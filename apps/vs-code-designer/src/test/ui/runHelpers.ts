@@ -505,6 +505,177 @@ export async function waitForWorkflowsRegistered(
   return false;
 }
 
+// ---------------------------------------------------------------------------
+// listCallbackUrl probe — gates the overview "Run trigger" enable state
+// ---------------------------------------------------------------------------
+
+/**
+ * Issue a single HTTP request returning {status, body} and never reject.
+ * Internal helper for the listCallbackUrl probe so the polling loop stays flat.
+ */
+function httpRequestJson(options: http.RequestOptions & { url: string }, timeoutMs = 3_000): Promise<{ status: number; body: string }> {
+  return new Promise((resolve) => {
+    const req = http.request(options.url, { ...options, timeout: timeoutMs }, (res) => {
+      const chunks: Buffer[] = [];
+      res.on('data', (c: Buffer) => chunks.push(c));
+      res.on('end', () => resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }));
+      res.on('error', () => resolve({ status: 0, body: '' }));
+    });
+    req.on('error', () => resolve({ status: 0, body: '' }));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve({ status: 0, body: '' });
+    });
+    req.end();
+  });
+}
+
+/**
+ * Wait until the local Functions runtime can produce a callback URL for the
+ * first registered workflow trigger.
+ *
+ * Background: the overview "Run trigger" button is gated by
+ *   `!isWorkflowRuntimeRunning || !canRunTrigger`
+ * where `canRunTrigger = Boolean(workflowProperties.callbackInfo)`
+ * (see libs/designer-ui/src/lib/overview/overviewcommandbar.tsx:64 and
+ * libs/designer-ui/src/lib/overview/index.tsx:136). `callbackInfo` is
+ * produced by the extension host calling
+ *   POST {baseUrl}/workflows/{name}/triggers/{triggerName}/listCallbackUrl
+ *        ?api-version=2019-10-01-edge-preview
+ * (see apps/vs-code-designer/src/app/commands/workflows/openOverview.ts:468
+ * and :518) and posting the response back to the webview, which flips the
+ * button to enabled.
+ *
+ * CI run 25909925774 showed `:7071/admin/host/status:Running` and the
+ * workflows-registered probe both fired within ~200ms, but the Run trigger
+ * button stayed disabled for the full 180 s click-loop budget. That is the
+ * window during which workflows are registered but `listCallbackUrl` still
+ * fails (host hasn't fully bound the trigger route yet — symptom of cold
+ * start on Linux runners). This probe collapses that window by waiting
+ * directly on the same signal the UI is waiting on.
+ *
+ * Strategy:
+ *   1. GET .../workflows?api-version=... → take the first workflow name.
+ *   2. GET .../workflows/{name}/triggers?api-version=... → first trigger
+ *      name (cached per workflow once seen).
+ *   3. POST .../workflows/{name}/triggers/{triggerName}/listCallbackUrl?... →
+ *      success = HTTP 200 with a non-empty `value` field in the JSON body.
+ *
+ * Non-throwing: returns true on success, false on timeout. The caller is
+ * expected to log + screenshot on false; the existing button-enablement
+ * poll in clickRunTrigger still runs after this probe as the canonical
+ * assertion site.
+ */
+export async function waitForRunTriggerEnabled(
+  driver: WebDriver,
+  opts: { timeoutMs?: number; intervalMs?: number; apiVersion?: string } = {}
+): Promise<boolean> {
+  const timeoutMs = opts.timeoutMs ?? 180_000;
+  const intervalMs = opts.intervalMs ?? 2_000;
+  const apiVersion = opts.apiVersion ?? '2019-10-01-edge-preview';
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const t0 = Date.now();
+  const deadline = t0 + timeoutMs;
+  let lastLog = 0;
+  let lastStatus = 0;
+  let lastBody = '';
+  let lastStep = 'none';
+  let workflowName: string | undefined;
+  let triggerName: string | undefined;
+
+  while (Date.now() < deadline) {
+    try {
+      // Step 1: discover workflow name (cache once found).
+      if (!workflowName) {
+        lastStep = 'workflows';
+        const wf = await httpRequestJson({ url: `${managementBase}/workflows?api-version=${apiVersion}`, method: 'GET' });
+        lastStatus = wf.status;
+        lastBody = wf.body;
+        if (wf.status === 200) {
+          let parsed: any = null;
+          try {
+            parsed = JSON.parse(wf.body);
+          } catch {
+            parsed = null;
+          }
+          const list = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : null;
+          if (list && list.length > 0 && typeof list[0]?.name === 'string') {
+            workflowName = list[0].name;
+          }
+        }
+      }
+
+      // Step 2: discover trigger name (cache once found).
+      if (workflowName && !triggerName) {
+        lastStep = 'triggers';
+        const tr = await httpRequestJson({
+          url: `${managementBase}/workflows/${workflowName}/triggers?api-version=${apiVersion}`,
+          method: 'GET',
+        });
+        lastStatus = tr.status;
+        lastBody = tr.body;
+        if (tr.status === 200) {
+          let parsed: any = null;
+          try {
+            parsed = JSON.parse(tr.body);
+          } catch {
+            parsed = null;
+          }
+          const list = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : null;
+          if (list && list.length > 0 && typeof list[0]?.name === 'string') {
+            triggerName = list[0].name;
+          }
+        }
+      }
+
+      // Step 3: probe listCallbackUrl — the canonical "button can enable" signal.
+      if (workflowName && triggerName) {
+        lastStep = 'listCallbackUrl';
+        const cb = await httpRequestJson({
+          url: `${managementBase}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`,
+          method: 'POST',
+          headers: { 'Content-Length': '0' },
+        });
+        lastStatus = cb.status;
+        lastBody = cb.body;
+        if (cb.status === 200) {
+          let parsed: any = null;
+          try {
+            parsed = JSON.parse(cb.body);
+          } catch {
+            parsed = null;
+          }
+          if (parsed && typeof parsed.value === 'string' && parsed.value.length > 0) {
+            const elapsed = Date.now() - t0;
+            console.log(`[overview] listCallbackUrl ready — workflow="${workflowName}" trigger="${triggerName}" (${elapsed}ms)`);
+            return true;
+          }
+        }
+      }
+    } catch {
+      /* ignore — keep polling */
+    }
+
+    // Throttled progress log at 10s cadence (per playbook).
+    const now = Date.now();
+    if (now - lastLog >= 10_000) {
+      console.log(
+        `[overview] Waiting for listCallbackUrl (${now - t0}ms elapsed, step=${lastStep}, lastStatus=${lastStatus}, workflow=${workflowName ?? '?'}, trigger=${triggerName ?? '?'})`
+      );
+      lastLog = now;
+    }
+
+    await sleep(intervalMs);
+  }
+
+  await captureScreenshot(driver, 'waitForRunTriggerEnabled-timeout');
+  const bodySnippet = lastBody ? lastBody.slice(0, 512) : '(empty)';
+  console.log(
+    `[overview] Timeout — listCallbackUrl never returned a value within ${timeoutMs}ms (step=${lastStep}, lastStatus=${lastStatus}, workflow=${workflowName ?? '?'}, trigger=${triggerName ?? '?'}, lastBody=${bodySnippet})`
+  );
+  return false;
+}
+
 /**
  * Pre-warm the Functions host after starting a debug session.
  *
@@ -926,6 +1097,21 @@ export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): P
   if (!workflowsReady) {
     console.log('[clickRunTrigger] No workflows registered within 180s — host is up but trigger routes never registered');
     await captureScreenshot(driver, 'clickRunTrigger-no-workflows');
+    return false;
+  }
+
+  // CI run 25909925774: host-running and workflows-registered both fired in
+  // <200ms but the Run trigger button stayed disabled for the full 180s
+  // click-loop budget. The overview UI gates "Run trigger" on
+  // `workflowProperties.callbackInfo`, which the extension host populates
+  // by polling listCallbackUrl. Probe the same endpoint directly so the
+  // downstream button-enablement loop doesn't have to absorb the cold-start
+  // gap between "trigger registered" and "trigger route accepts
+  // listCallbackUrl POSTs". See waitForRunTriggerEnabled for full details.
+  const triggerEnabled = await waitForRunTriggerEnabled(driver, { timeoutMs: 180_000 });
+  if (!triggerEnabled) {
+    console.log('[clickRunTrigger] listCallbackUrl never returned a value within 180s — overview UI will keep button disabled');
+    await captureScreenshot(driver, 'clickRunTrigger-callback-not-ready');
     return false;
   }
 
