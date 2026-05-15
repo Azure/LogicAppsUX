@@ -29,14 +29,297 @@ import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
 
 // ===========================================================================
+// Port management helpers
+// ===========================================================================
+
+/**
+ * Best-effort kill of any process(es) currently listening on `port`. Used to
+ * guarantee the F5 preLaunchTask spawns a fresh `func host start` onto a
+ * clean port rather than colliding with a stale design-time host, an orphan
+ * from a prior phase, or an external occupant.
+ *
+ * CI run 25915000783 observed `:7071/admin/host/status` returning "Running"
+ * in 168-306 ms after F5 — physically impossible for a cold-started func
+ * host — meaning another process owned the port and was serving 404
+ * `WorkflowNotFound` to `/workflows/{name}/triggers`. This helper neutralises
+ * that class of false start.
+ *
+ * Non-fatal: if nothing is listening, or platform tooling fails, we log and
+ * continue. Throwing here would mask the real downstream failure.
+ */
+async function killPortBound(port: number): Promise<void> {
+  try {
+    if (process.platform === 'win32') {
+      let pidsRaw = '';
+      try {
+        pidsRaw = execSync(
+          `powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort ${port} -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | Sort-Object -Unique"`,
+          { stdio: 'pipe', timeout: 5000 }
+        ).toString();
+      } catch {
+        pidsRaw = '';
+      }
+      const pids = pidsRaw
+        .split(/\s+/)
+        .map((s) => s.trim())
+        .filter((s) => /^\d+$/.test(s));
+      if (pids.length === 0) {
+        console.log(`[killport] no occupant on :${port}`);
+        return;
+      }
+      for (const pid of pids) {
+        let cmd = '?';
+        try {
+          cmd =
+            execSync(
+              `powershell -NoProfile -Command "(Get-Process -Id ${pid} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty ProcessName)"`,
+              { stdio: 'pipe', timeout: 5000 }
+            )
+              .toString()
+              .trim() || '?';
+        } catch {
+          /* ignore */
+        }
+        try {
+          execSync(`powershell -NoProfile -Command "Stop-Process -Id ${pid} -Force -ErrorAction SilentlyContinue"`, {
+            stdio: 'pipe',
+            timeout: 5000,
+          });
+          console.log(`[killport] killed PID ${pid} (${cmd}) on :${port}`);
+        } catch (e: any) {
+          console.log(`[killport] failed to kill PID ${pid} (${cmd}) on :${port}: ${e?.message ?? e}`);
+        }
+      }
+    } else {
+      let pidsRaw = '';
+      try {
+        pidsRaw = execSync(`lsof -ti:${port}`, { stdio: 'pipe', timeout: 5000, shell: '/bin/sh' }).toString();
+      } catch (e: any) {
+        // lsof exits 1 when nothing is listening — treat as "port free".
+        if (e?.status === 1) {
+          console.log(`[killport] no occupant on :${port}`);
+          return;
+        }
+        throw e;
+      }
+      const pids = pidsRaw
+        .split(/\s+/)
+        .map((s) => s.trim())
+        .filter((s) => /^\d+$/.test(s));
+      if (pids.length === 0) {
+        console.log(`[killport] no occupant on :${port}`);
+        return;
+      }
+      for (const pid of pids) {
+        let cmd = '?';
+        try {
+          cmd = execSync(`ps -o comm= -p ${pid}`, { stdio: 'pipe', timeout: 5000, shell: '/bin/sh' }).toString().trim() || '?';
+        } catch {
+          /* ignore */
+        }
+        try {
+          execSync(`kill -9 ${pid}`, { stdio: 'pipe', timeout: 5000, shell: '/bin/sh' });
+          console.log(`[killport] killed PID ${pid} (${cmd}) on :${port}`);
+        } catch (e: any) {
+          console.log(`[killport] failed to kill PID ${pid} (${cmd}) on :${port}: ${e?.message ?? e}`);
+        }
+      }
+    }
+  } catch (e: any) {
+    console.log(`[killport] error while freeing :${port}: ${e?.message ?? e}`);
+  }
+}
+
+/**
+ * Ensure :7071 is unbound before F5 spawns a fresh `func host start`. Sleeps
+ * briefly to let the kernel release the socket, then logs the freed state.
+ *
+ * Centralised pre-F5 hook for all phases (4.2, 4.3, 4.4, 4.5, 4.6,
+ * scenarios-pilot) — invoked from {@link startDebugging} before the command
+ * palette is opened so every shared-helper caller benefits.
+ *
+ * The `driver` parameter is currently unused but reserved for future
+ * UI-side cleanup (e.g., dismissing pre-existing debug sessions).
+ */
+export async function prepareForFreshFuncHost(_driver?: WebDriver): Promise<void> {
+  await killPortBound(7071);
+  // Allow the kernel a moment to release the TCP socket before F5 binds it.
+  await sleep(500);
+  console.log('[prepareForFreshFuncHost] :7071 freed');
+}
+
+/**
+ * Dump diagnostics when `:7071/admin/host/status` reports "Running" in under
+ * 2 seconds — physically impossible for a cold-started func host, so almost
+ * certainly some other process owns the port (design-time host / orphan /
+ * external occupant). See CI run 25915000783.
+ *
+ * Captures:
+ *   - port listener inventory (lsof / Get-NetTCPConnection)
+ *   - per-PID process detail (cmdline / path / start time)
+ *   - workflow-management endpoint body (first 500 chars) — reveals whether
+ *     the occupant speaks the Logic Apps workflow runtime API at all
+ *   - host.json / local.settings.json / launch.json from candidate workspace
+ *     dirs (env var driven, mirroring the timeout-path `launch.json` dump)
+ *
+ * All probes are wrapped in try/catch — a diagnostic failure must never
+ * change the test outcome.
+ */
+async function dumpSuspiciouslyFastHost(elapsedMs: number): Promise<void> {
+  console.log(`[runtime][diag] suspiciously-fast host status (${elapsedMs}ms <2000ms) — investigating occupant of :7071`);
+
+  // (A) Port listener inventory
+  try {
+    if (process.platform === 'win32') {
+      const out = execSync(
+        'powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort 7071 -State Listen -ErrorAction SilentlyContinue | Format-List | Out-String"',
+        { stdio: 'pipe', timeout: 5000 }
+      ).toString();
+      console.log(`[runtime][diag] :7071 listener:\n${out}`);
+    } else {
+      let out: string;
+      try {
+        out = execSync('lsof -iTCP:7071 -sTCP:LISTEN -P -n', { stdio: 'pipe', timeout: 5000, shell: '/bin/sh' }).toString();
+      } catch (e: any) {
+        out = e?.status === 1 ? '(no occupant)' : `error: ${e?.message ?? e}`;
+      }
+      console.log(`[runtime][diag] :7071 listener:\n${out}`);
+    }
+  } catch (e: any) {
+    console.log(`[runtime][diag] listener probe failed: ${e?.message ?? e}`);
+  }
+
+  // (B) Per-PID process detail
+  try {
+    let pids: string[] = [];
+    if (process.platform === 'win32') {
+      try {
+        const raw = execSync(
+          'powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort 7071 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | Sort-Object -Unique"',
+          { stdio: 'pipe', timeout: 5000 }
+        ).toString();
+        pids = raw
+          .split(/\s+/)
+          .map((s) => s.trim())
+          .filter((s) => /^\d+$/.test(s));
+      } catch {
+        /* ignore */
+      }
+      for (const pid of pids) {
+        try {
+          const out = execSync(
+            `powershell -NoProfile -Command "Get-Process -Id ${pid} -ErrorAction SilentlyContinue | Format-List Id, ProcessName, Path, StartTime | Out-String"`,
+            { stdio: 'pipe', timeout: 5000 }
+          ).toString();
+          console.log(`[runtime][diag] PID ${pid} detail:\n${out}`);
+        } catch (e: any) {
+          console.log(`[runtime][diag] PID ${pid} detail failed: ${e?.message ?? e}`);
+        }
+      }
+    } else {
+      try {
+        const raw = execSync('lsof -ti:7071', { stdio: 'pipe', timeout: 5000, shell: '/bin/sh' }).toString();
+        pids = raw
+          .split(/\s+/)
+          .map((s) => s.trim())
+          .filter((s) => /^\d+$/.test(s));
+      } catch {
+        /* ignore — lsof exit 1 when nothing is listening */
+      }
+      for (const pid of pids) {
+        try {
+          const out = execSync(`ps -o pid,ppid,cmd -p ${pid}`, { stdio: 'pipe', timeout: 5000, shell: '/bin/sh' }).toString();
+          console.log(`[runtime][diag] PID ${pid} detail:\n${out}`);
+        } catch (e: any) {
+          console.log(`[runtime][diag] PID ${pid} detail failed: ${e?.message ?? e}`);
+        }
+      }
+    }
+    if (pids.length === 0) {
+      console.log('[runtime][diag] no PID resolved for :7071 (race? socket already moved?)');
+    }
+  } catch (e: any) {
+    console.log(`[runtime][diag] PID inventory failed: ${e?.message ?? e}`);
+  }
+
+  // (C) Workflow-management endpoint body — what does this occupant *actually* serve?
+  try {
+    const result = await new Promise<{ status: string; body: string }>((resolve) => {
+      const req = http.get('http://localhost:7071/runtime/webhooks/workflow/api/management/workflows', { timeout: 3000 }, (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (c: Buffer) => chunks.push(c));
+        res.on('end', () => {
+          const body = Buffer.concat(chunks).toString('utf8').slice(0, 500);
+          resolve({ status: String(res.statusCode ?? 'unknown'), body });
+        });
+        res.on('error', (err) => resolve({ status: 'unreachable', body: err.message }));
+      });
+      req.on('error', (err) => resolve({ status: 'unreachable', body: err.message }));
+      req.on('timeout', () => {
+        req.destroy();
+        resolve({ status: 'unreachable', body: 'timeout after 3000ms' });
+      });
+    });
+    console.log(`[runtime][diag] workflows-management probe: status=${result.status}, body=${result.body}`);
+  } catch (e: any) {
+    console.log(`[runtime][diag] workflows-management probe failed: ${e?.message ?? e}`);
+  }
+
+  // (D) host.json / local.settings.json / launch.json from candidate workspace dirs
+  try {
+    const candidates = [
+      process.env.LA_E2E_LEGACY_PROJECT_DIR,
+      process.env.LA_E2E_CODEFUL_MODERN_DIR,
+      process.env.LA_E2E_CODEFUL_LEGACY_DIR,
+    ].filter((p): p is string => typeof p === 'string' && p.length > 0);
+    if (candidates.length === 0) {
+      console.log('[runtime][diag] no workspace path in scope — skipping config dump');
+    }
+    for (const wsDir of candidates) {
+      for (const rel of ['host.json', 'local.settings.json']) {
+        const fp = path.join(wsDir, rel);
+        try {
+          if (fs.existsSync(fp)) {
+            const content = fs.readFileSync(fp, 'utf8').slice(0, 1024);
+            console.log(`[runtime][diag] ${fp}:\n${content}`);
+          } else {
+            console.log(`[runtime][diag] ${fp}: (missing)`);
+          }
+        } catch (e: any) {
+          console.log(`[runtime][diag] ${fp} read failed: ${e?.message ?? e}`);
+        }
+      }
+      const launchPath = path.join(wsDir, '.vscode', 'launch.json');
+      try {
+        if (fs.existsSync(launchPath)) {
+          const content = fs.readFileSync(launchPath, 'utf8').slice(0, 2000);
+          console.log(`[runtime][diag] ${launchPath}:\n${content}`);
+        } else {
+          console.log(`[runtime][diag] ${launchPath}: (missing)`);
+        }
+      } catch (e: any) {
+        console.log(`[runtime][diag] ${launchPath} read failed: ${e?.message ?? e}`);
+      }
+    }
+  } catch (e: any) {
+    console.log(`[runtime][diag] config dump failed: ${e?.message ?? e}`);
+  }
+}
+
+// ===========================================================================
 // Debug helpers
 // ===========================================================================
 
 /**
  * Start debugging via "Debug: Start Debugging" command palette.
+ *
+ * Before opening the command palette we proactively free :7071 — see
+ * {@link prepareForFreshFuncHost} for the rationale (CI run 25915000783).
  */
 export async function startDebugging(workbench: Workbench, driver: WebDriver): Promise<void> {
   console.log('[debug] Starting debug via "Debug: Start Debugging"...');
+
+  await prepareForFreshFuncHost(driver);
 
   await clearBlockingUI(driver);
   await focusEditor(driver);
@@ -131,6 +414,7 @@ export async function waitForRuntimeReady(
   let lastProgressLog = 0;
   let debugToolbarSeenAt = 0;
   let hostRunningSeenAt = 0;
+  let suspiciousDumped = false;
 
   while (Date.now() < deadline) {
     // Probe VS Code's main workbench DOM via window.top rather than switching
@@ -253,7 +537,12 @@ export async function waitForRuntimeReady(
     // So in strict mode we trust the HTTP probe alone. DOM signals remain
     // telemetry-only and appear in the timeout diagnostic block.
     if (hostReady) {
-      console.log(`[debug] Runtime ready — host status is 'running' (${Date.now() - t0}ms)`);
+      const elapsedMs = Date.now() - t0;
+      if (elapsedMs < 2000 && !suspiciousDumped) {
+        suspiciousDumped = true;
+        await dumpSuspiciouslyFastHost(elapsedMs);
+      }
+      console.log(`[debug] Runtime ready — host status is 'running' (${elapsedMs}ms)`);
       return true;
     }
 
