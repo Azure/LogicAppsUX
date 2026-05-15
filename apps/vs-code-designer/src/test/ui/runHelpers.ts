@@ -414,6 +414,98 @@ export async function waitForRuntimeReady(
 }
 
 /**
+ * Wait until the Functions host has finished scanning the workflow project
+ * and registered at least one workflow function.
+ *
+ * Background: `:7071/admin/host/status` reports "Running" as soon as the host
+ * PROCESS is up, but workflow trigger routes are not yet registered. The
+ * Run trigger button stays disabled until registration completes. Polling
+ * the workflow-management endpoint
+ * `/runtime/webhooks/workflow/api/management/workflows` yields a non-empty
+ * array once a workflow is registered.
+ *
+ * CI run 25908119964 demonstrated host-running fires in ~50ms but workflow
+ * registration takes considerably longer on cold-start Linux runners; this
+ * probe bridges that gap with a single deterministic signal.
+ *
+ * Response shape: depending on host version the body may be a bare array
+ * (`[ {...}, {...} ]`) or an Azure-REST-style envelope (`{ value: [...] }`).
+ * We accept either.
+ */
+export async function waitForWorkflowsRegistered(
+  driver: WebDriver,
+  opts: { timeoutMs?: number; intervalMs?: number } = {}
+): Promise<boolean> {
+  const timeoutMs = opts.timeoutMs ?? 180_000;
+  const intervalMs = opts.intervalMs ?? 2_000;
+  const t0 = Date.now();
+  const deadline = t0 + timeoutMs;
+  let lastLog = 0;
+  let firstSeenAt = 0;
+  let lastBody = '';
+  let lastStatus = 0;
+
+  while (Date.now() < deadline) {
+    try {
+      const reachable = await new Promise<{ status: number; body: string }>((resolve) => {
+        const req = http.get('http://localhost:7071/runtime/webhooks/workflow/api/management/workflows', { timeout: 3000 }, (res) => {
+          const chunks: Buffer[] = [];
+          res.on('data', (c: Buffer) => chunks.push(c));
+          res.on('end', () => resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }));
+          res.on('error', () => resolve({ status: 0, body: '' }));
+        });
+        req.on('error', () => resolve({ status: 0, body: '' }));
+        req.on('timeout', () => {
+          req.destroy();
+          resolve({ status: 0, body: '' });
+        });
+      });
+
+      lastStatus = reachable.status;
+      lastBody = reachable.body;
+
+      if (reachable.status === 200) {
+        let parsed: any = null;
+        try {
+          parsed = JSON.parse(reachable.body);
+        } catch {
+          parsed = null;
+        }
+        const list = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : null;
+        if (list && list.length > 0) {
+          const elapsed = Date.now() - t0;
+          console.log(`[workflows] Registered — ${list.length} workflow(s) found (${elapsed}ms)`);
+          return true;
+        }
+        // 200 with empty list: registration not complete yet
+        if (!firstSeenAt && parsed) {
+          firstSeenAt = Date.now() - t0;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
+    // Throttled progress log at 10s cadence (per playbook)
+    const now = Date.now();
+    if (now - lastLog >= 10_000) {
+      console.log(`[workflows] Still waiting for workflow registration (${now - t0}ms elapsed, lastStatus=${lastStatus})`);
+      lastLog = now;
+    }
+
+    await sleep(intervalMs);
+  }
+
+  await captureScreenshot(driver, 'waitForWorkflowsRegistered-timeout');
+  const firstSeenLabel = firstSeenAt ? `${firstSeenAt}ms` : 'never';
+  const bodySnippet = lastBody ? lastBody.slice(0, 512) : '(empty)';
+  console.log(
+    `[workflows] Timeout — no workflows registered within ${timeoutMs}ms (firstSeenAt=${firstSeenLabel}, lastStatus=${lastStatus}, lastBody=${bodySnippet})`
+  );
+  return false;
+}
+
+/**
  * Pre-warm the Functions host after starting a debug session.
  *
  * Phase 4.3 (inlineJavascript) failed in CI with "Functions host did not
@@ -822,6 +914,18 @@ export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): P
   if (!hostReady) {
     await captureScreenshot(driver, 'clickRunTrigger-runtime-not-ready');
     console.log('[clickRunTrigger] Functions host not running after 180s; not entering click loop');
+    return false;
+  }
+
+  // :7071 host-status:"Running" fires as soon as the host PROCESS is up, but
+  // the Run trigger button is gated by workflow REGISTRATION (host must scan
+  // the project, discover the workflow function, and register its trigger
+  // route). CI 25908119964 showed host-running in ~50ms but button stayed
+  // disabled for full 180s. This probe bridges that gap.
+  const workflowsReady = await waitForWorkflowsRegistered(driver, { timeoutMs: 180_000 });
+  if (!workflowsReady) {
+    console.log('[clickRunTrigger] No workflows registered within 180s — host is up but trigger routes never registered');
+    await captureScreenshot(driver, 'clickRunTrigger-no-workflows');
     return false;
   }
 
