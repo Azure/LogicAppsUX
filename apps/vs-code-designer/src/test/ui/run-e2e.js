@@ -789,6 +789,22 @@ async function main() {
     console.log(`  DOTNET_ROOT: ${dotnetSdkDir}`);
   }
 
+  // R4 (workspaceConversionYes hardening): lock VS Code's host locale to
+  // en-US so localized button labels (DialogResponses.yes.title === 'Yes',
+  // 'No', 'Cancel', etc.) stay stable across CI runners. Without this,
+  // Linux runners can default to C.UTF-8 / German / Japanese and the
+  // ExTester ModalDialog.pushButton('Yes') call mis-matches.
+  if (!process.env.LANG) {
+    process.env.LANG = 'en_US.UTF-8';
+  }
+  if (!process.env.LC_ALL) {
+    process.env.LC_ALL = 'en_US.UTF-8';
+  }
+  if (!process.env.VSCODE_NLS_CONFIG) {
+    process.env.VSCODE_NLS_CONFIG = JSON.stringify({ locale: 'en-us', availableLanguages: {} });
+  }
+  console.log(`  Locale lock: LANG=${process.env.LANG} LC_ALL=${process.env.LC_ALL}`);
+
   const outTestDir = path.resolve(projectDir, 'out', 'test');
   const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
 
