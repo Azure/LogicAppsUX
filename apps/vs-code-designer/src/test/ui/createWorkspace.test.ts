@@ -1946,7 +1946,14 @@ describe('Create Workspace Tests', function () {
 
     // --- Validation helper functions ---
 
-    async function findValidationMessage(drv: WebDriver, expectedText: string, timeout = ELEMENT_TIMEOUT): Promise<WebElement> {
+    // The default 20s ceiling raced the webview render on gen-6 CI
+    // (`Pre-creation webview tests › should show validation error for
+    // non-existent path` at createWorkspace.test.ts:2230 → 2221). Validation
+    // is async (webview postMessage → extension → fs check → reply → render);
+    // 45s gives the IPC roundtrip + DOM update enough slack on cold-start
+    // Linux runners without masking a real validation regression (a broken
+    // validator still fails — just after longer).
+    async function findValidationMessage(drv: WebDriver, expectedText: string, timeout = 45_000): Promise<WebElement> {
       const deadline = Date.now() + timeout;
       while (Date.now() < deadline) {
         const candidates = await drv.findElements(By.xpath(`//*[contains(text(), ${toXPathLiteral(expectedText)})]`));
