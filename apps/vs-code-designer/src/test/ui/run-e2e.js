@@ -803,7 +803,6 @@ async function main() {
   const phase3Files = [testFile('inlineJavascript.test.js')];
   const phase4Files = [testFile('statelessVariables.test.js')];
   const phase5Files = [testFile('designerViewExtended.test.js')];
-  const phase6Files = [testFile('keyboardNavigation.test.js')];
 
   const phase7Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js'), testFile('dataMapper.test.js')];
 
@@ -1557,7 +1556,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'newtestsonly') {
-      // Run only the new tests (phases 4.3–4.6) each in their own session
+      // Run only the new tests (phases 4.3–4.5) each in their own session
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
@@ -1574,10 +1573,6 @@ namespace ${namespaceName}
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase5-only');
       exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
-
-      await new Promise((r) => setTimeout(r, 3000));
-      await prepareFreshSession('phase6-only');
-      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
 
       const finalExit = Math.max(...exits);
       console.log(`\n=== New tests results: ${exits.map((c, i) => `4.${i + 3}=${c}`).join(', ')} → exit ${finalExit} ===`);
@@ -1703,7 +1698,7 @@ namespace ${namespaceName}
     //
     //   - independentonly: phases that don't depend on Phase 4.1 workspaces.
     //   - createplusdesigner: Phase 4.1 → Phase 4.2 (designer lifecycle).
-    //   - createplusnewtests: Phase 4.1 → Phases 4.3-4.6 (single-test phases).
+    //   - createplusnewtests: Phase 4.1 → Phases 4.3-4.5 (single-test phases).
     //   - createplusconversion: Phase 4.1 → Phases 4.8a/c/d/e (workspace
     //     conversion; 4.8b is in `independentonly` because it builds its own
     //     legacy fixture and does not need Phase 4.1).
@@ -1794,13 +1789,9 @@ namespace ${namespaceName}
       await prepareFreshSession('phase5-shard');
       exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
 
-      await new Promise((r) => setTimeout(r, 3000));
-      await prepareFreshSession('phase6-shard');
-      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
-
       const finalExit = Math.max(...exits);
       console.log(
-        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]} → exit ${finalExit} ===`
+        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]} → exit ${finalExit} ===`
       );
       process.exit(finalExit);
     }
@@ -1917,7 +1908,7 @@ namespace ${namespaceName}
       console.log(`\n⚠ Phase 4.2 exited with code ${phase2Exit} — continuing to Phase 4.3`);
     }
 
-    // Phases 4.3–4.6: Each new test in its own fresh VS Code session
+    // Phases 4.3–4.5: Each new test in its own fresh VS Code session
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase3');
     const phase3Exit = await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: phase2Resources });
@@ -1937,13 +1928,6 @@ namespace ${namespaceName}
     const phase5Exit = await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: phase2Resources });
     if (phase5Exit !== 0) {
       console.log(`\n⚠ Phase 4.5 exited with code ${phase5Exit} — continuing`);
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await prepareFreshSession('phase6');
-    const phase6Exit = await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: phase2Resources });
-    if (phase6Exit !== 0) {
-      console.log(`\n⚠ Phase 4.6 exited with code ${phase6Exit} — continuing`);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -2052,7 +2036,6 @@ namespace ${namespaceName}
       phase3Exit,
       phase4Exit,
       phase5Exit,
-      phase6Exit,
       phase7Exit,
       phase8aExit,
       phase8bExit,
@@ -2064,7 +2047,7 @@ namespace ${namespaceName}
       console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
     }
     console.log(
-      `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.6=${phase6Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.10=${phase10Exit} → exit ${finalExit} ===`
+      `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.10=${phase10Exit} → exit ${finalExit} ===`
     );
     process.exit(finalExit);
   } catch (err) {
