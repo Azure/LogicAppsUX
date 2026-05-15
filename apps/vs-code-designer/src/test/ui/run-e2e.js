@@ -1522,6 +1522,32 @@ namespace ${namespaceName}
       process.exit(scenariosExit);
     }
 
+    if (e2eMode === 'scenarios-pilot') {
+      await extest.downloadCode(VSCODE_VERSION);
+      await extest.downloadChromeDriver(VSCODE_VERSION);
+      // Pilot exactly one scenario: inlineJavascript. Decision gate per the
+      // per-scenario re-architecture plan — if this passes where the current
+      // createplusnewtests shard fails Phase 4.3, the new pattern is validated.
+      const pilotScenarios = scenarios.filter((s) => s.id === 'p43-inlinejavascript');
+      if (pilotScenarios.length === 0) {
+        throw new Error('scenarios-pilot: p43-inlinejavascript scenario not found in scenarios[] table');
+      }
+      // Phase 4.1 must run first to populate the manifest the bootstrapper consumes
+      // for { appType: 'standard', wfType: 'Stateful' }. Mirror createplusnewtests's
+      // Phase 4.1 invocation.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-pilot');
+      const phase1Exit = await runPhase('Phase 4.1: createWorkspace (pilot prerequisite)', phase1Files);
+      if (phase1Exit !== 0) {
+        console.log(`\n⚠ Phase 4.1 exited with code ${phase1Exit} — pilot cannot proceed without manifest`);
+        process.exit(phase1Exit);
+      }
+      // Now run the pilot scenario through the bootstrapper.
+      const pilotExit = await runScenarioPhases(pilotScenarios);
+      console.log(`\n=== Pilot result: 4.1=${phase1Exit}, p43-inlinejavascript=${pilotExit} → exit ${Math.max(phase1Exit, pilotExit)} ===`);
+      process.exit(Math.max(phase1Exit, pilotExit));
+    }
+
     if (e2eMode === 'codefuldebugonly') {
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);

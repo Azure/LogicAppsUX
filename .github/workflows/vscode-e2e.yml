@@ -57,6 +57,8 @@ jobs:
             e2e_mode: createplusnewtests
           - shard: conversion
             e2e_mode: createplusconversion
+          - shard: scenarios-pilot
+            e2e_mode: scenarios-pilot
 
     steps:
       - name: Checkout
