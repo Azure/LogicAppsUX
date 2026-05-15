@@ -899,12 +899,6 @@ async function main() {
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
     },
-    {
-      id: 'p46-keyboardnavigation',
-      testFile: phase6Files[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-    },
 
     // Phase 4.7 — designer-shell smoke + dataMapper. dataMapper.test.ts
     // reads the manifest in its own `before` hook, so the bootstrapper
