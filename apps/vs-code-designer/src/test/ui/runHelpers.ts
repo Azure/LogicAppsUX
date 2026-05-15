@@ -632,13 +632,20 @@ export async function waitForOverviewView(
 export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): Promise<boolean> {
   // Gate: don't burn the click-loop deadline waiting for a button that can
   // only become enabled once the Functions host is running. If the runtime
-  // isn't ready within 60 s, fail fast with a screenshot + clear log so the
+  // isn't ready within 180 s, fail fast with a screenshot + clear log so the
   // surfaced failure points at the actual root cause (runtime not ready),
   // not the downstream symptom ("Run trigger clickable").
-  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 60_000 });
+  //
+  // 180s matches the default ceiling in waitForRuntimeReady and prewarmFunctionsHost.
+  // The previous 60s ceiling was too tight on the heavy `createplusnewtests` shard:
+  // even after the toolbar appeared (debug session attached), the Functions host
+  // could take >60s more to bind :7071, surfacing as
+  // "Timeout waiting for runtime after 60000ms ... debugToolbarSeen=never,
+  // hostRunningSeen=never" in Phase 4.4 statelessVariables on cold-start runners.
+  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 180_000 });
   if (!hostReady) {
     await captureScreenshot(driver, 'clickRunTrigger-runtime-not-ready');
-    console.log('[clickRunTrigger] Functions host not running after 60s; not entering click loop');
+    console.log('[clickRunTrigger] Functions host not running after 180s; not entering click loop');
     return false;
   }
 

@@ -22,7 +22,6 @@ import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManif
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { sleep, captureScreenshot } from './helpers';
 import {
-  TEST_TIMEOUT,
   DEPENDENCY_VALIDATION_TIMEOUT,
   waitForDependencyValidation,
   openDesignerForEntry,
@@ -62,7 +61,12 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
 );
 
 describe('Inline JavaScript Tests', function () {
-  this.timeout(TEST_TIMEOUT);
+  // Phase 4.3 needs more headroom than the shared TEST_TIMEOUT (300_000) on
+  // the heavy `createplusnewtests` shard: debug toolbar appears at ~171s on
+  // cold-start runners, leaving only ~129s for host startup + click trigger
+  // + wait-for-run-success under the 300s budget. Bumping per-test to 600s
+  // (10 min) gives enough slack for the slowest CI cold-starts.
+  this.timeout(600_000);
 
   let driver: WebDriver;
   let workbench: Workbench;
