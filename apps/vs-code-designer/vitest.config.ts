@@ -1,10 +1,31 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 import packageJson from './package.json';
 
 const packagePath = 'apps/vs-code-designer/';
+const coverageIncludeFile = path.resolve(__dirname, '.coverage-include');
+
+const toCoverageInclude = (files: string[]): string[] =>
+  files
+    .filter(
+      (file) =>
+        file.startsWith('src/') &&
+        (file.endsWith('.ts') || file.endsWith('.tsx')) &&
+        !file.includes('/__test__/') &&
+        !file.endsWith('.test.ts') &&
+        !file.endsWith('.test.tsx')
+    )
+    .map((file) => file.replace(/\\/g, '/'));
+
+const getConfiguredCoverageInclude = (): string[] | undefined => {
+  if (!existsSync(coverageIncludeFile)) {
+    return undefined;
+  }
+
+  return toCoverageInclude(readFileSync(coverageIncludeFile, 'utf8').split(/\r?\n/));
+};
 
 const getBaseRefCandidates = (baseRef: string): string[] => {
   const candidates: string[] = [];
@@ -28,6 +49,12 @@ const getBaseRefCandidates = (baseRef: string): string[] => {
 };
 
 const getCoverageInclude = (): string[] => {
+  const configuredCoverageInclude = getConfiguredCoverageInclude();
+
+  if (configuredCoverageInclude) {
+    return configuredCoverageInclude.length ? configuredCoverageInclude : ['src/__coverage_placeholder__.ts'];
+  }
+
   const baseRef = process.env.GITHUB_BASE_REF;
 
   if (!baseRef) {
@@ -44,17 +71,12 @@ const getCoverageInclude = (): string[] => {
         stdio: ['ignore', 'pipe', 'ignore'],
       })
         .split(/\r?\n/)
-        .filter(
-          (file) =>
-            file.startsWith(packagePath) &&
-            (file.endsWith('.ts') || file.endsWith('.tsx')) &&
-            !file.includes('/__test__/') &&
-            !file.endsWith('.test.ts') &&
-            !file.endsWith('.test.tsx')
-        )
+        .filter((file) => file.startsWith(packagePath))
         .map((file) => file.slice(packagePath.length));
 
-      return changedFiles.length ? changedFiles : ['src/__coverage_placeholder__.ts'];
+      const coverageInclude = toCoverageInclude(changedFiles);
+
+      return coverageInclude.length ? coverageInclude : ['src/__coverage_placeholder__.ts'];
     } catch {
       // Try the next remote/ref form. CI uses origin; local hotfix worktrees may use upstream.
     }

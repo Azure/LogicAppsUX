@@ -41,6 +41,13 @@ jobs:
       - name: Build
         run: pnpm turbo run build --cache-dir=.turbo
 
+      - name: Configure VS Code designer coverage scope
+        run: |
+          git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }}...HEAD -- apps/vs-code-designer/src \
+            | sed 's|^apps/vs-code-designer/||' \
+            > apps/vs-code-designer/.coverage-include
+          cat apps/vs-code-designer/.coverage-include
+
       - name: Run tests with coverage
         run: |
           pnpm turbo run test:lib --cache-dir=.turbo
