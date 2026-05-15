@@ -1835,6 +1835,27 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
     /* ignore */
   }
 
+  // Force the Explorer tree to expand to and reveal the now-active editor's file.
+  // Quick Open opens the file in the editor but does NOT expand the Explorer tree,
+  // so the polling loop below can re-query a collapsed-tree DOM forever (observed
+  // on cold per-scenario shards p42-{standard,customcode,rulesengine}, p48c —
+  // CI run 25946044192). Try the modern command first, then known fallbacks.
+  const revealCandidates = [
+    'workbench.files.action.showActiveFileInExplorer',
+    'revealInExplorer',
+    'workbench.action.revealActiveEditorInExplorer',
+  ];
+  for (const cmd of revealCandidates) {
+    try {
+      await new Workbench().executeCommand(cmd);
+      console.log(`[openDesignerViaExplorer] Revealed active file via "${cmd}"`);
+      await sleep(800); // let tree expansion animate + DOM settle
+      break;
+    } catch (revealErr: any) {
+      console.log(`[openDesignerViaExplorer] reveal command "${cmd}" failed: ${revealErr.message?.split('\n')[0]}`);
+    }
+  }
+
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       // Wait for the menubar overlay to be inactive before clicking. The

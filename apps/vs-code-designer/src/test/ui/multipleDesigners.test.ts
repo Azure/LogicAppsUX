@@ -191,6 +191,26 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     /* ignore */
   }
 
+  // Force the Explorer tree to expand to and reveal the now-active editor's file.
+  // Quick Open opens the file in the editor but does NOT expand the Explorer tree,
+  // so the polling loop below can re-query a collapsed-tree DOM forever (observed
+  // on cold per-scenario p48c-multipledesigners shard — CI run 25946044192).
+  const revealCandidates = [
+    'workbench.files.action.showActiveFileInExplorer',
+    'revealInExplorer',
+    'workbench.action.revealActiveEditorInExplorer',
+  ];
+  for (const cmd of revealCandidates) {
+    try {
+      await new Workbench().executeCommand(cmd);
+      console.log(`[multiDesigner] Revealed active file via "${cmd}"`);
+      await sleep(800);
+      break;
+    } catch (revealErr: any) {
+      console.log(`[multiDesigner] reveal command "${cmd}" failed: ${revealErr.message?.split('\n')[0]}`);
+    }
+  }
+
   // Now right-click on the active/focused workflow.json in the Explorer
   for (let attempt = 0; attempt < 3; attempt++) {
     try {

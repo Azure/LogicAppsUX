@@ -55,51 +55,60 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
   });
 
   it('should be able to search for commands in command palette', async () => {
-    // Open command palette and search for basic commands
-    const commandPrompt = await workbench.openCommandPrompt();
-    await commandPrompt.setText('Help');
-
-    // Wait for suggestions to appear. getQuickPicks() can return [] on slow CI
-    // hosts even when no exception is thrown (observed in p47-suite shard —
-    // see PR #9181 / CI runs 25941836505, 25944968117). Poll with re-type
-    // until non-zero, and fall back to listing all commands (">") so the
-    // assertion can still verify the picker is functional.
-    let suggestions: Awaited<ReturnType<typeof commandPrompt.getQuickPicks>> = [];
-    let lastErr: any;
-    const searchTerms = ['Help', 'Help', 'Help', '>'];
+    // Open command palette and search for basic commands.
+    //
+    // The InputBox returned by openCommandPrompt() can throw
+    // ElementNotInteractableError on its first setText() in cold sessions
+    // (observed in p47-suite shard — see PR #9181 / CI runs 25941836505,
+    // 25944968117, 25946044192). Additionally getQuickPicks() can return
+    // [] on slow CI hosts even when no exception is thrown. Wrap the
+    // entire palette-open + setText + getQuickPicks flow in a retry that
+    // re-acquires the palette on each attempt and presses Escape between
+    // attempts to dismiss any stuck UI.
+    const driver = VSBrowser.instance.driver;
+    let suggestions: any[] = [];
+    let lastErr: Error | undefined;
+    let lastPrompt: Awaited<ReturnType<typeof workbench.openCommandPrompt>> | undefined;
+    const searchTerms = ['Help', 'Help', '>', '>'];
     for (let attempt = 0; attempt < searchTerms.length; attempt++) {
       try {
-        await VSBrowser.instance.driver.sleep(2000);
+        // Re-acquire the palette each attempt — handle may be stale or the
+        // InputBox may not yet be interactable.
+        const commandPrompt = await workbench.openCommandPrompt();
+        lastPrompt = commandPrompt;
+        await driver.sleep(500); // let InputBox become interactable
+        await commandPrompt.setText(searchTerms[attempt]);
+        await driver.sleep(1500); // settle
         suggestions = await commandPrompt.getQuickPicks();
         if (suggestions.length > 0) {
           break;
         }
-        // Re-type to refresh the picker
-        const next = searchTerms[Math.min(attempt + 1, searchTerms.length - 1)];
-        console.log(`[smoke] getQuickPicks attempt ${attempt + 1}/${searchTerms.length} returned 0 results — retrying with "${next}"`);
-        try {
-          await commandPrompt.setText(next);
-        } catch {
-          /* ignore */
-        }
+        console.log(`[smoke-help] attempt ${attempt + 1}/${searchTerms.length} returned 0 results — retrying`);
       } catch (e) {
-        lastErr = e;
-        console.log(`[smoke] getQuickPicks attempt ${attempt + 1}/${searchTerms.length} failed: ${(e as Error).message?.split('\n')[0]}`);
+        lastErr = e as Error;
+        console.log(`[smoke-help] attempt ${attempt + 1}/${searchTerms.length} failed: ${(e as Error).message?.split('\n')[0]}`);
+        // Dismiss any stuck palette before the next attempt re-opens it.
         try {
-          await commandPrompt.setText(searchTerms[Math.min(attempt + 1, searchTerms.length - 1)]);
+          if (lastPrompt) {
+            await lastPrompt.cancel();
+          }
         } catch {
           /* ignore */
         }
+        await driver.sleep(1000);
       }
     }
-    if (suggestions.length === 0 && lastErr) {
-      throw lastErr;
-    }
-    expect(suggestions.length).to.be.greaterThan(0, 'Should find commands in command palette');
+    expect(suggestions.length).to.be.greaterThan(0, `Should find commands in command palette (last error: ${lastErr?.message ?? 'none'})`);
 
     console.log(`Found ${suggestions.length} command palette suggestions`);
 
-    await commandPrompt.cancel();
+    try {
+      if (lastPrompt) {
+        await lastPrompt.cancel();
+      }
+    } catch {
+      /* ignore */
+    }
   });
 
   it('should be able to open explorer view', async () => {
