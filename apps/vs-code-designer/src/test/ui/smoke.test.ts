@@ -59,11 +59,33 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
     const commandPrompt = await workbench.openCommandPrompt();
     await commandPrompt.setText('Help');
 
-    // Wait for suggestions to appear
-    await VSBrowser.instance.driver.sleep(1000);
-
-    // Get quick picks
-    const suggestions = await commandPrompt.getQuickPicks();
+    // Wait for suggestions to appear. getQuickPicks() internally waits for
+    // visibility and can flake on slow CI hosts (observed in p47-suite shard
+    // — see PR #9181 / CI run 25941836505). Retry a few times with extra
+    // settle time before giving up.
+    let suggestions: Awaited<ReturnType<typeof commandPrompt.getQuickPicks>> = [];
+    let lastErr: any;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        await VSBrowser.instance.driver.sleep(1500);
+        suggestions = await commandPrompt.getQuickPicks();
+        if (suggestions.length > 0) {
+          break;
+        }
+      } catch (e) {
+        lastErr = e;
+        console.log(`[smoke] getQuickPicks attempt ${attempt + 1}/3 failed: ${(e as Error).message?.split('\n')[0]}`);
+        // Retype to refresh the picker
+        try {
+          await commandPrompt.setText('Help');
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    if (suggestions.length === 0 && lastErr) {
+      throw lastErr;
+    }
     expect(suggestions.length).to.be.greaterThan(0, 'Should find Help-related commands');
 
     console.log(`Found ${suggestions.length} Help commands`);

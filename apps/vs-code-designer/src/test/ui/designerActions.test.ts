@@ -2304,6 +2304,21 @@ async function openOverviewPage(workbench: Workbench, driver: WebDriver, workflo
   // Try to find and right-click on workflow.json in the explorer tree
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
+      // Wait for the menubar overlay to be inactive before clicking. The
+      // menubar-menu-title element can intercept clicks on QuickPick / context
+      // menu rows if it isn't aria-hidden yet (root cause of the p42-* shard
+      // flake — see PR #9181 / CI run 25941836505).
+      try {
+        await driver.wait(async () => {
+          const active = await driver.findElements(By.css('.menubar-menu-title:not([aria-hidden="true"])'));
+          return active.length === 0;
+        }, 3000);
+      } catch {
+        /* menubar still active — proceed anyway; click retry handles it */
+      }
+      // Brief settle pause for any transient overlay
+      await sleep(300);
+
       // Find workflow.json in the Explorer tree using multiple selector strategies
       const treeItems =
         (await driver.executeScript<number>(`
@@ -2364,7 +2379,24 @@ async function openOverviewPage(workbench: Workbench, driver: WebDriver, workflo
                 const label = await menuItem.getText();
                 if (label.toLowerCase().includes('overview')) {
                   console.log(`[overview] Clicking context menu: "${label}"`);
-                  await menuItem.click();
+                  try {
+                    await menuItem.click();
+                  } catch (clickErr: any) {
+                    const msg = (clickErr?.message || '').split('\n')[0];
+                    const name = clickErr?.name || '';
+                    // ElementClickInterceptedError / StaleElementReferenceError —
+                    // bail out of the menu loop so the outer attempt loop retries
+                    // after dismissing the context menu and waiting for the
+                    // menubar overlay to settle.
+                    console.log(`[overview] menuItem.click intercepted/stale (${name}): ${msg}`);
+                    try {
+                      await driver.actions().sendKeys(Key.ESCAPE).perform();
+                    } catch {
+                      /* ignore */
+                    }
+                    await sleep(800);
+                    throw clickErr;
+                  }
                   await sleep(3000);
 
                   // Wait for the overview webview to appear
@@ -2390,16 +2422,25 @@ async function openOverviewPage(workbench: Workbench, driver: WebDriver, workflo
                   console.log('[overview] Webview not detected after clicking Overview');
                   return false;
                 }
-              } catch {
-                /* stale menu item */
+              } catch (menuErr: any) {
+                // Re-throw click-interception so outer attempt loop retries
+                // (don't swallow as "stale menu item")
+                if (menuErr?.name === 'ElementClickInterceptedError') {
+                  throw menuErr;
+                }
+                /* stale menu item — try next */
               }
             }
             // Dismiss the context menu if Overview wasn't found
             await driver.actions().sendKeys(Key.ESCAPE).perform();
             break;
           }
-        } catch {
-          /* stale row element */
+        } catch (rowErr: any) {
+          // Re-throw click-interception so outer attempt loop retries
+          if (rowErr?.name === 'ElementClickInterceptedError') {
+            throw rowErr;
+          }
+          /* stale row element — try next */
         }
       }
 
