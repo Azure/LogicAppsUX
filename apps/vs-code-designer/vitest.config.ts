@@ -101,7 +101,7 @@ export default defineConfig({
     fileParallelism: false,
     coverage: {
       enabled: true,
-      provider: 'istanbul',
+      provider: 'v8',
       include: getCoverageInclude(),
       exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/__test__/**', 'src/test/e2e/**', 'src/test/ui/**'],
       reporter: ['html', 'cobertura', 'lcov'],
