@@ -79,6 +79,24 @@ jobs:
         with:
           node-version: 20.x
 
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          # actions/setup-node@v4 places node at /opt/hostedtoolcache and only
+          # updates PATH for the workflow shell. The Functions host spawned by
+          # the VS Code extension under xvfb-run does not inherit this PATH,
+          # so its inline-code dependency generator fails with:
+          #   "The 'node' process needed for inline code dependency generation
+          #    could not be found on PATH"
+          # Symlink to /usr/local/bin so the runtime finds node regardless of
+          # PATH inheritance.
+          sudo ln -sf "$(which node)" /usr/local/bin/node
+          sudo ln -sf "$(which npm)" /usr/local/bin/npm
+          sudo ln -sf "$(which npx)" /usr/local/bin/npx
+          echo "Symlinked node $(node --version) at /usr/local/bin/node"
+          ls -la /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx
+          # Verify node is reachable without PATH
+          env -i /usr/local/bin/node --version
+
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
