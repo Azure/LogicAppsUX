@@ -181,7 +181,7 @@ describe('Create Workspace Fixtures', function () {
     await nextButton.click();
     await sleep(2000);
 
-    await clickCreateWorkspaceButton(driver, webview);
+    await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
 
     deepVerifyWorkspace(tempDir, {
       wsName,
@@ -254,7 +254,7 @@ describe('Create Workspace Fixtures', function () {
     await nextButton.click();
     await sleep(2000);
 
-    await clickCreateWorkspaceButton(driver, webview);
+    await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
 
     deepVerifyWorkspace(tempDir, {
       wsName,
@@ -383,7 +383,7 @@ describe('Create Workspace Fixtures', function () {
     await nextButton.click();
     await sleep(2000);
 
-    await clickCreateWorkspaceButton(driver, webview);
+    await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
 
     deepVerifyWorkspace(tempDir, {
       wsName,
