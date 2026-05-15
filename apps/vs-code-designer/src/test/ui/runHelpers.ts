@@ -244,27 +244,34 @@ export async function waitForRuntimeReady(
       hostRunningSeenAt = Date.now();
       console.log(`[debug] Functions host status='running' (${hostRunningSeenAt - t0}ms)`);
     }
+    // Strict mode (requireHostRunning: true): we have an authoritative HTTP
+    // probe to :7071/admin/host/status — when it returns 200 with body
+    // state:"Running", the Functions host is actually up. DOM-based signals
+    // (debug-toolbar visibility) are unreachable when callers invoke this
+    // from inside a webview iframe (Chromium cross-origin isolation between
+    // vscode-webview:// and vscode-file:// blocks window.top.document reads).
+    // So in strict mode we trust the HTTP probe alone. DOM signals remain
+    // telemetry-only and appear in the timeout diagnostic block.
     if (hostReady) {
-      if (!requireHostRunning) {
-        console.log(`[debug] Runtime ready — host status is 'running' (${Date.now() - t0}ms)`);
-        return true;
-      }
-      if (debugAttached) {
-        console.log(`[debug] Runtime ready — debug toolbar + host 'running' (${Date.now() - t0}ms)`);
-        await sleep(1000);
-        return true;
-      }
+      console.log(`[debug] Runtime ready — host status is 'running' (${Date.now() - t0}ms)`);
+      return true;
     }
 
     if (Date.now() - lastProgressLog > 10_000) {
       lastProgressLog = Date.now();
       const elapsed = Date.now() - t0;
       const missing: string[] = [];
-      if (!debugAttached) {
-        missing.push('debug-toolbar');
-      }
-      if (requireHostRunning && !hostReady) {
-        missing.push('host-running');
+      if (requireHostRunning) {
+        if (!hostReady) {
+          missing.push('host-running');
+        }
+      } else {
+        if (!debugAttached) {
+          missing.push('debug-toolbar');
+        }
+        if (!hostReady) {
+          missing.push('host-running');
+        }
       }
       if (missing.length > 0) {
         console.log(`[debug] Still waiting for runtime (${elapsed}ms elapsed, missing: ${missing.join(', ')})`);
@@ -372,6 +379,9 @@ export async function waitForRuntimeReady(
     console.log(
       `[waitForRuntimeReady][diag] Final gate state: debugToolbarSeen=${dbgLabel}, terminalsDetectedAt=${terminalsLabel}, hostRunningSeen=${hostLabel}, requireHostRunning=${requireHostRunning}`
     );
+    if (requireHostRunning && hostRunningSeenAt === 0) {
+      console.log('[waitForRuntimeReady][diag] strict mode timed out without `:7071` reporting Running — host genuinely never started.');
+    }
   } catch {
     /* ignore - diagnostic only */
   }
