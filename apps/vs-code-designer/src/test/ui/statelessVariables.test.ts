@@ -355,7 +355,7 @@ describe('Stateless Variable Tests', function () {
       const ovWv = await waitForOverviewView(workbench, driver, wjp);
       const runtimeReady = await waitForRuntimeReady(driver);
       assert.ok(runtimeReady, 'Functions runtime should start and become ready');
-      assert.ok(await clickRunTrigger(driver), 'Run trigger clickable');
+      assert.ok(await clickRunTrigger(driver, { workflowName: entry.wfName }), 'Run trigger clickable');
       await sleep(1000);
       await clickRefresh(driver);
       const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded');

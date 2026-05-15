@@ -434,10 +434,11 @@ export async function waitForRuntimeReady(
  */
 export async function waitForWorkflowsRegistered(
   driver: WebDriver,
-  opts: { timeoutMs?: number; intervalMs?: number } = {}
+  opts: { timeoutMs?: number; intervalMs?: number; workflowName?: string } = {}
 ): Promise<boolean> {
   const timeoutMs = opts.timeoutMs ?? 180_000;
   const intervalMs = opts.intervalMs ?? 2_000;
+  const workflowName = opts.workflowName;
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
   let lastLog = 0;
@@ -445,10 +446,21 @@ export async function waitForWorkflowsRegistered(
   let lastBody = '';
   let lastStatus = 0;
 
+  // When a specific workflow name is provided, probe the singular endpoint so
+  // we don't green-light on stale/template workflows left in the workspace.
+  // CI run 25911660164 demonstrated the list-form probe returning a single
+  // unrelated workflow within 15 ms while the test-created `testwf_*` workflow
+  // never registered — `listCallbackUrl` then 404'd for the full 180 s budget.
+  // Polling `/workflows/{name}` returns 404 until the SPECIFIC workflow is
+  // bound, eliminating the false-positive window.
+  const probeUrl = workflowName
+    ? `http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/${workflowName}?api-version=2019-10-01-edge-preview`
+    : 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows';
+
   while (Date.now() < deadline) {
     try {
       const reachable = await new Promise<{ status: number; body: string }>((resolve) => {
-        const req = http.get('http://localhost:7071/runtime/webhooks/workflow/api/management/workflows', { timeout: 3000 }, (res) => {
+        const req = http.get(probeUrl, { timeout: 3000 }, (res) => {
           const chunks: Buffer[] = [];
           res.on('data', (c: Buffer) => chunks.push(c));
           res.on('end', () => resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }));
@@ -465,6 +477,11 @@ export async function waitForWorkflowsRegistered(
       lastBody = reachable.body;
 
       if (reachable.status === 200) {
+        if (workflowName) {
+          const elapsed = Date.now() - t0;
+          console.log(`[workflows] Registered — workflow="${workflowName}" bound (${elapsed}ms)`);
+          return true;
+        }
         let parsed: any = null;
         try {
           parsed = JSON.parse(reachable.body);
@@ -489,7 +506,8 @@ export async function waitForWorkflowsRegistered(
     // Throttled progress log at 10s cadence (per playbook)
     const now = Date.now();
     if (now - lastLog >= 10_000) {
-      console.log(`[workflows] Still waiting for workflow registration (${now - t0}ms elapsed, lastStatus=${lastStatus})`);
+      const label = workflowName ? `workflow="${workflowName}"` : 'any workflow';
+      console.log(`[workflows] Still waiting for ${label} registration (${now - t0}ms elapsed, lastStatus=${lastStatus})`);
       lastLog = now;
     }
 
@@ -499,8 +517,9 @@ export async function waitForWorkflowsRegistered(
   await captureScreenshot(driver, 'waitForWorkflowsRegistered-timeout');
   const firstSeenLabel = firstSeenAt ? `${firstSeenAt}ms` : 'never';
   const bodySnippet = lastBody ? lastBody.slice(0, 512) : '(empty)';
+  const target = workflowName ? `workflow="${workflowName}" ` : '';
   console.log(
-    `[workflows] Timeout — no workflows registered within ${timeoutMs}ms (firstSeenAt=${firstSeenLabel}, lastStatus=${lastStatus}, lastBody=${bodySnippet})`
+    `[workflows] Timeout — ${target}not registered within ${timeoutMs}ms (firstSeenAt=${firstSeenLabel}, lastStatus=${lastStatus}, lastBody=${bodySnippet})`
   );
   return false;
 }
@@ -568,7 +587,7 @@ function httpRequestJson(options: http.RequestOptions & { url: string }, timeout
  */
 export async function waitForRunTriggerEnabled(
   driver: WebDriver,
-  opts: { timeoutMs?: number; intervalMs?: number; apiVersion?: string } = {}
+  opts: { timeoutMs?: number; intervalMs?: number; apiVersion?: string; workflowName?: string } = {}
 ): Promise<boolean> {
   const timeoutMs = opts.timeoutMs ?? 180_000;
   const intervalMs = opts.intervalMs ?? 2_000;
@@ -580,7 +599,12 @@ export async function waitForRunTriggerEnabled(
   let lastStatus = 0;
   let lastBody = '';
   let lastStep = 'none';
-  let workflowName: string | undefined;
+  // When the caller provides the workflow name (recommended) we skip the
+  // discovery step that polls the workflow LIST — that step previously
+  // returned stale/template workflows from the workspace bootstrap and let
+  // listCallbackUrl spin against the wrong name for the full timeout
+  // (CI run 25911660164).
+  let workflowName: string | undefined = opts.workflowName;
   let triggerName: string | undefined;
 
   while (Date.now() < deadline) {
@@ -977,6 +1001,20 @@ export async function waitForOverviewView(
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
 
+  // Fail-fast disk check (PR #9164, run 25911660164): when the Create-Workflow
+  // UI step silently fails to produce workflow.json, the Explorer probe inside
+  // openOverviewPage logs "workflow.json not found in Explorer tree" 3 times
+  // per attempt and then keeps retrying until this 90 s budget elapses. The
+  // downstream failure surfaces 180 s later as "listCallbackUrl never returned
+  // a value" instead of pointing at the real cause. Probe the filesystem
+  // directly so we either confirm the file is on disk (Explorer tree is just
+  // slow to refresh — proceed with the existing retry loop) or fail
+  // immediately with a clear message identifying the missing artifact.
+  if (!fs.existsSync(workflowJsonPath)) {
+    await captureScreenshot(driver, 'waitForOverviewView-missing-workflow-json');
+    assert.fail(`Create-Workflow UI step did not produce workflow.json on disk: ${workflowJsonPath}`);
+  }
+
   // Per SKILL.md rule #1: ensure no other editors (especially a stale
   // designer panel) are open before triggering the overview.
   try {
@@ -1068,7 +1106,9 @@ export async function waitForOverviewView(
  * the surfaced failure is "Run trigger clickable" but the real issue is the
  * runtime not being up.
  */
-export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): Promise<boolean> {
+export async function clickRunTrigger(driver: WebDriver, opts: { timeoutMs?: number; workflowName?: string } = {}): Promise<boolean> {
+  const timeoutMs = opts.timeoutMs ?? 180_000;
+  const workflowName = opts.workflowName;
   // Gate: don't burn the click-loop deadline waiting for a button that can
   // only become enabled once the Functions host is running. If the runtime
   // isn't ready within 180 s, fail fast with a screenshot + clear log so the
@@ -1093,9 +1133,14 @@ export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): P
   // the project, discover the workflow function, and register its trigger
   // route). CI 25908119964 showed host-running in ~50ms but button stayed
   // disabled for full 180s. This probe bridges that gap.
-  const workflowsReady = await waitForWorkflowsRegistered(driver, { timeoutMs: 180_000 });
+  //
+  // When a workflowName is provided we probe `/workflows/{name}` directly so
+  // we don't green-light on stale/template workflows left in the workspace
+  // (CI run 25911660164).
+  const workflowsReady = await waitForWorkflowsRegistered(driver, { timeoutMs: 180_000, workflowName });
   if (!workflowsReady) {
-    console.log('[clickRunTrigger] No workflows registered within 180s — host is up but trigger routes never registered');
+    const target = workflowName ? `workflow="${workflowName}" ` : '';
+    console.log(`[clickRunTrigger] ${target}not registered within 180s — host is up but trigger routes never registered`);
     await captureScreenshot(driver, 'clickRunTrigger-no-workflows');
     return false;
   }
@@ -1108,7 +1153,7 @@ export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): P
   // downstream button-enablement loop doesn't have to absorb the cold-start
   // gap between "trigger registered" and "trigger route accepts
   // listCallbackUrl POSTs". See waitForRunTriggerEnabled for full details.
-  const triggerEnabled = await waitForRunTriggerEnabled(driver, { timeoutMs: 180_000 });
+  const triggerEnabled = await waitForRunTriggerEnabled(driver, { timeoutMs: 180_000, workflowName });
   if (!triggerEnabled) {
     console.log('[clickRunTrigger] listCallbackUrl never returned a value within 180s — overview UI will keep button disabled');
     await captureScreenshot(driver, 'clickRunTrigger-callback-not-ready');
@@ -1207,12 +1252,12 @@ export async function clickRunTrigger(driver: WebDriver, timeoutMs = 180_000): P
  *   - clickRunTrigger inner loop: its own default 90 s, with another
  *     60 s host gate inside (cheap if host is already running).
  */
-export async function assertRunTriggerable(driver: WebDriver): Promise<void> {
+export async function assertRunTriggerable(driver: WebDriver, opts: { workflowName?: string } = {}): Promise<void> {
   const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 120_000 });
   if (!hostReady) {
     assert.fail('Functions host did not become running within 120s — design-time/runtime startup is too slow on this shard');
   }
-  const clicked = await clickRunTrigger(driver);
+  const clicked = await clickRunTrigger(driver, { workflowName: opts.workflowName });
   if (!clicked) {
     assert.fail('Run trigger remained disabled after host became running — webview/iframe issue');
   }
