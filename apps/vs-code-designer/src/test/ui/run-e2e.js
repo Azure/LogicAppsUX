@@ -803,6 +803,7 @@ async function main() {
   const phase3Files = [testFile('inlineJavascript.test.js')];
   const phase4Files = [testFile('statelessVariables.test.js')];
   const phase5Files = [testFile('designerViewExtended.test.js')];
+  const phase6Files = [testFile('keyboardNavigation.test.js')];
 
   const phase7Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js'), testFile('dataMapper.test.js')];
 
@@ -898,6 +899,12 @@ async function main() {
       testFile: phase5Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+    },
+    {
+      id: 'p46-keyboardnav',
+      testFile: phase6Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'p41-createworkspace' },
+      settings: { validateDependencies: false, autoStartDesignTime: true },
     },
 
     // Phase 4.7 — designer-shell smoke + dataMapper. dataMapper.test.ts
@@ -1576,7 +1583,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'newtestsonly') {
-      // Run only the new tests (phases 4.3–4.5) each in their own session
+      // Run only the new tests (phases 4.3–4.6) each in their own session
       await extest.downloadCode(VSCODE_VERSION);
       await extest.downloadChromeDriver(VSCODE_VERSION);
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
@@ -1593,6 +1600,10 @@ namespace ${namespaceName}
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase5-only');
       exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase6-only');
+      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
 
       const finalExit = Math.max(...exits);
       console.log(`\n=== New tests results: ${exits.map((c, i) => `4.${i + 3}=${c}`).join(', ')} → exit ${finalExit} ===`);
@@ -1809,9 +1820,13 @@ namespace ${namespaceName}
       await prepareFreshSession('phase5-shard');
       exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
 
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase6-shard');
+      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
+
       const finalExit = Math.max(...exits);
       console.log(
-        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]} → exit ${finalExit} ===`
+        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]} → exit ${finalExit} ===`
       );
       process.exit(finalExit);
     }
@@ -1948,6 +1963,13 @@ namespace ${namespaceName}
     const phase5Exit = await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: phase2Resources });
     if (phase5Exit !== 0) {
       console.log(`\n⚠ Phase 4.5 exited with code ${phase5Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase6');
+    const phase6Exit = await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: phase2Resources });
+    if (phase6Exit !== 0) {
+      console.log(`\n⚠ Phase 4.6 exited with code ${phase6Exit} — continuing`);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
