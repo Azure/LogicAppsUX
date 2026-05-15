@@ -52,4 +52,6 @@ jobs:
             > apps/vs-code-designer/.coverage-include
           cat apps/vs-code-designer/.coverage-include
       - run: pnpm turbo run test:extension-unit --cache-dir=.turbo
+        env:
+          VITEST_COVERAGE: 'false'
       - run: pnpm turbo run test:iframe-app --cache-dir=.turbo

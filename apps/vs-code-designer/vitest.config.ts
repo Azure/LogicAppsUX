@@ -100,7 +100,7 @@ export default defineConfig({
     setupFiles: ['test-setup.ts'],
     fileParallelism: false,
     coverage: {
-      enabled: true,
+      enabled: process.env.VITEST_COVERAGE !== 'false',
       provider: 'v8',
       include: getCoverageInclude(),
       exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/__test__/**', 'src/test/e2e/**', 'src/test/ui/**'],
