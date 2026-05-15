@@ -1837,6 +1837,21 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
 
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
+      // Wait for the menubar overlay to be inactive before clicking. The
+      // menubar-menu-title element can intercept clicks on context menu rows
+      // if it isn't aria-hidden yet (same root cause as the openOverviewPage
+      // flake fixed in 358332a41 — see PR #9181).
+      try {
+        await driver.wait(async () => {
+          const active = await driver.findElements(By.css('.menubar-menu-title:not([aria-hidden="true"])'));
+          return active.length === 0;
+        }, 3000);
+      } catch {
+        /* menubar still active — proceed anyway; click retry handles it */
+      }
+      // Brief settle pause for any transient overlay
+      await sleep(300);
+
       // Scroll the selected workflow.json into view
       await driver.executeScript(`
         var items = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
@@ -1911,7 +1926,24 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
           const menuLabel = await menuItem.getText();
           if (menuLabel.toLowerCase().includes('open designer') && !menuLabel.toLowerCase().includes('data map')) {
             console.log(`[openDesignerViaExplorer] Clicking: "${menuLabel}"`);
-            await menuItem.click();
+            try {
+              await menuItem.click();
+            } catch (clickErr: any) {
+              const msg = (clickErr?.message || '').split('\n')[0];
+              const name = clickErr?.name || '';
+              // ElementClickInterceptedError / StaleElementReferenceError —
+              // bail to outer attempt loop after dismissing the menu and
+              // letting the menubar overlay settle (mirrors openOverviewPage
+              // hardening from 358332a41).
+              console.log(`[openDesignerViaExplorer] menuItem.click intercepted/stale (${name}): ${msg}`);
+              try {
+                await driver.actions().sendKeys(Key.ESCAPE).perform();
+              } catch {
+                /* ignore */
+              }
+              await sleep(800);
+              throw clickErr;
+            }
             await sleep(3000);
 
             const found = await waitForDesignerWebviewTab(driver);
@@ -1924,8 +1956,13 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
             console.log(`[openDesignerViaExplorer] Webview not detected for "${label}" — retrying`);
             break;
           }
-        } catch {
-          /* stale menu item */
+        } catch (menuErr: any) {
+          // Re-throw click-interception so outer attempt loop retries
+          // (don't swallow as "stale menu item")
+          if (menuErr?.name === 'ElementClickInterceptedError') {
+            throw menuErr;
+          }
+          /* stale menu item — try next */
         }
       }
 
