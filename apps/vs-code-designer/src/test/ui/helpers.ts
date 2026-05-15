@@ -13,7 +13,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { By, Key, ModalDialog, type WebDriver } from 'vscode-extension-tester';
+import { By, Key, ModalDialog, until, type WebDriver } from 'vscode-extension-tester';
 
 type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 
@@ -327,6 +327,186 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
   }
 
   return false;
+}
+
+// ===========================================================================
+// Modal-dialog click helpers (used by workspace conversion tests)
+// ===========================================================================
+
+/**
+ * Returns true if a Selenium error indicates the WebDriver session has ended
+ * (e.g. VS Code reloaded, killing chromedriver). This is expected on the
+ * workspace-conversion "Yes" path where clicking the button reloads the
+ * window and tears down the Selenium session.
+ */
+export function isSessionEnded(e: unknown): boolean {
+  const msg = e instanceof Error ? e.message : String(e);
+  return /invalid session id|NoSuchSession|session deleted|chrome not reachable|target window already closed|disconnected: not connected/i.test(
+    msg
+  );
+}
+
+/**
+ * Force-focus the primary button of the active modal dialog. xvfb does not
+ * auto-raise modal windows, so the focused element on the underlying editor
+ * can swallow click events directed at the dialog. Calling .focus() via JS
+ * on the modal's primary button bypasses this and ensures Tab+Enter / click
+ * targets the dialog.
+ */
+export async function focusModalPrimaryButton(driver: WebDriver): Promise<boolean> {
+  try {
+    const focused = await driver.executeScript<boolean>(`
+      const btn = document.querySelector('.monaco-dialog-box button.primary, .monaco-dialog-box button');
+      if (btn) { btn.focus(); return true; }
+      return false;
+    `);
+    return focused === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Capture diagnostic information about modal dialogs / notifications / the
+ * active element to disk. Used as a fallback when clicking a dialog button
+ * fails so CI artifacts contain enough context to root-cause the failure.
+ */
+export async function dumpDialogDiagnostics(driver: WebDriver, label: string, dir: string): Promise<void> {
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const lines: string[] = [`[${ts}] ${label}`];
+  try {
+    lines.push(`title: ${await driver.getTitle()}`);
+    lines.push(`url: ${await driver.getCurrentUrl()}`);
+    const bodyLen = await driver.executeScript('return document.body.outerHTML.length');
+    lines.push(`bodyHtmlLen: ${bodyLen}`);
+    const dialogs = await driver.findElements(By.css('.monaco-dialog-box'));
+    lines.push(`dialogCount: ${dialogs.length}`);
+    for (let i = 0; i < dialogs.length; i++) {
+      const txt = (await dialogs[i].getText().catch(() => '')).slice(0, 200);
+      lines.push(`dialog[${i}]: ${txt}`);
+    }
+    const toasts = await driver.findElements(By.css('.notification-toast'));
+    lines.push(`notificationCount: ${toasts.length}`);
+    const active = await driver.switchTo().activeElement();
+    const tag = await active.getTagName().catch(() => '?');
+    const cls = await active.getAttribute('class').catch(() => '?');
+    lines.push(`activeElement: <${tag} class="${cls}">`);
+  } catch (e) {
+    lines.push(`(diagnostic capture errored: ${e instanceof Error ? e.message : String(e)})`);
+  }
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, `${sanitizeFileSegment(label)}-${ts}.txt`), lines.join('\n'));
+  } catch (e) {
+    console.log(`[dumpDialogDiagnostics] failed to write: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
+/**
+ * Resolve a single ModalDialog handle and click the named button, retrying
+ * on StaleElementReferenceError. Two prior bugs in workspaceConversionYes
+ * were caused by (a) instantiating two `new ModalDialog()` references and
+ * having the second go stale, and (b) the first click silently failing
+ * because xvfb hadn't routed focus to the dialog yet.
+ *
+ * The retry path force-focuses the primary button before re-attempting,
+ * waits for it to be visible, and finally falls back to Tab+Enter — which
+ * is the most xvfb-robust way to activate the default modal button.
+ */
+export async function pushDialogButtonWithRetry(driver: WebDriver, label: string, retries = 3, diagnosticsDir?: string): Promise<void> {
+  let lastErr: Error | undefined;
+  for (let i = 0; i < retries; i++) {
+    try {
+      const dialog = new ModalDialog();
+      // AbstractElement.wait() exists on older versions; guard with optional chain.
+      try {
+        await (dialog as unknown as { wait?: (timeout: number) => Promise<void> }).wait?.(5000);
+      } catch {
+        /* ignore — pushButton will throw the real error if dialog is missing */
+      }
+      // Force focus + wait for visibility BEFORE click — xvfb sometimes leaves
+      // focus on the underlying editor, which swallows the click.
+      await focusModalPrimaryButton(driver);
+      await sleep(200);
+      try {
+        const btn = await driver.findElement(By.css('.monaco-dialog-box button.primary, .monaco-dialog-box button'));
+        await driver.wait(until.elementIsVisible(btn), 5000).catch(() => undefined);
+      } catch {
+        /* dialog may have closed already */
+      }
+      await dialog.pushButton(label);
+      console.log(`[pushDialogButtonWithRetry] Clicked "${label}" (attempt ${i + 1})`);
+      return;
+    } catch (e) {
+      lastErr = e as Error;
+      const msg = e instanceof Error ? e.message : String(e);
+      console.log(`[pushDialogButtonWithRetry] attempt ${i + 1} failed: ${msg.substring(0, 200)}`);
+      if (isSessionEnded(e)) {
+        // Session is gone — the click probably worked and VS Code reloaded.
+        throw e;
+      }
+      if (diagnosticsDir) {
+        await dumpDialogDiagnostics(driver, `pushDialogButton-attempt${i + 1}`, diagnosticsDir);
+      }
+      if ((i < retries - 1 && e instanceof Error && e.name === 'StaleElementReferenceError') || /stale|detached/i.test(msg)) {
+        await sleep(500);
+        continue;
+      }
+      // Final fallback on the last attempt: Tab+Enter — xvfb-robust default-button activation.
+      if (i === retries - 1) {
+        try {
+          await focusModalPrimaryButton(driver);
+          await sleep(200);
+          await driver.actions().sendKeys(Key.TAB).perform();
+          await sleep(150);
+          await driver.actions().sendKeys(Key.ENTER).perform();
+          console.log('[pushDialogButtonWithRetry] Fell back to Tab+Enter');
+          return;
+        } catch (fallbackErr) {
+          if (isSessionEnded(fallbackErr)) {
+            throw fallbackErr;
+          }
+          lastErr = fallbackErr as Error;
+        }
+      }
+      await sleep(500);
+    }
+  }
+  throw lastErr ?? new Error(`Failed to push '${label}' after ${retries} retries`);
+}
+
+/**
+ * Cancel any currently open VS Code quick-input widget (command palette,
+ * quick-pick, input box). Pressing Escape is safe even if no widget is
+ * showing — this is a defensive pre-flight before opening a new prompt.
+ */
+export async function safeCancelAnyQuickInput(driver: WebDriver): Promise<void> {
+  try {
+    const visible = await driver.executeScript<boolean>(`
+      const w = document.querySelector('.quick-input-widget:not(.hidden)');
+      return !!(w && w.offsetHeight > 0);
+    `);
+    if (!visible) {
+      return;
+    }
+    for (let i = 0; i < 3; i++) {
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(200);
+      const stillVisible = await driver.executeScript<boolean>(`
+        const w = document.querySelector('.quick-input-widget:not(.hidden)');
+        return !!(w && w.offsetHeight > 0);
+      `);
+      if (!stillVisible) {
+        return;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
 }
 
 /**
