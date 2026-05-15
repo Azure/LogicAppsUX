@@ -133,19 +133,16 @@ export async function waitForRuntimeReady(
   let hostRunningSeenAt = 0;
 
   while (Date.now() < deadline) {
-    // Ensure every readiness probe runs against VS Code's main workbench, not a
-    // webview iframe. Callers frequently arrive here while the WebDriver is
-    // still parked inside a designer/overview iframe — in that context the
-    // .debug-toolbar selector can't see the workbench and an in-page XHR to
-    // :7071 is blocked by CORS. CI run 25903230417 (diagnostic dumps from
-    // commit 7bc8b05eb) proved the host was healthy on every "300s timeout"
-    // failure; the detector was simply polling from the wrong DOM context.
-    // Safe to call even when already at default content.
-    try {
-      await driver.switchTo().defaultContent();
-    } catch {
-      /* ignore */
-    }
+    // Probe VS Code's main workbench DOM via window.top rather than switching
+    // the WebDriver to defaultContent. Callers frequently arrive here while
+    // parked inside a designer/overview iframe (e.g., switchToOverviewWebview
+    // → waitForRuntimeReady → clickRunTrigger); an unconditional
+    // driver.switchTo().defaultContent() leaks that frame change back to the
+    // caller and breaks downstream selectors. Using window.top.document inside
+    // executeScript lets us read the workbench DOM from inside any iframe
+    // without touching the driver's active frame. The :7071 probe uses Node
+    // http (commit 7bc8b05eb / Dump B pattern), which bypasses the browser
+    // entirely and is unaffected by CORS or frame context.
 
     try {
       await dismissAllDialogs(driver);
@@ -161,13 +158,19 @@ export async function waitForRuntimeReady(
     let debugAttached = false;
     try {
       debugAttached = !!(await driver.executeScript<boolean>(`
-        var toolbar = document.querySelector('.debug-toolbar');
-        if (toolbar) {
-          var style = window.getComputedStyle(toolbar);
-          return style.display !== 'none' && style.visibility !== 'hidden';
+        try {
+          var doc = (window.top && window.top.document) ? window.top.document : document;
+          var win = (window.top) ? window.top : window;
+          var toolbar = doc.querySelector('.debug-toolbar');
+          if (toolbar) {
+            var style = win.getComputedStyle(toolbar);
+            return style.display !== 'none' && style.visibility !== 'hidden';
+          }
+          var actionBar = doc.querySelector('[class*="debug-toolbar"], [class*="debugging-actions"]');
+          return !!actionBar;
+        } catch (e) {
+          return false;
         }
-        var actionBar = document.querySelector('[class*="debug-toolbar"], [class*="debugging-actions"]');
-        return !!actionBar;
       `));
     } catch {
       /* ignore */
@@ -183,8 +186,13 @@ export async function waitForRuntimeReady(
 
     try {
       const terminalCount = await driver.executeScript<number>(`
-        var tabs = document.querySelectorAll('.terminal-tab, .terminal-tabs-entry');
-        return tabs.length;
+        try {
+          var doc = (window.top && window.top.document) ? window.top.document : document;
+          var tabs = doc.querySelectorAll('.terminal-tab, .terminal-tabs-entry');
+          return tabs.length;
+        } catch (e) {
+          return 0;
+        }
       `);
       if (terminalCount && terminalCount > 0 && terminalsDetectedAt === 0) {
         terminalsDetectedAt = Date.now();
