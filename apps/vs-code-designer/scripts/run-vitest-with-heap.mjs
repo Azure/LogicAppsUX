@@ -9,7 +9,7 @@ const args = process.argv.slice(2);
 
 const hasFileFilters = args.some((arg) => /(^|[/\\])src[/\\].*\.test\.tsx?$/.test(arg));
 const shouldShard = process.env.VITEST_COVERAGE === 'false' && !hasFileFilters;
-const shardSize = Number(process.env.VSCODE_DESIGNER_TEST_SHARD_SIZE ?? 8);
+const shardSize = Number(process.env.VSCODE_DESIGNER_TEST_SHARD_SIZE ?? 1);
 
 const runVitest = (vitestArgs) =>
   new Promise((resolve) => {
