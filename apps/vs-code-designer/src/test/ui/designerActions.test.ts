@@ -2929,6 +2929,13 @@ async function stopDebugging(driver: WebDriver): Promise<void> {
 
 describe('Designer Actions Tests', function () {
   this.timeout(TEST_TIMEOUT);
+  // 3 total attempts (2 retries) per test. Phase 4.1's root-cause fixes
+  // (asymmetric retry budget on openDesignerViaExplorer) eliminated the
+  // first-class cold-start failures, but ExTester webview interactions on
+  // xvfb runners retain residual nondeterminism (focus theft, frame switch
+  // races). Retries absorb that residue without masking real regressions:
+  // any genuine break manifests as 3-in-a-row failures.
+  this.retries(2);
 
   let driver: WebDriver;
   let workbench: Workbench;

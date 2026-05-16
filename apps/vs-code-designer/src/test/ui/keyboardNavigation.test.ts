@@ -42,6 +42,10 @@ const HOTKEY_SETTLE_MS = 1_500;
 
 describe('Keyboard Navigation Tests', function () {
   this.timeout(TEST_TIMEOUT);
+  // 3 total attempts per test. Synthetic KeyboardEvent dispatch + Actions
+  // chord (Phase 4 Fix 2) is mechanism-proven but ExTester chord delivery
+  // through webview iframes on xvfb is non-deterministic; retries absorb it.
+  this.retries(2);
 
   let driver: WebDriver;
   let workbench: Workbench;

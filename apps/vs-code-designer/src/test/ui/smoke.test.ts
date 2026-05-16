@@ -12,6 +12,11 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
   // can take up to 45s per call (15s x 3 retries) on cold sessions, and the help test
   // has a 4-attempt outer retry loop that needs ~50s x 4 = 200s headroom in worst case.
   this.timeout(300_000);
+  // 3 total attempts per test. The help-prompt test (p47-suite) uses JS focus
+  // + Actions sendKeys to bypass Selenium's isElementInteractable check on
+  // quick-input widgets (Phase 4 Fix 3); residual flake comes from VS Code's
+  // notification-center timing under xvfb load.
+  this.retries(2);
 
   let workbench: Workbench;
 

@@ -180,6 +180,11 @@ function assertWorkspaceFsInvariants(entry: WorkspaceManifestEntry, phase: strin
 
 describe('Workspace Conversion — Click Yes', function () {
   this.timeout(TEST_TIMEOUT);
+  // 3 total attempts per test. p48d's WBD-hybrid Markdown-preview focus
+  // theft is mitigated by closeAllEditors before waitForWorkspacePrompt
+  // (Phase 4.1 d866b3368) but ModalDialog discovery still has a 45s
+  // deadline that can fail when xvfb is slow to repaint.
+  this.retries(2);
 
   let driver: WebDriver;
   let manifest: WorkspaceManifestEntry[];

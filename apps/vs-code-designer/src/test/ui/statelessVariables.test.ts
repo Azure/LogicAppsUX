@@ -67,7 +67,10 @@ describe('Stateless Variable Tests', function () {
   // different outcome. A single retry absorbs the residual flake without
   // masking deterministic regressions; the next failure (if any) is
   // genuinely a 2-in-a-row event and worth investigating.
-  this.retries(1);
+  // Bumped from 1 -> 2 retries (3 total attempts) at the user's request after
+  // dropping continue-on-error masks. Functions host cold-start latency on
+  // GitHub Linux runners remains the dominant residual flake.
+  this.retries(2);
 
   let driver: WebDriver;
   let workbench: Workbench;
