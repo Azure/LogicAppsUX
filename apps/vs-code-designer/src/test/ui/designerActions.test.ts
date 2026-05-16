@@ -20,6 +20,10 @@ import {
 } from 'vscode-extension-tester';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
+import { sessionWarmup } from './sessionWarmup';
+import { waitForQuickInputAndType } from './helpers';
+
+let __warmedThisSession = false;
 
 /**
  * Designer Actions E2E Tests
@@ -1859,19 +1863,54 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
     /* ignore */
   }
 
-  // Open the workflow.json file via Quick Open (Ctrl+P) to reveal it in the tree.
-  // VSBrowser.instance.openResources() uses `code -r` IPC which silently fails on Linux CI.
+  // Strategy B: VSBrowser.openResources reveals AND selects the row in the
+  // Explorer tree, bypassing the need to poll for the workflow.json row.
+  // CAUTION: `code -r` IPC silently NO-OPS on Linux CI (documented in
+  // designerHelpers.ts comment history). A silent failure throws no
+  // exception, so the catch clause cannot detect it. Instead we verify a
+  // POSITIVE post-condition (a workflow.json row visible in the Explorer
+  // tree) and explicitly throw to trigger the Quick Open fallback when the
+  // tree is still empty.
   try {
-    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
-    await sleep(1000);
-    const quickInput = await driver.findElement(By.css('.quick-input-box input'));
-    await quickInput.sendKeys(`${label}/workflow.json`);
+    await VSBrowser.instance.openResources(workflowJsonPath);
     await sleep(1500);
-    await quickInput.sendKeys(Key.ENTER);
-    await sleep(2000);
-    console.log('[openDesignerViaExplorer] Opened workflow.json via Quick Open');
-  } catch (qoErr: any) {
-    console.log(`[openDesignerViaExplorer] Quick Open failed: ${qoErr.message}`);
+    const revealed = await driver
+      .wait(async () => {
+        const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+        for (const row of rows) {
+          const text = await row.getText().catch(() => '');
+          // Match BOTH the parent folder/label AND workflow.json so we don't
+          // false-positive on a stale row from a previous workflow in the
+          // same shard (e.g. multipleDesigners loads 2 workflows back-to-back).
+          if (text.includes(label) && text.includes('workflow.json')) {
+            return true;
+          }
+        }
+        return false;
+      }, 5_000)
+      .then(() => true)
+      .catch(() => false);
+    if (revealed) {
+      console.log('[openDesignerViaExplorer] openResources revealed workflow.json - skipping Quick Open');
+    } else {
+      console.log('[openDesignerViaExplorer] openResources completed but tree not populated - falling through to Quick Open');
+      throw new Error('openResources silent no-op detected');
+    }
+  } catch (e: any) {
+    console.log(`[openDesignerViaExplorer] Reveal via openResources failed: ${e.message} - using Quick Open fallback`);
+    try {
+      await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await waitForQuickInputAndType(driver, `${label}/workflow.json`);
+      await sleep(1500);
+      await driver.actions().sendKeys(Key.ENTER).perform();
+      await sleep(2000);
+      console.log('[openDesignerViaExplorer] Opened workflow.json via Quick Open fallback');
+    } catch (qoErr: any) {
+      console.log(`[openDesignerViaExplorer] Quick Open fallback also failed: ${qoErr.message}`);
+    }
   }
 
   // Re-focus Explorer so the opened file is selected/revealed in the tree
@@ -1882,7 +1921,10 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
     /* ignore */
   }
 
-  for (let attempt = 0; attempt < 5; attempt++) {
+  // Strategy R3: logarithmic backoff (250ms, 500ms, 1s, 2s, 4s, then 4s cap)
+  // over 10 attempts instead of the old 5x3s fixed dance.
+  const backoffs = [250, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000, 4000];
+  for (let attempt = 0; attempt < 10; attempt++) {
     try {
       const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
       let targetRow = null;
@@ -1904,8 +1946,16 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
         }
       }
       if (!targetRow) {
-        console.log(`[openDesignerViaExplorer] workflow.json not found (attempt ${attempt + 1}/5)`);
-        await sleep(3000);
+        console.log(`[openDesignerViaExplorer] workflow.json not found (attempt ${attempt + 1}/10)`);
+        // R1 diagnostic: dump current tree contents under explicit opt-in.
+        if (process.env.LA_E2E_DEBUG_TREE === '1') {
+          const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+          for (let i = 0; i < Math.min(20, allRows.length); i++) {
+            const t = await allRows[i].getText().catch(() => '?');
+            console.log(`  [tree-row ${i}] ${t.replace(/\n/g, ' | ')}`);
+          }
+        }
+        await sleep(backoffs[attempt]);
         continue;
       }
 
@@ -1947,15 +1997,15 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
         }
       }
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[openDesignerViaExplorer] "Open Designer" not in menu (attempt ${attempt + 1}/5)`);
+      console.log(`[openDesignerViaExplorer] "Open Designer" not in menu (attempt ${attempt + 1}/10)`);
     } catch (e: any) {
-      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/10 failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {
         /* */
       }
-      await sleep(3000);
+      await sleep(backoffs[attempt]);
     }
   }
   return false;
@@ -2778,6 +2828,31 @@ describe('Designer Actions Tests', function () {
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
     await waitForDependencyValidation(driver, 300_000);
+  });
+
+  beforeEach(async function () {
+    if (__warmedThisSession) {
+      return;
+    }
+    this.timeout(60_000);
+    // Per-scenario matrix shards run a single `it`. Pick the workspace that
+    // matches the test currently in flight so the warmup expands the same
+    // tree the test will exercise. Falls back to manifest[0] when the title
+    // doesn't match a known scenario (defensive — should never happen).
+    const title = this.currentTest?.title ?? '';
+    let entry: WorkspaceManifestEntry | undefined;
+    if (title.includes('CustomCode')) {
+      entry = manifest.find((e) => e.appType === 'customCode') || manifest.find((e) => e.appType === 'rulesEngine') || manifest[0];
+    } else if (title.includes('RulesEngine')) {
+      entry =
+        manifest.find((e) => e.appType === 'rulesEngine' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'rulesEngine');
+    } else {
+      entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
+    }
+    const workspaceRoot = entry?.wsDir ?? manifest?.[0]?.wsDir;
+    const result = await sessionWarmup(driver, workbench, { workspaceRoot });
+    console.log(`[warmup] ${JSON.stringify(result)}`);
+    __warmedThisSession = true;
   });
 
   afterEach(async () => {

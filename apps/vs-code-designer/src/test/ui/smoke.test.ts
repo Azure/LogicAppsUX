@@ -2,6 +2,10 @@
 
 import { expect } from 'chai';
 import { VSBrowser, Workbench, ActivityBar, EditorView } from 'vscode-extension-tester';
+import { sessionWarmup } from './sessionWarmup';
+import { waitForQuickInputAndType } from './helpers';
+
+let __warmedThisSession = false;
 
 describe('Logic Apps Extension - Basic Smoke Tests', function () {
   this.timeout(60000);
@@ -14,6 +18,16 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
 
     // Wait for VS Code to fully load
     await VSBrowser.instance.driver.sleep(3000);
+  });
+
+  beforeEach(async function () {
+    if (__warmedThisSession) {
+      return;
+    }
+    this.timeout(60_000);
+    const result = await sessionWarmup(VSBrowser.instance.driver, workbench);
+    console.log(`[warmup] ${JSON.stringify(result)}`);
+    __warmedThisSession = true;
   });
 
   after(async () => {
@@ -55,59 +69,64 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
   });
 
   it('should be able to search for commands in command palette', async () => {
-    // Open command palette and search for basic commands.
-    //
-    // The InputBox returned by openCommandPrompt() can throw
-    // ElementNotInteractableError on its first setText() in cold sessions
-    // (observed in p47-suite shard — see PR #9181 / CI runs 25941836505,
-    // 25944968117, 25946044192). Additionally getQuickPicks() can return
-    // [] on slow CI hosts even when no exception is thrown. Wrap the
-    // entire palette-open + setText + getQuickPicks flow in a retry that
-    // re-acquires the palette on each attempt and presses Escape between
-    // attempts to dismiss any stuck UI.
+    // Use the shared helper that bypasses ExTester InputBox brittleness on
+    // cold sessions (see waitForQuickInputAndType in helpers.ts and the
+    // p47-suite flake history in PR #9181 / CI runs 25941836505, 25944968117,
+    // 25946044192). The helper retries on exception, but getQuickPicks() can
+    // also return [] on slow hosts even with no thrown exception, so wrap
+    // the helper + getQuickPicks() check in an outer empty-result retry.
     const driver = VSBrowser.instance.driver;
     let suggestions: any[] = [];
     let lastErr: Error | undefined;
-    let lastPrompt: Awaited<ReturnType<typeof workbench.openCommandPrompt>> | undefined;
-    const searchTerms = ['Help', 'Help', '>', '>'];
-    for (let attempt = 0; attempt < searchTerms.length; attempt++) {
+    let lastCommandPrompt: any;
+    for (let attempt = 0; attempt < 4; attempt++) {
       try {
-        // Re-acquire the palette each attempt — handle may be stale or the
-        // InputBox may not yet be interactable.
-        const commandPrompt = await workbench.openCommandPrompt();
-        lastPrompt = commandPrompt;
-        await driver.sleep(500); // let InputBox become interactable
-        await commandPrompt.setText(searchTerms[attempt]);
-        await driver.sleep(1500); // settle
-        suggestions = await commandPrompt.getQuickPicks();
+        // Acquire a fresh palette handle on every attempt. openCommandPrompt()
+        // itself is the original cold-session failure surface — keeping it
+        // inside the retry loop ensures we recover from those failures too.
+        lastCommandPrompt = await workbench.openCommandPrompt();
+        // Should find Help-related commands (command palette mode, requires
+        // '>' prefix — waitForQuickInputAndType calls clear() which wipes the
+        // prefix and drops the widget into file Quick-Open mode).
+        await waitForQuickInputAndType(driver, '>Help');
+        await driver.sleep(1000);
+        suggestions = await lastCommandPrompt.getQuickPicks();
         if (suggestions.length > 0) {
           break;
         }
-        console.log(`[smoke-help] attempt ${attempt + 1}/${searchTerms.length} returned 0 results — retrying`);
-      } catch (e) {
-        lastErr = e as Error;
-        console.log(`[smoke-help] attempt ${attempt + 1}/${searchTerms.length} failed: ${(e as Error).message?.split('\n')[0]}`);
-        // Dismiss any stuck palette before the next attempt re-opens it.
+        console.log(`[smoke-help] attempt ${attempt + 1}/4 returned 0 results - retrying`);
+        // Dismiss palette before next attempt (loop will re-open).
         try {
-          if (lastPrompt) {
-            await lastPrompt.cancel();
-          }
+          await lastCommandPrompt.cancel();
         } catch {
           /* ignore */
         }
-        await driver.sleep(1000);
+        await driver.sleep(500);
+      } catch (e: any) {
+        lastErr = e;
+        const firstLine = e?.message?.split('\n')[0] ?? 'unknown';
+        console.log(`[smoke-help] attempt ${attempt + 1}/4 failed: ${firstLine}`);
+        try {
+          await lastCommandPrompt?.cancel();
+        } catch {
+          /* ignore */
+        }
+        await driver.sleep(500 * (attempt + 1));
       }
     }
-    expect(suggestions.length).to.be.greaterThan(0, `Should find commands in command palette (last error: ${lastErr?.message ?? 'none'})`);
-
-    console.log(`Found ${suggestions.length} command palette suggestions`);
-
     try {
-      if (lastPrompt) {
-        await lastPrompt.cancel();
+      expect(suggestions.length).to.be.greaterThan(
+        0,
+        `Should find Help-related commands in command palette (last error: ${lastErr?.message ?? 'empty results across 4 attempts'})`
+      );
+    } finally {
+      // Always dismiss palette even if helper threw — leaving it open leaks
+      // state into subsequent tests.
+      try {
+        await lastCommandPrompt?.cancel();
+      } catch {
+        /* ignore */
       }
-    } catch {
-      /* ignore */
     }
   });
 

@@ -29,6 +29,9 @@ import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManif
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { sleep } from './helpers';
 import { TEST_TIMEOUT, DEPENDENCY_VALIDATION_TIMEOUT, waitForDependencyValidation, openDesignerForEntry } from './designerHelpers';
+import { sessionWarmup } from './sessionWarmup';
+
+let __warmedThisSession = false;
 
 const GO_TO_OP_DIALOG = '[role="dialog"][aria-label="Go to operation"]';
 const RESULT_LIST = '[role="list"][aria-label="List of operation results"]';
@@ -62,6 +65,16 @@ describe('Keyboard Navigation Tests', function () {
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
     await waitForDependencyValidation(driver);
+  });
+
+  beforeEach(async function () {
+    if (__warmedThisSession) {
+      return;
+    }
+    this.timeout(60_000);
+    const result = await sessionWarmup(driver, workbench, { workspaceRoot: entry?.wsDir });
+    console.log(`[warmup] ${JSON.stringify(result)}`);
+    __warmedThisSession = true;
   });
 
   afterEach(async () => {

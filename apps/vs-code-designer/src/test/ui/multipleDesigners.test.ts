@@ -30,7 +30,8 @@ import * as assert from 'assert';
 import { Workbench, EditorView, type WebDriver, VSBrowser, By, Key } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { sleep, captureScreenshot, clearBlockingUI, dismissAllDialogs } from './helpers';
+import { sleep, captureScreenshot, clearBlockingUI, dismissAllDialogs, waitForQuickInputAndType } from './helpers';
+import { sessionWarmup } from './sessionWarmup';
 import {
   TEST_TIMEOUT,
   ensureLocalSettingsForDesigner,
@@ -47,6 +48,8 @@ import {
   waitForNodeCountIncrease,
   DESIGNER_READY_TIMEOUT,
 } from './designerHelpers';
+
+let __warmedThisSession = false;
 
 const EXPLICIT_SCREENSHOT_DIR = path.join(
   process.env.TEMP || process.cwd(),
@@ -168,19 +171,53 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     /* ignore */
   }
 
-  // Open the workflow.json file via Quick Open (Ctrl+P) to reveal it in the tree.
-  // VSBrowser.instance.openResources() uses `code -r` IPC which silently fails on Linux CI.
+  // Strategy B: VSBrowser.openResources reveals AND selects the exact
+  // workflow.json in the Explorer tree, bypassing the need to expand the
+  // tree manually. CAUTION: `code -r` IPC silently NO-OPS on Linux CI
+  // (documented in designerHelpers.ts comment history). A silent failure
+  // throws no exception — so we verify a POSITIVE post-condition (a
+  // workflow.json row in the Explorer tree) and explicitly throw to
+  // trigger the Quick Open fallback when the tree is still empty.
   try {
-    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
-    await sleep(1000);
-    const quickInput = await driver.findElement(By.css('.quick-input-box input'));
-    await quickInput.sendKeys(`${label}/workflow.json`);
+    await VSBrowser.instance.openResources(workflowJsonPath);
     await sleep(1500);
-    await quickInput.sendKeys(Key.ENTER);
-    await sleep(2000);
-    console.log(`[multiDesigner] Opened ${label}/workflow.json via Quick Open`);
-  } catch (qoErr: any) {
-    console.log(`[multiDesigner] Quick Open failed: ${qoErr.message}`);
+    const revealed = await driver
+      .wait(async () => {
+        const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+        for (const row of rows) {
+          const text = await row.getText().catch(() => '');
+          // Match BOTH the parent folder/label AND workflow.json so we don't
+          // false-positive on a stale row from a previous workflow in the
+          // same shard (this test opens 2 workflows back-to-back).
+          if (text.includes(label) && text.includes('workflow.json')) {
+            return true;
+          }
+        }
+        return false;
+      }, 5_000)
+      .then(() => true)
+      .catch(() => false);
+    if (revealed) {
+      console.log('[multiDesigner] openResources revealed workflow.json - skipping Quick Open');
+    } else {
+      console.log('[multiDesigner] openResources completed but tree not populated - falling through to Quick Open');
+      throw new Error('openResources silent no-op detected');
+    }
+  } catch (e: any) {
+    console.log(`[multiDesigner] Reveal via openResources failed: ${e.message} - using Quick Open fallback`);
+    try {
+      await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await waitForQuickInputAndType(driver, `${label}/workflow.json`);
+      await sleep(1500);
+      await driver.actions().sendKeys(Key.ENTER).perform();
+      await sleep(2000);
+      console.log(`[multiDesigner] Opened ${label}/workflow.json via Quick Open fallback`);
+    } catch (qoErr: any) {
+      console.log(`[multiDesigner] Quick Open fallback also failed: ${qoErr.message}`);
+    }
   }
 
   // Re-focus Explorer so the opened file is selected/revealed in the tree
@@ -191,10 +228,9 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     /* ignore */
   }
 
-  // Force the Explorer tree to expand to and reveal the now-active editor's file.
-  // Quick Open opens the file in the editor but does NOT expand the Explorer tree,
-  // so the polling loop below can re-query a collapsed-tree DOM forever (observed
-  // on cold per-scenario p48c-multipledesigners shard — CI run 25946044192).
+  // Belt-and-suspenders: explicitly reveal the active editor in Explorer.
+  // openResources usually does this on its own, but on Linux CI we have
+  // observed the tree remain collapsed (CI run 25946044192).
   const revealCandidates = [
     'workbench.files.action.showActiveFileInExplorer',
     'revealInExplorer',
@@ -211,8 +247,10 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     }
   }
 
+  // Strategy R3: bump 3 -> 10 attempts with logarithmic backoff.
+  const backoffs = [250, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000, 4000];
   // Now right-click on the active/focused workflow.json in the Explorer
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 10; attempt++) {
     try {
       // Wait for the menubar overlay to be inactive before clicking. The
       // menubar-menu-title element can intercept clicks on context menu rows
@@ -291,8 +329,15 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
       }
 
       if (!targetRow) {
-        console.log(`[multiDesigner] workflow.json not found in tree on attempt ${attempt + 1}`);
-        await sleep(2000);
+        console.log(`[multiDesigner] workflow.json not found in tree on attempt ${attempt + 1}/10`);
+        if (process.env.LA_E2E_DEBUG_TREE === '1') {
+          const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+          for (let i = 0; i < Math.min(20, allRows.length); i++) {
+            const t = await allRows[i].getText().catch(() => '?');
+            console.log(`  [tree-row ${i}] ${t.replace(/\n/g, ' | ')}`);
+          }
+        }
+        await sleep(backoffs[attempt]);
         continue;
       }
 
@@ -359,15 +404,15 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
 
       // Dismiss context menu
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[multiDesigner] "Open designer" not found in context menu on attempt ${attempt + 1}`);
+      console.log(`[multiDesigner] "Open designer" not found in context menu on attempt ${attempt + 1}/10`);
     } catch (e: any) {
-      console.log(`[multiDesigner] Attempt ${attempt + 1} failed: ${e.message}`);
+      console.log(`[multiDesigner] Attempt ${attempt + 1}/10 failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {
         /* ignore */
       }
-      await sleep(2000);
+      await sleep(backoffs[attempt]);
     }
   }
   return false;
@@ -559,6 +604,23 @@ describe('Multiple Designers + Add Workflow', function () {
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
     await waitForDependencyValidation(driver);
+  });
+
+  beforeEach(async function () {
+    if (__warmedThisSession) {
+      return;
+    }
+    this.timeout(60_000);
+    // Match the entry the single `it` block will use (standard/Stateful)
+    // so the warmup expands the same tree the test exercises.
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+      manifest.find((e) => e.appType === 'standard') ||
+      manifest[0];
+    const workspaceRoot = entry?.wsDir;
+    const result = await sessionWarmup(driver, workbench, { workspaceRoot });
+    console.log(`[warmup] ${JSON.stringify(result)}`);
+    __warmedThisSession = true;
   });
 
   afterEach(async () => {

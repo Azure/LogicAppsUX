@@ -13,7 +13,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { By, Key, ModalDialog, until, type WebDriver } from 'vscode-extension-tester';
+import { By, Key, ModalDialog, until, type WebDriver, type WebElement } from 'vscode-extension-tester';
 
 type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 
@@ -24,6 +24,53 @@ type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 /** Sleep for ms milliseconds */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Raw Selenium quick-input typing that bypasses ExTester's InputBox page object.
+ *
+ * The ExTester InputBox.setText/clear API can throw ElementNotInteractableError
+ * on cold sessions because it matches hidden cached widgets. This helper uses
+ * the proven `.quick-input-widget:not(.hidden) .quick-input-box input` selector
+ * (see createWorkspaceShared.ts:266), with `until.elementLocated` so the wait
+ * absorbs the widget-not-yet-rendered race, plus explicit visibility +
+ * isEnabled checks and a 3-attempt retry with backoff for cold-session
+ * settling.
+ *
+ * CAVEAT: this helper calls `input.clear()`, which deletes ALL existing text
+ * in the widget — including the leading `>` prefix that
+ * `Workbench.openCommandPrompt()` inserts to switch the widget into
+ * command-palette mode. After clearing, the widget is in FILE / quick-open
+ * mode. Callers that want command-palette behaviour must re-type the `>`
+ * prefix themselves (e.g. `waitForQuickInputAndType(driver, '>Help')`), or
+ * use ExTester's InputBox.setText directly. For plain file Quick Open
+ * (Ctrl+P), no prefix is needed.
+ *
+ * Returns the input WebElement on success; throws after all retries fail.
+ */
+export async function waitForQuickInputAndType(driver: WebDriver, text: string, timeoutMs = 5000): Promise<WebElement> {
+  let lastErr: Error | undefined;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const input = await driver.wait(
+        until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
+        timeoutMs,
+        'Expected visible quick-input widget to appear'
+      );
+      await driver.wait(until.elementIsVisible(input), timeoutMs);
+      await driver.wait(async () => await input.isEnabled().catch(() => false), timeoutMs);
+      await input.clear();
+      await input.sendKeys(text);
+      await sleep(300);
+      return input;
+    } catch (e: any) {
+      lastErr = e;
+      const firstLine = e?.message?.split('\n')[0] ?? e?.message ?? 'unknown';
+      console.log(`[waitForQuickInputAndType] attempt ${attempt + 1}/3 failed: ${firstLine}`);
+      await sleep(500 * (attempt + 1));
+    }
+  }
+  throw new Error(`[waitForQuickInputAndType] failed after 3 attempts: ${lastErr?.message ?? 'unknown'}`);
 }
 
 /** Replace invalid filename characters with underscores */

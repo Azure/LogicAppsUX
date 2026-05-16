@@ -66,6 +66,7 @@ import {
   dumpDomState,
   jsDismissDialogs,
   focusEditor,
+  waitForQuickInputAndType,
 } from './helpers';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import * as path from 'path';
@@ -1810,21 +1811,52 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
     /* ignore */
   }
 
-  // Open the workflow.json file via Quick Open (Ctrl+P) to reveal it in the tree.
-  // VSBrowser.instance.openResources() uses `code -r` IPC which silently fails
-  // on Linux CI (same root cause as openWorkspaceFileInSession).
+  // Strategy B: VSBrowser.openResources reveals AND selects the row in the
+  // Explorer tree. CAUTION: `code -r` IPC silently NO-OPS on Linux CI — a
+  // silent failure throws no exception, so we verify a POSITIVE
+  // post-condition and explicitly throw to trigger the Quick Open fallback
+  // when the tree is still empty (same fix as designerActions.test.ts /
+  // multipleDesigners.test.ts copies of this routine).
   try {
-    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
-    await sleep(1000);
-    const quickInput = await driver.findElement(By.css('.quick-input-box input'));
-    // Type workflow folder + filename for uniqueness in multi-workflow workspaces
-    await quickInput.sendKeys(`${label}/workflow.json`);
+    await VSBrowser.instance.openResources(workflowJsonPath);
     await sleep(1500);
-    await quickInput.sendKeys(Key.ENTER);
-    await sleep(2000);
-    console.log('[openDesignerViaExplorer] Opened workflow.json via Quick Open');
-  } catch (qoErr: any) {
-    console.log(`[openDesignerViaExplorer] Quick Open failed: ${qoErr.message}`);
+    const revealed = await driver
+      .wait(async () => {
+        const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+        for (const row of rows) {
+          const text = await row.getText().catch(() => '');
+          // Match BOTH the parent folder/label AND workflow.json so we don't
+          // false-positive on a stale row from a previous workflow in the
+          // same shard.
+          if (text.includes(label) && text.includes('workflow.json')) {
+            return true;
+          }
+        }
+        return false;
+      }, 5_000)
+      .then(() => true)
+      .catch(() => false);
+    if (revealed) {
+      console.log('[openDesignerViaExplorer] openResources revealed workflow.json - skipping Quick Open');
+    } else {
+      console.log('[openDesignerViaExplorer] openResources completed but tree not populated - falling through to Quick Open');
+      throw new Error('openResources silent no-op detected');
+    }
+  } catch (e: any) {
+    console.log(`[openDesignerViaExplorer] Reveal via openResources failed: ${e.message} - using Quick Open fallback`);
+    try {
+      await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await waitForQuickInputAndType(driver, `${label}/workflow.json`);
+      await sleep(1500);
+      await driver.actions().sendKeys(Key.ENTER).perform();
+      await sleep(2000);
+      console.log('[openDesignerViaExplorer] Opened workflow.json via Quick Open fallback');
+    } catch (qoErr: any) {
+      console.log(`[openDesignerViaExplorer] Quick Open fallback also failed: ${qoErr.message}`);
+    }
   }
 
   // Re-focus Explorer so the opened file is selected/revealed in the tree
@@ -1856,7 +1888,10 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
     }
   }
 
-  for (let attempt = 0; attempt < 5; attempt++) {
+  // Strategy R3: 5 -> 10 attempts with logarithmic backoff (250ms, 500ms,
+  // 1s, 2s, 4s, then 4s cap) instead of a fixed 5x3s dance.
+  const backoffs = [250, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000, 4000];
+  for (let attempt = 0; attempt < 10; attempt++) {
     try {
       // Wait for the menubar overlay to be inactive before clicking. The
       // menubar-menu-title element can intercept clicks on context menu rows
@@ -1930,8 +1965,15 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
       }
 
       if (!targetRow) {
-        console.log(`[openDesignerViaExplorer] workflow.json not found in tree (attempt ${attempt + 1}/5)`);
-        await sleep(3000);
+        console.log(`[openDesignerViaExplorer] workflow.json not found in tree (attempt ${attempt + 1}/10)`);
+        if (process.env.LA_E2E_DEBUG_TREE === '1') {
+          const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+          for (let i = 0; i < Math.min(20, allRows.length); i++) {
+            const t = await allRows[i].getText().catch(() => '?');
+            console.log(`  [tree-row ${i}] ${t.replace(/\n/g, ' | ')}`);
+          }
+        }
+        await sleep(backoffs[attempt]);
         continue;
       }
 
@@ -1989,15 +2031,15 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
 
       // Dismiss context menu if "Open Designer" not found
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[openDesignerViaExplorer] "Open Designer" not in context menu (attempt ${attempt + 1}/5)`);
+      console.log(`[openDesignerViaExplorer] "Open Designer" not in context menu (attempt ${attempt + 1}/10)`);
     } catch (e: any) {
-      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/10 failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {
         /* ignore */
       }
-      await sleep(3000);
+      await sleep(backoffs[attempt]);
     }
   }
   return false;
