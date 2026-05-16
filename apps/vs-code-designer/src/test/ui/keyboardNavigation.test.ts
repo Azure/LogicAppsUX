@@ -27,7 +27,7 @@ import * as assert from 'assert';
 import { Workbench, EditorView, By, Key, until, type WebDriver, VSBrowser } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { sleep } from './helpers';
+import { sleep, captureScreenshot } from './helpers';
 import { TEST_TIMEOUT, DEPENDENCY_VALIDATION_TIMEOUT, waitForDependencyValidation, openDesignerForEntry } from './designerHelpers';
 import { sessionWarmup } from './sessionWarmup';
 
@@ -114,9 +114,9 @@ describe('Keyboard Navigation Tests', function () {
     activeWebview = result.webview;
 
     await anchorFocusInsideCanvas(driver);
-    await pressCtrlAltP(driver);
+    await pressGoToOperationHotkey(driver);
 
-    const dialog = await driver.wait(until.elementLocated(By.css(GO_TO_OP_DIALOG)), PANEL_OPEN_TIMEOUT);
+    const dialog = await waitForGoToOpDialogWithDiagnostic(driver);
     assert.ok(await dialog.isDisplayed(), 'Go to operation panel should be visible');
 
     // SearchBox should auto-focus when panel mounts (autoFocus={true}).
@@ -145,8 +145,8 @@ describe('Keyboard Navigation Tests', function () {
     activeWebview = result.webview;
 
     await anchorFocusInsideCanvas(driver);
-    await pressCtrlAltP(driver);
-    await driver.wait(until.elementLocated(By.css(GO_TO_OP_DIALOG)), PANEL_OPEN_TIMEOUT);
+    await pressGoToOperationHotkey(driver);
+    await waitForGoToOpDialogWithDiagnostic(driver);
 
     await driver.actions().sendKeys(Key.ESCAPE).perform();
     await driver.wait(
@@ -191,12 +191,70 @@ describe('Keyboard Navigation Tests', function () {
 });
 
 /**
- * Press Ctrl+Alt+P via the Selenium Actions API (per SKILL.md rule 6).
+ * Phase 2 F3 (revised by review board #4) — Press the designer's
+ * "Go to operation" hotkey (Ctrl+Alt+P).
+ *
+ * The hotkey is registered INSIDE the React app inside the webview iframe via
+ * `useHotkeys(['ctrl+alt+p', ...])` in libs/designer/src/lib/ui/Designer.tsx.
+ * The caller's `anchorFocusInsideCanvas()` already places DOM focus inside the
+ * iframe before this helper runs, so Selenium's `actions().sendKeys()` reaches
+ * the iframe's keydown listener directly. A pre-Escape clears any phantom
+ * modal that may have appeared during designer load.
+ *
+ * Earlier revisions of this helper switched to `defaultContent()` before
+ * sending the chord and then polled for the dialog from `defaultContent`,
+ * which is the wrong frame (the dialog mounts inside the iframe) — that
+ * caused deterministic post-chord readiness misses. The caller's existing
+ * `driver.wait(until.elementLocated(...))` will surface a clean timeout if
+ * the dialog truly fails to appear.
+ *
+ * Phase 2.5 carry-over (deferred from review board #5, non-blocking):
+ *   - N1: F1 retry timing log via console.time/timeEnd
+ *   - N2: 3s warm-up replaced with polling for host signal
+ *   - N5: waitForQuickInputReady fixed sleeps replaced with polls
+ *   - N6: G3 post-Escape 1000ms sleep replaced with poll
+ *   - N7: clearBlockingUI called twice in one path
+ *   - N8: `retried: boolean` -> `attempt = 0` to allow >1 retry
+ * Tracked in plan.md and #9183. Phase 2's goal is fixing the 5 flaky
+ * shards, not refactoring to perfect.
  */
-async function pressCtrlAltP(driver: WebDriver): Promise<void> {
+async function pressGoToOperationHotkey(driver: WebDriver): Promise<void> {
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  } catch {
+    /* ignore */
+  }
+  await sleep(200);
   await driver.actions().keyDown(Key.CONTROL).keyDown(Key.ALT).sendKeys('p').keyUp(Key.ALT).keyUp(Key.CONTROL).perform();
-  // Allow React Flow's keydown listener + panel mount to settle.
-  await sleep(300);
+  // N3 (review board r2): dropped post-chord sleep(500). The caller's
+  // driver.wait(until.elementLocated(GO_TO_OP_DIALOG), 5000) polls every
+  // ~250ms, so a fixed sleep adds latency with no correctness benefit.
+}
+
+/**
+ * N4 (review board r2) — Diagnostic wrapper for the post-chord dialog wait.
+ * On TimeoutError, captures iframe count, document.activeElement, and a
+ * screenshot so post-mortems can distinguish (chord didn't reach iframe)
+ * vs (useHotkeys didn't fire) vs (dialog mounted in a different frame).
+ */
+async function waitForGoToOpDialogWithDiagnostic(driver: WebDriver) {
+  try {
+    return await driver.wait(until.elementLocated(By.css(GO_TO_OP_DIALOG)), PANEL_OPEN_TIMEOUT);
+  } catch (e: any) {
+    try {
+      const iframes = await driver.findElements(By.css('iframe'));
+      console.log(`[keyboardNav-diag] Dialog not found within ${PANEL_OPEN_TIMEOUT}ms`);
+      console.log(`[keyboardNav-diag] iframe count: ${iframes.length}`);
+      const activeTag = await driver
+        .executeScript<string>('return document.activeElement ? document.activeElement.tagName : "?"')
+        .catch(() => '?');
+      console.log(`[keyboardNav-diag] document.activeElement: ${activeTag}`);
+      await captureScreenshot(driver, 'keyboardNav-dialog-not-found');
+    } catch {
+      /* swallow diagnostic errors -- always rethrow original */
+    }
+    throw e;
+  }
 }
 
 /**

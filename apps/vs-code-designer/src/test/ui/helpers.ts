@@ -13,7 +13,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { By, Key, ModalDialog, until, type WebDriver, type WebElement } from 'vscode-extension-tester';
+import { By, Key, ModalDialog, until, type WebDriver, type WebElement, type Workbench } from 'vscode-extension-tester';
 
 type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 
@@ -48,7 +48,11 @@ export function sleep(ms: number): Promise<void> {
  *
  * Returns the input WebElement on success; throws after all retries fail.
  */
-export async function waitForQuickInputAndType(driver: WebDriver, text: string, timeoutMs = 5000): Promise<WebElement> {
+export async function waitForQuickInputAndType(driver: WebDriver, text: string, timeoutMs = 15000): Promise<WebElement> {
+  // Phase 2 F2: bumped default timeoutMs 5000 -> 15000. Phase 1 CI evidence
+  // (run 25949973119, smoke + multipleDesigners) showed
+  // `Waiting until element is visible / 5140ms` timeouts where the widget DOM
+  // exists but never paints visible. 3x headroom per senior-swe-planner I3.
   let lastErr: Error | undefined;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -71,6 +75,72 @@ export async function waitForQuickInputAndType(driver: WebDriver, text: string, 
     }
   }
   throw new Error(`[waitForQuickInputAndType] failed after 3 attempts: ${lastErr?.message ?? 'unknown'}`);
+}
+
+/**
+ * Phase 2 F2 — Pre-condition gate before opening the command palette on cold
+ * sessions.
+ *
+ * Phase 1 CI evidence (run 25949973119, p47-suite + p48c-multipledesigners)
+ * showed `waitForQuickInputAndType` timing out with
+ * `Waiting until element is visible / 5140ms`. The Quick Input widget exists
+ * in the DOM but never becomes visible/interactable because:
+ *   - notification toasts (extension activation, Azurite startup) steal focus,
+ *   - a phantom Quick Input from a prior step still holds the input lock.
+ *
+ * This helper clears competing UI surfaces and asserts no Quick Input is
+ * currently visible BEFORE the caller opens a fresh one. Per planner B4: poll
+ * for state, do NOT trust fixed sleeps. Per planner B4: do NOT close the
+ * auxiliary bar (could TOGGLE it open if it wasn't already open).
+ */
+export async function waitForQuickInputReady(workbench: Workbench, driver: WebDriver, timeoutMs = 5000): Promise<void> {
+  // Clear notifications (extension activation toasts, Azurite startup, etc.)
+  try {
+    await workbench.executeCommand('workbench.action.notifications.clearAll');
+  } catch {
+    /* ignore */
+  }
+  await sleep(200);
+  // Press Escape to clear any phantom modal/Quick Input
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  } catch {
+    /* ignore */
+  }
+  // Phase 2 R1 (review board #4) — positive log when the gate is doing real work.
+  // If a Quick Input widget is visible at entry, callers can see in CI logs that
+  // this helper actually waited for clearance rather than no-opping.
+  const initiallyVisible = await driver.findElements(By.css('.quick-input-widget.show'));
+  if (initiallyVisible.length > 0) {
+    console.log('[waitForQuickInputReady] Quick Input visible at entry — waiting for clear');
+  }
+  // Poll for "no Quick Input visible" state before returning. On timeout we
+  // try a second Escape + brief re-poll before degrading to non-fatal so
+  // callers can distinguish "gate closed cleanly" from "still busy".
+  await driver
+    .wait(
+      async () => {
+        const visible = await driver.findElements(By.css('.quick-input-widget.show'));
+        return visible.length === 0;
+      },
+      timeoutMs,
+      'No Quick Input widget should be visible before opening a fresh one'
+    )
+    .catch(async () => {
+      console.log('[waitForQuickInputReady] First poll timed out — sending second Escape');
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(500);
+      const stillVisible = await driver.findElements(By.css('.quick-input-widget.show'));
+      if (stillVisible.length > 0) {
+        console.log('[waitForQuickInputReady] WARN: Quick Input still visible after 2 Escapes; caller may race');
+      } else {
+        console.log('[waitForQuickInputReady] Second Escape cleared widget');
+      }
+    });
 }
 
 /** Replace invalid filename characters with underscores */

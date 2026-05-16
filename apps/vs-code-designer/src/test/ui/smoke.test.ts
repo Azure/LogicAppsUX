@@ -3,12 +3,15 @@
 import { expect } from 'chai';
 import { VSBrowser, Workbench, ActivityBar, EditorView } from 'vscode-extension-tester';
 import { sessionWarmup } from './sessionWarmup';
-import { waitForQuickInputAndType } from './helpers';
+import { waitForQuickInputAndType, waitForQuickInputReady } from './helpers';
 
 let __warmedThisSession = false;
 
 describe('Logic Apps Extension - Basic Smoke Tests', function () {
-  this.timeout(60000);
+  // Suite timeout bumped from 60s -> 300s in Phase 2 because waitForQuickInputAndType
+  // can take up to 45s per call (15s x 3 retries) on cold sessions, and the help test
+  // has a 4-attempt outer retry loop that needs ~50s x 4 = 200s headroom in worst case.
+  this.timeout(300_000);
 
   let workbench: Workbench;
 
@@ -81,6 +84,12 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
     let lastCommandPrompt: any;
     for (let attempt = 0; attempt < 4; attempt++) {
       try {
+        // Phase 2 F2: clear notifications + phantom Quick Input BEFORE every
+        // openCommandPrompt() attempt. Phase 1 CI evidence showed the widget
+        // existing in DOM but never painting visible because a notification
+        // toast or stale Quick Input was holding the input lock. Polls for
+        // `.quick-input-widget.show` absence (no fixed sleeps) per planner B4.
+        await waitForQuickInputReady(workbench, driver);
         // Acquire a fresh palette handle on every attempt. openCommandPrompt()
         // itself is the original cold-session failure surface — keeping it
         // inside the retry loop ensures we recover from those failures too.

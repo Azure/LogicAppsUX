@@ -47,6 +47,7 @@ import {
   countCanvasNodes,
   waitForNodeCountIncrease,
   DESIGNER_READY_TIMEOUT,
+  switchToDesignerWebview,
 } from './designerHelpers';
 
 let __warmedThisSession = false;
@@ -160,8 +161,13 @@ async function switchToActiveDesignerFrame(driver: WebDriver, timeoutMs = DESIGN
  * now-active/focused workflow.json row. This guarantees we right-click the correct
  * file even when multiple workflow.json files exist in the tree.
  */
-async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJsonPath: string, label: string): Promise<boolean> {
-  console.log(`[multiDesigner] Opening designer for "${label}" via right-click...`);
+async function openDesignerViaExplorerRightClick(
+  driver: WebDriver,
+  workflowJsonPath: string,
+  label: string,
+  retried = false
+): Promise<boolean> {
+  console.log(`[multiDesigner] Opening designer for "${label}" via right-click${retried ? ' (retry pass)' : ''}...`);
 
   // Switch to Explorer view
   try {
@@ -382,8 +388,68 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
                   'return !!(document.querySelector("iframe.webview") || document.querySelector("iframe[id*=\\"webview\\"]"))'
                 );
                 if (found) {
-                  console.log(`[multiDesigner] Designer webview detected for "${label}"`);
-                  return true;
+                  console.log(`[multiDesigner] Designer webview tab detected for "${label}"`);
+                  // Phase 2 F1 — iframe presence != React canvas ready.
+                  // Delegate to switchToDesignerWebview (staged readyLevel
+                  // progression). On failure, close the active editor and
+                  // recursively retry openDesignerViaExplorerRightClick ONCE.
+                  try {
+                    await switchToDesignerWebview(driver, 30_000);
+                    try {
+                      await driver.switchTo().defaultContent();
+                    } catch {
+                      /* ignore */
+                    }
+                    console.log(`[multiDesigner] Designer canvas ready for "${label}"`);
+                    return true;
+                  } catch (canvasErr: any) {
+                    try {
+                      await driver.switchTo().defaultContent();
+                    } catch {
+                      /* ignore */
+                    }
+                    console.log(`[multiDesigner] Canvas-ready check failed: ${canvasErr.message}`);
+                    if (retried) {
+                      // Planner I4: diagnostic dump on final failure.
+                      try {
+                        const allIframes = await driver.findElements(By.css('iframe'));
+                        console.log(`[multiDesigner][diag] iframe count after canvas-fail: ${allIframes.length}`);
+                      } catch {
+                        /* ignore */
+                      }
+                      try {
+                        await captureScreenshot(driver, `multiDesigner-canvas-fail-${label}`);
+                      } catch {
+                        /* ignore */
+                      }
+                      return false;
+                    }
+                    console.log('[multiDesigner] Retrying once after close-active-editor');
+                    // Phase 2 R1 (review board #4) — pre-retry diagnostic: snapshot state at
+                    // retry trigger so CI logs can compare attempt-1 vs attempt-2 state.
+                    try {
+                      const iframes = await driver.findElements(By.css('iframe'));
+                      console.log(`[multiDesigner][pre-retry] iframe count: ${iframes.length}`);
+                      await captureScreenshot(driver, `multiDesigner-pre-retry-${label}`);
+                    } catch {
+                      /* ignore */
+                    }
+                    try {
+                      await new Workbench().executeCommand('workbench.action.closeActiveEditor');
+                      // Phase 2 R1 — warm-up grace: 1.5s wasn't enough for the design-time
+                      // host to settle between attempts, so retry-1 produced the same outcome.
+                      await sleep(3000);
+                      try {
+                        await new Workbench().executeCommand('workbench.action.notifications.clearAll');
+                      } catch {
+                        /* ignore */
+                      }
+                      await sleep(500);
+                    } catch {
+                      /* ignore */
+                    }
+                    return await openDesignerViaExplorerRightClick(driver, workflowJsonPath, label, true);
+                  }
                 }
               } catch {
                 /* ignore */
@@ -764,6 +830,27 @@ describe('Multiple Designers + Add Workflow', function () {
       /* ignore */
     }
     await clearBlockingUI(driver);
+
+    // Phase 2 G3 (revised by review board #4) — Reset frame context + clear any
+    // modal between designer-1 and designer-2 opens, WITHOUT closing designer 1.
+    // Designer 1 MUST stay open: Step 5 asserts `designerTabs.length >= 2`
+    // (BOTH designers open simultaneously) and Step 6 calls
+    // activateDesignerTab(wf1Name) which requires designer 1's tab + iframe
+    // state intact. The right-click sequence runs in defaultContent, so a
+    // frame-context reset + Escape is sufficient to prevent designer 1's
+    // iframe from intercepting input.
+    try {
+      await driver.switchTo().defaultContent();
+    } catch {
+      /* ignore */
+    }
+    await clearBlockingUI(driver);
+    try {
+      await driver.actions().sendKeys(Key.ESCAPE).perform();
+    } catch {
+      /* ignore */
+    }
+    await sleep(1000);
 
     // ── Step 4: Open designer for NEW workflow via right-click (KEEP designer 1 open) ──
     const d2Opened = await openDesignerViaExplorerRightClick(driver, newWfJson, newWfName);

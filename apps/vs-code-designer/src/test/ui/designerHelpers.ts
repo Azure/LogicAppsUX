@@ -1043,6 +1043,11 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
  *
  * This matches the proven pattern from switchToActiveDesignerFrame() in
  * multipleDesigners.test.ts which successfully loads the designer.
+ *
+ * @throws Error on timeout if the Designer canvas does not become ready within
+ *         the timeout. Callers must wrap in try/catch and treat throw as a
+ *         "designer-not-ready" signal. (Phase 2 F1 change: previously returned
+ *         a stale WebView on timeout, masking failures.)
  */
 export async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DESIGNER_READY_TIMEOUT): Promise<WebView> {
   const webview = new WebView();
@@ -1141,7 +1146,10 @@ export async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DES
     await sleep(1500);
   }
 
-  // Timed out — dump diagnostics
+  // Phase 2 F1: throw on timeout instead of returning a useless WebView handle.
+  // Callers (openDesignerForEntry + the new openDesignerViaExplorer canvas-ready
+  // check) already wrap in try/catch, and treating "timeout" as success caused
+  // the cold-session designer-open flakes documented in CI run 25949973119.
   console.log(`[designerReady] readyLevel=${readyLevel} after ${Date.now() - t0}ms`);
   if (readyLevel === 0) {
     console.log('[designerReady] Warning: designer content not found within timeout');
@@ -1171,7 +1179,7 @@ export async function switchToDesignerWebview(driver: WebDriver, timeoutMs = DES
     }
   }
 
-  return webview;
+  throw new Error(`Designer canvas not ready after ${timeoutMs}ms (readyLevel=${readyLevel})`);
 }
 
 /**
@@ -1800,8 +1808,13 @@ export async function canvasHasNode(driver: WebDriver, nodeText: string): Promis
  * Strategy: use openResources() to reveal + select the workflow.json in the
  * Explorer tree, then right-click the selected row and click "Open Designer".
  */
-export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: string, label: string): Promise<boolean> {
-  console.log(`[openDesignerViaExplorer] Opening designer for "${label}"...`);
+export async function openDesignerViaExplorer(
+  driver: WebDriver,
+  workflowJsonPath: string,
+  label: string,
+  retried = false
+): Promise<boolean> {
+  console.log(`[openDesignerViaExplorer] Opening designer for "${label}"${retried ? ' (retry pass)' : ''}...`);
 
   // Switch to Explorer view
   try {
@@ -2011,8 +2024,71 @@ export async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPat
 
             const found = await waitForDesignerWebviewTab(driver);
             if (found) {
-              console.log(`[openDesignerViaExplorer] Designer webview detected for "${label}"`);
-              return true;
+              console.log(`[openDesignerViaExplorer] Designer webview tab detected for "${label}"`);
+              // Phase 2 F1 — iframe presence != React canvas ready. Delegate
+              // to switchToDesignerWebview which has staged readyLevel
+              // progression (msla-designer-canvas -> react-flow__viewport ->
+              // nodes/trigger card). On failure, close the active editor and
+              // recursively retry openDesignerViaExplorer ONCE (planner B1: do
+              // NOT use workbench.action.reloadWindow — kills webview + design-
+              // time host with no recovery harness in this test suite).
+              try {
+                await switchToDesignerWebview(driver, 30_000);
+                try {
+                  await driver.switchTo().defaultContent();
+                } catch {
+                  /* ignore */
+                }
+                console.log(`[openDesignerViaExplorer] Designer canvas ready for "${label}"`);
+                return true;
+              } catch (canvasErr: any) {
+                try {
+                  await driver.switchTo().defaultContent();
+                } catch {
+                  /* ignore */
+                }
+                console.log(`[openDesignerViaExplorer] Canvas-ready check failed: ${canvasErr.message}`);
+                if (retried) {
+                  // Planner I4: diagnostic dump on final failure.
+                  try {
+                    const allIframes = await driver.findElements(By.css('iframe'));
+                    console.log(`[openDesignerViaExplorer][diag] iframe count after canvas-fail: ${allIframes.length}`);
+                  } catch {
+                    /* ignore */
+                  }
+                  try {
+                    await captureScreenshot(driver, `openDesignerViaExplorer-canvas-fail-${label}`);
+                  } catch {
+                    /* ignore */
+                  }
+                  return false;
+                }
+                console.log('[openDesignerViaExplorer] Retrying once after close-active-editor');
+                // Phase 2 R1 (review board #4) — pre-retry diagnostic: snapshot state at
+                // retry trigger so CI logs can compare attempt-1 vs attempt-2 state.
+                try {
+                  const iframes = await driver.findElements(By.css('iframe'));
+                  console.log(`[openDesignerViaExplorer][pre-retry] iframe count: ${iframes.length}`);
+                  await captureScreenshot(driver, `openDesignerViaExplorer-pre-retry-${label}`);
+                } catch {
+                  /* ignore */
+                }
+                try {
+                  await new Workbench().executeCommand('workbench.action.closeActiveEditor');
+                  // Phase 2 R1 — warm-up grace: 1.5s wasn't enough for the design-time
+                  // host to settle between attempts, so retry-1 produced the same outcome.
+                  await sleep(3000);
+                  try {
+                    await new Workbench().executeCommand('workbench.action.notifications.clearAll');
+                  } catch {
+                    /* ignore */
+                  }
+                  await sleep(500);
+                } catch {
+                  /* ignore */
+                }
+                return await openDesignerViaExplorer(driver, workflowJsonPath, label, true);
+              }
             }
 
             ensureRuntimeDependencyExecutablePermissions();
@@ -2122,6 +2198,8 @@ export async function openDesignerForEntry(
   }
 
   try {
+    // switchToDesignerWebview now throws on timeout (Phase 2 F1). The try/catch
+    // below converts that throw into a structured { success: false } return.
     const webview = await switchToDesignerWebview(driver);
     console.log(`${tag} Switched into designer webview`);
     return { success: true, webview };
