@@ -1808,13 +1808,18 @@ export async function canvasHasNode(driver: WebDriver, nodeText: string): Promis
  * Strategy: use openResources() to reveal + select the workflow.json in the
  * Explorer tree, then right-click the selected row and click "Open Designer".
  */
+// Phase 4.1: module-scoped flag for asymmetric retry budget (cold-start
+// first open needs ~32s; subsequent opens use Phase 4's ~7.75s budget).
+let __firstOpenDone = false;
+
 export async function openDesignerViaExplorer(
   driver: WebDriver,
   workflowJsonPath: string,
   label: string,
   retried = false
 ): Promise<boolean> {
-  console.log(`[openDesignerViaExplorer] Opening designer for "${label}"${retried ? ' (retry pass)' : ''}...`);
+  const isFirstOpen = !__firstOpenDone;
+  console.log(`[openDesignerViaExplorer] Opening designer for "${label}"${retried ? ' (retry pass)' : ''} (isFirstOpen=${isFirstOpen})`);
 
   // Switch to Explorer view
   try {
@@ -1943,13 +1948,16 @@ export async function openDesignerViaExplorer(
     }
   }
 
-  // Strategy R3 (Phase 4 revert): 5 attempts with logarithmic backoff
-  // (250ms, 500ms, 1s, 2s, 4s) instead of a fixed 5x3s dance. Phase 3 had
-  // doubled this to 10 attempts which amplified right-click flakes past the
-  // per-test 10-min ceiling; reverted to 5 so failures stay within budget
-  // and the outer openDesignerForEntry retry loop can recover.
-  const backoffs = [250, 500, 1000, 2000, 4000];
-  for (let attempt = 0; attempt < 5; attempt++) {
+  // Phase 4.1: asymmetric retry budget. Cold-start FIRST workflow open
+  // races extension activation and needs more headroom (~32s with longer
+  // backoffs) — Phase 4's flat 5 x [250,500,1000,2000,4000] = ~7.75s
+  // budget wasn't enough for p42-standard / p42-rulesengine test1 (cold
+  // start, reveal=false). Subsequent opens use Phase 4's logarithmic
+  // budget which keeps the p43-customcode flake fix.
+  const backoffs = isFirstOpen ? [250, 500, 1000, 2000, 4000, 6000, 8000, 10_000] : [250, 500, 1000, 2000, 4000];
+  const maxAttempts = backoffs.length;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/${maxAttempts} for "${label}"`);
     try {
       // Wait for the menubar overlay to be inactive before clicking. The
       // menubar-menu-title element can intercept clicks on context menu rows
@@ -2023,7 +2031,7 @@ export async function openDesignerViaExplorer(
       }
 
       if (!targetRow) {
-        console.log(`[openDesignerViaExplorer] workflow.json not found in tree (attempt ${attempt + 1}/5)`);
+        console.log(`[openDesignerViaExplorer] workflow.json not found in tree (attempt ${attempt + 1}/${maxAttempts})`);
         if (process.env.LA_E2E_DEBUG_TREE === '1') {
           const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
           for (let i = 0; i < Math.min(20, allRows.length); i++) {
@@ -2085,6 +2093,7 @@ export async function openDesignerViaExplorer(
                   /* ignore */
                 }
                 console.log(`[openDesignerViaExplorer] Designer canvas ready for "${label}"`);
+                __firstOpenDone = true;
                 return true;
               } catch (canvasErr: any) {
                 try {
@@ -2152,9 +2161,9 @@ export async function openDesignerViaExplorer(
 
       // Dismiss context menu if "Open Designer" not found
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[openDesignerViaExplorer] "Open Designer" not in context menu (attempt ${attempt + 1}/5)`);
+      console.log(`[openDesignerViaExplorer] "Open Designer" not in context menu (attempt ${attempt + 1}/${maxAttempts})`);
     } catch (e: any) {
-      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/${maxAttempts} failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {

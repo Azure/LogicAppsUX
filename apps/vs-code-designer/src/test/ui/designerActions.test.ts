@@ -1862,8 +1862,13 @@ async function canvasHasNode(driver: WebDriver, nodeText: string): Promise<boole
 /**
  * Open the designer for a workflow.json via right-click in the Explorer tree.
  */
+// Phase 4.1: module-scoped flag for asymmetric retry budget (cold-start
+// first open needs ~32s; subsequent opens use Phase 4's ~7.75s budget).
+let __firstOpenDone = false;
+
 async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: string, label: string, retried = false): Promise<boolean> {
-  console.log(`[openDesignerViaExplorer] Opening designer for "${label}"${retried ? ' (retry pass)' : ''}...`);
+  const isFirstOpen = !__firstOpenDone;
+  console.log(`[openDesignerViaExplorer] Opening designer for "${label}"${retried ? ' (retry pass)' : ''} (isFirstOpen=${isFirstOpen})`);
   try {
     await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
     await sleep(1500);
@@ -1971,12 +1976,16 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
     /* ignore */
   }
 
-  // Strategy R3 (Phase 4 revert): logarithmic backoff (250ms, 500ms, 1s, 2s,
-  // 4s) over 5 attempts instead of the old 5x3s fixed dance. Phase 3 had
-  // doubled this to 10 attempts which amplified right-click flakes past the
-  // per-test 10-min ceiling; reverted to 5 so failures stay within budget.
-  const backoffs = [250, 500, 1000, 2000, 4000];
-  for (let attempt = 0; attempt < 5; attempt++) {
+  // Phase 4.1: asymmetric retry budget. Cold-start FIRST workflow open
+  // races extension activation and needs more headroom (~32s with longer
+  // backoffs) — Phase 4's flat 5 x [250,500,1000,2000,4000] = ~7.75s
+  // budget wasn't enough for p42-standard / p42-rulesengine test1 (cold
+  // start, reveal=false). Subsequent opens use Phase 4's logarithmic
+  // budget which keeps the p43-customcode flake fix.
+  const backoffs = isFirstOpen ? [250, 500, 1000, 2000, 4000, 6000, 8000, 10_000] : [250, 500, 1000, 2000, 4000];
+  const maxAttempts = backoffs.length;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/${maxAttempts} for "${label}"`);
     try {
       const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
       let targetRow = null;
@@ -1998,7 +2007,7 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
         }
       }
       if (!targetRow) {
-        console.log(`[openDesignerViaExplorer] workflow.json not found (attempt ${attempt + 1}/5)`);
+        console.log(`[openDesignerViaExplorer] workflow.json not found (attempt ${attempt + 1}/${maxAttempts})`);
         // R1 diagnostic: dump current tree contents under explicit opt-in.
         if (process.env.LA_E2E_DEBUG_TREE === '1') {
           const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
@@ -2050,6 +2059,7 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
                     /* ignore */
                   }
                   console.log(`[openDesignerViaExplorer] Designer canvas ready for "${label}"`);
+                  __firstOpenDone = true;
                   return true;
                 } catch (canvasErr: any) {
                   try {
@@ -2109,9 +2119,9 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
         }
       }
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[openDesignerViaExplorer] "Open Designer" not in menu (attempt ${attempt + 1}/5)`);
+      console.log(`[openDesignerViaExplorer] "Open Designer" not in menu (attempt ${attempt + 1}/${maxAttempts})`);
     } catch (e: any) {
-      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/5 failed: ${e.message}`);
+      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/${maxAttempts} failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {
