@@ -140,6 +140,7 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 | 4.3 | inlineJavascript.test.ts | Execute JavaScript Code action (ADO #10109800) |
 | 4.4 | statelessVariables.test.ts | Initialize Variable action (ADO #10109878) |
 | 4.5 | designerViewExtended.test.ts | Parallel branches + run-after (ADO #10109401) |
+| 4.6 | keyboardNavigation.test.ts | Ctrl+Up/Down + Ctrl+Alt+P / Ctrl+Shift+P hotkey contract |
 | 4.7 | dataMapper.test.ts, demo, smoke, standalone | Data Mapper + generic tests |
 
 ### Shared Helper Modules
