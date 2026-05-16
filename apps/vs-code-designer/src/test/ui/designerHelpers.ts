@@ -1824,6 +1824,48 @@ export async function openDesignerViaExplorer(
     /* ignore */
   }
 
+  // Phase 3 R3: Force Explorer tree refresh before relying on the tree state.
+  // Phase 2 evidence (p42-*, p48c) showed the workflow.json row not found for
+  // all 10 attempts when this helper was called for a second workflow in the
+  // same workspace — the tree was stale from the first designer-open.
+  // F5 fix: poll for the workflow.json row (no blind sleep). Also expand the
+  // parent folder to handle H-p42-A (VS Code auto-collapses sibling folders
+  // when a new file is revealed elsewhere).
+  try {
+    await new Workbench().executeCommand('workbench.files.action.refreshFilesExplorer');
+  } catch {
+    /* ignore */
+  }
+  try {
+    const parentFolder = path.basename(path.dirname(workflowJsonPath));
+    await driver
+      .wait(async () => {
+        const folders = await driver.findElements(By.css(`.explorer-folders-view .monaco-list-row[aria-label*="${parentFolder}"]`));
+        if (folders.length === 0) {
+          return false;
+        }
+        const expanded = await folders[0].getAttribute('aria-expanded').catch(() => null);
+        if (expanded === 'false') {
+          try {
+            await folders[0].click();
+          } catch {
+            /* row may go stale during expand */
+          }
+          await sleep(500);
+        }
+        return true;
+      }, 5_000)
+      .catch(() => undefined);
+  } catch {
+    /* ignore */
+  }
+  await driver
+    .wait(async () => {
+      const rows = await driver.findElements(By.css('.explorer-folders-view .monaco-list-row[aria-label*="workflow.json"]'));
+      return rows.length > 0;
+    }, 5_000)
+    .catch(() => undefined);
+
   // Strategy B: VSBrowser.openResources reveals AND selects the row in the
   // Explorer tree. CAUTION: `code -r` IPC silently NO-OPS on Linux CI — a
   // silent failure throws no exception, so we verify a POSITIVE

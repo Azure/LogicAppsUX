@@ -68,13 +68,28 @@ describe('Keyboard Navigation Tests', function () {
   });
 
   beforeEach(async function () {
-    if (__warmedThisSession) {
-      return;
+    if (!__warmedThisSession) {
+      this.timeout(60_000);
+      const result = await sessionWarmup(driver, workbench, { workspaceRoot: entry?.wsDir });
+      console.log(`[warmup] ${JSON.stringify(result)}`);
+      __warmedThisSession = true;
     }
-    this.timeout(60_000);
-    const result = await sessionWarmup(driver, workbench, { workspaceRoot: entry?.wsDir });
-    console.log(`[warmup] ${JSON.stringify(result)}`);
-    __warmedThisSession = true;
+    // Phase 3 H-p46-A diag: panel/tree state at test start. If iframe count is
+    // 0 or designer tab count is 0 BEFORE the test body runs, the R1 iframe
+    // re-entry guard inside pressGoToOperationHotkey can't help — the session
+    // arrived without a designer webview, which is the real failure surface.
+    try {
+      await driver.switchTo().defaultContent();
+    } catch {
+      /* ignore */
+    }
+    try {
+      const iframes = await driver.findElements(By.css('iframe.webview'));
+      const tabs = await driver.findElements(By.css('.tabs-container .tab'));
+      console.log(`[keyboardNav-precondition] iframe count: ${iframes.length}, tab count: ${tabs.length}`);
+    } catch (e: any) {
+      console.log(`[keyboardNav-precondition] probe failed: ${e?.message?.split('\n')[0] ?? 'unknown'}`);
+    }
   });
 
   afterEach(async () => {
@@ -114,7 +129,7 @@ describe('Keyboard Navigation Tests', function () {
     activeWebview = result.webview;
 
     await anchorFocusInsideCanvas(driver);
-    await pressGoToOperationHotkey(driver);
+    await pressGoToOperationHotkey(driver, activeWebview);
 
     const dialog = await waitForGoToOpDialogWithDiagnostic(driver);
     assert.ok(await dialog.isDisplayed(), 'Go to operation panel should be visible');
@@ -145,7 +160,7 @@ describe('Keyboard Navigation Tests', function () {
     activeWebview = result.webview;
 
     await anchorFocusInsideCanvas(driver);
-    await pressGoToOperationHotkey(driver);
+    await pressGoToOperationHotkey(driver, activeWebview);
     await waitForGoToOpDialogWithDiagnostic(driver);
 
     await driver.actions().sendKeys(Key.ESCAPE).perform();
@@ -218,7 +233,50 @@ describe('Keyboard Navigation Tests', function () {
  * Tracked in plan.md and #9183. Phase 2's goal is fixing the 5 flaky
  * shards, not refactoring to perfect.
  */
-async function pressGoToOperationHotkey(driver: WebDriver): Promise<void> {
+async function pressGoToOperationHotkey(
+  driver: WebDriver,
+  webview: Awaited<ReturnType<typeof openDesignerForEntry>>['webview']
+): Promise<void> {
+  // Phase 3 R1: Re-enter the webview iframe before sending the chord. Phase 2
+  // diagnostics (waitForGoToOpDialogWithDiagnostic) showed iframe count=0 and
+  // document.activeElement=BODY at chord time on the failing shard — Selenium
+  // had lost the frame context after the designer-open + anchorFocus dance.
+  //
+  // F2 reconciliation: GUARD against actual VS Code panel disposal. If the
+  // webview iframe is truly gone (not just dropped from Selenium's view),
+  // fail fast with a clear diagnostic instead of hanging on a canvas-ready
+  // probe. We use webview.switchToFrame() (ExTester's native re-entry on the
+  // SAME WebView page object) so we never need to guess which iframe is
+  // "active" — this is simpler than the multipleDesigners.test.ts
+  // switchToActiveDesignerFrame() helper and sidesteps F2's hang-risk.
+  try {
+    try {
+      await webview.switchBack();
+    } catch {
+      /* ignore — best-effort */
+    }
+    const iframes = await driver.findElements(By.css('iframe.webview'));
+    if (iframes.length === 0) {
+      console.log('[keyboardNav-diag] webview panel disposed before chord — cannot re-enter (R1 guard)');
+      throw new Error('Webview panel disposed before keyboard chord');
+    }
+    await webview.switchToFrame();
+    // Phase 3 r1 BLOCKER #2: webview.switchToFrame() lands DOM focus on the
+    // iframe <body>, not on `.react-flow__pane`. The Designer's `useHotkeys`
+    // handler is registered inside the canvas subtree, so the Ctrl+Alt+P
+    // chord fired from <body> never reaches it. Re-click an empty area of
+    // the pane to re-anchor focus inside the canvas before sending the chord.
+    try {
+      const pane = await driver.findElement(By.css('.react-flow__pane'));
+      await driver.actions().move({ origin: pane, x: 50, y: 50 }).click().perform();
+      await sleep(200);
+    } catch (anchorErr: any) {
+      console.log(`[pressGoToOperationHotkey] re-anchor failed: ${anchorErr?.message ?? 'unknown'}`);
+    }
+  } catch (e: any) {
+    console.log(`[pressGoToOperationHotkey] iframe re-entry failed: ${e?.message?.split('\n')[0] ?? 'unknown'}`);
+    throw e;
+  }
   try {
     await driver.actions().sendKeys(Key.ESCAPE).perform();
   } catch {

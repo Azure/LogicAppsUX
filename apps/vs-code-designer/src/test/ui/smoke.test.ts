@@ -1,7 +1,7 @@
 /// <reference types="mocha" />
 
 import { expect } from 'chai';
-import { VSBrowser, Workbench, ActivityBar, EditorView } from 'vscode-extension-tester';
+import { VSBrowser, Workbench, ActivityBar, EditorView, By } from 'vscode-extension-tester';
 import { sessionWarmup } from './sessionWarmup';
 import { waitForQuickInputAndType, waitForQuickInputReady } from './helpers';
 
@@ -94,6 +94,17 @@ describe('Logic Apps Extension - Basic Smoke Tests', function () {
         // itself is the original cold-session failure surface — keeping it
         // inside the retry loop ensures we recover from those failures too.
         lastCommandPrompt = await workbench.openCommandPrompt();
+        // Phase 3 H-p47-A diagnostic: count `.quick-input-widget` elements in
+        // ANY visual state right after openCommandPrompt(). This detects the
+        // "shortcut never reached VS Code" hypothesis — if the count is 0,
+        // the keyboard chord didn't open a widget at all (vs a widget that's
+        // present in the DOM but hidden by .show class transitions).
+        try {
+          const widgetCount = await driver.findElements(By.css('.quick-input-widget')).then((r) => r.length);
+          console.log(`[smoke-help] After openCommandPrompt: ${widgetCount} quick-input-widget elements in DOM`);
+        } catch (probeErr: any) {
+          console.log(`[smoke-help] widget-count probe failed: ${probeErr?.message?.split('\n')[0] ?? 'unknown'}`);
+        }
         // Should find Help-related commands (command palette mode, requires
         // '>' prefix — waitForQuickInputAndType calls clear() which wipes the
         // prefix and drops the widget into file Quick-Open mode).

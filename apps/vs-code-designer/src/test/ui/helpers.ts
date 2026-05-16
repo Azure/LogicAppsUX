@@ -53,16 +53,61 @@ export async function waitForQuickInputAndType(driver: WebDriver, text: string, 
   // (run 25949973119, smoke + multipleDesigners) showed
   // `Waiting until element is visible / 5140ms` timeouts where the widget DOM
   // exists but never paints visible. 3x headroom per senior-swe-planner I3.
+  //
+  // Phase 3 R2: Drop the `.quick-input-widget:not(.hidden) .quick-input-box
+  // input` selector — the `.show` / `.hidden` CSS class transitions can take
+  // >5s on slow CI runners (the widget paints before the class is removed).
+  // F4 fix: use `offsetParent !== null` as the canonical "actually rendered"
+  // check (hidden inputs are still .isEnabled() === true, so isEnabled was
+  // a false-positive gate). Locate the input by structural selector only,
+  // then validate visibility via computed style + offsetParent.
+  // Phase 3 r1 BLOCKER #1: VS Code maintains a `.quick-input-widget` pool —
+  // `document.querySelector('.quick-input-widget')` returns the first DOM
+  // match, which may be a hidden cached widget. The old `offsetParent !== null`
+  // check then stayed false for the whole timeout even when a visible palette
+  // was rendered alongside. Iterate every widget, find the visible one, and
+  // bind the input lookup to that widget so we don't grab a hidden input.
   let lastErr: Error | undefined;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const input = await driver.wait(
-        until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
+      await driver.wait(
+        async () =>
+          driver
+            .executeScript<boolean>(
+              'const widgets = Array.from(document.querySelectorAll(".quick-input-widget"));' +
+                'for (const w of widgets) {' +
+                '  const s = getComputedStyle(w);' +
+                '  if (s.display !== "none" && s.visibility !== "hidden" && w.offsetParent !== null) {' +
+                '    const inp = w.querySelector(".quick-input-box input");' +
+                '    if (inp) return true;' +
+                '  }' +
+                '}' +
+                'return false;'
+            )
+            .catch(() => false),
         timeoutMs,
-        'Expected visible quick-input widget to appear'
+        'Expected a visible quick-input widget containing an input to be rendered'
       );
-      await driver.wait(until.elementIsVisible(input), timeoutMs);
-      await driver.wait(async () => await input.isEnabled().catch(() => false), timeoutMs);
+      const inputs = await driver.findElements(By.css('.quick-input-widget .quick-input-box input'));
+      let input: WebElement | null = null;
+      for (const candidate of inputs) {
+        const visible = await driver
+          .executeScript<boolean>(
+            'const w = arguments[0].closest(".quick-input-widget");' +
+              'if (!w) return false;' +
+              'const s = getComputedStyle(w);' +
+              'return s.display !== "none" && s.visibility !== "hidden" && w.offsetParent !== null;',
+            candidate
+          )
+          .catch(() => false);
+        if (visible) {
+          input = candidate;
+          break;
+        }
+      }
+      if (!input) {
+        throw new Error('No visible quick-input widget found among candidates');
+      }
       await input.clear();
       await input.sendKeys(text);
       await sleep(300);
@@ -94,6 +139,14 @@ export async function waitForQuickInputAndType(driver: WebDriver, text: string, 
  * auxiliary bar (could TOGGLE it open if it wasn't already open).
  */
 export async function waitForQuickInputReady(workbench: Workbench, driver: WebDriver, timeoutMs = 5000): Promise<void> {
+  // Phase 3 F3 fix: Switch to defaultContent BEFORE clearing notifications +
+  // sending Escape. If a prior test left us inside a webview iframe, the
+  // Escape would go to the React app instead of the VS Code workbench.
+  try {
+    await driver.switchTo().defaultContent();
+  } catch {
+    /* ignore */
+  }
   // Clear notifications (extension activation toasts, Azurite startup, etc.)
   try {
     await workbench.executeCommand('workbench.action.notifications.clearAll');
@@ -101,7 +154,16 @@ export async function waitForQuickInputReady(workbench: Workbench, driver: WebDr
     /* ignore */
   }
   await sleep(200);
-  // Press Escape to clear any phantom modal/Quick Input
+  // Phase 3 (planner improvement): Double Escape. The first dismisses an
+  // inline decoration (selection / IME / link hover popup) and the second
+  // closes the quick-input pool itself. Sending only one Escape was observed
+  // to leave the widget visible on cold sessions.
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  } catch {
+    /* ignore */
+  }
+  await sleep(100);
   try {
     await driver.actions().sendKeys(Key.ESCAPE).perform();
   } catch {
