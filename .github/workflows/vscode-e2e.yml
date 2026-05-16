@@ -379,15 +379,17 @@ jobs:
             la-runtime-deps-${{ runner.os }}-
 
       - name: Run scenario (${{ matrix.scenario }})
-        # p48d-conversionyes is known xvfb-flaky in CI; the legacy in-process
-        # runScenarioPhases() loop excluded it from the aggregate via
-        # allowFailure: true. In the per-scenario matrix each scenario is its
-        # own job, so continue-on-error replays that semantic at the job level.
+        # Phase 4.1 (commits 2672168f7 + d866b3368) targeted the 5 historically-
+        # flaky shards (p42-standard, p42-customcode, p42-rulesengine,
+        # p46-keyboardnav, p47-suite) at the root cause, and added a focus-reset
+        # for the pre-existing p48d-conversionyes xvfb race. Run 25970697053
+        # had all 17 shards green at the step level with masks active.
         #
-        # Known-flaky shards (tracked in #9182 — Per-scenario matrix exposes 5 pre-existing test-helper races).
-        # These run but don't block the workflow exit code; vscode-e2e-summary still requires the non-flaky shards.
-        # When the underlying flakes are fixed in #9182, remove the corresponding entries from this list.
-        continue-on-error: ${{ contains(fromJSON('["p48d-conversionyes","p42-standard","p42-customcode","p42-rulesengine","p46-keyboardnav","p47-suite"]'), matrix.scenario) }}
+        # Dropping continue-on-error so any future regression in those shards
+        # is surfaced as a job-level failure (no longer masked). Flake closure
+        # gating is now structural: a red shard fails the workflow. If the
+        # fixes don't hold under runner-image churn, the failure mode and CI
+        # diff will be visible immediately instead of hidden behind allowFailure.
         run: |
           # Belt-and-suspenders PATH export (see grouped-shard rationale in git history).
           export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
