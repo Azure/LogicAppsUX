@@ -108,8 +108,26 @@ export async function waitForQuickInputAndType(driver: WebDriver, text: string, 
       if (!input) {
         throw new Error('No visible quick-input widget found among candidates');
       }
-      await input.clear();
-      await input.sendKeys(text);
+      // Phase 4: Skip Selenium-level interactability check. R2's widget
+      // iteration above correctly locates the visible widget + input, but
+      // `input.clear()` then throws `element not interactable` because
+      // Selenium's interactability check is stricter than
+      // `display !== "none" && visibility !== "hidden" && offsetParent !== null`
+      // — it also requires a non-zero bounding rect with the center not
+      // occluded, and VS Code's input can have a 0x0 layout briefly while
+      // the widget animates in. Use JS to focus + clear + dispatch input
+      // event, then Actions.sendKeys to type into whatever element has
+      // focus (the input we just focused).
+      // r1 (critic): target the resolved input WebElement directly via
+      // arguments[0] instead of re-querying widgets. Eliminates risk of
+      // targeting a different widget than R2's iteration located if two
+      // are momentarily visible.
+      await driver.executeScript(
+        'const i = arguments[0];' + 'i.focus();' + 'i.value = "";' + 'i.dispatchEvent(new Event("input", { bubbles: true }));',
+        input
+      );
+      await sleep(100);
+      await driver.actions().sendKeys(text).perform();
       await sleep(300);
       return input;
     } catch (e: any) {

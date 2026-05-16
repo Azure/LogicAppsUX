@@ -237,18 +237,15 @@ async function pressGoToOperationHotkey(
   driver: WebDriver,
   webview: Awaited<ReturnType<typeof openDesignerForEntry>>['webview']
 ): Promise<void> {
-  // Phase 3 R1: Re-enter the webview iframe before sending the chord. Phase 2
-  // diagnostics (waitForGoToOpDialogWithDiagnostic) showed iframe count=0 and
-  // document.activeElement=BODY at chord time on the failing shard — Selenium
-  // had lost the frame context after the designer-open + anchorFocus dance.
-  //
-  // F2 reconciliation: GUARD against actual VS Code panel disposal. If the
-  // webview iframe is truly gone (not just dropped from Selenium's view),
-  // fail fast with a clear diagnostic instead of hanging on a canvas-ready
-  // probe. We use webview.switchToFrame() (ExTester's native re-entry on the
-  // SAME WebView page object) so we never need to guess which iframe is
-  // "active" — this is simpler than the multipleDesigners.test.ts
-  // switchToActiveDesignerFrame() helper and sidesteps F2's hang-risk.
+  // Phase 4: Re-enter webview iframe and dispatch synthetic KeyboardEvent.
+  // Phase 3 evidence showed activeElement was iframe <body> not
+  // `.react-flow__pane` when the chord was sent via driver.actions(), so
+  // `useHotkeys` never fired. Re-clicking the pane (Phase 3 r1 re-anchor)
+  // did not restore focus. Bypass host-level chord routing entirely by
+  // dispatching the keydown directly to the pane element from inside the
+  // iframe. The iframe re-entry stays as defense-in-depth (Selenium can
+  // lose frame context after the designer-open dance), and the Actions
+  // chord remains as a fallback if the pane isn't present.
   try {
     try {
       await webview.switchBack();
@@ -261,29 +258,57 @@ async function pressGoToOperationHotkey(
       throw new Error('Webview panel disposed before keyboard chord');
     }
     await webview.switchToFrame();
-    // Phase 3 r1 BLOCKER #2: webview.switchToFrame() lands DOM focus on the
-    // iframe <body>, not on `.react-flow__pane`. The Designer's `useHotkeys`
-    // handler is registered inside the canvas subtree, so the Ctrl+Alt+P
-    // chord fired from <body> never reaches it. Re-click an empty area of
-    // the pane to re-anchor focus inside the canvas before sending the chord.
-    try {
-      const pane = await driver.findElement(By.css('.react-flow__pane'));
-      await driver.actions().move({ origin: pane, x: 50, y: 50 }).click().perform();
-      await sleep(200);
-    } catch (anchorErr: any) {
-      console.log(`[pressGoToOperationHotkey] re-anchor failed: ${anchorErr?.message ?? 'unknown'}`);
+    // Dispatch synthetic KeyboardEvent — bypasses focus/host routing.
+    // react-hotkeys-hook listens on document by default; bubbles:true ensures
+    // the event propagates from the pane up to document.
+    // r1 sleeper-risk defense: dispatch keyup after keydown to prevent
+    // react-hotkeys-hook v4.3.8 stale `currentlyPressedKeys` state leaking
+    // across tests.
+    const dispatched = await driver.executeScript<boolean>(
+      'const pane = document.querySelector(".react-flow__pane");' +
+        'if (!pane) return false;' +
+        'pane.dispatchEvent(new KeyboardEvent("keydown", { key: "p", code: "KeyP", ctrlKey: true, altKey: true, bubbles: true, cancelable: true }));' +
+        'pane.dispatchEvent(new KeyboardEvent("keyup", { key: "p", code: "KeyP", ctrlKey: true, altKey: true, bubbles: true, cancelable: true }));' +
+        'return true;'
+    );
+    if (dispatched) {
+      console.log('[pressGoToOperationHotkey] Synthetic KeyboardEvent dispatched on react-flow__pane');
+      // r1 (critic): post-dispatch readback — poll for dialog within 1.5s.
+      // If the synthetic path succeeded, return early; otherwise fall through
+      // to the Actions chord as belt-and-suspenders (idempotent — the test
+      // already handles a stray dialog via Escape).
+      let synthSucceeded = false;
+      try {
+        await driver.wait(
+          async () => (await driver.findElements(By.css('[role="dialog"][aria-label="Go to operation"]'))).length > 0,
+          1500
+        );
+        synthSucceeded = true;
+      } catch {
+        /* dialog didn't appear yet — fall through to Actions chord */
+      }
+      if (synthSucceeded) {
+        return;
+      }
+      console.log(
+        '[pressGoToOperationHotkey] Synthetic event dispatched but dialog not detected — running Actions chord as belt-and-suspenders'
+      );
+    } else {
+      console.log('[pressGoToOperationHotkey] .react-flow__pane not found — falling back to Actions chord');
     }
+    // r1 (critic): Always run Actions chord as fallback OR belt-and-suspenders.
+    // Restores pre-chord ESCAPE (lost in Phase 4 r0).
+    try {
+      await driver.actions().sendKeys(Key.ESCAPE).perform();
+    } catch {
+      /* ignore */
+    }
+    await sleep(200);
+    await driver.actions().keyDown(Key.CONTROL).keyDown(Key.ALT).sendKeys('p').keyUp(Key.ALT).keyUp(Key.CONTROL).perform();
   } catch (e: any) {
-    console.log(`[pressGoToOperationHotkey] iframe re-entry failed: ${e?.message?.split('\n')[0] ?? 'unknown'}`);
+    console.log(`[pressGoToOperationHotkey] iframe re-entry or dispatch failed: ${e?.message?.split('\n')[0] ?? 'unknown'}`);
     throw e;
   }
-  try {
-    await driver.actions().sendKeys(Key.ESCAPE).perform();
-  } catch {
-    /* ignore */
-  }
-  await sleep(200);
-  await driver.actions().keyDown(Key.CONTROL).keyDown(Key.ALT).sendKeys('p').keyUp(Key.ALT).keyUp(Key.CONTROL).perform();
   // N3 (review board r2): dropped post-chord sleep(500). The caller's
   // driver.wait(until.elementLocated(GO_TO_OP_DIALOG), 5000) polls every
   // ~250ms, so a fixed sleep adds latency with no correctness benefit.

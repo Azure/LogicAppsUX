@@ -1971,10 +1971,12 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
     /* ignore */
   }
 
-  // Strategy R3: logarithmic backoff (250ms, 500ms, 1s, 2s, 4s, then 4s cap)
-  // over 10 attempts instead of the old 5x3s fixed dance.
-  const backoffs = [250, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000, 4000];
-  for (let attempt = 0; attempt < 10; attempt++) {
+  // Strategy R3 (Phase 4 revert): logarithmic backoff (250ms, 500ms, 1s, 2s,
+  // 4s) over 5 attempts instead of the old 5x3s fixed dance. Phase 3 had
+  // doubled this to 10 attempts which amplified right-click flakes past the
+  // per-test 10-min ceiling; reverted to 5 so failures stay within budget.
+  const backoffs = [250, 500, 1000, 2000, 4000];
+  for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
       let targetRow = null;
@@ -1996,7 +1998,7 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
         }
       }
       if (!targetRow) {
-        console.log(`[openDesignerViaExplorer] workflow.json not found (attempt ${attempt + 1}/10)`);
+        console.log(`[openDesignerViaExplorer] workflow.json not found (attempt ${attempt + 1}/5)`);
         // R1 diagnostic: dump current tree contents under explicit opt-in.
         if (process.env.LA_E2E_DEBUG_TREE === '1') {
           const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
@@ -2107,9 +2109,9 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
         }
       }
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[openDesignerViaExplorer] "Open Designer" not in menu (attempt ${attempt + 1}/10)`);
+      console.log(`[openDesignerViaExplorer] "Open Designer" not in menu (attempt ${attempt + 1}/5)`);
     } catch (e: any) {
-      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/10 failed: ${e.message}`);
+      console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/5 failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {

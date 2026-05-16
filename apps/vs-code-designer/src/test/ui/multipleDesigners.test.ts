@@ -295,10 +295,12 @@ async function openDesignerViaExplorerRightClick(
     }
   }
 
-  // Strategy R3: bump 3 -> 10 attempts with logarithmic backoff.
-  const backoffs = [250, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000, 4000];
+  // Strategy R3 (Phase 4 revert): 5 attempts with logarithmic backoff
+  // (was bumped from 3 -> 10 in Phase 3 but amplified right-click flakes
+  // past the per-test 10-min ceiling; reverted to 5).
+  const backoffs = [250, 500, 1000, 2000, 4000];
   // Now right-click on the active/focused workflow.json in the Explorer
-  for (let attempt = 0; attempt < 10; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     try {
       // Wait for the menubar overlay to be inactive before clicking. The
       // menubar-menu-title element can intercept clicks on context menu rows
@@ -377,7 +379,7 @@ async function openDesignerViaExplorerRightClick(
       }
 
       if (!targetRow) {
-        console.log(`[multiDesigner] workflow.json not found in tree on attempt ${attempt + 1}/10`);
+        console.log(`[multiDesigner] workflow.json not found in tree on attempt ${attempt + 1}/5`);
         if (process.env.LA_E2E_DEBUG_TREE === '1') {
           const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
           for (let i = 0; i < Math.min(20, allRows.length); i++) {
@@ -512,9 +514,9 @@ async function openDesignerViaExplorerRightClick(
 
       // Dismiss context menu
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[multiDesigner] "Open designer" not found in context menu on attempt ${attempt + 1}/10`);
+      console.log(`[multiDesigner] "Open designer" not found in context menu on attempt ${attempt + 1}/5`);
     } catch (e: any) {
-      console.log(`[multiDesigner] Attempt ${attempt + 1}/10 failed: ${e.message}`);
+      console.log(`[multiDesigner] Attempt ${attempt + 1}/5 failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {
