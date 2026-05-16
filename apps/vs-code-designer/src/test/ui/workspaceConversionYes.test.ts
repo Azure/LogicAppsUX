@@ -218,6 +218,21 @@ describe('Workspace Conversion — Click Yes', function () {
 
     await openFolderInSession(driver, entry.wsDir);
 
+    // Phase 4.1 p48d fix: close any auto-opened editors (e.g. WBD-hybrid
+    // announcement.md preview) that steal focus into a webview iframe and
+    // delay the ModalDialog page-object from becoming queryable. Cheap no-op
+    // for p48a/p48e which don't auto-open previews.
+    await new EditorView().closeAllEditors().catch(() => {
+      // ignore — best-effort focus reset
+    });
+    await driver
+      .switchTo()
+      .defaultContent()
+      .catch(() => {
+        // ignore — best-effort focus reset
+      });
+    await sleep(1000);
+
     // Wait for the modal prompt to appear (R1: modal-only detection; R7: 45s).
     const promptMessage = await waitForWorkspacePrompt(driver, PROMPT_DEADLINE_MS);
     await captureScreenshot(driver, 'conversion-yes-prompt-found', EXPLICIT_SCREENSHOT_DIR);
