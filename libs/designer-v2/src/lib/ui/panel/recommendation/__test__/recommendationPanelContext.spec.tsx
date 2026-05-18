@@ -24,6 +24,7 @@ vi.mock('../../../../core/state/panel/panelSelectors', () => ({
   useDiscoveryPanelSelectedOperationId: vi.fn(() => ''),
   useDiscoveryPanelSelectedBrowseCategory: vi.fn(() => null),
   useDiscoveryPanelSelectionState: vi.fn(() => SELECTION_STATES.SEARCH),
+  useDiscoveryPanelSearchTerm: vi.fn(() => ''),
   useMcpToolWizard: vi.fn(() => null),
   useIsAddingAgentTool: vi.fn(() => false),
 }));
@@ -37,6 +38,7 @@ vi.mock('../../../../core/state/panel/panelSlice', () => ({
   selectOperationId: vi.fn((id) => ({ type: 'panel/selectOperationId', payload: id })),
   selectBrowseCategory: vi.fn((category) => ({ type: 'panel/selectBrowseCategory', payload: category })),
   setDiscoverySelectionState: vi.fn((state) => ({ type: 'panel/setDiscoverySelectionState', payload: state })),
+  setDiscoverySearchTerm: vi.fn((term) => ({ type: 'panel/setDiscoverySearchTerm', payload: term })),
   openMcpToolWizard: vi.fn((payload) => ({ type: 'panel/openMcpToolWizard', payload })),
 }));
 
@@ -112,6 +114,7 @@ import {
   useDiscoveryPanelSelectedOperationId,
   useDiscoveryPanelSelectedBrowseCategory,
   useDiscoveryPanelSelectionState,
+  useDiscoveryPanelSearchTerm,
   useMcpToolWizard,
 } from '../../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectBrowseCategory } from '../../../../core/state/panel/panelSlice';
@@ -122,6 +125,7 @@ const mockUseDiscoveryPanelSelectedOperationGroupId = vi.mocked(useDiscoveryPane
 const mockUseDiscoveryPanelSelectedOperationId = vi.mocked(useDiscoveryPanelSelectedOperationId);
 const mockUseDiscoveryPanelSelectedBrowseCategory = vi.mocked(useDiscoveryPanelSelectedBrowseCategory);
 const mockUseDiscoveryPanelSelectionState = vi.mocked(useDiscoveryPanelSelectionState);
+const mockUseDiscoveryPanelSearchTerm = vi.mocked(useDiscoveryPanelSearchTerm);
 const mockUseMcpToolWizard = vi.mocked(useMcpToolWizard);
 const mockSelectOperationGroupId = vi.mocked(selectOperationGroupId);
 const mockSelectBrowseCategory = vi.mocked(selectBrowseCategory);
@@ -289,10 +293,9 @@ describe('RecommendationPanelContext', () => {
     });
 
     test('should render SearchView when search term is entered', () => {
-      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('http');
 
-      const searchInput = screen.getByTestId('search-input');
-      fireEvent.change(searchInput, { target: { value: 'http' } });
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
 
       expect(screen.getByTestId('search-view')).toBeDefined();
       expect(screen.getByTestId('search-view').textContent).toContain('Search: http');
