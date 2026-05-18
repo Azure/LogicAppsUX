@@ -596,7 +596,13 @@ async function addWorkflowViaRightClick(driver: WebDriver, appFolderName: string
         const menuLabel = await menuItem.getText().catch(() => '');
         if (menuLabel.toLowerCase().includes('create workflow') || menuLabel.toLowerCase().includes('new workflow')) {
           console.log(`[multiDesigner] Clicking: "${menuLabel}"`);
-          await menuItem.click();
+          await driver.executeScript('arguments[0].scrollIntoView({ block: "center" });', menuItem).catch(() => undefined);
+          try {
+            await driver.actions().move({ origin: menuItem }).click().perform();
+          } catch (clickErr) {
+            console.log(`[multiDesigner] Actions click failed, trying JS click: ${(clickErr as Error).message}`);
+            await driver.executeScript('arguments[0].click();', menuItem);
+          }
           await sleep(2000);
 
           // Enter workflow name in the QuickPick input
@@ -611,7 +617,8 @@ async function addWorkflowViaRightClick(driver: WebDriver, appFolderName: string
             // Select workflow type if prompted
             const typePicks = await driver.findElements(By.css('.quick-input-widget:not(.hidden) .quick-input-list .monaco-list-row'));
             if (typePicks.length > 0) {
-              await typePicks[0].click();
+              await driver.executeScript('arguments[0].scrollIntoView({ block: "center" });', typePicks[0]).catch(() => undefined);
+              await driver.actions().move({ origin: typePicks[0] }).click().perform();
               await sleep(2000);
               console.log('[multiDesigner] Selected workflow type');
             }

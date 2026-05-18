@@ -210,23 +210,26 @@ describe('Workspace Conversion — Click Yes', function () {
     // earlier phase eats our Ctrl+Shift+P keystrokes.
     await safeCancelAnyQuickInput(driver);
 
-    await openFolderInSession(driver, entry.wsDir);
+    let promptMessage = await waitForWorkspacePrompt(driver, 10_000);
+    if (!promptMessage) {
+      await openFolderInSession(driver, entry.wsDir);
 
-    // Close any auto-opened editors that steal focus into a webview iframe and
-    // delay the ModalDialog page object from becoming queryable.
-    await new EditorView().closeAllEditors().catch(() => {
-      // ignore — best-effort focus reset
-    });
-    await driver
-      .switchTo()
-      .defaultContent()
-      .catch(() => {
+      // Close any auto-opened editors that steal focus into a webview iframe and
+      // delay the ModalDialog page object from becoming queryable.
+      await new EditorView().closeAllEditors().catch(() => {
         // ignore — best-effort focus reset
       });
-    await sleep(1000);
+      await driver
+        .switchTo()
+        .defaultContent()
+        .catch(() => {
+          // ignore — best-effort focus reset
+        });
+      await sleep(1000);
 
-    // Wait for the modal prompt to appear.
-    const promptMessage = await waitForWorkspacePrompt(driver, PROMPT_DEADLINE_MS);
+      // Wait for the modal prompt to appear.
+      promptMessage = await waitForWorkspacePrompt(driver, PROMPT_DEADLINE_MS);
+    }
     await captureScreenshot(driver, 'conversion-yes-prompt-found', EXPLICIT_SCREENSHOT_DIR);
 
     assert.ok(promptMessage, 'workspace conversion modal dialog must appear within 90s');

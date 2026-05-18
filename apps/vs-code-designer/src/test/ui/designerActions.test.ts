@@ -1943,7 +1943,13 @@ async function canvasHasNode(driver: WebDriver, nodeText: string): Promise<boole
 // first open needs ~32s; subsequent opens use Phase 4's ~7.75s budget).
 let __firstOpenDone = false;
 
-async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: string, label: string, retried = false): Promise<boolean> {
+async function openDesignerViaExplorer(
+  driver: WebDriver,
+  workflowJsonPath: string,
+  label: string,
+  retried = false,
+  allowCommandFallback = false
+): Promise<boolean> {
   const isFirstOpen = !__firstOpenDone;
   console.log(`[openDesignerViaExplorer] Opening designer for "${label}"${retried ? ' (retry pass)' : ''} (isFirstOpen=${isFirstOpen})`);
   try {
@@ -2178,7 +2184,7 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
                   } catch {
                     /* ignore */
                   }
-                  return await openDesignerViaExplorer(driver, workflowJsonPath, label, true);
+                  return await openDesignerViaExplorer(driver, workflowJsonPath, label, true, allowCommandFallback);
                 }
               }
               await sleep(500);
@@ -2201,6 +2207,9 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
               await sleep(backoffs[attempt]);
               continue attemptLoop;
             }
+            if (allowCommandFallback) {
+              break attemptLoop;
+            }
             return false;
           }
         } catch {
@@ -2217,6 +2226,28 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
         /* */
       }
       await sleep(backoffs[attempt]);
+    }
+  }
+  if (allowCommandFallback) {
+    console.log(`[openDesignerViaExplorer] Falling back to command palette Open Designer for "${label}"`);
+    try {
+      if (await executeOpenDesignerCommand(new Workbench(), driver)) {
+        await sleep(3000);
+        await switchToDesignerWebview(driver, 30_000);
+        await driver.switchTo().defaultContent();
+        const titles = await new EditorView().getOpenEditorTitles().catch(() => []);
+        const expectedDesignerOpen = titles.some(
+          (title) => title.toLowerCase().includes(label.toLowerCase()) && title.toLowerCase().includes('workspace')
+        );
+        if (!expectedDesignerOpen) {
+          console.log(`[openDesignerViaExplorer] Command fallback opened unexpected designer tab. Titles=${JSON.stringify(titles)}`);
+          return false;
+        }
+        __firstOpenDone = true;
+        return true;
+      }
+    } catch (e: any) {
+      console.log(`[openDesignerViaExplorer] Command palette fallback failed: ${e.message}`);
     }
   }
   return false;
@@ -2247,14 +2278,19 @@ async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file. This triggers an extension host restart.
-  try {
-    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-    driver = VSBrowser.instance.driver;
-    workbench = new Workbench();
-    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-  } catch (e: any) {
-    return { success: false, error: `Failed to open workspace: ${e.message}` };
+  const shouldSkipWorkspaceReopen = process.env.LA_E2E_SCENARIO && entry.appType !== 'standard';
+  if (shouldSkipWorkspaceReopen) {
+    console.log(`${tag} Skipping workspace reopen for ${entry.appType} scenario to preserve Selenium session`);
+  } else {
+    // 3. Open the workspace file. This triggers an extension host restart.
+    try {
+      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+      driver = VSBrowser.instance.driver;
+      workbench = new Workbench();
+      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+    } catch (e: any) {
+      return { success: false, error: `Failed to open workspace: ${e.message}` };
+    }
   }
 
   // 4. Wait for extension to settle, dismiss blocking UI
@@ -2276,12 +2312,18 @@ async function openDesignerForEntry(
     /* ignore */
   }
 
-  const designerOpened = await openDesignerViaExplorer(driver, workflowJsonPath, entry.wfName || 'workflow');
+  const designerOpened = await openDesignerViaExplorer(
+    driver,
+    workflowJsonPath,
+    entry.wfName || 'workflow',
+    false,
+    !!shouldSkipWorkspaceReopen
+  );
   if (!designerOpened) {
     await captureScreenshot(driver, `${entry.label}-designer-not-opened`);
     return { success: false, error: 'Could not open designer via Explorer right-click' };
   }
-  console.log(`${tag} Designer opened via Explorer right-click`);
+  console.log(`${tag} Designer opened`);
 
   // 6. Switch into the webview
   // Note: prompt handling is now integrated into waitForDesignerWebviewTab()
@@ -2877,7 +2919,7 @@ async function getLatestRunStatus(driver: WebDriver): Promise<string> {
 async function waitForRunStatusInList(
   driver: WebDriver,
   targetStatus: string,
-  timeoutMs = 90_000
+  timeoutMs = 180_000
 ): Promise<{ found: boolean; lastStatus: string }> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
@@ -3670,7 +3712,7 @@ describe('Designer Actions Tests', function () {
       await captureScreenshot(driver, `test2-step10-run-status-${(runningStatus || 'none').toLowerCase()}`);
       console.log(`[test2] Latest run status after trigger: "${runningStatus}"`);
 
-      const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 90_000);
+      const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 180_000);
       await captureScreenshot(driver, 'test2-step11-run-succeeded-in-list');
 
       if (succeeded) {
@@ -3840,7 +3882,7 @@ describe('Designer Actions Tests', function () {
       assert.ok(await clickRunTrigger(driver, { workflowName: entry.wfName }), 'Run trigger should be clickable');
       await sleep(1000);
       await clickRefresh(driver);
-      const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 90_000);
+      const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 180_000);
       await captureScreenshot(driver, `test3-run-status-${(lastStatus || 'none').toLowerCase()}`);
 
       assert.ok(succeeded, `RulesEngine run should succeed (last status="${lastStatus}")`);

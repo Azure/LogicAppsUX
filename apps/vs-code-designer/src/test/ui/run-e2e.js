@@ -1018,7 +1018,7 @@ async function main() {
     {
       id: 'p48d-conversionyes',
       testFile: phase8dFiles[0],
-      workspaceSpec: 'plain-folder',
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
     {

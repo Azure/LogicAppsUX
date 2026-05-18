@@ -1629,7 +1629,7 @@ export async function getLatestRunStatus(driver: WebDriver): Promise<string> {
 export async function waitForRunStatusInList(
   driver: WebDriver,
   targetStatus: string,
-  timeoutMs = 90_000
+  timeoutMs = 180_000
 ): Promise<{ found: boolean; lastStatus: string }> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;

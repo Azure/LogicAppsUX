@@ -1850,7 +1850,8 @@ export async function openDesignerViaExplorer(
   driver: WebDriver,
   workflowJsonPath: string,
   label: string,
-  retried = false
+  retried = false,
+  allowCommandFallback = false
 ): Promise<boolean> {
   const isFirstOpen = !__firstOpenDone;
   console.log(`[openDesignerViaExplorer] Opening designer for "${label}"${retried ? ' (retry pass)' : ''} (isFirstOpen=${isFirstOpen})`);
@@ -2169,7 +2170,7 @@ export async function openDesignerViaExplorer(
                 } catch {
                   /* ignore */
                 }
-                return await openDesignerViaExplorer(driver, workflowJsonPath, label, true);
+                return await openDesignerViaExplorer(driver, workflowJsonPath, label, true, allowCommandFallback);
               }
             }
 
@@ -2200,6 +2201,28 @@ export async function openDesignerViaExplorer(
       await sleep(backoffs[attempt]);
     }
   }
+  if (allowCommandFallback) {
+    console.log(`[openDesignerViaExplorer] Falling back to command palette Open Designer for "${label}"`);
+    try {
+      if (await executeOpenDesignerCommand(new Workbench(), driver)) {
+        await sleep(3000);
+        await switchToDesignerWebview(driver, 30_000);
+        await driver.switchTo().defaultContent();
+        const titles = await new EditorView().getOpenEditorTitles().catch(() => []);
+        const expectedDesignerOpen = titles.some(
+          (title) => title.toLowerCase().includes(label.toLowerCase()) && title.toLowerCase().includes('workspace')
+        );
+        if (!expectedDesignerOpen) {
+          console.log(`[openDesignerViaExplorer] Command fallback opened unexpected designer tab. Titles=${JSON.stringify(titles)}`);
+          return false;
+        }
+        __firstOpenDone = true;
+        return true;
+      }
+    } catch (e: any) {
+      console.log(`[openDesignerViaExplorer] Command palette fallback failed: ${e.message}`);
+    }
+  }
   return false;
 }
 
@@ -2228,14 +2251,19 @@ export async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file via `code -r`.
-  try {
-    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-    driver = VSBrowser.instance.driver;
-    workbench = new Workbench();
-    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-  } catch (e: any) {
-    return { success: false, error: `Failed to open workspace: ${e.message}` };
+  const shouldSkipWorkspaceReopen = process.env.LA_E2E_SCENARIO && entry.appType !== 'standard';
+  if (shouldSkipWorkspaceReopen) {
+    console.log(`${tag} Skipping workspace reopen for ${entry.appType} scenario to preserve Selenium session`);
+  } else {
+    // 3. Open the workspace file via `code -r`.
+    try {
+      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+      driver = VSBrowser.instance.driver;
+      workbench = new Workbench();
+      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+    } catch (e: any) {
+      return { success: false, error: `Failed to open workspace: ${e.message}` };
+    }
   }
 
   // 4. Wait for extension to settle, dismiss blocking UI
@@ -2264,12 +2292,18 @@ export async function openDesignerForEntry(
     /* ignore */
   }
 
-  const designerOpened = await openDesignerViaExplorer(driver, workflowJsonPath, entry.wfName || 'workflow');
+  const designerOpened = await openDesignerViaExplorer(
+    driver,
+    workflowJsonPath,
+    entry.wfName || 'workflow',
+    false,
+    !!shouldSkipWorkspaceReopen
+  );
   if (!designerOpened) {
     await captureScreenshot(driver, `${entry.label}-designer-not-opened`);
     return { success: false, error: 'Could not open designer via Explorer right-click' };
   }
-  console.log(`${tag} Designer opened via Explorer right-click`);
+  console.log(`${tag} Designer opened`);
 
   // 6. Switch into the webview
   // Note: prompt handling is now integrated into waitForDesignerWebviewTab()
@@ -2769,29 +2803,40 @@ export async function openNodeSettingsPanel(driver: WebDriver, nodeText: string)
  */
 export async function openRunAfterSettings(driver: WebDriver): Promise<boolean> {
   try {
-    // Look for a "Settings" tab or "Run After" section header
-    const selectors = ['[data-automation-id*="run-after"]', '[aria-label*="Run After"]', '[aria-label*="Settings"]'];
-
-    for (const selector of selectors) {
-      const elements = await driver.findElements(By.css(selector));
-      if (elements.length > 0) {
-        await elements[0].click();
-        await sleep(1000);
-        console.log('[openRunAfterSettings] Opened Run After settings');
-        return true;
+    const clickRunAfterHeader = async (): Promise<boolean> => {
+      const headers = await driver.findElements(
+        By.css(
+          '.msla-setting-section-header, [data-automation-id*="runAfter"], [data-automation-id*="run-after"], [aria-label*="Run after"], [aria-label*="Run After"]'
+        )
+      );
+      for (const header of headers) {
+        const text = await header.getText().catch(() => '');
+        const ariaLabel = await header.getAttribute('aria-label').catch(() => '');
+        if (`${text} ${ariaLabel}`.toLowerCase().includes('run after')) {
+          await driver.executeScript('arguments[0].scrollIntoView({ block: "center" });', header).catch(() => undefined);
+          await driver.actions().move({ origin: header }).click().perform();
+          await sleep(1000);
+          console.log('[openRunAfterSettings] Opened Run after section');
+          return true;
+        }
       }
-    }
+      return false;
+    };
 
-    // Try finding by text content
-    const buttons = await driver.findElements(By.xpath('//button[contains(text(), "Settings") or contains(text(), "Run After")]'));
-    if (buttons.length > 0) {
-      await buttons[0].click();
-      await sleep(1000);
-      console.log('[openRunAfterSettings] Opened settings via text match');
+    if (await clickRunAfterHeader()) {
       return true;
     }
 
-    // Try the tab/pivot pattern used in the designer
+    // Try finding by text content
+    const runAfterButtons = await driver.findElements(By.xpath('//button[contains(., "Run after") or contains(., "Run After")]'));
+    if (runAfterButtons.length > 0) {
+      await runAfterButtons[0].click();
+      await sleep(1000);
+      console.log('[openRunAfterSettings] Opened Run after via text match');
+      return true;
+    }
+
+    // Try the tab/pivot pattern used in the designer, then expand the Run after section within Settings.
     const tabs = await driver.findElements(By.css('[role="tab"]'));
     for (const tab of tabs) {
       const text = await tab.getText().catch(() => '');
@@ -2799,7 +2844,9 @@ export async function openRunAfterSettings(driver: WebDriver): Promise<boolean> 
         await tab.click();
         await sleep(1000);
         console.log('[openRunAfterSettings] Opened Settings tab');
-        return true;
+        if (await clickRunAfterHeader()) {
+          return true;
+        }
       }
     }
 
