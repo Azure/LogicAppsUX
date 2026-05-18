@@ -341,4 +341,30 @@ describe('executeCopilotTool', () => {
       expect(parsed.error).toContain('Failed to list operations');
     });
   });
+
+  // ── re-ranking ─────────────────────────────────────────────────────────
+  describe('discover_connectors re-ranking', () => {
+    it('should boost operations whose connector name matches search terms', async () => {
+      // Simulate the real-world issue: searching "outlook email" returns irrelevant connectors first
+      const ops = [
+        makeOperation('scp-get-email-insights', '/connectors/contosohub', 'Contoso Hub', 'Enrich email summary'),
+        makeOperation('scp-get-email-summary', '/connectors/docusign', 'Docusign', 'Get email summary'),
+        makeOperation('FormatEmailGet', '/connectors/dqondemand', 'DQ on Demand', 'Format Email'),
+        makeOperation('MSOutlookCloseInstance', '/connectors/iaconnect', 'IA-Connect to Microsoft Office', 'Close MS Outlook instance'),
+        makeOperation('SendEmailV2', '/connectors/office365', 'Office 365 Outlook', 'Send an email (V2)'),
+        makeOperation('OnNewEmail', '/connectors/office365', 'Office 365 Outlook', 'When a new email arrives'),
+      ];
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+      mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['outlook email'] }));
+      const parsed = JSON.parse(result);
+
+      const results = parsed['outlook email'];
+      expect(results).toBeDefined();
+      // Office 365 Outlook operations should be ranked first because "outlook" matches the connector name
+      expect(results[0].connectorName).toBe('Office 365 Outlook');
+      expect(results[1].connectorName).toBe('Office 365 Outlook');
+    });
+  });
 });
