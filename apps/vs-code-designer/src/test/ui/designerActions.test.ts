@@ -22,6 +22,7 @@ import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import { sessionWarmup } from './sessionWarmup';
 import { waitForQuickInputAndType } from './helpers';
+import { clickRunTrigger as clickRunTriggerWithReadiness, waitForRunStatusInList as waitForRunStatusInListWithRefresh } from './runHelpers';
 
 let __warmedThisSession = false;
 
@@ -2278,19 +2279,14 @@ async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  const shouldSkipWorkspaceReopen = process.env.LA_E2E_SCENARIO && entry.appType !== 'standard';
-  if (shouldSkipWorkspaceReopen) {
-    console.log(`${tag} Skipping workspace reopen for ${entry.appType} scenario to preserve Selenium session`);
-  } else {
-    // 3. Open the workspace file. This triggers an extension host restart.
-    try {
-      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-      driver = VSBrowser.instance.driver;
-      workbench = new Workbench();
-      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-    } catch (e: any) {
-      return { success: false, error: `Failed to open workspace: ${e.message}` };
-    }
+  // 3. Open the workspace file. This triggers extension activation for the selected shape.
+  try {
+    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+    driver = VSBrowser.instance.driver;
+    workbench = new Workbench();
+    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+  } catch (e: any) {
+    return { success: false, error: `Failed to open workspace: ${e.message}` };
   }
 
   // 4. Wait for extension to settle, dismiss blocking UI
@@ -2312,13 +2308,7 @@ async function openDesignerForEntry(
     /* ignore */
   }
 
-  const designerOpened = await openDesignerViaExplorer(
-    driver,
-    workflowJsonPath,
-    entry.wfName || 'workflow',
-    false,
-    !!shouldSkipWorkspaceReopen
-  );
+  const designerOpened = await openDesignerViaExplorer(driver, workflowJsonPath, entry.wfName || 'workflow', false, false);
   if (!designerOpened) {
     await captureScreenshot(driver, `${entry.label}-designer-not-opened`);
     return { success: false, error: 'Could not open designer via Explorer right-click' };
@@ -3114,6 +3104,11 @@ describe('Designer Actions Tests', function () {
     if (__warmedThisSession) {
       return;
     }
+    if (targetShape === 'customCode' || targetShape === 'rulesEngine') {
+      console.log(`[warmup] Skipping session warmup for ${targetShape}; workspace open activates the extension for this shard`);
+      __warmedThisSession = true;
+      return;
+    }
     this.timeout(60_000);
     // Per-scenario matrix shards run a single `it`. Pick the exact workspace
     // shape that matches the test currently in flight.
@@ -3361,7 +3356,7 @@ describe('Designer Actions Tests', function () {
       // Don't assert callback URL — it may not appear if runtime hasn't fully registered the workflow yet
 
       // Assertion 11: Click "Run trigger"
-      const triggerRan = await clickRunTrigger(driver);
+      const triggerRan = await clickRunTriggerWithReadiness(driver, { workflowName: entry.wfName });
       await captureScreenshot(driver, 'test1-step11-after-run-trigger');
       assert.ok(triggerRan, '"Run trigger" button should be clickable');
 
@@ -3374,7 +3369,7 @@ describe('Designer Actions Tests', function () {
       // Don't assert Running — it may already be Succeeded if the run is fast
 
       // Assertion 13: Refresh until the run shows "Succeeded" in the overview list
-      const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded');
+      const { found: succeeded, lastStatus } = await waitForRunStatusInListWithRefresh(driver, 'Succeeded');
       await captureScreenshot(driver, 'test1-step13-run-succeeded-in-list');
       assert.ok(succeeded, `Run should show "Succeeded" in overview list (last status: "${lastStatus}")`);
 
@@ -3698,7 +3693,7 @@ describe('Designer Actions Tests', function () {
       }
 
       // Assertion 9: Click "Run trigger"
-      const triggerRan = await clickRunTrigger(driver);
+      const triggerRan = await clickRunTriggerWithReadiness(driver, { workflowName: entry.wfName });
       await captureScreenshot(driver, 'test2-step9-after-run-trigger');
       assert.ok(triggerRan, '"Run trigger" button should be clickable');
 
@@ -3712,7 +3707,7 @@ describe('Designer Actions Tests', function () {
       await captureScreenshot(driver, `test2-step10-run-status-${(runningStatus || 'none').toLowerCase()}`);
       console.log(`[test2] Latest run status after trigger: "${runningStatus}"`);
 
-      const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 180_000);
+      const { found: succeeded, lastStatus } = await waitForRunStatusInListWithRefresh(driver, 'Succeeded', 180_000);
       await captureScreenshot(driver, 'test2-step11-run-succeeded-in-list');
 
       if (succeeded) {
@@ -3879,10 +3874,10 @@ describe('Designer Actions Tests', function () {
       const overviewWebview = await switchToOverviewWebview(driver);
       await captureScreenshot(driver, 'test3-overview-loaded');
 
-      assert.ok(await clickRunTrigger(driver, { workflowName: entry.wfName }), 'Run trigger should be clickable');
+      assert.ok(await clickRunTriggerWithReadiness(driver, { workflowName: entry.wfName }), 'Run trigger should be clickable');
       await sleep(1000);
       await clickRefresh(driver);
-      const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 180_000);
+      const { found: succeeded, lastStatus } = await waitForRunStatusInListWithRefresh(driver, 'Succeeded', 180_000);
       await captureScreenshot(driver, `test3-run-status-${(lastStatus || 'none').toLowerCase()}`);
 
       assert.ok(succeeded, `RulesEngine run should succeed (last status="${lastStatus}")`);

@@ -976,7 +976,8 @@ async function main() {
       id: 'p44-statelessvariables',
       testFile: phase4Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateless' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p45-designerviewextended',
@@ -1018,7 +1019,7 @@ async function main() {
     {
       id: 'p48d-conversionyes',
       testFile: phase8dFiles[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
+      workspaceSpec: 'plain-folder',
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
     {

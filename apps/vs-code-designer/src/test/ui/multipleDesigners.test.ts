@@ -606,11 +606,38 @@ async function addWorkflowViaRightClick(driver: WebDriver, appFolderName: string
           await sleep(2000);
 
           // Enter workflow name in the QuickPick input
-          const quickInputs = await driver.findElements(By.css('.quick-input-widget:not(.hidden) input'));
-          if (quickInputs.length > 0) {
-            await quickInputs[0].sendKeys(newWorkflowName);
+          const quickInput = await driver
+            .wait(async () => {
+              const inputs = await driver.findElements(By.css('.quick-input-widget:not(.hidden) input'));
+              for (const input of inputs) {
+                if ((await input.isDisplayed().catch(() => false)) && (await input.isEnabled().catch(() => false))) {
+                  return input;
+                }
+              }
+              return null;
+            }, 10_000)
+            .catch(() => null);
+          if (quickInput) {
+            await quickInput.click().catch(() => undefined);
+            try {
+              await quickInput.sendKeys(newWorkflowName);
+            } catch (inputErr) {
+              console.log(`[multiDesigner] sendKeys to workflow name input failed, trying JS input: ${(inputErr as Error).message}`);
+              await driver.executeScript(
+                `
+                const input = arguments[0];
+                const value = arguments[1];
+                input.focus();
+                input.value = value;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+              `,
+                quickInput,
+                newWorkflowName
+              );
+            }
             await sleep(500);
-            await quickInputs[0].sendKeys(Key.ENTER);
+            await quickInput.sendKeys(Key.ENTER);
             await sleep(2000);
             console.log(`[multiDesigner] Entered workflow name: "${newWorkflowName}"`);
 
@@ -618,7 +645,12 @@ async function addWorkflowViaRightClick(driver: WebDriver, appFolderName: string
             const typePicks = await driver.findElements(By.css('.quick-input-widget:not(.hidden) .quick-input-list .monaco-list-row'));
             if (typePicks.length > 0) {
               await driver.executeScript('arguments[0].scrollIntoView({ block: "center" });', typePicks[0]).catch(() => undefined);
-              await driver.actions().move({ origin: typePicks[0] }).click().perform();
+              try {
+                await driver.actions().move({ origin: typePicks[0] }).click().perform();
+              } catch (typeClickErr) {
+                console.log(`[multiDesigner] Workflow type Actions click failed, trying JS click: ${(typeClickErr as Error).message}`);
+                await driver.executeScript('arguments[0].click();', typePicks[0]);
+              }
               await sleep(2000);
               console.log('[multiDesigner] Selected workflow type');
             }

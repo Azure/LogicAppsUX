@@ -2251,19 +2251,14 @@ export async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  const shouldSkipWorkspaceReopen = process.env.LA_E2E_SCENARIO && entry.appType !== 'standard';
-  if (shouldSkipWorkspaceReopen) {
-    console.log(`${tag} Skipping workspace reopen for ${entry.appType} scenario to preserve Selenium session`);
-  } else {
-    // 3. Open the workspace file via `code -r`.
-    try {
-      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-      driver = VSBrowser.instance.driver;
-      workbench = new Workbench();
-      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-    } catch (e: any) {
-      return { success: false, error: `Failed to open workspace: ${e.message}` };
-    }
+  // 3. Open the workspace file via `code -r` to trigger extension activation for the selected shape.
+  try {
+    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+    driver = VSBrowser.instance.driver;
+    workbench = new Workbench();
+    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+  } catch (e: any) {
+    return { success: false, error: `Failed to open workspace: ${e.message}` };
   }
 
   // 4. Wait for extension to settle, dismiss blocking UI
@@ -2279,7 +2274,11 @@ export async function openDesignerForEntry(
   } catch {
     /* ignore */
   }
-  await waitForExtensionValidationComplete(driver);
+  if (process.env.LA_E2E_SKIP_VALIDATION_WAIT === '1') {
+    console.log(`${tag} Skipping dependency validation wait by scenario setting`);
+  } else {
+    await waitForExtensionValidationComplete(driver);
+  }
 
   // 5. Open designer via right-click on workflow.json in the Explorer tree.
   //    This is more reliable than the command palette because:
@@ -2292,13 +2291,7 @@ export async function openDesignerForEntry(
     /* ignore */
   }
 
-  const designerOpened = await openDesignerViaExplorer(
-    driver,
-    workflowJsonPath,
-    entry.wfName || 'workflow',
-    false,
-    !!shouldSkipWorkspaceReopen
-  );
+  const designerOpened = await openDesignerViaExplorer(driver, workflowJsonPath, entry.wfName || 'workflow', false, false);
   if (!designerOpened) {
     await captureScreenshot(driver, `${entry.label}-designer-not-opened`);
     return { success: false, error: 'Could not open designer via Explorer right-click' };
@@ -2879,13 +2872,14 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
         const found = [];
         const checked = {};
         const disabled = {};
-        const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"]'));
+        const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"], .fui-Checkbox, [class*="fui-Checkbox"]'));
         for (const [status, label] of Object.entries(labels)) {
           const lowerLabel = String(label).toLowerCase();
           const candidate = candidates.find((el) => {
             const text = [
               el.getAttribute('aria-label') || '',
               el.closest('label')?.textContent || '',
+              el.textContent || '',
               el.parentElement?.textContent || '',
               el.parentElement?.parentElement?.textContent || '',
             ].join(' ').toLowerCase();
@@ -2895,8 +2889,10 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
             continue;
           }
           found.push(status);
-          checked[status] = candidate instanceof HTMLInputElement ? candidate.checked : candidate.getAttribute('aria-checked') === 'true';
-          disabled[status] = candidate instanceof HTMLInputElement ? candidate.disabled : candidate.getAttribute('aria-disabled') === 'true';
+          const input = candidate instanceof HTMLInputElement ? candidate : candidate.querySelector('input[type="checkbox"]');
+          const checkbox = input || candidate.querySelector('[role="checkbox"]') || candidate;
+          checked[status] = input instanceof HTMLInputElement ? input.checked : checkbox.getAttribute('aria-checked') === 'true';
+          disabled[status] = input instanceof HTMLInputElement ? input.disabled : checkbox.getAttribute('aria-disabled') === 'true';
         }
         return { found, checked, disabled };
       `,
@@ -2908,11 +2904,12 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
       const status = arguments[0];
       const label = arguments[1];
       const lowerLabel = String(label).toLowerCase();
-      const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"]'));
+      const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"], .fui-Checkbox, [class*="fui-Checkbox"]'));
       const candidate = candidates.find((el) => {
         const text = [
           el.getAttribute('aria-label') || '',
           el.closest('label')?.textContent || '',
+          el.textContent || '',
           el.parentElement?.textContent || '',
           el.parentElement?.parentElement?.textContent || '',
         ].join(' ').toLowerCase();
@@ -2921,11 +2918,13 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
       if (!candidate) {
         return false;
       }
-      const disabled = candidate instanceof HTMLInputElement ? candidate.disabled : candidate.getAttribute('aria-disabled') === 'true';
+      const input = candidate instanceof HTMLInputElement ? candidate : candidate.querySelector('input[type="checkbox"]');
+      const checkbox = input || candidate.querySelector('[role="checkbox"]') || candidate;
+      const disabled = input instanceof HTMLInputElement ? input.disabled : checkbox.getAttribute('aria-disabled') === 'true';
       if (disabled) {
         return false;
       }
-      candidate.click();
+      checkbox.click();
       return true;
     `,
         status,

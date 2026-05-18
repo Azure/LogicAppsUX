@@ -92,11 +92,38 @@ async function waitForWorkspacePrompt(driver: WebDriver, timeoutMs: number): Pro
     } catch {
       /* no modal yet */
     }
+    try {
+      const dialogs = await driver.findElements(By.css('.monaco-dialog-box, [role="dialog"], .notification-toast'));
+      for (const dialog of dialogs) {
+        const text = await dialog.getText().catch(() => '');
+        if (/workspace/i.test(text)) {
+          console.log(`[conversionYes] Found workspace prompt via selector: "${text.substring(0, 150)}"`);
+          return text;
+        }
+      }
+    } catch {
+      /* no dialog-like element yet */
+    }
     await sleep(1000);
   }
   // On timeout, dump diagnostics so CI artifacts contain the DOM snapshot.
   await dumpDialogDiagnostics(driver, 'waitForWorkspacePrompt-timeout', DIAGNOSTICS_DIR);
   return null;
+}
+
+async function clickWorkspacePromptButton(driver: WebDriver): Promise<boolean> {
+  return driver.executeScript<boolean>(`
+    const labels = ['yes', 'open workspace'];
+    const buttons = Array.from(document.querySelectorAll('button, a.monaco-button, .monaco-button'));
+    for (const button of buttons) {
+      const text = (button.textContent || button.getAttribute('aria-label') || '').trim().toLowerCase();
+      if (labels.some((label) => text.includes(label))) {
+        button.click();
+        return true;
+      }
+    }
+    return false;
+  `);
 }
 
 /** Detect whether VS Code reloaded the workbench after pushing "Yes". */
@@ -249,12 +276,15 @@ describe('Workspace Conversion — Click Yes', function () {
       await pushDialogButtonWithRetry(driver, YES_BUTTON_LABEL, 3, DIAGNOSTICS_DIR);
     } catch (e) {
       clickThrew = e;
-      if (!isSessionEnded(e)) {
+      if (isSessionEnded(e)) {
+        // Session-ended during click = reload raced ahead of the click ACK. That's success.
+        console.log('[conversionYes] Selenium session ended during click — VS Code reloaded');
+      } else if (await clickWorkspacePromptButton(driver).catch(() => false)) {
+        console.log('[conversionYes] Clicked workspace prompt button via selector fallback');
+      } else {
         await dumpDialogDiagnostics(driver, 'conversion-yes-click-failed', DIAGNOSTICS_DIR);
         throw e;
       }
-      // Session-ended during click = reload raced ahead of the click ACK. That's success.
-      console.log('[conversionYes] Selenium session ended during click — VS Code reloaded');
     }
 
     // R9: milestone — post-click (may fail if session already gone).
