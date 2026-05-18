@@ -141,6 +141,30 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
   }
 }
 
+function isExecutableFile(filePath: string): boolean {
+  try {
+    fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getFuncCoreToolsPath(): string {
+  return path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+}
+
+function assertFuncCoreToolsExecutable(context: string): void {
+  const funcBinaryPath = getFuncCoreToolsPath();
+  ensureRuntimeDependencyExecutablePermissions();
+  if (!fs.existsSync(funcBinaryPath)) {
+    throw new Error(`[depValidation] func binary not found after ${context}: ${funcBinaryPath}`);
+  }
+  if (!isExecutableFile(funcBinaryPath)) {
+    throw new Error(`[depValidation] func binary exists but is not executable after ${context}: ${funcBinaryPath}`);
+  }
+}
+
 /**
  * Ensure the local.settings.json for a workspace has WORKFLOWS_SUBSCRIPTION_ID
  * set to "" so that the Azure connector wizard is skipped when opening the designer.
@@ -526,7 +550,7 @@ export async function openFileInEditor(workbench: Workbench, driver: WebDriver, 
 export async function waitForDependencyValidation(driver: WebDriver, timeoutMs = DEPENDENCY_VALIDATION_TIMEOUT): Promise<void> {
   const t0 = Date.now();
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
-  const funcBinaryPath = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', 'func');
+  const funcBinaryPath = getFuncCoreToolsPath();
 
   // The extension's download/extract can leave Linux/macOS binaries without
   // execute bits. Apply this before and after validation because validation can
@@ -626,7 +650,10 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
 
         console.log(`[depValidation] func binary already exists at ${funcBinaryPath} (${Date.now() - t0}ms)`);
         ensureRuntimeDependencyExecutablePermissions();
-        return;
+        if (isExecutableFile(funcBinaryPath)) {
+          return;
+        }
+        console.log('[depValidation] func binary exists but is not executable yet — continuing to poll');
       }
 
       await sleep(2000);
@@ -648,7 +675,10 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       // Also wait a moment for the extension to update its internal state
       await sleep(3000);
       ensureRuntimeDependencyExecutablePermissions();
-      return;
+      if (isExecutableFile(funcBinaryPath)) {
+        return;
+      }
+      console.log('[depValidation] func binary still not executable after chmod — continuing to poll');
     }
 
     // Check if validation notification reappeared (downloading next dependency)
@@ -678,7 +708,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
     console.log(`[depValidation] Error listing deps: ${e.message}`);
   }
 
-  console.log(`[depValidation] WARNING: func binary not found after ${Math.round((Date.now() - t0) / 1000)}s — designer tests may fail`);
+  assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s`);
 }
 
 /**
@@ -771,7 +801,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
 
   if (!firstSeen) {
     console.log(`[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s — assuming complete`);
-    ensureRuntimeDependencyExecutablePermissions();
+    assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s without validation notification`);
     return;
   }
 
@@ -800,9 +830,9 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
   }
 
   if (Date.now() - t0 >= timeoutMs) {
-    console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s — proceeding anyway`);
+    throw new Error(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s`);
   }
-  ensureRuntimeDependencyExecutablePermissions();
+  assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s validation wait`);
 
   // Phase 3: Wait for design-time API (func host start) to be ready.
   // After validation completes, the extension starts func which takes time.
@@ -832,6 +862,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
       if (apiReady) {
         console.log(`[waitForValidation] Design-time API indicators found (${Math.round((Date.now() - t0) / 1000)}s)`);
         await sleep(3000);
+        assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s design-time API wait`);
         return;
       }
     } catch {
@@ -839,7 +870,8 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
     }
     await sleep(2000);
   }
-  console.log(`[waitForValidation] Design-time API wait timed out — proceeding (${Math.round((Date.now() - t0) / 1000)}s)`);
+  assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s design-time API wait`);
+  console.log(`[waitForValidation] Design-time API wait timed out after func validation (${Math.round((Date.now() - t0) / 1000)}s)`);
 }
 
 /**
@@ -1830,12 +1862,8 @@ export async function openDesignerViaExplorer(
   }
 
   // Phase 3 R3: Force Explorer tree refresh before relying on the tree state.
-  // Phase 2 evidence (p42-*, p48c) showed the workflow.json row not found for
-  // all 10 attempts when this helper was called for a second workflow in the
-  // same workspace — the tree was stale from the first designer-open.
-  // F5 fix: poll for the workflow.json row (no blind sleep). Also expand the
-  // parent folder to handle H-p42-A (VS Code auto-collapses sibling folders
-  // when a new file is revealed elsewhere).
+  // Force Explorer tree refresh before relying on tree state. Opening one
+  // designer can leave the Explorer stale or collapsed before the next open.
   try {
     await new Workbench().executeCommand('workbench.files.action.refreshFilesExplorer');
   } catch {
@@ -1961,8 +1989,7 @@ export async function openDesignerViaExplorer(
     try {
       // Wait for the menubar overlay to be inactive before clicking. The
       // menubar-menu-title element can intercept clicks on context menu rows
-      // if it isn't aria-hidden yet (same root cause as the openOverviewPage
-      // flake fixed in 358332a41 — see PR #9181).
+      // if it isn't aria-hidden yet.
       try {
         await driver.wait(async () => {
           const active = await driver.findElements(By.css('.menubar-menu-title:not([aria-hidden="true"])'));
@@ -2118,8 +2145,8 @@ export async function openDesignerViaExplorer(
                   return false;
                 }
                 console.log('[openDesignerViaExplorer] Retrying once after close-active-editor');
-                // Phase 2 R1 (review board #4) — pre-retry diagnostic: snapshot state at
-                // retry trigger so CI logs can compare attempt-1 vs attempt-2 state.
+                // Snapshot state at retry trigger so CI logs can compare
+                // attempt-1 vs attempt-2 state.
                 try {
                   const iframes = await driver.findElements(By.css('iframe'));
                   console.log(`[openDesignerViaExplorer][pre-retry] iframe count: ${iframes.length}`);
@@ -2129,8 +2156,7 @@ export async function openDesignerViaExplorer(
                 }
                 try {
                   await new Workbench().executeCommand('workbench.action.closeActiveEditor');
-                  // Phase 2 R1 — warm-up grace: 1.5s wasn't enough for the design-time
-                  // host to settle between attempts, so retry-1 produced the same outcome.
+                  // Give the design-time host time to settle between attempts.
                   await sleep(3000);
                   try {
                     await new Workbench().executeCommand('workbench.action.notifications.clearAll');

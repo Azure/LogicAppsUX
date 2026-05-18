@@ -24,19 +24,9 @@
  *
  * Phase 4.8d — own session, startup resource = workspace directory.
  *
- * Hardening applied (R1-R9 — Track 3 of the e2e-optimizations effort):
- *   R1 drop notification-scanning (prompt is modal)
- *   R2 single ModalDialog handle with stale-element retry
- *   R3 force-focus + Tab+Enter fallback for xvfb-robust click
- *   R4 locale-lock via en-US LANG/LC_ALL (label matches DialogResponses.yes.title)
- *   R5 safeCancelAnyQuickInput pre-flight cleanup
- *   R6 elementIsVisible wait before click (inside pushDialogButtonWithRetry)
- *   R7 timeout bumps: phase 60s -> 120s, prompt 30s -> 45s
- *   R8 dumpDialogDiagnostics on click failure
- *   R9 milestone screenshots
- *
- * NOTE: `allowFailure: true` remains at run-e2e.js:932 pending 3 consecutive
- * green CI runs (R10 gate). Do not remove until validated.
+ * Hardening: modal-only detection, stale-element retry, focus/keyboard fallback,
+ * locale-locked labels, pre-flight Quick Input cleanup, visibility waits,
+ * diagnostic dumps, and milestone screenshots.
  */
 
 import * as path from 'path';
@@ -180,10 +170,8 @@ function assertWorkspaceFsInvariants(entry: WorkspaceManifestEntry, phase: strin
 
 describe('Workspace Conversion — Click Yes', function () {
   this.timeout(TEST_TIMEOUT);
-  // 3 total attempts per test. p48d's WBD-hybrid Markdown-preview focus
-  // theft is mitigated by closeAllEditors before waitForWorkspacePrompt
-  // (Phase 4.1 d866b3368) but ModalDialog discovery still has a 45s
-  // deadline that can fail when xvfb is slow to repaint.
+  // 3 total attempts per test. ModalDialog discovery can miss the prompt
+  // when xvfb is slow to repaint.
   this.retries(2);
 
   let driver: WebDriver;

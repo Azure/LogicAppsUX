@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
-// Create Workspace FIXTURES tests — drives the wizard for ONLY the 3 runtime-fixture
-// shapes (Standard/Stateful, CustomCode/Stateful, RulesEngine/Stateful) consumed by
-// downstream Phase 4.2 / 4.3 scenario shards. Writes the workspace manifest at
+// Create Workspace FIXTURES tests — drives the wizard for ONLY the runtime-fixture
+// shapes consumed by downstream Phase 4.2 / 4.3 / 4.4 scenario shards:
+// Standard/Stateful, Standard/Stateless, CustomCode/Stateful, RulesEngine/Stateful.
+// Writes the workspace manifest at
 // WORKSPACE_MANIFEST_PATH that those shards read.
 //
 // **D-001 (binding):** this file MUST drive the Create Workspace wizard. It MUST NOT
@@ -13,7 +14,7 @@
 // this via grep; symbol names are intentionally elided in this comment so the guard
 // regex doesn't false-positive on our own documentation.
 //
-// Wall time target: ~2-3 minutes (vs ~12 minutes for the 12-shape behavior file).
+// Wall time target: a short fixture-only run (vs ~12 minutes for the 12-shape behavior file).
 // This is the critical-path test that Step 3's per-scenario shards depend on; the
 // full behavior coverage runs independently in createWorkspace.behavior.test.ts.
 
@@ -63,8 +64,9 @@ function assertManifestShape(entry: WorkspaceManifestEntry): void {
   let host: { version?: string };
   try {
     host = JSON.parse(hostRaw);
-  } catch (e: any) {
-    throw new Error(`[fixtures:shape] host.json is not valid JSON: ${e.message}`);
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    throw new Error(`[fixtures:shape] host.json is not valid JSON: ${message}`);
   }
   if (!host.version) {
     throw new Error(`[fixtures:shape] host.json missing "version" field`);
@@ -78,15 +80,15 @@ function assertManifestShape(entry: WorkspaceManifestEntry): void {
   let wf: { kind?: string; definition?: unknown };
   try {
     wf = JSON.parse(wfRaw);
-  } catch (e: any) {
-    throw new Error(`[fixtures:shape] workflow.json is not valid JSON: ${e.message}`);
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    throw new Error(`[fixtures:shape] workflow.json is not valid JSON: ${message}`);
   }
   if (!wf.kind) {
     throw new Error(`[fixtures:shape] workflow.json missing "kind" field`);
   }
-  // Stateful workflows should have kind "Stateful" (case-insensitive)
-  if (entry.wfType === 'Stateful' && wf.kind.toLowerCase() !== 'stateful') {
-    throw new Error(`[fixtures:shape] expected workflow.json kind=Stateful, got "${wf.kind}"`);
+  if ((entry.wfType === 'Stateful' || entry.wfType === 'Stateless') && wf.kind.toLowerCase() !== entry.wfType.toLowerCase()) {
+    throw new Error(`[fixtures:shape] expected workflow.json kind=${entry.wfType}, got "${wf.kind}"`);
   }
   console.log(`[fixtures:shape] OK ${entry.label}: host.json v${host.version}, workflow.json kind=${wf.kind}`);
 }
@@ -203,6 +205,50 @@ describe('Create Workspace Fixtures', function () {
 
     await captureScreenshot(driver, 'fixtures-standard-passed');
     console.log('[fixtures:standard] PASSED');
+  });
+
+  it('should create Standard + Stateless workspace and record in manifest', async function () {
+    this.timeout(TEST_TIMEOUT);
+
+    const wsName = uniqueName('slws');
+    const appName = uniqueName('slapp');
+    const wfName = uniqueName('slwf');
+
+    console.log('[fixtures:stateless] Opening Create Workspace command...');
+    await selectCreateWorkspaceCommand(workbench);
+
+    console.log('[fixtures:stateless] Switching to webview...');
+    const webview = await switchToWebviewFrame(driver);
+
+    console.log('[fixtures:stateless] Filling form fields...');
+    await fillStandardFormFields(driver, tempDir, { wsName, appName, wfName, wfType: 'Stateless' });
+
+    const nextButton = await waitForNextButton(driver);
+    await nextButton.click();
+    await sleep(2000);
+
+    await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
+
+    deepVerifyWorkspace(tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'standard',
+      wfType: 'Stateless',
+    });
+
+    const entry = buildManifestEntry('Standard + Stateless', tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'standard',
+      wfType: 'Stateless',
+    });
+    appendToWorkspaceManifest(entry);
+    assertManifestShape(entry);
+
+    await captureScreenshot(driver, 'fixtures-stateless-passed');
+    console.log('[fixtures:stateless] PASSED');
   });
 
   it('should create CustomCode + Stateful workspace and record in manifest', async function () {

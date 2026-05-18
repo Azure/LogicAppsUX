@@ -800,26 +800,51 @@ async function openFileInEditor(workbench: Workbench, driver: WebDriver, filePat
 async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000): Promise<void> {
   const t0 = Date.now();
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
-  const funcBinaryPath = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', 'func');
+  const funcBinaryPath = path.join(
+    os.homedir(),
+    '.azurelogicapps',
+    'dependencies',
+    'FuncCoreTools',
+    process.platform === 'win32' ? 'func.exe' : 'func'
+  );
 
-  // Fix execute permissions on downloaded runtime binaries.
-  // The extension's download/extract doesn't set chmod +x on Linux, causing
-  // "/bin/sh: 1: .../func: Permission denied" when running `func host start`.
-  if (process.platform === 'linux' || process.platform === 'darwin') {
+  const isExecutableFile = (filePath: string): boolean => {
+    try {
+      fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const ensureRuntimeDependencyExecutablePermissions = (): void => {
+    // Fix execute permissions on downloaded runtime binaries.
+    // The extension's download/extract doesn't set chmod +x on Linux, causing
+    // "/bin/sh: 1: .../func: Permission denied" when running `func host start`.
+    if (process.platform !== 'linux' && process.platform !== 'darwin') {
+      return;
+    }
+
     const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+    let fixedAny = false;
     for (const subDir of ['FuncCoreTools', 'NodeJs', 'DotNetSDK']) {
       const binDir = path.join(depsRoot, subDir);
       if (fs.existsSync(binDir)) {
         try {
           const { execSync } = require('child_process');
           execSync(`chmod -R +x "${binDir}"`, { stdio: 'ignore' });
+          fixedAny = true;
         } catch {
           /* ignore */
         }
       }
     }
-    console.log('[depValidation] Fixed execute permissions on runtime binaries');
-  }
+    if (fixedAny) {
+      console.log('[depValidation] Fixed execute permissions on runtime binaries');
+    }
+  };
+
+  ensureRuntimeDependencyExecutablePermissions();
 
   const isValidationVisible = async (): Promise<boolean> => {
     try {
@@ -849,7 +874,10 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
       }
       console.log(`[depValidation] Validation complete (${Date.now() - t0}ms)`);
     }
-    return;
+    if (isExecutableFile(funcBinaryPath)) {
+      return;
+    }
+    console.log('[depValidation] func binary exists but is not executable yet — continuing to poll');
   }
 
   // Wait for the notification to appear and complete
@@ -876,7 +904,11 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
       }
       if (fs.existsSync(funcBinaryPath)) {
         console.log(`[depValidation] func binary found (${Date.now() - t0}ms)`);
-        return;
+        ensureRuntimeDependencyExecutablePermissions();
+        if (isExecutableFile(funcBinaryPath)) {
+          return;
+        }
+        console.log('[depValidation] func binary found but is not executable yet — continuing to poll');
       }
       await sleep(2000);
     }
@@ -888,13 +920,23 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
     if (fs.existsSync(funcBinaryPath)) {
       console.log(`[depValidation] func binary found at ${funcBinaryPath} (${Date.now() - t0}ms)`);
       await sleep(3000);
-      return;
+      ensureRuntimeDependencyExecutablePermissions();
+      if (isExecutableFile(funcBinaryPath)) {
+        return;
+      }
+      console.log('[depValidation] func binary still not executable after chmod — continuing to poll');
     }
     console.log(`[depValidation] Waiting for func binary... (${Date.now() - t0}ms)`);
     await sleep(5000);
   }
 
-  console.log(`[depValidation] WARNING: func binary not found after ${Math.round((Date.now() - t0) / 1000)}s`);
+  if (fs.existsSync(funcBinaryPath) && !isExecutableFile(funcBinaryPath)) {
+    throw new Error(
+      `[depValidation] func binary exists but is not executable after ${Math.round((Date.now() - t0) / 1000)}s: ${funcBinaryPath}`
+    );
+  }
+
+  throw new Error(`[depValidation] func binary not found after ${Math.round((Date.now() - t0) / 1000)}s: ${funcBinaryPath}`);
 }
 
 /**
@@ -903,6 +945,35 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
  */
 async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs = 120_000): Promise<void> {
   const t0 = Date.now();
+  const funcBinaryPath = path.join(
+    os.homedir(),
+    '.azurelogicapps',
+    'dependencies',
+    'FuncCoreTools',
+    process.platform === 'win32' ? 'func.exe' : 'func'
+  );
+
+  const ensureFuncExecutable = (context: string): void => {
+    if (process.platform === 'linux' || process.platform === 'darwin') {
+      const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+      for (const subDir of ['FuncCoreTools', 'NodeJs', 'DotNetSDK']) {
+        const binDir = path.join(depsRoot, subDir);
+        if (fs.existsSync(binDir)) {
+          try {
+            const { execSync } = require('child_process');
+            execSync(`chmod -R +x "${binDir}"`, { stdio: 'ignore' });
+          } catch {
+            /* ignore */
+          }
+        }
+      }
+    }
+    try {
+      fs.accessSync(funcBinaryPath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
+    } catch {
+      throw new Error(`[waitForValidation] func binary missing or not executable after ${context}: ${funcBinaryPath}`);
+    }
+  };
 
   const hasValidationNotification = async (): Promise<string | null> => {
     try {
@@ -964,6 +1035,7 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
 
   if (!firstSeen) {
     console.log(`[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s`);
+    ensureFuncExecutable(`${Math.round((Date.now() - t0) / 1000)}s without validation notification`);
     return;
   }
 
@@ -987,8 +1059,9 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
   }
 
   if (Date.now() - t0 >= timeoutMs) {
-    console.log(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s`);
+    throw new Error(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s`);
   }
+  ensureFuncExecutable(`${Math.round((Date.now() - t0) / 1000)}s validation wait`);
 
   // Wait for design-time API (func host start) to start
   console.log('[waitForValidation] Waiting for design-time API to start...');
@@ -1013,6 +1086,7 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
       if (apiReady) {
         console.log(`[waitForValidation] Design-time API indicators found (${Math.round((Date.now() - t0) / 1000)}s)`);
         await sleep(3000);
+        ensureFuncExecutable(`${Math.round((Date.now() - t0) / 1000)}s design-time API wait`);
         return;
       }
     } catch {
@@ -1020,7 +1094,8 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
     }
     await sleep(2000);
   }
-  console.log(`[waitForValidation] Design-time API wait timed out (${Math.round((Date.now() - t0) / 1000)}s)`);
+  ensureFuncExecutable(`${Math.round((Date.now() - t0) / 1000)}s design-time API wait`);
+  console.log(`[waitForValidation] Design-time API wait timed out after func validation (${Math.round((Date.now() - t0) / 1000)}s)`);
 }
 
 /**
@@ -1876,13 +1951,8 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
     /* ignore */
   }
 
-  // Phase 3 R3: Force Explorer tree refresh before relying on the tree state.
-  // Phase 2 evidence (p42-*, p48c) showed the workflow.json row not found for
-  // all 10 attempts when this helper was called for a second workflow in the
-  // same workspace — the tree was stale from the first designer-open.
-  // F5 fix: poll for the workflow.json row (no blind sleep). Also expand the
-  // parent folder to handle H-p42-A (VS Code auto-collapses sibling folders
-  // when a new file is revealed elsewhere).
+  // Force Explorer tree refresh before relying on tree state. Opening one
+  // designer can leave the Explorer stale or collapsed before the next open.
   try {
     await new Workbench().executeCommand('workbench.files.action.refreshFilesExplorer');
   } catch {
@@ -1984,7 +2054,7 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
   // budget which keeps the p43-customcode flake fix.
   const backoffs = isFirstOpen ? [250, 500, 1000, 2000, 4000, 6000, 8000, 10_000] : [250, 500, 1000, 2000, 4000];
   const maxAttempts = backoffs.length;
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  attemptLoop: for (let attempt = 0; attempt < maxAttempts; attempt++) {
     console.log(`[openDesignerViaExplorer] Attempt ${attempt + 1}/${maxAttempts} for "${label}"`);
     try {
       const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
@@ -2084,8 +2154,8 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
                     return false;
                   }
                   console.log('[openDesignerViaExplorer] Retrying once after close-active-editor');
-                  // Phase 2 R1 (review board #4) — pre-retry diagnostic: snapshot state at
-                  // retry trigger so CI logs can compare attempt-1 vs attempt-2 state.
+                  // Snapshot state at retry trigger so CI logs can compare
+                  // attempt-1 vs attempt-2 state.
                   try {
                     const iframes = await driver.findElements(By.css('iframe'));
                     console.log(`[openDesignerViaExplorer][pre-retry] iframe count: ${iframes.length}`);
@@ -2095,8 +2165,7 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
                   }
                   try {
                     await new Workbench().executeCommand('workbench.action.closeActiveEditor');
-                    // Phase 2 R1 — warm-up grace: 1.5s wasn't enough for the design-time
-                    // host to settle between attempts, so retry-1 produced the same outcome.
+                    // Give the design-time host time to settle between attempts.
                     await sleep(3000);
                     try {
                       await new Workbench().executeCommand('workbench.action.notifications.clearAll');
@@ -2111,6 +2180,24 @@ async function openDesignerViaExplorer(driver: WebDriver, workflowJsonPath: stri
                 }
               }
               await sleep(500);
+            }
+            console.log(
+              `[openDesignerViaExplorer] Webview not detected for "${label}" after Open Designer click (attempt ${attempt + 1}/${maxAttempts})`
+            );
+            try {
+              await captureScreenshot(driver, `openDesignerViaExplorer-no-webview-${label}-attempt-${attempt + 1}`);
+            } catch {
+              /* ignore */
+            }
+            try {
+              await driver.switchTo().defaultContent();
+              await driver.actions().sendKeys(Key.ESCAPE).perform();
+            } catch {
+              /* ignore */
+            }
+            if (attempt < maxAttempts - 1) {
+              await sleep(backoffs[attempt]);
+              continue attemptLoop;
             }
             return false;
           }
@@ -2480,8 +2567,7 @@ async function openOverviewPage(workbench: Workbench, driver: WebDriver, workflo
     try {
       // Wait for the menubar overlay to be inactive before clicking. The
       // menubar-menu-title element can intercept clicks on QuickPick / context
-      // menu rows if it isn't aria-hidden yet (root cause of the p42-* shard
-      // flake — see PR #9181 / CI run 25941836505).
+      // menu rows if it isn't aria-hidden yet.
       try {
         await driver.wait(async () => {
           const active = await driver.findElements(By.css('.menubar-menu-title:not([aria-hidden="true"])'));
@@ -2723,7 +2809,8 @@ async function clickRunTrigger(driver: WebDriver): Promise<boolean> {
       if (btns.length > 0) {
         const btn = btns[0];
         const disabled = await btn.getAttribute('disabled');
-        if (disabled) {
+        const ariaDisabled = await btn.getAttribute('aria-disabled');
+        if (disabled || ariaDisabled === 'true') {
           console.log('[overview] "Run trigger" button is disabled — runtime may not be ready');
         } else {
           await driver.actions().move({ origin: btn }).click().perform();
@@ -2941,6 +3028,14 @@ describe('Designer Actions Tests', function () {
   let workbench: Workbench;
   let manifest: WorkspaceManifestEntry[];
 
+  const skipIfShapeDoesNotMatch = (ctx: { skip: () => void }, shape: 'standard' | 'customCode' | 'rulesEngine'): void => {
+    const targetShape = process.env.LA_E2E_SHAPE;
+    if (targetShape && targetShape !== shape) {
+      console.log(`[designerActions] Skipping ${shape}; LA_E2E_SHAPE=${targetShape}`);
+      ctx.skip();
+    }
+  };
+
   before(async function () {
     this.timeout(300_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
@@ -2962,25 +3057,35 @@ describe('Designer Actions Tests', function () {
   });
 
   beforeEach(async function () {
+    const title = this.currentTest?.title ?? '';
+    const targetShape = process.env.LA_E2E_SHAPE;
+    if (
+      (targetShape === 'standard' && !title.includes('Request trigger and Response action, then save')) ||
+      (targetShape === 'customCode' && !title.includes('CustomCode')) ||
+      (targetShape === 'rulesEngine' && !title.includes('RulesEngine'))
+    ) {
+      return;
+    }
+
     if (__warmedThisSession) {
       return;
     }
     this.timeout(60_000);
-    // Per-scenario matrix shards run a single `it`. Pick the workspace that
-    // matches the test currently in flight so the warmup expands the same
-    // tree the test will exercise. Falls back to manifest[0] when the title
-    // doesn't match a known scenario (defensive — should never happen).
-    const title = this.currentTest?.title ?? '';
+    // Per-scenario matrix shards run a single `it`. Pick the exact workspace
+    // shape that matches the test currently in flight.
     let entry: WorkspaceManifestEntry | undefined;
     if (title.includes('CustomCode')) {
-      entry = manifest.find((e) => e.appType === 'customCode') || manifest.find((e) => e.appType === 'rulesEngine') || manifest[0];
+      entry = manifest.find((e) => e.appType === 'customCode' && e.wfType === 'Stateful');
     } else if (title.includes('RulesEngine')) {
-      entry =
-        manifest.find((e) => e.appType === 'rulesEngine' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'rulesEngine');
+      entry = manifest.find((e) => e.appType === 'rulesEngine' && e.wfType === 'Stateful');
     } else {
-      entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
+      entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     }
-    const workspaceRoot = entry?.wsDir ?? manifest?.[0]?.wsDir;
+    if (!entry) {
+      assert.fail(`No exact workspace entry found for warmup test "${title}"`);
+      return;
+    }
+    const workspaceRoot = entry.wsDir;
     const result = await sessionWarmup(driver, workbench, { workspaceRoot });
     console.log(`[warmup] ${JSON.stringify(result)}`);
     __warmedThisSession = true;
@@ -3004,11 +3109,11 @@ describe('Designer Actions Tests', function () {
   // =====================================================================
   // Test 1: Standard workflow — open designer, add Request trigger
   // =====================================================================
-  it('should add a Request trigger and Response action, then save', async () => {
-    const entry =
-      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
+  it('should add a Request trigger and Response action, then save', async function () {
+    skipIfShapeDoesNotMatch(this, 'standard');
+    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     if (!entry) {
-      assert.fail('No matching workspace entry found in manifest');
+      assert.fail('No Standard + Stateful workspace entry found in manifest');
       return;
     }
 
@@ -3267,7 +3372,8 @@ describe('Designer Actions Tests', function () {
   // =====================================================================
   // Test 2: CustomCode workflow — open designer, add Compose action
   // =====================================================================
-  it('should add a Compose action to a CustomCode workflow', async () => {
+  it('should add a Compose action to a CustomCode workflow', async function () {
+    skipIfShapeDoesNotMatch(this, 'customCode');
     // Close all editor tabs from test 1 (run details webview, designer, workflow.json).
     // Without this, the run details webview from test 1 stays focused and blocks
     // the command palette interaction needed to open the CustomCode workspace.
@@ -3288,9 +3394,9 @@ describe('Designer Actions Tests', function () {
       console.log('[test2] Could not close editors via keyboard shortcut');
     }
 
-    const entry = manifest.find((e) => e.appType === 'customCode') || manifest.find((e) => e.appType === 'rulesEngine') || manifest[0];
+    const entry = manifest.find((e) => e.appType === 'customCode' && e.wfType === 'Stateful');
     if (!entry) {
-      assert.fail('No matching workspace entry found in manifest');
+      assert.fail('No CustomCode + Stateful workspace entry found in manifest');
       return;
     }
 
@@ -3610,7 +3716,8 @@ describe('Designer Actions Tests', function () {
   // verify the rulesEngine appType runtime actually starts, runs, and
   // reports success, not to exercise every rulesEngine feature.
   // ===========================================================================
-  it('should add a Request trigger and Response action to a RulesEngine workflow, then run and verify', async () => {
+  it('should add a Request trigger and Response action to a RulesEngine workflow, then run and verify', async function () {
+    skipIfShapeDoesNotMatch(this, 'rulesEngine');
     // Close any editors left open by previous tests.
     try {
       await driver.switchTo().defaultContent();
@@ -3627,8 +3734,7 @@ describe('Designer Actions Tests', function () {
       console.log('[test3:rulesEngine] Could not close editors via keyboard shortcut');
     }
 
-    const entry =
-      manifest.find((e) => e.appType === 'rulesEngine' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'rulesEngine');
+    const entry = manifest.find((e) => e.appType === 'rulesEngine' && e.wfType === 'Stateful');
     if (!entry) {
       assert.fail('No rulesEngine workspace entry found in manifest — Phase 4.1a fixtures must run first');
       return;
@@ -3735,17 +3841,12 @@ describe('Designer Actions Tests', function () {
       const { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 90_000);
       await captureScreenshot(driver, `test3-run-status-${(lastStatus || 'none').toLowerCase()}`);
 
-      if (succeeded) {
-        const detailsOpened = await clickLatestRunRow(driver);
-        assert.ok(detailsOpened, 'Should be able to open the succeeded run');
-        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
-        assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
-        console.log('[test3:rulesEngine] PASSED — full flow: trigger + action + debug + run succeeded');
-      } else {
-        // Non-fatal in CI (function worker init timing). The critical assertions
-        // (designer + save + debug-start + runtime-ready) have already passed.
-        console.log(`[test3:rulesEngine] PASSED (partial) — debug succeeded but run did not complete: last status="${lastStatus}"`);
-      }
+      assert.ok(succeeded, `RulesEngine run should succeed (last status="${lastStatus}")`);
+      const detailsOpened = await clickLatestRunRow(driver);
+      assert.ok(detailsOpened, 'Should be able to open the succeeded run');
+      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
+      assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
+      console.log('[test3:rulesEngine] PASSED — full flow: trigger + action + debug + run succeeded');
 
       try {
         await overviewWebview.switchBack();

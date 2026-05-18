@@ -839,8 +839,8 @@ async function main() {
 
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
   // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
-  // consumed by downstream Phase 4.2 / 4.3 shape-specific scenarios. Drives the
-  // wizard ONLY for standard/Stateful, customCode/Stateful, rulesEngine/Stateful.
+  // consumed by downstream shape-specific scenarios. Drives the wizard only for
+  // Standard/Stateful, Standard/Stateless, CustomCode/Stateful, and RulesEngine/Stateful.
   const phase1aFiles = [testFile('createWorkspace.fixtures.test.js')];
 
   const phase2Files = [testFile('designerActions.test.js')];
@@ -891,8 +891,6 @@ async function main() {
   //                   shouldValidateRuntimeDependencies() at runtime.
   //   monolithic    — true when the scenario runs multiple test files
   //                   in a single VS Code session (currently 4.1, 4.7).
-  //   allowFailure  — true to log the scenario's failure but exclude it
-  //                   from the aggregate exit code (xvfb-flaky cases).
   // ------------------------------------------------------------------
   const scenarios = [
     // Independent / no-workspace scenarios
@@ -935,6 +933,7 @@ async function main() {
       testFile: phase2Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'standard' },
     },
     {
       id: 'p42-customcode',
@@ -976,7 +975,7 @@ async function main() {
     {
       id: 'p44-statelessvariables',
       testFile: phase4Files[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      workspaceSpec: { appType: 'standard', wfType: 'Stateless' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
     },
     {
@@ -1021,7 +1020,6 @@ async function main() {
       testFile: phase8dFiles[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
-      allowFailure: true /* known xvfb-flaky in CI */,
     },
     {
       id: 'p48e-conversionsubfolder',
@@ -1466,6 +1464,26 @@ namespace ${namespaceName}
       return phase2Resources;
     };
 
+    const getStandardStatelessResources = () => {
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      if (!fs.existsSync(manifestPath)) {
+        console.warn(`  Manifest not found for stateless startup resource: ${manifestPath}`);
+        return [];
+      }
+      try {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateless');
+        if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+          console.log(`  Using stateless startup workspace: ${preferred.wsFilePath}`);
+          return [preferred.wsFilePath];
+        }
+        console.warn('  Could not find Standard + Stateless workspace in manifest for stateless startup resource');
+      } catch (e) {
+        console.warn(`  Failed to parse manifest for stateless startup resource: ${e.message}`);
+      }
+      return [];
+    };
+
     // ------------------------------------------------------------------
     // Phase A — per-scenario workspace resolver.
     //
@@ -1530,8 +1548,8 @@ namespace ${namespaceName}
         const { appType, wfType, use } = spec;
         const entry =
           manifest.find((e) => (!appType || e.appType === appType) && (!wfType || e.wfType === wfType)) ||
-          manifest.find((e) => !appType || e.appType === appType) ||
-          manifest[0];
+          (!wfType ? manifest.find((e) => !appType || e.appType === appType) : undefined) ||
+          (!appType && !wfType ? manifest[0] : undefined);
         if (!entry) {
           console.warn(`  [${scenarioId}] No manifest entry matched ${JSON.stringify(spec)}`);
           return { resources: [] };
@@ -1558,16 +1576,13 @@ namespace ${namespaceName}
     //   3. Resolve startup resources via selectWorkspaceForSpec().
     //   4. Export LA_E2E_LEGACY_PROJECT_DIR for self-contained specs.
     //   5. Hand off to runPhase() (one ExTester instance per scenario).
-    //   6. Collect exit codes; allowFailure scenarios are logged but
-    //      excluded from the aggregate Math.max.
+    //   6. Collect exit codes; every scenario contributes to the aggregate.
     //
-    // Returns the aggregate exit code (0 if every non-allowFailure
-    // scenario passed).
+    // Returns the aggregate exit code.
     const runScenarioPhases = async (scenarioList /* , opts */) => {
       const exits = [];
-      const allowFailureExits = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, allowFailure, env: scenarioEnv } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
         const resolvedSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
@@ -1603,20 +1618,13 @@ namespace ${namespaceName}
             process.env[key] = prev;
           }
         }
-        if (allowFailure) {
-          allowFailureExits.push({ id, exit });
-          if (exit !== 0) {
-            console.log(`  ⚠ Scenario ${id} exited with ${exit}; excluded from aggregate (allowFailure: true)`);
-          }
-        } else {
-          exits.push(exit);
-        }
+        exits.push(exit);
         // Brief pause between sessions to let VS Code/chromedriver release
         // ports and sockets before the next prepareFreshSession() runs.
         await new Promise((r) => setTimeout(r, 3000));
       }
       const aggregate = exits.length === 0 ? 0 : Math.max(...exits);
-      console.log(`\n=== Scenarios results: ${exits.length} blocking, ${allowFailureExits.length} allowFailure → exit ${aggregate} ===`);
+      console.log(`\n=== Scenarios results: ${exits.length} blocking → exit ${aggregate} ===`);
       return aggregate;
     };
 
@@ -1719,7 +1727,7 @@ namespace ${namespaceName}
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase4-only');
-      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: wsResources }));
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() }));
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase5-only');
@@ -1791,7 +1799,8 @@ namespace ${namespaceName}
         exits.push(await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir }));
         await new Promise((r) => setTimeout(r, 3000));
       } else {
-        exits.push(0);
+        console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+        exits.push(1);
       }
 
       // Phase 4.8e: Open logic app subfolder, click No
@@ -1938,7 +1947,7 @@ namespace ${namespaceName}
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase4-shard');
-      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: wsResources }));
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() }));
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase5-shard');
@@ -2009,6 +2018,9 @@ namespace ${namespaceName}
         await new Promise((r) => setTimeout(r, 3000));
         await prepareFreshSession('phase8d-shard');
         phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
+      } else {
+        console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+        phase8dExit = 1;
       }
 
       // Phase 4.8e: Open logic app subfolder, click No
@@ -2021,13 +2033,7 @@ namespace ${namespaceName}
         exits.push(0);
       }
 
-      // Mirror `full` mode behaviour: 4.8d (conversionYes) is environment-flaky
-      // in CI (xvfb dialog interaction), so log its result but exclude from
-      // the shard exit code.
-      const finalExit = Math.max(...exits);
-      if (phase8dExit !== 0) {
-        console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
-      }
+      const finalExit = Math.max(...exits, phase8dExit);
       console.log(
         `\n=== Conversion shard results: 4.1=${exits[0]}, 4.8a=${exits[1]}, 4.8c=${exits[2]}, 4.8d=${phase8dExit}, 4.8e=${exits[3]} → exit ${finalExit} ===`
       );
@@ -2077,7 +2083,7 @@ namespace ${namespaceName}
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase4');
-    const phase4Exit = await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: phase2Resources });
+    const phase4Exit = await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() });
     if (phase4Exit !== 0) {
       console.log(`\n⚠ Phase 4.4 exited with code ${phase4Exit} — continuing`);
     }
@@ -2155,6 +2161,9 @@ namespace ${namespaceName}
       await prepareFreshSession('phase8d');
       phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
       if (phase8dExit !== 0) console.log(`\n⚠ Phase 4.8d exited with code ${phase8dExit} — continuing`);
+    } else {
+      console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+      phase8dExit = 1;
     }
 
     // Phase 4.8e: Open logic app subfolder, click No
@@ -2190,11 +2199,7 @@ namespace ${namespaceName}
       console.log(`\n⚠ Phase 4.10 setup error: ${err.message || err} — continuing`);
     }
 
-    // Exit with worst exit code from all phases
-    // Note: phase8dExit (conversionYes) is excluded from the final exit code
-    // because this test is environment-flaky in CI — the "Yes"/"Open Workspace"
-    // button is sometimes not interactable under xvfb. It still runs and logs
-    // its result, but does not block the pipeline.
+    // Exit with worst exit code from all phases.
     const finalExit = Math.max(
       phase0Exit,
       phase1Exit,
@@ -2206,12 +2211,10 @@ namespace ${namespaceName}
       phase8aExit,
       phase8bExit,
       phase8cExit,
+      phase8dExit,
       phase8eExit,
       phase10Exit
     );
-    if (phase8dExit !== 0) {
-      console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
-    }
     console.log(
       `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.10=${phase10Exit} → exit ${finalExit} ===`
     );

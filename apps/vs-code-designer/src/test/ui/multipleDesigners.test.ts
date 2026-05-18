@@ -184,13 +184,8 @@ async function openDesignerViaExplorerRightClick(
     /* ignore */
   }
 
-  // Phase 3 R3: Force Explorer tree refresh before relying on the tree state.
-  // Phase 2 evidence (p42-*, p48c) showed the workflow.json row not found for
-  // all 10 attempts when this helper was called for a second workflow in the
-  // same workspace — the tree was stale from the first designer-open.
-  // F5 fix: poll for the workflow.json row (no blind sleep). Also expand the
-  // parent folder to handle H-p42-A (VS Code auto-collapses sibling folders
-  // when a new file is revealed elsewhere).
+  // Force Explorer tree refresh before relying on tree state. Opening one
+  // designer can leave the Explorer stale or collapsed before the next open.
   try {
     await new Workbench().executeCommand('workbench.files.action.refreshFilesExplorer');
   } catch {
@@ -311,13 +306,12 @@ async function openDesignerViaExplorerRightClick(
   const backoffs = isFirstOpen ? [250, 500, 1000, 2000, 4000, 6000, 8000, 10_000] : [250, 500, 1000, 2000, 4000];
   const maxAttempts = backoffs.length;
   // Now right-click on the active/focused workflow.json in the Explorer
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  attemptLoop: for (let attempt = 0; attempt < maxAttempts; attempt++) {
     console.log(`[multiDesigner] Attempt ${attempt + 1}/${maxAttempts} for "${label}"`);
     try {
       // Wait for the menubar overlay to be inactive before clicking. The
       // menubar-menu-title element can intercept clicks on context menu rows
-      // if it isn't aria-hidden yet (same root cause as the openOverviewPage
-      // flake fixed in 358332a41 — see PR #9181).
+      // if it isn't aria-hidden yet.
       try {
         await driver.wait(async () => {
           const active = await driver.findElements(By.css('.menubar-menu-title:not([aria-hidden="true"])'));
@@ -482,8 +476,8 @@ async function openDesignerViaExplorerRightClick(
                       return false;
                     }
                     console.log('[multiDesigner] Retrying once after close-active-editor');
-                    // Phase 2 R1 (review board #4) — pre-retry diagnostic: snapshot state at
-                    // retry trigger so CI logs can compare attempt-1 vs attempt-2 state.
+                    // Snapshot state at retry trigger so CI logs can compare
+                    // attempt-1 vs attempt-2 state.
                     try {
                       const iframes = await driver.findElements(By.css('iframe'));
                       console.log(`[multiDesigner][pre-retry] iframe count: ${iframes.length}`);
@@ -493,8 +487,7 @@ async function openDesignerViaExplorerRightClick(
                     }
                     try {
                       await new Workbench().executeCommand('workbench.action.closeActiveEditor');
-                      // Phase 2 R1 — warm-up grace: 1.5s wasn't enough for the design-time
-                      // host to settle between attempts, so retry-1 produced the same outcome.
+                      // Give the design-time host time to settle between attempts.
                       await sleep(3000);
                       try {
                         await new Workbench().executeCommand('workbench.action.notifications.clearAll');
@@ -513,7 +506,24 @@ async function openDesignerViaExplorerRightClick(
               }
               await sleep(500);
             }
-            console.log(`[multiDesigner] Webview not detected for "${label}"`);
+            console.log(
+              `[multiDesigner] Webview not detected for "${label}" after Open Designer click (attempt ${attempt + 1}/${maxAttempts})`
+            );
+            try {
+              await captureScreenshot(driver, `multiDesigner-no-webview-${label}-attempt-${attempt + 1}`);
+            } catch {
+              /* ignore */
+            }
+            try {
+              await driver.switchTo().defaultContent();
+              await driver.actions().sendKeys(Key.ESCAPE).perform();
+            } catch {
+              /* ignore */
+            }
+            if (attempt < maxAttempts - 1) {
+              await sleep(backoffs[attempt]);
+              continue attemptLoop;
+            }
             return false;
           }
         } catch (menuErr: any) {
@@ -707,6 +717,11 @@ async function activateDesignerTab(
 
 describe('Multiple Designers + Add Workflow', function () {
   this.timeout(TEST_TIMEOUT);
+  // p48c opens multiple designer webviews in one VS Code session. The latest
+  // strict-gated run showed the same designer-open race family as p42, so give
+  // the scenario the same 3 total attempts while helper hardening remains in
+  // progress.
+  this.retries(2);
 
   let driver: WebDriver;
   let workbench: Workbench;
@@ -888,8 +903,8 @@ describe('Multiple Designers + Add Workflow', function () {
     }
     await clearBlockingUI(driver);
 
-    // Phase 2 G3 (revised by review board #4) — Reset frame context + clear any
-    // modal between designer-1 and designer-2 opens, WITHOUT closing designer 1.
+    // Reset frame context and clear any modal between designer-1 and designer-2
+    // opens, WITHOUT closing designer 1.
     // Designer 1 MUST stay open: Step 5 asserts `designerTabs.length >= 2`
     // (BOTH designers open simultaneously) and Step 6 calls
     // activateDesignerTab(wf1Name) which requires designer 1's tab + iframe

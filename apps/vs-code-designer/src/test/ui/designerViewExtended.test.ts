@@ -183,28 +183,53 @@ describe('Designer View Extended Tests', function () {
       return;
     }
 
+    const wjp = path.join(entry.wfDir, 'workflow.json');
+    fs.writeFileSync(
+      wjp,
+      JSON.stringify(
+        {
+          definition: {
+            $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+            actions: {
+              Response: { type: 'Response', kind: 'Http', inputs: { statusCode: 200, body: 'OK' }, runAfter: { manual: ['Succeeded'] } },
+            },
+            contentVersion: '1.0.0.0',
+            outputs: {},
+            triggers: { manual: { type: 'Request', kind: 'Http', inputs: { schema: {} } } },
+          },
+          kind: 'Stateful',
+        },
+        null,
+        4
+      )
+    );
+
     const result = await openDesignerForEntry(workbench, driver, entry);
     driver = VSBrowser.instance.driver;
     assert.ok(result.success, `Designer should open — ${result.error}`);
 
     try {
       const panelOpened = await openNodeSettingsPanel(driver, 'Response');
-      if (panelOpened) {
-        const runAfterOpened = await openRunAfterSettings(driver);
-        if (runAfterOpened) {
-          await configureRunAfter(driver, ['Failed']);
-          await captureScreenshot(driver, 'runafter-configured', EXPLICIT_SCREENSHOT_DIR);
-        }
-        await clickSaveButton(driver);
-        try {
-          await result.webview!.switchBack();
-        } catch {
-          /* ignore */
-        }
-        await sleep(2000);
-        const wf = readWorkflowJson(entry.wfDir);
-        console.log(`[runAfter] Actions: ${JSON.stringify(Object.keys(wf?.definition?.actions || {}))}`);
+      assert.ok(panelOpened, 'Response node settings panel should open');
+
+      const runAfterOpened = await openRunAfterSettings(driver);
+      assert.ok(runAfterOpened, 'Run after settings should open');
+
+      await configureRunAfter(driver, ['Failed']);
+      await captureScreenshot(driver, 'runafter-configured', EXPLICIT_SCREENSHOT_DIR);
+
+      assert.ok(await clickSaveButton(driver), 'Save should complete after configuring run-after');
+      try {
+        await result.webview!.switchBack();
+      } catch {
+        /* ignore */
       }
+      await sleep(2000);
+      const wf = readWorkflowJson(entry.wfDir);
+      console.log(`[runAfter] Actions: ${JSON.stringify(Object.keys(wf?.definition?.actions || {}))}`);
+      const responseAction = wf?.definition?.actions?.Response;
+      assert.ok(responseAction, `workflow.json should contain Response action: ${JSON.stringify(wf?.definition?.actions)}`);
+      assert.deepStrictEqual(responseAction.runAfter, { manual: ['Failed'] }, 'Response action runAfter should be exactly Failed');
       console.log('[runAfter] Test completed');
     } finally {
       try {
