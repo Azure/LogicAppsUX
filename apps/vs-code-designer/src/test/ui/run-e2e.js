@@ -1602,12 +1602,6 @@ namespace ${namespaceName}
 
         await prepareFreshSession(id);
         const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
-        envOverridesApplied.push({ key: 'LA_E2E_STARTUP_RESOURCE', prev: process.env.LA_E2E_STARTUP_RESOURCE });
-        if (resources[0]) {
-          process.env.LA_E2E_STARTUP_RESOURCE = resources[0];
-        } else {
-          delete process.env.LA_E2E_STARTUP_RESOURCE;
-        }
         if (legacyDir) {
           process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
         }

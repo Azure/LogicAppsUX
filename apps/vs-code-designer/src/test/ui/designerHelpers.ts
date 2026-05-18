@@ -2228,19 +2228,14 @@ export async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file unless the scenario runner already launched
-  // VS Code with this workspace as its startup resource.
-  if (isScenarioStartupWorkspace(entry.wsFilePath)) {
-    console.log(`${tag} Reusing scenario startup workspace: ${entry.wsFilePath}`);
-  } else {
-    try {
-      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-      driver = VSBrowser.instance.driver;
-      workbench = new Workbench();
-      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-    } catch (e: any) {
-      return { success: false, error: `Failed to open workspace: ${e.message}` };
-    }
+  // 3. Open the workspace file via `code -r`.
+  try {
+    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+    driver = VSBrowser.instance.driver;
+    workbench = new Workbench();
+    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+  } catch (e: any) {
+    return { success: false, error: `Failed to open workspace: ${e.message}` };
   }
 
   // 4. Wait for extension to settle, dismiss blocking UI
@@ -2352,15 +2347,6 @@ export function readWorkflowJson(wfDir: string): any {
   const filePath = path.join(wfDir, 'workflow.json');
   const content = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(content);
-}
-
-function isScenarioStartupWorkspace(wsFilePath: string): boolean {
-  const startupResource = process.env.LA_E2E_STARTUP_RESOURCE;
-  if (!process.env.LA_E2E_SCENARIO || !startupResource) {
-    return false;
-  }
-  const normalize = (value: string) => (process.platform === 'win32' ? path.resolve(value).toLowerCase() : path.resolve(value));
-  return normalize(startupResource) === normalize(wsFilePath);
 }
 
 // ===========================================================================

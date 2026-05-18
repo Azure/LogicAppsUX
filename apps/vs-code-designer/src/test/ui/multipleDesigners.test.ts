@@ -61,15 +61,6 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
 );
 const SHOULD_WAIT_FOR_RUNTIME_DEPENDENCIES = process.env.LA_E2E_SCENARIO !== 'p48c-multipledesigners';
 
-function isScenarioStartupWorkspace(wsFilePath: string): boolean {
-  const startupResource = process.env.LA_E2E_STARTUP_RESOURCE;
-  if (!process.env.LA_E2E_SCENARIO || !startupResource) {
-    return false;
-  }
-  const normalize = (value: string) => (process.platform === 'win32' ? path.resolve(value).toLowerCase() : path.resolve(value));
-  return normalize(startupResource) === normalize(wsFilePath);
-}
-
 async function waitForFile(filePath: string, timeoutMs: number): Promise<boolean> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -831,14 +822,10 @@ describe('Multiple Designers + Add Workflow', function () {
       )
     );
 
-    // ── Step 1: Open the workspace unless the scenario runner already did ──
-    if (isScenarioStartupWorkspace(entry.wsFilePath)) {
-      console.log(`[multiDesigner] Reusing scenario startup workspace: ${entry.wsFilePath}`);
-    } else {
-      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-      driver = VSBrowser.instance.driver;
-      workbench = new Workbench();
-    }
+    // ── Step 1: Open the workspace ──
+    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+    driver = VSBrowser.instance.driver;
+    workbench = new Workbench();
     await captureScreenshot(driver, 'multi-workspace-opened', EXPLICIT_SCREENSHOT_DIR);
 
     // Wait for extension dependency validation to complete before opening designer
