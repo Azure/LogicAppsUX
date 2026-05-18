@@ -2228,14 +2228,19 @@ export async function openDesignerForEntry(
   // 2.5. Ensure local.settings.json has WORKFLOWS_SUBSCRIPTION_ID to skip Azure wizard
   ensureLocalSettingsForDesigner(entry.appDir);
 
-  // 3. Open the workspace file via `code -r`.
-  try {
-    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-    driver = VSBrowser.instance.driver;
-    workbench = new Workbench();
-    console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
-  } catch (e: any) {
-    return { success: false, error: `Failed to open workspace: ${e.message}` };
+  // 3. Open the workspace file unless the scenario runner already launched
+  // VS Code with this workspace as its startup resource.
+  if (isScenarioStartupWorkspace(entry.wsFilePath)) {
+    console.log(`${tag} Reusing scenario startup workspace: ${entry.wsFilePath}`);
+  } else {
+    try {
+      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+      driver = VSBrowser.instance.driver;
+      workbench = new Workbench();
+      console.log(`${tag} Opened workspace: ${entry.wsFilePath}`);
+    } catch (e: any) {
+      return { success: false, error: `Failed to open workspace: ${e.message}` };
+    }
   }
 
   // 4. Wait for extension to settle, dismiss blocking UI
@@ -2316,7 +2321,7 @@ export async function clickSaveButton(driver: WebDriver): Promise<boolean> {
               const isSaving = await driver.executeScript<boolean>(`
                 var btn = document.querySelector('button[aria-label="Save"]');
                 if (!btn) return false;
-                return btn.textContent.includes('Saving') || btn.disabled;
+                return btn.textContent.includes('Saving');
               `);
               if (!isSaving) {
                 console.log('[save] Save completed');
@@ -2327,8 +2332,8 @@ export async function clickSaveButton(driver: WebDriver): Promise<boolean> {
             }
             await sleep(500);
           }
-          console.log('[save] Save may still be in progress after timeout');
-          return true;
+          console.log('[save] Save still in progress after timeout');
+          return false;
         }
       }
     } catch {
@@ -2347,6 +2352,15 @@ export function readWorkflowJson(wfDir: string): any {
   const filePath = path.join(wfDir, 'workflow.json');
   const content = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(content);
+}
+
+function isScenarioStartupWorkspace(wsFilePath: string): boolean {
+  const startupResource = process.env.LA_E2E_STARTUP_RESOURCE;
+  if (!process.env.LA_E2E_SCENARIO || !startupResource) {
+    return false;
+  }
+  const normalize = (value: string) => (process.platform === 'win32' ? path.resolve(value).toLowerCase() : path.resolve(value));
+  return normalize(startupResource) === normalize(wsFilePath);
 }
 
 // ===========================================================================
@@ -2817,30 +2831,94 @@ export async function openRunAfterSettings(driver: WebDriver): Promise<boolean> 
  */
 export async function configureRunAfter(driver: WebDriver, statuses: string[]): Promise<boolean> {
   try {
-    for (const status of statuses) {
-      const checkboxes = await driver.findElements(
-        By.xpath(`//input[@type="checkbox" and (contains(..//text(), "${status}") or contains(@aria-label, "${status}"))]`)
+    const desired = new Set(statuses.map((status) => status.toLowerCase()));
+    const statusLabels = {
+      Succeeded: 'Is successful',
+      Failed: 'Has failed',
+      Skipped: 'Is skipped',
+      TimedOut: 'Has timed out',
+    };
+    const allStatuses = Object.keys(statusLabels);
+    const getStates = async () =>
+      driver.executeScript<{ found: string[]; checked: Record<string, boolean>; disabled: Record<string, boolean> }>(
+        `
+        const labels = arguments[0];
+        const found = [];
+        const checked = {};
+        const disabled = {};
+        const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"]'));
+        for (const [status, label] of Object.entries(labels)) {
+          const lowerLabel = String(label).toLowerCase();
+          const candidate = candidates.find((el) => {
+            const text = [
+              el.getAttribute('aria-label') || '',
+              el.closest('label')?.textContent || '',
+              el.parentElement?.textContent || '',
+              el.parentElement?.parentElement?.textContent || '',
+            ].join(' ').toLowerCase();
+            return text.includes(lowerLabel);
+          });
+          if (!candidate) {
+            continue;
+          }
+          found.push(status);
+          checked[status] = candidate instanceof HTMLInputElement ? candidate.checked : candidate.getAttribute('aria-checked') === 'true';
+          disabled[status] = candidate instanceof HTMLInputElement ? candidate.disabled : candidate.getAttribute('aria-disabled') === 'true';
+        }
+        return { found, checked, disabled };
+      `,
+        statusLabels
       );
-      if (checkboxes.length > 0) {
-        // Check if already checked
-        const checked = await checkboxes[0].getAttribute('checked');
-        if (!checked) {
-          await checkboxes[0].click();
-          console.log(`[configureRunAfter] Toggled "${status}"`);
-        }
-      } else {
-        // Try clicking a label that contains the status text
-        const labels = await driver.findElements(By.xpath(`//label[contains(text(), "${status}")]`));
-        if (labels.length > 0) {
-          await labels[0].click();
-          console.log(`[configureRunAfter] Clicked label for "${status}"`);
-        } else {
-          console.log(`[configureRunAfter] Checkbox for "${status}" not found`);
-        }
+    const clickStatus = async (status: string) =>
+      driver.executeScript<boolean>(
+        `
+      const status = arguments[0];
+      const label = arguments[1];
+      const lowerLabel = String(label).toLowerCase();
+      const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"]'));
+      const candidate = candidates.find((el) => {
+        const text = [
+          el.getAttribute('aria-label') || '',
+          el.closest('label')?.textContent || '',
+          el.parentElement?.textContent || '',
+          el.parentElement?.parentElement?.textContent || '',
+        ].join(' ').toLowerCase();
+        return text.includes(lowerLabel);
+      });
+      if (!candidate) {
+        return false;
       }
-      await sleep(300);
+      const disabled = candidate instanceof HTMLInputElement ? candidate.disabled : candidate.getAttribute('aria-disabled') === 'true';
+      if (disabled) {
+        return false;
+      }
+      candidate.click();
+      return true;
+    `,
+        status,
+        statusLabels[status as keyof typeof statusLabels]
+      );
+
+    let states = await getStates();
+    for (const status of allStatuses) {
+      if (desired.has(status.toLowerCase()) && !states.checked[status]) {
+        await clickStatus(status);
+        await sleep(400);
+      }
     }
-    return true;
+
+    states = await getStates();
+    for (const status of allStatuses) {
+      if (!desired.has(status.toLowerCase()) && states.checked[status]) {
+        await clickStatus(status);
+        await sleep(400);
+      }
+    }
+
+    states = await getStates();
+    const matchesDesired = allStatuses.every((status) => !!states.checked[status] === desired.has(status.toLowerCase()));
+    console.log(`[configureRunAfter] Found=${states.found.join(',')} checked=${JSON.stringify(states.checked)}`);
+    return allStatuses.every((status) => states.found.includes(status)) && matchesDesired;
   } catch (e: any) {
     console.log(`[configureRunAfter] Error: ${e.message}`);
     return false;

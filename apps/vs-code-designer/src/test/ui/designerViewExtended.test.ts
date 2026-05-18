@@ -215,7 +215,7 @@ describe('Designer View Extended Tests', function () {
       const runAfterOpened = await openRunAfterSettings(driver);
       assert.ok(runAfterOpened, 'Run after settings should open');
 
-      await configureRunAfter(driver, ['Failed']);
+      assert.ok(await configureRunAfter(driver, ['Failed']), 'Failed run-after checkbox should be configurable');
       await captureScreenshot(driver, 'runafter-configured', EXPLICIT_SCREENSHOT_DIR);
 
       assert.ok(await clickSaveButton(driver), 'Save should complete after configuring run-after');

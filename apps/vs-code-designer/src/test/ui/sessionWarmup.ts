@@ -65,8 +65,10 @@ export async function sessionWarmup(driver: WebDriver, workbench: Workbench, opt
   }
 
   // 2. Reveal the actual workspace under test so the Explorer tree expands
-  //    and workflow.json rows become reachable.
-  if (opts.workspaceRoot) {
+  //    and workflow.json rows become reachable. Per-scenario shards already
+  //    launch with the target workspace; re-opening resources here can replace
+  //    the workbench window and invalidate Selenium's session.
+  if (opts.workspaceRoot && !process.env.LA_E2E_SCENARIO) {
     try {
       await VSBrowser.instance.openResources(opts.workspaceRoot);
       await sleep(1500);
@@ -102,6 +104,8 @@ export async function sessionWarmup(driver: WebDriver, workbench: Workbench, opt
     } catch (e: any) {
       console.log(`[sessionWarmup] Workspace reveal failed (non-fatal): ${e.message}`);
     }
+  } else if (opts.workspaceRoot) {
+    console.log(`[sessionWarmup] Skipping resource reopen for scenario workspace: ${opts.workspaceRoot}`);
   }
 
   // 3. Open the Explorer view (covers the case where no workspaceRoot was

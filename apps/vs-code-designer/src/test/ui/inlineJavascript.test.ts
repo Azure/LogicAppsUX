@@ -69,6 +69,34 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
  */
 const TARGET_SHAPE = (process.env.LA_E2E_SHAPE || 'standard') as 'standard' | 'customCode' | 'rulesEngine';
 
+function workflowHasInlineJsShape(wfDir: string): boolean {
+  const wf = readWorkflowJson(wfDir);
+  const actions = wf?.definition?.actions ?? {};
+  const actionValues = Object.values(actions);
+  const serializedActions = JSON.stringify(actions);
+  return (
+    Object.keys(actions).length >= 2 &&
+    actionValues.some((action: any) => action?.type === 'Response') &&
+    /JavaScript|InlineCode/i.test(serializedActions) &&
+    Object.keys(wf?.definition?.triggers ?? {}).length > 0
+  );
+}
+
+async function waitForWorkflowJsonShape(wfDir: string, timeoutMs = 30_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      if (workflowHasInlineJsShape(wfDir)) {
+        return true;
+      }
+    } catch {
+      // The file can be briefly unreadable while save rewrites workflow.json.
+    }
+    await sleep(500);
+  }
+  return false;
+}
+
 describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
   // Phase 4.3 needs more headroom than the shared TEST_TIMEOUT (300_000) on
   // the heavy `createplusnewtests` shard: debug toolbar appears at ~171s on
@@ -210,6 +238,7 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
 
       // Save
       assert.ok(await clickSaveButton(driver), 'Save should complete');
+      assert.ok(await waitForWorkflowJsonShape(entry.wfDir), 'Saved workflow.json should include Request, JavaScript, and Response');
 
       // CRITICAL: switch back from designer webview BUT keep editors OPEN.
       // The designer panel tab must stay in the editor area when F5 fires so
@@ -225,9 +254,7 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
         /* ignore */
       }
       await sleep(2000);
-      const wf = readWorkflowJson(entry.wfDir);
-      assert.ok(wf?.definition?.actions && Object.keys(wf.definition.actions).length > 0, 'Should have actions');
-      assert.ok(wf?.definition?.triggers && Object.keys(wf.definition.triggers).length > 0, 'Should have triggers');
+      assert.ok(workflowHasInlineJsShape(entry.wfDir), 'workflow.json should retain Request, JavaScript, and Response before debug');
 
       // Debug → Run → Verify
       workbench = new Workbench();

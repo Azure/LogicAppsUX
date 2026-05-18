@@ -1013,12 +1013,12 @@ async function main() {
       id: 'p48c-multipledesigners',
       testFile: phase8cFiles[0],
       workspaceSpec: 'manifest-multi',
-      settings: { validateDependencies: true, autoStartDesignTime: true },
+      settings: { validateDependencies: false, autoStartDesignTime: true },
     },
     {
       id: 'p48d-conversionyes',
       testFile: phase8dFiles[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
+      workspaceSpec: 'plain-folder',
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
     {
@@ -1602,6 +1602,12 @@ namespace ${namespaceName}
 
         await prepareFreshSession(id);
         const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
+        envOverridesApplied.push({ key: 'LA_E2E_STARTUP_RESOURCE', prev: process.env.LA_E2E_STARTUP_RESOURCE });
+        if (resources[0]) {
+          process.env.LA_E2E_STARTUP_RESOURCE = resources[0];
+        } else {
+          delete process.env.LA_E2E_STARTUP_RESOURCE;
+        }
         if (legacyDir) {
           process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
         }

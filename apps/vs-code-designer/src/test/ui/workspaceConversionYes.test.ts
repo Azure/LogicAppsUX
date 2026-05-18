@@ -170,9 +170,10 @@ function assertWorkspaceFsInvariants(entry: WorkspaceManifestEntry, phase: strin
 
 describe('Workspace Conversion — Click Yes', function () {
   this.timeout(TEST_TIMEOUT);
-  // 3 total attempts per test. ModalDialog discovery can miss the prompt
-  // when xvfb is slow to repaint.
-  this.retries(2);
+  // This scenario is intentionally single-attempt: clicking Yes changes the
+  // workspace/window state, so a Mocha retry no longer exercises the original
+  // conversion prompt.
+  this.retries(0);
 
   let driver: WebDriver;
   let manifest: WorkspaceManifestEntry[];

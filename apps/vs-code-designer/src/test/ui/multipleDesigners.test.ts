@@ -59,6 +59,27 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
   'multipleDesigners-explicit',
   new Date().toISOString().replace(/[:.]/g, '-')
 );
+const SHOULD_WAIT_FOR_RUNTIME_DEPENDENCIES = process.env.LA_E2E_SCENARIO !== 'p48c-multipledesigners';
+
+function isScenarioStartupWorkspace(wsFilePath: string): boolean {
+  const startupResource = process.env.LA_E2E_STARTUP_RESOURCE;
+  if (!process.env.LA_E2E_SCENARIO || !startupResource) {
+    return false;
+  }
+  const normalize = (value: string) => (process.platform === 'win32' ? path.resolve(value).toLowerCase() : path.resolve(value));
+  return normalize(startupResource) === normalize(wsFilePath);
+}
+
+async function waitForFile(filePath: string, timeoutMs: number): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (fs.existsSync(filePath)) {
+      return true;
+    }
+    await sleep(500);
+  }
+  return false;
+}
 
 /**
  * Switch into the ACTIVE webview iframe using raw Selenium.
@@ -741,7 +762,11 @@ describe('Multiple Designers + Add Workflow', function () {
     }
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
-    await waitForDependencyValidation(driver);
+    if (SHOULD_WAIT_FOR_RUNTIME_DEPENDENCIES) {
+      await waitForDependencyValidation(driver);
+    } else {
+      console.log('[multiDesigner] Skipping runtime dependency validation for UI-only scenario');
+    }
   });
 
   beforeEach(async function () {
@@ -806,10 +831,14 @@ describe('Multiple Designers + Add Workflow', function () {
       )
     );
 
-    // ── Step 1: Open the workspace ──
-    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
-    driver = VSBrowser.instance.driver;
-    workbench = new Workbench();
+    // ── Step 1: Open the workspace unless the scenario runner already did ──
+    if (isScenarioStartupWorkspace(entry.wsFilePath)) {
+      console.log(`[multiDesigner] Reusing scenario startup workspace: ${entry.wsFilePath}`);
+    } else {
+      await openWorkspaceFileInSession(workbench, entry.wsFilePath);
+      driver = VSBrowser.instance.driver;
+      workbench = new Workbench();
+    }
     await captureScreenshot(driver, 'multi-workspace-opened', EXPLICIT_SCREENSHOT_DIR);
 
     // Wait for extension dependency validation to complete before opening designer
@@ -818,45 +847,25 @@ describe('Multiple Designers + Add Workflow', function () {
     } catch {
       /* ignore */
     }
-    await waitForExtensionValidationComplete(driver);
+    if (SHOULD_WAIT_FOR_RUNTIME_DEPENDENCIES) {
+      await waitForExtensionValidationComplete(driver);
+    } else {
+      console.log('[multiDesigner] Skipping extension validation wait for UI-only scenario');
+    }
 
     // ── Step 2: Add a new workflow via right-click on the logic app folder ──
     const newWfName = 'e2enewwf';
     const wfAdded = await addWorkflowViaRightClick(driver, entry.appName, newWfName);
     await captureScreenshot(driver, 'multi-after-add-workflow', EXPLICIT_SCREENSHOT_DIR);
-    // Don't hard-assert — the workflow might be created on disk even if the QuickPick interaction was partial
     if (wfAdded) {
       console.log(`[multiDesigner] Workflow "${newWfName}" added via right-click ✓`);
     } else {
-      console.log('[multiDesigner] Right-click add may have partially succeeded — checking disk...');
+      console.log('[multiDesigner] Right-click helper did not confirm success — checking disk before failing');
     }
-
-    // Wait for the workflow to appear on disk (extension creates it asynchronously)
-    await sleep(3000);
     const newWfDir = path.join(entry.appDir, newWfName);
     const newWfJson = path.join(newWfDir, 'workflow.json');
-    if (!fs.existsSync(newWfJson)) {
-      // Create it manually as fallback so the rest of the test can proceed
-      console.log(`[multiDesigner] Workflow not on disk at ${newWfJson} — creating manually`);
-      fs.mkdirSync(newWfDir, { recursive: true });
-      fs.writeFileSync(
-        newWfJson,
-        JSON.stringify(
-          {
-            definition: {
-              $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-              actions: {},
-              contentVersion: '1.0.0.0',
-              outputs: {},
-              triggers: {},
-            },
-            kind: 'Stateful',
-          },
-          null,
-          4
-        )
-      );
-    }
+    const createdOnDisk = await waitForFile(newWfJson, 15_000);
+    assert.ok(createdOnDisk, `Right-click Add Workflow should create ${newWfJson}`);
 
     // Close all editors to start fresh
     try {
