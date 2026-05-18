@@ -196,24 +196,24 @@ describe('executeCopilotTool', () => {
       expect(mockConnectionService.getSwaggerFromConnector).not.toHaveBeenCalled();
     });
 
-    it('should limit results to top 5 connectors per capability', async () => {
+    it('should limit results to top 10 connectors per capability', async () => {
       const ops = Array.from({ length: 20 }, (_, i) => makeOperation(`Op${i}`, `/connectors/conn${i}`, `Connector ${i}`, `Operation ${i}`));
       mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
 
       const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['test capability'] }));
       const parsed = JSON.parse(result);
 
-      expect(parsed['test capability'].length).toBeLessThanOrEqual(5);
+      expect(parsed['test capability'].length).toBeLessThanOrEqual(10);
     });
 
-    it('should limit matching operations per connector to 5', async () => {
+    it('should limit matching operations per connector to 10', async () => {
       const ops = Array.from({ length: 10 }, (_, i) => makeOperation(`Op${i}`, '/connectors/test', 'Test Connector', `Operation ${i}`));
       mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
 
       const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['test'] }));
       const parsed = JSON.parse(result);
 
-      expect(parsed['test'][0].matchingOperations.length).toBeLessThanOrEqual(5);
+      expect(parsed['test'][0].matchingOperations.length).toBeLessThanOrEqual(10);
     });
   });
 
