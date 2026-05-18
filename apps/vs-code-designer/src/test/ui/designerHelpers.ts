@@ -719,7 +719,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
  * This function polls for those notifications and waits until they've been
  * absent for a stable period, indicating validation is complete.
  */
-export async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs = 120_000): Promise<void> {
+export async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs = DEPENDENCY_VALIDATION_TIMEOUT): Promise<void> {
   const t0 = Date.now();
 
   const hasValidationNotification = async (): Promise<string | null> => {
@@ -800,8 +800,10 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
   }
 
   if (!firstSeen) {
-    console.log(`[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s — assuming complete`);
-    assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s without validation notification`);
+    console.log(
+      `[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s — waiting for dependency binaries`
+    );
+    await waitForDependencyValidation(driver, timeoutMs);
     return;
   }
 

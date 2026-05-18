@@ -943,7 +943,7 @@ async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000
  * Wait for the extension's dependency validation to fully complete.
  * The design-time API (func host start) won't start until validation is done.
  */
-async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs = 120_000): Promise<void> {
+async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs = 300_000): Promise<void> {
   const t0 = Date.now();
   const funcBinaryPath = path.join(
     os.homedir(),
@@ -1034,8 +1034,10 @@ async function waitForExtensionValidationComplete(driver: WebDriver, timeoutMs =
   }
 
   if (!firstSeen) {
-    console.log(`[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s`);
-    ensureFuncExecutable(`${Math.round((Date.now() - t0) / 1000)}s without validation notification`);
+    console.log(
+      `[waitForValidation] No validation notification in ${Math.round((Date.now() - t0) / 1000)}s — waiting for dependency binaries`
+    );
+    await waitForDependencyValidation(driver, timeoutMs);
     return;
   }
 

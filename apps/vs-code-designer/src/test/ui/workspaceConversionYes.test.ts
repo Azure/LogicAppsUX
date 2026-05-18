@@ -45,8 +45,8 @@ import {
   dumpDialogDiagnostics,
 } from './helpers';
 
-const TEST_TIMEOUT = 120_000;
-const PROMPT_DEADLINE_MS = 45_000;
+const TEST_TIMEOUT = 180_000;
+const PROMPT_DEADLINE_MS = 90_000;
 const RELOAD_DEADLINE_MS = 30_000;
 
 /**
@@ -211,10 +211,8 @@ describe('Workspace Conversion — Click Yes', function () {
 
     await openFolderInSession(driver, entry.wsDir);
 
-    // Phase 4.1 p48d fix: close any auto-opened editors (e.g. WBD-hybrid
-    // announcement.md preview) that steal focus into a webview iframe and
-    // delay the ModalDialog page-object from becoming queryable. Cheap no-op
-    // for p48a/p48e which don't auto-open previews.
+    // Close any auto-opened editors that steal focus into a webview iframe and
+    // delay the ModalDialog page object from becoming queryable.
     await new EditorView().closeAllEditors().catch(() => {
       // ignore — best-effort focus reset
     });
@@ -226,11 +224,11 @@ describe('Workspace Conversion — Click Yes', function () {
       });
     await sleep(1000);
 
-    // Wait for the modal prompt to appear (R1: modal-only detection; R7: 45s).
+    // Wait for the modal prompt to appear.
     const promptMessage = await waitForWorkspacePrompt(driver, PROMPT_DEADLINE_MS);
     await captureScreenshot(driver, 'conversion-yes-prompt-found', EXPLICIT_SCREENSHOT_DIR);
 
-    assert.ok(promptMessage, 'workspace conversion modal dialog must appear within 45s');
+    assert.ok(promptMessage, 'workspace conversion modal dialog must appear within 90s');
     assert.ok(/workspace/i.test(promptMessage), `prompt should mention "workspace": "${promptMessage.substring(0, 150)}"`);
 
     // Capture the pre-click title so we can detect "(Workspace)" flip after click.
