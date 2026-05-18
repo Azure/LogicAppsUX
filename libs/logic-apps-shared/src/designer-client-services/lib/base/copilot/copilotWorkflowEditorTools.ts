@@ -151,8 +151,12 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
       // Re-rank: boost operations whose connector name matches words in the search term
       operations = rerankByConnectorName(operations, capability);
 
-      // Group operations by connector
-      const byConnector = new Map<string, { name: string; description: string; operations: string[] }>();
+      // Group operations by connector, scoring each by relevance to the search term
+      const searchWords = capability
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w) => w.length > 2);
+      const byConnector = new Map<string, { name: string; description: string; operations: { summary: string; score: number }[] }>();
       for (const op of operations) {
         const api = (op.properties as any)?.api;
         const connId: string = api?.id ?? '';
@@ -168,9 +172,11 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
         }
         const entry = byConnector.get(connId)!;
         const summary = op.properties?.summary ?? op.name ?? '';
-        if (!entry.operations.includes(summary)) {
-          entry.operations.push(summary);
+        if (entry.operations.some((o) => o.summary === summary)) {
+          continue;
         }
+        const score = scoreOperationRelevance(summary, op.properties?.description ?? '', searchWords);
+        entry.operations.push({ summary, score });
       }
 
       // Return the top connectors (limit to 5 unique connectors)
@@ -179,11 +185,13 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
         if (connectors.length >= 5) {
           break;
         }
+        // Sort operations within each connector by relevance score (highest first)
+        const rankedOps = info.operations.sort((a, b) => b.score - a.score).map((o) => o.summary);
         connectors.push({
           connectorId: connId,
           connectorName: info.name,
           description: info.description,
-          matchingOperations: info.operations.slice(0, 5),
+          matchingOperations: rankedOps.slice(0, 5),
         });
       }
 
@@ -224,6 +232,38 @@ function rerankByConnectorName(operations: DiscoveryOpArray, searchTerm: string)
     }
     return 0;
   });
+}
+
+/**
+ * Scores an operation's relevance to the search term.
+ * Higher score = more relevant. Uses word overlap between the search terms
+ * and the operation's summary/description.
+ */
+function scoreOperationRelevance(summary: string, description: string, searchWords: string[]): number {
+  if (searchWords.length === 0) {
+    return 0;
+  }
+
+  const summaryLower = summary.toLowerCase();
+  const descriptionLower = description.toLowerCase();
+  let score = 0;
+
+  for (const word of searchWords) {
+    // Summary matches are worth more than description matches
+    if (summaryLower.includes(word)) {
+      score += 3;
+    } else if (descriptionLower.includes(word)) {
+      score += 1;
+    }
+  }
+
+  // Bonus for exact phrase match in summary
+  const phrase = searchWords.join(' ');
+  if (summaryLower.includes(phrase)) {
+    score += 5;
+  }
+
+  return score;
 }
 
 /**

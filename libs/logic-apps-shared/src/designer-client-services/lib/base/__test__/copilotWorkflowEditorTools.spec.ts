@@ -305,5 +305,24 @@ describe('executeCopilotTool', () => {
       expect(connectors[0].connectorName).toBe('Office 365 Outlook');
       expect(connectors[0].connectorId).toBe('/connectors/office365');
     });
+
+    it('should rank operations within a connector by relevance to the search term', async () => {
+      const ops = [
+        makeOperation('GetCalendarEvents', '/connectors/outlook', 'Office 365 Outlook', 'Get calendar events'),
+        makeOperation('DeleteEmail', '/connectors/outlook', 'Office 365 Outlook', 'Delete email'),
+        makeOperation('SendEmailV2', '/connectors/outlook', 'Office 365 Outlook', 'Send an email (V2)'),
+        makeOperation('GetAttachments', '/connectors/outlook', 'Office 365 Outlook', 'Get attachments'),
+        makeOperation('OnNewEmail', '/connectors/outlook', 'Office 365 Outlook', 'When a new email arrives'),
+        makeOperation('FlagEmail', '/connectors/outlook', 'Office 365 Outlook', 'Flag an email'),
+      ];
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['send email'] }));
+      const parsed = JSON.parse(result);
+
+      const connector = parsed['send email'][0];
+      // "Send an email (V2)" should rank highest because it contains both "send" and "email"
+      expect(connector.matchingOperations[0]).toBe('Send an email (V2)');
+    });
   });
 });
