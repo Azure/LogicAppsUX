@@ -60,7 +60,7 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Logic/locations/${location}/generateCopilotResponse`;
 
     const sku = this._resolveSku(workflow);
-    const maxToolRounds = 5;
+    const maxToolRounds = 10;
 
     let toolResults: Array<{ toolCallId: string; result: string }> | undefined;
     let previousToolCalls: Array<{ id: string; name: string; arguments: string }> | undefined;
@@ -146,7 +146,50 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
       return result;
     }
 
-    throw new Error('Tool calling exceeded maximum rounds');
+    // Tool loop exhausted — send one final request without tool results so the LLM
+    // can respond to the user asking for clarification instead of hard-failing.
+    const finalRequestBody = {
+      properties: {
+        query: prompt,
+        workflow: {
+          definition: workflow.definition,
+          kind: workflow.kind,
+          connectionReferences: workflow.connectionReferences,
+          ...(workflow.parameters && Object.keys(workflow.parameters).length > 0 ? { parameters: workflow.parameters } : {}),
+          ...(workflow.notes && Object.keys(workflow.notes).length > 0 ? { notes: workflow.notes } : {}),
+        },
+        sku,
+        toolResults: toolResults?.map((tr) => ({
+          ...tr,
+          result: JSON.stringify({ error: 'Tool calling limit reached. Ask the user to clarify which connector or operation to use.' }),
+        })),
+        toolCalls: previousToolCalls,
+      },
+    };
+
+    const finalResponse = await axios.post(uri, finalRequestBody, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: accessToken,
+      },
+      params: { 'api-version': apiVersion },
+      signal,
+    });
+
+    const finalText: string = finalResponse.data?.properties?.response;
+    if (finalText) {
+      const result = parseCopilotResponse(finalText, workflow);
+      if (Object.keys(discoveredConnectors).length > 0) {
+        result.discoveredConnectors = discoveredConnectors;
+      }
+      return result;
+    }
+
+    return {
+      type: 'text',
+      text: "I wasn't able to find the right connectors. Could you clarify which service or connector you'd like to use?",
+    };
   }
 
   /**
