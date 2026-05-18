@@ -165,6 +165,80 @@ function assertFuncCoreToolsExecutable(context: string): void {
   }
 }
 
+function isInvalidSessionError(error: unknown): boolean {
+  const name = (error as { name?: string })?.name?.toLowerCase() ?? '';
+  const message = String((error as { message?: string })?.message ?? error).toLowerCase();
+  return (
+    name.includes('nosuchsession') ||
+    message.includes('invalid session id') ||
+    message.includes('no such session') ||
+    message.includes('does not have a valid session id') ||
+    message.includes('chrome not reachable') ||
+    message.includes('disconnected')
+  );
+}
+
+async function dumpRuntimeDependencyDiagnostics(driver: WebDriver, context: string): Promise<void> {
+  console.log(`[depValidation][diag] ${context}`);
+  try {
+    console.log(`[depValidation][diag] title="${await driver.getTitle()}"`);
+  } catch (e: any) {
+    if (isInvalidSessionError(e)) {
+      throw e;
+    }
+    console.log(`[depValidation][diag] title unavailable: ${e.message}`);
+  }
+
+  try {
+    const visibleValidation = await driver.executeScript<string>(`
+      const els = Array.from(document.querySelectorAll(
+        '.notifications-toasts .notification-list-item, [role="dialog"], .notification-toast, .monaco-notification-list-item, .statusbar-item, .statusbar-entry, .part.statusbar'
+      ));
+      return els
+        .map((el) => el.textContent || '')
+        .filter((text) => text.includes('Validating Runtime Dependency') || text.includes('Successfully installed') || text.includes('Error reading JSON'))
+        .join('\\n---\\n')
+        .slice(0, 2000);
+    `);
+    console.log(`[depValidation][diag] visible validation text=${visibleValidation || '(none)'}`);
+  } catch (e: any) {
+    if (isInvalidSessionError(e)) {
+      throw e;
+    }
+    console.log(`[depValidation][diag] visible validation text unavailable: ${e.message}`);
+  }
+
+  const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+  try {
+    if (fs.existsSync(depsRoot)) {
+      for (const item of fs.readdirSync(depsRoot)) {
+        const itemPath = path.join(depsRoot, item);
+        const stat = fs.statSync(itemPath);
+        const childNames = stat.isDirectory() ? fs.readdirSync(itemPath).slice(0, 20) : [];
+        console.log(`[depValidation][diag] ${item}/ dir=${stat.isDirectory()} children=${JSON.stringify(childNames)}`);
+      }
+    } else {
+      console.log(`[depValidation][diag] dependencies root missing: ${depsRoot}`);
+    }
+  } catch (e: any) {
+    console.log(`[depValidation][diag] dependency listing failed: ${e.message}`);
+  }
+
+  const funcPath = getFuncCoreToolsPath();
+  console.log(`[depValidation][diag] func=${funcPath} exists=${fs.existsSync(funcPath)} executable=${isExecutableFile(funcPath)}`);
+
+  try {
+    const command =
+      process.platform === 'win32'
+        ? 'powershell.exe -NoProfile -Command "Get-Process func,dotnet,node -ErrorAction SilentlyContinue | Select-Object ProcessName,Id,Path | ConvertTo-Json -Compress"'
+        : "ps -eo pid,comm,args | grep -E 'func|dotnet|node' | grep -v grep | head -20";
+    const processOutput = execSync(command, { encoding: 'utf8' });
+    console.log(`[depValidation][diag] processes=${processOutput.trim() || '(none)'}`);
+  } catch (e: any) {
+    console.log(`[depValidation][diag] process dump failed: ${e.message}`);
+  }
+}
+
 /**
  * Ensure the local.settings.json for a workspace has WORKFLOWS_SUBSCRIPTION_ID
  * set to "" so that the Azure connector wizard is skipped when opening the designer.
@@ -345,8 +419,10 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
   try {
     const titleBefore = await driver.getTitle();
     console.log(`[openWorkspaceFileInSession] VS Code title BEFORE: "${titleBefore}"`);
-  } catch {
-    /* ignore */
+  } catch (e: any) {
+    if (isInvalidSessionError(e)) {
+      throw e;
+    }
   }
 
   // Open the workspace/folder via the command palette.
@@ -360,8 +436,45 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
 
   let opened = false;
   let lastOpenError = '';
+  const dumpOpenWorkspaceDiagnostics = async (context: string): Promise<void> => {
+    try {
+      const diag = await driver.executeScript<string>(
+        `
+        const quickInput = document.querySelector('.quick-input-widget:not(.hidden)');
+        const dialogs = Array.from(document.querySelectorAll('[role="dialog"], .monaco-dialog-box, .notification-toast'))
+          .map((el) => el.textContent || '')
+          .join('\\n---\\n')
+          .slice(0, 1000);
+        const editors = Array.from(document.querySelectorAll('.tabs-container .tab, .editor-group-container .tabs-container .tab'))
+          .map((el) => el.textContent || '')
+          .join(' | ')
+          .slice(0, 1000);
+        return JSON.stringify({
+          title: document.title,
+          quickInput: quickInput ? quickInput.textContent : '',
+          dialogs,
+          editors,
+          activeElement: document.activeElement ? document.activeElement.outerHTML?.slice(0, 500) : '',
+        });
+      `
+      );
+      console.log(`[openWorkspaceFileInSession][diag] ${context}: ${diag}`);
+    } catch (e: any) {
+      if (isInvalidSessionError(e)) {
+        throw e;
+      }
+      console.log(`[openWorkspaceFileInSession][diag] ${context} unavailable: ${e.message}`);
+    }
+  };
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
+      try {
+        await driver.switchTo().defaultContent();
+      } catch (e: any) {
+        if (isInvalidSessionError(e)) {
+          throw e;
+        }
+      }
       await clearBlockingUI(driver);
 
       // Use Quick Open (Ctrl+O on Linux) which opens the file/folder dialog
@@ -425,12 +538,22 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       // Wait for the workbench to be ready after potential reload
       try {
         await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
-      } catch {
+      } catch (e: any) {
+        if (isInvalidSessionError(e)) {
+          throw e;
+        }
         /* timeout is OK — VS Code may have reloaded */
       }
 
       // Check if the workspace actually opened
-      const titleAfter = await driver.getTitle().catch(() => '');
+      let titleAfter = '';
+      try {
+        titleAfter = await driver.getTitle();
+      } catch (e: any) {
+        if (isInvalidSessionError(e)) {
+          throw e;
+        }
+      }
       console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
 
       if (titleAfter.toLowerCase().includes(expectedWorkspaceName)) {
@@ -445,8 +568,9 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       }
 
       // Check explorer
-      const explorerState = await driver
-        .executeScript<string>(
+      let explorerState = 'ERROR';
+      try {
+        explorerState = await driver.executeScript<string>(
           `
         const expected = arguments[0];
         const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
@@ -456,8 +580,12 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
         return 'ROWS=' + rows.length;
       `,
           expectedWorkspaceName
-        )
-        .catch(() => 'ERROR');
+        );
+      } catch (e: any) {
+        if (isInvalidSessionError(e)) {
+          throw e;
+        }
+      }
       console.log(`[openWorkspaceFileInSession] Explorer: ${explorerState}`);
 
       if (explorerState.startsWith('MATCH=')) {
@@ -471,11 +599,17 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
     } catch (e: any) {
       console.log(`[openWorkspaceFileInSession] Attempt ${attempt + 1}/3 failed: ${e.message}`);
       lastOpenError = e.message;
+      if (isInvalidSessionError(e)) {
+        throw e;
+      }
+      await dumpOpenWorkspaceDiagnostics(`attempt ${attempt + 1} failed`);
       try {
         const body = await driver.findElement(By.css('body'));
         await body.sendKeys(Key.ESCAPE);
-      } catch {
-        /* ignore */
+      } catch (escapeError: any) {
+        if (isInvalidSessionError(escapeError)) {
+          throw escapeError;
+        }
       }
       await sleep(2000);
     }
@@ -583,8 +717,10 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
   try {
     const title = await driver.getTitle();
     console.log(`[depValidation] VS Code title at start: "${title}"`);
-  } catch {
-    /* ignore */
+  } catch (e: any) {
+    if (isInvalidSessionError(e)) {
+      throw e;
+    }
   }
 
   const isValidationVisible = async (): Promise<boolean> => {
@@ -606,7 +742,10 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
         return false;
       `)) ?? false
       );
-    } catch {
+    } catch (e: any) {
+      if (isInvalidSessionError(e)) {
+        throw e;
+      }
       return false;
     }
   };
@@ -640,8 +779,10 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
         if (msg) {
           console.log(`[depValidation] Current stage: "${msg.substring(0, 120)}"`);
         }
-      } catch {
-        /* ignore */
+      } catch (e: any) {
+        if (isInvalidSessionError(e)) {
+          throw e;
+        }
       }
       await sleep(2000);
     }
@@ -713,6 +854,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
   }
 
   // Final check — log what exists in the dependencies folder
+  await dumpRuntimeDependencyDiagnostics(driver, 'waitForDependencyValidation timeout');
   const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
   try {
     if (fs.existsSync(depsRoot)) {
@@ -764,7 +906,10 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
         }
         return null;
       `);
-    } catch {
+    } catch (e: any) {
+      if (isInvalidSessionError(e)) {
+        throw e;
+      }
       return null;
     }
   };
@@ -788,8 +933,10 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
           }
         }
       `);
-    } catch {
-      /* ignore */
+    } catch (e: any) {
+      if (isInvalidSessionError(e)) {
+        throw e;
+      }
     }
   };
 
@@ -854,6 +1001,7 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
   }
 
   if (Date.now() - t0 >= timeoutMs) {
+    await dumpRuntimeDependencyDiagnostics(driver, 'waitForExtensionValidationComplete timeout');
     throw new Error(`[waitForValidation] Timeout after ${Math.round(timeoutMs / 1000)}s`);
   }
   assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s validation wait`);
@@ -889,8 +1037,10 @@ export async function waitForExtensionValidationComplete(driver: WebDriver, time
         assertFuncCoreToolsExecutable(`${Math.round((Date.now() - t0) / 1000)}s design-time API wait`);
         return;
       }
-    } catch {
-      /* ignore */
+    } catch (e: any) {
+      if (isInvalidSessionError(e)) {
+        throw e;
+      }
     }
     await sleep(2000);
   }
@@ -2880,7 +3030,7 @@ export async function openRunAfterSettings(driver: WebDriver): Promise<boolean> 
 export async function configureRunAfter(driver: WebDriver, statuses: string[]): Promise<boolean> {
   try {
     const desired = new Set(statuses.map((status) => status.toLowerCase()));
-    const statusLabels = {
+    const statusLabels: Record<string, string> = {
       Succeeded: 'Is successful',
       Failed: 'Has failed',
       Skipped: 'Is skipped',
@@ -2888,35 +3038,78 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
     };
     const allStatuses = Object.keys(statusLabels);
     const getStates = async () =>
-      driver.executeScript<{ found: string[]; checked: Record<string, boolean>; disabled: Record<string, boolean> }>(
+      driver.executeScript<{
+        found: string[];
+        checked: Record<string, boolean>;
+        disabled: Record<string, boolean>;
+        diagnostics: string[];
+      }>(
         `
         const labels = arguments[0];
         const found = [];
         const checked = {};
         const disabled = {};
-        const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"], .fui-Checkbox, [class*="fui-Checkbox"]'));
-        for (const [status, label] of Object.entries(labels)) {
+        const diagnostics = [];
+        const usedControls = [];
+        function getRoot() {
+          const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel, body'));
+          return roots.find((root) => {
+            const text = (root.textContent || '').toLowerCase();
+            return text.includes('run after') && (text.includes('has failed') || text.includes('is successful') || text.includes('has timed out'));
+          }) || document.body;
+        }
+        function findControl(label) {
           const lowerLabel = String(label).toLowerCase();
-          const candidate = candidates.find((el) => {
+          const root = getRoot();
+          const candidates = Array.from(
+            root.querySelectorAll(
+              'input[type="checkbox"], [role="checkbox"], label, .fui-Checkbox, [class*="fui-Checkbox"], [class*="Checkbox__label"]'
+            )
+          );
+          for (const el of candidates) {
+            const checkboxContainer = el.closest('.fui-Checkbox, [class*="fui-Checkbox"], label');
             const text = [
               el.getAttribute('aria-label') || '',
-              el.closest('label')?.textContent || '',
+              el.getAttribute('title') || '',
+              checkboxContainer?.textContent || '',
               el.textContent || '',
               el.parentElement?.textContent || '',
-              el.parentElement?.parentElement?.textContent || '',
             ].join(' ').toLowerCase();
-            return text.includes(lowerLabel);
-          });
-          if (!candidate) {
+            if (!text.includes(lowerLabel)) {
+              continue;
+            }
+            let node = el;
+            for (let depth = 0; node && depth < 6; depth++) {
+              const input = node instanceof HTMLInputElement ? node : node.querySelector?.('input[type="checkbox"]');
+              const roleCheckbox = node.getAttribute?.('role') === 'checkbox' ? node : node.querySelector?.('[role="checkbox"]');
+              const control = input || roleCheckbox;
+              if (control) {
+                if (usedControls.includes(control)) {
+                  diagnostics.push(String(label) + ': duplicate control');
+                  return null;
+                }
+                usedControls.push(control);
+                return { control, input: input instanceof HTMLInputElement ? input : null };
+              }
+              node = node.parentElement;
+            }
+          }
+          diagnostics.push(String(label) + ': not found');
+          return null;
+        }
+        for (const [status, label] of Object.entries(labels)) {
+          const match = findControl(label);
+          if (!match) {
             continue;
           }
           found.push(status);
-          const input = candidate instanceof HTMLInputElement ? candidate : candidate.querySelector('input[type="checkbox"]');
-          const checkbox = input || candidate.querySelector('[role="checkbox"]') || candidate;
-          checked[status] = input instanceof HTMLInputElement ? input.checked : checkbox.getAttribute('aria-checked') === 'true';
-          disabled[status] = input instanceof HTMLInputElement ? input.disabled : checkbox.getAttribute('aria-disabled') === 'true';
+          checked[status] = match.input ? match.input.checked : match.control.getAttribute('aria-checked') === 'true';
+          disabled[status] = match.input ? match.input.disabled : match.control.getAttribute('aria-disabled') === 'true';
         }
-        return { found, checked, disabled };
+        if (found.length === 0) {
+          diagnostics.push('body=' + (document.body.textContent || '').slice(0, 1000));
+        }
+        return { found, checked, disabled, diagnostics };
       `,
         statusLabels
       );
@@ -2951,31 +3144,48 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
     const clickStatus = async (status: string) =>
       driver.executeScript<boolean>(
         `
-      const status = arguments[0];
       const label = arguments[1];
+      function getRoot() {
+        const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel, body'));
+        return roots.find((root) => {
+          const text = (root.textContent || '').toLowerCase();
+          return text.includes('run after') && (text.includes('has failed') || text.includes('is successful') || text.includes('has timed out'));
+        }) || document.body;
+      }
       const lowerLabel = String(label).toLowerCase();
-      const candidates = Array.from(document.querySelectorAll('input[type="checkbox"], [role="checkbox"], .fui-Checkbox, [class*="fui-Checkbox"]'));
-      const candidate = candidates.find((el) => {
+      const root = getRoot();
+      const candidates = Array.from(root.querySelectorAll('input[type="checkbox"], [role="checkbox"], label, .fui-Checkbox, [class*="fui-Checkbox"], [class*="Checkbox__label"]'));
+      for (const el of candidates) {
+        const checkboxContainer = el.closest('.fui-Checkbox, [class*="fui-Checkbox"], label');
         const text = [
           el.getAttribute('aria-label') || '',
-          el.closest('label')?.textContent || '',
+          el.getAttribute('title') || '',
+          checkboxContainer?.textContent || '',
           el.textContent || '',
           el.parentElement?.textContent || '',
-          el.parentElement?.parentElement?.textContent || '',
         ].join(' ').toLowerCase();
-        return text.includes(lowerLabel);
-      });
-      if (!candidate) {
-        return false;
+        if (!text.includes(lowerLabel)) {
+          continue;
+        }
+        let node = el;
+        for (let depth = 0; node && depth < 6; depth++) {
+          const input = node instanceof HTMLInputElement ? node : node.querySelector?.('input[type="checkbox"]');
+          const roleCheckbox = node.getAttribute?.('role') === 'checkbox' ? node : node.querySelector?.('[role="checkbox"]');
+          const control = input || roleCheckbox;
+          if (!control) {
+            node = node.parentElement;
+            continue;
+          }
+          const disabled = input instanceof HTMLInputElement ? input.disabled : control.getAttribute('aria-disabled') === 'true';
+          if (disabled) {
+            return false;
+          }
+          control.scrollIntoView({ block: 'center', inline: 'center' });
+          control.click();
+          return true;
+        }
       }
-      const input = candidate instanceof HTMLInputElement ? candidate : candidate.querySelector('input[type="checkbox"]');
-      const checkbox = input || candidate.querySelector('[role="checkbox"]') || candidate;
-      const disabled = input instanceof HTMLInputElement ? input.disabled : checkbox.getAttribute('aria-disabled') === 'true';
-      if (disabled) {
         return false;
-      }
-      checkbox.click();
-      return true;
     `,
         status,
         statusLabels[status as keyof typeof statusLabels]
@@ -3005,7 +3215,11 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
 
     states = await getStates();
     const matchesDesired = allStatuses.every((status) => !!states.checked[status] === desired.has(status.toLowerCase()));
-    console.log(`[configureRunAfter] Found=${states.found.join(',')} checked=${JSON.stringify(states.checked)}`);
+    console.log(
+      `[configureRunAfter] Found=${states.found.join(',')} checked=${JSON.stringify(states.checked)} diagnostics=${JSON.stringify(
+        states.diagnostics
+      )}`
+    );
     return allStatuses.every((status) => states.found.includes(status)) && matchesDesired;
   } catch (e: any) {
     console.log(`[configureRunAfter] Error: ${e.message}`);

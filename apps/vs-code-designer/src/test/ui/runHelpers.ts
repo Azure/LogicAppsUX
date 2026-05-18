@@ -1651,6 +1651,30 @@ async function dumpWorkflowRunDiagnostics(): Promise<void> {
         5_000
       );
       console.log(`[overview][diag] workflow=${workflowName} runs status=${runs.status} body=${runs.body.slice(0, 2000) || '(empty)'}`);
+      if (runs.status === 200) {
+        try {
+          const parsedRuns = JSON.parse(runs.body);
+          const runItems = Array.isArray(parsedRuns?.value) ? parsedRuns.value : Array.isArray(parsedRuns) ? parsedRuns : [];
+          const latestRunName = runItems[0]?.name;
+          if (typeof latestRunName === 'string' && latestRunName.length > 0) {
+            const encodedRunName = encodeURIComponent(latestRunName);
+            const actions = await httpRequestJson(
+              {
+                url: `${managementBase}/workflows/${encodedWorkflowName}/runs/${encodedRunName}/actions?api-version=${apiVersion}`,
+                method: 'GET',
+              },
+              5_000
+            );
+            console.log(
+              `[overview][diag] workflow=${workflowName} run=${latestRunName} actions status=${actions.status} body=${
+                actions.body.slice(0, 2000) || '(empty)'
+              }`
+            );
+          }
+        } catch (e: any) {
+          console.log(`[overview][diag] workflow=${workflowName} action diagnostics failed: ${e?.message ?? e}`);
+        }
+      }
       const triggers = await httpRequestJson(
         { url: `${managementBase}/workflows/${encodedWorkflowName}/triggers?api-version=${apiVersion}`, method: 'GET' },
         5_000

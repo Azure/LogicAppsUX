@@ -28,6 +28,7 @@ const distDir = path.join(projectDir, 'dist');
  * locally and in CI. Update this when ExTester releases support for newer versions.
  */
 const VSCODE_VERSION = '1.108.0';
+const DOWNLOAD_RETRY_ATTEMPTS = 3;
 
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
@@ -51,6 +52,32 @@ function copyDirSync(src, dest, skipDir) {
       fs.copyFileSync(srcPath, destPath);
     }
   }
+}
+
+async function withDownloadRetry(label, action) {
+  let lastError;
+  for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
+    try {
+      if (attempt > 1) {
+        console.log(`  retry(${attempt - 1}): ${label}`);
+      }
+      await action();
+      return;
+    } catch (error) {
+      lastError = error;
+      const message = error?.message || String(error);
+      console.log(`  ${label} attempt ${attempt}/${DOWNLOAD_RETRY_ATTEMPTS} failed: ${message}`);
+      if (attempt < DOWNLOAD_RETRY_ATTEMPTS) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
+      }
+    }
+  }
+  throw lastError;
+}
+
+async function downloadExTesterAssets(extest) {
+  await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, () => extest.downloadCode(VSCODE_VERSION));
+  await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => extest.downloadChromeDriver(VSCODE_VERSION));
 }
 
 /**
@@ -278,8 +305,7 @@ async function main() {
 
   // Step 1: Download VS Code + ChromeDriver (skips if already cached)
   console.log('\n=== Step 1: Download VS Code + ChromeDriver ===');
-  await extest.downloadCode(VSCODE_VERSION);
-  await extest.downloadChromeDriver(VSCODE_VERSION);
+  await downloadExTesterAssets(extest);
 
   // Step 2: Install extension dependencies from the marketplace (PARALLEL)
   // Skip deps already present in test-extensions/. For uncached deps,
@@ -1643,22 +1669,19 @@ namespace ${namespaceName}
         process.exit(2);
       }
       console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const singleExit = await runScenarioPhases([scenarioEntry]);
       process.exit(singleExit);
     }
 
     if (e2eMode === 'scenarios') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const scenariosExit = await runScenarioPhases(scenarios);
       process.exit(scenariosExit);
     }
 
     if (e2eMode === 'scenarios-pilot') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       // Pilot exactly one scenario: inlineJavascript. Decision gate per the
       // per-scenario re-architecture plan — if this passes where the current
       // createplusnewtests shard fails Phase 4.3, the new pattern is validated.
@@ -1683,8 +1706,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'codefuldebugonly') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const phase10Exit = await runCodefulDebugPhases('phase10-only');
       process.exit(phase10Exit);
     }
@@ -1692,8 +1714,7 @@ namespace ${namespaceName}
     if (e2eMode === 'nonlogicappstartup') {
       // Startup regression test: intentionally omit runtime dependency paths to
       // exercise extension activation in a plain, non-Logic-App folder.
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
 
       await prepareFreshSession('nonlogicappstartup-only');
@@ -1703,8 +1724,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
 
       await prepareFreshSession('phase2-only');
@@ -1717,8 +1737,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'newtestsonly') {
       // Run only the new tests (phases 4.3–4.6) each in their own session
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
       const exits = [];
@@ -1745,8 +1764,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'conversiononly') {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       // ALL conversion tests need validateDependencies ON so the extension
       // fully activates and detects legacy projects / shows conversion dialog.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
@@ -1836,8 +1854,7 @@ namespace ${namespaceName}
     if (e2eMode === 'conversioncreateonly') {
       // Run only Phase 4.8b: Open legacy project folder (no .code-workspace),
       // click Yes, then verify one Create click starts and completes workspace creation.
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
 
       const legacyDir = createLegacyProjectFixture('conversioncreateonly');
@@ -1849,8 +1866,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createonly') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       await prepareFreshSession('phase1-only');
       const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
       process.exit(phase1Exit);
@@ -1874,8 +1890,7 @@ namespace ${namespaceName}
     // ----------------------------------------------------------------------
 
     if (e2eMode === 'independentonly') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       // Phase 4.0: nonLogicAppStartup — plain folder, no Logic App context.
@@ -1898,8 +1913,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusdesigner') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       // Phase 4.1: createWorkspace — needed to produce the manifest consumed
@@ -1931,8 +1945,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusnewtests') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
@@ -1966,8 +1979,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusconversion') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });

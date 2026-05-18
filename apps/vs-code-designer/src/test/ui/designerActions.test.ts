@@ -9,20 +9,20 @@ import {
   Workbench,
   WebView,
   By,
-  until,
   EditorView,
   type WebDriver,
   VSBrowser,
   type WebElement,
   Key,
   ModalDialog,
-  InputBox,
+  type InputBox,
 } from 'vscode-extension-tester';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import { sessionWarmup } from './sessionWarmup';
 import { waitForQuickInputAndType } from './helpers';
 import { clickRunTrigger as clickRunTriggerWithReadiness, waitForRunStatusInList as waitForRunStatusInListWithRefresh } from './runHelpers';
+import { openWorkspaceFileInSession as openWorkspaceFileInSessionShared } from './designerHelpers';
 
 let __warmedThisSession = false;
 
@@ -646,125 +646,7 @@ async function handleDesignerPrompts(workbench: Workbench, driver: WebDriver): P
  * After opening, clears any blocking UI (auth dialogs, workspace trust prompts, etc.)
  */
 async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: string): Promise<void> {
-  console.log(`[openWorkspaceFileInSession] Opening: ${wsFilePath}`);
-
-  if (!fs.existsSync(wsFilePath)) {
-    throw new Error(`Path not found: ${wsFilePath}`);
-  }
-
-  const driver = VSBrowser.instance.driver;
-  const isWorkspaceFile = wsFilePath.endsWith('.code-workspace');
-  const expectedWorkspaceName = (isWorkspaceFile ? path.basename(wsFilePath, '.code-workspace') : path.basename(wsFilePath)).toLowerCase();
-
-  // Open via command palette — code -r doesn't work on Linux CI
-  let opened = false;
-  let lastOpenError = '';
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      await clearBlockingUI(driver);
-      const input = await workbench.openCommandPrompt();
-      await sleep(500);
-
-      if (isWorkspaceFile) {
-        await input.setText('> File: Open Workspace from File...');
-      } else {
-        await input.setText('> File: Open Folder...');
-      }
-      await sleep(1000);
-
-      const picks = await input.getQuickPicks();
-      let commandFound = false;
-      for (const pick of picks) {
-        const label = await pick.getLabel();
-        if ((isWorkspaceFile && label.includes('Open Workspace from File')) || (!isWorkspaceFile && label.includes('Open Folder'))) {
-          console.log(`[openWorkspaceFileInSession] Selecting: "${label}"`);
-          await pick.select();
-          commandFound = true;
-          break;
-        }
-      }
-
-      if (!commandFound) {
-        await input.cancel();
-        await sleep(2000);
-        continue;
-      }
-
-      await sleep(2000);
-
-      // Type path in simple dialog
-      try {
-        const dialogInput = new InputBox();
-        await dialogInput.setText(wsFilePath);
-        await sleep(500);
-        await dialogInput.confirm();
-      } catch {
-        const body = await driver.findElement(By.css('body'));
-        await body.sendKeys(wsFilePath, Key.ENTER);
-      }
-
-      await sleep(5000);
-
-      try {
-        await (await workbench.getDriver()).wait(until.elementLocated(By.css('.monaco-workbench')), 20_000);
-      } catch {
-        /* reload timeout OK */
-      }
-
-      const titleAfter = await driver.getTitle().catch(() => '');
-      console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
-      if (titleAfter.toLowerCase().includes(expectedWorkspaceName)) {
-        opened = true;
-        break;
-      }
-      if (titleAfter !== 'Visual Studio Code') {
-        console.log(
-          `[openWorkspaceFileInSession] Title changed but did not include expected workspace "${expectedWorkspaceName}" — checking Explorer`
-        );
-      }
-
-      const explorerState = await driver
-        .executeScript<string>(
-          `
-          const expected = arguments[0];
-          const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
-          if (rows.length === 0) return 'EMPTY';
-          const text = Array.from(rows).map((row) => row.textContent || '').join('\\n').toLowerCase();
-          if (text.includes(expected)) return 'MATCH=' + rows.length;
-          return 'ROWS=' + rows.length;
-        `,
-          expectedWorkspaceName
-        )
-        .catch(() => 'ERROR');
-      console.log(`[openWorkspaceFileInSession] Explorer: ${explorerState}`);
-      if (explorerState.startsWith('MATCH=')) {
-        opened = true;
-        break;
-      }
-      lastOpenError = `workspace title stayed "${titleAfter}" and Explorer state was ${explorerState}`;
-    } catch (e: any) {
-      console.log(`[openWorkspaceFileInSession] Attempt ${attempt + 1}/3 failed: ${e.message}`);
-      lastOpenError = e.message;
-      try {
-        const body = await driver.findElement(By.css('body'));
-        await body.sendKeys(Key.ESCAPE);
-      } catch {
-        /* ignore */
-      }
-      await sleep(2000);
-    }
-  }
-
-  if (!opened) {
-    throw new Error(
-      `[openWorkspaceFileInSession] Failed to open ${wsFilePath}: ${lastOpenError || 'no positive workspace-open postcondition'}`
-    );
-  }
-
-  await clearBlockingUI(driver);
-  await sleep(3000);
-  await clearBlockingUI(driver);
-  console.log('[openWorkspaceFileInSession] Done');
+  await openWorkspaceFileInSessionShared(workbench, wsFilePath);
 }
 
 /**
