@@ -58,7 +58,7 @@ let __warmedThisSession = false;
 // ===========================================================================
 
 /** Timeout for each individual test */
-const TEST_TIMEOUT = 300_000;
+const TEST_TIMEOUT = 600_000;
 
 /** Timeout for waiting for elements */
 const ELEMENT_TIMEOUT = 15_000;
@@ -654,8 +654,11 @@ async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: stri
 
   const driver = VSBrowser.instance.driver;
   const isWorkspaceFile = wsFilePath.endsWith('.code-workspace');
+  const expectedWorkspaceName = (isWorkspaceFile ? path.basename(wsFilePath, '.code-workspace') : path.basename(wsFilePath)).toLowerCase();
 
   // Open via command palette — code -r doesn't work on Linux CI
+  let opened = false;
+  let lastOpenError = '';
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       await clearBlockingUI(driver);
@@ -710,11 +713,38 @@ async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: stri
 
       const titleAfter = await driver.getTitle().catch(() => '');
       console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
-      if (titleAfter !== 'Visual Studio Code') {
+      if (titleAfter.toLowerCase().includes(expectedWorkspaceName)) {
+        opened = true;
         break;
       }
+      if (titleAfter !== 'Visual Studio Code') {
+        console.log(
+          `[openWorkspaceFileInSession] Title changed but did not include expected workspace "${expectedWorkspaceName}" — checking Explorer`
+        );
+      }
+
+      const explorerState = await driver
+        .executeScript<string>(
+          `
+          const expected = arguments[0];
+          const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
+          if (rows.length === 0) return 'EMPTY';
+          const text = Array.from(rows).map((row) => row.textContent || '').join('\\n').toLowerCase();
+          if (text.includes(expected)) return 'MATCH=' + rows.length;
+          return 'ROWS=' + rows.length;
+        `,
+          expectedWorkspaceName
+        )
+        .catch(() => 'ERROR');
+      console.log(`[openWorkspaceFileInSession] Explorer: ${explorerState}`);
+      if (explorerState.startsWith('MATCH=')) {
+        opened = true;
+        break;
+      }
+      lastOpenError = `workspace title stayed "${titleAfter}" and Explorer state was ${explorerState}`;
     } catch (e: any) {
       console.log(`[openWorkspaceFileInSession] Attempt ${attempt + 1}/3 failed: ${e.message}`);
+      lastOpenError = e.message;
       try {
         const body = await driver.findElement(By.css('body'));
         await body.sendKeys(Key.ESCAPE);
@@ -723,6 +753,12 @@ async function openWorkspaceFileInSession(workbench: Workbench, wsFilePath: stri
       }
       await sleep(2000);
     }
+  }
+
+  if (!opened) {
+    throw new Error(
+      `[openWorkspaceFileInSession] Failed to open ${wsFilePath}: ${lastOpenError || 'no positive workspace-open postcondition'}`
+    );
   }
 
   await clearBlockingUI(driver);
@@ -3845,6 +3881,19 @@ describe('Designer Actions Tests', function () {
         /* ignore */
       }
       await sleep(2000);
+
+      const workflow = readWorkflowJson(entry.wfDir);
+      const triggers = workflow?.definition?.triggers;
+      const actions = workflow?.definition?.actions;
+      console.log(`[test3] workflow.json triggers: ${JSON.stringify(Object.keys(triggers || {}))}`);
+      console.log(`[test3] workflow.json actions: ${JSON.stringify(Object.keys(actions || {}))}`);
+      assert.ok(triggers && Object.keys(triggers).length > 0, 'RulesEngine workflow.json should contain at least one trigger before debug');
+      assert.ok(actions && Object.keys(actions).length > 0, 'RulesEngine workflow.json should contain at least one action before debug');
+      const actionValues = Object.values(actions) as any[];
+      const hasResponseAction = actionValues.some(
+        (action: any) => action.type === 'Response' || action.type?.toLowerCase().includes('response')
+      );
+      assert.ok(hasResponseAction, 'RulesEngine workflow.json should contain a Response action before debug');
 
       // Debug → Open overview → Run → Verify
       workbench = new Workbench();

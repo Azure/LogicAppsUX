@@ -27,11 +27,19 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as assert from 'assert';
-import { Workbench, EditorView, type WebDriver, VSBrowser, By, Key } from 'vscode-extension-tester';
+import { Workbench, EditorView, type WebDriver, type WebView, VSBrowser, By, Key } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { sleep, captureScreenshot, clearBlockingUI, dismissAllDialogs, waitForQuickInputAndType } from './helpers';
 import { sessionWarmup } from './sessionWarmup';
+import {
+  clearAndType,
+  findDropdownByLabel,
+  findInputByLabel,
+  selectDropdownOption,
+  switchToWebviewFrame,
+  waitForNextButton,
+} from './createWorkspaceShared';
 import {
   TEST_TIMEOUT,
   ensureLocalSettingsForDesigner,
@@ -48,6 +56,7 @@ import {
   waitForNodeCountIncrease,
   DESIGNER_READY_TIMEOUT,
   switchToDesignerWebview,
+  clickElementWithFallback,
 } from './designerHelpers';
 
 let __warmedThisSession = false;
@@ -563,6 +572,75 @@ async function openDesignerViaExplorerRightClick(
   return false;
 }
 
+async function clickEnabledButtonByText(driver: WebDriver, buttonTexts: string[], timeoutMs = 30_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const buttons = await driver.findElements(By.css('button'));
+    for (const button of buttons) {
+      const text = (await button.getText().catch(() => '')).trim().toLowerCase();
+      const disabled = await button
+        .getAttribute('disabled')
+        .then((value) => value === 'true' || value === '')
+        .catch(() => false);
+      const ariaDisabled = await button
+        .getAttribute('aria-disabled')
+        .then((value) => value === 'true')
+        .catch(() => false);
+      if (!disabled && !ariaDisabled && buttonTexts.some((candidate) => text.includes(candidate.toLowerCase()))) {
+        try {
+          await clickElementWithFallback(driver, button, `button matching ${JSON.stringify(buttonTexts)}`);
+          console.log(`[multiDesigner] Clicked button "${text}" matching ${JSON.stringify(buttonTexts)}`);
+          return true;
+        } catch (e: any) {
+          console.log(`[multiDesigner] Button click failed for "${text}": ${e?.message ?? e}`);
+        }
+      }
+    }
+    await sleep(500);
+  }
+  console.log(`[multiDesigner] No enabled button matched ${JSON.stringify(buttonTexts)} within ${timeoutMs}ms`);
+  return false;
+}
+
+async function fillCreateWorkflowWebview(driver: WebDriver, newWorkflowName: string): Promise<boolean> {
+  let webview: WebView | undefined;
+  try {
+    webview = await switchToWebviewFrame(driver);
+    console.log('[multiDesigner] Create workflow webview opened');
+
+    const nameInput = await findInputByLabel(driver, 'Workflow name');
+    await clearAndType(nameInput, newWorkflowName);
+
+    const typeDropdown = await findDropdownByLabel(driver, 'Workflow type');
+    await selectDropdownOption(driver, typeDropdown, 'Stateful');
+
+    const nextButton = await waitForNextButton(driver, 30_000);
+    await clickElementWithFallback(driver, nextButton, 'Create workflow Next button');
+    await sleep(1000);
+
+    const createClicked = await clickEnabledButtonByText(driver, ['Create workflow', 'Create'], 30_000);
+    if (!createClicked) {
+      return false;
+    }
+    await sleep(3000);
+    return true;
+  } catch (e: any) {
+    console.log(`[multiDesigner] Create workflow webview flow failed: ${e?.message ?? e}`);
+    return false;
+  } finally {
+    try {
+      await webview?.switchBack();
+    } catch {
+      /* webview may close after create */
+    }
+    try {
+      await driver.switchTo().defaultContent();
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 /**
  * Add a workflow via right-click on the logic app folder → "Create workflow..."
  * Returns the name of the created workflow, or null if it failed.
@@ -605,7 +683,14 @@ async function addWorkflowViaRightClick(driver: WebDriver, appFolderName: string
           }
           await sleep(2000);
 
-          // Enter workflow name in the QuickPick input
+          // Current product flow opens the Create workflow webview. Older
+          // builds used Quick Input, so keep that path as fallback only.
+          if (await fillCreateWorkflowWebview(driver, newWorkflowName)) {
+            console.log(`[multiDesigner] Submitted Create workflow webview for "${newWorkflowName}"`);
+            return true;
+          }
+
+          // Enter workflow name in the legacy QuickPick input
           const quickInput = await driver
             .wait(async () => {
               const inputs = await driver.findElements(By.css('.quick-input-widget:not(.hidden) input'));

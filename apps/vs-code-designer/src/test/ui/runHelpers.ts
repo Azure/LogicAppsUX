@@ -1623,6 +1623,47 @@ export async function getLatestRunStatus(driver: WebDriver): Promise<string> {
   }
 }
 
+async function dumpWorkflowRunDiagnostics(): Promise<void> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  try {
+    const wf = await httpRequestJson({ url: `${managementBase}/workflows?api-version=${apiVersion}`, method: 'GET' }, 5_000);
+    console.log(`[overview][diag] workflows status=${wf.status} body=${wf.body.slice(0, 2000) || '(empty)'}`);
+    if (wf.status !== 200) {
+      return;
+    }
+
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(wf.body);
+    } catch {
+      parsed = null;
+    }
+    const workflows = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : [];
+    for (const workflow of workflows.slice(0, 3)) {
+      const workflowName = workflow?.name;
+      if (typeof workflowName !== 'string' || workflowName.length === 0) {
+        continue;
+      }
+      const encodedWorkflowName = encodeURIComponent(workflowName);
+      const runs = await httpRequestJson(
+        { url: `${managementBase}/workflows/${encodedWorkflowName}/runs?api-version=${apiVersion}`, method: 'GET' },
+        5_000
+      );
+      console.log(`[overview][diag] workflow=${workflowName} runs status=${runs.status} body=${runs.body.slice(0, 2000) || '(empty)'}`);
+      const triggers = await httpRequestJson(
+        { url: `${managementBase}/workflows/${encodedWorkflowName}/triggers?api-version=${apiVersion}`, method: 'GET' },
+        5_000
+      );
+      console.log(
+        `[overview][diag] workflow=${workflowName} triggers status=${triggers.status} body=${triggers.body.slice(0, 1000) || '(empty)'}`
+      );
+    }
+  } catch (e: any) {
+    console.log(`[overview][diag] workflow run diagnostics failed: ${e?.message ?? e}`);
+  }
+}
+
 /**
  * Poll the overview run history list until the latest run shows the target status.
  */
@@ -1662,6 +1703,7 @@ export async function waitForRunStatusInList(
   }
 
   console.log(`[overview] Target status "${targetStatus}" not found after ${timeoutMs}ms (last: "${lastStatus}")`);
+  await dumpWorkflowRunDiagnostics();
   return { found: false, lastStatus };
 }
 

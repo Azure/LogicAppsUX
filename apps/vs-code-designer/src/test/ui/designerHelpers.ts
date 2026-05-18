@@ -356,7 +356,10 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
   // shows a simple text input (files.simpleDialog.enable=true is set by ExTester).
   const isWorkspaceFile = wsFilePath.endsWith('.code-workspace');
   const openPath = isWorkspaceFile ? wsFilePath : wsFilePath;
+  const expectedWorkspaceName = (isWorkspaceFile ? path.basename(wsFilePath, '.code-workspace') : path.basename(wsFilePath)).toLowerCase();
 
+  let opened = false;
+  let lastOpenError = '';
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       await clearBlockingUI(driver);
@@ -430,31 +433,44 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       const titleAfter = await driver.getTitle().catch(() => '');
       console.log(`[openWorkspaceFileInSession] VS Code title AFTER: "${titleAfter}"`);
 
-      if (titleAfter !== 'Visual Studio Code') {
+      if (titleAfter.toLowerCase().includes(expectedWorkspaceName)) {
         console.log('[openWorkspaceFileInSession] Workspace opened successfully (title changed)');
+        opened = true;
         break;
+      }
+      if (titleAfter !== 'Visual Studio Code') {
+        console.log(
+          `[openWorkspaceFileInSession] Title changed but did not include expected workspace "${expectedWorkspaceName}" — checking Explorer`
+        );
       }
 
       // Check explorer
       const explorerState = await driver
         .executeScript<string>(
           `
+        const expected = arguments[0];
         const rows = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
         if (rows.length === 0) return 'EMPTY';
+        const text = Array.from(rows).map((row) => row.textContent || '').join('\\n').toLowerCase();
+        if (text.includes(expected)) return 'MATCH=' + rows.length;
         return 'ROWS=' + rows.length;
-      `
+      `,
+          expectedWorkspaceName
         )
         .catch(() => 'ERROR');
       console.log(`[openWorkspaceFileInSession] Explorer: ${explorerState}`);
 
-      if (explorerState !== 'EMPTY') {
-        console.log('[openWorkspaceFileInSession] Folder opened (explorer has rows)');
+      if (explorerState.startsWith('MATCH=')) {
+        console.log('[openWorkspaceFileInSession] Folder opened (Explorer contains expected workspace)');
+        opened = true;
         break;
       }
 
       console.log(`[openWorkspaceFileInSession] Workspace not opened on attempt ${attempt + 1}/3`);
+      lastOpenError = `workspace title stayed "${titleAfter}" and Explorer state was ${explorerState}`;
     } catch (e: any) {
       console.log(`[openWorkspaceFileInSession] Attempt ${attempt + 1}/3 failed: ${e.message}`);
+      lastOpenError = e.message;
       try {
         const body = await driver.findElement(By.css('body'));
         await body.sendKeys(Key.ESCAPE);
@@ -463,6 +479,12 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       }
       await sleep(2000);
     }
+  }
+
+  if (!opened) {
+    throw new Error(
+      `[openWorkspaceFileInSession] Failed to open ${wsFilePath}: ${lastOpenError || 'no positive workspace-open postcondition'}`
+    );
   }
 
   await clearBlockingUI(driver);
@@ -2898,6 +2920,34 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
       `,
         statusLabels
       );
+    const expandCollapsedRunAfterRows = async () =>
+      driver.executeScript<number>(
+        `
+        let clicked = 0;
+        const candidates = Array.from(document.querySelectorAll('button, [role="button"], [aria-expanded="false"]'));
+        for (const el of candidates) {
+          const text = [
+            el.getAttribute('aria-label') || '',
+            el.textContent || '',
+            el.parentElement?.textContent || '',
+            el.parentElement?.parentElement?.textContent || '',
+          ].join(' ').toLowerCase();
+          const looksExpandable =
+            text.includes('expand') || text.includes('run after') || text.includes('manual') || text.includes('response');
+          if (!looksExpandable) {
+            continue;
+          }
+          try {
+            el.scrollIntoView({ block: 'center', inline: 'center' });
+            el.click();
+            clicked++;
+          } catch {
+            // Keep trying other candidate expanders.
+          }
+        }
+        return clicked;
+      `
+      );
     const clickStatus = async (status: string) =>
       driver.executeScript<boolean>(
         `
@@ -2932,6 +2982,12 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
       );
 
     let states = await getStates();
+    if (states.found.length === 0) {
+      const expanded = await expandCollapsedRunAfterRows();
+      console.log(`[configureRunAfter] Expanded ${expanded} collapsed run-after candidate(s) before checkbox query`);
+      await sleep(800);
+      states = await getStates();
+    }
     for (const status of allStatuses) {
       if (desired.has(status.toLowerCase()) && !states.checked[status]) {
         await clickStatus(status);
