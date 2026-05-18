@@ -60,7 +60,7 @@ export class BaseCopilotWorkflowEditorService implements ICopilotWorkflowEditorS
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Logic/locations/${location}/generateCopilotResponse`;
 
     const sku = this._resolveSku(workflow);
-    const maxToolRounds = 5;
+    const maxToolRounds = 10;
 
     let toolResults: Array<{ toolCallId: string; result: string }> | undefined;
     let previousToolCalls: Array<{ id: string; name: string; arguments: string }> | undefined;
