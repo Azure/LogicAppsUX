@@ -68,6 +68,7 @@ export interface DiscoveryPanelContentState {
   agentToolMetadata?: { newAdditiveSubgraphId: string; subGraphManifest: OperationManifest };
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;
+  searchTerm: string;
   selectedNodeIds: string[];
   selectedOperationGroupId: string;
   selectedOperationId: string;
