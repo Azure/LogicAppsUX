@@ -191,13 +191,13 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
       // Return the top connectors (limit to 5 unique connectors)
       const connectors: unknown[] = [];
       for (const [connId, info] of byConnector.entries()) {
-        if (connectors.length >= 5) {
+        if (connectors.length >= 10) {
           break;
         }
         // Sort operations within each connector by relevance score (highest first)
         const rankedOps = info.operations
           .sort((a, b) => b.score - a.score)
-          .slice(0, 5)
+          .slice(0, 10)
           .map((o) => ({ operationId: o.operationId, summary: o.summary }));
         connectors.push({
           connectorId: connId,
