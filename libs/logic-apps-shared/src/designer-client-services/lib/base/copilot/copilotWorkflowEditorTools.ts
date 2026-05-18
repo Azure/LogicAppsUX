@@ -148,6 +148,9 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
         continue;
       }
 
+      // Re-rank: boost operations whose connector name matches words in the search term
+      operations = rerankByConnectorName(operations, capability);
+
       // Get the top matches and build complete action templates
       const topOps = operations.slice(0, 5);
       const actionTemplates: unknown[] = [];
@@ -200,6 +203,36 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
   } catch (error) {
     return JSON.stringify({ error: `Discovery failed: ${error instanceof Error ? error.message : String(error)}` });
   }
+}
+
+/**
+ * Re-ranks operations so those whose connector name matches search terms appear first.
+ * This avoids the problem where searching "outlook email" returns irrelevant connectors
+ * (e.g. Contoso Hub) whose descriptions happen to mention "email" or "outlook".
+ */
+function rerankByConnectorName(operations: DiscoveryOpArray, searchTerm: string): DiscoveryOpArray {
+  const words = searchTerm
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length > 2);
+
+  if (words.length === 0) {
+    return operations;
+  }
+
+  return [...operations].sort((a, b) => {
+    const nameA = ((a.properties as any)?.api?.displayName ?? (a.properties as any)?.api?.name ?? '').toLowerCase();
+    const nameB = ((b.properties as any)?.api?.displayName ?? (b.properties as any)?.api?.name ?? '').toLowerCase();
+    const matchA = words.some((w) => nameA.includes(w));
+    const matchB = words.some((w) => nameB.includes(w));
+    if (matchA && !matchB) {
+      return -1;
+    }
+    if (!matchA && matchB) {
+      return 1;
+    }
+    return 0;
+  });
 }
 
 /**
