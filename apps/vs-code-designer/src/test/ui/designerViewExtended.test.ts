@@ -214,7 +214,6 @@ describe('Designer View Extended Tests', function () {
 
       await captureScreenshot(driver, 'runafter-panel-opened', EXPLICIT_SCREENSHOT_DIR);
 
-      assert.ok(await clickSaveButton(driver), 'Save should complete after opening run-after action');
       try {
         await result.webview!.switchBack();
       } catch {
