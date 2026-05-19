@@ -68,6 +68,38 @@ Curated CI, E2E, and workflow-failure learnings. Add entries through `session-kn
 - Applies to: `chief-engineer`, `pr-orchestrator`, `ci-sentinel`.
 - Status: verified.
 
+### Collapsing stacked PRs into an integration PR
+
+- Learning: For fork-to-upstream stacked PRs that all target `main`, collapse by fetching each PR head, starting from a clean integration-branch worktree, tagging the pre-collapse head, and merging each PR with `--no-ff` in the intended order. Verify every side PR head is an ancestor of the collapsed head before pushing.
+- Why it matters: GitHub cannot model fork PRs based on another fork branch, so side PR labels/checks may look stale even when the work is intentionally superseded by an integration PR. PR #9164 safely collapsed #9175/#9178/#9179/#9180/#9181 this way while preserving readable first-parent history.
+- Source: Azure/LogicAppsUX#9164 collapsed head `4b68281a122cae99c323430c588277f0e5cbefdd`; final status comment `#issuecomment-4489982690`.
+- Applies to: `chief-engineer`, `pr-orchestrator`, `ci-sentinel`, `release-scribe`.
+- Status: verified.
+
+### Validate on the collapsed PR head, not only on child PR heads
+
+- Learning: A green child PR (for example #9181) is evidence to start a collapse, but the integration PR must get fresh green checks on the collapsed head before it is declared merge-ready.
+- Why it matters: #9181 had strict green VS Code E2E, but #9164 still needed fresh post-collapse `validate-pr`, build, coverage, Playwright, Chat E2E, and VS Code E2E checks on head `4b68281a`.
+- Source: Azure/LogicAppsUX#9164 post-collapse runs `26108941288`, `26108941164`, and `26111149301`.
+- Applies to: `chief-engineer`, `pr-orchestrator`, `ci-sentinel`, `release-scribe`.
+- Status: verified.
+
+### VS Code E2E build artifacts should be produced once
+
+- Learning: Keep `setup-extension-build` as a shared serial job that installs/builds/compiles once, uploads the extension and compiled E2E artifacts, and lets matrix shards download those artifacts instead of rebuilding.
+- Why it matters: PR #9178 removed duplicated setup work from each shard, making the scenario matrix faster and less variable.
+- Source: Azure/LogicAppsUX#9178 and #9164 collapsed `.github/workflows/vscode-e2e.yml`.
+- Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`.
+- Status: verified.
+
+### Turbo cache keys must be content-based
+
+- Learning: Do not key `.turbo` cache only by `${{ github.sha }}`. Use a content hash over relevant app/lib sources, the lockfile, and `turbo.json`, with restore keys.
+- Why it matters: SHA-only keys guarantee cache misses on every push, hiding the intended CI speedup.
+- Source: Azure/LogicAppsUX#9178; #9164 collapsed `.github/workflows/vscode-e2e.yml`.
+- Applies to: `ci-sentinel`, `chief-engineer`.
+- Status: verified.
+
 ## Worktree creation: `git new` for fresh branches off main, raw `git worktree add` off feature branches
 
 - Learning: The `git new <branch>` repo alias creates a worktree at `../<branch>` off `origin/main` with `.github` / `.squad` overlay + skip-worktree. **It always branches off main.** When a new branch needs to be cut off a *feature* branch (e.g. stacking a follow-up on top of an in-flight PR branch), `git new` is wrong — use raw `git worktree add -b <new-branch> ../<dir> <base-ref>`.

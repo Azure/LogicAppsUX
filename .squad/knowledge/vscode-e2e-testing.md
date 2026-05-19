@@ -230,7 +230,7 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 
 ### Diagnostics-first discipline for CI-only failures (PR #9164 meta-lesson)
 
-- Learning: For VS Code E2E failures that reproduce only in CI with no log signal, the **first** move (not the 15th) is to land a dump-on-failure block. PR #9164 burned a 14-commit reliability arc chasing symptoms because diagnostics were not added until commit `7bc8b05eb`. Once they landed, 7 more commits identified the real root cause (`func: host start` PATH propagation, see `vscode-task-env-propagation.md`) cleanly.
+- Learning: For VS Code E2E failures that reproduce only in CI with no log signal, add dump-on-failure diagnostics early before adding broad retries or sleeps. Delayed diagnostics made PR #9164 triage longer than necessary; once diagnostics landed, the team identified the real root cause (`func: host start` PATH propagation, see `vscode-task-env-propagation.md`) cleanly.
 - Rule: when a runtime-gated wait/click fails in CI, dump on failure:
   1. The terminal panel text for the relevant task (e.g. `func: host start`).
   2. A raw Node `http` probe to the suspected service (e.g. `:7071/admin/host/status`, `/management/workflows/{name}` filtered for health).
@@ -240,17 +240,49 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Reference helpers from PR #9164:
   - `dumpSuspiciouslyFastHost` — fires when `:7071` answers in <2s without a preceding `[killport]` log, signalling a stale host (commit `1fa956ca6`).
   - `dumpDialogDiagnostics` — captures modal dialog DOM state on click failure (commit `aa2c61cba`, conversionYes Track 3).
-- Cost analysis: ~80 lines of diagnostic code saved the equivalent of ~14 generations of debugging.
+- Cost analysis: a small amount of targeted diagnostic code prevented further blind CI iteration.
 - Source: PR #9164 commits `7bc8b05eb`, `1fa956ca6`, `aa2c61cba`; `apps/vs-code-designer/src/test/ui/runHelpers.ts`.
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `vscode`, `chief-engineer`.
 - Status: verified.
 
-### CI parallelization via 5-shard matrix + summary rollup
+### Strict per-scenario matrix is the preferred final VS Code E2E CI shape
 
-- Learning: `vscode-e2e.yml` shards the suite across 5 runners (`independent`, `designer`, `newtests`, `conversion`, `scenarios-pilot`) using a matrix on `E2E_MODE`. A separate `vscode-e2e-summary` job depends on all shards and provides the **single** branch-protection-required check name. Adding/removing shards does not require touching branch protection.
-- Path-filter coalescing on rapid pushes can skip the workflow entirely on `push:` events. Always include a `workflow_dispatch:` trigger as a manual fallback so a maintainer can re-run the matrix without an empty commit. PR #9164 added this in commit `857567947`.
-- Source: `.github/workflows/vscode-e2e.yml` (`matrix:` block, `vscode-e2e-summary` rollup job, `workflow_dispatch:` trigger); commits `7c483a10b` (matrix shard), `857567947` (workflow_dispatch).
-- Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`, `chief-engineer`.
+- Learning: VS Code E2E now fans out by scenario id and gates on strict `vscode-e2e (p*)` jobs plus the single `vscode-e2e-summary` rollup. Do not reintroduce workflow-level `continue-on-error` or internal `allowFailure` masking for strict scenarios; strict shards must fail loudly. Keep `workflow_dispatch:` as a manual fallback because path-filtered PR workflows can be coalesced after rapid pushes.
+- Why it matters: PR #9181 proved the scenario fan-out can pass under strict gating, and #9164 validated the collapsed branch with every scenario shard plus `vscode-e2e-summary` green. This preserves fast, attributable failures without hiding regressions.
+- Source: Azure/LogicAppsUX#9181 run `26081963896`; Azure/LogicAppsUX#9164 collapsed-head run `26108941288`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `chief-engineer`.
+- Status: verified.
+
+### Scenario shards must verify only their intended shape
+
+- Learning: Shape-specific scenarios (`p42-*`, `p43-*`) must set and honor shape selectors such as `LA_E2E_SHAPE`; a shard named for one workflow shape must not silently run unrelated shapes.
+- Why it matters: Earlier p42 shards were misleading because each named shard could still run multiple shapes. PR #9181 isolated `p42-standard`, `p42-customcode`, `p42-rulesengine`, `p43-inlinejavascript`, `p43-customcode`, and `p43-rulesengine`, making failures attributable to the named scenario.
+- Source: Azure/LogicAppsUX#9181 run `26081963896`; #9164 collapsed-head run `26108941288`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
+### Runtime scenarios need action-level success evidence
+
+- Learning: Runtime E2Es must verify persisted workflow shape, top-level run completion, and action-level success evidence. A successful run-list row alone is insufficient.
+- Why it matters: Run history can show a top-level `Succeeded` while details rows are missing, stale, or still rendering. PR #9181 strengthened `verifyAllNodesSucceeded` so p42/p43 runtime paths require non-empty action success evidence from the details UI or the latest-run actions API fallback.
+- Source: Azure/LogicAppsUX#9181 final head `020d10403`; `apps/vs-code-designer/src/test/ui/runHelpers.ts`; #9164 collapsed-head run `26108941288`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-reviewer`, `ci-sentinel`.
+- Status: verified.
+
+### Classify UI-only/deserialization scenarios explicitly
+
+- Learning: Scenarios such as `p45-designerviewextended` should be documented as UI/deserialization-focused and assert persisted graph state such as `Compose.runAfter`, rather than being counted as full runtime/run-history coverage.
+- Why it matters: Clear scenario classification prevents future agents from over-counting coverage and avoids adding runtime waits to tests whose purpose is designer state persistence.
+- Source: Azure/LogicAppsUX#9181 PR body and #9164 final body; `apps/vs-code-designer/src/test/ui/designerViewExtended.test.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `release-scribe`.
+- Status: verified.
+
+### Marketplace dependency installs must retry and fail closed
+
+- Learning: `run-e2e.js` marketplace dependency bootstrap must retry failed direct dependency installs sequentially, rebuild `extensions.json`, and fail closed if dependency installation cannot be proven.
+- Why it matters: Parallel VS Code CLI marketplace installs can race or leave a valid-looking extension directory while commands are not contributed. Treating that as success caused "Open Designer" activation failures in scenario shards.
+- Source: Azure/LogicAppsUX#9181 final head `020d10403`; `apps/vs-code-designer/src/test/ui/run-e2e.js`; #9164 collapsed-head run `26108941288`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
 - Status: verified.
 
 ### `prepareFreshSession` contract: kill orphans between phases

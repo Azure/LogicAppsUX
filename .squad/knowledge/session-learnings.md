@@ -47,3 +47,19 @@ Curated durable learnings extracted from Copilot sessions. Add entries through `
 - Source: Azurite auto-start debug regression session; `apps/vs-code-designer/src/app/commands/pickFuncProcess.ts`; `apps/vs-code-designer/src/app/utils/startRuntimeApi.ts`.
 - Applies to: `vscode`, `test`, `vscode-test-specialist`, `senior-swe-reviewer`.
 - Status: verified.
+
+### VS Code E2E optimization arc (#9164/#9175/#9178/#9179/#9180/#9181)
+
+- Learning: The completed VS Code E2E optimization arc moved CI from broad grouped shards toward strict scenario-level fan-out, preserved `vscode-e2e-summary` as the single required rollup, added shared setup/build artifacts, split create-workspace fixture and behavior coverage, restored real keyboard-navigation assertions, added rulesEngine/custom-code/stateless/run-after/conversion/multi-designer coverage, and hardened runtime readiness, dependency install, and action-level run verification.
+- Why it matters: Future agents should treat #9164 as the integrated source of truth for this stack, not the individually closed side PRs. The side PRs were intentionally closed as superseded only after #9164 contained their heads and all non-skipped checks were green.
+- Source: Azure/LogicAppsUX#9164 collapsed head `4b68281a122cae99c323430c588277f0e5cbefdd`; strict VS Code E2E run `26108941288`; validate-pr run `26111149301`; final status comment `#issuecomment-4489982690`.
+- Applies to: `chief-engineer`, `pr-orchestrator`, `ci-sentinel`, `vscode-test-specialist`, `test`, `release-scribe`.
+- Status: verified.
+
+### Regression control for flaky E2E stabilization
+
+- Learning: When strict CI exposes moving VS Code E2E failures, freeze broad helper/workflow edits, classify failures by scenario and failure class, and prefer one failure class per commit with senior review before push.
+- Why it matters: The PR #9181 stabilization initially regressed in different ways because broad shared-helper changes made causality hard to prove. The successful path used CI ledgers, subagent review, focused fixes, local static validation, and remote CI iteration.
+- Source: PR #9181 stabilization ledger in this session; Azure/LogicAppsUX#9181 green run `26081963896`; #9164 collapsed run `26108941288`.
+- Applies to: `chief-engineer`, `ci-sentinel`, `vscode-test-specialist`, `test`, `senior-swe-reviewer`.
+- Status: verified.
