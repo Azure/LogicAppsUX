@@ -1903,7 +1903,7 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
       var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
       for (var r = 0; r < rows.length; r++) {
         var rowText = (rows[r].textContent || '').trim();
-        if (/when an http request is received|manual/i.test(rowText)) {
+        if (/when an http request is received|^manual\b|\bmanual\s+(running|succeeded|failed|cancelled|skipped|waiting)\b/i.test(rowText)) {
           continue;
         }
         var cells = rows[r].querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
@@ -1946,9 +1946,8 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
 
     const details = `${result.succeeded} succeeded${result.other.length > 0 ? `, non-succeeded: [${result.other.join(', ')}]` : ''}`;
     console.log(`[overview] Run details — ${details}`);
-    const onlyRunningNonActionRows = result.other.length > 0 && result.other.every((status) => status === 'Running');
     return {
-      allSucceeded: result.succeeded > 0 && (result.other.length === 0 || onlyRunningNonActionRows),
+      allSucceeded: result.succeeded > 0 && result.other.length === 0,
       details,
     };
   } catch (e: any) {
