@@ -19,7 +19,28 @@
       ],
       "options": {
         "env": {
-          "PATH": "${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH"
+          "PATH": "${env:PATH}"
+        }
+      },
+      "windows": {
+        "options": {
+          "env": {
+            "PATH": "${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;${env:PATH}"
+          }
+        }
+      },
+      "linux": {
+        "options": {
+          "env": {
+            "PATH": "${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/NodeJs:${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/DotNetSDK:${env:PATH}"
+          }
+        }
+      },
+      "osx": {
+        "options": {
+          "env": {
+            "PATH": "${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/NodeJs:${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/DotNetSDK:${env:PATH}"
+          }
         }
       },
       "problemMatcher": "$func-watch",

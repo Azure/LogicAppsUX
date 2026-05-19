@@ -24,6 +24,7 @@ import path from 'path';
 import * as fse from 'fs-extra';
 import type { DebugConfiguration } from 'vscode';
 import { getContainerTemplatePath, getWorkspaceTemplatePath } from '../../../utils/assets';
+import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
 import { confirmEditJsonFile } from '../../../utils/fs';
 import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
@@ -95,16 +96,7 @@ const getCodefulTasks = (targetFramework: string) => {
   const releaseDotnetArgs: string[] = ['--configuration', 'Release'];
   const funcBinariesExist = binariesExist(funcDependencyName);
   const debugSubpath = path.posix.join('bin', 'Debug', targetFramework);
-  const binariesOptions = funcBinariesExist
-    ? {
-        options: {
-          cwd: debugSubpath,
-          env: {
-            PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-          },
-        },
-      }
-    : {};
+  const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv({ cwd: debugSubpath }) : {};
   return [
     {
       label: 'clean',
