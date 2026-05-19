@@ -41,8 +41,105 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Build the extension + compile the E2E test bundle ONCE per workflow run,
+  # then fan out to the matrix shards which download the resulting artifact.
+  # This eliminates ~3min of duplicated pnpm install + turbo build + tsup
+  # work that previously ran on each of the 5 matrix shards in parallel.
+  setup-extension-build:
+    name: setup-extension-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      build-artifact: extension-build-${{ github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          # Content-based key: hits across pushes that don't change source.
+          # Previously keyed on github.sha which missed on every push.
+          key: ${{ runner.os }}-turbo-${{ hashFiles('apps/**/*.ts', 'apps/**/*.tsx', 'libs/**/*.ts', 'libs/**/*.tsx', 'pnpm-lock.yaml', 'turbo.json') }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          # Mirrors the matrix-job symlink step. Kept here so any tooling
+          # invoked during build (turbo, tsup) that shells out to /usr/bin/node
+          # resolves correctly. The matrix shards re-do this on their own
+          # runners because each matrix entry is an independent VM.
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Cache the pnpm content-addressed store so matrix shards can rehydrate
+      # node_modules faster on warm runs. The setup-extension-build job warms
+      # this cache by running a full install below; shards restore the cache
+      # and pnpm reuses store entries while falling back to the network for
+      # anything missing (no --offline strictness).
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Build extension
+        run: pnpm turbo run build:extension --cache-dir=.turbo
+
+      - name: Compile E2E tests
+        working-directory: apps/vs-code-designer
+        run: npx tsup --config tsup.e2e.test.config.ts
+
+      - name: Tar build artifacts
+        # Tar preserves symlinks/permissions and dramatically speeds upload
+        # vs uploading thousands of small files in node_modules-adjacent dirs.
+        run: |
+          tar -czf extension-build.tar.gz \
+            apps/vs-code-designer/dist/ \
+            apps/vs-code-designer/out/ \
+            $(find apps/vs-code-designer/node_modules/.cache -maxdepth 0 -type d 2>/dev/null)
+
+      - name: Upload extension build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-build-${{ github.sha }}
+          path: extension-build.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
   vscode-e2e:
     name: vscode-e2e (${{ matrix.shard }})
+    needs: setup-extension-build
     timeout-minutes: 35
     runs-on: ubuntu-latest
     strategy:
@@ -65,14 +162,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Cache turbo build setup
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -105,10 +194,18 @@ jobs:
           # /usr/bin (the most conservative location).
           env -i /usr/bin/node --version
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+      # Rehydrate node_modules via pnpm. The store cache accelerates installs
+      # on warm runs (~30-60s) but we don't enforce --offline because
+      # pnpm/action-setup's batched install may not fully populate the store
+      # for strict offline use, and a partial-cache network fallback is
+      # preferable to ERR_PNPM_NO_OFFLINE_TARBALL failures.
+      - name: Cache pnpm store
+        uses: actions/cache@v4
         with:
-          dotnet-version: '8.0.x'
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -118,12 +215,14 @@ jobs:
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
-      - name: Build extension
-        run: pnpm turbo run build:extension --cache-dir=.turbo
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
 
-      - name: Compile E2E tests
-        working-directory: apps/vs-code-designer
-        run: npx tsup --config tsup.e2e.test.config.ts
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
 
       - name: Install system dependencies for virtual display
         run: |
