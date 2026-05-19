@@ -1,18 +1,13 @@
-# Graph Report - src  (2026-05-19)
+# Graph Report - libs/logic-apps-shared/src  (2026-04-21)
 
 ## Corpus Check
-- 351 files · ~633,331 words
+- 328 files · ~198,704 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 13912 nodes · 16214 edges · 414 communities (366 shown, 48 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 681 edges (avg confidence: 0.8)
+- 1242 nodes · 1876 edges · 264 communities detected
+- Extraction: 71% EXTRACTED · 29% INFERRED · 0% AMBIGUOUS · INFERRED: 553 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
-
-## Graph Freshness
-- Built from commit: `76fb15f7`
-- Run `git rev-parse HEAD` and compare to check if the graph is stale.
-- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Community 0|Community 0]]
@@ -32,18 +27,48 @@
 - [[_COMMUNITY_Community 14|Community 14]]
 - [[_COMMUNITY_Community 15|Community 15]]
 - [[_COMMUNITY_Community 16|Community 16]]
+- [[_COMMUNITY_Community 17|Community 17]]
 - [[_COMMUNITY_Community 18|Community 18]]
 - [[_COMMUNITY_Community 19|Community 19]]
 - [[_COMMUNITY_Community 20|Community 20]]
+- [[_COMMUNITY_Community 21|Community 21]]
+- [[_COMMUNITY_Community 22|Community 22]]
+- [[_COMMUNITY_Community 23|Community 23]]
+- [[_COMMUNITY_Community 24|Community 24]]
+- [[_COMMUNITY_Community 25|Community 25]]
+- [[_COMMUNITY_Community 26|Community 26]]
 - [[_COMMUNITY_Community 27|Community 27]]
 - [[_COMMUNITY_Community 28|Community 28]]
 - [[_COMMUNITY_Community 29|Community 29]]
 - [[_COMMUNITY_Community 30|Community 30]]
+- [[_COMMUNITY_Community 31|Community 31]]
 - [[_COMMUNITY_Community 32|Community 32]]
+- [[_COMMUNITY_Community 33|Community 33]]
+- [[_COMMUNITY_Community 34|Community 34]]
+- [[_COMMUNITY_Community 35|Community 35]]
+- [[_COMMUNITY_Community 36|Community 36]]
+- [[_COMMUNITY_Community 37|Community 37]]
+- [[_COMMUNITY_Community 38|Community 38]]
+- [[_COMMUNITY_Community 39|Community 39]]
+- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 41|Community 41]]
+- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Community 43|Community 43]]
+- [[_COMMUNITY_Community 44|Community 44]]
+- [[_COMMUNITY_Community 45|Community 45]]
+- [[_COMMUNITY_Community 46|Community 46]]
+- [[_COMMUNITY_Community 47|Community 47]]
+- [[_COMMUNITY_Community 48|Community 48]]
+- [[_COMMUNITY_Community 49|Community 49]]
+- [[_COMMUNITY_Community 50|Community 50]]
+- [[_COMMUNITY_Community 51|Community 51]]
+- [[_COMMUNITY_Community 52|Community 52]]
 - [[_COMMUNITY_Community 53|Community 53]]
 - [[_COMMUNITY_Community 54|Community 54]]
 - [[_COMMUNITY_Community 55|Community 55]]
 - [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
 - [[_COMMUNITY_Community 59|Community 59]]
 - [[_COMMUNITY_Community 60|Community 60]]
 - [[_COMMUNITY_Community 61|Community 61]]
@@ -52,226 +77,280 @@
 - [[_COMMUNITY_Community 64|Community 64]]
 - [[_COMMUNITY_Community 65|Community 65]]
 - [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
+- [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
 - [[_COMMUNITY_Community 72|Community 72]]
+- [[_COMMUNITY_Community 73|Community 73]]
+- [[_COMMUNITY_Community 74|Community 74]]
 - [[_COMMUNITY_Community 75|Community 75]]
-- [[_COMMUNITY_Community 264|Community 264]]
-- [[_COMMUNITY_Community 265|Community 265]]
-- [[_COMMUNITY_Community 266|Community 266]]
-- [[_COMMUNITY_Community 267|Community 267]]
-- [[_COMMUNITY_Community 268|Community 268]]
-- [[_COMMUNITY_Community 269|Community 269]]
-- [[_COMMUNITY_Community 270|Community 270]]
-- [[_COMMUNITY_Community 271|Community 271]]
-- [[_COMMUNITY_Community 272|Community 272]]
-- [[_COMMUNITY_Community 273|Community 273]]
-- [[_COMMUNITY_Community 274|Community 274]]
-- [[_COMMUNITY_Community 275|Community 275]]
-- [[_COMMUNITY_Community 276|Community 276]]
-- [[_COMMUNITY_Community 277|Community 277]]
-- [[_COMMUNITY_Community 278|Community 278]]
-- [[_COMMUNITY_Community 279|Community 279]]
-- [[_COMMUNITY_Community 280|Community 280]]
-- [[_COMMUNITY_Community 281|Community 281]]
-- [[_COMMUNITY_Community 282|Community 282]]
-- [[_COMMUNITY_Community 283|Community 283]]
-- [[_COMMUNITY_Community 284|Community 284]]
-- [[_COMMUNITY_Community 285|Community 285]]
-- [[_COMMUNITY_Community 286|Community 286]]
-- [[_COMMUNITY_Community 287|Community 287]]
-- [[_COMMUNITY_Community 288|Community 288]]
-- [[_COMMUNITY_Community 289|Community 289]]
-- [[_COMMUNITY_Community 290|Community 290]]
-- [[_COMMUNITY_Community 291|Community 291]]
-- [[_COMMUNITY_Community 292|Community 292]]
-- [[_COMMUNITY_Community 293|Community 293]]
-- [[_COMMUNITY_Community 294|Community 294]]
-- [[_COMMUNITY_Community 295|Community 295]]
-- [[_COMMUNITY_Community 296|Community 296]]
-- [[_COMMUNITY_Community 297|Community 297]]
-- [[_COMMUNITY_Community 298|Community 298]]
-- [[_COMMUNITY_Community 299|Community 299]]
-- [[_COMMUNITY_Community 300|Community 300]]
-- [[_COMMUNITY_Community 301|Community 301]]
-- [[_COMMUNITY_Community 302|Community 302]]
-- [[_COMMUNITY_Community 303|Community 303]]
-- [[_COMMUNITY_Community 304|Community 304]]
-- [[_COMMUNITY_Community 305|Community 305]]
-- [[_COMMUNITY_Community 306|Community 306]]
-- [[_COMMUNITY_Community 307|Community 307]]
-- [[_COMMUNITY_Community 308|Community 308]]
-- [[_COMMUNITY_Community 309|Community 309]]
-- [[_COMMUNITY_Community 310|Community 310]]
-- [[_COMMUNITY_Community 311|Community 311]]
-- [[_COMMUNITY_Community 312|Community 312]]
-- [[_COMMUNITY_Community 313|Community 313]]
-- [[_COMMUNITY_Community 314|Community 314]]
-- [[_COMMUNITY_Community 315|Community 315]]
-- [[_COMMUNITY_Community 316|Community 316]]
-- [[_COMMUNITY_Community 317|Community 317]]
-- [[_COMMUNITY_Community 318|Community 318]]
-- [[_COMMUNITY_Community 319|Community 319]]
-- [[_COMMUNITY_Community 320|Community 320]]
-- [[_COMMUNITY_Community 321|Community 321]]
-- [[_COMMUNITY_Community 322|Community 322]]
-- [[_COMMUNITY_Community 323|Community 323]]
-- [[_COMMUNITY_Community 324|Community 324]]
-- [[_COMMUNITY_Community 325|Community 325]]
-- [[_COMMUNITY_Community 326|Community 326]]
-- [[_COMMUNITY_Community 327|Community 327]]
-- [[_COMMUNITY_Community 328|Community 328]]
-- [[_COMMUNITY_Community 329|Community 329]]
-- [[_COMMUNITY_Community 330|Community 330]]
-- [[_COMMUNITY_Community 331|Community 331]]
-- [[_COMMUNITY_Community 332|Community 332]]
-- [[_COMMUNITY_Community 333|Community 333]]
-- [[_COMMUNITY_Community 334|Community 334]]
-- [[_COMMUNITY_Community 335|Community 335]]
-- [[_COMMUNITY_Community 336|Community 336]]
-- [[_COMMUNITY_Community 337|Community 337]]
-- [[_COMMUNITY_Community 338|Community 338]]
-- [[_COMMUNITY_Community 339|Community 339]]
-- [[_COMMUNITY_Community 340|Community 340]]
-- [[_COMMUNITY_Community 341|Community 341]]
-- [[_COMMUNITY_Community 342|Community 342]]
-- [[_COMMUNITY_Community 343|Community 343]]
-- [[_COMMUNITY_Community 344|Community 344]]
-- [[_COMMUNITY_Community 345|Community 345]]
-- [[_COMMUNITY_Community 346|Community 346]]
-- [[_COMMUNITY_Community 347|Community 347]]
-- [[_COMMUNITY_Community 348|Community 348]]
-- [[_COMMUNITY_Community 349|Community 349]]
-- [[_COMMUNITY_Community 350|Community 350]]
-- [[_COMMUNITY_Community 351|Community 351]]
-- [[_COMMUNITY_Community 352|Community 352]]
-- [[_COMMUNITY_Community 353|Community 353]]
-- [[_COMMUNITY_Community 354|Community 354]]
-- [[_COMMUNITY_Community 355|Community 355]]
-- [[_COMMUNITY_Community 356|Community 356]]
-- [[_COMMUNITY_Community 357|Community 357]]
-- [[_COMMUNITY_Community 358|Community 358]]
-- [[_COMMUNITY_Community 359|Community 359]]
-- [[_COMMUNITY_Community 360|Community 360]]
-- [[_COMMUNITY_Community 361|Community 361]]
-- [[_COMMUNITY_Community 362|Community 362]]
-- [[_COMMUNITY_Community 363|Community 363]]
-- [[_COMMUNITY_Community 364|Community 364]]
-- [[_COMMUNITY_Community 365|Community 365]]
-- [[_COMMUNITY_Community 367|Community 367]]
-- [[_COMMUNITY_Community 368|Community 368]]
-- [[_COMMUNITY_Community 369|Community 369]]
-- [[_COMMUNITY_Community 370|Community 370]]
-- [[_COMMUNITY_Community 371|Community 371]]
-- [[_COMMUNITY_Community 372|Community 372]]
-- [[_COMMUNITY_Community 373|Community 373]]
-- [[_COMMUNITY_Community 374|Community 374]]
-- [[_COMMUNITY_Community 375|Community 375]]
-- [[_COMMUNITY_Community 376|Community 376]]
-- [[_COMMUNITY_Community 377|Community 377]]
-- [[_COMMUNITY_Community 378|Community 378]]
-- [[_COMMUNITY_Community 379|Community 379]]
-- [[_COMMUNITY_Community 380|Community 380]]
-- [[_COMMUNITY_Community 381|Community 381]]
-- [[_COMMUNITY_Community 382|Community 382]]
-- [[_COMMUNITY_Community 383|Community 383]]
-- [[_COMMUNITY_Community 384|Community 384]]
-- [[_COMMUNITY_Community 385|Community 385]]
-- [[_COMMUNITY_Community 386|Community 386]]
-- [[_COMMUNITY_Community 387|Community 387]]
-- [[_COMMUNITY_Community 389|Community 389]]
-- [[_COMMUNITY_Community 390|Community 390]]
-- [[_COMMUNITY_Community 391|Community 391]]
-- [[_COMMUNITY_Community 392|Community 392]]
-- [[_COMMUNITY_Community 393|Community 393]]
-- [[_COMMUNITY_Community 395|Community 395]]
-- [[_COMMUNITY_Community 396|Community 396]]
-- [[_COMMUNITY_Community 397|Community 397]]
-- [[_COMMUNITY_Community 398|Community 398]]
-- [[_COMMUNITY_Community 400|Community 400]]
-- [[_COMMUNITY_Community 401|Community 401]]
-- [[_COMMUNITY_Community 402|Community 402]]
-- [[_COMMUNITY_Community 403|Community 403]]
-- [[_COMMUNITY_Community 404|Community 404]]
-- [[_COMMUNITY_Community 405|Community 405]]
-- [[_COMMUNITY_Community 406|Community 406]]
-- [[_COMMUNITY_Community 407|Community 407]]
-- [[_COMMUNITY_Community 408|Community 408]]
+- [[_COMMUNITY_Community 76|Community 76]]
+- [[_COMMUNITY_Community 77|Community 77]]
+- [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
+- [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 83|Community 83]]
+- [[_COMMUNITY_Community 84|Community 84]]
+- [[_COMMUNITY_Community 85|Community 85]]
+- [[_COMMUNITY_Community 86|Community 86]]
+- [[_COMMUNITY_Community 87|Community 87]]
+- [[_COMMUNITY_Community 88|Community 88]]
+- [[_COMMUNITY_Community 89|Community 89]]
+- [[_COMMUNITY_Community 90|Community 90]]
+- [[_COMMUNITY_Community 91|Community 91]]
+- [[_COMMUNITY_Community 92|Community 92]]
+- [[_COMMUNITY_Community 93|Community 93]]
+- [[_COMMUNITY_Community 94|Community 94]]
+- [[_COMMUNITY_Community 95|Community 95]]
+- [[_COMMUNITY_Community 96|Community 96]]
+- [[_COMMUNITY_Community 97|Community 97]]
+- [[_COMMUNITY_Community 98|Community 98]]
+- [[_COMMUNITY_Community 99|Community 99]]
+- [[_COMMUNITY_Community 100|Community 100]]
+- [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
+- [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
+- [[_COMMUNITY_Community 106|Community 106]]
+- [[_COMMUNITY_Community 107|Community 107]]
+- [[_COMMUNITY_Community 108|Community 108]]
+- [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
+- [[_COMMUNITY_Community 111|Community 111]]
+- [[_COMMUNITY_Community 112|Community 112]]
+- [[_COMMUNITY_Community 113|Community 113]]
+- [[_COMMUNITY_Community 114|Community 114]]
+- [[_COMMUNITY_Community 115|Community 115]]
+- [[_COMMUNITY_Community 116|Community 116]]
+- [[_COMMUNITY_Community 117|Community 117]]
+- [[_COMMUNITY_Community 118|Community 118]]
+- [[_COMMUNITY_Community 119|Community 119]]
+- [[_COMMUNITY_Community 120|Community 120]]
+- [[_COMMUNITY_Community 121|Community 121]]
+- [[_COMMUNITY_Community 122|Community 122]]
+- [[_COMMUNITY_Community 123|Community 123]]
+- [[_COMMUNITY_Community 124|Community 124]]
+- [[_COMMUNITY_Community 125|Community 125]]
+- [[_COMMUNITY_Community 126|Community 126]]
+- [[_COMMUNITY_Community 127|Community 127]]
+- [[_COMMUNITY_Community 128|Community 128]]
+- [[_COMMUNITY_Community 129|Community 129]]
+- [[_COMMUNITY_Community 130|Community 130]]
+- [[_COMMUNITY_Community 131|Community 131]]
+- [[_COMMUNITY_Community 132|Community 132]]
+- [[_COMMUNITY_Community 133|Community 133]]
+- [[_COMMUNITY_Community 134|Community 134]]
+- [[_COMMUNITY_Community 135|Community 135]]
+- [[_COMMUNITY_Community 136|Community 136]]
+- [[_COMMUNITY_Community 137|Community 137]]
+- [[_COMMUNITY_Community 138|Community 138]]
+- [[_COMMUNITY_Community 139|Community 139]]
+- [[_COMMUNITY_Community 140|Community 140]]
+- [[_COMMUNITY_Community 141|Community 141]]
+- [[_COMMUNITY_Community 142|Community 142]]
+- [[_COMMUNITY_Community 143|Community 143]]
+- [[_COMMUNITY_Community 144|Community 144]]
+- [[_COMMUNITY_Community 145|Community 145]]
+- [[_COMMUNITY_Community 146|Community 146]]
+- [[_COMMUNITY_Community 147|Community 147]]
+- [[_COMMUNITY_Community 148|Community 148]]
+- [[_COMMUNITY_Community 149|Community 149]]
+- [[_COMMUNITY_Community 150|Community 150]]
+- [[_COMMUNITY_Community 151|Community 151]]
+- [[_COMMUNITY_Community 152|Community 152]]
+- [[_COMMUNITY_Community 153|Community 153]]
+- [[_COMMUNITY_Community 154|Community 154]]
+- [[_COMMUNITY_Community 155|Community 155]]
+- [[_COMMUNITY_Community 156|Community 156]]
+- [[_COMMUNITY_Community 157|Community 157]]
+- [[_COMMUNITY_Community 158|Community 158]]
+- [[_COMMUNITY_Community 159|Community 159]]
+- [[_COMMUNITY_Community 160|Community 160]]
+- [[_COMMUNITY_Community 161|Community 161]]
+- [[_COMMUNITY_Community 162|Community 162]]
+- [[_COMMUNITY_Community 163|Community 163]]
+- [[_COMMUNITY_Community 164|Community 164]]
+- [[_COMMUNITY_Community 165|Community 165]]
+- [[_COMMUNITY_Community 166|Community 166]]
+- [[_COMMUNITY_Community 167|Community 167]]
+- [[_COMMUNITY_Community 168|Community 168]]
+- [[_COMMUNITY_Community 169|Community 169]]
+- [[_COMMUNITY_Community 170|Community 170]]
+- [[_COMMUNITY_Community 171|Community 171]]
+- [[_COMMUNITY_Community 172|Community 172]]
+- [[_COMMUNITY_Community 173|Community 173]]
+- [[_COMMUNITY_Community 174|Community 174]]
+- [[_COMMUNITY_Community 175|Community 175]]
+- [[_COMMUNITY_Community 176|Community 176]]
+- [[_COMMUNITY_Community 177|Community 177]]
+- [[_COMMUNITY_Community 178|Community 178]]
+- [[_COMMUNITY_Community 179|Community 179]]
+- [[_COMMUNITY_Community 180|Community 180]]
+- [[_COMMUNITY_Community 181|Community 181]]
+- [[_COMMUNITY_Community 182|Community 182]]
+- [[_COMMUNITY_Community 183|Community 183]]
+- [[_COMMUNITY_Community 184|Community 184]]
+- [[_COMMUNITY_Community 185|Community 185]]
+- [[_COMMUNITY_Community 186|Community 186]]
+- [[_COMMUNITY_Community 187|Community 187]]
+- [[_COMMUNITY_Community 188|Community 188]]
+- [[_COMMUNITY_Community 189|Community 189]]
+- [[_COMMUNITY_Community 190|Community 190]]
+- [[_COMMUNITY_Community 191|Community 191]]
+- [[_COMMUNITY_Community 192|Community 192]]
+- [[_COMMUNITY_Community 193|Community 193]]
+- [[_COMMUNITY_Community 194|Community 194]]
+- [[_COMMUNITY_Community 195|Community 195]]
+- [[_COMMUNITY_Community 196|Community 196]]
+- [[_COMMUNITY_Community 197|Community 197]]
+- [[_COMMUNITY_Community 198|Community 198]]
+- [[_COMMUNITY_Community 199|Community 199]]
+- [[_COMMUNITY_Community 200|Community 200]]
+- [[_COMMUNITY_Community 201|Community 201]]
+- [[_COMMUNITY_Community 202|Community 202]]
+- [[_COMMUNITY_Community 203|Community 203]]
+- [[_COMMUNITY_Community 204|Community 204]]
+- [[_COMMUNITY_Community 205|Community 205]]
+- [[_COMMUNITY_Community 206|Community 206]]
+- [[_COMMUNITY_Community 207|Community 207]]
+- [[_COMMUNITY_Community 208|Community 208]]
+- [[_COMMUNITY_Community 209|Community 209]]
+- [[_COMMUNITY_Community 210|Community 210]]
+- [[_COMMUNITY_Community 211|Community 211]]
+- [[_COMMUNITY_Community 212|Community 212]]
+- [[_COMMUNITY_Community 213|Community 213]]
+- [[_COMMUNITY_Community 214|Community 214]]
+- [[_COMMUNITY_Community 215|Community 215]]
+- [[_COMMUNITY_Community 216|Community 216]]
+- [[_COMMUNITY_Community 217|Community 217]]
+- [[_COMMUNITY_Community 218|Community 218]]
+- [[_COMMUNITY_Community 219|Community 219]]
+- [[_COMMUNITY_Community 220|Community 220]]
+- [[_COMMUNITY_Community 221|Community 221]]
+- [[_COMMUNITY_Community 222|Community 222]]
+- [[_COMMUNITY_Community 223|Community 223]]
+- [[_COMMUNITY_Community 224|Community 224]]
+- [[_COMMUNITY_Community 225|Community 225]]
+- [[_COMMUNITY_Community 226|Community 226]]
+- [[_COMMUNITY_Community 227|Community 227]]
+- [[_COMMUNITY_Community 228|Community 228]]
+- [[_COMMUNITY_Community 229|Community 229]]
+- [[_COMMUNITY_Community 230|Community 230]]
+- [[_COMMUNITY_Community 231|Community 231]]
+- [[_COMMUNITY_Community 232|Community 232]]
+- [[_COMMUNITY_Community 233|Community 233]]
+- [[_COMMUNITY_Community 234|Community 234]]
+- [[_COMMUNITY_Community 235|Community 235]]
+- [[_COMMUNITY_Community 236|Community 236]]
+- [[_COMMUNITY_Community 237|Community 237]]
+- [[_COMMUNITY_Community 238|Community 238]]
+- [[_COMMUNITY_Community 239|Community 239]]
+- [[_COMMUNITY_Community 240|Community 240]]
+- [[_COMMUNITY_Community 241|Community 241]]
+- [[_COMMUNITY_Community 242|Community 242]]
+- [[_COMMUNITY_Community 243|Community 243]]
+- [[_COMMUNITY_Community 244|Community 244]]
+- [[_COMMUNITY_Community 245|Community 245]]
+- [[_COMMUNITY_Community 246|Community 246]]
+- [[_COMMUNITY_Community 247|Community 247]]
+- [[_COMMUNITY_Community 248|Community 248]]
+- [[_COMMUNITY_Community 249|Community 249]]
+- [[_COMMUNITY_Community 250|Community 250]]
+- [[_COMMUNITY_Community 251|Community 251]]
+- [[_COMMUNITY_Community 252|Community 252]]
+- [[_COMMUNITY_Community 253|Community 253]]
+- [[_COMMUNITY_Community 254|Community 254]]
+- [[_COMMUNITY_Community 255|Community 255]]
+- [[_COMMUNITY_Community 256|Community 256]]
+- [[_COMMUNITY_Community 257|Community 257]]
+- [[_COMMUNITY_Community 258|Community 258]]
+- [[_COMMUNITY_Community 259|Community 259]]
+- [[_COMMUNITY_Community 260|Community 260]]
+- [[_COMMUNITY_Community 261|Community 261]]
+- [[_COMMUNITY_Community 262|Community 262]]
+- [[_COMMUNITY_Community 263|Community 263]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `map()` - 70 edges
-2. `equals()` - 51 edges
-3. `equals()` - 48 edges
-4. `IHttpClient` - 33 edges
-5. `isHybridLogicApp()` - 28 edges
-6. `StandardRunService` - 27 edges
-7. `includes()` - 27 edges
-8. `StandardRunService` - 26 edges
-9. `getAzureResourceRecursive()` - 26 edges
-10. `SchemaProcessor` - 25 edges
+2. `equals()` - 48 edges
+3. `includes()` - 27 edges
+4. `StandardRunService` - 26 edges
+5. `getAzureResourceRecursive()` - 26 edges
+6. `ConsumptionRunService` - 24 edges
+7. `isHybridLogicApp()` - 24 edges
+8. `SchemaProcessor` - 21 edges
+9. `SwaggerParser` - 19 edges
+10. `startsWith()` - 19 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `getInputByName()` --calls--> `equals()`  [INFERRED]
-  parsers/lib/manifest/__test__/parser.spec.ts → utils/src/lib/helpers/functions.ts
-- `getOutputByName()` --calls--> `equals()`  [INFERRED]
-  parsers/lib/manifest/__test__/parser.spec.ts → utils/src/lib/helpers/functions.ts
-- `orderAdvancedAfterOthers()` --calls--> `equals()`  [INFERRED]
-  parsers/lib/swagger/parser.ts → utils/src/lib/helpers/functions.ts
-- `orderImportantBeforeOthers()` --calls--> `equals()`  [INFERRED]
-  parsers/lib/swagger/parser.ts → utils/src/lib/helpers/functions.ts
-- `isTemplateExpression()` --calls--> `isNullOrEmpty()`  [INFERRED]
-  parsers/lib/common/helpers/expression.ts → utils/src/lib/helpers/functions.ts
+- `filterStateful()` --calls--> `includes()`  [INFERRED]
+  libs/logic-apps-shared/src/designer-client-services/lib/standard/search.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+- `includePathItemParameters()` --calls--> `map()`  [INFERRED]
+  libs/logic-apps-shared/src/parsers/lib/swagger/parser.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+- `getTriggerFromDefinition()` --calls--> `map()`  [INFERRED]
+  libs/logic-apps-shared/src/utils/src/lib/helpers/logicapps.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+- `canRunBeInvokedWithPayload()` --calls--> `equals()`  [INFERRED]
+  libs/logic-apps-shared/src/utils/src/lib/helpers/logicapps.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
+- `getIdentityDropdownOptions()` --calls--> `equals()`  [INFERRED]
+  libs/logic-apps-shared/src/utils/src/lib/helpers/connections.ts → libs/logic-apps-shared/src/utils/src/lib/helpers/functions.ts
 
-## Communities (414 total, 48 thin omitted)
+## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (21): ConsumptionConnectorService, _executeAzureDynamicApi(), _fetchData(), _getAllPagedValues(), getConnectionProperties(), _getErrorMessageFromConnectorResponse(), _getInvokeParameters(), _getResponseFromDynamicApi() (+13 more)
+Cohesion: 0.03
+Nodes (32): connectorIsAppService(), ConnectionService(), ConsumptionConnectorService, _executeAzureDynamicApi(), _fetchData(), _getAllPagedValues(), getConnectionProperties(), _getErrorMessageFromConnectorResponse() (+24 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.06
-Nodes (25): ExpressionBuilder, ExpressionBuilderException, ExpressionEvaluator, ExpressionEvaluatorException, convertToStringLiteral(), isAppSettingExpression(), isBooleanLiteral(), isFunction() (+17 more)
+Cohesion: 0.05
+Nodes (30): ExpressionBuilder, ExpressionBuilderException, isCustomConnectorId(), isManagedConnectorId(), isSharedManagedConnectorId(), isSharedManagedConnectorIdFromPApps(), ExpressionEvaluator, ExpressionEvaluatorException (+22 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.04
-Nodes (16): StandardArtifactService, fetchAppsByQuery(), BaseCognitiveServiceService, hex2rgb(), hsv2rgb(), rgb2hex(), rgb2hsv(), toHex() (+8 more)
+Nodes (18): StandardArtifactService, fetchAppsByQuery(), BaseCognitiveServiceService, hex2rgb(), hsv2rgb(), rgb2hex(), rgb2hsv(), toHex() (+10 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.05
-Nodes (33): makeFetchResponse(), BaseExperimentationService, ExperimentationService(), enableAPIMGatewayConnection(), BaseGatewayService, BaseRoleService, ConsumptionSearchService, filterAzureConnection() (+25 more)
+Cohesion: 0.04
+Nodes (32): normalizeConnectorIds(), makeFetchResponse(), BaseExperimentationService, ExperimentationService(), enableAPIMGatewayConnection(), BaseGatewayService, guid(), LoggerService() (+24 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.04
-Nodes (25): clone(), combineObjects(), copy(), deepMerge(), deleteObjectProperties(), deleteObjectProperty(), excludePathValueFromTarget(), extend() (+17 more)
+Nodes (31): StandardCustomCodeService, clone(), combineObjects(), copy(), deepMerge(), deleteObjectProperties(), deleteObjectProperty(), exclude() (+23 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.05
-Nodes (39): BrowserReporter, convertLevelToType(), ConsumptionConnectionService, createConnectionInApiHub(), deleteConnection(), _getAdditionalPropertiesForCreateConnection(), getAllConnectionsInLocation(), getAzureConnectionRequestPath() (+31 more)
+Cohesion: 0.06
+Nodes (36): BrowserReporter, convertLevelToType(), ConsumptionConnectionService, createConnectionInApiHub(), deleteConnection(), _getAdditionalPropertiesForCreateConnection(), getAllConnectionsInLocation(), getAzureConnectionRequestPath() (+28 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.08
-Nodes (6): BaseApiManagementService, BaseAppServiceService, connectorIsAppService(), BaseFunctionService, unmap(), isFunctionContainer()
+Cohesion: 0.05
+Nodes (20): BaseApiManagementService, BaseAppServiceService, fallbackConnectorIconUrl(), getAllConnectorProperties(), getBrandColorFromConnector(), getDescriptionFromConnector(), getDisplayNameFromConnector(), getIconUriFromConnector() (+12 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.05
-Nodes (33): connectorContainsAllClientCertificateConnectionParameters(), connectorContainsAllServicePrincipalConnectionParameters(), getAuthRedirect(), _getConnectionParameterSetParametersUsingType(), getConnectionParametersWithType(), getIdentityDropdownOptions(), hasTermsOfUse(), _isConnectionParameterHidden() (+25 more)
+Cohesion: 0.04
+Nodes (22): hasTermsOfUse(), addPrefix(), endsWith(), startsWith(), trim(), ConsumptionOperationManifestService, getBuiltInOperationInfo(), isBuiltInOperation() (+14 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.08
-Nodes (19): aggregate(), create(), isDynamicTreeExtension(), isLegacyDynamicValuesBuiltInExtension(), isLegacyDynamicValuesExtension(), isLegacyDynamicValuesTreeExtension(), ParametersProcessor, SchemaProcessor (+11 more)
+Cohesion: 0.09
+Nodes (18): aggregate(), create(), isDynamicTreeExtension(), isLegacyDynamicValuesBuiltInExtension(), isLegacyDynamicValuesExtension(), isLegacyDynamicValuesTreeExtension(), ParametersProcessor, SchemaProcessor (+10 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.10
-Nodes (13): ConnectionService(), getSwaggerFromConnector(), BaseCopilotWorkflowEditorService, buildActionTemplate(), deriveReferenceName(), discoverConnectors(), executeCopilotTool(), findSwaggerOperation() (+5 more)
+Cohesion: 0.08
+Nodes (15): getSwaggerFromConnector(), BaseCopilotWorkflowEditorService, buildActionTemplate(), deriveReferenceName(), discoverConnectors(), executeCopilotTool(), findSwaggerOperation(), getConnectorOperations() (+7 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.06
-Nodes (6): deepCompareObjects(), isObject(), parseErrorMessage(), ConsumptionRunService, getCallbackUrl(), isCallbackInfoWithRelativePath()
+Nodes (7): deepCompareObjects(), getRecordEntry(), isObject(), parseErrorMessage(), ConsumptionRunService, getCallbackUrl(), isCallbackInfoWithRelativePath()
 
 ### Community 11 - "Community 11"
-Cohesion: 0.24
-Nodes (4): cleanDynamicSchemaParameters(), getStaticResultSchemaForAPIConnector(), wrapOutputsSchemaToOperationSchema(), OutputsProcessor
+Cohesion: 0.1
+Nodes (6): cleanDynamicSchemaParameters(), getStaticResultSchemaForAPIConnector(), wrapOutputsSchemaToOperationSchema(), OutputsProcessor, SwaggerParser, getArrayOutputMetadata()
 
 ### Community 12 - "Community 12"
-Cohesion: 0.20
+Cohesion: 0.2
 Nodes (23): buildAgentsUri(), buildAgentUri(), buildProxyUri(), buildUpdateBody(), createFoundryAgentViaProxy(), extractVersionsData(), foundryHeaders(), getFoundryAgent() (+15 more)
 
 ### Community 13 - "Community 13"
@@ -279,496 +358,1415 @@ Cohesion: 0.24
 Nodes (16): convertAgentConnectionDataToConnection(), convertApimConnectionDataToConnection(), convertFunctionsConnectionDataToConnection(), convertKnowledgeHubConnectionDataToConnection(), convertMcpConnectionDataToConnection(), convertServiceProviderConnectionDataToConnection(), convertToAgentConnectionsData(), convertToApimConnectionsData() (+8 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.06
-Nodes (34): fallbackConnectorIconUrl(), getAllConnectorProperties(), getBrandColorFromConnector(), getDescriptionFromConnector(), getDisplayNameFromConnector(), getIconUriFromConnector(), isIndependentPublisherConnector(), normalizeConnectorIds() (+26 more)
+Cohesion: 0.18
+Nodes (13): cleanIndexedValue(), createEx(), decodePropertySegment(), _decodeSegment(), encodePropertySegment(), _encodeSegment(), expandAndEncodePropertySegment(), getValue() (+5 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
+Cohesion: 0.17
+Nodes (14): connectorContainsAllClientCertificateConnectionParameters(), connectorContainsAllServicePrincipalConnectionParameters(), getAuthRedirect(), _getConnectionParameterSetParametersUsingType(), getConnectionParametersWithType(), getIdentityDropdownOptions(), _isConnectionParameterHidden(), isHiddenConnectionParameter() (+6 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.15
 Nodes (4): getWindowDimensions(), useEdgeIndex(), useWindowDimensions(), useEdgesData()
 
-### Community 264 - "Community 264"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 265 - "Community 265"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 266 - "Community 266"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 267 - "Community 267"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 268 - "Community 268"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 269 - "Community 269"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 270 - "Community 270"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 271 - "Community 271"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 272 - "Community 272"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 273 - "Community 273"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 274 - "Community 274"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 275 - "Community 275"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 276 - "Community 276"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 277 - "Community 277"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 278 - "Community 278"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 279 - "Community 279"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 280 - "Community 280"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 281 - "Community 281"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 282 - "Community 282"
-Cohesion: 0.00
-Nodes (500): 00xlpa, 02vyBk, 03RO5d, 04AwK7, 06zKZg, 07oZoX, 07ZsoY, 08e2rO (+492 more)
-
-### Community 283 - "Community 283"
-Cohesion: 0.01
-Nodes (168): Action, ActionDefinition, Actions, ActionsNode, ActiveDirectoryOAuthAuthentication, AgentAction, AgentChannels, AgentCondition (+160 more)
-
-### Community 284 - "Community 284"
-Cohesion: 0.03
-Nodes (68): supportedBaseManifestTypes, ConsumptionOperationManifestServiceOptions, supportedConsumptionManifestObjects, supportedConsumptionManifestTypes, coreBadge, iseBadge, previewBadge, apiManagementActionManifest (+60 more)
-
-### Community 285 - "Community 285"
-Cohesion: 0.04
-Nodes (80): hasTermsOfUse(), addPrefix(), arrayEquals(), arrayEqualsOrderInsensitive(), BUILT_IN_AGENT_TOOLS, clone(), combineObjects(), copy() (+72 more)
-
-### Community 286 - "Community 286"
-Cohesion: 0.04
-Nodes (47): builtInConnectorIds, builtInOperationsMetadata, foreachOperationInfo, getAccessTokenType, supportedBaseManifestObjects, ConnectorConnectionErrorCode, ConnectorConnectionException, InvalidFormatException (+39 more)
-
-### Community 287 - "Community 287"
-Cohesion: 0.04
-Nodes (44): BaseCognitiveServiceServiceOptions, BaseGatewayServiceOptions, BaseRoleServiceOptions, BaseTenantService, BaseTenantServiceOptions, getAzureResourceRecursive(), Tenant, ConsumptionRunServiceOptions (+36 more)
-
-### Community 288 - "Community 288"
-Cohesion: 0.04
-Nodes (61): ChunkSizeCapabilities, ExpressionConstants, FILE_PARAMETER_KEYS, Formats, OutputKeys, ParameterLocations, Permissions, PropertyName (+53 more)
-
-### Community 289 - "Community 289"
-Cohesion: 0.04
-Nodes (42): ApiManagementServiceOptions, BaseAppServiceServiceOptions, connectorIsAppService(), BaseConnectorServiceOptions, _executeAzureDynamicApi(), _fetchData(), _getAllPagedValues(), _getErrorMessageFromConnectorResponse() (+34 more)
-
-### Community 290 - "Community 290"
-Cohesion: 0.04
-Nodes (53): BaseOAuthService, OAuthPopup, ConsumptionConnectionServiceOptions, ConnectionCreationInfo, group, groupId, ILoggerService, InitLoggerService() (+45 more)
-
-### Community 291 - "Community 291"
-Cohesion: 0.03
-Nodes (68): Action, ActionDefinition, Actions, ActiveDirectoryOAuthAuthentication, ApiConnectionAction, ApiConnectionHeaders, ApiConnectionHost, ApiConnectionHostApi (+60 more)
-
-### Community 292 - "Community 292"
-Cohesion: 0.05
-Nodes (39): ConsumptionConnectorService, getResourceName(), optional(), ConnectionParametersMetadata, ConnectionService(), ConnectorWithSwagger, CreateConnectionResult, IConnectionService (+31 more)
-
-### Community 293 - "Community 293"
-Cohesion: 0.07
-Nodes (32): AzureOperationsFetchResponse, BaseSearchServiceOptions, getActiveSearchOperations(), getAgentConnectorOperation(), getAgentWorkflows(), getAllAzureConnectors(), getAllAzureOperations(), getAllCustomApiConnectors() (+24 more)
-
-### Community 294 - "Community 294"
-Cohesion: 0.10
-Nodes (28): InternalSchemaProcessorOptions, ParentPropertyInfo, SchemaObject, SchemaProcessor, dereferenceRefSchema(), EmptyRefs, getEditorForParameter(), getEditorOptionsForParameter() (+20 more)
-
-### Community 295 - "Community 295"
-Cohesion: 0.06
-Nodes (8): getHybridAppBaseRelativeUrl(), isHybridLogicApp(), ConsumptionOperationManifestService, getBuiltInOperationInfo(), isBuiltInOperation(), isServiceProviderOperation(), StandardOperationManifestService, StandardRunService
-
-### Community 296 - "Community 296"
-Cohesion: 0.08
-Nodes (46): buildAgentsUri(), buildAgentUri(), buildProjectEndpointFromResourceId(), buildProxyUri(), buildUpdateBody(), CreateFoundryAgentOptions, createFoundryAgentViaProxy(), extractVersionsData() (+38 more)
-
-### Community 297 - "Community 297"
-Cohesion: 0.07
-Nodes (34): IStaticResultSchemaService, cleanDynamicSchemaParameters(), getStaticResultSchemaForAPIConnector(), wrapOutputsSchemaToOperationSchema(), intl, STATIC_RESULT_ERROR_OBJECT_CODE_TITLE, STATIC_RESULT_ERROR_OBJECT_MESSAGE_TITLE, STATIC_RESULT_OPERATION_CODE_TITLE (+26 more)
-
-### Community 298 - "Community 298"
-Cohesion: 0.06
-Nodes (16): BaseExperimentationService, BaseOperationManifestServiceOptions, getBuiltInOperationInfo(), isBuiltInOperation(), ConsumptionOperationManifestService, ExperimentationService(), IExperimentationService, InitExperimentationServiceService() (+8 more)
-
-### Community 299 - "Community 299"
-Cohesion: 0.05
-Nodes (43): ContactObject, DefinitionsObject, Document, ExampleObject, ExternalDocumentationObject, GeneralParameterObject, HeaderObject, HeadersObject (+35 more)
-
-### Community 300 - "Community 300"
-Cohesion: 0.09
-Nodes (5): isIdentityAssociatedWithLogicApp(), getRecordEntry(), StandardConnectionService, isHybridLogicApp(), StandardRunService
-
-### Community 301 - "Community 301"
-Cohesion: 0.12
-Nodes (18): ExpressionEvaluator, ExpressionEvaluatorErrorCode, ExpressionEvaluatorException, ExpressionEvaluatorOptions, isAppSettingExpression(), isBooleanLiteral(), isFunction(), isLiteralExpression() (+10 more)
-
-### Community 302 - "Community 302"
-Cohesion: 0.05
-Nodes (37): ActionSetting, BindingMode, BuiltInOutput, ConnectionMetadata, ConnectionReferenceKeyFormat, ConnectionReferenceKeyFormatMapping, ConnectionType, CustomSwaggerServiceDetails (+29 more)
-
-### Community 303 - "Community 303"
-Cohesion: 0.05
-Nodes (37): ApiKeySecurityScheme, BodyParameter, Contact, Definitions, Example, ExternalDocumentation, Header, Headers (+29 more)
-
-### Community 304 - "Community 304"
-Cohesion: 0.08
-Nodes (28): ConnectionsResponse, ConsentLink, createConnectionInApiHub(), deleteConnection(), getAccessTokenType, _getAdditionalPropertiesForCreateConnection(), getAzureConnectionRequestPath(), getConnection() (+20 more)
-
-### Community 305 - "Community 305"
-Cohesion: 0.09
-Nodes (31): copyArray(), createCopy(), AgentConnectionModel, AgentMcpConnectionModel, APIManagementConnectionModel, ConnectionAcl, ConnectionAndAppSetting, ConnectionCreationClient (+23 more)
-
-### Community 306 - "Community 306"
-Cohesion: 0.08
-Nodes (28): getAllConnectionsInLocation(), getConnectionsForConnector(), CLIENT_CERTIFICATE_CONSTANTS, connectorContainsAllClientCertificateConnectionParameters(), connectorContainsAllServicePrincipalConnectionParameters(), connectorsShownAsAzure, getAuthRedirect(), _getConnectionParameterSetParametersUsingType() (+20 more)
-
-### Community 307 - "Community 307"
-Cohesion: 0.07
-Nodes (15): ArgumentException, AssertionErrorCode, AssertionException, ConnectorServiceErrorCode, ConnectorServiceException, Exception, InvalidFormatException, SerializationErrorCode (+7 more)
-
-### Community 308 - "Community 308"
-Cohesion: 0.12
-Nodes (21): ExpressionException, ExpressionExceptionCode, ExpressionParserErrorCode, ParserException, ScannerException, ExpressionBuilderErrorCode, ExpressionBuilderException, TokenToParse (+13 more)
-
-### Community 309 - "Community 309"
-Cohesion: 0.09
-Nodes (11): generateUniqueName(), getPropertyValue(), map(), removeKeys(), setObjectPropertyValue(), unmap(), ManifestParser, orderAdvancedAfterOthers() (+3 more)
-
-### Community 310 - "Community 310"
-Cohesion: 0.07
-Nodes (8): BaseCognitiveServiceService, BaseResourceService, BaseResourceServiceOptions, fetchAppsByQuery(), IResourceService, LogicAppResource, Resource, WorkflowResource
-
-### Community 311 - "Community 311"
-Cohesion: 0.08
-Nodes (23): dereferenceJsonSchema(), SchemaObject, api, functionOperation, swaggerFunctionOperation, integrationAccountArtifactLookupOperation, liquidJsonToJsonOperation, liquidJsonToTextOperation (+15 more)
-
-### Community 312 - "Community 312"
-Cohesion: 0.08
-Nodes (26): ExtensionProperties, createItem, getEmails, onNewEmail, DynamicListExtension, DynamicSchemaType, DynamicValuesType, allInputParameters (+18 more)
-
-### Community 313 - "Community 313"
-Cohesion: 0.07
-Nodes (26): ConnectorsMock, connectorsSearchResultsMock, Capabilities, ConnectionAlternativeParameters, ConnectionParameterAllowedValue, ConnectionParameterMetadata, ConnectionParameterSchemaFormat, ConnectionParameterSchemaType (+18 more)
-
-### Community 314 - "Community 314"
-Cohesion: 0.10
-Nodes (10): areApiIdsEqual(), canStringBeConverted(), escapeString(), idDisplayCase(), labelCase(), normalizeApiId(), removeIdTag(), toPascalCase() (+2 more)
-
-### Community 315 - "Community 315"
-Cohesion: 0.13
-Nodes (19): OutputSource, cleanIndexedValue(), _codeBook, createEx(), decodePropertySegment(), _decodeSegment(), encodePropertySegment(), _encodeSegment() (+11 more)
-
-### Community 317 - "Community 317"
-Cohesion: 0.08
-Nodes (23): options, parameters, processor, properties, propertiesForSchemaWithGrandLevelSchema, propertiesForSchemaWithGrandNestArray, propertiesForSchemaWithNestArray, propertiesForSchemaWithNestArrayBothTitle (+15 more)
-
-### Community 318 - "Community 318"
-Cohesion: 0.13
-Nodes (17): getCallbackUrl(), getIsCallbackUrlSupported(), getRequestTriggerName(), getRunTriggerName(), getTriggerName(), isCallbackInfoWithRelativePath(), armConnectorIds, connector (+9 more)
-
-### Community 319 - "Community 319"
-Cohesion: 0.10
-Nodes (18): Outlook, CyclicalRefMetadata, DereferencedDocument, dereferenceSwagger(), address, addressProps, children, endTime (+10 more)
-
-### Community 320 - "Community 320"
-Cohesion: 0.09
-Nodes (21): Artifact, Connection, ConnectionInfo, ConnectorRuntimeType, ContentInfo, DetailsType, FeaturedConnector, FeaturedConnectorType (+13 more)
-
-### Community 321 - "Community 321"
-Cohesion: 0.12
-Nodes (9): BaseTemplateService, BaseTemplateServiceOptions, resourceName, ConsumptionTemplateService, ConsumptionTemplateServiceOptions, CustomTemplateResource, ITemplateService, StandardTemplateService (+1 more)
-
-### Community 322 - "Community 322"
-Cohesion: 0.12
-Nodes (12): BaseRoleService, customLengthGuid(), guid(), hexValues, isAGuid(), generatedGuid, guid1, guid2 (+4 more)
-
-### Community 323 - "Community 323"
-Cohesion: 0.10
-Nodes (19): AgentMetadata, BindFunction, BoundParameter, BoundParameters, CallbackInfo, CallbackInfoWithRelativePath, CallbackInfoWithValue, ChatHistory (+11 more)
-
-### Community 324 - "Community 324"
-Cohesion: 0.15
-Nodes (15): ActionTemplate, buildActionTemplate(), CopilotToolDefinition, deriveReferenceName(), discoverConnectors(), executeCopilotTool(), getConnectorOperations(), rerankByConnectorName() (+7 more)
-
-### Community 325 - "Community 325"
-Cohesion: 0.15
-Nodes (16): CopilotWorkflowEditorService(), ICopilotWorkflowEditorService, InitCopilotWorkflowEditorService(), isCopilotWorkflowEditorServiceInitialized(), WorkflowChange, WorkflowEditResponse, change, changeTypes (+8 more)
-
-### Community 326 - "Community 326"
-Cohesion: 0.11
-Nodes (18): getAllValidationErrorType(), getValidationErrorSchema(), intl, STATIC_RESULT_ERROR_LINE_NUMBER, STATIC_RESULT_ERROR_LINE_POSITION, STATIC_RESULT_HTTP_BODY_TITLE, STATIC_RESULT_OPERATION_OUTPUT_TITLE, STATIC_RESULT_PARSE_JSON_CHILD_ERRORS (+10 more)
-
-### Community 327 - "Community 327"
-Cohesion: 0.13
-Nodes (12): canRunBeInvokedWithPayload(), getTriggerType(), cache, IntlGlobalProvider(), IntlGlobalProviderProps, resetIntl(), IntlProvider(), IntlProviderProps (+4 more)
-
-### Community 328 - "Community 328"
-Cohesion: 0.13
-Nodes (5): BaseTemplateResourceService, ITemplateResourceServiceOptions, getTemplateManifestFromResourceManifest(), ITemplateResourceService, WorkflowData
-
-### Community 329 - "Community 329"
-Cohesion: 0.12
-Nodes (16): connectionsMock, Api, Connection, ConnectionAuthenticatedUser, ConnectionFeatureType, ConnectionParameterSetValues, ConnectionParameterValue, ConnectionParameterValues (+8 more)
-
-### Community 330 - "Community 330"
-Cohesion: 0.15
-Nodes (6): validateRequiredServiceArguments(), ICustomCodeService, UploadCustomCodeAppFilePayload, UploadCustomCodePayload, CustomCodeServiceOptions, StandardCustomCodeService
-
-### Community 331 - "Community 331"
-Cohesion: 0.27
-Nodes (3): ExpressionScanner, isNumeric(), isWhitespace()
-
-### Community 332 - "Community 332"
-Cohesion: 0.13
-Nodes (7): areSwaggerOperationPathsMatching(), cleanSwaggerOperationPathValue(), getClientRequestIdFromHeaders(), getTemplateManifestFromResourceManifest(), pathCombine(), trimUrl(), BaseTemplateResourceService
-
-### Community 333 - "Community 333"
-Cohesion: 0.15
-Nodes (6): getWindowDimensions(), useEdgeIndex(), useWindowDimensions(), EdgeData, useEdgesData(), Size
-
-### Community 334 - "Community 334"
-Cohesion: 0.12
-Nodes (16): ArtifactInformation, ContentAndSchemaInputs, EmptyNodeGenerationMode, FlatFileDecodingAction, FlatFileEncodingAction, FlatFileEncodingInputs, FunctionInput, IntegrationAccountArtifactLookupAction (+8 more)
-
-### Community 335 - "Community 335"
-Cohesion: 0.19
-Nodes (6): ApiHubServiceDetails, ArtifactServiceOptions, FileDetails, MapArtifact, SchemaArtifact, StandardArtifactService
-
-### Community 336 - "Community 336"
-Cohesion: 0.20
-Nodes (6): IDesignerUiInteractionsService, DropdownMenuCustomNode, DropdownMenuItem, DropdownMenuOption, TopLevelDropdownMenuItem, UiInteractionData
-
-### Community 337 - "Community 337"
-Cohesion: 0.13
-Nodes (14): API, code:typescript (import { isVersionSupported } from '@microsoft/logic-apps-sh), code:typescript (import { isMultiVariableSupport } from '@microsoft/logic-app), code:typescript (import { isVersionSupported } from '@microsoft/logic-apps-sh), code:typescript (import { isVersionSupported } from '@microsoft/logic-apps-sh), code:typescript (// Old (deprecated)), Feature Flags Based on Version, `isMultiVariableSupport(version?)` (deprecated) (+6 more)
-
-### Community 338 - "Community 338"
-Cohesion: 0.17
-Nodes (13): MockAzureOperation, MockSearchOperations, MockSearchOperationsBuiltIn, BuiltInOperation, DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes, DiscoveryWorkflow (+5 more)
-
-### Community 339 - "Community 339"
-Cohesion: 0.13
-Nodes (14): ArtifactInformation, ContentAndSchemaInputs, EmptyNodeGenerationMode, FlatFileDecodingAction, FlatFileEncodingAction, FlatFileEncodingInputs, FunctionInput, IntegrationAccountArtifactLookupAction (+6 more)
-
-### Community 340 - "Community 340"
-Cohesion: 0.15
-Nodes (7): LiteralSegment, Modes, Segment, Types, UriTemplateGenerator, UriTemplateParser, VariableSegment
-
-### Community 341 - "Community 341"
+### Community 17 - "Community 17"
 Cohesion: 0.22
-Nodes (13): getSwaggerFromConnector(), constructor(), fallbackConnectorIconUrl(), isArmResourceId(), isBuiltInConnectorId(), getAllConnectorProperties(), getBrandColorFromConnector(), getDescriptionFromConnector() (+5 more)
+Nodes (0): 
 
-### Community 342 - "Community 342"
-Cohesion: 0.14
-Nodes (12): BaseCopilotWorkflowEditorServiceOptions, controller, defaultOptions, mockAxiosPost, mockGetAccessToken, simpleWorkflow, svc, textResponse (+4 more)
+### Community 18 - "Community 18"
+Cohesion: 0.47
+Nodes (1): BaseChatbotService
 
-### Community 343 - "Community 343"
-Cohesion: 0.14
-Nodes (13): WorkflowChangeTargetType, WorkflowChangeType, bareDefinition, inner, llmResponse, parsed, raw, repaired (+5 more)
+### Community 19 - "Community 19"
+Cohesion: 0.4
+Nodes (1): BaseUserPreferenceService
 
-### Community 344 - "Community 344"
-Cohesion: 0.20
-Nodes (12): ConnectionParameterEditorService(), IConnectionCredentialMappingEditorProps, IConnectionCredentialMappingInfo, IConnectionCredentialMappingOptions, IConnectionParameterEditorOptions, IConnectionParameterEditorProps, IConnectionParameterEditorService, IConnectionParameterInfo (+4 more)
+### Community 20 - "Community 20"
+Cohesion: 0.5
+Nodes (1): TestSearchService
 
-### Community 345 - "Community 345"
-Cohesion: 0.18
-Nodes (12): ChangeHandler, EditorService(), ICustomEditorOptions, IEditorParameterInfo, IEditorProps, IEditorService, InitEditorService(), IRenderDefaultEditorParams (+4 more)
+### Community 21 - "Community 21"
+Cohesion: 0.4
+Nodes (0): 
 
-### Community 346 - "Community 346"
-Cohesion: 0.21
-Nodes (10): Color, hex2rgb(), HSV, hsv2rgb(), lighten(), RGB, rgb2hex(), rgb2hsv() (+2 more)
+### Community 22 - "Community 22"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 347 - "Community 347"
-Cohesion: 0.20
-Nodes (11): getDuration(), TimeUnit, toFriendlyDurationString(), duration, end, intl, start, cache (+3 more)
+### Community 23 - "Community 23"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 348 - "Community 348"
-Cohesion: 0.14
-Nodes (13): ConnectionAndOrder, emptyCanvasRect, FunctionMetadata, FunctionMetadataV1, FunctionPositionMetadata, IFileSysTreeItem, ITreeDirectory, ITreeFile (+5 more)
+### Community 24 - "Community 24"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 349 - "Community 349"
-Cohesion: 0.14
-Nodes (13): WorkflowDefinition, ApiHubAuthentication, ConnectionMapping, ConnectionReference, ConnectionReferences, ConsumptionWorkflowMetadata, Impersonation, ImpersonationSource (+5 more)
+### Community 25 - "Community 25"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 350 - "Community 350"
-Cohesion: 0.21
-Nodes (8): normalizeTemplate(), replaceTemplatePlaceholders(), WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, WorkflowEdgeType, WorkflowNodeType, placeholderValues, result
+### Community 26 - "Community 26"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 351 - "Community 351"
-Cohesion: 0.15
-Nodes (12): DataMapSchema, InputFormat, NamespaceDictionary, NormalizedDataType, PathItem, SchemaExtended, SchemaFileFormat, SchemaNode (+4 more)
+### Community 27 - "Community 27"
+Cohesion: 0.5
+Nodes (1): ConsumptionTemplateService
 
-### Community 354 - "Community 354"
-Cohesion: 0.24
-Nodes (3): BaseChatbotService, ChatbotServiceOptions, IChatbotService
+### Community 28 - "Community 28"
+Cohesion: 0.5
+Nodes (1): ServiceException
 
-### Community 355 - "Community 355"
-Cohesion: 0.18
-Nodes (10): chunktext, composeOperation, csvTableOperation, htmlTableOperation, joinOperation, parsedocument, parsedocumentwithmetadata, parseJsonOperation (+2 more)
+### Community 29 - "Community 29"
+Cohesion: 0.5
+Nodes (1): BaseCloneService
 
-### Community 356 - "Community 356"
-Cohesion: 0.42
-Nodes (3): aggregate(), create(), ParametersProcessor
+### Community 30 - "Community 30"
+Cohesion: 0.5
+Nodes (1): BaseTemplateService
 
-### Community 358 - "Community 358"
-Cohesion: 0.22
-Nodes (4): BaseCloneService, BaseCloneServiceOptions, queryParameters, ICloneService
+### Community 31 - "Community 31"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 360 - "Community 360"
-Cohesion: 0.20
-Nodes (6): COPILOT_WORKFLOW_TOOLS, builtInOps, ops, parsed, summaries, tool
+### Community 32 - "Community 32"
+Cohesion: 0.5
+Nodes (1): InvalidFormatException
 
-### Community 361 - "Community 361"
-Cohesion: 0.20
-Nodes (9): ArtifactCreationStatus, ArtifactType, ContentKind, KnowledgeHub, KnowledgeHubArtifact, KnowledgeHubExtended, ProgressStatus, UploadFile (+1 more)
+### Community 33 - "Community 33"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 363 - "Community 363"
-Cohesion: 0.50
-Nodes (8): buildResponseFromParsed(), getParseError(), parseChanges(), parseCopilotResponse(), repairJson(), stripJsonComments(), tryExtractJson(), tryJsonParse()
+### Community 34 - "Community 34"
+Cohesion: 0.5
+Nodes (0): 
 
-### Community 364 - "Community 364"
-Cohesion: 0.22
-Nodes (8): agentGroup, controlGroup, dataOperationsGroup, dateTimeGroup, httpGroup, requestGroup, scheduleGroup, variableGroup
+### Community 35 - "Community 35"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 368 - "Community 368"
-Cohesion: 0.22
-Nodes (8): AddSubtractTimeInputs, AddSubtractTimeInputsType, ConvertTimeZoneInputs, ConvertTimeZoneInputsType, CurrentTimeInputs, ExpressionAction, OffsetTimeInputs, OffsetTimeInputsType
+### Community 36 - "Community 36"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 370 - "Community 370"
-Cohesion: 0.29
-Nodes (6): ArmResource, ArmResources, ApiToGatewayMapping, Gateway, GatewayProperties, GatewayType
+### Community 37 - "Community 37"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 371 - "Community 371"
-Cohesion: 0.25
-Nodes (7): appSettings, expectedObject, input, parameters, resolvedString, service, unresolvedObject
+### Community 38 - "Community 38"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 372 - "Community 372"
-Cohesion: 0.29
-Nodes (6): foreachOperation, ifOperation, scopeOperation, switchOperation, terminateOperation, untilOperation
+### Community 39 - "Community 39"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 373 - "Community 373"
-Cohesion: 0.29
-Nodes (6): addToTimeOperation, convertTimezoneOperation, currentTimeOperation, getFutureTimeOperation, getPastTimeOperation, subtractFromTimeOperation
+### Community 40 - "Community 40"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 374 - "Community 374"
-Cohesion: 0.29
-Nodes (6): httpActionOperation, httpSwaggerActionOperation, httpSwaggerTriggerOperation, httpTriggerOperation, httpWebhookActionOperation, httpWebhookTriggerOperation
+### Community 41 - "Community 41"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 375 - "Community 375"
-Cohesion: 0.29
-Nodes (6): appendArrayVariableOperation, appendStringVariableOperation, decrementVariableOperation, incrementVariableOperation, initializeVariableOperation, setVariableOperation
+### Community 42 - "Community 42"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 376 - "Community 376"
-Cohesion: 0.29
-Nodes (3): ContentType, IHostService, IsConnectorFn
+### Community 43 - "Community 43"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 377 - "Community 377"
-Cohesion: 0.29
-Nodes (6): agentModelTypeOptions, deploymentVisValues, dropdownValues, inputs, kbVisValues, v2Option
+### Community 44 - "Community 44"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 379 - "Community 379"
-Cohesion: 0.43
-Nodes (4): BundleVersionRequirements, compareVersions(), isVersionSupported(), parseVersion()
+### Community 45 - "Community 45"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 383 - "Community 383"
-Cohesion: 0.40
-Nodes (3): CONSUMPTION_SYSTEM_PROMPT, DEFAULT_SYSTEM_PROMPT, LogicAppsSku
+### Community 46 - "Community 46"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 384 - "Community 384"
-Cohesion: 0.40
-Nodes (4): delayOperation, delayUntilOperation, recurrenceOperation, slidingWindowOperation
+### Community 47 - "Community 47"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 385 - "Community 385"
-Cohesion: 0.40
-Nodes (4): api, apiManagementActionOperation, apiManagementGroup, apiManagementTriggerOperation
+### Community 48 - "Community 48"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 386 - "Community 386"
-Cohesion: 0.40
-Nodes (4): api, appServiceActionOperation, appServiceGroup, appServiceTriggerOperation
+### Community 49 - "Community 49"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 387 - "Community 387"
-Cohesion: 0.40
-Nodes (4): api, batchTriggerOperation, selectBatchWorkflowGroup, sendToBatchOperation
+### Community 50 - "Community 50"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 389 - "Community 389"
-Cohesion: 0.40
-Nodes (4): Assertion, AssertionDefinition, OperationMock, UnitTestDefinition
+### Community 51 - "Community 51"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 392 - "Community 392"
-Cohesion: 0.50
-Nodes (3): invokeNestedAgentOperation, invokeWorkflowGroup, invokeWorkflowOperation
+### Community 52 - "Community 52"
+Cohesion: 0.67
+Nodes (0): 
 
-### Community 395 - "Community 395"
-Cohesion: 0.50
-Nodes (3): AGENT_MODEL_CONFIG, SUPPORTED_AGENT_OPENAI_MODELS, SUPPORTED_FOUNDRY_AGENT_MODELS
+### Community 53 - "Community 53"
+Cohesion: 0.67
+Nodes (1): ConnectorConnectionException
 
-### Community 396 - "Community 396"
-Cohesion: 0.50
-Nodes (3): DocumentationMetadataState, OperationMetadata, SummaryMetadata
+### Community 54 - "Community 54"
+Cohesion: 0.67
+Nodes (1): ExpressionException
 
-### Community 397 - "Community 397"
-Cohesion: 0.50
-Nodes (3): ManagedIdentity, ManagedIdentityData, ResourceIdentityType
+### Community 55 - "Community 55"
+Cohesion: 0.67
+Nodes (1): ParserException
+
+### Community 56 - "Community 56"
+Cohesion: 0.67
+Nodes (1): ScannerException
+
+### Community 57 - "Community 57"
+Cohesion: 0.67
+Nodes (0): 
+
+### Community 58 - "Community 58"
+Cohesion: 0.67
+Nodes (0): 
+
+### Community 59 - "Community 59"
+Cohesion: 0.67
+Nodes (1): ValidationException
+
+### Community 60 - "Community 60"
+Cohesion: 0.67
+Nodes (1): SerializationException
+
+### Community 61 - "Community 61"
+Cohesion: 0.67
+Nodes (1): ConnectorServiceException
+
+### Community 62 - "Community 62"
+Cohesion: 0.67
+Nodes (1): AssertionException
+
+### Community 63 - "Community 63"
+Cohesion: 0.67
+Nodes (1): UnsupportedException
+
+### Community 64 - "Community 64"
+Cohesion: 0.67
+Nodes (1): UserException
+
+### Community 65 - "Community 65"
+Cohesion: 0.67
+Nodes (1): ArgumentException
+
+### Community 66 - "Community 66"
+Cohesion: 1.0
+Nodes (2): getDuration(), toFriendlyDurationString()
+
+### Community 67 - "Community 67"
+Cohesion: 0.67
+Nodes (0): 
+
+### Community 68 - "Community 68"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 69 - "Community 69"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 70 - "Community 70"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 71 - "Community 71"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 72 - "Community 72"
+Cohesion: 1.0
+Nodes (1): DevLogger
+
+### Community 73 - "Community 73"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 74 - "Community 74"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 75 - "Community 75"
+Cohesion: 1.0
+Nodes (1): ExpressionConstants
+
+### Community 76 - "Community 76"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 77 - "Community 77"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 78 - "Community 78"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 79 - "Community 79"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 80 - "Community 80"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 81 - "Community 81"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 82 - "Community 82"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 83 - "Community 83"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 84 - "Community 84"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 85 - "Community 85"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 86 - "Community 86"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 87 - "Community 87"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 88 - "Community 88"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 89 - "Community 89"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 90 - "Community 90"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 91 - "Community 91"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 92 - "Community 92"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 93 - "Community 93"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 94 - "Community 94"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 95 - "Community 95"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 96 - "Community 96"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 97 - "Community 97"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 98 - "Community 98"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 99 - "Community 99"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 100 - "Community 100"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 101 - "Community 101"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 102 - "Community 102"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 103 - "Community 103"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 104 - "Community 104"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 105 - "Community 105"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 106 - "Community 106"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 107 - "Community 107"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 108 - "Community 108"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 109 - "Community 109"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 110 - "Community 110"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 111 - "Community 111"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 112 - "Community 112"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 113 - "Community 113"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 114 - "Community 114"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 115 - "Community 115"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 116 - "Community 116"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 117 - "Community 117"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 118 - "Community 118"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 119 - "Community 119"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 120 - "Community 120"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 121 - "Community 121"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 122 - "Community 122"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 123 - "Community 123"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 124 - "Community 124"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 125 - "Community 125"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 126 - "Community 126"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 127 - "Community 127"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 128 - "Community 128"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 129 - "Community 129"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 130 - "Community 130"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 131 - "Community 131"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 132 - "Community 132"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 133 - "Community 133"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 134 - "Community 134"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 135 - "Community 135"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 136 - "Community 136"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 137 - "Community 137"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 138 - "Community 138"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 139 - "Community 139"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 140 - "Community 140"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 141 - "Community 141"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 142 - "Community 142"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 143 - "Community 143"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 144 - "Community 144"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 145 - "Community 145"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 146 - "Community 146"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 147 - "Community 147"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 148 - "Community 148"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 149 - "Community 149"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 150 - "Community 150"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 151 - "Community 151"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 152 - "Community 152"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 153 - "Community 153"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 154 - "Community 154"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 155 - "Community 155"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 156 - "Community 156"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 157 - "Community 157"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 158 - "Community 158"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 159 - "Community 159"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 160 - "Community 160"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 161 - "Community 161"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 162 - "Community 162"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 163 - "Community 163"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 164 - "Community 164"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 165 - "Community 165"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 166 - "Community 166"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 167 - "Community 167"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 168 - "Community 168"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 169 - "Community 169"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 170 - "Community 170"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 171 - "Community 171"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 172 - "Community 172"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 173 - "Community 173"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 174 - "Community 174"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 175 - "Community 175"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 176 - "Community 176"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 177 - "Community 177"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 178 - "Community 178"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 179 - "Community 179"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 180 - "Community 180"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 181 - "Community 181"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 182 - "Community 182"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 183 - "Community 183"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 184 - "Community 184"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 185 - "Community 185"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 186 - "Community 186"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 187 - "Community 187"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 188 - "Community 188"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 189 - "Community 189"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 190 - "Community 190"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 191 - "Community 191"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 192 - "Community 192"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 193 - "Community 193"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 194 - "Community 194"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 195 - "Community 195"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 196 - "Community 196"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 197 - "Community 197"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 198 - "Community 198"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 199 - "Community 199"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 200 - "Community 200"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 201 - "Community 201"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 202 - "Community 202"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 203 - "Community 203"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 204 - "Community 204"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 205 - "Community 205"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 206 - "Community 206"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 207 - "Community 207"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 208 - "Community 208"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 209 - "Community 209"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 210 - "Community 210"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 211 - "Community 211"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 212 - "Community 212"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 213 - "Community 213"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 214 - "Community 214"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 215 - "Community 215"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 216 - "Community 216"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 217 - "Community 217"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 218 - "Community 218"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 219 - "Community 219"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 220 - "Community 220"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 221 - "Community 221"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 222 - "Community 222"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 223 - "Community 223"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 224 - "Community 224"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 225 - "Community 225"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 226 - "Community 226"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 227 - "Community 227"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 228 - "Community 228"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 229 - "Community 229"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 230 - "Community 230"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 231 - "Community 231"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 232 - "Community 232"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 233 - "Community 233"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 234 - "Community 234"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 235 - "Community 235"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 236 - "Community 236"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 237 - "Community 237"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 238 - "Community 238"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 239 - "Community 239"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 240 - "Community 240"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 241 - "Community 241"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 242 - "Community 242"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 243 - "Community 243"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 244 - "Community 244"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 245 - "Community 245"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 246 - "Community 246"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 247 - "Community 247"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 248 - "Community 248"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 249 - "Community 249"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 250 - "Community 250"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 251 - "Community 251"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 252 - "Community 252"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 253 - "Community 253"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 254 - "Community 254"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 255 - "Community 255"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 256 - "Community 256"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 257 - "Community 257"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 258 - "Community 258"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 259 - "Community 259"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 260 - "Community 260"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 261 - "Community 261"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 262 - "Community 262"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 263 - "Community 263"
+Cohesion: 1.0
+Nodes (0): 
 
 ## Knowledge Gaps
-- **11169 isolated node(s):** `CyclicalRefMetadata`, `DereferencedDocument`, `ParametersProcessorOptions`, `Parameter`, `GetOperationsOptions` (+11164 more)
+- **2 isolated node(s):** `DevLogger`, `ExpressionConstants`
   These have ≤1 connection - possible missing edges or undocumented components.
-- **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **Thin community `Community 68`** (2 nodes): `StaticResultService()`, `staticresult.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 69`** (2 nodes): `getAllValidStatusCodes()`, `httpresult.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 70`** (2 nodes): `useFavoriteContext()`, `FavoriteContextProvider.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 71`** (2 nodes): `createMockOptions()`, `connection.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 72`** (2 nodes): `DevLogger`, `devLogger.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 73`** (2 nodes): `buildSystemPrompt()`, `copilotWorkflowEditorPrompt.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 74`** (2 nodes): `dereferenceSwagger()`, `dereference.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 75`** (2 nodes): `ExpressionConstants`, `constants.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 76`** (2 nodes): `dereferenceJsonSchema()`, `dereferenceJsonSchema.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 77`** (2 nodes): `isException()`, `exception.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 78`** (2 nodes): `constructor()`, `baseexception.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 79`** (2 nodes): `sortFunc()`, `functions.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 80`** (2 nodes): `getAadConnector()`, `connections.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 81`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 82`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 83`** (1 nodes): `badges.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 84`** (1 nodes): `callbackInfo.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 85`** (1 nodes): `httpClient.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 86`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 87`** (1 nodes): `apiManagement.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 88`** (1 nodes): `agent.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 89`** (1 nodes): `invokeWorkflow.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 90`** (1 nodes): `inlineCode.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 91`** (1 nodes): `batchWorkflow.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 92`** (1 nodes): `appServices.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 93`** (1 nodes): `xml.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 94`** (1 nodes): `rosettanet.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 95`** (1 nodes): `liquid.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 96`** (1 nodes): `flatfile.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 97`** (1 nodes): `operationgroups.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 98`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 99`** (1 nodes): `integrationAccount.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 100`** (1 nodes): `as2.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 101`** (1 nodes): `functions.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 102`** (1 nodes): `mcpclientconnector.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 103`** (1 nodes): `operationmanifest.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 104`** (1 nodes): `connection.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 105`** (1 nodes): `run.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 106`** (1 nodes): `agentLoopConnector.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 107`** (1 nodes): `integrationaccountartifactlookup.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 108`** (1 nodes): `apiManagement.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 109`** (1 nodes): `chunktext.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 110`** (1 nodes): `parsedocument.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 111`** (1 nodes): `a2arequest.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 112`** (1 nodes): `invokeWorkflow.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 113`** (1 nodes): `swaggerFunctions.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 114`** (1 nodes): `builtinmcpclient.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 115`** (1 nodes): `inlinecode.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 116`** (1 nodes): `batchWorkflow.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 117`** (1 nodes): `appServices.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 118`** (1 nodes): `xml.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 119`** (1 nodes): `rosettanet.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 120`** (1 nodes): `invokeNestedAgent.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 121`** (1 nodes): `agentloop.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 122`** (1 nodes): `liquid.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 123`** (1 nodes): `mcpclientconnector.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 124`** (1 nodes): `flatfile.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 125`** (1 nodes): `compose.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 126`** (1 nodes): `as2.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 127`** (1 nodes): `parsedocumentwithmetadata.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 128`** (1 nodes): `functions.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 129`** (1 nodes): `baseactionresult.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 130`** (1 nodes): `flatfiledecoding.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 131`** (1 nodes): `flatfileencoding.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 132`** (1 nodes): `query.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 133`** (1 nodes): `helper.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 134`** (1 nodes): `experimentationFlags.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 135`** (1 nodes): `editor.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 136`** (1 nodes): `copilotWorkflowEditor.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 137`** (1 nodes): `invokeFunctionManifest.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 138`** (1 nodes): `standardOperationManifest.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 139`** (1 nodes): `logger.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 140`** (1 nodes): `connectionParameterEditor.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 141`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 142`** (1 nodes): `agentLoopConnector.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 143`** (1 nodes): `builtinmcpclient.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 144`** (1 nodes): `acaSessionConnector.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 145`** (1 nodes): `agentloop.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 146`** (1 nodes): `mcpclientconnector.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 147`** (1 nodes): `agentLoopConnector.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 148`** (1 nodes): `agentloop.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 149`** (1 nodes): `operationgroups.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 150`** (1 nodes): `mcpclientconnector.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 151`** (1 nodes): `run.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 152`** (1 nodes): `AzurePortalBlade.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 153`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 154`** (1 nodes): `handoff.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 155`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 156`** (1 nodes): `logEntry.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 157`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 158`** (1 nodes): `datetime.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 159`** (1 nodes): `schedule.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 160`** (1 nodes): `http.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 161`** (1 nodes): `agent.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 162`** (1 nodes): `dataoperations.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 163`** (1 nodes): `inlinecode.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 164`** (1 nodes): `request.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 165`** (1 nodes): `control.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 166`** (1 nodes): `handoff.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 167`** (1 nodes): `variables.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 168`** (1 nodes): `operationgroups.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 169`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 170`** (1 nodes): `csvtable.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 171`** (1 nodes): `scope.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 172`** (1 nodes): `datetime.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 173`** (1 nodes): `agentConnector.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 174`** (1 nodes): `select.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 175`** (1 nodes): `schedule.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 176`** (1 nodes): `http.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 177`** (1 nodes): `a2arequest.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 178`** (1 nodes): `terminate.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 179`** (1 nodes): `invokefunction.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 180`** (1 nodes): `condition.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 181`** (1 nodes): `foreach.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 182`** (1 nodes): `inlinecode.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 183`** (1 nodes): `until.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 184`** (1 nodes): `join.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 185`** (1 nodes): `switch.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 186`** (1 nodes): `response.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 187`** (1 nodes): `request.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 188`** (1 nodes): `handoff.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 189`** (1 nodes): `variables.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 190`** (1 nodes): `parsejson.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 191`** (1 nodes): `query.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 192`** (1 nodes): `htmltable.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 193`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 194`** (1 nodes): `dereference.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 195`** (1 nodes): `swagger.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 196`** (1 nodes): `outlook.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 197`** (1 nodes): `manifests.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 198`** (1 nodes): `expression.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 199`** (1 nodes): `schemaprocessor.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 200`** (1 nodes): `utils.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 201`** (1 nodes): `keysutility.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 202`** (1 nodes): `expression.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 203`** (1 nodes): `dereferenceJsonSchema.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 204`** (1 nodes): `resolution-service.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 205`** (1 nodes): `evaluator.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 206`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 207`** (1 nodes): `intl.spec.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 208`** (1 nodes): `IntlProvider.spec.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 209`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 210`** (1 nodes): `connectorsSearchResultsMock.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 211`** (1 nodes): `operations.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 212`** (1 nodes): `connections.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 213`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 214`** (1 nodes): `connectors.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 215`** (1 nodes): `topLevelDropdownMenuItem.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 216`** (1 nodes): `logicApps.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 217`** (1 nodes): `logicAppsV2Integration.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 218`** (1 nodes): `helpers.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 219`** (1 nodes): `managedidentity.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 220`** (1 nodes): `knowledge.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 221`** (1 nodes): `dataMap.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 222`** (1 nodes): `openApiV2.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 223`** (1 nodes): `chatbot.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 224`** (1 nodes): `workflow.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 225`** (1 nodes): `template.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 226`** (1 nodes): `connector.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 227`** (1 nodes): `agent.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 228`** (1 nodes): `mcp.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 229`** (1 nodes): `logicAppsV2Expression.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 230`** (1 nodes): `connection.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 231`** (1 nodes): `operation.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 232`** (1 nodes): `dropdownMenuOption.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 233`** (1 nodes): `operationDiscoveryResults.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 234`** (1 nodes): `workflowNode.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 235`** (1 nodes): `logicAppsV2.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 236`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 237`** (1 nodes): `subscription.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 238`** (1 nodes): `theme.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 239`** (1 nodes): `uiInteractionData.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 240`** (1 nodes): `operationmanifest.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 241`** (1 nodes): `armresource.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 242`** (1 nodes): `logicAppsIntegration.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 243`** (1 nodes): `dropdownMenuCustomNode.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 244`** (1 nodes): `gateway.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 245`** (1 nodes): `dataMapSchema.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 246`** (1 nodes): `unitTest.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 247`** (1 nodes): `run.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 248`** (1 nodes): `graphics.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 249`** (1 nodes): `a2a.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 250`** (1 nodes): `swagger.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 251`** (1 nodes): `dropdownMenuItem.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 252`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 253`** (1 nodes): `localStorage.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 254`** (1 nodes): `index.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 255`** (1 nodes): `connectors.spec.tsx`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 256`** (1 nodes): `stringFunctions.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 257`** (1 nodes): `http.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 258`** (1 nodes): `color.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 259`** (1 nodes): `version.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 260`** (1 nodes): `guid.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 261`** (1 nodes): `run.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 262`** (1 nodes): `datetime.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 263`** (1 nodes): `operations.spec.ts`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `loadLocaleData()` connect `Community 327` to `Community 264`, `Community 265`, `Community 266`, `Community 267`, `Community 268`, `Community 269`, `Community 270`, `Community 15`, `Community 271`, `Community 272`, `Community 274`, `Community 275`, `Community 276`, `Community 277`, `Community 278`, `Community 279`, `Community 280`, `Community 281`, `Community 282`, `Community 273`?**
-  _High betweenness centrality (0.756) - this node is a cross-community bridge._
-- **Why does `getIntl()` connect `Community 294` to `Community 352`, `Community 289`, `Community 356`, `Community 357`, `Community 327`, `Community 300`, `Community 365`, `Community 301`, `Community 369`?**
-  _High betweenness centrality (0.118) - this node is a cross-community bridge._
-- **Why does `equals()` connect `Community 301` to `Community 288`, `Community 356`, `Community 292`, `Community 294`, `Community 327`, `Community 298`, `Community 331`, `Community 300`, `Community 304`, `Community 305`, `Community 306`, `Community 309`, `Community 312`, `Community 378`, `Community 285`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+- **Why does `map()` connect `Community 2` to `Community 0`, `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 8`, `Community 9`, `Community 10`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`?**
+  _High betweenness centrality (0.183) - this node is a cross-community bridge._
+- **Why does `equals()` connect `Community 1` to `Community 0`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 11`, `Community 13`, `Community 15`?**
+  _High betweenness centrality (0.081) - this node is a cross-community bridge._
+- **Why does `includes()` connect `Community 6` to `Community 0`, `Community 4`, `Community 5`, `Community 7`, `Community 8`, `Community 9`, `Community 10`, `Community 12`, `Community 15`?**
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **Are the 65 inferred relationships involving `map()` (e.g. with `getTemplateManifestFromResourceManifest()` and `._updateOperationsIfNeeded()`) actually correct?**
   _`map()` has 65 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 30 inferred relationships involving `equals()` (e.g. with `.isReservedParameter()` and `orderAdvancedAfterOthers()`) actually correct?**
-  _`equals()` has 30 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 41 inferred relationships involving `equals()` (e.g. with `._listDynamicValues()` and `._getIdentityDetailsForApiHubAuth()`) actually correct?**
   _`equals()` has 41 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `CyclicalRefMetadata`, `DereferencedDocument`, `ParametersProcessorOptions` to the rest of the system?**
-  _11169 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Are the 23 inferred relationships involving `includes()` (e.g. with `.getListDynamicValues()` and `.createConnection()`) actually correct?**
+  _`includes()` has 23 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 17 inferred relationships involving `getAzureResourceRecursive()` (e.g. with `.fetchFunctionApps()` and `.fetchFunctionAppsFunctions()`) actually correct?**
+  _`getAzureResourceRecursive()` has 17 INFERRED edges - model-reasoned connections that need verification._
