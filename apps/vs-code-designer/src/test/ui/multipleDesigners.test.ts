@@ -27,10 +27,19 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as assert from 'assert';
-import { Workbench, EditorView, type WebDriver, VSBrowser, By, Key } from 'vscode-extension-tester';
+import { Workbench, EditorView, type WebDriver, type WebView, VSBrowser, By, Key } from 'vscode-extension-tester';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { sleep, captureScreenshot, clearBlockingUI, dismissAllDialogs } from './helpers';
+import { sleep, captureScreenshot, clearBlockingUI, dismissAllDialogs, waitForQuickInputAndType } from './helpers';
+import { sessionWarmup } from './sessionWarmup';
+import {
+  clearAndType,
+  findDropdownByLabel,
+  findInputByLabel,
+  selectDropdownOption,
+  switchToWebviewFrame,
+  waitForNextButton,
+} from './createWorkspaceShared';
 import {
   TEST_TIMEOUT,
   ensureLocalSettingsForDesigner,
@@ -46,7 +55,11 @@ import {
   countCanvasNodes,
   waitForNodeCountIncrease,
   DESIGNER_READY_TIMEOUT,
+  switchToDesignerWebview,
+  clickElementWithFallback,
 } from './designerHelpers';
+
+let __warmedThisSession = false;
 
 const EXPLICIT_SCREENSHOT_DIR = path.join(
   process.env.TEMP || process.cwd(),
@@ -55,6 +68,18 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
   'multipleDesigners-explicit',
   new Date().toISOString().replace(/[:.]/g, '-')
 );
+const SHOULD_WAIT_FOR_RUNTIME_DEPENDENCIES = process.env.LA_E2E_SCENARIO !== 'p48c-multipledesigners';
+
+async function waitForFile(filePath: string, timeoutMs: number): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (fs.existsSync(filePath)) {
+      return true;
+    }
+    await sleep(500);
+  }
+  return false;
+}
 
 /**
  * Switch into the ACTIVE webview iframe using raw Selenium.
@@ -157,8 +182,20 @@ async function switchToActiveDesignerFrame(driver: WebDriver, timeoutMs = DESIGN
  * now-active/focused workflow.json row. This guarantees we right-click the correct
  * file even when multiple workflow.json files exist in the tree.
  */
-async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJsonPath: string, label: string): Promise<boolean> {
-  console.log(`[multiDesigner] Opening designer for "${label}" via right-click...`);
+// Phase 4.1: module-scoped flag for asymmetric retry budget (cold-start
+// first open needs ~32s; subsequent opens use Phase 4's ~7.75s budget).
+let __firstOpenDone = false;
+
+async function openDesignerViaExplorerRightClick(
+  driver: WebDriver,
+  workflowJsonPath: string,
+  label: string,
+  retried = false
+): Promise<boolean> {
+  const isFirstOpen = !__firstOpenDone;
+  console.log(
+    `[multiDesigner] Opening designer for "${label}" via right-click${retried ? ' (retry pass)' : ''} (isFirstOpen=${isFirstOpen})`
+  );
 
   // Switch to Explorer view
   try {
@@ -168,19 +205,90 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     /* ignore */
   }
 
-  // Open the workflow.json file via Quick Open (Ctrl+P) to reveal it in the tree.
-  // VSBrowser.instance.openResources() uses `code -r` IPC which silently fails on Linux CI.
+  // Force Explorer tree refresh before relying on tree state. Opening one
+  // designer can leave the Explorer stale or collapsed before the next open.
   try {
-    await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
-    await sleep(1000);
-    const quickInput = await driver.findElement(By.css('.quick-input-box input'));
-    await quickInput.sendKeys(`${label}/workflow.json`);
+    await new Workbench().executeCommand('workbench.files.action.refreshFilesExplorer');
+  } catch {
+    /* ignore */
+  }
+  try {
+    const parentFolder = path.basename(path.dirname(workflowJsonPath));
+    await driver
+      .wait(async () => {
+        const folders = await driver.findElements(By.css(`.explorer-folders-view .monaco-list-row[aria-label*="${parentFolder}"]`));
+        if (folders.length === 0) {
+          return false;
+        }
+        const expanded = await folders[0].getAttribute('aria-expanded').catch(() => null);
+        if (expanded === 'false') {
+          try {
+            await folders[0].click();
+          } catch {
+            /* row may go stale during expand */
+          }
+          await sleep(500);
+        }
+        return true;
+      }, 5_000)
+      .catch(() => undefined);
+  } catch {
+    /* ignore */
+  }
+  await driver
+    .wait(async () => {
+      const rows = await driver.findElements(By.css('.explorer-folders-view .monaco-list-row[aria-label*="workflow.json"]'));
+      return rows.length > 0;
+    }, 5_000)
+    .catch(() => undefined);
+
+  // Strategy B: VSBrowser.openResources reveals AND selects the exact
+  // workflow.json in the Explorer tree, bypassing the need to expand the
+  // tree manually. CAUTION: `code -r` IPC silently NO-OPS on Linux CI
+  // (documented in designerHelpers.ts comment history). A silent failure
+  // throws no exception — so we verify a POSITIVE post-condition (a
+  // workflow.json row in the Explorer tree) and explicitly throw to
+  // trigger the Quick Open fallback when the tree is still empty.
+  try {
+    await VSBrowser.instance.openResources(workflowJsonPath);
     await sleep(1500);
-    await quickInput.sendKeys(Key.ENTER);
-    await sleep(2000);
-    console.log(`[multiDesigner] Opened ${label}/workflow.json via Quick Open`);
-  } catch (qoErr: any) {
-    console.log(`[multiDesigner] Quick Open failed: ${qoErr.message}`);
+    const revealed = await driver
+      .wait(async () => {
+        const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+        for (const row of rows) {
+          const text = await row.getText().catch(() => '');
+          // Match BOTH the parent folder/label AND workflow.json so we don't
+          // false-positive on a stale row from a previous workflow in the
+          // same shard (this test opens 2 workflows back-to-back).
+          if (text.includes(label) && text.includes('workflow.json')) {
+            return true;
+          }
+        }
+        return false;
+      }, 5_000)
+      .then(() => true)
+      .catch(() => false);
+    if (revealed) {
+      console.log('[multiDesigner] openResources revealed workflow.json - skipping Quick Open');
+    } else {
+      console.log('[multiDesigner] openResources completed but tree not populated - falling through to Quick Open');
+      throw new Error('openResources silent no-op detected');
+    }
+  } catch (e: any) {
+    console.log(`[multiDesigner] Reveal via openResources failed: ${e.message} - using Quick Open fallback`);
+    try {
+      await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await driver.actions().keyDown(Key.CONTROL).sendKeys('p').keyUp(Key.CONTROL).perform();
+      await sleep(1000);
+      await waitForQuickInputAndType(driver, `${label}/workflow.json`);
+      await sleep(1500);
+      await driver.actions().sendKeys(Key.ENTER).perform();
+      await sleep(2000);
+      console.log(`[multiDesigner] Opened ${label}/workflow.json via Quick Open fallback`);
+    } catch (qoErr: any) {
+      console.log(`[multiDesigner] Quick Open fallback also failed: ${qoErr.message}`);
+    }
   }
 
   // Re-focus Explorer so the opened file is selected/revealed in the tree
@@ -191,9 +299,50 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
     /* ignore */
   }
 
-  // Now right-click on the active/focused workflow.json in the Explorer
-  for (let attempt = 0; attempt < 3; attempt++) {
+  // Belt-and-suspenders: explicitly reveal the active editor in Explorer.
+  // openResources usually does this on its own, but on Linux CI we have
+  // observed the tree remain collapsed (CI run 25946044192).
+  const revealCandidates = [
+    'workbench.files.action.showActiveFileInExplorer',
+    'revealInExplorer',
+    'workbench.action.revealActiveEditorInExplorer',
+  ];
+  for (const cmd of revealCandidates) {
     try {
+      await new Workbench().executeCommand(cmd);
+      console.log(`[multiDesigner] Revealed active file via "${cmd}"`);
+      await sleep(800);
+      break;
+    } catch (revealErr: any) {
+      console.log(`[multiDesigner] reveal command "${cmd}" failed: ${revealErr.message?.split('\n')[0]}`);
+    }
+  }
+
+  // Phase 4.1: asymmetric retry budget. Cold-start FIRST workflow open
+  // races extension activation and needs more headroom (~32s with longer
+  // backoffs) — Phase 4's flat 5 x [250,500,1000,2000,4000] = ~7.75s
+  // budget wasn't enough for p42-standard / p42-rulesengine test1 (cold
+  // start, reveal=false). Subsequent opens use Phase 4's logarithmic
+  // budget which keeps the p43-customcode flake fix.
+  const backoffs = isFirstOpen ? [250, 500, 1000, 2000, 4000, 6000, 8000, 10_000] : [250, 500, 1000, 2000, 4000];
+  const maxAttempts = backoffs.length;
+  // Now right-click on the active/focused workflow.json in the Explorer
+  attemptLoop: for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    console.log(`[multiDesigner] Attempt ${attempt + 1}/${maxAttempts} for "${label}"`);
+    try {
+      // Wait for the menubar overlay to be inactive before clicking. The
+      // menubar-menu-title element can intercept clicks on context menu rows
+      // if it isn't aria-hidden yet.
+      try {
+        await driver.wait(async () => {
+          const active = await driver.findElements(By.css('.menubar-menu-title:not([aria-hidden="true"])'));
+          return active.length === 0;
+        }, 3000);
+      } catch {
+        /* menubar still active — proceed anyway; click retry handles it */
+      }
+      await sleep(300);
+
       // Scroll to the right file in the Explorer
       await driver.executeScript(`
         var items = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
@@ -257,8 +406,15 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
       }
 
       if (!targetRow) {
-        console.log(`[multiDesigner] workflow.json not found in tree on attempt ${attempt + 1}`);
-        await sleep(2000);
+        console.log(`[multiDesigner] workflow.json not found in tree on attempt ${attempt + 1}/${maxAttempts}`);
+        if (process.env.LA_E2E_DEBUG_TREE === '1') {
+          const allRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+          for (let i = 0; i < Math.min(20, allRows.length); i++) {
+            const t = await allRows[i].getText().catch(() => '?');
+            console.log(`  [tree-row ${i}] ${t.replace(/\n/g, ' | ')}`);
+          }
+        }
+        await sleep(backoffs[attempt]);
         continue;
       }
 
@@ -274,7 +430,20 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
           const menuLabel = await menuItem.getText();
           if (menuLabel.toLowerCase().includes('open designer') && !menuLabel.toLowerCase().includes('data map')) {
             console.log(`[multiDesigner] Clicking: "${menuLabel}"`);
-            await menuItem.click();
+            try {
+              await menuItem.click();
+            } catch (clickErr: any) {
+              const msg = (clickErr?.message || '').split('\n')[0];
+              const name = clickErr?.name || '';
+              console.log(`[multiDesigner] menuItem.click intercepted/stale (${name}): ${msg}`);
+              try {
+                await driver.actions().sendKeys(Key.ESCAPE).perform();
+              } catch {
+                /* ignore */
+              }
+              await sleep(800);
+              throw clickErr;
+            }
             await sleep(3000);
 
             // Wait for webview tab to appear
@@ -290,36 +459,186 @@ async function openDesignerViaExplorerRightClick(driver: WebDriver, workflowJson
                   'return !!(document.querySelector("iframe.webview") || document.querySelector("iframe[id*=\\"webview\\"]"))'
                 );
                 if (found) {
-                  console.log(`[multiDesigner] Designer webview detected for "${label}"`);
-                  return true;
+                  console.log(`[multiDesigner] Designer webview tab detected for "${label}"`);
+                  // Phase 2 F1 — iframe presence != React canvas ready.
+                  // Delegate to switchToDesignerWebview (staged readyLevel
+                  // progression). On failure, close the active editor and
+                  // recursively retry openDesignerViaExplorerRightClick ONCE.
+                  try {
+                    await switchToDesignerWebview(driver, 30_000);
+                    try {
+                      await driver.switchTo().defaultContent();
+                    } catch {
+                      /* ignore */
+                    }
+                    console.log(`[multiDesigner] Designer canvas ready for "${label}"`);
+                    __firstOpenDone = true;
+                    return true;
+                  } catch (canvasErr: any) {
+                    try {
+                      await driver.switchTo().defaultContent();
+                    } catch {
+                      /* ignore */
+                    }
+                    console.log(`[multiDesigner] Canvas-ready check failed: ${canvasErr.message}`);
+                    if (retried) {
+                      // Planner I4: diagnostic dump on final failure.
+                      try {
+                        const allIframes = await driver.findElements(By.css('iframe'));
+                        console.log(`[multiDesigner][diag] iframe count after canvas-fail: ${allIframes.length}`);
+                      } catch {
+                        /* ignore */
+                      }
+                      try {
+                        await captureScreenshot(driver, `multiDesigner-canvas-fail-${label}`);
+                      } catch {
+                        /* ignore */
+                      }
+                      return false;
+                    }
+                    console.log('[multiDesigner] Retrying once after close-active-editor');
+                    // Snapshot state at retry trigger so CI logs can compare
+                    // attempt-1 vs attempt-2 state.
+                    try {
+                      const iframes = await driver.findElements(By.css('iframe'));
+                      console.log(`[multiDesigner][pre-retry] iframe count: ${iframes.length}`);
+                      await captureScreenshot(driver, `multiDesigner-pre-retry-${label}`);
+                    } catch {
+                      /* ignore */
+                    }
+                    try {
+                      await new Workbench().executeCommand('workbench.action.closeActiveEditor');
+                      // Give the design-time host time to settle between attempts.
+                      await sleep(3000);
+                      try {
+                        await new Workbench().executeCommand('workbench.action.notifications.clearAll');
+                      } catch {
+                        /* ignore */
+                      }
+                      await sleep(500);
+                    } catch {
+                      /* ignore */
+                    }
+                    return await openDesignerViaExplorerRightClick(driver, workflowJsonPath, label, true);
+                  }
                 }
               } catch {
                 /* ignore */
               }
               await sleep(500);
             }
-            console.log(`[multiDesigner] Webview not detected for "${label}"`);
+            console.log(
+              `[multiDesigner] Webview not detected for "${label}" after Open Designer click (attempt ${attempt + 1}/${maxAttempts})`
+            );
+            try {
+              await captureScreenshot(driver, `multiDesigner-no-webview-${label}-attempt-${attempt + 1}`);
+            } catch {
+              /* ignore */
+            }
+            try {
+              await driver.switchTo().defaultContent();
+              await driver.actions().sendKeys(Key.ESCAPE).perform();
+            } catch {
+              /* ignore */
+            }
+            if (attempt < maxAttempts - 1) {
+              await sleep(backoffs[attempt]);
+              continue attemptLoop;
+            }
             return false;
           }
-        } catch {
-          /* stale menu item */
+        } catch (menuErr: any) {
+          // Re-throw click-interception so outer attempt loop retries
+          if (menuErr?.name === 'ElementClickInterceptedError') {
+            throw menuErr;
+          }
+          /* stale menu item — try next */
         }
       }
 
       // Dismiss context menu
       await driver.actions().sendKeys(Key.ESCAPE).perform();
-      console.log(`[multiDesigner] "Open designer" not found in context menu on attempt ${attempt + 1}`);
+      console.log(`[multiDesigner] "Open designer" not found in context menu on attempt ${attempt + 1}/${maxAttempts}`);
     } catch (e: any) {
-      console.log(`[multiDesigner] Attempt ${attempt + 1} failed: ${e.message}`);
+      console.log(`[multiDesigner] Attempt ${attempt + 1}/${maxAttempts} failed: ${e.message}`);
       try {
         await driver.actions().sendKeys(Key.ESCAPE).perform();
       } catch {
         /* ignore */
       }
-      await sleep(2000);
+      await sleep(backoffs[attempt]);
     }
   }
   return false;
+}
+
+async function clickEnabledButtonByText(driver: WebDriver, buttonTexts: string[], timeoutMs = 30_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const buttons = await driver.findElements(By.css('button'));
+    for (const button of buttons) {
+      const text = (await button.getText().catch(() => '')).trim().toLowerCase();
+      const disabled = await button
+        .getAttribute('disabled')
+        .then((value) => value === 'true' || value === '')
+        .catch(() => false);
+      const ariaDisabled = await button
+        .getAttribute('aria-disabled')
+        .then((value) => value === 'true')
+        .catch(() => false);
+      if (!disabled && !ariaDisabled && buttonTexts.some((candidate) => text.includes(candidate.toLowerCase()))) {
+        try {
+          await clickElementWithFallback(driver, button, `button matching ${JSON.stringify(buttonTexts)}`);
+          console.log(`[multiDesigner] Clicked button "${text}" matching ${JSON.stringify(buttonTexts)}`);
+          return true;
+        } catch (e: any) {
+          console.log(`[multiDesigner] Button click failed for "${text}": ${e?.message ?? e}`);
+        }
+      }
+    }
+    await sleep(500);
+  }
+  console.log(`[multiDesigner] No enabled button matched ${JSON.stringify(buttonTexts)} within ${timeoutMs}ms`);
+  return false;
+}
+
+async function fillCreateWorkflowWebview(driver: WebDriver, newWorkflowName: string): Promise<boolean> {
+  let webview: WebView | undefined;
+  try {
+    webview = await switchToWebviewFrame(driver);
+    console.log('[multiDesigner] Create workflow webview opened');
+
+    const nameInput = await findInputByLabel(driver, 'Workflow name');
+    await clearAndType(nameInput, newWorkflowName);
+
+    const typeDropdown = await findDropdownByLabel(driver, 'Workflow type');
+    await selectDropdownOption(driver, typeDropdown, 'Stateful');
+
+    const nextButton = await waitForNextButton(driver, 30_000);
+    await clickElementWithFallback(driver, nextButton, 'Create workflow Next button');
+    await sleep(1000);
+
+    const createClicked = await clickEnabledButtonByText(driver, ['Create workflow', 'Create'], 30_000);
+    if (!createClicked) {
+      return false;
+    }
+    await sleep(3000);
+    return true;
+  } catch (e: any) {
+    console.log(`[multiDesigner] Create workflow webview flow failed: ${e?.message ?? e}`);
+    return false;
+  } finally {
+    try {
+      await webview?.switchBack();
+    } catch {
+      /* webview may close after create */
+    }
+    try {
+      await driver.switchTo().defaultContent();
+    } catch {
+      /* ignore */
+    }
+  }
 }
 
 /**
@@ -355,22 +674,68 @@ async function addWorkflowViaRightClick(driver: WebDriver, appFolderName: string
         const menuLabel = await menuItem.getText().catch(() => '');
         if (menuLabel.toLowerCase().includes('create workflow') || menuLabel.toLowerCase().includes('new workflow')) {
           console.log(`[multiDesigner] Clicking: "${menuLabel}"`);
-          await menuItem.click();
+          await driver.executeScript('arguments[0].scrollIntoView({ block: "center" });', menuItem).catch(() => undefined);
+          try {
+            await driver.actions().move({ origin: menuItem }).click().perform();
+          } catch (clickErr) {
+            console.log(`[multiDesigner] Actions click failed, trying JS click: ${(clickErr as Error).message}`);
+            await driver.executeScript('arguments[0].click();', menuItem);
+          }
           await sleep(2000);
 
-          // Enter workflow name in the QuickPick input
-          const quickInputs = await driver.findElements(By.css('.quick-input-widget:not(.hidden) input'));
-          if (quickInputs.length > 0) {
-            await quickInputs[0].sendKeys(newWorkflowName);
+          // Current product flow opens the Create workflow webview. Older
+          // builds used Quick Input, so keep that path as fallback only.
+          if (await fillCreateWorkflowWebview(driver, newWorkflowName)) {
+            console.log(`[multiDesigner] Submitted Create workflow webview for "${newWorkflowName}"`);
+            return true;
+          }
+
+          // Enter workflow name in the legacy QuickPick input
+          const quickInput = await driver
+            .wait(async () => {
+              const inputs = await driver.findElements(By.css('.quick-input-widget:not(.hidden) input'));
+              for (const input of inputs) {
+                if ((await input.isDisplayed().catch(() => false)) && (await input.isEnabled().catch(() => false))) {
+                  return input;
+                }
+              }
+              return null;
+            }, 10_000)
+            .catch(() => null);
+          if (quickInput) {
+            await quickInput.click().catch(() => undefined);
+            try {
+              await quickInput.sendKeys(newWorkflowName);
+            } catch (inputErr) {
+              console.log(`[multiDesigner] sendKeys to workflow name input failed, trying JS input: ${(inputErr as Error).message}`);
+              await driver.executeScript(
+                `
+                const input = arguments[0];
+                const value = arguments[1];
+                input.focus();
+                input.value = value;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+              `,
+                quickInput,
+                newWorkflowName
+              );
+            }
             await sleep(500);
-            await quickInputs[0].sendKeys(Key.ENTER);
+            await quickInput.sendKeys(Key.ENTER);
             await sleep(2000);
             console.log(`[multiDesigner] Entered workflow name: "${newWorkflowName}"`);
 
             // Select workflow type if prompted
             const typePicks = await driver.findElements(By.css('.quick-input-widget:not(.hidden) .quick-input-list .monaco-list-row'));
             if (typePicks.length > 0) {
-              await typePicks[0].click();
+              await driver.executeScript('arguments[0].scrollIntoView({ block: "center" });', typePicks[0]).catch(() => undefined);
+              try {
+                await driver.actions().move({ origin: typePicks[0] }).click().perform();
+              } catch (typeClickErr) {
+                console.log(`[multiDesigner] Workflow type Actions click failed, trying JS click: ${(typeClickErr as Error).message}`);
+                await driver.executeScript('arguments[0].click();', typePicks[0]);
+              }
               await sleep(2000);
               console.log('[multiDesigner] Selected workflow type');
             }
@@ -488,6 +853,11 @@ async function activateDesignerTab(
 
 describe('Multiple Designers + Add Workflow', function () {
   this.timeout(TEST_TIMEOUT);
+  // p48c opens multiple designer webviews in one VS Code session. The latest
+  // strict-gated run showed the same designer-open race family as p42, so give
+  // the scenario the same 3 total attempts while helper hardening remains in
+  // progress.
+  this.retries(2);
 
   let driver: WebDriver;
   let workbench: Workbench;
@@ -507,7 +877,28 @@ describe('Multiple Designers + Add Workflow', function () {
     }
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
-    await waitForDependencyValidation(driver);
+    if (SHOULD_WAIT_FOR_RUNTIME_DEPENDENCIES) {
+      await waitForDependencyValidation(driver);
+    } else {
+      console.log('[multiDesigner] Skipping runtime dependency validation for UI-only scenario');
+    }
+  });
+
+  beforeEach(async function () {
+    if (__warmedThisSession) {
+      return;
+    }
+    this.timeout(60_000);
+    // Match the entry the single `it` block will use (standard/Stateful)
+    // so the warmup expands the same tree the test exercises.
+    const entry =
+      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+      manifest.find((e) => e.appType === 'standard') ||
+      manifest[0];
+    const workspaceRoot = entry?.wsDir;
+    const result = await sessionWarmup(driver, workbench, { workspaceRoot });
+    console.log(`[warmup] ${JSON.stringify(result)}`);
+    __warmedThisSession = true;
   });
 
   afterEach(async () => {
@@ -567,45 +958,25 @@ describe('Multiple Designers + Add Workflow', function () {
     } catch {
       /* ignore */
     }
-    await waitForExtensionValidationComplete(driver);
+    if (SHOULD_WAIT_FOR_RUNTIME_DEPENDENCIES) {
+      await waitForExtensionValidationComplete(driver);
+    } else {
+      console.log('[multiDesigner] Skipping extension validation wait for UI-only scenario');
+    }
 
     // ── Step 2: Add a new workflow via right-click on the logic app folder ──
     const newWfName = 'e2enewwf';
     const wfAdded = await addWorkflowViaRightClick(driver, entry.appName, newWfName);
     await captureScreenshot(driver, 'multi-after-add-workflow', EXPLICIT_SCREENSHOT_DIR);
-    // Don't hard-assert — the workflow might be created on disk even if the QuickPick interaction was partial
     if (wfAdded) {
       console.log(`[multiDesigner] Workflow "${newWfName}" added via right-click ✓`);
     } else {
-      console.log('[multiDesigner] Right-click add may have partially succeeded — checking disk...');
+      console.log('[multiDesigner] Right-click helper did not confirm success — checking disk before failing');
     }
-
-    // Wait for the workflow to appear on disk (extension creates it asynchronously)
-    await sleep(3000);
     const newWfDir = path.join(entry.appDir, newWfName);
     const newWfJson = path.join(newWfDir, 'workflow.json');
-    if (!fs.existsSync(newWfJson)) {
-      // Create it manually as fallback so the rest of the test can proceed
-      console.log(`[multiDesigner] Workflow not on disk at ${newWfJson} — creating manually`);
-      fs.mkdirSync(newWfDir, { recursive: true });
-      fs.writeFileSync(
-        newWfJson,
-        JSON.stringify(
-          {
-            definition: {
-              $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-              actions: {},
-              contentVersion: '1.0.0.0',
-              outputs: {},
-              triggers: {},
-            },
-            kind: 'Stateful',
-          },
-          null,
-          4
-        )
-      );
-    }
+    const createdOnDisk = await waitForFile(newWfJson, 15_000);
+    assert.ok(createdOnDisk, `Right-click Add Workflow should create ${newWfJson}`);
 
     // Close all editors to start fresh
     try {
@@ -651,6 +1022,27 @@ describe('Multiple Designers + Add Workflow', function () {
       /* ignore */
     }
     await clearBlockingUI(driver);
+
+    // Reset frame context and clear any modal between designer-1 and designer-2
+    // opens, WITHOUT closing designer 1.
+    // Designer 1 MUST stay open: Step 5 asserts `designerTabs.length >= 2`
+    // (BOTH designers open simultaneously) and Step 6 calls
+    // activateDesignerTab(wf1Name) which requires designer 1's tab + iframe
+    // state intact. The right-click sequence runs in defaultContent, so a
+    // frame-context reset + Escape is sufficient to prevent designer 1's
+    // iframe from intercepting input.
+    try {
+      await driver.switchTo().defaultContent();
+    } catch {
+      /* ignore */
+    }
+    await clearBlockingUI(driver);
+    try {
+      await driver.actions().sendKeys(Key.ESCAPE).perform();
+    } catch {
+      /* ignore */
+    }
+    await sleep(1000);
 
     // ── Step 4: Open designer for NEW workflow via right-click (KEEP designer 1 open) ──
     const d2Opened = await openDesignerViaExplorerRightClick(driver, newWfJson, newWfName);

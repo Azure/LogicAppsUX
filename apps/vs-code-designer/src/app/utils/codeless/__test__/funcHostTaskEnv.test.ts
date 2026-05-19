@@ -23,11 +23,11 @@ describe('getFuncHostTaskEnv', () => {
       expect(result.options.cwd).toBe('/abs/path/to/logic-app');
     });
 
-    it('does not propagate cwd into platform-specific blocks (they inherit base)', () => {
+    it('propagates cwd into platform-specific blocks so OS-specific options preserve the working directory', () => {
       const result = getFuncHostTaskEnv({ cwd: '/abs/path' });
-      expect((result.windows.options as { cwd?: string }).cwd).toBeUndefined();
-      expect((result.linux.options as { cwd?: string }).cwd).toBeUndefined();
-      expect((result.osx.options as { cwd?: string }).cwd).toBeUndefined();
+      expect(result.windows.options.cwd).toBe('/abs/path');
+      expect(result.linux.options.cwd).toBe('/abs/path');
+      expect(result.osx.options.cwd).toBe('/abs/path');
     });
   });
 

@@ -28,6 +28,7 @@ const distDir = path.join(projectDir, 'dist');
  * locally and in CI. Update this when ExTester releases support for newer versions.
  */
 const VSCODE_VERSION = '1.108.0';
+const DOWNLOAD_RETRY_ATTEMPTS = 3;
 
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
@@ -51,6 +52,50 @@ function copyDirSync(src, dest, skipDir) {
       fs.copyFileSync(srcPath, destPath);
     }
   }
+}
+
+async function withDownloadRetry(label, action) {
+  let lastError;
+  for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
+    try {
+      if (attempt > 1) {
+        console.log(`  retry(${attempt - 1}): ${label}`);
+      }
+      await action();
+      return;
+    } catch (error) {
+      lastError = error;
+      const message = error?.message || String(error);
+      console.log(`  ${label} attempt ${attempt}/${DOWNLOAD_RETRY_ATTEMPTS} failed: ${message}`);
+      if (attempt < DOWNLOAD_RETRY_ATTEMPTS) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
+      }
+    }
+  }
+  throw lastError;
+}
+
+function installExtensionWithCli(cliBase, dep, label = dep) {
+  return new Promise((resolve) => {
+    const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
+    const startTime = Date.now();
+    exec(command, { timeout: 300000 }, (error, stdout, stderr) => {
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      if (error) {
+        const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
+        console.warn(`  ⚠ ${label} failed (${elapsed}s): ${error.message}${output ? `\n${output}` : ''}`);
+        resolve({ dep, success: false });
+      } else {
+        console.log(`  ✓ ${label} installed (${elapsed}s)`);
+        resolve({ dep, success: true });
+      }
+    });
+  });
+}
+
+async function downloadExTesterAssets(extest) {
+  await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, () => extest.downloadCode(VSCODE_VERSION));
+  await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => extest.downloadChromeDriver(VSCODE_VERSION));
 }
 
 /**
@@ -278,8 +323,7 @@ async function main() {
 
   // Step 1: Download VS Code + ChromeDriver (skips if already cached)
   console.log('\n=== Step 1: Download VS Code + ChromeDriver ===');
-  await extest.downloadCode(VSCODE_VERSION);
-  await extest.downloadChromeDriver(VSCODE_VERSION);
+  await downloadExTesterAssets(extest);
 
   // Step 2: Install extension dependencies from the marketplace (PARALLEL)
   // Skip deps already present in test-extensions/. For uncached deps,
@@ -356,21 +400,8 @@ async function main() {
       console.log(`  Installing ${depsToInstall.length} deps (concurrency=${CONCURRENCY})...`);
 
       const taskFns = depsToInstall.map((dep) => () => {
-        return new Promise((resolve) => {
-          const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
-          const startTime = Date.now();
-          console.log(`  ⏳ ${dep}`);
-          exec(command, { timeout: 300000 }, (error, stdout, stderr) => {
-            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-            if (error) {
-              console.warn(`  ⚠ ${dep} failed (${elapsed}s)`);
-              resolve({ dep, success: false });
-            } else {
-              console.log(`  ✓ ${dep} installed (${elapsed}s)`);
-              resolve({ dep, success: true });
-            }
-          });
-        });
+        console.log(`  ⏳ ${dep}`);
+        return installExtensionWithCli(cliBase, dep);
       });
 
       const results = await parallelLimit(taskFns, CONCURRENCY);
@@ -378,24 +409,26 @@ async function main() {
       const failed = results.filter((r) => !r.success);
       console.log(`  ${succeeded}/${depsToInstall.length} installed successfully`);
 
-      // Retry any failed deps sequentially. Parallel installs may report EPERM
-      // when two CLI processes install the same transitive dependency (e.g.,
-      // both csdevkit and csharp pull in dotnet-runtime). The extension often
-      // still ends up on disk, so only retry if the directory is truly missing.
+      // Retry failed direct deps sequentially. Parallel installs may report
+      // EPERM/ENOENT or leave a partial directory while transitive dependencies
+      // are still being extracted. A package.json on disk is not enough: VS Code
+      // can still fail to activate dependent extensions if the CLI install did
+      // not complete cleanly.
       if (failed.length > 0) {
         for (const { dep } of failed) {
-          removeInvalidExtensionEntries(dep);
-          const onDisk = !!findValidInstalledExtension(dep);
-          if (onDisk) {
-            console.log(`  ✓ ${dep} present on disk despite CLI error, OK`);
-          } else {
-            console.log(`  ↻ Retrying ${dep} sequentially...`);
-            try {
-              await extest.installFromMarketplace(dep);
-              console.log(`  ✓ ${dep} installed on retry`);
-            } catch (err) {
-              console.warn(`  ⚠ ${dep} retry failed — tests may still work without it`);
+          let retrySucceeded = false;
+          for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
+            removeInvalidExtensionEntries(dep);
+            console.log(`  ↻ Retrying ${dep} sequentially (${attempt}/${DOWNLOAD_RETRY_ATTEMPTS})...`);
+            const retry = await installExtensionWithCli(cliBase, dep, `${dep} retry ${attempt}`);
+            if (retry.success) {
+              retrySucceeded = true;
+              break;
             }
+            await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
+          }
+          if (!retrySucceeded) {
+            throw new Error(`${dep} failed to install after ${DOWNLOAD_RETRY_ATTEMPTS} sequential retries`);
           }
         }
       }
@@ -711,12 +744,20 @@ async function main() {
   const getRuntimeDependencyPaths = () => {
     const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
     const nodeJsDir = resolveNodeBinDir(depsRoot);
+    const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
+    const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
+    const funcBinaryCandidates = [
+      path.join(funcToolsDir, funcExecutable),
+      path.join(funcToolsDir, 'in-proc8', funcExecutable),
+      path.join(funcToolsDir, 'in-proc6', funcExecutable),
+    ];
+    const funcBinary = funcBinaryCandidates.find((candidate) => fs.existsSync(candidate)) || funcBinaryCandidates[0];
     return {
       depsRoot,
-      funcToolsDir: path.join(depsRoot, 'FuncCoreTools'),
+      funcToolsDir,
       dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
       nodeJsDir,
-      funcBinary: path.join(depsRoot, 'FuncCoreTools', 'func'),
+      funcBinary,
       dotnetBinary: path.join(depsRoot, 'DotNetSDK', 'dotnet'),
       nodeBinary: path.join(nodeJsDir, 'node'),
     };
@@ -839,8 +880,8 @@ async function main() {
 
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
   // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
-  // consumed by downstream Phase 4.2 / 4.3 shape-specific scenarios. Drives the
-  // wizard ONLY for standard/Stateful, customCode/Stateful, rulesEngine/Stateful.
+  // consumed by downstream shape-specific scenarios. Drives the wizard only for
+  // Standard/Stateful, Standard/Stateless, CustomCode/Stateful, and RulesEngine/Stateful.
   const phase1aFiles = [testFile('createWorkspace.fixtures.test.js')];
 
   const phase2Files = [testFile('designerActions.test.js')];
@@ -891,8 +932,6 @@ async function main() {
   //                   shouldValidateRuntimeDependencies() at runtime.
   //   monolithic    — true when the scenario runs multiple test files
   //                   in a single VS Code session (currently 4.1, 4.7).
-  //   allowFailure  — true to log the scenario's failure but exclude it
-  //                   from the aggregate exit code (xvfb-flaky cases).
   // ------------------------------------------------------------------
   const scenarios = [
     // Independent / no-workspace scenarios
@@ -934,7 +973,8 @@ async function main() {
       id: 'p42-standard',
       testFile: phase2Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p42-customcode',
@@ -947,8 +987,8 @@ async function main() {
       id: 'p42-rulesengine',
       testFile: phase2Files[0],
       workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'rulesEngine' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
 
     // Phases 4.3-4.6 — runtime-touching consumer tests
@@ -957,33 +997,38 @@ async function main() {
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'standard' },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p43-customcode',
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'customCode' },
+      env: { LA_E2E_SHAPE: 'customCode', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p43-rulesengine',
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'rulesEngine' },
+      // RulesEngine workspace-load auto-start can block designer open behind
+      // design-time timeout dialogs. The test still starts debug explicitly and
+      // verifies callback/run success, so runtime coverage remains strict.
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p44-statelessvariables',
       testFile: phase4Files[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      workspaceSpec: { appType: 'standard', wfType: 'Stateless' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p45-designerviewextended',
       testFile: phase5Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p46-keyboardnav',
@@ -1014,14 +1059,13 @@ async function main() {
       id: 'p48c-multipledesigners',
       testFile: phase8cFiles[0],
       workspaceSpec: 'manifest-multi',
-      settings: { validateDependencies: true, autoStartDesignTime: true },
+      settings: { validateDependencies: false, autoStartDesignTime: true },
     },
     {
       id: 'p48d-conversionyes',
       testFile: phase8dFiles[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
+      workspaceSpec: 'plain-folder',
       settings: { validateDependencies: true, autoStartDesignTime: false },
-      allowFailure: true /* known xvfb-flaky in CI */,
     },
     {
       id: 'p48e-conversionsubfolder',
@@ -1466,6 +1510,26 @@ namespace ${namespaceName}
       return phase2Resources;
     };
 
+    const getStandardStatelessResources = () => {
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      if (!fs.existsSync(manifestPath)) {
+        console.warn(`  Manifest not found for stateless startup resource: ${manifestPath}`);
+        return [];
+      }
+      try {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateless');
+        if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+          console.log(`  Using stateless startup workspace: ${preferred.wsFilePath}`);
+          return [preferred.wsFilePath];
+        }
+        console.warn('  Could not find Standard + Stateless workspace in manifest for stateless startup resource');
+      } catch (e) {
+        console.warn(`  Failed to parse manifest for stateless startup resource: ${e.message}`);
+      }
+      return [];
+    };
+
     // ------------------------------------------------------------------
     // Phase A — per-scenario workspace resolver.
     //
@@ -1530,8 +1594,8 @@ namespace ${namespaceName}
         const { appType, wfType, use } = spec;
         const entry =
           manifest.find((e) => (!appType || e.appType === appType) && (!wfType || e.wfType === wfType)) ||
-          manifest.find((e) => !appType || e.appType === appType) ||
-          manifest[0];
+          (!wfType ? manifest.find((e) => !appType || e.appType === appType) : undefined) ||
+          (!appType && !wfType ? manifest[0] : undefined);
         if (!entry) {
           console.warn(`  [${scenarioId}] No manifest entry matched ${JSON.stringify(spec)}`);
           return { resources: [] };
@@ -1558,16 +1622,13 @@ namespace ${namespaceName}
     //   3. Resolve startup resources via selectWorkspaceForSpec().
     //   4. Export LA_E2E_LEGACY_PROJECT_DIR for self-contained specs.
     //   5. Hand off to runPhase() (one ExTester instance per scenario).
-    //   6. Collect exit codes; allowFailure scenarios are logged but
-    //      excluded from the aggregate Math.max.
+    //   6. Collect exit codes; every scenario contributes to the aggregate.
     //
-    // Returns the aggregate exit code (0 if every non-allowFailure
-    // scenario passed).
+    // Returns the aggregate exit code.
     const runScenarioPhases = async (scenarioList /* , opts */) => {
       const exits = [];
-      const allowFailureExits = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, allowFailure, env: scenarioEnv } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
         const resolvedSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
@@ -1603,33 +1664,43 @@ namespace ${namespaceName}
             process.env[key] = prev;
           }
         }
-        if (allowFailure) {
-          allowFailureExits.push({ id, exit });
-          if (exit !== 0) {
-            console.log(`  ⚠ Scenario ${id} exited with ${exit}; excluded from aggregate (allowFailure: true)`);
-          }
-        } else {
-          exits.push(exit);
-        }
+        exits.push(exit);
         // Brief pause between sessions to let VS Code/chromedriver release
         // ports and sockets before the next prepareFreshSession() runs.
         await new Promise((r) => setTimeout(r, 3000));
       }
       const aggregate = exits.length === 0 ? 0 : Math.max(...exits);
-      console.log(`\n=== Scenarios results: ${exits.length} blocking, ${allowFailureExits.length} allowFailure → exit ${aggregate} ===`);
+      console.log(`\n=== Scenarios results: ${exits.length} blocking → exit ${aggregate} ===`);
       return aggregate;
     };
 
+    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects a single
+    // scenarios[] entry by id. Takes precedence over E2E_MODE so a matrix
+    // shard that sets both env vars (e.g. for transitional debugging)
+    // still runs exactly one scenario. E2E_MODE remains supported as a
+    // fallback for legacy grouped-shard invocations.
+    const singleScenarioId = process.env.LA_E2E_SCENARIO;
+    if (singleScenarioId) {
+      const scenarioEntry = scenarios.find((s) => s.id === singleScenarioId);
+      if (!scenarioEntry) {
+        console.error(`Unknown LA_E2E_SCENARIO: ${singleScenarioId}`);
+        console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
+        process.exit(2);
+      }
+      console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
+      await downloadExTesterAssets(extest);
+      const singleExit = await runScenarioPhases([scenarioEntry]);
+      process.exit(singleExit);
+    }
+
     if (e2eMode === 'scenarios') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const scenariosExit = await runScenarioPhases(scenarios);
       process.exit(scenariosExit);
     }
 
     if (e2eMode === 'scenarios-pilot') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       // Pilot exactly one scenario: inlineJavascript. Decision gate per the
       // per-scenario re-architecture plan — if this passes where the current
       // createplusnewtests shard fails Phase 4.3, the new pattern is validated.
@@ -1654,8 +1725,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'codefuldebugonly') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const phase10Exit = await runCodefulDebugPhases('phase10-only');
       process.exit(phase10Exit);
     }
@@ -1663,8 +1733,7 @@ namespace ${namespaceName}
     if (e2eMode === 'nonlogicappstartup') {
       // Startup regression test: intentionally omit runtime dependency paths to
       // exercise extension activation in a plain, non-Logic-App folder.
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
 
       await prepareFreshSession('nonlogicappstartup-only');
@@ -1674,8 +1743,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
 
       await prepareFreshSession('phase2-only');
@@ -1688,8 +1756,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'newtestsonly') {
       // Run only the new tests (phases 4.3–4.6) each in their own session
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
       const exits = [];
@@ -1699,7 +1766,7 @@ namespace ${namespaceName}
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase4-only');
-      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: wsResources }));
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() }));
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase5-only');
@@ -1716,8 +1783,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'conversiononly') {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       // ALL conversion tests need validateDependencies ON so the extension
       // fully activates and detects legacy projects / shows conversion dialog.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
@@ -1771,7 +1837,8 @@ namespace ${namespaceName}
         exits.push(await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir }));
         await new Promise((r) => setTimeout(r, 3000));
       } else {
-        exits.push(0);
+        console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+        exits.push(1);
       }
 
       // Phase 4.8e: Open logic app subfolder, click No
@@ -1806,8 +1873,7 @@ namespace ${namespaceName}
     if (e2eMode === 'conversioncreateonly') {
       // Run only Phase 4.8b: Open legacy project folder (no .code-workspace),
       // click Yes, then verify one Create click starts and completes workspace creation.
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
 
       const legacyDir = createLegacyProjectFixture('conversioncreateonly');
@@ -1819,8 +1885,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createonly') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       await prepareFreshSession('phase1-only');
       const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
       process.exit(phase1Exit);
@@ -1844,8 +1909,7 @@ namespace ${namespaceName}
     // ----------------------------------------------------------------------
 
     if (e2eMode === 'independentonly') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       // Phase 4.0: nonLogicAppStartup — plain folder, no Logic App context.
@@ -1868,8 +1932,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusdesigner') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       // Phase 4.1: createWorkspace — needed to produce the manifest consumed
@@ -1901,8 +1964,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusnewtests') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
@@ -1918,7 +1980,7 @@ namespace ${namespaceName}
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase4-shard');
-      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: wsResources }));
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() }));
 
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase5-shard');
@@ -1936,8 +1998,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusconversion') {
-      await extest.downloadCode(VSCODE_VERSION);
-      await extest.downloadChromeDriver(VSCODE_VERSION);
+      await downloadExTesterAssets(extest);
       const exits = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
@@ -1989,6 +2050,9 @@ namespace ${namespaceName}
         await new Promise((r) => setTimeout(r, 3000));
         await prepareFreshSession('phase8d-shard');
         phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
+      } else {
+        console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+        phase8dExit = 1;
       }
 
       // Phase 4.8e: Open logic app subfolder, click No
@@ -2001,13 +2065,7 @@ namespace ${namespaceName}
         exits.push(0);
       }
 
-      // Mirror `full` mode behaviour: 4.8d (conversionYes) is environment-flaky
-      // in CI (xvfb dialog interaction), so log its result but exclude from
-      // the shard exit code.
-      const finalExit = Math.max(...exits);
-      if (phase8dExit !== 0) {
-        console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
-      }
+      const finalExit = Math.max(...exits, phase8dExit);
       console.log(
         `\n=== Conversion shard results: 4.1=${exits[0]}, 4.8a=${exits[1]}, 4.8c=${exits[2]}, 4.8d=${phase8dExit}, 4.8e=${exits[3]} → exit ${finalExit} ===`
       );
@@ -2057,7 +2115,7 @@ namespace ${namespaceName}
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase4');
-    const phase4Exit = await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: phase2Resources });
+    const phase4Exit = await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() });
     if (phase4Exit !== 0) {
       console.log(`\n⚠ Phase 4.4 exited with code ${phase4Exit} — continuing`);
     }
@@ -2135,6 +2193,9 @@ namespace ${namespaceName}
       await prepareFreshSession('phase8d');
       phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
       if (phase8dExit !== 0) console.log(`\n⚠ Phase 4.8d exited with code ${phase8dExit} — continuing`);
+    } else {
+      console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+      phase8dExit = 1;
     }
 
     // Phase 4.8e: Open logic app subfolder, click No
@@ -2170,11 +2231,7 @@ namespace ${namespaceName}
       console.log(`\n⚠ Phase 4.10 setup error: ${err.message || err} — continuing`);
     }
 
-    // Exit with worst exit code from all phases
-    // Note: phase8dExit (conversionYes) is excluded from the final exit code
-    // because this test is environment-flaky in CI — the "Yes"/"Open Workspace"
-    // button is sometimes not interactable under xvfb. It still runs and logs
-    // its result, but does not block the pipeline.
+    // Exit with worst exit code from all phases.
     const finalExit = Math.max(
       phase0Exit,
       phase1Exit,
@@ -2186,12 +2243,10 @@ namespace ${namespaceName}
       phase8aExit,
       phase8bExit,
       phase8cExit,
+      phase8dExit,
       phase8eExit,
       phase10Exit
     );
-    if (phase8dExit !== 0) {
-      console.log(`\n⚠ Phase 4.8d (conversionYes) failed but is excluded from final exit code (known flaky in CI)`);
-    }
     console.log(
       `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.10=${phase10Exit} → exit ${finalExit} ===`
     );

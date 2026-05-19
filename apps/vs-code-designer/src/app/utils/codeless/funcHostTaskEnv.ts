@@ -29,11 +29,16 @@
  *
  * Reference: https://code.visualstudio.com/docs/editor/tasks#_operating-system-specific-properties
  */
+interface FuncHostTaskOptionsBlock {
+  cwd?: string;
+  env: Record<string, string>;
+}
+
 export interface FuncHostTaskOptions {
-  options: { cwd?: string; env: Record<string, string> };
-  windows: { options: { env: Record<string, string> } };
-  linux: { options: { env: Record<string, string> } };
-  osx: { options: { env: Record<string, string> } };
+  options: FuncHostTaskOptionsBlock;
+  windows: { options: FuncHostTaskOptionsBlock };
+  linux: { options: FuncHostTaskOptionsBlock };
+  osx: { options: FuncHostTaskOptionsBlock };
 }
 
 const DEPS_VAR = '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}';
@@ -52,16 +57,15 @@ const POSIX_PATH = `${DEPS_VAR}/NodeJs:${DEPS_VAR}/DotNetSDK:${INHERITED_PATH}`;
  *               block (e.g. `cwd` for codeful / dotnet projects).
  */
 export function getFuncHostTaskEnv(extras?: { cwd?: string }): FuncHostTaskOptions {
-  const baseOptions: { cwd?: string; env: Record<string, string> } = {
-    env: { PATH: INHERITED_PATH },
-  };
-  if (extras?.cwd) {
-    baseOptions.cwd = extras.cwd;
-  }
+  const createOptions = (path: string): FuncHostTaskOptionsBlock => ({
+    ...(extras?.cwd ? { cwd: extras.cwd } : {}),
+    env: { PATH: path },
+  });
+
   return {
-    options: baseOptions,
-    windows: { options: { env: { PATH: WINDOWS_PATH } } },
-    linux: { options: { env: { PATH: POSIX_PATH } } },
-    osx: { options: { env: { PATH: POSIX_PATH } } },
+    options: createOptions(INHERITED_PATH),
+    windows: { options: createOptions(WINDOWS_PATH) },
+    linux: { options: createOptions(POSIX_PATH) },
+    osx: { options: createOptions(POSIX_PATH) },
   };
 }

@@ -1095,59 +1095,151 @@ export async function findButtonByText(driver: WebDriver, text: string): Promise
  * After creation, the extension calls vscode.openFolder which may reload
  * or open a new VS Code window. This function recovers the driver state.
  */
-export async function clickCreateWorkspaceButton(driver: WebDriver, webview: WebView): Promise<void> {
-  const createButtons = await driver.findElements(By.xpath("//button[contains(text(), 'Create workspace')]"));
-  if (createButtons.length === 0) {
-    await webview.switchBack();
-    throw new Error('"Create workspace" button not found on review page');
-  }
+export async function clickCreateWorkspaceButton(
+  driver: WebDriver,
+  webview: WebView,
+  verifyOnDisk?: { parentDir: string; wsName: string }
+): Promise<void> {
+  // Mirror the openOverviewPage hardening (commit 358332a41 / PR #9181):
+  //   - 3-attempt retry catching ElementClickInterceptedError / StaleElementReferenceError.
+  //   - Wait for the menubar overlay (.menubar-menu-title:not([aria-hidden="true"]))
+  //     to settle before each click — it can intercept the React webview button.
+  //   - Optional post-click disk verification: poll the parent dir for the
+  //     workspace folder for up to ~20s. If it never appears, the click was
+  //     almost certainly swallowed (workbench DOM survives but the create
+  //     command never fired), so throw ElementClickInterceptedError to trigger
+  //     the outer retry instead of letting verifyWorkspaceOnDisk fail later.
+  // CI run 25944295174 (setup-fixtures, Standard + Stateful) hit exactly this
+  // race: "[clickCreateWorkspace] Workbench recovered" followed by
+  // "[verifyDisk] Workspace dir exists: false".
+  let currentWebview: WebView = webview;
+  let lastErr: any;
 
-  console.log('[clickCreateWorkspace] Clicking "Create workspace" button...');
-  await createButtons[0].click();
-
-  // Wait for the extension to process: create files on disk + dispose panel
-  // The extension also calls vscode.openFolder which may reload the window
-  await sleep(15_000);
-
-  // Switch back from the (now likely closed) webview
-  try {
-    await webview.switchBack();
-  } catch {
-    console.log('[clickCreateWorkspace] Webview already closed (expected after creation)');
-  }
-
-  // Recovery: ensure we're on the default content (not stuck in a dead iframe)
-  try {
-    await driver.switchTo().defaultContent();
-  } catch {
-    console.log('[clickCreateWorkspace] Could not switch to defaultContent');
-  }
-
-  // Wait for the workbench to be available again (handles potential page reload)
-  try {
-    await driver.wait(until.elementLocated(By.css('.monaco-workbench')), 30_000);
-    console.log('[clickCreateWorkspace] Workbench recovered');
-  } catch {
-    console.log('[clickCreateWorkspace] Warning: workbench not found after creation, trying window handles...');
-    // Try switching between window handles in case a new window opened
+  for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const handles = await driver.getAllWindowHandles();
-      console.log(`[clickCreateWorkspace] Window handles: ${handles.length}`);
-      for (const handle of handles) {
+      // Wait for the menubar overlay to be inactive before clicking.
+      try {
+        await driver.wait(async () => {
+          const active = await driver.findElements(By.css('.menubar-menu-title:not([aria-hidden="true"])'));
+          return active.length === 0;
+        }, 2000);
+      } catch {
+        /* menubar still active — proceed; click retry handles it */
+      }
+      await sleep(300);
+
+      const createButtons = await driver.findElements(By.xpath("//button[contains(text(), 'Create workspace')]"));
+      if (createButtons.length === 0) {
         try {
-          await driver.switchTo().window(handle);
-          await driver.wait(until.elementLocated(By.css('.monaco-workbench')), 5_000);
-          console.log(`[clickCreateWorkspace] Recovered on window handle: ${handle}`);
-          return;
+          await currentWebview.switchBack();
         } catch {
-          // Try next handle
+          /* ignore */
+        }
+        throw new Error('"Create workspace" button not found on review page');
+      }
+
+      console.log(`[clickCreateWorkspace] Clicking "Create workspace" button (attempt ${attempt}/3)...`);
+      await createButtons[0].click();
+
+      // Wait for the extension to process: create files on disk + dispose panel.
+      // The extension also calls vscode.openFolder which may reload the window.
+      await sleep(15_000);
+
+      // Switch back from the (now likely closed) webview
+      try {
+        await currentWebview.switchBack();
+      } catch {
+        console.log('[clickCreateWorkspace] Webview already closed (expected after creation)');
+      }
+
+      // Recovery: ensure we're on the default content (not stuck in a dead iframe)
+      try {
+        await driver.switchTo().defaultContent();
+      } catch {
+        console.log('[clickCreateWorkspace] Could not switch to defaultContent');
+      }
+
+      // Wait for the workbench to be available again (handles potential page reload)
+      try {
+        await driver.wait(until.elementLocated(By.css('.monaco-workbench')), 30_000);
+        console.log('[clickCreateWorkspace] Workbench recovered');
+      } catch {
+        console.log('[clickCreateWorkspace] Warning: workbench not found after creation, trying window handles...');
+        try {
+          const handles = await driver.getAllWindowHandles();
+          console.log(`[clickCreateWorkspace] Window handles: ${handles.length}`);
+          for (const handle of handles) {
+            try {
+              await driver.switchTo().window(handle);
+              await driver.wait(until.elementLocated(By.css('.monaco-workbench')), 5_000);
+              console.log(`[clickCreateWorkspace] Recovered on window handle: ${handle}`);
+              break;
+            } catch {
+              // Try next handle
+            }
+          }
+        } catch (e) {
+          console.log(`[clickCreateWorkspace] Window handle recovery failed: ${e}`);
         }
       }
-    } catch (e) {
-      console.log(`[clickCreateWorkspace] Window handle recovery failed: ${e}`);
+
+      // Post-click disk verification: poll for the workspace dir to actually
+      // appear. "Workbench recovered" only proves the DOM survived — not that
+      // the create command fired. If the click was swallowed by an overlay
+      // intercept, the workbench is unchanged and the dir never appears.
+      if (verifyOnDisk) {
+        const targetDir = path.join(verifyOnDisk.parentDir, verifyOnDisk.wsName);
+        const deadline = Date.now() + 20_000;
+        let exists = false;
+        while (Date.now() < deadline) {
+          if (fs.existsSync(targetDir)) {
+            exists = true;
+            break;
+          }
+          await sleep(500);
+        }
+        if (!exists) {
+          const swallowedErr: any = new Error(
+            `[clickCreateWorkspace] Workspace dir not created within 20s after click — click was likely swallowed (attempt ${attempt}/3): ${targetDir}`
+          );
+          swallowedErr.name = 'ElementClickInterceptedError';
+          throw swallowedErr;
+        }
+        console.log(`[clickCreateWorkspace] Workspace dir confirmed on disk: ${targetDir}`);
+      }
+
+      return;
+    } catch (err: any) {
+      const name = err?.name || '';
+      const msg = typeof err?.message === 'string' ? err.message : '';
+      const retriable = name === 'ElementClickInterceptedError' || name === 'StaleElementReferenceError' || msg.includes('stale element');
+
+      if (!retriable || attempt === 3) {
+        throw err;
+      }
+
+      lastErr = err;
+      console.log(`[clickCreateWorkspace] Attempt ${attempt}/3 failed (${name || 'Error'}): ${msg.split('\n')[0]} — retrying`);
+
+      // Re-enter the (still-open) Create Workspace webview so the next attempt
+      // can re-find the button. switchToWebviewFrame handles dismissing toasts
+      // and resolves the active iframe.
+      try {
+        await driver.switchTo().defaultContent();
+      } catch {
+        /* ignore */
+      }
+      await sleep(1000);
+      try {
+        currentWebview = await switchToWebviewFrame(driver);
+      } catch (reEnterErr) {
+        console.log(`[clickCreateWorkspace] Failed to re-enter webview for retry: ${reEnterErr}`);
+        throw err;
+      }
     }
-    console.log('[clickCreateWorkspace] Warning: full driver recovery failed, tests may be unstable');
   }
+
+  throw lastErr ?? new Error('[clickCreateWorkspace] All 3 attempts failed');
 }
 
 /**

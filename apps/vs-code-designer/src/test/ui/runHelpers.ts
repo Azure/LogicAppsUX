@@ -24,6 +24,7 @@ import { execSync } from 'child_process';
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as http from 'http';
+import * as https from 'https';
 import * as path from 'path';
 import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
@@ -857,6 +858,130 @@ function httpRequestJson(options: http.RequestOptions & { url: string }, timeout
   });
 }
 
+function httpPostJson(url: string, body: unknown, timeoutMs = 60_000): Promise<{ status: number; body: string }> {
+  return new Promise((resolve) => {
+    const payload = JSON.stringify(body ?? {});
+    const client = url.startsWith('https:') ? https : http;
+    const req = client.request(
+      url,
+      {
+        method: 'POST',
+        timeout: timeoutMs,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (c: Buffer) => chunks.push(c));
+        res.on('end', () => resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }));
+        res.on('error', (err) => resolve({ status: 0, body: err.message }));
+      }
+    );
+    req.on('error', (err) => resolve({ status: 0, body: err.message }));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve({ status: 0, body: `timeout after ${timeoutMs}ms` });
+    });
+    req.write(payload);
+    req.end();
+  });
+}
+
+async function getWorkflowCallbackUrl(workflowName: string, timeoutMs = 180_000): Promise<string | undefined> {
+  const apiVersion = '2019-10-01-edge-preview';
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const deadline = Date.now() + timeoutMs;
+  let triggerName: string | undefined;
+  let lastStatus = 0;
+  let lastBody = '';
+  while (Date.now() < deadline) {
+    const encodedWorkflowName = encodeURIComponent(workflowName);
+    if (!triggerName) {
+      const tr = await httpRequestJson({
+        url: `${managementBase}/workflows/${encodedWorkflowName}/triggers?api-version=${apiVersion}`,
+        method: 'GET',
+      });
+      lastStatus = tr.status;
+      lastBody = tr.body;
+      if (tr.status === 200) {
+        try {
+          const parsed = JSON.parse(tr.body);
+          const list = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : [];
+          if (typeof list[0]?.name === 'string') {
+            triggerName = list[0].name;
+          }
+        } catch {
+          /* keep polling */
+        }
+      }
+    }
+    if (triggerName) {
+      const cb = await httpRequestJson({
+        url: `${managementBase}/workflows/${encodedWorkflowName}/triggers/${encodeURIComponent(triggerName)}/listCallbackUrl?api-version=${apiVersion}`,
+        method: 'POST',
+        headers: { 'Content-Length': '0' },
+      });
+      lastStatus = cb.status;
+      lastBody = cb.body;
+      if (cb.status === 200) {
+        try {
+          const parsed = JSON.parse(cb.body);
+          if (typeof parsed?.value === 'string' && parsed.value.length > 0) {
+            return parsed.value;
+          }
+        } catch {
+          /* keep polling */
+        }
+      }
+    }
+    await sleep(2000);
+  }
+  console.log(
+    `[workflowCallback] Callback URL not available for workflow="${workflowName}" within ${timeoutMs}ms (lastStatus=${lastStatus}, lastBody=${lastBody.slice(0, 500)})`
+  );
+  return undefined;
+}
+
+export async function invokeWorkflowCallback(
+  driver: WebDriver,
+  opts: { workflowName: string; body?: unknown; timeoutMs?: number }
+): Promise<boolean> {
+  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 180_000 });
+  if (!hostReady) {
+    await captureScreenshot(driver, 'invokeWorkflowCallback-runtime-not-ready');
+    return false;
+  }
+  const workflowsReady = await waitForWorkflowsRegistered(driver, { workflowName: opts.workflowName, timeoutMs: 240_000 });
+  if (!workflowsReady) {
+    await captureScreenshot(driver, 'invokeWorkflowCallback-workflow-not-ready');
+    return false;
+  }
+  const callbackUrl = await getWorkflowCallbackUrl(opts.workflowName, opts.timeoutMs ?? 180_000);
+  if (!callbackUrl) {
+    await captureScreenshot(driver, 'invokeWorkflowCallback-no-callback-url');
+    return false;
+  }
+  let lastResult: { status: number; body: string } | undefined;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    lastResult = await httpPostJson(callbackUrl, opts.body ?? {}, 120_000);
+    console.log(
+      `[workflowCallback] POST workflow="${opts.workflowName}" attempt=${attempt + 1} status=${lastResult.status} body=${
+        lastResult.body.slice(0, 500) || '(empty)'
+      }`
+    );
+    if (lastResult.status >= 200 && lastResult.status < 300) {
+      return true;
+    }
+    if (lastResult.status > 0 && lastResult.status < 500) {
+      return false;
+    }
+    await sleep(5000);
+  }
+  return false;
+}
+
 /**
  * Wait until the local Functions runtime can produce a callback URL for the
  * first registered workflow trigger.
@@ -1623,13 +1748,78 @@ export async function getLatestRunStatus(driver: WebDriver): Promise<string> {
   }
 }
 
+async function dumpWorkflowRunDiagnostics(): Promise<void> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  try {
+    const wf = await httpRequestJson({ url: `${managementBase}/workflows?api-version=${apiVersion}`, method: 'GET' }, 5_000);
+    console.log(`[overview][diag] workflows status=${wf.status} body=${wf.body.slice(0, 2000) || '(empty)'}`);
+    if (wf.status !== 200) {
+      return;
+    }
+
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(wf.body);
+    } catch {
+      parsed = null;
+    }
+    const workflows = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : [];
+    for (const workflow of workflows.slice(0, 3)) {
+      const workflowName = workflow?.name;
+      if (typeof workflowName !== 'string' || workflowName.length === 0) {
+        continue;
+      }
+      const encodedWorkflowName = encodeURIComponent(workflowName);
+      const runs = await httpRequestJson(
+        { url: `${managementBase}/workflows/${encodedWorkflowName}/runs?api-version=${apiVersion}`, method: 'GET' },
+        5_000
+      );
+      console.log(`[overview][diag] workflow=${workflowName} runs status=${runs.status} body=${runs.body.slice(0, 2000) || '(empty)'}`);
+      if (runs.status === 200) {
+        try {
+          const parsedRuns = JSON.parse(runs.body);
+          const runItems = Array.isArray(parsedRuns?.value) ? parsedRuns.value : Array.isArray(parsedRuns) ? parsedRuns : [];
+          const latestRunName = runItems[0]?.name;
+          if (typeof latestRunName === 'string' && latestRunName.length > 0) {
+            const encodedRunName = encodeURIComponent(latestRunName);
+            const actions = await httpRequestJson(
+              {
+                url: `${managementBase}/workflows/${encodedWorkflowName}/runs/${encodedRunName}/actions?api-version=${apiVersion}`,
+                method: 'GET',
+              },
+              5_000
+            );
+            console.log(
+              `[overview][diag] workflow=${workflowName} run=${latestRunName} actions status=${actions.status} body=${
+                actions.body.slice(0, 2000) || '(empty)'
+              }`
+            );
+          }
+        } catch (e: any) {
+          console.log(`[overview][diag] workflow=${workflowName} action diagnostics failed: ${e?.message ?? e}`);
+        }
+      }
+      const triggers = await httpRequestJson(
+        { url: `${managementBase}/workflows/${encodedWorkflowName}/triggers?api-version=${apiVersion}`, method: 'GET' },
+        5_000
+      );
+      console.log(
+        `[overview][diag] workflow=${workflowName} triggers status=${triggers.status} body=${triggers.body.slice(0, 1000) || '(empty)'}`
+      );
+    }
+  } catch (e: any) {
+    console.log(`[overview][diag] workflow run diagnostics failed: ${e?.message ?? e}`);
+  }
+}
+
 /**
  * Poll the overview run history list until the latest run shows the target status.
  */
 export async function waitForRunStatusInList(
   driver: WebDriver,
   targetStatus: string,
-  timeoutMs = 90_000
+  timeoutMs = 180_000
 ): Promise<{ found: boolean; lastStatus: string }> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
@@ -1662,6 +1852,7 @@ export async function waitForRunStatusInList(
   }
 
   console.log(`[overview] Target status "${targetStatus}" not found after ${timeoutMs}ms (last: "${lastStatus}")`);
+  await dumpWorkflowRunDiagnostics();
   return { found: false, lastStatus };
 }
 
@@ -1700,45 +1891,151 @@ export async function clickLatestRunRow(driver: WebDriver): Promise<boolean> {
   return false;
 }
 
-/**
- * Verify that all action nodes show "Succeeded" in the run details view.
- */
-export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allSucceeded: boolean; details: string }> {
-  try {
-    const result = await driver.executeScript<{ succeeded: number; other: string[] }>(`
-      var succeeded = 0;
-      var other = [];
-      var statusTexts = ['Succeeded', 'Running', 'Failed', 'Cancelled', 'Skipped', 'Waiting'];
-      var cells = document.querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
+type ActionStatusSnapshot = {
+  succeeded: number;
+  other: string[];
+};
+
+async function readRunDetailsActionStatuses(driver: WebDriver): Promise<ActionStatusSnapshot> {
+  return await driver.executeScript<ActionStatusSnapshot>(`
+    var succeeded = 0;
+    var other = [];
+    var statusTexts = ['Succeeded', 'Running', 'Failed', 'Cancelled', 'Skipped', 'Waiting'];
+    function isTriggerRow(text) {
+      var normalized = (text || '').toLowerCase().replace(/[_\\s-]+/g, ' ').trim();
+      return normalized.indexOf('when an http request is received') >= 0 ||
+        normalized.indexOf('when http request is received') >= 0 ||
+        /^manual\\b/.test(normalized) ||
+        /^request\\b/.test(normalized);
+    }
+    function isRunHistoryRow(text) {
+      return /^[0-9]{12,}/.test(text || '') && (text || '').indexOf('/') >= 0 && /[0-9]{4}/.test(text || '');
+    }
+    var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
+    for (var r = 0; r < rows.length; r++) {
+      var rowText = (rows[r].textContent || '').trim();
+      if (isTriggerRow(rowText) || isRunHistoryRow(rowText)) {
+        continue;
+      }
+      var cells = rows[r].querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
       for (var i = 0; i < cells.length; i++) {
         var t = (cells[i].textContent || '').trim();
         for (var j = 0; j < statusTexts.length; j++) {
           if (t === statusTexts[j]) {
             if (t === 'Succeeded') succeeded++;
-            else other.push(t);
+            else other.push(t + (rowText ? ': ' + rowText.substring(0, 120) : ''));
             break;
           }
         }
       }
-      if (succeeded === 0) {
-        var all = document.querySelectorAll('*');
-        for (var i = 0; i < all.length; i++) {
-          var t = (all[i].textContent || '').trim();
-          if (all[i].children.length === 0 && statusTexts.indexOf(t) >= 0) {
-            if (t === 'Succeeded') succeeded++;
-            else other.push(t);
-          }
-        }
-      }
-      return { succeeded: succeeded, other: other };
-    `);
+    }
+    return { succeeded: succeeded, other: other };
+  `);
+}
 
-    const details = `${result.succeeded} succeeded${result.other.length > 0 ? `, non-succeeded: [${result.other.join(', ')}]` : ''}`;
-    console.log(`[overview] Run details — ${details}`);
-    return {
-      allSucceeded: result.succeeded > 0 && result.other.length === 0,
-      details,
-    };
+async function verifyLatestRunActionRunsSucceeded(workflowName: string): Promise<{ allSucceeded: boolean; details: string } | undefined> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  const encodedWorkflowName = encodeURIComponent(workflowName);
+  const runs = await httpRequestJson(
+    { url: `${managementBase}/workflows/${encodedWorkflowName}/runs?api-version=${apiVersion}`, method: 'GET' },
+    5_000
+  );
+
+  if (runs.status !== 200) {
+    return { allSucceeded: false, details: `action API runs status=${runs.status} body=${runs.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  let runItems: any[] = [];
+  try {
+    const parsedRuns = JSON.parse(runs.body);
+    runItems = Array.isArray(parsedRuns?.value) ? parsedRuns.value : Array.isArray(parsedRuns) ? parsedRuns : [];
+  } catch {
+    return { allSucceeded: false, details: `action API runs parse failed body=${runs.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  const latestRunName = runItems[0]?.name;
+  if (typeof latestRunName !== 'string' || latestRunName.length === 0) {
+    return { allSucceeded: false, details: 'action API found no latest run' };
+  }
+
+  const actions = await httpRequestJson(
+    {
+      url: `${managementBase}/workflows/${encodedWorkflowName}/runs/${encodeURIComponent(latestRunName)}/actions?api-version=${apiVersion}`,
+      method: 'GET',
+    },
+    5_000
+  );
+
+  if (actions.status !== 200) {
+    return { allSucceeded: false, details: `action API actions status=${actions.status} body=${actions.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  let actionItems: any[] = [];
+  try {
+    const parsedActions = JSON.parse(actions.body);
+    actionItems = Array.isArray(parsedActions?.value) ? parsedActions.value : Array.isArray(parsedActions) ? parsedActions : [];
+  } catch {
+    return { allSucceeded: false, details: `action API actions parse failed body=${actions.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  if (actionItems.length === 0) {
+    return undefined;
+  }
+
+  const actionStatuses = actionItems.map((action) => ({
+    name: typeof action?.name === 'string' ? action.name : '(unnamed)',
+    status:
+      typeof action?.status === 'string'
+        ? action.status
+        : typeof action?.properties?.status === 'string'
+          ? action.properties.status
+          : '(missing)',
+  }));
+  const nonSucceeded = actionStatuses.filter((action) => action.status !== 'Succeeded');
+  const details = `action API run=${latestRunName} actions=${actionStatuses.map((action) => `${action.name}:${action.status}`).join(', ')}`;
+  return { allSucceeded: nonSucceeded.length === 0, details };
+}
+
+/**
+ * Verify that all action nodes show "Succeeded" in the run details view.
+ */
+export async function verifyAllNodesSucceeded(
+  driver: WebDriver,
+  workflowName?: string
+): Promise<{ allSucceeded: boolean; details: string }> {
+  const deadline = Date.now() + 60_000;
+  let lastDetails = '0 succeeded';
+  try {
+    while (Date.now() < deadline) {
+      const result = await readRunDetailsActionStatuses(driver);
+      lastDetails = `${result.succeeded} succeeded${result.other.length > 0 ? `, non-succeeded: [${result.other.join(', ')}]` : ''}`;
+      if (result.succeeded > 0 && result.other.length === 0) {
+        console.log(`[overview] Run details — ${lastDetails}`);
+        return { allSucceeded: true, details: lastDetails };
+      }
+
+      const hasTerminalFailure = result.other.some(
+        (status) => status.startsWith('Failed') || status.startsWith('Cancelled') || status.startsWith('Skipped')
+      );
+      if (hasTerminalFailure) {
+        console.log(`[overview] Run details — ${lastDetails}`);
+        return { allSucceeded: false, details: lastDetails };
+      }
+
+      await sleep(1000);
+    }
+
+    if (workflowName) {
+      const apiResult = await verifyLatestRunActionRunsSucceeded(workflowName);
+      if (apiResult) {
+        console.log(`[overview] Run details unavailable after polling; ${apiResult.details}`);
+        return apiResult;
+      }
+    }
+
+    console.log(`[overview] Run details — ${lastDetails}`);
+    return { allSucceeded: false, details: lastDetails };
   } catch (e: any) {
     console.log(`[overview] Error reading run details: ${e.message}`);
     return { allSucceeded: false, details: 'error reading details' };

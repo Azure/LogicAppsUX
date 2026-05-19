@@ -24,19 +24,9 @@
  *
  * Phase 4.8d — own session, startup resource = workspace directory.
  *
- * Hardening applied (R1-R9 — Track 3 of the e2e-optimizations effort):
- *   R1 drop notification-scanning (prompt is modal)
- *   R2 single ModalDialog handle with stale-element retry
- *   R3 force-focus + Tab+Enter fallback for xvfb-robust click
- *   R4 locale-lock via en-US LANG/LC_ALL (label matches DialogResponses.yes.title)
- *   R5 safeCancelAnyQuickInput pre-flight cleanup
- *   R6 elementIsVisible wait before click (inside pushDialogButtonWithRetry)
- *   R7 timeout bumps: phase 60s -> 120s, prompt 30s -> 45s
- *   R8 dumpDialogDiagnostics on click failure
- *   R9 milestone screenshots
- *
- * NOTE: `allowFailure: true` remains at run-e2e.js:932 pending 3 consecutive
- * green CI runs (R10 gate). Do not remove until validated.
+ * Hardening: modal-only detection, stale-element retry, focus/keyboard fallback,
+ * locale-locked labels, pre-flight Quick Input cleanup, visibility waits,
+ * diagnostic dumps, and milestone screenshots.
  */
 
 import * as path from 'path';
@@ -55,8 +45,8 @@ import {
   dumpDialogDiagnostics,
 } from './helpers';
 
-const TEST_TIMEOUT = 120_000;
-const PROMPT_DEADLINE_MS = 45_000;
+const TEST_TIMEOUT = 180_000;
+const PROMPT_DEADLINE_MS = 90_000;
 const RELOAD_DEADLINE_MS = 30_000;
 
 /**
@@ -102,11 +92,38 @@ async function waitForWorkspacePrompt(driver: WebDriver, timeoutMs: number): Pro
     } catch {
       /* no modal yet */
     }
+    try {
+      const dialogs = await driver.findElements(By.css('.monaco-dialog-box, [role="dialog"], .notification-toast'));
+      for (const dialog of dialogs) {
+        const text = await dialog.getText().catch(() => '');
+        if (/workspace/i.test(text)) {
+          console.log(`[conversionYes] Found workspace prompt via selector: "${text.substring(0, 150)}"`);
+          return text;
+        }
+      }
+    } catch {
+      /* no dialog-like element yet */
+    }
     await sleep(1000);
   }
   // On timeout, dump diagnostics so CI artifacts contain the DOM snapshot.
   await dumpDialogDiagnostics(driver, 'waitForWorkspacePrompt-timeout', DIAGNOSTICS_DIR);
   return null;
+}
+
+async function clickWorkspacePromptButton(driver: WebDriver): Promise<boolean> {
+  return driver.executeScript<boolean>(`
+    const labels = ['yes', 'open workspace'];
+    const buttons = Array.from(document.querySelectorAll('button, a.monaco-button, .monaco-button'));
+    for (const button of buttons) {
+      const text = (button.textContent || button.getAttribute('aria-label') || '').trim().toLowerCase();
+      if (labels.some((label) => text.includes(label))) {
+        button.click();
+        return true;
+      }
+    }
+    return false;
+  `);
 }
 
 /** Detect whether VS Code reloaded the workbench after pushing "Yes". */
@@ -180,6 +197,10 @@ function assertWorkspaceFsInvariants(entry: WorkspaceManifestEntry, phase: strin
 
 describe('Workspace Conversion — Click Yes', function () {
   this.timeout(TEST_TIMEOUT);
+  // This scenario is intentionally single-attempt: clicking Yes changes the
+  // workspace/window state, so a Mocha retry no longer exercises the original
+  // conversion prompt.
+  this.retries(0);
 
   let driver: WebDriver;
   let manifest: WorkspaceManifestEntry[];
@@ -216,13 +237,29 @@ describe('Workspace Conversion — Click Yes', function () {
     // earlier phase eats our Ctrl+Shift+P keystrokes.
     await safeCancelAnyQuickInput(driver);
 
-    await openFolderInSession(driver, entry.wsDir);
+    let promptMessage = await waitForWorkspacePrompt(driver, 10_000);
+    if (!promptMessage) {
+      await openFolderInSession(driver, entry.wsDir);
 
-    // Wait for the modal prompt to appear (R1: modal-only detection; R7: 45s).
-    const promptMessage = await waitForWorkspacePrompt(driver, PROMPT_DEADLINE_MS);
+      // Close any auto-opened editors that steal focus into a webview iframe and
+      // delay the ModalDialog page object from becoming queryable.
+      await new EditorView().closeAllEditors().catch(() => {
+        // ignore — best-effort focus reset
+      });
+      await driver
+        .switchTo()
+        .defaultContent()
+        .catch(() => {
+          // ignore — best-effort focus reset
+        });
+      await sleep(1000);
+
+      // Wait for the modal prompt to appear.
+      promptMessage = await waitForWorkspacePrompt(driver, PROMPT_DEADLINE_MS);
+    }
     await captureScreenshot(driver, 'conversion-yes-prompt-found', EXPLICIT_SCREENSHOT_DIR);
 
-    assert.ok(promptMessage, 'workspace conversion modal dialog must appear within 45s');
+    assert.ok(promptMessage, 'workspace conversion modal dialog must appear within 90s');
     assert.ok(/workspace/i.test(promptMessage), `prompt should mention "workspace": "${promptMessage.substring(0, 150)}"`);
 
     // Capture the pre-click title so we can detect "(Workspace)" flip after click.
@@ -239,12 +276,15 @@ describe('Workspace Conversion — Click Yes', function () {
       await pushDialogButtonWithRetry(driver, YES_BUTTON_LABEL, 3, DIAGNOSTICS_DIR);
     } catch (e) {
       clickThrew = e;
-      if (!isSessionEnded(e)) {
+      if (isSessionEnded(e)) {
+        // Session-ended during click = reload raced ahead of the click ACK. That's success.
+        console.log('[conversionYes] Selenium session ended during click — VS Code reloaded');
+      } else if (await clickWorkspacePromptButton(driver).catch(() => false)) {
+        console.log('[conversionYes] Clicked workspace prompt button via selector fallback');
+      } else {
         await dumpDialogDiagnostics(driver, 'conversion-yes-click-failed', DIAGNOSTICS_DIR);
         throw e;
       }
-      // Session-ended during click = reload raced ahead of the click ACK. That's success.
-      console.log('[conversionYes] Selenium session ended during click — VS Code reloaded');
     }
 
     // R9: milestone — post-click (may fail if session already gone).

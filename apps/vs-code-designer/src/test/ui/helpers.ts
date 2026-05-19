@@ -13,7 +13,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { By, Key, ModalDialog, until, type WebDriver } from 'vscode-extension-tester';
+import { By, Key, ModalDialog, until, type WebDriver, type WebElement, type Workbench } from 'vscode-extension-tester';
 
 type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 
@@ -24,6 +24,203 @@ type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 /** Sleep for ms milliseconds */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Raw Selenium quick-input typing that bypasses ExTester's InputBox page object.
+ *
+ * The ExTester InputBox.setText/clear API can throw ElementNotInteractableError
+ * on cold sessions because it matches hidden cached widgets. This helper uses
+ * the proven `.quick-input-widget:not(.hidden) .quick-input-box input` selector
+ * (see createWorkspaceShared.ts:266), with `until.elementLocated` so the wait
+ * absorbs the widget-not-yet-rendered race, plus explicit visibility +
+ * isEnabled checks and a 3-attempt retry with backoff for cold-session
+ * settling.
+ *
+ * CAVEAT: this helper calls `input.clear()`, which deletes ALL existing text
+ * in the widget — including the leading `>` prefix that
+ * `Workbench.openCommandPrompt()` inserts to switch the widget into
+ * command-palette mode. After clearing, the widget is in FILE / quick-open
+ * mode. Callers that want command-palette behaviour must re-type the `>`
+ * prefix themselves (e.g. `waitForQuickInputAndType(driver, '>Help')`), or
+ * use ExTester's InputBox.setText directly. For plain file Quick Open
+ * (Ctrl+P), no prefix is needed.
+ *
+ * Returns the input WebElement on success; throws after all retries fail.
+ */
+export async function waitForQuickInputAndType(driver: WebDriver, text: string, timeoutMs = 15000): Promise<WebElement> {
+  // Phase 2 F2: bumped default timeoutMs 5000 -> 15000. Phase 1 CI evidence
+  // (run 25949973119, smoke + multipleDesigners) showed
+  // `Waiting until element is visible / 5140ms` timeouts where the widget DOM
+  // exists but never paints visible. 3x headroom per senior-swe-planner I3.
+  //
+  // Phase 3 R2: Drop the `.quick-input-widget:not(.hidden) .quick-input-box
+  // input` selector — the `.show` / `.hidden` CSS class transitions can take
+  // >5s on slow CI runners (the widget paints before the class is removed).
+  // F4 fix: use `offsetParent !== null` as the canonical "actually rendered"
+  // check (hidden inputs are still .isEnabled() === true, so isEnabled was
+  // a false-positive gate). Locate the input by structural selector only,
+  // then validate visibility via computed style + offsetParent.
+  // Phase 3 r1 BLOCKER #1: VS Code maintains a `.quick-input-widget` pool —
+  // `document.querySelector('.quick-input-widget')` returns the first DOM
+  // match, which may be a hidden cached widget. The old `offsetParent !== null`
+  // check then stayed false for the whole timeout even when a visible palette
+  // was rendered alongside. Iterate every widget, find the visible one, and
+  // bind the input lookup to that widget so we don't grab a hidden input.
+  let lastErr: Error | undefined;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await driver.wait(
+        async () =>
+          driver
+            .executeScript<boolean>(
+              'const widgets = Array.from(document.querySelectorAll(".quick-input-widget"));' +
+                'for (const w of widgets) {' +
+                '  const s = getComputedStyle(w);' +
+                '  if (s.display !== "none" && s.visibility !== "hidden" && w.offsetParent !== null) {' +
+                '    const inp = w.querySelector(".quick-input-box input");' +
+                '    if (inp) return true;' +
+                '  }' +
+                '}' +
+                'return false;'
+            )
+            .catch(() => false),
+        timeoutMs,
+        'Expected a visible quick-input widget containing an input to be rendered'
+      );
+      const inputs = await driver.findElements(By.css('.quick-input-widget .quick-input-box input'));
+      let input: WebElement | null = null;
+      for (const candidate of inputs) {
+        const visible = await driver
+          .executeScript<boolean>(
+            'const w = arguments[0].closest(".quick-input-widget");' +
+              'if (!w) return false;' +
+              'const s = getComputedStyle(w);' +
+              'return s.display !== "none" && s.visibility !== "hidden" && w.offsetParent !== null;',
+            candidate
+          )
+          .catch(() => false);
+        if (visible) {
+          input = candidate;
+          break;
+        }
+      }
+      if (!input) {
+        throw new Error('No visible quick-input widget found among candidates');
+      }
+      // Phase 4: Skip Selenium-level interactability check. R2's widget
+      // iteration above correctly locates the visible widget + input, but
+      // `input.clear()` then throws `element not interactable` because
+      // Selenium's interactability check is stricter than
+      // `display !== "none" && visibility !== "hidden" && offsetParent !== null`
+      // — it also requires a non-zero bounding rect with the center not
+      // occluded, and VS Code's input can have a 0x0 layout briefly while
+      // the widget animates in. Use JS to focus + clear + dispatch input
+      // event, then Actions.sendKeys to type into whatever element has
+      // focus (the input we just focused).
+      // r1 (critic): target the resolved input WebElement directly via
+      // arguments[0] instead of re-querying widgets. Eliminates risk of
+      // targeting a different widget than R2's iteration located if two
+      // are momentarily visible.
+      await driver.executeScript(
+        'const i = arguments[0];' + 'i.focus();' + 'i.value = "";' + 'i.dispatchEvent(new Event("input", { bubbles: true }));',
+        input
+      );
+      await sleep(100);
+      await driver.actions().sendKeys(text).perform();
+      await sleep(300);
+      return input;
+    } catch (e: any) {
+      lastErr = e;
+      const firstLine = e?.message?.split('\n')[0] ?? e?.message ?? 'unknown';
+      console.log(`[waitForQuickInputAndType] attempt ${attempt + 1}/3 failed: ${firstLine}`);
+      await sleep(500 * (attempt + 1));
+    }
+  }
+  throw new Error(`[waitForQuickInputAndType] failed after 3 attempts: ${lastErr?.message ?? 'unknown'}`);
+}
+
+/**
+ * Phase 2 F2 — Pre-condition gate before opening the command palette on cold
+ * sessions.
+ *
+ * Phase 1 CI evidence (run 25949973119, p47-suite + p48c-multipledesigners)
+ * showed `waitForQuickInputAndType` timing out with
+ * `Waiting until element is visible / 5140ms`. The Quick Input widget exists
+ * in the DOM but never becomes visible/interactable because:
+ *   - notification toasts (extension activation, Azurite startup) steal focus,
+ *   - a phantom Quick Input from a prior step still holds the input lock.
+ *
+ * This helper clears competing UI surfaces and asserts no Quick Input is
+ * currently visible BEFORE the caller opens a fresh one. Per planner B4: poll
+ * for state, do NOT trust fixed sleeps. Per planner B4: do NOT close the
+ * auxiliary bar (could TOGGLE it open if it wasn't already open).
+ */
+export async function waitForQuickInputReady(workbench: Workbench, driver: WebDriver, timeoutMs = 5000): Promise<void> {
+  // Phase 3 F3 fix: Switch to defaultContent BEFORE clearing notifications +
+  // sending Escape. If a prior test left us inside a webview iframe, the
+  // Escape would go to the React app instead of the VS Code workbench.
+  try {
+    await driver.switchTo().defaultContent();
+  } catch {
+    /* ignore */
+  }
+  // Clear notifications (extension activation toasts, Azurite startup, etc.)
+  try {
+    await workbench.executeCommand('workbench.action.notifications.clearAll');
+  } catch {
+    /* ignore */
+  }
+  await sleep(200);
+  // Phase 3 (planner improvement): Double Escape. The first dismisses an
+  // inline decoration (selection / IME / link hover popup) and the second
+  // closes the quick-input pool itself. Sending only one Escape was observed
+  // to leave the widget visible on cold sessions.
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  } catch {
+    /* ignore */
+  }
+  await sleep(100);
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  } catch {
+    /* ignore */
+  }
+  // Phase 2 R1 (review board #4) — positive log when the gate is doing real work.
+  // If a Quick Input widget is visible at entry, callers can see in CI logs that
+  // this helper actually waited for clearance rather than no-opping.
+  const initiallyVisible = await driver.findElements(By.css('.quick-input-widget.show'));
+  if (initiallyVisible.length > 0) {
+    console.log('[waitForQuickInputReady] Quick Input visible at entry — waiting for clear');
+  }
+  // Poll for "no Quick Input visible" state before returning. On timeout we
+  // try a second Escape + brief re-poll before degrading to non-fatal so
+  // callers can distinguish "gate closed cleanly" from "still busy".
+  await driver
+    .wait(
+      async () => {
+        const visible = await driver.findElements(By.css('.quick-input-widget.show'));
+        return visible.length === 0;
+      },
+      timeoutMs,
+      'No Quick Input widget should be visible before opening a fresh one'
+    )
+    .catch(async () => {
+      console.log('[waitForQuickInputReady] First poll timed out — sending second Escape');
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(500);
+      const stillVisible = await driver.findElements(By.css('.quick-input-widget.show'));
+      if (stillVisible.length > 0) {
+        console.log('[waitForQuickInputReady] WARN: Quick Input still visible after 2 Escapes; caller may race');
+      } else {
+        console.log('[waitForQuickInputReady] Second Escape cleared widget');
+      }
+    });
 }
 
 /** Replace invalid filename characters with underscores */
