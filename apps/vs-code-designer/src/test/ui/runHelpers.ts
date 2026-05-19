@@ -963,11 +963,23 @@ export async function invokeWorkflowCallback(
     await captureScreenshot(driver, 'invokeWorkflowCallback-no-callback-url');
     return false;
   }
-  const result = await httpPostJson(callbackUrl, opts.body ?? {}, 120_000);
-  console.log(
-    `[workflowCallback] POST workflow="${opts.workflowName}" status=${result.status} body=${result.body.slice(0, 500) || '(empty)'}`
-  );
-  return result.status >= 200 && result.status < 300;
+  let lastResult: { status: number; body: string } | undefined;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    lastResult = await httpPostJson(callbackUrl, opts.body ?? {}, 120_000);
+    console.log(
+      `[workflowCallback] POST workflow="${opts.workflowName}" attempt=${attempt + 1} status=${lastResult.status} body=${
+        lastResult.body.slice(0, 500) || '(empty)'
+      }`
+    );
+    if (lastResult.status >= 200 && lastResult.status < 300) {
+      return true;
+    }
+    if (lastResult.status > 0 && lastResult.status < 500) {
+      return false;
+    }
+    await sleep(5000);
+  }
+  return false;
 }
 
 /**

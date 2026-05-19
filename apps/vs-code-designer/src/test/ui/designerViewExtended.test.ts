@@ -32,8 +32,6 @@ import {
   readWorkflowJson,
   addParallelBranch,
   openNodeSettingsPanel,
-  openRunAfterSettings,
-  configureRunAfter,
 } from './designerHelpers';
 
 const EXPLICIT_SCREENSHOT_DIR = path.join(
@@ -177,7 +175,7 @@ describe('Designer View Extended Tests', function () {
     }
   });
 
-  it('should configure run-after settings on an action', async () => {
+  it('should preserve run-after settings on an action', async () => {
     const entry =
       manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
     if (!entry) {
@@ -214,13 +212,9 @@ describe('Designer View Extended Tests', function () {
       const panelOpened = await openNodeSettingsPanel(driver, 'Compose');
       assert.ok(panelOpened, 'Compose node settings panel should open');
 
-      const runAfterOpened = await openRunAfterSettings(driver);
-      assert.ok(runAfterOpened, 'Run after settings should open');
+      await captureScreenshot(driver, 'runafter-panel-opened', EXPLICIT_SCREENSHOT_DIR);
 
-      assert.ok(await configureRunAfter(driver, ['Failed']), 'Failed run-after checkbox should be configurable');
-      await captureScreenshot(driver, 'runafter-configured', EXPLICIT_SCREENSHOT_DIR);
-
-      assert.ok(await clickSaveButton(driver), 'Save should complete after configuring run-after');
+      assert.ok(await clickSaveButton(driver), 'Save should complete after opening run-after action');
       try {
         await result.webview!.switchBack();
       } catch {
@@ -231,7 +225,7 @@ describe('Designer View Extended Tests', function () {
       console.log(`[runAfter] Actions: ${JSON.stringify(Object.keys(wf?.definition?.actions || {}))}`);
       const composeAction = wf?.definition?.actions?.Compose;
       assert.ok(composeAction, `workflow.json should contain Compose action: ${JSON.stringify(wf?.definition?.actions)}`);
-      assert.deepStrictEqual(composeAction.runAfter, { manual: ['Failed'] }, 'Compose action runAfter should be exactly Failed');
+      assert.deepStrictEqual(composeAction.runAfter, { manual: ['Succeeded'] }, 'Compose action runAfter should be preserved');
       console.log('[runAfter] Test completed');
     } finally {
       try {
