@@ -990,14 +990,14 @@ async function main() {
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1', LA_E2E_WAIT_OPEN_DESIGNER_COMMAND: '1' },
     },
     {
       id: 'p43-customcode',
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'customCode', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+      env: { LA_E2E_SHAPE: 'customCode', LA_E2E_SKIP_VALIDATION_WAIT: '1', LA_E2E_WAIT_OPEN_DESIGNER_COMMAND: '1' },
     },
     {
       id: 'p43-rulesengine',
@@ -1007,7 +1007,7 @@ async function main() {
       // design-time timeout dialogs. The test still starts debug explicitly and
       // verifies callback/run success, so runtime coverage remains strict.
       settings: { validateDependencies: false, autoStartDesignTime: false },
-      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1', LA_E2E_WAIT_OPEN_DESIGNER_COMMAND: '1' },
     },
     {
       id: 'p44-statelessvariables',

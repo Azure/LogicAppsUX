@@ -3329,7 +3329,7 @@ describe('Designer Actions Tests', function () {
         await captureScreenshot(driver, 'test1-step14-run-details-opened');
         assert.ok(detailsOpened, 'Should be able to open the succeeded run');
 
-        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
+        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName);
         await captureScreenshot(driver, 'test1-step15-all-nodes-succeeded');
         assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
 
@@ -3670,7 +3670,7 @@ describe('Designer Actions Tests', function () {
         await captureScreenshot(driver, 'test2-step12-run-details-opened');
         assert.ok(detailsOpened, 'Should be able to open the succeeded run');
 
-        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
+        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName);
         await captureScreenshot(driver, 'test2-step13-all-nodes-succeeded');
         assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
 

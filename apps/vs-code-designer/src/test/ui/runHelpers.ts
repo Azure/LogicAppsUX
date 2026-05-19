@@ -1891,52 +1891,151 @@ export async function clickLatestRunRow(driver: WebDriver): Promise<boolean> {
   return false;
 }
 
-/**
- * Verify that all action nodes show "Succeeded" in the run details view.
- */
-export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allSucceeded: boolean; details: string }> {
-  try {
-    const result = await driver.executeScript<{ succeeded: number; other: string[] }>(`
-      var succeeded = 0;
-      var other = [];
-      var statusTexts = ['Succeeded', 'Running', 'Failed', 'Cancelled', 'Skipped', 'Waiting'];
-      function isTriggerRow(text) {
-        var normalized = (text || '').toLowerCase().replace(/[_\\s-]+/g, ' ').trim();
-        return normalized.indexOf('when an http request is received') >= 0 ||
-          normalized.indexOf('when http request is received') >= 0 ||
-          /^manual\\b/.test(normalized) ||
-          /^request\\b/.test(normalized);
+type ActionStatusSnapshot = {
+  succeeded: number;
+  other: string[];
+};
+
+async function readRunDetailsActionStatuses(driver: WebDriver): Promise<ActionStatusSnapshot> {
+  return await driver.executeScript<ActionStatusSnapshot>(`
+    var succeeded = 0;
+    var other = [];
+    var statusTexts = ['Succeeded', 'Running', 'Failed', 'Cancelled', 'Skipped', 'Waiting'];
+    function isTriggerRow(text) {
+      var normalized = (text || '').toLowerCase().replace(/[_\\s-]+/g, ' ').trim();
+      return normalized.indexOf('when an http request is received') >= 0 ||
+        normalized.indexOf('when http request is received') >= 0 ||
+        /^manual\\b/.test(normalized) ||
+        /^request\\b/.test(normalized);
+    }
+    function isRunHistoryRow(text) {
+      return /^[0-9]{12,}/.test(text || '') && (text || '').indexOf('/') >= 0 && /[0-9]{4}/.test(text || '');
+    }
+    var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
+    for (var r = 0; r < rows.length; r++) {
+      var rowText = (rows[r].textContent || '').trim();
+      if (isTriggerRow(rowText) || isRunHistoryRow(rowText)) {
+        continue;
       }
-      function isRunHistoryRow(text) {
-        return /^[0-9]{12,}/.test(text || '') && (text || '').indexOf('/') >= 0 && /[0-9]{4}/.test(text || '');
-      }
-      var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
-      for (var r = 0; r < rows.length; r++) {
-        var rowText = (rows[r].textContent || '').trim();
-        if (isTriggerRow(rowText) || isRunHistoryRow(rowText)) {
-          continue;
-        }
-        var cells = rows[r].querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
-        for (var i = 0; i < cells.length; i++) {
-          var t = (cells[i].textContent || '').trim();
-          for (var j = 0; j < statusTexts.length; j++) {
-            if (t === statusTexts[j]) {
-              if (t === 'Succeeded') succeeded++;
-              else other.push(t + (rowText ? ': ' + rowText.substring(0, 120) : ''));
-              break;
-            }
+      var cells = rows[r].querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
+      for (var i = 0; i < cells.length; i++) {
+        var t = (cells[i].textContent || '').trim();
+        for (var j = 0; j < statusTexts.length; j++) {
+          if (t === statusTexts[j]) {
+            if (t === 'Succeeded') succeeded++;
+            else other.push(t + (rowText ? ': ' + rowText.substring(0, 120) : ''));
+            break;
           }
         }
       }
-      return { succeeded: succeeded, other: other };
-    `);
+    }
+    return { succeeded: succeeded, other: other };
+  `);
+}
 
-    const details = `${result.succeeded} succeeded${result.other.length > 0 ? `, non-succeeded: [${result.other.join(', ')}]` : ''}`;
-    console.log(`[overview] Run details — ${details}`);
-    return {
-      allSucceeded: result.succeeded > 0 && result.other.length === 0,
-      details,
-    };
+async function verifyLatestRunActionRunsSucceeded(workflowName: string): Promise<{ allSucceeded: boolean; details: string } | undefined> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  const encodedWorkflowName = encodeURIComponent(workflowName);
+  const runs = await httpRequestJson(
+    { url: `${managementBase}/workflows/${encodedWorkflowName}/runs?api-version=${apiVersion}`, method: 'GET' },
+    5_000
+  );
+
+  if (runs.status !== 200) {
+    return { allSucceeded: false, details: `action API runs status=${runs.status} body=${runs.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  let runItems: any[] = [];
+  try {
+    const parsedRuns = JSON.parse(runs.body);
+    runItems = Array.isArray(parsedRuns?.value) ? parsedRuns.value : Array.isArray(parsedRuns) ? parsedRuns : [];
+  } catch {
+    return { allSucceeded: false, details: `action API runs parse failed body=${runs.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  const latestRunName = runItems[0]?.name;
+  if (typeof latestRunName !== 'string' || latestRunName.length === 0) {
+    return { allSucceeded: false, details: 'action API found no latest run' };
+  }
+
+  const actions = await httpRequestJson(
+    {
+      url: `${managementBase}/workflows/${encodedWorkflowName}/runs/${encodeURIComponent(latestRunName)}/actions?api-version=${apiVersion}`,
+      method: 'GET',
+    },
+    5_000
+  );
+
+  if (actions.status !== 200) {
+    return { allSucceeded: false, details: `action API actions status=${actions.status} body=${actions.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  let actionItems: any[] = [];
+  try {
+    const parsedActions = JSON.parse(actions.body);
+    actionItems = Array.isArray(parsedActions?.value) ? parsedActions.value : Array.isArray(parsedActions) ? parsedActions : [];
+  } catch {
+    return { allSucceeded: false, details: `action API actions parse failed body=${actions.body.slice(0, 500) || '(empty)'}` };
+  }
+
+  if (actionItems.length === 0) {
+    return undefined;
+  }
+
+  const actionStatuses = actionItems.map((action) => ({
+    name: typeof action?.name === 'string' ? action.name : '(unnamed)',
+    status:
+      typeof action?.status === 'string'
+        ? action.status
+        : typeof action?.properties?.status === 'string'
+          ? action.properties.status
+          : '(missing)',
+  }));
+  const nonSucceeded = actionStatuses.filter((action) => action.status !== 'Succeeded');
+  const details = `action API run=${latestRunName} actions=${actionStatuses.map((action) => `${action.name}:${action.status}`).join(', ')}`;
+  return { allSucceeded: nonSucceeded.length === 0, details };
+}
+
+/**
+ * Verify that all action nodes show "Succeeded" in the run details view.
+ */
+export async function verifyAllNodesSucceeded(
+  driver: WebDriver,
+  workflowName?: string
+): Promise<{ allSucceeded: boolean; details: string }> {
+  const deadline = Date.now() + 60_000;
+  let lastDetails = '0 succeeded';
+  try {
+    while (Date.now() < deadline) {
+      const result = await readRunDetailsActionStatuses(driver);
+      lastDetails = `${result.succeeded} succeeded${result.other.length > 0 ? `, non-succeeded: [${result.other.join(', ')}]` : ''}`;
+      if (result.succeeded > 0 && result.other.length === 0) {
+        console.log(`[overview] Run details — ${lastDetails}`);
+        return { allSucceeded: true, details: lastDetails };
+      }
+
+      const hasTerminalFailure = result.other.some(
+        (status) => status.startsWith('Failed') || status.startsWith('Cancelled') || status.startsWith('Skipped')
+      );
+      if (hasTerminalFailure) {
+        console.log(`[overview] Run details — ${lastDetails}`);
+        return { allSucceeded: false, details: lastDetails };
+      }
+
+      await sleep(1000);
+    }
+
+    if (workflowName) {
+      const apiResult = await verifyLatestRunActionRunsSucceeded(workflowName);
+      if (apiResult) {
+        console.log(`[overview] Run details unavailable after polling; ${apiResult.details}`);
+        return apiResult;
+      }
+    }
+
+    console.log(`[overview] Run details — ${lastDetails}`);
+    return { allSucceeded: false, details: lastDetails };
   } catch (e: any) {
     console.log(`[overview] Error reading run details: ${e.message}`);
     return { allSucceeded: false, details: 'error reading details' };

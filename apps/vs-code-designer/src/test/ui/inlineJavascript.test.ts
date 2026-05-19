@@ -262,7 +262,7 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
       const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 30_000);
       assert.ok(found || lastStatus === 'Running', `Run should start or succeed (last: "${lastStatus}")`);
       assert.ok(await clickLatestRunRow(driver), 'Should open run details');
-      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
+      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName);
       assert.ok(allSucceeded, `All nodes should succeed (${details})`);
       console.log('[inlineJS] PASSED');
       try {
