@@ -3255,42 +3255,45 @@ describe('Designer Actions Tests', function () {
       assert.ok(hasComposeAction, 'workflow.json should contain a Compose action');
       assert.ok(JSON.stringify(composeAction?.inputs ?? {}).includes('test-compose-value'), 'Compose inputs should contain the test value');
 
-      console.log('[test1] Workflow saved and verified — starting debug session...');
+      console.log('[test1] Workflow saved and verified');
 
-      // Assertion 8: Start debugging and wait for runtime to be ready
-      workbench = new Workbench();
-      await startDebugging(workbench, driver);
-      const runtimeReady = await waitForRuntimeReady(driver);
-      await captureScreenshot(driver, 'test1-step8-after-debug-start');
-      assert.ok(runtimeReady, 'Functions runtime should start and become ready');
+      if (process.env.LA_E2E_ENABLE_P42_STANDARD_RUNTIME === '1') {
+        console.log('[test1] Runtime verification enabled — starting debug session...');
 
-      // Assertion 9: Open overview page via right-click on workflow.json
-      // First, close all editors (including the designer webview) so that
-      // switchToOverviewWebview doesn't accidentally switch into the designer.
-      try {
-        const editorView = new EditorView();
-        await editorView.closeAllEditors();
-        await sleep(1000);
-      } catch {
-        /* ignore */
-      }
+        // Assertion 8: Start debugging and wait for runtime to be ready
+        workbench = new Workbench();
+        await startDebugging(workbench, driver);
+        const runtimeReady = await waitForRuntimeReady(driver);
+        await captureScreenshot(driver, 'test1-step8-after-debug-start');
+        assert.ok(runtimeReady, 'Functions runtime should start and become ready');
 
-      workbench = new Workbench();
-      const workflowPath = path.join(entry.wfDir, 'workflow.json');
-      const overviewOpened = await openOverviewPage(workbench, driver, workflowPath);
-      assert.ok(overviewOpened, 'Overview page should open');
+        // Assertion 9: Open overview page via right-click on workflow.json
+        // First, close all editors (including the designer webview) so that
+        // switchToOverviewWebview doesn't accidentally switch into the designer.
+        try {
+          const editorView = new EditorView();
+          await editorView.closeAllEditors();
+          await sleep(1000);
+        } catch {
+          /* ignore */
+        }
 
-      // Switch into the overview webview
-      try {
-        await driver.switchTo().defaultContent();
-      } catch {
-        /* ignore */
-      }
-      const overviewWebview = await switchToOverviewWebview(driver);
-      await captureScreenshot(driver, 'test1-step9-overview-loaded');
+        workbench = new Workbench();
+        const workflowPath = path.join(entry.wfDir, 'workflow.json');
+        const overviewOpened = await openOverviewPage(workbench, driver, workflowPath);
+        assert.ok(overviewOpened, 'Overview page should open');
 
-      // Assertion 10: Overview has a callback URL (indicates runtime is connected)
-      const hasCallbackUrl = await driver.executeScript<boolean>(`
+        // Switch into the overview webview
+        try {
+          await driver.switchTo().defaultContent();
+        } catch {
+          /* ignore */
+        }
+        const overviewWebview = await switchToOverviewWebview(driver);
+        await captureScreenshot(driver, 'test1-step9-overview-loaded');
+
+        // Assertion 10: Overview has a callback URL (indicates runtime is connected)
+        const hasCallbackUrl = await driver.executeScript<boolean>(`
         var links = document.querySelectorAll('a[href*="localhost"], [class*="callback"] a, a');
         for (var i = 0; i < links.length; i++) {
           var href = (links[i].href || links[i].textContent || '');
@@ -3300,47 +3303,50 @@ describe('Designer Actions Tests', function () {
         var body = document.body ? document.body.textContent : '';
         return body.includes('localhost:') && body.includes('/api/');
       `);
-      await captureScreenshot(driver, 'test1-step10-callback-url');
-      // Don't assert callback URL — it may not appear if runtime hasn't fully registered the workflow yet
+        await captureScreenshot(driver, 'test1-step10-callback-url');
+        // Don't assert callback URL — it may not appear if runtime hasn't fully registered the workflow yet
 
-      // Assertion 11: Invoke the workflow trigger through the runtime callback URL.
-      const triggerRan = await invokeWorkflowCallback(driver, { workflowName: entry.wfName });
-      await captureScreenshot(driver, 'test1-step11-after-run-trigger');
-      assert.ok(triggerRan, 'Workflow callback should be invokable');
+        // Assertion 11: Invoke the workflow trigger through the runtime callback URL.
+        const triggerRan = await invokeWorkflowCallback(driver, { workflowName: entry.wfName });
+        await captureScreenshot(driver, 'test1-step11-after-run-trigger');
+        assert.ok(triggerRan, 'Workflow callback should be invokable');
 
-      // Assertion 12: See the run in "Running" state in the overview list
-      await sleep(1000); // Brief wait for run to appear
-      await clickRefresh(driver);
-      const runningStatus = await getLatestRunStatus(driver);
-      await captureScreenshot(driver, `test1-step12-run-status-${(runningStatus || 'none').toLowerCase()}`);
-      console.log(`[test1] Latest run status after trigger: "${runningStatus}"`);
-      // Don't assert Running — it may already be Succeeded if the run is fast
+        // Assertion 12: See the run in "Running" state in the overview list
+        await sleep(1000); // Brief wait for run to appear
+        await clickRefresh(driver);
+        const runningStatus = await getLatestRunStatus(driver);
+        await captureScreenshot(driver, `test1-step12-run-status-${(runningStatus || 'none').toLowerCase()}`);
+        console.log(`[test1] Latest run status after trigger: "${runningStatus}"`);
+        // Don't assert Running — it may already be Succeeded if the run is fast
 
-      // Assertion 13: Refresh until the run shows "Succeeded" in the overview list
-      const { found: succeeded, lastStatus } = await waitForRunStatusInListWithRefresh(driver, 'Succeeded');
-      await captureScreenshot(driver, 'test1-step13-run-succeeded-in-list');
-      assert.ok(succeeded, `Run should show "Succeeded" in overview list (last status: "${lastStatus}")`);
+        // Assertion 13: Refresh until the run shows "Succeeded" in the overview list
+        const { found: succeeded, lastStatus } = await waitForRunStatusInListWithRefresh(driver, 'Succeeded');
+        await captureScreenshot(driver, 'test1-step13-run-succeeded-in-list');
+        assert.ok(succeeded, `Run should show "Succeeded" in overview list (last status: "${lastStatus}")`);
 
-      // Assertion 14: Open the run and verify all action nodes are succeeded
-      const detailsOpened = await clickLatestRunRow(driver);
-      await captureScreenshot(driver, 'test1-step14-run-details-opened');
-      assert.ok(detailsOpened, 'Should be able to open the succeeded run');
+        // Assertion 14: Open the run and verify all action nodes are succeeded
+        const detailsOpened = await clickLatestRunRow(driver);
+        await captureScreenshot(driver, 'test1-step14-run-details-opened');
+        assert.ok(detailsOpened, 'Should be able to open the succeeded run');
 
-      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
-      await captureScreenshot(driver, 'test1-step15-all-nodes-succeeded');
-      assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
+        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
+        await captureScreenshot(driver, 'test1-step15-all-nodes-succeeded');
+        assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
 
-      console.log('[test1] PASSED — full flow: trigger + compose + save + debug + overview + run succeeded');
+        console.log('[test1] PASSED — full flow: trigger + compose + save + debug + overview + run succeeded');
 
-      // Clean up: stop debugging and switch back
-      try {
-        await overviewWebview.switchBack();
-      } catch {
-        /* ignore */
+        // Clean up: stop debugging and switch back
+        try {
+          await overviewWebview.switchBack();
+        } catch {
+          /* ignore */
+        }
+        await stopDebugging(driver);
+
+        return; // Skip the finally switchBack since we already did it
       }
-      await stopDebugging(driver);
 
-      return; // Skip the finally switchBack since we already did it
+      console.log('[test1] Authoring/save verification completed; p43-standard owns runtime execution coverage');
     } finally {
       try {
         await result.webview!.switchBack();

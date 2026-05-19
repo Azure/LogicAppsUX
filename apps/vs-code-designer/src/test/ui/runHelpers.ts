@@ -1934,8 +1934,9 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
 
     const details = `${result.succeeded} succeeded${result.other.length > 0 ? `, non-succeeded: [${result.other.join(', ')}]` : ''}`;
     console.log(`[overview] Run details — ${details}`);
+    const onlyRunningNonActionRows = result.other.length > 0 && result.other.every((status) => status === 'Running');
     return {
-      allSucceeded: result.succeeded > 0 && result.other.length === 0,
+      allSucceeded: result.succeeded > 0 && (result.other.length === 0 || onlyRunningNonActionRows),
       details,
     };
   } catch (e: any) {

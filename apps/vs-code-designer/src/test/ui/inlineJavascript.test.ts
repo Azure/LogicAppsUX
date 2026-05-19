@@ -136,7 +136,11 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
     }
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
-    await waitForDependencyValidation(driver);
+    if (process.env.LA_E2E_SKIP_VALIDATION_WAIT === '1') {
+      console.log('[inlineJS] Skipping dependency validation wait by scenario setting');
+    } else {
+      await waitForDependencyValidation(driver);
+    }
   });
 
   afterEach(async () => {

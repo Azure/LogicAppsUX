@@ -2990,6 +2990,14 @@ export async function addParallelBranch(driver: WebDriver, afterNodeText: string
  */
 export async function openNodeSettingsPanel(driver: WebDriver, nodeText: string): Promise<boolean> {
   try {
+    const exactNode = await driver.findElements(By.css(`#msla-node-${nodeText}`));
+    if (exactNode.length > 0) {
+      await driver.actions().move({ origin: exactNode[0] }).click().perform();
+      await sleep(1500);
+      console.log(`[openNodeSettingsPanel] Clicked exact node "${nodeText}"`);
+      return true;
+    }
+
     const nodes = await driver.findElements(By.css('.react-flow__node'));
     const candidates: Array<{ node: WebElement; text: string }> = [];
     for (const node of nodes) {

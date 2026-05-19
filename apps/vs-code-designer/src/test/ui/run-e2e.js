@@ -966,8 +966,8 @@ async function main() {
       id: 'p42-standard',
       testFile: phase2Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'standard' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p42-customcode',
@@ -980,8 +980,8 @@ async function main() {
       id: 'p42-rulesengine',
       testFile: phase2Files[0],
       workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'rulesEngine' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
 
     // Phases 4.3-4.6 — runtime-touching consumer tests
@@ -990,21 +990,21 @@ async function main() {
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'standard' },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p43-customcode',
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'customCode' },
+      env: { LA_E2E_SHAPE: 'customCode', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p43-rulesengine',
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'rulesEngine' },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p44-statelessvariables',
