@@ -218,6 +218,33 @@ async function parallelLimit(taskFns, limit) {
 async function main() {
   const { ExTester } = require('vscode-extension-tester');
 
+  // ------------------------------------------------------------------
+  // D-001 pre-flight: enforce that *.fixtures.test.ts files do not write
+  // workspace files directly. Fixture data must come from the wizard.
+  // This guard is a cheap grep — it runs before any build/test work so
+  // a violating PR fails fast on its very first CI run.
+  // ------------------------------------------------------------------
+  const uiTestDir = path.resolve(__dirname);
+  const fixturesGuardPattern = /fs\s*\.\s*writeFile|outputJson/;
+  const fixturesGuardViolations = [];
+  for (const fname of fs.readdirSync(uiTestDir)) {
+    if (!fname.endsWith('.fixtures.test.ts')) continue;
+    const filePath = path.join(uiTestDir, fname);
+    const contents = fs.readFileSync(filePath, 'utf8');
+    if (fixturesGuardPattern.test(contents)) {
+      fixturesGuardViolations.push(fname);
+    }
+  }
+  if (fixturesGuardViolations.length > 0) {
+    console.error(
+      '\n✖ D-001 lint guard FAILED: *.fixtures.test.ts files must not call fs.writeFile* or outputJson*.\n' +
+        '  Fixture workspaces must be produced by the Create Workspace wizard, not synthesized on disk.\n' +
+        `  Violating files: ${fixturesGuardViolations.join(', ')}`
+    );
+    process.exit(2);
+  }
+  console.log('✓ D-001 lint guard passed (no fs.writeFile/outputJson in *.fixtures.test.ts).');
+
   // Read extension metadata from dist/package.json
   const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
   const extDeps = pkgJson.extensionDependencies || [];
@@ -810,7 +837,11 @@ async function main() {
 
   const phase0Files = [testFile('nonLogicAppStartup.test.js')];
 
-  const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.test.js')];
+  const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
+  // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
+  // consumed by downstream Phase 4.2 / 4.3 shape-specific scenarios. Drives the
+  // wizard ONLY for standard/Stateful, customCode/Stateful, rulesEngine/Stateful.
+  const phase1aFiles = [testFile('createWorkspace.fixtures.test.js')];
 
   const phase2Files = [testFile('designerActions.test.js')];
 
@@ -878,23 +909,46 @@ async function main() {
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
 
-    // Phase 4.1 — workspace creation (kept monolithic; the pre-creation
-    // webview block + 12 shape creation tests share a session today).
+    // Phase 4.1a (NEW Step 2) — fast fixtures-only wizard run. Writes the manifest
+    // consumed by Phase 4.2 / 4.3 shape-specific scenarios. This is the critical
+    // path; the full 12-shape behavior validation runs independently as p41b.
     {
-      id: 'p41-createworkspace',
+      id: 'p41a-fixtures',
+      testFile: phase1aFiles[0],
+      workspaceSpec: 'self-creates',
+      settings: { validateDependencies: true, autoStartDesignTime: true },
+    },
+    // Phase 4.1b (NEW Step 2) — full 12-shape wizard validation + 75 form/validation
+    // assertions. Runs on its own parallel shard OFF the critical path. No downstream
+    // scenarios depend on the manifest this writes.
+    {
+      id: 'p41b-createworkspace-behavior',
       testFile: phase1Files,
       workspaceSpec: 'self-creates',
       settings: { validateDependencies: true, autoStartDesignTime: true },
       monolithic: true,
     },
 
-    // Phase 4.2 — designer lifecycle (Standard + CustomCode share one file)
-    // Phase C will split designerActions.test.js into two scenarios.
+    // Phase 4.2 — designer lifecycle (Standard / CustomCode / RulesEngine sharded).
     {
       id: 'p42-standard',
       testFile: phase2Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+    },
+    {
+      id: 'p42-customcode',
+      testFile: phase2Files[0],
+      workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'customCode' },
+    },
+    {
+      id: 'p42-rulesengine',
+      testFile: phase2Files[0],
+      workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'rulesEngine' },
     },
 
     // Phases 4.3-4.6 — runtime-touching consumer tests
@@ -903,6 +957,21 @@ async function main() {
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'standard' },
+    },
+    {
+      id: 'p43-customcode',
+      testFile: phase3Files[0],
+      workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'customCode' },
+    },
+    {
+      id: 'p43-rulesengine',
+      testFile: phase3Files[0],
+      workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'rulesEngine' },
     },
     {
       id: 'p44-statelessvariables',
@@ -919,7 +988,7 @@ async function main() {
     {
       id: 'p46-keyboardnav',
       testFile: phase6Files[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'p41-createworkspace' },
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'p41a-fixtures' },
       settings: { validateDependencies: false, autoStartDesignTime: true },
     },
 
@@ -1142,7 +1211,7 @@ async function main() {
     }
     // ExTester runs Mocha in this Node process. Some phases intentionally reuse
     // the same compiled test file with different env gates (for example
-    // createWorkspace.test.js in Phase 4.1 and Phase 4.10A), so clear cached
+    // createWorkspace.behavior.test.js in Phase 4.1b and Phase 4.10A), so clear cached
     // test modules before adding them to a new Mocha instance.
     for (const file of files) {
       try {
@@ -1330,7 +1399,7 @@ namespace ${namespaceName}
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
     process.env.LA_E2E_CODEFUL_CREATE_ONLY = '1';
     await prepareFreshSession(`${labelPrefix}-phase10a-create`);
-    const createExit = await runPhase('Phase 4.10A: create codeful workspaces', [testFile('createWorkspace.test.js')]);
+    const createExit = await runPhase('Phase 4.10A: create codeful workspaces', [testFile('createWorkspace.behavior.test.js')]);
     delete process.env.LA_E2E_CODEFUL_CREATE_ONLY;
     if (createExit !== 0) {
       console.log(`\n⚠ Phase 4.10A exited with code ${createExit}; skipping Phase 4.10B`);
@@ -1498,12 +1567,23 @@ namespace ${namespaceName}
       const exits = [];
       const allowFailureExits = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, allowFailure } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, allowFailure, env: scenarioEnv } = scenario;
         const resolvedSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
         }
         writeTestSettings(resolvedSettings);
+
+        // Apply per-scenario env overrides (e.g. LA_E2E_SHAPE for parameterized
+        // shape-specific shards). Captured here so we can restore afterward.
+        const envOverridesApplied = [];
+        if (scenarioEnv && typeof scenarioEnv === 'object') {
+          for (const [key, value] of Object.entries(scenarioEnv)) {
+            envOverridesApplied.push({ key, prev: process.env[key] });
+            process.env[key] = String(value);
+            console.log(`  [${id}] env override: ${key}=${value}`);
+          }
+        }
 
         await prepareFreshSession(id);
         const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
@@ -1515,6 +1595,14 @@ namespace ${namespaceName}
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
         }
         const exit = await runPhase(`Scenario ${id}`, fileList, { resources });
+        // Restore env overrides so subsequent scenarios aren't contaminated.
+        for (const { key, prev } of envOverridesApplied) {
+          if (prev === undefined) {
+            delete process.env[key];
+          } else {
+            process.env[key] = prev;
+          }
+        }
         if (allowFailure) {
           allowFailureExits.push({ id, exit });
           if (exit !== 0) {

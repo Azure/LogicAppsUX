@@ -60,7 +60,16 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
   new Date().toISOString().replace(/[:.]/g, '-')
 );
 
-describe('Inline JavaScript Tests', function () {
+/**
+ * Workspace shape this run targets. Parameterized via LA_E2E_SHAPE env var
+ * so each Step 3 shard (p43-inlinejavascript, p43-customcode, p43-rulesengine)
+ * runs the same test logic against a different fixture workspace. Defaults to
+ * 'standard' when unset so local invocations and the legacy fallback E2E_MODEs
+ * keep working unchanged.
+ */
+const TARGET_SHAPE = (process.env.LA_E2E_SHAPE || 'standard') as 'standard' | 'customCode' | 'rulesEngine';
+
+describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
   // Phase 4.3 needs more headroom than the shared TEST_TIMEOUT (300_000) on
   // the heavy `createplusnewtests` shard: debug toolbar appears at ~171s on
   // cold-start runners, leaving only ~129s for host startup + click trigger
@@ -114,13 +123,14 @@ describe('Inline JavaScript Tests', function () {
     await sleep(1000);
   });
 
-  it('should create a workflow with Request trigger, Execute JavaScript Code, and Response, then run and verify', async () => {
+  it(`should create a workflow with Request trigger, Execute JavaScript Code, and Response, then run and verify (shape=${TARGET_SHAPE})`, async () => {
     const entry =
-      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
+      manifest.find((e) => e.appType === TARGET_SHAPE && e.wfType === 'Stateful') || manifest.find((e) => e.appType === TARGET_SHAPE);
     if (!entry) {
-      assert.fail('No matching workspace entry found in manifest');
+      assert.fail(`No manifest entry found for shape "${TARGET_SHAPE}" (Stateful) - Phase 4.1a fixtures must run first`);
       return;
     }
+    console.log(`[inlineJS] Using workspace ${entry.label} (appType=${entry.appType} wfType=${entry.wfType})`);
 
     // Reset workflow to empty
     const wjp = path.join(entry.wfDir, 'workflow.json');
