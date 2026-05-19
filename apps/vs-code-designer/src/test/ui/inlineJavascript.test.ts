@@ -11,7 +11,7 @@
  *   1. Create workflow with Request trigger
  *   2. Add Execute JavaScript Code action with inline code
  *   3. Add Response action with JS output as body
- *   4. Save, debug, run from overview, verify all nodes succeeded
+ *   4. Save, debug, invoke the workflow callback, verify all nodes succeeded
  */
 
 import * as path from 'path';
@@ -44,7 +44,7 @@ import {
   startDebugging,
   waitForOverviewView,
   waitForRuntimeReady,
-  clickRunTrigger,
+  invokeWorkflowCallback,
   clickRefresh,
   waitForRunStatusInList,
   clickLatestRunRow,
@@ -269,7 +269,7 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
       const ovWv = await waitForOverviewView(workbench, driver, wjp);
       const runtimeReady = await waitForRuntimeReady(driver);
       assert.ok(runtimeReady, 'Functions runtime should start and become ready');
-      assert.ok(await clickRunTrigger(driver, { workflowName: entry.wfName }), 'Run trigger clickable');
+      assert.ok(await invokeWorkflowCallback(driver, { workflowName: entry.wfName }), 'Workflow callback should be invokable');
       await sleep(1000);
       await clickRefresh(driver);
       const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded');

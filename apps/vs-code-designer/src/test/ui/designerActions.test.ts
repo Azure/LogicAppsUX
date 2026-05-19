@@ -21,7 +21,11 @@ import type { WorkspaceManifestEntry } from './workspaceManifest';
 import { WORKSPACE_MANIFEST_PATH, loadWorkspaceManifest } from './workspaceManifest';
 import { sessionWarmup } from './sessionWarmup';
 import { waitForQuickInputAndType } from './helpers';
-import { clickRunTrigger as clickRunTriggerWithReadiness, waitForRunStatusInList as waitForRunStatusInListWithRefresh } from './runHelpers';
+import {
+  clickRunTrigger as clickRunTriggerWithReadiness,
+  invokeWorkflowCallback,
+  waitForRunStatusInList as waitForRunStatusInListWithRefresh,
+} from './runHelpers';
 import { openWorkspaceFileInSession as openWorkspaceFileInSessionShared } from './designerHelpers';
 
 let __warmedThisSession = false;
@@ -3273,10 +3277,14 @@ describe('Designer Actions Tests', function () {
       await captureScreenshot(driver, 'test1-step10-callback-url');
       // Don't assert callback URL — it may not appear if runtime hasn't fully registered the workflow yet
 
-      // Assertion 11: Click "Run trigger"
-      const triggerRan = await clickRunTriggerWithReadiness(driver, { workflowName: entry.wfName });
+      // Assertion 11: Invoke the workflow trigger and consume the HTTP response.
+      // The overview "Run trigger" UI can leave synchronous Request+Response
+      // workflows in response=Waiting because no caller holds the HTTP request
+      // open. Posting to the callback URL exercises the same runtime trigger and
+      // lets the Response action complete.
+      const triggerRan = await invokeWorkflowCallback(driver, { workflowName: entry.wfName });
       await captureScreenshot(driver, 'test1-step11-after-run-trigger');
-      assert.ok(triggerRan, '"Run trigger" button should be clickable');
+      assert.ok(triggerRan, 'Workflow callback should be invokable');
 
       // Assertion 12: See the run in "Running" state in the overview list
       await sleep(1000); // Brief wait for run to appear
@@ -3805,7 +3813,7 @@ describe('Designer Actions Tests', function () {
       const overviewWebview = await switchToOverviewWebview(driver);
       await captureScreenshot(driver, 'test3-overview-loaded');
 
-      assert.ok(await clickRunTriggerWithReadiness(driver, { workflowName: entry.wfName }), 'Run trigger should be clickable');
+      assert.ok(await invokeWorkflowCallback(driver, { workflowName: entry.wfName }), 'Workflow callback should be invokable');
       await sleep(1000);
       await clickRefresh(driver);
       const { found: succeeded, lastStatus } = await waitForRunStatusInListWithRefresh(driver, 'Succeeded', 180_000);

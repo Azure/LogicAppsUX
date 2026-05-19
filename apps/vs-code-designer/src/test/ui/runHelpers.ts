@@ -24,6 +24,7 @@ import { execSync } from 'child_process';
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as http from 'http';
+import * as https from 'https';
 import * as path from 'path';
 import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
@@ -855,6 +856,118 @@ function httpRequestJson(options: http.RequestOptions & { url: string }, timeout
     });
     req.end();
   });
+}
+
+function httpPostJson(url: string, body: unknown, timeoutMs = 60_000): Promise<{ status: number; body: string }> {
+  return new Promise((resolve) => {
+    const payload = JSON.stringify(body ?? {});
+    const client = url.startsWith('https:') ? https : http;
+    const req = client.request(
+      url,
+      {
+        method: 'POST',
+        timeout: timeoutMs,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (c: Buffer) => chunks.push(c));
+        res.on('end', () => resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }));
+        res.on('error', (err) => resolve({ status: 0, body: err.message }));
+      }
+    );
+    req.on('error', (err) => resolve({ status: 0, body: err.message }));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve({ status: 0, body: `timeout after ${timeoutMs}ms` });
+    });
+    req.write(payload);
+    req.end();
+  });
+}
+
+async function getWorkflowCallbackUrl(workflowName: string, timeoutMs = 180_000): Promise<string | undefined> {
+  const apiVersion = '2019-10-01-edge-preview';
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const deadline = Date.now() + timeoutMs;
+  let triggerName: string | undefined;
+  let lastStatus = 0;
+  let lastBody = '';
+  while (Date.now() < deadline) {
+    const encodedWorkflowName = encodeURIComponent(workflowName);
+    if (!triggerName) {
+      const tr = await httpRequestJson({
+        url: `${managementBase}/workflows/${encodedWorkflowName}/triggers?api-version=${apiVersion}`,
+        method: 'GET',
+      });
+      lastStatus = tr.status;
+      lastBody = tr.body;
+      if (tr.status === 200) {
+        try {
+          const parsed = JSON.parse(tr.body);
+          const list = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : [];
+          if (typeof list[0]?.name === 'string') {
+            triggerName = list[0].name;
+          }
+        } catch {
+          /* keep polling */
+        }
+      }
+    }
+    if (triggerName) {
+      const cb = await httpRequestJson({
+        url: `${managementBase}/workflows/${encodedWorkflowName}/triggers/${encodeURIComponent(triggerName)}/listCallbackUrl?api-version=${apiVersion}`,
+        method: 'POST',
+        headers: { 'Content-Length': '0' },
+      });
+      lastStatus = cb.status;
+      lastBody = cb.body;
+      if (cb.status === 200) {
+        try {
+          const parsed = JSON.parse(cb.body);
+          if (typeof parsed?.value === 'string' && parsed.value.length > 0) {
+            return parsed.value;
+          }
+        } catch {
+          /* keep polling */
+        }
+      }
+    }
+    await sleep(2000);
+  }
+  console.log(
+    `[workflowCallback] Callback URL not available for workflow="${workflowName}" within ${timeoutMs}ms (lastStatus=${lastStatus}, lastBody=${lastBody.slice(0, 500)})`
+  );
+  return undefined;
+}
+
+export async function invokeWorkflowCallback(
+  driver: WebDriver,
+  opts: { workflowName: string; body?: unknown; timeoutMs?: number }
+): Promise<boolean> {
+  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 180_000 });
+  if (!hostReady) {
+    await captureScreenshot(driver, 'invokeWorkflowCallback-runtime-not-ready');
+    return false;
+  }
+  const workflowsReady = await waitForWorkflowsRegistered(driver, { workflowName: opts.workflowName, timeoutMs: 240_000 });
+  if (!workflowsReady) {
+    await captureScreenshot(driver, 'invokeWorkflowCallback-workflow-not-ready');
+    return false;
+  }
+  const callbackUrl = await getWorkflowCallbackUrl(opts.workflowName, opts.timeoutMs ?? 180_000);
+  if (!callbackUrl) {
+    await captureScreenshot(driver, 'invokeWorkflowCallback-no-callback-url');
+    return false;
+  }
+  const result = await httpPostJson(callbackUrl, opts.body ?? {}, 120_000);
+  console.log(
+    `[workflowCallback] POST workflow="${opts.workflowName}" status=${result.status} body=${result.body.slice(0, 500) || '(empty)'}`
+  );
+  return result.status >= 200 && result.status < 300;
 }
 
 /**

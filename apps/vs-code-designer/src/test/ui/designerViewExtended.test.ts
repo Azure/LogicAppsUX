@@ -98,7 +98,7 @@ describe('Designer View Extended Tests', function () {
           definition: {
             $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
             actions: {
-              Response: { type: 'Response', kind: 'Http', inputs: { statusCode: 200, body: 'OK' }, runAfter: { manual: ['Succeeded'] } },
+              Compose: { type: 'Compose', inputs: 'OK', runAfter: { manual: ['Succeeded'] } },
             },
             contentVersion: '1.0.0.0',
             outputs: {},
@@ -118,7 +118,7 @@ describe('Designer View Extended Tests', function () {
     try {
       await captureScreenshot(driver, 'parallel-initial', EXPLICIT_SCREENSHOT_DIR);
 
-      const added = await addParallelBranch(driver, 'Response');
+      const added = await addParallelBranch(driver, 'Compose');
       await captureScreenshot(driver, 'parallel-after-branch', EXPLICIT_SCREENSHOT_DIR);
       console.log(`[parallel] addParallelBranch returned: ${added}`);
       assert.ok(added, 'Parallel branch should be added');
@@ -158,10 +158,8 @@ describe('Designer View Extended Tests', function () {
         await sleep(500);
       }
       await captureScreenshot(driver, 'parallel-compose-wait-result', EXPLICIT_SCREENSHOT_DIR);
-      assert.ok(
-        composeFound || newCount > countAfterBranch,
-        `Compose node should be on canvas (found=${composeFound}, count ${countAfterBranch}→${newCount})`
-      );
+      assert.ok(composeFound, 'Compose node should remain on canvas after adding a parallel branch action');
+      assert.ok(newCount > countAfterBranch, `A new parallel branch action should be added (count ${countAfterBranch}→${newCount})`);
 
       await clickSaveButton(driver);
       await captureScreenshot(driver, 'parallel-after-save', EXPLICIT_SCREENSHOT_DIR);
@@ -191,7 +189,7 @@ describe('Designer View Extended Tests', function () {
           definition: {
             $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
             actions: {
-              Response: { type: 'Response', kind: 'Http', inputs: { statusCode: 200, body: 'OK' }, runAfter: { manual: ['Succeeded'] } },
+              Compose: { type: 'Compose', inputs: 'OK', runAfter: { manual: ['Succeeded'] } },
             },
             contentVersion: '1.0.0.0',
             outputs: {},
@@ -209,8 +207,8 @@ describe('Designer View Extended Tests', function () {
     assert.ok(result.success, `Designer should open — ${result.error}`);
 
     try {
-      const panelOpened = await openNodeSettingsPanel(driver, 'Response');
-      assert.ok(panelOpened, 'Response node settings panel should open');
+      const panelOpened = await openNodeSettingsPanel(driver, 'Compose');
+      assert.ok(panelOpened, 'Compose node settings panel should open');
 
       const runAfterOpened = await openRunAfterSettings(driver);
       assert.ok(runAfterOpened, 'Run after settings should open');
@@ -227,9 +225,9 @@ describe('Designer View Extended Tests', function () {
       await sleep(2000);
       const wf = readWorkflowJson(entry.wfDir);
       console.log(`[runAfter] Actions: ${JSON.stringify(Object.keys(wf?.definition?.actions || {}))}`);
-      const responseAction = wf?.definition?.actions?.Response;
-      assert.ok(responseAction, `workflow.json should contain Response action: ${JSON.stringify(wf?.definition?.actions)}`);
-      assert.deepStrictEqual(responseAction.runAfter, { manual: ['Failed'] }, 'Response action runAfter should be exactly Failed');
+      const composeAction = wf?.definition?.actions?.Compose;
+      assert.ok(composeAction, `workflow.json should contain Compose action: ${JSON.stringify(wf?.definition?.actions)}`);
+      assert.deepStrictEqual(composeAction.runAfter, { manual: ['Failed'] }, 'Compose action runAfter should be exactly Failed');
       console.log('[runAfter] Test completed');
     } finally {
       try {

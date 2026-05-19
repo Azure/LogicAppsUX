@@ -737,12 +737,20 @@ async function main() {
   const getRuntimeDependencyPaths = () => {
     const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
     const nodeJsDir = resolveNodeBinDir(depsRoot);
+    const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
+    const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
+    const funcBinaryCandidates = [
+      path.join(funcToolsDir, funcExecutable),
+      path.join(funcToolsDir, 'in-proc8', funcExecutable),
+      path.join(funcToolsDir, 'in-proc6', funcExecutable),
+    ];
+    const funcBinary = funcBinaryCandidates.find((candidate) => fs.existsSync(candidate)) || funcBinaryCandidates[0];
     return {
       depsRoot,
-      funcToolsDir: path.join(depsRoot, 'FuncCoreTools'),
+      funcToolsDir,
       dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
       nodeJsDir,
-      funcBinary: path.join(depsRoot, 'FuncCoreTools', 'func'),
+      funcBinary,
       dotnetBinary: path.join(depsRoot, 'DotNetSDK', 'dotnet'),
       nodeBinary: path.join(nodeJsDir, 'node'),
     };

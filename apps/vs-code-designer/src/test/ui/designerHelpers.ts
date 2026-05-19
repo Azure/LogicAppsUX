@@ -150,8 +150,19 @@ function isExecutableFile(filePath: string): boolean {
   }
 }
 
+function getFuncCoreToolsCandidatePaths(): string[] {
+  const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
+  const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
+  return [
+    path.join(funcToolsRoot, executableName),
+    path.join(funcToolsRoot, 'in-proc8', executableName),
+    path.join(funcToolsRoot, 'in-proc6', executableName),
+  ];
+}
+
 function getFuncCoreToolsPath(): string {
-  return path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+  const candidates = getFuncCoreToolsCandidatePaths();
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
 
 function assertFuncCoreToolsExecutable(context: string): void {
@@ -224,8 +235,9 @@ async function dumpRuntimeDependencyDiagnostics(driver: WebDriver, context: stri
     console.log(`[depValidation][diag] dependency listing failed: ${e.message}`);
   }
 
-  const funcPath = getFuncCoreToolsPath();
-  console.log(`[depValidation][diag] func=${funcPath} exists=${fs.existsSync(funcPath)} executable=${isExecutableFile(funcPath)}`);
+  for (const funcPath of getFuncCoreToolsCandidatePaths()) {
+    console.log(`[depValidation][diag] func=${funcPath} exists=${fs.existsSync(funcPath)} executable=${isExecutableFile(funcPath)}`);
+  }
 
   try {
     const command =
@@ -466,7 +478,25 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
       console.log(`[openWorkspaceFileInSession][diag] ${context} unavailable: ${e.message}`);
     }
   };
+
+  try {
+    await driver.switchTo().defaultContent();
+    await clearBlockingUI(driver);
+    const title = await driver.getTitle();
+    if (title.toLowerCase().includes(expectedWorkspaceName)) {
+      console.log('[openWorkspaceFileInSession] Expected workspace already open');
+      opened = true;
+    }
+  } catch (e: any) {
+    if (isInvalidSessionError(e)) {
+      throw e;
+    }
+  }
+
   for (let attempt = 0; attempt < 3; attempt++) {
+    if (opened) {
+      break;
+    }
     try {
       try {
         await driver.switchTo().defaultContent();
@@ -476,6 +506,15 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
         }
       }
       await clearBlockingUI(driver);
+      try {
+        const body = await driver.findElement(By.css('body'));
+        await body.sendKeys(Key.ESCAPE);
+        await sleep(250);
+      } catch (escapeError: any) {
+        if (isInvalidSessionError(escapeError)) {
+          throw escapeError;
+        }
+      }
 
       // Use Quick Open (Ctrl+O on Linux) which opens the file/folder dialog
       // Or use the command palette to run "File: Open Folder..."
@@ -3052,15 +3091,23 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
         const diagnostics = [];
         const usedControls = [];
         function getRoot() {
-          const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel, body'));
-          return roots.find((root) => {
+          const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel'));
+          const root = roots.find((root) => {
             const text = (root.textContent || '').toLowerCase();
             return text.includes('run after') && (text.includes('has failed') || text.includes('is successful') || text.includes('has timed out'));
-          }) || document.body;
+          });
+          if (!root) {
+            diagnostics.push('run-after status root not found');
+          }
+          return root;
         }
         function findControl(label) {
           const lowerLabel = String(label).toLowerCase();
           const root = getRoot();
+          if (!root) {
+            diagnostics.push(String(label) + ': no run-after root');
+            return null;
+          }
           const candidates = Array.from(
             root.querySelectorAll(
               'input[type="checkbox"], [role="checkbox"], label, .fui-Checkbox, [class*="fui-Checkbox"], [class*="Checkbox__label"]'
@@ -3146,14 +3193,17 @@ export async function configureRunAfter(driver: WebDriver, statuses: string[]): 
         `
       const label = arguments[1];
       function getRoot() {
-        const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel, body'));
+        const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel'));
         return roots.find((root) => {
           const text = (root.textContent || '').toLowerCase();
           return text.includes('run after') && (text.includes('has failed') || text.includes('is successful') || text.includes('has timed out'));
-        }) || document.body;
+        });
       }
       const lowerLabel = String(label).toLowerCase();
       const root = getRoot();
+      if (!root) {
+        return false;
+      }
       const candidates = Array.from(root.querySelectorAll('input[type="checkbox"], [role="checkbox"], label, .fui-Checkbox, [class*="fui-Checkbox"], [class*="Checkbox__label"]'));
       for (const el of candidates) {
         const checkboxContainer = el.closest('.fui-Checkbox, [class*="fui-Checkbox"], label');
