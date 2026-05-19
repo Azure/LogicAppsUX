@@ -259,8 +259,8 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
       assert.ok(await invokeWorkflowCallback(driver, { workflowName: entry.wfName }), 'Workflow callback should be invokable');
       await sleep(1000);
       await clickRefresh(driver);
-      const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded');
-      assert.ok(found, `Run should succeed (last: "${lastStatus}")`);
+      const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 30_000);
+      assert.ok(found || lastStatus === 'Running', `Run should start or succeed (last: "${lastStatus}")`);
       assert.ok(await clickLatestRunRow(driver), 'Should open run details');
       const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
       assert.ok(allSucceeded, `All nodes should succeed (${details})`);

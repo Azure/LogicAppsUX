@@ -1900,10 +1900,17 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
       var succeeded = 0;
       var other = [];
       var statusTexts = ['Succeeded', 'Running', 'Failed', 'Cancelled', 'Skipped', 'Waiting'];
+      function isTriggerRow(text) {
+        var normalized = (text || '').toLowerCase().replace(/[_\\s-]+/g, ' ').trim();
+        return normalized.indexOf('when an http request is received') >= 0 ||
+          normalized.indexOf('when http request is received') >= 0 ||
+          /^manual\\b/.test(normalized) ||
+          /^request\\b/.test(normalized);
+      }
       var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
       for (var r = 0; r < rows.length; r++) {
         var rowText = (rows[r].textContent || '').trim();
-        if (/when an http request is received|^manual\b|\bmanual\s+(running|succeeded|failed|cancelled|skipped|waiting)\b/i.test(rowText)) {
+        if (isTriggerRow(rowText)) {
           continue;
         }
         var cells = rows[r].querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
@@ -1912,7 +1919,7 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
           for (var j = 0; j < statusTexts.length; j++) {
             if (t === statusTexts[j]) {
               if (t === 'Succeeded') succeeded++;
-              else other.push(t);
+              else other.push(t + (rowText ? ': ' + rowText.substring(0, 120) : ''));
               break;
             }
           }
