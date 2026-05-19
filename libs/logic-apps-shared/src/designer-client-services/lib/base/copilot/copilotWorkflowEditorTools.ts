@@ -25,7 +25,7 @@ export const COPILOT_WORKFLOW_TOOLS: CopilotToolDefinition[] = [
     function: {
       name: 'discover_connectors',
       description:
-        'Search for available managed API connectors and their operations. Call this BEFORE creating ANY ApiConnection action. Returns complete, ready-to-use action definitions that you can copy directly into the workflow. Provide descriptions of the capabilities you need and this tool will return the matching operations with their full action templates.',
+        'Search for available connectors matching a capability description. Call this BEFORE creating ANY ApiConnection action to find which connectors are available. Returns a list of matching connectors with their IDs and a summary of their operations. After finding the right connector, call get_connector_operations with the connectorId to get full action templates.',
       parameters: {
         type: 'object',
         properties: {
@@ -47,13 +47,18 @@ export const COPILOT_WORKFLOW_TOOLS: CopilotToolDefinition[] = [
     function: {
       name: 'get_connector_operations',
       description:
-        'List all available operations for a specific connector by ID. Use this when you already know the connector ID (e.g. from the workflow connectionReferences) and want to see all operations it supports. Returns complete action templates for each operation.',
+        'Get full action templates for a connector. Use the operationId from discover_connectors results to get a specific operation, or omit it to list all operations. Returns complete, ready-to-use action definitions that you can copy directly into the workflow.',
       parameters: {
         type: 'object',
         properties: {
           connectorId: {
             type: 'string',
-            description: 'The connector ID (e.g. from the workflow connectionReferences or from a previous discover_connectors result)',
+            description: 'The connector ID (from discover_connectors results or from the workflow connectionReferences)',
+          },
+          operationId: {
+            type: 'string',
+            description:
+              'Optional: the specific operationId from discover_connectors matchingOperations. When provided, returns only that operation template instead of all operations.',
           },
         },
         required: ['connectorId'],
@@ -91,7 +96,7 @@ export async function executeCopilotTool(toolName: string, rawArgs: string): Pro
       return discoverConnectors(capabilities);
     }
     case 'get_connector_operations':
-      return getConnectorOperations(String(args['connectorId'] ?? ''));
+      return getConnectorOperations(String(args['connectorId'] ?? ''), args['operationId'] as string | undefined);
     default:
       return JSON.stringify({ error: `Unknown tool: ${toolName}` });
   }
@@ -102,8 +107,9 @@ export async function executeCopilotTool(toolName: string, rawArgs: string): Pro
 // ---------------------------------------------------------------------------
 
 /**
- * Discovers connectors and operations matching the given capability descriptions.
- * Returns complete, ready-to-use action templates for each matched operation.
+ * Discovers connectors matching the given capability descriptions.
+ * Returns connectors grouped by ID with a summary of their matching operations.
+ * The LLM should then call get_connector_operations for the chosen connector.
  */
 async function discoverConnectors(capabilities: string[] | undefined): Promise<string> {
   if (!capabilities || capabilities.length === 0) {
@@ -112,7 +118,6 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
 
   try {
     const searchService = SearchService();
-    const connectionService = ConnectionService();
     const results: Record<string, unknown> = {};
 
     for (const capability of capabilities) {
@@ -144,56 +149,65 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
       }
 
       if (!operations || operations.length === 0) {
-        results[capability] = { message: `No operations found for "${capability}"` };
+        results[capability] = { message: `No connectors found for "${capability}"` };
         continue;
       }
 
-      // Get the top matches and build complete action templates
-      const topOps = operations.slice(0, 5);
-      const actionTemplates: unknown[] = [];
+      // Re-rank: boost operations whose connector name matches words in the search term
+      operations = rerankByConnectorName(operations, capability);
 
-      // Group by connector to batch swagger lookups
-      const byConnector = new Map<string, typeof topOps>();
-      for (const op of topOps) {
+      // Group operations by connector, scoring each by relevance to the search term
+      const searchWords = capability
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w) => w.length > 2);
+      const byConnector = new Map<
+        string,
+        { name: string; description: string; operations: { operationId: string; summary: string; score: number }[] }
+      >();
+      for (const op of operations) {
         const api = (op.properties as any)?.api;
-        const connId = api?.id ?? '';
+        const connId: string = api?.id ?? '';
+        if (!connId) {
+          continue;
+        }
         if (!byConnector.has(connId)) {
-          byConnector.set(connId, []);
+          byConnector.set(connId, {
+            name: api?.displayName ?? api?.name ?? '',
+            description: api?.description ?? '',
+            operations: [],
+          });
         }
-        byConnector.get(connId)?.push(op);
+        const entry = byConnector.get(connId)!;
+        const operationId = (op.properties as any)?.swaggerOperationId ?? op.name ?? '';
+        const summary = op.properties?.summary ?? op.name ?? '';
+        if (entry.operations.some((o) => o.operationId === operationId)) {
+          continue;
+        }
+        const score = scoreOperationRelevance(summary, op.properties?.description ?? '', searchWords);
+        entry.operations.push({ operationId, summary, score });
       }
 
-      for (const [connId, ops] of byConnector.entries()) {
-        let swagger: OpenAPIV2.Document | null = null;
-        try {
-          swagger = connId ? await connectionService.getSwaggerFromConnector(connId) : null;
-        } catch {
-          // Swagger not available — still return operation info without action template
+      // Return the top connectors (limit to 5 unique connectors)
+      const connectors: unknown[] = [];
+      for (const [connId, info] of byConnector.entries()) {
+        if (connectors.length >= 10) {
+          break;
         }
-
-        for (const op of ops) {
-          const api = (op.properties as any)?.api;
-          const swaggerOpId = (op.properties as any)?.swaggerOperationId ?? op.name;
-
-          const swaggerOp = swagger ? findSwaggerOperation(swagger, swaggerOpId) : null;
-
-          if (swaggerOp) {
-            actionTemplates.push(buildActionTemplate(op, swaggerOp, api));
-          } else {
-            // Return basic info without a full action template
-            actionTemplates.push({
-              operationId: op.name,
-              connectorId: connId,
-              connectorName: api?.displayName ?? api?.name,
-              summary: op.properties?.summary,
-              description: op.properties?.description,
-              note: swagger ? 'Operation not found in swagger — use a different operationId' : 'Swagger not available for this connector',
-            });
-          }
-        }
+        // Sort operations within each connector by relevance score (highest first)
+        const rankedOps = info.operations
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 10)
+          .map((o) => ({ operationId: o.operationId, summary: o.summary }));
+        connectors.push({
+          connectorId: connId,
+          connectorName: info.name,
+          description: info.description,
+          matchingOperations: rankedOps,
+        });
       }
 
-      results[capability] = actionTemplates;
+      results[capability] = connectors;
     }
 
     return JSON.stringify(results);
@@ -203,9 +217,72 @@ async function discoverConnectors(capabilities: string[] | undefined): Promise<s
 }
 
 /**
- * Lists all operations for a specific connector and returns complete action templates.
+ * Re-ranks operations so those whose connector name matches search terms appear first.
+ * This avoids the problem where searching "outlook email" returns irrelevant connectors
+ * (e.g. Contoso Hub) whose descriptions happen to mention "email" or "outlook".
  */
-async function getConnectorOperations(connectorId: string): Promise<string> {
+function rerankByConnectorName(operations: DiscoveryOpArray, searchTerm: string): DiscoveryOpArray {
+  const words = searchTerm
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length > 2);
+
+  if (words.length === 0) {
+    return operations;
+  }
+
+  return [...operations].sort((a, b) => {
+    const nameA = ((a.properties as any)?.api?.displayName ?? (a.properties as any)?.api?.name ?? '').toLowerCase();
+    const nameB = ((b.properties as any)?.api?.displayName ?? (b.properties as any)?.api?.name ?? '').toLowerCase();
+    const matchA = words.some((w) => nameA.includes(w));
+    const matchB = words.some((w) => nameB.includes(w));
+    if (matchA && !matchB) {
+      return -1;
+    }
+    if (!matchA && matchB) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
+/**
+ * Scores an operation's relevance to the search term.
+ * Higher score = more relevant. Uses word overlap between the search terms
+ * and the operation's summary/description.
+ */
+function scoreOperationRelevance(summary: string, description: string, searchWords: string[]): number {
+  if (searchWords.length === 0) {
+    return 0;
+  }
+
+  const summaryLower = summary.toLowerCase();
+  const descriptionLower = description.toLowerCase();
+  let score = 0;
+
+  for (const word of searchWords) {
+    // Summary matches are worth more than description matches
+    if (summaryLower.includes(word)) {
+      score += 3;
+    } else if (descriptionLower.includes(word)) {
+      score += 1;
+    }
+  }
+
+  // Bonus for exact phrase match in summary
+  const phrase = searchWords.join(' ');
+  if (summaryLower.includes(phrase)) {
+    score += 5;
+  }
+
+  return score;
+}
+
+/**
+ * Lists operations for a specific connector and returns complete action templates.
+ * When operationId is provided, returns only that specific operation template.
+ */
+async function getConnectorOperations(connectorId: string, operationId?: string): Promise<string> {
   try {
     const searchService = SearchService();
     const connectionService = ConnectionService();
@@ -218,6 +295,18 @@ async function getConnectorOperations(connectorId: string): Promise<string> {
 
     if (!operations || operations.length === 0) {
       return JSON.stringify({ results: [], message: `No operations found for connector "${connectorId}"` });
+    }
+
+    // Filter to specific operation if operationId is provided
+    if (operationId) {
+      const targetId = operationId.toLowerCase();
+      operations = operations.filter((op) => {
+        const swaggerOpId = ((op.properties as any)?.swaggerOperationId ?? op.name ?? '').toLowerCase();
+        return swaggerOpId === targetId;
+      });
+      if (operations.length === 0) {
+        return JSON.stringify({ results: [], message: `Operation "${operationId}" not found in connector "${connectorId}"` });
+      }
     }
 
     let swagger: OpenAPIV2.Document | null = null;
@@ -271,6 +360,15 @@ interface ActionTemplate {
       queries?: Record<string, string>;
       headers?: Record<string, string>;
     };
+  };
+  /**
+   * A ready-to-use connectionReference entry. Add this to the workflow's connectionReferences
+   * using the referenceName as the key (must match actionDefinition.inputs.host.connection.referenceName).
+   */
+  connectionReference: {
+    connectionName: string;
+    source: string;
+    id: string;
   };
   /** Description of each input field for the body/queries */
   inputDescriptions?: Record<string, string>;
@@ -376,6 +474,11 @@ function buildActionTemplate(op: DiscoveryOpArray[number], swaggerOp: SwaggerOpe
     actionDefinition: {
       type: 'ApiConnection',
       inputs,
+    },
+    connectionReference: {
+      connectionName: referenceName,
+      source: 'Embedded',
+      id: api?.id ?? '',
     },
     inputDescriptions: Object.keys(inputDescriptions).length > 0 ? inputDescriptions : undefined,
   };
