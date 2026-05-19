@@ -75,6 +75,24 @@ async function withDownloadRetry(label, action) {
   throw lastError;
 }
 
+function installExtensionWithCli(cliBase, dep, label = dep) {
+  return new Promise((resolve) => {
+    const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
+    const startTime = Date.now();
+    exec(command, { timeout: 300000 }, (error, stdout, stderr) => {
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      if (error) {
+        const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
+        console.warn(`  ⚠ ${label} failed (${elapsed}s): ${error.message}${output ? `\n${output}` : ''}`);
+        resolve({ dep, success: false });
+      } else {
+        console.log(`  ✓ ${label} installed (${elapsed}s)`);
+        resolve({ dep, success: true });
+      }
+    });
+  });
+}
+
 async function downloadExTesterAssets(extest) {
   await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, () => extest.downloadCode(VSCODE_VERSION));
   await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => extest.downloadChromeDriver(VSCODE_VERSION));
@@ -382,21 +400,8 @@ async function main() {
       console.log(`  Installing ${depsToInstall.length} deps (concurrency=${CONCURRENCY})...`);
 
       const taskFns = depsToInstall.map((dep) => () => {
-        return new Promise((resolve) => {
-          const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
-          const startTime = Date.now();
-          console.log(`  ⏳ ${dep}`);
-          exec(command, { timeout: 300000 }, (error, stdout, stderr) => {
-            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-            if (error) {
-              console.warn(`  ⚠ ${dep} failed (${elapsed}s)`);
-              resolve({ dep, success: false });
-            } else {
-              console.log(`  ✓ ${dep} installed (${elapsed}s)`);
-              resolve({ dep, success: true });
-            }
-          });
-        });
+        console.log(`  ⏳ ${dep}`);
+        return installExtensionWithCli(cliBase, dep);
       });
 
       const results = await parallelLimit(taskFns, CONCURRENCY);
@@ -404,24 +409,26 @@ async function main() {
       const failed = results.filter((r) => !r.success);
       console.log(`  ${succeeded}/${depsToInstall.length} installed successfully`);
 
-      // Retry any failed deps sequentially. Parallel installs may report EPERM
-      // when two CLI processes install the same transitive dependency (e.g.,
-      // both csdevkit and csharp pull in dotnet-runtime). The extension often
-      // still ends up on disk, so only retry if the directory is truly missing.
+      // Retry failed direct deps sequentially. Parallel installs may report
+      // EPERM/ENOENT or leave a partial directory while transitive dependencies
+      // are still being extracted. A package.json on disk is not enough: VS Code
+      // can still fail to activate dependent extensions if the CLI install did
+      // not complete cleanly.
       if (failed.length > 0) {
         for (const { dep } of failed) {
-          removeInvalidExtensionEntries(dep);
-          const onDisk = !!findValidInstalledExtension(dep);
-          if (onDisk) {
-            console.log(`  ✓ ${dep} present on disk despite CLI error, OK`);
-          } else {
-            console.log(`  ↻ Retrying ${dep} sequentially...`);
-            try {
-              await extest.installFromMarketplace(dep);
-              console.log(`  ✓ ${dep} installed on retry`);
-            } catch (err) {
-              console.warn(`  ⚠ ${dep} retry failed — tests may still work without it`);
+          let retrySucceeded = false;
+          for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
+            removeInvalidExtensionEntries(dep);
+            console.log(`  ↻ Retrying ${dep} sequentially (${attempt}/${DOWNLOAD_RETRY_ATTEMPTS})...`);
+            const retry = await installExtensionWithCli(cliBase, dep, `${dep} retry ${attempt}`);
+            if (retry.success) {
+              retrySucceeded = true;
+              break;
             }
+            await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
+          }
+          if (!retrySucceeded && findValidInstalledExtension(dep)) {
+            console.warn(`  ⚠ ${dep} still reports install failures but a valid extension directory exists`);
           }
         }
       }
@@ -990,14 +997,14 @@ async function main() {
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1', LA_E2E_WAIT_OPEN_DESIGNER_COMMAND: '1' },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p43-customcode',
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: true },
-      env: { LA_E2E_SHAPE: 'customCode', LA_E2E_SKIP_VALIDATION_WAIT: '1', LA_E2E_WAIT_OPEN_DESIGNER_COMMAND: '1' },
+      env: { LA_E2E_SHAPE: 'customCode', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p43-rulesengine',
@@ -1007,7 +1014,7 @@ async function main() {
       // design-time timeout dialogs. The test still starts debug explicitly and
       // verifies callback/run success, so runtime coverage remains strict.
       settings: { validateDependencies: false, autoStartDesignTime: false },
-      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1', LA_E2E_WAIT_OPEN_DESIGNER_COMMAND: '1' },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p44-statelessvariables',

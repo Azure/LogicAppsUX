@@ -1280,57 +1280,6 @@ export async function executeOpenDesignerCommand(workbench: Workbench, driver: W
   return false;
 }
 
-async function waitForOpenDesignerCommandRegistered(workbench: Workbench, driver: WebDriver, timeoutMs = 60_000): Promise<boolean> {
-  const deadline = Date.now() + timeoutMs;
-  let attempt = 0;
-  let lastAvailable: string[] = [];
-
-  while (Date.now() < deadline) {
-    attempt++;
-    let input: InputBox | undefined;
-    try {
-      await clearBlockingUI(driver);
-      await jsDismissDialogs(driver);
-      await focusEditor(driver);
-      input = await workbench.openCommandPrompt();
-      await sleep(500);
-      await input.setText('> Open Designer');
-      await sleep(1500);
-
-      const picks = await input.getQuickPicks();
-      const available: string[] = [];
-      for (const pick of picks) {
-        try {
-          const label = await pick.getLabel();
-          available.push(label);
-          const lower = label.toLowerCase();
-          if (lower.includes('open designer') && !lower.includes('data map')) {
-            console.log(`[waitForOpenDesignerCommand] Registered after ${attempt} attempt(s): "${label}"`);
-            await input.cancel();
-            return true;
-          }
-        } catch {
-          /* stale pick */
-        }
-      }
-      lastAvailable = available.slice(0, 10);
-      console.log(`[waitForOpenDesignerCommand] Attempt ${attempt}: not registered yet. Available=${JSON.stringify(lastAvailable)}`);
-      await input.cancel();
-    } catch (e: any) {
-      console.log(`[waitForOpenDesignerCommand] Attempt ${attempt} failed: ${e.message}`);
-      try {
-        await input?.cancel();
-      } catch {
-        /* ignore */
-      }
-    }
-    await sleep(3000);
-  }
-
-  console.log(`[waitForOpenDesignerCommand] Timed out after ${timeoutMs}ms. Last available=${JSON.stringify(lastAvailable)}`);
-  return false;
-}
-
 /**
  * Switch into the designer webview iframe and wait for the designer to
  * actually finish loading — not just exist.
@@ -2545,13 +2494,6 @@ export async function openDesignerForEntry(
   }
   if (process.env.LA_E2E_SKIP_VALIDATION_WAIT === '1') {
     console.log(`${tag} Skipping dependency validation wait by scenario setting`);
-    if (process.env.LA_E2E_WAIT_OPEN_DESIGNER_COMMAND === '1') {
-      const commandRegistered = await waitForOpenDesignerCommandRegistered(workbench, driver);
-      if (!commandRegistered) {
-        await captureScreenshot(driver, `${entry.label}-open-designer-command-not-registered`);
-        return { success: false, error: 'Open Designer command/context was not registered after workspace activation' };
-      }
-    }
   } else {
     await waitForExtensionValidationComplete(driver);
   }
