@@ -1017,7 +1017,8 @@ async function main() {
       id: 'p45-designerviewextended',
       testFile: phase5Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
       id: 'p46-keyboardnav',

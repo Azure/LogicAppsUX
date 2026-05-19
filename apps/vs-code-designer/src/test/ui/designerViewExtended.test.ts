@@ -65,7 +65,11 @@ describe('Designer View Extended Tests', function () {
     }
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
-    await waitForDependencyValidation(driver);
+    if (process.env.LA_E2E_SKIP_VALIDATION_WAIT === '1') {
+      console.log('[designerViewExtended] Skipping dependency validation wait for UI-only scenario');
+    } else {
+      await waitForDependencyValidation(driver);
+    }
   });
 
   afterEach(async () => {

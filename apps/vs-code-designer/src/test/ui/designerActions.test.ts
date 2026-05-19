@@ -130,6 +130,25 @@ async function captureScreenshot(driver: WebDriver, fileName: string): Promise<s
   }
 }
 
+async function fillFirstContentEditable(driver: WebDriver, value: string, context: string): Promise<boolean> {
+  for (let fillAttempt = 0; fillAttempt < 5; fillAttempt++) {
+    const editors = await driver.findElements(
+      By.css(
+        '[contenteditable="true"].editor-input, [data-automation-id*="stringeditor"] [contenteditable="true"], .msla-editor-container [contenteditable="true"], [role="textbox"][contenteditable="true"]'
+      )
+    );
+    if (editors.length > 0) {
+      await driver.actions().move({ origin: editors[0] }).click().perform();
+      await sleep(300);
+      await editors[0].sendKeys(value);
+      console.log(`[${context}] Filled first contenteditable editor`);
+      return true;
+    }
+    await sleep(1000);
+  }
+  return false;
+}
+
 /**
  * Dismiss any VS Code notification toasts that may block interactions.
  */
@@ -3016,7 +3035,7 @@ describe('Designer Actions Tests', function () {
     const title = this.currentTest?.title ?? '';
     const targetShape = process.env.LA_E2E_SHAPE;
     if (
-      (targetShape === 'standard' && !title.includes('Request trigger and Response action, then save')) ||
+      (targetShape === 'standard' && !title.includes('Request trigger and Compose action, then save')) ||
       (targetShape === 'customCode' && !title.includes('CustomCode')) ||
       (targetShape === 'rulesEngine' && !title.includes('RulesEngine'))
     ) {
@@ -3070,7 +3089,7 @@ describe('Designer Actions Tests', function () {
   // =====================================================================
   // Test 1: Standard workflow — open designer, add Request trigger
   // =====================================================================
-  it('should add a Request trigger and Response action, then save', async function () {
+  it('should add a Request trigger and Compose action, then save', async function () {
     skipIfShapeDoesNotMatch(this, 'standard');
     const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful');
     if (!entry) {
@@ -3131,10 +3150,11 @@ describe('Designer Actions Tests', function () {
       assert.ok(hasTrigger, 'Request trigger should appear on canvas');
       console.log('[test1] Trigger added');
 
-      // Assertion 4: Immediately find + button and add Response action.
-      // Retry the full click→menu→search→select flow if Response doesn't appear.
-      let hasResponse = false;
-      for (let responseAttempt = 0; responseAttempt < 3; responseAttempt++) {
+      // Assertion 4: Immediately find + button and add a built-in action.
+      // Keep this runtime smoke asynchronous; a Response action can legitimately
+      // hold the callback request open until the test-side HTTP client times out.
+      let hasCompose = false;
+      for (let actionAttempt = 0; actionAttempt < 3; actionAttempt++) {
         // Find and click + button
         let actionPanelOpened = false;
         for (let clickAttempt = 0; clickAttempt < 3; clickAttempt++) {
@@ -3160,38 +3180,42 @@ describe('Designer Actions Tests', function () {
         }
 
         if (!actionPanelOpened) {
-          console.log(`[test1] Could not open action panel on attempt ${responseAttempt + 1}`);
+          console.log(`[test1] Could not open action panel on attempt ${actionAttempt + 1}`);
           await sleep(1000);
           continue;
         }
 
-        // Search and select Response
-        const searchedAction = await searchInDiscoveryPanel(driver, 'Response');
+        // Search and select Compose
+        const searchedAction = await searchInDiscoveryPanel(driver, 'Compose');
         if (!searchedAction) {
-          console.log(`[test1] Search box not found on attempt ${responseAttempt + 1}`);
+          console.log(`[test1] Search box not found on attempt ${actionAttempt + 1}`);
           continue;
         }
         await waitForSearchResults(driver);
 
         const beforeCount = await countCanvasNodes(driver);
-        const selectedAction = await selectOperation(driver, 'response');
+        const selectedAction = await selectOperation(driver, 'compose');
         if (!selectedAction) {
-          console.log(`[test1] Could not select Response on attempt ${responseAttempt + 1}`);
+          console.log(`[test1] Could not select Compose on attempt ${actionAttempt + 1}`);
           continue;
         }
 
         await waitForNodeCountIncrease(driver, beforeCount);
-        hasResponse = await canvasHasNode(driver, 'response');
-        if (hasResponse) {
+        hasCompose = await canvasHasNode(driver, 'compose');
+        if (hasCompose) {
           break;
         }
 
-        console.log(`[test1] Response not found on canvas after attempt ${responseAttempt + 1}, retrying...`);
+        console.log(`[test1] Compose not found on canvas after attempt ${actionAttempt + 1}, retrying...`);
         await sleep(1000);
       }
 
-      await captureScreenshot(driver, 'test1-step4-after-add-response');
-      assert.ok(hasResponse, 'Response action should appear on canvas');
+      await captureScreenshot(driver, 'test1-step4-after-add-compose');
+      assert.ok(hasCompose, 'Compose action should appear on canvas');
+
+      await sleep(2000);
+      const inputsFilled = await fillFirstContentEditable(driver, 'test-compose-value', 'test1');
+      assert.ok(inputsFilled, 'Compose inputs field should be filled');
 
       // Assertion 6: Save the workflow
       const saved = await clickSaveButton(driver);
@@ -3224,10 +3248,12 @@ describe('Designer Actions Tests', function () {
       const hasHttpTrigger = triggerValues.some((t: any) => t.type === 'Request' || t.type?.toLowerCase().includes('request'));
       assert.ok(hasHttpTrigger, 'workflow.json should contain an HTTP Request trigger');
 
-      // Verify there's a Response action
+      // Verify there's a Compose action
       const actionValues = Object.values(actions) as any[];
-      const hasResponseAction = actionValues.some((a: any) => a.type === 'Response' || a.type?.toLowerCase().includes('response'));
-      assert.ok(hasResponseAction, 'workflow.json should contain a Response action');
+      const composeAction = actionValues.find((a: any) => a.type === 'Compose' || a.type?.toLowerCase().includes('compose'));
+      const hasComposeAction = !!composeAction;
+      assert.ok(hasComposeAction, 'workflow.json should contain a Compose action');
+      assert.ok(JSON.stringify(composeAction?.inputs ?? {}).includes('test-compose-value'), 'Compose inputs should contain the test value');
 
       console.log('[test1] Workflow saved and verified — starting debug session...');
 
@@ -3277,11 +3303,7 @@ describe('Designer Actions Tests', function () {
       await captureScreenshot(driver, 'test1-step10-callback-url');
       // Don't assert callback URL — it may not appear if runtime hasn't fully registered the workflow yet
 
-      // Assertion 11: Invoke the workflow trigger and consume the HTTP response.
-      // The overview "Run trigger" UI can leave synchronous Request+Response
-      // workflows in response=Waiting because no caller holds the HTTP request
-      // open. Posting to the callback URL exercises the same runtime trigger and
-      // lets the Response action complete.
+      // Assertion 11: Invoke the workflow trigger through the runtime callback URL.
       const triggerRan = await invokeWorkflowCallback(driver, { workflowName: entry.wfName });
       await captureScreenshot(driver, 'test1-step11-after-run-trigger');
       assert.ok(triggerRan, 'Workflow callback should be invokable');
@@ -3308,7 +3330,7 @@ describe('Designer Actions Tests', function () {
       await captureScreenshot(driver, 'test1-step15-all-nodes-succeeded');
       assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
 
-      console.log('[test1] PASSED — full flow: trigger + response + save + debug + overview + run succeeded');
+      console.log('[test1] PASSED — full flow: trigger + compose + save + debug + overview + run succeeded');
 
       // Clean up: stop debugging and switch back
       try {
@@ -3677,11 +3699,11 @@ describe('Designer Actions Tests', function () {
   // Test 3 — RulesEngine + Stateful runtime smoke (Step 2: closes the
   // rulesEngine runtime-debug gap identified in
   // .squad/knowledge/e2e-shape-coverage-audit.md). Mirrors test 1's
-  // minimal Request-trigger + Response action shape — the goal is to
+  // minimal Request-trigger + Compose action shape — the goal is to
   // verify the rulesEngine appType runtime actually starts, runs, and
   // reports success, not to exercise every rulesEngine feature.
   // ===========================================================================
-  it('should add a Request trigger and Response action to a RulesEngine workflow, then run and verify', async function () {
+  it('should add a Request trigger and Compose action to a RulesEngine workflow, then run and verify', async function () {
     skipIfShapeDoesNotMatch(this, 'rulesEngine');
     // Close any editors left open by previous tests.
     try {
@@ -3746,7 +3768,7 @@ describe('Designer Actions Tests', function () {
       await waitForNodeCountIncrease(driver, c0);
       await captureScreenshot(driver, 'test3-after-request-trigger');
 
-      // Add Response action — minimum valid shape per Step 2 plan guidance.
+      // Add a Compose action for an asynchronous runtime smoke.
       await sleep(2000);
       const addAction = await findLastAddActionElement(driver);
       if (addAction) {
@@ -3755,12 +3777,15 @@ describe('Designer Actions Tests', function () {
         await clickAddActionMenuItem(driver);
       }
       if (await waitForDiscoveryPanel(driver, 3000)) {
-        await searchInDiscoveryPanel(driver, 'Response');
+        await searchInDiscoveryPanel(driver, 'Compose');
         await waitForSearchResults(driver);
         const c1 = await countCanvasNodes(driver);
-        await selectOperation(driver, 'Response');
+        await selectOperation(driver, 'Compose');
         await waitForNodeCountIncrease(driver, c1);
       }
+
+      await sleep(2000);
+      assert.ok(await fillFirstContentEditable(driver, 'rules-engine-compose-value', 'test3'), 'Compose inputs field should be filled');
 
       // Save
       assert.ok(await clickSaveButton(driver), 'Save should complete');
@@ -3780,10 +3805,13 @@ describe('Designer Actions Tests', function () {
       assert.ok(triggers && Object.keys(triggers).length > 0, 'RulesEngine workflow.json should contain at least one trigger before debug');
       assert.ok(actions && Object.keys(actions).length > 0, 'RulesEngine workflow.json should contain at least one action before debug');
       const actionValues = Object.values(actions) as any[];
-      const hasResponseAction = actionValues.some(
-        (action: any) => action.type === 'Response' || action.type?.toLowerCase().includes('response')
+      const composeAction = actionValues.find((action: any) => action.type === 'Compose' || action.type?.toLowerCase().includes('compose'));
+      const hasComposeAction = !!composeAction;
+      assert.ok(hasComposeAction, 'RulesEngine workflow.json should contain a Compose action before debug');
+      assert.ok(
+        JSON.stringify(composeAction?.inputs ?? {}).includes('rules-engine-compose-value'),
+        'RulesEngine Compose inputs should contain the test value'
       );
-      assert.ok(hasResponseAction, 'RulesEngine workflow.json should contain a Response action before debug');
 
       // Debug → Open overview → Run → Verify
       workbench = new Workbench();

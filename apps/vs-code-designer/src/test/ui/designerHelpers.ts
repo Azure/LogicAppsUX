@@ -485,6 +485,13 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
     const title = await driver.getTitle();
     if (title.toLowerCase().includes(expectedWorkspaceName)) {
       console.log('[openWorkspaceFileInSession] Expected workspace already open');
+      try {
+        await new EditorView().closeAllEditors();
+        await sleep(1000);
+        console.log('[openWorkspaceFileInSession] Closed existing editors in already-open workspace');
+      } catch (closeErr: any) {
+        console.log(`[openWorkspaceFileInSession] Could not close existing editors: ${closeErr.message}`);
+      }
       opened = true;
     }
   } catch (e: any) {

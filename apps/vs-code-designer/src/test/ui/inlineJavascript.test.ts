@@ -10,7 +10,7 @@
  * Verifies:
  *   1. Create workflow with Request trigger
  *   2. Add Execute JavaScript Code action with inline code
- *   3. Add Response action with JS output as body
+ *   3. Save and run the Request + JavaScript workflow
  *   4. Save, debug, invoke the workflow callback, verify all nodes succeeded
  */
 
@@ -27,7 +27,6 @@ import {
   openDesignerForEntry,
   findAddTriggerCard,
   findAddActionElement,
-  findLastAddActionElement,
   waitForDiscoveryPanel,
   searchInDiscoveryPanel,
   waitForSearchResults,
@@ -72,12 +71,11 @@ const TARGET_SHAPE = (process.env.LA_E2E_SHAPE || 'standard') as 'standard' | 'c
 function workflowHasInlineJsShape(wfDir: string): boolean {
   const wf = readWorkflowJson(wfDir);
   const actions = wf?.definition?.actions ?? {};
-  const actionValues = Object.values(actions);
   const serializedActions = JSON.stringify(actions);
   return (
-    Object.keys(actions).length >= 2 &&
-    actionValues.some((action: any) => action?.type === 'Response') &&
+    Object.keys(actions).length >= 1 &&
     /JavaScript|InlineCode/i.test(serializedActions) &&
+    serializedActions.includes('hello') &&
     Object.keys(wf?.definition?.triggers ?? {}).length > 0
   );
 }
@@ -155,7 +153,7 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
     await sleep(1000);
   });
 
-  it(`should create a workflow with Request trigger, Execute JavaScript Code, and Response, then run and verify (shape=${TARGET_SHAPE})`, async () => {
+  it(`should create a workflow with Request trigger and Execute JavaScript Code, then run and verify (shape=${TARGET_SHAPE})`, async () => {
     const entry =
       manifest.find((e) => e.appType === TARGET_SHAPE && e.wfType === 'Stateful') || manifest.find((e) => e.appType === TARGET_SHAPE);
     if (!entry) {
@@ -221,24 +219,9 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
       const codeFilled = await fillCodeEditor(driver, "return 'hello'");
       assert.ok(codeFilled, 'Code editor should be fillable');
 
-      // Add Response action — use findLastAddActionElement to add AFTER the JS action
-      const addAction2 = await findLastAddActionElement(driver);
-      if (addAction2) {
-        await clickElementWithFallback(driver, addAction2, 'last add action button');
-        await sleep(500);
-        await clickAddActionMenuItem(driver);
-      }
-      if (await waitForDiscoveryPanel(driver, 3000)) {
-        await searchInDiscoveryPanel(driver, 'Response');
-        await waitForSearchResults(driver);
-        const c2 = await countCanvasNodes(driver);
-        await selectOperation(driver, 'Response');
-        await waitForNodeCountIncrease(driver, c2);
-      }
-
       // Save
       assert.ok(await clickSaveButton(driver), 'Save should complete');
-      assert.ok(await waitForWorkflowJsonShape(entry.wfDir), 'Saved workflow.json should include Request, JavaScript, and Response');
+      assert.ok(await waitForWorkflowJsonShape(entry.wfDir), 'Saved workflow.json should include Request and JavaScript');
 
       // CRITICAL: switch back from designer webview BUT keep editors OPEN.
       // The designer panel tab must stay in the editor area when F5 fires so
@@ -254,7 +237,7 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
         /* ignore */
       }
       await sleep(2000);
-      assert.ok(workflowHasInlineJsShape(entry.wfDir), 'workflow.json should retain Request, JavaScript, and Response before debug');
+      assert.ok(workflowHasInlineJsShape(entry.wfDir), 'workflow.json should retain Request and JavaScript before debug');
 
       // Debug → Run → Verify
       workbench = new Workbench();
