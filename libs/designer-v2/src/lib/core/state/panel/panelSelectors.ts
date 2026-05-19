@@ -93,6 +93,8 @@ export const usePreviousPanelMode = () => useSelector(createSelector(getPanelSta
 
 export const useIsAddingAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingAgentTool));
 
+export const useDiscoveryPanelSearchTerm = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.searchTerm));
+
 export const useIsRunHistoryCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.runHistoryCollapsed));
 
 export const useMcpToolWizard = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard));

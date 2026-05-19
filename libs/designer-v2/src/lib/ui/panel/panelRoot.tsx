@@ -99,13 +99,12 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     return {
       isCollapsed: collapsed,
       toggleCollapse: dismissPanel,
-      width,
       layerProps,
       panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
       isResizeable,
       mountNode: panelContainerElement || undefined,
     };
-  }, [customPanelLocations, collapsed, dismissPanel, width, panelContainerElement, panelLocation, isResizeable, currentPanelMode]);
+  }, [customPanelLocations, collapsed, dismissPanel, panelContainerElement, panelLocation, isResizeable, currentPanelMode]);
 
   const onRenderFooterContent = useMemo(
     () => (currentPanelMode === 'WorkflowParameters' ? () => <WorkflowParametersPanelFooter /> : undefined),
