@@ -1907,10 +1907,13 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
           /^manual\\b/.test(normalized) ||
           /^request\\b/.test(normalized);
       }
+      function isRunHistoryRow(text) {
+        return /^[0-9]{12,}/.test(text || '') && (text || '').indexOf('/') >= 0 && /[0-9]{4}/.test(text || '');
+      }
       var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
       for (var r = 0; r < rows.length; r++) {
         var rowText = (rows[r].textContent || '').trim();
-        if (isTriggerRow(rowText)) {
+        if (isTriggerRow(rowText) || isRunHistoryRow(rowText)) {
           continue;
         }
         var cells = rows[r].querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
@@ -1922,29 +1925,6 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
               else other.push(t + (rowText ? ': ' + rowText.substring(0, 120) : ''));
               break;
             }
-          }
-        }
-      }
-      if (succeeded === 0 && other.length === 0) {
-        var cells = document.querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
-        for (var k = 0; k < cells.length; k++) {
-          var cellText = (cells[k].textContent || '').trim();
-          for (var s = 0; s < statusTexts.length; s++) {
-            if (cellText === statusTexts[s]) {
-              if (cellText === 'Succeeded') succeeded++;
-              else other.push(cellText);
-              break;
-            }
-          }
-        }
-      }
-      if (succeeded === 0) {
-        var all = document.querySelectorAll('*');
-        for (var i = 0; i < all.length; i++) {
-          var t = (all[i].textContent || '').trim();
-          if (all[i].children.length === 0 && statusTexts.indexOf(t) >= 0) {
-            if (t === 'Succeeded') succeeded++;
-            else other.push(t);
           }
         }
       }
