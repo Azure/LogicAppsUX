@@ -427,8 +427,8 @@ async function main() {
             }
             await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
           }
-          if (!retrySucceeded && findValidInstalledExtension(dep)) {
-            console.warn(`  ⚠ ${dep} still reports install failures but a valid extension directory exists`);
+          if (!retrySucceeded) {
+            throw new Error(`${dep} failed to install after ${DOWNLOAD_RETRY_ATTEMPTS} sequential retries`);
           }
         }
       }

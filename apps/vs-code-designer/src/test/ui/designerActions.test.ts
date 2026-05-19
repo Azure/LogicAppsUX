@@ -25,6 +25,7 @@ import {
   clickRunTrigger as clickRunTriggerWithReadiness,
   invokeWorkflowCallback,
   waitForRunStatusInList as waitForRunStatusInListWithRefresh,
+  verifyAllNodesSucceeded as verifyAllNodesSucceededWithActions,
 } from './runHelpers';
 import { openWorkspaceFileInSession as openWorkspaceFileInSessionShared } from './designerHelpers';
 
@@ -2924,54 +2925,6 @@ async function clickLatestRunRow(driver: WebDriver): Promise<boolean> {
 }
 
 /**
- * Once inside the run details view, verify that all action nodes show "Succeeded".
- * Returns the count of succeeded nodes and any non-succeeded nodes found.
- */
-async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allSucceeded: boolean; details: string }> {
-  try {
-    const result = await driver.executeScript<{ succeeded: number; other: string[] }>(`
-      var succeeded = 0;
-      var other = [];
-      var statusTexts = ['Succeeded', 'Running', 'Failed', 'Cancelled', 'Skipped', 'Waiting'];
-      // Look in table rows / grid cells for action statuses
-      var cells = document.querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
-      for (var i = 0; i < cells.length; i++) {
-        var t = (cells[i].textContent || '').trim();
-        for (var j = 0; j < statusTexts.length; j++) {
-          if (t === statusTexts[j]) {
-            if (t === 'Succeeded') succeeded++;
-            else other.push(t);
-            break;
-          }
-        }
-      }
-      // Also check leaf elements with exact status text
-      if (succeeded === 0) {
-        var all = document.querySelectorAll('*');
-        for (var i = 0; i < all.length; i++) {
-          var t = (all[i].textContent || '').trim();
-          if (all[i].children.length === 0 && statusTexts.indexOf(t) >= 0) {
-            if (t === 'Succeeded') succeeded++;
-            else other.push(t);
-          }
-        }
-      }
-      return { succeeded: succeeded, other: other };
-    `);
-
-    const details = `${result.succeeded} succeeded${result.other.length > 0 ? `, non-succeeded: [${result.other.join(', ')}]` : ''}`;
-    console.log(`[overview] Run details — ${details}`);
-    return {
-      allSucceeded: result.succeeded > 0 && result.other.length === 0,
-      details,
-    };
-  } catch (e: any) {
-    console.log(`[overview] Error reading run details: ${e.message}`);
-    return { allSucceeded: false, details: 'error reading details' };
-  }
-}
-
-/**
  * Stop the debug session by pressing Shift+F5.
  */
 async function stopDebugging(driver: WebDriver): Promise<void> {
@@ -3329,7 +3282,7 @@ describe('Designer Actions Tests', function () {
         await captureScreenshot(driver, 'test1-step14-run-details-opened');
         assert.ok(detailsOpened, 'Should be able to open the succeeded run');
 
-        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName);
+        const { allSucceeded, details } = await verifyAllNodesSucceededWithActions(driver, entry.wfName);
         await captureScreenshot(driver, 'test1-step15-all-nodes-succeeded');
         assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
 
@@ -3670,7 +3623,7 @@ describe('Designer Actions Tests', function () {
         await captureScreenshot(driver, 'test2-step12-run-details-opened');
         assert.ok(detailsOpened, 'Should be able to open the succeeded run');
 
-        const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName);
+        const { allSucceeded, details } = await verifyAllNodesSucceededWithActions(driver, entry.wfName);
         await captureScreenshot(driver, 'test2-step13-all-nodes-succeeded');
         assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
 
