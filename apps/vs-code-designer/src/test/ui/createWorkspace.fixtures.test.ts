@@ -72,6 +72,17 @@ function assertManifestShape(entry: WorkspaceManifestEntry): void {
     throw new Error(`[fixtures:shape] host.json missing "version" field`);
   }
 
+  const localSettingsPath = path.join(entry.appDir, 'local.settings.json');
+  if (!fs.existsSync(localSettingsPath)) {
+    throw new Error(`[fixtures:shape] Missing local.settings.json at ${localSettingsPath}`);
+  }
+  try {
+    JSON.parse(fs.readFileSync(localSettingsPath, 'utf-8'));
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    throw new Error(`[fixtures:shape] local.settings.json is not valid JSON: ${message}`);
+  }
+
   const workflowJsonPath = path.join(entry.wfDir, 'workflow.json');
   if (!fs.existsSync(workflowJsonPath)) {
     throw new Error(`[fixtures:shape] Missing workflow.json at ${workflowJsonPath}`);
@@ -91,6 +102,24 @@ function assertManifestShape(entry: WorkspaceManifestEntry): void {
     throw new Error(`[fixtures:shape] expected workflow.json kind=${entry.wfType}, got "${wf.kind}"`);
   }
   console.log(`[fixtures:shape] OK ${entry.label}: host.json v${host.version}, workflow.json kind=${wf.kind}`);
+}
+
+async function waitForManifestShape(entry: WorkspaceManifestEntry, timeoutMs = 60_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  let lastError: unknown;
+
+  while (Date.now() < deadline) {
+    try {
+      assertManifestShape(entry);
+      return;
+    } catch (error: unknown) {
+      lastError = error;
+      await sleep(500);
+    }
+  }
+
+  const message = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new Error(`[fixtures:shape] Timed out after ${timeoutMs}ms waiting for ${entry.label}: ${message}`);
 }
 
 describe('Create Workspace Fixtures', function () {
@@ -185,6 +214,15 @@ describe('Create Workspace Fixtures', function () {
 
     await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
 
+    const entry = buildManifestEntry('Standard + Stateful', tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'standard',
+      wfType: 'Stateful',
+    });
+    await waitForManifestShape(entry);
+
     deepVerifyWorkspace(tempDir, {
       wsName,
       appName,
@@ -193,15 +231,7 @@ describe('Create Workspace Fixtures', function () {
       wfType: 'Stateful',
     });
 
-    const entry = buildManifestEntry('Standard + Stateful', tempDir, {
-      wsName,
-      appName,
-      wfName,
-      appType: 'standard',
-      wfType: 'Stateful',
-    });
     appendToWorkspaceManifest(entry);
-    assertManifestShape(entry);
 
     await captureScreenshot(driver, 'fixtures-standard-passed');
     console.log('[fixtures:standard] PASSED');
@@ -229,6 +259,15 @@ describe('Create Workspace Fixtures', function () {
 
     await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
 
+    const entry = buildManifestEntry('Standard + Stateless', tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'standard',
+      wfType: 'Stateless',
+    });
+    await waitForManifestShape(entry);
+
     deepVerifyWorkspace(tempDir, {
       wsName,
       appName,
@@ -237,15 +276,7 @@ describe('Create Workspace Fixtures', function () {
       wfType: 'Stateless',
     });
 
-    const entry = buildManifestEntry('Standard + Stateless', tempDir, {
-      wsName,
-      appName,
-      wfName,
-      appType: 'standard',
-      wfType: 'Stateless',
-    });
     appendToWorkspaceManifest(entry);
-    assertManifestShape(entry);
 
     await captureScreenshot(driver, 'fixtures-stateless-passed');
     console.log('[fixtures:stateless] PASSED');
@@ -302,6 +333,18 @@ describe('Create Workspace Fixtures', function () {
 
     await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
 
+    const entry = buildManifestEntry('CustomCode + Stateful', tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'customCode',
+      wfType: 'Stateful',
+      ccFolderName,
+      fnName,
+      fnNamespace,
+    });
+    await waitForManifestShape(entry);
+
     deepVerifyWorkspace(tempDir, {
       wsName,
       appName,
@@ -313,18 +356,7 @@ describe('Create Workspace Fixtures', function () {
       fnNamespace,
     });
 
-    const entry = buildManifestEntry('CustomCode + Stateful', tempDir, {
-      wsName,
-      appName,
-      wfName,
-      appType: 'customCode',
-      wfType: 'Stateful',
-      ccFolderName,
-      fnName,
-      fnNamespace,
-    });
     appendToWorkspaceManifest(entry);
-    assertManifestShape(entry);
 
     await captureScreenshot(driver, 'fixtures-customcode-passed');
     console.log('[fixtures:customCode] PASSED');
@@ -431,6 +463,18 @@ describe('Create Workspace Fixtures', function () {
 
     await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
 
+    const entry = buildManifestEntry('RulesEngine + Stateful', tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'rulesEngine',
+      wfType: 'Stateful',
+      ccFolderName: reFolderName,
+      fnName,
+      fnNamespace,
+    });
+    await waitForManifestShape(entry);
+
     deepVerifyWorkspace(tempDir, {
       wsName,
       appName,
@@ -442,18 +486,7 @@ describe('Create Workspace Fixtures', function () {
       fnNamespace,
     });
 
-    const entry = buildManifestEntry('RulesEngine + Stateful', tempDir, {
-      wsName,
-      appName,
-      wfName,
-      appType: 'rulesEngine',
-      wfType: 'Stateful',
-      ccFolderName: reFolderName,
-      fnName,
-      fnNamespace,
-    });
     appendToWorkspaceManifest(entry);
-    assertManifestShape(entry);
 
     await captureScreenshot(driver, 'fixtures-rulesengine-passed');
     console.log('[fixtures:rulesEngine] PASSED');
