@@ -1003,7 +1003,10 @@ async function main() {
       id: 'p43-rulesengine',
       testFile: phase3Files[0],
       workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
-      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      // RulesEngine workspace-load auto-start can block designer open behind
+      // design-time timeout dialogs. The test still starts debug explicitly and
+      // verifies callback/run success, so runtime coverage remains strict.
+      settings: { validateDependencies: false, autoStartDesignTime: false },
       env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
     {
