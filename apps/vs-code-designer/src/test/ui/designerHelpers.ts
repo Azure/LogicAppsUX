@@ -2509,7 +2509,7 @@ export async function openDesignerForEntry(
     /* ignore */
   }
 
-  const designerOpened = await openDesignerViaExplorer(driver, workflowJsonPath, entry.wfName || 'workflow', false, false);
+  const designerOpened = await openDesignerViaExplorer(driver, workflowJsonPath, entry.wfName || 'workflow', false, true);
   if (!designerOpened) {
     await captureScreenshot(driver, `${entry.label}-designer-not-opened`);
     return { success: false, error: 'Could not open designer via Explorer right-click' };
@@ -2991,13 +2991,28 @@ export async function addParallelBranch(driver: WebDriver, afterNodeText: string
 export async function openNodeSettingsPanel(driver: WebDriver, nodeText: string): Promise<boolean> {
   try {
     const nodes = await driver.findElements(By.css('.react-flow__node'));
+    const candidates: Array<{ node: WebElement; text: string }> = [];
     for (const node of nodes) {
       const text = await node.getText().catch(() => '');
       if (text.toLowerCase().includes(nodeText.toLowerCase())) {
-        await driver.actions().move({ origin: node }).click().perform();
+        candidates.push({ node, text });
+      }
+    }
+    candidates.sort((a, b) => a.text.length - b.text.length);
+    for (const candidate of candidates) {
+      try {
+        await driver.actions().move({ origin: candidate.node }).click().perform();
         await sleep(1500);
-        console.log(`[openNodeSettingsPanel] Clicked on node "${nodeText}"`);
-        return true;
+        const bodyText = await driver
+          .findElement(By.css('body'))
+          .getText()
+          .catch(() => '');
+        if (bodyText.toLowerCase().includes(nodeText.toLowerCase())) {
+          console.log(`[openNodeSettingsPanel] Clicked on node "${nodeText}"`);
+          return true;
+        }
+      } catch {
+        /* try the next candidate */
       }
     }
     console.log(`[openNodeSettingsPanel] Node "${nodeText}" not found`);

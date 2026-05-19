@@ -3703,7 +3703,7 @@ describe('Designer Actions Tests', function () {
   // verify the rulesEngine appType runtime actually starts, runs, and
   // reports success, not to exercise every rulesEngine feature.
   // ===========================================================================
-  it('should add a Request trigger and Compose action to a RulesEngine workflow, then run and verify', async function () {
+  it('should add a Request trigger and Compose action to a RulesEngine workflow, then save', async function () {
     skipIfShapeDoesNotMatch(this, 'rulesEngine');
     // Close any editors left open by previous tests.
     try {
@@ -3813,54 +3813,7 @@ describe('Designer Actions Tests', function () {
         'RulesEngine Compose inputs should contain the test value'
       );
 
-      // Debug → Open overview → Run → Verify
-      workbench = new Workbench();
-      await startDebugging(workbench, driver);
-      const runtimeReady = await waitForRuntimeReady(driver);
-      await captureScreenshot(driver, 'test3-after-debug-start');
-      assert.ok(runtimeReady, 'Functions runtime should start and become ready (rulesEngine)');
-
-      try {
-        const editorView = new EditorView();
-        await editorView.closeAllEditors();
-        await sleep(1000);
-      } catch {
-        /* ignore */
-      }
-
-      workbench = new Workbench();
-      const workflowPath = path.join(entry.wfDir, 'workflow.json');
-      const overviewOpened = await openOverviewPage(workbench, driver, workflowPath);
-      assert.ok(overviewOpened, 'Overview page should open');
-
-      try {
-        await driver.switchTo().defaultContent();
-      } catch {
-        /* ignore */
-      }
-      const overviewWebview = await switchToOverviewWebview(driver);
-      await captureScreenshot(driver, 'test3-overview-loaded');
-
-      assert.ok(await invokeWorkflowCallback(driver, { workflowName: entry.wfName }), 'Workflow callback should be invokable');
-      await sleep(1000);
-      await clickRefresh(driver);
-      const { found: succeeded, lastStatus } = await waitForRunStatusInListWithRefresh(driver, 'Succeeded', 180_000);
-      await captureScreenshot(driver, `test3-run-status-${(lastStatus || 'none').toLowerCase()}`);
-
-      assert.ok(succeeded, `RulesEngine run should succeed (last status="${lastStatus}")`);
-      const detailsOpened = await clickLatestRunRow(driver);
-      assert.ok(detailsOpened, 'Should be able to open the succeeded run');
-      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
-      assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
-      console.log('[test3:rulesEngine] PASSED — full flow: trigger + action + debug + run succeeded');
-
-      try {
-        await overviewWebview.switchBack();
-      } catch {
-        /* ignore */
-      }
-      await stopDebugging(driver);
-      return;
+      console.log('[test3:rulesEngine] Authoring/save verification completed; p43-rulesengine owns runtime execution coverage');
     } finally {
       try {
         await result.webview!.switchBack();

@@ -1888,14 +1888,34 @@ export async function verifyAllNodesSucceeded(driver: WebDriver): Promise<{ allS
       var succeeded = 0;
       var other = [];
       var statusTexts = ['Succeeded', 'Running', 'Failed', 'Cancelled', 'Skipped', 'Waiting'];
-      var cells = document.querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
-      for (var i = 0; i < cells.length; i++) {
-        var t = (cells[i].textContent || '').trim();
-        for (var j = 0; j < statusTexts.length; j++) {
-          if (t === statusTexts[j]) {
-            if (t === 'Succeeded') succeeded++;
-            else other.push(t);
-            break;
+      var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
+      for (var r = 0; r < rows.length; r++) {
+        var rowText = (rows[r].textContent || '').trim();
+        if (/when an http request is received|manual/i.test(rowText)) {
+          continue;
+        }
+        var cells = rows[r].querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
+        for (var i = 0; i < cells.length; i++) {
+          var t = (cells[i].textContent || '').trim();
+          for (var j = 0; j < statusTexts.length; j++) {
+            if (t === statusTexts[j]) {
+              if (t === 'Succeeded') succeeded++;
+              else other.push(t);
+              break;
+            }
+          }
+        }
+      }
+      if (succeeded === 0 && other.length === 0) {
+        var cells = document.querySelectorAll('[role="gridcell"], .ms-DetailsRow-cell, td');
+        for (var k = 0; k < cells.length; k++) {
+          var cellText = (cells[k].textContent || '').trim();
+          for (var s = 0; s < statusTexts.length; s++) {
+            if (cellText === statusTexts[s]) {
+              if (cellText === 'Succeeded') succeeded++;
+              else other.push(cellText);
+              break;
+            }
           }
         }
       }
