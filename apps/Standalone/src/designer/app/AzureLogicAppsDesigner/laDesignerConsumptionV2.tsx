@@ -490,10 +490,7 @@ const DesignerEditorConsumption = () => {
                   if (newWorkflow.parameters) {
                     setParameters(newWorkflow.parameters);
                   }
-                  setWorkflow({
-                    ...newWorkflow,
-                    id: guid(),
-                  });
+                  setWorkflow({ ...newWorkflow });
                   DesignerStore.dispatch(setIsWorkflowDirty(true));
                   if (changes) {
                     const nodeIds = changes.flatMap((change) => change.nodeIds);

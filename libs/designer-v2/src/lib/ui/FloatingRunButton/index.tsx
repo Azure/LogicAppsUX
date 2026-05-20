@@ -87,6 +87,7 @@ export interface FloatingRunButtonProps {
     tooltipText?: string;
   };
   isConsumption?: boolean;
+  forceSave?: boolean;
 }
 
 export const FloatingRunButton = ({
@@ -101,6 +102,7 @@ export const FloatingRunButton = ({
   tooltipOverride,
   chatProps,
   isConsumption,
+  forceSave,
 }: FloatingRunButtonProps) => {
   const intl = useIntl();
 
@@ -209,7 +211,7 @@ export const FloatingRunButton = ({
     });
 
     // If workflowReadOnly is true, skip the actual save and just return the serialized workflow
-    if (workflowReadOnly || !isDirty) {
+    if (workflowReadOnly || (!isDirty && !forceSave)) {
       return serializedWorkflow;
     }
 
@@ -242,7 +244,7 @@ export const FloatingRunButton = ({
         isDraftMode
       );
     }
-  }, [workflowReadOnly, dispatch, saveDraftWorkflow, isDraftMode, isDirty]);
+  }, [workflowReadOnly, dispatch, saveDraftWorkflow, isDraftMode, isDirty, forceSave]);
 
   const {
     mutate: runMutate,
