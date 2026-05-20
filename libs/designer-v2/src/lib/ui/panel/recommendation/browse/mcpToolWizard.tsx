@@ -30,9 +30,94 @@ import { isConnectionValid, getAssistedConnectionProps } from '../../../../core/
 import { addOperation } from '../../../../core/actions/bjsworkflow/add';
 import { useMcpToolWizardStyles } from './styles/McpToolWizard.styles';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
-import type { Connection, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionParameterSets, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { MCP_CLIENT_CONNECTOR_ID } from '../helpers';
+
+/**
+ * Connection parameter sets for MCP servers. Used as a fallback when a custom connector
+ * doesn't have its own connectionParameterSets, so users can select auth type
+ * (None, Basic, Managed Identity, OAuth, etc.) during connection creation.
+ */
+const mcpConnectionParameterSets: ConnectionParameterSets = {
+  uiDefinition: {
+    displayName: 'Authentication type',
+    description: 'The authentication type to use.',
+  },
+  values: [
+    {
+      name: 'None',
+      parameters: {},
+      uiDefinition: { displayName: 'None', description: 'None' },
+    },
+    {
+      name: 'Basic',
+      parameters: {
+        username: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Username',
+            constraints: { propertyPath: ['authentication'], required: 'true' },
+            description: 'Username',
+          },
+        },
+        password: {
+          type: 'securestring',
+          uiDefinition: {
+            displayName: 'Password',
+            constraints: { propertyPath: ['authentication'], required: 'true' },
+            description: 'Password',
+          },
+        },
+      },
+      uiDefinition: { displayName: 'Basic', description: 'Basic authentication' },
+    },
+    {
+      name: 'Key',
+      parameters: {
+        key: {
+          type: 'securestring',
+          uiDefinition: {
+            displayName: 'Key',
+            constraints: { required: 'true', propertyPath: ['authentication'] },
+            description: 'Key',
+          },
+        },
+        keyHeaderName: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Key Header Name',
+            constraints: { propertyPath: ['authentication'] },
+            description: 'Key header name',
+          },
+        },
+      },
+      uiDefinition: { displayName: 'Key', description: 'Key authentication' },
+    },
+    {
+      name: 'ManagedServiceIdentity',
+      parameters: {
+        identity: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Managed identity',
+            constraints: { required: 'false', editor: 'identitypicker', propertyPath: ['authentication'] },
+            description: 'The managed identity to use for authentication',
+          },
+        },
+        audience: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Audience',
+            constraints: { required: 'true', propertyPath: ['authentication'] },
+            description: 'The audience',
+          },
+        },
+      },
+      uiDefinition: { displayName: 'Managed identity', description: 'Managed identity authentication' },
+    },
+  ],
+};
 
 export const McpToolWizard = () => {
   const intl = useIntl();
@@ -603,6 +688,12 @@ export const McpToolWizard = () => {
     // Managed MCP servers use the default Azure connection flow
     const connectionMetadata = isManagedMcpServer ? undefined : { type: ConnectionType.Mcp, required: true };
 
+    // For managed MCP servers (custom connectors), the connector from Azure API
+    // may not include connectionParameterSets (auth options). Provide MCP auth
+    // parameter sets as a fallback so users can select auth type (None, Basic,
+    // Managed Identity, etc.) when creating a connection.
+    const parameterSetsOverride = isManagedMcpServer ? mcpConnectionParameterSets : undefined;
+
     return (
       <div className={classes.createConnectionContainer}>
         <CreateConnectionInternal
@@ -617,6 +708,7 @@ export const McpToolWizard = () => {
           onConnectionCreated={handleConnectionCreated}
           onConnectionCancelled={handleConnectionCancelled}
           description=" "
+          connectionParameterSetsOverride={parameterSetsOverride}
         />
       </div>
     );

@@ -232,6 +232,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
   const showMultiAuthDropdown = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
 
+  // Check if the currently selected multi-auth parameter set is a managed identity type.
+  // When true, we show the identity picker instead of the hidden managedIdentity parameter.
+  const isMultiAuthManagedIdentitySet = useMemo(() => {
+    if (!isMultiAuth) {
+      return false;
+    }
+    return Object.values(multiAuthParams).some((param) => param.type === ConnectionParameterTypes.managedIdentity);
+  }, [isMultiAuth, multiAuthParams]);
+
   const hasOnlyOnPremGateway = useMemo(
     () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
     [connectorCapabilities]
@@ -439,6 +448,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     if (legacyManagedIdentitySelected && !selectedManagedIdentity) {
       return false;
     }
+    if (isMultiAuthManagedIdentitySet && !selectedManagedIdentity) {
+      return false;
+    }
     if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) {
       return true;
     }
@@ -497,7 +509,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
-    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
+    const identitySelected = legacyManagedIdentitySelected || isMultiAuthManagedIdentitySet ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : undefined,
@@ -917,6 +929,20 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               onChange={onAuthDropdownChange}
               connectionParameterSets={connectionParameterSets}
             />
+          )}
+
+          {/* Multi-auth Managed Identity Selection (for MCP custom connectors with MI parameter set) */}
+          {isMultiAuthManagedIdentitySet && (
+            <div className="param-row">
+              <Label
+                className="label"
+                isRequiredField={true}
+                text={legacyManagedIdentityLabelText}
+                htmlFor={'connection-param-set-select'}
+                disabled={isLoading}
+              />
+              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
+            </div>
           )}
 
           {/* OAuth tenant ID selection */}
