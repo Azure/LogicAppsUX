@@ -59,6 +59,21 @@ export interface IOperationManifestService {
    * @return {string}
    */
   getBuiltInConnector(connectorId: string): Connector;
+
+  /**
+   * Gets default setting values for an operation from the backend.
+   * @arg {string} connectorId - The connector id.
+   * @arg {string} operationId - The operation id.
+   * @arg {string[]} supportedSettings - The list of supported setting keys to fetch defaults for.
+   * @arg {string} [workflowKind] - The workflow kind (stateful, stateless, agent).
+   * @return {Promise<Record<string, any> | undefined>}
+   */
+  getSettingDefaults?(
+    connectorId: string,
+    operationId: string,
+    supportedSettings: string[],
+    workflowKind?: string
+  ): Promise<Record<string, any> | undefined>;
 }
 
 let service: IOperationManifestService;

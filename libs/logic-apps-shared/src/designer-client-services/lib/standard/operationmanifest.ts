@@ -230,6 +230,38 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   override getBuiltInConnector(connectorId: string): Connector {
     return this.allBuiltInConnectors[connectorId.toLowerCase()];
   }
+
+  async getSettingDefaults(
+    connectorId: string,
+    operationId: string,
+    supportedSettings: string[],
+    workflowKind?: string
+  ): Promise<Record<string, any> | undefined> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const connectorName = connectorId.split('/').slice(-1)[0];
+    const operationName = operationId.split('/').slice(-1)[0];
+
+    try {
+      if (isHybridLogicApp(baseUrl)) {
+        return await httpClient.post<Record<string, any>, { settings: string[]; workflowKind?: string }>({
+          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
+          headers: {
+            'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorName}/operations/${operationName}/settingDefaults`,
+            'x-ms-logicapps-proxy-method': 'POST',
+          },
+          content: { settings: supportedSettings, workflowKind },
+        });
+      }
+
+      return await httpClient.post<Record<string, any>, { settings: string[]; workflowKind?: string }>({
+        uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}/settingDefaults`,
+        queryParameters: { 'api-version': apiVersion },
+        content: { settings: supportedSettings, workflowKind },
+      });
+    } catch {
+      return undefined;
+    }
+  }
 }
 
 export function isServiceProviderOperation(operationType?: string): boolean {
