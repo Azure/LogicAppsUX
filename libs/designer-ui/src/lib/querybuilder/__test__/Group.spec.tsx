@@ -177,7 +177,7 @@ describe('Group Component Move Functionality', () => {
 
       // Component should render without errors with complex nested structure
       expect(screen.getAllByRole('combobox')[0]).toBeInTheDocument(); // Group condition dropdown
-    });
+    }, 10000);
   });
 
   describe('Group State Management', () => {

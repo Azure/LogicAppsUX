@@ -1,11 +1,15 @@
+/**
+ * @vitest-environment jsdom
+ */
 import type { ConfirmProps } from '../confirm';
 import { Confirm } from '../confirm';
 import * as React from 'react';
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { render } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
+import { describe, vi, beforeEach, it, expect } from 'vitest';
+
 describe('ui/dialogs/_confirm', () => {
   let minimal: ConfirmProps;
-  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
@@ -15,12 +19,14 @@ describe('ui/dialogs/_confirm', () => {
       onConfirm: vi.fn(),
       onDismiss: vi.fn(),
     };
-    renderer = ReactShallowRenderer.createRenderer();
   });
 
   it('should render', () => {
-    const confirm = renderer.render(<Confirm {...minimal} />);
-
-    expect(confirm).toMatchSnapshot();
+    const { baseElement } = render(
+      <IntlProvider locale="en">
+        <Confirm {...minimal} />
+      </IntlProvider>
+    );
+    expect(baseElement).toMatchSnapshot();
   });
 });

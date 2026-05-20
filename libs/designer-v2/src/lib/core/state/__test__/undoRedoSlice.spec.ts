@@ -4,15 +4,15 @@ import { StateHistory, StateHistoryItem } from '../undoRedo/undoRedoTypes';
 import constants from '../../../common/constants';
 
 describe('undo redo slice reducers', () => {
-  const mockCompressedState1 = { compressedState: new Uint8Array([140, 27]) };
+  const mockCompressedState1 = { compressedSlices: { connections: new Uint8Array([140, 27]) } };
   const mockCompressedState2 = {
-    compressedState: new Uint8Array([120, 59]),
+    compressedSlices: { connections: new Uint8Array([120, 59]) },
     editedPanelTab: constants.PANEL_TAB_NAMES.PARAMETERS,
     editedPanelNode: 'Initialize_Variable',
   };
-  const mockCompressedState3 = { compressedState: new Uint8Array([12, 1]) };
-  const mockCompressedState4 = { compressedState: new Uint8Array([63, 150]) };
-  const mockCompressedState5 = { compressedState: new Uint8Array([32, 47]) };
+  const mockCompressedState3 = { compressedSlices: { connections: new Uint8Array([12, 1]) } };
+  const mockCompressedState4 = { compressedSlices: { connections: new Uint8Array([63, 150]) } };
+  const mockCompressedState5 = { compressedSlices: { connections: new Uint8Array([32, 47]) } };
 
   it('should save state to history based on limit', () => {
     let mockInitialState: StateHistory = {
@@ -62,7 +62,7 @@ describe('undo redo slice reducers', () => {
     };
 
     // Current state gets put into future and latest past state gets removed to be used for current state
-    let state = reducer(mockInitialState, updateStateHistoryOnUndoClick({ compressedState: mockCompressedState4.compressedState }));
+    let state = reducer(mockInitialState, updateStateHistoryOnUndoClick({ compressedSlices: mockCompressedState4.compressedSlices }));
     expect(state.past).toEqual([mockCompressedState1]);
     expect(state.future).toEqual([mockCompressedState4, mockCompressedState3]);
     expect(state.undoRedoClickToggle).toEqual(1);
@@ -70,7 +70,7 @@ describe('undo redo slice reducers', () => {
     expect(state.currentEditedPanelTab).toEqual(constants.PANEL_TAB_NAMES.PARAMETERS);
 
     // On second undo click, state2 should be saved in future array with current panel details
-    state = reducer(state, updateStateHistoryOnUndoClick({ compressedState: mockCompressedState2.compressedState }));
+    state = reducer(state, updateStateHistoryOnUndoClick({ compressedSlices: mockCompressedState2.compressedSlices }));
     expect(state.past).toEqual([]);
     expect(state.future).toEqual([mockCompressedState2, mockCompressedState4, mockCompressedState3]);
     expect(state.undoRedoClickToggle).toEqual(0);
@@ -86,7 +86,7 @@ describe('undo redo slice reducers', () => {
     };
 
     // Current state gets put into past and first future state gets removed to be used for current state
-    let state = reducer(mockInitialState, updateStateHistoryOnRedoClick({ compressedState: mockCompressedState4.compressedState }));
+    let state = reducer(mockInitialState, updateStateHistoryOnRedoClick({ compressedSlices: mockCompressedState4.compressedSlices }));
     expect(state.past).toEqual([mockCompressedState1, mockCompressedState4]);
     expect(state.future).toEqual([mockCompressedState3]);
     expect(state.undoRedoClickToggle).toEqual(1);
@@ -94,7 +94,7 @@ describe('undo redo slice reducers', () => {
     expect(state.currentEditedPanelTab).toEqual(constants.PANEL_TAB_NAMES.PARAMETERS);
 
     // On second redo click, state2 should be saved in past array with current panel details
-    state = reducer(state, updateStateHistoryOnRedoClick({ compressedState: mockCompressedState2.compressedState }));
+    state = reducer(state, updateStateHistoryOnRedoClick({ compressedSlices: mockCompressedState2.compressedSlices }));
     expect(state.past).toEqual([mockCompressedState1, mockCompressedState4, mockCompressedState2]);
     expect(state.future).toEqual([]);
     expect(state.undoRedoClickToggle).toEqual(0);

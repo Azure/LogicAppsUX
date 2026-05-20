@@ -5,18 +5,6 @@ import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
-// Mock react-intl
-vi.mock('react-intl', async () => {
-  const actualIntl = await vi.importActual('react-intl');
-  return {
-    ...actualIntl,
-    useIntl: () => ({
-      formatMessage: vi.fn(({ defaultMessage }) => defaultMessage),
-      formatDate: vi.fn((date) => `Formatted: ${date}`),
-    }),
-  };
-});
-
 describe('ui/panel/panelContainer', () => {
   let minimal: PanelContainerProps, renderer: ReactShallowRenderer.ShallowRenderer;
   beforeEach(() => {

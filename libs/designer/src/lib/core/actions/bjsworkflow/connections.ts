@@ -1,4 +1,4 @@
-import Constants from '../../../common/constants';
+import Constants, { isManagedMcpConnector, MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -47,12 +47,13 @@ import {
   LoggerService,
   LogEntryLevel,
   foundryServiceConnectionRegex,
+  microsoftFoundryModelsRegex,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
-import { isManagedMcpOperation } from '../../state/workflow/helper';
+import { isBuiltInMcpOperation, isManagedMcpOperation } from '../../state/workflow/helper';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
 export interface ConnectionPayload {
   nodeId: string;
@@ -123,21 +124,28 @@ const updateAgentParametersForConnection = (
   const rawModelType = connection.properties.connectionParameters?.agentModelType?.type?.trim() ?? '';
 
   // Map display name to manifest parameter value
-  const displayNameToManifestValue: Record<string, string> = {
-    [AgentUtils.ModelType.AzureOpenAI]: 'AzureOpenAI',
-    [AgentUtils.ModelType.FoundryService]: 'FoundryAgentService',
-    [AgentUtils.ModelType.APIM]: 'APIMGenAIGateway',
-    [AgentUtils.ModelType.V1ChatCompletionsService]: 'V1ChatCompletionsService',
-  };
-  let agentModelTypeValue = displayNameToManifestValue[rawModelType] ?? '';
+  let agentModelTypeValue = AgentUtils.DisplayNameToManifest[rawModelType] ?? '';
 
-  // Fallback: detect Foundry connections by cognitiveServiceAccountId resource pattern
+  // Fallback: detect connection type by cognitiveServiceAccountId resource pattern
   if (!agentModelTypeValue) {
     const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
     if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'FoundryAgentService';
+      agentModelTypeValue = 'FoundryAgentServiceV2';
+    } else if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
+      agentModelTypeValue = 'MicrosoftFoundry';
     } else {
+      // Default to AzureOpenAI, but preserve other existing valid values
+      // (e.g., 'FoundryAgentServiceV2', 'APIMGenAIGateway') that the regex couldn't detect
       agentModelTypeValue = 'AzureOpenAI';
+      const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+      const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
+      const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
+      const currentValue = existingParam?.value?.[0]?.value;
+
+      const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
+      if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
+        agentModelTypeValue = currentValue;
+      }
     }
   }
 
@@ -173,29 +181,42 @@ const updateAgentParametersForConnection = (
     },
   });
 
-  // Update visibility and clear values based on model type
-  const isV1 = agentModelTypeValue === 'V1ChatCompletionsService';
+  // Always clear deploymentId and modelId when switching connections
+  parametersToUpdate.push({
+    groupId: ParameterGroupKeys.DEFAULT,
+    parameterId: deploymentIdParam.id,
+    propertiesToUpdate: {
+      value: [createLiteralValueSegment('')],
+      preservedValue: undefined,
+    },
+  });
+  parametersToUpdate.push({
+    groupId: ParameterGroupKeys.DEFAULT,
+    parameterId: modelIdParam.id,
+    propertiesToUpdate: {
+      value: [createLiteralValueSegment('')],
+      preservedValue: undefined,
+    },
+  });
 
-  if (isV1) {
-    // V1 Chat Completions: show modelId, hide deploymentId
-    parametersToUpdate.push({
-      groupId: ParameterGroupKeys.DEFAULT,
-      parameterId: deploymentIdParam.id,
-      propertiesToUpdate: {
-        value: [createLiteralValueSegment('')],
-        preservedValue: undefined,
-      },
-    });
-  } else {
-    // AzureOpenAI/Foundry/APIM: show deploymentId, hide modelId
-    parametersToUpdate.push({
-      groupId: ParameterGroupKeys.DEFAULT,
-      parameterId: modelIdParam.id,
-      propertiesToUpdate: {
-        value: [createLiteralValueSegment('')],
-        preservedValue: undefined,
-      },
-    });
+  // Clear deploymentModelProperties (name, format, version) when switching connections
+  const deploymentModelPropertiesKeys = [
+    'inputs.$.agentModelSettings.deploymentModelProperties.name',
+    'inputs.$.agentModelSettings.deploymentModelProperties.format',
+    'inputs.$.agentModelSettings.deploymentModelProperties.version',
+  ];
+  for (const key of deploymentModelPropertiesKeys) {
+    const param = defaultGroup.parameters?.find((p) => p.parameterKey === key);
+    if (param) {
+      parametersToUpdate.push({
+        groupId: ParameterGroupKeys.DEFAULT,
+        parameterId: param.id,
+        propertiesToUpdate: {
+          value: [createLiteralValueSegment('')],
+          preservedValue: undefined,
+        },
+      });
+    }
   }
 
   dispatch(
@@ -289,11 +310,21 @@ const updateNodeConnectionAndProperties = async (
 };
 
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
-  if (!isConnectionMultiAuthManagedIdentityType(connection, connector) && !isConnectionSingleAuthManagedIdentityType(connection)) {
+  // For managed MCP connections, always include MSI auth properties if the Logic App has a managed identity.
+  // These connectors don't follow the standard multi-auth/single-auth MSI detection patterns.
+  if (
+    !isManagedMcpConnector(connector) &&
+    !isConnectionMultiAuthManagedIdentityType(connection, connector) &&
+    !isConnectionSingleAuthManagedIdentityType(connection)
+  ) {
     return undefined;
   }
 
   const identity = WorkflowService().getAppIdentity?.();
+  if (!identity) {
+    return undefined;
+  }
+
   const userAssignedIdentity =
     equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
       ? Object.keys(identity?.userAssignedIdentities)[0]
@@ -508,7 +539,79 @@ export const isOpenApiConnectionType = (type: string): boolean => {
 export async function getConnectionsApiAndMapping(deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch) {
   const connectionsMappings = await getConnectionsMappingForNodes(deserializedWorkflow);
   dispatch(initializeConnectionsMappings(connectionsMappings));
-  return;
+
+  // Reconstruct built-in MCP connections from inline Connection data in the workflow definition.
+  // Built-in MCP connections are serialized inline (inputs.Connection.McpServerUrl) rather than
+  // in $connections/connectionReferences, so we need to recreate them during deserialization.
+  const { actionData } = deserializedWorkflow;
+  for (const [nodeId, operation] of Object.entries(actionData)) {
+    if (!isBuiltInMcpOperation(operation) || connectionsMappings[nodeId]) {
+      continue;
+    }
+    const connectionInput = (operation as any)?.inputs?.Connection;
+    const mcpServerUrl = connectionInput?.McpServerUrl;
+    if (!mcpServerUrl) {
+      continue;
+    }
+    try {
+      const connectionName = `mcp-${nodeId}`;
+      const connectorId = 'connectionProviders/mcpclient';
+      const connectionId = `/connectionProviders/mcpclient/connections/${connectionName}`;
+
+      // Skip if this connection was already reconstructed (e.g., repeated deserialization)
+      const connectionService = ConnectionService();
+      const existingConnection = (connectionService as any)._connections?.[connectionId];
+      if (existingConnection) {
+        dispatch(changeConnectionMapping({ nodeId, connectorId, connectionId }));
+        continue;
+      }
+
+      const connection = {
+        id: connectionId,
+        name: connectionName,
+        type: 'connections',
+        location: '',
+        properties: {
+          displayName: connectionName,
+          overallStatus: 'Connected',
+          statuses: [{ status: 'Connected' }],
+          api: {
+            id: connectorId,
+            name: 'mcpclient',
+            displayName: 'MCP Client',
+            iconUri: '',
+            brandColor: '#000000',
+            description: '',
+            category: 'MCP',
+            type: 'mcpclient',
+          },
+          createdTime: new Date().toISOString(),
+          parameterValues: (() => {
+            const auth = connectionInput?.Authentication;
+            const values: Record<string, any> = { mcpServerUrl };
+            if (typeof auth === 'object' && auth !== null) {
+              values.authenticationType = auth.type ?? 'None';
+              // Extract all auth-related properties back to flat parameterValues
+              for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+                if (auth[prop] !== undefined) {
+                  values[prop] = auth[prop];
+                }
+              }
+            } else {
+              values.authenticationType = auth ?? 'None';
+            }
+            return values;
+          })(),
+        },
+      } as any;
+      // Store in ConnectionService so getConnection() can find it later
+      (connectionService as any)._connections[connection.id] = connection;
+      // Create the connection mapping and reference in Redux
+      dispatch(changeConnectionMapping({ nodeId, connectorId, connectionId: connection.id }));
+    } catch {
+      // If reconstruction fails, the node will show "Invalid connection" — user can re-configure
+    }
+  }
 }
 
 export async function getManifestBasedConnectionMapping(

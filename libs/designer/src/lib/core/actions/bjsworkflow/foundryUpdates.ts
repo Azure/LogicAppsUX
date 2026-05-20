@@ -5,6 +5,8 @@ interface PendingFoundryUpdate {
   projectEndpoint: string;
   agentId: string;
   updates: UpdateFoundryAgentOptions;
+  /** The version the user explicitly selected in the UI (survives panel close/reopen). */
+  selectedVersion?: string;
 }
 
 const pendingUpdates = new Map<string, PendingFoundryUpdate>();

@@ -53,11 +53,13 @@ vi.mock('@fluentui/react-components', () => ({
     </div>
   ),
   Text: ({ children, ...props }: any) => <span {...props}>{children}</span>,
-  MessageBar: ({ children, intent }: { children: React.ReactNode; intent?: string }) => (
-    <div data-testid="message-bar" data-intent={intent}>
+  MessageBar: ({ children, intent, style }: { children: React.ReactNode; intent?: string; style?: React.CSSProperties }) => (
+    <div data-testid="message-bar" data-intent={intent} style={style}>
       {children}
     </div>
   ),
+  MessageBarBody: ({ children }: { children: React.ReactNode }) => <div data-testid="message-bar-body">{children}</div>,
+  MessageBarTitle: ({ children }: { children: React.ReactNode }) => <span data-testid="message-bar-title">{children}</span>,
 }));
 
 // Import EditConnectionPanel after mocks
@@ -601,10 +603,14 @@ describe('EditConnectionPanel Component', () => {
       await waitFor(() => {
         expect(screen.getByText('Saving...')).toBeInTheDocument();
       });
+
+      // Wait for save operation to complete to avoid state updates after test teardown
+      await waitFor(() => {
+        expect(screen.queryByText('Saving...')).not.toBeInTheDocument();
+      });
     });
 
-    it('handles save errors gracefully', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    it('handles save errors gracefully and shows error message bar', async () => {
       mockCreateOrUpdateConnection.mockRejectedValue(new Error('Save failed'));
 
       renderComponent();
@@ -622,10 +628,12 @@ describe('EditConnectionPanel Component', () => {
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Error updating connection:', expect.any(Error));
+        // Check that the error message bar is displayed
+        const errorMessageBars = screen.getAllByTestId('message-bar');
+        const errorBar = errorMessageBars.find((bar) => bar.getAttribute('data-intent') === 'error');
+        expect(errorBar).toBeInTheDocument();
+        expect(screen.getByText('Save failed')).toBeInTheDocument();
       });
-
-      consoleErrorSpy.mockRestore();
     });
   });
 });

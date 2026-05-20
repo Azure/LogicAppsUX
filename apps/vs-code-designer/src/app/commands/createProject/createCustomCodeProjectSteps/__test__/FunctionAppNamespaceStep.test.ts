@@ -85,5 +85,30 @@ describe('FunctionAppNamespaceStep', () => {
       const result = await callValidateNamespace(validFunctionAppNamespace);
       expect(result).toBeUndefined();
     });
+
+    it('returns undefined for dotted namespace like MyCompany.Functions', async () => {
+      const result = await callValidateNamespace('MyCompany.Functions');
+      expect(result).toBeUndefined();
+    });
+
+    it('returns undefined for multi-segment dotted namespace', async () => {
+      const result = await callValidateNamespace('A.B.C');
+      expect(result).toBeUndefined();
+    });
+
+    it('returns error for namespace ending with a dot', async () => {
+      const result = await callValidateNamespace('MyNamespace.');
+      expect(result).toBeDefined();
+    });
+
+    it('returns error for namespace starting with a dot', async () => {
+      const result = await callValidateNamespace('.MyNamespace');
+      expect(result).toBeDefined();
+    });
+
+    it('returns error for namespace with consecutive dots', async () => {
+      const result = await callValidateNamespace('A..B');
+      expect(result).toBeDefined();
+    });
   });
 });

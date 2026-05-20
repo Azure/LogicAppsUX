@@ -6,13 +6,14 @@ import { ChatButton } from './chat';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
 
 export interface OverviewCommandBarProps {
-  triggerName?: string;
+  canRunTrigger?: boolean;
   isDarkMode?: boolean;
   isRefreshing?: boolean;
   isAgentWorkflow?: boolean;
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
   isWorkflowRuntimeRunning?: boolean;
+  hasCallbackInfo?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;
 }
@@ -24,9 +25,10 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
   agentUrlLoading,
   agentUrlData,
   isWorkflowRuntimeRunning,
+  hasCallbackInfo,
   onRefresh,
   onRunTrigger,
-  triggerName,
+  canRunTrigger,
 }) => {
   const intl = useIntl();
 
@@ -59,7 +61,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
       icon: <PlayRegular />,
       title: Resources.OVERVIEW_RUN_TRIGGER,
       onClick: onRunTrigger,
-      disabled: !isWorkflowRuntimeRunning || !triggerName,
+      disabled: !isWorkflowRuntimeRunning || !canRunTrigger,
     });
   }
 

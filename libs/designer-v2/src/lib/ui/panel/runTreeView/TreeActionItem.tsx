@@ -202,6 +202,8 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
                   agentNodeId,
                   runId: selectedRun.id,
                   repetitionName: parentRepetitionName,
+                  inputsLink: data?.inputsLink,
+                  outputsLink: data?.outputsLink,
                 })
               );
             }
@@ -253,10 +255,10 @@ export const TreeActionItem = ({ id, content, icon, repetitionName, treeItemProp
       <ChatFilled className={mergeClasses(styles.treeItemToolIcon, data?.chatRole === 'User' && styles.userChatIcon)} />
     ) : data?.isHandoff ? (
       <img src={HandoffIcon} alt={id} className={styles.treeItemToolIcon} />
-    ) : equals(subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION) ? (
-      <WrenchFilled className={styles.treeItemToolIcon} />
     ) : data?.isBuiltInTool ? (
       <CodeFilled className={styles.treeItemToolIcon} />
+    ) : equals(subgraphType, SUBGRAPH_TYPES.AGENT_CONDITION) ? (
+      <WrenchFilled className={styles.treeItemToolIcon} />
     ) : (hasRepetitionData && !data) || !icon ? (
       <div className={styles.treeItemIcon} />
     ) : (

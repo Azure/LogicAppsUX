@@ -1,6 +1,6 @@
 import { Dropdown, type IDropdownOption } from '@fluentui/react';
 import { getIdentityDropdownOptions, type ManagedIdentity } from '@microsoft/logic-apps-shared';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 interface LegacyManagedIdentityDropdownProps {
@@ -14,8 +14,11 @@ const LegacyManagedIdentityDropdown = (props: LegacyManagedIdentityDropdownProps
   const intl = useIntl();
   const dropdownOptions = useMemo(() => getIdentityDropdownOptions(identity, intl), [identity, intl]);
 
-  // Even though the component has the default value, we need to call onChange to update the parent component
-  useEffect(() => onChange(null, dropdownOptions?.[0]), [onChange, dropdownOptions]);
+  // Use a ref for onChange so the effect only fires when dropdownOptions changes,
+  // not on every render when the parent re-creates the onChange callback.
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  useEffect(() => onChangeRef.current(null, dropdownOptions?.[0]), [dropdownOptions]);
 
   const noIdentitiesAvailable = useMemo(() => dropdownOptions.length === 0, [dropdownOptions]);
   const noIdentityText = intl.formatMessage({

@@ -9,9 +9,14 @@
   bottom: 0px;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 5;
+  z-index: 1;
   display: flex;
   gap: 8px;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
 
   *.ms-Button {
     border: none;

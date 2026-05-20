@@ -69,7 +69,6 @@ export const DesignerCommandBar = ({
   isDesignerView,
   isMonitoringView,
   isDarkMode,
-  showConnectionsPanel,
   showRunHistory,
   toggleRunHistory,
   enableCopilot,
@@ -88,7 +87,6 @@ export const DesignerCommandBar = ({
   isMonitoringView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
-  showConnectionsPanel?: boolean;
   showRunHistory?: boolean;
   toggleRunHistory: () => void;
   enableCopilot?: () => void;
@@ -396,17 +394,13 @@ export const DesignerCommandBar = ({
           dispatch(resetDesignerView());
         },
       },
-      ...(showConnectionsPanel
-        ? [
-            {
-              key: 'connections',
-              text: 'Connections',
-              iconProps: { iconName: 'Link' },
-              onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
-              onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
-            },
-          ]
-        : []),
+      {
+        key: 'connections',
+        text: 'Connections',
+        iconProps: { iconName: 'Link' },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
+      },
       {
         key: 'errors',
         text: 'Errors',
@@ -461,7 +455,6 @@ export const DesignerCommandBar = ({
       saveUnitTestIsDisabled,
       isCreateUnitTestDisabled,
       isUnitTest,
-      showConnectionsPanel,
       haveErrors,
       isDarkMode,
       isCopilotReady,

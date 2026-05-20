@@ -3,7 +3,6 @@ import {
   ConnectionService,
   equals,
   type KnowledgeHub,
-  type KnowledgeHubArtifact,
   type KnowledgeHubExtended,
   LogEntryLevel,
   LoggerService,
@@ -24,21 +23,14 @@ export const useAllKnowledgeHubs = (siteResourceId: string) => {
     queryKey: ['knowledgehubs', siteResourceId.toLowerCase()],
     queryFn: async (): Promise<KnowledgeHubExtended[]> => {
       try {
-        const response: any = await ResourceService().executeResourceAction(
-          `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHub`,
-          'GET',
-          { 'api-version': '2025-11-01' }
+        const response: any = await ResourceService().getResource(
+          `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgehubs`,
+          { 'api-version': '2018-11-01' }
         );
 
-        const hubs = (response.value ?? []).sort((a: KnowledgeHub, b: KnowledgeHub) => a.name.localeCompare(b.name));
+        const hubs = (response ?? []).sort((a: KnowledgeHub, b: KnowledgeHub) => a.name.localeCompare(b.name));
 
-        const promises: Promise<any>[] = hubs.map((hub: KnowledgeHub) => getArtifactsInHub(siteResourceId, hub.name));
-
-        const extendedHubs = await Promise.all(promises);
-        return hubs.map((hub: KnowledgeHub, index: number) => ({
-          ...hub,
-          artifacts: extendedHubs[index],
-        }));
+        return hubs;
       } catch (errorResponse: any) {
         const error = errorResponse?.error || {};
 
@@ -55,35 +47,6 @@ export const useAllKnowledgeHubs = (siteResourceId: string) => {
     enabled: !!siteResourceId,
     ...queryOpts,
   });
-};
-
-export const getArtifactsInHub = async (siteResourceId: string, hubName: string) => {
-  const queryClient = getReactQueryClient();
-
-  return queryClient.fetchQuery(
-    ['knowledgeartifacts', siteResourceId.toLowerCase(), hubName.toLowerCase()],
-    async (): Promise<KnowledgeHubArtifact[]> => {
-      try {
-        const response: any = await ResourceService().executeResourceAction(
-          `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHub/${hubName}/knowledgeArtifact`,
-          'GET',
-          { 'api-version': '2025-11-01' }
-        );
-
-        return (response.value ?? []).sort((a: KnowledgeHubArtifact, b: KnowledgeHubArtifact) => a.name.localeCompare(b.name));
-      } catch (errorResponse: any) {
-        const error = errorResponse?.error || {};
-        // For now log the error and return empty list
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'KnowledgeHub.listKnowledgeHubArtifacts',
-          error,
-          message: `Error while fetching knowledge artifacts for the app: ${siteResourceId}`,
-        });
-        return [];
-      }
-    }
-  );
 };
 
 export const useConnection = () => {

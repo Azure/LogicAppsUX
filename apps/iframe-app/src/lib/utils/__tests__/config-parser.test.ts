@@ -40,36 +40,36 @@ describe('parseIframeConfig', () => {
 
   describe('agent URL extraction', () => {
     it('extracts agent URL from data attribute', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe('http://test.agent/agent-card.json');
+      expect(config.props.agentCard).toBe('https://test.logic.azure.com/agent-card.json');
     });
 
     it('extracts agent URL from URL parameter', () => {
-      window.location.search = '?agentCard=http://url.agent/agent-card.json';
+      window.location.search = '?agentCard=https://url.logic.azure.com/agent-card.json';
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe('http://url.agent/agent-card.json');
+      expect(config.props.agentCard).toBe('https://url.logic.azure.com/agent-card.json');
     });
 
     it('supports legacy agent parameter', () => {
-      window.location.search = '?agent=http://legacy.agent/agent-card.json';
+      window.location.search = '?agent=https://legacy.logic.azure.com/agent-card.json';
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe('http://legacy.agent/agent-card.json');
+      expect(config.props.agentCard).toBe('https://legacy.logic.azure.com/agent-card.json');
     });
 
     it('prefers data attribute over URL parameter', () => {
-      document.documentElement.dataset.agentCard = 'http://data.agent/agent-card.json';
-      window.location.search = '?agentCard=http://url.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://data.logic.azure.com/agent-card.json';
+      window.location.search = '?agentCard=https://url.logic.azure.com/agent-card.json';
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe('http://data.agent/agent-card.json');
+      expect(config.props.agentCard).toBe('https://data.logic.azure.com/agent-card.json');
     });
 
     it('transforms URL to agent card when following iframe pattern', () => {
@@ -101,7 +101,7 @@ describe('parseIframeConfig', () => {
 
   describe('theme parsing', () => {
     it('parses theme from data attributes', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       document.documentElement.dataset.themePrimary = '#ff0000';
       document.documentElement.dataset.themeBackground = '#ffffff';
 
@@ -121,7 +121,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('uses theme preset', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?theme=azure';
 
       const config = parseIframeConfig();
@@ -132,7 +132,7 @@ describe('parseIframeConfig', () => {
 
   describe('branding parsing', () => {
     it('parses branding from data attributes', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       document.documentElement.dataset.brandTitle = 'My Chat';
       document.documentElement.dataset.brandSubtitle = 'AI Assistant';
       document.documentElement.dataset.brandLogoUrl = 'http://example.com/logo.png';
@@ -147,7 +147,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('uses default branding values when not specified', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
 
       const config = parseIframeConfig();
 
@@ -158,7 +158,7 @@ describe('parseIframeConfig', () => {
 
   describe('other configuration', () => {
     it('parses user ID from data attributes', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       document.documentElement.dataset.userId = 'user123';
 
       const config = parseIframeConfig();
@@ -167,7 +167,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('parses valid metadata JSON', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       document.documentElement.dataset.metadata = '{"key":"value","num":123}';
 
       const config = parseIframeConfig();
@@ -176,7 +176,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('handles invalid metadata JSON gracefully', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       document.documentElement.dataset.metadata = 'invalid json';
 
       const config = parseIframeConfig();
@@ -186,7 +186,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('parses allowed file types', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       document.documentElement.dataset.allowedFileTypes = '.pdf,.doc,.txt';
 
       const config = parseIframeConfig();
@@ -195,7 +195,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('handles allowFileUpload as true by default', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
 
       const config = parseIframeConfig();
 
@@ -203,7 +203,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('parses multi-session mode', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?multiSession=true';
 
       const config = parseIframeConfig();
@@ -212,7 +212,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('parses context ID from URL parameter', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?contextId=ctx-123';
 
       const config = parseIframeConfig();
@@ -221,7 +221,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('returns undefined for identity providers when window.IDENTITY_PROVIDERS is not set', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
 
       const config = parseIframeConfig();
 
@@ -230,7 +230,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('uses window.IDENTITY_PROVIDERS when set', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = '{"custom":{"signInEndpoint":"/.auth/login/custom","name":"Custom Provider"}}';
 
       const config = parseIframeConfig();
@@ -247,7 +247,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('returns undefined for identity providers when IDENTITY_PROVIDERS is invalid JSON', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = 'not valid json';
 
       const config = parseIframeConfig();
@@ -261,7 +261,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('returns undefined for identity providers when IDENTITY_PROVIDERS is empty string', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = '';
 
       const config = parseIframeConfig();
@@ -274,7 +274,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to null', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = 'null';
 
       const config = parseIframeConfig();
@@ -287,7 +287,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to array', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = '["microsoft", "google"]';
 
       const config = parseIframeConfig();
@@ -300,7 +300,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('returns undefined for identity providers when IDENTITY_PROVIDERS parses to primitive', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       (window as any).IDENTITY_PROVIDERS = '"just a string"';
 
       const config = parseIframeConfig();
@@ -313,7 +313,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('handles multiple identity providers', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       (window as any).IDENTITY_PROVIDERS =
         '{"microsoft":{"signInEndpoint":"/.auth/login/aad","name":"Microsoft"},"google":{"signInEndpoint":"/.auth/login/google","name":"Google"},"github":{"signInEndpoint":"/.auth/login/github","name":"GitHub"}}';
 
@@ -332,7 +332,7 @@ describe('parseIframeConfig', () => {
 
   describe('portal security', () => {
     it('validates trusted portal authority', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?inPortal=true&trustedAuthority=https://portal.azure.com';
 
       const config = parseIframeConfig();
@@ -342,7 +342,7 @@ describe('parseIframeConfig', () => {
     });
 
     it('allows subdomain of trusted authority', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?inPortal=true&trustedAuthority=https://subdomain.portal.azure.com';
 
       const config = parseIframeConfig();
@@ -352,14 +352,14 @@ describe('parseIframeConfig', () => {
     });
 
     it('throws error for untrusted authority', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?inPortal=true&trustedAuthority=https://evil.com';
 
       expect(() => parseIframeConfig()).toThrow("The origin 'evil.com' is not trusted for Frame Blade");
     });
 
     it('allows localhost for development', () => {
-      document.documentElement.dataset.agentCard = 'http://test.agent/agent-card.json';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?inPortal=true&trustedAuthority=https://localhost:3000';
 
       const config = parseIframeConfig();

@@ -23,6 +23,8 @@ export {
   setFocusNode,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } from './state/workflow/workflowSlice';
 export {
   useIsWorkflowDirty,

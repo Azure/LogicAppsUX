@@ -8,7 +8,7 @@ export default defineProject({
     name: packageJson.name,
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['test-setup.ts'],
+    setupFiles: ['test-setup.ts', '../shared-test-utils/fluentui-react-icons-mock.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
     typecheck: { enabled: true },
     restoreMocks: true,

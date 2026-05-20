@@ -19,6 +19,7 @@ export default [
             "**/node_modules/**",
             "**/build/**",
             "**/dist/**",
+            "**/out/**",
             "**/__test__/**",
             "**/__tests__/**",
             "**/compiled-lang/**",

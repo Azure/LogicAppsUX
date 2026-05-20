@@ -64,4 +64,5 @@ export interface WorkflowState {
   timelineRepetitionIndex: number;
   timelineRepetitionArray: string[][];
   flowErrors: Record<string, string[]>;
+  copilotModifiedNodeIds: Record<string, boolean>;
 }

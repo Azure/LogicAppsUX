@@ -89,5 +89,6 @@ export * from './unitTesting/conditionExpression';
 export * from './teachingPopup';
 export * from './tokens';
 export * from './knowledge';
+export * from './filedropzone';
 export { FunctionGroupDefinitions as TemplateFunctions } from './workflow/languageservice/templatefunctions';
 export type { FunctionDefinition } from './workflow/languageservice/templatefunctions';

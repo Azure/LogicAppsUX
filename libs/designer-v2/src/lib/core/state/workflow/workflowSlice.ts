@@ -83,6 +83,7 @@ export const initialWorkflowState: WorkflowState = {
   timelineRepetitionIndex: 0,
   timelineRepetitionArray: [],
   flowErrors: {},
+  copilotModifiedNodeIds: {},
 };
 
 export const workflowSlice = createSlice({
@@ -816,6 +817,16 @@ export const workflowSlice = createSlice({
     setFlowErrors: (state, action: PayloadAction<{ flowErrors: Record<string, string[]> }>) => {
       state.flowErrors = action.payload.flowErrors;
     },
+    setCopilotModifiedNodeIds: (state, action: PayloadAction<string[]>) => {
+      const nodeIds: Record<string, boolean> = {};
+      for (const nodeId of action.payload) {
+        nodeIds[nodeId] = true;
+      }
+      state.copilotModifiedNodeIds = nodeIds;
+    },
+    clearCopilotModifiedNodeIds: (state) => {
+      state.copilotModifiedNodeIds = {};
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -832,7 +843,10 @@ export const workflowSlice = createSlice({
         state.changeCount += 1;
       }
     });
-    builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(resetWorkflowState, (state) => ({
+      ...initialWorkflowState,
+      copilotModifiedNodeIds: state.copilotModifiedNodeIds,
+    }));
     builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
       const { nodeId, inputs, outputs } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -842,15 +856,18 @@ export const workflowSlice = createSlice({
       const existingInputs = nodeMetadata.runData?.inputs;
       const existingOutputs = nodeMetadata.runData?.outputs;
 
-      // Don't overwrite existing inputs/outputs with empty values
-      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData)
+      // Only preserve existing inputs/outputs when they have content
+      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData).
+      // For regular actions, empty {} is a valid result and should be written.
       const hasNewInputs = inputs && Object.keys(inputs).length > 0;
       const hasNewOutputs = outputs && Object.keys(outputs).length > 0;
+      const hasExistingInputs = existingInputs && Object.keys(existingInputs).length > 0;
+      const hasExistingOutputs = existingOutputs && Object.keys(existingOutputs).length > 0;
 
       const nodeRunData = {
         ...nodeMetadata.runData,
-        inputs: hasNewInputs ? inputs : existingInputs,
-        outputs: hasNewOutputs ? outputs : existingOutputs,
+        inputs: hasNewInputs || !hasExistingInputs ? inputs : existingInputs,
+        outputs: hasNewOutputs || !hasExistingOutputs ? outputs : existingOutputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });
@@ -958,6 +975,8 @@ export const {
   updateAgenticMetadata,
   setFocusElement,
   clearFocusElement,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

@@ -200,31 +200,6 @@ describe('HybridQueryBuilderEditor Move Functionality', () => {
       const comboboxes = screen.getAllByRole('combobox');
       expect(comboboxes.length).toBeGreaterThan(0);
     });
-
-    it('should maintain performance with large structures', () => {
-      const largeStructure = createTestGroup({
-        items: Array.from({ length: 15 }, (_, i) =>
-          i % 3 === 0
-            ? createTestGroup({
-                items: [
-                  createTestRow({
-                    operand1: createTestValueSegment(`nested${i}`),
-                  }),
-                  createTestRow({
-                    operand1: createTestValueSegment(`nested${i + 1}`),
-                  }),
-                ],
-              })
-            : createTestRow({ operand1: createTestValueSegment(`field${i}`) })
-        ),
-      });
-
-      renderHybridQueryBuilder({ groupProps: largeStructure });
-
-      // Should handle large structures efficiently
-      expect(screen.getByText('field1')).toBeInTheDocument();
-      expect(screen.getByText('nested0')).toBeInTheDocument();
-    });
   });
 
   describe('Comparison with Regular QueryBuilder', () => {

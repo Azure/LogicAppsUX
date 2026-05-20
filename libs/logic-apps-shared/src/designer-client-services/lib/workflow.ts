@@ -1,4 +1,4 @@
-import type { OpenAPIV2, ManagedIdentity, LogicAppsV2, AgentURL } from '../../utils/src';
+import type { OpenAPIV2, ManagedIdentity, LogicAppsV2, AgentURL, UploadFile } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 import type { CallbackInfo } from './callbackInfo';
 import type { BladeReference, OpenBladeOptions } from './common/models/AzurePortalBlade';
@@ -44,6 +44,11 @@ export interface IWorkflowService {
   notifyCallbackUrlUpdate?(triggerName: string, newTriggerId: string): void;
 
   /**
+   * Gets Logic App resource id of the workflow being designed.
+   */
+  getLogicAppId?(): string;
+
+  /**
    * Gets managed identity associated with workflow app.
    */
   getAppIdentity?(): ManagedIdentity | undefined;
@@ -77,9 +82,29 @@ export interface IWorkflowService {
   resubmitWorkflow?(runId: string, actionsToResubmit: string[]): void;
 
   /**
+   * Uploads file artifact to knowledge hub in multi-part request
+   */
+  uploadFileArtifact?(
+    resourceId: string,
+    hubName: string,
+    content: { file: UploadFile; name: string; description?: string },
+    setIsLoading: (isLoading: boolean) => void
+  ): Promise<void>;
+
+  /**
+   * Flag to determine if knowledge hub features should be enabled in the workflow designer
+   */
+  isKnowledgeHubEnabled?(): boolean;
+
+  /**
    * Opens an Azure Portal blade
    */
   openBlade?(bladeReference: BladeReference | Promise<BladeReference>, options?: OpenBladeOptions): Promise<boolean>;
+
+  /**
+   * Gets sandbox configurations from the integration account.
+   */
+  getSandboxConfigurations?(integrationAccountId: string): Promise<any[]>;
 }
 
 let service: IWorkflowService;

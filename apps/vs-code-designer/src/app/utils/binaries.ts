@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
-  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dotnetDependencyName,
@@ -19,12 +18,11 @@ import {
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
-import { onboardBinaries } from '../../onboarding';
 import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { isDevContainerWorkspace } from './devContainerUtils';
+import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -38,6 +36,8 @@ import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
+
+export { useBinariesDependencies } from './runtimeDependencies';
 
 /**
  * Download and Extracts dependency zip.
@@ -143,7 +143,7 @@ const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, maj
     const latestVersion = semver.valid(semver.coerce(response.tag_name));
     context.telemetry.properties.latestVersionSource = 'github';
     context.telemetry.properties.latestGithubVersion = response.tag_name;
-    if (checkMajorVersion(latestVersion, majorVersion)) {
+    if (latestVersion && checkMajorVersion(latestVersion, majorVersion)) {
       return latestVersion;
     }
     throw new Error(
@@ -151,7 +151,7 @@ const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, maj
         'latestVersionNotFound',
         'Latest version of Azure Functions Core Tools not found for major version {0}. Latest version is {1}.',
         majorVersion,
-        latestVersion
+        latestVersion ?? 'unknown'
       )
     );
   } catch (error) {
@@ -201,10 +201,13 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
     return await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
       .then((response: IGitHubReleaseInfo[]) => {
         context.telemetry.properties.latestVersionSource = 'github';
-        let latestVersion: string | null;
+        let latestVersion: string | null = null;
         for (const releaseInfo of response) {
           const releaseVersion: string | null = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
+          if (!releaseVersion) {
+            continue;
+          }
           if (
             checkMajorVersion(releaseVersion, majorVersion) &&
             (isNullOrUndefined(latestVersion) || semver.gt(releaseVersion, latestVersion))
@@ -212,7 +215,7 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
             latestVersion = releaseVersion;
           }
         }
-        return latestVersion;
+        return latestVersion ?? DependencyVersion.dotnet8;
       })
       .catch((error) => {
         context.telemetry.properties.latestVersionSource = 'fallback';
@@ -235,7 +238,7 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
         for (const releaseInfo of response) {
           const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
-          if (checkMajorVersion(releaseVersion, majorVersion)) {
+          if (releaseVersion && checkMajorVersion(releaseVersion, majorVersion)) {
             return releaseVersion;
           }
         }
@@ -290,7 +293,11 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
   if (!(await useBinariesDependencies())) {
     return false;
   }
+
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  if (!binariesLocation) {
+    return false;
+  }
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
 
@@ -306,7 +313,8 @@ async function readJsonFromUrl(url: string): Promise<any> {
     }
     throw new Error(`Request failed with status: ${response.status}`);
   } catch (error) {
-    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${error.message}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${errorMessage}`);
     throw error;
   }
 }
@@ -353,7 +361,7 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
   try {
     if (dependencyFilePath.endsWith('.zip')) {
       const zip = new AdmZip(dependencyFilePath);
-      await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
+      zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
     } else {
       await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
     }
@@ -398,7 +406,6 @@ function extractContainerFolder(targetFolder: string) {
 
 /**
  * Gets dependency timeout setting value from workspace settings.
- * @param {IActionContext} context - Command context.
  * @returns {number} Timeout value in seconds.
  */
 export function getDependencyTimeout(): number {
@@ -435,18 +442,3 @@ export async function installBinaries(context: IActionContext) {
     context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
   }
 }
-
-/**
- * Returns boolean to determine if workspace uses binaries dependencies.
- * Returns false for devContainer workspaces as they have pre-configured environments.
- */
-export const useBinariesDependencies = async (): Promise<boolean> => {
-  // Always return false for devContainer workspaces
-  const isDevContainer = await isDevContainerWorkspace();
-  if (isDevContainer) {
-    return false;
-  }
-
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
-  return !!binariesInstallation;
-};

@@ -18,7 +18,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="24"
           viewBox="0 0 24 24"
@@ -32,7 +32,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="24"
           viewBox="0 0 24 24"
@@ -62,7 +62,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             style={
@@ -81,7 +81,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             style={
@@ -213,7 +213,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="24"
           viewBox="0 0 24 24"
@@ -227,7 +227,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="24"
           viewBox="0 0 24 24"
@@ -257,7 +257,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             style={
@@ -276,7 +276,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             style={
@@ -341,7 +341,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
       >
         <svg
           aria-hidden={true}
-          className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+          className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
           fill="currentColor"
           height="24"
           viewBox="0 0 24 24"
@@ -355,7 +355,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
         </svg>
         <svg
           aria-hidden={true}
-          className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+          className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
           fill="currentColor"
           height="24"
           viewBox="0 0 24 24"
@@ -402,7 +402,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
         >
           <svg
             aria-hidden={true}
-            className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             style={
@@ -421,7 +421,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
           </svg>
           <svg
             aria-hidden={true}
-            className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="24"
             style={

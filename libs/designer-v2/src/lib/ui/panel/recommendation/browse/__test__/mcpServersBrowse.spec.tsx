@@ -52,6 +52,7 @@ const createTestStore = () =>
   configureStore({
     reducer: {
       panel: () => ({}),
+      designerOptions: () => ({ hostOptions: {} }),
     },
   });
 

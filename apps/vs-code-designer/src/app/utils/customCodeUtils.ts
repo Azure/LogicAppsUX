@@ -8,6 +8,7 @@ import { ext } from '../../extensionVariables';
 import { getWorkspaceRoot } from './workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { customDirectory, libDirectory } from '../../constants';
 
 export interface CustomCodeFunctionsProjectMetadata {
   projectPath: string;
@@ -22,7 +23,7 @@ export async function customCodeArtifactsExist(projectPath: string): Promise<boo
     return false;
   }
 
-  const customCodeArtifactsPath = path.join(projectPath, 'lib', 'custom');
+  const customCodeArtifactsPath = path.join(projectPath, libDirectory, customDirectory);
   const customFolderExists = await fse.pathExists(customCodeArtifactsPath);
   if (!customFolderExists) {
     return false;

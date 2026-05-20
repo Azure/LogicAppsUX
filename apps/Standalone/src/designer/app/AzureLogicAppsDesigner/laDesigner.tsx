@@ -24,6 +24,7 @@ import {
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
   validateWorkflowStandard,
+  uploadFileToKnowledgeHub,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -32,8 +33,6 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
-  BaseCopilotWorkflowEditorService,
-  InitCopilotWorkflowEditorService,
   BaseExperimentationService,
   BaseUserPreferenceService,
   BaseFunctionService,
@@ -54,6 +53,7 @@ import {
   BaseCognitiveServiceService,
   RoleService,
   resolveConnectionsReferences,
+  BaseResourceService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -72,9 +72,6 @@ import {
   getMissingRoleDefinitions,
   roleQueryKeys,
   isAgentWorkflow,
-  setIsWorkflowDirty,
-  setFocusNode,
-  changePanelNode,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -107,7 +104,6 @@ const DesignerEditor = () => {
     language,
     hostOptions,
     hostingPlan,
-    showConnectionsPanel,
     showEdgeDrawing,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
@@ -480,7 +476,6 @@ const DesignerEditor = () => {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
-          showConnectionsPanel,
           showEdgeDrawing,
           showPerformanceDebug,
           mcpClientToolEnabled: true,
@@ -520,26 +515,6 @@ const DesignerEditor = () => {
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-                  enableWorkflowEditing={true}
-                  autoApply={true}
-                  onWorkflowProposed={(newWorkflow) => {
-                    if (newWorkflow.parameters) {
-                      setCurrentParameters(newWorkflow.parameters as unknown as ParametersData);
-                    }
-                    setWorkflow({
-                      ...newWorkflow,
-                      id: guid(),
-                    });
-                    DesignerStore.dispatch(setIsWorkflowDirty(true));
-                  }}
-                  getNodeVisuals={(nodeId) => {
-                    const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
-                    return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
-                  }}
-                  onNodeClick={(nodeId) => {
-                    DesignerStore.dispatch(setFocusNode(nodeId));
-                    DesignerStore.dispatch(changePanelNode(nodeId));
-                  }}
                 />
               ) : null}
               <div
@@ -561,7 +536,6 @@ const DesignerEditor = () => {
                   isUnitTest={isUnitTest}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
-                  showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
                   toggleMonitoringView={toggleMonitoringView}
                   showRunHistory={showRunHistory}
@@ -872,6 +846,7 @@ const getDesignerServices = (
   const workflowService: IWorkflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
     getAgentUrl: () => fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? ''),
+    getLogicAppId: () => siteResourceId,
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
@@ -899,9 +874,11 @@ const getDesignerServices = (
       const workflowId: string = response.headers['x-ms-workflow-run-id'];
       dispatch(changeRunId(workflowId));
     },
+    uploadFileArtifact: uploadFileToKnowledgeHub,
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
+    isKnowledgeHubEnabled: () => true,
   };
 
   const hostService: IHostService = {
@@ -942,20 +919,6 @@ const getDesignerServices = (
     location,
   });
 
-  // Initialize CopilotWorkflowEditorService if API key is configured
-  const copilotEditorApiKey = import.meta.env.VITE_COPILOT_EDITOR_API_KEY;
-  const copilotEditorEndpoint = import.meta.env.VITE_COPILOT_EDITOR_ENDPOINT;
-  if (copilotEditorApiKey && copilotEditorEndpoint) {
-    const copilotEditorService = new BaseCopilotWorkflowEditorService({
-      endpoint: copilotEditorEndpoint,
-      apiKey: copilotEditorApiKey,
-      model: import.meta.env.VITE_COPILOT_EDITOR_MODEL || undefined,
-      deploymentName: import.meta.env.VITE_COPILOT_EDITOR_DEPLOYMENT || undefined,
-      apiVersion: import.meta.env.VITE_COPILOT_EDITOR_API_VERSION || undefined,
-    });
-    InitCopilotWorkflowEditorService(copilotEditorService);
-  }
-
   const customCodeService = new StandardCustomCodeService({
     apiVersion: '2018-11-01',
     baseUrl: armUrl,
@@ -978,6 +941,7 @@ const getDesignerServices = (
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
 
   return {
     appService,
@@ -1000,6 +964,7 @@ const getDesignerServices = (
     cognitiveServiceService,
     connectionParameterEditorService,
     editorService,
+    resourceService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

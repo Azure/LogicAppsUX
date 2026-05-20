@@ -1,4 +1,5 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
+import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { ApiHubServiceDetails, SchemaType, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import type {
   MapDefinitionData,
@@ -141,25 +142,6 @@ export interface IResourceGroup {
   text?: string;
 }
 
-export const RouteName = {
-  export: 'export',
-  instance_selection: 'instance-selection',
-  workflows_selection: 'workflows-selection',
-  validation: 'validation',
-  overview: 'overview',
-  summary: 'summary',
-  status: 'status',
-  review: 'review',
-  designer: 'designer',
-  dataMapper: 'dataMapper',
-  unitTest: 'unitTest',
-  createWorkspace: 'createWorkspace',
-  createWorkspaceFromPackage: 'createWorkspaceFromPackage',
-  createLogicApp: 'createLogicApp',
-  createWorkspaceStructure: 'createWorkspaceStructure',
-};
-
-export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];
 export const ValidationStatus = {
   succeeded: 'Succeeded',
   succeeded_with_warnings: 'SucceededWithWarning',
@@ -314,6 +296,16 @@ export interface UpdateCallbackInfoMessage {
   command: typeof ExtensionCommand.update_callback_info;
   data: {
     callbackInfo?: ICallbackUrlResponse;
+    workflowName?: string;
+  };
+}
+
+export interface UpdateWorkflowPropertiesMessage {
+  command: typeof ExtensionCommand.update_workflow_properties;
+  data: {
+    workflowProperties: OverviewPropertiesProps;
+    workflowPropertiesList?: OverviewPropertiesProps[];
+    kind?: string;
   };
 }
 

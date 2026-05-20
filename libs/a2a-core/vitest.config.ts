@@ -6,7 +6,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
-    setupFiles: ['./src/react/test/setup.ts'],
+    setupFiles: ['./src/react/test/setup.ts', '../shared-test-utils/fluentui-react-icons-mock.ts'],
     coverage: {
       enabled: true,
       provider: 'istanbul',
@@ -17,6 +17,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      react: resolve(__dirname, 'node_modules/react'),
+      'react-dom': resolve(__dirname, 'node_modules/react-dom'),
       '\\.(css|less|scss|sass)$': resolve(__dirname, './src/react/test/css-modules-mock.js'),
     },
   },

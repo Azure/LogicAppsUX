@@ -46,6 +46,7 @@ export const useRunsInfiniteQuery = (enabled = false) => {
     {
       enabled,
       ...queryOpts,
+      refetchInterval: enabled ? constants.RUN_POLLING_INTERVAL_IN_MS : false,
       getNextPageParam: (lastPage) => lastPage.nextLink ?? undefined,
       // Seed flattened runs and per-run cache entries so `useRun` can read
       // them without an extra fetch when available.
@@ -105,6 +106,12 @@ export const useRun = (runId: string | undefined, enabled = true) => {
         ...old,
         [fetchedRun.id]: fetchedRun,
       }));
+
+      // When a run reaches terminal status, refresh the runs list
+      if (fetchedRun.properties.status !== constants.FLOW_STATUS.RUNNING) {
+        queryClient.invalidateQueries([runsQueriesKeys.runs]);
+      }
+
       return fetchedRun;
     },
     {

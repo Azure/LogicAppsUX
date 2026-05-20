@@ -41,3 +41,62 @@ export const useWizardStyles = makeStyles({
     padding: '10px 0',
   },
 });
+
+export const useListStyles = makeStyles({
+  tableStyle: {
+    width: '95%',
+  },
+
+  tableCell: {
+    border: 'none',
+    paddingBottom: '8px',
+  },
+
+  rowCell: {
+    alignItems: 'center',
+  },
+
+  icon: {
+    marginRight: '8px',
+  },
+
+  iconsCell: {
+    textAlign: 'right',
+    border: 'none',
+    paddingBottom: '8px',
+    width: '8%',
+  },
+
+  nameCell: {
+    display: 'flex',
+    minWidth: 0,
+  },
+
+  nameText: {
+    display: 'flex',
+    gap: '8px',
+    marginTop: '6px',
+    minWidth: 0,
+    alignItems: 'flex-start',
+  },
+
+  nameIcon: {
+    flexShrink: 0,
+  },
+
+  nameLabel: {
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+  },
+
+  hubNameCell: {},
+
+  artifactNameCell: {
+    marginLeft: '32px',
+  },
+
+  statusCell: {
+    display: 'flex',
+    gap: '4px',
+  },
+});

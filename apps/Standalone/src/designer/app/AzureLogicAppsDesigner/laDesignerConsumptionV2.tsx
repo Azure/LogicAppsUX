@@ -31,8 +31,6 @@ import {
   ConsumptionSearchService,
   BaseChatbotService,
   BaseCopilotWorkflowEditorService,
-  InitCopilotWorkflowEditorService,
-  CONSUMPTION_SYSTEM_PROMPT,
   ConsumptionRunService,
   guid,
   startsWith,
@@ -58,6 +56,8 @@ import {
   setIsWorkflowDirty,
   setFocusNode,
   changePanelNode,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } from '@microsoft/logic-apps-designer-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -307,7 +307,7 @@ const DesignerEditorConsumption = () => {
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
+      skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
     return serializedWorkflow;
@@ -457,6 +457,7 @@ const DesignerEditorConsumption = () => {
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
+            integrationAccount: (workflowAndArtifactsData?.properties as any)?.integrationAccount,
           },
           showPerformanceDebug,
         }}
@@ -484,16 +485,20 @@ const DesignerEditorConsumption = () => {
                 getAuthToken={getAuthToken}
                 enableWorkflowEditing={true}
                 autoApply={true}
-                onWorkflowProposed={(newWorkflow) => {
+                onWorkflowProposed={(newWorkflow, changes) => {
                   setNotes(newWorkflow.notes ?? {});
                   if (newWorkflow.parameters) {
                     setParameters(newWorkflow.parameters);
                   }
-                  setWorkflow({
-                    ...newWorkflow,
-                    id: guid(),
-                  });
+                  setWorkflow({ ...newWorkflow });
                   DesignerStore.dispatch(setIsWorkflowDirty(true));
+                  if (changes) {
+                    const nodeIds = changes.flatMap((change) => change.nodeIds);
+                    DesignerStore.dispatch(setCopilotModifiedNodeIds(nodeIds));
+                    setTimeout(() => DesignerStore.dispatch(clearCopilotModifiedNodeIds()), 3000);
+                  } else {
+                    DesignerStore.dispatch(clearCopilotModifiedNodeIds());
+                  }
                 }}
                 getNodeVisuals={(nodeId) => {
                   const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
@@ -728,7 +733,7 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint, isDraftMode);
     },
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => workflowAndArtifactsData?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
@@ -737,6 +742,20 @@ const getDesignerServices = (
     },
     notifyCallbackUrlUpdate: (triggerName: string, newTriggerId: string) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
+    },
+    getSandboxConfigurations: async (integrationAccountId: string) => {
+      // Agent harness sandbox APIs are only available in limited regions.
+      // Use the regional ARM endpoint (brazilus) to route requests to a supported region.
+      const sandboxBaseUrl = 'https://brazilus.management.azure.com';
+      const response = await httpClient.get<any>({
+        uri: `${sandboxBaseUrl}${integrationAccountId}/sandboxConfigurations`,
+        queryParameters: { 'api-version': '2016-06-01' },
+      });
+      // This endpoint returns a bare JSON array, not the usual ARM { value: [...] } envelope.
+      if (Array.isArray(response)) {
+        return response;
+      }
+      return response?.value ?? [];
     },
   };
 
@@ -779,20 +798,14 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
-  // Initialize CopilotWorkflowEditorService if API key is configured
-  const copilotEditorApiKey = import.meta.env.VITE_COPILOT_EDITOR_API_KEY;
-  const copilotEditorEndpoint = import.meta.env.VITE_COPILOT_EDITOR_ENDPOINT;
-  if (copilotEditorApiKey && copilotEditorEndpoint) {
-    const copilotEditorService = new BaseCopilotWorkflowEditorService({
-      endpoint: copilotEditorEndpoint,
-      apiKey: copilotEditorApiKey,
-      model: import.meta.env.VITE_COPILOT_EDITOR_MODEL || undefined,
-      deploymentName: import.meta.env.VITE_COPILOT_EDITOR_DEPLOYMENT || undefined,
-      apiVersion: import.meta.env.VITE_COPILOT_EDITOR_API_VERSION || undefined,
-      systemPrompt: CONSUMPTION_SYSTEM_PROMPT,
-    });
-    InitCopilotWorkflowEditorService(copilotEditorService);
-  }
+  // Initialize CopilotWorkflowEditorService
+  const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
+    baseUrl,
+    subscriptionId,
+    location: 'centralusstage',
+    apiVersion: '2026-03-01-preview',
+    getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
+  });
 
   // This isn't correct but without it I was getting errors
   //   It's fine just to unblock standalone consumption
@@ -829,6 +842,7 @@ const getDesignerServices = (
     roleService,
     hostService,
     chatbotService,
+    copilotWorkflowEditorService,
     customCodeService,
     cognitiveServiceService,
     userPreferenceService: new BaseUserPreferenceService(),

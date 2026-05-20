@@ -14,6 +14,10 @@ import {
   useAllConnectionErrors,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
+  onUndoClick,
+  onRedoClick,
+  useCanUndo,
+  useCanRedo,
   type RootState,
   resetDesignerView,
   collapsePanel,
@@ -57,6 +61,8 @@ import {
   CheckmarkFilled,
   ArrowUndoFilled,
   ArrowUndoRegular,
+  ArrowRedoFilled,
+  ArrowRedoRegular,
 } from '@fluentui/react-icons';
 import { useCommandBarStyles } from './styles';
 import { useSelector } from 'react-redux';
@@ -65,6 +71,8 @@ import { useIntlMessages, designerMessages } from '../../../intl';
 // Designer icons
 const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
 const DiscardIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
+const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
+const RedoIcon = bundleIcon(ArrowRedoFilled, ArrowRedoRegular);
 const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
 const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
@@ -91,12 +99,13 @@ export interface DesignerCommandBarProps {
   switchToDesignerView: () => void;
   switchToCodeView: () => void;
   switchToMonitoringView: () => void;
+  supportsUnitTest?: boolean;
+  showRunHistory?: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isDarkMode,
   isUnitTest,
-  isLocal,
   runId,
   saveWorkflow: _saveWorkflow,
   saveWorkflowFromCode: _saveWorkflowFromCode,
@@ -107,6 +116,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   switchToDesignerView,
   switchToCodeView,
   switchToMonitoringView,
+  supportsUnitTest,
+  showRunHistory = true,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -237,6 +248,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     [isMonitoringView, isSaving, isSavingFromCode, haveErrors, designerIsDirty]
   );
 
+  const isUndoDisabled = !useCanUndo();
+  const isRedoDisabled = !useCanRedo();
+
   const ViewModeSelect = () => (
     <Card className={styles.viewModeContainer}>
       <Button
@@ -263,18 +277,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       >
         Code
       </Button>
-      <Button
-        appearance={isMonitoringView ? 'primary' : 'subtle'}
-        className={mergeClasses(styles.viewButton, isMonitoringView ? styles.selectedButton : '')}
-        size="small"
-        onClick={() => {
-          dispatch(collapsePanel());
-          dispatch(resetDesignerView());
-          switchToMonitoringView();
-        }}
-      >
-        Run history
-      </Button>
+      {showRunHistory ? (
+        <Button
+          appearance={isMonitoringView ? 'primary' : 'subtle'}
+          className={mergeClasses(styles.viewButton, isMonitoringView ? styles.selectedButton : '')}
+          size="small"
+          onClick={() => {
+            dispatch(collapsePanel());
+            dispatch(resetDesignerView());
+            switchToMonitoringView();
+          }}
+        >
+          Run history
+        </Button>
+      ) : null}
     </Card>
   );
 
@@ -360,13 +376,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
-          {isLocal && (
+          {supportsUnitTest && (
             <MenuItem key={'create-unit-test'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
               {intlText.CREATE_UNIT_TEST_FROM_RUN}
             </MenuItem>
           )}
           {isUnitTest && <UnitTestItems />}
           <PanelItems />
+          <MenuDivider />
+          <MenuItem disabled={!isDesignerView || isUndoDisabled} onClick={() => dispatch(onUndoClick())} icon={<UndoIcon />}>
+            {intlText.UNDO}
+          </MenuItem>
+          <MenuItem disabled={!isDesignerView || isRedoDisabled} onClick={() => dispatch(onRedoClick())} icon={<RedoIcon />}>
+            {intlText.REDO}
+          </MenuItem>
           <MenuDivider />
           <MenuItem
             key={'file-a-bug'}

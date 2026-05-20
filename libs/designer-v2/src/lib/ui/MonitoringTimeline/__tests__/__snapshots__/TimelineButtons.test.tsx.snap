@@ -15,7 +15,7 @@ exports[`TimelineButtons > should render collapsed (not expanded) 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -29,7 +29,7 @@ exports[`TimelineButtons > should render collapsed (not expanded) 1`] = `
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -54,7 +54,7 @@ exports[`TimelineButtons > should render collapsed (not expanded) 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -68,7 +68,7 @@ exports[`TimelineButtons > should render collapsed (not expanded) 1`] = `
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -100,7 +100,7 @@ exports[`TimelineButtons > should render with default props 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -114,7 +114,7 @@ exports[`TimelineButtons > should render with default props 1`] = `
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -140,7 +140,7 @@ exports[`TimelineButtons > should render with default props 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -154,7 +154,7 @@ exports[`TimelineButtons > should render with default props 1`] = `
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -187,7 +187,7 @@ exports[`TimelineButtons > should render with disabled buttons when fetching rep
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -201,7 +201,7 @@ exports[`TimelineButtons > should render with disabled buttons when fetching rep
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -227,7 +227,7 @@ exports[`TimelineButtons > should render with disabled buttons when fetching rep
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -241,7 +241,7 @@ exports[`TimelineButtons > should render with disabled buttons when fetching rep
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -274,7 +274,7 @@ exports[`TimelineButtons > should render with disabled buttons when no repetitio
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -288,7 +288,7 @@ exports[`TimelineButtons > should render with disabled buttons when no repetitio
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -314,7 +314,7 @@ exports[`TimelineButtons > should render with disabled buttons when no repetitio
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -328,7 +328,7 @@ exports[`TimelineButtons > should render with disabled buttons when no repetitio
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -361,7 +361,7 @@ exports[`TimelineButtons > should render with disabled next button at last task 
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -375,7 +375,7 @@ exports[`TimelineButtons > should render with disabled next button at last task 
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -401,7 +401,7 @@ exports[`TimelineButtons > should render with disabled next button at last task 
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -415,7 +415,7 @@ exports[`TimelineButtons > should render with disabled next button at last task 
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -448,7 +448,7 @@ exports[`TimelineButtons > should render with disabled previous button at first 
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -462,7 +462,7 @@ exports[`TimelineButtons > should render with disabled previous button at first 
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -488,7 +488,7 @@ exports[`TimelineButtons > should render with disabled previous button at first 
     >
       <svg
         aria-hidden={true}
-        className="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"
@@ -502,7 +502,7 @@ exports[`TimelineButtons > should render with disabled previous button at first 
       </svg>
       <svg
         aria-hidden={true}
-        className="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         viewBox="0 0 20 20"

@@ -1,11 +1,10 @@
-import type { ApiHubServiceDetails, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
+import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type {
   CompleteFileSystemConnectionData,
-  ConnectionsData,
   ICallbackUrlResponse,
   IDesignerPanelMetadata,
 } from '@microsoft/vscode-extension-logic-apps';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DesignerState {
@@ -26,6 +25,7 @@ export interface DesignerState {
   hostVersion: string;
   isUnitTest: boolean;
   unitTestDefinition: UnitTestDefinition | null;
+  supportsUnitTest: boolean;
 }
 
 const initialState: DesignerState = {
@@ -57,13 +57,13 @@ const initialState: DesignerState = {
   hostVersion: '',
   isUnitTest: false,
   unitTestDefinition: null,
+  supportsUnitTest: false,
 };
 
-export const designerSlice = createSlice({
+export const designerSlice: Slice<DesignerState> = createSlice({
   name: 'designer',
   initialState,
   reducers: {
-    /// TODO(ccastrotrejo): Update missing types
     initializeDesigner: (state, action: PayloadAction<any>) => {
       const {
         panelMetadata,
@@ -80,6 +80,7 @@ export const designerSlice = createSlice({
         isUnitTest,
         unitTestDefinition,
         workflowRuntimeBaseUrl,
+        supportsUnitTest,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -96,6 +97,7 @@ export const designerSlice = createSlice({
       state.hostVersion = hostVersion;
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
+      state.supportsUnitTest = supportsUnitTest ?? (isLocal && !isMonitoringView);
     },
     updateRuntimeBaseUrl: (state, action: PayloadAction<string | undefined>) => {
       state.workflowRuntimeBaseUrl = action.payload ?? '';

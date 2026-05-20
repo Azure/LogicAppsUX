@@ -5,7 +5,8 @@ import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import { LogEntryLevel, LoggerService, TokenType, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, TokenType, filterRecord, getRecordEntry, guid } from '@microsoft/logic-apps-shared';
+import { ValueSegmentType } from '@microsoft/designer-ui';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type {
   FilePickerInfo,
@@ -463,6 +464,51 @@ export const operationMetadataSlice = createSlice({
         args: [action.payload.id],
       });
     },
+    setAgentHarnessSandboxConfigurationId: (state, action: PayloadAction<{ nodeId: string; sandboxConfigurationId?: string }>) => {
+      const { nodeId, sandboxConfigurationId } = action.payload;
+      const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
+      if (!nodeInputs) {
+        return;
+      }
+      const AGENT_HARNESS_KEY = 'inputs.$.agentModelSettings.agentHarness';
+      for (const group of Object.values(nodeInputs.parameterGroups)) {
+        const param = group.parameters.find((p) => p.parameterKey === AGENT_HARNESS_KEY);
+        if (!param) {
+          continue;
+        }
+        const firstSegment = param.value?.[0];
+        let current: any = {};
+        if (param.preservedValue !== undefined && param.preservedValue !== null) {
+          current = typeof param.preservedValue === 'string' ? JSON.parse(param.preservedValue) : { ...param.preservedValue };
+        } else if (
+          firstSegment?.type === ValueSegmentType.LITERAL &&
+          typeof firstSegment.value === 'string' &&
+          firstSegment.value.length > 0
+        ) {
+          try {
+            current = JSON.parse(firstSegment.value);
+          } catch {
+            current = {};
+          }
+        } else if (firstSegment && typeof firstSegment.value === 'object' && firstSegment.value !== null) {
+          current = firstSegment.value;
+        }
+        if (sandboxConfigurationId) {
+          current.sandboxConfigurationId = sandboxConfigurationId;
+        } else {
+          delete current.sandboxConfigurationId;
+        }
+        param.preservedValue = current;
+        param.value = [
+          {
+            id: firstSegment?.id ?? guid(),
+            type: ValueSegmentType.LITERAL,
+            value: JSON.stringify(current),
+          },
+        ];
+        break;
+      }
+    },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
       const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
@@ -808,6 +854,7 @@ export const {
   initializeNodeOperationInputsData,
   initializeOperationInfo,
   updateNodeParameters,
+  setAgentHarnessSandboxConfigurationId,
   updateNodeParameterGroups,
   addDynamicInputs,
   addDynamicOutputs,

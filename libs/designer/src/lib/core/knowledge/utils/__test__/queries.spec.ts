@@ -4,7 +4,7 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAllKnowledgeHubs, getArtifactsInHub, useConnection, getCosmosDbEndpoint } from '../queries';
+import { useAllKnowledgeHubs, useConnection, getCosmosDbEndpoint } from '../queries';
 import React from 'react';
 
 const mockExecuteResourceAction = vi.fn();
@@ -62,16 +62,8 @@ describe('knowledge queries', () => {
       { name: 'hub-a', description: 'First hub' },
     ];
 
-    const mockArtifacts = [
-      { name: 'artifact-1', type: 'document' },
-      { name: 'artifact-2', type: 'document' },
-    ];
-
-    test('should fetch and sort knowledge hubs with their artifacts', async () => {
-      mockExecuteResourceAction
-        .mockResolvedValueOnce({ value: mockHubs })
-        .mockResolvedValueOnce({ value: mockArtifacts })
-        .mockResolvedValueOnce({ value: [] });
+    test('should fetch and sort knowledge hubs alphabetically', async () => {
+      mockGetResource.mockResolvedValueOnce(mockHubs);
 
       const { result } = renderHook(() => useAllKnowledgeHubs(siteResourceId), {
         wrapper: createWrapper,
@@ -81,11 +73,9 @@ describe('knowledge queries', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
-        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHub`,
-        'GET',
-        { 'api-version': '2025-11-01' }
-      );
+      expect(mockGetResource).toHaveBeenCalledWith(`${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgehubs`, {
+        'api-version': '2018-11-01',
+      });
 
       // Hubs should be sorted alphabetically
       expect(result.current.data?.[0].name).toBe('hub-a');
@@ -95,7 +85,7 @@ describe('knowledge queries', () => {
 
     test('should return empty array and log error on failure', async () => {
       const error = { code: 'NotFound', message: 'Resource not found' };
-      mockExecuteResourceAction.mockRejectedValue({ error });
+      mockGetResource.mockRejectedValue({ error });
 
       const { result } = renderHook(() => useAllKnowledgeHubs(siteResourceId), {
         wrapper: createWrapper,
@@ -121,11 +111,11 @@ describe('knowledge queries', () => {
 
       // Query should not run
       expect(result.current.fetchStatus).toBe('idle');
-      expect(mockExecuteResourceAction).not.toHaveBeenCalled();
+      expect(mockGetResource).not.toHaveBeenCalled();
     });
 
     test('should handle empty hubs response', async () => {
-      mockExecuteResourceAction.mockResolvedValueOnce({ value: [] });
+      mockGetResource.mockResolvedValueOnce([]);
 
       const { result } = renderHook(() => useAllKnowledgeHubs(siteResourceId), {
         wrapper: createWrapper,
@@ -137,62 +127,19 @@ describe('knowledge queries', () => {
 
       expect(result.current.data).toEqual([]);
     });
-  });
 
-  describe('getArtifactsInHub', () => {
-    test('should fetch and sort artifacts for a hub', async () => {
-      const hubName = 'test-hub-sort';
-      const mockArtifacts = [
-        { name: 'doc-z', type: 'document' },
-        { name: 'doc-a', type: 'document' },
-      ];
-      mockExecuteResourceAction.mockResolvedValue({ value: mockArtifacts });
+    test('should handle null response', async () => {
+      mockGetResource.mockResolvedValueOnce(null);
 
-      const result = await getArtifactsInHub(siteResourceId, hubName);
-
-      expect(mockExecuteResourceAction).toHaveBeenCalledWith(
-        `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/knowledgeHub/${hubName}/knowledgeArtifact`,
-        'GET',
-        { 'api-version': '2025-11-01' }
-      );
-
-      // Artifacts should be sorted alphabetically
-      expect(result[0].name).toBe('doc-a');
-      expect(result[1].name).toBe('doc-z');
-    });
-
-    test('should return empty array and log error on failure', async () => {
-      const hubName = 'test-hub-error';
-      const error = { code: 'BadRequest', message: 'Invalid hub' };
-      mockExecuteResourceAction.mockRejectedValue({ error });
-
-      const result = await getArtifactsInHub(siteResourceId, hubName);
-
-      expect(result).toEqual([]);
-      expect(mockLog).toHaveBeenCalledWith({
-        level: 'Error',
-        area: 'KnowledgeHub.listKnowledgeHubArtifacts',
-        error,
-        message: `Error while fetching knowledge artifacts for the app: ${siteResourceId}`,
+      const { result } = renderHook(() => useAllKnowledgeHubs(siteResourceId), {
+        wrapper: createWrapper,
       });
-    });
 
-    test('should handle empty artifacts response', async () => {
-      const hubName = 'test-hub-empty';
-      mockExecuteResourceAction.mockResolvedValue({ value: [] });
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
 
-      const result = await getArtifactsInHub(siteResourceId, hubName);
-
-      expect(result).toEqual([]);
-    });
-
-    test('should handle response without value property', async () => {
-      const hubName = 'test-hub-no-value';
-      mockExecuteResourceAction.mockResolvedValue({});
-
-      const result = await getArtifactsInHub(siteResourceId, hubName);
-
-      expect(result).toEqual([]);
+      expect(result.current.data).toEqual([]);
     });
   });
 

@@ -75,7 +75,6 @@ const DesignerEditorConsumption = () => {
     showChatBot,
     showRunHistory,
     hostOptions,
-    showConnectionsPanel,
     showEdgeDrawing,
     suppressDefaultNodeSelect,
     showPerformanceDebug,
@@ -301,14 +300,15 @@ const DesignerEditorConsumption = () => {
           readOnly,
           isMonitoringView,
           useLegacyWorkflowParameters: true,
-          showConnectionsPanel,
           showEdgeDrawing,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
+            integrationAccount: (workflowAndArtifactsData?.properties as any)?.integrationAccount,
           },
           showPerformanceDebug,
+          mcpClientToolEnabled: true,
         }}
       >
         {definition ? (
@@ -357,7 +357,6 @@ const DesignerEditorConsumption = () => {
                   isDesignerView={designerView}
                   isUnitTest={false}
                   isMonitoringView={isMonitoringView}
-                  showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
                   toggleMonitoringView={toggleMonitoringView}
                   showRunHistory={showRunHistory}
@@ -555,7 +554,7 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint);
     },
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => workflowAndArtifactsData?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
@@ -564,6 +563,17 @@ const getDesignerServices = (
     },
     notifyCallbackUrlUpdate: (triggerName: string, newTriggerId: string) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
+    },
+    getSandboxConfigurations: async (integrationAccountId: string) => {
+      // Agent harness sandbox APIs are only available in limited regions.
+      // Use the regional ARM endpoint (brazilus) to route requests to a supported region.
+      const sandboxBaseUrl = 'https://brazilus.management.azure.com';
+      const response = await httpClient.get<any>({
+        uri: `${sandboxBaseUrl}${integrationAccountId}/sandboxConfigurations`,
+        queryParameters: { 'api-version': '2016-06-01' },
+      });
+      // This endpoint returns a bare JSON array, not the usual ARM { value: [...] } envelope.
+      return Array.isArray(response) ? response : (response?.value ?? []);
     },
   };
 
