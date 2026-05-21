@@ -54,6 +54,10 @@ export default {
                 displayName: 'Foundry Models (Preview)',
               },
               {
+                value: 'AzureOpenAI',
+                displayName: 'Azure OpenAI',
+              },
+              {
                 value: 'FoundryAgentServiceV2',
                 displayName: 'Foundry project (Preview)',
                 unSupportedWorkflowKind: ['agent'],
