@@ -37,7 +37,7 @@ import { MCP_CLIENT_CONNECTOR_ID } from '../helpers';
 /**
  * Connection parameter sets for MCP servers. Used as a fallback when a custom connector
  * doesn't have its own connectionParameterSets, so users can select auth type
- * (None, Basic, Managed Identity, OAuth, etc.) during connection creation.
+ * (None, Basic, Key, or Managed Identity) during connection creation.
  */
 const mcpConnectionParameterSets: ConnectionParameterSets = {
   uiDefinition: {

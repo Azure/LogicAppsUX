@@ -238,7 +238,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     if (!isMultiAuth) {
       return false;
     }
-    return Object.values(multiAuthParams).some((param) => param.type === ConnectionParameterTypes.managedIdentity);
+    return Object.values(multiAuthParams).some(
+      (param) =>
+        param.type === ConnectionParameterTypes.managedIdentity ||
+        equals(param.uiDefinition?.constraints?.default, 'managedserviceidentity')
+    );
   }, [isMultiAuth, multiAuthParams]);
 
   const hasOnlyOnPremGateway = useMemo(
@@ -542,6 +546,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     operationParameterValues,
     isUsingDynamicConnection,
     isDynamicConnectionOptionValidForConnector,
+    isMultiAuthManagedIdentitySet,
   ]);
 
   // INTL STRINGS
@@ -938,10 +943,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 className="label"
                 isRequiredField={true}
                 text={legacyManagedIdentityLabelText}
-                htmlFor={'connection-param-set-select'}
+                htmlFor={'multi-auth-managed-identity-select'}
                 disabled={isLoading}
               />
-              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
+              <LegacyManagedIdentityDropdown
+                id={'multi-auth-managed-identity-select'}
+                identity={identity}
+                onChange={onLegacyManagedIdentityChange}
+                disabled={isLoading}
+              />
             </div>
           )}
 
