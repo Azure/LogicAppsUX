@@ -2,6 +2,7 @@ import { describe, vi, beforeEach, it, expect } from 'vitest';
 import { ConsumptionConnectorService } from '../connector';
 import type { IHttpClient } from '../../httpClient';
 import { InitConnectionService } from '../../connection';
+import { InitWorkflowService } from '../../workflow';
 import type { Connection } from '../../../../utils/src';
 
 describe('ConsumptionConnectorService', () => {
@@ -248,6 +249,9 @@ describe('ConsumptionConnectorService', () => {
             },
           } as unknown as Connection),
         } as any);
+        InitWorkflowService({
+          getAppIdentity: vi.fn().mockReturnValue({ type: 'SystemAssigned' }),
+        } as any);
       });
 
       it('should send managedConnection shape for non-builtin connections', async () => {
@@ -268,6 +272,11 @@ describe('ConsumptionConnectorService', () => {
 
         expect(content.managedConnection).toEqual({
           connection: { id: managedConnectionId },
+          connectionProperties: {
+            authentication: {
+              type: 'ManagedServiceIdentity',
+            },
+          },
         });
         expect(content.mcpServerPath).toBe('/mcp/path');
         expect(content.connection).toBeUndefined();
@@ -319,6 +328,12 @@ describe('ConsumptionConnectorService', () => {
     const buildAuth = (props: Record<string, any>) => {
       return (connectorService as any)._buildMcpAuthentication(props);
     };
+
+    beforeEach(() => {
+      InitWorkflowService({
+        getAppIdentity: vi.fn().mockReturnValue({ type: 'SystemAssigned' }),
+      } as any);
+    });
 
     it('should return undefined for None auth type', () => {
       expect(buildAuth({ authenticationType: 'None' })).toBeUndefined();
