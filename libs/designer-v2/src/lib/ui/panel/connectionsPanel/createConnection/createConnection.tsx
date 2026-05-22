@@ -115,6 +115,7 @@ export interface CreateConnectionProps {
   operationManifest?: OperationManifest;
   workflowKind?: string;
   workflowMetadata?: ConsumptionWorkflowMetadata;
+  enableManagedIdentityPicker?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -231,19 +232,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
   const showMultiAuthDropdown = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
-
-  // Check if the currently selected multi-auth parameter set is a managed identity type.
-  // When true, we show the identity picker instead of the hidden managedIdentity parameter.
-  const isMultiAuthManagedIdentitySet = useMemo(() => {
-    if (!isMultiAuth) {
-      return false;
-    }
-    return Object.values(multiAuthParams).some(
-      (param) =>
-        param.type === ConnectionParameterTypes.managedIdentity ||
-        equals(param.uiDefinition?.constraints?.default, 'managedserviceidentity')
-    );
-  }, [isMultiAuth, multiAuthParams]);
 
   const hasOnlyOnPremGateway = useMemo(
     () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
@@ -419,6 +407,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
+  // Show MI picker only when explicitly enabled by the caller (e.g. MCP wizard) AND
+  // there are no visible parameters (form would be empty without it).
+  const isMultiAuthManagedIdentitySet = useMemo(() => {
+    if (!props.enableManagedIdentityPicker || !isMultiAuth) {
+      return false;
+    }
+    return Object.keys(capabilityEnabledParameters ?? {}).length === 0;
+  }, [props.enableManagedIdentityPicker, isMultiAuth, capabilityEnabledParameters]);
+
   // Don't show name for simple connections
   const showNameInput = useMemo(() => {
     const isMcpClientConnection = connectorId?.toLowerCase().includes('mcpclient');
@@ -467,6 +464,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     resourceSelectorProps,
     legacyManagedIdentitySelected,
     selectedManagedIdentity,
+    isMultiAuthManagedIdentitySet,
     capabilityEnabledParameters,
     parameterValues,
   ]);

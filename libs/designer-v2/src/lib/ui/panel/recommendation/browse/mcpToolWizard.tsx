@@ -709,6 +709,7 @@ export const McpToolWizard = () => {
           onConnectionCancelled={handleConnectionCancelled}
           description=" "
           connectionParameterSetsOverride={parameterSetsOverride}
+          enableManagedIdentityPicker={isManagedMcpServer}
         />
       </div>
     );

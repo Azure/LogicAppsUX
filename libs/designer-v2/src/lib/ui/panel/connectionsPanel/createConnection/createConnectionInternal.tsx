@@ -48,6 +48,7 @@ export const CreateConnectionInternal = (props: {
   workflowKind?: string;
   workflowMetadata?: { agentType?: string };
   connectionParameterSetsOverride?: ConnectionParameterSets;
+  enableManagedIdentityPicker?: boolean;
 }) => {
   const {
     classes,
@@ -71,6 +72,7 @@ export const CreateConnectionInternal = (props: {
     workflowKind,
     workflowMetadata,
     connectionParameterSetsOverride,
+    enableManagedIdentityPicker,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -348,6 +350,7 @@ export const CreateConnectionInternal = (props: {
       operationManifest={operationManifest}
       workflowKind={workflowKind}
       workflowMetadata={workflowMetadata}
+      enableManagedIdentityPicker={enableManagedIdentityPicker}
     />
   );
 };
