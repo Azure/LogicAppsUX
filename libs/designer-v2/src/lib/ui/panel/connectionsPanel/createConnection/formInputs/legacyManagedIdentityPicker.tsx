@@ -4,13 +4,14 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 interface LegacyManagedIdentityDropdownProps {
+  id?: string;
   identity?: ManagedIdentity;
   onChange: (event: any, item?: IDropdownOption<any>) => void;
   disabled?: boolean;
 }
 
 const LegacyManagedIdentityDropdown = (props: LegacyManagedIdentityDropdownProps) => {
-  const { identity, onChange, disabled } = props;
+  const { id, identity, onChange, disabled } = props;
   const intl = useIntl();
   const dropdownOptions = useMemo(() => getIdentityDropdownOptions(identity, intl), [identity, intl]);
 
@@ -29,6 +30,7 @@ const LegacyManagedIdentityDropdown = (props: LegacyManagedIdentityDropdownProps
 
   return (
     <Dropdown
+      id={id}
       className={'connection-parameter-input'}
       onChange={onChange}
       placeholder={noIdentitiesAvailable ? noIdentityText : undefined}
