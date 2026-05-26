@@ -9,6 +9,7 @@ import { CreateConnection, type CreateButtonTexts } from './createConnection';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type {
   ConnectionParameterSetValues,
+  ConnectionParameterSets,
   ConnectionMetadata,
   ConnectionCreationInfo,
   ConnectionParametersMetadata,
@@ -46,6 +47,8 @@ export const CreateConnectionInternal = (props: {
   operationManifest?: OperationManifest;
   workflowKind?: string;
   workflowMetadata?: { agentType?: string };
+  connectionParameterSetsOverride?: ConnectionParameterSets;
+  enableManagedIdentityPicker?: boolean;
 }) => {
   const {
     classes,
@@ -68,6 +71,8 @@ export const CreateConnectionInternal = (props: {
     operationManifest,
     workflowKind,
     workflowMetadata,
+    connectionParameterSetsOverride,
+    enableManagedIdentityPicker,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -320,7 +325,7 @@ export const CreateConnectionInternal = (props: {
       classes={classes}
       connector={connector}
       connectionParameterSets={getSupportedParameterSets(
-        connector.properties.connectionParameterSets,
+        connector.properties.connectionParameterSets ?? connectionParameterSetsOverride,
         operationType,
         connector.properties.capabilities
       )}
@@ -345,6 +350,7 @@ export const CreateConnectionInternal = (props: {
       operationManifest={operationManifest}
       workflowKind={workflowKind}
       workflowMetadata={workflowMetadata}
+      enableManagedIdentityPicker={enableManagedIdentityPicker}
     />
   );
 };

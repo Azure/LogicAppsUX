@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { binariesExist } from '../../../utils/binaries';
+import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
 import { extensionCommand, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
 import { InitCustomCodeScriptProjectStep } from './initCustomCodeScriptProjectStep';
 import type { ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
@@ -11,15 +12,7 @@ import type { TaskDefinition } from 'vscode';
 export class InitCustomCodeProjectStep extends InitCustomCodeScriptProjectStep {
   protected getTasks(): TaskDefinition[] {
     const funcBinariesExist = binariesExist(funcDependencyName);
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
+    const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv() : {};
     return [
       {
         label: 'generateDebugSymbols',

@@ -4,7 +4,6 @@ import {
   useIsDarkMode,
   useIsMonitoringView,
   useIsReadOnly,
-  useShowConnectionsPanel,
   useHostOptions,
   useIsUnitTestView,
   useShowPerformanceDebug,
@@ -20,7 +19,6 @@ import {
   setReadOnly,
   loadWorkflow,
   setAreCustomEditorsEnabled,
-  setShowConnectionsPanel,
   setHostOptions,
   setUnitTest,
   setShowPerformanceDebug,
@@ -39,7 +37,6 @@ const ContextSettings = () => {
   const isMonitoringView = useIsMonitoringView();
   const isUnitTest = useIsUnitTestView();
   const isDarkMode = useIsDarkMode();
-  const showConnectionsPanel = useShowConnectionsPanel();
   const showEdgeDrawing = useShowEdgeDrawing();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelect();
@@ -86,11 +83,6 @@ const ContextSettings = () => {
         label="Custom Editors"
         checked={areCustomEditorsEnabled}
         onChange={(_, checked) => dispatch(setAreCustomEditorsEnabled(!!checked))}
-      />
-      <Checkbox
-        label="Connections Panel"
-        checked={showConnectionsPanel}
-        onChange={(_, checked) => dispatch(setShowConnectionsPanel(!!checked))}
       />
       <Checkbox label="Show Edge Drawing" checked={showEdgeDrawing} onChange={(_, checked) => dispatch(setShowEdgeDrawing(!!checked))} />
       <Checkbox

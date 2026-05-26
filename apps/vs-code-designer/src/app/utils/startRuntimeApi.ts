@@ -108,7 +108,10 @@ async function waitForRuntimeStartUp(context: IActionContext, projectPath: strin
     }
     if (setRuntimeInst) {
       const runtimeInst = ext.runtimeInstances.get(projectPath);
-      runtimeInst.childFuncPid = await findChildProcess(runtimeInst.process.pid);
+      runtimeInst.childFuncPid = await resolveChildFuncPid(runtimeInst.process.pid);
+      ext.outputChannel.appendLog(
+        `Runtime child func PID ${runtimeInst.childFuncPid ? `resolved to ${runtimeInst.childFuncPid}` : 'was not resolved during startup'}`
+      );
       runtimeInst.isStarting = false;
     }
     context.telemetry.measurements.waitForDesignTimeStartupDuration = (Date.now() - initialTime) / 1000;
@@ -156,12 +159,32 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     retries++;
   }
   if (!childFuncPid) {
-    return false;
+    ext.outputChannel.appendLog('Runtime child func PID not set yet. Attempting live resolution from current child processes.');
   }
 
   if (os.platform() === Platform.windows) {
     const children = await getChildProcessesWithScript(process.pid);
-    correctId = children.some((p) => p.processId.toString() === childFuncPid && p.name === 'func.exe');
+    const runtimeInst = ext.runtimeInstances.get(projectPath);
+    const resolvedChildFuncPid =
+      childFuncPid ??
+      [...children]
+        .reverse()
+        .find((p) => /func(\.exe|)$/i.test(p.name || ''))
+        ?.processId?.toString();
+
+    if (runtimeInst && resolvedChildFuncPid && resolvedChildFuncPid !== childFuncPid) {
+      runtimeInst.childFuncPid = resolvedChildFuncPid;
+      childFuncPid = resolvedChildFuncPid;
+      ext.outputChannel.appendLog(`Runtime child func PID updated during validation to ${resolvedChildFuncPid}`);
+    }
+
+    ext.outputChannel.appendLog(`Checking for func.exe child process. Looking for PID: ${childFuncPid}, Found ${children.length} children`);
+    correctId = children.some((p) => {
+      const matches = p.processId.toString() === childFuncPid && /func(\.exe|)$/i.test(p.name || '');
+      ext.outputChannel.appendLog(`  Child: PID=${p.processId}, Name=${p.name}, Matches=${matches}`);
+      return matches;
+    });
+    ext.outputChannel.appendLog(`Process validation result: ${correctId ? 'VALID' : 'INVALID'}`);
   } else {
     await find_process('pid', process.pid).then((list) => {
       if (list.length > 0) {
@@ -174,6 +197,21 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   return correctId;
 }
 
+async function resolveChildFuncPid(processId: number, retries = 5, delayMs = 500): Promise<string | undefined> {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const childFuncPid = await findChildProcess(processId);
+    if (childFuncPid) {
+      return childFuncPid;
+    }
+
+    if (attempt < retries - 1) {
+      await delay(delayMs);
+    }
+  }
+
+  return undefined;
+}
+
 export function stopRuntimeApi(projectPath: string): void {
   ext.outputChannel.appendLog(`Stopping Runtime API for project: ${projectPath}`);
   const { process, childFuncPid } = ext.runtimeInstances.get(projectPath);
@@ -183,7 +221,9 @@ export function stopRuntimeApi(projectPath: string): void {
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+    if (childFuncPid) {
+      cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+    }
     cp.exec(`taskkill /pid ${process.pid} /t /f`);
   } else {
     cp.spawn('kill', ['-9'].concat(`${process.pid}`));

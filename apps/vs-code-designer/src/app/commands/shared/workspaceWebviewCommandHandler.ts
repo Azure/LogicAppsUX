@@ -65,6 +65,7 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
   };
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
+  let isCreateInProgress = false;
 
   // Standard message handlers
   const messageHandlers = {
@@ -83,9 +84,45 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
     },
 
     [createCommand]: async (message: any) => {
+      // Log diagnostic data sent from webview if available
+      if (message?._diagnostics) {
+        ext.outputChannel.appendLog(`[CreateWorkspace Diagnostics] ${JSON.stringify(message._diagnostics, null, 2)}`);
+      }
+
+      // Log received message data for debugging
+      const receivedDiagnostics = {
+        command: createCommand,
+        timestamp: new Date().toISOString(),
+        hasMessageData: !!message?.data,
+        messageDataType: typeof message?.data,
+        messageDataKeys: message?.data ? Object.keys(message.data) : [],
+        workspaceProjectPath: message?.data?.workspaceProjectPath,
+        workspaceName: message?.data?.workspaceName,
+        logicAppName: message?.data?.logicAppName,
+        logicAppType: message?.data?.logicAppType,
+      };
+      ext.outputChannel.appendLog(`[CreateWorkspace Handler] ${JSON.stringify(receivedDiagnostics, null, 2)}`);
+
+      if (isCreateInProgress) {
+        return;
+      }
+
+      isCreateInProgress = true;
+      let createSucceeded = false;
       await callWithTelemetryAndErrorHandling(panelName.replace(/\s+/g, ''), async (activateContext: IActionContext) => {
-        await createHandler(activateContext, message.data);
+        try {
+          await createHandler(activateContext, message.data);
+          createSucceeded = true;
+        } finally {
+          if (!createSucceeded) {
+            isCreateInProgress = false;
+          }
+        }
       });
+      if (!createSucceeded) {
+        isCreateInProgress = false;
+        return;
+      }
       if (onResolve) {
         onResolve(true);
       }

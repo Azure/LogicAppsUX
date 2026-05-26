@@ -56,6 +56,8 @@ import {
   setIsWorkflowDirty,
   setFocusNode,
   changePanelNode,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } from '@microsoft/logic-apps-designer-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -305,7 +307,7 @@ const DesignerEditorConsumption = () => {
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
+      skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
     return serializedWorkflow;
@@ -483,16 +485,20 @@ const DesignerEditorConsumption = () => {
                 getAuthToken={getAuthToken}
                 enableWorkflowEditing={true}
                 autoApply={true}
-                onWorkflowProposed={(newWorkflow) => {
+                onWorkflowProposed={(newWorkflow, changes) => {
                   setNotes(newWorkflow.notes ?? {});
                   if (newWorkflow.parameters) {
                     setParameters(newWorkflow.parameters);
                   }
-                  setWorkflow({
-                    ...newWorkflow,
-                    id: guid(),
-                  });
+                  setWorkflow({ ...newWorkflow });
                   DesignerStore.dispatch(setIsWorkflowDirty(true));
+                  if (changes) {
+                    const nodeIds = changes.flatMap((change) => change.nodeIds);
+                    DesignerStore.dispatch(setCopilotModifiedNodeIds(nodeIds));
+                    setTimeout(() => DesignerStore.dispatch(clearCopilotModifiedNodeIds()), 3000);
+                  } else {
+                    DesignerStore.dispatch(clearCopilotModifiedNodeIds());
+                  }
                 }}
                 getNodeVisuals={(nodeId) => {
                   const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
@@ -796,7 +802,7 @@ const getDesignerServices = (
   const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
     baseUrl,
     subscriptionId,
-    location,
+    location: 'centralusstage',
     apiVersion: '2026-03-01-preview',
     getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
   });

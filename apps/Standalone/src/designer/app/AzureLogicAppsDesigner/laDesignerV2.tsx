@@ -2,7 +2,14 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBarV2';
-import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, NotesData, ParametersData } from './Models/Workflow';
+import type {
+  ConnectionAndAppSetting,
+  ConnectionReferenceModel,
+  ConnectionsData,
+  NotesData,
+  ParametersData,
+  WorkflowJson,
+} from './Models/Workflow';
 import { Artifact, VfsArtifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
@@ -74,6 +81,8 @@ import {
   setIsWorkflowDirty,
   setFocusNode,
   changePanelNode,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -125,7 +134,7 @@ const DesignerEditor = () => {
 
   // State props
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>(); // Current workflow on the designer
+  const [workflow, setWorkflow] = useState<WorkflowJson>(); // Current workflow on the designer
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
   const [isDraftMode, setIsDraftMode] = useState(true);
@@ -191,7 +200,7 @@ const DesignerEditor = () => {
     setIsDraftMode(draftMode);
   }, []);
 
-  const getConnectionConfiguration = async (connectionId: string, _manifest: any, useMcpConnections?: boolean): Promise<any> => {
+  const getConnectionConfiguration = async (connectionId: string, _manifest?: any, useMcpConnections?: boolean): Promise<any> => {
     if (!connectionId) {
       return Promise.resolve();
     }
@@ -289,10 +298,8 @@ const DesignerEditor = () => {
   const hideMonitoringView = useCallback(() => {
     if (isMonitoringView) {
       toggleMonitoringView();
-      setWorkflow({
-        ...artifactData?.properties.files[Artifact.WorkflowFile],
-        id: guid(),
-      });
+      const wf = artifactData?.properties.files[Artifact.WorkflowFile];
+      setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
     }
   }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
 
@@ -351,9 +358,6 @@ const DesignerEditor = () => {
         definition,
         kind,
       };
-
-      delete workflowToSave.id;
-      delete workflowToSave.notes;
 
       const newManagedApiConnections = {
         ...(connectionsData?.managedApiConnections ?? {}),
@@ -563,8 +567,6 @@ const DesignerEditor = () => {
           ...prevState,
           definition: codeToConvert.definition,
           kind: codeToConvert.kind,
-          connectionReferences: codeToConvert.connectionReferences ?? {},
-          id: guid(),
         }));
         setIsDesignerView(true);
         setIsCodeView(false);
@@ -587,7 +589,7 @@ const DesignerEditor = () => {
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
-      setWorkflow((previousWorkflow?: Workflow) => {
+      setWorkflow((previousWorkflow?: WorkflowJson) => {
         if (!previousWorkflow) {
           // Do not update the workflow if previousWorkflow is undefined; return previous value unchanged
           return previousWorkflow;
@@ -638,7 +640,7 @@ const DesignerEditor = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
-        id={workflow?.id}
+        id={designerID}
         key={designerID}
         locale={language}
         options={{
@@ -665,7 +667,7 @@ const DesignerEditor = () => {
               notes: currentNotes,
               kind: workflow?.kind,
             }}
-            workflowId={workflow?.id}
+            workflowId={designerID}
             customCode={customCodeData}
             runInstance={runInstanceData as any}
             appSettings={settingsData?.properties}
@@ -712,16 +714,24 @@ const DesignerEditor = () => {
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
                   enableWorkflowEditing={true}
                   autoApply={true}
-                  onWorkflowProposed={(newWorkflow) => {
+                  onWorkflowProposed={(newWorkflow, changes) => {
                     setCurrentNotes(newWorkflow.notes ?? {});
                     if (newWorkflow.parameters) {
                       setCurrentParameters(newWorkflow.parameters as unknown as ParametersData);
                     }
                     setWorkflow({
-                      ...newWorkflow,
-                      id: guid(),
+                      definition: newWorkflow.definition,
+                      kind: newWorkflow.kind ?? 'stateful',
+                      metadata: (newWorkflow as any)?.metadata ?? workflow?.metadata,
                     });
                     DesignerStore.dispatch(setIsWorkflowDirty(true));
+                    if (changes) {
+                      const nodeIds = changes.flatMap((change) => change.nodeIds);
+                      DesignerStore.dispatch(setCopilotModifiedNodeIds(nodeIds));
+                      setTimeout(() => DesignerStore.dispatch(clearCopilotModifiedNodeIds()), 3000);
+                    } else {
+                      DesignerStore.dispatch(clearCopilotModifiedNodeIds());
+                    }
                   }}
                   getNodeVisuals={(nodeId) => {
                     const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
@@ -1120,7 +1130,7 @@ const getDesignerServices = (
   const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
     baseUrl: armUrl,
     subscriptionId,
-    location,
+    location: 'centralusstage',
     apiVersion: '2026-03-01-preview',
     getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
   });

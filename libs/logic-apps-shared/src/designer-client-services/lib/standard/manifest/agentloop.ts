@@ -46,13 +46,16 @@ export default {
           title: 'Agent model source',
           description: 'Source where your agent model is hosted.',
           'x-ms-editor': 'dropdown',
-          'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {
             readOnly: true,
             options: [
               {
                 value: 'MicrosoftFoundry',
                 displayName: 'Foundry Models (Preview)',
+              },
+              {
+                value: 'AzureOpenAI',
+                displayName: 'Azure OpenAI',
               },
               {
                 value: 'FoundryAgentServiceV2',

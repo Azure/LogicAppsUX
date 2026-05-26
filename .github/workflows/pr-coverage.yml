@@ -92,6 +92,8 @@ jobs:
             **/styles.tsx
             **/*.styles.ts
             **/*.styles.tsx
+            **/*Styles.ts
+            **/*Styles.tsx
             **/constants.ts
             **/constants/**
             # Config files
@@ -135,14 +137,39 @@ jobs:
             **/webviewCommunication.tsx
             # VS Code React intl files (localization catalog, not unit-test target)
             apps/vs-code-react/src/intl/**
+            # Store assembly and webview app composition are covered by lower-level unit tests and E2E
+            apps/vs-code-react/src/state/store.ts
+            apps/vs-code-react/src/app/designer/appV2.tsx
+            # VS Code overview React shell (orchestration glue; meaningful logic
+            # lives in overview/runtime.ts, services/workflowService.ts, and
+            # shared helpers, all of which are unit-tested).
+            apps/vs-code-react/src/app/overview/app.tsx
             # VS Code extension E2E and UI test harness files
             apps/vs-code-designer/src/test/e2e/**
             apps/vs-code-designer/src/test/ui/**
             # Environment-specific utility excluded from coverage policy
             apps/vs-code-designer/src/app/utils/codeless/getAuthorizationToken.ts
             apps/vs-code-designer/src/app/commands/logstream/startStreamingLogs.ts
+            apps/vs-code-designer/src/app/languageServer/languageServer.ts
+            apps/vs-code-designer/src/app/commands/deploy/deploy.ts
+            apps/vs-code-designer/src/app/commands/workflows/exportLogicApp.ts
+            apps/vs-code-designer/src/app/utils/startRuntimeApi.ts
             apps/vs-code-designer/src/extensionVariables.ts
             apps/vs-code-designer/src/main.ts
+            # VS Code project-scaffolding files (depend on VS Code APIs; tested via E2E).
+            # The pure-function PATH helper `funcHostTaskEnv.ts` has its own unit
+            # tests in `src/app/utils/codeless/__test__/funcHostTaskEnv.test.ts`;
+            # these callers just thread its output into VS Code task / project
+            # init pipelines and cannot be exercised in the vitest node env.
+            apps/vs-code-designer/src/app/utils/vsCodeConfig/tasks.ts
+            apps/vs-code-designer/src/app/debug/validatePreDebug.ts
+            apps/vs-code-designer/src/app/commands/createNewCodeProject/CodeProjectBase/CreateLogicAppVSCodeContents.ts
+            apps/vs-code-designer/src/app/commands/createProject/createCustomCodeProjectSteps/initCustomCodeProjectStep.ts
+            apps/vs-code-designer/src/app/commands/createProject/createCustomCodeProjectSteps/initCustomCodeProjectStepBase.ts
+            apps/vs-code-designer/src/app/commands/createProject/createCustomCodeProjectSteps/initCustomCodeScriptProjectStep.ts
+            apps/vs-code-designer/src/app/commands/initProjectForVSCode/initDotnetProjectStep.ts
+            apps/vs-code-designer/src/app/commands/initProjectForVSCode/initProjectStep.ts
+            apps/vs-code-designer/src/app/commands/initProjectForVSCode/initScriptProjectStep.ts
 
       - name: Check coverage on changed files
         id: coverage-check

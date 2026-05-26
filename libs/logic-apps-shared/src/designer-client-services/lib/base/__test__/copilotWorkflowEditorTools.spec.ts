@@ -116,7 +116,6 @@ describe('executeCopilotTool', () => {
     it('should search using getActiveSearchOperations when available', async () => {
       const ops = [makeOperation('SendEmail', '/connectors/outlook', 'Office 365 Outlook', 'Send an email')];
       mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
-      mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
 
       const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['send email via outlook'] }));
       const parsed = JSON.parse(result);
@@ -124,24 +123,41 @@ describe('executeCopilotTool', () => {
       expect(mockSearchService.getActiveSearchOperations).toHaveBeenCalledWith('send email via outlook');
       expect(parsed['send email via outlook']).toBeDefined();
       expect(parsed['send email via outlook']).toHaveLength(1);
-      expect(parsed['send email via outlook'][0].operationId).toBe('SendEmail');
+      expect(parsed['send email via outlook'][0].connectorId).toBe('/connectors/outlook');
+      expect(parsed['send email via outlook'][0].connectorName).toBe('Office 365 Outlook');
     });
 
-    it('should fall back to getAllOperations and filter when getActiveSearchOperations is unavailable', async () => {
+    it('should return matching operations as summaries on the connector', async () => {
+      const ops = [
+        makeOperation('SendEmail', '/connectors/outlook', 'Office 365 Outlook', 'Send an email'),
+        makeOperation('GetEmails', '/connectors/outlook', 'Office 365 Outlook', 'Get emails'),
+      ];
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['email'] }));
+      const parsed = JSON.parse(result);
+
+      const connector = parsed['email'][0];
+      expect(connector.connectorId).toBe('/connectors/outlook');
+      const summaries = connector.matchingOperations.map((o: any) => o.summary);
+      expect(summaries).toContain('Send an email');
+      expect(summaries).toContain('Get emails');
+    });
+
+    it('should fall back to getBuiltInOperations and filter when getActiveSearchOperations is unavailable', async () => {
       delete mockSearchService.getActiveSearchOperations;
-      const allOps = [
+      const builtInOps = [
         makeOperation('SendEmail', '/connectors/outlook', 'Outlook', 'Send an email'),
         makeOperation('GetRows', '/connectors/sql', 'SQL Server', 'Get rows from table'),
       ];
-      mockSearchService.getAllOperations.mockResolvedValue(allOps);
-      mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
+      mockSearchService.getBuiltInOperations = vi.fn().mockResolvedValue(builtInOps);
 
       const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['email'] }));
       const parsed = JSON.parse(result);
 
       expect(parsed['email']).toBeDefined();
-      // Should find the email operation via name/description/summary matching
-      expect(parsed['email'].some((op: any) => op.operationId === 'SendEmail')).toBe(true);
+      // Should find the Outlook connector via name/description/summary matching
+      expect(parsed['email'].some((c: any) => c.connectorName === 'Outlook')).toBe(true);
     });
 
     it('should return message when no operations match', async () => {
@@ -150,129 +166,54 @@ describe('executeCopilotTool', () => {
       const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['nonexistent capability'] }));
       const parsed = JSON.parse(result);
 
-      expect(parsed['nonexistent capability'].message).toContain('No operations found');
+      expect(parsed['nonexistent capability'].message).toContain('No connectors found');
     });
 
-    it('should build action templates when swagger is available', async () => {
+    it('should group operations by connector and deduplicate', async () => {
+      const ops = [
+        makeOperation('SendEmail', '/connectors/outlook', 'Office 365 Outlook', 'Send an email'),
+        makeOperation('GetEmails', '/connectors/outlook', 'Office 365 Outlook', 'Get emails'),
+        makeOperation('GetRows', '/connectors/sql', 'SQL Server', 'Get rows from table'),
+      ];
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['data'] }));
+      const parsed = JSON.parse(result);
+
+      // Should return 2 connectors, not 3 operations
+      expect(parsed['data']).toHaveLength(2);
+      expect(parsed['data'][0].connectorId).toBe('/connectors/outlook');
+      expect(parsed['data'][1].connectorId).toBe('/connectors/sql');
+    });
+
+    it('should not fetch swagger (no action templates in discover)', async () => {
       const ops = [makeOperation('SendEmail', '/connectors/outlook', 'Office 365 Outlook')];
       mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
-      mockConnectionService.getSwaggerFromConnector.mockResolvedValue(
-        makeSwaggerDoc({
-          '/{connectionId}/v2/Mail': {
-            post: {
-              operationId: 'SendEmail',
-              summary: 'Send an email',
-              parameters: [
-                { name: 'connectionId', in: 'path', required: true, type: 'string' },
-                {
-                  name: 'body',
-                  in: 'body',
-                  schema: {
-                    properties: {
-                      To: { type: 'string', description: 'Recipients' },
-                      Subject: { type: 'string', description: 'Email subject' },
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        })
-      );
 
-      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['send email'] }));
-      const parsed = JSON.parse(result);
+      await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['send email'] }));
 
-      const template = parsed['send email'][0];
-      expect(template.actionDefinition).toBeDefined();
-      expect(template.actionDefinition.type).toBe('ApiConnection');
-      expect(template.actionDefinition.inputs.method).toBe('post');
-      // Connection ID prefix should be stripped from path
-      expect(template.actionDefinition.inputs.path).toBe('/v2/Mail');
-      expect(template.actionDefinition.inputs.host.connection.referenceName).toBeTruthy();
-      expect(template.actionDefinition.inputs.body).toBeDefined();
-      expect(template.inputDescriptions).toBeDefined();
+      // discover_connectors should NOT call getSwaggerFromConnector
+      expect(mockConnectionService.getSwaggerFromConnector).not.toHaveBeenCalled();
     });
 
-    it('should strip {connectionId} from swagger paths', async () => {
-      const ops = [makeOperation('GetItem', '/connectors/sharepoint', 'SharePoint')];
+    it('should limit results to top 10 connectors per capability', async () => {
+      const ops = Array.from({ length: 20 }, (_, i) => makeOperation(`Op${i}`, `/connectors/conn${i}`, `Connector ${i}`, `Operation ${i}`));
       mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
-      mockConnectionService.getSwaggerFromConnector.mockResolvedValue(
-        makeSwaggerDoc({
-          '/{connectionId}/datasets/{dataset}/tables/{table}/items/{id}': {
-            get: {
-              operationId: 'GetItem',
-              parameters: [
-                { name: 'connectionId', in: 'path', type: 'string' },
-                { name: 'dataset', in: 'path', type: 'string', description: 'Site URL' },
-                { name: 'table', in: 'path', type: 'string', description: 'List name' },
-                { name: 'id', in: 'path', type: 'string', description: 'Item ID' },
-              ],
-            },
-          },
-        })
-      );
-
-      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['get sharepoint item'] }));
-      const parsed = JSON.parse(result);
-
-      const template = parsed['get sharepoint item'][0];
-      // {connectionId} should be removed
-      expect(template.actionDefinition.inputs.path).not.toContain('connectionId');
-      // Other path params should be parameterized
-      expect(template.actionDefinition.inputs.path).toContain("@{encodeURIComponent('");
-    });
-
-    it('should include query parameters in the template', async () => {
-      const ops = [makeOperation('ListItems', '/connectors/sharepoint', 'SharePoint')];
-      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
-      mockConnectionService.getSwaggerFromConnector.mockResolvedValue(
-        makeSwaggerDoc({
-          '/{connectionId}/items': {
-            get: {
-              operationId: 'ListItems',
-              parameters: [
-                { name: 'connectionId', in: 'path', type: 'string' },
-                { name: '$filter', in: 'query', type: 'string', description: 'OData filter' },
-                { name: '$top', in: 'query', type: 'integer', description: 'Number of items' },
-              ],
-            },
-          },
-        })
-      );
-
-      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['list items'] }));
-      const parsed = JSON.parse(result);
-
-      const template = parsed['list items'][0];
-      expect(template.actionDefinition.inputs.queries).toBeDefined();
-      expect(template.actionDefinition.inputs.queries['$filter']).toBeDefined();
-      expect(template.actionDefinition.inputs.queries['$top']).toBeDefined();
-    });
-
-    it('should handle swagger fetch failures gracefully', async () => {
-      const ops = [makeOperation('Op1', '/connectors/test', 'Test Connector')];
-      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
-      mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('network error'));
-
-      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['test'] }));
-      const parsed = JSON.parse(result);
-
-      // Should still return results, just without actionDefinition
-      expect(parsed['test']).toBeDefined();
-      expect(parsed['test'][0].operationId).toBe('Op1');
-      expect(parsed['test'][0].note).toContain('Swagger not available');
-    });
-
-    it('should limit results to top 5 operations per capability', async () => {
-      const ops = Array.from({ length: 10 }, (_, i) => makeOperation(`Op${i}`, '/connectors/test', 'Test', `Operation ${i}`));
-      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
-      mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
 
       const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['test capability'] }));
       const parsed = JSON.parse(result);
 
-      expect(parsed['test capability'].length).toBeLessThanOrEqual(5);
+      expect(parsed['test capability'].length).toBeLessThanOrEqual(10);
+    });
+
+    it('should limit matching operations per connector to 10', async () => {
+      const ops = Array.from({ length: 10 }, (_, i) => makeOperation(`Op${i}`, '/connectors/test', 'Test Connector', `Operation ${i}`));
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['test'] }));
+      const parsed = JSON.parse(result);
+
+      expect(parsed['test'][0].matchingOperations.length).toBeLessThanOrEqual(10);
     });
   });
 
@@ -289,17 +230,15 @@ describe('executeCopilotTool', () => {
       expect(parsed.results).toHaveLength(2);
     });
 
-    it('should fall back to filtering getAllOperations when getOperationsByConnector is unavailable', async () => {
+    it('should return no results when getOperationsByConnector is unavailable', async () => {
       delete mockSearchService.getOperationsByConnector;
-      const allOps = [makeOperation('Op1', '/connectors/outlook', 'Outlook'), makeOperation('Op2', '/connectors/sql', 'SQL')];
-      mockSearchService.getAllOperations.mockResolvedValue(allOps);
       mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
 
       const result = await executeCopilotTool('get_connector_operations', JSON.stringify({ connectorId: '/connectors/outlook' }));
       const parsed = JSON.parse(result);
 
-      expect(parsed.results).toHaveLength(1);
-      expect(parsed.results[0].operationId).toBe('Op1');
+      expect(parsed.results).toHaveLength(0);
+      expect(parsed.message).toBeDefined();
     });
 
     it('should return a message when no operations found', async () => {
@@ -334,6 +273,40 @@ describe('executeCopilotTool', () => {
       expect(parsed.results[0].actionDefinition.type).toBe('ApiConnection');
     });
 
+    it('should filter to specific operation when operationId is provided', async () => {
+      const ops = [
+        makeOperation('SendEmail', '/connectors/outlook', 'Office 365 Outlook', 'Send an email'),
+        makeOperation('GetEmails', '/connectors/outlook', 'Office 365 Outlook', 'Get emails'),
+        makeOperation('DeleteEmail', '/connectors/outlook', 'Office 365 Outlook', 'Delete email'),
+      ];
+      mockSearchService.getOperationsByConnector.mockResolvedValue(ops);
+      mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
+
+      const result = await executeCopilotTool(
+        'get_connector_operations',
+        JSON.stringify({ connectorId: '/connectors/outlook', operationId: 'SendEmail' })
+      );
+      const parsed = JSON.parse(result);
+
+      expect(parsed.results).toHaveLength(1);
+      expect(parsed.results[0].operationId).toBe('SendEmail');
+    });
+
+    it('should return message when operationId is not found', async () => {
+      const ops = [makeOperation('SendEmail', '/connectors/outlook', 'Office 365 Outlook', 'Send an email')];
+      mockSearchService.getOperationsByConnector.mockResolvedValue(ops);
+      mockConnectionService.getSwaggerFromConnector.mockRejectedValue(new Error('no swagger'));
+
+      const result = await executeCopilotTool(
+        'get_connector_operations',
+        JSON.stringify({ connectorId: '/connectors/outlook', operationId: 'NonExistentOp' })
+      );
+      const parsed = JSON.parse(result);
+
+      expect(parsed.results).toEqual([]);
+      expect(parsed.message).toContain('NonExistentOp');
+    });
+
     it('should handle errors gracefully', async () => {
       mockSearchService.getOperationsByConnector.mockRejectedValue(new Error('Service unavailable'));
 
@@ -341,6 +314,62 @@ describe('executeCopilotTool', () => {
       const parsed = JSON.parse(result);
 
       expect(parsed.error).toContain('Failed to list operations');
+    });
+  });
+
+  // ── re-ranking ─────────────────────────────────────────────────────────
+  describe('discover_connectors re-ranking', () => {
+    it('should boost connectors whose name matches search terms', async () => {
+      // Simulate the real-world issue: searching "outlook email" returns irrelevant connectors first
+      const ops = [
+        makeOperation('scp-get-email-insights', '/connectors/contosohub', 'Contoso Hub', 'Enrich email summary'),
+        makeOperation('scp-get-email-summary', '/connectors/docusign', 'Docusign', 'Get email summary'),
+        makeOperation('FormatEmailGet', '/connectors/dqondemand', 'DQ on Demand', 'Format Email'),
+        makeOperation('MSOutlookCloseInstance', '/connectors/iaconnect', 'IA-Connect to Microsoft Office', 'Close MS Outlook instance'),
+        makeOperation('SendEmailV2', '/connectors/office365', 'Office 365 Outlook', 'Send an email (V2)'),
+        makeOperation('OnNewEmail', '/connectors/office365', 'Office 365 Outlook', 'When a new email arrives'),
+      ];
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['outlook email'] }));
+      const parsed = JSON.parse(result);
+
+      const connectors = parsed['outlook email'];
+      expect(connectors).toBeDefined();
+      // Office 365 Outlook should be the first connector because "outlook" matches the connector name
+      expect(connectors[0].connectorName).toBe('Office 365 Outlook');
+      expect(connectors[0].connectorId).toBe('/connectors/office365');
+    });
+
+    it('should rank operations within a connector by relevance to the search term', async () => {
+      const ops = [
+        makeOperation('GetCalendarEvents', '/connectors/outlook', 'Office 365 Outlook', 'Get calendar events'),
+        makeOperation('DeleteEmail', '/connectors/outlook', 'Office 365 Outlook', 'Delete email'),
+        makeOperation('SendEmailV2', '/connectors/outlook', 'Office 365 Outlook', 'Send an email (V2)'),
+        makeOperation('GetAttachments', '/connectors/outlook', 'Office 365 Outlook', 'Get attachments'),
+        makeOperation('OnNewEmail', '/connectors/outlook', 'Office 365 Outlook', 'When a new email arrives'),
+        makeOperation('FlagEmail', '/connectors/outlook', 'Office 365 Outlook', 'Flag an email'),
+      ];
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['send email'] }));
+      const parsed = JSON.parse(result);
+
+      const connector = parsed['send email'][0];
+      // "Send an email (V2)" should rank highest because it contains both "send" and "email"
+      expect(connector.matchingOperations[0].summary).toBe('Send an email (V2)');
+    });
+
+    it('should include operationId in matchingOperations', async () => {
+      const ops = [makeOperation('SendEmailV2', '/connectors/outlook', 'Office 365 Outlook', 'Send an email (V2)')];
+      mockSearchService.getActiveSearchOperations.mockResolvedValue(ops);
+
+      const result = await executeCopilotTool('discover_connectors', JSON.stringify({ capabilities: ['email'] }));
+      const parsed = JSON.parse(result);
+
+      const connector = parsed['email'][0];
+      expect(connector.matchingOperations[0].operationId).toBe('SendEmailV2');
+      expect(connector.matchingOperations[0].summary).toBe('Send an email (V2)');
     });
   });
 });

@@ -11,6 +11,7 @@ import {
   useDiscoveryPanelSelectedOperationId,
   useDiscoveryPanelSelectedBrowseCategory,
   useDiscoveryPanelSelectionState,
+  useDiscoveryPanelSearchTerm,
   useMcpToolWizard,
   useIsAddingAgentTool,
 } from '../../../core/state/panel/panelSelectors';
@@ -19,6 +20,7 @@ import {
   selectOperationId,
   selectBrowseCategory,
   setDiscoverySelectionState,
+  setDiscoverySearchTerm,
   openMcpToolWizard,
 } from '../../../core/state/panel/panelSlice';
 import { SELECTION_STATES } from '../../../core/state/panel/panelTypes';
@@ -50,7 +52,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const classes = useRecommendationPanelContextStyles();
   const isTrigger = useDiscoveryPanelIsAddingTrigger();
-  const [searchTerm, setSearchTerm] = useState('');
+  const searchTerm = useDiscoveryPanelSearchTerm();
+  const setSearchTerm = useCallback((term: string) => dispatch(setDiscoverySearchTerm(term)), [dispatch]);
 
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
   const mcpToolWizard = useMcpToolWizard();
