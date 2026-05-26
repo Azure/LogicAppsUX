@@ -225,7 +225,6 @@ export async function createLocalConfigurationFiles(
   // TODO(aeldridge): Update to point to codeful private bundle once it's published.
   if (logicAppType === ProjectType.codeful) {
     localSettingsJson.Values[workflowCodefulEnabled] = 'true';
-    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
