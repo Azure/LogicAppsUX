@@ -46,6 +46,8 @@ jobs:
           pnpm turbo run test:lib --cache-dir=.turbo
           pnpm turbo run test:iframe-app --cache-dir=.turbo
           pnpm turbo run test:extension-unit --cache-dir=.turbo
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: Merge coverage reports
         run: |
