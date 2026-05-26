@@ -63,7 +63,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean,
-    operationPath?: string
+    operationPath?: string,
+    identity?: string
   ): Promise<ListDynamicValue[]> {
     const { apiVersion, httpClient } = this.options;
     const { operationId: dynamicOperation, apiType } = dynamicState;
@@ -114,15 +115,10 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         };
       } else if (isRealConnectionId && isArmResourceId(connectionId)) {
         // Managed MCP connection — build full managed connection reference with identity
-        const identity = WorkflowService().getAppIdentity?.();
-        const userIdentity =
-          equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
-            ? Object.keys(identity.userAssignedIdentities)[0]
-            : undefined;
         const connectionProperties = {
           authentication: {
             type: 'ManagedServiceIdentity',
-            ...optional('identity', userIdentity),
+            ...optional('identity', identity),
           },
         };
         content = {
