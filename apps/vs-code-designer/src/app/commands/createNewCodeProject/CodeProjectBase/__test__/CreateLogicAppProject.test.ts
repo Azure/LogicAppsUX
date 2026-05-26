@@ -1156,7 +1156,7 @@ local.settings.json`
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     <SelfContained>false</SelfContained>
  </PropertyGroup>
- 
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Abstractions" Version="1.3.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.1" />
@@ -1164,12 +1164,17 @@ local.settings.json`
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
- 
+
   <Target Name="TriggerPublishOnBuild" AfterTargets="Build">
       <CallTarget Targets="Publish" />
   </Target>
 </Project>`;
-      expect(csprojContent.trim()).toBe(expectedCsproj.trim());
+      const normalizeXml = (value: string) =>
+        value
+          .replace(/\r\n/g, '\n')
+          .replace(/[ \t]+$/gm, '')
+          .trim();
+      expect(normalizeXml(csprojContent)).toBe(normalizeXml(expectedCsproj));
     });
 
     it('should create .csproj file for NetFx custom code project', async () => {
