@@ -3442,7 +3442,7 @@ describe('core/utils/parameters/helper', () => {
       vi.spyOn(VariableHelper, 'getAllVariables').mockReturnValue([]);
       vi.spyOn(GraphHelper, 'getTriggerNodeId').mockReturnValue('manual');
       vi.spyOn(Helper, 'updateTokenMetadataInParameters').mockReturnValue();
-      const spied = vi.spyOn(Helper, 'updateDynamicDataInNode');
+      vi.spyOn(Helper, 'updateDynamicDataInNode');
 
       await loadDynamicContentForInputsInNode(
         nodeId,
@@ -3455,7 +3455,13 @@ describe('core/utils/parameters/helper', () => {
         stepDefinition
       );
 
-      expect(dispatchMockFn).toHaveBeenCalledTimes(2);
+      expect(dispatchMockFn).toHaveBeenCalledTimes(4);
+      expect(dispatchMockFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'operationMetadata/updateNodeDynamicInputLoadStatus',
+          payload: { nodeId, status: 'loading' },
+        })
+      );
     });
   });
 

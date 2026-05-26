@@ -3,42 +3,72 @@ import type { RequestData } from '../common/models/Query';
 import { isSuccessResponse } from '../core/util';
 import { CopilotPanelHeader } from './panelheader';
 import { getId } from '@fluentui/react';
-import { LogEntryLevel, LoggerService, ChatbotService, guid, type Workflow } from '@microsoft/logic-apps-shared';
+import {
+  LogEntryLevel,
+  LoggerService,
+  ChatbotService,
+  CopilotWorkflowEditorService,
+  isCopilotWorkflowEditorServiceInitialized,
+  guid,
+  fallbackConnectorIconUrl,
+  type Workflow,
+  type WorkflowChange,
+  WorkflowChangeType,
+  WorkflowChangeTargetType,
+} from '@microsoft/logic-apps-shared';
 import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
-import { PanelLocation, ConversationItemType, FlowOrigin } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { PanelLocation, ConversationItemType, FlowOrigin, UndoStatus } from '@microsoft/designer-ui';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { AssistantChat, defaultChatbotPanelWidth } from './ChatbotUi';
 
-interface CoPilotChatbotProps {
+export interface CoPilotChatbotProps {
   panelLocation?: PanelLocation;
+  /** Controls whether the chatbot drawer is open. The component stays mounted to preserve conversation history. */
+  isOpen?: boolean;
   getAuthToken: () => Promise<string>;
   getUpdatedWorkflow: () => Promise<Workflow>;
   openFeedbackPanel: () => void; // callback when feedback panel is opened
   openAzureCopilotPanel?: (prompt?: string) => void; // callback to open Azure Copilot Panel
   closeChatBot?: () => void; // callback when chatbot is closed
   chatbotWidth?: string;
+  /** When true and CopilotWorkflowEditorService is initialized, workflow edit requests go through the editor service */
+  enableWorkflowEditing?: boolean;
+  /** Called when a workflow modification is proposed/approved. The host is responsible for applying the update. */
+  onWorkflowProposed?: (workflow: Workflow, changes?: WorkflowChange[]) => void;
+  /** When true, workflow proposals are applied immediately without showing a proposal card. Defaults to true. */
+  autoApply?: boolean;
+  /** Optional callback to resolve a node's icon and brand color by node ID */
+  getNodeVisuals?: (nodeId: string) => { iconUri: string; brandColor: string } | undefined;
+  /** Optional callback when a node ID in the change list is clicked — used to focus/open the node in the editor */
+  onNodeClick?: (nodeId: string) => void;
 }
 
 export const CoPilotChatbot = ({
   panelLocation = PanelLocation.Left,
+  isOpen = true,
   getAuthToken,
   getUpdatedWorkflow,
   openFeedbackPanel,
   openAzureCopilotPanel,
   closeChatBot,
   chatbotWidth = defaultChatbotPanelWidth,
+  enableWorkflowEditing = false,
+  onWorkflowProposed,
+  autoApply = true,
+  getNodeVisuals,
+  onNodeClick,
 }: CoPilotChatbotProps) => {
   const chatSessionId = useRef(guid());
   const intl = useIntl();
   const chatbotService = ChatbotService();
-  const [inputQuery, setInputQuery] = useState('');
-  const [collapsed, setCollapsed] = useState(false);
+  const workflowEditorEnabled = enableWorkflowEditing && isCopilotWorkflowEditorServiceInitialized();
   const [answerGeneration, stopAnswerGeneration] = useState(true);
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
   const [isSaving] = useState(false);
   const [focus, setFocus] = useState(false);
+  const [progressText, setProgressText] = useState('');
   const [conversation, setConversation] = useState<ConversationItem[]>([
     {
       type: ConversationItemType.Greeting,
@@ -46,19 +76,28 @@ export const CoPilotChatbot = ({
       id: getId(),
       date: new Date(),
       reaction: undefined,
+      workflowEditingEnabled: workflowEditorEnabled,
     },
   ]);
   const [controller, setController] = useState(new AbortController());
   const signal = controller.signal;
   const [selectedOperation] = useState('');
+  // Track the last proposed workflow for undo support
+  const pendingProposalRef = useRef<{ workflow: Workflow; previousWorkflow: Workflow; conversationItemId: string } | null>(null);
 
   const intlText = useMemo(() => {
     return {
-      chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask a question about this workflow or about Azure Logic Apps as a whole ...',
-        id: 'kXn5e0',
-        description: 'Chabot input placeholder text',
-      }),
+      chatInputPlaceholder: workflowEditorEnabled
+        ? intl.formatMessage({
+            defaultMessage: 'Ask a question or describe a workflow change...',
+            id: 'S+9l11',
+            description: 'Chatbot input placeholder when workflow editing is enabled',
+          })
+        : intl.formatMessage({
+            defaultMessage: 'Ask a question about this workflow or about Azure Logic Apps as a whole ...',
+            id: 'kXn5e0',
+            description: 'Chabot input placeholder text',
+          }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
         id: 'Yrw/Qt',
@@ -150,6 +189,26 @@ export const CoPilotChatbot = ({
         id: 'O0tSvb',
         description: 'Chatbot card telling user that the AI response is being generated',
       }),
+      progressThinking: intl.formatMessage({
+        defaultMessage: 'Thinking...',
+        id: '71Gdi9',
+        description: 'Chatbot progress message shown while waiting for the initial AI response',
+      }),
+      progressSearchingConnectors: intl.formatMessage({
+        defaultMessage: 'Searching for connectors...',
+        id: '4Z2vwX',
+        description: 'Chatbot progress message shown while searching for available connectors',
+      }),
+      progressBuildingWorkflow: intl.formatMessage({
+        defaultMessage: 'Building workflow...',
+        id: 'hUnLzB',
+        description: 'Chatbot progress message shown while generating the final workflow from connector results',
+      }),
+      progressWorking: intl.formatMessage({
+        defaultMessage: 'Working...',
+        id: 'AL1iVa',
+        description: 'Chatbot progress message shown when the AI has been processing for a while without a status update',
+      }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
         id: '4iyEAY',
@@ -165,8 +224,23 @@ export const CoPilotChatbot = ({
         id: 'JKZpcd',
         description: 'Chatbot card telling user that the AI response is being canceled',
       }),
+      workflowAppliedText: intl.formatMessage({
+        defaultMessage: '✅ Workflow updated successfully.',
+        id: 'I9lfbc',
+        description: 'Chatbot message confirming a workflow modification was applied',
+      }),
+      workflowProposedText: intl.formatMessage({
+        defaultMessage: 'I have a workflow change ready. Review the proposal below.',
+        id: 'lO+med',
+        description: 'Chatbot message when a workflow modification is proposed for review',
+      }),
+      workflowUndoneText: intl.formatMessage({
+        defaultMessage: '↩️ Workflow change has been undone.',
+        id: 'OevhEs',
+        description: 'Chatbot message confirming a workflow modification was undone',
+      }),
     };
-  }, [intl, selectedOperation]);
+  }, [intl, selectedOperation, workflowEditorEnabled]);
 
   const logFeedbackVote = useCallback((reaction: ChatEntryReaction, isRemovedVote?: boolean) => {
     if (isRemovedVote) {
@@ -183,6 +257,451 @@ export const CoPilotChatbot = ({
       });
     }
   }, []);
+
+  const enrichChangesWithVisuals = useCallback(
+    (
+      changes: WorkflowChange[] | undefined,
+      currentWorkflow: Workflow,
+      preApplySnapshot?: Map<string, { iconUri: string; brandColor: string }>
+    ): WorkflowChange[] | undefined => {
+      if (!changes) {
+        return changes;
+      }
+      const connectionIconUrl = fallbackConnectorIconUrl();
+      const connectionRefs = currentWorkflow.connectionReferences ?? {};
+
+      // Build a normalized key → original key map for case/space-insensitive lookups
+      const normalizeKey = (key: string) => key.toLowerCase().replace(/[\s_]/g, '');
+      const snapshotByNormalized = new Map<string, { iconUri: string; brandColor: string }>();
+      if (preApplySnapshot) {
+        for (const [key, value] of preApplySnapshot) {
+          snapshotByNormalized.set(normalizeKey(key), value);
+        }
+      }
+
+      return changes.map((change) => {
+        // Skip if already enriched
+        if (change.iconUri) {
+          return change;
+        }
+
+        // Non-action target types (notes, connections, parameters) don't need connector icon enrichment
+        if (change.targetType && change.targetType !== WorkflowChangeTargetType.Action) {
+          return change;
+        }
+
+        const primaryNodeId = change.nodeIds[0];
+        if (!primaryNodeId) {
+          return { ...change, iconUri: connectionIconUrl, brandColor: '#4E4F4F' };
+        }
+
+        // Check if this is a connection reference change
+        if (primaryNodeId in connectionRefs) {
+          return { ...change, iconUri: connectionIconUrl, brandColor: '#4E4F4F' };
+        }
+
+        // Try the live store first (works for modified nodes, and added nodes after re-render)
+        if (getNodeVisuals) {
+          const visuals = getNodeVisuals(primaryNodeId);
+          if (visuals) {
+            return { ...change, iconUri: visuals.iconUri, brandColor: visuals.brandColor };
+          }
+        }
+
+        // Fall back to pre-apply snapshot (works for deleted nodes)
+        // Try exact match first, then normalized match for LLM name mismatches
+        if (preApplySnapshot) {
+          const snapshotVisuals = preApplySnapshot.get(primaryNodeId);
+          if (snapshotVisuals) {
+            return { ...change, iconUri: snapshotVisuals.iconUri, brandColor: snapshotVisuals.brandColor };
+          }
+        }
+        const normalizedVisuals = snapshotByNormalized.get(normalizeKey(primaryNodeId));
+        if (normalizedVisuals) {
+          return { ...change, iconUri: normalizedVisuals.iconUri, brandColor: normalizedVisuals.brandColor };
+        }
+
+        // Ultimate fallback — use a generic connector icon so there's always something visible
+        return { ...change, iconUri: connectionIconUrl, brandColor: '#4E4F4F' };
+      });
+    },
+    [getNodeVisuals]
+  );
+
+  /**
+   * Schedules a delayed re-enrichment attempt for conversation items whose changes
+   * are still missing icon data (e.g. newly added nodes that the designer hasn't
+   * processed yet).
+   */
+  const scheduleIconEnrichment = useCallback(
+    (
+      responseId: string,
+      rawChanges: WorkflowChange[] | undefined,
+      currentWorkflow: Workflow,
+      preApplySnapshot?: Map<string, { iconUri: string; brandColor: string }>,
+      retriesLeft = 5
+    ) => {
+      if (!rawChanges || !getNodeVisuals) {
+        return;
+      }
+      const timer = setTimeout(() => {
+        setConversation((current) =>
+          current.map((item) => {
+            if (item.id !== responseId || item.type !== ConversationItemType.ReplyWithFlow) {
+              return item;
+            }
+            const enriched = enrichChangesWithVisuals(rawChanges, currentWorkflow, preApplySnapshot);
+            const fallbackIcon = fallbackConnectorIconUrl();
+            const stillUsingFallback =
+              enriched?.some((c) => c.changeType === WorkflowChangeType.Added && c.iconUri === fallbackIcon) ?? false;
+            if (stillUsingFallback && retriesLeft > 1) {
+              scheduleIconEnrichment(responseId, rawChanges, currentWorkflow, preApplySnapshot, retriesLeft - 1);
+            }
+            return { ...item, changes: enriched };
+          })
+        );
+      }, 1000);
+      return timer;
+    },
+    [getNodeVisuals, enrichChangesWithVisuals]
+  );
+
+  const buildConversationSummary = useCallback((currentConversation: ConversationItem[], maxTurns = 10): string => {
+    const relevant = currentConversation
+      .filter(
+        (item) =>
+          item.type === ConversationItemType.Query ||
+          item.type === ConversationItemType.Reply ||
+          item.type === ConversationItemType.ReplyWithFlow
+      )
+      .slice(0, maxTurns * 2);
+
+    if (relevant.length === 0) {
+      return '';
+    }
+
+    const lines = relevant.reverse().map((item) => {
+      if (item.type === ConversationItemType.Query) {
+        return `User: ${(item as any).text}`;
+      }
+      if (item.type === ConversationItemType.Reply) {
+        return `Assistant: ${(item as any).text}`;
+      }
+      if (item.type === ConversationItemType.ReplyWithFlow) {
+        const reply = item as any;
+        const changesSummary = reply.changes?.length
+          ? reply.changes.map((c: WorkflowChange) => `${c.changeType} ${c.targetType}: ${c.nodeIds?.join(', ')}`).join('; ')
+          : 'modified workflow';
+        return `Assistant: [${changesSummary}] ${reply.text}`;
+      }
+      return '';
+    });
+
+    const summary = lines.filter(Boolean).join('\n');
+    const estimatedTokens = summary.length / 4;
+    if (estimatedTokens > 2000) {
+      const kept: string[] = [];
+      let total = 0;
+      const filtered = lines.filter(Boolean);
+      for (let i = filtered.length - 1; i >= 0; i--) {
+        total += filtered[i].length / 4;
+        if (total > 2000) {
+          break;
+        }
+        kept.unshift(filtered[i]);
+      }
+      return kept.join('\n');
+    }
+
+    return summary;
+  }, []);
+
+  const handleWorkflowEditResponse = useCallback(
+    async (query: string, requestPayload: RequestData) => {
+      const editorService = CopilotWorkflowEditorService();
+      const currentWorkflow = await getUpdatedWorkflow();
+
+      const conversationSummary = buildConversationSummary(conversation);
+      const augmentedQuery = conversationSummary ? `Previous conversation:\n${conversationSummary}\n\nCurrent request: ${query}` : query;
+
+      setProgressText(intlText.progressThinking);
+
+      let staleTimer: ReturnType<typeof setTimeout> | undefined;
+      const resetStaleTimer = () => {
+        if (staleTimer) {
+          clearTimeout(staleTimer);
+        }
+        staleTimer = setTimeout(() => {
+          setProgressText(intlText.progressWorking);
+        }, 30_000);
+      };
+      resetStaleTimer();
+
+      try {
+        const response = await editorService.getWorkflowEdit(augmentedQuery, currentWorkflow, signal, (status) => {
+          const progressMessages: Record<string, string> = {
+            thinking: intlText.progressThinking,
+            'searching-connectors': intlText.progressSearchingConnectors,
+            'building-workflow': intlText.progressBuildingWorkflow,
+          };
+          setProgressText(progressMessages[status] ?? status);
+          resetStaleTimer();
+        });
+
+        if (response.type === 'workflow' && response.workflow) {
+          const proposedWorkflow = response.workflow;
+
+          // Pre-populate connection references for newly discovered connectors so that
+          // operations can initialize (resolve swagger) even before the user creates the actual connection.
+          if (response.discoveredConnectors) {
+            const isConsumption = !proposedWorkflow.kind;
+            for (const [refName, connector] of Object.entries(response.discoveredConnectors)) {
+              if (isConsumption) {
+                // Consumption: populate parameters.$connections.value
+                const params = (proposedWorkflow as any).parameters ?? {};
+                if (!params['$connections']) {
+                  params['$connections'] = { value: {} };
+                }
+                if (!params['$connections'].value?.[refName]) {
+                  params['$connections'].value = params['$connections'].value ?? {};
+                  params['$connections'].value[refName] = {
+                    connectionId: '',
+                    connectionName: '',
+                    id: connector.connectorId,
+                  };
+                }
+                (proposedWorkflow as any).parameters = params;
+              } else if (!proposedWorkflow.connectionReferences[refName]) {
+                // Standard: populate connectionReferences
+                proposedWorkflow.connectionReferences[refName] = {
+                  api: { id: connector.connectorId },
+                  connection: { id: '' },
+                  connectionName: '',
+                };
+              }
+            }
+          }
+
+          const responseId = guid();
+
+          if (autoApply) {
+            // Capture visual metadata for every referenced node BEFORE applying
+            // (deleted nodes will lose their metadata once the designer processes the new workflow)
+            const preApplySnapshot = new Map<string, { iconUri: string; brandColor: string }>();
+            if (getNodeVisuals && response.changes) {
+              for (const change of response.changes) {
+                for (const nodeId of change.nodeIds) {
+                  const visuals = getNodeVisuals(nodeId);
+                  if (visuals) {
+                    preApplySnapshot.set(nodeId, visuals);
+                  }
+                }
+              }
+            }
+
+            // Auto-apply: immediately call onWorkflowProposed and show confirmation
+            pendingProposalRef.current = {
+              workflow: proposedWorkflow,
+              previousWorkflow: currentWorkflow,
+              conversationItemId: responseId,
+            };
+            onWorkflowProposed?.(proposedWorkflow, response.changes);
+
+            // Enrich changes with node icons — modified/deleted nodes resolve from
+            // the pre-apply snapshot; for added nodes, schedule a delayed retry
+            const enrichedChanges = enrichChangesWithVisuals(response.changes, currentWorkflow, preApplySnapshot);
+            const fallbackIcon = fallbackConnectorIconUrl();
+            const hasAddedWithFallback =
+              enrichedChanges?.some((c) => c.changeType === WorkflowChangeType.Added && c.iconUri === fallbackIcon) ?? false;
+
+            setConversation((current) => [
+              {
+                type: ConversationItemType.ReplyWithFlow,
+                id: responseId,
+                date: new Date(),
+                text: response.text || intlText.workflowAppliedText,
+                reaction: undefined,
+                undoStatus: UndoStatus.UndoAvailable,
+                correlationId: chatSessionId.current,
+                changes: enrichedChanges,
+                onNodeClick,
+                __rawRequest: requestPayload,
+                __rawResponse: response,
+                openFeedback: openFeedbackPanel,
+                logFeedbackVote,
+                onClick: () => {
+                  // Undo handler: revert to previous workflow
+                  const proposal = pendingProposalRef.current;
+                  if (proposal && proposal.conversationItemId === responseId) {
+                    onWorkflowProposed?.(proposal.previousWorkflow, undefined);
+                    pendingProposalRef.current = null;
+                    setConversation((current) =>
+                      current.map((item) =>
+                        item.id === responseId
+                          ? {
+                              ...item,
+                              undoStatus: UndoStatus.Undone,
+                              text: intlText.workflowUndoneText,
+                            }
+                          : item
+                      )
+                    );
+                  }
+                },
+              },
+              ...current,
+            ]);
+
+            // Re-enrich icons for newly added nodes once designer processes the workflow
+            if (hasAddedWithFallback) {
+              scheduleIconEnrichment(responseId, response.changes, currentWorkflow, preApplySnapshot);
+            }
+          } else {
+            // Proposal mode: show the proposal for user approval
+            pendingProposalRef.current = {
+              workflow: proposedWorkflow,
+              previousWorkflow: currentWorkflow,
+              conversationItemId: responseId,
+            };
+
+            const proposalEnrichedChanges = enrichChangesWithVisuals(response.changes, currentWorkflow);
+
+            setConversation((current) => [
+              {
+                type: ConversationItemType.ReplyWithFlow,
+                id: responseId,
+                date: new Date(),
+                text: response.text || intlText.workflowProposedText,
+                reaction: undefined,
+                undoStatus: UndoStatus.Unavailable,
+                correlationId: chatSessionId.current,
+                changes: proposalEnrichedChanges,
+                onNodeClick,
+                __rawRequest: requestPayload,
+                __rawResponse: response,
+                openFeedback: openFeedbackPanel,
+                logFeedbackVote,
+                onClick: () => {
+                  // Approve handler: apply the proposed workflow
+                  const proposal = pendingProposalRef.current;
+                  if (proposal && proposal.conversationItemId === responseId) {
+                    onWorkflowProposed?.(proposal.workflow, response.changes);
+                    setConversation((current) =>
+                      current.map((item) =>
+                        item.id === responseId
+                          ? {
+                              ...item,
+                              undoStatus: UndoStatus.UndoAvailable,
+                              onClick: () => {
+                                // After approval, clicking again will undo
+                                if (proposal) {
+                                  onWorkflowProposed?.(proposal.previousWorkflow, undefined);
+                                  pendingProposalRef.current = null;
+                                  setConversation((c) =>
+                                    c.map((i) =>
+                                      i.id === responseId ? { ...i, undoStatus: UndoStatus.Undone, text: intlText.workflowUndoneText } : i
+                                    )
+                                  );
+                                }
+                              },
+                            }
+                          : item
+                      )
+                    );
+                  }
+                },
+              },
+              ...current,
+            ]);
+
+            // Re-enrich icons for any changes missing visuals
+            const proposalFallbackIcon = fallbackConnectorIconUrl();
+            if (proposalEnrichedChanges?.some((c) => c.changeType === WorkflowChangeType.Added && c.iconUri === proposalFallbackIcon)) {
+              scheduleIconEnrichment(responseId, response.changes, currentWorkflow);
+            }
+          }
+        } else {
+          // Text-only response (question answer, etc.)
+          setConversation((current) => [
+            {
+              type: ConversationItemType.Reply,
+              id: guid(),
+              date: new Date(),
+              text: response.text,
+              isMarkdownText: true,
+              correlationId: chatSessionId.current,
+              __rawRequest: requestPayload,
+              __rawResponse: response,
+              reaction: undefined,
+              openFeedback: openFeedbackPanel,
+              logFeedbackVote,
+            },
+            ...current,
+          ]);
+        }
+      } finally {
+        if (staleTimer) {
+          clearTimeout(staleTimer);
+        }
+      }
+    },
+    [
+      getUpdatedWorkflow,
+      signal,
+      autoApply,
+      onWorkflowProposed,
+      getNodeVisuals,
+      onNodeClick,
+      openFeedbackPanel,
+      logFeedbackVote,
+      enrichChangesWithVisuals,
+      scheduleIconEnrichment,
+      intlText.workflowAppliedText,
+      intlText.workflowProposedText,
+      intlText.workflowUndoneText,
+      conversation,
+      buildConversationSummary,
+      intlText.progressThinking,
+      intlText.progressSearchingConnectors,
+      intlText.progressBuildingWorkflow,
+      intlText.progressWorking,
+    ]
+  );
+
+  const handleChatbotResponse = useCallback(
+    async (query: string, requestPayload: RequestData) => {
+      const response = await chatbotService.getCopilotResponse(query, await getUpdatedWorkflow(), signal, await getAuthToken());
+      if (!isSuccessResponse(response.status)) {
+        throw new Error(response.statusText);
+      }
+      const queryResponse: string = response.data.properties.response;
+      // commenting out usage of additionalParameters until Logic Apps backend is updated to include this response property
+      const additionalParameters: AdditionalParametersItem = response.data.properties.additionalParameters;
+      setConversation((current) => [
+        {
+          type: ConversationItemType.Reply,
+          id: response.data.properties.queryId,
+          date: new Date(),
+          text: queryResponse,
+          isMarkdownText: false,
+          correlationId: chatSessionId.current,
+          __rawRequest: requestPayload,
+          __rawResponse: response,
+          reaction: undefined,
+          additionalDocURL: additionalParameters?.url ?? undefined,
+          azureButtonCallback:
+            /*additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure)*/ queryResponse ===
+              constants.DefaultAzureResponseCallback && openAzureCopilotPanel
+              ? () => openAzureCopilotPanel(query)
+              : undefined,
+          openFeedback: openFeedbackPanel,
+          logFeedbackVote,
+        },
+        ...current,
+      ]);
+    },
+    [chatbotService, getUpdatedWorkflow, signal, getAuthToken, openAzureCopilotPanel, openFeedbackPanel, logFeedbackVote]
+  );
 
   const onSubmitInputQuery = useCallback(
     async (input: string) => {
@@ -209,35 +728,11 @@ export const CoPilotChatbot = ({
       };
       stopAnswerGeneration(false);
       try {
-        const response = await chatbotService.getCopilotResponse(query, await getUpdatedWorkflow(), signal, await getAuthToken());
-        if (!isSuccessResponse(response.status)) {
-          throw new Error(response.statusText);
+        if (workflowEditorEnabled) {
+          await handleWorkflowEditResponse(query, requestPayload);
+        } else {
+          await handleChatbotResponse(query, requestPayload);
         }
-        const queryResponse: string = response.data.properties.response;
-        // commenting out usage of additionalParameters until Logic Apps backend is updated to include this response property
-        const additionalParameters: AdditionalParametersItem = response.data.properties.additionalParameters;
-        setConversation((current) => [
-          {
-            type: ConversationItemType.Reply,
-            id: response.data.properties.queryId,
-            date: new Date(),
-            text: queryResponse,
-            isMarkdownText: false,
-            correlationId: chatSessionId.current,
-            __rawRequest: requestPayload,
-            __rawResponse: response,
-            reaction: undefined,
-            additionalDocURL: additionalParameters?.url ?? undefined,
-            azureButtonCallback:
-              /*additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure)*/ queryResponse ===
-                constants.DefaultAzureResponseCallback && openAzureCopilotPanel
-                ? () => openAzureCopilotPanel(query)
-                : undefined,
-            openFeedback: openFeedbackPanel,
-            logFeedbackVote,
-          },
-          ...current,
-        ]);
         stopAnswerGeneration(true);
         setTimeout(() => {
           setFocus(true);
@@ -294,10 +789,9 @@ export const CoPilotChatbot = ({
     },
     [
       getUpdatedWorkflow,
-      chatbotService,
-      signal,
-      getAuthToken,
-      openAzureCopilotPanel,
+      workflowEditorEnabled,
+      handleWorkflowEditResponse,
+      handleChatbotResponse,
       openFeedbackPanel,
       logFeedbackVote,
       intlText.cancelGenerationText,
@@ -306,7 +800,6 @@ export const CoPilotChatbot = ({
   );
 
   const dismissCopilot = useCallback(() => {
-    setCollapsed(true);
     closeChatBot?.();
     LoggerService().log({
       level: LogEntryLevel.Warning,
@@ -319,22 +812,16 @@ export const CoPilotChatbot = ({
     controller.abort();
   }, [controller]);
 
-  useEffect(() => {
-    setInputQuery('');
-  }, [conversation]);
-
   return (
     <AssistantChat
       panel={{
         location: panelLocation,
         width: chatbotWidth,
-        isOpen: !collapsed,
+        isOpen,
         onDismiss: dismissCopilot,
-        header: <CopilotPanelHeader closeCopilot={dismissCopilot} />,
+        header: <CopilotPanelHeader />,
       }}
       inputBox={{
-        value: inputQuery,
-        onChange: setInputQuery,
         placeholder: intlText.chatInputPlaceholder,
         onSubmit: onSubmitInputQuery,
       }}
@@ -350,7 +837,7 @@ export const CoPilotChatbot = ({
         test: intlText.chatSuggestion.testButton,
         save: intlText.chatSuggestion.saveButton,
         submit: intlText.submitButtonTitle,
-        progressState: intlText.progressCardText,
+        progressState: progressText,
         progressStop: intlText.progressCardStopButtonLabel,
         progressSave: intlText.progressCardSaveText,
         protectedMessage: intlText.protectedMessage,

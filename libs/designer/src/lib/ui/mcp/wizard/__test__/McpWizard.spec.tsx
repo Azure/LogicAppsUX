@@ -10,6 +10,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { vi, describe, beforeEach, afterEach, it, expect, type MockedFunction } from 'vitest';
 import { McpWizard, type RegisterMcpServerHandler } from '../McpWizard';
 import type { RootState } from '../../../../core/state/mcp/store';
+import { useAllMcpServersFromVfs } from '../../../../core/mcp/utils/queries';
 
 // Mock the heavy dependencies
 vi.mock('../../../panel/mcpPanelRoot', () => ({
@@ -56,6 +57,11 @@ vi.mock('../../../../core/mcp/utils/queries', () => ({
     isLoading: false,
   })),
   useAllMcpServers: vi.fn(() => ({
+    data: [],
+    isLoading: false,
+    isError: false,
+  })),
+  useAllMcpServersFromVfs: vi.fn(() => ({
     data: [],
     isLoading: false,
     isError: false,
@@ -126,11 +132,6 @@ vi.mock('../../../../core/mcp/utils/serializer', () => ({
   serializeMcpWorkflows: vi.fn().mockResolvedValue({
     serverInfo: { name: 'test', description: 'test' },
   }),
-}));
-
-vi.mock('../../../../core/mcp/utils/server', () => ({
-  validateMcpServerName: vi.fn().mockReturnValue(undefined),
-  validateMcpServerDescription: vi.fn().mockReturnValue(undefined),
 }));
 
 vi.mock('../../../../core/mcp/utils/helper', () => ({
@@ -286,9 +287,9 @@ describe('McpWizard', () => {
       renderWithProviders(<McpWizard registerMcpServer={mockRegisterMcpServer} onClose={mockOnClose} />);
 
       const serverNameInput = screen.getByPlaceholderText('Enter a name for the MCP server');
-      fireEvent.change(serverNameInput, { target: { value: 'My Test Server' } });
+      fireEvent.change(serverNameInput, { target: { value: 'MyTest Server' } });
 
-      expect(serverNameInput).toHaveValue('My Test Server');
+      expect(serverNameInput).toHaveValue('MyTest Server');
     });
 
     it('should update server description when typing', () => {

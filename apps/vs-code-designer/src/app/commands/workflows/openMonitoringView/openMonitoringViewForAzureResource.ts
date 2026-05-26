@@ -16,7 +16,7 @@ import {
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
-import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
+import { getRunTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -160,10 +160,13 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
     };
 
     await vscode.window.withProgress(options, async () => {
-      const triggerName = getTriggerName(this.node.workflowFileContent.definition);
-      const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
-
       try {
+        const triggerName = getRunTriggerName(this.node.workflowFileContent.definition);
+        if (!triggerName) {
+          throw new Error(localize('workflowTriggerNotFound', 'Unable to determine a trigger to resubmit this workflow run.'));
+        }
+
+        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
         await sendAzureRequest(url, this.context, HTTP_METHODS.POST, this.node.subscription);
       } catch (error) {
         const errorMessage = localize('runResubmitFailed', 'Workflow run resubmit failed: ') + error.message;

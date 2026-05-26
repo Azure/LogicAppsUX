@@ -371,6 +371,16 @@
         "title": "Parameterize connections",
         "category": "Azure Logic Apps",
         "when": "config.myExtension.enableCommand"
+      },
+      {
+        "command": "azureLogicAppsStandard.openLanguageServerConnectionView",
+        "title": "Open language server connection view",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.enableDevContainer",
+        "title": "Enable Dev Container For Project",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [
@@ -708,6 +718,11 @@
           "group": "navigation@3"
         },
         {
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "logicApps.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true",
+          "group": "navigation@3"
+        },
+        {
           "command": "azureLogicAppsStandard.switchToDotnetProject",
           "when": "logicApps.hasProject && explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
@@ -770,6 +785,10 @@
           "when": "logicApps.hasProject && resourceFilename==workflow.json"
         },
         {
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "logicApps.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true"
+        },
+        {
           "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
           "when": "never"
         },
@@ -787,6 +806,14 @@
         },
         {
           "command": "azureLogicAppsStandard.createProject",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.enableDevContainer",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.openLanguageServerConnectionView",
           "when": "never"
         }
       ]
@@ -1000,6 +1027,16 @@
             "type": "boolean",
             "description": "Enable to use SMB deployment for hybrid logic apps.",
             "default": false
+          },
+          "azureLogicAppsStandard.languageServerDLLPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Absolute path to the server DLL."
+          },
+          "azureLogicAppsStandard.languageServerNupkgPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Absolute path to the .nupkg file."
           }
         }
       }
@@ -1047,7 +1084,9 @@
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations",
-    "onStartupFinished"
+    "onStartupFinished",
+    "onLanguage:csharp",
+    "onLanguage:json"
   ],
   "galleryBanner": {
     "color": "#015cda",

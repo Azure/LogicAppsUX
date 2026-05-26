@@ -7,6 +7,7 @@ import {
   getObjectPropertyValue,
   LoggerService,
   LogEntryLevel,
+  getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAzureConnectorsLazyQuery } from '../../../core/queries/browse';
@@ -60,6 +61,36 @@ export const useAllMcpServers = (siteResourceId: string) => {
     },
     enabled: !!siteResourceId,
     ...queryOpts,
+  });
+};
+
+export const useAllMcpServersFromVfs = (siteResourceId: string) => {
+  return useQuery({
+    queryKey: ['mcpserversvfs', siteResourceId.toLowerCase()],
+    queryFn: async (): Promise<string[]> => {
+      try {
+        const response: any = await ResourceService().getResource(`${siteResourceId}/hostruntime/admin/vfs/mcpservers.json`, {
+          'api-version': '2018-11-01',
+          relativepath: '1',
+        });
+
+        return (getPropertyValue(response, 'mcpServers') ?? []).map((server: McpServer) => server.name);
+      } catch (errorResponse: any) {
+        const error = errorResponse?.error || {};
+
+        // For now log the error and return empty list
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'McpServer.listServersFromVfs',
+          error,
+          message: `Error while fetching mcp servers for the app: ${siteResourceId}`,
+        });
+        return [];
+      }
+    },
+    enabled: !!siteResourceId,
+    ...queryOpts,
+    cacheTime: 0, // Do not cache as this is only used to validate server name uniqueness on create/edit panel
   });
 };
 

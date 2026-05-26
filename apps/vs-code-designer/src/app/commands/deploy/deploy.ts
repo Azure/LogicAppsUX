@@ -21,6 +21,9 @@ import {
   isZipDeployEnabledSetting,
   useSmbDeployment,
   libDirectory,
+  customDirectory,
+  workflowAuthenticationMethodKey,
+  ProjectDirectoryPathKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -58,6 +61,8 @@ import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { publishCodefulProject } from '../publishCodefulProject';
+import { isCodefulProject } from '../../utils/codeful';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -84,15 +89,35 @@ async function deploy(
   addLocalFuncTelemetry(actionContext);
 
   let deployProjectPathForWorkflowApp: string | undefined;
-  const settingsToExclude: string[] = [webhookRedirectHostUri, azureWebJobsStorageKey];
+  const settingsToExclude: string[] = [
+    webhookRedirectHostUri,
+    azureWebJobsStorageKey,
+    ProjectDirectoryPathKey,
+    workflowAuthenticationMethodKey,
+    'REMOTEDEBUGGINGVERSION',
+  ];
   const deployPaths = await getDeployFsPath(actionContext, target);
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;
 
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
-    if (!(await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, 'custom')))) {
-      await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+
+    // Check if this is a codeful project and build/publish if needed
+    const isCodeful = await isCodefulProject(logicAppNode.fsPath);
+    if (isCodeful) {
+      context.telemetry.properties.isCodefulProject = 'true';
+      ext.outputChannel.appendLog(localize('buildingCodefulProject', 'Building and publishing codeful Logic App project...'));
+
+      // Build the codeful project
+      await publishCodefulProject(actionContext, logicAppNode);
+      ext.outputChannel.appendLog(localize('codefulProjectPublished', 'Codeful project built and published successfully.'));
+    } else {
+      // For codeless projects, build custom code functions if they exist
+      const customFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
+      if (customFolderExists) {
+        await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+      }
     }
   }
 

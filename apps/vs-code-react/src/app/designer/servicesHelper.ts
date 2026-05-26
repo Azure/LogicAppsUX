@@ -77,7 +77,7 @@ export const getDesignerServices = (
   hostVersion: string,
   queryClient: QueryClient,
   sendMsgToVsix: (msg: MessageToVsix) => void,
-  setRunId: (runId: string) => void
+  setRunId?: (runId: string) => void
 ): IDesignerServices => {
   let authToken = '';
   let panelId = '';
@@ -180,6 +180,13 @@ export const getDesignerServices = (
     getConfiguration: async (connectionId: string, manifest: OperationManifest | undefined): Promise<any> => {
       try {
         const configuration: Record<string, any> = {};
+        // WORKAROUND: If connectionId is already a configuration object (not a string),
+        // it means something is calling getConfiguration with the result of a previous call.
+        // In this case, just return the object as-is.
+        const connectionIdAsAny = connectionId as any;
+        if (typeof connectionIdAsAny === 'object' && connectionIdAsAny !== null) {
+          return connectionIdAsAny as Record<string, any>;
+        }
 
         if (shouldIncludeWorkflowAppLocation(isLocal, manifest)) {
           configuration.workflowAppLocation = appSettings.ProjectDirectoryPath;
@@ -361,7 +368,7 @@ export const getDesignerServices = (
         title,
       });
     },
-    openRun: (runId: string) => setRunId(runId),
+    openRun: (runId: string) => setRunId?.(runId),
   };
 
   const runService = new StandardRunService({

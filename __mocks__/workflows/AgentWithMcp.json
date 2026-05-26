@@ -1,0 +1,70 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "WorkflowAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "deploymentId": "gpt-4o",
+            "messages": [
+              {
+                "role": "System",
+                "content": "You are a helpful assistant that can use MCP tools."
+              }
+            ]
+          }
+        },
+        "tools": {
+          "Regular_Tool": {
+            "actions": {
+              "Compose": {
+                "type": "Compose",
+                "inputs": "test",
+                "runAfter": {}
+              }
+            },
+            "description": "A regular tool with compose action",
+            "type": "Tool"
+          },
+          "BuiltIn_MCP_Server": {
+            "type": "McpClientTool",
+            "kind": "BuiltIn",
+            "inputs": {
+              "Connection": {
+                "Authentication": "None",
+                "McpServerUrl": "https://mcp.time.mcpcentral.io/"
+              }
+            }
+          },
+          "Managed_MCP_Server": {
+            "type": "McpClientTool",
+            "kind": "Managed",
+            "inputs": {
+              "connectionReference": {
+                "connectionName": "office365"
+              },
+              "parameters": {
+                "mcpServerPath": "/mcp/contacts"
+              }
+            }
+          }
+        },
+        "runAfter": {},
+        "limit": {
+          "count": 100
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "When_an_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    }
+  },
+  "connectionReferences": {},
+  "parameters": {}
+}

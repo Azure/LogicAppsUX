@@ -45,12 +45,17 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
   const isAgentServiceConnection = useMemo(
-    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentService', true),
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentServiceV2', true),
     [operationParameterValues]
   );
 
   const isAzureOpenAI = useMemo(
     () => equals(operationParameterValues?.['agentModelType'] ?? '', 'AzureOpenAI', true),
+    [operationParameterValues]
+  );
+
+  const isMicrosoftFoundry = useMemo(
+    () => equals(operationParameterValues?.['agentModelType'] ?? '', 'MicrosoftFoundry', true),
     [operationParameterValues]
   );
 
@@ -68,7 +73,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     isFetching: isFetchingAccount,
     data: allCognitiveServiceAccounts,
     refetch: refetchServiceAccounts,
-  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, isAzureOpenAI);
+  } = useAllCognitiveServiceAccounts(selectedSubscriptionId, isAzureOpenAI || isMicrosoftFoundry);
 
   const {
     isFetching: isFetchingAPIManagementAccounts,

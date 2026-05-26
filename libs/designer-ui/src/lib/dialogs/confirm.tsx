@@ -1,5 +1,4 @@
-import type { IDialogContentProps, IModalProps } from '@fluentui/react';
-import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@fluentui/react';
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 export interface ConfirmProps {
@@ -10,20 +9,8 @@ export interface ConfirmProps {
   onDismiss(): void;
 }
 
-const modalProps: IModalProps = {
-  isBlocking: true,
-  firstFocusableSelector: 'dialog-ok-button',
-};
-
 export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, onConfirm, onDismiss }) => {
   const intl = useIntl();
-  if (hidden) {
-    return null;
-  }
-
-  const dialogContentProps: IDialogContentProps = {
-    title,
-  };
 
   const okMessage = intl.formatMessage({
     defaultMessage: 'OK',
@@ -36,14 +23,27 @@ export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, onConf
     description: 'Cancel message appearing on a confirmation dialog.',
   });
   return (
-    <Dialog dialogContentProps={dialogContentProps} hidden={hidden} modalProps={modalProps} onDismiss={onDismiss}>
-      {message}
-      <DialogFooter>
-        <PrimaryButton className="dialog-ok-button" onClick={onConfirm}>
-          {okMessage}
-        </PrimaryButton>
-        <DefaultButton onClick={onDismiss}>{cancelMessage}</DefaultButton>
-      </DialogFooter>
+    <Dialog
+      modalType="alert"
+      open={!hidden}
+      onOpenChange={(_, data) => {
+        if (!data.open) {
+          onDismiss();
+        }
+      }}
+    >
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogContent>{message}</DialogContent>
+          <DialogActions>
+            <Button onClick={onDismiss}>{cancelMessage}</Button>
+            <Button appearance="primary" onClick={onConfirm}>
+              {okMessage}
+            </Button>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
     </Dialog>
   );
 };

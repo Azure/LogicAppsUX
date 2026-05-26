@@ -24,6 +24,8 @@ import type {
   IUserPreferenceService,
   IExperimentationService,
   ICognitiveServiceService,
+  IResourceService,
+  ICopilotWorkflowEditorService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
@@ -51,9 +53,9 @@ export interface DesignerOptionsState {
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
     enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
+    integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
-  showConnectionsPanel?: boolean;
   showEdgeDrawing?: boolean;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
@@ -77,6 +79,7 @@ export interface ServiceOptions {
   runService?: IRunService;
   roleService?: IRoleService;
   editorService?: IEditorService;
+  resourceService?: IResourceService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;
   customCodeService?: ICustomCodeService;
@@ -84,4 +87,5 @@ export interface ServiceOptions {
   userPreferenceService?: IUserPreferenceService;
   experimentationService?: IExperimentationService;
   cognitiveServiceService?: ICognitiveServiceService;
+  copilotWorkflowEditorService?: ICopilotWorkflowEditorService;
 }

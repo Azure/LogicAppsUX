@@ -25,7 +25,7 @@ exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="panel-card-v2-badge active ___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         role="button"
@@ -64,7 +64,7 @@ exports[`lib/card/cardfooter > should render with a connection icon 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="panel-card-v2-badge active ___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         role="button"
@@ -103,7 +103,7 @@ exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="panel-card-v2-badge active ___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         role="button"
@@ -142,7 +142,7 @@ exports[`lib/card/cardfooter > should render with a testing icon 1`] = `
     >
       <svg
         aria-hidden={true}
-        className="panel-card-v2-badge active ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+        className="panel-card-v2-badge active ___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
         fill="currentColor"
         height="1em"
         role="button"
@@ -169,7 +169,7 @@ exports[`lib/card/cardfooter > should render with an inactive connection icon 1`
   >
     <svg
       aria-label="Connection required"
-      className="panel-card-v2-badge inactive ___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+      className="panel-card-v2-badge inactive ___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
       fill="currentColor"
       height="1em"
       role="img"

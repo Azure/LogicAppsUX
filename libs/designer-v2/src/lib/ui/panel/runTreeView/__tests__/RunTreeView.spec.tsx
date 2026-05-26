@@ -404,4 +404,365 @@ describe('RunTreeView', () => {
       expect(TimelineHooks.useTimelineRepetitions).toHaveBeenCalled();
     });
   });
+
+  describe('Tree Building', () => {
+    it('should render trigger as a tree item', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {},
+        },
+      };
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('tree-item-manual')).toBeInTheDocument();
+      });
+    });
+
+    it('should render normal actions as tree items', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            Compose: {
+              name: 'Compose',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+            },
+            Response: {
+              name: 'Response',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:02Z',
+            },
+          },
+        },
+      };
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('tree-item-Compose')).toBeInTheDocument();
+        expect(screen.getByTestId('tree-item-Response')).toBeInTheDocument();
+      });
+    });
+
+    it('should skip actions with Skipped status', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            Compose: {
+              name: 'Compose',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+            },
+            SkippedAction: {
+              name: 'SkippedAction',
+              status: 'Skipped',
+              startTime: '2024-01-01T10:00:02Z',
+            },
+          },
+        },
+      };
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('tree-item-Compose')).toBeInTheDocument();
+      });
+      expect(screen.queryByTestId('tree-item-SkippedAction')).not.toBeInTheDocument();
+    });
+
+    it('should skip built-in agent tools from top-level actions', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            code_interpreter: {
+              name: 'code_interpreter',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+            },
+            Compose: {
+              name: 'Compose',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:02Z',
+            },
+          },
+        },
+      };
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('tree-item-Compose')).toBeInTheDocument();
+      });
+      // code_interpreter is a built-in agent tool and should be skipped at top level
+      expect(screen.queryByTestId('tree-item-code_interpreter')).not.toBeInTheDocument();
+    });
+
+    it('should place child actions under parent nodes using nodesMetadata', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            Scope1: {
+              name: 'Scope1',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+            },
+            ChildAction: {
+              name: 'ChildAction',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:02Z',
+            },
+          },
+        },
+      };
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+      (WorkflowSelectors.useNodesMetadata as Mock).mockReturnValue({
+        Scope1: { graphId: 'root' },
+        ChildAction: { parentNodeId: 'Scope1', graphId: 'Scope1' },
+      });
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('tree-item-Scope1')).toBeInTheDocument();
+        expect(screen.getByTestId('tree-item-ChildAction')).toBeInTheDocument();
+      });
+    });
+
+    it('should fetch agent repetitions and render tool iterations', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            AgentScope: {
+              name: 'AgentScope',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+              iterationCount: 1,
+            },
+          },
+        },
+      };
+
+      const mockAgentRepetitions = [
+        {
+          name: '000000',
+          properties: {
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:01Z',
+            repetitionIndexes: [],
+            tools: {
+              myTool: { iterations: 2 },
+            },
+          },
+        },
+      ];
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+      (Core.getAgentRepetitions as Mock).mockResolvedValue(mockAgentRepetitions);
+      (Core.getAgentActionsRepetition as Mock).mockResolvedValue([]);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(Core.getAgentRepetitions).toHaveBeenCalledWith('AgentScope', 'run-123', false);
+      });
+
+      // The agent repetition and its tools should be added to the tree
+      await waitFor(() => {
+        expect(screen.getByTestId('tree-item-AgentScope')).toBeInTheDocument();
+      });
+    });
+
+    it('should skip agent repetitions with Skipped status', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            AgentScope: {
+              name: 'AgentScope',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+              iterationCount: 1,
+            },
+          },
+        },
+      };
+
+      const mockAgentRepetitions = [
+        {
+          name: '000000',
+          properties: {
+            status: 'Skipped',
+            startTime: '2024-01-01T10:00:01Z',
+            repetitionIndexes: [],
+          },
+        },
+      ];
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+      (Core.getAgentRepetitions as Mock).mockResolvedValue(mockAgentRepetitions);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(Core.getAgentRepetitions).toHaveBeenCalled();
+      });
+
+      // Skipped repetitions should not appear in the tree
+      expect(screen.queryByTestId('tree-item-AgentScope')).not.toBeInTheDocument();
+    });
+
+    it('should render scope repetitions', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            ForEach: {
+              name: 'ForEach',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+              repetitionCount: 2,
+            },
+          },
+        },
+      };
+
+      const mockRepetitions = [
+        {
+          name: '000000',
+          properties: {
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:01Z',
+            repetitionIndexes: [],
+          },
+        },
+        {
+          name: '000001',
+          properties: {
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:02Z',
+            repetitionIndexes: [],
+          },
+        },
+      ];
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+      (Core.getNodeRepetitions as Mock).mockResolvedValue(mockRepetitions);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(Core.getNodeRepetitions).toHaveBeenCalledWith('ForEach', 'run-123', false);
+      });
+    });
+
+    it('should skip scope repetitions with Skipped status', async () => {
+      const mockRun = {
+        id: 'run-123',
+        properties: {
+          status: 'Succeeded',
+          trigger: {
+            name: 'manual',
+            status: 'Succeeded',
+            startTime: '2024-01-01T10:00:00Z',
+          },
+          actions: {
+            ForEach: {
+              name: 'ForEach',
+              status: 'Succeeded',
+              startTime: '2024-01-01T10:00:01Z',
+              repetitionCount: 1,
+            },
+          },
+        },
+      };
+
+      const mockRepetitions = [
+        {
+          name: '000000',
+          properties: {
+            status: 'Skipped',
+            startTime: '2024-01-01T10:00:01Z',
+            repetitionIndexes: [],
+          },
+        },
+      ];
+
+      (WorkflowSelectors.useRunInstance as Mock).mockReturnValue(mockRun);
+      (Core.getNodeRepetitions as Mock).mockResolvedValue(mockRepetitions);
+
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(Core.getNodeRepetitions).toHaveBeenCalled();
+      });
+
+      // Skipped repetitions should not be rendered
+      expect(screen.queryByTestId('tree-item-ForEach')).not.toBeInTheDocument();
+    });
+  });
 });

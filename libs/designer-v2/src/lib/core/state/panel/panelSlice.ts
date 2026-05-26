@@ -34,6 +34,7 @@ const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
   relationshipIds: {
     graphId: 'root',
   },
+  searchTerm: '',
   selectedNodeIds: [],
   selectedOperationGroupId: '',
   selectedOperationId: '',
@@ -253,6 +254,9 @@ export const panelSlice = createSlice({
     selectOperationId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationId = action.payload;
     },
+    setDiscoverySearchTerm: (state, action: PayloadAction<string>) => {
+      state.discoveryContent.searchTerm = action.payload;
+    },
     selectBrowseCategory: (state, action: PayloadAction<{ key: string; title: string } | undefined>) => {
       state.discoveryContent.selectedBrowseCategory = action.payload;
     },
@@ -431,6 +435,7 @@ export const {
   setRunHistoryCollapsed,
   openMcpToolWizard,
   setMcpWizardStep,
+  setDiscoverySearchTerm,
   setMcpWizardConnection,
   setMcpWizardTools,
   setMcpWizardHeaders,

@@ -24,6 +24,10 @@ const AGENT_CARD = {
 
 const AGENT_CARD_URL = 'http://localhost:3001/api/agents/test/.well-known/agent-card.json';
 
+// Delay (ms) used in the message/stream mock to keep the agent request in-flight
+// long enough for tests to observe the disabled input state.
+const MESSAGE_STREAM_MOCK_DELAY_MS = 3000;
+
 test.describe('Input Validation', { tag: '@mock' }, () => {
   test.beforeEach(async ({ page }) => {
     // Mock authentication - return authenticated user
@@ -275,6 +279,48 @@ test.describe('Input State Management', { tag: '@mock' }, () => {
 
     // Input should be enabled initially
     await expect(messageInput).toBeEnabled();
+
+    // Override agent route for this test to add a delay on message/stream requests.
+    // This ensures the request stays in-flight long enough to observe the disabled state,
+    // instead of failing immediately (route.continue() with no real backend) and re-enabling.
+    await page.route('**/api/agents/test', async (route: Route) => {
+      if (route.request().method() !== 'POST') {
+        await route.continue();
+        return;
+      }
+
+      const postData = route.request().postDataJSON();
+
+      if (postData?.method === 'contexts/list') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ jsonrpc: '2.0', id: postData.id, result: [] }),
+        });
+        return;
+      }
+
+      if (postData?.method === 'message/stream') {
+        // Delay response so the input stays disabled long enough to be observed
+        await new Promise<void>((resolve) => setTimeout(resolve, MESSAGE_STREAM_MOCK_DELAY_MS));
+        await route.fulfill({
+          status: 200,
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
+          },
+          body: `data: ${JSON.stringify({
+            jsonrpc: '2.0',
+            id: postData.id,
+            result: { status: { state: 'completed' }, kind: 'status-update', final: true },
+          })}\n\n`,
+        });
+        return;
+      }
+
+      await route.continue();
+    });
 
     // Send first message
     await messageInput.fill('First message');

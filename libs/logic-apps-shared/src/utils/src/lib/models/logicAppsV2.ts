@@ -633,6 +633,7 @@ export interface RetryPolicy {
   type?: string; // None, Exponential or Fixed
   minimumInterval?: string;
   maximumInterval?: string;
+  httpStatusCodes?: number[];
 }
 
 export interface RetryableActionInputs {

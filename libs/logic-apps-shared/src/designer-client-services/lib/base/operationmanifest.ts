@@ -42,6 +42,7 @@ import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import agentloopManifest from '../standard/manifest/agentloop';
 import handoffManifest from './manifests/handoff';
+import invokeFunctionManifest from './manifests/invokefunction';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
@@ -76,6 +77,7 @@ const xmlcompose = 'xmlcompose';
 const xmlparse = 'xmlparse';
 export const flatfiledecoding = 'flatfiledecoding';
 export const flatfileencoding = 'flatfileencoding';
+const flatfileschemageneration = 'flatfileschemageneration';
 const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const swiftmtdecode = 'swiftmtdecode';
@@ -130,8 +132,6 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
-const hl7decode = 'hl7decode';
-const hl7encode = 'hl7encode';
 export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 export const chunktextwithmetadata = 'chunktextwithmetadata';
 
@@ -155,7 +155,6 @@ const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 const x12ConnectorId = 'connectionProviders/x12Operations';
 const xmlOperationsConnectionId = 'connectionProviders/xmlOperations';
 const edifactConnectorId = 'connectionProviders/edifactOperations';
-const hl7ConnectorId = 'connectionProviders/hl7Operations';
 export const inlineCodeConnectorId = 'connectionProviders/inlineCode';
 
 const azurefunction = 'azurefunction';
@@ -215,6 +214,7 @@ export const supportedBaseManifestTypes = [
   xmlparse,
   flatfiledecoding,
   flatfileencoding,
+  flatfileschemageneration,
   scope,
   swiftdecode,
   swiftencode,
@@ -235,8 +235,6 @@ export const supportedBaseManifestTypes = [
   parsedocument,
   parsedocumentwithmetadata,
   chunktextwithmetadata,
-  hl7decode,
-  hl7encode,
 ];
 
 export const builtInConnectorIds = {
@@ -350,6 +348,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case xmlvalidation:
     case flatfiledecoding:
     case flatfileencoding:
+    case flatfileschemageneration:
     case scope:
     case swiftdecode:
     case swiftencode:
@@ -375,8 +374,6 @@ export function isBuiltInOperation(definition: any): boolean {
     case chunktext:
     case chunktextwithmetadata:
     case parsedocumentwithmetadata:
-    case hl7decode:
-    case hl7encode:
       return true;
 
     case mcpclienttool:
@@ -693,6 +690,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/flatFileOperations',
     operationId: 'flatFileEncoding',
   },
+  [flatfileschemageneration]: {
+    connectorId: 'connectionProviders/flatFileOperations',
+    operationId: 'flatFileSchemaGeneration',
+  },
   [scope]: {
     connectorId: controlConnectorId,
     operationId: scope,
@@ -785,14 +786,6 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: chunktextwithmetadata,
   },
-  [hl7decode]: {
-    connectorId: hl7ConnectorId,
-    operationId: hl7decode,
-  },
-  [hl7encode]: {
-    connectorId: hl7ConnectorId,
-    operationId: hl7encode,
-  },
 };
 
 export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
@@ -818,6 +811,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [httpwebhooktrigger, httpWebhookTriggerManifest],
   [incrementvariable, incrementManifest],
   [initializevariable, initializeManifest],
+  [invokefunction, invokeFunctionManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],

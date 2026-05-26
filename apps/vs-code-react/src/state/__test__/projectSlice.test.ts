@@ -9,15 +9,16 @@ describe('projectSlice', () => {
 
   describe('initialize', () => {
     it('should set initialized to true and project name', () => {
-      const result = projectReducer(initialState, initialize('designer'));
+      const result = projectReducer(initialState, initialize({ project: 'designer' }));
       expect(result.initialized).toBe(true);
       expect(result.project).toBe('designer');
     });
 
-    it('should handle undefined project name', () => {
-      const result = projectReducer(initialState, initialize(undefined));
+    it('should handle undefined route', () => {
+      const result = projectReducer(initialState, initialize({ project: 'designer' }));
       expect(result.initialized).toBe(true);
-      expect(result.project).toBeUndefined();
+      expect(result.project).toBe('designer');
+      expect(result.route).toBeUndefined();
     });
   });
 

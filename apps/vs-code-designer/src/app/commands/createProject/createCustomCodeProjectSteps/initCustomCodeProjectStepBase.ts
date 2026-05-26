@@ -25,6 +25,7 @@ import {
   tryGetLogicAppCustomCodeFunctionsProjects,
 } from '../../../utils/customCodeUtils';
 import { getDebugConfiguration } from '../../../utils/debug';
+import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
 import { isSubpath, confirmEditJsonFile, confirmOverwriteFile } from '../../../utils/fs';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import {
@@ -118,47 +119,41 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
    **/
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
     const tasksJsonPath: string = path.join(context.projectPath, vscodeFolderName, tasksFileName);
-    const tasksJsonContent = `{
-        "version": "2.0.0",
-        "tasks": [
-          {
-            "label": "generateDebugSymbols",
-            "command": '\${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            "args": [
-              "\${input:getDebugSymbolDll}"
-            ],
-            "type": "process",
-            "problemMatcher": "$msCompile"
+    const tasksJsonContent = {
+      version: '2.0.0',
+      tasks: [
+        {
+          label: 'generateDebugSymbols',
+          command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+          args: ['${input:getDebugSymbolDll}'],
+          type: 'process',
+          problemMatcher: '$msCompile',
+        },
+        {
+          type: 'shell',
+          command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
+          args: ['host', 'start'],
+          ...getFuncHostTaskEnv(),
+          problemMatcher: '$func-watch',
+          isBackground: true,
+          label: 'func: host start',
+          group: {
+            kind: 'build',
+            isDefault: true,
           },
-          {
-            "type": "shell",
-            "command":"\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}",
-            "args" : ["host", "start"],
-            "options": {
-              "env": {
-                "PATH": "\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\DotNetSDK;$env:PATH"
-              }
-            },
-            "problemMatcher": "$func-watch",
-            "isBackground": true,
-            "label": "func: host start",
-            "group": {
-              "kind": "build",
-              "isDefault": true
-            }
-          }
-        ],
-        "inputs": [
-          {
-            "id": "getDebugSymbolDll",
-            "type": "command",
-            "command": "azureLogicAppsStandard.getDebugSymbolDll"
-          }
-        ]
-      }`;
+        },
+      ],
+      inputs: [
+        {
+          id: 'getDebugSymbolDll',
+          type: 'command',
+          command: 'azureLogicAppsStandard.getDebugSymbolDll',
+        },
+      ],
+    };
 
     if (await confirmOverwriteFile(context, tasksJsonPath)) {
-      await fse.writeFile(tasksJsonPath, tasksJsonContent);
+      await fse.writeFile(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
     }
   }
 

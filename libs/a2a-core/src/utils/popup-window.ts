@@ -10,10 +10,40 @@ export interface PopupWindowResult {
   error?: Error;
 }
 
+const ALLOWED_POPUP_PROTOCOLS = new Set(['https:']);
+
 /**
- * Opens a popup window and returns a promise that resolves when the window is closed
+ * Validates that a URL uses an allowed protocol (https: only).
+ * Blocks javascript:, data:, vbscript:, and other dangerous schemes.
+ * Allows http: for localhost URLs in development environments.
+ */
+export function validatePopupUrl(url: string): URL {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`Invalid URL for authentication popup: ${url}`);
+  }
+
+  // Allow http: for localhost in development
+  if (parsed.protocol === 'http:' && (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1')) {
+    return parsed;
+  }
+
+  if (!ALLOWED_POPUP_PROTOCOLS.has(parsed.protocol)) {
+    throw new Error(`Blocked authentication popup with disallowed protocol: ${parsed.protocol}`);
+  }
+
+  return parsed;
+}
+
+/**
+ * Opens a popup window and returns a promise that resolves when the window is closed.
+ * Only allows https: URLs to prevent DOM XSS via javascript: protocol injection.
  */
 export async function openPopupWindow(url: string, windowName = 'a2a-auth', options: PopupWindowOptions = {}): Promise<PopupWindowResult> {
+  validatePopupUrl(url);
+
   const {
     width = 600,
     height = 700,
@@ -37,6 +67,17 @@ export async function openPopupWindow(url: string, windowName = 'a2a-auth', opti
 
   if (!popup) {
     throw new Error('Failed to open popup window. Please check your popup blocker settings.');
+  }
+
+  // Prevent the opened window from accessing window.opener (XSS mitigation).
+  // We set this after opening instead of using the 'noopener' window feature,
+  // because 'noopener' causes window.open() to return null, which prevents
+  // us from monitoring when the popup closes.
+  try {
+    popup.opener = null;
+  } catch {
+    // Cross-origin windows may throw — this is expected and acceptable
+    // since cross-origin popups can't access opener anyway.
   }
 
   // Focus the popup

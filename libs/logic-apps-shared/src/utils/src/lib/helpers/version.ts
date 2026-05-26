@@ -12,7 +12,7 @@ export const BundleVersionRequirements = {
 
 /**
  * Parses a semantic version string into its components.
- * @arg {string} version - The version string to parse (e.g., "1.114.23").
+ * @arg {string} version - The version string to parse (e.g., "1.114.23" or "1.160.0.18").
  * @return {[number, number, number]} - A tuple of [major, minor, patch] version numbers.
  * @throws {ArgumentException} If the version string is invalid or contains non-numeric parts.
  */
@@ -22,11 +22,14 @@ const parseVersion = (version: string): [number, number, number] => {
   }
 
   const parts = version.split('.');
-  if (parts.length < 3) {
-    throw new ArgumentException(`Invalid version format: "${version}". Expected format: "major.minor.patch"`);
+  // Support both 3-part (1.2.3) and 4-part (1.2.3.4) versions
+  // For 4-part versions, ignore the 4th part for comparison purposes
+  if (parts.length !== 3 && parts.length !== 4) {
+    throw new ArgumentException(`Invalid version format: "${version}". Expected format: "major.minor.patch" or "major.minor.patch.build"`);
   }
 
-  const [major, minor, patch] = parts.map(Number);
+  // Only use first 3 parts for semantic versioning comparison
+  const [major, minor, patch] = parts.slice(0, 3).map(Number);
 
   if ([major, minor, patch].some(Number.isNaN) || [major, minor, patch].some((v) => v < 0)) {
     throw new ArgumentException(`Invalid version format: "${version}". All parts must be non-negative numbers`);

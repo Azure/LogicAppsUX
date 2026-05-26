@@ -65,7 +65,9 @@ describe('server utils', () => {
         return defaultMessage;
       }),
     });
-    mockEquals.mockImplementation((a, b) => a === b);
+    mockEquals.mockImplementation((a, b) => {
+      return a === b;
+    });
     mockIsNullOrEmpty.mockImplementation((value) => !value || value.trim() === '');
     mockGetPropertyValue.mockReturnValue('test-api-key');
     mockGetHostConfig.mockResolvedValue({
@@ -85,10 +87,11 @@ describe('server utils', () => {
   });
 
   describe('validateMcpServerName', () => {
+    const existingNames = ['Server1', 'Server2', 'TestServer'];
     it('should return error message for null or empty server name', () => {
       mockIsNullOrEmpty.mockReturnValue(true);
 
-      const result = validateMcpServerName('');
+      const result = validateMcpServerName('', existingNames);
 
       expect(result).toBe('Server name is required.');
       expect(mockIsNullOrEmpty).toHaveBeenCalledWith('');
@@ -98,7 +101,7 @@ describe('server utils', () => {
       mockIsNullOrEmpty.mockReturnValue(false);
       mockEquals.mockReturnValue(true);
 
-      const result = validateMcpServerName('default');
+      const result = validateMcpServerName('default', existingNames);
 
       expect(result).toBe('Can\'t use "default" as the server name.');
       expect(mockEquals).toHaveBeenCalledWith('default', 'default');
@@ -109,7 +112,7 @@ describe('server utils', () => {
       mockEquals.mockReturnValue(false);
       const longName = 'a'.repeat(81);
 
-      const result = validateMcpServerName(longName);
+      const result = validateMcpServerName(longName, existingNames);
 
       expect(result).toBe('Server name must be less than 80 characters.');
     });
@@ -118,8 +121,7 @@ describe('server utils', () => {
       mockIsNullOrEmpty.mockReturnValue(false);
       mockEquals.mockReturnValue(false);
 
-      const result = validateMcpServerName('server-name!@#');
-
+      const result = validateMcpServerName('server-name!@#', existingNames);
       expect(result).toBe('Enter a unique name under 80 characters with only letters and numbers.');
     });
 
@@ -127,7 +129,7 @@ describe('server utils', () => {
       mockIsNullOrEmpty.mockReturnValue(false);
       mockEquals.mockReturnValue(false);
 
-      const result = validateMcpServerName('validServerName');
+      const result = validateMcpServerName('validServerName', existingNames);
 
       expect(result).toBeUndefined();
     });
@@ -136,8 +138,7 @@ describe('server utils', () => {
       mockIsNullOrEmpty.mockReturnValue(false);
       mockEquals.mockReturnValue(false);
 
-      const result = validateMcpServerName('12345');
-
+      const result = validateMcpServerName('12345', existingNames);
       expect(result).toBeUndefined();
     });
 
@@ -145,7 +146,7 @@ describe('server utils', () => {
       mockIsNullOrEmpty.mockReturnValue(false);
       mockEquals.mockReturnValue(false);
 
-      const result = validateMcpServerName('server123');
+      const result = validateMcpServerName('server123', existingNames);
 
       expect(result).toBeUndefined();
     });
@@ -154,8 +155,7 @@ describe('server utils', () => {
       mockIsNullOrEmpty.mockReturnValue(false);
       mockEquals.mockReturnValue(false);
 
-      const result = validateMcpServerName('a');
-
+      const result = validateMcpServerName('a', existingNames);
       expect(result).toBeUndefined();
     });
 
@@ -164,9 +164,15 @@ describe('server utils', () => {
       mockEquals.mockReturnValue(false);
       const exactLengthName = 'a'.repeat(80);
 
-      const result = validateMcpServerName(exactLengthName);
-
+      const result = validateMcpServerName(exactLengthName, existingNames);
       expect(result).toBeUndefined();
+    });
+
+    it('should return error message for non-unique server name', () => {
+      mockIsNullOrEmpty.mockReturnValue(false);
+
+      const result = validateMcpServerName('Server1', existingNames);
+      expect(result).toBe('Server name must be unique. A server with this name already exists.');
     });
   });
 

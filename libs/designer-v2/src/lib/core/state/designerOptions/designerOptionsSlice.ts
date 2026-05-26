@@ -25,6 +25,7 @@ import {
   InitUserPreferenceService,
   InitExperimentationServiceService,
   InitCognitiveServiceService,
+  InitCopilotWorkflowEditorService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -78,6 +79,7 @@ export const initializeServices = createAsyncThunk(
     userPreferenceService,
     experimentationService,
     cognitiveServiceService,
+    copilotWorkflowEditorService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -140,6 +142,10 @@ export const initializeServices = createAsyncThunk(
 
     if (cognitiveServiceService) {
       InitCognitiveServiceService(cognitiveServiceService);
+    }
+
+    if (copilotWorkflowEditorService) {
+      InitCopilotWorkflowEditorService(copilotWorkflowEditorService);
     }
 
     // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,

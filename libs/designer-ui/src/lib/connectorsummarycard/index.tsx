@@ -8,6 +8,7 @@ import { OperationRuntimeBadges } from './operationRuntimeBadges';
 import { useCallback } from 'react';
 import { ChevronRight12Regular } from '@fluentui/react-icons';
 import { FavoriteButton } from '../panel';
+import { useConnectorSummaryCardStyles } from './connectorsummarycard.styles';
 
 export interface ConnectorSummaryCardProps {
   connector: Connector | OperationApi;
@@ -20,6 +21,7 @@ export interface ConnectorSummaryCardProps {
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const { connector, onClick, isCard = true, displayRuntimeInfo, hideFavorites } = props;
   const { id } = connector;
+  const styles = useConnectorSummaryCardStyles();
 
   const connectorName = getDisplayNameFromConnector(connector);
   const description = getDescriptionFromConnector(connector);
@@ -37,7 +39,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
     <>
       <div className="msla-connector-summary-header">
         {isCard ? <ConnectorImage /> : null}
-        <Text className="msla-connector-summary-title">{connectorName}</Text>
+        <Text className={mergeClasses('msla-connector-summary-title', styles.title)}>{connectorName}</Text>
         <InfoDot
           title={connectorName}
           description={description}
@@ -66,7 +68,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   if (isCard) {
     return (
       <div
-        className="msla-connector-summary-card"
+        className={mergeClasses('msla-connector-summary-card', styles.card)}
         onClick={handleClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {

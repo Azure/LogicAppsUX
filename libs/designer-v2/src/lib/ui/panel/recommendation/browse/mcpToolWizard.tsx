@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Text, Spinner, Button, MessageBar, MessageBarBody, Label, Radio, RadioGroup } from '@fluentui/react-components';
-import { AddRegular } from '@fluentui/react-icons';
+import { AddRegular, CheckmarkLockRegular } from '@fluentui/react-icons';
 import { TemplatesPanelFooter, type TemplatePanelFooterProps, SimpleDictionary, SearchableDropdown } from '@microsoft/designer-ui';
 import { ConnectionType, ConnectorService, removeConnectionPrefix } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../../core';
@@ -30,9 +30,94 @@ import { isConnectionValid, getAssistedConnectionProps } from '../../../../core/
 import { addOperation } from '../../../../core/actions/bjsworkflow/add';
 import { useMcpToolWizardStyles } from './styles/McpToolWizard.styles';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
-import type { Connection, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionParameterSets, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { MCP_CLIENT_CONNECTOR_ID } from '../helpers';
+
+/**
+ * Connection parameter sets for MCP servers. Used as a fallback when a custom connector
+ * doesn't have its own connectionParameterSets, so users can select auth type
+ * (None, Basic, Key, or Managed Identity) during connection creation.
+ */
+const mcpConnectionParameterSets: ConnectionParameterSets = {
+  uiDefinition: {
+    displayName: 'Authentication type',
+    description: 'The authentication type to use.',
+  },
+  values: [
+    {
+      name: 'None',
+      parameters: {},
+      uiDefinition: { displayName: 'None', description: 'None' },
+    },
+    {
+      name: 'Basic',
+      parameters: {
+        username: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Username',
+            constraints: { propertyPath: ['authentication'], required: 'true' },
+            description: 'Username',
+          },
+        },
+        password: {
+          type: 'securestring',
+          uiDefinition: {
+            displayName: 'Password',
+            constraints: { propertyPath: ['authentication'], required: 'true' },
+            description: 'Password',
+          },
+        },
+      },
+      uiDefinition: { displayName: 'Basic', description: 'Basic authentication' },
+    },
+    {
+      name: 'Key',
+      parameters: {
+        key: {
+          type: 'securestring',
+          uiDefinition: {
+            displayName: 'Key',
+            constraints: { required: 'true', propertyPath: ['authentication'] },
+            description: 'Key',
+          },
+        },
+        keyHeaderName: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Key Header Name',
+            constraints: { propertyPath: ['authentication'] },
+            description: 'Key header name',
+          },
+        },
+      },
+      uiDefinition: { displayName: 'Key', description: 'Key authentication' },
+    },
+    {
+      name: 'ManagedServiceIdentity',
+      parameters: {
+        identity: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Managed identity',
+            constraints: { required: 'false', editor: 'identitypicker', propertyPath: ['authentication'] },
+            description: 'The managed identity to use for authentication',
+          },
+        },
+        audience: {
+          type: 'string',
+          uiDefinition: {
+            displayName: 'Audience',
+            constraints: { required: 'true', propertyPath: ['authentication'] },
+            description: 'The audience',
+          },
+        },
+      },
+      uiDefinition: { displayName: 'Managed identity', description: 'Managed identity authentication' },
+    },
+  ],
+};
 
 export const McpToolWizard = () => {
   const intl = useIntl();
@@ -400,10 +485,10 @@ export const McpToolWizard = () => {
         id: 'Yzw97z',
         description: 'Description for connection selection step',
       }),
-      step2Description: intl.formatMessage({
-        defaultMessage: 'Configure the parameters for this MCP tool',
-        id: 'kAJqcb',
-        description: 'Description for parameters step',
+      connectionLockedInfo: intl.formatMessage({
+        defaultMessage: 'The connection for this MCP server is locked and cannot be changed.',
+        id: 'lmqT4k',
+        description: 'Info message shown on parameters step when the connection is locked',
       }),
       toolsManagementDescription: intl.formatMessage({
         defaultMessage: 'Configure how tools are managed and included for this MCP server',
@@ -506,14 +591,9 @@ export const McpToolWizard = () => {
         description: 'Retry button text',
       }),
       addConnectionLink: intl.formatMessage({
-        defaultMessage: 'Add new',
-        id: 'YW1rx0',
-        description: 'Link text to add a new connection',
-      }),
-      createConnectionDescription: intl.formatMessage({
-        defaultMessage: 'Create a new connection for the MCP server.',
-        id: 'lPj8hf',
-        description: 'Description for create connection step',
+        defaultMessage: 'Create a new connection',
+        id: '5R1r3q',
+        description: 'Button text to create a new connection',
       }),
     }),
     [intl]
@@ -532,22 +612,12 @@ export const McpToolWizard = () => {
 
     const buttonContents: TemplatePanelFooterProps['buttonContents'] = [
       {
-        type: 'navigation',
+        type: 'action',
         text: INTL_TEXT.backButton,
         onClick: handleBack,
         appearance: 'subtle',
       },
     ];
-
-    // Add "Add a connection" button on connection step
-    if (isConnectionStep) {
-      buttonContents.push({
-        type: 'action',
-        text: INTL_TEXT.addConnectionLink,
-        onClick: handleAddConnectionClick,
-        appearance: 'subtle',
-      });
-    }
 
     // Disable Done button if in "selected tools" mode with no tools selected
     const isDoneDisabled =
@@ -600,12 +670,14 @@ export const McpToolWizard = () => {
     }
 
     return (
-      <ConnectionTable
-        connections={validConnections}
-        currentConnectionId={localConnectionId}
-        saveSelectionCallback={handleConnectionTableSelect}
-        isXrmConnectionReferenceMode={false}
-      />
+      <div className={classes.connectionStepContainer}>
+        <ConnectionTable
+          connections={validConnections}
+          currentConnectionId={localConnectionId}
+          saveSelectionCallback={handleConnectionTableSelect}
+          isXrmConnectionReferenceMode={false}
+        />
+      </div>
     );
   };
 
@@ -615,6 +687,12 @@ export const McpToolWizard = () => {
     // Only pass ConnectionType.Mcp for builtin MCP connections
     // Managed MCP servers use the default Azure connection flow
     const connectionMetadata = isManagedMcpServer ? undefined : { type: ConnectionType.Mcp, required: true };
+
+    // For managed MCP servers (custom connectors), the connector from Azure API
+    // may not include connectionParameterSets (auth options). Provide MCP auth
+    // parameter sets as a fallback so users can select auth type (None, Basic,
+    // Managed Identity, etc.) when creating a connection.
+    const parameterSetsOverride = isManagedMcpServer ? mcpConnectionParameterSets : undefined;
 
     return (
       <div className={classes.createConnectionContainer}>
@@ -630,6 +708,8 @@ export const McpToolWizard = () => {
           onConnectionCreated={handleConnectionCreated}
           onConnectionCancelled={handleConnectionCancelled}
           description=" "
+          connectionParameterSetsOverride={parameterSetsOverride}
+          enableManagedIdentityPicker={isManagedMcpServer}
         />
       </div>
     );
@@ -669,7 +749,7 @@ export const McpToolWizard = () => {
     return (
       <div className={classes.toolsContainer}>
         {/* Tools management section */}
-        <div className={classes.toolsSection} style={{ paddingTop: '16px', borderTop: '1px solid #e0e0e0' }}>
+        <div className={classes.toolsSection} style={{ paddingTop: '16px' }}>
           <Text size={200} style={{ marginBottom: '12px' }}>
             {INTL_TEXT.toolsManagementDescription}
           </Text>
@@ -749,12 +829,6 @@ export const McpToolWizard = () => {
     if (isConnectionStep) {
       return INTL_TEXT.step1Description;
     }
-    if (isCreateConnectionStep) {
-      return INTL_TEXT.createConnectionDescription;
-    }
-    if (isParametersStep) {
-      return INTL_TEXT.step2Description;
-    }
     return null;
   };
 
@@ -778,36 +852,33 @@ export const McpToolWizard = () => {
   // When step 1 is completed but not locked, show checkmark with brand color
   const isStep1Locked = (isConnectionLocked || wasOpenedAtCreateConnection) && isParametersStep;
   const isStep1Completed = !isConnectionLocked && !wasOpenedAtCreateConnection && isParametersStep;
+  const stepDescription = getStepDescription();
 
   return (
     <div className={classes.container}>
       <div className={classes.content}>
         {/* Step Indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              backgroundColor: isStep1Locked
-                ? 'var(--colorNeutralBackground5)'
-                : currentStepNumber >= 1
-                  ? 'var(--colorBrandBackground)'
-                  : 'var(--colorNeutralBackground3)',
-              color: isStep1Locked
-                ? 'var(--colorNeutralForeground3)'
-                : currentStepNumber >= 1
-                  ? 'var(--colorNeutralForegroundOnBrand)'
-                  : 'var(--colorNeutralForeground3)',
-              fontSize: '12px',
-              fontWeight: 600,
-            }}
-          >
-            {isStep1Locked ? '🔒' : isStep1Completed ? '✓' : '1'}
-          </div>
+          {isStep1Locked ? (
+            <CheckmarkLockRegular style={{ width: '24px', height: '24px', color: 'var(--colorStatusSuccessForeground1)' }} />
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                backgroundColor: currentStepNumber >= 1 ? 'var(--colorBrandBackground)' : 'var(--colorNeutralBackground3)',
+                color: currentStepNumber >= 1 ? 'var(--colorNeutralForegroundOnBrand)' : 'var(--colorNeutralForeground3)',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              {isStep1Completed ? '✓' : '1'}
+            </div>
+          )}
           <Text
             weight={currentStepNumber === 1 && !isStep1Locked ? 'semibold' : 'regular'}
             style={{
@@ -841,7 +912,12 @@ export const McpToolWizard = () => {
           </div>
           <Text weight={currentStepNumber === 2 ? 'semibold' : 'regular'}>{INTL_TEXT.step2Label}</Text>
         </div>
-        <Text className={classes.stepDescription}>{getStepDescription()}</Text>
+        {stepDescription ? <Text className={classes.stepDescription}>{stepDescription}</Text> : null}
+        {isParametersStep && isStep1Locked && (
+          <MessageBar intent="info" layout="multiline">
+            <MessageBarBody>{INTL_TEXT.connectionLockedInfo}</MessageBarBody>
+          </MessageBar>
+        )}
         {isParametersStep && toolsErrorMessage && (
           <div className={classes.warningContainer}>
             <MessageBar intent="warning">
@@ -857,6 +933,13 @@ export const McpToolWizard = () => {
           </div>
         )}
         {renderCurrentStep()}
+        {isConnectionStep ? (
+          <div className={classes.connectionStepActionContainer}>
+            <Button onClick={handleAddConnectionClick} size="small">
+              {INTL_TEXT.addConnectionLink}
+            </Button>
+          </div>
+        ) : null}
       </div>
       {(footerContent.buttonContents?.length ?? 0) > 0 && (
         <div className={classes.footer}>

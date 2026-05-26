@@ -24,6 +24,7 @@ import type {
   IUserPreferenceService,
   IExperimentationService,
   ICognitiveServiceService,
+  ICopilotWorkflowEditorService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
@@ -47,11 +48,14 @@ export interface DesignerOptionsState {
     recurrenceInterval?: LogicApps.Recurrence;
     maxWaitingRuns?: MaximumWaitingRunsMetadata; // min and max of Maximum Waiting Runs Concurrency Setting
     stringOverrides?: Record<string, string>; // string overrides for localization
-    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
+    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 20)
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
     enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
+    disableMcpClientTools?: boolean; // hide MCP client tools from browse panel
+    disableNativeMcpClientTools?: boolean; // hide native (built-in) MCP client tools tab from browse panel
+    integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
@@ -82,4 +86,5 @@ export interface ServiceOptions {
   userPreferenceService?: IUserPreferenceService;
   experimentationService?: IExperimentationService;
   cognitiveServiceService?: ICognitiveServiceService;
+  copilotWorkflowEditorService?: ICopilotWorkflowEditorService;
 }

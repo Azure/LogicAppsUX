@@ -24,6 +24,7 @@ import {
   type MessageOptions,
 } from 'vscode';
 import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import type { LanguageClient } from 'vscode-languageclient/node';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -37,6 +38,9 @@ type FuncInstance = {
   childFuncPid?: string;
   port?: number;
   isStarting?: boolean;
+  startupError?: string;
+  startupPromise?: Promise<void>;
+  validationRetryCount?: number;
 };
 
 // biome-ignore lint/style/noNamespace:
@@ -93,9 +97,11 @@ export namespace ext {
     export: 'export',
     overview: 'overview',
     unitTest: 'unitTest',
+    languageServer: 'languageServer',
     createWorkspace: 'createWorkspace',
     createWorkspaceFromPackage: 'createWorkspaceFromPackage',
     createLogicApp: 'createLogicApp',
+    createWorkflow: 'createWorkflow',
     createWorkspaceStructure: 'createWorkspaceStructure',
   } as const;
   export type webViewKey = keyof typeof webViewKey;
@@ -109,7 +115,9 @@ export namespace ext {
     [webViewKey.createWorkspaceFromPackage]: {},
     [webViewKey.createWorkspaceStructure]: {},
     [webViewKey.createLogicApp]: {},
+    [webViewKey.createWorkflow]: {},
     [webViewKey.overview]: {},
+    [webViewKey.languageServer]: {},
   };
 
   export const log = (text: string) => {
@@ -146,6 +154,10 @@ export namespace ext {
   export const testRuns = new Map<string, any>();
   // Telemetry
   export let telemetryReporter: TelemetryReporter;
+  export const telemetryString = 'setInGitHubBuild';
+
+  // Language server protocol
+  export let languageClient: LanguageClient | undefined;
 }
 
 export const ExtensionCommand = {

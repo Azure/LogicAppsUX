@@ -1,7 +1,40 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { openPopupWindow, isPopupSupported } from './popup-window';
+import { openPopupWindow, isPopupSupported, validatePopupUrl } from './popup-window';
 
 describe('popup-window', () => {
+  describe('validatePopupUrl', () => {
+    it('should allow https: URLs', () => {
+      expect(() => validatePopupUrl('https://login.microsoftonline.com/auth')).not.toThrow();
+      expect(() => validatePopupUrl('https://example.com/consent')).not.toThrow();
+    });
+
+    it('should block javascript: URLs', () => {
+      expect(() => validatePopupUrl('javascript:alert(1)')).toThrow('disallowed protocol');
+    });
+
+    it('should block data: URLs', () => {
+      expect(() => validatePopupUrl('data:text/html,<script>alert(1)</script>')).toThrow('disallowed protocol');
+    });
+
+    it('should block vbscript: URLs', () => {
+      expect(() => validatePopupUrl('vbscript:MsgBox("XSS")')).toThrow('disallowed protocol');
+    });
+
+    it('should block http: URLs', () => {
+      expect(() => validatePopupUrl('http://example.com/auth')).toThrow('disallowed protocol');
+    });
+
+    it('should allow http: for localhost in development', () => {
+      expect(() => validatePopupUrl('http://localhost:3001/mock-consent')).not.toThrow();
+      expect(() => validatePopupUrl('http://127.0.0.1:3001/mock-consent')).not.toThrow();
+    });
+
+    it('should reject invalid URLs', () => {
+      expect(() => validatePopupUrl('not-a-url')).toThrow('Invalid URL');
+      expect(() => validatePopupUrl('')).toThrow('Invalid URL');
+    });
+  });
+
   describe('isPopupSupported', () => {
     it('should return true in a browser environment', () => {
       expect(isPopupSupported()).toBe(true);
@@ -18,6 +51,7 @@ describe('popup-window', () => {
         closed: false,
         focus: vi.fn(),
         close: vi.fn(),
+        opener: window,
       };
 
       // Store original window.open
@@ -44,6 +78,22 @@ describe('popup-window', () => {
 
       expect(window.open).toHaveBeenCalledWith('https://example.com/auth', 'a2a-auth', expect.stringContaining('width=600'));
       expect(mockPopup.focus).toHaveBeenCalled();
+    });
+
+    it('should null out window.opener to prevent parent page access', () => {
+      openPopupWindow('https://example.com/auth');
+
+      expect(mockPopup.opener).toBeNull();
+    });
+
+    it('should reject javascript: URLs before calling window.open', async () => {
+      await expect(openPopupWindow('javascript:alert(document.cookie)')).rejects.toThrow('disallowed protocol');
+      expect(window.open).not.toHaveBeenCalled();
+    });
+
+    it('should reject data: URLs before calling window.open', async () => {
+      await expect(openPopupWindow('data:text/html,<script>alert(1)</script>')).rejects.toThrow('disallowed protocol');
+      expect(window.open).not.toHaveBeenCalled();
     });
 
     it('should open a popup window with custom options', () => {

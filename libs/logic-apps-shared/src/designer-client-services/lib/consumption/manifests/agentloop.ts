@@ -10,6 +10,7 @@ export default {
       'Action in which the AI agent decides at each step which tools to use and how, and which text to generate to respond to the user.',
 
     allowChildOperations: true,
+    enableAgentHarness: true,
     subGraphDetails: {
       tools: {
         isAdditive: true,
@@ -36,6 +37,7 @@ export default {
           required: ['description'],
         },
         inputsLocation: [],
+        allowOperations: true,
       },
     },
     inputs: {
@@ -45,7 +47,6 @@ export default {
           title: 'Agent model source',
           description: 'Source where your agent model is hosted.',
           'x-ms-editor': 'dropdown',
-          'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {
             readOnly: true,
             options: [
@@ -62,7 +63,6 @@ export default {
           type: 'string',
           title: 'Model ID',
           description: 'The model ID to use.',
-          default: 'gpt-4o-mini',
           'x-ms-visibility': 'hideInUI',
         },
         deploymentId: {
@@ -202,6 +202,25 @@ export default {
             agentChatCompletionSettings: {
               type: 'object',
               properties: {
+                builtinTools: {
+                  type: 'array',
+                  title: 'Built-in Tools',
+                  'x-ms-visibility': 'important',
+                  'x-ms-editor': 'builtintools',
+                  'x-ms-editor-options': {
+                    options: [
+                      {
+                        value: 'code_interpreter',
+                        displayName: 'Code Interpreter',
+                        description: 'Enable the agent to write and execute JavaScript code for calculations, and data analysis.',
+                        infoMessage: 'Integration account is required to enable code interpreter.',
+                        infoLinkText: 'Read more',
+                        infoLinkUrl:
+                          'https://learn.microsoft.com/en-us/azure/logic-apps/enterprise-integration/create-integration-account?tabs=azure-portal%2Cconsumption#create-integration-account',
+                      },
+                    ],
+                  },
+                },
                 temperature: {
                   title: 'Temperature',
                   description: 'Sampling temperature to use (value should be between 0 and 2)',
@@ -281,6 +300,10 @@ export default {
                   },
                 },
               },
+            },
+            agentHarness: {
+              type: 'object',
+              'x-ms-visibility': 'internal',
             },
           },
         },

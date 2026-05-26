@@ -266,6 +266,7 @@ export interface LicenseObject {
 
 export interface IJsonSchema {
   id?: string;
+  $ref?: string;
   $schema?: string;
   title?: string;
   description?: string;
@@ -287,6 +288,9 @@ export interface IJsonSchema {
   required?: string[];
   additionalProperties?: boolean | IJsonSchema;
   definitions?: {
+    [name: string]: IJsonSchema;
+  };
+  $defs?: {
     [name: string]: IJsonSchema;
   };
   properties?: {

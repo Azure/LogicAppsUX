@@ -30,12 +30,14 @@ export interface CreateWorkflowPanelProps {
   clearDetailsOnClose?: boolean;
   panelWidth?: string;
   showCloseButton?: boolean;
+  mountNode: HTMLElement | null;
   onClose?: () => void;
 }
 
 export const CreateWorkflowPanel = ({
   createWorkflow,
   onClose,
+  mountNode,
   panelWidth = '50%',
   clearDetailsOnClose = true,
   showCloseButton = true,
@@ -125,7 +127,13 @@ export const CreateWorkflowPanel = ({
       open={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
       onOpenChange={(_, { open }) => !open && shouldCloseByDefault && dismissPanel()}
       position="end"
-      style={{ width: panelWidth }}
+      style={{
+        width: panelWidth,
+      }}
+      mountNode={{
+        element: mountNode,
+      }}
+      type={'overlay'}
     >
       <DrawerHeader className={styles.header}>{onRenderHeaderContent()}</DrawerHeader>
       <DrawerBody className={styles.body}>

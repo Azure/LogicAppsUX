@@ -6,11 +6,12 @@ import {
   LogEntryLevel,
   LoggerService,
   parseErrorMessage,
+  SUPPORTED_AGENT_OPENAI_MODELS,
+  SUPPORTED_FOUNDRY_AGENT_MODELS,
   type IEditorProps,
 } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import constants from '../../../../../../common/constants';
 import { deploymentModelNameStyle, useDeploymentModelResourceStyles } from './styles';
 import { Button, mergeClasses, Text } from '@fluentui/react-components';
 
@@ -18,8 +19,9 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   const intl = useIntl();
   const { metadata, onClose } = props;
   const styles = useDeploymentModelResourceStyles();
+  const supportedModels = metadata?.agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
   const [name, setName] = useState(`model-${customLengthGuid(5)}`);
-  const [modelKey, setModelKey] = useState(constants.SUPPORTED_AGENT_MODELS[0]);
+  const [modelKey, setModelKey] = useState(supportedModels[0]);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -60,7 +62,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   );
 
   const onSubmit = useCallback(async () => {
-    const resourceId = metadata?.cognitiveServiceAccountId;
+    const resourceId = metadata?.cognitiveServiceAccountId?.replace(/\/models$/, '');
     if (!resourceId) {
       console.error('OpenAI account ID is not provided in metadata.');
       return;
@@ -124,7 +126,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
               id: guid(),
             },
           ]}
-          options={constants.SUPPORTED_AGENT_MODELS.map((supportedModel) => ({
+          options={supportedModels.map((supportedModel) => ({
             key: supportedModel,
             displayName: supportedModel,
             value: supportedModel,

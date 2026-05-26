@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { nameValidation } from '../validation/helper';
+import { nameValidation } from '../utils/validation';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -259,6 +259,7 @@ export const WorkspaceNameStep: React.FC = () => {
           )}
         </Field>
       </div>
+      {/* DevContainer toggle hidden — feature not ready to ship. Re-enable when ready. */}
     </div>
   );
 };

@@ -215,7 +215,7 @@ describe('MCPServers', () => {
             }),
           ]),
           expect.objectContaining({
-            title: 'Server updated successfully',
+            title: 'Successfully updated the server.',
             content: expect.stringContaining('Test Server 1'),
           })
         );
@@ -295,7 +295,7 @@ describe('MCPServers', () => {
         expect(mockOnUpdateServers).toHaveBeenCalledWith(
           expect.arrayContaining([expect.objectContaining({ name: 'Test Server 2' })]),
           expect.objectContaining({
-            title: 'Deleted MCP server',
+            title: 'Deleted the MCP server',
             content: expect.stringContaining('Test Server 1'),
           })
         );

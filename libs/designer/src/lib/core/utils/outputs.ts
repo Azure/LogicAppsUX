@@ -27,6 +27,7 @@ import {
   OutputSource,
   clone,
   create,
+  dereferenceJsonSchema,
   equals,
   getBrandColorFromConnector,
   getIconUriFromConnector,
@@ -318,7 +319,10 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
         case 'Value': {
           if (segment.type === ValueSegmentType.LITERAL) {
             try {
-              schemaToReplace = JSON.parse(segment.value);
+              const parsedSchema = JSON.parse(segment.value);
+              // Resolve $ref pointers against $defs/definitions so titles, descriptions,
+              // and other metadata from referenced definitions are preserved in the UI.
+              schemaToReplace = dereferenceJsonSchema(parsedSchema) ?? undefined;
             } catch {} // eslint-disable-line no-empty
           }
           break;

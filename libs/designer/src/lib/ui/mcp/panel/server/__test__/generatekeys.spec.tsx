@@ -314,8 +314,8 @@ describe('GenerateKeys', () => {
     it('renders key access duration section', () => {
       renderWithProviders();
 
-      expect(screen.getByText('Key access duration')).toBeTruthy();
-      expect(screen.getByText(/Set how long this key should be valid/)).toBeTruthy();
+      expect(screen.getByText('API key access duration')).toBeTruthy();
+      expect(screen.getByText(/Set the valid duration for this API key. Securely save the key after generation/)).toBeTruthy();
     });
 
     it('renders duration dropdown with all options', () => {
@@ -457,7 +457,7 @@ describe('GenerateKeys', () => {
 
       // Check main text elements using getAllBy to handle multiple instances
       expect(screen.getAllByText('Generate MCP API key').length).toBeGreaterThan(0);
-      expect(screen.getByText('Key access duration')).toBeTruthy();
+      expect(screen.getByText('API key access duration')).toBeTruthy();
       expect(screen.getByText('Duration (days)')).toBeTruthy();
       expect(screen.getByText('Access key')).toBeTruthy();
       expect(screen.getAllByText('Primary key').length).toBeGreaterThan(0);

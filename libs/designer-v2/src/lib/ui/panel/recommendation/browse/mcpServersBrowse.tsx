@@ -10,6 +10,7 @@ import { useMcpServersBrowseStyles } from './styles/McpServersBrowse.styles';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { openMcpToolWizard } from '../../../../core/state/panel/panelSlice';
 import { builtinMcpServerOperation, connectionToOperation, getOperationCardDataFromOperation, MCP_CLIENT_CONNECTOR_ID } from '../helpers';
+import { useDisableNativeMcpClientTools } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 
 type McpServerTab = 'all' | 'microsoft' | 'custom' | 'others';
 
@@ -24,6 +25,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
 
   const [selectedTab, setSelectedTab] = useState<McpServerTab>('all');
   const [sortOrder, setSortOrder] = useState<'a-to-z' | 'z-to-a'>('a-to-z');
+  const disableNativeMcpClientTools = useDisableNativeMcpClientTools();
 
   const { data: mcpServersData, isLoading: isServersLoading } = useMcpServersQuery();
 
@@ -55,10 +57,29 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
     description: 'Text shown when no MCP servers are available',
   });
 
-  const descriptionText = intl.formatMessage({
+  const allTabDescriptionText = intl.formatMessage({
     defaultMessage: 'Choose a Model Context Protocol (MCP) server to invoke.',
     id: 'EvgBRe',
     description: 'Description text for MCP server selection',
+  });
+
+  const microsoftTabDescriptionText = intl.formatMessage({
+    defaultMessage: 'MCP servers provided and managed by Microsoft.',
+    id: 'WIIV8A',
+    description: 'Description text for Microsoft MCP servers tab',
+  });
+
+  const customTabDescriptionText = intl.formatMessage({
+    defaultMessage:
+      'MCP servers created or managed by your organization for reuse across logic apps, with enterprise-level authentication.',
+    id: 'dfYgIR',
+    description: 'Description text for Custom MCP servers tab',
+  });
+
+  const othersTabDescriptionText = intl.formatMessage({
+    defaultMessage: 'MCP servers added directly to a single logic app for quick setup, experiments, or proofs of concept.',
+    id: 'V1U5Gz',
+    description: 'Description text for Others MCP servers tab',
   });
 
   const allTabText = intl.formatMessage({
@@ -108,7 +129,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
   }, []);
 
   const filteredAndSortedServers = useMemo(() => {
-    const connectionOperations = (mcpConnections ?? []).map(connectionToOperation);
+    const connectionOperations = disableNativeMcpClientTools ? [] : (mcpConnections ?? []).map(connectionToOperation);
 
     let filtered: DiscoveryOperation<DiscoveryResultTypes>[] = [];
 
@@ -128,14 +149,14 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
       return sortOrder === 'a-to-z' ? aName.localeCompare(bName) : bName.localeCompare(aName);
     });
 
-    if (selectedTab === 'all') {
+    if (selectedTab === 'all' && !disableNativeMcpClientTools) {
       return [builtinMcpServerOperation, ...filtered];
     }
     if (selectedTab === 'others') {
-      return [...filtered, builtinMcpServerOperation];
+      return disableNativeMcpClientTools ? filtered : [builtinMcpServerOperation, ...filtered];
     }
     return filtered;
-  }, [mcpServers, mcpConnections, selectedTab, sortOrder, isMicrosoftServer]);
+  }, [mcpServers, mcpConnections, selectedTab, sortOrder, isMicrosoftServer, disableNativeMcpClientTools]);
 
   const displayingItemsText = intl.formatMessage(
     {
@@ -145,6 +166,15 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
     },
     { count: filteredAndSortedServers.length }
   );
+
+  const descriptionText =
+    selectedTab === 'microsoft'
+      ? microsoftTabDescriptionText
+      : selectedTab === 'custom'
+        ? customTabDescriptionText
+        : selectedTab === 'others'
+          ? othersTabDescriptionText
+          : allTabDescriptionText;
 
   if (isLoading) {
     return (
@@ -161,7 +191,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
           <Tab value="all">{allTabText}</Tab>
           <Tab value="microsoft">{microsoftTabText}</Tab>
           <Tab value="custom">{customTabText}</Tab>
-          <Tab value="others">{othersTabText}</Tab>
+          {!disableNativeMcpClientTools && <Tab value="others">{othersTabText}</Tab>}
         </TabList>
       </div>
 

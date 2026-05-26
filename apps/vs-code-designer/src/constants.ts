@@ -16,12 +16,14 @@ export const gitignoreFileName = '.gitignore';
 export const tasksFileName = 'tasks.json';
 export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
+export const devContainerFileName = 'devcontainer.json';
 export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
+export const sdkLspServer = 'SdkLspServer';
 
 // Directory names
 export const deploymentDirectory = 'deployment';
@@ -30,9 +32,11 @@ export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
 export const artifactsDirectory = 'Artifacts';
 export const libDirectory = 'lib';
+export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 export const rulesDirectory = 'Rules';
+export const lspDirectory = 'LanguageServerLogicApps';
 
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
@@ -40,9 +44,11 @@ export const testsDirectoryName = 'Tests';
 export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
+export const devContainerFolderName = '.devcontainer';
 export const assetsFolderName = 'assets';
 export const deploymentScriptTemplatesFolderName = 'DeploymentScriptTemplates';
 export const workspaceTemplatesFolderName = 'WorkspaceTemplates';
+export const containerTemplatesFolderName = 'ContainerTemplates';
 export const unitTestTemplatesFolderName = 'UnitTestTemplates';
 
 // Unit test template names
@@ -106,14 +112,8 @@ export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
-
-export const WorkflowType = {
-  stateful: 'Stateful-Codeless',
-  stateless: 'Stateless-Codeless',
-  agentic: 'Agentic-Codeless',
-  agent: 'Agent-Codeless',
-} as const;
-export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
+// Codeful settings
+export const workflowCodefulEnabled = 'WORKFLOW_CODEFUL_ENABLED';
 
 export const workflowCodeType = {
   codeful: 'Codeful',
@@ -220,8 +220,19 @@ export const extensionCommand = {
   vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
+  openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
+  sdkLspApplyEdits: 'sdklsp.applyEdits',
+  enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
+
+// Extension context
+export const customExtensionContext = {
+  isCodeful: 'azureLogicAppsStandard.isCodeful',
+  isCodefulWorkflowFile: 'azureLogicAppsStandard.isCodefulWorkflowFile',
+  codefulWorkflowFiles: 'azureLogicAppsStandard.codefulWorkflowFiles',
+} as const;
+export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
@@ -271,6 +282,7 @@ export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
+export const onStartLanguageServerProtocol = 'onStartLanguageServerProtocol';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -288,6 +300,12 @@ export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 export const azureWebJobsFeatureFlagsKey = 'AzureWebJobsFeatureFlags';
 export const multiLanguageWorkerSetting = 'EnableMultiLanguageWorker';
+// Azure Functions runtime setting (passed as env var via local.settings.json
+// Values) that pins the absolute path of the `node` binary used by the
+// in-proc8 InlineCodeDependencyGenerator. Keeps inline-JS workflows working
+// even when the task-level PATH override doesn't propagate to dep generator
+// child processes.
+export const inlineCodeNodeExecutablePathKey = 'languageWorkers__node__defaultExecutablePath';
 
 // Project
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
@@ -342,6 +360,7 @@ export const DependencyDefaultPath = {
 export type DependencyDefaultPath = (typeof DependencyDefaultPath)[keyof typeof DependencyDefaultPath];
 // .NET
 export const DotnetVersion = {
+  net10: 'net10.0',
   net8: 'net8.0',
   net6: 'net6.0',
   net3: 'netcoreapp3.1',

@@ -19,13 +19,13 @@ export const DeleteModal = ({ onDelete, onDismiss }: { onDelete: () => void; onD
   const intl = useIntl();
   const INTL_TEXT = {
     title: intl.formatMessage({
-      defaultMessage: 'Delete this MCP server group',
-      id: 'J8T6HJ',
+      defaultMessage: 'Delete this MCP server group.',
+      id: 'iNX6z3',
       description: 'Title for the delete MCP server group modal',
     }),
     content: intl.formatMessage({
-      defaultMessage: 'Are you sure you want to delete this MCP server group? This action cannot be undone.',
-      id: 'YEY2TH',
+      defaultMessage: `Confirm that you want to delete this MCP server group? You can't undo this action.`,
+      id: '6ASWgB',
       description: 'Content for the delete MCP server group modal',
     }),
     deleteButtonText: intl.formatMessage({

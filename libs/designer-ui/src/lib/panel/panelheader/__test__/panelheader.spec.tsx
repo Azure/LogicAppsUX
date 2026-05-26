@@ -1,30 +1,22 @@
 import { PanelLocation, PanelScope } from '../../panelUtil';
 import type { PanelHeaderProps } from '../panelheader';
 import { PanelHeader } from '../panelheader';
-import { initializeIcons } from '@fluentui/react';
+import { ThemeProvider, createTheme, initializeIcons } from '@fluentui/react';
 import { MenuItem } from '@fluentui/react-components';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
-// Mock react-intl
-vi.mock('react-intl', async () => {
-  const actualIntl = await vi.importActual('react-intl');
-  return {
-    ...actualIntl,
-    useIntl: () => ({
-      formatMessage: vi.fn(({ defaultMessage }) => defaultMessage),
-      formatDate: vi.fn((date) => `Formatted: ${date}`),
-    }),
-  };
-});
-
 describe('lib/panel/panelHeader/main', () => {
   let minimal: PanelHeaderProps;
   let minimalWithHeader: PanelHeaderProps;
   let minimalWithButtons: PanelHeaderProps;
   let shallow: ReactShallowRenderer.ShallowRenderer;
+
+  beforeAll(() => {
+    initializeIcons();
+  });
 
   beforeEach(() => {
     minimal = {
@@ -68,7 +60,6 @@ describe('lib/panel/panelHeader/main', () => {
       canShowLogicAppRun: true,
     };
     shallow = ReactShallowRenderer.createRenderer();
-    initializeIcons();
   });
 
   afterEach(() => {
@@ -76,7 +67,13 @@ describe('lib/panel/panelHeader/main', () => {
   });
 
   it('should render', () => {
-    const panelHeader = renderer.create(<PanelHeader {...minimal} />).toJSON();
+    const panelHeader = renderer
+      .create(
+        <ThemeProvider theme={createTheme()}>
+          <PanelHeader {...minimal} />
+        </ThemeProvider>
+      )
+      .toJSON();
     expect(panelHeader).toMatchSnapshot();
   });
 
@@ -85,7 +82,13 @@ describe('lib/panel/panelHeader/main', () => {
       ...minimalWithHeader,
     };
 
-    const panelHeader = renderer.create(<PanelHeader {...props} />).toJSON();
+    const panelHeader = renderer
+      .create(
+        <ThemeProvider theme={createTheme()}>
+          <PanelHeader {...props} />
+        </ThemeProvider>
+      )
+      .toJSON();
     expect(panelHeader).toMatchSnapshot();
   });
 
@@ -125,7 +128,13 @@ describe('lib/panel/panelHeader/main', () => {
   });
 
   it('should render with panel header buttons', () => {
-    const panelHeader = renderer.create(<PanelHeader {...minimalWithButtons} />).toJSON();
+    const panelHeader = renderer
+      .create(
+        <ThemeProvider theme={createTheme()}>
+          <PanelHeader {...minimalWithButtons} />
+        </ThemeProvider>
+      )
+      .toJSON();
     expect(panelHeader).toMatchSnapshot();
   });
 
@@ -134,7 +143,13 @@ describe('lib/panel/panelHeader/main', () => {
       ...minimalWithButtons,
       showTriggerInfo: true,
     };
-    const panelHeader = renderer.create(<PanelHeader {...props} />).toJSON();
+    const panelHeader = renderer
+      .create(
+        <ThemeProvider theme={createTheme()}>
+          <PanelHeader {...props} />
+        </ThemeProvider>
+      )
+      .toJSON();
     expect(panelHeader).toMatchSnapshot();
   });
 });

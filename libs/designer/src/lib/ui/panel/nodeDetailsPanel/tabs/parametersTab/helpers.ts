@@ -17,6 +17,10 @@ export const isAgentConnectorAndDeploymentId = (id: string, key: string): boolea
   return AgentUtils.isConnector(id) && AgentUtils.isDeploymentOrModelIdParameter(key);
 };
 
+export const isAgentConnectorAndFoundryAgentName = (id: string, key: string): boolean => {
+  return AgentUtils.isConnector(id) && AgentUtils.isFoundryAgentIdParameter(key);
+};
+
 export const isAgentConnectorAndAgentModel = (id: string, key: string): boolean => {
   return AgentUtils.isConnector(id) && AgentUtils.isAgentModelTypeParameter(key);
 };
@@ -33,7 +37,7 @@ export const isAgentConnectorAndAgentServiceModel = (
   const agentConnector = AgentUtils.isConnector(connectorId ?? '');
   const parameterGroup = parameterGroups[groupId];
   const parameter = parameterGroup?.parameters?.find((param: any) => param.parameterKey === agentModelTypeParameterKey);
-  return agentConnector && parameter?.value?.[0]?.value === 'FoundryAgentService';
+  return agentConnector && parameter?.value?.[0]?.value === 'FoundryAgentServiceV2';
 };
 
 export const categorizeConnections = (connections: Connection[]): CategorizedConnections => {
@@ -53,9 +57,30 @@ export const categorizeConnections = (connections: Connection[]): CategorizedCon
   );
 };
 
-export const getFirstDeploymentModelName = async (connection: Connection): Promise<string> => {
+export interface FirstDeploymentInfo {
+  deploymentName: string;
+  modelName: string;
+  modelFormat?: string;
+  modelVersion?: string;
+}
+
+export const getFirstDeploymentInfo = async (connection: Connection): Promise<FirstDeploymentInfo | undefined> => {
   const deploymentModels = await getCognitiveServiceAccountDeploymentsForConnection(connection);
-  return deploymentModels.length > 0 ? deploymentModels[0].name : '';
+  if (deploymentModels.length === 0) {
+    return undefined;
+  }
+  const first = deploymentModels[0];
+  return {
+    deploymentName: first.name ?? '',
+    modelName: first.properties?.model?.name ?? '',
+    modelFormat: first.properties?.model?.format,
+    modelVersion: first.properties?.model?.version,
+  };
+};
+
+export const getFirstDeploymentModelName = async (connection: Connection): Promise<string> => {
+  const info = await getFirstDeploymentInfo(connection);
+  return info?.deploymentName ?? '';
 };
 
 export const getDeploymentIdParameter = (state: RootState, nodeId: string): ParameterInfo | undefined => {
@@ -74,7 +99,7 @@ export const getConnectionToAssign = (
   azureOpenAIConnections: Connection[],
   foundryConnections: Connection[]
 ): Connection | null => {
-  const connections = modelType === 'AzureOpenAI' ? azureOpenAIConnections : foundryConnections;
+  const connections = modelType === 'AzureOpenAI' || modelType === 'MicrosoftFoundry' ? azureOpenAIConnections : foundryConnections;
 
   if (connections.length === 0) {
     return null;

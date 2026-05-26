@@ -24,7 +24,7 @@ import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
 export async function validateFuncCoreToolsIsLatest(majorVersion?: string): Promise<void> {
-  if (useBinariesDependencies()) {
+  if (await useBinariesDependencies()) {
     await validateFuncCoreToolsIsLatestBinaries(majorVersion);
   } else {
     await validateFuncCoreToolsIsLatestSystem();
@@ -36,7 +36,7 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
 
-    const binaries = binariesExist(funcDependencyName);
+    const binaries = await binariesExist(funcDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
 
     const localVersion: string | null = binaries ? await getLocalFuncCoreToolsVersion() : null;

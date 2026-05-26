@@ -77,12 +77,14 @@ export const serializeAgentInstructions = (
   const nodeMap = new Map<string, ValueSegment>();
   const agentInstructions: AgentInstructions[] = [];
 
-  // Convert system message
+  // Convert system message — only include if it has content
   const systemMessageString = convertSegmentsToString(agentLevel === AGENT_INSTRUCTION_TYPES.SYSTEM ? value : systemMessage, nodeMap);
-  agentInstructions.push({
-    role: AGENT_INSTRUCTION_TYPES.SYSTEM,
-    content: systemMessageString ?? '',
-  });
+  if (!isUndefinedOrEmptyString(systemMessageString)) {
+    agentInstructions.push({
+      role: AGENT_INSTRUCTION_TYPES.SYSTEM,
+      content: systemMessageString,
+    });
+  }
 
   // Convert user messages
   const userMessageString = convertSegmentsToString(

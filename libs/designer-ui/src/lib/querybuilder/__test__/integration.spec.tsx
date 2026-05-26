@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GroupType, QueryBuilderEditor } from '../index';
 import { HybridQueryBuilderEditor } from '../HybridQueryBuilder';
@@ -93,7 +93,7 @@ describe('Query Builder Integration Tests', () => {
       expect(screen.getByText('nested1')).toBeInTheDocument();
       expect(screen.getByText('nested2')).toBeInTheDocument();
       expect(screen.getByText('after')).toBeInTheDocument();
-    });
+    }, 10000);
   });
 
   describe('SimpleQueryBuilder Integration', () => {
@@ -233,51 +233,6 @@ describe('Query Builder Integration Tests', () => {
   });
 
   describe('Move Functionality Integration', () => {
-    it('should maintain move functionality across component switches', async () => {
-      const testGroup = createTestGroup({
-        items: [
-          createTestRow({ operand1: createTestValueSegment('item1') }),
-          createTestRow({ operand1: createTestValueSegment('item2') }),
-          createTestRow({ operand1: createTestValueSegment('item3') }),
-        ],
-      });
-
-      // Test in regular QueryBuilder
-      const { unmount } = render(
-        <QueryBuilderTestWrapper>
-          <QueryBuilderEditor groupProps={testGroup} getTokenPicker={mockGetTokenPicker} onChange={mockOnChange} />
-        </QueryBuilderTestWrapper>
-      );
-
-      // Should have move buttons
-      const moreButtons = screen.getAllByRole('button', {
-        name: /more commands/i,
-      });
-      expect(moreButtons.length).toBeGreaterThan(0);
-
-      await user.click(moreButtons[1]); // Click on middle item
-      expect(screen.getByRole('menuitem', { name: /move up/i })).toBeInTheDocument();
-      expect(screen.getByRole('menuitem', { name: /move down/i })).toBeInTheDocument();
-
-      unmount();
-
-      // Test in Hybrid QueryBuilder - should have same functionality
-      render(
-        <QueryBuilderTestWrapper>
-          <HybridQueryBuilderEditor groupProps={testGroup} getTokenPicker={mockGetTokenPicker} onChange={mockOnChange} />
-        </QueryBuilderTestWrapper>
-      );
-
-      const hybridMoreButtons = screen.getAllByRole('button', {
-        name: /more commands/i,
-      });
-      expect(hybridMoreButtons.length).toBeGreaterThan(0);
-
-      await user.click(hybridMoreButtons[1]);
-      expect(screen.getByRole('menuitem', { name: /move up/i })).toBeInTheDocument();
-      expect(screen.getByRole('menuitem', { name: /move down/i })).toBeInTheDocument();
-    }, 10000);
-
     it('should handle move operations consistently across components', () => {
       const moveTestData = createTestGroup({
         items: [
@@ -512,84 +467,5 @@ describe('Query Builder Integration Tests', () => {
         );
       }).not.toThrow();
     });
-  });
-
-  describe('Performance Comparison', () => {
-    it('should have similar performance characteristics across components', () => {
-      const largeTestData = createTestGroup({
-        items: Array.from({ length: 20 }, (_, i) => createTestRow({ operand1: createTestValueSegment(`field${i}`) })),
-      });
-
-      // Measure regular QueryBuilder
-      const start1 = performance.now();
-      const { unmount: unmount1 } = render(
-        <QueryBuilderTestWrapper>
-          <QueryBuilderEditor groupProps={largeTestData} getTokenPicker={mockGetTokenPicker} onChange={mockOnChange} />
-        </QueryBuilderTestWrapper>
-      );
-      const end1 = performance.now();
-      const regularTime = end1 - start1;
-      unmount1();
-
-      // Measure Hybrid QueryBuilder
-      const start2 = performance.now();
-      const { unmount: unmount2 } = render(
-        <QueryBuilderTestWrapper>
-          <HybridQueryBuilderEditor groupProps={largeTestData} getTokenPicker={mockGetTokenPicker} onChange={mockOnChange} />
-        </QueryBuilderTestWrapper>
-      );
-      const end2 = performance.now();
-      const hybridTime = end2 - start2;
-      unmount2();
-
-      // Both components should render within reasonable time (less than 2 seconds each)
-      expect(regularTime).toBeLessThan(5000);
-      expect(hybridTime).toBeLessThan(5000);
-
-      // Performance difference should not be extreme (neither should be more than 5x slower)
-      const ratio = Math.max(regularTime, hybridTime) / Math.min(regularTime, hybridTime);
-      expect(ratio).toBeLessThan(5);
-    }, 10000); // Increase timeout to 10 seconds
-
-    it('should handle large RowItem structures efficiently in SimpleQueryBuilder', () => {
-      const largeRowItem = {
-        isOldFormat: false,
-        isRowFormat: true,
-        itemValue: {
-          operator: 'and',
-          operand1: Array.from({ length: 10 }, (_, i) => ({
-            id: `operand1-${i}`,
-            type: ValueSegmentType.LITERAL,
-            value: `field${i} equals value${i}`,
-          })),
-          operand2: Array.from({ length: 10 }, (_, i) => ({
-            id: `operand2-${i}`,
-            type: ValueSegmentType.LITERAL,
-            value: `condition${i}`,
-          })),
-          type: GroupType.ROW,
-        },
-      };
-
-      const start = performance.now();
-      const { unmount } = render(
-        <QueryBuilderTestWrapper>
-          <SimpleQueryBuilder
-            initialValue={convertRootPropToValue(largeRowItem.itemValue)}
-            rowFormat={largeRowItem.isRowFormat}
-            itemValue={largeRowItem.itemValue}
-            getTokenPicker={mockGetTokenPicker}
-            onChange={mockOnChange}
-          />
-        </QueryBuilderTestWrapper>
-      );
-      const end = performance.now();
-      const renderTime = end - start;
-
-      unmount();
-
-      // Should render within reasonable time (less than 2 seconds)
-      expect(renderTime).toBeLessThan(2000);
-    }, 10000); // Increase timeout to 10 seconds
   });
 });

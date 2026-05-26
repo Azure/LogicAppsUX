@@ -8,10 +8,12 @@ import { CreateServer } from './create';
 export const McpServerPanel = ({
   onUpdateServer,
   server,
+  existingServers,
   onClose,
 }: {
   onUpdateServer: (servers: Partial<McpServer>) => Promise<void>;
   server?: McpServer;
+  existingServers?: string[];
   onClose: () => void;
 }) => {
   const { isOpen, panelView } = useSelector((state: RootState) => ({
@@ -29,8 +31,8 @@ export const McpServerPanel = ({
   return panelView === McpPanelView.GenerateKeys ? (
     <GenerateKeys />
   ) : panelView === McpPanelView.CreateMcpServer ? (
-    <CreateServer onUpdate={onUpdateServer} onClose={onClose} />
+    <CreateServer onUpdate={onUpdateServer} onClose={onClose} existingServers={existingServers} />
   ) : server !== undefined ? (
-    <CreateServer onUpdate={onUpdateServer} server={server} onClose={onClose} />
+    <CreateServer onUpdate={onUpdateServer} server={server} onClose={onClose} existingServers={existingServers} />
   ) : null;
 };

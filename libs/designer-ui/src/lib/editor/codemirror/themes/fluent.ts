@@ -141,6 +141,79 @@ export const createFluentTheme = (isInverted: boolean): Extension[] => {
       '.cm-activeLine': {
         backgroundColor: colors.lineHighlight,
       },
+      // Search panel styling
+      '.cm-panels': {
+        backgroundColor: colors.gutterBackground,
+        color: colors.foreground,
+        borderBottom: `1px solid ${colors.gutterBorder}`,
+      },
+      '.cm-panels.cm-panels-top': {
+        borderBottom: `1px solid ${colors.gutterBorder}`,
+      },
+      '.cm-search': {
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: '4px',
+        padding: '4px 8px',
+        fontSize: '13px',
+      },
+      '.cm-search label': {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '2px',
+        fontSize: '13px',
+        color: colors.foreground,
+      },
+      '.cm-search input[type="text"]': {
+        backgroundColor: isInverted ? '#3c3c3c' : '#ffffff',
+        color: colors.foreground,
+        border: `1px solid ${colors.gutterBorder}`,
+        borderRadius: '2px',
+        padding: '2px 6px',
+        fontSize: '13px',
+        outline: 'none',
+        fontFamily: 'inherit',
+      },
+      '.cm-search input[type="text"]:focus': {
+        borderColor: '#0078d4',
+      },
+      '.cm-search input[type="checkbox"]': {
+        accentColor: '#0078d4',
+      },
+      '.cm-search button': {
+        backgroundColor: isInverted ? '#3c3c3c' : '#e1e1e1',
+        color: colors.foreground,
+        border: `1px solid ${colors.gutterBorder}`,
+        borderRadius: '2px',
+        padding: '2px 8px',
+        fontSize: '13px',
+        cursor: 'pointer',
+      },
+      '.cm-search button:hover': {
+        backgroundColor: isInverted ? '#454545' : '#c8c8c8',
+      },
+      '.cm-search button[name="close"]': {
+        backgroundColor: 'transparent',
+        border: 'none',
+        padding: '2px 6px',
+        fontSize: '16px',
+        lineHeight: '1',
+      },
+      '.cm-search button[name="close"]:hover': {
+        backgroundColor: isInverted ? '#454545' : '#c8c8c8',
+        borderRadius: '2px',
+      },
+      '.cm-searchMatch': {
+        backgroundColor: isInverted ? 'rgba(234, 92, 0, 0.33)' : 'rgba(234, 92, 0, 0.2)',
+        outline: `1px solid ${isInverted ? 'rgba(234, 92, 0, 0.5)' : 'rgba(234, 92, 0, 0.4)'}`,
+      },
+      '.cm-searchMatch.cm-searchMatch-selected': {
+        backgroundColor: isInverted ? 'rgba(81, 92, 106, 0.6)' : 'rgba(164, 206, 255, 0.6)',
+      },
+      '.cm-selectionMatch': {
+        backgroundColor: isInverted ? 'rgba(173, 214, 255, 0.15)' : 'rgba(173, 214, 255, 0.4)',
+      },
     },
     { dark: isInverted }
   );

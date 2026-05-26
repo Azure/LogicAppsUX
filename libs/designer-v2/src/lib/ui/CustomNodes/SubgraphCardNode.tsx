@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import constants from '../../common/constants';
 import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSubgraphFromManifest } from '../../core/actions/bjsworkflow/add';
@@ -18,12 +17,16 @@ import {
   useNodeMetadata,
   useParentNodeId,
   useRunData,
+  useRunIndex,
+  useRunInstance,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { fetchBuiltInToolRunData } from '../../core/actions/bjsworkflow/monitoring';
+import { getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
-import { SUBGRAPH_TYPES, guid, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { isBuiltInAgentTool, SUBGRAPH_TYPES, guid, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -56,6 +59,8 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
   const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
 
   const title = useNodeDisplayName(subgraphId);
+  const runInstance = useRunInstance();
+  const agentRunIndex = useRunIndex(graphId);
 
   const isSwitchAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
   const isAgentAddTool = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
@@ -145,9 +150,33 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
         dispatch(setFocusNode(newAdditiveSubgraphId));
       } else {
         dispatch(changePanelNode(_id));
+        // For built-in tools in monitoring view, fetch inputs/outputs if not already loaded
+        if (isMonitoringView && isBuiltInAgentTool(_id) && !metadata?.runData?.inputs && runInstance?.id && graphId) {
+          dispatch(
+            fetchBuiltInToolRunData({
+              toolNodeId: _id,
+              agentNodeId: graphId,
+              runId: runInstance.id,
+              repetitionName: getScopeRepetitionName(agentRunIndex),
+            })
+          );
+        }
       }
     },
-    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, dispatch, newAdditiveSubgraphId, graphId]
+    [
+      isAddCase,
+      graphNode,
+      isAgentAddTool,
+      operationInfo,
+      iconUri,
+      dispatch,
+      newAdditiveSubgraphId,
+      graphId,
+      isMonitoringView,
+      metadata,
+      runInstance,
+      agentRunIndex,
+    ]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);

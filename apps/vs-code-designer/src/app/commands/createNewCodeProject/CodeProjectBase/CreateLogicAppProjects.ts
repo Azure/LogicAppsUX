@@ -18,15 +18,16 @@ import {
   createRulesFiles,
   updateWorkspaceFile,
 } from './CreateLogicAppWorkspace';
+import { devContainerFolderName, devContainerFileName } from '../../../../constants';
 
 export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
   addLocalFuncTelemetry(context);
 
-  const myWebviewProjectContext: IWebviewProjectContext = options;
+  const webviewProjectContext: IWebviewProjectContext = options;
   // Create the workspace folder
   const workspaceFolder = workspaceRootFolder;
   // Path to the logic app folder
-  const logicAppFolderPath = path.join(workspaceFolder, myWebviewProjectContext.logicAppName);
+  const logicAppFolderPath = path.join(workspaceFolder, webviewProjectContext.logicAppName);
 
   // Check if the logic app directory already exists
   const logicAppExists = await fse.pathExists(logicAppFolderPath);
@@ -40,10 +41,16 @@ export async function createLogicAppProject(context: IActionContext, options: an
   if (vscode.workspace.workspaceFile) {
     // Get the directory containing the .code-workspace file
     const workspaceFilePath = vscode.workspace.workspaceFile.fsPath;
-    myWebviewProjectContext.workspaceFilePath = workspaceFilePath;
-    myWebviewProjectContext.shouldCreateLogicAppProject = !doesLogicAppExist;
+    webviewProjectContext.workspaceFilePath = workspaceFilePath;
+    webviewProjectContext.shouldCreateLogicAppProject = !doesLogicAppExist;
+
+    // Detect if this is a devcontainer project by checking:
+    // 1. If .devcontainer folder exists in workspace file
+    // 2. If devcontainer.json exists in that folder
+    webviewProjectContext.isDevContainerProject = await isDevContainerWorkspace(workspaceFilePath, workspaceFolder);
+
     // need to get logic app in projects
-    await updateWorkspaceFile(myWebviewProjectContext);
+    await updateWorkspaceFile(webviewProjectContext);
   } else {
     // Fall back to the newly created workspace folder if not in a workspace
     vscode.window.showErrorMessage(
@@ -55,7 +62,7 @@ export async function createLogicAppProject(context: IActionContext, options: an
   const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
   mySubContext.logicAppName = options.logicAppName;
   mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = myWebviewProjectContext.logicAppType as ProjectType;
+  mySubContext.projectType = webviewProjectContext.logicAppType;
   mySubContext.functionFolderName = options.functionFolderName;
   mySubContext.functionAppName = options.functionName;
   mySubContext.functionAppNamespace = options.functionNamespace;
@@ -63,12 +70,12 @@ export async function createLogicAppProject(context: IActionContext, options: an
   mySubContext.workspacePath = workspaceFolder;
 
   if (!doesLogicAppExist) {
-    await createLogicAppAndWorkflow(myWebviewProjectContext, logicAppFolderPath);
+    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath);
 
     // .vscode folder
-    await createLogicAppVsCodeContents(myWebviewProjectContext, logicAppFolderPath);
+    await createLogicAppVsCodeContents(webviewProjectContext, logicAppFolderPath);
 
-    await createLocalConfigurationFiles(myWebviewProjectContext, logicAppFolderPath);
+    await createLocalConfigurationFiles(webviewProjectContext, logicAppFolderPath);
 
     if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
       await gitInit(workspaceFolder);
@@ -79,9 +86,38 @@ export async function createLogicAppProject(context: IActionContext, options: an
     await createLibFolder(mySubContext);
   }
 
-  if (myWebviewProjectContext.logicAppType !== ProjectType.logicApp) {
+  if (webviewProjectContext.logicAppType === ProjectType.customCode || webviewProjectContext.logicAppType === ProjectType.rulesEngine) {
     const createFunctionAppFilesStep = new CreateFunctionAppFiles();
     await createFunctionAppFilesStep.setup(mySubContext);
   }
   vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+}
+
+/**
+ * Checks if the workspace is a devcontainer project by:
+ * 1. Checking if .devcontainer folder is listed in the workspace file
+ * 2. Verifying that devcontainer.json exists in that folder
+ * @param workspaceFilePath - Path to the .code-workspace file
+ * @param workspaceFolder - Root folder of the workspace
+ * @returns true if this is a devcontainer workspace, false otherwise
+ */
+async function isDevContainerWorkspace(workspaceFilePath: string, workspaceFolder: string): Promise<boolean> {
+  // Read the workspace file
+  const workspaceFileContent = await fse.readJson(workspaceFilePath);
+
+  // Check if .devcontainer folder is in the workspace folders
+  const folders = workspaceFileContent.folders || [];
+  const hasDevContainerFolder = folders.some(
+    (folder: any) => folder.path === devContainerFolderName || folder.path === `./${devContainerFolderName}`
+  );
+
+  if (!hasDevContainerFolder) {
+    return false;
+  }
+
+  // Verify devcontainer.json actually exists
+  const devContainerJsonPath = path.join(workspaceFolder, devContainerFolderName, devContainerFileName);
+  const devContainerJsonExists = await fse.pathExists(devContainerJsonPath);
+
+  return devContainerJsonExists;
 }

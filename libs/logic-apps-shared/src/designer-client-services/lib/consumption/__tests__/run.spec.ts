@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ConsumptionRunService } from '../run';
 import type { IHttpClient } from '../../httpClient';
+import { InitLoggerService } from '../../logger';
 
 describe('ConsumptionRunService', () => {
   let runService: ConsumptionRunService;
@@ -26,6 +27,44 @@ describe('ConsumptionRunService', () => {
     };
 
     runService = new ConsumptionRunService(mockOptions);
+    InitLoggerService([{ log: vi.fn() } as any]);
+  });
+
+  describe('getContent', () => {
+    test('should return empty object when API returns empty response (204 No Content)', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue('');
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    test('should return empty object when API returns null response', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue(null);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    test('should return empty object when API returns undefined response', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue(undefined);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    test('should return actual content when API returns valid data', async () => {
+      const mockContent = { body: { key: 'value' } };
+      vi.mocked(mockHttpClient.get).mockResolvedValue(mockContent);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual(mockContent);
+    });
+
+    test('should return undefined when content size exceeds 2MB', async () => {
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 3000000 });
+      expect(result).toBeUndefined();
+      expect(mockHttpClient.get).not.toHaveBeenCalled();
+    });
   });
 
   describe('getMoreScopeRepetitions', () => {
