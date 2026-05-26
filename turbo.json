@@ -41,6 +41,7 @@
       "outputs": ["coverage/**"]
     },
     "test:extension-unit": {
+      "env": ["VITEST_COVERAGE", "VSCODE_DESIGNER_COVERAGE_INCLUDE"],
       "outputs": ["coverage/**"]
     },
     "test:iframe-app": {

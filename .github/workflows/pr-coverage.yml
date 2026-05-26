@@ -41,6 +41,20 @@ jobs:
       - name: Build
         run: pnpm turbo run build --cache-dir=.turbo
 
+      - name: Configure VS Code designer coverage scope
+        run: |
+          CHANGED_DESIGNER_FILES=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} "$GITHUB_SHA" -- 'apps/vs-code-designer/src/**/*.ts' 'apps/vs-code-designer/src/**/*.tsx' \
+            | grep -Ev 'apps/vs-code-designer/src/test/(e2e|ui)/|\.test\.tsx?$|\.spec\.tsx?$|test-setup\.ts|extensionVariables\.ts|main\.ts' \
+            | sed 's#^apps/vs-code-designer/##' \
+            | paste -sd, -)
+          if [ -n "$CHANGED_DESIGNER_FILES" ]; then
+            echo "VSCODE_DESIGNER_COVERAGE_INCLUDE=$CHANGED_DESIGNER_FILES" >> "$GITHUB_ENV"
+            echo "$CHANGED_DESIGNER_FILES"
+          else
+            echo "VSCODE_DESIGNER_COVERAGE_INCLUDE=__no_changed_source__/**" >> "$GITHUB_ENV"
+            echo "No changed VS Code designer source files require coverage."
+          fi
+
       - name: Run tests with coverage
         run: |
           pnpm turbo run test:lib --cache-dir=.turbo
