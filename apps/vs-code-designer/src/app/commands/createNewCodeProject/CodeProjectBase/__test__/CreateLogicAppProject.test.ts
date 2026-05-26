@@ -749,7 +749,7 @@ describe('createLogicAppProject - Integration Tests', () => {
 
         // Create .csproj file from template using correct path
         const csprojTemplateMap: Record<string, string> = {
-          net8: 'FunctionsProjNet8New',
+          net8: 'FunctionsProjNet8',
           net472: 'FunctionsProjNetFx',
           rulesEngine: 'RulesFunctionsProj',
         };

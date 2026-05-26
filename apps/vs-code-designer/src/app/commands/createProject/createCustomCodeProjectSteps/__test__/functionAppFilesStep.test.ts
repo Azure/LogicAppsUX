@@ -39,6 +39,9 @@ vi.mock('../../../../utils/funcCoreTools/funcVersion', () => ({
 
 vi.mock('../../../../utils/debug', () => ({
   getDebugConfiguration: vi.fn().mockReturnValue({ name: 'generated launch' }),
+  usesPublishFolderProperty: vi.fn((projectType: ProjectType, targetFramework: TargetFramework) => {
+    return projectType === ProjectType.customCode && targetFramework !== TargetFramework.NetFx;
+  }),
 }));
 
 describe('FunctionAppFilesStep', () => {
@@ -55,7 +58,7 @@ describe('FunctionAppFilesStep', () => {
     vi.mocked(isMultiRootWorkspace).mockReturnValue(false);
     vi.mocked(fs.readFile).mockImplementation((filePath: any) => {
       const pathText = String(filePath);
-      if (pathText.includes('FunctionsProjNet8New')) {
+      if (pathText.includes('FunctionsProjNet8')) {
         return Promise.resolve('<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\LogicApp</LogicAppFolderToPublish>');
       }
       if (pathText.includes('FunctionsProjNetFx')) {
@@ -77,7 +80,7 @@ describe('FunctionAppFilesStep', () => {
 
     expect(fs.ensureDir).toHaveBeenCalledWith(expect.stringContaining('ProcessOrder'));
     expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionsFileNet8'), 'utf-8');
-    expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionsProjNet8New'), 'utf-8');
+    expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('FunctionsProjNet8'), 'utf-8');
     expect(fs.writeFile).toHaveBeenCalledWith(
       expect.stringContaining('ProcessOrder.cs'),
       'namespace Contoso.Functions { public class ProcessOrder {} }'

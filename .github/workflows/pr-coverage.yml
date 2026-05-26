@@ -41,32 +41,11 @@ jobs:
       - name: Build
         run: pnpm turbo run build --cache-dir=.turbo
 
-      - name: Configure VS Code designer coverage scope
-        run: |
-          git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }}...HEAD -- apps/vs-code-designer/src \
-            | sed 's|^apps/vs-code-designer/||' \
-            > apps/vs-code-designer/.coverage-include
-          cat apps/vs-code-designer/.coverage-include
-
       - name: Run tests with coverage
         run: |
           pnpm turbo run test:lib --cache-dir=.turbo
           pnpm turbo run test:iframe-app --cache-dir=.turbo
-          pnpm turbo run test:extension-unit --filter=!vscode-designer --cache-dir=.turbo
-          pnpm --dir apps/vs-code-designer run test:extension-unit -- \
-            src/app/commands/createCustomCodeFunction/createCustomCodeFunctionSteps/__test__/functionFileStep.test.ts \
-            src/app/commands/createNewCodeProject/CodeProjectBase/__test__/CreateFunctionAppFiles.test.ts \
-            src/app/commands/createNewCodeProject/CodeProjectBase/__test__/CreateLogicAppProject.test.ts \
-            src/app/commands/createNewCodeProject/CodeProjectBase/__test__/CreateLogicAppVSCodeContents.test.ts \
-            src/app/commands/createProject/createCustomCodeProjectSteps/__test__/functionAppFilesStep.test.ts \
-            src/app/commands/createProject/createCustomCodeProjectSteps/__test__/targetFrameworkStep.test.ts \
-            src/app/commands/createWorkflow/createCodefulWorkflow/createCodefulWorkflowSteps/__test__/codefulWorkflowCreateStep.test.ts \
-            src/app/commands/workflows/__test__/switchToDotnetProject.test.ts \
-            src/app/utils/__test__/customCodeUtils.test.ts \
-            src/app/utils/__test__/debug.test.ts \
-            src/app/utils/codeless/__test__/updateBuildFile.test.ts \
-            src/app/utils/dotnet/__test__/dotnet.test.ts \
-            src/app/utils/dotnet/__test__/executeDotnetTemplateCommand.test.ts
+          pnpm turbo run test:extension-unit --cache-dir=.turbo
 
       - name: Merge coverage reports
         run: |

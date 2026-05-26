@@ -49,7 +49,7 @@ describe('customCodeUtils', () => {
   beforeAll(async () => {
     const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
     const assetsFolderPath = path.join(__dirname, '..', '..', '..', assetsFolderName);
-    const net8CsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNet8New');
+    const net8CsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNet8');
     const netFxCsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNetFx');
 
     validNet8CsprojContent = await realFs.readFile(net8CsprojTemplatePath, 'utf8');
