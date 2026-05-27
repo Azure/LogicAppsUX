@@ -581,10 +581,10 @@ export class ConsumptionRunService implements IRunService {
   }
 
   async resubmitRun(runId: string, triggerName: string): Promise<any> {
-    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
 
     try {
-      const resubmitUrl = `${baseUrl}/triggers/${triggerName}/histories/${runId}/resubmit?api-version=${apiVersion}`;
+      const resubmitUrl = `${baseUrl}${workflowId}/triggers/${triggerName}/histories/${runId}/resubmit?api-version=${apiVersion}`;
       const headers = { 'If-Match': '*' };
       const response = await httpClient.post({
         uri: resubmitUrl,
@@ -592,7 +592,7 @@ export class ConsumptionRunService implements IRunService {
       });
       return response;
     } catch (e: any) {
-      return new Error(e.message);
+      throw new Error(e.message);
     }
   }
 
