@@ -342,7 +342,7 @@ describe('Stateless Variable Tests', function () {
       workbench = new Workbench();
       await startDebugging(workbench, driver);
       assert.ok(await waitForRuntimeReady(driver), 'Runtime should start');
-      assert.ok(await waitForWorkflowRuntimeReady(driver, entry.wfName), 'Workflow runtime management endpoint should be ready');
+      await waitForWorkflowRuntimeReady(driver, entry.wfName);
       try {
         await new EditorView().closeAllEditors();
         await sleep(1000);

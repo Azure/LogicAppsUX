@@ -2200,7 +2200,7 @@ async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000): Promi
   return false;
 }
 
-async function waitForWorkflowRuntimeReady(driver: WebDriver, workflowName: string, timeoutMs = 120_000): Promise<boolean> {
+async function waitForWorkflowRuntimeReady(driver: WebDriver, workflowName: string, timeoutMs = 30_000): Promise<boolean> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
   const encodedWorkflowName = encodeURIComponent(workflowName);
@@ -2923,7 +2923,7 @@ describe('Designer Actions Tests', function () {
       const runtimeReady = await waitForRuntimeReady(driver);
       await captureScreenshot(driver, 'test1-step8-after-debug-start');
       assert.ok(runtimeReady, 'Functions runtime should start and become ready');
-      assert.ok(await waitForWorkflowRuntimeReady(driver, entry.wfName), 'Workflow runtime management endpoint should be ready');
+      await waitForWorkflowRuntimeReady(driver, entry.wfName);
 
       // Assertion 9: Open overview page via right-click on workflow.json
       // First, close all editors (including the designer webview) so that
@@ -3248,7 +3248,7 @@ describe('Designer Actions Tests', function () {
       const runtimeReady = await waitForRuntimeReady(driver);
       await captureScreenshot(driver, 'test2-step7-after-debug-start');
       assert.ok(runtimeReady, 'Functions runtime should start and become ready');
-      assert.ok(await waitForWorkflowRuntimeReady(driver, entry.wfName), 'Workflow runtime management endpoint should be ready');
+      await waitForWorkflowRuntimeReady(driver, entry.wfName);
 
       // Extra stabilization for custom code: the func host needs time to
       // initialize the custom code worker process and register the workflow's

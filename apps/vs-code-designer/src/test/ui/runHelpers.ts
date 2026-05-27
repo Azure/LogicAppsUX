@@ -163,7 +163,7 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
   return false;
 }
 
-export async function waitForWorkflowRuntimeReady(driver: WebDriver, workflowName: string, timeoutMs = 120_000): Promise<boolean> {
+export async function waitForWorkflowRuntimeReady(driver: WebDriver, workflowName: string, timeoutMs = 30_000): Promise<boolean> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
   const encodedWorkflowName = encodeURIComponent(workflowName);
