@@ -1,5 +1,13 @@
 import type { OpenAPIV2 } from '../../../utils/src';
-import { ArgumentException, UnsupportedException, optional, equals, getResourceName } from '../../../utils/src';
+import {
+  ArgumentException,
+  UnsupportedException,
+  optional,
+  equals,
+  getResourceName,
+  isArmResourceId,
+  ResourceIdentityType,
+} from '../../../utils/src';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import { ConnectionService } from '../connection';
@@ -7,6 +15,7 @@ import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExt
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
+import { WorkflowService } from '../workflow';
 
 interface ConsumptionConnectorServiceOptions extends BaseConnectorServiceOptions {
   workflowReferenceId: string;
@@ -54,7 +63,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     parameters: Record<string, any>,
     dynamicState: any,
     isManagedIdentityConnection?: boolean,
-    operationPath?: string
+    operationPath?: string,
+    identity?: string
   ): Promise<ListDynamicValue[]> {
     const { apiVersion, httpClient } = this.options;
     const { operationId: dynamicOperation, apiType } = dynamicState;
@@ -103,11 +113,18 @@ export class ConsumptionConnectorService extends BaseConnectorService {
           connection: connectionData,
           mcpServerPath: operationPath,
         };
-      } else if (isRealConnectionId) {
-        // Managed MCP connection — send managed connection reference
+      } else if (isRealConnectionId && isArmResourceId(connectionId)) {
+        // Managed MCP connection — build full managed connection reference with identity
+        const connectionProperties = {
+          authentication: {
+            type: 'ManagedServiceIdentity',
+            ...optional('identity', identity),
+          },
+        };
         content = {
           managedConnection: {
             connection: { id: connectionId },
+            connectionProperties,
           },
           mcpServerPath: operationPath,
         };
@@ -268,8 +285,20 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       authentication['value'] = connectionProperties['value'];
     } else if (mappedAuthType === 'ManagedServiceIdentity') {
       authentication['audience'] = connectionProperties['audience'];
-      if (connectionProperties['identity']) {
-        authentication['identity'] = connectionProperties['identity'];
+      // Identity may be stored in parameterValues (round-tripped from workflow definition)
+      // or must be derived from the workflow's managed identity configuration.
+      const storedIdentity = connectionProperties['identity'];
+      if (storedIdentity) {
+        authentication['identity'] = storedIdentity;
+      } else {
+        const appIdentity = WorkflowService().getAppIdentity?.();
+        const userIdentity =
+          equals(appIdentity?.type, ResourceIdentityType.USER_ASSIGNED) && appIdentity?.userAssignedIdentities
+            ? Object.keys(appIdentity.userAssignedIdentities)[0]
+            : undefined;
+        if (userIdentity) {
+          authentication['identity'] = userIdentity;
+        }
       }
     }
 
