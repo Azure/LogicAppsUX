@@ -163,6 +163,62 @@ export async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000)
   return false;
 }
 
+export async function waitForWorkflowRuntimeReady(driver: WebDriver, workflowName: string, timeoutMs = 120_000): Promise<boolean> {
+  const t0 = Date.now();
+  const deadline = t0 + timeoutMs;
+  const encodedWorkflowName = encodeURIComponent(workflowName);
+
+  while (Date.now() < deadline) {
+    try {
+      const ready = await driver.executeScript<boolean>(
+        `
+        const workflowName = arguments[0];
+        const requestJson = (url) => {
+          try {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false);
+            xhr.timeout = 3000;
+            xhr.send();
+            if (xhr.status !== 200) {
+              return { ok: false, status: xhr.status };
+            }
+            try {
+              JSON.parse(xhr.responseText || '{}');
+            } catch {
+              return { ok: false, status: xhr.status };
+            }
+            return { ok: true, status: xhr.status };
+          } catch (e) {
+            return { ok: false, status: 0 };
+          }
+        };
+
+        const host = requestJson('http://localhost:7071/admin/host/status');
+        if (!host.ok) {
+          return false;
+        }
+
+        const runs = requestJson('http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/' + workflowName + '/runs?api-version=2019-10-01-edge-preview');
+        return runs.ok;
+        `,
+        encodedWorkflowName
+      );
+
+      if (ready) {
+        console.log(`[debug] Workflow runtime management endpoint ready for "${workflowName}" (${Date.now() - t0}ms)`);
+        return true;
+      }
+    } catch {
+      /* ignore */
+    }
+
+    await sleep(3000);
+  }
+
+  console.log(`[debug] Timeout waiting for workflow runtime readiness for "${workflowName}" after ${timeoutMs}ms`);
+  return false;
+}
+
 // ===========================================================================
 // Overview helpers
 // ===========================================================================
@@ -436,6 +492,8 @@ export async function clickRefresh(driver: WebDriver): Promise<void> {
 export async function getLatestRunStatus(driver: WebDriver): Promise<string> {
   try {
     return await driver.executeScript<string>(`
+      var loading = document.querySelector('.ms-Shimmer, .ms-Shimmer-container, [class*="shimmer"], [class*="Shimmer"]');
+      if (loading) return '';
       var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
       for (var i = 0; i < rows.length; i++) {
         var text = rows[i].textContent || '';
@@ -458,7 +516,7 @@ export async function getLatestRunStatus(driver: WebDriver): Promise<string> {
 export async function waitForRunStatusInList(
   driver: WebDriver,
   targetStatus: string,
-  timeoutMs = 90_000
+  timeoutMs = 180_000
 ): Promise<{ found: boolean; lastStatus: string }> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
@@ -482,7 +540,7 @@ export async function waitForRunStatusInList(
       return { found: false, lastStatus: status };
     }
 
-    if (Date.now() - t0 > (refreshCount + 1) * 3000) {
+    if (Date.now() - t0 > (refreshCount + 1) * 5000) {
       await clickRefresh(driver);
       refreshCount++;
     }
