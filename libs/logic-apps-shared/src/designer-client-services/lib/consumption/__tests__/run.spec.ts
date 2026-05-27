@@ -172,6 +172,45 @@ describe('ConsumptionRunService', () => {
     });
   });
 
+  describe('resubmitRun', () => {
+    test('should construct URL with workflowId path segment', async () => {
+      vi.mocked(mockHttpClient.post).mockResolvedValue({});
+
+      await runService.resubmitRun('run-123', 'manual');
+
+      expect(mockHttpClient.post).toHaveBeenCalledWith({
+        uri: 'https://api.example.comtest-workflow/triggers/manual/histories/run-123/resubmit?api-version=2016-06-01',
+        headers: { 'If-Match': '*' },
+      });
+    });
+
+    test('should include workflowId for ARM resource paths', async () => {
+      const armOptions = {
+        ...mockOptions,
+        baseUrl: 'https://management.azure.com',
+        workflowId: '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.Logic/workflows/my-workflow',
+      };
+      const armRunService = new ConsumptionRunService(armOptions);
+      vi.mocked(mockHttpClient.post).mockResolvedValue({});
+
+      await armRunService.resubmitRun('08584222487129015244', 'When_an_HTTP_request_is_received');
+
+      expect(mockHttpClient.post).toHaveBeenCalledWith({
+        uri: 'https://management.azure.com/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.Logic/workflows/my-workflow/triggers/When_an_HTTP_request_is_received/histories/08584222487129015244/resubmit?api-version=2016-06-01',
+        headers: { 'If-Match': '*' },
+      });
+    });
+
+    test('should return Error object when HTTP request fails', async () => {
+      vi.mocked(mockHttpClient.post).mockRejectedValue(new Error('Forbidden'));
+
+      const result = await runService.resubmitRun('run-123', 'manual');
+
+      expect(result).toBeInstanceOf(Error);
+      expect((result as Error).message).toBe('Forbidden');
+    });
+  });
+
   describe('integration with getScopeRepetitions', () => {
     test('should work with getScopeRepetitions pagination flow', async () => {
       // Mock the first page response
