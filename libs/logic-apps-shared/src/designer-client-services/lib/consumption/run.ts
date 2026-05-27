@@ -592,7 +592,7 @@ export class ConsumptionRunService implements IRunService {
       });
       return response;
     } catch (e: any) {
-      return new Error(e.message);
+      throw new Error(e.message);
     }
   }
 

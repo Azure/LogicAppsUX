@@ -201,13 +201,10 @@ describe('ConsumptionRunService', () => {
       });
     });
 
-    test('should return Error object when HTTP request fails', async () => {
+    test('should throw error when HTTP request fails', async () => {
       vi.mocked(mockHttpClient.post).mockRejectedValue(new Error('Forbidden'));
 
-      const result = await runService.resubmitRun('run-123', 'manual');
-
-      expect(result).toBeInstanceOf(Error);
-      expect((result as Error).message).toBe('Forbidden');
+      await expect(runService.resubmitRun('run-123', 'manual')).rejects.toThrow('Forbidden');
     });
   });
 
