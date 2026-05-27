@@ -316,6 +316,15 @@ describe('switchToDotnetProject', () => {
   });
 
   describe('binaries handling', () => {
+    it('should request .NET 8 from managed binaries by default', async () => {
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue('8.0.100');
+
+      await switchToDotnetProject(mockContext, mockTarget);
+
+      expect(getLocalDotNetVersionFromBinaries).toHaveBeenCalledWith('8');
+    });
+
     it('should create global.json when using binaries', async () => {
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue('8.0.100');
@@ -335,6 +344,41 @@ describe('switchToDotnetProject', () => {
       await switchToDotnetProject(mockContext, mockTarget);
 
       expect(fse.writeFileSync).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('build file updates', () => {
+    it('should add codeful package references and target framework for codeful conversion', async () => {
+      await switchToDotnetProject(mockContext, mockTarget, '8', true);
+
+      expect(addNugetPackagesToBuildFileByName).toHaveBeenCalledTimes(3);
+      expect(addNugetPackagesToBuildFileByName).toHaveBeenCalledWith(expect.any(Object), 'DurableTask', '1.0.0');
+      expect(addNugetPackagesToBuildFileByName).toHaveBeenCalledWith(expect.any(Object), 'WorkflowsWebJobs', '1.0.0');
+      expect(addNugetPackagesToBuildFileByName).toHaveBeenCalledWith(expect.any(Object), 'WorkflowsSDK', '1.0.0');
+      expect(addNugetPackagesToBuildFile).not.toHaveBeenCalled();
+    });
+
+    it('should add discovered workflows, artifacts, connections, parameters, and lib folder to the build file', async () => {
+      (fse.readdir as unknown as Mock).mockImplementation(async (folderPath: string) => {
+        if (folderPath === mockTarget.fsPath) {
+          return ['Stateful1', 'Artifacts', 'lib', 'connections.json', 'parameters.json'];
+        }
+        if (folderPath === `${mockTarget.fsPath}/Stateful1`) {
+          return ['workflow.json'];
+        }
+        return [];
+      });
+      (fse.stat as unknown as Mock).mockImplementation(async (filePath: string) => ({
+        isDirectory: () => filePath.endsWith('Stateful1'),
+      }));
+
+      await switchToDotnetProject(mockContext, mockTarget);
+
+      expect(addFolderToBuildPath).toHaveBeenCalledWith(expect.any(Object), 'Stateful1');
+      expect(addFolderToBuildPath).toHaveBeenCalledWith(expect.any(Object), 'Artifacts');
+      expect(addFileToBuildPath).toHaveBeenCalledWith(expect.any(Object), 'connections.json');
+      expect(addFileToBuildPath).toHaveBeenCalledWith(expect.any(Object), 'parameters.json');
+      expect(addLibToPublishPath).toHaveBeenCalledWith(expect.any(Object));
     });
   });
 

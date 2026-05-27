@@ -152,7 +152,7 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
       }
 
       ext.outputChannel.appendLog(
-        `The csproj file in ${folderPath} does not match the expected format for a .NET 8, .NET 10, or .NET Framework custom code functions project.`
+        `The csproj file in ${folderPath} does not match the expected format for a .NET 8 or .NET Framework custom code functions project.`
       );
       resolve(undefined);
     });
@@ -160,10 +160,6 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
 }
 
 function getCustomCodeTargetFramework(csprojContent: string): TargetFramework | undefined {
-  if (isCustomCodeNet10Csproj(csprojContent)) {
-    return TargetFramework.Net10;
-  }
-
   if (isCustomCodeNet8Csproj(csprojContent)) {
     return TargetFramework.Net8;
   }
@@ -179,16 +175,12 @@ function usesLogicAppFolderToPublish(targetFramework: TargetFramework): boolean 
   return targetFramework !== TargetFramework.NetFx;
 }
 
-function isCustomCodeNetCoreCsproj(csprojContent: string, targetFramework: TargetFramework.Net8 | TargetFramework.Net10): boolean {
+function isCustomCodeNetCoreCsproj(csprojContent: string, targetFramework: TargetFramework): boolean {
   return (
     csprojContent.includes(`<TargetFramework>${targetFramework}</TargetFramework>`) &&
     csprojContent.includes('Microsoft.Azure.Workflows.Webjobs.Sdk') &&
     csprojContent.includes('<LogicAppFolderToPublish>')
   );
-}
-
-function isCustomCodeNet10Csproj(csprojContent: string): boolean {
-  return isCustomCodeNetCoreCsproj(csprojContent, TargetFramework.Net10);
 }
 
 function isCustomCodeNet8Csproj(csprojContent: string): boolean {

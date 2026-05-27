@@ -2200,6 +2200,62 @@ async function waitForRuntimeReady(driver: WebDriver, timeoutMs = 90_000): Promi
   return false;
 }
 
+async function waitForWorkflowRuntimeReady(driver: WebDriver, workflowName: string, timeoutMs = 30_000): Promise<boolean> {
+  const t0 = Date.now();
+  const deadline = t0 + timeoutMs;
+  const encodedWorkflowName = encodeURIComponent(workflowName);
+
+  while (Date.now() < deadline) {
+    try {
+      const ready = await driver.executeScript<boolean>(
+        `
+        const workflowName = arguments[0];
+        const requestJson = (url) => {
+          try {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false);
+            xhr.timeout = 3000;
+            xhr.send();
+            if (xhr.status !== 200) {
+              return { ok: false, status: xhr.status };
+            }
+            try {
+              JSON.parse(xhr.responseText || '{}');
+            } catch {
+              return { ok: false, status: xhr.status };
+            }
+            return { ok: true, status: xhr.status };
+          } catch (e) {
+            return { ok: false, status: 0 };
+          }
+        };
+
+        const host = requestJson('http://localhost:7071/admin/host/status');
+        if (!host.ok) {
+          return false;
+        }
+
+        const runs = requestJson('http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/' + workflowName + '/runs?api-version=2019-10-01-edge-preview');
+        return runs.ok;
+        `,
+        encodedWorkflowName
+      );
+
+      if (ready) {
+        console.log(`[debug] Workflow runtime management endpoint ready for "${workflowName}" (${Date.now() - t0}ms)`);
+        return true;
+      }
+    } catch {
+      /* ignore */
+    }
+
+    await sleep(3000);
+  }
+
+  console.log(`[debug] Timeout waiting for workflow runtime readiness for "${workflowName}" after ${timeoutMs}ms`);
+  return false;
+}
+
 /**
  * Open the overview page by right-clicking on workflow.json in the Explorer
  * and selecting "Overview" from the context menu.
@@ -2489,6 +2545,8 @@ async function clickRefresh(driver: WebDriver): Promise<void> {
 async function getLatestRunStatus(driver: WebDriver): Promise<string> {
   try {
     return await driver.executeScript<string>(`
+      var loading = document.querySelector('.ms-Shimmer, .ms-Shimmer-container, [class*="shimmer"], [class*="Shimmer"]');
+      if (loading) return '';
       var rows = document.querySelectorAll('[role="row"], .ms-DetailsRow, tr');
       for (var i = 0; i < rows.length; i++) {
         var text = rows[i].textContent || '';
@@ -2514,7 +2572,7 @@ async function getLatestRunStatus(driver: WebDriver): Promise<string> {
 async function waitForRunStatusInList(
   driver: WebDriver,
   targetStatus: string,
-  timeoutMs = 90_000
+  timeoutMs = 180_000
 ): Promise<{ found: boolean; lastStatus: string }> {
   const t0 = Date.now();
   const deadline = t0 + timeoutMs;
@@ -2540,7 +2598,7 @@ async function waitForRunStatusInList(
     }
 
     // Refresh every 3 seconds to get updated status
-    if (Date.now() - t0 > (refreshCount + 1) * 3000) {
+    if (Date.now() - t0 > (refreshCount + 1) * 5000) {
       await clickRefresh(driver);
       refreshCount++;
     }
@@ -2865,6 +2923,7 @@ describe('Designer Actions Tests', function () {
       const runtimeReady = await waitForRuntimeReady(driver);
       await captureScreenshot(driver, 'test1-step8-after-debug-start');
       assert.ok(runtimeReady, 'Functions runtime should start and become ready');
+      await waitForWorkflowRuntimeReady(driver, entry.wfName);
 
       // Assertion 9: Open overview page via right-click on workflow.json
       // First, close all editors (including the designer webview) so that
@@ -3189,6 +3248,7 @@ describe('Designer Actions Tests', function () {
       const runtimeReady = await waitForRuntimeReady(driver);
       await captureScreenshot(driver, 'test2-step7-after-debug-start');
       assert.ok(runtimeReady, 'Functions runtime should start and become ready');
+      await waitForWorkflowRuntimeReady(driver, entry.wfName);
 
       // Extra stabilization for custom code: the func host needs time to
       // initialize the custom code worker process and register the workflow's

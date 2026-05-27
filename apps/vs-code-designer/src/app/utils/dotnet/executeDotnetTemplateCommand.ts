@@ -55,15 +55,14 @@ export async function executeDotnetTemplateCommand(
 
 /**
  * Maps a detected .NET framework version to the corresponding dotnetJsonCli asset folder.
- * The JsonCli DLLs are framework-agnostic and forward-compatible, so newer frameworks
- * (e.g. net10.0) can reuse the net8.0 binaries.
+ * The JsonCli DLLs are framework-agnostic and forward-compatible, so newer frameworks can reuse the net8.0 binaries.
  */
 export function getJsonCliFramework(framework: string): string {
   const supportedJsonCliFrameworks = ['net8.0', 'net6.0', 'netcoreapp3.0', 'netcoreapp2.0'];
   if (supportedJsonCliFrameworks.includes(framework)) {
     return framework;
   }
-  // Fall back to net8.0 for newer frameworks (e.g. net10.0)
+  // Fall back to net8.0 for newer frameworks.
   return 'net8.0';
 }
 
@@ -115,7 +114,7 @@ export async function getFramework(context: IActionContext, workingDirectory: st
     const versions = versionSources.join('\n');
 
     // Prioritize "LTS", then "Current", then "Preview"
-    const netVersions: string[] = ['10', '8', '6', '3', '2', '9'];
+    const netVersions: string[] = ['8', '6', '3', '2', '9'];
 
     const semVersions: SemVer[] = netVersions.map((v) => semVerCoerce(v) as SemVer);
 

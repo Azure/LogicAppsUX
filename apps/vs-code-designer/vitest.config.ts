@@ -2,6 +2,8 @@ import { defineConfig } from 'vitest/config';
 import packageJson from './package.json';
 import path from 'path';
 
+const coverageInclude = process.env.VSCODE_DESIGNER_COVERAGE_INCLUDE?.split(',').filter(Boolean);
+
 export default defineConfig({
   plugins: [],
   resolve: {
@@ -15,7 +17,12 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    coverage: {
+      enabled: process.env.VITEST_COVERAGE !== 'false',
+      provider: 'istanbul',
+      include: coverageInclude?.length ? coverageInclude : ['src/**/*'],
+      reporter: ['html', 'cobertura', 'lcov'],
+    },
     restoreMocks: true,
     // Exclude E2E tests that use Mocha instead of Vitest
     exclude: [

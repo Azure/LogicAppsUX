@@ -23,7 +23,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as assert from 'assert';
 import { Workbench, WebView, type WebDriver, VSBrowser, ModalDialog, By, Key } from 'vscode-extension-tester';
-import { sleep, captureScreenshot, dismissNotifications, openFolderInSession } from './helpers';
+import { sleep, captureScreenshot, dismissNotifications, openFolderInSession, dismissAzureFunctionsProjectPrompt } from './helpers';
 
 const TEST_TIMEOUT = 180_000;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
@@ -297,6 +297,7 @@ async function dismissOuterNotificationsAndReturnToWebview(driver: WebDriver, we
     await webview.switchBack();
     await driver.switchTo().defaultContent();
     await dismissQuickInputIfVisible(driver);
+    await dismissAzureFunctionsProjectPrompt(driver);
     await dismissNotifications(driver);
     await driver
       .executeScript(

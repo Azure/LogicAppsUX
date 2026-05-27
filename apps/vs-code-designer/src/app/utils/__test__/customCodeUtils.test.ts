@@ -5,6 +5,7 @@ import * as workspaceUtils from '../workspace';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import {
   CustomCodeFunctionsProjectMetadata,
+  customCodeArtifactsExist,
   getCustomCodeFunctionsProjectMetadata,
   getAllCustomCodeFunctionsProjects,
   isCustomCodeFunctionsProject,
@@ -21,6 +22,7 @@ vi.mock('fs-extra', () => ({
   readdir: vi.fn(),
   readFile: vi.fn(),
   pathExists: vi.fn(),
+  pathExistsSync: vi.fn(),
 }));
 
 vi.mock('verifyProjectUtils', () => ({
@@ -41,18 +43,15 @@ vi.mock('../../../extensionVariables', () => ({
 
 describe('customCodeUtils', () => {
   let validNet8CsprojContent: string;
-  let validNet10CsprojContent: string;
   let validNetFxCsprojContent: string;
   let invalidCsprojContent: string;
 
   beforeAll(async () => {
     const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
     const assetsFolderPath = path.join(__dirname, '..', '..', '..', assetsFolderName);
-    const net10CsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNet10');
     const net8CsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNet8');
     const netFxCsprojTemplatePath = path.join(assetsFolderPath, 'FunctionProjectTemplate', 'FunctionsProjNetFx');
 
-    validNet10CsprojContent = await realFs.readFile(net10CsprojTemplatePath, 'utf8');
     validNet8CsprojContent = await realFs.readFile(net8CsprojTemplatePath, 'utf8');
     validNetFxCsprojContent = await realFs.readFile(netFxCsprojTemplatePath, 'utf8');
     invalidCsprojContent = `
@@ -134,6 +133,63 @@ describe('customCodeUtils', () => {
     });
   });
 
+  describe('customCodeArtifactsExist', () => {
+    const logicAppPath = path.join('test', 'LogicApp');
+    const customArtifactsPath = path.join(logicAppPath, 'lib', 'custom');
+    const peerProjectPath = path.join('test', 'Functions');
+
+    it('should return false when custom artifacts folder is missing', async () => {
+      vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
+
+      await expect(customCodeArtifactsExist(logicAppPath)).resolves.toBe(false);
+    });
+
+    it('should return false when a custom code artifact function.json is missing', async () => {
+      vi.spyOn(fse, 'pathExists').mockImplementation(async (p: string) => p === customArtifactsPath);
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === path.dirname(logicAppPath)) {
+          return ['LogicApp', 'Functions'];
+        }
+        if (p === peerProjectPath) {
+          return ['Functions.csproj'];
+        }
+        if (p === customArtifactsPath) {
+          return ['Functions'];
+        }
+        return [];
+      });
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readFile').mockResolvedValue(validNet8CsprojContent);
+
+      await expect(customCodeArtifactsExist(logicAppPath)).resolves.toBe(false);
+    });
+
+    it('should return true when every custom code project has generated artifacts', async () => {
+      vi.spyOn(fse, 'pathExists').mockImplementation(
+        async (p: string) => p === customArtifactsPath || p.endsWith(path.join('Functions', 'function.json'))
+      );
+      vi.spyOn(fse, 'pathExistsSync').mockImplementation((p: string) => p.endsWith(path.join('Functions', 'function.json')));
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === path.dirname(logicAppPath)) {
+          return ['LogicApp', 'Functions'];
+        }
+        if (p === peerProjectPath) {
+          return ['Functions.csproj'];
+        }
+        if (p === customArtifactsPath) {
+          return ['Functions'];
+        }
+        return [];
+      });
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readFile').mockResolvedValue(validNet8CsprojContent);
+
+      await expect(customCodeArtifactsExist(logicAppPath)).resolves.toBe(true);
+    });
+  });
+
   describe('isCustomCodeFunctionsProject', () => {
     const testFolderPath = path.join('test', 'folder', 'path');
     const testCsprojFile = 'Function.csproj';
@@ -155,14 +211,6 @@ describe('customCodeUtils', () => {
       vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
       vi.spyOn(fse, 'readdir').mockResolvedValue([testCsprojFile]);
       vi.spyOn(fse, 'readFile').mockResolvedValue(validNet8CsprojContent);
-      const result = await isCustomCodeFunctionsProject(testFolderPath);
-      expect(result).toBe(true);
-    });
-
-    it('should return true for a valid net10 csproj file', async () => {
-      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
-      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsprojFile]);
-      vi.spyOn(fse, 'readFile').mockResolvedValue(validNet10CsprojContent);
       const result = await isCustomCodeFunctionsProject(testFolderPath);
       expect(result).toBe(true);
     });
@@ -258,25 +306,6 @@ describe('customCodeUtils', () => {
         functionAppName: testFunctionName,
         logicAppName: 'LogicApp',
         targetFramework: TargetFramework.Net8,
-        namespace: testNamespace,
-      } as CustomCodeFunctionsProjectMetadata);
-    });
-
-    it('should return metadata for a valid net10 csproj file', async () => {
-      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsFile, testCsprojFile]);
-      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
-        if (p.endsWith('.csproj')) {
-          return validNet10CsprojContent;
-        }
-        return `namespace ${testNamespace} {}`;
-      });
-
-      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
-      expect(result).toEqual({
-        projectPath: testFolderPath,
-        functionAppName: testFunctionName,
-        logicAppName: 'LogicApp',
-        targetFramework: TargetFramework.Net10,
         namespace: testNamespace,
       } as CustomCodeFunctionsProjectMetadata);
     });

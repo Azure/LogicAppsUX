@@ -38,6 +38,7 @@ import {
 import {
   startDebugging,
   waitForRuntimeReady,
+  waitForWorkflowRuntimeReady,
   openOverviewPage,
   switchToOverviewWebview,
   clickRunTrigger,
@@ -341,6 +342,7 @@ describe('Stateless Variable Tests', function () {
       workbench = new Workbench();
       await startDebugging(workbench, driver);
       assert.ok(await waitForRuntimeReady(driver), 'Runtime should start');
+      await waitForWorkflowRuntimeReady(driver, entry.wfName);
       try {
         await new EditorView().closeAllEditors();
         await sleep(1000);

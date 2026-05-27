@@ -9,7 +9,7 @@ export default defineProject({
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
     coverage: {
-      enabled: true,
+      enabled: process.env.VITEST_COVERAGE !== 'false',
       provider: 'istanbul',
       include: ['src/app/**/*', 'src/state/**/*'],
       exclude: ['src/intl/**/*'],

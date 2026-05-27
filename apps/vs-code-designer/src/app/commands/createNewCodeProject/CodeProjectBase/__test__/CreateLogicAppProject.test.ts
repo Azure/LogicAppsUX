@@ -382,28 +382,6 @@ describe('createLogicAppProject', () => {
       );
     });
 
-    it('should create custom code project with Net10 target framework', async () => {
-      const customCodeOptions = {
-        ...mockOptions,
-        logicAppType: ProjectType.customCode,
-        targetFramework: 'net10.0',
-      };
-
-      const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
-
-      await createLogicAppProject(mockContext, customCodeOptions, workspaceRootFolder);
-
-      expect(mockSetup).toHaveBeenCalledWith(
-        expect.objectContaining({
-          projectType: ProjectType.customCode,
-          targetFramework: 'net10.0',
-        })
-      );
-    });
-
     it('should pass correct function parameters to custom code project', async () => {
       const customCodeOptions = {
         ...mockOptions,
@@ -747,7 +725,6 @@ describe('createLogicAppProject - Integration Tests', () => {
 
         // Create .cs file from template using correct path
         const csTemplateMap: Record<string, string> = {
-          'net10.0': 'FunctionsFileNet10',
           net8: 'FunctionsFileNet8',
           net472: 'FunctionsFileNetFx',
           rulesEngine: 'RulesFunctionsFile',
@@ -759,13 +736,6 @@ describe('createLogicAppProject - Integration Tests', () => {
             : path.join(functionTemplatesPath, csTemplate);
         const csContent = await processTemplate(csTemplatePath, { methodName, namespace });
         await fse.writeFile(path.join(functionFolderPath, `${methodName}.cs`), csContent);
-
-        // Create Program.cs for .NET 10 custom code projects
-        if (targetFramework === 'net10.0' && projectType !== ProjectType.rulesEngine) {
-          const programTemplatePath = path.join(functionTemplatesPath, 'ProgramFileNet10');
-          const programContent = await processTemplate(programTemplatePath, { namespace });
-          await fse.writeFile(path.join(functionFolderPath, 'Program.cs'), programContent);
-        }
 
         // Create rules files for rulesEngine
         if (projectType === ProjectType.rulesEngine) {
@@ -779,7 +749,6 @@ describe('createLogicAppProject - Integration Tests', () => {
 
         // Create .csproj file from template using correct path
         const csprojTemplateMap: Record<string, string> = {
-          'net10.0': 'FunctionsProjNet10',
           net8: 'FunctionsProjNet8',
           net472: 'FunctionsProjNetFx',
           rulesEngine: 'RulesFunctionsProj',
@@ -792,7 +761,7 @@ describe('createLogicAppProject - Integration Tests', () => {
         let csprojContent = await fse.readFile(csprojTemplatePath, 'utf-8');
 
         // Replace LogicApp folder references
-        if ((targetFramework === 'net8' || targetFramework === 'net10.0') && projectType === ProjectType.customCode) {
+        if (targetFramework === 'net8' && projectType === ProjectType.customCode) {
           csprojContent = csprojContent.replace(
             /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\..\\LogicApp<\/LogicAppFolderToPublish>/g,
             `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
@@ -1187,7 +1156,7 @@ local.settings.json`
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     <SelfContained>false</SelfContained>
  </PropertyGroup>
- 
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Abstractions" Version="1.3.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.1" />
@@ -1195,12 +1164,17 @@ local.settings.json`
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
- 
+
   <Target Name="TriggerPublishOnBuild" AfterTargets="Build">
       <CallTarget Targets="Publish" />
   </Target>
 </Project>`;
-      expect(csprojContent.trim()).toBe(expectedCsproj.trim());
+      const normalizeXml = (value: string) =>
+        value
+          .replace(/\r\n/g, '\n')
+          .replace(/[ \t]+$/gm, '')
+          .trim();
+      expect(normalizeXml(csprojContent)).toBe(normalizeXml(expectedCsproj));
     });
 
     it('should create .csproj file for NetFx custom code project', async () => {
@@ -1280,108 +1254,6 @@ local.settings.json`
 
       const settingsContent = await fse.readJSON(settingsPath);
       expect(settingsContent).toHaveProperty('azureFunctions.projectRuntime');
-    });
-
-    it('should create Program.cs for Net10 custom code project with correct namespace', async () => {
-      const options: IWebviewProjectContext = {
-        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
-        workspaceName: 'TestWorkspace',
-        logicAppName: 'TestLogicApp',
-        logicAppType: ProjectType.customCode,
-        workflowName: 'MyWorkflow',
-        workflowType: 'Stateful',
-        functionFolderName: 'Functions',
-        functionName: 'MyFunction',
-        functionNamespace: 'MyCompany.Functions',
-        targetFramework: 'net10.0',
-      } as any;
-
-      const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
-
-      await createLogicAppProject(mockContext, options, workspaceRootFolder);
-
-      // Verify Program.cs was created
-      const functionsFolderPath = path.join(workspaceRootFolder, 'Functions');
-      const programCsPath = path.join(functionsFolderPath, 'Program.cs');
-      const programCsExists = await fse.pathExists(programCsPath);
-      expect(programCsExists).toBe(true);
-
-      // Verify Program.cs content has namespace replaced
-      const programContent = await fse.readFile(programCsPath, 'utf-8');
-      expect(programContent).toContain('namespace MyCompany.Functions');
-      expect(programContent).not.toContain('<%= namespace %>');
-      expect(programContent).toContain('HostBuilder');
-    });
-
-    it('should not create Program.cs for Net8 custom code project', async () => {
-      const options: IWebviewProjectContext = {
-        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
-        workspaceName: 'TestWorkspace',
-        logicAppName: 'TestLogicApp',
-        logicAppType: ProjectType.customCode,
-        workflowName: 'MyWorkflow',
-        workflowType: 'Stateful',
-        functionFolderName: 'Functions',
-        functionName: 'MyFunction',
-        functionNamespace: 'MyNamespace',
-        targetFramework: 'net8',
-      } as any;
-
-      const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
-
-      await createLogicAppProject(mockContext, options, workspaceRootFolder);
-
-      // Verify Program.cs was NOT created for Net8
-      const functionsFolderPath = path.join(workspaceRootFolder, 'Functions');
-      const programCsPath = path.join(functionsFolderPath, 'Program.cs');
-      const programCsExists = await fse.pathExists(programCsPath);
-      expect(programCsExists).toBe(false);
-    });
-
-    it('should not create Program.cs for NetFx custom code project', async () => {
-      const options: IWebviewProjectContext = {
-        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
-        workspaceName: 'TestWorkspace',
-        logicAppName: 'TestLogicApp',
-        logicAppType: ProjectType.customCode,
-        workflowName: 'MyWorkflow',
-        workflowType: 'Stateful',
-        functionFolderName: 'Functions',
-        functionName: 'MyFunction',
-        functionNamespace: 'MyNamespace',
-        targetFramework: 'net472',
-      } as any;
-
-      const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
-
-      await createLogicAppProject(mockContext, options, workspaceRootFolder);
-
-      // Verify Program.cs was NOT created for NetFx
-      const functionsFolderPath = path.join(workspaceRootFolder, 'Functions');
-      const programCsPath = path.join(functionsFolderPath, 'Program.cs');
-      const programCsExists = await fse.pathExists(programCsPath);
-      expect(programCsExists).toBe(false);
     });
   });
 

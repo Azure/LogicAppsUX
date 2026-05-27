@@ -91,6 +91,52 @@ export async function dismissNotifications(driver: WebDriver): Promise<void> {
   }
 }
 
+/** Dismiss the Azure Functions project prompt without mutating the legacy project. */
+export async function dismissAzureFunctionsProjectPrompt(driver: WebDriver): Promise<boolean> {
+  const promptText = 'Detected an Azure Functions Project';
+  const actionText = "Don't warn again";
+
+  try {
+    const toasts = await driver.findElements(By.css('.notification-toast, .notification-list-item'));
+    for (const toast of toasts) {
+      let text = '';
+      try {
+        text = await toast.getText();
+      } catch {
+        continue;
+      }
+
+      if (!text.includes(promptText) || !text.includes('Initialize for optimal use with VS Code')) {
+        continue;
+      }
+
+      const actions = await toast.findElements(By.css('.monaco-button, .monaco-text-button, .action-label, button'));
+      for (const action of actions) {
+        const label = await action.getText().catch(() => '');
+        const title = label || (await action.getAttribute('title').catch(() => ''));
+        if (title.includes(actionText)) {
+          await action.click();
+          await sleep(500);
+          console.log('[dismissAzureFunctionsProjectPrompt] Clicked "Don\'t warn again"');
+          return true;
+        }
+      }
+
+      const closeButtons = await toast.findElements(By.css('.codicon-close, [aria-label="Close"]'));
+      if (closeButtons.length > 0) {
+        await closeButtons[0].click();
+        await sleep(500);
+        console.log('[dismissAzureFunctionsProjectPrompt] Closed Azure Functions project prompt');
+        return true;
+      }
+    }
+  } catch {
+    // Prompt is absent or already dismissed.
+  }
+
+  return false;
+}
+
 /**
  * Dismiss any VS Code modal dialog (auth sign-in, workspace trust, etc.).
  *
