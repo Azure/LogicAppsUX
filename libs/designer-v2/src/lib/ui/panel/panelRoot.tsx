@@ -99,13 +99,12 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     return {
       isCollapsed: collapsed,
       toggleCollapse: dismissPanel,
-      width,
       layerProps,
       panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
       isResizeable,
       mountNode: panelContainerElement || undefined,
     };
-  }, [customPanelLocations, collapsed, dismissPanel, width, panelContainerElement, panelLocation, isResizeable, currentPanelMode]);
+  }, [customPanelLocations, collapsed, dismissPanel, panelContainerElement, panelLocation, isResizeable, currentPanelMode]);
 
   const onRenderFooterContent = useMemo(
     () => (currentPanelMode === 'WorkflowParameters' ? () => <WorkflowParametersPanelFooter /> : undefined),
@@ -118,34 +117,33 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
 
   const isLoadingPanel = useIsPanelLoading();
 
-  const LoadingComponent = () => (
+  const loadingContent = (
     <div className="msla-loading-container">
       <Spinner size={'large'} />
     </div>
   );
 
-  const Content = () =>
-    isLoadingPanel ? (
-      <LoadingComponent />
-    ) : currentPanelMode === 'WorkflowParameters' ? (
-      <WorkflowParametersPanel {...commonPanelProps} />
-    ) : currentPanelMode === 'Discovery' ? (
-      <RecommendationPanelContext {...commonPanelProps} />
-    ) : currentPanelMode === 'NodeSearch' ? (
-      <NodeSearchDialog {...commonPanelProps} focusReturnElementId={focusReturnElementId} />
-    ) : currentPanelMode === 'Connection' ? (
-      <ConnectionPanel {...commonPanelProps} />
-    ) : currentPanelMode === 'Error' ? (
-      <ErrorsPanel {...commonPanelProps} />
-    ) : currentPanelMode === 'Assertions' ? (
-      <AssertionsPanel {...commonPanelProps} />
-    ) : null; // Caught above
+  const content = isLoadingPanel ? (
+    loadingContent
+  ) : currentPanelMode === 'WorkflowParameters' ? (
+    <WorkflowParametersPanel {...commonPanelProps} />
+  ) : currentPanelMode === 'Discovery' ? (
+    <RecommendationPanelContext {...commonPanelProps} />
+  ) : currentPanelMode === 'NodeSearch' ? (
+    <NodeSearchDialog {...commonPanelProps} focusReturnElementId={focusReturnElementId} />
+  ) : currentPanelMode === 'Connection' ? (
+    <ConnectionPanel {...commonPanelProps} />
+  ) : currentPanelMode === 'Error' ? (
+    <ErrorsPanel {...commonPanelProps} />
+  ) : currentPanelMode === 'Assertions' ? (
+    <AssertionsPanel {...commonPanelProps} />
+  ) : null; // Caught above
 
   if (isUndefined(currentPanelMode)) {
     return null;
   }
 
-  if (dialogModes.includes(currentPanelMode)) {
+  if (dialogModes.includes(currentPanelMode) && content) {
     return (
       <Dialog
         open={true}
@@ -155,7 +153,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
           }
         }}
       >
-        <Content />
+        {content}
       </Dialog>
     );
   }
@@ -213,7 +211,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
       }}
     >
       {isResizeable ? <PanelResizer updatePanelWidth={setWidth} /> : null}
-      <Content />
+      {content}
     </Panel>
   );
 };

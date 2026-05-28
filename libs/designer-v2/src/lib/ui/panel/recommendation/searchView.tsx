@@ -9,9 +9,11 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds, useIsAddingAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useEnableNestedAgentLoops } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
 import constants from '../../../common/constants';
 import { ALLOWED_A2A_CONNECTOR_NAMES } from './helpers';
+import { useMcpServersQuery } from '../../../core/queries/browse';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -39,8 +41,12 @@ export const SearchView: FC<SearchViewProps> = ({
   const isAgentTool = useIsAddingAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
   const isA2AWorkflow = useIsA2AWorkflow();
+  const enableNestedAgentLoops = useEnableNestedAgentLoops();
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const { data: mcpServersData } = useMcpServersQuery();
+  const mcpServers = useMemo(() => mcpServersData?.data ?? [], [mcpServersData?.data]);
 
   const [searchResults, setSearchResults] = useState<DiscoveryOpArray>([]);
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
@@ -89,9 +95,15 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
 
-      // Exclude agent operations unless it's the root of an agentic or A2A workflow
-      if (((!isAgenticWorkflow && !isA2AWorkflow) || !isRoot) && equals(type, constants.NODE.TYPE.AGENT)) {
-        return false;
+      // Exclude agent operations unless it's an agentic or A2A workflow
+      // When not at root, also require enableNestedAgentLoops to be true
+      if (equals(type, constants.NODE.TYPE.AGENT)) {
+        if (!isAgenticWorkflow && !isA2AWorkflow) {
+          return false;
+        }
+        if (!isRoot && !enableNestedAgentLoops) {
+          return false;
+        }
       }
 
       // Exclude variable initialization if not at the root
@@ -121,19 +133,20 @@ export const SearchView: FC<SearchViewProps> = ({
 
       return true;
     },
-    [isA2AWorkflow, isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter]
+    [isA2AWorkflow, isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop, passesA2AWorkflowFilter, enableNestedAgentLoops]
   );
 
   useDebouncedEffect(
     () => {
-      const searchResultsPromise = new DefaultSearchOperationsService(allOperations).searchOperations(searchTerm, filterAgenticLoops);
+      const operations = isAgentTool ? [...allOperations, ...mcpServers] : allOperations;
+      const searchResultsPromise = new DefaultSearchOperationsService(operations).searchOperations(searchTerm, filterAgenticLoops);
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filterAgenticLoops],
+    [searchTerm, allOperations, filterAgenticLoops, isAgentTool, mcpServers],
     200
   );
 

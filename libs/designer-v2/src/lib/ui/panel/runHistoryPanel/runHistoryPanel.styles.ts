@@ -14,6 +14,35 @@ export const useRunHistoryPanelStyles = makeStyles({
     gap: '8px',
   },
 
+  filterToggleRow: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    marginTop: '4px',
+  },
+
+  filterContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    backgroundColor: tokens.colorNeutralBackground4,
+    borderRadius: tokens.borderRadiusLarge,
+    border: `1px solid ${tokens.colorNeutralStroke1}`,
+    padding: '8px',
+    marginTop: '4px',
+  },
+
+  compatComponent: {
+    zIndex: 10,
+  },
+
+  smallInput: {
+    minWidth: '0px',
+
+    '& input': {
+      minWidth: '0px',
+    },
+  },
+
   runProperty: {
     display: 'flex',
     flexDirection: 'column',

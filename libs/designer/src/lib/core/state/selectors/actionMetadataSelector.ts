@@ -13,7 +13,6 @@ import {
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
-import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
@@ -64,20 +63,12 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
 
 export const useAllOperations = () => useSelector((state: RootState) => state.operations.operationInfo);
 export const useOperationInfo = (nodeId: string) => {
-  const selector = createSelector(
-    [(state: RootState) => state.operations.operationInfo, (_, nodeId: string) => nodeId],
-    (operationInfo, id) => getRecordEntry(operationInfo, id) ?? ({ type: '' } as NodeOperation)
-  );
-  return useSelector((state: RootState) => selector(state, nodeId));
+  return useSelector((state: RootState) => getRecordEntry(state.operations.operationInfo, nodeId) ?? ({ type: '' } as NodeOperation));
 };
 
 export const useAllOutputParameters = () => useSelector((state: RootState) => state.operations.outputParameters);
 export const useOutputParameters = (nodeId: string) => {
-  const selector = createSelector(
-    [(state: RootState) => state.operations.outputParameters, (_, nodeId: string) => nodeId],
-    (outputParameters, id) => getRecordEntry(outputParameters, id)
-  );
-  return useSelector((state: RootState) => selector(state, nodeId));
+  return useSelector((state: RootState) => getRecordEntry(state.operations.outputParameters, nodeId));
 };
 
 export const useOperationManifest = (

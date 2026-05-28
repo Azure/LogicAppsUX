@@ -14,7 +14,7 @@ import type {
 } from '../models/operation';
 import { ParametersProcessor } from './parameterprocessor';
 import { UriTemplateParser, UriTemplateGenerator } from './uritemplateparser';
-import APIParser from '@apidevtools/swagger-parser';
+import { dereferenceSwagger } from './dereference';
 import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '../../../utils/src';
 import { aggregate, equals, getPropertyValue, map, unmap } from '../../../utils/src';
 
@@ -69,16 +69,15 @@ const ApiNotificationConstants = {
 };
 
 export class SwaggerParser {
+  /**
+   * Parses and dereferences a Swagger/OpenAPI document.
+   * Resolves all local $ref pointers, detecting and handling cyclical references.
+   *
+   * @param swagger - The Swagger document to parse
+   * @returns The dereferenced document (async for backward compatibility)
+   */
   static parse = async (swagger: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
-    return APIParser.validate(swagger as any, {
-      dereference: {
-        circular: 'ignore',
-      },
-      validate: {
-        schema: false,
-        spec: false,
-      },
-    }) as any;
+    return dereferenceSwagger(swagger);
   };
 
   constructor(public api: OpenAPIV2.Document) {}

@@ -1,5 +1,7 @@
 export { ChatInput } from './components/chatInputBox';
+export type { ChatInputHandle, ChatInputSubmitButtonProps, IChatInputProps } from './components/chatInputBox';
 export { ChatBubble } from './components/chatBubble';
+export type { ChatBubbleAction } from './components/chatBubble';
 export { ConversationMessage } from './components/conversationMessage';
 export * from './components/conversationItem';
 export { ProgressCardWithStopButton } from './components/progressCardWithStopButton';

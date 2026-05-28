@@ -56,7 +56,7 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
 export async function switchToDotnetProject(
   context: IProjectWizardContext,
   target: vscode.Uri,
-  localDotNetMajorVersion = '8',
+  localDotNetMajorVersion = '10',
   isCodeful = false
 ) {
   if (target === undefined || Object.keys(target).length === 0) {
@@ -136,7 +136,7 @@ export async function switchToDotnetProject(
   const projectPath: string = target.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
-  const useBinaries = useBinariesDependencies();
+  const useBinaries = await useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
 
   await deleteBundleProjectFiles(target);
@@ -158,8 +158,16 @@ export async function switchToDotnetProject(
 
   await copyBundleProjectFiles(target);
   await updateBuildFile(context, target, dotnetVersion, isCodeful);
-  if (useBinaries) {
+  if (useBinaries && dotnetLocalVersion) {
     await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
+  } else if (useBinaries) {
+    ext.outputChannel.appendLog(
+      localize(
+        'dotnetVersionNotFound',
+        'Could not determine local .NET SDK version for major version {0}. Skipping global.json creation.',
+        localDotNetMajorVersion
+      )
+    );
   }
 
   const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(target.fsPath);

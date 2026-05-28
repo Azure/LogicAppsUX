@@ -8,8 +8,8 @@ export default defineConfig({
   reporter: process.env.TEST_SHARDED ? 'blob' : 'html',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 3,
-  workers: '50%',
+  retries: 2,
+  workers: process.env.CI ? 2 : '50%',
   timeout: 5 * 60 * 1_000,
   expect: {
     timeout: 20 * 1000,
@@ -23,7 +23,7 @@ export default defineConfig({
     actionTimeout: 20 * 1_000,
     baseURL: 'http://localhost:3001',
     video: 'on-first-retry',
-    trace: 'on',
+    trace: 'on-first-retry',
   },
 
   /* Configure projects for major browsers */

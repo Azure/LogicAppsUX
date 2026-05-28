@@ -1,6 +1,6 @@
 import { useMount } from '@fluentui/react-hooks';
 import type { EditorContentChangedEventArgs } from '@microsoft/designer-ui';
-import { MonacoEditor } from '@microsoft/designer-ui';
+import { CodeMirrorEditor } from '@microsoft/designer-ui';
 import { serializeBJSWorkflow, store as DesignerStore, setIsWorkflowDirty, useIsWorkflowDirty } from '@microsoft/logic-apps-designer-v2';
 import type { AppDispatch } from '@microsoft/logic-apps-designer-v2';
 import { EditorLanguage, isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -13,6 +13,7 @@ interface CodeViewProps {
   isConsumption?: boolean;
 }
 
+// eslint-disable-next-line react/display-name
 const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProps, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const isWorkflowIsDirty = useIsWorkflowDirty();
@@ -57,19 +58,19 @@ const CodeViewEditor = forwardRef(({ workflowKind, isConsumption }: CodeViewProp
     hasChanges: () => changesMade,
   }));
 
-  return (
-    <div>
-      {isNullOrUndefined(code) ? null : (
-        <MonacoEditor
-          height="95vh"
-          language={EditorLanguage.json}
-          value={code}
-          overviewRulerBorder={true}
-          scrollBeyondLastLine={false}
-          fontSize={13}
-          onContentChanged={handleContentChanged}
-        />
-      )}
+  return isNullOrUndefined(code) ? null : (
+    <div style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+      <CodeMirrorEditor
+        height="100%"
+        language={EditorLanguage.json}
+        value={code}
+        overviewRulerBorder={true}
+        scrollBeyondLastLine={false}
+        noBorder={true}
+        fontSize={13}
+        onContentChanged={handleContentChanged}
+        indentWithTab={true}
+      />
     </div>
   );
 });

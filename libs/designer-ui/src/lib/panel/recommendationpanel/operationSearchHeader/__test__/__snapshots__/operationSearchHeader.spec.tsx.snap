@@ -78,7 +78,7 @@ exports[`OperationSearchHeader > renders correctly with isTriggerNode=false 1`] 
         >
           <svg
             aria-hidden="true"
-            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            class="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -176,7 +176,7 @@ exports[`OperationSearchHeader > renders correctly with isTriggerNode=true 1`] =
         >
           <svg
             aria-hidden="true"
-            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            class="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"
@@ -273,7 +273,7 @@ exports[`OperationSearchHeader > renders correctly with search term and filters 
         >
           <svg
             aria-hidden="true"
-            class="___12fm75w_v8ls9a0 f1w7gpdv fez10in fg4l7m0"
+            class="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
             fill="currentColor"
             height="1em"
             viewBox="0 0 20 20"

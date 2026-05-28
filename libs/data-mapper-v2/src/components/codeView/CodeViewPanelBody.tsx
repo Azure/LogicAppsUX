@@ -46,7 +46,6 @@ export const CodeViewPanelBody = (_props: CodeViewPanelBodyProps) => {
         scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
         width="100%"
         wordWrap="on"
-        wrappingIndent="same"
         readOnly
       />
     </div>

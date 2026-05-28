@@ -50,10 +50,6 @@ export const usePanelTabHideKeys = () => {
   return useSelector((state: RootState) => state.designerOptions.panelTabHideKeys ?? []);
 };
 
-export const useShowConnectionsPanel = () => {
-  return useSelector((state: RootState) => state.designerOptions?.showConnectionsPanel ?? false);
-};
-
 export const useShowEdgeDrawing = () => {
   return useSelector((state: RootState) => state.designerOptions?.showEdgeDrawing ?? false);
 };
@@ -64,6 +60,10 @@ export const useShowPerformanceDebug = () => {
 
 export const useMcpClientToolEnabled = () => {
   return useSelector((state: RootState) => state.designerOptions.mcpClientToolEnabled ?? false);
+};
+
+export const useEnableNestedAgentLoops = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.enableNestedAgentLoops ?? false);
 };
 
 export const useAreDesignerOptionsInitialized = () => {

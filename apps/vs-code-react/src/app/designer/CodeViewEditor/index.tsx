@@ -62,19 +62,18 @@ const CodeViewEditor = forwardRef(({ workflowKind, workflowFile }: CodeViewProps
     hasChanges: () => changesMade,
   }));
 
-  return (
-    <div>
-      {isNullOrUndefined(code) ? null : (
-        <MonacoEditor
-          height="95vh"
-          language={EditorLanguage.json}
-          value={code}
-          overviewRulerBorder={true}
-          scrollBeyondLastLine={false}
-          fontSize={13}
-          onContentChanged={handleContentChanged}
-        />
-      )}
+  return isNullOrUndefined(code) ? null : (
+    <div style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+      <MonacoEditor
+        height="100%"
+        language={EditorLanguage.json}
+        value={code}
+        overviewRulerBorder={true}
+        scrollBeyondLastLine={false}
+        noBorder={true}
+        fontSize={13}
+        onContentChanged={handleContentChanged}
+      />
     </div>
   );
 });

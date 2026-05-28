@@ -9,6 +9,7 @@ import { CreateConnection, type CreateButtonTexts } from './createConnection';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type {
   ConnectionParameterSetValues,
+  ConnectionParameterSets,
   ConnectionMetadata,
   ConnectionCreationInfo,
   ConnectionParametersMetadata,
@@ -46,6 +47,8 @@ export const CreateConnectionInternal = (props: {
   operationManifest?: OperationManifest;
   workflowKind?: string;
   workflowMetadata?: { agentType?: string };
+  connectionParameterSetsOverride?: ConnectionParameterSets;
+  enableManagedIdentityPicker?: boolean;
 }) => {
   const {
     classes,
@@ -68,6 +71,8 @@ export const CreateConnectionInternal = (props: {
     operationManifest,
     workflowKind,
     workflowMetadata,
+    connectionParameterSetsOverride,
+    enableManagedIdentityPicker,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -112,7 +117,12 @@ export const CreateConnectionInternal = (props: {
   );
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, selectedIdentity?: string, isUsingDynamicConnection?: boolean) => {
+    (
+      newConnection: Connection,
+      selectedIdentity?: string,
+      isUsingDynamicConnection?: boolean,
+      additionalConnectionProperties?: Record<string, any>
+    ) => {
       const payload: CreatedConnectionPayload = {
         connection: newConnection,
         connector: connector as Connector,
@@ -122,6 +132,9 @@ export const CreateConnectionInternal = (props: {
         const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
         payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
         payload.authentication = getApiHubAuthentication(userAssignedIdentity);
+      } else if (additionalConnectionProperties) {
+        // Multi-auth ManagedServiceIdentity path (e.g., MCP connectors with MSI parameter set)
+        payload.connectionProperties = additionalConnectionProperties;
       }
 
       if (isUsingDynamicConnection) {
@@ -197,7 +210,11 @@ export const CreateConnectionInternal = (props: {
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
           connectionParametersSet: selectedParameterSet
-            ? getConnectionParameterSetValues(selectedParameterSet.name, outputParameterValues)
+            ? getConnectionParameterSetValues(
+                selectedParameterSet.name,
+                outputParameterValues,
+                Object.keys(selectedParameterSet.parameters ?? {})
+              )
             : undefined,
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
@@ -232,7 +249,24 @@ export const CreateConnectionInternal = (props: {
 
         if (connection) {
           updateNewConnectionInCache(connection);
-          applyNewConnection(connection, identitySelected, isUsingDynamicConnection);
+
+          // For multi-auth ManagedServiceIdentity parameter sets (e.g., managed MCP connectors),
+          // build connectionProperties.authentication from the user-provided values since these
+          // aren't handled by the legacy managed identity flow.
+          let msiConnectionProperties: Record<string, any> | undefined;
+          if (!identitySelected && selectedParameterSet?.name === 'ManagedServiceIdentity') {
+            const userIdentity = outputParameterValues['identity'];
+            const mcpAudience = outputParameterValues['audience'];
+            msiConnectionProperties = {
+              authentication: {
+                type: 'ManagedServiceIdentity',
+                ...(mcpAudience ? { audience: mcpAudience } : {}),
+                ...(userIdentity ? { identity: userIdentity } : {}),
+              },
+            };
+          }
+
+          applyNewConnection(connection, identitySelected, isUsingDynamicConnection, msiConnectionProperties);
           updateOperationParameterValues?.(operationParameterValues);
         } else if (err) {
           setErrorMessage(String(err));
@@ -291,7 +325,7 @@ export const CreateConnectionInternal = (props: {
       classes={classes}
       connector={connector}
       connectionParameterSets={getSupportedParameterSets(
-        connector.properties.connectionParameterSets,
+        connector.properties.connectionParameterSets ?? connectionParameterSetsOverride,
         operationType,
         connector.properties.capabilities
       )}
@@ -316,22 +350,24 @@ export const CreateConnectionInternal = (props: {
       operationManifest={operationManifest}
       workflowKind={workflowKind}
       workflowMetadata={workflowMetadata}
+      enableManagedIdentityPicker={enableManagedIdentityPicker}
     />
   );
 };
 
 export function getConnectionParameterSetValues(
   selectedParameterSetName: string,
-  outputParameterValues: Record<string, any>
+  outputParameterValues: Record<string, any>,
+  validParameterKeys?: string[]
 ): ConnectionParameterSetValues {
+  // Filter to only include parameters that are defined in the parameter set
+  // This prevents sending parameters that the connector API doesn't recognize
+  const filteredParameterValues = validParameterKeys
+    ? Object.fromEntries(Object.entries(outputParameterValues).filter(([key]) => validParameterKeys.includes(key)))
+    : outputParameterValues;
+
   return {
     name: selectedParameterSetName,
-    values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
-      // eslint-disable-next-line no-param-reassign
-      acc[key] = {
-        value: outputParameterValues[key],
-      };
-      return acc;
-    }, {}),
+    values: Object.fromEntries(Object.keys(filteredParameterValues).map((key) => [key, { value: filteredParameterValues[key] }])),
   };
 }

@@ -8,6 +8,7 @@
 /out-tsc
 build 
 .nx
+tsup.config.bundled_*
 # dependencies
 node_modules
 /CodeCoverage
@@ -40,10 +41,14 @@ testem.log
 debug.log
 
 # vscode e2e exTester artifacts
+/.tmp-e2e/
+/.tmp-vitest/
 /apps/vs-code-designer/test-resources
 test-resources
+test-extensions
 /apps/vs-code-designer/out
 /apps/vs-code-designer/*.vsix
+.vscode-test
 
 # System Files
 .DS_Store
@@ -61,6 +66,7 @@ __azurite_db_queue_extent__.json
 
 # ARM Token
 **/armToken.json
+**/foundryToken.json
 **/subscriptionIds.json
 
 # Generated Docusaurus files
@@ -122,4 +128,8 @@ CHANGELOG.MD
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-vite.config.ts.timestamp*
+vite.config.ts.timestamp*.worktrees/
+
+# Graphify knowledge graphs (commit reports + JSON, ignore cache + HTML)
+**/graphify-out/cache/
+**/graphify-out/graph.html

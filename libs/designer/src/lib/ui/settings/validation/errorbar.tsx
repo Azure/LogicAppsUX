@@ -16,8 +16,11 @@ export function CustomizableMessageBar({ type, message, onWarningDismiss }: Mess
     description: 'Dismiss button text',
   });
 
+  // Use role="alert" for error/warning to announce to screen readers immediately when added to DOM
+  const role = type === 'error' || type === 'warning' ? 'alert' : undefined;
+
   return (
-    <MessageBar intent={type} className="msla-setting-section-message-bar">
+    <MessageBar intent={type} role={role} className="msla-setting-section-message-bar">
       <MessageBarBody>{message}</MessageBarBody>
       {onWarningDismiss && (
         <MessageBarActions

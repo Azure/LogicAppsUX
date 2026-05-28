@@ -1,5 +1,5 @@
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { DetailsList, type IColumn, SelectionMode, setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -81,8 +81,9 @@ export const TemplateOverview = ({
     onClose
   ).footerContent;
 
+  const containerRef = useRef<HTMLDivElement>(null);
   return (
-    <>
+    <div>
       <QuickViewPanelHeader
         title={title}
         summary={summary}
@@ -123,24 +124,28 @@ export const TemplateOverview = ({
         <TemplatesPanelFooter {...footerContentProps} />
       </div>
 
-      {selectedWorkflow ? (
-        <QuickViewPanel
-          showCreate={false}
-          workflowId={selectedWorkflow}
-          clearDetailsOnClose={false}
-          onClose={() => setSelectedWorkflow(undefined)}
-        />
-      ) : null}
+      <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {selectedWorkflow ? (
+          <QuickViewPanel
+            mountNode={containerRef?.current}
+            showCreate={false}
+            workflowId={selectedWorkflow}
+            clearDetailsOnClose={false}
+            onClose={() => setSelectedWorkflow(undefined)}
+          />
+        ) : null}
 
-      {showCreatePanel ? (
-        <CreateWorkflowPanel
-          createWorkflow={createWorkflow}
-          showCloseButton={showCloseButton}
-          panelWidth={panelWidth}
-          onClose={() => setShowCreatePanel(false)}
-          clearDetailsOnClose={false}
-        />
-      ) : null}
+        {showCreatePanel ? (
+          <CreateWorkflowPanel
+            mountNode={containerRef?.current}
+            createWorkflow={createWorkflow}
+            showCloseButton={showCloseButton}
+            panelWidth={panelWidth}
+            onClose={() => setShowCreatePanel(false)}
+            clearDetailsOnClose={false}
+          />
+        ) : null}
+      </div>
       <div
         id={'msla-layer-host'}
         style={{
@@ -149,7 +154,7 @@ export const TemplateOverview = ({
           visibility: 'hidden',
         }}
       />
-    </>
+    </div>
   );
 };
 

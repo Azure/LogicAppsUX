@@ -1,18 +1,18 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import packageJson from './package.json';
 
 export default defineConfig({
   plugins: [react()],
   test: {
+    name: packageJson.name,
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'src/test/', '**/*.d.ts', '**/*.config.*', '**/mockData.ts'],
-    },
+    setupFiles: ['./src/test/setup.ts', '../../libs/shared-test-utils/fluentui-react-icons-mock.ts'],
+    root: './',
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
   },
   resolve: {
     alias: {

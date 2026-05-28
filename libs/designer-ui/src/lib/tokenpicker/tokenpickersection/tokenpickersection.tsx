@@ -1,19 +1,19 @@
 import { TokenPickerMode } from '..';
 import type { ValueSegment } from '../../editor';
+import type { CodeMirrorEditorRef } from '../../editor/monaco';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
 import { TokenPickerNoMatches } from './tokenpickernomatches';
 import type { GetValueSegmentHandler } from './tokenpickeroption';
 import { TokenPickerOptions } from './tokenpickeroption';
-import type { editor } from 'monaco-editor';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 
 export interface TokenPickerBaseProps {
   selectedMode: TokenPickerMode;
   searchQuery: string;
-  expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  expressionEditorRef: MutableRefObject<CodeMirrorEditorRef | null>;
   expression: ExpressionEditorEvent;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   getValueSegmentFromToken: GetValueSegmentHandler;

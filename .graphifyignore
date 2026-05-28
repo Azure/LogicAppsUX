@@ -1,0 +1,20 @@
+# Graphify ignore — skip noise directories
+node_modules/
+dist/
+build/
+coverage/
+.turbo/
+__mocks__/
+test-results/
+e2e/
+*.less
+*.css
+*.svg
+*.png
+*.jpg
+*.gif
+*.ico
+*.woff
+*.woff2
+*.map
+pnpm-lock.yaml

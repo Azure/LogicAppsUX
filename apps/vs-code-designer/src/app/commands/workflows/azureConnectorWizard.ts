@@ -7,7 +7,6 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@mic
 import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
-import type { Progress } from 'vscode';
 import {
   defaultMsiAudience,
   workflowAuthenticationMethodKey,
@@ -91,10 +90,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
     this._projectPath = projectPath;
   }
 
-  public async execute(
-    context: IAzureConnectorsContext,
-    _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
-  ): Promise<void> {
+  public async execute(context: IAzureConnectorsContext): Promise<void> {
     const valuesToUpdateInSettings: Record<string, string> = {};
     if (context.enabled === false) {
       valuesToUpdateInSettings[workflowSubscriptionIdKey] = '';
@@ -110,6 +106,12 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
         valuesToUpdateInSettings[workflowAuthenticationMethodKey] = context.authenticationMethod;
         valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
       }
+
+      // Then send notifications for runtime updates
+      ext?.languageClient?.sendNotification('custom/updateApiConfig', {
+        subscriptionId: subscriptionId,
+        resourceGroup: resourceGroup,
+      });
     }
 
     await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);

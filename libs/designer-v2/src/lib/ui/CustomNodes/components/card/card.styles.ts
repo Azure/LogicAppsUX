@@ -146,4 +146,35 @@ export const useCardStyles = makeStyles({
     padding: '4px',
     maxWidth: '200px',
   },
+  copilotModified: {
+    overflow: 'visible',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: '-6px',
+      left: '-6px',
+      right: '-6px',
+      bottom: '-6px',
+      borderRadius: '10px',
+      background: 'linear-gradient(90deg, transparent 0%,  #b4a0ff 10%, #7160e8 50%, #b4a0ff 90%, transparent 100%)',
+      backgroundSize: '200% 100%',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: '300% 0',
+      animationName: {
+        '0%': { backgroundPosition: '200% 0' },
+        '100%': { backgroundPosition: '-100% 0' },
+      },
+      animationDuration: '1.5s',
+      animationTimingFunction: 'ease-in-out',
+      animationIterationCount: '1',
+      zIndex: -1,
+      pointerEvents: 'none',
+    },
+    '@media (prefers-reduced-motion)': {
+      '&::after': {
+        animationName: 'none',
+        background: '#7160e8',
+      },
+    },
+  },
 });

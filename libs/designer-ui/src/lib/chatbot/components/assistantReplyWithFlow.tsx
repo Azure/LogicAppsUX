@@ -1,10 +1,115 @@
 import { Confirm } from '../../dialogs/confirm';
 import { useFeedbackMessage, useReportBugButton } from '../feedbackHelper';
+import type { ChatBubbleAction } from './chatBubble';
 import { ChatBubble } from './chatBubble';
 import { UndoStatus, type AssistantReplyWithFlowItem } from './conversationItem';
-import { FlowDiffPreview } from './flowDiffPreview';
+import {
+  ArrowUndoRegular,
+  AddCircleRegular,
+  EditRegular,
+  DeleteRegular,
+  NoteFilled,
+  LinkFilled,
+  MentionBracketsFilled,
+} from '@fluentui/react-icons';
+import { makeStyles, tokens } from '@fluentui/react-components';
+import { WorkflowChangeType, WorkflowChangeTargetType, labelCase } from '@microsoft/logic-apps-shared';
 import React from 'react';
+import Markdown from 'react-markdown';
 import { useIntl } from 'react-intl';
+
+const useStyles = makeStyles({
+  changeList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    margin: '4px 0',
+  },
+  changeItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+  },
+  changeFirstLine: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  changeSecondLine: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  },
+  changeTypeIcon: {
+    flexShrink: 0,
+    fontSize: '14px',
+    padding: '6px',
+  },
+  addedIcon: {
+    color: tokens.colorPaletteGreenForeground1,
+  },
+  modifiedIcon: {
+    color: tokens.colorPaletteBlueForeground2,
+  },
+  removedIcon: {
+    color: tokens.colorPaletteRedForeground1,
+  },
+  nodeIcon: {
+    width: '24px',
+    height: '24px',
+    borderRadius: '2px',
+    flexShrink: 0,
+    objectFit: 'contain',
+  },
+  targetTypeIcon: {
+    width: '24px',
+    height: '24px',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '20px',
+    color: tokens.colorNeutralForeground2,
+  },
+  nodeName: {
+    fontWeight: tokens.fontWeightSemibold,
+    fontSize: tokens.fontSizeBase300,
+    lineHeight: tokens.lineHeightBase300,
+  },
+  nodeNameClickable: {
+    fontWeight: tokens.fontWeightSemibold,
+    fontSize: tokens.fontSizeBase300,
+    lineHeight: tokens.lineHeightBase300,
+    cursor: 'pointer',
+    color: tokens.colorBrandForegroundLink,
+    ':hover': {
+      textDecorationLine: 'underline',
+    },
+  },
+  changeDescription: {
+    fontSize: tokens.fontSizeBase200,
+    lineHeight: tokens.lineHeightBase200,
+    color: tokens.colorNeutralForeground3,
+  },
+});
+
+const changeIconMap = {
+  [WorkflowChangeType.Added]: { icon: AddCircleRegular, styleKey: 'addedIcon' as const },
+  [WorkflowChangeType.Modified]: { icon: EditRegular, styleKey: 'modifiedIcon' as const },
+  [WorkflowChangeType.Removed]: { icon: DeleteRegular, styleKey: 'removedIcon' as const },
+};
+
+const targetTypeIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  [WorkflowChangeTargetType.Note]: NoteFilled,
+  [WorkflowChangeTargetType.Connection]: LinkFilled,
+  [WorkflowChangeTargetType.Parameter]: MentionBracketsFilled,
+};
+
+const targetTypeDisplayNameMap: Record<string, string> = {
+  [WorkflowChangeTargetType.Note]: 'Note',
+  [WorkflowChangeTargetType.Connection]: 'Connection',
+  [WorkflowChangeTargetType.Parameter]: 'Parameter',
+};
 
 type AssistantReplyWithFlowProps = {
   item: AssistantReplyWithFlowItem;
@@ -15,6 +120,7 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const [isUndoConfirmationOpen, setIsUndoConfirmationOpen] = React.useState<boolean>(false);
   const intl = useIntl();
+  const styles = useStyles();
   const intlText = {
     actionUndone: intl.formatMessage({
       defaultMessage: 'Action undone',
@@ -63,16 +169,16 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
   };
 
   const onConfirmationClick = React.useCallback(() => {
-    // TODO: undo whatever operation - onUndoOperationRequested(item);
+    item.onClick?.(item.id);
     setIsUndoConfirmationOpen(false);
-  }, []);
+  }, [item]);
 
-  const additionalFooterActions = [];
+  const additionalFooterActions: ChatBubbleAction[] = [];
   if (item.undoStatus === UndoStatus.UndoAvailable) {
     additionalFooterActions.push({
       text: intlText.undo,
       onClick: () => setIsUndoConfirmationOpen(true),
-      iconProps: { iconName: 'Undo' },
+      iconElement: React.createElement(ArrowUndoRegular),
       disabled: false, // TODO
     });
   } else if (item.undoStatus === UndoStatus.Undone) {
@@ -96,7 +202,65 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         additionalFooterActions={additionalFooterActions}
       >
-        <FlowDiffPreview />
+        {item.changes && item.changes.length > 0 ? (
+          <div className={styles.changeList}>
+            {item.changes.map((change, index) => {
+              const { icon: ChangeTypeIcon, styleKey } = changeIconMap[change.changeType] ?? changeIconMap[WorkflowChangeType.Modified];
+              const isNonActionTarget = change.targetType && change.targetType !== WorkflowChangeTargetType.Action;
+              const isClickable = !isNonActionTarget && change.changeType !== WorkflowChangeType.Removed && !!item.onNodeClick;
+              const TargetTypeIcon = isNonActionTarget ? targetTypeIconMap[change.targetType] : undefined;
+              return (
+                <div key={index} className={styles.changeItem}>
+                  <div className={styles.changeFirstLine}>
+                    {TargetTypeIcon ? (
+                      <span className={styles.targetTypeIcon}>
+                        <TargetTypeIcon />
+                      </span>
+                    ) : change.iconUri ? (
+                      <img src={change.iconUri} alt="" className={styles.nodeIcon} />
+                    ) : null}
+                    <div>
+                      {isNonActionTarget ? (
+                        <span className={styles.nodeName}>{targetTypeDisplayNameMap[change.targetType] ?? 'Item'}</span>
+                      ) : change.nodeIds.length > 0 ? (
+                        change.nodeIds.map((id, i) => {
+                          const label = labelCase(id) + (i < change.nodeIds.length - 1 ? ', ' : '');
+                          return isClickable ? (
+                            <span
+                              key={id}
+                              className={styles.nodeNameClickable}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => item.onNodeClick?.(id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  item.onNodeClick?.(id);
+                                }
+                              }}
+                            >
+                              {label}
+                            </span>
+                          ) : (
+                            <span key={id} className={styles.nodeName}>
+                              {label}
+                            </span>
+                          );
+                        })
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className={styles.changeSecondLine}>
+                    <ChangeTypeIcon className={`${styles.changeTypeIcon} ${styles[styleKey]}`} />
+                    <span className={styles.changeDescription}>{change.description}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <Markdown>{item.text}</Markdown>
+        )}
         <Confirm
           hidden={!isUndoConfirmationOpen}
           title={intlText.undoDialog.title}

@@ -1,4 +1,3 @@
-import { useShowConnectionsPanel } from '../../state/workflowLoadingSelectors';
 import './pseudoCommandBar.less';
 import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
@@ -43,8 +42,6 @@ export const PseudoCommandBar = () => {
 
   const isDirty = useIsDesignerDirty();
 
-  const showConnectionsButton = useShowConnectionsPanel();
-
   return (
     <div className="pseudo-command-bar">
       <ActionButton
@@ -69,13 +66,11 @@ export const PseudoCommandBar = () => {
         text="Workflow Parameters"
         onClick={() => dispatch(openPanel({ panelMode: 'WorkflowParameters' }))}
       />
-      {showConnectionsButton && (
-        <ActionButton
-          iconProps={{ iconName: 'Link12' }}
-          text="Connections"
-          onClick={() => dispatch(openPanel({ panelMode: 'Connection' }))}
-        />
-      )}
+      <ActionButton
+        iconProps={{ iconName: 'Link12' }}
+        text="Connections"
+        onClick={() => dispatch(openPanel({ panelMode: 'Connection' }))}
+      />
       <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
       <ActionButton
         iconProps={{
@@ -106,7 +101,6 @@ export const PseudoCommandBar = () => {
             lineNumbers="on"
             scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
             wordWrap="on"
-            wrappingIndent="same"
             height="800px"
             width="800px"
           />

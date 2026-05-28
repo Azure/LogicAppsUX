@@ -1,15 +1,12 @@
-import constants from '../constants';
-import StopGenerating from '../images/StopGenerating.svg';
-import StopGeneratingDark from '../images/StopGenerating_Dark.svg';
+import { RecordStopFilled } from '@fluentui/react-icons';
 import { animations } from './animations';
 import type { IContainerWithProgressBarStyles } from './containerWithProgressBar';
 import { ContainerWithProgressBar } from './containerWithProgressBar';
 import type { IStyle } from '@fluentui/react';
-import { useTheme, keyframes, mergeStyleSets } from '@fluentui/react';
+import { keyframes, mergeStyleSets } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
-import { ActionButton } from '@fluentui/react/lib/Button';
 import type React from 'react';
-import { useIntl } from 'react-intl';
+import { Button } from '@fluentui/react-components';
 
 export type ProgressCardWithStopButtonProps = {
   progressState: string;
@@ -26,15 +23,6 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
   styles,
   dataAutomationId,
 }) => {
-  const intl = useIntl();
-  const { isInverted } = useTheme();
-  const intlText = {
-    stopButtonAltText: intl.formatMessage({
-      defaultMessage: 'Stop',
-      id: 'zec5Ay',
-      description: 'Chatbot stop generating flow button alt text',
-    }),
-  };
   const classNames = mergeStyleSets(getStyles(), styles);
   return (
     <div className={animations.progressCardEnter}>
@@ -43,13 +31,15 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
       </ContainerWithProgressBar>
       {onStopButtonClick && stopButtonLabel && (
         <div className={classNames.stopContainer}>
-          <img src={isInverted ? StopGeneratingDark : StopGenerating} alt={intlText.stopButtonAltText} />
-          <ActionButton
-            text={stopButtonLabel}
-            iconProps={{ styles: { root: { paddingBottom: 3 } } }}
-            styles={mergeStyleSets(getActionButtonStyles(isInverted), styles?.actionButton)}
+          <Button
+            icon={<RecordStopFilled />}
+            appearance="transparent"
             onClick={onStopButtonClick}
-          />
+            style={{ margin: '8px 0' }}
+            size={'small'}
+          >
+            {stopButtonLabel}
+          </Button>
         </div>
       )}
     </div>
@@ -73,32 +63,7 @@ const getStyles = () => {
       width: '100%',
       display: 'flex',
       justifyContent: 'center',
-    },
-  };
-};
-
-const getActionButtonStyles = (isInverted?: boolean) => {
-  return {
-    root: {
-      color: isInverted ? constants.DARK_PRIMARY : constants.NEUTRAL_PRIMARY,
-      backgroundColor: 'transparent',
-    },
-    icon: {
-      paddingTop: 2,
-      color: constants.NEUTRAL_PRIMARY,
-    },
-    iconPressed: {
-      color: constants.NEUTRAL_PRIMARY,
-    },
-    rootHovered: {
-      color: constants.NEUTRAL_PRIMARY_ALT,
-      backgroundColor: 'transparent',
-    },
-    iconHovered: {
-      color: constants.NEUTRAL_PRIMARY_ALT,
-    },
-    rootPressed: {
-      backgroundColor: 'transparent',
+      alignItems: 'center',
     },
   };
 };

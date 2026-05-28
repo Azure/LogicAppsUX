@@ -2,6 +2,7 @@ import { StandardRunService } from '../run';
 import type { IHttpClient } from '../../httpClient';
 import type { LogicAppsV2 } from '../../../../utils/src';
 import { describe, vi, beforeEach, it, test, expect } from 'vitest';
+import { InitLoggerService } from '../../logger';
 
 describe('StandardRunService', () => {
   let mockHttpClient: IHttpClient;
@@ -25,6 +26,7 @@ describe('StandardRunService', () => {
     };
     mockOptions.httpClient = mockHttpClient;
     runService = new StandardRunService(mockOptions);
+    InitLoggerService([{ log: vi.fn() } as any]);
   });
 
   describe('getScopeRepetitions', () => {
@@ -191,6 +193,43 @@ describe('StandardRunService', () => {
       const result = await runService.getScopeRepetitions(mockAction, 'Succeeded');
 
       expect(result).toEqual(mockRepetitionsResponse);
+    });
+  });
+
+  describe('getContent', () => {
+    it('should return empty object when API returns empty response (204 No Content)', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue('');
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    it('should return empty object when API returns null response', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue(null);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    it('should return empty object when API returns undefined response', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue(undefined);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    it('should return actual content when API returns valid data', async () => {
+      const mockContent = { body: { key: 'value' } };
+      vi.mocked(mockHttpClient.get).mockResolvedValue(mockContent);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual(mockContent);
+    });
+
+    it('should return undefined when content size exceeds 2MB', async () => {
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 3000000 });
+      expect(result).toBeUndefined();
+      expect(mockHttpClient.get).not.toHaveBeenCalled();
     });
   });
 

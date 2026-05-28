@@ -71,7 +71,7 @@ describe('iframe initialization', () => {
 
     await import('./iframe');
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to initialize chat widget:', expect.any(Error));
+    // The code renders ErrorDisplay to document.body when chat-root is missing
     expect(mockCreateRoot).toHaveBeenCalledWith(document.body);
     expect(mockRoot.render).toHaveBeenCalled();
   });

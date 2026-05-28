@@ -1,11 +1,21 @@
 import type { OpenAPIV2 } from '../../../utils/src';
-import { ArgumentException, UnsupportedException, optional, equals, getResourceName } from '../../../utils/src';
+import {
+  ArgumentException,
+  UnsupportedException,
+  optional,
+  equals,
+  getResourceName,
+  isArmResourceId,
+  ResourceIdentityType,
+} from '../../../utils/src';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
+import { ConnectionService } from '../connection';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
+import { WorkflowService } from '../workflow';
 
 interface ConsumptionConnectorServiceOptions extends BaseConnectorServiceOptions {
   workflowReferenceId: string;
@@ -52,10 +62,13 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     operationId: string,
     parameters: Record<string, any>,
     dynamicState: any,
-    isManagedIdentityConnection?: boolean
+    isManagedIdentityConnection?: boolean,
+    operationPath?: string,
+    identity?: string
   ): Promise<ListDynamicValue[]> {
     const { apiVersion, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
+    const { operationId: dynamicOperation, apiType } = dynamicState;
+    const isMcpConnection = apiType === 'mcp' && dynamicOperation === 'listMcpTools';
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
 
@@ -69,6 +82,73 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       });
     }
 
+    // MCP-specific: use listMcpTools endpoint instead of dynamicList
+    if (isMcpConnection) {
+      const { baseUrl, workflowReferenceId } = this.options;
+      const uri = `${baseUrl}${workflowReferenceId}/listMcpTools`;
+
+      // Get the connection data from ConnectionService
+      let connection: any;
+      try {
+        connection = connectionId ? await ConnectionService().getConnection(connectionId) : undefined;
+      } catch {
+        // Connection may not be in cache/API Hub for built-in MCP
+      }
+
+      const isRealConnectionId = connectionId && !connectionId.includes('__MOCK');
+
+      let content: any;
+      const parameterValues = connection?.properties?.parameterValues;
+      if (parameterValues?.mcpServerUrl) {
+        // Built-in MCP connection — has mcpServerUrl in parameterValues
+        const connectionData: any = {
+          mcpServerUrl: parameterValues.mcpServerUrl,
+          displayName: connection.properties.displayName,
+        };
+        const authentication = this._buildMcpAuthentication(parameterValues);
+        if (authentication) {
+          connectionData.authentication = authentication;
+        }
+        content = {
+          connection: connectionData,
+          mcpServerPath: operationPath,
+        };
+      } else if (isRealConnectionId && isArmResourceId(connectionId)) {
+        // Managed MCP connection — build full managed connection reference with identity
+        const connectionProperties = {
+          authentication: {
+            type: 'ManagedServiceIdentity',
+            ...optional('identity', identity),
+          },
+        };
+        content = {
+          managedConnection: {
+            connection: { id: connectionId },
+            connectionProperties,
+          },
+          mcpServerPath: operationPath,
+        };
+      } else {
+        // No valid connection available (e.g., mock reference during deserialization)
+        // Return empty list — tools will load when called from the wizard with a real connection
+        return [];
+      }
+
+      const mcpToolsResponse = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': this.options.apiVersion },
+        content,
+      });
+      const tools = this._getResponseFromDynamicApi(mcpToolsResponse, uri);
+
+      return (tools ?? []).map((tool: any) => ({
+        value: tool.name,
+        displayName: tool.name,
+        description: tool.description,
+      }));
+    }
+
+    // Regular dynamic list for non-MCP connections
     const uri = `${connectionId}/dynamicList`;
     const response = await httpClient.post({
       uri,
@@ -173,5 +253,55 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     }
 
     return undefined;
+  }
+
+  private _buildMcpAuthentication(connectionProperties: Record<string, any>): Record<string, any> | undefined {
+    const authType = connectionProperties['authenticationType'];
+    if (!authType || authType === 'None') {
+      return undefined;
+    }
+
+    // Normalize MCP connector manifest auth set names to backend-expected types.
+    const mappedAuthType = authType === 'Key' ? 'ApiKey' : authType;
+
+    const authentication: Record<string, any> = { type: mappedAuthType };
+    if (mappedAuthType === 'ApiKey') {
+      authentication['value'] = connectionProperties['key'];
+      authentication['name'] = connectionProperties['keyHeaderName'];
+      authentication['in'] = 'header';
+    } else if (mappedAuthType === 'Basic') {
+      authentication['username'] = connectionProperties['username'];
+      authentication['password'] = connectionProperties['password'];
+    } else if (mappedAuthType === 'ActiveDirectoryOAuth') {
+      authentication['tenant'] = connectionProperties['tenant'];
+      authentication['clientId'] = connectionProperties['clientId'];
+      authentication['secret'] = connectionProperties['secret'];
+      authentication['authority'] = connectionProperties['authority'];
+      authentication['audience'] = connectionProperties['audience'];
+    } else if (mappedAuthType === 'ClientCertificate') {
+      authentication['pfx'] = connectionProperties['pfx'];
+      authentication['password'] = connectionProperties['password'];
+    } else if (mappedAuthType === 'Raw') {
+      authentication['value'] = connectionProperties['value'];
+    } else if (mappedAuthType === 'ManagedServiceIdentity') {
+      authentication['audience'] = connectionProperties['audience'];
+      // Identity may be stored in parameterValues (round-tripped from workflow definition)
+      // or must be derived from the workflow's managed identity configuration.
+      const storedIdentity = connectionProperties['identity'];
+      if (storedIdentity) {
+        authentication['identity'] = storedIdentity;
+      } else {
+        const appIdentity = WorkflowService().getAppIdentity?.();
+        const userIdentity =
+          equals(appIdentity?.type, ResourceIdentityType.USER_ASSIGNED) && appIdentity?.userAssignedIdentities
+            ? Object.keys(appIdentity.userAssignedIdentities)[0]
+            : undefined;
+        if (userIdentity) {
+          authentication['identity'] = userIdentity;
+        }
+      }
+    }
+
+    return authentication;
   }
 }

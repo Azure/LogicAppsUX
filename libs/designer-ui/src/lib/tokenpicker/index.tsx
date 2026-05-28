@@ -1,5 +1,4 @@
-// biome-ignore lint/correctness/noUnusedImports: actually is used
-import type { editor } from 'monaco-editor';
+import type { CodeMirrorEditorRef } from '../editor/monaco';
 import { ValueSegmentType, type Token, type ValueSegment } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
@@ -110,7 +109,7 @@ export function TokenPicker({
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [expressionEditorError, setExpressionEditorError] = useState<string>('');
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const expressionEditorRef = useRef<CodeMirrorEditorRef | null>(null);
   const searchBoxRef = useRef<HTMLInputElement | null>(null);
   const isExpression = initialMode === TokenPickerMode.EXPRESSION;
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);

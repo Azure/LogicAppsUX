@@ -1,18 +1,64 @@
 /**
  * Authentication handler for App Service EasyAuth
- * Handles token refresh and logout scenarios when 401 errors occur
+ * Handles token refresh, login popup, and logout scenarios when 401 errors occur
  */
 
-export type AuthHandlerConfig = {
+// ============================================================================
+// Types & Interfaces
+// ============================================================================
+
+interface JwtPayload {
+  exp?: number;
+  iat?: number;
+  sub?: string;
+  aud?: string | string[];
+  iss?: string;
+  [key: string]: unknown;
+}
+
+export interface AuthInformation {
+  isAuthenticated: boolean;
+  /**
+   * Indicates whether Azure App Service EasyAuth is configured on the Logic App.
+   * - `true`: EasyAuth is configured (/.auth/me returns 401, 403, 302, or 200)
+   * - `false`: EasyAuth is NOT configured (/.auth/me returns 404 or network error)
+   *
+   * When false, the application should skip authentication flows entirely.
+   */
+  isEasyAuthConfigured: boolean;
+  error: Error | null;
+  username?: string;
+}
+
+export interface AuthHandlerConfig {
   baseUrl: string;
   onRefreshSuccess?: () => void;
   onRefreshFailed?: () => void;
   /** Called when login is required (after refresh fails) */
   onLoginRequired: () => void;
-};
+}
+
+export interface LoginPopupOptions {
+  /** Base URL of the App Service */
+  baseUrl: string;
+  /** Path to the sign-in endpoint */
+  signInEndpoint?: string;
+  /** URL to redirect to after successful login (relative to baseUrl) */
+  postLoginRedirectUri?: string;
+  /** Callback when login completes successfully, receives auth information including username */
+  onSuccess?: (authInfo: AuthInformation) => void;
+  /** Callback when login fails or is cancelled */
+  onFailed?: (error: Error) => void;
+  /** Timeout in milliseconds (default: 5 minutes) */
+  timeout?: number;
+}
+
+// ============================================================================
+// Private Helper Functions
+// ============================================================================
 
 /**
- * Attempts to refresh the authentication token
+ * Attempts to refresh the authentication token via EasyAuth refresh endpoint
  * @returns true if refresh succeeded, false otherwise
  */
 async function refreshAuthToken(baseUrl: string): Promise<boolean> {
@@ -21,7 +67,6 @@ async function refreshAuthToken(baseUrl: string): Promise<boolean> {
       method: 'GET',
       credentials: 'same-origin',
     });
-
     return response.ok;
   } catch (error) {
     console.error('Token refresh failed:', error);
@@ -29,82 +74,144 @@ async function refreshAuthToken(baseUrl: string): Promise<boolean> {
   }
 }
 
-// /**
-//  * Opens logout popup and monitors for completion
-//  */
-// function openLogoutPopup(baseUrl: string, onComplete: () => void): void {
-//   const logoutUrl = `${baseUrl}/.auth/logout`;
-//   const popup = window.open(logoutUrl, 'auth-logout', 'width=600,height=700,popup=true');
-
-//   if (!popup) {
-//     console.error('Failed to open logout popup');
-//     // If popup blocked, try redirect
-//     window.location.href = logoutUrl;
-//     return;
-//   }
-
-//   // Monitor popup for completion
-//   const checkInterval = setInterval(() => {
-//     try {
-//       // Check if popup is closed
-//       if (popup.closed) {
-//         clearInterval(checkInterval);
-//         onComplete();
-//         return;
-//       }
-
-//       // Check if popup navigated to logout complete
-//       // This might fail due to cross-origin restrictions, but we try
-//       if (popup.location.href?.endsWith('/.auth/logout/complete')) {
-//         clearInterval(checkInterval);
-//         popup.close();
-//         onComplete();
-//         return;
-//       }
-//     } catch (_e) {
-//       // Cross-origin error is expected, just check if closed
-//       if (popup.closed) {
-//         clearInterval(checkInterval);
-//         onComplete();
-//       }
-//     }
-//   }, 500);
-
-//   // Timeout after 5 minutes
-//   setTimeout(
-//     () => {
-//       clearInterval(checkInterval);
-//       if (!popup.closed) {
-//         popup.close();
-//       }
-//       onComplete();
-//     },
-//     5 * 60 * 1000
-//   );
-// }
-
-export interface LoginPopupOptions {
-  /** Base URL of the App Service */
-  baseUrl: string;
-  /** URL to redirect to after successful login (relative to baseUrl) */
-  postLoginRedirectUri?: string;
-  /** Callback when login completes successfully */
-  onSuccess?: () => void;
-  /** Callback when login fails or is cancelled */
-  onFailed?: () => void;
-  /** Timeout in milliseconds (default: 5 minutes) */
-  timeout?: number;
+/**
+ * Extracts username from JWT access token in the auth response
+ */
+function extractUsernameFromToken(accessToken: string | undefined): string | undefined {
+  if (!accessToken) {
+    return undefined;
+  }
+  try {
+    const decodedJwt = decodeJwtPayload(accessToken);
+    return decodedJwt.name as string | undefined;
+  } catch {
+    // Invalid JWT token, continue without username
+    return undefined;
+  }
 }
 
+// ============================================================================
+// Public API - JWT Utilities
+// ============================================================================
+
 /**
- * Opens login popup for Azure App Service EasyAuth and monitors for completion
- * Uses /.auth/login/aad endpoint for Microsoft Entra ID authentication
+ * Decodes a JWT token payload without verifying the signature.
+ * Use this only for reading claims client-side; signature verification should happen server-side.
+ * @param token The JWT token string
+ * @returns The decoded payload object
+ * @throws Error if the token format is invalid
+ */
+export function decodeJwtPayload(token: string): JwtPayload {
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    throw new Error('Invalid JWT format');
+  }
+
+  const base64Url = parts[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64 + '=='.slice(0, (4 - (base64.length % 4)) % 4);
+
+  const jsonPayload = decodeURIComponent(
+    atob(padded)
+      .split('')
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .join('')
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
+// ============================================================================
+// Public API - URL Utilities
+// ============================================================================
+
+/**
+ * Extracts base URL from current window location or agent card URL
+ */
+export function getBaseUrl(agentCardUrl?: string): string {
+  if (agentCardUrl) {
+    try {
+      const url = new URL(agentCardUrl);
+      return url.origin;
+    } catch {
+      // Invalid URL, fall back to current origin
+    }
+  }
+  return window.location.origin;
+}
+
+// ============================================================================
+// Public API - Authentication Status
+// ============================================================================
+
+/**
+ * Checks the current authentication status via EasyAuth /.auth/me endpoint
+ * Also extracts username from the JWT token if available
+ *
+ * Easy Auth can be configured to return different status codes for unauthenticated requests:
+ * - 401 Unauthorized
+ * - 403 Forbidden
+ * - 404 Not Found (this means Easy Auth is NOT configured)
+ * - 302 Redirect
+ *
+ * Any of 401, 403, or 302 indicates Easy Auth IS configured but user is not authenticated.
+ */
+export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation> {
+  try {
+    const response = await fetch(`${baseUrl}/.auth/me`, {
+      method: 'GET',
+      credentials: 'include', // Important: include cookies for cross-origin
+      redirect: 'manual', // Don't follow redirects - we want to detect 302
+    });
+
+    const status = response.status;
+
+    // 404 means Easy Auth is not configured on this Logic App
+    if (status === 404) {
+      return { isAuthenticated: false, isEasyAuthConfigured: false, error: null };
+    }
+
+    // 401, 403 mean Easy Auth is configured but user is not authenticated
+    if (status === 401 || status === 403) {
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: null };
+    }
+
+    // 0 status with opaqueredirect type means a 302 redirect was attempted
+    // This happens when redirect: 'manual' is set and server tries to redirect
+    if (response.type === 'opaqueredirect' || status === 0) {
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: null };
+    }
+
+    if (!response.ok) {
+      return { isAuthenticated: false, isEasyAuthConfigured: true, error: new Error('Failed to fetch authentication status') };
+    }
+
+    const data = await response.json();
+    // /.auth/me returns an array of identity providers, empty array or null if not authenticated
+    const isAuthenticated = Array.isArray(data) && data.length > 0;
+    const username = extractUsernameFromToken(data[0]?.access_token);
+
+    return { isAuthenticated, isEasyAuthConfigured: true, error: null, username };
+  } catch (error) {
+    // Network errors or other failures - assume Easy Auth is not configured
+    return { isAuthenticated: false, isEasyAuthConfigured: false, error: error as Error };
+  }
+}
+
+// ============================================================================
+// Public API - Login Popup
+// ============================================================================
+
+/**
+ * Opens login popup for Azure App Service EasyAuth and monitors for completion.
+ * Supports dynamic identity providers via the signInEndpoint parameter.
+ * The popup is monitored for navigation back to the app origin or closure.
  */
 export function openLoginPopup(options: LoginPopupOptions): void {
-  const { baseUrl, postLoginRedirectUri, onSuccess, onFailed, timeout = 5 * 60 * 1000 } = options;
+  const { baseUrl, signInEndpoint, postLoginRedirectUri, onSuccess, onFailed, timeout = 5 * 60 * 1000 } = options;
 
   // Build login URL with optional redirect
-  let loginUrl = `${baseUrl}/.auth/login/aad`;
+  let loginUrl = `${baseUrl}${signInEndpoint}`;
   if (postLoginRedirectUri) {
     loginUrl += `?post_login_redirect_uri=${encodeURIComponent(postLoginRedirectUri)}`;
   }
@@ -112,8 +219,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
   const popup = window.open(loginUrl, 'auth-login', 'width=600,height=700,popup=true');
 
   if (!popup) {
-    console.error('[Auth] Failed to open login popup - popup may be blocked');
-    onFailed?.();
+    onFailed?.(new Error('Failed to open login popup'));
     return;
   }
 
@@ -126,7 +232,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
     clearTimeout(timeoutId);
   };
 
-  const handleSuccess = () => {
+  const handleSuccess = (authInfo: AuthInformation) => {
     if (completed) {
       return;
     }
@@ -134,15 +240,15 @@ export function openLoginPopup(options: LoginPopupOptions): void {
     if (!popup.closed) {
       popup.close();
     }
-    onSuccess?.();
+    onSuccess?.(authInfo);
   };
 
-  const handleFailure = () => {
+  const handleFailure = (error: Error) => {
     if (completed) {
       return;
     }
     cleanup();
-    onFailed?.();
+    onFailed?.(error);
   };
 
   // Monitor popup for completion
@@ -173,11 +279,14 @@ export function openLoginPopup(options: LoginPopupOptions): void {
         // If popup is on our origin (not Azure AD), check if login is complete
         if (popupOrigin === baseOrigin) {
           // Check if we're NOT on the initial login page
-          const isLoginPage = popupHref.includes('/.auth/login/aad') && !popupHref.includes('callback');
+          const isLoginPage = popupHref.includes('/.auth/login/') && !popupHref.includes('callback');
 
           if (!isLoginPage) {
-            console.log('[Auth] Not on login page anymore, login complete!');
-            handleSuccess();
+            // Fetch auth info before calling success
+            const authInfo = await checkAuthStatus(baseUrl);
+            if (authInfo.isAuthenticated) {
+              handleSuccess(authInfo);
+            }
           }
         }
       } catch (_e) {
@@ -188,7 +297,7 @@ export function openLoginPopup(options: LoginPopupOptions): void {
       return;
     }
 
-    // Single path for auth checking - prevents duplicate success calls
+    // Re-check: another tick may have completed during the async block above
     if (completed) {
       return;
     }
@@ -203,70 +312,48 @@ export function openLoginPopup(options: LoginPopupOptions): void {
     }
 
     try {
-      const isAuthenticated = await checkAuthStatus(baseUrl);
+      const authInfo = await checkAuthStatus(baseUrl);
 
       if (completed) {
         return;
       }
 
-      if (isAuthenticated) {
-        handleSuccess();
+      if (authInfo.isAuthenticated) {
+        handleSuccess(authInfo);
       } else if (popupIsClosed) {
-        // Only fail if popup is closed AND not authenticated
-        handleFailure();
+        // Only fail when popup is closed AND user is not authenticated
+        handleFailure(authInfo.error ?? new Error('Login cancelled or failed'));
       }
       // If not authenticated but popup still open, keep polling
-    } catch (_e) {
+    } catch (error) {
       if (popupIsClosed && !completed) {
-        handleFailure();
+        const err = error instanceof Error ? error : new Error('Login failed');
+        handleFailure(err);
       }
     }
-  }, 500); // Poll every 500ms
+  }, 500);
 
-  // Timeout
+  // Timeout handler
   const timeoutId = setTimeout(() => {
     if (completed) {
       return;
     }
     console.log('[Auth] Login timed out');
-    cleanup();
     if (!popup.closed) {
       popup.close();
     }
-    handleFailure();
+    handleFailure(new Error('Login timed out'));
   }, timeout);
 }
 
-/**
- * Checks if the user is currently authenticated by calling /.auth/me
- * @returns true if authenticated, false otherwise
- */
-export async function checkAuthStatus(baseUrl: string): Promise<boolean> {
-  try {
-    console.log('[Auth] Checking auth status at:', `${baseUrl}/.auth/me`);
-    const response = await fetch(`${baseUrl}/.auth/me`, {
-      method: 'GET',
-      credentials: 'include', // Important: include cookies for cross-origin
-    });
-
-    if (!response.ok) {
-      return false;
-    }
-
-    const data = await response.json();
-    // /.auth/me returns an array of identity providers, empty array or null if not authenticated
-    const isAuthenticated = Array.isArray(data) && data.length > 0;
-    console.log('[Auth] Is authenticated:', isAuthenticated);
-    return isAuthenticated;
-  } catch (error) {
-    console.error('[Auth] Failed to check auth status:', error);
-    return false;
-  }
-}
+// ============================================================================
+// Public API - Unauthorized Handler
+// ============================================================================
 
 /**
  * Creates an unauthorized handler that attempts token refresh first,
- * then calls onLoginRequired if refresh fails
+ * then calls onLoginRequired if refresh fails.
+ * Prevents multiple simultaneous auth attempts.
  */
 export function createUnauthorizedHandler(config: AuthHandlerConfig) {
   let isHandling = false;
@@ -294,20 +381,4 @@ export function createUnauthorizedHandler(config: AuthHandlerConfig) {
       isHandling = false;
     }
   };
-}
-
-/**
- * Extracts base URL from current window location or agent card URL
- */
-export function getBaseUrl(agentCardUrl?: string): string {
-  if (agentCardUrl) {
-    try {
-      const url = new URL(agentCardUrl);
-      return url.origin;
-    } catch {
-      // Invalid URL, fall back to current origin
-    }
-  }
-
-  return window.location.origin;
 }

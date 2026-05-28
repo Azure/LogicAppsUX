@@ -2,11 +2,10 @@
   "name": "@microsoft/logic-apps-shared",
   "version": "5.110.0",
   "dependencies": {
-    "@apidevtools/swagger-parser": "10.0.3",
     "@formatjs/intl": "^2.10.1",
     "@xyflow/react": "^12.3.5",
     "@xyflow/system": "^0.0.37",
-    "axios": "^1.12.0",
+    "axios": "1.15.0",
     "react-intl": "6.3.0"
   },
   "devDependencies": {
@@ -23,7 +22,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": ["build/lib/**/*"],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -35,14 +34,14 @@
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
   "publishConfig": {
-    "main": "build/lib/index.cjs",
+    "main": "build/lib/index.js",
     "module": "build/lib/index.js",
     "types": "build/lib/index.d.ts",
     "exports": {
       ".": {
-        "types:": "./build/lib/index.d.ts",
+        "types": "./build/lib/index.d.ts",
         "import": "./build/lib/index.js",
-        "default": "./build/lib/index.cjs"
+        "default": "./build/lib/index.js"
       },
       "./package.json": "./package.json",
       "./build/lib/index.css": "./build/lib/index.css"

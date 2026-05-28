@@ -1,6 +1,6 @@
 import { DynamicSchemaType, DynamicValuesType } from '../../../models/operation';
 import { ExtensionProperties } from '../../constants';
-import { getParameterDynamicSchema, getParameterDynamicValues } from '../utils';
+import { getParameterDynamicSchema, getParameterDynamicValues, getEditorOptionsForParameter } from '../utils';
 import type { OpenAPIV2 } from '../../../../../utils/src';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
@@ -53,6 +53,63 @@ describe('Parser common utilities tests', () => {
       expect(dynamicSchema).toBeDefined();
       expect(dynamicSchema?.type).toBe(DynamicSchemaType.DynamicProperties);
       expect(dynamicSchema?.extension).toBe('dynamicPropertiesExtension');
+    });
+  });
+
+  describe('getEditorOptionsForParameter', () => {
+    it('should preserve multiSelect and serialization when dynamic values are present', () => {
+      const schema: SchemaObject = {
+        type: 'array',
+        [ExtensionProperties.EditorOptions]: {
+          multiSelect: true,
+          titleSeparator: ',',
+          serialization: {
+            valueType: 'array',
+          },
+        },
+        [ExtensionProperties.DynamicList]: {
+          dynamicState: {
+            apiType: 'mcp',
+            operationId: 'listMcpTools',
+          },
+        },
+      };
+
+      const dynamicValues = getParameterDynamicValues(schema);
+      const editorOptions = getEditorOptionsForParameter(schema, dynamicValues, undefined);
+
+      expect(editorOptions).toBeDefined();
+      expect(editorOptions.multiSelect).toBe(true);
+      expect(editorOptions.serialization).toEqual({ valueType: 'array' });
+      expect(editorOptions.options).toEqual([]);
+    });
+
+    it('should return editorOptions as-is when no dynamic values or enum', () => {
+      const schema: SchemaObject = {
+        type: 'string',
+        [ExtensionProperties.EditorOptions]: {
+          someOption: 'value',
+        },
+      };
+
+      const editorOptions = getEditorOptionsForParameter(schema, undefined, undefined);
+
+      expect(editorOptions).toEqual({ someOption: 'value' });
+    });
+
+    it('should preserve editorOptions when static enum is present', () => {
+      const schema: SchemaObject = {
+        type: 'string',
+        [ExtensionProperties.EditorOptions]: {
+          multiSelect: true,
+        },
+      };
+      const enumValues = [{ value: 'a', displayName: 'A' }];
+
+      const editorOptions = getEditorOptionsForParameter(schema, undefined, enumValues);
+
+      expect(editorOptions.multiSelect).toBe(true);
+      expect(editorOptions.options).toEqual([{ value: 'a', displayName: 'A', key: 'A' }]);
     });
   });
 });

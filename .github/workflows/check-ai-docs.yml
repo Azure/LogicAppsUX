@@ -1,0 +1,40 @@
+name: Check AI Docs Freshness
+
+# Ensures generated AI instruction files are in sync with their canonical source.
+# Fails if someone edited a generated file directly instead of docs/ai-setup/.
+
+on:
+  pull_request:
+    paths:
+      - 'docs/ai-setup/**'
+      - 'CLAUDE.md'
+      - '.github/copilot-instructions.md'
+      - '.github/instructions/**'
+      - 'libs/*/CLAUDE.md'
+      - 'apps/*/CLAUDE.md'
+      - 'scripts/generate-ai-docs.sh'
+
+jobs:
+  check-freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Regenerate AI docs
+        run: ./scripts/generate-ai-docs.sh
+
+      - name: Check for drift
+        run: |
+          if git diff --quiet; then
+            echo "Generated AI docs are in sync with docs/ai-setup/"
+          else
+            echo "ERROR: Generated AI docs are out of sync!"
+            echo ""
+            echo "The following files differ from their canonical source in docs/ai-setup/:"
+            git diff --name-only
+            echo ""
+            echo "Fix: Edit the canonical source in docs/ai-setup/, then run: pnpm run ai:generate"
+            echo "Do NOT edit generated files directly (they have a DO NOT EDIT header)."
+            exit 1
+          fi

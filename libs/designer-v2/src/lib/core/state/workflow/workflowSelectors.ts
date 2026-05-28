@@ -3,6 +3,7 @@ import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNo
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
+import { getWorkflowNodeFromGraphState, getWorkflowGraphPath, buildNodeIndex } from './workflowGraphTraversal';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
@@ -14,6 +15,7 @@ import type {} from '@tanstack/react-query';
 import { collapseFlowTree } from './helper';
 import { useEdges } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
+import { getOperationsState } from '../selectors/actionMetadataSelector';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -47,6 +49,9 @@ export const useShouldNodeFocus = (id: string) =>
 export const useFocusElement = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusElement));
 
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
+
+export const useIsCopilotModifiedNode = (nodeId: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => !!state.copilotModifiedNodeIds?.[nodeId]));
 
 export const useWorkflowChangeCount = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.changeCount));
 
@@ -95,54 +100,72 @@ export const useIsEverythingExpanded = () =>
 
 export const useWorkflowGraph = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.graph));
 
-export const useRootWorkflowGraphForLayout = () =>
-  useSelector(
-    createSelector(getWorkflowAndOperationState, (rootState) => {
-      const workflowState = rootState.workflow;
+const getHandoffAdjustedGraph = createSelector([getWorkflowAndOperationState], (rootState) => {
+  const graph = rootState.workflow.graph;
+  if (!graph) {
+    return undefined;
+  }
+  return handoffToolAdjustment(graph, rootState);
+});
 
-      const rootNode = workflowState.graph;
-      const collapsedIds = workflowState.collapsedGraphIds;
-      const collapsedActionsIds = workflowState.collapsedActionIds;
+const getCollapsedGraphBase = createSelector(
+  [
+    getHandoffAdjustedGraph,
+    (state: RootState) => state.workflow.collapsedGraphIds,
+    (state: RootState) => state.workflow.collapsedActionIds,
+  ],
+  (graph, collapsedIds, collapsedActionIds) => {
+    if (!graph) {
+      return undefined;
+    }
 
-      if (!rootNode) {
-        return undefined;
-      }
+    const hasCollapsedGraphs = Object.keys(collapsedIds).length > 0;
+    const hasCollapsedActions = Object.keys(collapsedActionIds).length > 0;
 
-      let newGraph = rootNode;
+    if (!hasCollapsedGraphs && !hasCollapsedActions) {
+      return graph;
+    }
 
-      newGraph = handoffToolAdjustment(newGraph, rootState);
+    let result = graph;
 
-      if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
-        return newGraph;
-      }
+    if (hasCollapsedActions) {
+      result = collapseFlowTree(result, collapsedActionIds).graph;
+    }
 
-      if (Object.keys(collapsedActionsIds).length !== 0) {
-        newGraph = collapseFlowTree(newGraph, collapsedActionsIds).graph;
-      }
+    if (hasCollapsedGraphs) {
+      result = {
+        ...result,
+        children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(result.children ?? []),
+      };
+    }
 
-      if (Object.keys(collapsedIds).length !== 0) {
-        newGraph = {
-          ...newGraph,
-          children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(newGraph.children ?? []),
-        };
-      }
+    return result;
+  },
+  {
+    memoizeOptions: {
+      maxSize: 5,
+    },
+  }
+);
 
-      return newGraph;
-    })
-  );
+export const useRootWorkflowGraphForLayout = () => useSelector(getCollapsedGraphBase);
 
-export const useCollapsedMapping = () =>
-  useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      const rootNode = state.graph;
-      const collapsedActionsIds = state.collapsedActionIds;
-      if (!rootNode) {
-        return {};
-      }
+const getCollapsedMappingBase = createSelector(
+  [(state: RootState) => state.workflow.graph, (state: RootState) => state.workflow.collapsedActionIds],
+  (graph, collapsedActionIds) => {
+    if (!graph) {
+      return {};
+    }
+    return collapseFlowTree(graph, collapsedActionIds).collapsedMapping;
+  },
+  {
+    memoizeOptions: {
+      maxSize: 5,
+    },
+  }
+);
 
-      return collapseFlowTree(rootNode, collapsedActionsIds).collapsedMapping;
-    })
-  );
+export const useCollapsedMapping = () => useSelector(getCollapsedMappingBase);
 
 const nonfilteredNodeTypes = [WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE];
 const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => nonfilteredNodeTypes.includes(child.type));
@@ -263,29 +286,7 @@ export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
     })
   );
 
-export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: string) => {
-  const graph = state.graph;
-  if (!graph) {
-    return undefined;
-  }
-
-  const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
-    if (node.id === actionId) {
-      return node;
-    }
-
-    let result: WorkflowNode | undefined;
-    for (const child of node.children ?? []) {
-      const childRes = traverseGraph(child);
-      if (childRes) {
-        result = childRes;
-      }
-    }
-    return result;
-  };
-
-  return traverseGraph(graph);
-};
+export { getWorkflowNodeFromGraphState };
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   const edges = useEdges()
@@ -294,12 +295,15 @@ export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   return edges.map((edge) => edge.target);
 };
 
+// Memoized index of all workflow nodes by ID — only rebuilds when graph reference changes
+const selectNodeIndex = createSelector([(state: RootState) => state.workflow.graph], buildNodeIndex);
+
 export const useWorkflowNode = (actionId?: string) => {
   return useSelector((state: RootState) => {
     if (!actionId) {
       return undefined;
     }
-    return getWorkflowNodeFromGraphState(state.workflow, actionId);
+    return selectNodeIndex(state).get(actionId);
   });
 };
 
@@ -325,9 +329,9 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
     createSelector(getWorkflowState, (state: WorkflowState) => {
       let caseId = baseId;
       let caseCount = 1;
-      const idList = Object.keys(state.nodesMetadata);
-      // eslint-disable-next-line no-loop-func
-      while (idList.some((id) => id === caseId)) {
+      const idSet = new Set(Object.keys(state.nodesMetadata));
+
+      while (idSet.has(caseId)) {
         caseCount++;
         caseId = `${baseId}_${caseCount}`;
       }
@@ -370,10 +374,10 @@ export const useDisconnectedNodes = (): string[] => {
   const rootGraphNodeIds = useMemo(() => rootGraph?.children?.map((child) => child.id) ?? [], [rootGraph]);
   const connectedRootGraphNodeIds = useConnectedRootGraphNodeIds();
 
-  return useMemo(
-    () => rootGraphNodeIds.filter((nodeId) => !connectedRootGraphNodeIds.includes(nodeId)),
-    [connectedRootGraphNodeIds, rootGraphNodeIds]
-  );
+  return useMemo(() => {
+    const connectedSet = new Set(connectedRootGraphNodeIds);
+    return rootGraphNodeIds.filter((nodeId) => !connectedSet.has(nodeId));
+  }, [connectedRootGraphNodeIds, rootGraphNodeIds]);
 };
 
 export const useIsDisconnected = (nodeId: string): boolean => {
@@ -454,23 +458,7 @@ export const useGetAllOperationNodesWithin = (nodeId: string) => {
   }, [graphNodes, nodeId]);
 };
 
-export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
-  const traverseGraph = (node: WorkflowNode, path: string[] = []): string[] | undefined => {
-    if (node.id === graphId) {
-      return path;
-    }
-    let result: string[] | undefined;
-    for (const child of node.children ?? []) {
-      const childResult = traverseGraph(child, [...path, node.id]);
-      if (childResult) {
-        result = childResult;
-      }
-    }
-    return result;
-  };
-
-  return [...(traverseGraph(graph) ?? []), graphId];
-};
+export { getWorkflowGraphPath };
 
 export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance));
@@ -734,61 +722,66 @@ export const useAllAgentIds = (): string[] => {
 };
 
 // These edges are not actually present in the graph, but are used to represent handoffs between agents during graph calculations
-export const useHandoffEdges = (): WorkflowEdge[] => {
-  const nodesMetadata = useNodesMetadata();
-  return useMemo(() => {
-    const handoffEdges: WorkflowEdge[] = [];
-    for (const [nodeId, metadata] of Object.entries(nodesMetadata)) {
-      for (const agent of Object.values(metadata.handoffs ?? {})) {
-        handoffEdges.push({
-          id: `${nodeId}-${agent}`,
-          source: nodeId,
-          target: agent,
-          type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
-        });
-      }
+const selectHandoffEdges = createSelector([(state: RootState) => state.workflow.nodesMetadata], (nodesMetadata: NodesMetadata) => {
+  const handoffEdges: WorkflowEdge[] = [];
+  for (const [nodeId, metadata] of Object.entries(nodesMetadata)) {
+    for (const agent of Object.values(metadata.handoffs ?? {})) {
+      handoffEdges.push({
+        id: `${nodeId}-${agent}`,
+        source: nodeId,
+        target: agent,
+        type: WORKFLOW_EDGE_TYPES.HANDOFF_EDGE,
+      });
     }
-    return handoffEdges;
-  }, [nodesMetadata]);
+  }
+  return handoffEdges;
+});
+
+export const useHandoffEdges = (): WorkflowEdge[] => {
+  return useSelector(selectHandoffEdges);
 };
 
 export const useHandoffActionsForAgent = (agentId: string): any[] => {
   return useSelector(
-    createSelector(getWorkflowAndOperationState, (state: { workflow: WorkflowState; operations: OperationMetadataState }) => {
-      // Check the action is an agent action
-      if (!equals(state.workflow.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
-        return [];
-      }
-      const toolNodeIds = Object.keys(state.workflow.nodesMetadata[agentId]?.handoffs ?? {});
-      const output: any[] = [];
-      for (const toolId of toolNodeIds) {
-        // If the tool contains a handoff action, add it to the output
-        const toolActionIds = getNodesWithGraphId(toolId, state.workflow.nodesMetadata);
-        const isSingleAction = Object.keys(toolActionIds).length === 1;
-        for (const actionId of Object.keys(toolActionIds)) {
-          const action = state.workflow.operations[actionId];
-          if (equals(action.type, commonConstants.NODE.TYPE.HANDOFF)) {
-            const toolDescription =
-              state.operations?.inputParameters?.[toolId]?.parameterGroups?.default?.parameters?.find((param) =>
-                equals(param.parameterName, 'description')
-              )?.value?.[0]?.value ?? '';
-            const targetId =
-              state.operations?.inputParameters?.[actionId]?.parameterGroups?.default?.parameters?.find((param) =>
-                equals(param.parameterName, 'name')
-              )?.value?.[0]?.value ?? '';
-
-            const actionData = {
-              id: actionId,
-              toolId,
-              toolDescription,
-              targetId,
-              isSingleAction,
-            };
-            output.push(actionData);
+    useMemo(
+      () =>
+        createSelector([getWorkflowState, getOperationsState], (workflowState: WorkflowState, operationsState: OperationMetadataState) => {
+          // Check the action is an agent action
+          if (!equals(workflowState.operations[agentId]?.type, commonConstants.NODE.TYPE.AGENT)) {
+            return [];
           }
-        }
-      }
-      return output;
-    })
+          const toolNodeIds = Object.keys(workflowState.nodesMetadata[agentId]?.handoffs ?? {});
+          const output: any[] = [];
+          for (const toolId of toolNodeIds) {
+            // If the tool contains a handoff action, add it to the output
+            const toolActionIds = getNodesWithGraphId(toolId, workflowState.nodesMetadata);
+            const isSingleAction = Object.keys(toolActionIds).length === 1;
+            for (const actionId of Object.keys(toolActionIds)) {
+              const action = workflowState.operations[actionId];
+              if (equals(action.type, commonConstants.NODE.TYPE.HANDOFF)) {
+                const toolDescription =
+                  operationsState?.inputParameters?.[toolId]?.parameterGroups?.default?.parameters?.find((param) =>
+                    equals(param.parameterName, 'description')
+                  )?.value?.[0]?.value ?? '';
+                const targetId =
+                  operationsState?.inputParameters?.[actionId]?.parameterGroups?.default?.parameters?.find((param) =>
+                    equals(param.parameterName, 'name')
+                  )?.value?.[0]?.value ?? '';
+
+                const actionData = {
+                  id: actionId,
+                  toolId,
+                  toolDescription,
+                  targetId,
+                  isSingleAction,
+                };
+                output.push(actionData);
+              }
+            }
+          }
+          return output;
+        }),
+      [agentId]
+    )
   );
 };

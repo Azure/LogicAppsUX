@@ -66,6 +66,13 @@ export const convertValueType = (value: ValueSegment[], type?: string): string |
     return type;
   }
   const stringSegments = convertSegmentsToString(value).trim();
+
+  // If value contains tokens mixed with other content (compound expressions like "@{var1}-@{var2}"),
+  // treat as string to produce valid JSON. Compound expressions must be quoted strings in JSON.
+  if (containsTokenSegments(value) && value.length > 1) {
+    return constants.SWAGGER.TYPE.STRING;
+  }
+
   if (isNonString(stringSegments) || containsTokenSegments(value)) {
     return type;
   }

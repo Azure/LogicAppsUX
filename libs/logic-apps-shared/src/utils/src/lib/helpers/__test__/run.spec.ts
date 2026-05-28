@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getCallbackUrl, getIsCallbackUrlSupported, getRequestTriggerName, getTriggerName } from '../run';
+import { getCallbackUrl, getIsCallbackUrlSupported, getRequestTriggerName, getRunTriggerName, getTriggerName } from '../run';
 import { CallbackInfo, LogicAppsV2 } from '../../models';
 
 const requestDefinition: LogicAppsV2.WorkflowDefinition = {
@@ -147,6 +147,58 @@ describe('lib/utils/src/lib/helpers', () => {
 
     it('should return undefined when there are no triggers', () => {
       const triggerName = getTriggerName(emptyDefinition);
+      expect(triggerName).toBeUndefined();
+    });
+  });
+
+  describe('getRunTriggerName', () => {
+    it('should prefer the request trigger when one exists', () => {
+      const definition: any = {
+        triggers: {
+          When_a_HTTP_request_is_received: {
+            kind: 'Http',
+            type: 'Request',
+          },
+          Recurrence: {
+            recurrence: {
+              frequency: 'Minute',
+              interval: 10,
+            },
+            type: 'Recurrence',
+          },
+        },
+      };
+
+      const triggerName = getRunTriggerName(definition);
+      expect(triggerName).toBe('When_a_HTTP_request_is_received');
+    });
+
+    it('should fall back to the single trigger when there is no request trigger', () => {
+      const triggerName = getRunTriggerName(recurrenceDefinition);
+      expect(triggerName).toBe('Recurrence');
+    });
+
+    it('should return undefined when there are multiple non-request triggers', () => {
+      const definition: any = {
+        triggers: {
+          Recurrence: {
+            recurrence: {
+              frequency: 'Minute',
+              interval: 10,
+            },
+            type: 'Recurrence',
+          },
+          Recurrence_2: {
+            recurrence: {
+              frequency: 'Hour',
+              interval: 1,
+            },
+            type: 'Recurrence',
+          },
+        },
+      };
+
+      const triggerName = getRunTriggerName(definition);
       expect(triggerName).toBeUndefined();
     });
   });

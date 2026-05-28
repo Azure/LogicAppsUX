@@ -273,7 +273,7 @@ export const initializeOperationDetailsForManagedMcpServer = async (
     };
     const builtinMcpServerManifest = await getOperationManifest(builtinMcpServerOperationInfo);
 
-    const operationInfo = { connectorId, operationId, type: operation.type, kind: operation.kind };
+    const operationInfo = { connectorId, operationId, type: operation.type, kind: operation.kind, operationPath: mcpServerPath };
     dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
 
     //const parsedManifest = new ManifestParser(manifest, OperationManifestService().isAliasingSupported(operation.type, operation.kind));
@@ -607,6 +607,7 @@ const initializeOutputTokensForOperations = (
       const {
         manifest,
         nodeOutputs,
+        nodeInputs,
         operationMetadata: { iconUri, brandColor },
       } = nodeData;
 
@@ -617,7 +618,8 @@ const initializeOutputTokensForOperations = (
           operations[operationId]?.type,
           nodeOutputs.outputs ?? {},
           { iconUri, brandColor },
-          nodesWithData[operationId]?.settings
+          nodesWithData[operationId]?.settings,
+          nodeInputs
         )
       );
     } catch (error: any) {

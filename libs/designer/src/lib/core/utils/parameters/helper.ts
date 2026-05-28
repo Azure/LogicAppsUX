@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations  */
 import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
@@ -166,9 +165,10 @@ import type {
   OperationInfo,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
-import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
+import { getInputDependencies, updateOutputsAndTokens } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
+import { KnowledgeHubEditor } from '../../../ui/knowledge/editor';
 
 export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
@@ -286,10 +286,8 @@ export function addRecurrenceParametersInGroup(
   if (recurrenceParameters.length) {
     const intl = getIntl();
     if (recurrence.useLegacyParameterGroup) {
-      // eslint-disable-next-line no-param-reassign
       parameterGroups[ParameterGroupKeys.DEFAULT].parameters = recurrenceParameters;
     } else {
-      // eslint-disable-next-line no-param-reassign
       parameterGroups[ParameterGroupKeys.RECURRENCE] = {
         id: ParameterGroupKeys.RECURRENCE,
         description: intl.formatMessage({
@@ -334,9 +332,10 @@ export function toParameterInfoMap(
   shouldEncodeBasedOnMetadata = true
 ): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
+  const isKnowledgeHubEnabled = WorkflowService()?.isKnowledgeHubEnabled ? WorkflowService()?.isKnowledgeHubEnabled?.() : true;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
-    if (!inputParameter.dynamicSchema) {
+    if (!inputParameter.dynamicSchema && !(!isKnowledgeHubEnabled && equals(inputParameter.editor, constants.EDITOR.KNOWLEDGE_BASE))) {
       const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }
@@ -523,6 +522,14 @@ export function getParameterEditorProps(
     }
   } else if (editor === constants.EDITOR.INITIALIZE_VARIABLE) {
     editorViewModel = { hideParameterErrors: true };
+  } else if (editor === constants.EDITOR.KNOWLEDGE_BASE) {
+    editorOptions = {
+      ...editorOptions,
+      hideLabel: true,
+      hubName: parameterValue.length === 1 && isLiteralValueSegment(parameterValue[0]) ? parameterValue[0].value : undefined,
+      logicAppId: WorkflowService().getLogicAppId?.() ?? '',
+      EditorComponent: KnowledgeHubEditor,
+    };
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
@@ -1079,7 +1086,6 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
 
 export function ensureExpressionValue(valueSegment: ValueSegment, calculateValue = false): void {
   if (isTokenValueSegment(valueSegment)) {
-    // eslint-disable-next-line no-param-reassign
     valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, calculateValue ? undefined : valueSegment.value);
   }
 }
@@ -1882,12 +1888,14 @@ export const updateParameterAndDependencies = createAsyncThunk(
             });
             continue;
           }
+          // Preserve existing editorOptions (like multiSelect, serialization) when resetting options
+          const existingEditorOptions = dependentParameter.editorOptions ?? {};
           payload.parameters.push({
             groupId,
             parameterId: dependentParameter.id,
             propertiesToUpdate: {
               dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
-              editorOptions: { options: [] },
+              editorOptions: { ...existingEditorOptions, options: [] },
             },
           });
         }
@@ -1947,6 +1955,18 @@ export const updateParameterAndDependencies = createAsyncThunk(
         loadDynamicOutputs !== undefined ? loadDynamicOutputs : true,
         loadDefaultValues !== undefined ? loadDefaultValues : true
       );
+    }
+
+    // For Agent operations, if the responseFormat.type parameter changes, update output tokens
+    if (
+      operationInfo?.type === 'Agent' &&
+      updatedParameter.parameterName === 'agentModelSettings.agentChatCompletionSettings.responseFormat.type'
+    ) {
+      const rootState = getState() as RootState;
+      const nodeInputs = rootState.operations.inputParameters[nodeId];
+      const settings = rootState.operations.settings[nodeId] || {};
+
+      await updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
     }
   }
 );
@@ -2476,9 +2496,12 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   dispatch(
@@ -2500,7 +2523,7 @@ export async function loadDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
@@ -2551,9 +2574,12 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
+  // Preserve existing editorOptions (like multiSelect, serialization) when updating options
+  const existingEditorOptions = parameter.editorOptions ?? {};
+
   let propertiesToUpdate: any = {
     dynamicData: { status: DynamicLoadStatus.LOADING },
-    editorOptions: { options: [] },
+    editorOptions: { ...existingEditorOptions, options: [] },
   };
 
   // Send the initial status update to the store
@@ -2576,7 +2602,7 @@ export async function fetchDynamicValuesForParameter(
 
     propertiesToUpdate = {
       dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
-      editorOptions: { options: dynamicValues },
+      editorOptions: { ...existingEditorOptions, options: dynamicValues },
     };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
@@ -3677,7 +3703,6 @@ export function getExpressionTokenTitle(expression: Expression): string {
     case ExpressionType.StringLiteral:
       return (expression as ExpressionLiteral).value;
     case ExpressionType.Function: {
-      // eslint-disable-next-line no-case-declarations
       const functionExpression = expression as ExpressionFunction;
       return `${functionExpression.name}(${functionExpression.arguments.length > 0 ? '...' : ''})`;
     }
@@ -4005,9 +4030,9 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
         tokenExpression = `@${stringifiedTokenExpression}`;
-        // eslint-disable-next-line no-useless-escape
+
         tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
-        // eslint-disable-next-line no-useless-escape
+
         tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
       }
 

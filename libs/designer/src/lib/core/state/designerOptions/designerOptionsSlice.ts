@@ -25,6 +25,8 @@ import {
   InitUserPreferenceService,
   InitExperimentationServiceService,
   InitCognitiveServiceService,
+  InitResourceService,
+  InitCopilotWorkflowEditorService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -40,7 +42,6 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   designerOptionsInitialized: false,
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
-  showConnectionsPanel: false,
   showEdgeDrawing: false,
   panelTabHideKeys: [],
   mcpClientToolEnabled: false,
@@ -80,6 +81,8 @@ export const initializeServices = createAsyncThunk(
     userPreferenceService,
     experimentationService,
     cognitiveServiceService,
+    resourceService,
+    copilotWorkflowEditorService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -144,6 +147,14 @@ export const initializeServices = createAsyncThunk(
       InitCognitiveServiceService(cognitiveServiceService);
     }
 
+    if (resourceService) {
+      InitResourceService(resourceService);
+    }
+
+    if (copilotWorkflowEditorService) {
+      InitCopilotWorkflowEditorService(copilotWorkflowEditorService);
+    }
+
     // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
     // we are always defaulting to the false implementation of the experimentation service.
     InitExperimentationServiceService(experimentationService);
@@ -167,7 +178,6 @@ export const designerOptionsSlice = createSlice({
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
-      state.showConnectionsPanel = action.payload.showConnectionsPanel;
       state.showEdgeDrawing = action.payload.showEdgeDrawing;
       state.panelTabHideKeys = action.payload.panelTabHideKeys;
       state.hostOptions = {

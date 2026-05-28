@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { getStateHistory, setStateHistory } from './historyHelpers';
 import type { RootState } from './store';
 import type { ConnectionReferences, WorkflowParameter } from '@microsoft/logic-apps-designer';
@@ -26,7 +25,6 @@ export interface WorkflowLoadingState {
   showChatBot?: boolean;
   showRunHistory?: boolean;
   parameters: Record<string, WorkflowParameter>;
-  showConnectionsPanel?: boolean;
   showEdgeDrawing?: boolean; // show edge drawing
   workflowKind?: string;
   language: string;
@@ -58,14 +56,13 @@ const initialState: WorkflowLoadingState = {
   hostingPlan: 'standard',
   isLocal: false,
   showChatBot: false,
-  showConnectionsPanel: false,
   workflowKind: 'stateful',
   language: 'en',
   areCustomEditorsEnabled: false,
   suppressDefaultNodeSelect: false,
   hostOptions: {
     displayRuntimeInfo: true,
-    maxStateHistorySize: 0,
+    maxStateHistorySize: 20,
     collapseGraphsByDefault: false,
     enableMultiVariable: true,
   },
@@ -186,9 +183,6 @@ export const workflowLoadingSlice = createSlice({
     setRunHistoryEnabled: (state, action: PayloadAction<boolean>) => {
       state.showRunHistory = action.payload;
     },
-    setShowConnectionsPanel: (state, action: PayloadAction<boolean>) => {
-      state.showConnectionsPanel = action.payload;
-    },
     setShowEdgeDrawing: (state, action: PayloadAction<boolean>) => {
       state.showEdgeDrawing = action.payload;
     },
@@ -276,7 +270,6 @@ export const {
   setIsLocalSelected,
   setIsChatBotEnabled,
   setRunHistoryEnabled,
-  setShowConnectionsPanel,
   setShowEdgeDrawing,
   changeRunId,
   setLanguage,

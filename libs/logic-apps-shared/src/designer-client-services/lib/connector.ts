@@ -67,7 +67,9 @@ export interface IConnectorService {
     operationId: string,
     parameters: Record<string, any>,
     dynamicState: any,
-    isManagedIdentityConnection?: boolean
+    isManagedIdentityConnection?: boolean,
+    operationPath?: string,
+    identity?: string
   ): Promise<ListDynamicValue[]>;
 
   /**

@@ -1,0 +1,117 @@
+// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
+
+namespace <%= logicAppNamespace %>
+{
+    using Microsoft.Azure.Workflows.Sdk;
+    using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
+    using Newtonsoft.Json;
+
+    /// <summary>
+    /// Autonomous agent workflow class.
+    /// </summary>
+    public class <%= flowNameClass %> : IWorkflowProvider
+    {
+        /// <summary>
+        /// Gets the autonomous agent workflow definition.
+        /// </summary>
+        public FlowDefinition[] GetWorkflows()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+
+            var agent = WorkflowActions.BuiltIn.Agent(
+                agentModelType: AgentModelType.AzureOpenAI,
+                deploymentId: "gpt-4.1",
+                agentModelSettings: new AgentModelSettings
+                {
+                    AgentChatCompletionSettings = new AgentChatCompletionSettings
+                    {
+                        MaxTokens = 3000,
+                        Temperature = 0.7,
+                        FrequencyPenalty = 0.1,
+                        PresencePenalty = 0.1,
+                        TopP = 0.1,
+                    },
+                    DeploymentModelProperties = new AgentDeploymentModelProperties
+                    {
+                        Name = "gpt-4o",
+                        Format = "OpenAI",
+                        Version = "2024-11-20"
+                    }
+                },
+                connectionName: "agent",
+                messages: () => new AgentPromptMessage[]
+                {
+                    new AgentPromptMessage
+                    {
+                        Role = MessageRole.System,
+                        Content = "You are an agent to respond the weather to the user and send an email"
+                    },
+                    new AgentPromptMessage
+                    {
+                        Role = MessageRole.User,
+                        Content = "What's the weather like in Seattle? And send an email to john.doe@example.com about today's weather."
+                    }
+                }
+            ).WithName("WeatherAgent");
+
+            agent.AddTool(toolContext =>
+                {
+                    return WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+                        location: () => toolContext.Parameters.Location,
+                        units: () => unitsInput.Imperial
+                    );
+                },
+                description: "This tool gets the weather",
+                parameters: new WeatherParameters());
+
+            agent.AddTool(toolContext =>
+                {
+                    return WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2(
+                        emailMessageto: () => toolContext.Parameters.Recipient,
+                        emailMessagesubject: () => toolContext.Parameters.Subject,
+                        emailMessagebody: () => toolContext.Parameters.Body);
+                },
+               description: "This tool will send an email",
+               parameters: new EmailParameters());
+
+            var workflow = trigger.Then(agent);
+
+            return new[] { WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow) };
+        }
+
+        /// <summary>
+        /// The weather parameters.
+        /// </summary>
+        private class WeatherParameters
+        {
+            /// <summary>
+            /// The location.
+            /// </summary>
+            [JsonProperty(Required = Required.Default)]
+            public string? Location { get; set; }
+        }
+
+        /// <summary>
+        /// The email parameters.
+        /// </summary>
+        private class EmailParameters
+        {
+            /// <summary>
+            /// The email recipient.
+            /// </summary>
+            public string? Recipient { get; set; }
+
+            /// <summary>
+            /// The email subject.
+            /// </summary>
+            public string? Subject { get; set; }
+
+            /// <summary>
+            /// The email body.
+            /// </summary>
+            public string? Body { get; set; }
+        }
+    }
+}

@@ -25,12 +25,35 @@ import { createWorkspaceWebviewCommandHandler } from './shared/workspaceWebviewC
 export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
   addLocalFuncTelemetry(context);
 
-  const myWebviewProjectContext: IWebviewProjectContext = options;
+  const webviewProjectContext: IWebviewProjectContext = options;
 
-  const workspaceFolderPath = path.join(myWebviewProjectContext.workspaceProjectPath.fsPath, myWebviewProjectContext.workspaceName);
+  // Add telemetry properties for debugging
+  context.telemetry.properties.hasWorkspaceProjectPath = String(!!webviewProjectContext.workspaceProjectPath);
+  context.telemetry.properties.workspaceProjectPathType = typeof webviewProjectContext.workspaceProjectPath;
+  context.telemetry.properties.receivedOptionsKeys = Object.keys(options || {}).join(',');
+
+  // Validate that workspaceProjectPath exists and has required properties
+  if (!webviewProjectContext.workspaceProjectPath || !webviewProjectContext.workspaceProjectPath.fsPath) {
+    const errorMessage = `[ConvertToWorkspace] Invalid workspaceProjectPath: ${JSON.stringify(
+      {
+        hasWorkspaceProjectPath: !!webviewProjectContext.workspaceProjectPath,
+        workspaceProjectPathType: typeof webviewProjectContext.workspaceProjectPath,
+        workspaceProjectPathValue: webviewProjectContext.workspaceProjectPath,
+        contextKeys: Object.keys(options || {}),
+      },
+      null,
+      2
+    )}`;
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(
+      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(webviewProjectContext.workspaceProjectPath)}`
+    );
+  }
+
+  const workspaceFolderPath = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
 
   await fse.ensureDir(workspaceFolderPath);
-  const workspaceFilePath = path.join(workspaceFolderPath, `${myWebviewProjectContext.workspaceName}.code-workspace`);
+  const workspaceFilePath = path.join(workspaceFolderPath, `${webviewProjectContext.workspaceName}.code-workspace`);
 
   // Start with an empty folders array
   const workspaceFolders = [];
@@ -58,7 +81,7 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
     folders: workspaceFolders,
   };
 
-  await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
+  await fse.writeJson(workspaceFilePath, workspaceData, { spaces: 2 });
 
   const uri = vscode.Uri.file(workspaceFilePath);
 
@@ -68,7 +91,7 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
 async function createWorkspaceStructureWebview(_context: IActionContext): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
     createWorkspaceWebviewCommandHandler({
-      panelName: localize('createWorkspaceStructure', 'Create Workspace Structure'),
+      panelName: localize('createWorkspaceStructure', 'Create workspace structure'),
       panelGroupKey: ext.webViewKey.createWorkspaceStructure,
       projectName: ProjectName.createWorkspaceStructure,
       createCommand: ExtensionCommand.createWorkspaceStructure,

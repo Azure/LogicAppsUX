@@ -9,6 +9,8 @@ import type {
   ConnectionPanelContentState,
   DiscoveryPanelContentState,
   ErrorPanelContentState,
+  McpToolWizardState,
+  McpWizardStep,
   NodeSearchPanelContentState,
   OperationPanelContentState,
   PanelMode,
@@ -32,10 +34,12 @@ const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
   relationshipIds: {
     graphId: 'root',
   },
+  searchTerm: '',
   selectedNodeIds: [],
   selectedOperationGroupId: '',
   selectedOperationId: '',
   favoriteOperations: [],
+  selectionState: undefined,
 });
 
 const getInitialErrorContentState = (): ErrorPanelContentState => ({
@@ -87,8 +91,10 @@ export const panelSlice = createSlice({
     },
     collapsePanel: (state) => {
       state.isCollapsed = true;
-      state.discoveryContent.selectedOperationGroupId = '';
       state.discoveryContent.selectedBrowseCategory = undefined;
+      state.discoveryContent.selectedOperationGroupId = '';
+      state.discoveryContent.selectedOperationId = '';
+      state.discoveryContent.selectionState = undefined;
       state.discoveryContent.isAddingTrigger = false;
     },
     clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean } | undefined>) => {
@@ -206,9 +212,11 @@ export const panelSlice = createSlice({
       state.discoveryContent.isParallelBranch = isParallelBranch ?? false;
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
-      state.discoveryContent.isAddingAgentTool = isAgentTool;
+      state.discoveryContent.isAddingAgentTool = isAgentTool ?? false;
       state.discoveryContent.selectedBrowseCategory = undefined;
       state.discoveryContent.selectedOperationGroupId = '';
+      state.discoveryContent.selectedOperationId = '';
+      state.discoveryContent.selectionState = undefined;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -228,7 +236,13 @@ export const panelSlice = createSlice({
       state.discoveryContent.agentToolMetadata = { newAdditiveSubgraphId, subGraphManifest };
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
-      state.discoveryContent.selectedOperationGroupId = cleanConnectorId(action.payload);
+      const cleanedId = cleanConnectorId(action.payload);
+      state.discoveryContent.selectedOperationGroupId = cleanedId;
+
+      const selectionState = cleanedId ? 'DETAILS' : 'SEARCH';
+      if (state.discoveryContent.selectionState !== selectionState) {
+        state.discoveryContent.selectionState = selectionState;
+      }
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -240,8 +254,14 @@ export const panelSlice = createSlice({
     selectOperationId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationId = action.payload;
     },
+    setDiscoverySearchTerm: (state, action: PayloadAction<string>) => {
+      state.discoveryContent.searchTerm = action.payload;
+    },
     selectBrowseCategory: (state, action: PayloadAction<{ key: string; title: string } | undefined>) => {
       state.discoveryContent.selectedBrowseCategory = action.payload;
+    },
+    setDiscoverySelectionState: (state, action: PayloadAction<'SEARCH' | 'DETAILS' | 'AZURE_RESOURCE' | 'HTTP_SWAGGER' | undefined>) => {
+      state.discoveryContent.selectionState = action.payload;
     },
     setFavoriteOperations: (state, action: PayloadAction<ActionPanelFavoriteItem[]>) => {
       state.discoveryContent.favoriteOperations = action.payload;
@@ -335,6 +355,53 @@ export const panelSlice = createSlice({
     setRunHistoryCollapsed: (state, action: PayloadAction<boolean>) => {
       state.runHistoryCollapsed = action.payload;
     },
+    openMcpToolWizard: (
+      state,
+      action: PayloadAction<{
+        operation: McpToolWizardState['operation'];
+        connectionId?: string;
+        forceCreateConnection?: boolean;
+      }>
+    ) => {
+      const { operation, connectionId, forceCreateConnection } = action.payload;
+      state.discoveryContent.mcpToolWizard = {
+        operation,
+        currentStep: forceCreateConnection ? 'CREATE_CONNECTION' : connectionId ? 'PARAMETERS' : 'CONNECTION',
+        connectionId,
+        allowedTools: undefined,
+        isConnectionLocked: !!connectionId,
+      };
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area,
+        message: action.type,
+        args: [operation.name],
+      });
+    },
+    setMcpWizardStep: (state, action: PayloadAction<McpWizardStep>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.currentStep = action.payload;
+      }
+    },
+    setMcpWizardConnection: (state, action: PayloadAction<string>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.connectionId = action.payload;
+      }
+    },
+    setMcpWizardTools: (state, action: PayloadAction<string[]>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.allowedTools = action.payload;
+      }
+    },
+    setMcpWizardHeaders: (state, action: PayloadAction<Record<string, string>>) => {
+      if (state.discoveryContent.mcpToolWizard) {
+        state.discoveryContent.mcpToolWizard.headers = action.payload;
+      }
+    },
+    closeMcpToolWizard: (state) => {
+      state.discoveryContent.mcpToolWizard = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -353,6 +420,7 @@ export const {
   selectOperationGroupId,
   selectOperationId,
   selectBrowseCategory,
+  setDiscoverySelectionState,
   setFavoriteOperations,
   setPinnedPanelActiveTab,
   setSelectedPanelActiveTab,
@@ -365,6 +433,13 @@ export const {
   initRunInPanel,
   addAgentToolMetadata,
   setRunHistoryCollapsed,
+  openMcpToolWizard,
+  setMcpWizardStep,
+  setDiscoverySearchTerm,
+  setMcpWizardConnection,
+  setMcpWizardTools,
+  setMcpWizardHeaders,
+  closeMcpToolWizard,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

@@ -1,17 +1,14 @@
 import * as React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { CollapsedCard } from '../index';
+import * as logicAppsShared from '@microsoft/logic-apps-shared';
 
 const defaultId = 'test-id';
 
-vi.mock(import('@microsoft/logic-apps-shared'), async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    replaceWhiteSpaceWithUnderscore: vi.fn((text: string) => text),
-  };
+beforeEach(() => {
+  vi.spyOn(logicAppsShared, 'replaceWhiteSpaceWithUnderscore').mockImplementation((text: string) => text);
 });
 
 const renderComponent = (props: React.ComponentProps<typeof CollapsedCard>) => {

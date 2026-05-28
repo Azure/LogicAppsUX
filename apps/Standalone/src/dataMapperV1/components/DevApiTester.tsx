@@ -29,7 +29,6 @@ const commonCodeEditorProps: Partial<MonacoProps> = {
   lineNumbers: 'on',
   scrollbar: { horizontal: 'auto', vertical: 'auto' },
   wordWrap: 'on',
-  wrappingIndent: 'same',
   width: '600px',
 };
 

@@ -7,14 +7,8 @@ export default defineProject({
   test: {
     name: packageJson.name,
     environment: 'jsdom',
-    setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
+    setupFiles: ['test-setup.ts', '../shared-test-utils/fluentui-react-icons-mock.ts'],
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
     restoreMocks: true,
-    alias: [
-      {
-        find: /^monaco-editor$/,
-        replacement: `${__dirname}/node_modules/monaco-editor/esm/vs/editor/editor.api`,
-      },
-    ],
   },
 });

@@ -35,6 +35,7 @@ import {
   LoggerService,
   equals,
   getRecordEntry,
+  isBuiltInAgentTool,
   RUN_AFTER_STATUS,
   WORKFLOW_NODE_TYPES,
   containsIdTag,
@@ -48,7 +49,7 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
-import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
+import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
 
@@ -82,6 +83,7 @@ export const initialWorkflowState: WorkflowState = {
   timelineRepetitionIndex: 0,
   timelineRepetitionArray: [],
   flowErrors: {},
+  copilotModifiedNodeIds: {},
 };
 
 export const workflowSlice = createSlice({
@@ -123,7 +125,6 @@ export const workflowSlice = createSlice({
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
             if (equals(edge.source, constants.NODE.TYPE.PLACEHOLDER_TRIGGER)) {
-              // eslint-disable-next-line no-param-reassign
               edge.id = `${action.payload.nodeId}-${edge.target}`;
               edge.source = action.payload.nodeId;
             }
@@ -313,6 +314,12 @@ export const workflowSlice = createSlice({
             runData: {
               status: tools[toolId].status,
               repetitionCount: tools[toolId].iterations,
+              ...(isBuiltInAgentTool(toolId)
+                ? {
+                    inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
+                    outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
+                  }
+                : {}),
             },
             runIndex: 0,
           };
@@ -810,6 +817,16 @@ export const workflowSlice = createSlice({
     setFlowErrors: (state, action: PayloadAction<{ flowErrors: Record<string, string[]> }>) => {
       state.flowErrors = action.payload.flowErrors;
     },
+    setCopilotModifiedNodeIds: (state, action: PayloadAction<string[]>) => {
+      const nodeIds: Record<string, boolean> = {};
+      for (const nodeId of action.payload) {
+        nodeIds[nodeId] = true;
+      }
+      state.copilotModifiedNodeIds = nodeIds;
+    },
+    clearCopilotModifiedNodeIds: (state) => {
+      state.copilotModifiedNodeIds = {};
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -826,19 +843,53 @@ export const workflowSlice = createSlice({
         state.changeCount += 1;
       }
     });
-    builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(resetWorkflowState, (state) => ({
+      ...initialWorkflowState,
+      copilotModifiedNodeIds: state.copilotModifiedNodeIds,
+    }));
     builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
       const { nodeId, inputs, outputs } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
         return;
       }
+      const existingInputs = nodeMetadata.runData?.inputs;
+      const existingOutputs = nodeMetadata.runData?.outputs;
+
+      // Only preserve existing inputs/outputs when they have content
+      // (e.g., for built-in tools that already have their data from fetchBuiltInToolRunData).
+      // For regular actions, empty {} is a valid result and should be written.
+      const hasNewInputs = inputs && Object.keys(inputs).length > 0;
+      const hasNewOutputs = outputs && Object.keys(outputs).length > 0;
+      const hasExistingInputs = existingInputs && Object.keys(existingInputs).length > 0;
+      const hasExistingOutputs = existingOutputs && Object.keys(existingOutputs).length > 0;
+
       const nodeRunData = {
         ...nodeMetadata.runData,
-        inputs: inputs,
-        outputs: outputs,
+        inputs: hasNewInputs || !hasExistingInputs ? inputs : existingInputs,
+        outputs: hasNewOutputs || !hasExistingOutputs ? outputs : existingOutputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    });
+    builder.addCase(fetchBuiltInToolRunData.fulfilled, (state, action) => {
+      const { toolNodeId, inputsLink, outputsLink, inputs, outputs, startTime, endTime, status, correlation } = action.payload;
+
+      // Create nodesMetadata entry if it doesn't exist (for built-in tools like code_interpreter)
+      if (!state.nodesMetadata[toolNodeId]) {
+        state.nodesMetadata[toolNodeId] = {} as NodeMetadata;
+      }
+
+      state.nodesMetadata[toolNodeId].runData = {
+        ...state.nodesMetadata[toolNodeId].runData,
+        inputsLink,
+        outputsLink,
+        inputs,
+        outputs,
+        startTime,
+        endTime,
+        status,
+        correlation,
+      } as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
     builder.addCase(updateNodeSettings, (state, action: PayloadAction<AddSettingsPayload>) => {
@@ -924,6 +975,8 @@ export const {
   updateAgenticMetadata,
   setFocusElement,
   clearFocusElement,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

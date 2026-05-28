@@ -43,6 +43,15 @@ export {
   parseWorkflowParameterValue,
 } from './actions/bjsworkflow/serializer';
 export {
+  flushPendingFoundryUpdates,
+  hasPendingFoundryUpdates,
+  setPendingFoundryUpdate,
+  clearPendingFoundryUpdate,
+  getPendingFoundryUpdate,
+  consumeVersionRefresh,
+  needsVersionRefresh,
+} from './actions/bjsworkflow/foundryUpdates';
+export {
   setSelectedNodeId,
   changePanelNode,
   clearPanel,
@@ -67,7 +76,10 @@ export { ConfigureTemplateDataProvider } from './configuretemplate/ConfigureTemp
 export { McpDataProvider } from './mcp/McpDataProvider';
 export { McpWizardProvider } from './mcp/McpWizardProvider';
 export { resetMcpStateOnResourceChange } from './actions/bjsworkflow/mcp';
+export { McpServerDataProvider } from './mcp/McpServerDataProvider';
 export type { McpServerCreateData } from './mcp/utils/serializer';
+export { KnowledgeDataProvider } from './knowledge/KnowledgeDataProvider';
+export { KnowledgeWizardProvider } from './knowledge/KnowledgeWizardProvider';
 export {
   validateParameter,
   parameterValueToString,
@@ -104,6 +116,7 @@ export * from './queries/role';
 export * from './queries/runs';
 export * from './queries/template';
 export * from './queries/clone';
+export { getHostConfig } from './mcp/utils/queries';
 export {
   resetStateOnResourceChange,
   type WorkflowTemplateData,
@@ -120,3 +133,4 @@ export { setLocation, setSubscription, setResourceGroup } from './state/template
 export { getConsumptionWorkflowPayloadForCreate } from './templates/utils/createhelper';
 export * from './state/modal/modalSelectors';
 export * from './state/modal/modalSlice';
+export { getReferenceForConnection } from './state/connection/helpers';

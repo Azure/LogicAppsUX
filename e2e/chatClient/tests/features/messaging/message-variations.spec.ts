@@ -277,7 +277,7 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await messageInput.fill(symbolsMessage);
     await sendButton.click();
 
-    await expect(page.getByText(symbolsMessage)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(symbolsMessage).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle box drawing and block characters', async ({ page }) => {
@@ -289,7 +289,8 @@ test.describe('Emoji and Complex Unicode', { tag: '@mock' }, () => {
     await sendButton.click();
 
     // Check for a part of the box drawing
-    await expect(page.getByText('┌─┬─┐', { exact: false })).toBeVisible({ timeout: 5000 });
+    // Use .first() to avoid strict mode violation when agent echo response also contains the message text
+    await expect(page.getByText('┌─┬─┐', { exact: false }).first()).toBeVisible({ timeout: 5000 });
   });
 });
 

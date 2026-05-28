@@ -12,7 +12,7 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  minify: false,
+  minify: true,
   target: 'es2020',
   platform: 'browser',
   splitting: true,

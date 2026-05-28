@@ -11,12 +11,12 @@ export function Peek({ input }: PeekProps): JSX.Element {
   const options = {
     contextmenu: false,
     fontSize: 13,
-    lineNumbers: 'off',
+    lineNumbers: 'off' as const,
     readOnly: true,
     scrollBeyondLastLine: false,
     wordWrap: 'on',
     defaultValue: '',
-    folding: true,
+    folding: false,
   };
 
   return (
@@ -27,7 +27,9 @@ export function Peek({ input }: PeekProps): JSX.Element {
         fontSize={options.fontSize}
         readOnly={options.readOnly}
         folding={options.folding}
+        lineNumbers={options.lineNumbers}
         language={EditorLanguage.json}
+        label="code-view"
         monacoContainerStyle={{ height: '100%' }}
       />
     </div>

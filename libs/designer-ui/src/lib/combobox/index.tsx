@@ -89,9 +89,10 @@ export const Combobox = ({
       const updatedOptionkey = getSelectedKey(options, initialValue, isLoading, isCaseSensitive);
       const updatedOptionKeys = getSelectedKeys(options, initialValue, serialization, isCaseSensitive);
       setSelectedKey(updatedOptionkey);
+      setSelectedKeys(multiSelect ? updatedOptionKeys : undefined);
       setMode(getMode(updatedOptionkey, updatedOptionKeys, initialValue, isLoading));
     }
-  }, [errorDetails, initialValue, isCaseSensitive, isLoading, options, serialization]);
+  }, [errorDetails, initialValue, isCaseSensitive, isLoading, multiSelect, options, serialization]);
 
   // Debounce search value to prevent excessive filtering
   useEffect(() => {

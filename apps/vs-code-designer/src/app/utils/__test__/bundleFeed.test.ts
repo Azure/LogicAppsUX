@@ -1,10 +1,48 @@
-import { getBundleVersionNumber, getExtensionBundleFolder } from '../bundleFeed';
+import {
+  getBundleVersionNumber,
+  getDependenciesVersion,
+  getExtensionBundleFolder,
+  getLatestVersionRange,
+  addDefaultBundle,
+  downloadExtensionBundle,
+  resetCachedBundleVersion
+} from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { extensionBundleId } from '../../../constants';
+import { extensionBundleId, defaultVersionRange, defaultExtensionBundlePathValue } from '../../../constants';
+import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as cpUtils from '../funcCoreTools/cpUtils';
+import * as feedModule from '../feed';
+import * as binariesModule from '../binaries';
+
+// Mock fs-extra
+vi.mock('fs-extra', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as object),
+    readdir: vi.fn(),
+    stat: vi.fn(),
+    pathExists: vi.fn(),
+    readdirSync: vi.fn(),
+    statSync: vi.fn(),
+  };
+});
+
+// Mock axios
+vi.mock('axios', () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
+
+// Mock child_process
+vi.mock('child_process', () => ({
+  execSync: vi.fn(),
+  exec: vi.fn(),
+  spawn: vi.fn(),
+}));
 
 // Mock localize
 vi.mock('../../localize', () => ({
@@ -45,6 +83,21 @@ vi.mock('vscode', () => ({
       },
     ],
   },
+}));
+
+// Mock feed module
+vi.mock('../feed', () => ({
+  getJsonFeed: vi.fn(),
+}));
+
+// Mock binaries module
+vi.mock('../binaries', () => ({
+  downloadAndExtractDependency: vi.fn(),
+}));
+
+// Mock localSettings
+vi.mock('../appSettings/localSettings', () => ({
+  getLocalSettingsJson: vi.fn().mockResolvedValue({}),
 }));
 
 const mockedFse = vi.mocked(fse);
@@ -170,6 +223,14 @@ describe('getExtensionBundleFolder', () => {
       // Should use the last occurrence
       expect(result).toBe('C:\\Path\\ExtensionBundles\\');
     });
+
+    it('should use the bundle ID fallback when ExtensionBundles is not followed by a separator', async () => {
+      mockedExecuteCommand.mockResolvedValue('C:\\Path\\ExtensionBundlesMicrosoft.Azure.Functions.ExtensionBundle\\1.0.0');
+
+      const result = await getExtensionBundleFolder();
+
+      expect(result).toBe('C:\\Path\\ExtensionBundles');
+    });
   });
 
   describe('error handling', () => {
@@ -198,6 +259,12 @@ describe('getExtensionBundleFolder', () => {
       await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
     });
 
+    it('should throw error when a path line cannot be parsed as an extension bundle path', async () => {
+      mockedExecuteCommand.mockResolvedValue('C:\\Path\\ExtensionBundles');
+
+      await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
+    });
+
     it('should handle executeCommand throwing an error', async () => {
       mockedExecuteCommand.mockRejectedValue(new Error('Command failed'));
 
@@ -214,6 +281,40 @@ describe('getExtensionBundleFolder', () => {
       mockedExecuteCommand.mockResolvedValue('   \n  \r\n  \n   ');
 
       await expect(getExtensionBundleFolder()).rejects.toThrow('Could not find path to extension bundle.');
+    });
+
+    it('should throw a friendly dependencies-not-ready error when getFunctionsCommand throws', async () => {
+      const funcVersionMod = await import('../funcCoreTools/funcVersion');
+      vi.mocked(funcVersionMod.getFunctionsCommand).mockImplementationOnce(() => {
+        throw new Error('Functions Core Tools Binary Path Setting is empty');
+      });
+
+      await expect(getExtensionBundleFolder()).rejects.toThrow(
+        'Logic Apps Standard runtime dependencies are still installing. Please wait a moment and try again.'
+      );
+      expect(mockedExecuteCommand).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('working directory selection', () => {
+    it('uses the provided workingDirectory when supplied', async () => {
+      const mockOutput =
+        'C:\\Users\\test\\.azure-functions-core-tools\\Functions\\ExtensionBundles\\Microsoft.Azure.Functions.ExtensionBundle.Workflows\\1.138.54\r\n';
+      mockedExecuteCommand.mockResolvedValue(mockOutput);
+
+      await getExtensionBundleFolder('/explicit/project/path');
+
+      expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/explicit/project/path', 'func', 'GetExtensionBundlePath');
+    });
+
+    it('falls back to the first workspace folder when no workingDirectory is provided', async () => {
+      const mockOutput =
+        'C:\\Users\\test\\.azure-functions-core-tools\\Functions\\ExtensionBundles\\Microsoft.Azure.Functions.ExtensionBundle.Workflows\\1.138.54\r\n';
+      mockedExecuteCommand.mockResolvedValue(mockOutput);
+
+      await getExtensionBundleFolder();
+
+      expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/mock/workspace', 'func', 'GetExtensionBundlePath');
     });
   });
 
@@ -282,6 +383,7 @@ describe('getBundleVersionNumber', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    resetCachedBundleVersion();
     // Mock getExtensionBundleFolder to return a proper Windows path
     const mockCommandOutput = `C:\\mock\\bundle\\root\\ExtensionBundles\\${extensionBundleId}\\1.0.0\n`;
     mockedExecuteCommand.mockResolvedValue(mockCommandOutput);
@@ -351,6 +453,18 @@ describe('getBundleVersionNumber', () => {
     await expect(getBundleVersionNumber()).rejects.toThrow('Extension bundle could not be found.');
   });
 
+  it('forwards an explicit workingDirectory through to getExtensionBundleFolder', async () => {
+    const mockFolders = ['1.2.3'];
+    mockedFse.readdir.mockResolvedValue(mockFolders as any);
+    mockedFse.stat.mockImplementation(() => {
+      return Promise.resolve({ isDirectory: () => true } as any);
+    });
+
+    await getBundleVersionNumber('/explicit/project/path');
+
+    expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/explicit/project/path', 'func', 'GetExtensionBundlePath');
+  });
+
   it('should handle mixed version formats correctly', async () => {
     const mockFolders = ['1.0', '1.0.0', '1.0.0.1'];
     mockedFse.readdir.mockResolvedValue(mockFolders as any);
@@ -377,5 +491,205 @@ describe('getBundleVersionNumber', () => {
     await getBundleVersionNumber();
 
     expect(mockedExecuteCommand).toHaveBeenCalledWith(expect.anything(), '/mock/workspace', 'func', 'GetExtensionBundlePath');
+  });
+});
+
+describe('getLatestVersionRange', () => {
+  it('should return the default version range constant', () => {
+    const result = getLatestVersionRange();
+    expect(result).toBe(defaultVersionRange);
+  });
+
+  it('should return a valid semver range string', () => {
+    const result = getLatestVersionRange();
+    expect(result).toMatch(/^\[.*\)$/);
+  });
+});
+
+describe('getDependenciesVersion', () => {
+  it('loads dependency feed using a local settings source URI override', async () => {
+    const mockedGetLocalSettingsJson = await import('../appSettings/localSettings');
+    vi.mocked(mockedGetLocalSettingsJson.getLocalSettingsJson).mockResolvedValue({
+      Values: {
+        FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://bundles.example.com',
+      },
+    } as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue({ id: extensionBundleId } as any);
+    const context = { telemetry: { properties: {}, measurements: {} } };
+
+    await expect(getDependenciesVersion(context as any)).resolves.toEqual({ id: extensionBundleId });
+
+    expect(feedModule.getJsonFeed).toHaveBeenCalledWith(
+      context,
+      `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
+    );
+  });
+});
+
+describe('addDefaultBundle', () => {
+  it('should add extension bundle configuration to host.json', () => {
+    const hostJson: IHostJsonV2 = {
+      version: '2.0',
+    };
+
+    addDefaultBundle(hostJson);
+
+    expect(hostJson.extensionBundle).toBeDefined();
+    expect(hostJson.extensionBundle?.id).toBe(extensionBundleId);
+    expect(hostJson.extensionBundle?.version).toBe(defaultVersionRange);
+  });
+
+  it('should overwrite existing extension bundle configuration', () => {
+    const hostJson: IHostJsonV2 = {
+      version: '2.0',
+      extensionBundle: {
+        id: 'old-bundle-id',
+        version: '[1.0.0, 2.0.0)',
+      },
+    };
+
+    addDefaultBundle(hostJson);
+
+    expect(hostJson.extensionBundle?.id).toBe(extensionBundleId);
+    expect(hostJson.extensionBundle?.version).toBe(defaultVersionRange);
+  });
+
+  it('should preserve other host.json properties', () => {
+    const hostJson: IHostJsonV2 = {
+      version: '2.0',
+      logging: {
+        logLevel: {
+          default: 'Information',
+        },
+      },
+    };
+
+    addDefaultBundle(hostJson);
+
+    expect(hostJson.version).toBe('2.0');
+    expect(hostJson.logging).toBeDefined();
+    expect(hostJson.extensionBundle).toBeDefined();
+  });
+});
+
+describe('downloadExtensionBundle', () => {
+  const mockedGetJsonFeed = vi.mocked(feedModule.getJsonFeed);
+  const mockedDownloadAndExtract = vi.mocked(binariesModule.downloadAndExtractDependency);
+
+  const createMockContext = () => ({
+    telemetry: {
+      properties: {} as Record<string, string>,
+      measurements: {} as Record<string, number>,
+    },
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Reset environment variables
+    delete process.env.AzureFunctionsJobHost_extensionBundle_version;
+    delete process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+  });
+
+  it('should download newer version when feed has higher version than local', async () => {
+    // Feed versions (simulating index.json format)
+    const feedVersions = ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.95.0'];
+
+    // Local version is 1.75.0
+    mockedFse.pathExists.mockResolvedValue(true as never);
+    mockedFse.readdirSync.mockReturnValue(['1.75.0'] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+
+    // Mock the feed to return the versions array
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+
+    // Mock download to succeed
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    // Should have downloaded
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('true');
+
+    // Should download version 1.95.0 (the highest from feed)
+    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('1.95.0'),
+      defaultExtensionBundlePathValue,
+      extensionBundleId,
+      '1.95.0'
+    );
+  });
+
+  it('should not download when local version is higher than feed versions', async () => {
+    // Feed only has older versions
+    const feedVersions = ['1.0.0', '1.1.0', '1.2.0'];
+
+    // Local version is already 1.75.0
+    mockedFse.pathExists.mockResolvedValue(true as never);
+    mockedFse.readdirSync.mockReturnValue(['1.75.0'] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    // Should not download
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('false');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('should correctly identify the latest version from an unordered feed list', async () => {
+    // Feed versions in random order
+    const feedVersions = ['1.3.0', '1.95.0', '1.0.0', '1.50.0', '1.1.0'];
+
+    // No local versions
+    mockedFse.pathExists.mockResolvedValue(true as never);
+    mockedFse.readdirSync.mockReturnValue([] as any);
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    // Should download 1.95.0 (the actual highest version)
+    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('1.95.0'),
+      defaultExtensionBundlePathValue,
+      extensionBundleId,
+      '1.95.0'
+    );
+  });
+
+  it('should handle multiple local versions and compare against highest', async () => {
+    // Feed has 1.95.0
+    const feedVersions = ['1.0.0', '1.95.0'];
+
+    // Multiple local versions, highest is 1.75.0
+    mockedFse.pathExists.mockResolvedValue(true as never);
+    mockedFse.readdirSync.mockReturnValue(['1.50.0', '1.75.0', '1.60.0'] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    // Should download since 1.95.0 > 1.75.0
+    expect(result).toBe(true);
+    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('1.95.0'),
+      defaultExtensionBundlePathValue,
+      extensionBundleId,
+      '1.95.0'
+    );
   });
 });

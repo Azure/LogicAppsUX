@@ -6892,7 +6892,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copilot chat canceled]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Chat do Copilot cancelado]]></Val>
+            <Val><![CDATA[Copilot Chat cancelado]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10448,15 +10448,6 @@
           <Val><![CDATA[Required. The number to multiply Multiplicand 1 with.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Necessário. O número pelo qual multiplicar o Multiplicando 1.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";TxdbTq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select a logic app]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Selecione um aplicativo lógico]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

@@ -21,6 +21,7 @@ import {
 import {
   ConnectionParameterEditorService,
   ConnectionService,
+  ConsumptionConnectionService,
   Capabilities,
   ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
@@ -38,6 +39,7 @@ import {
   ExtensionProperties,
   LoggerService,
   LogEntryLevel,
+  isIndependentPublisherConnector,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -62,6 +64,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
+import { IndependentPublisherDisclaimer } from './independentPublisherDisclaimer';
 import { useStyles } from './styles';
 import { isA2AKind } from '../../../../core/state/workflow/helper';
 import { useShouldEnableAPIMGatewayConnection } from '../../../../core/utils/experimentation';
@@ -229,6 +232,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [connectionParameterSets, selectedParamSetIndex]
   );
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
+  const showMultiAuthDropdown = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
 
   const hasOnlyOnPremGateway = useMemo(
     () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
@@ -405,12 +409,23 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   }, [enabledCapabilities, parametersByCapability]);
 
   // Don't show name for simple connections
-  const showNameInput = useMemo(
-    () =>
+  const showNameInput = useMemo(() => {
+    const isMcpClientConnection = connectorId?.toLowerCase().includes('mcpclient');
+
+    if (isMcpClientConnection) {
+      const connectionService = ConnectionService();
+      const isConsumptionSku = connectionService instanceof ConsumptionConnectionService;
+
+      if (isConsumptionSku) {
+        return false;
+      }
+    }
+
+    return (
       !(isUsingOAuth && !isMultiAuth) &&
-      (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected),
-    [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
-  );
+      (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected)
+    );
+  }, [connectorId, isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]);
 
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) {
@@ -896,7 +911,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           )}
 
           {/* Authentication Selection */}
-          {isMultiAuth && (
+          {showMultiAuthDropdown && (
             <ConnectionMultiAuthInput
               data-testId={'connection-multi-auth-input'}
               isLoading={isLoading}
@@ -957,6 +972,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           />
         </div>
       )}
+
+      {/* Independent Publisher Disclaimer */}
+      {isIndependentPublisherConnector(connector) && <IndependentPublisherDisclaimer createButtonText={submitButtonText} />}
 
       {/* Action Buttons */}
       <div className="msla-edit-connection-actions-container">

@@ -6,8 +6,12 @@ import {
   OperationManifestService,
   Status,
   type BoundParameters,
+  type BoundParameter,
   map,
   type LogicAppsV2,
+  RunService,
+  type ContentLink,
+  labelCase,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../..';
@@ -20,6 +24,22 @@ import { ParameterGroupKeys } from '../../utils/parameters/helper';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import OutputsBinder from '../../utils/monitoring/binders/outputs';
+import { getAgentActionsRepetition, getAgentRepetition } from '../../queries/runs';
+
+/**
+ * Converts raw JSON data into BoundParameters format for display in ValuesPanel.
+ * Each top-level key becomes a BoundParameter with proper displayName and value.
+ */
+const convertToBoundParameters = (data: Record<string, any>): BoundParameters => {
+  const result: BoundParameters = {};
+  for (const [key, value] of Object.entries(data)) {
+    result[key] = {
+      displayName: labelCase(key),
+      value: value,
+    } as BoundParameter;
+  }
+  return result;
+};
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -120,3 +140,98 @@ const getParametersToBind = (type: string, payloadInputs: any, isInputs: boolean
   }
   return payloadInputs;
 };
+
+/**
+ * Fetches iteration-level data for built-in agent tools (e.g. code_interpreter).
+ * Built-in tools have action-level content links available via getAgentActionsRepetition.
+ * We fetch the actual content from those links to avoid CORS issues.
+ */
+export const fetchBuiltInToolRunData = createAsyncThunk(
+  'fetchBuiltInToolRunData',
+  async (payload: {
+    toolNodeId: string;
+    agentNodeId: string;
+    runId: string;
+    repetitionName: string;
+    inputsLink?: ContentLink;
+    outputsLink?: ContentLink;
+  }) => {
+    const { toolNodeId, agentNodeId, runId, repetitionName } = payload;
+
+    // Use action-level links if provided, otherwise fetch them from getAgentActionsRepetition
+    let actionInputsLink = payload.inputsLink;
+    let actionOutputsLink = payload.outputsLink;
+    let repetitionProperties: any = {};
+
+    if (actionInputsLink || actionOutputsLink) {
+      // We have action-level links — no need to fetch
+      repetitionProperties = {};
+    } else {
+      // Fetch action results to get tool-specific links (not the parent agent's links)
+      const actionsRepetitions = await getAgentActionsRepetition(agentNodeId, runId, repetitionName, 0);
+      let foundToolAction = false;
+      for (const actionsRepetition of actionsRepetitions) {
+        const actionResults: any[] = (actionsRepetition.properties as any)?.actionResults ?? [];
+        for (const action of actionResults) {
+          if (action?.name === toolNodeId) {
+            actionInputsLink = action.inputsLink as ContentLink | undefined;
+            actionOutputsLink = action.outputsLink as ContentLink | undefined;
+            repetitionProperties = action;
+            foundToolAction = true;
+            break;
+          }
+        }
+        if (foundToolAction) {
+          break;
+        }
+      }
+
+      // Fall back to parent repetition if tool-specific action not found
+      if (!foundToolAction) {
+        const repetition = await getAgentRepetition(agentNodeId, runId, repetitionName);
+        actionInputsLink = repetition.properties.inputsLink as ContentLink | undefined;
+        actionOutputsLink = repetition.properties.outputsLink as ContentLink | undefined;
+        repetitionProperties = repetition.properties;
+      }
+    }
+
+    // Fetch the actual content from the links
+    let inputs: Record<string, any> = {};
+    let outputs: Record<string, any> = {};
+
+    try {
+      if (actionInputsLink?.uri) {
+        inputs = (await RunService().getContent(actionInputsLink as ContentLink)) ?? {};
+      }
+    } catch (e) {
+      // Content fetch failed - continue with empty inputs
+      console.warn('[fetchBuiltInToolRunData] Failed to fetch built-in tool inputs:', e);
+    }
+
+    try {
+      if (actionOutputsLink?.uri) {
+        outputs = (await RunService().getContent(actionOutputsLink as ContentLink)) ?? {};
+      }
+    } catch (e) {
+      // Content fetch failed - continue with empty outputs
+      console.warn('[fetchBuiltInToolRunData] Failed to fetch built-in tool outputs:', e);
+    }
+
+    // Convert raw inputs/outputs to BoundParameters format for display
+    const boundInputs = convertToBoundParameters(inputs);
+    const boundOutputs = convertToBoundParameters(outputs);
+
+    const result = {
+      toolNodeId,
+      inputsLink: actionInputsLink,
+      outputsLink: actionOutputsLink,
+      inputs: boundInputs,
+      outputs: boundOutputs,
+      startTime: repetitionProperties.startTime,
+      endTime: repetitionProperties.endTime,
+      status: repetitionProperties.status,
+      correlation: repetitionProperties.correlation,
+    };
+    return result;
+  }
+);

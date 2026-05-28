@@ -44,7 +44,7 @@ const GraphContainerNode = ({ id }: NodeProps) => {
       >
         <DefaultHandle type="target" />
         <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
-        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle />}
+        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle highlighted={selected} />}
       </div>
       {showLeafComponents && (
         <div className="edge-drop-zone-container">

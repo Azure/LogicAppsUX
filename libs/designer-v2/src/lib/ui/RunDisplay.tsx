@@ -1,8 +1,9 @@
-import { Button, makeStyles, tokens } from '@fluentui/react-components';
+import { Button, Card, makeStyles, tokens } from '@fluentui/react-components';
 import { setRunHistoryCollapsed } from '../core/state/panel/panelSlice';
 import { useRunInstance } from '../core/state/workflow/workflowSelectors';
 import { RunHistoryEntryInfo } from './panel';
 import { useIsRunHistoryCollapsed } from '../core/state/panel/panelSelectors';
+import { useRun } from '../core/queries/runs';
 import { useDispatch } from 'react-redux';
 
 import { bundleIcon, ChevronDoubleRightFilled, ChevronDoubleRightRegular } from '@fluentui/react-icons';
@@ -11,12 +12,14 @@ const ExpandIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegula
 const useRunDisplayStyles = makeStyles({
   root: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'stretch',
     gap: '16px',
     position: 'absolute',
     top: '16px',
     left: '16px',
     zIndex: 999,
+    flexDirection: 'row',
+    justifyItems: 'stretch',
   },
 });
 
@@ -24,12 +27,13 @@ export const RunDisplay = () => {
   const dispatch = useDispatch();
 
   const selectedRun = useRunInstance();
+  const { data: runData } = useRun(selectedRun?.id);
 
   const isRunHistoryCollapsed = useIsRunHistoryCollapsed();
 
   const styles = useRunDisplayStyles();
 
-  if (!selectedRun && !isRunHistoryCollapsed) {
+  if (!runData && !isRunHistoryCollapsed) {
     return null;
   }
 
@@ -42,12 +46,15 @@ export const RunDisplay = () => {
           size="large"
           style={{
             border: 'none',
-            boxShadow: tokens.shadow8,
-            height: '48px',
+            boxShadow: tokens.shadow4,
           }}
         />
       ) : null}
-      {selectedRun ? <RunHistoryEntryInfo run={selectedRun as any} /> : null}
+      {runData ? (
+        <Card>
+          <RunHistoryEntryInfo run={runData as any} />
+        </Card>
+      ) : null}
     </div>
   );
 };

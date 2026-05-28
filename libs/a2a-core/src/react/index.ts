@@ -28,6 +28,7 @@ export type {
   Branding,
   AgentCard,
   AuthConfig,
+  IdentityProvider,
 } from './types';
 
 export type {

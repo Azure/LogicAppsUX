@@ -2,6 +2,7 @@ import { cloneElement, useMemo, useState } from 'react';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { AgentInstructionEditor } from '../../agentinstruction';
+import { BuiltinToolsEditor } from '../../builtintools';
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
@@ -102,7 +103,9 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const [openPopover, setOpenPopover] = useState(false);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
-    equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
+    (props.editorOptions?.hideLabel === true && equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.AGENT_INSTRUCTION)) ||
+    equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU) ||
+    equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.BUILTIN_TOOLS);
   const [showSubComponent, setShowSubComponent] = useState(false);
   const CustomNewResourceComponent = useMemo(() => props.newResourceProps?.component, [props.newResourceProps?.component]);
   const stringResources = useMemo(
@@ -218,6 +221,7 @@ export const TokenField = ({
           agentParameterButtonProps={agentParameterButtonProps}
           tokenMapping={tokenMapping}
           hideUserInstructions={editorOptions?.hideUserInstructions}
+          hideSystemInstructions={editorOptions?.hideSystemInstructions}
           loadParameterValueFromString={loadParameterValueFromString}
           serializeValue={onValueChange}
           getTokenPicker={getTokenPicker}
@@ -390,6 +394,9 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
         />
       );
+
+    case constants.PARAMETER.EDITOR.BUILTIN_TOOLS:
+      return <BuiltinToolsEditor initialValue={value} options={editorOptions?.options} readonly={readOnly} onChange={onValueChange} />;
 
     case constants.PARAMETER.EDITOR.DROPDOWN:
       return (

@@ -30,6 +30,7 @@ import {
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
   BaseChatbotService,
+  BaseCopilotWorkflowEditorService,
   ConsumptionRunService,
   guid,
   startsWith,
@@ -52,6 +53,11 @@ import {
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
   FloatingRunButton,
+  setIsWorkflowDirty,
+  setFocusNode,
+  changePanelNode,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } from '@microsoft/logic-apps-designer-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -65,7 +71,6 @@ const httpClient = new HttpClient();
 const DesignerEditorConsumption = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id: workflowId } = useSelector((state: RootState) => ({
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
   }));
 
@@ -92,6 +97,26 @@ const DesignerEditorConsumption = () => {
     isError: isWorkflowAndArtifactsError,
     error: workflowAndArtifactsError,
   } = useWorkflowAndArtifactsConsumption(workflowId);
+
+  const {
+    workflow: prodWorkflow,
+    connectionReferences: prodConnectionReferences,
+    parameters: prodParameters,
+    notes: prodNotes,
+  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+
+  const { data: draftWorkflowAndArtifactsData, isFetching: isDraftWorkflowAndArtifactsLoading } = useWorkflowAndArtifactsConsumption(
+    workflowId,
+    true
+  );
+
+  const {
+    workflow: draftWorkflow,
+    connectionReferences: draftConnectionReferences,
+    parameters: draftParameters,
+    notes: draftNotes,
+  } = useMemo(() => getDataForConsumption(draftWorkflowAndArtifactsData), [draftWorkflowAndArtifactsData]);
+
   const { data: runInstanceData } = useRunInstanceConsumption(workflowName, appId, runId);
 
   const { data: tenantId } = useCurrentTenantId();
@@ -101,6 +126,10 @@ const DesignerEditorConsumption = () => {
   const [designerID, setDesignerID] = useState(guid());
 
   const [workflow, setWorkflow] = useState<any>(); // Current workflow on the designer
+  const [connectionReferences, setConnectionReferences] = useState<any>();
+  const [parameters, setParameters] = useState<any>();
+  const [notes, setNotes] = useState<any>();
+
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
 
@@ -109,16 +138,8 @@ const DesignerEditorConsumption = () => {
     setIsDraftMode(draftMode);
   }, []);
 
-  const {
-    workflow: prodWorkflow,
-    connectionReferences,
-    parameters,
-    notes,
-  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
-  // TODO: Implement draft workflow fetching properly
-  const draftWorkflow = useMemo(() => prodWorkflow, [prodWorkflow]);
-
   const [definition, setDefinition] = useState<any>();
+
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
 
   // TODO: Implement saveDraftWorkflow properly
@@ -166,12 +187,15 @@ const DesignerEditorConsumption = () => {
   const hideMonitoringView = useCallback(() => {
     if (isMonitoringView) {
       toggleMonitoringView();
+      setConnectionReferences(draftConnectionReferences);
+      setParameters(draftParameters);
+      setNotes(draftNotes);
       setWorkflow({
         ...draftWorkflow,
         id: guid(),
       });
     }
-  }, [draftWorkflow, isMonitoringView, toggleMonitoringView]);
+  }, [draftConnectionReferences, draftNotes, draftParameters, draftWorkflow, isMonitoringView, toggleMonitoringView]);
 
   const onRun = useCallback(
     (runId: string) => {
@@ -283,7 +307,7 @@ const DesignerEditorConsumption = () => {
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
+      skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
     return serializedWorkflow;
@@ -329,6 +353,9 @@ const DesignerEditorConsumption = () => {
         if (codeEditorRef.current?.hasChanges() && !isEqual(codeToConvert, { definition: workflow?.definition, kind: workflow?.kind })) {
           await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
         }
+        setConnectionReferences(codeToConvert?.connectionReferences ?? draftConnectionReferences ?? {});
+        setParameters(codeToConvert?.parameters ?? draftParameters ?? {});
+        setNotes(codeToConvert?.notes ?? draftNotes ?? {});
         setWorkflow((prevState: any) => ({
           ...prevState,
           definition: codeToConvert.definition,
@@ -336,6 +363,7 @@ const DesignerEditorConsumption = () => {
           connectionReferences: codeToConvert.connectionReferences ?? {},
           id: guid(),
         }));
+
         setIsDesignerView(true);
         setIsCodeView(false);
       } catch (error: any) {
@@ -371,20 +399,38 @@ const DesignerEditorConsumption = () => {
   }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
-    if (isWorkflowAndArtifactsLoading || !prodWorkflow) {
+    if (isWorkflowAndArtifactsLoading || !prodWorkflow || isDraftWorkflowAndArtifactsLoading) {
       return;
     }
 
-    if (isDraftMode) {
-      if (draftWorkflow) {
-        setWorkflow(draftWorkflow as any);
-      } else {
-        setWorkflow(prodWorkflow as any);
-      }
+    if (isDraftMode && draftWorkflow?.definition) {
+      setConnectionReferences(draftConnectionReferences);
+      setParameters(draftParameters);
+      setNotes(draftNotes);
+      setWorkflow(draftWorkflow as any);
     } else {
+      setConnectionReferences(prodConnectionReferences);
+      setParameters(prodParameters);
+      setNotes(prodNotes);
       setWorkflow(prodWorkflow as any);
     }
-  }, [isWorkflowAndArtifactsLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
+  }, [
+    isWorkflowAndArtifactsLoading,
+    draftWorkflow,
+    isDraftMode,
+    prodWorkflow,
+    isDraftWorkflowAndArtifactsLoading,
+    draftConnectionReferences,
+    draftParameters,
+    draftNotes,
+    prodConnectionReferences,
+    prodParameters,
+    prodNotes,
+  ]);
+
+  const derivedIsReadOnly = useMemo(() => {
+    return readOnly || isMonitoringView || !isDraftMode;
+  }, [readOnly, isMonitoringView, isDraftMode]);
 
   if (isWorkflowAndArtifactsError) {
     throw workflowAndArtifactsError;
@@ -403,7 +449,7 @@ const DesignerEditorConsumption = () => {
         options={{
           services,
           isDarkMode,
-          readOnly: readOnly || isMonitoringView || !isDraftMode,
+          readOnly: derivedIsReadOnly,
           isMonitoringView,
           isDraft: isDraftMode,
           useLegacyWorkflowParameters: true,
@@ -411,6 +457,7 @@ const DesignerEditorConsumption = () => {
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
+            integrationAccount: (workflowAndArtifactsData?.properties as any)?.integrationAccount,
           },
           showPerformanceDebug,
         }}
@@ -428,23 +475,47 @@ const DesignerEditorConsumption = () => {
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
             <div style={{ display: 'flex', height: 'inherit' }}>
-              {showChatBot ? (
-                <CoPilotChatbot
-                  getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={openFeedBackPanel}
-                  closeChatBot={() => {
-                    dispatch(setIsChatBotEnabled(false));
-                  }}
-                  getAuthToken={getAuthToken}
-                />
-              ) : null}
-              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+              <CoPilotChatbot
+                isOpen={showChatBot}
+                getUpdatedWorkflow={getUpdatedWorkflow}
+                openFeedbackPanel={openFeedBackPanel}
+                closeChatBot={() => {
+                  dispatch(setIsChatBotEnabled(false));
+                }}
+                getAuthToken={getAuthToken}
+                enableWorkflowEditing={true}
+                autoApply={true}
+                onWorkflowProposed={(newWorkflow, changes) => {
+                  setNotes(newWorkflow.notes ?? {});
+                  if (newWorkflow.parameters) {
+                    setParameters(newWorkflow.parameters);
+                  }
+                  setWorkflow({ ...newWorkflow });
+                  DesignerStore.dispatch(setIsWorkflowDirty(true));
+                  if (changes) {
+                    const nodeIds = changes.flatMap((change) => change.nodeIds);
+                    DesignerStore.dispatch(setCopilotModifiedNodeIds(nodeIds));
+                    setTimeout(() => DesignerStore.dispatch(clearCopilotModifiedNodeIds()), 3000);
+                  } else {
+                    DesignerStore.dispatch(clearCopilotModifiedNodeIds());
+                  }
+                }}
+                getNodeVisuals={(nodeId) => {
+                  const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
+                  return meta ? { iconUri: meta.iconUri, brandColor: meta.brandColor } : undefined;
+                }}
+                onNodeClick={(nodeId) => {
+                  DesignerStore.dispatch(setFocusNode(nodeId));
+                  DesignerStore.dispatch(changePanelNode(nodeId));
+                }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0', minHeight: 0, minWidth: 0, overflow: 'hidden' }}>
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}
                   discard={discardAllChanges}
                   location={canonicalLocation}
-                  isReadOnly={readOnly}
+                  isReadOnly={derivedIsReadOnly}
                   isDarkMode={isDarkMode}
                   isUnitTest={false}
                   isMonitoringView={isMonitoringView}
@@ -462,7 +533,7 @@ const DesignerEditorConsumption = () => {
                 {isCodeView ? (
                   <CodeViewEditor ref={codeEditorRef} isConsumption />
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
+                  <>
                     <Designer />
                     <FloatingRunButton
                       siteResourceId={workflowId}
@@ -470,9 +541,11 @@ const DesignerEditorConsumption = () => {
                       saveDraftWorkflow={saveWorkflowFromDesigner}
                       onRun={onRun}
                       isDarkMode={isDarkMode}
-                      isDraftMode={false} // TODO: Support draft mode runs once backend is ready
+                      isDraftMode={isDraftMode}
+                      isConsumption={true}
+                      workflowReadOnly={derivedIsReadOnly}
                     />
-                  </div>
+                  </>
                 )}
                 <CombineInitializeVariableDialog />
                 <TriggerDescriptionDialog workflowId={workflowId} />
@@ -539,6 +612,7 @@ const getDesignerServices = (
     ...defaultServiceParams,
     clientSupportedOperations: [
       ['/connectionProviders/workflow', 'invokeWorkflow'],
+      ['/connectionProviders/workflow', 'invokenestedagent'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
@@ -659,7 +733,7 @@ const getDesignerServices = (
       const accessEndpoint = workflowAndArtifactsData?.properties?.accessEndpoint;
       return fetchAgentUrlConsumption(workflowId, workflowName, accessEndpoint, isDraftMode);
     },
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => workflowAndArtifactsData?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
@@ -668,6 +742,20 @@ const getDesignerServices = (
     },
     notifyCallbackUrlUpdate: (triggerName: string, newTriggerId: string) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
+    },
+    getSandboxConfigurations: async (integrationAccountId: string) => {
+      // Agent harness sandbox APIs are only available in limited regions.
+      // Use the regional ARM endpoint (brazilus) to route requests to a supported region.
+      const sandboxBaseUrl = 'https://brazilus.management.azure.com';
+      const response = await httpClient.get<any>({
+        uri: `${sandboxBaseUrl}${integrationAccountId}/sandboxConfigurations`,
+        queryParameters: { 'api-version': '2016-06-01' },
+      });
+      // This endpoint returns a bare JSON array, not the usual ARM { value: [...] } envelope.
+      if (Array.isArray(response)) {
+        return response;
+      }
+      return response?.value ?? [];
     },
   };
 
@@ -710,6 +798,15 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
+  // Initialize CopilotWorkflowEditorService
+  const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
+    baseUrl,
+    subscriptionId,
+    location: 'centralusstage',
+    apiVersion: '2026-03-01-preview',
+    getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
+  });
+
   // This isn't correct but without it I was getting errors
   //   It's fine just to unblock standalone consumption
   const customCodeService = new StandardCustomCodeService({
@@ -745,6 +842,7 @@ const getDesignerServices = (
     roleService,
     hostService,
     chatbotService,
+    copilotWorkflowEditorService,
     customCodeService,
     cognitiveServiceService,
     userPreferenceService: new BaseUserPreferenceService(),

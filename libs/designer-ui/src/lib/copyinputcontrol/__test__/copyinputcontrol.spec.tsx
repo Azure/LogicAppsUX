@@ -4,11 +4,11 @@ import type { CopyInputControlWithAgentProps } from '../CopyInputControlWithAgen
 import { CopyInputControlWithAgent } from '../CopyInputControlWithAgent';
 import renderer from 'react-test-renderer';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as AgentUrlViewerModule from '../AgentUrlViewer';
 
-vi.mock('../AgentUrlViewer', () => ({
-  AgentUrlViewer: () => null,
-  AgentUrlButton: () => null,
-}));
+beforeEach(() => {
+  vi.spyOn(AgentUrlViewerModule, 'AgentUrlViewer').mockImplementation(() => null);
+});
 
 describe('lib/copyinputcontrol', () => {
   let minimal: CopyInputControlProps;

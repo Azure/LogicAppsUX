@@ -5,6 +5,11 @@ import {
   getConnectionMappingForNode,
   getLegacyConnectionReferenceKey,
   getManifestBasedConnectionMapping,
+  isOpenApiConnectionType,
+  isConnectionRequiredForOperation,
+  isConnectionAutoSelectionDisabled,
+  getConnectionMetadata,
+  needsConnection,
 } from '../../../actions/bjsworkflow/connections';
 import {
   InitOperationManifestService,
@@ -13,7 +18,7 @@ import {
   createItem,
   ConnectionReferenceKeyFormat,
 } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, OperationManifest, Connector } from '@microsoft/logic-apps-shared';
 
 const nodeId = '1';
 const connectionName = 'name123';
@@ -133,6 +138,88 @@ const mockOpenApiConnection: LogicAppsV2.OpenApiOperationAction = {
     },
   },
 };
+
+describe('isOpenApiConnectionType', () => {
+  it('should return true for OpenApiConnection type', () => {
+    expect(isOpenApiConnectionType('OpenApiConnection')).toBe(true);
+  });
+
+  it('should return true for OpenApiConnectionWebhook type', () => {
+    expect(isOpenApiConnectionType('OpenApiConnectionWebhook')).toBe(true);
+  });
+
+  it('should return true for OpenApiConnectionNotification type', () => {
+    expect(isOpenApiConnectionType('OpenApiConnectionNotification')).toBe(true);
+  });
+
+  it('should return false for non-OpenApi types', () => {
+    expect(isOpenApiConnectionType('ApiConnection')).toBe(false);
+    expect(isOpenApiConnectionType('Http')).toBe(false);
+    expect(isOpenApiConnectionType('')).toBe(false);
+  });
+});
+
+describe('isConnectionRequiredForOperation', () => {
+  it('should return true when connection is required', () => {
+    const manifest = { properties: { connection: { required: true } } } as unknown as OperationManifest;
+    expect(isConnectionRequiredForOperation(manifest)).toBe(true);
+  });
+
+  it('should return false when connection is not required', () => {
+    const manifest = { properties: { connection: { required: false } } } as unknown as OperationManifest;
+    expect(isConnectionRequiredForOperation(manifest)).toBe(false);
+  });
+
+  it('should return false when connection property is missing', () => {
+    const manifest = { properties: {} } as unknown as OperationManifest;
+    expect(isConnectionRequiredForOperation(manifest)).toBe(false);
+  });
+});
+
+describe('isConnectionAutoSelectionDisabled', () => {
+  it('should return true when auto selection is disabled', () => {
+    const manifest = { properties: { connection: { disableAutoSelection: true } } } as unknown as OperationManifest;
+    expect(isConnectionAutoSelectionDisabled(manifest)).toBe(true);
+  });
+
+  it('should return false when auto selection is enabled', () => {
+    const manifest = { properties: { connection: { disableAutoSelection: false } } } as unknown as OperationManifest;
+    expect(isConnectionAutoSelectionDisabled(manifest)).toBe(false);
+  });
+
+  it('should return false when connection property is missing', () => {
+    const manifest = { properties: {} } as unknown as OperationManifest;
+    expect(isConnectionAutoSelectionDisabled(manifest)).toBe(false);
+  });
+});
+
+describe('getConnectionMetadata', () => {
+  it('should return connection metadata', () => {
+    const connection = { required: true, type: 'test' };
+    const manifest = { properties: { connection } } as unknown as OperationManifest;
+    expect(getConnectionMetadata(manifest)).toEqual(connection);
+  });
+
+  it('should return undefined when manifest is undefined', () => {
+    expect(getConnectionMetadata(undefined)).toBeUndefined();
+  });
+
+  it('should return undefined when connection is not set', () => {
+    const manifest = { properties: {} } as unknown as OperationManifest;
+    expect(getConnectionMetadata(manifest)).toBeUndefined();
+  });
+});
+
+describe('needsConnection', () => {
+  it('should return false when connector is undefined', () => {
+    expect(needsConnection(undefined)).toBe(false);
+  });
+
+  it('should return true when connector has empty properties (simple connection)', () => {
+    const connector = { properties: {} } as unknown as Connector;
+    expect(needsConnection(connector)).toBe(true);
+  });
+});
 
 function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionReferenceKeyFormat | '') {
   spy = vi

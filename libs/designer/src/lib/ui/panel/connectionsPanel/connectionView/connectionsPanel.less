@@ -1,0 +1,34 @@
+@import './allConnections/allConnections.less';
+@import './selectConnection/selectConnection.less';
+@import './createConnection/createConnection.less';
+
+.msla-flex-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  .msla-flex-header-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .msla-flex-header-subtitle {
+    color: gray;
+  }
+}
+
+.msla-action-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+
+  &.large {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.msla-connections-panel-body {
+  padding: 12px 0px;
+}

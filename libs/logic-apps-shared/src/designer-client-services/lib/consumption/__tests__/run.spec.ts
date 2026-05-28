@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ConsumptionRunService } from '../run';
 import type { IHttpClient } from '../../httpClient';
+import { InitLoggerService } from '../../logger';
 
 describe('ConsumptionRunService', () => {
   let runService: ConsumptionRunService;
@@ -26,6 +27,44 @@ describe('ConsumptionRunService', () => {
     };
 
     runService = new ConsumptionRunService(mockOptions);
+    InitLoggerService([{ log: vi.fn() } as any]);
+  });
+
+  describe('getContent', () => {
+    test('should return empty object when API returns empty response (204 No Content)', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue('');
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    test('should return empty object when API returns null response', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue(null);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    test('should return empty object when API returns undefined response', async () => {
+      vi.mocked(mockHttpClient.get).mockResolvedValue(undefined);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual({});
+    });
+
+    test('should return actual content when API returns valid data', async () => {
+      const mockContent = { body: { key: 'value' } };
+      vi.mocked(mockHttpClient.get).mockResolvedValue(mockContent);
+
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 100 });
+      expect(result).toEqual(mockContent);
+    });
+
+    test('should return undefined when content size exceeds 2MB', async () => {
+      const result = await runService.getContent({ uri: 'https://test.com/content', contentSize: 3000000 });
+      expect(result).toBeUndefined();
+      expect(mockHttpClient.get).not.toHaveBeenCalled();
+    });
   });
 
   describe('getMoreScopeRepetitions', () => {
@@ -130,6 +169,42 @@ describe('ConsumptionRunService', () => {
       const call = vi.mocked(mockHttpClient.get).mock.calls[0][0];
       expect(call.headers).toBeInstanceOf(Headers);
       expect(call.headers.get('Authorization')).toBe(mockOptions.accessToken);
+    });
+  });
+
+  describe('resubmitRun', () => {
+    test('should construct URL with workflowId path segment', async () => {
+      vi.mocked(mockHttpClient.post).mockResolvedValue({});
+
+      await runService.resubmitRun('run-123', 'manual');
+
+      expect(mockHttpClient.post).toHaveBeenCalledWith({
+        uri: 'https://api.example.comtest-workflow/triggers/manual/histories/run-123/resubmit?api-version=2016-06-01',
+        headers: { 'If-Match': '*' },
+      });
+    });
+
+    test('should include workflowId for ARM resource paths', async () => {
+      const armOptions = {
+        ...mockOptions,
+        baseUrl: 'https://management.azure.com',
+        workflowId: '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.Logic/workflows/my-workflow',
+      };
+      const armRunService = new ConsumptionRunService(armOptions);
+      vi.mocked(mockHttpClient.post).mockResolvedValue({});
+
+      await armRunService.resubmitRun('08584222487129015244', 'When_an_HTTP_request_is_received');
+
+      expect(mockHttpClient.post).toHaveBeenCalledWith({
+        uri: 'https://management.azure.com/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.Logic/workflows/my-workflow/triggers/When_an_HTTP_request_is_received/histories/08584222487129015244/resubmit?api-version=2016-06-01',
+        headers: { 'If-Match': '*' },
+      });
+    });
+
+    test('should throw error when HTTP request fails', async () => {
+      vi.mocked(mockHttpClient.post).mockRejectedValue(new Error('Forbidden'));
+
+      await expect(runService.resubmitRun('run-123', 'manual')).rejects.toThrow('Forbidden');
     });
   });
 

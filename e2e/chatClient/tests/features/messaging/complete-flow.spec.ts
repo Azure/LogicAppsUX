@@ -32,6 +32,15 @@ test.describe('Complete Chat Flow', { tag: '@mock' }, () => {
       messageStream: false,
     };
 
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     // Mock 1: Agent card endpoint
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       calls.agentCard = true;
@@ -206,6 +215,15 @@ test.describe('Complete Chat Flow', { tag: '@mock' }, () => {
   });
 
   test('should show typing indicator while waiting for response', async ({ page }) => {
+    // Mock authentication - return authenticated user
+    await page.route('**/.auth/me', async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ provider_name: 'aad', user_id: 'test-user' }]),
+      });
+    });
+
     await page.route('**/api/agents/test/.well-known/agent-card.json', async (route: Route) => {
       await route.fulfill({
         status: 200,

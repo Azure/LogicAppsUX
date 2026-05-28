@@ -11,12 +11,19 @@ import {
   useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
-import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, isBuiltInAgentTool, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogTitle, DialogTrigger } from '@fluentui/react-components';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import { clearFocusElement, setFocusNode, setRunIndex, setTimelineRepetitionIndex } from '../../../core/state/workflow/workflowSlice';
+import {
+  clearFocusElement,
+  setFocusNode,
+  setRunIndex,
+  setTimelineRepetitionIndex,
+  setToolRunIndex,
+} from '../../../core/state/workflow/workflowSlice';
 import { parseChatHistory, useRefreshChatMutation } from '../agentChat/helper';
+import { fetchBuiltInToolRunData } from '../../../core/actions/bjsworkflow/monitoring';
 // import constants from '../../../common/constants';
 import { useIsA2AWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
@@ -24,7 +31,7 @@ export const AgentChatContent = () => {
   // State section
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
-  const [textInput, setTextInput] = useState<string>('');
+
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -71,19 +78,41 @@ export const AgentChatContent = () => {
   }, []);
 
   const toolResultCallback = useCallback(
-    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+    (agentName: string, toolName: string, iteration: number, subIteration: number, mcpToolName?: string) => {
       const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
       if (isA2AWorkflow) {
         dispatch(setTimelineRepetitionIndex(iteration));
       } else {
         dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-        dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+        if (mcpToolName) {
+          dispatch(setToolRunIndex({ page: subIteration, nodeId: toolName }));
+        } else {
+          dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+        }
       }
 
-      dispatch(setFocusNode(agentLastOperation));
-      dispatch(changePanelNode(agentLastOperation));
+      // For built-in tools (e.g. code_interpreter), there is no child operation in the graph.
+      // Navigate to the tool node itself and fetch its run data from the parent agent repetition.
+      if (isBuiltInAgentTool(toolName)) {
+        const repetitionName = String(iteration).padStart(6, '0');
+        if (runInstance?.id) {
+          dispatch(
+            fetchBuiltInToolRunData({
+              toolNodeId: toolName,
+              agentNodeId: agentName,
+              runId: runInstance.id,
+              repetitionName,
+            })
+          );
+        }
+        dispatch(setFocusNode(toolName));
+        dispatch(changePanelNode(toolName));
+      } else {
+        dispatch(setFocusNode(agentLastOperation));
+        dispatch(changePanelNode(agentLastOperation));
+      }
     },
-    [dispatch, isA2AWorkflow, rawAgentLastOperations]
+    [dispatch, isA2AWorkflow, rawAgentLastOperations, runInstance]
   );
 
   const toolContentCallback = useCallback(
@@ -108,32 +137,34 @@ export const AgentChatContent = () => {
     [dispatch]
   );
 
-  const onChatSubmit = useCallback(async () => {
-    if (!textInput || isNullOrUndefined(chatInvokeUri)) {
-      return;
-    }
+  const onChatSubmit = useCallback(
+    async (value: string) => {
+      if (!value || isNullOrUndefined(chatInvokeUri)) {
+        return;
+      }
 
-    setIsWaitingForResponse(true);
+      setIsWaitingForResponse(true);
 
-    try {
-      await RunService().invokeAgentChat({
-        id: chatInvokeUri,
-        data: { role: 'User', content: textInput },
-      });
+      try {
+        await RunService().invokeAgentChat({
+          id: chatInvokeUri,
+          data: { role: 'User', content: value },
+        });
 
-      refetchChatHistory();
-    } catch (e: any) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'agentchat',
-        message: 'Agent chat invocation failed',
-        error: e,
-      });
-    }
+        refetchChatHistory();
+      } catch (e: any) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'agentchat',
+          message: 'Agent chat invocation failed',
+          error: e,
+        });
+      }
 
-    setIsWaitingForResponse(false);
-    setTextInput('');
-  }, [textInput, chatInvokeUri, refetchChatHistory]);
+      setIsWaitingForResponse(false);
+    },
+    [chatInvokeUri, refetchChatHistory]
+  );
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
@@ -218,8 +249,6 @@ export const AgentChatContent = () => {
         panel={{}}
         inputBox={{
           onSubmit: onChatSubmit,
-          onChange: setTextInput,
-          value: textInput,
           readOnly: !chatInvokeUri,
         }}
         string={{

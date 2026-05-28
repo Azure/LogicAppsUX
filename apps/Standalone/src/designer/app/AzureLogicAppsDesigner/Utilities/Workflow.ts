@@ -110,7 +110,6 @@ export function addOrUpdateAppSettings(settings: Record<string, string>, origina
       // TODO: To show this in a notification of info bar on the blade that key will be overriden.
     }
 
-    // eslint-disable-next-line no-param-reassign
     originalSettings[settingKey] = settings[settingKey];
   }
 
@@ -118,6 +117,15 @@ export function addOrUpdateAppSettings(settings: Record<string, string>, origina
 }
 
 export const getDataForConsumption = (data: any) => {
+  if (!data) {
+    return {
+      workflow: undefined,
+      connectionReferences: undefined,
+      parameters: undefined,
+      notes: undefined,
+    };
+  }
+
   const properties = data?.properties as any;
 
   const definition = removeProperties(properties?.definition, ['parameters']);

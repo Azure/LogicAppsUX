@@ -66,7 +66,14 @@ export const RecommendationPanelCard = ({
       className="msla-recommendation-panel-card"
       focusMode="off"
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
       tabIndex={0}
+      role="button"
       aria-label={operationTitle}
       data-automation-id={apiId}
       style={{ flexDirection: 'row' }}

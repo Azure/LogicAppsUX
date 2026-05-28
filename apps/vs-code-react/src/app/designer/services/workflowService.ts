@@ -8,46 +8,62 @@ export const fetchAgentUrl = (
   httpClient: IHttpClient,
   clientId: string,
   tenantId: string,
-  isWorkflowRuntimeRunning?: boolean
+  isWorkflowRuntimeRunning?: boolean,
+  defaultHostName?: string
 ): Promise<AgentURL> => {
   const queryClient = getReactQueryClient();
 
-  return queryClient.fetchQuery(['agentUrl', workflowName, runtimeUrl, isWorkflowRuntimeRunning], async (): Promise<AgentURL> => {
-    if (!workflowName || !runtimeUrl) {
-      return { agentUrl: '', chatUrl: '', hostName: '' };
-    }
-
-    try {
-      const baseUrl = `${new URL(runtimeUrl).origin}`;
-      const agentBaseUrl = baseUrl.startsWith('http://') ? baseUrl : `http://${baseUrl}`;
-      const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-      const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
-      let queryParams: AgentQueryParams | undefined = undefined;
-
-      // Get A2A authentication key
-      const a2aData = await fetchA2AAuthKey(workflowName, runtimeUrl, httpClient, clientId, tenantId);
-
-      // Add authentication tokens if available
-      const a2aKey = a2aData?.key;
-      if (a2aKey) {
-        queryParams = { apiKey: a2aKey };
+  return queryClient.fetchQuery(
+    ['agentUrl', workflowName, runtimeUrl, isWorkflowRuntimeRunning, defaultHostName],
+    async (): Promise<AgentURL> => {
+      if (!workflowName || (!runtimeUrl && !defaultHostName)) {
+        return { agentUrl: '', chatUrl: '', hostName: '' };
       }
 
-      return {
-        agentUrl,
-        chatUrl,
-        queryParams,
-        hostName: runtimeUrl,
-      };
-    } catch (error) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        message: `Failed to get agent URL: ${error}`,
-        area: 'vscode: fetchAgentUrl',
-      });
-      return { agentUrl: '', chatUrl: '', hostName: runtimeUrl };
+      try {
+        let agentBaseUrl: string;
+        let hostName: string;
+
+        if (defaultHostName) {
+          // Azure remote workflow - use the app's defaultHostName with HTTPS
+          agentBaseUrl = defaultHostName.startsWith('https://') ? defaultHostName : `https://${defaultHostName}`;
+          hostName = defaultHostName;
+        } else {
+          // Local workflow - use the runtime URL with HTTP
+          const baseUrl = `${new URL(runtimeUrl).origin}`;
+          agentBaseUrl = baseUrl.startsWith('http://') ? baseUrl : `http://${baseUrl}`;
+          hostName = runtimeUrl;
+        }
+
+        const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
+        const chatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
+        let queryParams: AgentQueryParams | undefined = undefined;
+
+        // Get A2A authentication key
+        const a2aData = await fetchA2AAuthKey(workflowName, runtimeUrl, httpClient, clientId, tenantId);
+
+        // Add authentication tokens if available
+        const a2aKey = a2aData?.key;
+        if (a2aKey) {
+          queryParams = { apiKey: a2aKey };
+        }
+
+        return {
+          agentUrl,
+          chatUrl,
+          queryParams,
+          hostName,
+        };
+      } catch (error) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          message: `Failed to get agent URL: ${error}`,
+          area: 'vscode: fetchAgentUrl',
+        });
+        return { agentUrl: '', chatUrl: '', hostName: defaultHostName ?? runtimeUrl };
+      }
     }
-  });
+  );
 };
 
 // Helper function to fetch A2A authentication key

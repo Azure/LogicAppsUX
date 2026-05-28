@@ -58,6 +58,18 @@ export const useShowPerformanceDebug = () => {
   return useSelector((state: RootState) => state.designerOptions.showPerformanceDebug ?? false);
 };
 
+export const useEnableNestedAgentLoops = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.enableNestedAgentLoops ?? false);
+};
+
+export const useDisableMcpClientTools = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.disableMcpClientTools ?? false);
+};
+
+export const useDisableNativeMcpClientTools = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.disableNativeMcpClientTools ?? false);
+};
+
 export const useAreDesignerOptionsInitialized = () => {
   return useSelector((state: RootState) => state.designerOptions?.designerOptionsInitialized ?? false);
 };

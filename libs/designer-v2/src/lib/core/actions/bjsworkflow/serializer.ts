@@ -1,10 +1,10 @@
-import Constants from '../../../common/constants';
+import Constants, { MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
 import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
-import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
@@ -26,6 +26,7 @@ import {
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
+  ConnectionService,
   WorkflowService,
   getIntl,
   create,
@@ -75,7 +76,7 @@ import type {
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
-import { isA2AWorkflow } from '../../../core/state/workflow/helper';
+import { isA2AWorkflow, isBuiltInMcpOperation, isManagedMcpOperation } from '../../../core/state/workflow/helper';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -156,11 +157,30 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
   const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = getRecordEntry(connectionsMapping, nodeId);
-    if (!referenceKey || !referencesObject[referenceKey]) {
+    if (!referenceKey) {
       return references;
     }
 
-    references[referenceKey] = referencesObject[referenceKey];
+    const reference = referencesObject[referenceKey];
+    if (!reference) {
+      return references;
+    }
+
+    const operation = getRecordEntry(rootState.operations.operationInfo, nodeId);
+    // Built-in MCP operations don't use connection references; exclude them
+    if (operation && isBuiltInMcpOperation(operation)) {
+      return references;
+    }
+
+    const referenceConnectionId = reference.connection?.id;
+    if (
+      referenceConnectionId?.startsWith('/connectionProviders/mcpclient/') ||
+      referenceConnectionId?.startsWith('connectionProviders/mcpclient/')
+    ) {
+      return references;
+    }
+
+    references[referenceKey] = reference;
     return references;
   }, {});
 
@@ -287,10 +307,13 @@ export const serializeOperation = async (
   }
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
-  const isManagedMcpClient = operation.type?.toLowerCase() === 'mcpclienttool' && operation.kind?.toLowerCase() === "managed";
+  const isManagedMcpClient = isManagedMcpOperation(operation);
+  const isBuiltInMcpClient = isBuiltInMcpOperation(operation);
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
+  } else if (isBuiltInMcpClient) {
+    serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
@@ -332,6 +355,25 @@ export const serializeOperation = async (
     const replacedTriggerId = getRecordEntry(rootState.workflow.idReplacements, triggerId) ?? triggerId;
     // Remove any runAfter properties pointing to the trigger, EXCEPT for agent actions
     removeRunAfterTriggerFromOperation(serializedOperation, replacedTriggerId);
+  }
+
+  // If dynamic inputs are not yet available (still loading, failed, or never started) and
+  // no stashed parameters exist, preserve the original definition's inputs so dynamic
+  // parameter values are not lost on save.
+  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
+  const hasDynamicInputsError = !!errors?.[ErrorLevel.DynamicInputs];
+  const nodeExpectsDynamicInputs =
+    nodeInputs?.dynamicLoadStatus !== undefined && nodeInputs.dynamicLoadStatus !== DynamicLoadStatus.SUCCEEDED;
+  const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
+  const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
+  if ((hasDynamicInputsError || nodeExpectsDynamicInputs) && !hasStash && !hasDynamicParamsInGroups) {
+    const originalDef = getRecordEntry(rootState.workflow.operations, operationId);
+    if (originalDef && 'inputs' in originalDef && originalDef.inputs && 'inputs' in serializedOperation) {
+      serializedOperation = {
+        ...serializedOperation,
+        inputs: merge({}, originalDef.inputs, serializedOperation.inputs),
+      };
+    }
   }
 
   return serializedOperation;
@@ -429,12 +471,20 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
   const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
+
+  // For FoundryAgentServiceV2, strip system messages — instructions live on the Foundry agent definition
+  if (inputPathValue?.parameters?.agentModelType === 'FoundryAgentServiceV2' && Array.isArray(inputPathValue?.parameters?.messages)) {
+    inputPathValue.parameters.messages = inputPathValue.parameters.messages.filter(
+      (msg: { role?: string }) => msg.role?.toLowerCase() !== 'system'
+    );
+  }
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
-  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) || manifest.properties.runAfter?.type === RunAfterType.NotSupported
-    ? undefined
-    : getRunAfter(operationFromWorkflow, idReplacements);
+  const runAfter =
+    isRootNode(operationId, rootState.workflow.nodesMetadata) || manifest.properties.runAfter?.type === RunAfterType.NotSupported
+      ? undefined
+      : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
       ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, false /* encodePathComponents */)
@@ -475,7 +525,7 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
   const manifest = await getOperationManifest(nativeMcpOperationInfo);
   const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
-   
+
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
 
   const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
@@ -495,6 +545,102 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
       mcpServerPath: operationPath,
     },
   };
+
+  return {
+    type: type,
+    kind: kind,
+    ...optional('description', operationFromWorkflow.description),
+    ...optional('inputs', inputs),
+  };
+};
+
+const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+  const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
+  if (!operationInfo) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
+  }
+  const { type, kind } = operationInfo;
+
+  const inputsToSerialize = getOperationInputsToSerialize(rootState, nodeId);
+
+  const nativeMcpOperationInfo = { connectorId: 'connectionProviders/mcpclient', operationId: 'nativemcpclient' };
+  const manifest = await getOperationManifest(nativeMcpOperationInfo);
+  const inputParameters = serializeParametersFromManifest(inputsToSerialize, manifest);
+
+  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
+
+  // Built-in MCP operations should serialize Connection settings when available.
+  // If we can resolve the connection URL, emit the Connection block.
+  // Otherwise fall back to the parameter-based format to avoid sending an
+  // incomplete Connection object that the backend would reject.
+  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
+  const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
+  const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
+  const connectionId = connectionReference?.connection?.id;
+
+  // All auth-related property keys that can appear in parameterValues
+
+  let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
+  // Authentication can be a string (e.g., 'None') or an object (e.g., { type: 'ManagedServiceIdentity', audience: '...' })
+  // Collect all auth-related params so we can rebuild the full Authentication object
+  let authenticationType = 'None';
+  let authParams: Record<string, any> = {};
+  const existingAuth = existingConnectionInput?.Authentication;
+  if (typeof existingAuth === 'object' && existingAuth !== null) {
+    authenticationType = existingAuth.type ?? 'None';
+    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+      if (existingAuth[prop] != null) {
+        authParams[prop] = existingAuth[prop];
+      }
+    }
+  } else {
+    authenticationType = existingAuth ?? 'None';
+  }
+
+  if (connectionId) {
+    try {
+      const connection = await ConnectionService().getConnection(connectionId);
+      const parameterValues = (connection?.properties as any)?.parameterValues;
+      if (parameterValues) {
+        mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
+        authenticationType = parameterValues.authenticationType ?? authenticationType;
+        // Collect all auth-related params from parameterValues
+        authParams = {};
+        for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+          if (parameterValues[prop] != null) {
+            authParams[prop] = parameterValues[prop];
+          }
+        }
+      }
+    } catch {
+      // Keep existing values when connection lookup fails.
+    }
+  }
+
+  // Merge the Connection block with manifest-serialized parameters (e.g., allowedTools, headers)
+  // so user-configured inputs are preserved alongside the connection settings.
+  const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
+
+  let inputs: Record<string, any> | undefined;
+  if (mcpServerUrl) {
+    const connectionBlock: Record<string, any> = {
+      McpServerUrl: mcpServerUrl,
+    };
+    // Build Authentication as an object for non-None auth types (expected by consumption backend)
+    if (authenticationType && authenticationType !== 'None') {
+      connectionBlock.Authentication = { type: authenticationType, ...authParams };
+    } else {
+      connectionBlock.Authentication = authenticationType;
+    }
+    inputs = {
+      Connection: connectionBlock,
+      ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
+    };
+  } else if (hasParameters) {
+    inputs = {
+      parameters: { ...inputParameters.parameters },
+    };
+  }
 
   return {
     type: type,
@@ -589,15 +735,29 @@ export interface SerializedParameter extends ParameterInfo {
 export const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId) as NodeInputs;
-  return getOperationInputParameters(nodeInputs).map((input) => ({
+  const shouldEncode = shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {});
+
+  const currentParams = getOperationInputParameters(nodeInputs);
+  const serialized = currentParams.map((input) => ({
     ...input,
-    value: parameterValueToString(
-      input,
-      true /* isDefinitionValue */,
-      idReplacements,
-      shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {})
-    ),
+    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements, shouldEncode),
   }));
+
+  // If dynamic parameters were stashed (cleared during loading or after failure),
+  // include them as fallback so their values are not lost on save.
+  const stashed = nodeInputs?.stashedDynamicParameterValues;
+  if (stashed?.length) {
+    const currentKeys = new Set(currentParams.map((p) => p.parameterKey));
+    const missingStashed = stashed.filter((p) => !currentKeys.has(p.parameterKey));
+    for (const param of missingStashed) {
+      serialized.push({
+        ...param,
+        value: parameterValueToString(param, true /* isDefinitionValue */, idReplacements, shouldEncode),
+      });
+    }
+  }
+
+  return serialized;
 };
 
 const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
@@ -859,7 +1019,7 @@ interface AgentConnectionInfo {
 interface McpConnectionInfo {
   connectionReference: {
     connectionName: string;
-  }
+  };
 }
 
 const serializeHost = (
@@ -906,7 +1066,6 @@ const serializeHost = (
         },
       };
     case ConnectionReferenceKeyFormat.OpenApiConnection: {
-      // eslint-disable-next-line no-case-declarations
       const connectorSegments = connectorId.split('/');
       return {
         host: {
@@ -945,8 +1104,8 @@ const serializeHost = (
     case ConnectionReferenceKeyFormat.McpConnection:
       return {
         connectionReference: {
-          connectionName: referenceKey
-        }
+          connectionName: referenceKey,
+        },
       };
     default:
       throw new AssertionException(
@@ -967,17 +1126,11 @@ const serializeHost = (
 };
 
 const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
+  const result = { ...inputs };
   for (const [key, value] of Object.entries(hostInfo)) {
-    if (inputs[key]) {
-      // eslint-disable-next-line no-param-reassign
-      inputs[key] = { ...inputs[key], ...value };
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      inputs[key] = value;
-    }
+    result[key] = result[key] ? { ...result[key], ...value } : value;
   }
-
-  return inputs;
+  return result;
 };
 
 //#endregion
@@ -1006,28 +1159,28 @@ const serializeNestedOperations = async (
 
       if (subGraphDetail?.allowOperations) {
         const operations = operationNodes.filter((graph) => graph.subGraphLocation === subGraphLocation);
-          const nestedOperationsPromises = operations.map((nestedOperation) =>
-            serializeOperation(rootState, nestedOperation.id)
-          ) as Promise<LogicAppsV2.OperationDefinition>[];
-          const nestedOperations = await Promise.all(nestedOperationsPromises);
-          const idReplacements = rootState.workflow.idReplacements;
+        const nestedOperationsPromises = operations.map((nestedOperation) =>
+          serializeOperation(rootState, nestedOperation.id)
+        ) as Promise<LogicAppsV2.OperationDefinition>[];
+        const nestedOperations = await Promise.all(nestedOperationsPromises);
+        const idReplacements = rootState.workflow.idReplacements;
 
-          const newResult = {};
-          safeSetObjectPropertyValue(
-            newResult,
-            [subGraphLocation],
-            nestedOperations.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
-              if (!isNullOrEmpty(action)) {
-                const actionId = operations[index].id;
-                actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
-                return actions;
-              }
-
+        const newResult = {};
+        safeSetObjectPropertyValue(
+          newResult,
+          [subGraphLocation],
+          nestedOperations.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
+            if (!isNullOrEmpty(action)) {
+              const actionId = operations[index].id;
+              actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
               return actions;
-            }, {})
-          );
+            }
 
-          result = merge(result, newResult);
+            return actions;
+          }, {})
+        );
+
+        result = merge(result, newResult);
       }
 
       if (subGraphDetail?.isAdditive) {

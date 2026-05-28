@@ -16,7 +16,7 @@ import {
   FloatingRunButton,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
-import { guid, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
+import { BundleVersionRequirements, guid, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
@@ -32,6 +32,7 @@ export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
+  const { supportsUnitTest } = vscodeState;
   const styles = useAppStyles();
   const {
     panelMetaData,
@@ -60,6 +61,7 @@ export const DesignerApp = () => {
   const [initialWorkflow, setInitialWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [workflow, setWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
+  const isCodefulWorkflow = panelMetaData?.localSettings?.WORKFLOW_CODEFUL_ENABLED === 'true';
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
@@ -138,7 +140,12 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const isMultiVariableSupportEnabled = useMemo(
-    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', '1.114.22'),
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', BundleVersionRequirements.MULTI_VARIABLE),
+    [panelMetaData?.extensionBundleVersion]
+  );
+
+  const isNestedAgentLoopsSupportEnabled = useMemo(
+    () => isVersionSupported(panelMetaData?.extensionBundleVersion ?? '', BundleVersionRequirements.NESTED_AGENT_LOOPS),
     [panelMetaData?.extensionBundleVersion]
   );
 
@@ -318,6 +325,7 @@ export const DesignerApp = () => {
           hostOptions: {
             displayRuntimeInfo: true,
             enableMultiVariable: isMultiVariableSupportEnabled,
+            enableNestedAgentLoops: isNestedAgentLoopsSupportEnabled,
           },
         }}
       >
@@ -349,6 +357,8 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
+              supportsUnitTest={supportsUnitTest}
+              showRunHistory={!isCodefulWorkflow}
             />
 
             {!isCodeView && (

@@ -1,0 +1,28 @@
+{
+  "name": "la-e2e-codeful-task-recorder",
+  "displayName": "LA E2E Codeful Task Recorder",
+  "description": "Test-only extension that records VS Code task events to a JSONL file. Used by the codeful debug F5 E2E phase to detect the double clean+build regression.",
+  "publisher": "la-e2e",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "main": "./main.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      {
+        "command": "la-e2e.startDebug",
+        "title": "LA E2E: Start Debug"
+      },
+      {
+        "command": "la-e2e.stopDebug",
+        "title": "LA E2E: Stop Debug"
+      },
+      {
+        "command": "la-e2e.recorderPing",
+        "title": "LA E2E: Recorder Ping"
+      }
+    ]
+  }
+}

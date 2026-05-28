@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   Card,
   Divider,
@@ -11,12 +12,12 @@ import {
   MenuTrigger,
   mergeClasses,
   Spinner,
-  Text,
   tokens,
   Toolbar,
   ToolbarButton,
+  Tooltip,
 } from '@fluentui/react-components';
-import { isNullOrEmpty, ChatbotService } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty, ChatbotService, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer-v2';
 import {
   store as DesignerStore,
@@ -45,9 +46,11 @@ import {
   resetDesignerView,
   downloadDocumentAsFile,
   useNodesAndDynamicDataInitialized,
+  useChangeCount,
+  flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer-v2';
 import { useEffect, useMemo, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { environment } from '../../../environments/environment';
 import { isSuccessResponse } from './Services/HttpClient';
@@ -70,6 +73,10 @@ import {
   DocumentOnePageAddRegular,
   DocumentOnePageColumnsFilled,
   DocumentOnePageColumnsRegular,
+  ArrowSyncFilled,
+  CheckmarkCircleRegular,
+  ChatSparkleFilled,
+  ChatSparkleRegular,
 } from '@fluentui/react-icons';
 
 const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
@@ -80,6 +87,7 @@ const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
 const ErrorsIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
 const DocumentOnePageAddIcon = bundleIcon(DocumentOnePageAddFilled, DocumentOnePageAddRegular);
 const DocumentOnePageColumnsIcon = bundleIcon(DocumentOnePageColumnsFilled, DocumentOnePageColumnsRegular);
+const ChatIcon = bundleIcon(ChatSparkleFilled, ChatSparkleRegular);
 
 const useStyles = makeStyles({
   viewModeContainer: {
@@ -148,54 +156,102 @@ export const DesignerCommandBar = ({
   const styles = useStyles();
   const [lastSavedTime, setLastSavedTime] = useState<Date>();
   const [autoSaving, setAutoSaving] = useState<boolean>(false);
+  const [autosaveError, setAutosaveError] = useState<string>();
+
+  const designerIsDirty = useIsDesignerDirty();
+  const isInitialized = useNodesAndDynamicDataInitialized();
 
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
+  const queryClient = useQueryClient();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async (autoSave?: boolean) => {
-    setAutoSaving(autoSave ?? false);
-    const designerState = DesignerStore.getState();
-    const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: false,
-      ignoreNonCriticalErrors: true,
-    });
-
-    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc: any, [id, nodeInputs]) => {
-      const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
-        return parameterGroup.parameters.some((parameter) => {
-          const validationErrors = validateParameter(parameter, parameter.value);
-          if (validationErrors.length > 0) {
-            dispatch(
-              updateParameterValidation({
-                nodeId: id,
-                groupId: parameterGroup.id,
-                parameterId: parameter.id,
-                validationErrors,
-              })
-            );
-          }
-          return validationErrors.length;
-        });
+    try {
+      setAutoSaving(autoSave ?? false);
+      const designerState = DesignerStore.getState();
+      const serializedWorkflow = await serializeBJSWorkflow(designerState, {
+        skipValidation: false,
+        ignoreNonCriticalErrors: true,
       });
-      if (hasValidationErrors) {
-        acc[id] = hasValidationErrors;
+
+      const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc: any, [id, nodeInputs]) => {
+        const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
+          return parameterGroup.parameters.some((parameter) => {
+            const validationErrors = validateParameter(parameter, parameter.value);
+            if (validationErrors.length > 0) {
+              dispatch(
+                updateParameterValidation({
+                  nodeId: id,
+                  groupId: parameterGroup.id,
+                  parameterId: parameter.id,
+                  validationErrors,
+                })
+              );
+            }
+            return validationErrors.length;
+          });
+        });
+        if (hasValidationErrors) {
+          acc[id] = hasValidationErrors;
+        }
+        return acc;
+      }, {});
+
+      const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
+
+      const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
+
+      if (!hasParametersErrors || autoSave) {
+        await flushPendingFoundryUpdates(() => {
+          queryClient.invalidateQueries({ queryKey: ['foundryAgentVersions'] });
+        }).catch(console.error);
+        await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)), autoSave);
+        // Only refresh callback URL on explicit saves, not auto-saves.
+        // The callback URL doesn't change on draft saves, so calling it on every
+        // auto-save cycle just generates unnecessary network requests.
+        if (!autoSave && Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
+          updateCallbackUrl(designerState, dispatch);
+        }
+        // Invalidate the production workflow cache after a non-draft save (Publish)
+        // so that switching to published view shows the latest saved workflow
+        if (!autoSave && !isDraftMode) {
+          queryClient.invalidateQueries({ queryKey: ['workflowArtifactsConsumption'] });
+        }
+        if (autoSave) {
+          setLastSavedTime(new Date());
+        }
       }
-      return acc;
-    }, {});
-
-    const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
-
-    const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
-
-    if (!hasParametersErrors || autoSave) {
-      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)), autoSave);
-      if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
-        updateCallbackUrl(designerState, dispatch);
-      }
+    } catch (error: any) {
+      console.error('Error saving workflow:', error);
       if (autoSave) {
-        setLastSavedTime(new Date());
+        setAutosaveError(error?.message ?? 'Unknown error during auto-save');
       }
+    } finally {
+      setAutoSaving(false);
     }
   });
+
+  // When any change is made, set needsSaved to true
+  const changeCount = useChangeCount();
+  const [needsSaved, setNeedsSaved] = useState(false);
+  useEffect(() => {
+    if (changeCount === 0) {
+      return;
+    }
+    setNeedsSaved(true);
+  }, [changeCount]);
+
+  // Auto-save every 5 seconds if needed
+  useThrottledEffect(
+    () => {
+      if (!needsSaved || !isDraftMode || isSaving || isSaving || isMonitoringView) {
+        return;
+      }
+      setNeedsSaved(false);
+      saveWorkflowMutate(true);
+    },
+    [isDraftMode, isSaving, isMonitoringView, isSaving, needsSaved, saveWorkflowMutate, isCodeView],
+    5000
+  );
 
   const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
@@ -229,9 +285,6 @@ export const DesignerCommandBar = ({
     const queryResponse: string = response.data.properties.response;
     downloadDocumentAsFile(queryResponse);
   });
-
-  const designerIsDirty = useIsDesignerDirty();
-  const isInitialized = useNodesAndDynamicDataInitialized();
 
   const allInputErrors = useSelector((state: RootState) => {
     return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
@@ -333,8 +386,43 @@ export const DesignerCommandBar = ({
   );
 
   const DraftSaveNotification = () => {
-    if (isDraftMode && lastSavedTime) {
-      return <Text style={{ fontStyle: 'italic' }}>{`Draft auto-saved at: ${lastSavedTime?.toLocaleTimeString()}`}</Text>;
+    const [, setTick] = useState(0);
+
+    useEffect(() => {
+      if (isDraftMode && lastSavedTime) {
+        const interval = setInterval(() => {
+          setTick((prev) => prev + 1);
+        }, 2000); // Update every 2 seconds
+
+        return () => clearInterval(interval);
+      }
+    }, [lastSavedTime, isDraftMode]);
+
+    if (isDraftMode && (isDesignerView || isCodeView)) {
+      const style = { fontStyle: 'italic', fontSize: '12px' };
+      const iconStyle = { fontSize: '16px' };
+
+      if (isSaving || needsSaved) {
+        return (
+          <Badge appearance="ghost" color="informative" size="small" style={style} icon={<ArrowSyncFilled style={iconStyle} />}>
+            {'Saving...'}
+          </Badge>
+        );
+      }
+
+      return lastSavedTime ? (
+        <Tooltip content={`Draft autosaved at: ${lastSavedTime.toLocaleTimeString()}`} relationship="label" withArrow>
+          <Badge appearance="ghost" color="informative" size="small" style={style} icon={<CheckmarkCircleRegular style={iconStyle} />}>
+            {getRelativeTimeString(lastSavedTime)}
+          </Badge>
+        </Tooltip>
+      ) : autosaveError ? (
+        <Tooltip content={autosaveError} relationship="label" withArrow>
+          <Badge appearance="ghost" color="danger" size="small" style={style} icon={<ErrorCircleFilled style={iconStyle} />}>
+            {'Error autosaving draft'}
+          </Badge>
+        </Tooltip>
+      ) : null;
     }
     return null;
   };
@@ -393,9 +481,6 @@ export const DesignerCommandBar = ({
             Assertions
           </MenuItem>
           <MenuDivider />
-          <MenuItem disabled={!isCopilotReady} onClick={() => enableCopilot?.()}>
-            Assistant
-          </MenuItem>
           <MenuItem
             disabled={haveErrors || isDownloadingDocument}
             onClick={() => downloadDocument()}
@@ -415,15 +500,6 @@ export const DesignerCommandBar = ({
     </Menu>
   );
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (isDraftMode && !isSaving && isDesignerView && !isMonitoringView) {
-        saveWorkflowMutate(true);
-      }
-    }, 30000); // Auto-save every 30 seconds
-    return () => clearTimeout(timeoutId);
-  }, [saveIsDisabled, isDraftMode, isSaving, isDesignerView, saveWorkflowMutate, isMonitoringView]);
-
   return (
     <>
       <Toolbar
@@ -435,6 +511,9 @@ export const DesignerCommandBar = ({
         }}
       >
         <ViewModeSelect />
+        <ToolbarButton aria-label="Assistant" icon={<ChatIcon />} disabled={!isCopilotReady} onClick={() => enableCopilot?.()}>
+          Assistant
+        </ToolbarButton>
         <div style={{ flexGrow: 1 }} />
         <DraftSaveNotification />
         <SaveButton />
@@ -457,4 +536,37 @@ export const DesignerCommandBar = ({
       </div>
     </>
   );
+};
+
+const getRelativeTimeString = (savedTime: Date) => {
+  const now = new Date();
+  const diffMs = now.getTime() - savedTime.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+
+  if (diffHours > 0) {
+    const unit = diffHours === 1 ? Common_TimeFormat.hour : Common_TimeFormat.hours;
+    return Common_TimeFormat.autoSavedHours.replace('{0}', diffHours.toString()).replace('{1}', unit);
+  }
+  if (diffMinutes > 0) {
+    return Common_TimeFormat.autoSavedMinutes.replace('{0}', Common_TimeFormat.aFew).replace('{1}', Common_TimeFormat.minutes);
+  }
+  return Common_TimeFormat.autoSavedSeconds.replace('{0}', Common_TimeFormat.aFew).replace('{1}', Common_TimeFormat.seconds);
+};
+
+const Common_TimeFormat = {
+  /** 0 = number of seconds */
+  autoSavedSeconds: 'Autosaved {0} {1} ago',
+  /** 0 = number of minutes */
+  autoSavedMinutes: 'Autosaved {0} {1} ago',
+  /** 0 = number of hours */
+  autoSavedHours: 'Autosaved {0} {1} ago',
+  aFew: 'a few',
+  second: 'second',
+  seconds: 'seconds',
+  minute: 'minute',
+  minutes: 'minutes',
+  hour: 'hour',
+  hours: 'hours',
 };
