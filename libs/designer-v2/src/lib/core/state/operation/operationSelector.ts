@@ -126,16 +126,16 @@ export const useOperationDynamicInputsError = (nodeId: string | undefined): stri
     )
   );
 
-const selectAllConnectionErrors = createSelector(getOperationState, (state) =>
-  Object.entries(state.errors ?? {}).reduce((acc: any, [nodeId, errors]) => {
+const selectAllConnectionErrors = createSelector(getOperationState, (state) => {
+  const result: Record<string, string> = {};
+  for (const [nodeId, errors] of Object.entries(state.errors ?? {})) {
     const connectionError = errors?.[ErrorLevel.Connection];
-
     if (connectionError) {
-      acc[nodeId] = connectionError.message;
+      result[nodeId] = connectionError.message;
     }
-    return acc;
-  }, {})
-);
+  }
+  return result;
+});
 
 export const useAllConnectionErrors = (): Record<string, string> => useSelector(selectAllConnectionErrors);
 

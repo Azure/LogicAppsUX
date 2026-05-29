@@ -722,23 +722,21 @@ export const useIsWithinAgenticLoop = (id?: string): boolean => {
   );
 };
 
-export const useHasUpstreamAgenticLoop = (upstreamNodes: string[]): boolean => {
-  return useSelector(
-    useMemo(
-      () =>
-        createSelector(getWorkflowState, (state: WorkflowState) => {
-          for (const nodeId of upstreamNodes) {
-            const type = getRecordEntry(state.operations, nodeId)?.type;
-            if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
-              return true;
-            }
-          }
-          return false;
-        }),
-      [upstreamNodes]
-    )
-  );
-};
+const selectHasUpstreamAgenticLoop = createSelector(
+  [getWorkflowState, (_state: RootState, upstreamNodes: string[]) => upstreamNodes],
+  (state: WorkflowState, upstreamNodes: string[]) => {
+    for (const nodeId of upstreamNodes) {
+      const type = getRecordEntry(state.operations, nodeId)?.type;
+      if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
+        return true;
+      }
+    }
+    return false;
+  }
+);
+
+export const useHasUpstreamAgenticLoop = (upstreamNodes: string[]): boolean =>
+  useSelector((state: RootState) => selectHasUpstreamAgenticLoop(state, upstreamNodes));
 
 export const useAgentOperations = () => {
   const agentOperationsSelector = useMemo(
