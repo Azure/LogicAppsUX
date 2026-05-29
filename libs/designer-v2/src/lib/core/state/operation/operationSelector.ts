@@ -14,29 +14,37 @@ const getOperationState = (state: RootState) => state.operations;
 
 export const useOperationVisuals = (nodeId: string) =>
   useSelector(
-    createSelector(
-      getOperationState,
-      (state) =>
-        getRecordEntry(state.operationMetadata, nodeId) ?? {
-          brandColor: '',
-          iconUri: '',
-        }
+    useMemo(
+      () =>
+        createSelector(
+          getOperationState,
+          (state) =>
+            getRecordEntry(state.operationMetadata, nodeId) ?? {
+              brandColor: '',
+              iconUri: '',
+            }
+        ),
+      [nodeId]
     )
   );
 
 export const useOperationsVisuals = (nodesId: string[]) =>
   useSelector(
-    createSelector(getOperationState, (state) => {
-      return nodesId.map((nodeId) => {
-        return {
-          ...(getRecordEntry(state.operationMetadata, nodeId) ?? {
-            brandColor: '',
-            iconUri: '',
-          }),
-          id: nodeId,
-        };
-      });
-    })
+    useMemo(
+      () =>
+        createSelector(getOperationState, (state) => {
+          return nodesId.map((nodeId) => {
+            return {
+              ...(getRecordEntry(state.operationMetadata, nodeId) ?? {
+                brandColor: '',
+                iconUri: '',
+              }),
+              id: nodeId,
+            };
+          });
+        }),
+      [nodesId]
+    )
   );
 
 export const getNodeOperationData = (state: OperationMetadataState, nodeId: string) => {
@@ -102,53 +110,65 @@ export const useOperationParameterByName = (nodeId: string, parameterName: strin
 };
 
 export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined =>
-  useSelector(createSelector(getOperationState, (state) => getTopErrorInOperation(getRecordEntry(state.errors, nodeId))));
+  useSelector(
+    useMemo(() => createSelector(getOperationState, (state) => getTopErrorInOperation(getRecordEntry(state.errors, nodeId))), [nodeId])
+  );
 
 export const useOperationDynamicInputsError = (nodeId: string | undefined): string | undefined =>
   useSelector(
-    createSelector(getOperationState, (state) => {
-      const errors = getRecordEntry(state.errors, nodeId);
-      return errors?.[ErrorLevel.DynamicInputs]?.message;
-    })
-  );
-
-export const useAllConnectionErrors = (): Record<string, string> =>
-  useSelector(
-    createSelector(getOperationState, (state) =>
-      Object.entries(state.errors ?? {}).reduce((acc: any, [nodeId, errors]) => {
-        const connectionError = errors?.[ErrorLevel.Connection];
-        // eslint-disable-next-line no-param-reassign
-        if (connectionError) {
-          acc[nodeId] = connectionError.message;
-        }
-        return acc;
-      }, {})
+    useMemo(
+      () =>
+        createSelector(getOperationState, (state) => {
+          const errors = getRecordEntry(state.errors, nodeId);
+          return errors?.[ErrorLevel.DynamicInputs]?.message;
+        }),
+      [nodeId]
     )
   );
 
-export const useOperationsInputParameters = (): Record<string, NodeInputs> =>
-  useSelector(createSelector(getOperationState, (state) => state.inputParameters));
+const selectAllConnectionErrors = createSelector(getOperationState, (state) => {
+  const result: Record<string, string> = {};
+  for (const [nodeId, errors] of Object.entries(state.errors ?? {})) {
+    const connectionError = errors?.[ErrorLevel.Connection];
+    if (connectionError) {
+      result[nodeId] = connectionError.message;
+    }
+  }
+  return result;
+});
+
+export const useAllConnectionErrors = (): Record<string, string> => useSelector(selectAllConnectionErrors);
+
+const selectOperationsInputParameters = createSelector(getOperationState, (state) => state.inputParameters);
+
+export const useOperationsInputParameters = (): Record<string, NodeInputs> => useSelector(selectOperationsInputParameters);
 
 export const useSecureInputsOutputs = (nodeId: string): boolean =>
   useSelector(
-    createSelector(getOperationState, (state) => {
-      const nodeSettings = getRecordEntry(state.settings, nodeId);
-      return !!(nodeSettings?.secureInputs?.value || nodeSettings?.secureOutputs?.value);
-    })
+    useMemo(
+      () =>
+        createSelector(getOperationState, (state) => {
+          const nodeSettings = getRecordEntry(state.settings, nodeId);
+          return !!(nodeSettings?.secureInputs?.value || nodeSettings?.secureOutputs?.value);
+        }),
+      [nodeId]
+    )
   );
 
 export const useParameterStaticResult = (nodeId: string): NodeStaticResults | undefined =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.staticResults, nodeId)));
+  useSelector(useMemo(() => createSelector(getOperationState, (state) => getRecordEntry(state.staticResults, nodeId)), [nodeId]));
 
 export const useRawInputParameters = (nodeId: string): NodeInputs | undefined =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.inputParameters, nodeId)));
+  useSelector(useMemo(() => createSelector(getOperationState, (state) => getRecordEntry(state.inputParameters, nodeId)), [nodeId]));
 
 export const useRawOutputParameters = (nodeId: string): NodeOutputs | undefined =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.outputParameters, nodeId)));
+  useSelector(useMemo(() => createSelector(getOperationState, (state) => getRecordEntry(state.outputParameters, nodeId)), [nodeId]));
 
 const mockDeps: NodeDependencies = { inputs: {}, outputs: {} };
 export const useDependencies = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.dependencies, nodeId) ?? mockDeps));
+  useSelector(
+    useMemo(() => createSelector(getOperationState, (state) => getRecordEntry(state.dependencies, nodeId) ?? mockDeps), [nodeId])
+  );
 
 interface TokenDependencies {
   dependencies: Set<string>;
@@ -234,26 +254,35 @@ export const useNodesTokenDependencies = (nodes: Set<string>) => {
   }, [nodes, operationsInputsParameters, variables]);
 };
 
-export const useAllOperationErrors = () => useSelector(createSelector(getOperationState, (state) => state.errors));
+const selectAllOperationErrors = createSelector(getOperationState, (state) => state.errors);
+
+export const useAllOperationErrors = () => useSelector(selectAllOperationErrors);
 
 export const useParameterValidationErrors = (nodeId: string) => {
   const allParameters = useOperationInputParameters(nodeId);
   return useMemo(() => allParameters.flatMap((parameter) => parameter.validationErrors).filter((error) => error), [allParameters]);
 };
 
-export const useNodesInitialized = () => useSelector(createSelector(getOperationState, (state) => state.loadStatus.nodesInitialized));
+const selectNodesInitialized = createSelector(getOperationState, (state) => state.loadStatus.nodesInitialized);
 
-export const useNodesAndDynamicDataInitialized = () =>
-  useSelector(createSelector(getOperationState, (state) => state.loadStatus.nodesAndDynamicDataInitialized));
+export const useNodesInitialized = () => useSelector(selectNodesInitialized);
+
+const selectNodesAndDynamicDataInitialized = createSelector(getOperationState, (state) => state.loadStatus.nodesAndDynamicDataInitialized);
+
+export const useNodesAndDynamicDataInitialized = () => useSelector(selectNodesAndDynamicDataInitialized);
 
 export const useIsNodeLoadingDynamicData = (nodeId: string) =>
   useSelector(
-    createSelector(getOperationState, (state) => {
-      const parameterGroups = getRecordEntry(state.inputParameters, nodeId)?.parameterGroups;
-      return Object.values(parameterGroups ?? {}).some((parameterGroup) =>
-        parameterGroup.parameters.some((parameter) => parameter.dynamicData?.status === DynamicLoadStatus.LOADING)
-      );
-    })
+    useMemo(
+      () =>
+        createSelector(getOperationState, (state) => {
+          const parameterGroups = getRecordEntry(state.inputParameters, nodeId)?.parameterGroups;
+          return Object.values(parameterGroups ?? {}).some((parameterGroup) =>
+            parameterGroup.parameters.some((parameter) => parameter.dynamicData?.status === DynamicLoadStatus.LOADING)
+          );
+        }),
+      [nodeId]
+    )
   );
 
 const getTopErrorInOperation = (errors?: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
@@ -279,23 +308,28 @@ const getTopErrorInOperation = (errors?: Record<ErrorLevel, ErrorInfo | undefine
 };
 
 export const useBrandColor = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.brandColor ?? ''));
-
-export const useIconUri = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.iconUri ?? ''));
-
-export const useAllIcons = () =>
   useSelector(
-    createSelector(getOperationState, (state) => {
-      const icons: Record<string, string> = {};
-      Object.entries(state.operationMetadata).forEach(([nodeId, metadata]) => {
-        if (metadata?.iconUri) {
-          icons[nodeId] = metadata.iconUri;
-        }
-      });
-      return icons;
-    })
+    useMemo(() => createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.brandColor ?? ''), [nodeId])
   );
 
+export const useIconUri = (nodeId: string) =>
+  useSelector(
+    useMemo(() => createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.iconUri ?? ''), [nodeId])
+  );
+
+const selectAllIcons = createSelector(getOperationState, (state) => {
+  const icons: Record<string, string> = {};
+  Object.entries(state.operationMetadata).forEach(([nodeId, metadata]) => {
+    if (metadata?.iconUri) {
+      icons[nodeId] = metadata.iconUri;
+    }
+  });
+  return icons;
+});
+
+export const useAllIcons = () => useSelector(selectAllIcons);
+
 export const useNodeConnectorId = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationInfo, nodeId)?.connectorId));
+  useSelector(
+    useMemo(() => createSelector(getOperationState, (state) => getRecordEntry(state.operationInfo, nodeId)?.connectorId), [nodeId])
+  );
