@@ -183,8 +183,8 @@ export const getOperationSettings = (
       value: getSuppressWorkflowHeadersOnResponse(operation),
     },
     concurrency: {
-      isSupported: isConcurrencySupported(isTrigger, nodeType, manifest),
-      value: getConcurrency(isTrigger, nodeType, manifest, operation),
+      isSupported: isConcurrencySupported(isTrigger, nodeType, manifest, workflowKind),
+      value: getConcurrency(isTrigger, nodeType, manifest, operation, workflowKind),
     },
     singleInstance: getSingleInstance(operation),
     splitOnConfiguration: getSplitOnConfiguration(operation),
@@ -422,9 +422,10 @@ const getConcurrency = (
   isTrigger: boolean,
   nodeType: string,
   manifest?: OperationManifest,
-  definition?: LogicAppsV2.OperationDefinition
+  definition?: LogicAppsV2.OperationDefinition,
+  workflowKind?: WorkflowKind
 ): ConcurrencySettings | undefined => {
-  if (!isConcurrencySupported(isTrigger, nodeType, manifest)) {
+  if (!isConcurrencySupported(isTrigger, nodeType, manifest, workflowKind)) {
     return undefined;
   }
 
@@ -472,7 +473,16 @@ const getConcurrency = (
   return typeof concurrencyRuns === 'number' ? { enabled: true, runs: concurrencyRuns, maximumWaitingRuns } : { enabled: false };
 };
 
-const isConcurrencySupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
+const isConcurrencySupported = (
+  isTrigger: boolean,
+  nodeType: string,
+  manifest?: OperationManifest,
+  workflowKind?: WorkflowKind
+): boolean => {
+  // Stateless workflows do not support concurrency control
+  if (equals(workflowKind, WorkflowKind.STATELESS)) {
+    return false;
+  }
   if (manifest) {
     const concurrencySetting = getOperationSettingFromManifest(manifest, 'concurrency') as OperationManifestSetting<void> | undefined;
     return isSettingSupportedFromOperationManifest(concurrencySetting, isTrigger);

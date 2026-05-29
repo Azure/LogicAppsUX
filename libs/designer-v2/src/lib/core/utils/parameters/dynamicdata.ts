@@ -113,13 +113,16 @@ export async function getDynamicValues(
       shouldEncodeBasedOnMetadata
     );
 
+    // Thread the selected identity from connectionReference if present
+    const selectedIdentity = connectionReference?.connectionProperties?.authentication?.identity;
     return getListDynamicValues(
       connectionReference?.connection.id,
       operationInfo.connectorId,
       operationInfo.operationId,
       operationParameters,
       dynamicState,
-      operationInfo.operationPath
+      operationInfo.operationPath,
+      selectedIdentity
     );
   }
   if (isLegacyDynamicValuesExtension(definition)) {
@@ -739,7 +742,7 @@ function loadUnknownManifestBasedParameters(
   if (isNullOrEmpty(input) || !isObject(input)) {
     if (!knownKeys.has(keyPrefix)) {
       // Add a generic unknown parameter.
-      // eslint-disable-next-line no-param-reassign
+
       result[keyPrefix] = {
         key: keyPrefix,
         name: previousKeyPath,
@@ -947,7 +950,6 @@ function evaluateTemplateExpressions(
 function evaluateParameter(parameter: SerializedParameter, evaluator: ExpressionEvaluator): void {
   const value = parameter.value;
   if (isTemplateExpression(value)) {
-    // eslint-disable-next-line no-param-reassign
     parameter.value = evaluator.evaluate(value);
   }
   if (value !== parameter.value) {
