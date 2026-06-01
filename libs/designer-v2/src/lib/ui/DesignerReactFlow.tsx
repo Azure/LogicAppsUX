@@ -382,6 +382,13 @@ const DesignerReactFlow = (props: any) => {
       .map((node) => (containsIdTag(node.id) ? removeIdTag(node.id) : node.id));
   }, []);
 
+  // Reset the pending box selection when a new marquee begins. Without this, a fresh marquee
+  // that selects nothing won't fire onSelectionChange, leaving the ref holding the previous
+  // marquee's ids — which onSelectionEnd would then wrongly re-commit.
+  const onSelectionStart = useCallback(() => {
+    pendingBoxSelectionRef.current = [];
+  }, []);
+
   // Commit the box selection only once the user finishes dragging the selection box.
   const onSelectionEnd = useCallback(() => {
     const ids = pendingBoxSelectionRef.current;
@@ -498,11 +505,12 @@ const DesignerReactFlow = (props: any) => {
       edgeTypes={edgeTypes}
       elementsSelectable={true}
       selectionOnDrag={false}
-      selectionMode={SelectionMode.Partial}
+      selectionMode={SelectionMode.Full}
       selectionKeyCode={'Shift'}
       multiSelectionKeyCode={['Meta', 'Control']}
       panOnDrag={true}
       onSelectionChange={onSelectionChange}
+      onSelectionStart={onSelectionStart}
       onSelectionEnd={onSelectionEnd}
       panOnScroll={true}
       deleteKeyCode={['Backspace', 'Delete']}
