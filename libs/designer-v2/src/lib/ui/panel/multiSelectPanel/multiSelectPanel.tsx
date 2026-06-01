@@ -216,6 +216,11 @@ export const MultiSelectPanel = (props: CommonPanelProps): JSX.Element => {
             <DialogContent>
               <p>{intlText.deleteConfirmBody}</p>
               <p>{intlText.deleteConfirmDetail}</p>
+              <div className={styles.dialogList}>
+                {selectedNodeIds.map((nodeId) => (
+                  <MultiSelectNodeRow key={nodeId} nodeId={nodeId} />
+                ))}
+              </div>
             </DialogContent>
             <DialogActions>
               <Button appearance="primary" onClick={onConfirmDelete}>
