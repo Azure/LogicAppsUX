@@ -185,7 +185,11 @@ export const getTriggerCategories = (): BrowseCategoryConfig[] => {
   ];
 };
 
-export const getActionCategories = (allowAgents?: boolean, isAddingAgentTool?: boolean): BrowseCategoryConfig[] => {
+export const getActionCategories = (
+  allowAgents?: boolean,
+  isAddingAgentTool?: boolean,
+  disableMcpClientTools?: boolean
+): BrowseCategoryConfig[] => {
   const intl = getIntl();
 
   return [
@@ -206,7 +210,7 @@ export const getActionCategories = (allowAgents?: boolean, isAddingAgentTool?: b
     },
     {
       key: 'mcpServers',
-      visible: isAddingAgentTool,
+      visible: isAddingAgentTool && !(disableMcpClientTools ?? false),
       text: intl.formatMessage({
         defaultMessage: 'MCP servers',
         id: 'pVNvTG',

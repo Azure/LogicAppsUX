@@ -152,8 +152,8 @@ export const workspaceMessages = defineMessages({
     description: 'Autonomous agents workflow description',
   },
   AGENT_TITLE: {
-    defaultMessage: 'Conversational agents',
-    id: '6sEsIN',
+    defaultMessage: 'Conversational agents (Preview)',
+    id: 'M9LjqI',
     description: 'Conversational agent workflow option',
   },
   AGENT_DESCRIPTION: {
@@ -289,6 +289,16 @@ export const workspaceMessages = defineMessages({
     id: 'kkKTEH',
     description: 'Logic app with custom code description',
   },
+  CODEFUL_LABEL: {
+    defaultMessage: 'Logic app (codeful)',
+    id: 'mjCsxB',
+    description: 'Logic app codeful option',
+  },
+  CODEFUL_DESCRIPTION: {
+    defaultMessage: 'Standard logic app codeful with built-in connectors and triggers',
+    id: 'qZPmZV',
+    description: 'Standard logic app description',
+  },
   LOGIC_APP_RULES_ENGINE: {
     defaultMessage: 'Logic app with rules engine',
     id: 'sXNnlg',
@@ -400,14 +410,19 @@ export const workspaceMessages = defineMessages({
     id: 'ZY5ygq',
     description: 'Function namespace empty text',
   },
+  FUNCTION_NAMESPACE_VALIDATION: {
+    defaultMessage: 'Function namespace must be a valid C# namespace.',
+    id: '7/FvCp',
+    description: 'Function namespace validation message text',
+  },
   FUNCTION_NAME_EMPTY: {
     defaultMessage: 'Function name cannot be empty.',
     id: 'MbFszg',
     description: 'Function name empty text',
   },
   FUNCTION_NAME_VALIDATION: {
-    defaultMessage: 'Function name must start with a letter and can only contain letters, digits, "_" and "-".',
-    id: 'DdAlJ9',
+    defaultMessage: 'Function name must start with a letter and can only contain letters, digits, and "_".',
+    id: 'rD0nnU',
     description: 'Function name validation message text',
   },
   FUNCTION_FOLDER_NAME_EMPTY: {
@@ -557,6 +572,11 @@ export const workspaceMessages = defineMessages({
     id: 'Wxan/5',
     description: 'Create logic app project text.',
   },
+  CREATE_WORKFLOW: {
+    defaultMessage: 'Create workflow',
+    id: 'CBQYkl',
+    description: 'Create logic app workflow text.',
+  },
   CREATE_PROJECT_BUTTON: {
     defaultMessage: 'Create project',
     id: 'u+VFmh',
@@ -586,6 +606,11 @@ export const workspaceMessages = defineMessages({
     defaultMessage: 'Logic app created successfully!',
     id: '8YVpN7',
     description: 'Logic app creation success message',
+  },
+  WORKFLOW_CREATED: {
+    defaultMessage: 'Workflow created successfully!',
+    id: 'WXclF7',
+    description: 'Workflow creation success message',
   },
   WORKSPACE_CREATED: {
     defaultMessage: 'Workspace created successfully!',
@@ -1014,6 +1039,16 @@ export const designerMessages = defineMessages({
     id: 'gHm7zV',
     description: 'Errors button',
   },
+  UNDO: {
+    defaultMessage: 'Undo',
+    id: 'pvRsdK',
+    description: 'Undo button',
+  },
+  REDO: {
+    defaultMessage: 'Redo',
+    id: 'wBjdul',
+    description: 'Redo button',
+  },
   REFRESH: {
     defaultMessage: 'Refresh',
     id: 'rREwxg',
@@ -1071,6 +1106,16 @@ export const overviewMessages = defineMessages({
     defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view.',
     id: 'VWH06W',
     description: 'Debug project error message',
+  },
+  WORKFLOW: {
+    defaultMessage: 'Workflow',
+    id: 'lW2CUD',
+    description: 'Text for workflow label',
+  },
+  SELECT_WORKFLOW: {
+    defaultMessage: 'Select a workflow',
+    id: 'zbBPqf',
+    description: 'Text for workflow dropdown placeholder',
   },
 });
 

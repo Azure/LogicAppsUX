@@ -1,12 +1,12 @@
 import type { Connector, OperationInfo, OperationManifest } from '../../../utils/src';
 import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
-import { enableCodeInterpreterConsumption } from '../experimentationFlags';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import {
   agentType,
   getBuiltInOperationInfo,
   isBuiltInOperation,
+  mcpclientConnectorId,
   supportedBaseManifestObjects,
   supportedBaseManifestTypes,
 } from '../base/operationmanifest';
@@ -39,6 +39,8 @@ import {
 import { getBuiltInConnectorsInConsumption } from './search';
 import agentloop from './manifests/agentloop';
 import a2arequestManifest from './manifests/a2arequest';
+import builtinMcpClientManifest from './manifests/builtinmcpclient';
+import mcpclientconnector from './manifests/mcpclientconnector';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;
@@ -62,6 +64,19 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
       result[connector.id.toLowerCase()] = connector;
       return result;
     }, {});
+
+    this.allBuiltInConnectors[mcpclientconnector.id.toLowerCase()] = mcpclientconnector;
+  }
+
+  override isSupported(operationType?: string, operationKind?: string): boolean {
+    if (operationType?.toLowerCase() === 'mcpclienttool' && operationKind?.toLowerCase() === 'builtin') {
+      return true;
+    }
+    const { supportedTypes } = this.options;
+    const normalizedOperationType = operationType?.toLowerCase() ?? '';
+    return supportedTypes
+      ? supportedTypes.indexOf(normalizedOperationType) > -1
+      : supportedConsumptionManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -69,6 +84,12 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
       const normalizedOperationType = definition.type?.toLowerCase();
 
       switch (normalizedOperationType) {
+        case 'mcpclienttool':
+          return {
+            connectorId: mcpclientConnectorId,
+            operationId: 'nativemcpclient',
+          };
+
         case 'workflow':
           return {
             connectorId: invokeWorkflowGroup.id,
@@ -102,27 +123,14 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
-  override isSupported(operationType?: string, _operationKind?: string): boolean {
-    const { supportedTypes } = this.options;
-    const normalizedOperationType = operationType?.toLowerCase() ?? '';
-    return supportedTypes
-      ? supportedTypes.indexOf(normalizedOperationType) > -1
-      : supportedConsumptionManifestTypes.indexOf(normalizedOperationType) > -1;
-  }
-
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+    if (connectorId?.toLowerCase() === mcpclientConnectorId.toLowerCase() && operationId === 'nativemcpclient') {
+      return builtinMcpClientManifest;
+    }
+
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
 
     if (supportedManifest) {
-      if (operationId === agentType) {
-        const isCodeInterpreterEnabled = await enableCodeInterpreterConsumption();
-        if (!isCodeInterpreterEnabled) {
-          const manifest: OperationManifest = JSON.parse(JSON.stringify(supportedManifest));
-          delete (manifest.properties?.inputs?.properties as any)?.agentModelSettings?.properties?.agentChatCompletionSettings?.properties
-            ?.builtinTools;
-          return manifest;
-        }
-      }
       return supportedManifest;
     }
 
@@ -160,6 +168,17 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
   }
 
   override async getOperation(_connectorId: string, operationId: string, _useCachedData = false): Promise<any> {
+    if (_connectorId?.toLowerCase() === mcpclientConnectorId.toLowerCase() && operationId === 'nativemcpclient') {
+      return {
+        properties: {
+          connector: { properties: { displayName: builtinMcpClientManifest.properties.connector?.properties.displayName } },
+          brandColor: builtinMcpClientManifest.properties.brandColor,
+          description: builtinMcpClientManifest.properties.description,
+          iconUri: builtinMcpClientManifest.properties.iconUri,
+        },
+      };
+    }
+
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
 
     if (supportedManifest) {

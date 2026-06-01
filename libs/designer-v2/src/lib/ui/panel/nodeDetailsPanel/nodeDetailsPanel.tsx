@@ -18,19 +18,12 @@ import { isOperationNameValid, isTriggerNode } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { PinMenuItem } from '../../menuItems/pinMenuItem';
+import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from './childWorkflowHelpers';
+import { useRawInputsOutputs } from './useRawInputsOutputs';
 import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelScope } from '@microsoft/designer-ui';
-import {
-  equals,
-  getObjectPropertyValue,
-  getRecordEntry,
-  HostService,
-  isNullOrEmpty,
-  isNullOrUndefined,
-  SUBGRAPH_TYPES,
-  WorkflowService,
-} from '@microsoft/logic-apps-shared';
+import { equals, getRecordEntry, HostService, isNullOrUndefined, SUBGRAPH_TYPES, WorkflowService } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
@@ -198,37 +191,25 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     isResizeable,
   };
 
-  const getChildRunNameFromOutputs = (outputs: any): string | undefined => {
-    if (!isNullOrEmpty(outputs)) {
-      return getObjectPropertyValue(outputs, ['headers', 'value', 'x-ms-workflow-run-id']);
-    }
-    return undefined;
-  };
-
-  const getChildWorkflowIdFromInputs = (childWorkflowInputs: any): string | undefined => {
-    if (!isNullOrEmpty(childWorkflowInputs)) {
-      const workflow = getObjectPropertyValue(childWorkflowInputs, ['host.workflow.id']);
-      if (!isNullOrEmpty(workflow)) {
-        return workflow.value;
-      }
-    }
-    return undefined;
-  };
+  // Read raw (pre-binding) inputs/outputs from the shared React Query cache.
+  // The MonitoringTab populates this cache; we subscribe here to get the raw data
+  // before ManifestOutputsBinder drops properties not in the operation manifest schema.
+  const { data: rawInputsOutputs } = useRawInputsOutputs(selectedNode);
 
   const runName = useMemo(() => {
-    return getChildRunNameFromOutputs(runData?.outputs);
-  }, [runData?.outputs]);
+    return getChildRunNameFromOutputs(rawInputsOutputs?.outputs);
+  }, [rawInputsOutputs?.outputs]);
 
   const canShowLogicAppRun = useMemo(() => {
     return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName && !!HostService() && !!HostService()?.openMonitorView;
   }, [nodeType, runName]);
 
   const showLogicAppRunClick = useCallback(() => {
-    const workflowId = getChildWorkflowIdFromInputs(runData?.inputs);
+    const workflowId = getChildWorkflowIdFromInputs(rawInputsOutputs?.inputs);
     if (workflowId && runName && !!HostService()) {
       HostService().openMonitorView?.(workflowId, runName);
     }
-  }, [runData?.inputs, runName]);
+  }, [rawInputsOutputs?.inputs, runName]);
 
   // Re-render panel when undo/redo is performed to update panel parameter values, title etc.
   const undoRedoClickToggle = useUndoRedoClickToggle();
@@ -284,5 +265,5 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 };
 
 // TODO: 12798935 Analytics (event logging)
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 const handleTrackEvent = (_data: PageActionTelemetryData): void => {};

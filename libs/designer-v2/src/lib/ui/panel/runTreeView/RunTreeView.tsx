@@ -126,6 +126,24 @@ export const RunTreeView = () => {
     [setTreeItemsRecord]
   );
 
+  // Store action-level inputsLink/outputsLink on the parent tool tree item for built-in tools
+  const updateToolRunLinks = useCallback(
+    (toolRepetitionId: string, action: any) => {
+      setTreeItemsRecord((prev) => ({
+        ...prev,
+        [toolRepetitionId]: {
+          ...prev[toolRepetitionId],
+          data: {
+            ...(prev[toolRepetitionId]?.data ?? {}),
+            inputsLink: action?.inputsLink,
+            outputsLink: action?.outputsLink,
+          },
+        },
+      }));
+    },
+    [setTreeItemsRecord]
+  );
+
   // Reset tree items when run changes
   useEffect(() => {
     setTreeItemsRecord({});
@@ -274,10 +292,21 @@ export const RunTreeView = () => {
                 const actions: any[] = (actionRepetition.properties as any)?.actionResults ?? [];
                 actions.forEach((action: any, index: number) => {
                   const actionId = action?.name;
+                  const parentId = isBuiltInAgentTool(actionId) ? actionId : (nodesMetadata?.[actionId]?.graphId ?? 'root');
+                  const parentRepetitionId = `${parentId}-#${repetitionName}-${repIndexToName(index)}`;
+
+                  updateToolTimes(parentRepetitionId, action);
+
+                  // Built-in tools (e.g. code_interpreter) don't have sub-actions —
+                  // the action result is the tool itself, so skip creating a child node
+                  // and just update the tool tree item's links directly.
+                  if (isBuiltInAgentTool(actionId)) {
+                    updateToolRunLinks(parentRepetitionId, action);
+                    return;
+                  }
+
                   const leafRepetitionIndex = getCountRecord(actionId);
                   const newActionId = `${actionId}-#${repIndexToName(leafRepetitionIndex)}`;
-                  const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
-                  const parentRepetitionId = `${parentId}-#${repetitionName}-${repIndexToName(index)}`;
                   // Add new repetition node
                   const newTreeData = {
                     value: newActionId,
@@ -308,8 +337,6 @@ export const RunTreeView = () => {
                   };
                   addToCountRecord(actionId);
                   addTreeItem(newTreeData);
-
-                  updateToolTimes(parentRepetitionId, action);
                 });
               });
             });
@@ -433,10 +460,21 @@ export const RunTreeView = () => {
             }
 
             const actionId = action?.name;
+            const parentId = isBuiltInAgentTool(actionId) ? actionId : (nodesMetadata?.[actionId]?.graphId ?? 'root');
+            const parentRepetitionId = `${parentId}-#${repetitionName}-#${repIndexToName(index)}`;
+
+            updateToolTimes(parentRepetitionId, action);
+
+            // Built-in tools (e.g. code_interpreter) don't have sub-actions —
+            // the action result is the tool itself, so skip creating a child node
+            // and just update the tool tree item's links directly.
+            if (isBuiltInAgentTool(actionId)) {
+              updateToolRunLinks(parentRepetitionId, action);
+              return;
+            }
+
             const leafRepetitionIndex = getCountRecord(actionId);
             const newActionId = `${actionId}-#${repIndexToName(leafRepetitionIndex)}`;
-            const parentId = nodesMetadata?.[actionId]?.graphId ?? 'root';
-            const parentRepetitionId = `${parentId}-#${repetitionName}-#${repIndexToName(index)}`;
             // Add new repetition node
             const newTreeData = {
               value: newActionId,
@@ -467,8 +505,6 @@ export const RunTreeView = () => {
             };
             addToCountRecord(actionId);
             addTreeItem(newTreeData);
-
-            updateToolTimes(parentRepetitionId, action);
           });
         });
       });
@@ -507,7 +543,7 @@ export const RunTreeView = () => {
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actions, selectedRun, agentRepetitionData, chatHistoryData, addTreeItem, updateToolTimes, isRunning]);
+  }, [actions, selectedRun, agentRepetitionData, chatHistoryData, addTreeItem, updateToolTimes, updateToolRunLinks, isRunning]);
 
   const treeItems = useMemo(
     () =>

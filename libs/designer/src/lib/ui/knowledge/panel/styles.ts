@@ -20,10 +20,12 @@ export const usePanelStyles = makeStyles({
   },
   body: {
     padding: '0 20px',
-    overflow: 'hidden',
+    overflow: 'auto',
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    maxHeight: 'calc(100vh - 130px)',
+    minHeight: '80vh',
   },
   footer: {
     padding: `${tokens.spacingVerticalM} 20px`,
@@ -95,5 +97,48 @@ export const useEditPanelStyles = makeStyles({
     flexDirection: 'column',
     gap: '8px',
     paddingBottom: '16px',
+  },
+});
+
+export const useAddFilePanelStyles = makeStyles({
+  fileNameCell: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    overflow: 'hidden',
+    maxWidth: '100%',
+  },
+
+  fileNameText: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    flex: 1,
+    minWidth: 0,
+  },
+
+  inputCell: {
+    padding: `${tokens.spacingVerticalXS} ${tokens.spacingHorizontalXS}`,
+  },
+
+  inputText: {
+    width: '100%',
+  },
+
+  errorInput: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '7%',
+  },
+
+  actionButton: {
+    margin: `0 ${tokens.spacingHorizontalXS}`,
+  },
+
+  sectionItem: {
+    flexDirection: 'column',
+    gap: '8px',
+    paddingBottom: '24px',
+    width: '60%',
   },
 });

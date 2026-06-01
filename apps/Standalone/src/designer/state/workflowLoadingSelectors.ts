@@ -49,10 +49,6 @@ export const useShowChatBot = () => {
   return useSelector((state: RootState) => state.workflowLoader.showChatBot);
 };
 
-export const useShowConnectionsPanel = () => {
-  return useSelector((state: RootState) => state.workflowLoader?.showConnectionsPanel ?? false);
-};
-
 export const useShowEdgeDrawing = () => {
   return useSelector((state: RootState) => state.workflowLoader?.showEdgeDrawing ?? false);
 };

@@ -2,7 +2,14 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBarV2';
-import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, NotesData, ParametersData } from './Models/Workflow';
+import type {
+  ConnectionAndAppSetting,
+  ConnectionReferenceModel,
+  ConnectionsData,
+  NotesData,
+  ParametersData,
+  WorkflowJson,
+} from './Models/Workflow';
 import { Artifact, VfsArtifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
@@ -33,7 +40,6 @@ import {
   BaseAppServiceService,
   BaseChatbotService,
   BaseCopilotWorkflowEditorService,
-  InitCopilotWorkflowEditorService,
   BaseExperimentationService,
   BaseUserPreferenceService,
   BaseFunctionService,
@@ -75,13 +81,14 @@ import {
   setIsWorkflowDirty,
   setFocusNode,
   changePanelNode,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } from '@microsoft/logic-apps-designer-v2';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeViewV2';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 import { CustomEditorService } from './Services/customEditorService';
@@ -121,13 +128,13 @@ const DesignerEditor = () => {
   } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
   const { data: artifactData, isLoading: artifactsLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
-  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
+  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, hostingPlan);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
 
   // State props
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>(); // Current workflow on the designer
+  const [workflow, setWorkflow] = useState<WorkflowJson>(); // Current workflow on the designer
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
   const [isDraftMode, setIsDraftMode] = useState(true);
@@ -193,7 +200,7 @@ const DesignerEditor = () => {
     setIsDraftMode(draftMode);
   }, []);
 
-  const getConnectionConfiguration = async (connectionId: string, _manifest: any, useMcpConnections?: boolean): Promise<any> => {
+  const getConnectionConfiguration = async (connectionId: string, _manifest?: any, useMcpConnections?: boolean): Promise<any> => {
     if (!connectionId) {
       return Promise.resolve();
     }
@@ -291,10 +298,8 @@ const DesignerEditor = () => {
   const hideMonitoringView = useCallback(() => {
     if (isMonitoringView) {
       toggleMonitoringView();
-      setWorkflow({
-        ...artifactData?.properties.files[Artifact.WorkflowFile],
-        id: guid(),
-      });
+      const wf = artifactData?.properties.files[Artifact.WorkflowFile];
+      setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
     }
   }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
 
@@ -307,7 +312,6 @@ const DesignerEditor = () => {
   );
 
   // Services
-
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const supportsStateful = !equals(workflow?.kind, 'stateless');
   const services = useMemo(
@@ -354,9 +358,6 @@ const DesignerEditor = () => {
         definition,
         kind,
       };
-
-      delete workflowToSave.id;
-      delete workflowToSave.notes;
 
       const newManagedApiConnections = {
         ...(connectionsData?.managedApiConnections ?? {}),
@@ -566,8 +567,6 @@ const DesignerEditor = () => {
           ...prevState,
           definition: codeToConvert.definition,
           kind: codeToConvert.kind,
-          connectionReferences: codeToConvert.connectionReferences ?? {},
-          id: guid(),
         }));
         setIsDesignerView(true);
         setIsCodeView(false);
@@ -590,7 +589,7 @@ const DesignerEditor = () => {
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
-      setWorkflow((previousWorkflow?: Workflow) => {
+      setWorkflow((previousWorkflow?: WorkflowJson) => {
         if (!previousWorkflow) {
           // Do not update the workflow if previousWorkflow is undefined; return previous value unchanged
           return previousWorkflow;
@@ -641,7 +640,7 @@ const DesignerEditor = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
-        id={workflow?.id}
+        id={designerID}
         key={designerID}
         locale={language}
         options={{
@@ -668,7 +667,7 @@ const DesignerEditor = () => {
               notes: currentNotes,
               kind: workflow?.kind,
             }}
-            workflowId={workflow?.id}
+            workflowId={designerID}
             customCode={customCodeData}
             runInstance={runInstanceData as any}
             appSettings={settingsData?.properties}
@@ -715,16 +714,24 @@ const DesignerEditor = () => {
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
                   enableWorkflowEditing={true}
                   autoApply={true}
-                  onWorkflowProposed={(newWorkflow) => {
+                  onWorkflowProposed={(newWorkflow, changes) => {
                     setCurrentNotes(newWorkflow.notes ?? {});
                     if (newWorkflow.parameters) {
                       setCurrentParameters(newWorkflow.parameters as unknown as ParametersData);
                     }
                     setWorkflow({
-                      ...newWorkflow,
-                      id: guid(),
+                      definition: newWorkflow.definition,
+                      kind: newWorkflow.kind ?? 'stateful',
+                      metadata: (newWorkflow as any)?.metadata ?? workflow?.metadata,
                     });
                     DesignerStore.dispatch(setIsWorkflowDirty(true));
+                    if (changes) {
+                      const nodeIds = changes.flatMap((change) => change.nodeIds);
+                      DesignerStore.dispatch(setCopilotModifiedNodeIds(nodeIds));
+                      setTimeout(() => DesignerStore.dispatch(clearCopilotModifiedNodeIds()), 3000);
+                    } else {
+                      DesignerStore.dispatch(clearCopilotModifiedNodeIds());
+                    }
                   }}
                   getNodeVisuals={(nodeId) => {
                     const meta = DesignerStore.getState().operations.operationMetadata[nodeId];
@@ -1119,19 +1126,14 @@ const getDesignerServices = (
     location,
   });
 
-  // Initialize CopilotWorkflowEditorService if API key is configured
-  const copilotEditorApiKey = import.meta.env.VITE_COPILOT_EDITOR_API_KEY;
-  const copilotEditorEndpoint = import.meta.env.VITE_COPILOT_EDITOR_ENDPOINT;
-  if (copilotEditorApiKey && copilotEditorEndpoint) {
-    const copilotEditorService = new BaseCopilotWorkflowEditorService({
-      endpoint: copilotEditorEndpoint,
-      apiKey: copilotEditorApiKey,
-      model: import.meta.env.VITE_COPILOT_EDITOR_MODEL || undefined,
-      deploymentName: import.meta.env.VITE_COPILOT_EDITOR_DEPLOYMENT || undefined,
-      apiVersion: import.meta.env.VITE_COPILOT_EDITOR_API_VERSION || undefined,
-    });
-    InitCopilotWorkflowEditorService(copilotEditorService);
-  }
+  // Initialize CopilotWorkflowEditorService
+  const copilotWorkflowEditorService = new BaseCopilotWorkflowEditorService({
+    baseUrl: armUrl,
+    subscriptionId,
+    location: 'centralusstage',
+    apiVersion: '2026-03-01-preview',
+    getAccessToken: async () => (environment?.armToken ? `Bearer ${environment.armToken}` : ''),
+  });
 
   const customCodeService = new StandardCustomCodeService({
     apiVersion: '2018-11-01',
@@ -1149,7 +1151,9 @@ const getDesignerServices = (
     httpClient,
     identity: workflowApp?.identity,
   });
-  cognitiveServiceService.getFoundryAccessToken = async () => environment.foundryToken ?? environment.armToken ?? '';
+  // All Foundry calls go through the backend proxy — no direct Foundry token needed.
+  // The proxy handles auth server-side via MSI (production) or Bearer token (local POC).
+  cognitiveServiceService.foundryProxyBaseUrl = `${baseUrl}/foundryProxy`;
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
@@ -1171,6 +1175,7 @@ const getDesignerServices = (
     roleService,
     hostService,
     chatbotService,
+    copilotWorkflowEditorService,
     customCodeService,
     cognitiveServiceService,
     connectionParameterEditorService,

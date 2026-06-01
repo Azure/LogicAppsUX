@@ -52,7 +52,22 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { FoundryAgentDetails, buildFoundryPortalUrl, NavigateIcon, useFoundryAgentDetailsStyles } from '@microsoft/designer-ui';
-import { Divider, Link, MessageBar, MessageBarBody, Spinner, Text } from '@fluentui/react-components';
+import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
+import {
+  Button,
+  Divider,
+  Dropdown,
+  Field,
+  Input,
+  Link,
+  MessageBar,
+  MessageBarBody,
+  Option,
+  Spinner,
+  Text,
+  Textarea,
+  tokens,
+} from '@fluentui/react-components';
 import {
   PanelLocation,
   TokenPicker,
@@ -76,6 +91,7 @@ import {
   type NewResourceProps,
 } from '@microsoft/designer-ui';
 import {
+  AGENT_MODEL_CONFIG,
   clone,
   ConnectionService,
   EditorService,
@@ -85,9 +101,13 @@ import {
   getRecordEntry,
   isNullOrUndefined,
   isRecordNotEmpty,
+  RoleService,
   SUBGRAPH_TYPES,
+  SUPPORTED_AGENT_OPENAI_MODELS,
+  SUPPORTED_FOUNDRY_AGENT_MODELS,
 } from '@microsoft/logic-apps-shared';
-import type { Connection, Connector, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
+import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
+import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -97,22 +117,24 @@ import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
+  useFoundryAccountResourceIdForNode,
   useFoundryAgentsForNode,
   useFoundryAgentVersions,
   useFoundryModelsForNode,
   useFoundryProjectEndpointForNode,
   useFoundryProjectResourceIdForNode,
+  useCreateFoundryAgent,
 } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 import {
   categorizeConnections,
   getConnectionToAssign,
   getDeploymentIdParameter,
   agentModelTypeParameterKey,
-  getFirstDeploymentModelName,
+  getFirstDeploymentInfo,
   isAgentConnectorAndAgentModel,
   isAgentConnectorAndAgentServiceModel,
   isAgentConnectorAndDeploymentId,
-  isAgentConnectorAndFoundryAgentId,
+  isAgentConnectorAndFoundryAgentName,
 } from './helpers';
 import type { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -293,7 +315,9 @@ const updateConnectionAndDeployment = async (
   nodeId: string,
   connector: Connector,
   connection: Connection,
-  deploymentIdParamId: string
+  deploymentIdParamId: string,
+  state?: RootState,
+  modelType?: string
 ): Promise<void> => {
   try {
     // Update connection
@@ -307,24 +331,65 @@ const updateConnectionAndDeployment = async (
 
     ConnectionService().setupConnectionIfNeeded(connection);
 
-    // Get deployment model name
-    const deploymentModelName = await getFirstDeploymentModelName(connection);
+    // Get deployment info (name + model properties)
+    const deploymentInfo = await getFirstDeploymentInfo(connection);
+    const deploymentModelName = deploymentInfo?.deploymentName ?? '';
 
     // Update deployment model parameter
-    dispatch(
-      updateNodeParameters({
-        nodeId,
-        parameters: [
-          {
-            groupId: ParameterGroupKeys.DEFAULT,
-            parameterId: deploymentIdParamId,
-            propertiesToUpdate: {
-              value: [createLiteralValueSegment(deploymentModelName)],
-            },
-          },
-        ],
-      })
-    );
+    const parametersToUpdate: Array<{
+      groupId: string;
+      parameterId: string;
+      propertiesToUpdate: { value: any[] };
+    }> = [
+      {
+        groupId: ParameterGroupKeys.DEFAULT,
+        parameterId: deploymentIdParamId,
+        propertiesToUpdate: {
+          value: [createLiteralValueSegment(deploymentModelName)],
+        },
+      },
+    ];
+
+    // Also populate deploymentModelProperties for MicrosoftFoundry
+    if (modelType === 'MicrosoftFoundry' && state && deploymentInfo) {
+      const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+      const defaultGroup = parameterGroups?.[ParameterGroupKeys.DEFAULT];
+      if (defaultGroup) {
+        const modelName = deploymentInfo.modelName;
+        let modelFormat = deploymentInfo.modelFormat;
+        let modelVersion = deploymentInfo.modelVersion;
+        if (!modelFormat || !modelVersion) {
+          const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+          if (!modelFormat) {
+            modelFormat = config?.format ?? 'OpenAI';
+          }
+          if (!modelVersion) {
+            modelVersion = config?.version;
+          }
+        }
+
+        const deploymentModelPropertiesMap: Record<string, string | undefined> = {
+          'inputs.$.agentModelSettings.deploymentModelProperties.name': modelName,
+          'inputs.$.agentModelSettings.deploymentModelProperties.format': modelFormat,
+          'inputs.$.agentModelSettings.deploymentModelProperties.version': modelVersion,
+        };
+
+        for (const [key, val] of Object.entries(deploymentModelPropertiesMap)) {
+          const param = defaultGroup.parameters.find((p) => p.parameterKey === key);
+          if (param && val) {
+            parametersToUpdate.push({
+              groupId: ParameterGroupKeys.DEFAULT,
+              parameterId: param.id,
+              propertiesToUpdate: {
+                value: [createLiteralValueSegment(val)],
+              },
+            });
+          }
+        }
+      }
+    }
+
+    dispatch(updateNodeParameters({ nodeId, parameters: parametersToUpdate }));
   } catch {
     clearConnectionAndDeploymentModel(dispatch, nodeId, deploymentIdParamId);
   }
@@ -355,9 +420,27 @@ export const dynamicallyLoadAgentConnection = createAsyncThunk(
     }
 
     // Update connection and deployment model
-    await updateConnectionAndDeployment(dispatch, nodeId, connector, connectionToAssign, deploymentIdParam.id);
+    await updateConnectionAndDeployment(
+      dispatch,
+      nodeId,
+      connector,
+      connectionToAssign,
+      deploymentIdParam.id,
+      getState() as RootState,
+      modelType
+    );
   }
 );
+
+// Stable parameter keys for Foundry-managed fields (not locale-dependent)
+const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
+const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
+const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentName';
+
+const EMPTY_PARAM_GROUPS: Record<string, ParameterGroup> = {};
+type FoundryRbacStatus = 'idle' | 'checking' | 'assigning' | 'assigned' | 'not-needed' | 'failed';
+const RBAC_READY_STATUSES: ReadonlySet<FoundryRbacStatus> = new Set(['assigned', 'not-needed', 'failed']);
+const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
 
 export const ParameterSection = ({
   nodeId,
@@ -373,6 +456,7 @@ export const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
@@ -384,13 +468,90 @@ export const ParameterSection = ({
     nodeId,
     operationInfo?.connectorId
   );
-  const { data: foundryAgentsForNode } = useFoundryAgentsForNode(nodeId);
-  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
   const foundryProjectEndpoint = useFoundryProjectEndpointForNode(nodeId);
   const foundryProjectResourceId = useFoundryProjectResourceIdForNode(nodeId);
+  const foundryAccountResourceId = useFoundryAccountResourceIdForNode(nodeId);
+
+  // Compute isAgentServiceConnection early so we can gate proxy queries behind RBAC completion.
+  const earlyParamGroups = useSelector(
+    (state: RootState) => state.operations.inputParameters[nodeId]?.parameterGroups ?? EMPTY_PARAM_GROUPS
+  );
+  const isAgentServiceConnection = useMemo(() => {
+    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, earlyParamGroups);
+  }, [group.id, earlyParamGroups, operationInfo.connectorId]);
+
+  // Track RBAC assignment status so proxy queries don't fire before roles are assigned.
+  const [foundryRbacStatus, setFoundryRbacStatus] = useState<FoundryRbacStatus>('idle');
+  const rbacAssignedResourceRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isAgentServiceConnection || !foundryAccountResourceId) {
+      return;
+    }
+    if (rbacAssignedResourceRef.current === foundryAccountResourceId) {
+      return;
+    }
+    let cancelled = false;
+    const targetResourceId = foundryAccountResourceId;
+    rbacAssignedResourceRef.current = targetResourceId;
+    setFoundryRbacStatus('checking');
+    getMissingRoleDefinitions(targetResourceId, [
+      'Azure AI User',
+      'Azure AI Administrator',
+      'Azure AI Developer',
+      'Cognitive Services Contributor',
+    ])
+      .then((missingRoles) => {
+        if (cancelled || rbacAssignedResourceRef.current !== targetResourceId) {
+          return;
+        }
+        if (missingRoles.length === 0) {
+          setFoundryRbacStatus('not-needed');
+          return;
+        }
+        setFoundryRbacStatus('assigning');
+        return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
+          () => {
+            if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
+              setFoundryRbacStatus('assigned');
+            }
+          }
+        );
+      })
+      .catch((err) => {
+        console.error('Foundry RBAC assignment failed:', err);
+        if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
+          rbacAssignedResourceRef.current = undefined;
+          setFoundryRbacStatus('failed');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAgentServiceConnection, foundryAccountResourceId]);
+
+  // Foundry proxy queries fire immediately — the query's own retry logic handles auth errors.
+  const { data: foundryAgentsForNode, isFetching: foundryAgentsFetching, refetch: refetchFoundryAgents } = useFoundryAgentsForNode(nodeId);
+  const { data: foundryModelsForNode, isLoading: foundryModelsLoading } = useFoundryModelsForNode(nodeId);
+  const createFoundryAgent = useCreateFoundryAgent(nodeId);
+  const [isCreatingNewAgent, setIsCreatingNewAgent] = useState(false);
+
+  // Track whether loading has been ongoing long enough to show a hint (new connections may take a minute for RBAC propagation).
+  const [showSlowLoadingHint, setShowSlowLoadingHint] = useState(false);
+  const isFoundryLoading = foundryRbacStatus === 'checking' || foundryRbacStatus === 'assigning' || foundryAgentsFetching;
+  useEffect(() => {
+    if (!isAgentServiceConnection || !isFoundryLoading) {
+      setShowSlowLoadingHint(false);
+      return;
+    }
+    const timer = setTimeout(() => setShowSlowLoadingHint(true), 10_000);
+    return () => clearTimeout(timer);
+  }, [isAgentServiceConnection, isFoundryLoading]);
 
   // Track the selected Foundry agent and pending edits (restore from module-level store on remount)
   const existingPendingUpdate = getPendingFoundryUpdate(nodeId);
+  // Capture in a ref so the version-init effect can read it without re-triggering on every render.
+  const existingPendingUpdateRef = useRef(existingPendingUpdate);
   const [pendingFoundryModel, setPendingFoundryModel] = useState<string | undefined>(existingPendingUpdate?.updates?.model);
   const [pendingFoundryInstructions, setPendingFoundryInstructions] = useState<string | undefined>(
     existingPendingUpdate?.updates?.instructions
@@ -427,11 +588,7 @@ export const ParameterSection = ({
     [nodeId, rootState.operations.inputParameters]
   );
 
-  const isAgentServiceConnection = useMemo(() => {
-    return isAgentConnectorAndAgentServiceModel(operationInfo.connectorId, group.id, nodeInputs.parameterGroups);
-  }, [group.id, nodeInputs.parameterGroups, operationInfo.connectorId]);
-
-  // Detect if the node already has a foundryAgentId but agentModelType hasn't been populated yet.
+  // Detect if the node already has a foundryAgentName but agentModelType hasn't been populated yet.
   // This avoids flashing the generic agent UI while the connection type is still resolving.
   // Only applies when agentModelType is truly empty (not yet loaded); if it's set to a
   // non-Foundry value (e.g. after switching connections) this must return false.
@@ -443,7 +600,7 @@ export const ParameterSection = ({
     if (agentModelType) {
       return false;
     }
-    return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
+    return !!findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value;
   }, [isAgentServiceConnection, nodeInputs.parameterGroups, group.id]);
 
   // Derive the currently selected Foundry agent from parameter values
@@ -451,26 +608,42 @@ export const ParameterSection = ({
     if (!isAgentServiceConnection || !foundryAgentsForNode?.length) {
       return undefined;
     }
-    const agentId = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentId')?.value?.[0]?.value;
-    if (!agentId) {
+    const agentName = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value;
+    if (!agentName) {
       return undefined;
     }
-    return foundryAgentsForNode.find((a) => a.id === agentId);
+    return foundryAgentsForNode.find((a) => a.name === agentName || a.id === agentName);
   }, [isAgentServiceConnection, foundryAgentsForNode, nodeInputs.parameterGroups, group.id]);
 
   // Fetch versions for the selected Foundry agent
   const { data: foundryVersions, isLoading: foundryVersionsLoading } = useFoundryAgentVersions(nodeId, selectedFoundryAgent?.id);
-  const [selectedFoundryVersion, setSelectedFoundryVersion] = useState<string | undefined>(undefined);
+  const [selectedFoundryVersion, setSelectedFoundryVersion] = useState<string | undefined>(existingPendingUpdate?.selectedVersion);
 
-  // Derive the effective version: explicit selection > stored param > latest available
+  // Flag set by the agent-switch reset effect to force effectiveFoundryVersion to
+  // ignore stale selectedFoundryVersion/storedVersion during the transition render.
+  const agentSwitchPendingRef = useRef(false);
+
+  // Derive the effective version: explicit selection > stored param > latest available.
+  // foundryVersionName stores the version name (e.g. "v7") for the backend.
+  // The UI state (selectedFoundryVersion) uses the version number (e.g. "7") for dropdown matching.
   const effectiveFoundryVersion = useMemo(() => {
+    if (agentSwitchPendingRef.current) {
+      // Agent just switched — ignore stale selections, wait for new versions to load
+      if (foundryVersions?.length) {
+        return String(foundryVersions[0].version);
+      }
+      return undefined;
+    }
     if (selectedFoundryVersion && foundryVersions?.some((v) => String(v.version) === selectedFoundryVersion)) {
       return selectedFoundryVersion;
     }
     if (foundryVersions?.length) {
-      const storedVersion = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber')?.value?.[0]?.value;
-      if (storedVersion && foundryVersions.some((v) => String(v.version) === storedVersion)) {
-        return storedVersion;
+      const storedVersionName = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName')?.value?.[0]?.value;
+      if (storedVersionName) {
+        const match = foundryVersions.find((v) => `v${v.version}` === storedVersionName);
+        if (match) {
+          return String(match.version);
+        }
       }
       return String(foundryVersions[0].version);
     }
@@ -478,29 +651,54 @@ export const ParameterSection = ({
   }, [selectedFoundryVersion, foundryVersions, nodeInputs.parameterGroups, group.id]);
 
   // Persist the derived version into state AND sync to workflow parameters on initial load
+  // or after an agent switch (hasInitializedVersion is reset when the agent changes).
+  // Skip instructions sync when pending edits exist (restored from module store after panel reopen).
   const hasInitializedVersion = useRef(false);
   useEffect(() => {
     if (!effectiveFoundryVersion || hasInitializedVersion.current) {
       return;
     }
     hasInitializedVersion.current = true;
-    setSelectedFoundryVersion(effectiveFoundryVersion);
+    // Clear the agent-switch flag now that we've initialized with the correct version
+    agentSwitchPendingRef.current = false;
 
-    // Write version number to workflow parameter
-    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
-    if (versionParam) {
-      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, effectiveFoundryVersion);
+    // Only overwrite selectedFoundryVersion if we don't already have a restored pending version
+    if (!existingPendingUpdateRef.current?.selectedVersion) {
+      setSelectedFoundryVersion(effectiveFoundryVersion);
     }
 
-    // Sync system instructions from the selected version/agent into messages parameter
+    // Write version name (e.g. "v7") to workflow parameter for the backend
+    const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
     const selectedVersionData = foundryVersions?.find((v) => String(v.version) === effectiveFoundryVersion);
-    const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
-    if (instructions) {
-      const messagesParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.messages');
-      if (messagesParam) {
-        const currentValue = convertSegmentsToString(messagesParam.value ?? []);
-        const newMessagesJson = buildMessagesWithSystemInstructions(currentValue, instructions);
-        dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
+    if (versionParam && selectedVersionData) {
+      dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${selectedVersionData.version}`);
+    }
+
+    // Sync model and instructions from the selected version to local state.
+    // Skip only when the user has pending edits from a prior session (panel reopen).
+    const hasPendingEdits =
+      existingPendingUpdateRef.current?.updates?.model !== undefined ||
+      existingPendingUpdateRef.current?.updates?.instructions !== undefined;
+    if (!hasPendingEdits) {
+      const model = selectedVersionData?.definition?.model;
+      const instructions = selectedVersionData?.definition?.instructions ?? selectedFoundryAgent?.instructions;
+
+      if (model) {
+        setPendingFoundryModel(model);
+        const deploymentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.deploymentId');
+        if (deploymentParam) {
+          dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, model);
+        }
+      }
+
+      if (instructions) {
+        setPendingFoundryInstructions(instructions);
+        const messagesParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.messages');
+        if (messagesParam) {
+          const currentValue = convertSegmentsToString(messagesParam.value ?? []);
+          const newMessagesJson = buildMessagesWithSystemInstructions(currentValue, instructions);
+          dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
+        }
       }
     }
   }, [effectiveFoundryVersion, foundryVersions, selectedFoundryAgent, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
@@ -512,24 +710,52 @@ export const ParameterSection = ({
       consumeVersionRefresh(nodeId);
 
       const latestVersion = String(foundryVersions[0].version);
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
-      const storedVersion = versionParam?.value?.[0]?.value;
-
-      if (latestVersion !== storedVersion) {
+      if (latestVersion !== selectedFoundryVersion) {
         setSelectedFoundryVersion(latestVersion);
+        const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
         if (versionParam) {
-          dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, latestVersion);
+          dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${foundryVersions[0].version}`);
         }
       }
     }
-  }, [foundryVersions, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
+  }, [foundryVersions, nodeInputs.parameterGroups, group.id, nodeId, dispatch, selectedFoundryVersion]);
 
-  // Reset pending overrides when the selected agent changes to avoid stale state
+  // Reset pending overrides when the user switches to a different agent (not on initial load).
+  // On remount, selectedFoundryAgent?.id goes undefined → actual ID as React Query resolves;
+  // that transition must NOT clear the pending edits we just restored from the module store.
+  // Track the raw foundryAgentName parameter value to reliably detect agent switches,
+  // since selectedFoundryAgent depends on the React Query agents list loading.
+  const rawFoundryAgentName = useMemo(
+    () => findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName')?.value?.[0]?.value as string | undefined,
+    [nodeInputs.parameterGroups, group.id]
+  );
+  const prevRawAgentNameRef = useRef<string | undefined>(rawFoundryAgentName);
   useEffect(() => {
-    setPendingFoundryModel(undefined);
-    setPendingFoundryInstructions(undefined);
-    clearPendingFoundryUpdate(nodeId);
-  }, [selectedFoundryAgent?.id, nodeId]);
+    if (!isAgentServiceConnection) {
+      return;
+    }
+    const prevId = prevRawAgentNameRef.current;
+    prevRawAgentNameRef.current = rawFoundryAgentName;
+
+    // Only clear when the agent param truly changes from one name to another
+    if (prevId && rawFoundryAgentName && prevId !== rawFoundryAgentName) {
+      setPendingFoundryModel(undefined);
+      setPendingFoundryInstructions(undefined);
+      setSelectedFoundryVersion(undefined);
+      clearPendingFoundryUpdate(nodeId);
+      // Allow the version-init effect to run again for the new agent's versions
+      hasInitializedVersion.current = false;
+      // Signal effectiveFoundryVersion to ignore stale state during the transition
+      agentSwitchPendingRef.current = true;
+
+      // Clear the stored version parameter so effectiveFoundryVersion
+      // falls through to the latest version for the new agent.
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
+      if (versionParam) {
+        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, '');
+      }
+    }
+  }, [isAgentServiceConnection, rawFoundryAgentName, nodeId, nodeInputs.parameterGroups, group.id, dispatch]);
 
   // Sync pending Foundry changes to the update store for save-time flushing
   const handleFoundryModelChange = useCallback(
@@ -541,6 +767,7 @@ export const ParameterSection = ({
           projectEndpoint: foundryProjectEndpoint,
           agentId: selectedFoundryAgent.id,
           updates: { model: modelId, instructions: pendingFoundryInstructions ?? selectedFoundryAgent.instructions ?? undefined },
+          selectedVersion: selectedFoundryVersion,
         });
       }
       // Sync deploymentId parameter so the serialized workflow includes the model
@@ -549,7 +776,16 @@ export const ParameterSection = ({
         dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, modelId);
       }
     },
-    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryInstructions, nodeInputs.parameterGroups, group.id, dispatch]
+    [
+      foundryProjectEndpoint,
+      selectedFoundryAgent,
+      nodeId,
+      pendingFoundryInstructions,
+      selectedFoundryVersion,
+      nodeInputs.parameterGroups,
+      group.id,
+      dispatch,
+    ]
   );
 
   const handleFoundryInstructionsChange = useCallback(
@@ -561,6 +797,7 @@ export const ParameterSection = ({
           projectEndpoint: foundryProjectEndpoint,
           agentId: selectedFoundryAgent.id,
           updates: { model: pendingFoundryModel ?? selectedFoundryAgent.model, instructions },
+          selectedVersion: selectedFoundryVersion,
         });
       }
       // Sync system instructions to the messages parameter so the workflow definition stays in sync
@@ -571,10 +808,19 @@ export const ParameterSection = ({
         dispatchParamUpdate(dispatch, nodeId, group.id, messagesParam, newMessagesJson);
       }
     },
-    [foundryProjectEndpoint, selectedFoundryAgent, nodeId, pendingFoundryModel, nodeInputs.parameterGroups, group.id, dispatch]
+    [
+      foundryProjectEndpoint,
+      selectedFoundryAgent,
+      nodeId,
+      pendingFoundryModel,
+      selectedFoundryVersion,
+      nodeInputs.parameterGroups,
+      group.id,
+      dispatch,
+    ]
   );
 
-  // Sync deploymentId when the selected Foundry agent changes (initial selection or switching agents)
+  // Sync deploymentId and foundryAgentName when the selected Foundry agent changes
   const prevFoundryAgentIdRef = useRef<string | undefined>(selectedFoundryAgent?.id);
   useEffect(() => {
     if (!selectedFoundryAgent || selectedFoundryAgent.id === prevFoundryAgentIdRef.current) {
@@ -587,6 +833,12 @@ export const ParameterSection = ({
     if (deploymentParam) {
       const modelValue = pendingFoundryModel ?? selectedFoundryAgent.model;
       dispatchParamUpdate(dispatch, nodeId, group.id, deploymentParam, modelValue);
+    }
+
+    // Sync foundryAgentName so the serialized workflow always has the correct agent name
+    const nameParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName');
+    if (nameParam) {
+      dispatchParamUpdate(dispatch, nodeId, group.id, nameParam, selectedFoundryAgent.name ?? selectedFoundryAgent.id);
     }
   }, [selectedFoundryAgent, pendingFoundryModel, nodeInputs.parameterGroups, group.id, nodeId, dispatch]);
 
@@ -607,10 +859,23 @@ export const ParameterSection = ({
         setPendingFoundryInstructions(instructions);
       }
 
-      // Sync version number to workflow parameter
-      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentVersionNumber');
+      // Persist version + model/instructions to the module-level store so edits survive panel close/reopen
+      if (foundryProjectEndpoint && selectedFoundryAgent) {
+        setPendingFoundryUpdate(nodeId, {
+          projectEndpoint: foundryProjectEndpoint,
+          agentId: selectedFoundryAgent.id,
+          updates: {
+            model: model ?? pendingFoundryModel ?? selectedFoundryAgent.model,
+            instructions: instructions ?? pendingFoundryInstructions ?? selectedFoundryAgent.instructions ?? undefined,
+          },
+          selectedVersion: version.version,
+        });
+      }
+
+      // Sync version name (e.g. "v7") to workflow parameter
+      const versionParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryVersionName');
       if (versionParam) {
-        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, version.version);
+        dispatchParamUpdate(dispatch, nodeId, group.id, versionParam, `v${version.version}`);
       }
 
       // Sync deploymentId to the version's model
@@ -621,7 +886,63 @@ export const ParameterSection = ({
         }
       }
     },
-    [nodeInputs.parameterGroups, group.id, dispatch, nodeId]
+    [
+      nodeInputs.parameterGroups,
+      group.id,
+      dispatch,
+      nodeId,
+      foundryProjectEndpoint,
+      selectedFoundryAgent,
+      pendingFoundryModel,
+      pendingFoundryInstructions,
+    ]
+  );
+
+  const addFoundryDependentUpdates = useCallback((_currentDependencies: typeof dependencies, _parameterId: string) => {
+    // foundryVersionName is written by the version init effect after
+    // versions load — no eager default needed here.
+  }, []);
+
+  const handleCreateFoundryAgent = useCallback(
+    async (options: CreateFoundryAgentOptions) => {
+      const newAgent = await createFoundryAgent.mutateAsync(options);
+      const foundryAgentParam = findFoundryParam(nodeInputs.parameterGroups, group.id, 'inputs.$.foundryAgentName');
+
+      if (foundryAgentParam) {
+        const updatedDependencies = clone(dependencies);
+        addFoundryDependentUpdates(updatedDependencies, foundryAgentParam.id);
+
+        dispatch(
+          updateParameterAndDependencies({
+            nodeId,
+            groupId: group.id,
+            parameterId: foundryAgentParam.id,
+            properties: { value: [createLiteralValueSegment(newAgent.name ?? newAgent.id)] },
+            isTrigger,
+            operationInfo,
+            connectionReference,
+            nodeInputs,
+            dependencies: updatedDependencies,
+            operationDefinition,
+          })
+        );
+      }
+
+      return newAgent;
+    },
+    [
+      createFoundryAgent,
+      nodeInputs,
+      group.id,
+      dependencies,
+      addFoundryDependentUpdates,
+      dispatch,
+      nodeId,
+      isTrigger,
+      operationInfo,
+      connectionReference,
+      operationDefinition,
+    ]
   );
 
   const onValueChange = useCallback(
@@ -737,57 +1058,55 @@ export const ParameterSection = ({
       };
 
       if (isAgentDeployment) {
-        const deploymentInfo = value?.length
-          ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
-          : undefined;
+        const selectedModelId = value?.length ? value[0]?.value : undefined;
 
-        updatedDependencies.inputs ??= {};
+        if (selectedModelId) {
+          // Look up the deployment from the API response (deployment.name = deploymentId, deployment.properties.model.name = modelId)
+          const deploymentInfo = deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === selectedModelId);
 
-        const agentDeploymentKeys = [
-          {
-            key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
-            default: deploymentInfo?.properties?.model?.name,
-          },
-          {
-            key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
-            default: deploymentInfo?.properties?.model?.format,
-          },
-          {
-            key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
-            default: deploymentInfo?.properties?.model?.version,
-          },
-        ];
+          const modelName = deploymentInfo?.properties?.model?.name;
+          let modelFormat = deploymentInfo?.properties?.model?.format;
+          let modelVersion = deploymentInfo?.properties?.model?.version;
 
-        for (const { key, default: defaultValue } of agentDeploymentKeys) {
-          const dependency = buildDependentParam(key, defaultValue);
-          if (dependency) {
-            updatedDependencies.inputs[key] = dependency;
+          // For MicrosoftFoundry, format and version are not in the ARM response — fill from AGENT_MODEL_CONFIG
+          if (!modelFormat || !modelVersion) {
+            const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+            if (!modelFormat) {
+              modelFormat = config?.format ?? 'OpenAI';
+            }
+            if (!modelVersion) {
+              modelVersion = config?.version;
+            }
+          }
+
+          updatedDependencies.inputs ??= {};
+
+          const agentDeploymentKeys = [
+            {
+              key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
+              default: modelName,
+            },
+            {
+              key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
+              default: modelFormat,
+            },
+            {
+              key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
+              default: modelVersion,
+            },
+          ];
+
+          for (const { key, default: defaultValue } of agentDeploymentKeys) {
+            const dependency = buildDependentParam(key, defaultValue);
+            if (dependency) {
+              updatedDependencies.inputs[key] = dependency;
+            }
           }
         }
       }
 
-      // Auto-populate dependent fields when foundryAgentId changes
-      const isFoundryAgentSelection = isAgentConnectorAndFoundryAgentId(operationInfo.connectorId ?? '', parameter?.parameterName ?? '');
-      if (isFoundryAgentSelection && foundryAgentsForNode?.length) {
-        const selectedAgentName = value?.length ? value[0]?.value : undefined;
-        const selectedAgentId = selectedAgentName ? selectedAgentName : undefined;
-        const selectedAgent = selectedAgentId ? foundryAgentsForNode.find((a: any) => a.id === selectedAgentId) : undefined;
-
-        updatedDependencies.inputs ??= {};
-
-        const foundryDependentKeys = [
-          { key: 'inputs.$.foundryAgentName', default: selectedAgent?.name ?? selectedAgentName },
-          { key: 'inputs.$.foundryAgentVersion', default: 'v2' },
-          { key: 'inputs.$.foundryAgentVersionNumber', default: '' },
-        ];
-
-        for (const { key, default: defaultValue } of foundryDependentKeys) {
-          const dependency = buildDependentParam(key, defaultValue);
-          if (dependency) {
-            updatedDependencies.inputs[key] = dependency;
-          }
-        }
-      }
+      // foundryVersionName is written by the version init effect after
+      // versions load — no eager default needed here.
 
       // Final dispatch to update parameter and dependencies
       dispatch(
@@ -1064,6 +1383,10 @@ export const ParameterSection = ({
     }
   };
 
+  const currentAgentModelType = findFoundryParam(nodeInputs.parameterGroups, group.id, agentModelTypeParameterKey)?.value?.[0]?.value as
+    | string
+    | undefined;
+
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
@@ -1103,14 +1426,16 @@ export const ParameterSection = ({
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
         isA2AWorkflow,
-        foundryAgentsForNode ?? []
+        foundryAgentsForNode ?? [],
+        currentAgentModelType
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
         operationInfo,
         param,
         cognitiveServiceAccountId,
-        refetchAndSetDeploymentForCognitiveServiceAccount
+        refetchAndSetDeploymentForCognitiveServiceAccount,
+        currentAgentModelType
       );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
@@ -1128,7 +1453,9 @@ export const ParameterSection = ({
           editorOptions,
           tokenEditor: true,
           isDynamic: dynamicData !== undefined,
-          isLoading: dynamicData?.status === DynamicLoadStatus.LOADING,
+          isLoading:
+            dynamicData?.status === DynamicLoadStatus.LOADING ||
+            (isAgentConnectorAndFoundryAgentName(operationInfo.connectorId ?? '', param.parameterName ?? '') && !foundryAgentsForNode),
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
@@ -1176,12 +1503,7 @@ export const ParameterSection = ({
       };
     });
 
-  // Stable parameter keys for Foundry-managed fields (not locale-dependent)
-  const FOUNDRY_DEPLOYMENT_KEY = 'inputs.$.deploymentId';
-  const FOUNDRY_MESSAGES_KEY = 'inputs.$.messages';
-  const FOUNDRY_AGENT_KEY = 'inputs.$.foundryAgentId';
-
-  // Hide AI model & collapse system instructions when Foundry manages them
+  // Hide AI model and system instructions when Foundry manages them
   const filterFoundryManagedSettings = (items: typeof settings) =>
     items
       .filter((s) => !(s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_DEPLOYMENT_KEY))
@@ -1191,12 +1513,116 @@ export const ParameterSection = ({
             ...s,
             settingProp: {
               ...s.settingProp,
-              editorOptions: { ...(s.settingProp as any).editorOptions, hideSystemInstructions: true, hideLabel: true },
+              editorOptions: {
+                ...(s.settingProp as any).editorOptions,
+                hideSystemInstructions: true,
+                hideLabel: true,
+              },
             },
           };
         }
         return s;
       });
+
+  const handleRefreshFoundryAgents = useCallback(() => {
+    // Ungate the query in case RBAC is still checking/assigning, then refetch
+    if (!RBAC_READY_STATUSES.has(foundryRbacStatus)) {
+      setFoundryRbacStatus('not-needed');
+    }
+    // Small delay to let React re-render with enabled: true before refetching
+    setTimeout(() => refetchFoundryAgents(), 0);
+  }, [foundryRbacStatus, refetchFoundryAgents]);
+
+  const createAgentInline = (
+    <CreateFoundryAgentInline
+      models={foundryModelsForNode ?? []}
+      modelsLoading={foundryModelsLoading}
+      onCreateAgent={handleCreateFoundryAgent}
+      isCreating={createFoundryAgent.isLoading}
+      disabled={readOnly}
+      showForm={isCreatingNewAgent}
+      onShowFormChange={setIsCreatingNewAgent}
+      onRefresh={handleRefreshFoundryAgents}
+      isRefreshing={foundryAgentsFetching}
+    />
+  );
+
+  // Show a loading state while RBAC roles are being set up or agents are loading.
+  // Keeps messaging simple — no mention of RBAC/permissions. Retries happen silently in the background.
+  if (isAgentServiceConnection && !foundryAgentsForNode) {
+    const agentPickerSetting = settings.find(
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
+    );
+    const filtered = filterFoundryManagedSettings(settings.filter((s) => s !== agentPickerSetting));
+    const loadingAgentsLabel = intl.formatMessage({
+      defaultMessage: 'Loading agents...',
+      id: '7oWsJU',
+      description: 'Spinner label shown while Foundry agents list is loading.',
+    });
+    const slowHintLabel = intl.formatMessage({
+      defaultMessage: 'This may take a moment for new connections.',
+      id: 'p+zBbS',
+      description: 'Hint shown after 10 seconds when loading Foundry agents takes longer than expected.',
+    });
+
+    return (
+      <>
+        {agentPickerSetting && (
+          <SettingsSection
+            id={group.id}
+            nodeId={nodeId}
+            sectionName={group.description}
+            title={group.description}
+            settings={[agentPickerSetting]}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
+            showSeparator={false}
+          />
+        )}
+        <div role="status" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '16px 0' }}>
+          <Spinner size="tiny" label={loadingAgentsLabel} />
+          {showSlowLoadingHint && (
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+              {slowHintLabel}
+            </Text>
+          )}
+        </div>
+        {filtered.length > 0 && (
+          <SettingsSection id={`${group.id}-after-foundry`} nodeId={nodeId} settings={filtered} showHeading={false} showSeparator={false} />
+        )}
+      </>
+    );
+  }
+
+  // Show a loading indicator while Foundry agent data is resolving.
+  // This prevents the generic agent parameters from flashing before the Foundry-specific UI loads.
+  if (isAgentServiceConnection && rawFoundryAgentName && !selectedFoundryAgent && !foundryAgentsForNode) {
+    const agentPickerSetting = settings.find(
+      (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
+    );
+
+    return (
+      <>
+        {agentPickerSetting && (
+          <SettingsSection
+            id={group.id}
+            nodeId={nodeId}
+            sectionName={group.description}
+            title={group.description}
+            settings={[agentPickerSetting]}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
+            showSeparator={false}
+          />
+        )}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+          <Spinner size="tiny" label="Loading agent details..." />
+        </div>
+      </>
+    );
+  }
 
   // Insert FoundryAgentDetails inline after the Agent picker when a Foundry agent is selected
   if (isAgentServiceConnection && selectedFoundryAgent) {
@@ -1214,35 +1640,46 @@ export const ParameterSection = ({
 
       return (
         <>
-          <SettingsSection
-            id={group.id}
-            nodeId={nodeId}
-            sectionName={group.description}
-            title={group.description}
-            settings={[agentPickerSetting]}
-            showHeading={!!group.description}
-            expanded={sectionExpanded}
-            onHeaderClick={onExpandSection}
-            showSeparator={false}
-          />
-          <FoundryPortalLink
-            projectResourceId={foundryProjectResourceId}
-            agentId={selectedFoundryAgent.id}
-            versionNumber={effectiveFoundryVersion}
-          />
-          <FoundryAgentDetails
-            agent={selectedFoundryAgent}
-            models={foundryModelsForNode ?? []}
-            modelsLoading={foundryModelsLoading}
-            selectedModel={pendingFoundryModel}
-            selectedInstructions={pendingFoundryInstructions}
-            onModelChange={handleFoundryModelChange}
-            onInstructionsChange={handleFoundryInstructionsChange}
-            versions={foundryVersions}
-            versionsLoading={foundryVersionsLoading}
-            selectedVersion={effectiveFoundryVersion}
-            onVersionChange={handleFoundryVersionChange}
-          />
+          <div style={isCreatingNewAgent ? { opacity: 0.5 } : undefined} {...(isCreatingNewAgent ? { inert: '' } : {})}>
+            <SettingsSection
+              id={group.id}
+              nodeId={nodeId}
+              sectionName={group.description}
+              title={group.description}
+              settings={[agentPickerSetting]}
+              showHeading={!!group.description}
+              expanded={sectionExpanded}
+              onHeaderClick={onExpandSection}
+              showSeparator={false}
+            />
+          </div>
+          {isCreatingNewAgent ? (
+            createAgentInline
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <FoundryPortalLink
+                  projectResourceId={foundryProjectResourceId}
+                  agentId={selectedFoundryAgent.id}
+                  versionNumber={effectiveFoundryVersion}
+                />
+                {createAgentInline}
+              </div>
+              <FoundryAgentDetails
+                agent={selectedFoundryAgent}
+                models={foundryModelsForNode ?? []}
+                modelsLoading={foundryModelsLoading}
+                selectedModel={pendingFoundryModel}
+                selectedInstructions={pendingFoundryInstructions}
+                onModelChange={handleFoundryModelChange}
+                onInstructionsChange={handleFoundryInstructionsChange}
+                versions={foundryVersions}
+                versionsLoading={foundryVersionsLoading}
+                selectedVersion={effectiveFoundryVersion}
+                onVersionChange={handleFoundryVersionChange}
+              />
+            </>
+          )}
           {remainingSettings.length > 0 && (
             <SettingsSection
               id={`${group.id}-after-foundry`}
@@ -1267,20 +1704,56 @@ export const ParameterSection = ({
     const agentIdx = filtered.findIndex(
       (s) => s.settingType === 'SettingTokenField' && (s.settingProp as any)?.parameterKey === FOUNDRY_AGENT_KEY
     );
-    const finalSettings = agentIdx > 0 ? [filtered[agentIdx], ...filtered.slice(0, agentIdx), ...filtered.slice(agentIdx + 1)] : filtered;
 
+    // Split: agent picker goes first, then create button, then remaining settings
+    if (agentIdx >= 0) {
+      const agentPickerSetting = filtered[agentIdx];
+      const otherSettings = [...filtered.slice(0, agentIdx), ...filtered.slice(agentIdx + 1)];
+
+      return (
+        <>
+          <SettingsSection
+            key={`${group.id}-agents-${foundryAgentsForNode?.length ?? 0}`}
+            id={group.id}
+            nodeId={nodeId}
+            sectionName={group.description}
+            title={group.description}
+            settings={[agentPickerSetting]}
+            showHeading={!!group.description}
+            expanded={sectionExpanded}
+            onHeaderClick={onExpandSection}
+            showSeparator={false}
+          />
+          {createAgentInline}
+          {otherSettings.length > 0 && (
+            <SettingsSection
+              id={`${group.id}-after-foundry`}
+              nodeId={nodeId}
+              settings={otherSettings}
+              showHeading={false}
+              showSeparator={false}
+            />
+          )}
+        </>
+      );
+    }
+
+    // Fallback: no agent picker found, render all with create at end
     return (
-      <SettingsSection
-        id={group.id}
-        nodeId={nodeId}
-        sectionName={group.description}
-        title={group.description}
-        settings={finalSettings}
-        showHeading={!!group.description}
-        expanded={sectionExpanded}
-        onHeaderClick={onExpandSection}
-        showSeparator={false}
-      />
+      <>
+        <SettingsSection
+          id={group.id}
+          nodeId={nodeId}
+          sectionName={group.description}
+          title={group.description}
+          settings={filtered}
+          showHeading={!!group.description}
+          expanded={sectionExpanded}
+          onHeaderClick={onExpandSection}
+          showSeparator={false}
+        />
+        {createAgentInline}
+      </>
     );
   }
 
@@ -1311,7 +1784,8 @@ export const getCustomEditorForNewResource = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
   cognitiveServiceAccountId: string | undefined,
-  refetchDeploymentModels: (name?: string) => void
+  refetchDeploymentModels: (name?: string) => void,
+  agentModelType?: string
 ): NewResourceProps | undefined => {
   const hasInlineCreateResource = getPropertyValue(parameter.schema, ExtensionProperties.InlineCreateNewResource);
 
@@ -1329,7 +1803,7 @@ export const getCustomEditorForNewResource = (
         hideLabel: customEditor.hideLabel,
         editor: customEditor.editor,
         onClose: refetchDeploymentModels,
-        metadata: { cognitiveServiceAccountId: cognitiveServiceAccountId },
+        metadata: { cognitiveServiceAccountId: cognitiveServiceAccountId, agentModelType },
       };
     }
   }
@@ -1344,7 +1818,8 @@ export const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
   isA2AWorkflow?: boolean,
-  foundryAgents: any[] = []
+  foundryAgents: any[] = [],
+  agentModelType?: string
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1375,8 +1850,9 @@ export const getEditorAndOptions = (
   // Handle agent connector with supported deployments
   const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
+    const supportedModels = agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
     const options = deploymentsForCognitiveServiceAccount
-      .filter((deployment) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+      .filter((deployment) => supportedModels.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
       .map((deployment) => ({
         value: deployment.name,
         displayName: `${deployment.name}${deployment.properties?.model?.name ? ` (${deployment.properties.model.name})` : ''}`,
@@ -1389,10 +1865,10 @@ export const getEditorAndOptions = (
   }
 
   // Handle Foundry agent picker combobox
-  const isFoundryAgent = isAgentConnectorAndFoundryAgentId(operationInfo?.connectorId, parameter.parameterName);
+  const isFoundryAgent = isAgentConnectorAndFoundryAgentName(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isFoundryAgent) {
     const options = foundryAgents.map((agent: any) => ({
-      value: agent.id,
+      value: agent.name ?? agent.id,
       displayName: `${agent.name ?? agent.id}${agent.model ? ` (${agent.model})` : ''}`,
     }));
 
@@ -1457,6 +1933,224 @@ function buildMessagesWithSystemInstructions(currentMessagesValue: string, syste
     // preserve nothing on parse failure
   }
   return JSON.stringify([{ role: 'system', content: systemInstructions }, ...userMessages], null, 4);
+}
+
+interface CreateFoundryAgentInlineProps {
+  models: Array<{ id: string; name: string }>;
+  modelsLoading: boolean;
+  onCreateAgent: (options: CreateFoundryAgentOptions) => Promise<unknown>;
+  isCreating: boolean;
+  disabled?: boolean;
+  /** Controlled form visibility — lifted to parent so it can toggle other sections. */
+  showForm: boolean;
+  onShowFormChange: (show: boolean) => void;
+  /** Callback to refresh the agents list. */
+  onRefresh?: () => void;
+  /** Whether agents are currently loading — shows spinner on refresh icon. */
+  isRefreshing?: boolean;
+}
+
+function CreateFoundryAgentInline({
+  models,
+  modelsLoading,
+  onCreateAgent,
+  isCreating,
+  disabled,
+  showForm,
+  onShowFormChange,
+  onRefresh,
+  isRefreshing,
+}: CreateFoundryAgentInlineProps) {
+  const intl = useIntl();
+  const [name, setName] = useState('');
+  const [model, setModel] = useState('');
+  const [instructions, setInstructions] = useState('');
+  const [error, setError] = useState<string>();
+
+  const createNewLabel = intl.formatMessage({
+    defaultMessage: 'Create new agent',
+    id: 'p4xMOj',
+    description: 'Button text for opening the inline Foundry agent creation form',
+  });
+  const agentNameLabel = intl.formatMessage({
+    defaultMessage: 'Agent name',
+    id: '613mcC',
+    description: 'Label for the Foundry agent name input',
+  });
+  const agentNamePlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter agent name',
+    id: 'fYtcZk',
+    description: 'Placeholder for the Foundry agent name input',
+  });
+  const modelLabel = intl.formatMessage({
+    defaultMessage: 'Model',
+    id: 'TC0zK+',
+    description: 'Label for the Foundry agent model picker',
+  });
+  const modelPlaceholder = intl.formatMessage({
+    defaultMessage: 'Select a model',
+    id: 'Y+MQKB',
+    description: 'Placeholder for the Foundry agent model picker',
+  });
+  const loadingModelsLabel = intl.formatMessage({
+    defaultMessage: 'Loading models...',
+    id: 'atEeTB',
+    description: 'Placeholder shown while Foundry models are loading',
+  });
+  const instructionsLabel = intl.formatMessage({
+    defaultMessage: 'Instructions',
+    id: 't306o+',
+    description: 'Label for the Foundry agent instructions input',
+  });
+  const instructionsPlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter agent instructions',
+    id: 'RSU2+t',
+    description: 'Placeholder for the Foundry agent instructions input',
+  });
+  const createLabel = intl.formatMessage({
+    defaultMessage: 'Create',
+    id: 'uzC6bF',
+    description: 'Button text for creating a Foundry agent',
+  });
+  const creatingLabel = intl.formatMessage({
+    defaultMessage: 'Creating...',
+    id: 'sYIWaR',
+    description: 'Button text shown while a Foundry agent is being created',
+  });
+  const cancelLabel = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    id: 'focYsW',
+    description: 'Button text for canceling inline Foundry agent creation',
+  });
+  const createErrorLabel = intl.formatMessage({
+    defaultMessage: 'Failed to create agent',
+    id: '9CPgcj',
+    description: 'Fallback error message shown when Foundry agent creation fails',
+  });
+
+  const resetForm = useCallback(() => {
+    onShowFormChange(false);
+    setName('');
+    setModel('');
+    setInstructions('');
+    setError(undefined);
+  }, [onShowFormChange]);
+
+  const handleSubmit = useCallback(async () => {
+    const trimmedName = name.trim();
+    const trimmedInstructions = instructions.trim();
+    if (!trimmedName || !model) {
+      return;
+    }
+
+    setError(undefined);
+    try {
+      await onCreateAgent({
+        name: trimmedName,
+        model,
+        ...(trimmedInstructions && { instructions: trimmedInstructions }),
+      });
+      resetForm();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : createErrorLabel);
+    }
+  }, [createErrorLabel, instructions, model, name, onCreateAgent, resetForm]);
+
+  if (!showForm) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Button
+          appearance="transparent"
+          size="small"
+          onClick={() => onShowFormChange(true)}
+          disabled={disabled}
+          style={{ justifyContent: 'flex-start', paddingLeft: 0, color: 'var(--colorBrandForeground1)' }}
+        >
+          + {createNewLabel}
+        </Button>
+        {onRefresh && (
+          <Button
+            icon={isRefreshing ? <Spinner size="extra-tiny" /> : <RefreshIcon />}
+            appearance="transparent"
+            size="small"
+            onClick={onRefresh}
+            aria-label={intl.formatMessage({
+              defaultMessage: 'Refresh agents list',
+              id: '5Bxb+T',
+              description: 'Accessible label for the button that refreshes the list of Foundry agents.',
+            })}
+            style={{ minWidth: 'auto' }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        padding: '8px',
+        marginTop: '4px',
+        backgroundColor: 'var(--colorNeutralBackground2)',
+        borderRadius: '4px',
+        border: '1px solid var(--colorBrandStroke1)',
+      }}
+    >
+      <Text weight="semibold" size={300}>
+        {createNewLabel}
+      </Text>
+      <Field label={agentNameLabel} required>
+        <Input
+          value={name}
+          onChange={(_, data) => setName(data.value)}
+          placeholder={agentNamePlaceholder}
+          size="small"
+          disabled={isCreating}
+        />
+      </Field>
+      <Field label={modelLabel} required>
+        <Dropdown
+          value={models.find((entry) => entry.id === model)?.name ?? ''}
+          selectedOptions={model ? [model] : []}
+          onOptionSelect={(_, data) => setModel(data.optionValue ?? '')}
+          placeholder={modelsLoading ? loadingModelsLabel : modelPlaceholder}
+          disabled={isCreating || modelsLoading}
+        >
+          {models.map((entry) => (
+            <Option key={entry.id} value={entry.id} text={entry.name}>
+              {entry.name}
+            </Option>
+          ))}
+        </Dropdown>
+      </Field>
+      <Field label={instructionsLabel}>
+        <Textarea
+          value={instructions}
+          onChange={(_, data) => setInstructions(data.value)}
+          placeholder={instructionsPlaceholder}
+          resize="vertical"
+          disabled={isCreating}
+        />
+      </Field>
+      {error ? (
+        <Text size={200} style={{ color: 'var(--colorPaletteRedForeground1)' }}>
+          {error}
+        </Text>
+      ) : null}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <Button appearance="primary" size="small" onClick={handleSubmit} disabled={!name.trim() || !model || isCreating}>
+          {isCreating ? creatingLabel : createLabel}
+        </Button>
+        {isCreating ? <Spinner size="tiny" /> : null}
+        <Button appearance="outline" size="small" onClick={resetForm} disabled={isCreating}>
+          {cancelLabel}
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 interface FoundryPortalLinkProps {

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "e2e": "E2E=true vite",
+    "e2e": "vite --mode e2e",
     "preview": "vite preview",
     "test:iframe-app": "vitest run --retry=3",
     "test": "vitest run --retry=3",
@@ -40,7 +40,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "jsdom": "^26.0.0",
     "typescript": "^5.3.3",
-    "vite": "^6.4.1",
+    "vite": "^6.4.2",
     "vite-bundle-analyzer": "^1.1.0",
     "vitest": "^3.2.4"
   },

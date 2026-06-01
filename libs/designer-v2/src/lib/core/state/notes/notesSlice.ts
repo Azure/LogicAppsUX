@@ -13,7 +13,7 @@ export interface NotesState {
   changeCount: number;
 }
 
-const initialState: NotesState = {
+export const initialState: NotesState = {
   notes: {},
   isDirty: false,
   changeCount: 0,

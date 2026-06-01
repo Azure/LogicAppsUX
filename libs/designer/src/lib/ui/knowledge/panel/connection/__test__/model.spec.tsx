@@ -16,12 +16,6 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Mock selectPanelTab action
-const mockSelectPanelTab = vi.fn((tabId: string) => ({ type: 'knowledgeHubPanel/selectPanelTab', payload: tabId }));
-vi.mock('../../../../../core/state/knowledge/panelSlice', () => ({
-  selectPanelTab: (tabId: string) => mockSelectPanelTab(tabId),
-}));
-
 // Mock styles
 vi.mock('../../styles', () => ({
   useCreatePanelStyles: () => ({
@@ -76,7 +70,7 @@ describe('modelTab', () => {
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) => defaultMessage,
   } as IntlShape;
 
-  const mockDispatch = vi.fn();
+  const mockSelectTab = vi.fn();
   const mockSetConnectionParameterValues = vi.fn();
   const mockOnPrimaryButtonClick = vi.fn();
 
@@ -169,7 +163,7 @@ describe('modelTab', () => {
   it('returns tab with correct id', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -187,7 +181,7 @@ describe('modelTab', () => {
   it('returns tab with correct title', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -205,7 +199,7 @@ describe('modelTab', () => {
   it('returns tab with disabled state when isCreating is true', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -224,7 +218,7 @@ describe('modelTab', () => {
     const statusIcon = <span>✓</span>;
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -242,7 +236,7 @@ describe('modelTab', () => {
   it('returns footerContent with Previous and Create buttons', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -259,10 +253,10 @@ describe('modelTab', () => {
     expect(result.footerContent?.buttonContents[1].text).toBe('Create');
   });
 
-  it('Previous button dispatches selectPanelTab with BASICS when clicked', () => {
+  it('Previous button calls selectTab with BASICS when clicked', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -276,18 +270,13 @@ describe('modelTab', () => {
 
     result.footerContent?.buttonContents[0].onClick?.();
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'knowledgeHubPanel/selectPanelTab',
-        payload: 'BASICS',
-      })
-    );
+    expect(mockSelectTab).toHaveBeenCalledWith('BASICS');
   });
 
   it('Create button calls onPrimaryButtonClick when clicked', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -307,7 +296,7 @@ describe('modelTab', () => {
   it('Create button is disabled when isPrimaryButtonDisabled is true', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -325,7 +314,7 @@ describe('modelTab', () => {
   it('Create button is disabled when isCreating is true', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -343,7 +332,7 @@ describe('modelTab', () => {
   it('Create button shows "Creating..." text when isCreating is true', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -361,7 +350,7 @@ describe('modelTab', () => {
   it('Create button has primary appearance', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -379,7 +368,7 @@ describe('modelTab', () => {
   it('Create button onClick handles undefined onPrimaryButtonClick gracefully', () => {
     const result = modelTab(
       mockIntl,
-      mockDispatch,
+      mockSelectTab,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -399,7 +388,7 @@ describe('modelTab', () => {
     const renderModelTab = (connectionParams = defaultConnectionParams, isCreating = false) => {
       const tab = modelTab(
         mockIntl,
-        mockDispatch,
+        mockSelectTab,
         mockConnectionParameterSets,
         connectionParams,
         mockSetConnectionParameterValues,

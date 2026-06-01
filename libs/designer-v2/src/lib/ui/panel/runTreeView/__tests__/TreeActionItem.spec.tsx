@@ -473,5 +473,206 @@ describe('TreeActionItem', () => {
       // Should not be selected due to index mismatch
       expect(screen.getByText('Test Action')).toBeInTheDocument();
     });
+
+    it('should not be selected when AGENT_CONDITION subgraph and run index does not match', () => {
+      (Core.useOperationPanelSelectedNodeId as Mock).mockReturnValue('test-action');
+      (WorkflowSelectors.useRunIndex as Mock).mockReturnValue(5);
+      (WorkflowSelectors.useNodeMetadata as Mock).mockReturnValue({
+        subgraphType: 'AGENT_CONDITION',
+      });
+
+      const propsWithRepetition = {
+        ...defaultProps,
+        data: {
+          repIndex: 0, // Different from run index (5)
+          startTime: '2024-01-01T10:00:00Z',
+        },
+      };
+
+      renderWithProviders(propsWithRepetition);
+
+      // Should not show selection indicator due to AGENT_CONDITION subgraph type mismatch
+      expect(screen.getByText('Test Action')).toBeInTheDocument();
+    });
+
+    it('should not be selected when agent repetition and run index does not match', () => {
+      (Core.useOperationPanelSelectedNodeId as Mock).mockReturnValue('test-action');
+      (WorkflowSelectors.useRunIndex as Mock).mockReturnValue(5);
+
+      const propsWithRepetition = {
+        ...defaultProps,
+        data: {
+          repIndex: 0, // Different from run index (5)
+          repetition: {
+            type: 'workflows/runs/actions/agentRepetitions',
+            properties: {
+              repetitionIndexes: [],
+            },
+          },
+          startTime: '2024-01-01T10:00:00Z',
+        },
+      };
+
+      renderWithProviders(propsWithRepetition);
+
+      // Should not show selection indicator due to agent repetition index mismatch
+      expect(screen.getByText('Test Action')).toBeInTheDocument();
+    });
+  });
+
+  describe('Click Dispatch Logic', () => {
+    it('should not dispatch on click when already selected', () => {
+      (Core.useOperationPanelSelectedNodeId as Mock).mockReturnValue('test-action');
+      (WorkflowSelectors.useRunIndex as Mock).mockReturnValue(0);
+
+      const propsWithMatchingIndex = {
+        ...defaultProps,
+        data: {
+          ...defaultProps.data,
+          repIndex: 0,
+        },
+      };
+
+      renderWithProviders(propsWithMatchingIndex);
+
+      // Click should not trigger additional dispatches
+      const treeItem = screen.getByRole('treeitem');
+      fireEvent.click(treeItem);
+
+      // Component should still be present without error
+      expect(screen.getByText('Test Action')).toBeInTheDocument();
+    });
+
+    it('should open chat popover on click for chat messages', () => {
+      const chatProps: TreeActionItemProps = {
+        ...defaultProps,
+        data: {
+          startTime: '2024-01-01T10:00:00Z',
+          chatMessage: 'Hello world from agent',
+          chatRole: 'Assistant',
+        },
+      };
+
+      renderWithProviders(chatProps);
+
+      const treeItem = screen.getByRole('treeitem');
+      fireEvent.click(treeItem);
+
+      // The popover should open and show the chat message
+      expect(screen.getByText('Hello world from agent')).toBeInTheDocument();
+    });
+  });
+
+  describe('Icon Variants', () => {
+    it('should render code icon for built-in tools', () => {
+      const builtInToolProps: TreeActionItemProps = {
+        ...defaultProps,
+        data: {
+          startTime: '2024-01-01T10:00:00Z',
+          isBuiltInTool: true,
+        },
+      };
+
+      renderWithProviders(builtInToolProps);
+
+      // CodeFilled icon should be rendered
+      expect(screen.getByText('Test Action')).toBeInTheDocument();
+    });
+
+    it('should render wrench icon for agent condition subgraph type', () => {
+      (WorkflowSelectors.useNodeMetadata as Mock).mockReturnValue({
+        subgraphType: 'AGENT_CONDITION',
+      });
+
+      renderWithProviders(defaultProps);
+
+      // WrenchFilled icon should be rendered
+      expect(screen.getByText('Test Action')).toBeInTheDocument();
+    });
+
+    it('should render empty div when no icon and has repetition data but no data', () => {
+      const propsWithRepetitionNoIcon = {
+        ...defaultProps,
+        icon: undefined,
+        data: {
+          startTime: '2024-01-01T10:00:00Z',
+          repetition: { properties: {} },
+        },
+      };
+
+      renderWithProviders(propsWithRepetitionNoIcon);
+
+      expect(screen.getByText('Test Action')).toBeInTheDocument();
+    });
+  });
+
+  describe('Duration Calculation', () => {
+    it('should display duration in minutes for longer runs', () => {
+      (WorkflowSelectors.useRunData as Mock).mockReturnValue({
+        startTime: '2024-01-01T10:00:00Z',
+        endTime: '2024-01-01T10:02:00Z',
+        status: 'Succeeded',
+      });
+
+      renderWithProviders(defaultProps);
+
+      // Duration should show 2m (abbreviated format from getDurationString)
+      const durationBadge = screen.getByText('2m');
+      expect(durationBadge).toBeInTheDocument();
+    });
+
+    it('should not display duration when no startTime in runData', () => {
+      (WorkflowSelectors.useRunData as Mock).mockReturnValue({
+        status: 'Succeeded',
+      });
+
+      renderWithProviders(defaultProps);
+
+      // Duration badge should not be present
+      expect(screen.queryByText(/min|[0-9]+s$/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Selection Indicator', () => {
+    it('should render with selected styles when selected', () => {
+      (Core.useOperationPanelSelectedNodeId as Mock).mockReturnValue('test-action');
+      (WorkflowSelectors.useRunIndex as Mock).mockReturnValue(0);
+
+      const propsWithMatchingSelection = {
+        ...defaultProps,
+        data: {
+          repIndex: 0,
+          startTime: '2024-01-01T10:00:00Z',
+        },
+      };
+
+      renderWithProviders(propsWithMatchingSelection);
+
+      // The component should render without errors when selected
+      expect(screen.getByText('Test Action')).toBeInTheDocument();
+      // The treeitem should be present
+      expect(screen.getByRole('treeitem')).toBeInTheDocument();
+    });
+
+    it('should call scrollIntoView when selected', () => {
+      const scrollIntoViewMock = vi.fn();
+      Element.prototype.scrollIntoView = scrollIntoViewMock;
+
+      (Core.useOperationPanelSelectedNodeId as Mock).mockReturnValue('test-action');
+      (WorkflowSelectors.useRunIndex as Mock).mockReturnValue(0);
+
+      const propsWithMatchingSelection = {
+        ...defaultProps,
+        data: {
+          repIndex: 0,
+          startTime: '2024-01-01T10:00:00Z',
+        },
+      };
+
+      renderWithProviders(propsWithMatchingSelection);
+
+      // scrollIntoView should be called for the selected item
+      expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' });
+    });
   });
 });

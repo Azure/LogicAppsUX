@@ -28,7 +28,7 @@ export async function isDevContainerWorkspace(): Promise<boolean> {
     }
 
     // Read the workspace file
-    const workspaceFileContent = await fse.readJSON(workspaceFile.fsPath);
+    const workspaceFileContent = await fse.readJson(workspaceFile.fsPath);
 
     // Check if .devcontainer folder is in the workspace folders
     const folders = workspaceFileContent.folders || [];

@@ -211,6 +211,11 @@ export const DesignerCommandBar = ({
         if (!autoSave && Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
           updateCallbackUrl(designerState, dispatch);
         }
+        // Invalidate the production workflow cache after a non-draft save (Publish)
+        // so that switching to published view shows the latest saved workflow
+        if (!autoSave && !isDraftMode) {
+          queryClient.invalidateQueries({ queryKey: ['workflowArtifactsConsumption'] });
+        }
         if (autoSave) {
           setLastSavedTime(new Date());
         }

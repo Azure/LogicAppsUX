@@ -104,11 +104,41 @@ describe('config-parser', () => {
     });
 
     it('should use agentCard param when provided', () => {
-      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=https://custom.com/agent-card.json');
+      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=https://custom.logic.azure.com/agent-card.json');
 
       const config = parseIframeConfig();
 
-      expect(config.props.agentCard).toBe('https://custom.com/agent-card.json');
+      expect(config.props.agentCard).toBe('https://custom.logic.azure.com/agent-card.json');
+    });
+
+    it('should throw for non-HTTPS agentCard URLs', () => {
+      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=http://evil.com/agent-card.json');
+
+      expect(() => parseIframeConfig()).toThrow('must use HTTPS');
+    });
+
+    it('should throw for untrusted domains in agentCard', () => {
+      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=https://evil.azurewebsites.net/agent-card.json');
+
+      expect(() => parseIframeConfig()).toThrow('not trusted');
+    });
+
+    it('should throw for javascript: protocol in agentCard', () => {
+      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=javascript:alert(1)');
+
+      expect(() => parseIframeConfig()).toThrow('must use HTTPS');
+    });
+
+    it('should throw for malformed agentCard URLs', () => {
+      mockLocation('https://example.com/api/agentsChat/myAgent/IFrame?agentCard=not-a-url');
+
+      expect(() => parseIframeConfig()).toThrow('Invalid agent card URL');
+    });
+
+    it('should block localhost agentCard when not in local development', () => {
+      mockLocation('https://agents.logic.azure.com/api/agentsChat/myAgent/IFrame?agentCard=https://localhost:3000/agent-card.json');
+
+      expect(() => parseIframeConfig()).toThrow('localhost are only allowed during local development');
     });
   });
 

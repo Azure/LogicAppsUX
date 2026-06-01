@@ -4,24 +4,19 @@ import { IntlProvider } from 'react-intl';
 import renderer from 'react-test-renderer';
 import { describe, vi, beforeEach, it, expect } from 'vitest';
 import { createLiteralValueSegment } from '../..';
+import * as isComboboxItemMatchModule from '../helpers/isComboboxItemMatch';
+import * as logicAppsShared from '@microsoft/logic-apps-shared';
 
-// Mock the helper function
-vi.mock('../helpers/isComboboxItemMatch', () => ({
-  isComboboxItemMatch: vi.fn((option, searchValue) => option.displayName.toLowerCase().includes(searchValue.toLowerCase())),
-}));
-
-// Mock LoggerService
-vi.mock('@microsoft/logic-apps-shared', async () => {
-  const actual = await vi.importActual('@microsoft/logic-apps-shared');
-  return {
-    ...actual,
-    LoggerService: vi.fn(() => ({
-      log: vi.fn(),
-      startTrace: vi.fn(),
-      endTrace: vi.fn(),
-      logErrorWithFormatting: vi.fn(),
-    })),
-  };
+beforeEach(() => {
+  vi.spyOn(isComboboxItemMatchModule, 'isComboboxItemMatch').mockImplementation((option: any, searchValue: string) =>
+    option.displayName.toLowerCase().includes(searchValue.toLowerCase())
+  );
+  vi.spyOn(logicAppsShared, 'LoggerService').mockReturnValue({
+    log: vi.fn(),
+    startTrace: vi.fn(),
+    endTrace: vi.fn(),
+    logErrorWithFormatting: vi.fn(),
+  } as any);
 });
 
 // Test wrapper component with required providers
@@ -230,7 +225,7 @@ describe('lib/combobox', () => {
 
   it('handles search with result limiting correctly', async () => {
     // Simplify the test to just verify that large datasets work with search - smaller for faster testing
-    const largeOptions = Array.from({ length: 2000 }, (_, i) => ({
+    const largeOptions = Array.from({ length: 200 }, (_, i) => ({
       key: `${i}`,
       value: `value-${i}`,
       displayName: `Option${i}`,

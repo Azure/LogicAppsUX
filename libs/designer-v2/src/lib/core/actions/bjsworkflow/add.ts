@@ -460,7 +460,7 @@ export const initializeOperationDetails = async (
     addTokensAndVariables(nodeId, type, initData, state, dispatch);
   }
 
-  if (isConnectionRequired) {
+  if (isConnectionRequired || connectionId) {
     try {
       await trySetDefaultConnectionForNode(
         nodeId,

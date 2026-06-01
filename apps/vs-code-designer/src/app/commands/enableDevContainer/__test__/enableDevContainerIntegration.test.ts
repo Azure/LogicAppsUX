@@ -2,13 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { devContainerFolderName, devContainerFileName, tasksFileName, vscodeFolderName } from '../../../../constants';
+import * as assetUtils from '../../../utils/assets';
 
 // Unmock fs-extra to use real file operations for integration tests
 vi.unmock('fs-extra');
@@ -22,33 +23,6 @@ import { enableDevContainer } from '../enableDevContainer';
 describe('enableDevContainer - Integration Tests', () => {
   let tempDir: string;
   let mockContext: IActionContext;
-  let assetsCopied = false;
-
-  beforeAll(async () => {
-    // Copy assets from src/assets to enableDevContainer directory for testing
-    const srcAssetsPath = path.resolve(__dirname, '..', '..', '..', '..', 'assets');
-    const destAssetsPath = path.resolve(__dirname, '..', '..', 'createNewCodeProject', 'CodeProjectBase', 'assets');
-    const destAssetsPath2 = path.resolve(__dirname, '..', 'assets');
-
-    // Check if assets need to be copied
-    if (await fse.pathExists(srcAssetsPath)) {
-      await fse.copy(srcAssetsPath, destAssetsPath);
-      await fse.copy(srcAssetsPath, destAssetsPath2);
-      assetsCopied = true;
-    }
-  });
-
-  afterAll(async () => {
-    // Clean up copied assets
-    const destAssetsPath = path.resolve(__dirname, '..', '..', 'createNewCodeProject', 'CodeProjectBase', 'assets');
-    const destAssetsPath2 = path.resolve(__dirname, '..', 'assets');
-    if (await fse.pathExists(destAssetsPath)) {
-      await fse.remove(destAssetsPath);
-    }
-    if (await fse.pathExists(destAssetsPath2)) {
-      await fse.remove(destAssetsPath2);
-    }
-  });
 
   beforeEach(async () => {
     // Create real temp directory
@@ -70,7 +44,9 @@ describe('enableDevContainer - Integration Tests', () => {
 
     // Mock ext.outputChannel
     const { ext } = await import('../../../../extensionVariables');
+    ext.designTimeInstances.clear();
     ext.outputChannel = {
+      appendLog: vi.fn(),
       appendLine: vi.fn(),
       show: vi.fn(),
     } as any;
@@ -79,15 +55,11 @@ describe('enableDevContainer - Integration Tests', () => {
     vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(undefined);
     vi.spyOn(vscode.window, 'showErrorMessage').mockResolvedValue(undefined);
     vi.spyOn(vscode.window, 'showWarningMessage').mockResolvedValue(undefined as any);
-
-    // // Check if assets need to be copied
-    // if ((await fse.pathExists(srcAssetsPath)) && !(await fse.pathExists(destAssetsPath))) {
-    //   await fse.copy(srcAssetsPath, destAssetsPath);
-    //   assetsCopied = true;
-    // }
   });
 
   afterEach(async () => {
+    const { ext } = await import('../../../../extensionVariables');
+    ext.designTimeInstances.clear();
     if (tempDir) {
       await fse.remove(tempDir);
     }
@@ -150,13 +122,13 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(await fse.pathExists(devContainerJsonPath)).toBe(true);
 
       // Verify devcontainer.json has valid JSON
-      const devContainerContent = await fse.readJSON(devContainerJsonPath);
+      const devContainerContent = await fse.readJson(devContainerJsonPath);
       expect(devContainerContent).toBeDefined();
       expect(devContainerContent.name).toBeDefined();
       expect(devContainerContent.image).toBeDefined();
 
       // Verify .devcontainer was added to workspace file
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       expect(workspaceContent.folders).toBeDefined();
       const devContainerFolder = workspaceContent.folders.find((folder: any) => folder.path === devContainerFolderName);
       expect(devContainerFolder).toBeDefined();
@@ -220,13 +192,13 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(await fse.pathExists(tasksJsonPath)).toBe(true);
 
       // Read original tasks.json
-      const originalTasks = await fse.readJSON(tasksJsonPath);
+      const originalTasks = await fse.readJson(tasksJsonPath);
 
       // Run enableDevContainer with real workspace file path
       await enableDevContainer(mockContext, workspaceFilePath);
 
       // Read converted tasks.json
-      const convertedTasks = await fse.readJSON(tasksJsonPath);
+      const convertedTasks = await fse.readJson(tasksJsonPath);
 
       // Verify tasks were converted
       expect(convertedTasks.tasks).toBeDefined();
@@ -267,9 +239,9 @@ describe('enableDevContainer - Integration Tests', () => {
 
       // Update workspace file to include second Logic App
       const workspaceFilePath = path.join(workspaceRootFolder, `${workspaceName}.code-workspace`);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       workspaceContent.folders.push({ path: logicApp2, name: logicApp2 });
-      await fse.writeJSON(workspaceFilePath, workspaceContent, { spaces: 2 });
+      await fse.writeJson(workspaceFilePath, workspaceContent, { spaces: 2 });
 
       // Run enableDevContainer with real workspace file path
       await enableDevContainer(mockContext, workspaceFilePath);
@@ -281,8 +253,8 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(await fse.pathExists(tasksJson1Path)).toBe(true);
       expect(await fse.pathExists(tasksJson2Path)).toBe(true);
 
-      const tasks1 = await fse.readJSON(tasksJson1Path);
-      const tasks2 = await fse.readJSON(tasksJson2Path);
+      const tasks1 = await fse.readJson(tasksJson1Path);
+      const tasks2 = await fse.readJson(tasksJson2Path);
 
       // Both should have devcontainer-compatible paths
       expect(tasks1.tasks[1].command).toContain('${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}');
@@ -311,7 +283,7 @@ describe('enableDevContainer - Integration Tests', () => {
       // Create .devcontainer folder manually
       const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
       await fse.ensureDir(devContainerPath);
-      await fse.writeJSON(path.join(devContainerPath, devContainerFileName), { name: 'existing' });
+      await fse.writeJson(path.join(devContainerPath, devContainerFileName), { name: 'existing' });
 
       // Mock vscode.window.showWarningMessage to simulate user canceling
       const showWarningMessageSpy = vi.spyOn(vscode.window, 'showWarningMessage').mockResolvedValue(undefined);
@@ -339,7 +311,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
       await fse.ensureDir(devContainerPath);
       const oldDevContainerJsonPath = path.join(devContainerPath, devContainerFileName);
-      await fse.writeJSON(oldDevContainerJsonPath, { name: 'old-config', version: '1.0' });
+      await fse.writeJson(oldDevContainerJsonPath, { name: 'old-config', version: '1.0' });
 
       // Mock vscode.window.showWarningMessage to simulate user choosing to overwrite
       vi.spyOn(vscode.window, 'showWarningMessage').mockResolvedValue('Overwrite' as any);
@@ -348,7 +320,7 @@ describe('enableDevContainer - Integration Tests', () => {
       await enableDevContainer(mockContext, workspaceFilePath);
 
       // Verify devcontainer.json was overwritten with new content
-      const newDevContainerContent = await fse.readJSON(oldDevContainerJsonPath);
+      const newDevContainerContent = await fse.readJson(oldDevContainerJsonPath);
       expect(newDevContainerContent.name).not.toBe('old-config');
       expect(newDevContainerContent.image).toBeDefined();
 
@@ -369,7 +341,8 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(showErrorMessageSpy.mock.calls[0][0]).toContain('No workspace is currently open');
 
       // Verify result
-      expect(mockContext.telemetry.properties.result).toBe('NoWorkspace');
+      expect(mockContext.telemetry.properties.result).toBe('Failed');
+      expect(mockContext.telemetry.properties.failureReason).toBe('NoWorkspace');
     });
 
     it('should verify devcontainer.json contains required properties', async () => {
@@ -385,7 +358,7 @@ describe('enableDevContainer - Integration Tests', () => {
 
       // Read devcontainer.json
       const devContainerJsonPath = path.join(workspaceRootFolder, devContainerFolderName, devContainerFileName);
-      const devContainerContent = await fse.readJSON(devContainerJsonPath);
+      const devContainerContent = await fse.readJson(devContainerJsonPath);
 
       // Verify required properties
       expect(devContainerContent.name).toBeDefined();
@@ -398,6 +371,7 @@ describe('enableDevContainer - Integration Tests', () => {
 
       // Verify Logic Apps extension is included
       expect(devContainerContent.customizations.vscode.extensions).toContain('ms-azuretools.vscode-azurelogicapps');
+      expect(devContainerContent.customizations.vscode.extensions).toContain('ms-vscode-remote.remote-containers');
 
       // Verify settings include required Logic Apps configurations
       const settings = devContainerContent.customizations.vscode.settings;
@@ -467,7 +441,7 @@ describe('enableDevContainer - Integration Tests', () => {
 
       // Read the workspace file
       const workspaceFilePath = path.join(workspaceRootFolder, `${workspaceName}.code-workspace`);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
 
       // Verify .devcontainer folder is in the workspace
       expect(workspaceContent.folders).toBeDefined();
@@ -487,9 +461,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const workspaceRootFolder = await createTestWorkspace(workspaceName, logicAppName);
       const workspaceFilePath = path.join(workspaceRootFolder, `${workspaceName}.code-workspace`);
 
-      // Remove the assets folder to simulate missing template
-      const destAssetsPath = path.resolve(__dirname, '..', 'assets');
-      await fse.remove(destAssetsPath);
+      vi.spyOn(assetUtils, 'getContainerTemplatePath').mockReturnValue(path.join(tempDir, 'missing-devcontainer.json'));
 
       try {
         await enableDevContainer(mockContext, workspaceFilePath);
@@ -499,11 +471,6 @@ describe('enableDevContainer - Integration Tests', () => {
         // Expected to throw
         expect(mockContext.telemetry.properties.result).toBe('Failed');
         expect(mockContext.telemetry.properties.error).toBeDefined();
-      }
-      const srcAssetsPath = path.resolve(__dirname, '..', '..', '..', '..', 'assets');
-      // Check if assets need to be copied
-      if (await fse.pathExists(srcAssetsPath)) {
-        await fse.copy(srcAssetsPath, destAssetsPath);
       }
     });
   });
@@ -537,7 +504,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const tasksJsonPath = path.join(secondLogicAppPath, vscodeFolderName, tasksFileName);
       expect(await fse.pathExists(tasksJsonPath)).toBe(true);
 
-      const tasksContent = await fse.readJSON(tasksJsonPath);
+      const tasksContent = await fse.readJson(tasksJsonPath);
 
       // Verify devcontainer-specific paths
       const funcHostStartTask = tasksContent.tasks.find((task: any) => task.label === 'func: host start');
@@ -581,7 +548,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const tasksJsonPath = path.join(secondLogicAppPath, vscodeFolderName, tasksFileName);
       expect(await fse.pathExists(tasksJsonPath)).toBe(true);
 
-      const tasksContent = await fse.readJSON(tasksJsonPath);
+      const tasksContent = await fse.readJson(tasksJsonPath);
 
       // Verify regular paths
       const funcHostStartTask = tasksContent.tasks.find((task: any) => task.label === 'func: host start');

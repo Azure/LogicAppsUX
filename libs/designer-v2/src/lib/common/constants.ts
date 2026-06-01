@@ -53,6 +53,36 @@ const VARIABLE_TYPE = {
   STRING: 'string',
 };
 
+/**
+ * Auth-related property keys that can appear in MCP connection parameterValues.
+ * Shared across serializer and deserializer to avoid drift.
+ */
+export const MCP_AUTH_PROPERTY_KEYS = [
+  'audience',
+  'identity',
+  'key',
+  'keyHeaderName',
+  'username',
+  'password',
+  'value',
+  'clientId',
+  'secret',
+  'tenant',
+  'authority',
+  'pfx',
+] as const;
+
+/**
+ * Checks whether a connector is a managed MCP connector (API Hub MCP, not built-in).
+ * Uses the connector type ('McpClient') or the managedApis path segment + 'mcp' suffix convention
+ * (e.g., a365mcp, githubmcp, stripemcp) as a fallback.
+ */
+export const isManagedMcpConnector = (connector: { id?: string; type?: string; properties?: { capabilities?: string[] } }): boolean => {
+  const id = connector.id?.toLowerCase() ?? '';
+  const isMcp = connector.type?.toLowerCase() === 'mcpclient' || /managedapis\/[^/]*mcp/.test(id);
+  return isMcp && !connector.properties?.capabilities?.includes('builtin');
+};
+
 export default {
   API_TIER: {
     PREMIUM: 'PREMIUM',
@@ -174,7 +204,7 @@ export default {
   DEFAULT_FREQUENCY_VALUE: 'Second',
   DEFAULT_INTERVAL_VALUE: 15,
   DEFAULT_KEY_PREFIX: '$',
-  DEFAULT_MAX_STATE_HISTORY_SIZE: 0,
+  DEFAULT_MAX_STATE_HISTORY_SIZE: 20,
   DEFAULT_SCHEMA: SCHEMA.GA_20160601,
   EDITOR: {
     AGENT_INSTRUCTION: 'agentinstruction',
@@ -359,6 +389,7 @@ export default {
       EXPRESSION: 'expression',
       FLAT_FILE_DECODING: 'flatfiledecoding',
       FLAT_FILE_ENCODING: 'flatfileencoding',
+      FLAT_FILE_SCHEMA_GENERATION: 'flatfileschemageneration',
       FOREACH: 'foreach',
       FUNCTION: 'function',
       HANDOFF: 'agenthandoff',
@@ -490,6 +521,7 @@ export default {
     TESTING: 'TESTING',
     MOCK_RESULTS: 'MOCK_RESULTS',
     HANDOFF: 'HANDOFF',
+    AGENT_HARNESS: 'AGENT_HARNESS',
   },
   TEMPLATE_PANEL_TAB_NAMES: {
     OVERVIEW: 'OVERVIEW',
@@ -804,6 +836,7 @@ export default {
     EXPRESSION: 'Expression',
     FLAT_FILE_DECODING: 'FlatFileDecoding',
     FLAT_FILE_ENCODING: 'FlatFileEncoding',
+    FLAT_FILE_SCHEMA_GENERATION: 'FlatFileSchemaGeneration',
     FOREACH: 'Foreach',
     FUNCTION: 'Function',
     HTTP: 'Http',
@@ -985,17 +1018,6 @@ export default {
     INPUT: '-inputchannel-',
     OUTPUT: '-outputchannel-',
   },
-  SUPPORTED_AGENT_MODELS: [
-    'gpt-5',
-    'gpt-5-chat',
-    'gpt-4.1',
-    'gpt-4',
-    'gpt-4o',
-    'gpt-35-turbo',
-    'gpt-4.1-mini',
-    'gpt-4.1-nano',
-    'gpt-4o-mini',
-  ],
   HANDOFF_TOOL_NAME_MAX_LENGTH: 64,
   CONNECTION_IDS: {
     ACA_SESSION: '/serviceProviders/acasession',

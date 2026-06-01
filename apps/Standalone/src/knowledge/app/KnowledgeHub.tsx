@@ -18,6 +18,7 @@ import { useKnowledgeStyles } from './styles';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import {
   createOrUpdateConnection,
+  uploadFileToKnowledgeHub,
   useAppSettings,
   useConnectionsData,
   useParametersData,
@@ -86,7 +87,7 @@ export const KnowledgeHub = () => {
           <div className={styles.wizardContent}>
             <div className={styles.wizardWrapper}>
               <KnowledgeDataProvider resourceDetails={resourceDetails} services={services} isDarkMode={theme === 'dark'}>
-                <KnowledgeHubWizard />
+                <KnowledgeHubWizard onUploadArtifact={uploadFileToKnowledgeHub} />
               </KnowledgeDataProvider>
             </div>
           </div>

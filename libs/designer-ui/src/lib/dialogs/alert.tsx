@@ -1,5 +1,4 @@
-import type { IDialogContentProps, IModalProps } from '@fluentui/react';
-import { Dialog, DialogFooter, PrimaryButton } from '@fluentui/react';
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 export interface AlertProps {
@@ -9,20 +8,8 @@ export interface AlertProps {
   onDismiss(): void;
 }
 
-const modalProps: IModalProps = {
-  isBlocking: true,
-  firstFocusableSelector: 'dialog-ok-button',
-};
-
 export const Alert: React.FC<AlertProps> = ({ hidden, message, title, onDismiss }) => {
   const intl = useIntl();
-  if (hidden) {
-    return null;
-  }
-
-  const dialogContentProps: IDialogContentProps = {
-    title,
-  };
 
   const okMessage = intl.formatMessage({
     defaultMessage: 'OK',
@@ -30,13 +17,26 @@ export const Alert: React.FC<AlertProps> = ({ hidden, message, title, onDismiss 
     description: 'OK message appearing on a alert message modal.',
   });
   return (
-    <Dialog dialogContentProps={dialogContentProps} hidden={hidden} modalProps={modalProps} onDismiss={onDismiss}>
-      {message}
-      <DialogFooter>
-        <PrimaryButton className="dialog-ok-button" onClick={onDismiss}>
-          {okMessage}
-        </PrimaryButton>
-      </DialogFooter>
+    <Dialog
+      modalType="alert"
+      open={!hidden}
+      onOpenChange={(_, data) => {
+        if (!data.open) {
+          onDismiss();
+        }
+      }}
+    >
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogContent>{message}</DialogContent>
+          <DialogActions>
+            <Button appearance="primary" onClick={onDismiss}>
+              {okMessage}
+            </Button>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
     </Dialog>
   );
 };

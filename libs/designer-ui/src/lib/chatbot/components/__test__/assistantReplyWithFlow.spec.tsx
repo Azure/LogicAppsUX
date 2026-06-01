@@ -3,7 +3,7 @@
  */
 import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { AssistantReplyWithFlow } from '../assistantReplyWithFlow';
 import { ConversationItemType, UndoStatus } from '../conversationItem';
 import type { AssistantReplyWithFlowItem } from '../conversationItem';
@@ -11,19 +11,20 @@ import { WorkflowChangeType, WorkflowChangeTargetType } from '@microsoft/logic-a
 import type { WorkflowChange } from '@microsoft/logic-apps-shared';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { IntlProvider } from 'react-intl';
+import * as feedbackHelper from '../../feedbackHelper';
 
-vi.mock('../../feedbackHelper', () => ({
-  useFeedbackMessage: () => ({
+beforeEach(() => {
+  vi.spyOn(feedbackHelper, 'useFeedbackMessage').mockReturnValue({
     feedbackMessage: null,
     onMessageReactionClicked: vi.fn(),
     reaction: undefined,
-  }),
-  useReportBugButton: () => ({
+  });
+  vi.spyOn(feedbackHelper, 'useReportBugButton').mockReturnValue({
     text: 'Report a bug',
     disabled: false,
     onClick: vi.fn(),
-  }),
-}));
+  });
+});
 
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <FluentProvider theme={webLightTheme}>

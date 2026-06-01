@@ -16,12 +16,6 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Mock closePanel action
-const mockClosePanel = vi.fn(() => ({ type: 'knowledgeHubPanel/closePanel' }));
-vi.mock('../../../../../core/state/knowledge/panelSlice', () => ({
-  closePanel: () => mockClosePanel(),
-}));
-
 // Mock styles
 vi.mock('../../styles', () => ({
   useCreatePanelStyles: () => ({
@@ -96,7 +90,7 @@ describe('basicsTab', () => {
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) => defaultMessage,
   } as IntlShape;
 
-  const mockDispatch = vi.fn();
+  const mockClose = vi.fn();
   const mockSetConnectionParameterValues = vi.fn();
   const mockOnPrimaryButtonClick = vi.fn();
 
@@ -173,7 +167,7 @@ describe('basicsTab', () => {
   it('returns tab with correct id', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -191,7 +185,7 @@ describe('basicsTab', () => {
   it('returns tab with correct title', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -209,7 +203,7 @@ describe('basicsTab', () => {
   it('returns tab with disabled state when isCreating is true', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -228,7 +222,7 @@ describe('basicsTab', () => {
     const statusIcon = <span>✓</span>;
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -246,7 +240,7 @@ describe('basicsTab', () => {
   it('returns footerContent with Close and Next buttons', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -263,10 +257,10 @@ describe('basicsTab', () => {
     expect(result.footerContent?.buttonContents[1].text).toBe('Next');
   });
 
-  it('Close button dispatches closePanel when clicked', () => {
+  it('Close button calls close callback when clicked', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -280,13 +274,13 @@ describe('basicsTab', () => {
 
     result.footerContent?.buttonContents[0].onClick?.();
 
-    expect(mockDispatch).toHaveBeenCalledWith({ type: 'knowledgeHubPanel/closePanel' });
+    expect(mockClose).toHaveBeenCalled();
   });
 
   it('Next button calls onPrimaryButtonClick when clicked', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -306,7 +300,7 @@ describe('basicsTab', () => {
   it('Next button is disabled when isPrimaryButtonDisabled is true', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -324,7 +318,7 @@ describe('basicsTab', () => {
   it('Next button is disabled when isCreating is true', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -342,7 +336,7 @@ describe('basicsTab', () => {
   it('Close button is disabled when isCreating is true', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -360,7 +354,7 @@ describe('basicsTab', () => {
   it('Next button has primary appearance', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -378,7 +372,7 @@ describe('basicsTab', () => {
   it('Next button onClick handles undefined onPrimaryButtonClick gracefully', () => {
     const result = basicsTab(
       mockIntl,
-      mockDispatch,
+      mockClose,
       mockConnectionParameterSets,
       defaultConnectionParams,
       mockSetConnectionParameterValues,
@@ -398,7 +392,7 @@ describe('basicsTab', () => {
     const renderBasicsTab = (connectionParams = defaultConnectionParams, isCreating = false) => {
       const tab = basicsTab(
         mockIntl,
-        mockDispatch,
+        mockClose,
         mockConnectionParameterSets,
         connectionParams,
         mockSetConnectionParameterValues,

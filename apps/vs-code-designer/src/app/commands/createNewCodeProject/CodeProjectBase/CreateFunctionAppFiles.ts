@@ -11,12 +11,12 @@ import {
   settingsFileName,
   tasksFileName,
   extensionCommand,
-  assetsFolderName,
 } from '../../../../constants';
 import { FuncVersion, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { TargetFramework, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { getAssetsRoot } from '../../../utils/assets';
 import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig/launch';
 import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
 import { localize } from '../../../../localize';
@@ -39,7 +39,7 @@ export class CreateFunctionAppFiles {
     const { functionAppName, functionAppNamespace: namespace, targetFramework, projectType } = context;
     const logicAppName = context.logicAppName || 'LogicApp';
     const functionFolderPath = path.join(context.workspacePath, context.functionFolderName);
-    const assetsPath = path.join(__dirname, assetsFolderName);
+    const assetsPath = getAssetsRoot();
 
     await fs.ensureDir(functionFolderPath);
     await createCsFile(assetsPath, functionFolderPath, functionAppName, namespace, projectType, targetFramework);

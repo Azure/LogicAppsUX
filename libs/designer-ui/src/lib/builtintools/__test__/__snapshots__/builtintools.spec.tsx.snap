@@ -16,14 +16,18 @@ exports[`lib/builtintools > should render with basic props 1`] = `
       className="___1hxfasu_0000000 f22iagw f1vx9l62 fz7g6wx fe7p41z"
     >
       <span
-        className="___bbz8wo0_0000000 fl43uef fy9rknc f19n0e5"
+        className="___1ej4kmx_0000000 f22iagw f122n59 fkln5zr"
       >
-        Code Interpreter
+        <span
+          className="___bbz8wo0_0000000 fl43uef fy9rknc f19n0e5"
+        >
+          Code Interpreter
+        </span>
       </span>
       <span
         className="___l0twgo0_0000000 fy9rknc fkfq4zb"
       >
-        Enable the agent to write and execute JavaScript code for calculations, data analysis, and file processing.
+        Enable the agent to write and execute JavaScript code for calculations, and data analysis.
       </span>
     </div>
     <div

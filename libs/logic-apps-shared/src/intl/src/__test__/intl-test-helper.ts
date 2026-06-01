@@ -4,7 +4,7 @@
  * These helper functions aim to address that and wrap a valid,
  * English-locale intl context around them.
  */
-import messages from '../../compiled-lang/strings.json';
+import messages from '../compiled-lang/strings.json';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
 import { vi } from 'vitest';

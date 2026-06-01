@@ -12,6 +12,7 @@ export interface OverviewPropertiesProps {
   operationOptions?: string;
   statelessRunMode?: string;
   stateType: string;
+  kind?: string;
   triggerName?: string;
   definition?: LogicAppsV2.WorkflowDefinition;
   agentUrl?: string;

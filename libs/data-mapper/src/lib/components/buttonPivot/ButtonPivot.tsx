@@ -1,7 +1,7 @@
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { Tab, TabList, tokens, Tooltip } from '@fluentui/react-components';
 import { bundleIcon } from '@fluentui/react-icons';
-import type { IconType } from 'react-icons/lib';
+import type { FluentIcon } from '@fluentui/react-icons';
 
 export interface ButtonPivotProps {
   xPos: string;
@@ -13,8 +13,8 @@ export interface ButtonPivotProps {
 }
 
 export interface ButtonPivotButtonProps {
-  regularIcon: IconType;
-  filledIcon: IconType;
+  regularIcon: FluentIcon;
+  filledIcon: FluentIcon;
   tooltip: string;
   value: string;
   onClick?: () => void;

@@ -98,7 +98,24 @@ export const initializeGraphState = createAsyncThunk<
       const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);
       updateChildrenDimensions(deserializedWorkflow?.graph?.children || [], previousGraphFlattened);
 
-      dispatch(initializeConnectionReferences(connectionReferences ?? {}));
+      // For Consumption workflows, connectionReferences may be empty because connections
+      // are stored in parameters.$connections.value instead. Build connectionReferences from
+      // $connections so that operation deserialization can resolve connector metadata.
+      const resolvedConnectionReferences = { ...(connectionReferences ?? {}) };
+      if (Object.keys(resolvedConnectionReferences).length === 0) {
+        const connectionsParam = workflowDefinition.parameters?.['$connections']?.value ?? {};
+        for (const [key, conn] of Object.entries(connectionsParam) as [string, any][]) {
+          if (conn?.id) {
+            resolvedConnectionReferences[key] = {
+              api: { id: conn.id },
+              connection: { id: conn.connectionId ?? '' },
+              connectionName: conn.connectionName ?? key,
+            };
+          }
+        }
+      }
+
+      dispatch(initializeConnectionReferences(resolvedConnectionReferences));
       dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
       updateWorkflowParameters(parameters ?? {}, dispatch);
 

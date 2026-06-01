@@ -1,6 +1,6 @@
 import constants from '../constants';
 import type { IStyle } from '@fluentui/react';
-import { keyframes, mergeStyleSets, useTheme } from '@fluentui/react';
+import { keyframes, mergeStyleSets } from '@fluentui/react';
 import type React from 'react';
 
 type ContainerWithProgressBarProps = {
@@ -16,8 +16,7 @@ export const ContainerWithProgressBar: React.FC<ContainerWithProgressBarProps> =
   styles,
   dataAutomationId,
 }) => {
-  const { isInverted } = useTheme();
-  const containerClassNames = mergeStyleSets(getContainerStyles(isInverted), styles);
+  const containerClassNames = mergeStyleSets(getContainerStyles(), styles);
   return (
     <div className={containerClassNames.root} data-automation-id={dataAutomationId}>
       <div className={containerClassNames.content}>{children}</div>
@@ -55,15 +54,12 @@ export interface IContainerWithProgressBarStyles {
   progressBar: IStyle;
 }
 
-const getContainerStyles = (isInverted?: boolean) => {
+const getContainerStyles = () => {
   return {
     root: {
-      background: isInverted ? constants.DARK_SECONADRY : constants.WHITE,
-      boxShadow: constants.ELEVATION4,
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-end',
-      borderRadius: 8,
       margin: '20px 0 0 0',
       overflow: 'hidden',
     },
@@ -71,7 +67,7 @@ const getContainerStyles = (isInverted?: boolean) => {
       flexGrow: 1,
       display: 'flex',
       alignItems: 'center',
-      padding: 12,
+      padding: '4px 8px',
     },
   };
 };
@@ -92,9 +88,9 @@ const getProgressBarStyles = () => {
       position: 'relative',
     },
     fillingProgressBar: {
-      background: 'linear-gradient(110deg, #0F6CBD 5%, #46E2FA 30%, #CD75FF 50%, #46E2FA 70% ,#0F6CBD 95%);',
+      background: 'linear-gradient(90deg, transparent 0%,  #b4a0ff 25%, #7160e8 50%, #b4a0ff 75%, transparent 100%)',
       backgroundSize: '200% 200%',
-      borderRadius: 0,
+      borderRadius: 8,
       height: '100%',
       width: '100%',
       position: 'absolute',
@@ -108,10 +104,6 @@ const getProgressBarStyles = () => {
 };
 
 const backgroundMotion: string = keyframes({
-  '0%': { backgroundPosition: '260% 175%' },
-  '20%': { backgroundPosition: '175% 150%' },
-  '40%': { backgroundPosition: '150% 100%' },
-  '60%': { backgroundPosition: '100% 75%' },
-  '80%': { backgroundPosition: '75% 50%' },
-  '100%': { backgroundPosition: '50% 0%' },
+  '0%': { backgroundPosition: '200% 0%' },
+  '100%': { backgroundPosition: '0% 0%' },
 });

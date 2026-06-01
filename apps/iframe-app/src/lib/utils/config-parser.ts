@@ -49,12 +49,50 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
   return { trustedParentOrigin: trustedAuthority };
 }
 
+const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];
+
+/**
+ * Validates that an agent card URL uses HTTPS and points to a trusted Microsoft domain.
+ * Blocks arbitrary external URLs to prevent chat hijacking via agentCard parameter injection.
+ */
+function validateAgentCardUrl(url: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`Invalid agent card URL: ${url}`);
+  }
+
+  // Allow localhost only when the iframe itself is running locally (development)
+  const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
+    if (isLocalDevelopment) {
+      return url;
+    }
+    throw new Error('Agent card URLs pointing to localhost are only allowed during local development.');
+  }
+
+  if (parsed.protocol !== 'https:') {
+    throw new Error(`Agent card URL must use HTTPS protocol, got: ${parsed.protocol}`);
+  }
+
+  const isTrustedDomain = ALLOWED_AGENT_CARD_DOMAINS.some(
+    (domain) => parsed.hostname === domain.slice(1) || parsed.hostname.endsWith(domain)
+  );
+
+  if (!isTrustedDomain) {
+    throw new Error(`Agent card URL domain is not trusted: ${parsed.hostname}. Allowed domains: ${ALLOWED_AGENT_CARD_DOMAINS.join(', ')}`);
+  }
+
+  return url;
+}
+
 function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): string {
   // Support both 'agent' and 'agentCard' parameters
   const agentCard = dataset.agentCard || params.get('agentCard') || params.get('agent');
 
   if (agentCard) {
-    return agentCard;
+    return validateAgentCardUrl(agentCard);
   }
 
   // Transform current URL to agent card URL if we're in an iframe context

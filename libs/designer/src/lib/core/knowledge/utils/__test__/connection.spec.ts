@@ -19,7 +19,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
         return defaultMessage;
       }
 
-      return defaultMessage.replace(/\{([^}]+)\}/g, (_, key) => values[key] ?? `{${key}}`);
+      return defaultMessage.replace(/\{([^}]+)\}/g, (_: any, key: string | number) => values[key] ?? `{${key}}`);
     }),
   })),
   getPropertyValue: vi.fn((obj, key) => obj?.[key]),
@@ -27,6 +27,16 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   ConnectionType: {
     KnowledgeHub: 'KnowledgeHub',
   },
+  LogEntryLevel: {
+    Error: 'Error',
+    Warning: 'Warning',
+    Debug: 'Debug',
+    Trace: 'Trace',
+    Verbose: 'Verbose',
+  },
+  LoggerService: vi.fn(() => ({
+    log: vi.fn(),
+  })),
 }));
 
 vi.mock('../../../ReactQueryProvider', () => ({

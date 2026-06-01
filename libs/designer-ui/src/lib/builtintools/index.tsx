@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { Switch } from '@fluentui/react-components';
+import { Link, Switch, Tooltip } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
 import type { ValueSegment } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
@@ -10,6 +11,9 @@ export interface BuiltinToolOption {
   value: string;
   displayName: string;
   description: string;
+  infoMessage?: string;
+  infoLinkText?: string;
+  infoLinkUrl?: string;
 }
 
 export interface BuiltinToolsEditorProps {
@@ -61,7 +65,26 @@ export const BuiltinToolsEditor = ({ initialValue, options = [], readonly, onCha
       {options.map((option) => (
         <div key={option.value} className={styles.toolRow}>
           <div className={styles.toolInfo}>
-            <span className={styles.toolName}>{option.displayName}</span>
+            <span className={styles.toolNameRow}>
+              <span className={styles.toolName}>{option.displayName}</span>
+              {option.infoMessage && (
+                <Tooltip
+                  relationship="description"
+                  content={
+                    <span>
+                      {option.infoMessage}{' '}
+                      {option.infoLinkUrl && (
+                        <Link href={option.infoLinkUrl} target="_blank" rel="noopener noreferrer" inline>
+                          {option.infoLinkText ?? option.infoLinkUrl}
+                        </Link>
+                      )}
+                    </span>
+                  }
+                >
+                  <Info16Regular className={styles.infoIcon} tabIndex={0} aria-label={option.infoMessage} />
+                </Tooltip>
+              )}
+            </span>
             <span className={styles.toolDescription}>{option.description}</span>
           </div>
           <Switch

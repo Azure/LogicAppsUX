@@ -3,6 +3,7 @@
   "version": "5.110.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
     "@faker-js/faker": "^8.4.1",
@@ -60,8 +61,7 @@
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.8",
     "vite-plugin-node-polyfills": "^0.23.0",
-    "vitest": "^3.2.4",
-    "@eslint/compat": "^2.0.0"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18",
@@ -81,10 +81,10 @@
     "build:lib": "turbo run build:lib",
     "build:extension": "turbo run build:extension",
     "check": "biome check --write .",
-    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
-    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
+    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/src/compiled-lang/\" ",
+    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/src/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "e2e:setup": "playwright install --with-deps",
-    "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
+    "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" \"apps/vs-code-react/src/**/*.{ts,tsx}\" --ignore \"**/node_modules/**\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --ignore \"apps/vs-code-react/src/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
     "generateArmToken": "node ./scripts/generateArmToken.js",
     "prepare": "husky || true",
     "publish": "turbo run build:lib && pnpm publish -r",
@@ -105,14 +105,17 @@
     "vscode:designer:pack": "turbo run vscode:designer:pack",
     "templates": "ts-node downloadTemplates.js",
     "vscode:designer:e2e:ui": "turbo run vscode:designer:e2e:ui",
-    "vscode:designer:e2e:headless": "turbo run vscode:designer:e2e:headless"
+    "vscode:designer:e2e:headless": "turbo run vscode:designer:e2e:headless",
+    "graphify:setup": "./scripts/graphify-setup.sh",
+    "graphify:rebuild": "./scripts/graphify-rebuild.sh",
+    "ai:generate": "./scripts/generate-ai-docs.sh"
   },
   "type": "module",
   "dependencies": {
     "dotenv": "^16.4.5",
     "find-process": "^1.4.7",
     "fs-extra": "^11.2.0",
-    "happy-dom": "^20.0.2",
+    "happy-dom": "^20.8.9",
     "react-window": "^2.2.6",
     "ts-node": "^10.9.2"
   },

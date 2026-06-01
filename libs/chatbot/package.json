@@ -2,9 +2,9 @@
   "name": "@microsoft/logic-apps-chatbot",
   "version": "5.110.0",
   "dependencies": {
-    "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.70.0",
-    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/react": "^8.110.2",
+    "@fluentui/react-components": "^9.70.0",
+    "@fluentui/react-icons": "^2.0.224",
     "@microsoft/designer-ui": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
     "react-intl": "6.3.0"
@@ -24,7 +24,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": ["build/lib/**/*"],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -33,14 +33,14 @@
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
   "publishConfig": {
-    "main": "build/lib/index.cjs",
+    "main": "build/lib/index.js",
     "module": "build/lib/index.js",
     "types": "build/lib/index.d.ts",
     "exports": {
       ".": {
-        "types:": "./build/lib/index.d.ts",
+        "types": "./build/lib/index.d.ts",
         "import": "./build/lib/index.js",
-        "default": "./build/lib/index.cjs"
+        "default": "./build/lib/index.js"
       },
       "./package.json": "./package.json",
       "./build/lib/index.css": "./build/lib/index.css"

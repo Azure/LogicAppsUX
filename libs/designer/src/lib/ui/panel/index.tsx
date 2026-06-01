@@ -10,3 +10,4 @@ export * from './connectionsPanel/createConnection/custom/cosmosConnector';
 export * from './nodeDetailsPanel/tabs/parametersTab/custom/deploymentModelResource';
 export * from './runHistoryPanel/runHistoryPanel';
 export * from './errorsPanel/tabs/errorsTab.hooks';
+export * from './connectionsPanel/connectionView/connectionsView';

@@ -156,6 +156,7 @@ const knowledgeHubLocation = 'knowledgeHubConnections';
 const mcpLocation = 'agentMcpConnections';
 export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+\/apis\/[^/]+/;
+export const microsoftFoundryModelsRegex = /\/models$/;
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -946,8 +947,12 @@ function convertToAgentConnectionsData(
       },
       endpoint: isBringYourOwnKeyAuth || isClientCertificateAuth ? parameterValues?.['endpoint'] : parameterValues?.['openAIEndpoint'],
       // Only include resourceId if it has a value
-      ...(cognitiveServiceAccountId && { resourceId: cognitiveServiceAccountId }),
-      type: isFoundryAgentServiceConnection ? 'FoundryAgentService' : isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
+      // Append /models for standard Cognitive Services connections (MicrosoftFoundry) to distinguish from legacy AzureOpenAI
+      ...(cognitiveServiceAccountId && {
+        resourceId:
+          isFoundryAgentServiceConnection || isAPIMManagementConnection ? cognitiveServiceAccountId : `${cognitiveServiceAccountId}/models`,
+      }),
+      type: isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },
     settings,
     pathLocation: [agentLocation],
@@ -1096,11 +1101,13 @@ function convertToMcpConnectionsData(
     processValue(connectionParametersSet.values, 'authority', false);
     processValue(connectionParametersSet.values, 'tenant', false);
     processValue(connectionParametersSet.values, 'audience', false);
+    processValue(connectionParametersSet.values, 'identity', false);
     processValue(connectionParametersSet.values, 'clientId', false);
     processValue(connectionParametersSet.values, 'secret', true);
     processValue(connectionParametersSet.values, 'value', true);
     processValue(connectionParametersSet.values, 'key', true);
     processValue(connectionParametersSet.values, 'keyHeaderName', false);
+    processValue(connectionParametersSet.values, 'identity', false);
   }
 
   return {

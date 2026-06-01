@@ -475,8 +475,9 @@ export const RunHistoryPanel = () => {
   // If a runId filter is set, prefetch that run's data
   const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
 
-  const compatMountNode = useMemo(() => {
-    return document.getElementById('fluent-compat-component-mount') ?? undefined;
+  const [compatMountNode, setCompatMountNode] = useState<HTMLElement | undefined>(undefined);
+  useEffect(() => {
+    setCompatMountNode(document.getElementById('fluent-compat-component-mount') ?? undefined);
   }, []);
 
   // MARK: Components

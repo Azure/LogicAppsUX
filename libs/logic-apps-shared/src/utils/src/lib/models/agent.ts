@@ -1,11 +1,49 @@
+/** Supported OpenAI models for AzureOpenAI agent connections (subset of foundry models). */
+export const SUPPORTED_AGENT_OPENAI_MODELS: string[] = [
+  'gpt-5',
+  'gpt-5-chat',
+  'gpt-4.1',
+  'gpt-4',
+  'gpt-4o',
+  'gpt-35-turbo',
+  'gpt-4.1-mini',
+  'gpt-4.1-nano',
+  'gpt-4o-mini',
+];
+
 export const AGENT_MODEL_CONFIG: Record<string, { name: string; version: string; format: string }> = {
+  'gpt-5.4-nano': { name: 'gpt-5.4-nano', version: '2025-08-01', format: 'OpenAI' },
+  'gpt-5.4-mini': { name: 'gpt-5.4-mini', version: '2025-08-01', format: 'OpenAI' },
+  'gpt-5.4-pro': { name: 'gpt-5.4-pro', version: '2025-08-01', format: 'OpenAI' },
+  'gpt-5.4': { name: 'gpt-5.4', version: '2025-08-01', format: 'OpenAI' },
+  'model-router': { name: 'model-router', version: '2025-05-15', format: 'OpenAI' },
+  'gpt-5.3-chat': { name: 'gpt-5.3-chat', version: '2025-08-07', format: 'OpenAI' },
+  'gpt-5.2-chat': { name: 'gpt-5.2-chat', version: '2025-08-07', format: 'OpenAI' },
+  'gpt-5.2': { name: 'gpt-5.2', version: '2025-08-07', format: 'OpenAI' },
   'gpt-5': { name: 'gpt-5', version: '2025-08-07', format: 'OpenAI' },
   'gpt-5-chat': { name: 'gpt-5-chat', version: '2025-08-07', format: 'OpenAI' },
+  'gpt-5.1': { name: 'gpt-5.1', version: '2025-06-10', format: 'OpenAI' },
+  'gpt-5.1-chat': { name: 'gpt-5.1-chat', version: '2025-06-10', format: 'OpenAI' },
+  'gpt-5-pro': { name: 'gpt-5-pro', version: '2025-06-10', format: 'OpenAI' },
+  o3: { name: 'o3', version: '2025-04-16', format: 'OpenAI' },
+  'o4-mini': { name: 'o4-mini', version: '2025-04-16', format: 'OpenAI' },
   'gpt-4.1': { name: 'gpt-4.1', version: '2025-04-14', format: 'OpenAI' },
-  'gpt-4': { name: 'gpt-4', version: '2025-04-14', format: 'OpenAI' },
-  'gpt-4o': { name: 'gpt-4o', version: '2025-04-14', format: 'OpenAI' },
-  'gpt-35-turbo': { name: 'gpt-3.5-turbo', version: '2025-04-14', format: 'OpenAI' },
   'gpt-4.1-mini': { name: 'gpt-4.1-mini', version: '2025-04-14', format: 'OpenAI' },
   'gpt-4.1-nano': { name: 'gpt-4.1-nano', version: '2025-04-14', format: 'OpenAI' },
-  'gpt-4o-mini': { name: 'gpt-4o-mini', version: '2025-04-14', format: 'OpenAI' },
+  'o3-mini': { name: 'o3-mini', version: '2025-01-31', format: 'OpenAI' },
+  'gpt-4o': { name: 'gpt-4o', version: '2024-11-20', format: 'OpenAI' },
+  'gpt-4o-mini': { name: 'gpt-4o-mini', version: '2024-07-18', format: 'OpenAI' },
+  'gpt-4.5-preview': { name: 'gpt-4.5-preview', version: '2025-02-27', format: 'OpenAI' },
+  'o3-pro': { name: 'o3-pro', version: '2025-06-10', format: 'OpenAI' },
+  o1: { name: 'o1', version: '2024-12-17', format: 'OpenAI' },
+  'gpt-4': { name: 'gpt-4', version: 'turbo-2024-04-09', format: 'OpenAI' },
+  'gpt-35-turbo': { name: 'gpt-3.5-turbo', version: '0125', format: 'OpenAI' },
+  'gpt-35-turbo-16k': { name: 'gpt-35-turbo-16k', version: '0613', format: 'OpenAI' },
+  'gpt-35-turbo-instruct': { name: 'gpt-35-turbo-instruct', version: '0914', format: 'OpenAI' },
+  'gpt-5-reasoning-alpha': { name: 'gpt-5-reasoning-alpha', version: '2025-08-07', format: 'OpenAI' },
+  'gpt-4-32k': { name: 'gpt-4-32k', version: '0613', format: 'OpenAI' },
+  'model-router-dev': { name: 'model-router-dev', version: '2025-05-15', format: 'OpenAI' },
 };
+
+/** Supported models for Foundry / MicrosoftFoundry agent connections (derived from AGENT_MODEL_CONFIG). */
+export const SUPPORTED_FOUNDRY_AGENT_MODELS: string[] = Object.keys(AGENT_MODEL_CONFIG);

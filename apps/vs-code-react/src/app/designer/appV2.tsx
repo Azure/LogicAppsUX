@@ -32,6 +32,7 @@ export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
+  const { supportsUnitTest } = vscodeState;
   const styles = useAppStyles();
   const {
     panelMetaData,
@@ -60,6 +61,7 @@ export const DesignerApp = () => {
   const [initialWorkflow, setInitialWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [workflow, setWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
+  const isCodefulWorkflow = panelMetaData?.localSettings?.WORKFLOW_CODEFUL_ENABLED === 'true';
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
@@ -355,6 +357,8 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
+              supportsUnitTest={supportsUnitTest}
+              showRunHistory={!isCodefulWorkflow}
             />
 
             {!isCodeView && (

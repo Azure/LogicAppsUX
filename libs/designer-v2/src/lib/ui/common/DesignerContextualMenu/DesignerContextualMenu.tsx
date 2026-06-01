@@ -6,13 +6,16 @@ import {
   SUBGRAPH_TYPES,
   UiInteractionsService,
   WorkflowService,
+  equals,
   getRecordEntry,
+  HostService,
   isScopeOperation,
   isUiInteractionsServiceEnabled,
 } from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, ExpandCollapseMenuItem, CollapseMenuItem } from '../../../ui/menuItems';
+import { ShowLogicAppRunMenuItem } from '../../../ui/menuItems/showLogicAppRunMenuItem';
 import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { AddNoteMenuItem } from '../../../ui/menuItems/addNoteMenuItem';
@@ -48,6 +51,8 @@ import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/ut
 import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSlice';
 import { addNote } from '../../../core/state/notes/notesSlice';
 import { useReactFlow } from '@xyflow/react';
+import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from '../../panel/nodeDetailsPanel/childWorkflowHelpers';
+import { useRawInputsOutputs } from '../../panel/nodeDetailsPanel/useRawInputsOutputs';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -116,6 +121,23 @@ export const DesignerContextualMenu = () => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [nodeId]);
   }, [runInstance, nodeId]);
 
+  // Read raw (pre-binding) inputs/outputs from the shared React Query cache.
+  // The MonitoringTab populates this cache; we subscribe to get raw data before
+  // ManifestOutputsBinder drops properties not in the operation manifest schema.
+  const isWorkflowNode = equals(operationInfo?.type, 'workflow');
+  const { data: rawInputsOutputs } = useRawInputsOutputs(nodeId, { enabled: isWorkflowNode });
+
+  const runName = useMemo(() => getChildRunNameFromOutputs(rawInputsOutputs?.outputs), [rawInputsOutputs?.outputs]);
+
+  const canShowLogicAppRun = useMemo(() => isWorkflowNode && !!runName && !!HostService()?.openMonitorView, [isWorkflowNode, runName]);
+
+  const showLogicAppRunClick = useCallback(() => {
+    const workflowId = getChildWorkflowIdFromInputs(rawInputsOutputs?.inputs);
+    if (workflowId && runName) {
+      HostService().openMonitorView?.(workflowId, runName);
+    }
+  }, [rawInputsOutputs?.inputs, runName]);
+
   const [showCopyCallout, setShowCopyCallout] = useState(false);
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
@@ -183,6 +205,14 @@ export const DesignerContextualMenu = () => {
             },
           ]
         : []),
+      ...(canShowLogicAppRun
+        ? [
+            {
+              priority: NodeMenuPriorities.ShowLogicAppRun,
+              renderCustomComponent: () => <ShowLogicAppRunMenuItem key={'showLogicAppRun'} onClick={showLogicAppRunClick} />,
+            },
+          ]
+        : []),
       ...(runAfter
         ? [
             {
@@ -208,6 +238,8 @@ export const DesignerContextualMenu = () => {
     copyClick,
     pinClick,
     resubmitClick,
+    canShowLogicAppRun,
+    showLogicAppRunClick,
     runAfterClick,
     runMode,
   ]);

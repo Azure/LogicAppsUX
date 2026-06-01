@@ -468,6 +468,7 @@ export default {
       FILEPICKER: 'filepicker',
       HTML: 'html',
       INITIALIZE_VARIABLE: 'initializevariable',
+      KNOWLEDGE_BASE: 'knowledgebase',
       RECURRENCE: 'recurrence',
       SCHEMA: 'schema',
       STRING: 'string',

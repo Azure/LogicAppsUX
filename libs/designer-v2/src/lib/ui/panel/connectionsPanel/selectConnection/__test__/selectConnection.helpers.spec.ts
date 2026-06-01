@@ -115,6 +115,25 @@ describe('selectConnection helpers', () => {
         { ...mockConnectionWithErrors.properties, parameterValues: { gateway: { id: 'jdoe', name: 'jdoe@example.com', type: 'gateway' } } },
         'jdoe@example.com',
       ],
+      [
+        'agentModelType "Foundry project" if available',
+        { ...mockConnectionWithErrors.properties, connectionParameters: { agentModelType: { type: 'Foundry project' } } },
+        'Foundry project',
+      ],
+      [
+        'agentModelType "Azure OpenAI" if available',
+        { ...mockConnectionWithErrors.properties, connectionParameters: { agentModelType: { type: 'Azure OpenAI' } } },
+        'Azure OpenAI',
+      ],
+      [
+        'gateway over agentModelType when both present',
+        {
+          ...mockConnectionWithErrors.properties,
+          parameterValues: { gateway: { id: 'gw', name: 'Gateway Name', type: 'gateway' } },
+          connectionParameters: { agentModelType: { type: 'Foundry project' } },
+        },
+        'Gateway Name',
+      ],
     ])('should handle "%s" case', (_caseName, properties, expected) => {
       expect(getSubLabelForConnection(properties)).toBe(expected);
     });

@@ -1,7 +1,5 @@
-import type { AppDispatch } from '../../../../../core/state/knowledge/store';
 import type { KnowledgeConnectionTabProps, KnowledgeTabProps } from '@microsoft/designer-ui';
 import type { IntlShape } from 'react-intl';
-import { selectPanelTab } from '../../../../../core/state/knowledge/panelSlice';
 import Constants from '../../../../../common/constants';
 import {
   ConnectionParameterEditorService,
@@ -23,7 +21,7 @@ import { comboboxStyles, dropdownStyles, getSelectedAuthIndex, secretFieldStyles
 
 export const modelTab = (
   intl: IntlShape,
-  dispatch: AppDispatch,
+  selectTab: (tabId: string) => void,
   connectionParameters: ConnectionParameterSets,
   connectionParameterValues: Record<string, any>,
   setConnectionParameterValues: (values: Record<string, any>) => void,
@@ -56,7 +54,7 @@ export const modelTab = (
           description: 'Button text for moving to the previous tab in the connection panel',
         }),
         onClick: () => {
-          dispatch(selectPanelTab(Constants.KNOWLEDGE_PANEL_TAB_NAMES.BASICS));
+          selectTab(Constants.KNOWLEDGE_PANEL_TAB_NAMES.BASICS);
         },
       },
       {
@@ -94,13 +92,16 @@ const Model = ({
   setConnectionParameterValues: (values: Record<string, any>) => void;
 }) => {
   const styles = useCreatePanelStyles();
-  const INTL_TEXT = {
-    description: intl.formatMessage({
-      defaultMessage: 'Set up a model for your knowledge base.',
-      id: 'snTAYI',
-      description: 'Description for the model tab in create connection panel',
+  const INTL_TEXT = useMemo(
+    () => ({
+      description: intl.formatMessage({
+        defaultMessage: 'Set up a model for your knowledge base.',
+        id: 'snTAYI',
+        description: 'Description for the model tab in create connection panel',
+      }),
     }),
-  };
+    [intl]
+  );
 
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(
     getSelectedAuthIndex(connectionParameterSets, connectionParameterValues.openAIAuthenticationType)

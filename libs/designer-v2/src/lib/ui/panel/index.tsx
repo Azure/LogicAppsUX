@@ -10,3 +10,4 @@ export * from './nodeDetailsPanel/tabs/parametersTab/custom/deploymentModelResou
 export * from './runHistoryPanel';
 export * from './errorsPanel/tabs/errorsTab.hooks';
 export * from './runTreeView';
+export * from './runHistoryPanel/runHistoryPanelInstance';

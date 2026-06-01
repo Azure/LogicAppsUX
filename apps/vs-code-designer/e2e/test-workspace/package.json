@@ -1,0 +1,5 @@
+{
+  "name": "logic-apps-test-workspace",
+  "version": "1.0.0",
+  "description": "Test workspace for Logic Apps VS Code extension e2e tests"
+}
