@@ -12,6 +12,8 @@ import {
   logicAppKind,
   workerRuntimeKey,
   azureStorageTypeSetting,
+  codefulExtensionBundleVersion,
+  codefulExtensionBundleVersionSetting,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
 } from '../../../constants';
@@ -201,6 +203,7 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
   if (isCodeful) {
     Object.assign(baseSettings.Values, {
       WORKFLOW_CODEFUL_ENABLED: 'true',
+      [codefulExtensionBundleVersionSetting]: codefulExtensionBundleVersion,
     });
   }
 

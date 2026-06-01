@@ -5,6 +5,8 @@ import {
   autoRuntimeDependenciesPathSettingKey,
   azureWebJobsFeatureFlagsKey,
   azureWebJobsStorageKey,
+  codefulExtensionBundleVersion,
+  codefulExtensionBundleVersionSetting,
   defaultVersionRange,
   devContainerFolderName,
   extensionBundleId,
@@ -225,6 +227,7 @@ export async function createLocalConfigurationFiles(
   // TODO(aeldridge): Update to point to codeful private bundle once it's published.
   if (logicAppType === ProjectType.codeful) {
     localSettingsJson.Values[workflowCodefulEnabled] = 'true';
+    localSettingsJson.Values[codefulExtensionBundleVersionSetting] = codefulExtensionBundleVersion;
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
