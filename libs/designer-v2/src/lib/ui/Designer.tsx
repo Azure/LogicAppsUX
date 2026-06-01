@@ -7,6 +7,11 @@ import {
   useIsVSCode,
   useIsDarkMode,
 } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
+import { setNodeSelection } from '../core/state/panel/panelSlice';
+import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
+import { useAllSelectableNodeIds } from '../core/state/workflow/workflowSelectors';
+import { duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -111,6 +116,50 @@ export const Designer = (props: DesignerProps) => {
       dispatch(onRedoClick());
     },
     { enabled: !isReadOnly && canRedo }
+  );
+
+  const selectedNodeId = useOperationPanelSelectedNodeId();
+  const selectedNodeIds = useOperationPanelSelectedNodeIds();
+  const allSelectableNodeIds = useAllSelectableNodeIds();
+
+  // Delete / Backspace: open the delete confirmation for the current selection (single or multi).
+  useHotkeys(
+    ['delete', 'backspace'],
+    (event) => {
+      if (selectedNodeIds.length > 1) {
+        event.preventDefault();
+        dispatch(setShowMultiSelectDeleteModal(true));
+      } else if (selectedNodeId) {
+        event.preventDefault();
+        dispatch(setShowDeleteModalNodeId(selectedNodeId));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+D: duplicate the selected node(s) directly below themselves.
+  useHotkeys(
+    ['meta+d', 'ctrl+d'],
+    (event) => {
+      event.preventDefault();
+      const idsToDuplicate = selectedNodeIds.length > 0 ? selectedNodeIds : selectedNodeId ? [selectedNodeId] : [];
+      if (idsToDuplicate.length > 0) {
+        dispatch(duplicateOperations({ nodeIds: idsToDuplicate }));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+A: select all actions on the canvas.
+  useHotkeys(
+    ['meta+a', 'ctrl+a'],
+    (event) => {
+      event.preventDefault();
+      if (allSelectableNodeIds.length > 0) {
+        dispatch(setNodeSelection(allSelectableNodeIds));
+      }
+    },
+    { enabled: !isReadOnly }
   );
 
   const isMonitoringView = useMonitoringView();

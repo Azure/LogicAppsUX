@@ -371,32 +371,81 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
-  // Track the in-progress marquee/box selection, but don't commit it to redux until the
-  // drag is released. Committing on every change is jarring because the panel re-renders
-  // continuously while the user is still dragging the selection box.
-  // Only action and scope cards participate; notes, containers, and placeholders are ignored.
+  // Only action and scope cards participate in box selection; notes, containers, and placeholders
+  // are ignored.
+  const toSelectableNodeIds = useCallback(
+    (nodes: { id: string; type?: string; selected?: boolean }[]): string[] =>
+      nodes
+        .filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)
+        .map((node) => (containsIdTag(node.id) ? removeIdTag(node.id) : node.id)),
+    []
+  );
+
+  // Marquee selection is committed to redux only when the drag is released — committing on every
+  // change is jarring because the panel re-renders continuously while the box is still being drawn.
+  //
+  // The tricky part is a timing race. react-flow runs here in *controlled* mode (`nodes={allNodes}`)
+  // and our `onNodesChange` intentionally ignores `select` changes, so the marquee selection never
+  // reaches the `nodes` array (`reactFlowInstance.getNodes()` stays unselected). It only lives in
+  // react-flow's internal `nodeLookup`, which is surfaced to us exclusively through
+  // `onSelectionChange` (`params.nodes`). That callback is delivered via a deferred store
+  // subscription, so on a quick release it can fire *after* `onSelectionEnd`.
+  //
+  // To be robust we commit from whichever of the two fires last:
+  //   - slow release: the final `onSelectionChange` arrives during the drag, then `onSelectionEnd`
+  //     commits from the ref.
+  //   - quick release: `onSelectionEnd` runs first (ref possibly stale/empty), then the deferred
+  //     `onSelectionChange` arrives after the drag has ended and commits the final set.
   const pendingBoxSelectionRef = useRef<string[]>([]);
-  const onSelectionChange = useCallback((params: OnSelectionChangeParams) => {
-    pendingBoxSelectionRef.current = (params?.nodes ?? [])
-      .filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)
-      .map((node) => (containsIdTag(node.id) ? removeIdTag(node.id) : node.id));
-  }, []);
+  const isBoxSelectingRef = useRef(false);
+  const lastCommittedSelectionRef = useRef('');
 
-  // Reset the pending box selection when a new marquee begins. Without this, a fresh marquee
-  // that selects nothing won't fire onSelectionChange, leaving the ref holding the previous
-  // marquee's ids — which onSelectionEnd would then wrongly re-commit.
-  const onSelectionStart = useCallback(() => {
-    pendingBoxSelectionRef.current = [];
-  }, []);
-
-  // Commit the box selection only once the user finishes dragging the selection box.
-  const onSelectionEnd = useCallback(() => {
-    const ids = pendingBoxSelectionRef.current;
-    // Ignore empty selections so a click or an empty marquee doesn't clobber an existing selection.
-    if (ids.length > 0) {
+  const commitBoxSelection = useCallback(
+    (ids: string[]) => {
+      // Ignore empty selections so a click or an empty marquee doesn't clobber an existing selection.
+      if (ids.length === 0) {
+        return;
+      }
+      // Guard against redundant dispatches (e.g. the post-commit onSelectionChange echo) so we don't
+      // thrash redux or loop.
+      const key = [...ids].sort().join('|');
+      if (key === lastCommittedSelectionRef.current) {
+        return;
+      }
+      lastCommittedSelectionRef.current = key;
       dispatch(setNodeSelection(ids));
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
+
+  const onSelectionChange = useCallback(
+    (params: OnSelectionChangeParams) => {
+      const ids = toSelectableNodeIds(params?.nodes ?? []);
+      pendingBoxSelectionRef.current = ids;
+      // If the marquee has already ended, this is the deferred final flush — commit it now. During
+      // the drag we hold off so the panel doesn't thrash while the box is still being drawn.
+      if (!isBoxSelectingRef.current) {
+        commitBoxSelection(ids);
+      }
+    },
+    [toSelectableNodeIds, commitBoxSelection]
+  );
+
+  // Reset tracking when a new marquee begins. Without clearing the ref, a fresh marquee that selects
+  // nothing won't fire onSelectionChange, leaving the ref holding the previous marquee's ids — which
+  // would then be wrongly re-committed.
+  const onSelectionStart = useCallback(() => {
+    isBoxSelectingRef.current = true;
+    pendingBoxSelectionRef.current = [];
+    lastCommittedSelectionRef.current = '';
+  }, []);
+
+  const onSelectionEnd = useCallback(() => {
+    isBoxSelectingRef.current = false;
+    // Commit what we have. If the final onSelectionChange hasn't flushed yet (quick release), the
+    // ref may be stale/empty here — the deferred onSelectionChange will then commit the final set.
+    commitBoxSelection(pendingBoxSelectionRef.current);
+  }, [commitBoxSelection]);
 
   const onPaneContextMenu = useCallback(
     (e: React.MouseEvent | MouseEvent) => {
@@ -506,14 +555,14 @@ const DesignerReactFlow = (props: any) => {
       elementsSelectable={true}
       selectionOnDrag={false}
       selectionMode={SelectionMode.Full}
-      selectionKeyCode={'Shift'}
-      multiSelectionKeyCode={['Meta', 'Control']}
+      selectionKeyCode={['Shift', 'Control']}
+      multiSelectionKeyCode={['Meta', 'Control', 'Shift']}
       panOnDrag={true}
       onSelectionChange={onSelectionChange}
       onSelectionStart={onSelectionStart}
       onSelectionEnd={onSelectionEnd}
       panOnScroll={true}
-      deleteKeyCode={['Backspace', 'Delete']}
+      deleteKeyCode={null}
       zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
       translateExtent={clampPan ? translateExtent : undefined}
       onMove={(_e, viewport) => setZoom(viewport.zoom)}

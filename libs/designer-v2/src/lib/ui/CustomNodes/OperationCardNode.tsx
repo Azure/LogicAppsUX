@@ -208,8 +208,8 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const nodeClick = useCallback(
     (e?: React.MouseEvent) => {
-      // Shift-click toggles the node in the multi-selection set instead of opening its panel.
-      if (e?.shiftKey) {
+      // Shift/Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
+      if (e?.shiftKey || e?.ctrlKey || e?.metaKey) {
         dispatch(toggleNodeSelection(id));
         return;
       }
