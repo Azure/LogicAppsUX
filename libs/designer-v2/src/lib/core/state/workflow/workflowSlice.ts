@@ -59,6 +59,13 @@ export interface AddImplicitForeachPayload {
   operation: any;
 }
 
+export interface WrapNodesInScopePayload {
+  scopeId: string;
+  nodeIds: string[];
+  graphId: string;
+  operation: any;
+}
+
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   workflowKind: undefined,
@@ -165,6 +172,66 @@ export const workflowSlice = createSlice({
         state.nodesMetadata,
         state
       );
+    },
+    wrapNodesInScope: (state: WorkflowState, action: PayloadAction<WrapNodesInScopePayload>) => {
+      if (!state.graph) {
+        return;
+      }
+      const { scopeId, nodeIds, graphId, operation } = action.payload;
+      const currentGraph = getWorkflowNodeFromGraphState(state, graphId) as WorkflowNode;
+      if (!currentGraph || nodeIds.length === 0) {
+        return;
+      }
+
+      const firstNodeId = nodeIds[0];
+      const parentIds = getImmediateSourceNodeIds(currentGraph, firstNodeId);
+      const parentId = parentIds.length === 1 ? parentIds[0] : undefined;
+
+      // Insert the new scope node where the first selected node currently sits.
+      addNodeToWorkflow(
+        { nodeId: scopeId, operation, relationshipIds: { graphId, parentId, childId: firstNodeId } } as AddNodePayload,
+        currentGraph,
+        state.nodesMetadata,
+        state
+      );
+
+      const scopeNode = getWorkflowNodeFromGraphState(state, scopeId) as WorkflowNode;
+      if (!scopeNode) {
+        return;
+      }
+
+      // Determine the container the selected nodes should move into.
+      const operationType = (operation.type ?? '').toLowerCase();
+      let targetGraph = scopeNode;
+      let targetGraphId = scopeId;
+      // For plain scopes the actions are direct children, parented off the scope header.
+      let previousNodeId: string | undefined = scopeNode.children?.[0]?.id;
+      if (operationType === 'if') {
+        targetGraphId = `${scopeId}-actions`;
+        targetGraph = getWorkflowNodeFromGraphState(state, targetGraphId) as WorkflowNode;
+        previousNodeId = undefined;
+      }
+
+      if (!targetGraph) {
+        return;
+      }
+
+      // Move each selected node (in chain order) into the scope container.
+      for (const nodeId of nodeIds) {
+        const currentNode = getWorkflowNodeFromGraphState(state, nodeId);
+        if (!currentNode) {
+          continue;
+        }
+        moveNodeInWorkflow(
+          currentNode,
+          currentGraph,
+          targetGraph,
+          { graphId: targetGraphId, parentId: previousNodeId },
+          state.nodesMetadata,
+          state
+        );
+        previousNodeId = nodeId;
+      }
     },
     pasteNode: (
       state: WorkflowState,
@@ -909,6 +976,7 @@ export const workflowSlice = createSlice({
         addAgentTool,
         addMcpServer,
         addImplicitForeachNode,
+        wrapNodesInScope,
         pasteScopeNode,
         setNodeDescription,
         updateRunAfter,
@@ -934,6 +1002,7 @@ export const {
   setRunInstance,
   addNode,
   addImplicitForeachNode,
+  wrapNodesInScope,
   pasteNode,
   pasteScopeNode,
   moveNode,

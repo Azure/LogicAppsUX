@@ -8,8 +8,9 @@ import type {
   NodeDimensionChange,
   NodePositionChange,
   XYPosition,
+  OnSelectionChangeParams,
 } from '@xyflow/react';
-import { BezierEdge, ReactFlow } from '@xyflow/react';
+import { BezierEdge, ReactFlow, SelectionMode } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   agentOperation,
@@ -28,7 +29,7 @@ import { useAllAgentIds, useDisconnectedNodes, useIsGraphEmpty, useNodesMetadata
 import { useNodesInitialized } from '../core/state/operation/operationSelector';
 import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import { addOperation, type AppDispatch } from '../core';
-import { clearPanel, expandDiscoveryPanel } from '../core/state/panel/panelSlice';
+import { clearPanel, expandDiscoveryPanel, setNodeSelection } from '../core/state/panel/panelSlice';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
@@ -370,6 +371,21 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
+  // Sync react-flow marquee/box selection into our redux multi-selection state.
+  // Only action and scope cards participate; notes, containers, and placeholders are ignored.
+  const onSelectionChange = useCallback(
+    (params: OnSelectionChangeParams) => {
+      const ids = (params?.nodes ?? [])
+        .filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)
+        .map((node) => (containsIdTag(node.id) ? removeIdTag(node.id) : node.id));
+      // Ignore empty change events to avoid clobbering a single click selection during re-layouts.
+      if (ids.length > 0) {
+        dispatch(setNodeSelection(ids));
+      }
+    },
+    [dispatch]
+  );
+
   const onPaneContextMenu = useCallback(
     (e: React.MouseEvent | MouseEvent) => {
       e.preventDefault();
@@ -475,7 +491,12 @@ const DesignerReactFlow = (props: any) => {
       nodesFocusable={false}
       edgesFocusable={false}
       edgeTypes={edgeTypes}
-      elementsSelectable={false}
+      elementsSelectable={true}
+      selectionOnDrag={true}
+      selectionMode={SelectionMode.Partial}
+      multiSelectionKeyCode={['Shift', 'Meta', 'Control']}
+      panOnDrag={[1, 2]}
+      onSelectionChange={onSelectionChange}
       panOnScroll={true}
       deleteKeyCode={['Backspace', 'Delete']}
       zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}

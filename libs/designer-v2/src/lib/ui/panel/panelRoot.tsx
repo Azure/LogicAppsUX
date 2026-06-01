@@ -6,12 +6,14 @@ import {
   useFocusReturnElementId,
   useIsPanelCollapsed,
   useIsPanelLoading,
+  useOperationPanelSelectedNodeIds,
 } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { AssertionsPanel } from './assertionsPanel/assertionsPanel';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
+import { MultiSelectPanel } from './multiSelectPanel/multiSelectPanel';
 import { NodeSearchDialog } from './nodeSearchPanel/nodeSearchDialog';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParametersPanel';
@@ -45,6 +47,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
   const collapsed = useIsPanelCollapsed();
   const currentPanelMode = useCurrentPanelMode();
   const focusReturnElementId = useFocusReturnElementId();
+  const selectedNodeIds = useOperationPanelSelectedNodeIds();
+  const isMultiSelect = currentPanelMode === 'Operation' && selectedNodeIds.length > 2;
 
   const panelContainerElement = panelContainerRef.current;
 
@@ -159,7 +163,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
   }
 
   return !isLoadingPanel && currentPanelMode === 'Operation' ? (
-    <NodeDetailsPanel {...commonPanelProps} />
+    isMultiSelect ? (
+      <MultiSelectPanel {...commonPanelProps} />
+    ) : (
+      <NodeDetailsPanel {...commonPanelProps} />
+    )
   ) : (
     <Panel
       className={`msla-panel-root-${currentPanelMode}`}

@@ -10,6 +10,7 @@ import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteMcpServer, deleteNode } from '../../state/workflow/workflowSlice';
+import { getWorkflowNodeFromGraphState } from '../../state/workflow/workflowGraphTraversal';
 import { getParameterFromName } from '../../utils/parameters/helper';
 import { updateAllUpstreamNodes } from './initialize';
 import { WORKFLOW_NODE_TYPES, getRecordEntry } from '@microsoft/logic-apps-shared';
@@ -167,6 +168,39 @@ export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayl
   recursiveGraphDelete(graphNode);
   return;
 });
+
+export type DeleteOperationsPayload = {
+  nodeIds: string[];
+};
+
+// Deletes multiple selected nodes at once. Operation nodes are removed individually;
+// scope/graph nodes are removed recursively via deleteGraphNode. The panel is cleared once.
+export const deleteOperations = createAsyncThunk(
+  'deleteOperations',
+  async (deletePayload: DeleteOperationsPayload, { getState, dispatch }) => {
+    const { nodeIds } = deletePayload;
+    if (!nodeIds || nodeIds.length === 0) {
+      return;
+    }
+
+    dispatch(clearFocusNode());
+    dispatch(clearPanel());
+
+    for (const nodeId of nodeIds) {
+      const state = getState() as RootState;
+      const workflowNode = getWorkflowNodeFromGraphState(state.workflow, nodeId);
+      const isTrigger = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.isRoot ?? false;
+      if (
+        workflowNode &&
+        (workflowNode.type === WORKFLOW_NODE_TYPES.GRAPH_NODE || workflowNode.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE)
+      ) {
+        dispatch(deleteGraphNode({ graphId: nodeId, graphNode: workflowNode, clearFocus: false }));
+      } else {
+        dispatch(deleteOperation({ nodeId, isTrigger, clearFocus: false }));
+      }
+    }
+  }
+);
 
 export const deleteMcpServerNode = createAsyncThunk(
   'deleteMcpServer',
