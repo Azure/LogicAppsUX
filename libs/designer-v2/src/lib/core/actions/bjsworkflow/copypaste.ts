@@ -7,7 +7,14 @@ import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
-import { createIdCopy, getRecordEntry, LOCAL_STORAGE_KEYS, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import {
+  createIdCopy,
+  getRecordEntry,
+  isScopeOperation,
+  LOCAL_STORAGE_KEYS,
+  removeIdTag,
+  type LogicAppsV2,
+} from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
@@ -104,6 +111,93 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
       localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
     }
   });
+});
+
+type CopyOperationsPayload = {
+  nodeIds: string[];
+};
+
+const buildActionClipboardEntry = (state: RootState, nodeId: string) => {
+  const newNodeId = createIdCopy(nodeId);
+  const nodeData = getNodeOperationData(state.operations, nodeId);
+  const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+  const nodeComment = getRecordEntry(state.workflow.operations, nodeId)?.description;
+  const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, nodeId);
+  const nodeTokenData = getRecordEntry(state.tokens.outputTokens, nodeId);
+
+  return {
+    nodeId: newNodeId,
+    nodeData,
+    nodeTokenData,
+    nodeOperationInfo,
+    nodeConnectionData,
+    nodeComment,
+    isScopeNode: false,
+  };
+};
+
+const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string) => {
+  const normalizedScopeId = removeIdTag(scopeNodeId);
+  const newNodeId = createIdCopy(normalizedScopeId);
+
+  const serializedOperation = await serializeOperation(state, normalizedScopeId, {
+    skipValidation: true,
+    ignoreNonCriticalErrors: true,
+  });
+
+  const allActionNames = getAllActionNames({ [normalizedScopeId]: serializedOperation as ActionDefinition });
+  const allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }> = {};
+  const staticResults: Record<string, any> = {};
+
+  allActionNames.forEach((actionName) => {
+    const connectionReference = getConnectionReferenceForNodeId(state.connections, actionName);
+    if (connectionReference) {
+      allConnectionData[actionName] = connectionReference;
+    }
+
+    const staticResult = getStaticResultForNodeId(state.staticResults, actionName);
+    if (staticResult) {
+      staticResults[actionName] = staticResult;
+    }
+  });
+
+  return {
+    nodeId: newNodeId,
+    serializedOperation,
+    allConnectionData,
+    staticResults,
+    isScopeNode: true,
+  };
+};
+
+const writeClipboardItem = (clipboardItem: string) => {
+  if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+    navigator.clipboard.writeText(clipboardItem);
+  } else {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
+  }
+};
+
+// Copies multiple selected nodes to the clipboard as a single multi-node payload so they can be
+// pasted together. Scope nodes are serialized in full; plain actions copy their operation data.
+export const copyOperations = createAsyncThunk('copyOperations', async (payload: CopyOperationsPayload, { getState }) => {
+  const { nodeIds } = payload;
+  if (!nodeIds || nodeIds.length === 0) {
+    return;
+  }
+  const state = getState() as RootState;
+
+  const nodes = [];
+  for (const nodeId of nodeIds) {
+    const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+    if (isScopeOperation(operationInfo?.type ?? '')) {
+      nodes.push(await buildScopeClipboardEntry(state, nodeId));
+    } else {
+      nodes.push(buildActionClipboardEntry(state, nodeId));
+    }
+  }
+
+  writeClipboardItem(JSON.stringify({ mslaNode: true, isMultiNode: true, nodes }));
 });
 
 interface PasteOperationPayload {

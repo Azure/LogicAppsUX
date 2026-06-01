@@ -71,37 +71,51 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const handlePasteClicked = useCallback(async () => {
     const relationshipIds = { graphId, childId, parentId };
     const copiedNode = await retrieveClipboardData();
-    if (copiedNode) {
-      if (copiedNode?.isScopeNode) {
-        dispatch(
+    if (!copiedNode) {
+      return;
+    }
+    const pasteSingleNode = async (node: any) => {
+      if (node?.isScopeNode) {
+        await dispatch(
           pasteScopeOperation({
             relationshipIds,
-            nodeId: copiedNode.nodeId,
-            serializedValue: copiedNode.serializedOperation,
-            allConnectionData: copiedNode.allConnectionData,
-            staticResults: copiedNode.staticResults,
+            nodeId: node.nodeId,
+            serializedValue: node.serializedOperation,
+            allConnectionData: node.allConnectionData,
+            staticResults: node.staticResults,
             upstreamNodeIds: upstreamNodesOfChild,
           })
         );
       } else {
-        dispatch(
+        await dispatch(
           pasteOperation({
             relationshipIds,
-            nodeId: copiedNode.nodeId,
-            nodeData: copiedNode.nodeData,
-            nodeTokenData: copiedNode.nodeTokenData,
-            operationInfo: copiedNode.nodeOperationInfo,
-            connectionData: copiedNode.nodeConnectionData,
-            comment: copiedNode.nodeComment,
+            nodeId: node.nodeId,
+            nodeData: node.nodeData,
+            nodeTokenData: node.nodeTokenData,
+            operationInfo: node.nodeOperationInfo,
+            connectionData: node.nodeConnectionData,
+            comment: node.nodeComment,
           })
         );
       }
-      LoggerService().log({
-        area: 'DropZone:handlePasteClicked',
-        level: LogEntryLevel.Verbose,
-        message: 'New node added via paste.',
-      });
+    };
+
+    if (copiedNode?.isMultiNode && Array.isArray(copiedNode.nodes)) {
+      // Paste in reverse so the inserted nodes keep their original top-to-bottom order
+      // (each paste inserts between the same parent/child edge).
+      for (let i = copiedNode.nodes.length - 1; i >= 0; i--) {
+        await pasteSingleNode(copiedNode.nodes[i]);
+      }
+    } else {
+      await pasteSingleNode(copiedNode);
     }
+
+    LoggerService().log({
+      area: 'DropZone:handlePasteClicked',
+      level: LogEntryLevel.Verbose,
+      message: 'New node added via paste.',
+    });
   }, [graphId, childId, parentId, dispatch, upstreamNodesOfChild]);
 
   const hotkeyRef = useHotkeys(

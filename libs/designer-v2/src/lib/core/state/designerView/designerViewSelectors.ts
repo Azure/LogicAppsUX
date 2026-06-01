@@ -16,6 +16,10 @@ export const useShowDeleteModalNodeId = () => {
   return useSelector((state: RootState) => state.designerView.showDeleteModalNodeId);
 };
 
+export const useShowMultiSelectDeleteModal = () => {
+  return useSelector((state: RootState) => state.designerView.showMultiSelectDeleteModal ?? false);
+};
+
 export const useNodeContextMenuData = () => {
   return useSelector((state: RootState) => state.designerView.nodeContextMenuData);
 };

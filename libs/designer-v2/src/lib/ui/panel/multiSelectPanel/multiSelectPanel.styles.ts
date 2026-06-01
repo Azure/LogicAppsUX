@@ -51,14 +51,6 @@ export const useMultiSelectPanelStyles = makeStyles({
     whiteSpace: 'nowrap',
     flexGrow: 1,
   },
-  dialogList: {
-    display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.gap('4px'),
-    marginTop: '12px',
-    maxHeight: '240px',
-    overflowY: 'auto',
-  },
   section: {
     marginTop: '16px',
     display: 'flex',

@@ -311,32 +311,44 @@ export const EdgeContextualMenu = () => {
         return;
       }
       const relationshipIds = { graphId, childId, parentId };
-      if (copiedNode?.isScopeNode) {
-        dispatch(
-          pasteScopeOperation({
-            relationshipIds,
-            nodeId: copiedNode.nodeId,
-            serializedValue: copiedNode.serializedOperation,
-            allConnectionData: copiedNode.allConnectionData,
-            staticResults: copiedNode.staticResults,
-            upstreamNodeIds: upstreamNodesOfChild,
-            isParallelBranch,
-          })
-        );
+      const pasteSingleNode = async (node: any) => {
+        if (node?.isScopeNode) {
+          await dispatch(
+            pasteScopeOperation({
+              relationshipIds,
+              nodeId: node.nodeId,
+              serializedValue: node.serializedOperation,
+              allConnectionData: node.allConnectionData,
+              staticResults: node.staticResults,
+              upstreamNodeIds: upstreamNodesOfChild,
+              isParallelBranch,
+            })
+          );
+        } else {
+          await dispatch(
+            pasteOperation({
+              relationshipIds,
+              nodeId: node.nodeId,
+              nodeData: node.nodeData,
+              nodeTokenData: node.nodeTokenData,
+              operationInfo: node.nodeOperationInfo,
+              connectionData: node.nodeConnectionData,
+              comment: node.nodeComment,
+              isParallelBranch,
+            })
+          );
+        }
+      };
+
+      if (copiedNode?.isMultiNode && Array.isArray(copiedNode.nodes)) {
+        // Paste in reverse so the inserted nodes keep their original top-to-bottom order.
+        for (let i = copiedNode.nodes.length - 1; i >= 0; i--) {
+          await pasteSingleNode(copiedNode.nodes[i]);
+        }
       } else {
-        dispatch(
-          pasteOperation({
-            relationshipIds,
-            nodeId: copiedNode.nodeId,
-            nodeData: copiedNode.nodeData,
-            nodeTokenData: copiedNode.nodeTokenData,
-            operationInfo: copiedNode.nodeOperationInfo,
-            connectionData: copiedNode.nodeConnectionData,
-            comment: copiedNode.nodeComment,
-            isParallelBranch,
-          })
-        );
+        await pasteSingleNode(copiedNode);
       }
+
       LoggerService().log({
         area: 'EdgeContextualMenu:handlePasteClicked',
         level: LogEntryLevel.Verbose,

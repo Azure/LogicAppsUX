@@ -11,6 +11,7 @@ import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
 import DeleteModal from './common/DeleteModal/DeleteModal';
+import { MultiSelectDeleteModal } from './common/DeleteModal/MultiSelectDeleteModal';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { mergeClasses, PanelLocation } from '@microsoft/designer-ui';
@@ -173,6 +174,7 @@ export const Designer = (props: DesignerProps) => {
                 />
               )}
               <DeleteModal />
+              <MultiSelectDeleteModal />
               <DesignerContextualMenu />
               <EdgeContextualMenu />
               <RunDisplay />
