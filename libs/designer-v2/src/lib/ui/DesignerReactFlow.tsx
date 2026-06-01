@@ -492,10 +492,11 @@ const DesignerReactFlow = (props: any) => {
       edgesFocusable={false}
       edgeTypes={edgeTypes}
       elementsSelectable={true}
-      selectionOnDrag={true}
+      selectionOnDrag={false}
       selectionMode={SelectionMode.Partial}
-      multiSelectionKeyCode={['Shift', 'Meta', 'Control']}
-      panOnDrag={[1, 2]}
+      selectionKeyCode={'Shift'}
+      multiSelectionKeyCode={['Meta', 'Control']}
+      panOnDrag={true}
       onSelectionChange={onSelectionChange}
       panOnScroll={true}
       deleteKeyCode={['Backspace', 'Delete']}
