@@ -1308,6 +1308,13 @@ describe('createLocalConfigurationFiles', () => {
     workflowName: 'TestWorkflow',
   } as any;
 
+  const mockContextCodeful: IWebviewProjectContext = {
+    workspaceName: 'TestWorkspace',
+    logicAppName: 'TestLogicApp',
+    logicAppType: ProjectType.codeful,
+    workflowName: 'TestWorkflow',
+  } as any;
+
   const logicAppFolderPath = actualPath.join('test', 'workspace', 'TestLogicApp');
 
   beforeEach(() => {
@@ -1458,6 +1465,25 @@ describe('createLocalConfigurationFiles', () => {
 
     // Verify exactly 6 properties exist (5 standard + 1 feature flag)
     expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+  });
+
+  it('should include bundle version and not source URI in local.settings.json for codeful projects', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContextCodeful, logicAppFolderPath);
+
+    const localSettingsCall = vi
+      .mocked(fsUtils.writeFormattedJson)
+      .mock.calls.find((call) => call[0].toString().includes('local.settings.json'));
+    expect(localSettingsCall).toBeDefined();
+    const localSettingsData = localSettingsCall![1] as any;
+
+    expect(localSettingsData.Values).toHaveProperty('WORKFLOW_CODEFUL_ENABLED', 'true');
+    expect(localSettingsData.Values).toHaveProperty(
+      'AzureFunctionsJobHost__extensionBundle__id',
+      'Microsoft.Azure.Functions.ExtensionBundle.Workflows'
+    );
+    expect(localSettingsData.Values).toHaveProperty('AzureFunctionsJobHost__extensionBundle__version', '1.165.50');
+    expect(localSettingsData.Values).not.toHaveProperty('Functions_ExtensionBundle_Source_URI');
+    expect(localSettingsData.Values).not.toHaveProperty('FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI');
   });
 
   it('should include global.json in .funcignore for rules engine projects', async () => {
