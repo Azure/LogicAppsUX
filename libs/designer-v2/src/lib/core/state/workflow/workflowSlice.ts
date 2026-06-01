@@ -209,7 +209,9 @@ export const workflowSlice = createSlice({
       if (operationType === 'if') {
         targetGraphId = `${scopeId}-actions`;
         targetGraph = getWorkflowNodeFromGraphState(state, targetGraphId) as WorkflowNode;
-        previousNodeId = undefined;
+        // Chain the first moved node off the subgraph header so it lays out inside the
+        // "true" branch (below the header) instead of beside the true/false branch labels.
+        previousNodeId = `${targetGraphId}-#subgraph`;
       }
 
       if (!targetGraph) {
