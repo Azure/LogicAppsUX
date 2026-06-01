@@ -1,8 +1,19 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
-import { Button, Text, mergeClasses } from '@fluentui/react-components';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+  Text,
+  mergeClasses,
+} from '@fluentui/react-components';
 import { Delete24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { PanelLocation } from '@microsoft/designer-ui';
@@ -64,6 +75,29 @@ export const MultiSelectPanel = (props: CommonPanelProps): JSX.Element => {
         id: 'GxU+Zs',
         description: 'Label for the button that deletes all selected actions',
       }),
+      deleteConfirmTitle: intl.formatMessage({
+        defaultMessage: 'Delete workflow actions',
+        id: 'Rk9QCh',
+        description: 'Title for the dialog confirming deletion of multiple selected actions',
+      }),
+      deleteConfirmBody: intl.formatMessage(
+        {
+          defaultMessage: 'Are you sure you want to delete these {count} actions?',
+          id: 'Lv/C+X',
+          description: 'Body text confirming deletion of multiple selected actions',
+        },
+        { count: selectedNodeIds.length }
+      ),
+      deleteConfirmDetail: intl.formatMessage({
+        defaultMessage: 'These steps will be removed from the Logic App, along with any of their child steps.',
+        id: 'bHReZg',
+        description: 'Additional detail text in the multi-delete confirmation dialog',
+      }),
+      cancelLabel: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: '2istir',
+        description: 'Label for the button that cancels the delete confirmation',
+      }),
       wrapHeading: intl.formatMessage({
         defaultMessage: 'Wrap in',
         id: 'qDS8i+',
@@ -88,8 +122,18 @@ export const MultiSelectPanel = (props: CommonPanelProps): JSX.Element => {
     [intl, selectedNodeIds.length]
   );
 
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
   const onDelete = useMemo(
     () => () => {
+      setIsDeleteConfirmOpen(true);
+    },
+    []
+  );
+
+  const onConfirmDelete = useMemo(
+    () => () => {
+      setIsDeleteConfirmOpen(false);
       dispatch(storeStateToUndoRedoHistory({ type: deleteOperations.pending }));
       dispatch(deleteOperations({ nodeIds: selectedNodeIds }));
     },
@@ -160,6 +204,30 @@ export const MultiSelectPanel = (props: CommonPanelProps): JSX.Element => {
           </Button>
         </div>
       </div>
+      <Dialog
+        open={isDeleteConfirmOpen}
+        onOpenChange={(_event, data) => setIsDeleteConfirmOpen(data.open)}
+        inertTrapFocus={true}
+        surfaceMotion={null}
+      >
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>{intlText.deleteConfirmTitle}</DialogTitle>
+            <DialogContent>
+              <p>{intlText.deleteConfirmBody}</p>
+              <p>{intlText.deleteConfirmDetail}</p>
+            </DialogContent>
+            <DialogActions>
+              <Button appearance="primary" onClick={onConfirmDelete}>
+                {intlText.deleteLabel}
+              </Button>
+              <DialogTrigger disableButtonEnhancement>
+                <Button appearance="secondary">{intlText.cancelLabel}</Button>
+              </DialogTrigger>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </Panel>
   );
 };

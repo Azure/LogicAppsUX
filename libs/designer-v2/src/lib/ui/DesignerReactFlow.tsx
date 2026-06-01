@@ -371,20 +371,25 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [isDraggingConnection, dispatch]);
 
-  // Sync react-flow marquee/box selection into our redux multi-selection state.
+  // Track the in-progress marquee/box selection, but don't commit it to redux until the
+  // drag is released. Committing on every change is jarring because the panel re-renders
+  // continuously while the user is still dragging the selection box.
   // Only action and scope cards participate; notes, containers, and placeholders are ignored.
-  const onSelectionChange = useCallback(
-    (params: OnSelectionChangeParams) => {
-      const ids = (params?.nodes ?? [])
-        .filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)
-        .map((node) => (containsIdTag(node.id) ? removeIdTag(node.id) : node.id));
-      // Ignore empty change events to avoid clobbering a single click selection during re-layouts.
-      if (ids.length > 0) {
-        dispatch(setNodeSelection(ids));
-      }
-    },
-    [dispatch]
-  );
+  const pendingBoxSelectionRef = useRef<string[]>([]);
+  const onSelectionChange = useCallback((params: OnSelectionChangeParams) => {
+    pendingBoxSelectionRef.current = (params?.nodes ?? [])
+      .filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)
+      .map((node) => (containsIdTag(node.id) ? removeIdTag(node.id) : node.id));
+  }, []);
+
+  // Commit the box selection only once the user finishes dragging the selection box.
+  const onSelectionEnd = useCallback(() => {
+    const ids = pendingBoxSelectionRef.current;
+    // Ignore empty selections so a click or an empty marquee doesn't clobber an existing selection.
+    if (ids.length > 0) {
+      dispatch(setNodeSelection(ids));
+    }
+  }, [dispatch]);
 
   const onPaneContextMenu = useCallback(
     (e: React.MouseEvent | MouseEvent) => {
@@ -498,6 +503,7 @@ const DesignerReactFlow = (props: any) => {
       multiSelectionKeyCode={['Meta', 'Control']}
       panOnDrag={true}
       onSelectionChange={onSelectionChange}
+      onSelectionEnd={onSelectionEnd}
       panOnScroll={true}
       deleteKeyCode={['Backspace', 'Delete']}
       zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
