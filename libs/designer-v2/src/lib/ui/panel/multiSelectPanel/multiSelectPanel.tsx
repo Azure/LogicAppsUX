@@ -120,7 +120,7 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
   );
 
   return (
-    <div className="msla-panel-layout">
+    <div className="msla-panel-layout msla-panel-border-selected">
       <PanelHeader
         nodeData={headerNodeData}
         headerItems={[]}
