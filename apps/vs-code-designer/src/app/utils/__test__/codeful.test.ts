@@ -1,7 +1,7 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
+import { extractHttpTriggerName, hasHttpRequestTrigger, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
@@ -201,5 +201,35 @@ describe('parseCsprojCopyToCodefulInfo', () => {
       replaceLangAfterTargets: 'Build;Publish',
       runsOnBuild: false,
     });
+  });
+});
+
+describe('codeful HTTP trigger detection', () => {
+  it('detects HTTP triggers that use the static WorkflowTriggers accessor', () => {
+    const workflowContent = `
+      var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger("manual");
+    `;
+
+    expect(hasHttpRequestTrigger(workflowContent)).toBe(true);
+    expect(extractHttpTriggerName(workflowContent)).toBe('manual');
+  });
+
+  it('detects HTTP triggers that use the constructor-based WorkflowBuiltInTriggers accessor', () => {
+    const workflowContent = `
+      var trigger = new WorkflowBuiltInTriggers().CreateHttpTrigger("manual");
+    `;
+
+    expect(hasHttpRequestTrigger(workflowContent)).toBe(true);
+    expect(extractHttpTriggerName(workflowContent)).toBe('manual');
+  });
+
+  it('ignores commented constructor-based HTTP triggers', () => {
+    const workflowContent = `
+      // var trigger = new WorkflowBuiltInTriggers().CreateHttpTrigger("manual");
+      var trigger = new WorkflowBuiltInTriggers().CreateTimerTrigger();
+    `;
+
+    expect(hasHttpRequestTrigger(workflowContent)).toBe(false);
+    expect(extractHttpTriggerName(workflowContent)).toBeUndefined();
   });
 });

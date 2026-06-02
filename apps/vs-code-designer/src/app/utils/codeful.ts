@@ -409,11 +409,13 @@ export const hasHttpRequestTrigger = (fileContent: string): boolean => {
     .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
     .replace(/\/\/.*/g, ''); // Remove // comments
 
-  return uncommentedContent.includes('WorkflowTriggers.BuiltIn.CreateHttpTrigger');
+  return /(?:WorkflowTriggers[\s\S]*?\.BuiltIn|new\s+WorkflowBuiltInTriggers\s*\(\s*\))[\s\S]*?\.CreateHttpTrigger\s*\(/.test(
+    uncommentedContent
+  );
 };
 
 /**
- * Extracts the HTTP trigger name from WorkflowTriggers.BuiltIn.CreateHttpTrigger() call.
+ * Extracts the HTTP trigger name from a CreateHttpTrigger() call.
  * @param fileContent - The content of the C# file
  * @returns The HTTP trigger name if found, undefined otherwise
  */
@@ -423,9 +425,12 @@ export const extractHttpTriggerName = (fileContent: string): string | undefined 
     .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
     .replace(/\/\/.*/g, ''); // Remove // comments
 
-  // Pattern to match: WorkflowTriggers.BuiltIn.CreateHttpTrigger("triggerName", ...)
+  // Pattern to match:
+  // WorkflowTriggers.BuiltIn.CreateHttpTrigger("triggerName", ...)
+  // new WorkflowBuiltInTriggers().CreateHttpTrigger("triggerName", ...)
   // Using [\s\S]*? to match any characters including newlines between parts
-  const pattern = /WorkflowTriggers[\s\S]*?\.BuiltIn[\s\S]*?\.CreateHttpTrigger\s*\(\s*["']([^"']+)["']/;
+  const pattern =
+    /(?:WorkflowTriggers[\s\S]*?\.BuiltIn|new\s+WorkflowBuiltInTriggers\s*\(\s*\))[\s\S]*?\.CreateHttpTrigger\s*\(\s*["']([^"']+)["']/;
   const match = uncommentedContent.match(pattern);
 
   if (match && match[1]) {
