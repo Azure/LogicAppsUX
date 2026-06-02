@@ -40,6 +40,10 @@ export type PanelContainerProps = {
   showTriggerInfo?: boolean;
   isTrigger?: boolean;
   hideComment?: boolean;
+  // When provided, the panel renders this content instead of the node-based body. Used for
+  // surfaces (e.g. multi-select) that share the same Drawer chrome but don't operate on a single node.
+  customContent?: JSX.Element;
+  customAriaLabel?: string;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -69,6 +73,8 @@ export const PanelContainer = ({
   showTriggerInfo,
   isTrigger,
   hideComment,
+  customContent,
+  customAriaLabel,
   ...rest
 }: PanelContainerProps) => {
   const intl = useIntl();
@@ -256,13 +262,17 @@ export const PanelContainer = ({
     return null;
   }
 
-  if (isCollapsed || !node) {
+  if (isCollapsed) {
+    return null;
+  }
+
+  if (!customContent && !node) {
     return null;
   }
 
   return (
     <Drawer
-      aria-label={panelLabel}
+      aria-label={customContent ? (customAriaLabel ?? panelLabel) : panelLabel}
       className="msla-panel-container"
       type="inline"
       modalType="non-modal"
@@ -280,33 +290,37 @@ export const PanelContainer = ({
         height: '100%',
       }}
     >
-      <div
-        className={mergeClasses(
-          'msla-panel-container-nested',
-          `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-          alternateSelectedNode && 'msla-panel-container-nested-dual'
-        )}
-      >
-        {node ? renderPanelContents(node, 'selected', false) : null}
-        {alternateSelectedNode ? (
-          <>
-            <Divider vertical={true} />
-            {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
-            {shouldDisplayPopup && targetElement ? (
-              <TeachingPopup
-                targetElement={targetElement}
-                title={toolBranchTitle}
-                message={toolBranchMessage}
-                withArrow={true}
-                handlePopupPrimaryOnClick={() => {
-                  localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
-                  setShouldDisplayPopup(false);
-                }}
-              />
-            ) : null}
-          </>
-        ) : null}
-      </div>
+      {customContent ? (
+        customContent
+      ) : (
+        <div
+          className={mergeClasses(
+            'msla-panel-container-nested',
+            `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
+            alternateSelectedNode && 'msla-panel-container-nested-dual'
+          )}
+        >
+          {node ? renderPanelContents(node, 'selected', false) : null}
+          {alternateSelectedNode ? (
+            <>
+              <Divider vertical={true} />
+              {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
+              {shouldDisplayPopup && targetElement ? (
+                <TeachingPopup
+                  targetElement={targetElement}
+                  title={toolBranchTitle}
+                  message={toolBranchMessage}
+                  withArrow={true}
+                  handlePopupPrimaryOnClick={() => {
+                    localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
+                    setShouldDisplayPopup(false);
+                  }}
+                />
+              ) : null}
+            </>
+          ) : null}
+        </div>
+      )}
       {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
     </Drawer>
   );

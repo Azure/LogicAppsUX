@@ -84,4 +84,18 @@ export const useMultiSelectPanelStyles = makeStyles({
     flexWrap: 'wrap',
     ...shorthands.gap('8px'),
   },
+  countBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '32px',
+    height: '32px',
+    ...shorthands.padding('0', '6px'),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    backgroundColor: tokens.colorBrandBackground,
+    color: tokens.colorNeutralForegroundOnBrand,
+    fontWeight: tokens.fontWeightSemibold,
+    fontSize: tokens.fontSizeBase300,
+    flexShrink: 0,
+  },
 });

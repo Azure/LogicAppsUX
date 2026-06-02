@@ -210,6 +210,9 @@ const DefaultNode = ({ id }: NodeProps) => {
     (e?: React.MouseEvent) => {
       // Shift/Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
       if (e?.shiftKey || e?.ctrlKey || e?.metaKey) {
+        // Stop React Flow's own click-selection from racing with our toggle and re-asserting the
+        // node as selected after we just removed it from the set.
+        e?.stopPropagation();
         dispatch(toggleNodeSelection(id));
         return;
       }

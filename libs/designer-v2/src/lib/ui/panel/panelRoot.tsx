@@ -23,9 +23,10 @@ import { Dialog, Spinner } from '@fluentui/react-components';
 import { isUndefined } from '@microsoft/applicationinsights-core-js';
 import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/designer-ui';
 import { PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
+import { useShowMultiSelectDeleteModal } from '../../core/state/designerView/designerViewSelectors';
 
 export interface PanelRootProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
@@ -58,7 +59,27 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     setWidth(currentPanelMode === 'Discovery' ? PanelSize.Small : PanelSize.Medium);
   }, [currentPanelMode]);
 
-  const dismissPanel = useCallback(() => dispatch(clearPanel()), [dispatch]);
+  // The multi-select delete confirmation dialog renders above this (light-dismiss) panel. Backing
+  // out of that dialog (Escape / outside click) ends up triggering the panel's light-dismiss handler
+  // and would otherwise clear the multi-selection. Escape closes the dialog first and the panel's
+  // dismiss can fire either in the same tick or a later one (e.g. focus restoration after the
+  // dialog unmounts), so we guard with both the live open state and a short window after it closes.
+  const isMultiSelectDeleteModalOpen = useShowMultiSelectDeleteModal();
+  const isMultiSelectDeleteModalOpenRef = useRef(isMultiSelectDeleteModalOpen);
+  const multiSelectDeleteModalClosedAtRef = useRef(0);
+  useEffect(() => {
+    if (isMultiSelectDeleteModalOpenRef.current && !isMultiSelectDeleteModalOpen) {
+      multiSelectDeleteModalClosedAtRef.current = Date.now();
+    }
+    isMultiSelectDeleteModalOpenRef.current = isMultiSelectDeleteModalOpen;
+  }, [isMultiSelectDeleteModalOpen]);
+
+  const dismissPanel = useCallback(() => {
+    if (isMultiSelectDeleteModalOpenRef.current || Date.now() - multiSelectDeleteModalClosedAtRef.current < 500) {
+      return;
+    }
+    dispatch(clearPanel());
+  }, [dispatch]);
 
   const intl = useIntl();
 
