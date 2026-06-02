@@ -17,13 +17,13 @@ namespace <%= logicAppNamespace %>
         /// </summary>
         public FlowDefinition[] GetWorkflows()
         {
-            var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+            var trigger = new WorkflowBuiltInTriggers().CreateHttpTrigger();
 
-            var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+            var getCurrentWeatherAction = new WorkflowManagedActions().Msnweather("msnweather").CurrentWeather(
                 location: () => "98058",
                 units: () => unitsInput.Imperial);
 
-            var response = WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}");
+            var response = new WorkflowBuiltInActions().Response(responseBody: () => $"{getCurrentWeatherAction.Body}");
             var workflow = trigger.Then(getCurrentWeatherAction).Then(response);
 
             return new[] { WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow) };

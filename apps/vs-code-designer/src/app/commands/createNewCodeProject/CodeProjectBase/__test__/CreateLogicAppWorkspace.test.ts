@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, type Mock } from 'vitest';
-import { WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
@@ -15,6 +14,13 @@ import * as cloudToLocalUtilsModule from '../../../../utils/cloudToLocalUtils';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+
+const WorkflowType = {
+  stateful: 'Stateful-Codeless',
+  statefulCodeful: 'Stateful-Codeful',
+  agenticCodeful: 'Agentic-Codeful',
+  agentCodeful: 'Agent-Codeful',
+} as const;
 
 vi.mock('vscode', () => ({
   window: {
@@ -62,6 +68,34 @@ vi.mock('path', () => ({
   resolve: vi.fn(),
 }));
 
+vi.mock('@microsoft/vscode-extension-logic-apps', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@microsoft/vscode-extension-logic-apps')>();
+  return {
+    ...actual,
+    ProjectType: {
+      logicApp: 'logicApp',
+      customCode: 'customCode',
+      rulesEngine: 'rulesEngine',
+      codeful: 'codeful',
+    },
+    WorkflowType: {
+      stateful: 'Stateful-Codeless',
+      stateless: 'Stateless-Codeless',
+      agentic: 'Agentic-Codeless',
+      agent: 'Agent-Codeless',
+      statefulCodeful: 'Stateful-Codeful',
+      statelessCodeful: 'Stateless-Codeful',
+      agenticCodeful: 'Agentic-Codeful',
+      agentCodeful: 'Agent-Codeful',
+    },
+    WorkerRuntime: {
+      Node: 'node',
+      Dotnet: 'dotnet',
+      DotnetIsolated: 'dotnet-isolated',
+    },
+  };
+});
+
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
 }));
@@ -86,12 +120,15 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         'utf-8'
       );
 
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather');
+      expect(templateContent).toContain('new WorkflowBuiltInTriggers().CreateHttpTrigger()');
+      expect(templateContent).toContain('new WorkflowManagedActions().Msnweather("msnweather").CurrentWeather');
       expect(templateContent).toContain('location: () => "98058"');
       expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
-      expect(templateContent).toContain('WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
+      expect(templateContent).toContain('new WorkflowBuiltInActions().Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
       expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).not.toContain('WorkflowActions.BuiltIn.Compose');
+      expect(templateContent).not.toContain('WorkflowTriggers.BuiltIn');
+      expect(templateContent).not.toContain('WorkflowActions.ManagedConnectors');
       expect(templateContent).not.toContain('WorkflowBuilderFactory');
       expect(templateContent).not.toContain('AddWorkflow()');
       expect(templateContent).not.toContain('builder.TriggerOutput.Body');
@@ -106,10 +143,15 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       );
 
       expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
-      expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger()');
-      expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
+      expect(templateContent).toContain('new WorkflowBuiltInTriggers().CreateConversationalAgentTrigger()');
+      expect(templateContent).toContain('new WorkflowBuiltInActions().Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow)');
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).toContain('new WorkflowManagedActions().Msnweather("msnweather").CurrentWeather');
+      expect(templateContent).toContain('new WorkflowManagedActions().Office365("outlook").SendEmail');
+      expect(templateContent).not.toContain('SendEmailV2');
+      expect(templateContent).not.toContain('WorkflowTriggers.BuiltIn');
+      expect(templateContent).not.toContain('WorkflowActions.BuiltIn');
+      expect(templateContent).not.toContain('WorkflowActions.ManagedConnectors');
       expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
@@ -123,11 +165,16 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       );
 
       expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
-      expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateHttpTrigger()');
-      expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
+      expect(templateContent).toContain('new WorkflowBuiltInTriggers().CreateHttpTrigger()');
+      expect(templateContent).toContain('new WorkflowBuiltInActions().Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).toContain('MessageRole.User');
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).toContain('new WorkflowManagedActions().Msnweather("msnweather").CurrentWeather');
+      expect(templateContent).toContain('new WorkflowManagedActions().Office365("outlook").SendEmail');
+      expect(templateContent).not.toContain('SendEmailV2');
+      expect(templateContent).not.toContain('WorkflowTriggers.BuiltIn');
+      expect(templateContent).not.toContain('WorkflowActions.BuiltIn');
+      expect(templateContent).not.toContain('WorkflowActions.ManagedConnectors');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
   });
@@ -196,7 +243,14 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgentCodefulWorkflow'), 'utf-8');
       const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
       expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain('new WorkflowBuiltInActions().Agent(');
+      expect(workflowWriteCall?.[1]).toContain('new WorkflowManagedActions().Office365("outlook").SendEmail');
       expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateAgentWorkflow("${testWorkflowName}", workflow)`);
+      expect(workflowWriteCall?.[1]).not.toContain('<%= flowName %>');
+      expect(workflowWriteCall?.[1]).not.toContain('<%= flowNameClass %>');
+      expect(workflowWriteCall?.[1]).not.toContain('<%= logicAppNamespace %>');
+      expect(workflowWriteCall?.[1]).not.toContain('WorkflowActions.BuiltIn');
+      expect(workflowWriteCall?.[1]).not.toContain('SendEmailV2');
 
       const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
       expect(programWriteCall?.[1]).toContain(`namespace ${testProjectName}`);
@@ -238,7 +292,15 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgenticCodefulWorkflow'), 'utf-8');
       const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
       expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain('new WorkflowBuiltInActions().Agent(');
+      expect(workflowWriteCall?.[1]).toContain('new WorkflowManagedActions().Office365("outlook").SendEmail');
+      expect(workflowWriteCall?.[1]).toContain('MessageRole.User');
       expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateStatefulWorkflow("${testWorkflowName}", workflow)`);
+      expect(workflowWriteCall?.[1]).not.toContain('<%= flowName %>');
+      expect(workflowWriteCall?.[1]).not.toContain('<%= flowNameClass %>');
+      expect(workflowWriteCall?.[1]).not.toContain('<%= logicAppNamespace %>');
+      expect(workflowWriteCall?.[1]).not.toContain('WorkflowActions.BuiltIn');
+      expect(workflowWriteCall?.[1]).not.toContain('SendEmailV2');
 
       const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
       expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
