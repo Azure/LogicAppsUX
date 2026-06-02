@@ -18,9 +18,9 @@ namespace <%= logicAppNamespace %>
         /// </summary>
         public FlowDefinition[] GetWorkflows()
         {
-            var trigger = new WorkflowBuiltInTriggers().CreateConversationalAgentTrigger();
+            var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
 
-            var agent = new WorkflowBuiltInActions().Agent(
+            var agent = WorkflowActions.BuiltIn.Agent(
                 agentModelType: AgentModelType.AzureOpenAI,
                 deploymentId: "gpt-4.1",
                 agentModelSettings: new AgentModelSettings
@@ -53,7 +53,7 @@ namespace <%= logicAppNamespace %>
 
             agent.AddTool(toolContext =>
                 {
-                    return new WorkflowManagedActions().Msnweather("msnweather").CurrentWeather(
+                    return WorkflowActions.Managed.Msnweather("msnweather").CurrentWeather(
                         location: () => toolContext.Parameters.Location,
                         units: () => unitsInput.Imperial
                     );
@@ -63,7 +63,7 @@ namespace <%= logicAppNamespace %>
 
             agent.AddTool(toolContext =>
                 {
-                    return new WorkflowManagedActions().Office365("outlook").SendEmail(
+                    return WorkflowActions.Managed.Office365("outlook").SendEmail(
                         emailMessageto: () => toolContext.Parameters.Recipient,
                         emailMessagesubject: () => toolContext.Parameters.Subject,
                         emailMessagebody: () => toolContext.Parameters.Body);
