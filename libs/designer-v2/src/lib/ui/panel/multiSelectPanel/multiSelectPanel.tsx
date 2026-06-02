@@ -120,45 +120,47 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
   );
 
   return (
-    <div className="msla-panel-layout msla-panel-border-selected">
-      <PanelHeader
-        nodeData={headerNodeData}
-        headerItems={[]}
-        headerLocation={panelLocation}
-        panelScope={PanelScope.CardLevel}
-        readOnlyMode={true}
-        renameTitleDisabled={true}
-        hideComment={true}
-        customIcon={countBadge}
-        commentChange={() => undefined}
-        onClose={onClose}
-        onTitleChange={() => ({ valid: true })}
-        handleTitleUpdate={() => undefined}
-      />
-      <div className="msla-panel-contents">
-        <div className={styles.root}>
-          <div className={styles.list}>
-            {selectedNodeIds.map((nodeId) => (
-              <MultiSelectNodeRow key={nodeId} nodeId={nodeId} />
-            ))}
-          </div>
-          {canWrap ? (
-            <div className={styles.wrapSection}>
-              <Text className={styles.wrapHeading}>{intlText.wrapHeading}</Text>
-              <div className={styles.wrapButtons}>
-                <Button appearance="secondary" onClick={onWrapInScope}>
-                  {intlText.wrapScope}
-                </Button>
-                <Button appearance="secondary" onClick={onWrapInCondition}>
-                  {intlText.wrapCondition}
-                </Button>
-              </div>
+    <div className={`msla-panel-container-nested msla-panel-container-nested-${panelLocation.toLowerCase()}`}>
+      <div className="msla-panel-layout msla-panel-border-selected">
+        <PanelHeader
+          nodeData={headerNodeData}
+          headerItems={[]}
+          headerLocation={panelLocation}
+          panelScope={PanelScope.CardLevel}
+          readOnlyMode={true}
+          renameTitleDisabled={true}
+          hideComment={true}
+          customIcon={countBadge}
+          commentChange={() => undefined}
+          onClose={onClose}
+          onTitleChange={() => ({ valid: true })}
+          handleTitleUpdate={() => undefined}
+        />
+        <div className="msla-panel-contents">
+          <div className={styles.root}>
+            <div className={styles.list}>
+              {selectedNodeIds.map((nodeId) => (
+                <MultiSelectNodeRow key={nodeId} nodeId={nodeId} />
+              ))}
             </div>
-          ) : null}
-          <div className={styles.footer}>
-            <Button appearance="primary" icon={<Delete24Regular />} onClick={onDelete}>
-              {intlText.deleteLabel}
-            </Button>
+            {canWrap ? (
+              <div className={styles.wrapSection}>
+                <Text className={styles.wrapHeading}>{intlText.wrapHeading}</Text>
+                <div className={styles.wrapButtons}>
+                  <Button appearance="secondary" onClick={onWrapInScope}>
+                    {intlText.wrapScope}
+                  </Button>
+                  <Button appearance="secondary" onClick={onWrapInCondition}>
+                    {intlText.wrapCondition}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+            <div className={styles.footer}>
+              <Button appearance="primary" icon={<Delete24Regular />} onClick={onDelete}>
+                {intlText.deleteLabel}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

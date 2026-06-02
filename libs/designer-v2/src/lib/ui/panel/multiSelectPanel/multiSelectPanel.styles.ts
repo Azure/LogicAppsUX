@@ -4,9 +4,10 @@ export const useMultiSelectPanelStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
-    ...shorthands.padding('16px'),
     boxSizing: 'border-box',
+    width: '100%',
+    ...shorthands.padding('15px'),
+    ...shorthands.gap('12px'),
   },
   header: {
     display: 'flex',
