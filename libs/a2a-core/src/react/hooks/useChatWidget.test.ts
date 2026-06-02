@@ -323,7 +323,9 @@ describe('useChatWidget', () => {
       fromDirect: vi.fn(),
     };
 
-    vi.mocked(AgentDiscovery).mockImplementation(() => mockDiscoveryInstance as any);
+    vi.mocked(AgentDiscovery).mockImplementation(function (this: any) {
+      return mockDiscoveryInstance as any;
+    });
 
     renderHook(() =>
       useChatWidget({

@@ -2,7 +2,7 @@ import { describe, test, expect } from 'vitest';
 import { loadLocaleData } from '../IntlProvider';
 
 describe('loadLocaleData', () => {
-  test('returns correct messages for each non english locale', async () => {
+  test('returns correct messages for each non english locale', { timeout: 120000 }, async () => {
     const locales = [
       'nl',
       'pl',

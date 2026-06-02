@@ -6,24 +6,26 @@ import type { AgentCard } from '../../types';
 
 // Mock A2AClient
 vi.mock('../../client/a2a-client', () => ({
-  A2AClient: vi.fn().mockImplementation(() => ({
-    message: {
-      stream: vi.fn().mockImplementation(async function* () {
-        yield {
-          id: 'task-1',
-          state: 'completed',
-          messages: [
-            {
-              role: 'assistant',
-              content: [{ type: 'text', content: 'Test response' }],
-            },
-          ],
-          contextId: 'context-123',
-        };
-      }),
-    },
-    sendAuthenticationCompleted: vi.fn(),
-  })),
+  A2AClient: vi.fn().mockImplementation(function (this: any) {
+    return {
+      message: {
+        stream: vi.fn().mockImplementation(async function* () {
+          yield {
+            id: 'task-1',
+            state: 'completed',
+            messages: [
+              {
+                role: 'assistant',
+                content: [{ type: 'text', content: 'Test response' }],
+              },
+            ],
+            contextId: 'context-123',
+          };
+        }),
+      },
+      sendAuthenticationCompleted: vi.fn(),
+    };
+  }),
 }));
 
 describe('useA2A - Storage Configuration', () => {

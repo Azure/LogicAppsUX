@@ -9,7 +9,7 @@ exports[`lib/card/addActionCard > Component Snapshots > should match snapshot fo
     data-automation-id="card-add_an_action"
     data-selected={true}
     data-testid="card-Add an action"
-    onClick={[MockFunction spy]}
+    onClick={[MockFunction]}
     style={
       {
         "backgroundColor": "#fff",
@@ -79,7 +79,7 @@ exports[`lib/card/addActionCard > Component Snapshots > should match snapshot fo
     data-automation-id="card-add_an_action"
     data-selected={false}
     data-testid="card-Add an action"
-    onClick={[MockFunction spy]}
+    onClick={[MockFunction]}
     style={
       {
         "backgroundColor": "#fff",
@@ -149,7 +149,7 @@ exports[`lib/card/addActionCard > Component Snapshots > should match snapshot fo
     data-automation-id="card-add_a_trigger"
     data-selected={true}
     data-testid="card-Add a trigger"
-    onClick={[MockFunction spy]}
+    onClick={[MockFunction]}
     style={
       {
         "backgroundColor": "#fff",
@@ -219,7 +219,7 @@ exports[`lib/card/addActionCard > Component Snapshots > should match snapshot fo
     data-automation-id="card-add_a_trigger"
     data-selected={false}
     data-testid="card-Add a trigger"
-    onClick={[MockFunction spy]}
+    onClick={[MockFunction]}
     style={
       {
         "backgroundColor": "#fff",
@@ -289,7 +289,7 @@ exports[`lib/card/addActionCard > Component Snapshots > should match snapshot wi
     data-automation-id="card-add_an_action"
     data-selected={true}
     data-testid="card-Add an action"
-    onClick={[MockFunction spy]}
+    onClick={[MockFunction]}
     style={
       {
         "backgroundColor": "#fff",

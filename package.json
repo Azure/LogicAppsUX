@@ -21,8 +21,8 @@
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@typescript-eslint/parser": "^8.29.1",
     "@vitejs/plugin-react": "^4.4.6",
-    "@vitest/coverage-istanbul": "^3.2.4",
-    "@vitest/ui": "^3.2.4",
+    "@vitest/coverage-istanbul": "^4.1.0",
+    "@vitest/ui": "^4.1.0",
     "@xyflow/system": "^0.0.37",
     "D": "^1.0.0",
     "archiver": "^7.0.1",
@@ -69,11 +69,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --write"
-    ]
+    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
   },
   "private": true,
   "scripts": {

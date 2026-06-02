@@ -54,7 +54,7 @@ describe('SSEClient', () => {
     mockEventSource = null as any;
 
     // Capture EventSource instance
-    vi.spyOn(global, 'EventSource' as any).mockImplementation((url: string, config?: EventSourceInit) => {
+    vi.spyOn(global, 'EventSource' as any).mockImplementation(function (this: any, url: string, config?: EventSourceInit) {
       mockEventSource = new MockEventSource(url, config);
       return mockEventSource as any;
     });

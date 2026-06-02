@@ -10,7 +10,7 @@ export default defineConfig({
     coverage: {
       enabled: true,
       provider: 'istanbul',
-      include: ['src/**/*'],
+      include: ['src/**/*.{ts,tsx,js,jsx}'],
       reporter: ['html', 'cobertura', 'lcov'],
       exclude: ['node_modules/', 'dist/', '**/*.d.ts', '**/*.config.ts', '**/index.ts'],
     },
