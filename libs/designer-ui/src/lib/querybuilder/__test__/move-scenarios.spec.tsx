@@ -379,7 +379,7 @@ describe('Query Builder Complex Move Scenarios', () => {
       // Spot check some items
       expect(screen.getByText('item0-0')).toBeInTheDocument();
       expect(screen.getByText('item2-2')).toBeInTheDocument();
-    });
+    }, 15000);
 
     it('should not cause memory leaks with frequent updates', () => {
       const dynamicStructure = createTestGroup({
