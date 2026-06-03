@@ -1,6 +1,7 @@
 import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import type { Settings, SettingData } from '../actions/bjsworkflow/settings';
 import { getReactQueryClient } from '../ReactQueryProvider';
+import Constants from '../../common/constants';
 
 /**
  * Extracts the list of setting keys that have isSupported === true.
@@ -62,9 +63,20 @@ export const mergeSettingDefaults = (settings: Settings, defaults: Record<string
 
     if (isReadOnly) {
       (merged as Record<string, unknown>)[settingKey] = { ...existing, value: defaultValue, readOnly: true };
+    } else if (settingKey === 'retryPolicy' && isDefaultRetryPolicy(existing.value)) {
+      (merged as Record<string, unknown>)[settingKey] = { ...existing, value: defaultValue, defaultHint: defaultValue };
     } else if (existing.value === undefined || existing.value === null) {
       (merged as Record<string, unknown>)[settingKey] = { ...existing, value: defaultValue };
     }
   }
   return merged;
+};
+
+const isDefaultRetryPolicy = (value: unknown): boolean => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    (value as { type: string }).type === Constants.RETRY_POLICY_TYPE.DEFAULT
+  );
 };

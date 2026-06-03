@@ -88,6 +88,7 @@ export interface SettingData<T> {
   isSupported: boolean;
   value?: T;
   readOnly?: boolean;
+  defaultHint?: T;
 }
 
 export interface Settings {
