@@ -11,7 +11,7 @@ import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } fro
 import { setNodeSelection } from '../core/state/panel/panelSlice';
 import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
 import { useAllSelectableNodeIds } from '../core/state/workflow/workflowSelectors';
-import { duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
+import { copyOperation, copyOperations, cutOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -145,6 +145,34 @@ export const Designer = (props: DesignerProps) => {
       const idsToDuplicate = selectedNodeIds.length > 0 ? selectedNodeIds : selectedNodeId ? [selectedNodeId] : [];
       if (idsToDuplicate.length > 0) {
         dispatch(duplicateOperations({ nodeIds: idsToDuplicate }));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+C: copy selected node(s) to clipboard.
+  useHotkeys(
+    ['meta+c', 'ctrl+c'],
+    (event) => {
+      event.preventDefault();
+      if (selectedNodeIds.length > 1) {
+        dispatch(copyOperations({ nodeIds: selectedNodeIds }));
+      } else if (selectedNodeId) {
+        dispatch(copyOperation({ nodeId: selectedNodeId }));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+X: cut selected node(s) to clipboard.
+  useHotkeys(
+    ['meta+x', 'ctrl+x'],
+    (event) => {
+      event.preventDefault();
+      if (selectedNodeIds.length > 1) {
+        dispatch(cutOperations({ nodeIds: selectedNodeIds }));
+      } else if (selectedNodeId) {
+        dispatch(cutOperations({ nodeIds: [selectedNodeId] }));
       }
     },
     { enabled: !isReadOnly }

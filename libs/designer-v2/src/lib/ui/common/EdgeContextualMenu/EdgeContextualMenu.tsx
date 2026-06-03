@@ -1,6 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
-import { Popover, PopoverSurface, MenuList, MenuItem, Tooltip, MenuDivider } from '@fluentui/react-components';
+import {
+  Popover,
+  PopoverSurface,
+  MenuList,
+  MenuItem,
+  Tooltip,
+  MenuDivider,
+  Menu,
+  MenuTrigger,
+  MenuPopover,
+  MenuSplitGroup,
+} from '@fluentui/react-components';
 import {
   LogEntryLevel,
   LoggerService,
@@ -465,52 +476,32 @@ export const EdgeContextualMenu = () => {
                 {isPasteEnabled &&
                   (isPasteDisabledForUpstreamAgent ? (
                     <Tooltip content={a2aPasteDisabledText} relationship="description">
-                      <CustomMenu
-                        item={{
-                          icon: <ClipboardIcon />,
-                          text: pasteFromClipboard,
-                          onClick: () => handlePasteClicked(false),
-                          dataAutomationId: automationId('paste'),
-                          disabled: true,
-                          subMenuItems: [
-                            {
-                              text: pasteFromClipboard,
-                              ariaLabel: pasteFromClipboard,
-                              onClick: () => handlePasteClicked(false),
-                              disabled: true,
-                            },
-                            {
-                              text: pasteParallelFromClipboard,
-                              ariaLabel: pasteParallelFromClipboard,
-                              onClick: () => handlePasteClicked(true),
-                              disabled: true,
-                            },
-                          ],
-                        }}
-                      />
+                      <MenuItem icon={<ClipboardIcon />} disabled={true} data-automation-id={automationId('paste')}>
+                        {pasteFromClipboard}
+                      </MenuItem>
                     </Tooltip>
                   ) : (
-                    <CustomMenu
-                      item={{
-                        icon: <ClipboardIcon />,
-                        text: pasteFromClipboard,
-                        onClick: () => handlePasteClicked(false),
-                        dataAutomationId: automationId('paste'),
-                        subMenuItems: [
-                          {
-                            text: pasteFromClipboard,
-                            ariaLabel: pasteFromClipboard,
-                            onClick: () => handlePasteClicked(false),
-                          },
-                          {
-                            text: pasteParallelFromClipboard,
-                            disabled: isAddParallelBranchDisabled,
-                            ariaLabel: pasteParallelFromClipboard,
-                            onClick: () => handlePasteClicked(true),
-                          },
-                        ],
-                      }}
-                    />
+                    <Menu positioning="after">
+                      <MenuSplitGroup>
+                        <MenuItem
+                          icon={<ClipboardIcon />}
+                          onClick={() => handlePasteClicked(false)}
+                          data-automation-id={automationId('paste')}
+                        >
+                          {pasteFromClipboard}
+                        </MenuItem>
+                        <MenuTrigger>
+                          <MenuItem disabled={isAddParallelBranchDisabled} onClick={(e) => e.stopPropagation()} />
+                        </MenuTrigger>
+                      </MenuSplitGroup>
+                      <MenuPopover>
+                        <MenuList>
+                          <MenuItem icon={<ParallelIcon />} disabled={isAddParallelBranchDisabled} onClick={() => handlePasteClicked(true)}>
+                            {pasteParallelFromClipboard}
+                          </MenuItem>
+                        </MenuList>
+                      </MenuPopover>
+                    </Menu>
                   ))}
                 {/* {hasParentAndChild && deleteRunAfterMenuItem} */}
                 {customMenuItems}
