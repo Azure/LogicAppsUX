@@ -268,7 +268,7 @@ export const PanelContainer = ({
     <Drawer
       aria-label={customContent ? (customAriaLabel ?? panelLabel) : panelLabel}
       className="msla-panel-container"
-      type="inline"
+      type="overlay"
       modalType="non-modal"
       mountNode={{
         className: 'msla-panel-host-container',
