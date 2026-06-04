@@ -53,6 +53,7 @@ import {
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
 import { useHandoffActionsForAgent, useHasUpstreamAgenticLoop, useIsAgentLoop } from '../../../core/state/workflow/workflowSelectors';
+import { addRunAfter, removeRunAfter } from '../../../core/state/workflow/workflowSlice';
 import { addAgentHandoff, removeAgentHandoff } from '../../../core/actions/bjsworkflow/handoff';
 import { removeOperationRunAfter } from '../../../core/actions/bjsworkflow/runafter';
 import constants from '../../../common/constants';
@@ -227,17 +228,25 @@ export const EdgeContextualMenu = () => {
     description: 'Text for button to add an agent',
   });
 
-  const pasteFromClipboard = intl.formatMessage({
-    defaultMessage: 'Paste an action',
-    id: 'ZUCTVP',
-    description: 'Text for button to paste an action from clipboard',
-  });
+  const pasteNodeCount = copiedNode?.isMultiNode ? (copiedNode.nodes?.length ?? 1) : 1;
 
-  const pasteParallelFromClipboard = intl.formatMessage({
-    defaultMessage: 'Paste a parallel action',
-    id: 'wPjnM9',
-    description: 'Text for button to paste a parallel action from clipboard',
-  });
+  const pasteFromClipboard = intl.formatMessage(
+    {
+      defaultMessage: '{count, plural, one {Paste an action} other {Paste {count} actions}}',
+      id: 'gW99On',
+      description: 'Text for button to paste one or more actions from clipboard',
+    },
+    { count: pasteNodeCount }
+  );
+
+  const pasteParallelFromClipboard = intl.formatMessage(
+    {
+      defaultMessage: '{count, plural, one {Paste a parallel action} other {Paste {count} parallel actions}}',
+      id: 'af1Dbe',
+      description: 'Text for button to paste one or more parallel actions from clipboard',
+    },
+    { count: pasteNodeCount }
+  );
 
   const a2aAgentLoopDisabledText = intl.formatMessage({
     defaultMessage: 'Cannot add subsequent actions below agents in agent to agent workflows',
@@ -322,39 +331,161 @@ export const EdgeContextualMenu = () => {
         return;
       }
       const relationshipIds = { graphId, childId, parentId };
-      const pasteSingleNode = async (node: any) => {
+      const pasteSingleNode = async (node: any, overrideRelationshipIds?: typeof relationshipIds, overrideIsParallel?: boolean) => {
+        const ids = overrideRelationshipIds ?? relationshipIds;
+        const parallel = overrideIsParallel ?? isParallelBranch;
         if (node?.isScopeNode) {
-          await dispatch(
+          const result = await dispatch(
             pasteScopeOperation({
-              relationshipIds,
+              relationshipIds: ids,
               nodeId: node.nodeId,
               serializedValue: node.serializedOperation,
               allConnectionData: node.allConnectionData,
               staticResults: node.staticResults,
               upstreamNodeIds: upstreamNodesOfChild,
-              isParallelBranch,
+              isParallelBranch: parallel,
             })
           );
-        } else {
-          await dispatch(
-            pasteOperation({
-              relationshipIds,
-              nodeId: node.nodeId,
-              nodeData: node.nodeData,
-              nodeTokenData: node.nodeTokenData,
-              operationInfo: node.nodeOperationInfo,
-              connectionData: node.nodeConnectionData,
-              comment: node.nodeComment,
-              isParallelBranch,
-            })
-          );
+          return (result as any).payload as string;
         }
+        const result = await dispatch(
+          pasteOperation({
+            relationshipIds: ids,
+            nodeId: node.nodeId,
+            nodeData: node.nodeData,
+            nodeTokenData: node.nodeTokenData,
+            operationInfo: node.nodeOperationInfo,
+            connectionData: node.nodeConnectionData,
+            comment: node.nodeComment,
+            isParallelBranch: parallel,
+          })
+        );
+        return (result as any).payload as string;
       };
 
       if (copiedNode?.isMultiNode && Array.isArray(copiedNode.nodes)) {
-        // Paste in reverse so the inserted nodes keep their original top-to-bottom order.
-        for (let i = copiedNode.nodes.length - 1; i >= 0; i--) {
-          await pasteSingleNode(copiedNode.nodes[i]);
+        const edges: Array<{ source: string; target: string }> = copiedNode.edges ?? [];
+
+        if (edges.length === 0) {
+          // No internal edges — flat paste (original behavior)
+          if (isParallelBranch) {
+            let prevNodeId = await pasteSingleNode(copiedNode.nodes[0], undefined, true);
+            for (let i = 1; i < copiedNode.nodes.length; i++) {
+              prevNodeId = await pasteSingleNode(copiedNode.nodes[i], { graphId, childId: undefined, parentId: prevNodeId }, false);
+            }
+          } else {
+            for (let i = copiedNode.nodes.length - 1; i >= 0; i--) {
+              await pasteSingleNode(copiedNode.nodes[i]);
+            }
+          }
+        } else {
+          // Graph-aware paste: preserve branching structure from edges
+          const nodeIds = copiedNode.nodes.map((n: any) => n.nodeId as string);
+          const nodeMap = new Map<string, any>(copiedNode.nodes.map((n: any) => [n.nodeId, n]));
+
+          // Build adjacency lists
+          const incomingEdges = new Map<string, string[]>();
+          const outgoingEdges = new Map<string, string[]>();
+          for (const edge of edges) {
+            if (!incomingEdges.has(edge.target)) {
+              incomingEdges.set(edge.target, []);
+            }
+            incomingEdges.get(edge.target)!.push(edge.source);
+            if (!outgoingEdges.has(edge.source)) {
+              outgoingEdges.set(edge.source, []);
+            }
+            outgoingEdges.get(edge.source)!.push(edge.target);
+          }
+
+          // Find roots (no incoming internal edges) and leaves (no outgoing)
+          const roots = nodeIds.filter((id: string) => !incomingEdges.has(id) || incomingEdges.get(id)!.length === 0);
+          const leaves = nodeIds.filter((id: string) => !outgoingEdges.has(id) || outgoingEdges.get(id)!.length === 0);
+
+          // Topological sort (Kahn's algorithm)
+          const inDegree = new Map<string, number>();
+          for (const id of nodeIds) {
+            inDegree.set(id, 0);
+          }
+          for (const edge of edges) {
+            inDegree.set(edge.target, (inDegree.get(edge.target) ?? 0) + 1);
+          }
+          const queue = [...roots];
+          const sorted: string[] = [];
+          while (queue.length > 0) {
+            const current = queue.shift()!;
+            sorted.push(current);
+            for (const target of outgoingEdges.get(current) ?? []) {
+              inDegree.set(target, (inDegree.get(target) ?? 0) - 1);
+              if (inDegree.get(target) === 0) {
+                queue.push(target);
+              }
+            }
+          }
+
+          // Paste nodes in topological order, preserving graph structure
+          const pastedIdMap = new Map<string, string>();
+          const predecessorUsed = new Set<string>();
+          let firstRootPastedId: string | undefined;
+
+          for (const clipNodeId of sorted) {
+            const node = nodeMap.get(clipNodeId);
+            const predecessors = incomingEdges.get(clipNodeId) ?? [];
+            const isRoot = predecessors.length === 0;
+            let pastedId: string;
+
+            if (isRoot) {
+              if (firstRootPastedId) {
+                // Additional roots: parallel branch from the original parent
+                pastedId = await pasteSingleNode(node, { graphId, childId: undefined, parentId }, true);
+              } else {
+                // First root: insert at the target position
+                if (isParallelBranch) {
+                  pastedId = await pasteSingleNode(node, undefined, true);
+                } else {
+                  pastedId = await pasteSingleNode(node);
+                }
+                firstRootPastedId = pastedId;
+              }
+            } else {
+              const firstPred = predecessors[0];
+              const pastedPredId = pastedIdMap.get(firstPred)!;
+
+              if (predecessorUsed.has(firstPred)) {
+                // Predecessor already has a chained successor — create parallel branch
+                pastedId = await pasteSingleNode(node, { graphId, childId: undefined, parentId: pastedPredId }, true);
+              } else {
+                // First successor of this predecessor — chain after it
+                pastedId = await pasteSingleNode(node, { graphId, childId: undefined, parentId: pastedPredId }, false);
+                predecessorUsed.add(firstPred);
+              }
+
+              // Add edges for additional predecessors (convergence points)
+              for (let p = 1; p < predecessors.length; p++) {
+                const additionalPredId = pastedIdMap.get(predecessors[p]);
+                if (additionalPredId) {
+                  dispatch(addRunAfter({ childOperationId: pastedId, parentOperationId: additionalPredId }));
+                }
+              }
+            }
+
+            pastedIdMap.set(clipNodeId, pastedId);
+          }
+
+          // Fix leaf-to-child connections for sequential paste
+          if (!isParallelBranch && childId && firstRootPastedId) {
+            const firstRootIsLeaf = leaves.includes(roots[0]);
+            if (!firstRootIsLeaf) {
+              // First root was auto-connected to childId but it's not a leaf — remove that edge
+              dispatch(removeRunAfter({ childOperationId: childId, parentOperationId: firstRootPastedId }));
+              // Connect actual leaf nodes to childId
+              for (const leaf of leaves) {
+                const pastedLeafId = pastedIdMap.get(leaf);
+                if (pastedLeafId) {
+                  dispatch(addRunAfter({ childOperationId: childId, parentOperationId: pastedLeafId }));
+                }
+              }
+            }
+          }
         }
       } else {
         await pasteSingleNode(copiedNode);

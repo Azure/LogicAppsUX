@@ -177,6 +177,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     async (e: React.MouseEvent<HTMLButtonElement>) => {
       const rect = buttonRef.current?.getBoundingClientRect();
       e.preventDefault();
+      e.stopPropagation();
       dispatch(
         setEdgeContextMenuData({
           graphId,

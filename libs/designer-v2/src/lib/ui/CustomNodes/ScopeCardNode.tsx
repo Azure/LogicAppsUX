@@ -448,7 +448,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {shouldShowPager ? renderLoopsPager : null}
-          {isFooter ? <EdgeDrawSourceHandle highlighted={selected} /> : <DefaultHandle type="source" />}
+          {isFooter ? <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} /> : <DefaultHandle type="source" />}
         </div>
       </div>
       {graphCollapsed && !isFooter ? (

@@ -198,7 +198,37 @@ export const copyOperations = createAsyncThunk('copyOperations', async (payload:
     }
   }
 
-  writeClipboardItem(JSON.stringify({ mslaNode: true, isMultiNode: true, nodes }));
+  // Extract internal edges between selected nodes from their runAfter relationships
+  const normalizedIds = nodeIds.map((id) => removeIdTag(id));
+  const edges: Array<{ source: string; target: string }> = [];
+  for (const nodeId of normalizedIds) {
+    const op = getRecordEntry(state.workflow.operations, nodeId) as LogicAppsV2.ActionDefinition | undefined;
+    if (op?.runAfter) {
+      for (const depId of Object.keys(op.runAfter)) {
+        if (normalizedIds.includes(depId)) {
+          edges.push({ source: createIdCopy(depId), target: createIdCopy(nodeId) });
+        }
+      }
+    }
+  }
+
+  writeClipboardItem(JSON.stringify({ mslaNode: true, isMultiNode: true, nodes, edges }));
+});
+
+// Cut = copy to clipboard then delete. Re-uses copyOperations logic, then dispatches deleteOperations.
+export const cutOperations = createAsyncThunk('cutOperations', async (payload: CopyOperationsPayload, { dispatch }) => {
+  const { nodeIds } = payload;
+  if (!nodeIds || nodeIds.length === 0) {
+    return;
+  }
+
+  // Copy to clipboard first
+  await dispatch(copyOperations({ nodeIds }));
+
+  // Then delete — import is inline to avoid circular dependency
+  const { deleteOperations } = await import('./delete');
+  dispatch(storeStateToUndoRedoHistory({ type: cutOperations.pending } as any));
+  await dispatch(deleteOperations({ nodeIds }));
 });
 
 interface PasteOperationPayload {
@@ -265,6 +295,8 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   }
 
   dispatch(setIsPanelLoading(false));
+
+  return nodeId;
 });
 
 interface PasteScopeOperationPayload {
@@ -363,6 +395,8 @@ export const pasteScopeOperation = createAsyncThunk(
 
     updateAllUpstreamNodes(getState() as RootState, dispatch);
     dispatch(setIsPanelLoading(false));
+
+    return nodeId;
   }
 );
 

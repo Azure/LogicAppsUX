@@ -28,10 +28,12 @@ const getChildEdgeTargets = (graph: WorkflowNode, nodeId: string): string[] =>
   (graph?.edges ?? []).filter((edge) => edge.source === nodeId && !/#(scope|subgraph|footer)/i.test(edge.id)).map((edge) => edge.target);
 
 /**
- * Determines whether the selected nodes form a single contiguous chain on the
- * same graph level: connected to one another with no unselected node sitting
- * between two selected nodes, and with at most one selected predecessor/successor
- * each (a simple path). Returns the ordered chain when valid, otherwise undefined.
+ * Determines whether the selected nodes form a contiguous connected subgraph on
+ * the same graph level — either a simple chain or a tree/DAG with parallel
+ * branches. The selection must have a single entry node (no selected parent),
+ * all nodes must be reachable from that entry through selected edges, and no
+ * unselected node may sit on a path between two selected nodes (convexity).
+ * Returns a topological ordering when valid, otherwise undefined.
  */
 export const getOrderedSelectedChain = (state: WorkflowState, nodeIds: string[]): string[] | undefined => {
   if (nodeIds.length < 2) {
@@ -72,33 +74,35 @@ export const getOrderedSelectedChain = (state: WorkflowState, nodeIds: string[])
     );
   }
 
-  // Simple-path requirement: each node has at most one selected parent and child.
-  for (const nodeId of nodeIds) {
-    if ((selectedChildren.get(nodeId)?.length ?? 0) > 1 || (selectedParents.get(nodeId)?.length ?? 0) > 1) {
-      return undefined;
-    }
-  }
-
-  // The chain must have a single entry node (no selected parent).
+  // The subgraph must have a single entry node (no selected parent).
   const startNodes = nodeIds.filter((nodeId) => (selectedParents.get(nodeId)?.length ?? 0) === 0);
   if (startNodes.length !== 1) {
     return undefined;
   }
 
-  // Walk the chain from the entry node; it must cover every selected node.
-  const ordered: string[] = [];
-  const visited = new Set<string>();
-  let current: string | undefined = startNodes[0];
-  while (current !== undefined) {
-    if (visited.has(current)) {
-      return undefined;
-    }
-    visited.add(current);
-    ordered.push(current);
-    const children: string[] = selectedChildren.get(current) ?? [];
-    current = children[0];
+  // Topological sort (BFS / Kahn's algorithm) — produces a valid ordering that
+  // respects parent-before-child ordering, including parallel branches.
+  const inDegree = new Map<string, number>();
+  for (const nodeId of nodeIds) {
+    inDegree.set(nodeId, selectedParents.get(nodeId)?.length ?? 0);
   }
 
+  const queue: string[] = [startNodes[0]];
+  const ordered: string[] = [];
+
+  while (queue.length > 0) {
+    const current = queue.shift() as string;
+    ordered.push(current);
+    for (const child of selectedChildren.get(current) ?? []) {
+      const newDegree = (inDegree.get(child) ?? 1) - 1;
+      inDegree.set(child, newDegree);
+      if (newDegree === 0) {
+        queue.push(child);
+      }
+    }
+  }
+
+  // Every selected node must be reachable from the entry (connected subgraph, no cycles).
   if (ordered.length !== nodeIds.length) {
     return undefined;
   }
@@ -138,7 +142,34 @@ const reachesSelection = (graph: WorkflowNode, startId: string, selected: Set<st
 };
 
 /**
+ * Filters a set of selected node IDs down to only those that sit on the
+ * outermost common graph level. Nodes nested inside another selected scope
+ * are excluded — they will stay inside their scope when wrapping.
+ */
+export const getTopLevelSelectedNodes = (state: WorkflowState, nodeIds: string[]): string[] => {
+  if (nodeIds.length <= 1) {
+    return nodeIds;
+  }
+
+  const selected = new Set(nodeIds);
+  return nodeIds.filter((nodeId) => {
+    // Walk up the graph hierarchy; if any ancestor is also selected, exclude this node.
+    let currentGraphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId;
+    while (currentGraphId && currentGraphId !== 'root') {
+      // The graphId IS the parent scope node id.
+      if (selected.has(currentGraphId)) {
+        return false;
+      }
+      currentGraphId = getRecordEntry(state.nodesMetadata, currentGraphId)?.graphId;
+    }
+    return true;
+  });
+};
+
+/**
  * Whether the current selection can be wrapped in a scope-style container.
  */
-export const canWrapSelectedNodes = (state: WorkflowState, nodeIds: string[]): boolean =>
-  getOrderedSelectedChain(state, nodeIds) !== undefined;
+export const canWrapSelectedNodes = (state: WorkflowState, nodeIds: string[]): boolean => {
+  const topLevel = getTopLevelSelectedNodes(state, nodeIds);
+  return getOrderedSelectedChain(state, topLevel) !== undefined;
+};

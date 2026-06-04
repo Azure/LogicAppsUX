@@ -1,34 +1,18 @@
-import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export const useMultiSelectDeleteModalStyles = makeStyles({
-  list: {
+  tagList: {
     display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.gap('4px'),
+    flexWrap: 'wrap',
+    ...shorthands.gap('6px'),
     marginTop: '12px',
     maxHeight: '240px',
     overflowY: 'auto',
   },
-  listItem: {
-    display: 'flex',
-    alignItems: 'center',
-    ...shorthands.gap('8px'),
-    ...shorthands.padding('6px', '8px'),
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke2),
-    backgroundColor: tokens.colorNeutralBackground1,
-  },
-  listItemIcon: {
+  tagIcon: {
     width: '20px',
     height: '20px',
-    flexShrink: 0,
+    ...shorthands.margin('4px'),
     ...shorthands.borderRadius(tokens.borderRadiusSmall),
-  },
-  listItemText: {
-    ...typographyStyles.body1,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    flexGrow: 1,
   },
 });

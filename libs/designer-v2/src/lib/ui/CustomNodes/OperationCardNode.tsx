@@ -363,7 +363,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           copilotModified={copilotModified}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected} />}
+        {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected || isMultiSelected} />}
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>

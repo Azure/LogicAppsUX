@@ -10,7 +10,8 @@ import {
   DialogSurface,
   DialogTitle,
   DialogTrigger,
-  Text,
+  Tag,
+  TagGroup,
 } from '@fluentui/react-components';
 import type { AppDispatch } from '../../../core';
 import { storeStateToUndoRedoHistory } from '../../../core';
@@ -23,18 +24,20 @@ import { setShowMultiSelectDeleteModal } from '../../../core/state/designerView/
 import { deleteOperations } from '../../../core/actions/bjsworkflow/delete';
 import { useMultiSelectDeleteModalStyles } from './MultiSelectDeleteModal.styles';
 
-const MultiSelectDeleteRow = ({ nodeId }: { nodeId: string }): JSX.Element => {
+const MultiSelectDeleteTag = ({ nodeId }: { nodeId: string }): JSX.Element => {
   const styles = useMultiSelectDeleteModalStyles();
   const displayName = useNodeDisplayName(nodeId);
   const { iconUri } = useOperationVisuals(nodeId);
 
   return (
-    <div className={styles.listItem}>
-      {iconUri ? <img className={styles.listItemIcon} src={iconUri} alt="" aria-hidden={true} /> : null}
-      <Text className={styles.listItemText} title={displayName}>
-        {displayName}
-      </Text>
-    </div>
+    <Tag
+      shape="rounded"
+      appearance="brand"
+      media={iconUri ? <img className={styles.tagIcon} src={iconUri} alt="" aria-hidden={true} /> : undefined}
+      value={nodeId}
+    >
+      {displayName}
+    </Tag>
   );
 };
 
@@ -104,13 +107,13 @@ export const MultiSelectDeleteModal = (): JSX.Element | null => {
           <DialogContent>
             <p>{intlText.body}</p>
             <p>{intlText.detail}</p>
-            <div className={styles.list}>
+            <TagGroup className={styles.tagList}>
               {selectedNodeIds.map((nodeId) => (
-                <MultiSelectDeleteRow key={nodeId} nodeId={nodeId} />
+                <MultiSelectDeleteTag key={nodeId} nodeId={nodeId} />
               ))}
-            </div>
+            </TagGroup>
           </DialogContent>
-          <DialogActions>
+          <DialogActions style={{ marginTop: '12px' }}>
             <Button appearance="primary" onClick={onConfirm}>
               {intlText.deleteLabel}
             </Button>

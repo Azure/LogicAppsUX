@@ -3,7 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { CardContextMenu } from '@microsoft/designer-ui';
 import { MenuItem } from '@fluentui/react-components';
-import { bundleIcon, Clipboard24Filled, Clipboard24Regular, Delete24Filled, Delete24Regular } from '@fluentui/react-icons';
+import {
+  bundleIcon,
+  Clipboard24Filled,
+  Clipboard24Regular,
+  Cut24Filled,
+  Cut24Regular,
+  Delete24Filled,
+  Delete24Regular,
+} from '@fluentui/react-icons';
 import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
 import {
   SUBGRAPH_TYPES,
@@ -46,7 +54,7 @@ import {
   useSuppressDefaultNodeSelectFunctionality,
   useNodeSelectAdditionalCallback,
 } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { copyOperation, copyScopeOperation, copyOperations } from '../../../core/actions/bjsworkflow/copypaste';
+import { copyOperation, copyScopeOperation, copyOperations, cutOperations } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from './CopyTooltip';
 import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
@@ -59,6 +67,7 @@ import { useRawInputsOutputs } from '../../panel/nodeDetailsPanel/useRawInputsOu
 
 const BulkDeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const BulkCopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);
+const BulkCutIcon = bundleIcon(Cut24Filled, Cut24Regular);
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -290,6 +299,13 @@ export const DesignerContextualMenu = () => {
     setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, selectedNodeIds]);
 
+  const bulkCutClick = useCallback(() => {
+    setOpen(false);
+    setShowCopyCallout(true);
+    dispatch(cutOperations({ nodeIds: selectedNodeIds }));
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
+  }, [dispatch, selectedNodeIds]);
+
   const bulkMenuItems = useMemo(() => {
     const deleteText = intl.formatMessage(
       {
@@ -307,15 +323,26 @@ export const DesignerContextualMenu = () => {
       },
       { count: selectedNodeIds.length }
     );
+    const cutText = intl.formatMessage(
+      {
+        defaultMessage: 'Cut {count} actions',
+        id: 'gxAtNf',
+        description: 'Context menu label to cut multiple selected actions',
+      },
+      { count: selectedNodeIds.length }
+    );
     return [
-      <MenuItem key={'bulk-delete'} icon={<BulkDeleteIcon />} onClick={bulkDeleteClick} data-automation-id={'msla-bulk-delete-menu-option'}>
-        {deleteText}
+      <MenuItem key={'bulk-cut'} icon={<BulkCutIcon />} onClick={bulkCutClick} data-automation-id={'msla-bulk-cut-menu-option'}>
+        {cutText}
       </MenuItem>,
       <MenuItem key={'bulk-copy'} icon={<BulkCopyIcon />} onClick={bulkCopyClick} data-automation-id={'msla-bulk-copy-menu-option'}>
         {copyText}
       </MenuItem>,
+      <MenuItem key={'bulk-delete'} icon={<BulkDeleteIcon />} onClick={bulkDeleteClick} data-automation-id={'msla-bulk-delete-menu-option'}>
+        {deleteText}
+      </MenuItem>,
     ];
-  }, [intl, selectedNodeIds.length, bulkDeleteClick, bulkCopyClick]);
+  }, [intl, selectedNodeIds.length, bulkDeleteClick, bulkCopyClick, bulkCutClick]);
 
   const menuItems = useMemo(() => {
     // If no node id, show canvas menu items

@@ -30,6 +30,7 @@ import { useNodesInitialized } from '../core/state/operation/operationSelector';
 import { setFlowErrors, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import { addOperation, type AppDispatch } from '../core';
 import { clearPanel, expandDiscoveryPanel, setNodeSelection } from '../core/state/panel/panelSlice';
+import { useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
 import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
@@ -182,9 +183,17 @@ const DesignerReactFlow = (props: any) => {
 
   ///
 
-  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
-
-  const allNodes = [...nodesWithPlaceholder, ...noteNodes];
+  // Stamp `selected: true` on nodes that are in the Redux selection so React Flow renders them with
+  // their selected visual. Without this, starting a new marquee clears React Flow's internal
+  // selection state and the previously-selected nodes lose their highlight.
+  const panelSelectedNodeIds = useOperationPanelSelectedNodeIds();
+  const allNodes = useMemo(() => {
+    const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
+    const selectedSet = new Set(panelSelectedNodeIds);
+    return [...nodesWithPlaceholder, ...noteNodes].map((node) =>
+      selectedSet.has(node.id) ? { ...node, selected: true } : node.selected ? { ...node, selected: false } : node
+    );
+  }, [isEmpty, isReadOnly, emptyWorkflowPlaceholderNodes, actionNodes, noteNodes, panelSelectedNodeIds]);
 
   const clampPan = useClampPan();
 
@@ -363,6 +372,33 @@ const DesignerReactFlow = (props: any) => {
     dispatch(setFlowErrors({ flowErrors: errors }));
   }, [disconnectedNodeErrorMessage, disconnectedNodes, dispatch]);
 
+  // Track modifier keys ourselves so we can toggle selectionOnDrag / panOnDrag reliably.
+  // React Flow's built-in selectionKeyCode uses key-up/down listeners that can miss events
+  // (e.g. key released while window is blurred), causing "sticky" marquee mode.
+  const [isSelectionKeyHeld, setIsSelectionKeyHeld] = useState(false);
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Shift' || e.key === 'Control') {
+        setIsSelectionKeyHeld(true);
+      }
+    };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Shift' || e.key === 'Control') {
+        setIsSelectionKeyHeld(false);
+      }
+    };
+    // If the window loses focus while a modifier is held, reset to avoid sticky state.
+    const onBlur = () => setIsSelectionKeyHeld(false);
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
+    };
+  }, []);
+
   const onPaneClick = useCallback(() => {
     if (isDraggingConnection) {
       setIsDraggingConnection(false);
@@ -400,20 +436,47 @@ const DesignerReactFlow = (props: any) => {
   const isBoxSelectingRef = useRef(false);
   const lastCommittedSelectionRef = useRef('');
 
+  // Additive marquee: track the current redux selection and snapshot it when a marquee begins.
+  const currentSelectionRef = useRef<string[]>([]);
+  useEffect(() => {
+    currentSelectionRef.current = panelSelectedNodeIds;
+  }, [panelSelectedNodeIds]);
+  const selectionAtMarqueeStartRef = useRef<string[] | null>(null);
+
   const commitBoxSelection = useCallback(
     (ids: string[]) => {
-      // Ignore empty selections so a click or an empty marquee doesn't clobber an existing selection.
-      if (ids.length === 0) {
+      const snapshot = selectionAtMarqueeStartRef.current;
+      let finalIds: string[];
+      if (snapshot !== null) {
+        selectionAtMarqueeStartRef.current = null;
+        if (ids.length === 0) {
+          // Shift-click on empty space with nothing marquee'd: clear the selection.
+          lastCommittedSelectionRef.current = '';
+          dispatch(clearPanel());
+          return;
+        }
+        // Toggle: if ALL marquee'd nodes were already selected, deselect them; otherwise add all.
+        const allAlreadySelected = ids.every((id) => snapshot.includes(id));
+        if (allAlreadySelected) {
+          finalIds = snapshot.filter((id) => !ids.includes(id));
+        } else {
+          finalIds = [...new Set([...snapshot, ...ids])];
+        }
+      } else {
+        finalIds = ids;
+      }
+
+      if (finalIds.length === 0) {
+        lastCommittedSelectionRef.current = '';
+        dispatch(clearPanel());
         return;
       }
-      // Guard against redundant dispatches (e.g. the post-commit onSelectionChange echo) so we don't
-      // thrash redux or loop.
-      const key = [...ids].sort().join('|');
+      const key = [...finalIds].sort().join('|');
       if (key === lastCommittedSelectionRef.current) {
         return;
       }
       lastCommittedSelectionRef.current = key;
-      dispatch(setNodeSelection(ids));
+      dispatch(setNodeSelection(finalIds));
     },
     [dispatch]
   );
@@ -438,6 +501,7 @@ const DesignerReactFlow = (props: any) => {
     isBoxSelectingRef.current = true;
     pendingBoxSelectionRef.current = [];
     lastCommittedSelectionRef.current = '';
+    selectionAtMarqueeStartRef.current = [...currentSelectionRef.current];
   }, []);
 
   const onSelectionEnd = useCallback(() => {
@@ -553,11 +617,11 @@ const DesignerReactFlow = (props: any) => {
       edgesFocusable={false}
       edgeTypes={edgeTypes}
       elementsSelectable={true}
-      selectionOnDrag={false}
+      selectionOnDrag={isSelectionKeyHeld}
       selectionMode={SelectionMode.Full}
-      selectionKeyCode={['Shift', 'Control']}
+      selectionKeyCode={null}
       multiSelectionKeyCode={['Meta', 'Control', 'Shift']}
-      panOnDrag={true}
+      panOnDrag={!isSelectionKeyHeld}
       onSelectionChange={onSelectionChange}
       onSelectionStart={onSelectionStart}
       onSelectionEnd={onSelectionEnd}

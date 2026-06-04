@@ -16,7 +16,7 @@ import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
-import { addNewEdge } from '../../parsers/restructuringHelpers';
+import { addNewEdge, removeEdge, reassignEdgeSources, reassignEdgeTargets } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { AddSettingsPayload, NodeOperation } from '../operation/operationMetadataSlice';
@@ -218,21 +218,99 @@ export const workflowSlice = createSlice({
         return;
       }
 
-      // Move each selected node (in chain order) into the scope container.
+      // Pre-compute each selected node's selected parents from the original graph
+      // BEFORE any moves, so we can preserve parallel branch structure.
+      const selected = new Set(nodeIds);
+      const selectedParentsMap = new Map<string, string[]>();
+      for (const nid of nodeIds) {
+        selectedParentsMap.set(
+          nid,
+          getImmediateSourceNodeIds(currentGraph, nid).filter((p) => selected.has(p))
+        );
+      }
+
+      const scopeHeaderId = previousNodeId;
+
+      // Move each selected node (in topological order) into the scope container.
       for (const nodeId of nodeIds) {
         const currentNode = getWorkflowNodeFromGraphState(state, nodeId);
         if (!currentNode) {
           continue;
         }
-        moveNodeInWorkflow(
-          currentNode,
-          currentGraph,
-          targetGraph,
-          { graphId: targetGraphId, parentId: previousNodeId },
-          state.nodesMetadata,
-          state
-        );
-        previousNodeId = nodeId;
+
+        const selParents = selectedParentsMap.get(nodeId) ?? [];
+
+        if (selParents.length === 0) {
+          // Entry node (no selected parent) — use moveNodeInWorkflow normally.
+          moveNodeInWorkflow(
+            currentNode,
+            currentGraph,
+            targetGraph,
+            { graphId: targetGraphId, parentId: scopeHeaderId },
+            state.nodesMetadata,
+            state
+          );
+        } else {
+          // Non-entry node — manually remove from old graph and add to scope
+          // with correct edges so parallel branch structure is preserved.
+
+          // --- Remove from old graph ---
+          const currentRunAfter = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter;
+          const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
+          const isOldRoot = getRecordEntry(state.nodesMetadata, nodeId)?.isRoot;
+
+          if (isOldRoot) {
+            const childIds = (currentGraph.edges ?? []).filter((e) => e.source === nodeId).map((e) => e.target);
+            for (const cid of childIds) {
+              const childMeta = getRecordEntry(state.nodesMetadata, cid);
+              if (childMeta) {
+                childMeta.isRoot = true;
+              }
+              delete (getRecordEntry(state.operations, cid) as any)?.runAfter;
+            }
+          }
+
+          if (multipleParents) {
+            const childEdge = (currentGraph.edges ?? []).find((e) => e.source === nodeId);
+            if (childEdge) {
+              reassignEdgeTargets(state, nodeId, childEdge.target, currentGraph);
+              removeEdge(state, nodeId, childEdge.target, currentGraph);
+            } else {
+              for (const pid of Object.keys(currentRunAfter ?? {})) {
+                removeEdge(state, pid, nodeId, currentGraph);
+              }
+            }
+          } else {
+            const oldParentId = (currentGraph.edges ?? []).find((e) => e.target === nodeId)?.source ?? '';
+            const allowRunAfterTrigger = isA2AWorkflow(state);
+            const isAfterTrigger = getRecordEntry(state.nodesMetadata, oldParentId)?.isTrigger;
+            const shouldAddRA = allowRunAfterTrigger || (!isOldRoot && !isAfterTrigger);
+            reassignEdgeSources(state, nodeId, oldParentId, currentGraph, shouldAddRA);
+            removeEdge(state, oldParentId, nodeId, currentGraph);
+          }
+
+          currentGraph.children = (currentGraph.children ?? []).filter((c) => c.id !== nodeId);
+          if (state.nodesMetadata[currentGraph.id]) {
+            state.nodesMetadata[currentGraph.id].actionCount = (state.nodesMetadata[currentGraph.id].actionCount ?? 1) - 1;
+          }
+
+          // --- Add to scope graph ---
+          targetGraph.children = [...(targetGraph.children ?? []), currentNode];
+
+          const newGraphId = targetGraph.id;
+          const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
+          state.nodesMetadata[nodeId] = {
+            ...getRecordEntry(state.nodesMetadata, nodeId),
+            graphId: newGraphId,
+            parentNodeId,
+            isRoot: false,
+          };
+
+          // Add edges from each selected parent already in the scope.
+          for (const selParent of selParents) {
+            addNewEdge(state, selParent, nodeId, targetGraph, true);
+          }
+        }
       }
     },
     pasteNode: (

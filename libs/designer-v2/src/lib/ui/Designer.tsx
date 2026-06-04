@@ -11,7 +11,7 @@ import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } fro
 import { setNodeSelection } from '../core/state/panel/panelSlice';
 import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
 import { useAllSelectableNodeIds } from '../core/state/workflow/workflowSelectors';
-import { copyOperation, copyOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
+import { copyOperation, copyOperations, cutOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -41,7 +41,6 @@ import { RunHistoryPanel } from './panel';
 import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
 import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
-import { PanelViewportShift } from './PanelViewportShift';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -165,6 +164,20 @@ export const Designer = (props: DesignerProps) => {
     { enabled: !isReadOnly }
   );
 
+  // Ctrl/Cmd+X: cut selected node(s) (copy + delete).
+  useHotkeys(
+    ['meta+x', 'ctrl+x'],
+    (event) => {
+      event.preventDefault();
+      if (selectedNodeIds.length > 1) {
+        dispatch(cutOperations({ nodeIds: selectedNodeIds }));
+      } else if (selectedNodeId) {
+        dispatch(cutOperations({ nodeIds: [selectedNodeId] }));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
   // Ctrl/Cmd+A: select all actions on the canvas.
   useHotkeys(
     ['meta+a', 'ctrl+a'],
@@ -257,7 +270,6 @@ export const Designer = (props: DesignerProps) => {
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />
-          <PanelViewportShift canvasRef={canvasRef} panelLocation={panelLocation} />
           <DragPanMonitor canvasRef={canvasRef} />
           <KindChangeDialog />
         </ReactFlowProvider>
