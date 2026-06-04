@@ -22,10 +22,10 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 
 export default class LogicAppsLanguageServer {
-  protected lspServerPath: string;
-  protected sdkNupkgPath: string;
+  protected lspServerPath: string | undefined;
+  protected sdkNupkgPath: string | undefined;
   protected apiVersion = workflowAppApiVersion;
-  private projectPath: string;
+  private projectPath: string | undefined;
   protected readonly context: IActionContext;
 
   constructor(context: IActionContext) {
@@ -39,21 +39,27 @@ export default class LogicAppsLanguageServer {
 
     const workspaceFolder = await getWorkspaceFolderPath(this.context);
     this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
+
+    if (!this.projectPath) {
+      return;
+    }
+
     const { lspServerPath, sdkNupkgPath } = await this.getSDKPaths();
 
     this.lspServerPath = lspServerPath;
     this.sdkNupkgPath = sdkNupkgPath;
-    const metaData = await this.getMetadata();
 
     if (!this.lspServerPath) {
-      window.showWarningMessage('Set "azureLogicAppsStandard.languageServerDLLPath" to your C# server DLL.');
+      window.showWarningMessage('Install or repair Logic Apps language server dependencies before starting C# workflow authoring.');
       return;
     }
 
     if (!this.sdkNupkgPath) {
-      window.showWarningMessage('Set "azureLogicAppsStandard.languageServerNupkgPath" to your SDK NuGet package.');
+      window.showWarningMessage('Install or repair Logic Apps language server SDK dependencies before starting C# workflow authoring.');
       return;
     }
+
+    const metaData = await this.getMetadata();
 
     // Build server arguments (removed --connections)
     const serverArgs = [this.lspServerPath, '--sdk', this.sdkNupkgPath];
@@ -166,23 +172,36 @@ export default class LogicAppsLanguageServer {
 
   private async getSDKPaths() {
     const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+    if (!dependenciesPath) {
+      return { lspServerPath: undefined, sdkNupkgPath: undefined };
+    }
 
     // Support for development mode - override with environment variable
     const devLspServerPath = process.env.LSP_SERVER_DEV_PATH;
-    let lspServerPath: string;
+    let lspServerPath: string | undefined;
 
     if (devLspServerPath && (await fse.pathExists(devLspServerPath))) {
       lspServerPath = devLspServerPath;
       console.log(`[LSP] Using development server: ${lspServerPath}`);
     } else {
       lspServerPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
+      if (!(await fse.pathExists(lspServerPath))) {
+        lspServerPath = undefined;
+      }
     }
 
     const sdkFolderPath = path.join(dependenciesPath, lspDirectory);
+    if (!(await fse.pathExists(sdkFolderPath))) {
+      return { lspServerPath, sdkNupkgPath: undefined };
+    }
+
     const files = await fse.readdir(sdkFolderPath);
     const sdkNupkgFile = files.find((file) => {
       return file.startsWith('Microsoft.Azure.Workflows.Sdk.') && file.endsWith('.nupkg');
     });
+    if (!sdkNupkgFile) {
+      return { lspServerPath, sdkNupkgPath: undefined };
+    }
 
     const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
 
@@ -190,6 +209,10 @@ export default class LogicAppsLanguageServer {
   }
 
   private async getMetadata() {
+    if (!this.projectPath) {
+      throw new Error('Logic Apps language server cannot start without a Logic App project path.');
+    }
+
     const azureDetails: AzureConnectorDetails = await getAzureConnectorDetailsForLocalProject(this.context, this.projectPath);
     const connectionFilePath: string = path.join(this.projectPath, connectionsFileName);
 
