@@ -189,7 +189,7 @@ export const deleteOperations = createAsyncThunk(
     for (const nodeId of nodeIds) {
       const state = getState() as RootState;
       const workflowNode = getWorkflowNodeFromGraphState(state.workflow, nodeId);
-      const isTrigger = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.isRoot ?? false;
+      const isTrigger = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.isTrigger ?? false;
       if (
         workflowNode &&
         (workflowNode.type === WORKFLOW_NODE_TYPES.GRAPH_NODE || workflowNode.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE)
