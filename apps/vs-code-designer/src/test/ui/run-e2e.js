@@ -27,7 +27,8 @@ const distDir = path.join(projectDir, 'dist');
  * change between VS Code versions. Pinning ensures the same version is used
  * locally and in CI. Update this when ExTester releases support for newer versions.
  */
-const VSCODE_VERSION = '1.108.0';
+const DEFAULT_VSCODE_VERSION = '1.108.0';
+const VSCODE_VERSION = process.env.E2E_VSCODE_VERSION || process.env.CODE_VERSION || DEFAULT_VSCODE_VERSION;
 const DOWNLOAD_RETRY_ATTEMPTS = 3;
 
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
@@ -1077,6 +1078,7 @@ async function main() {
 
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
   console.log(`\nE2E mode: ${e2eMode}`);
+  console.log(`VS Code version: ${VSCODE_VERSION}${VSCODE_VERSION === DEFAULT_VSCODE_VERSION ? ' (default)' : ' (env override)'}`);
   // Note: shard reliability is gated by helpers in runHelpers.ts (waitForRuntimeReady,
   // clickRunTrigger, assertRunTriggerable) and helpers.ts (selectCreateWorkspaceCommand,
   // switchToWebviewFrame, openFolderInSession, waitForWorkbenchReady). All CI-dependent
