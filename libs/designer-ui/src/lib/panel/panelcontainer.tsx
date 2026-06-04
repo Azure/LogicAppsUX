@@ -40,10 +40,6 @@ export type PanelContainerProps = {
   showTriggerInfo?: boolean;
   isTrigger?: boolean;
   hideComment?: boolean;
-  // When provided, the panel renders this content instead of the node-based body. Used for
-  // surfaces (e.g. multi-select) that share the same Drawer chrome but don't operate on a single node.
-  customContent?: JSX.Element;
-  customAriaLabel?: string;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -73,8 +69,6 @@ export const PanelContainer = ({
   showTriggerInfo,
   isTrigger,
   hideComment,
-  customContent,
-  customAriaLabel,
   ...rest
 }: PanelContainerProps) => {
   const intl = useIntl();
@@ -113,27 +107,33 @@ export const PanelContainer = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Calculate panel width: use manual resize if set, otherwise pick a default based on panel type.
-  const drawerWidth = useMemo(() => {
+  // Calculate responsive panel width
+  const getResponsiveWidth = () => {
     if (isCollapsed) {
       return PanelSize.Auto;
     }
 
-    // If the user has manually resized, honour that width (capped to viewport).
+    // If manually resized, use that width but constrain to viewport
     if (canResize && overrideWidth) {
       const numericWidth = Number.parseInt(overrideWidth, 10);
-      const maxWidth = viewportWidth * 0.9;
+      const maxWidth = viewportWidth * 0.9; // 90% of viewport width
       return `${Math.min(numericWidth, maxWidth)}px`;
     }
 
-    // Dual-view (pinned / alternate selected node) → 680px
-    if (alternateSelectedNode) {
-      return PanelSize.DualView;
-    }
+    // Default widths based on panel type
+    const defaultWidth = alternateSelectedNode ? Number.parseInt(PanelSize.DualView, 10) : Number.parseInt(PanelSize.Medium, 10);
 
-    // Single-node or multi-select → 480px
-    return '480px';
-  }, [isCollapsed, canResize, overrideWidth, alternateSelectedNode, viewportWidth]);
+    // Responsive breakpoints
+    if (viewportWidth < 768) {
+      return '100%'; // Full width on mobile
+    }
+    if (viewportWidth < 1024) {
+      return `${Math.min(defaultWidth, viewportWidth * 0.8)}px`; // 80% max on tablet
+    }
+    return `${Math.min(defaultWidth, viewportWidth * 0.6)}px`; // 60% max on desktop
+  };
+
+  const drawerWidth = getResponsiveWidth();
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
@@ -256,17 +256,13 @@ export const PanelContainer = ({
     return null;
   }
 
-  if (isCollapsed) {
-    return null;
-  }
-
-  if (!customContent && !node) {
+  if (isCollapsed || !node) {
     return null;
   }
 
   return (
     <Drawer
-      aria-label={customContent ? (customAriaLabel ?? panelLabel) : panelLabel}
+      aria-label={panelLabel}
       className="msla-panel-container"
       type="inline"
       modalType="non-modal"
@@ -284,37 +280,33 @@ export const PanelContainer = ({
         height: '100%',
       }}
     >
-      {customContent ? (
-        customContent
-      ) : (
-        <div
-          className={mergeClasses(
-            'msla-panel-container-nested',
-            `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-            alternateSelectedNode && 'msla-panel-container-nested-dual'
-          )}
-        >
-          {node ? renderPanelContents(node, 'selected', false) : null}
-          {alternateSelectedNode ? (
-            <>
-              <Divider vertical={true} />
-              {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
-              {shouldDisplayPopup && targetElement ? (
-                <TeachingPopup
-                  targetElement={targetElement}
-                  title={toolBranchTitle}
-                  message={toolBranchMessage}
-                  withArrow={true}
-                  handlePopupPrimaryOnClick={() => {
-                    localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
-                    setShouldDisplayPopup(false);
-                  }}
-                />
-              ) : null}
-            </>
-          ) : null}
-        </div>
-      )}
+      <div
+        className={mergeClasses(
+          'msla-panel-container-nested',
+          `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
+          alternateSelectedNode && 'msla-panel-container-nested-dual'
+        )}
+      >
+        {node ? renderPanelContents(node, 'selected', false) : null}
+        {alternateSelectedNode ? (
+          <>
+            <Divider vertical={true} />
+            {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
+            {shouldDisplayPopup && targetElement ? (
+              <TeachingPopup
+                targetElement={targetElement}
+                title={toolBranchTitle}
+                message={toolBranchMessage}
+                withArrow={true}
+                handlePopupPrimaryOnClick={() => {
+                  localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
+                  setShouldDisplayPopup(false);
+                }}
+              />
+            ) : null}
+          </>
+        ) : null}
+      </div>
       {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
     </Drawer>
   );
