@@ -117,8 +117,11 @@ export const useConnectionRefs = (): ConnectionReferences => {
 };
 
 export const useConnectionRefsByConnectorId = (connectorId?: string) => {
-  const allConnectionReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
-  return allConnectionReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
+  const connectionReferences = useSelector((state: RootState) => state.connections.connectionReferences);
+  return useMemo(
+    () => Object.values(connectionReferences).filter((ref: ConnectionReference) => ref.api.id === connectorId),
+    [connectionReferences, connectorId]
+  );
 };
 
 export const useIsOperationMissingConnection = (nodeId: string) => {
