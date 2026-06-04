@@ -236,6 +236,22 @@ describe('startDesignTimeProcess', () => {
     expect(appendedOutput).not.toContain('22222222-2222-2222-2222-222222222222');
   });
 
+  it('suppresses repeated process unhealthy logs with health-check entries', () => {
+    startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
+
+    const healthCheckEntries =
+      'Process reporting unhealthy: Unhealthy. Health check entries are {"azure.functions.web_host.lifecycle":{"status":"Healthy","description":null},"azure.functions.script_host.lifecycle":{"status":"Healthy","description":null},"azure.functions.webjobs.storage":{"status":"Unhealthy","description":"Unable to create client for AzureWebJobsStorage"}}\n';
+
+    stderr.emit('data', healthCheckEntries);
+    stderr.emit('data', healthCheckEntries);
+
+    const appendedOutput = outputChannel.append.mock.calls.map(([value]) => value).join('');
+
+    expect(appendedOutput).toContain(healthCheckEntries);
+    expect(appendedOutput).toContain('[Azure Logic Apps] Repeated failing health-check output suppressed.\n');
+    expect(appendedOutput.indexOf(healthCheckEntries)).toBe(appendedOutput.lastIndexOf(healthCheckEntries));
+  });
+
   it('flushes final unterminated output when a host stream closes', () => {
     startDesignTimeProcess(outputChannel as any, 'D:/workspace/app-one/workflow-designtime', 'func', 'host', 'start');
 
