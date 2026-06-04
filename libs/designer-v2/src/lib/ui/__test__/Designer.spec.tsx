@@ -83,6 +83,7 @@ vi.mock('@xyflow/react', () => ({
 vi.mock('../Controls', () => ({ default: () => <div data-testid="controls" /> }));
 vi.mock('../Minimap', () => ({ default: () => <div data-testid="minimap" /> }));
 vi.mock('../common/DeleteModal/DeleteModal', () => ({ default: () => null }));
+vi.mock('../common/DeleteModal/MultiSelectDeleteModal', () => ({ MultiSelectDeleteModal: () => null }));
 vi.mock('../panel/panelRoot', () => ({ PanelRoot: () => null }));
 vi.mock('../common/PerformanceDebug/PerformanceDebug', () => ({ PerformanceDebugTool: () => null }));
 vi.mock('../CanvasFinder', () => ({ CanvasFinder: () => null }));
