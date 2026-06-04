@@ -191,7 +191,7 @@ const DesignerReactFlow = (props: any) => {
     const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
     const selectedSet = new Set(panelSelectedNodeIds);
     return [...nodesWithPlaceholder, ...noteNodes].map((node) =>
-      selectedSet.has(node.id) ? { ...node, selected: true } : node.selected ? { ...node, selected: false } : node
+      selectedSet.has(node.id) ? { ...node, selected: true } : 'selected' in node && node.selected ? { ...node, selected: false } : node
     );
   }, [isEmpty, isReadOnly, emptyWorkflowPlaceholderNodes, actionNodes, noteNodes, panelSelectedNodeIds]);
 
