@@ -239,14 +239,11 @@ export const EdgeContextualMenu = () => {
     { count: pasteNodeCount }
   );
 
-  const pasteParallelFromClipboard = intl.formatMessage(
-    {
-      defaultMessage: '{count, plural, one {Paste a parallel action} other {Paste {count} parallel actions}}',
-      id: 'af1Dbe',
-      description: 'Text for button to paste one or more parallel actions from clipboard',
-    },
-    { count: pasteNodeCount }
-  );
+  const pasteParallelFromClipboard = intl.formatMessage({
+    defaultMessage: 'Paste as parallel branch',
+    id: '5BxSaa',
+    description: 'Text for button to paste actions as a parallel branch from clipboard',
+  });
 
   const a2aAgentLoopDisabledText = intl.formatMessage({
     defaultMessage: 'Cannot add subsequent actions below agents in agent to agent workflows',
