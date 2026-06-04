@@ -125,16 +125,19 @@ const DesignerReactFlow = (props: any) => {
     }
   }, [actionNodes, reactFlowInstance, isInitialized, containerDimensions]);
 
-  const emptyWorkflowPlaceholderNodes = [
-    {
-      id: 'newWorkflowTrigger',
-      position: { x: 0, y: 0 },
-      data: { label: 'newWorkflowTrigger' },
-      parentId: undefined,
-      type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
-      style: DEFAULT_NODE_SIZE,
-    },
-  ];
+  const emptyWorkflowPlaceholderNodes = useMemo(
+    () => [
+      {
+        id: 'newWorkflowTrigger',
+        position: { x: 0, y: 0 },
+        data: { label: 'newWorkflowTrigger' },
+        parentId: undefined,
+        type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
+        style: DEFAULT_NODE_SIZE,
+      } as Node,
+    ],
+    []
+  );
 
   /// Position dispatch debounce (Only applicable for notes currently)
 
@@ -191,7 +194,7 @@ const DesignerReactFlow = (props: any) => {
     const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
     const selectedSet = new Set(panelSelectedNodeIds);
     return [...nodesWithPlaceholder, ...noteNodes].map((node) =>
-      selectedSet.has(node.id) ? { ...node, selected: true } : 'selected' in node && node.selected ? { ...node, selected: false } : node
+      selectedSet.has(node.id) ? { ...node, selected: true } : node.selected ? { ...node, selected: false } : node
     );
   }, [isEmpty, isReadOnly, emptyWorkflowPlaceholderNodes, actionNodes, noteNodes, panelSelectedNodeIds]);
 
