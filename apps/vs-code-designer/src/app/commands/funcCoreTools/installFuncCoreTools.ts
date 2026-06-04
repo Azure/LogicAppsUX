@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageManager, autoRuntimeDependenciesPathSettingKey, funcDependencyName, funcPackageName } from '../../../constants';
+import { PackageManager, funcDependencyName, funcPackageName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import {
   downloadAndExtractDependency,
@@ -13,7 +13,8 @@ import {
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
-import { getGlobalSetting, promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
+import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
+import { promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type FuncVersion, type INpmDistTag } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from 'vscode-nls';
@@ -21,7 +22,7 @@ import { localize } from 'vscode-nls';
 export async function installFuncCoreToolsBinaries(context: IActionContext, majorVersion?: string): Promise<void> {
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
-  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const targetDirectory = await ensureRuntimeDependenciesPath();
   context.telemetry.properties.lastStep = 'getLatestFunctionCoreToolsVersion';
   const version = await getLatestFunctionCoreToolsVersion(context, majorVersion);
   let azureFunctionCoreToolsReleasesUrl: string;

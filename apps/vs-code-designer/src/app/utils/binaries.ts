@@ -69,61 +69,9 @@ export async function downloadAndExtractDependency(
 
   executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
 
-  axios.get(downloadUrl, { responseType: 'stream' }).then((response) => {
-    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
-    fs.mkdirSync(tempFolderPath, { recursive: true });
-    fs.chmodSync(tempFolderPath, 0o777);
-
-    const writer = fs.createWriteStream(dependencyFilePath);
-    response.data.pipe(writer);
-
-    writer.on('finish', async () => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
-      fs.chmodSync(dependencyFilePath, 0o777);
-
-      // Extract to targetFolder
-      if (dependencyName === dotnetDependencyName) {
-        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
-        if (process.platform === Platform.windows) {
-          await executeCommand(
-            ext.outputChannel,
-            undefined,
-            'powershell -ExecutionPolicy Bypass -File',
-            dependencyFilePath,
-            '-InstallDir',
-            targetFolder,
-            '-Channel',
-            `${version}.0`
-          );
-        } else {
-          await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
-        }
-      } else {
-        if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
-          stopAllDesignTimeApis();
-        }
-        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-        vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-        if (dependencyName === funcDependencyName) {
-          // Add execute permissions for func and gozip binaries
-          if (process.platform !== Platform.windows) {
-            fs.chmodSync(`${targetFolder}/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/gozip`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
-          }
-          await setFunctionsCommand();
-          await startAllDesignTimeApis();
-        } else if (dependencyName === extensionBundleId) {
-          await startAllDesignTimeApis();
-        }
-      }
-      // remove the temp folder.
-      fs.rmSync(tempFolderPath, { recursive: true });
-      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
-    });
-    writer.on('error', async (error) => {
-      // log the error message the VSCode window and to telemetry.
+  const response = await axios.get(downloadUrl, { responseType: 'stream' });
+  await new Promise<void>((resolve, reject) => {
+    const rejectDownload = async (error: Error) => {
       const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
       vscode.window.showErrorMessage(errorMessage);
       context.telemetry.properties.error = errorMessage;
@@ -131,6 +79,69 @@ export async function downloadAndExtractDependency(
       // remove the target folder.
       fs.rmSync(targetFolder, { recursive: true });
       await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
+      reject(new Error(errorMessage));
+    };
+
+    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
+    fs.mkdirSync(tempFolderPath, { recursive: true });
+    fs.chmodSync(tempFolderPath, 0o777);
+
+    const writer = fs.createWriteStream(dependencyFilePath);
+    response.data.on?.('error', rejectDownload);
+    response.data.pipe(writer);
+
+    writer.on('finish', async () => {
+      try {
+        executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
+        fs.chmodSync(dependencyFilePath, 0o777);
+
+        // Extract to targetFolder
+        if (dependencyName === dotnetDependencyName) {
+          const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
+          if (process.platform === Platform.windows) {
+            await executeCommand(
+              ext.outputChannel,
+              undefined,
+              'powershell -ExecutionPolicy Bypass -File',
+              dependencyFilePath,
+              '-InstallDir',
+              targetFolder,
+              '-Channel',
+              `${version}.0`
+            );
+          } else {
+            await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+          }
+        } else {
+          if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
+            stopAllDesignTimeApis();
+          }
+          await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+          vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+          if (dependencyName === funcDependencyName) {
+            // Add execute permissions for func and gozip binaries
+            if (process.platform !== Platform.windows) {
+              fs.chmodSync(`${targetFolder}/func`, 0o755);
+              fs.chmodSync(`${targetFolder}/gozip`, 0o755);
+              fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
+              fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
+            }
+            await setFunctionsCommand();
+            await startAllDesignTimeApis();
+          } else if (dependencyName === extensionBundleId) {
+            await startAllDesignTimeApis();
+          }
+        }
+        // remove the temp folder.
+        fs.rmSync(tempFolderPath, { recursive: true });
+        executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+    writer.on('error', async (error) => {
+      await rejectDownload(error);
     });
   });
 }
