@@ -153,11 +153,28 @@ function isExecutableFile(filePath: string): boolean {
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
   const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
-  return [
+  const candidates = [
     path.join(funcToolsRoot, executableName),
     path.join(funcToolsRoot, 'in-proc8', executableName),
     path.join(funcToolsRoot, 'in-proc6', executableName),
   ];
+
+  const directoriesToScan = [funcToolsRoot];
+  for (const directory of directoriesToScan) {
+    if (!fs.existsSync(directory)) {
+      continue;
+    }
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const entryPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        directoriesToScan.push(entryPath);
+      } else if (entry.name === executableName) {
+        candidates.push(entryPath);
+      }
+    }
+  }
+
+  return [...new Set(candidates)];
 }
 
 function getFuncCoreToolsPath(): string {
