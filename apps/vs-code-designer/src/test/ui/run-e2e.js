@@ -886,6 +886,7 @@ async function main() {
   const phase1aFiles = [testFile('createWorkspace.fixtures.test.js')];
 
   const phase2Files = [testFile('designerActions.test.js')];
+  const connectionPromptFallbackFiles = [testFile('connectionPromptFallback.test.js')];
 
   // Each new test gets its own phase (fresh VS Code session) to avoid
   // workspace-switch contention with the previous test's debug processes.
@@ -990,6 +991,13 @@ async function main() {
       workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
       settings: { validateDependencies: false, autoStartDesignTime: false },
       env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p42-connectionprompt',
+      testFile: connectionPromptFallbackFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
 
     // Phases 4.3-4.6 — runtime-touching consumer tests
@@ -1951,6 +1959,13 @@ namespace ${namespaceName}
       const phase2Resources = getPhase2Resources();
       exits.push(await runPhase('Phase 4.2: designerActions', phase2Files, { resources: phase2Resources }));
 
+      // Phase 4.2b: connector prompt cancellation fallback — deliberately
+      // removes Azure connector sentinel settings and verifies designer load.
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase2b-shard');
+      exits.push(await runPhase('Phase 4.2b: connectionPromptFallback', connectionPromptFallbackFiles, { resources: phase2Resources }));
+
       // Phase 4.7: demo/smoke/standalone/dataMapper. dataMapper depends on
       // Phase 4.1's manifest; the others are quick (~14s total for the three).
       // Co-locating with `designer` keeps them all on a Phase-4.1-aware runner
@@ -1961,7 +1976,9 @@ namespace ${namespaceName}
       exits.push(await runPhase('Phase 4.7: remaining suites', phase7Files));
 
       const finalExit = Math.max(...exits);
-      console.log(`\n=== Designer shard results: 4.1=${exits[0]}, 4.2=${exits[1]}, 4.7=${exits[2]} → exit ${finalExit} ===`);
+      console.log(
+        `\n=== Designer shard results: 4.1=${exits[0]}, 4.2=${exits[1]}, 4.2b=${exits[2]}, 4.7=${exits[3]} → exit ${finalExit} ===`
+      );
       process.exit(finalExit);
     }
 
