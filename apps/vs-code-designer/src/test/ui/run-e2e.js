@@ -16,7 +16,8 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
+const { ExTester } = require('vscode-extension-tester');
 
 const projectDir = path.resolve(__dirname, '..', '..', '..');
 const distDir = path.join(projectDir, 'dist');
@@ -28,7 +29,15 @@ const distDir = path.join(projectDir, 'dist');
  * locally and in CI. Update this when ExTester releases support for newer versions.
  */
 const DEFAULT_VSCODE_VERSION = '1.108.0';
+const VSCODE_VERSION_SOURCE = process.env.E2E_VSCODE_VERSION ? 'E2E_VSCODE_VERSION' : process.env.CODE_VERSION ? 'CODE_VERSION' : 'default';
+if (process.env.E2E_VSCODE_VERSION && process.env.CODE_VERSION && process.env.E2E_VSCODE_VERSION !== process.env.CODE_VERSION) {
+  throw new Error(
+    `E2E_VSCODE_VERSION (${process.env.E2E_VSCODE_VERSION}) and CODE_VERSION (${process.env.CODE_VERSION}) disagree. ` +
+      'Set only one VS Code version override for run-e2e.js.'
+  );
+}
 const VSCODE_VERSION = process.env.E2E_VSCODE_VERSION || process.env.CODE_VERSION || DEFAULT_VSCODE_VERSION;
+process.env.CODE_VERSION = VSCODE_VERSION;
 const DOWNLOAD_RETRY_ATTEMPTS = 3;
 
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
@@ -36,6 +45,14 @@ const DOWNLOAD_RETRY_ATTEMPTS = 3;
 // would destroy cached marketplace extension installs.
 const extDir = path.join(os.tmpdir(), 'test-resources', 'test-extensions');
 const testGlob = path.resolve(projectDir, 'out', 'test', '*.js').replace(/\\/g, '/');
+
+function createExTester() {
+  return new ExTester(
+    undefined, // storageFolder — use default (os.tmpdir()/test-resources)
+    undefined, // releaseType — Stable
+    extDir // extensionsDir — isolated dir, passed as --extensions-dir
+  );
+}
 
 /**
  * Recursively copy a directory, skipping test-extensions itself to avoid infinite recursion.
@@ -94,9 +111,80 @@ function installExtensionWithCli(cliBase, dep, label = dep) {
   });
 }
 
-async function downloadExTesterAssets(extest) {
-  await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, () => extest.downloadCode(VSCODE_VERSION));
-  await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => extest.downloadChromeDriver(VSCODE_VERSION));
+function findNestedWindowsCliPath(codeFolder) {
+  if (process.platform !== 'win32') {
+    return undefined;
+  }
+
+  try {
+    for (const entry of fs.readdirSync(codeFolder, { withFileTypes: true })) {
+      if (!entry.isDirectory()) {
+        continue;
+      }
+
+      const candidate = path.join(codeFolder, entry.name, 'resources', 'app', 'out', 'cli.js');
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    }
+  } catch {
+    /* diagnostic only */
+  }
+
+  return undefined;
+}
+
+function preflightVSCodeCli(extest) {
+  const codeFolder = extest.code.getCodeFolder();
+  const cliPath = extest.code.getCliPath();
+  const executablePath = extest.code.executablePath;
+  const nestedCliPath = findNestedWindowsCliPath(codeFolder);
+
+  if (!fs.existsSync(executablePath)) {
+    throw new Error(`VS Code executable not found at ${executablePath}. Clear ${codeFolder} and rerun the E2E launcher.`);
+  }
+
+  if (!fs.existsSync(cliPath)) {
+    const nestedHint = nestedCliPath ? ` Found nested Windows CLI at ${nestedCliPath}, but ExTester resolved ${cliPath}.` : '';
+    throw new Error(
+      `VS Code CLI not found at ${cliPath}.${nestedHint} ` +
+        `Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.`
+    );
+  }
+
+  let output;
+  try {
+    output = execSync(`${extest.code.getCliInitCommand()} -v`, {
+      encoding: 'utf8',
+      env: extest.code.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+  } catch (error) {
+    const nestedHint = nestedCliPath ? ` Nested Windows CLI candidate: ${nestedCliPath}.` : '';
+    throw new Error(
+      `VS Code CLI preflight failed for ${cliPath}.${nestedHint} ` +
+        `Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.\n${error.message}`
+    );
+  }
+
+  const actualVersion = output.split(/\r?\n/)[0]?.trim();
+  if (/^\d+\.\d+\.\d+/.test(VSCODE_VERSION) && actualVersion !== VSCODE_VERSION) {
+    throw new Error(
+      `VS Code CLI preflight resolved version ${actualVersion || '<empty>'}, expected ${VSCODE_VERSION}. Clear ${codeFolder} and rerun.`
+    );
+  }
+
+  console.log(`  ✓ VS Code CLI preflight: ${actualVersion} (${cliPath})`);
+}
+
+async function downloadExTesterAssets() {
+  await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, async () => {
+    const downloadTester = createExTester();
+    await downloadTester.downloadCode(VSCODE_VERSION);
+    preflightVSCodeCli(createExTester());
+  });
+
+  await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => createExTester().downloadChromeDriver(VSCODE_VERSION));
 }
 
 /**
@@ -262,8 +350,6 @@ async function parallelLimit(taskFns, limit) {
 }
 
 async function main() {
-  const { ExTester } = require('vscode-extension-tester');
-
   // ------------------------------------------------------------------
   // D-001 pre-flight: enforce that *.fixtures.test.ts files do not write
   // workspace files directly. Fixture data must come from the wizard.
@@ -314,17 +400,15 @@ async function main() {
   console.log(`dist/ source: ${distDir}`);
   console.log(`Extensions dir: ${extDir}`);
 
-  // Create ExTester WITHOUT coverage — we don't need --extensionDevelopmentPath
-  // because we're copying our extension directly into --extensions-dir
-  const extest = new ExTester(
-    undefined, // storageFolder — use default (os.tmpdir()/test-resources)
-    undefined, // releaseType — Stable
-    extDir // extensionsDir — isolated dir, passed as --extensions-dir
-  );
-
   // Step 1: Download VS Code + ChromeDriver (skips if already cached)
   console.log('\n=== Step 1: Download VS Code + ChromeDriver ===');
-  await downloadExTesterAssets(extest);
+  await downloadExTesterAssets();
+
+  // Create ExTester WITHOUT coverage — we don't need --extensionDevelopmentPath
+  // because we're copying our extension directly into --extensions-dir.
+  // This must happen after download/preflight so it cannot retain stale CLI
+  // state from a VS Code archive layout that changed during download.
+  const extest = createExTester();
 
   // Step 2: Install extension dependencies from the marketplace (PARALLEL)
   // Skip deps already present in test-extensions/. For uncached deps,
@@ -1086,7 +1170,7 @@ async function main() {
 
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
   console.log(`\nE2E mode: ${e2eMode}`);
-  console.log(`VS Code version: ${VSCODE_VERSION}${VSCODE_VERSION === DEFAULT_VSCODE_VERSION ? ' (default)' : ' (env override)'}`);
+  console.log(`VS Code version: ${VSCODE_VERSION} (${VSCODE_VERSION_SOURCE})`);
   // Note: shard reliability is gated by helpers in runHelpers.ts (waitForRuntimeReady,
   // clickRunTrigger, assertRunTriggerable) and helpers.ts (selectCreateWorkspaceCommand,
   // switchToWebviewFrame, openFolderInSession, waitForWorkbenchReady). All CI-dependent
@@ -1274,7 +1358,7 @@ async function main() {
         /* ignore */
       }
     }
-    const phaseTester = new ExTester(undefined, undefined, extDir);
+    const phaseTester = createExTester();
     const code = await phaseTester.runTests(files, phaseRunOptions);
     console.log(`  ${phaseName} exit code: ${code}`);
     return code;
@@ -1698,19 +1782,19 @@ namespace ${namespaceName}
         process.exit(2);
       }
       console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       const singleExit = await runScenarioPhases([scenarioEntry]);
       process.exit(singleExit);
     }
 
     if (e2eMode === 'scenarios') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       const scenariosExit = await runScenarioPhases(scenarios);
       process.exit(scenariosExit);
     }
 
     if (e2eMode === 'scenarios-pilot') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       // Pilot exactly one scenario: inlineJavascript. Decision gate per the
       // per-scenario re-architecture plan — if this passes where the current
       // createplusnewtests shard fails Phase 4.3, the new pattern is validated.
@@ -1735,7 +1819,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'codefuldebugonly') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       const phase10Exit = await runCodefulDebugPhases('phase10-only');
       process.exit(phase10Exit);
     }
@@ -1743,7 +1827,7 @@ namespace ${namespaceName}
     if (e2eMode === 'nonlogicappstartup') {
       // Startup regression test: intentionally omit runtime dependency paths to
       // exercise extension activation in a plain, non-Logic-App folder.
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
 
       await prepareFreshSession('nonlogicappstartup-only');
@@ -1753,7 +1837,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
 
       await prepareFreshSession('phase2-only');
@@ -1766,7 +1850,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'newtestsonly') {
       // Run only the new tests (phases 4.3–4.6) each in their own session
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
       const exits = [];
@@ -1793,7 +1877,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'conversiononly') {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       // ALL conversion tests need validateDependencies ON so the extension
       // fully activates and detects legacy projects / shows conversion dialog.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
@@ -1883,7 +1967,7 @@ namespace ${namespaceName}
     if (e2eMode === 'conversioncreateonly') {
       // Run only Phase 4.8b: Open legacy project folder (no .code-workspace),
       // click Yes, then verify one Create click starts and completes workspace creation.
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
 
       const legacyDir = createLegacyProjectFixture('conversioncreateonly');
@@ -1895,7 +1979,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createonly') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       await prepareFreshSession('phase1-only');
       const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
       process.exit(phase1Exit);
@@ -1919,7 +2003,7 @@ namespace ${namespaceName}
     // ----------------------------------------------------------------------
 
     if (e2eMode === 'independentonly') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       const exits = [];
 
       // Phase 4.0: nonLogicAppStartup — plain folder, no Logic App context.
@@ -1942,7 +2026,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusdesigner') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       const exits = [];
 
       // Phase 4.1: createWorkspace — needed to produce the manifest consumed
@@ -1983,7 +2067,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusnewtests') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       const exits = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
@@ -2017,7 +2101,7 @@ namespace ${namespaceName}
     }
 
     if (e2eMode === 'createplusconversion') {
-      await downloadExTesterAssets(extest);
+      await downloadExTesterAssets();
       const exits = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
