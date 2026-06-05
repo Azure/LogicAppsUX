@@ -752,7 +752,7 @@ export async function openFileInEditor(workbench: Workbench, driver: WebDriver, 
 export async function waitForDependencyValidation(driver: WebDriver, timeoutMs = DEPENDENCY_VALIDATION_TIMEOUT): Promise<void> {
   const t0 = Date.now();
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
-  const funcBinaryPath = getFuncCoreToolsPath();
+  const getCurrentFuncBinaryPath = (): string => getFuncCoreToolsPath();
 
   // The extension's download/extract can leave Linux/macOS binaries without
   // execute bits. Apply this before and after validation because validation can
@@ -851,6 +851,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       }
 
       // Check if func binary already exists (validation may have completed before we started)
+      const funcBinaryPath = getCurrentFuncBinaryPath();
       if (fs.existsSync(funcBinaryPath)) {
         if (Date.now() - t0 < 15_000) {
           await sleep(2000);
@@ -868,7 +869,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       await sleep(2000);
     }
 
-    if (!everAppeared && !fs.existsSync(funcBinaryPath)) {
+    if (!everAppeared && !fs.existsSync(getCurrentFuncBinaryPath())) {
       console.log('[depValidation] Notification never appeared and func not found — waiting for func binary on disk');
     }
   }
@@ -878,6 +879,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
   // it may disappear between dependency stages or get auto-dismissed.
   const funcDeadline = Date.now() + Math.max(timeoutMs - (Date.now() - t0), 60_000);
   while (Date.now() < funcDeadline) {
+    const funcBinaryPath = getCurrentFuncBinaryPath();
     if (fs.existsSync(funcBinaryPath)) {
       console.log(`[depValidation] func binary found at ${funcBinaryPath} (${Date.now() - t0}ms)`);
 
