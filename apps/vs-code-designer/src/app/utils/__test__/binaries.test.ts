@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import * as fs from 'fs';
+import * as path from 'path';
 import axios from 'axios';
 import * as vscode from 'vscode';
 import {
@@ -17,7 +18,7 @@ import {
   useBinariesDependencies,
 } from '../binaries';
 import { ext } from '../../../extensionVariables';
-import { DependencyVersion, dotnetDependencyName } from '../../../constants';
+import { DependencyVersion, dotnetDependencyName, funcCoreToolsBinaryPathSettingKey, funcDependencyName } from '../../../constants';
 import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
@@ -218,6 +219,22 @@ describe('binaries', () => {
       const result = await binariesExist('dependencyName');
 
       expect(result).toBe(false);
+    });
+
+    it('should return false if Func Core Tools folder exists but configured binary is missing', async () => {
+      const funcCoreToolsFolder = path.join('binariesLocation', funcDependencyName);
+      const funcBinary = path.join(funcCoreToolsFolder, 'func');
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcCoreToolsFolder);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+        settingName === funcCoreToolsBinaryPathSettingKey ? funcBinary : 'binariesLocation'
+      );
+
+      const result = await binariesExist(funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `FuncCoreTools binary is missing: ${funcBinary}`);
     });
 
     it('should return false if useBinariesDependencies returns false', async () => {
