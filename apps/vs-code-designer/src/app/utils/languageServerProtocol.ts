@@ -110,7 +110,7 @@ async function shouldCopySdkFromHash(sourceHash: string, hashMarkerFile: string,
 
 async function getFileHash(filePath: string): Promise<string> {
   const fileContent = await fse.readFile(filePath);
-  return createHash('sha256').update(fileContent.toString('latin1'), 'latin1').digest('hex');
+  return createHash('sha256').update(fileContent).digest('hex');
 }
 
 async function removeLegacyLspMarkers(targetDirectory: string): Promise<void> {

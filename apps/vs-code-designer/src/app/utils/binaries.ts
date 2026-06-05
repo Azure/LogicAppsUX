@@ -76,10 +76,23 @@ export async function downloadAndExtractDependency(
       vscode.window.showErrorMessage(errorMessage);
       context.telemetry.properties.error = errorMessage;
 
-      // remove the target folder.
-      fs.rmSync(targetFolder, { recursive: true });
-      await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
-      reject(new Error(errorMessage));
+      try {
+        fs.rmSync(targetFolder, { recursive: true, force: true });
+        await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
+      } catch (cleanupError) {
+        try {
+          await executeCommand(
+            ext.outputChannel,
+            undefined,
+            'echo',
+            `[ExtractError]: Failed to remove ${targetFolder}: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`
+          );
+        } catch {
+          // Keep rejection behavior deterministic even if cleanup logging fails.
+        }
+      } finally {
+        reject(new Error(errorMessage));
+      }
     };
 
     executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);

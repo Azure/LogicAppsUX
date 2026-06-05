@@ -146,6 +146,41 @@ describe('binaries', () => {
       expect(context.telemetry.properties.error).toContain('connection reset');
     });
 
+    it('rejects when download cleanup fails after a file writer error', async () => {
+      const downloadUrl = 'https://example.com/dependency.zip';
+      const targetFolder = 'targetFolder';
+      const dependencyName = dotnetDependencyName;
+      const folderName = 'folderName';
+      const writerError = new Error('disk full');
+      const cleanupError = new Error('folder locked');
+      const writer = {
+        on: vi.fn((event: string, callback: (error: Error) => void) => {
+          if (event === 'error') {
+            callback(writerError);
+          }
+          return writer;
+        }),
+      } as any;
+
+      (axios.get as Mock).mockResolvedValue({
+        data: {
+          on: vi.fn(),
+          pipe: vi.fn().mockImplementation((writer) => writer),
+        },
+      });
+      (fs.createWriteStream as Mock).mockReturnValue(writer);
+      (fs.rmSync as Mock).mockImplementationOnce(() => {
+        throw cleanupError;
+      });
+
+      await expect(downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName)).rejects.toThrow(
+        'Error downloading and extracting the DotNetSDK zip file: disk full'
+      );
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', expect.stringContaining('Failed to remove'));
+      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('disk full'));
+      expect(context.telemetry.properties.error).toContain('disk full');
+    });
+
     it('should throw error when the compression file extension is not supported', async () => {
       const downloadUrl = 'https://example.com/dependency.zip222';
       const targetFolder = 'targetFolder';
