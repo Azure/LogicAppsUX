@@ -53,6 +53,11 @@ describe('verifyLocalConnectionKeys', () => {
     };
     (vscode.workspace as any).workspaceFolders = testWorkspaceFolders;
     ext.outputChannel.appendLog = vi.fn();
+    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({
+      enabled: true,
+      tenantId: '4bb01b15-004c-4b95-9568-5165b5f89c41',
+      workflowManagementBaseUrl: 'https://management.azure.com/',
+    });
   });
 
   afterEach(() => {
@@ -101,6 +106,18 @@ describe('verifyLocalConnectionKeys', () => {
       parametersData
     );
     expect(connection.saveConnectionReferences).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, connectionsAndSettingsToUpdate);
+  });
+
+  it('should skip connection key verification when Azure connectors are disabled', async () => {
+    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({ enabled: false } as AzureConnectorDetails);
+    const getConnectionsJsonSpy = vi
+      .spyOn(connection, 'getConnectionsJson')
+      .mockResolvedValue(JSON.stringify({ managedApiConnections: { conn1: {} } }));
+
+    await verifyLocalConnectionKeys(testContext, testLogicAppProjectPath1);
+
+    expect(getConnectionsJsonSpy).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure connectors are disabled. Skipping connection key verification.');
   });
 
   it('should save connection references for the user-selected project', async () => {
