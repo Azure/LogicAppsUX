@@ -27,7 +27,7 @@ const processValidationCache = new Map<string, { timestamp: number; isValid: boo
 const VALIDATION_CACHE_TTL = 60000; // Cache for 60 seconds - revalidate every minute to catch process changes
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
-import { getAzureConnectorDetailsForLocalProject, updateFuncIgnore } from '../codeless/common';
+import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
@@ -317,7 +317,6 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           actionContext.telemetry.properties.startDesignTimeApi = 'true';
           updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
           actionContext.telemetry.measurements.startDesignTimeApiDuration = (Date.now() - loadDesignTimeStart) / 1000;
-          getAzureConnectorDetailsForLocalProject(actionContext, projectPath).catch(() => {});
         } catch (error) {
           const errorMessage = getErrorMessage(error);
           const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };

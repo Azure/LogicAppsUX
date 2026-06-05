@@ -12,7 +12,9 @@ const mocks = vi.hoisted(() => ({
   readFile: vi.fn(),
   readdir: vi.fn(),
   showWarningMessage: vi.fn(),
+  tryGetLogicAppCustomCodeFunctionsProjects: vi.fn(),
   tryGetLogicAppProjectRoot: vi.fn(),
+  getDotNetCommand: vi.fn(),
 }));
 
 vi.mock('vscode', () => ({
@@ -48,6 +50,14 @@ vi.mock('../../commands/workflows/switchDebugMode/switchDebugMode', () => ({
 
 vi.mock('../../utils/verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: mocks.tryGetLogicAppProjectRoot,
+}));
+
+vi.mock('../../utils/customCodeUtils', () => ({
+  tryGetLogicAppCustomCodeFunctionsProjects: mocks.tryGetLogicAppCustomCodeFunctionsProjects,
+}));
+
+vi.mock('../../utils/dotnet/dotnet', () => ({
+  getDotNetCommand: mocks.getDotNetCommand,
 }));
 
 vi.mock('fs-extra', () => ({
@@ -90,6 +100,8 @@ describe('LogicAppsLanguageServer', () => {
     mocks.readFile.mockResolvedValue('{}');
     mocks.readdir.mockResolvedValue([]);
     mocks.tryGetLogicAppProjectRoot.mockResolvedValue(projectPath);
+    mocks.tryGetLogicAppCustomCodeFunctionsProjects.mockResolvedValue(['D:\\workspace\\custom-code-project']);
+    mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
     mocks.getAzureConnectorDetailsForLocalProject.mockResolvedValue({
       accessToken: 'Bearer token',
       resourceGroupName: 'resource-group',
@@ -102,6 +114,19 @@ describe('LogicAppsLanguageServer', () => {
 
     await new LogicAppsLanguageServer({} as any).start();
 
+    expect(mocks.readdir).not.toHaveBeenCalled();
+    expect(mocks.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
+    expect(mocks.languageClient).not.toHaveBeenCalled();
+    expect(mocks.showWarningMessage).not.toHaveBeenCalled();
+  });
+
+  it('does not start or prompt for Azure connector metadata when no linked custom code project is found', async () => {
+    mocks.tryGetLogicAppCustomCodeFunctionsProjects.mockResolvedValue([]);
+
+    await new LogicAppsLanguageServer({} as any).start();
+
+    expect(mocks.tryGetLogicAppCustomCodeFunctionsProjects).toHaveBeenCalledWith(projectPath);
+    expect(mocks.pathExists).not.toHaveBeenCalled();
     expect(mocks.readdir).not.toHaveBeenCalled();
     expect(mocks.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
     expect(mocks.languageClient).not.toHaveBeenCalled();
@@ -150,11 +175,11 @@ describe('LogicAppsLanguageServer', () => {
       'Logic Apps language server',
       {
         run: {
-          command: 'dotnet',
+          command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
           args: [lspServerPath, '--sdk', path.join(sdkFolderPath, 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg')],
         },
         debug: {
-          command: 'dotnet',
+          command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
           args: [lspServerPath, '--sdk', path.join(sdkFolderPath, 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg')],
         },
       },

@@ -20,6 +20,8 @@ import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-ap
 import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/common';
 import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
+import { tryGetLogicAppCustomCodeFunctionsProjects } from '../utils/customCodeUtils';
+import { getDotNetCommand } from '../utils/dotnet/dotnet';
 
 export default class LogicAppsLanguageServer {
   protected lspServerPath: string | undefined;
@@ -41,6 +43,11 @@ export default class LogicAppsLanguageServer {
     this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
 
     if (!this.projectPath) {
+      return;
+    }
+
+    const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(this.projectPath);
+    if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
       return;
     }
 
@@ -131,7 +138,7 @@ export default class LogicAppsLanguageServer {
     };
 
     const run: Executable = {
-      command: 'dotnet',
+      command: getDotNetCommand(),
       args: serverArgs,
     };
 

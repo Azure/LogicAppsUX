@@ -410,10 +410,11 @@ async function main() {
   // state from a VS Code archive layout that changed during download.
   const extest = createExTester();
 
-  // Step 2: Install extension dependencies from the marketplace (PARALLEL)
+  // Step 2: Install extension dependencies from the marketplace.
   // Skip deps already present in test-extensions/. For uncached deps,
-  // run VS Code CLI --install-extension in parallel instead of sequentially
-  // to cut install time from ~60-90s to ~30-40s (limited by the largest dep).
+  // run VS Code CLI --install-extension sequentially. Parallel CLI installs
+  // race on shared extension/cache directories and can leave VS Code with
+  // partially extracted dependencies even when a follow-up retry succeeds.
   const getExtensionEntries = (extensionId) => {
     if (!fs.existsSync(extDir)) {
       return [];
@@ -475,13 +476,7 @@ async function main() {
       // but we can run it with async exec instead of execSync.
       const cliBase = extest.code.getCliInitCommand();
 
-      // Concurrency limit of 3 to avoid EPERM/ENOENT race conditions.
-      // Multiple CLI processes that install the same transitive dependency
-      // (e.g., both csharp and csdevkit pull in dotnet-runtime) corrupt
-      // the shared CachedExtensionVSIXs directory when run simultaneously.
-      // With 3 slots, smaller deps finish first and free a slot before
-      // the larger dotnet deps start, reducing overlap.
-      const CONCURRENCY = 3;
+      const CONCURRENCY = 1;
       console.log(`  Installing ${depsToInstall.length} deps (concurrency=${CONCURRENCY})...`);
 
       const taskFns = depsToInstall.map((dep) => () => {
