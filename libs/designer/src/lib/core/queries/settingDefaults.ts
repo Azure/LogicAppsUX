@@ -3,6 +3,36 @@ import type { Settings, SettingData } from '../actions/bjsworkflow/settings';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import Constants from '../../common/constants';
 
+const KNOWN_SETTING_KEYS = new Set<string>([
+  'asynchronous',
+  'correlation',
+  'secureInputs',
+  'secureOutputs',
+  'disableAsyncPattern',
+  'disableAutomaticDecompression',
+  'splitOn',
+  'retryPolicy',
+  'concurrency',
+  'requestOptions',
+  'sequential',
+  'singleInstance',
+  'splitOnConfiguration',
+  'suppressWorkflowHeaders',
+  'suppressWorkflowHeadersOnResponse',
+  'timeout',
+  'paging',
+  'trackedProperties',
+  'requestSchemaValidation',
+  'conditionExpressions',
+  'uploadChunk',
+  'downloadChunkSize',
+  'runAfter',
+  'invokerConnection',
+  'count',
+  'shouldFailOperation',
+  'hostSettings',
+]);
+
 /**
  * Extracts the list of setting keys that have isSupported === true.
  */
@@ -50,16 +80,24 @@ export const fetchSettingDefaults = async (
  */
 export const mergeSettingDefaults = (settings: Settings, defaults: Record<string, any>): Settings => {
   const merged = { ...settings };
+  const hostSettings: Record<string, SettingData<unknown>> = { ...merged.hostSettings };
+
   for (const key of Object.keys(defaults)) {
+    const entry = defaults[key];
+    const isReadOnly = entry?.readOnly === true;
+    const defaultValue = entry?.value;
+
+    if (!KNOWN_SETTING_KEYS.has(key)) {
+      // Unknown key from the API — store as a host-level setting for display
+      hostSettings[key] = { isSupported: true, value: defaultValue, readOnly: isReadOnly };
+      continue;
+    }
+
     const settingKey = key as keyof Settings;
     const existing = merged[settingKey] as SettingData<unknown> | undefined;
     if (!existing?.isSupported) {
       continue;
     }
-
-    const entry = defaults[key];
-    const isReadOnly = entry?.readOnly === true;
-    const defaultValue = entry?.value;
 
     if (isReadOnly) {
       (merged as Record<string, unknown>)[settingKey] = { ...existing, value: defaultValue, readOnly: true };
@@ -69,6 +107,11 @@ export const mergeSettingDefaults = (settings: Settings, defaults: Record<string
       (merged as Record<string, unknown>)[settingKey] = { ...existing, value: defaultValue };
     }
   }
+
+  if (Object.keys(hostSettings).length > 0) {
+    merged.hostSettings = hostSettings;
+  }
+
   return merged;
 };
 
