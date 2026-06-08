@@ -626,7 +626,7 @@ exports[`InputsPanel > should render the InputsPanel with secure inputs 1`] = `
     >
       <div
         class="msla-trace-inputs-outputs-header-text"
-        style="border-color: rgba(0, 0, 0, 0.7);"
+        style="border-color: #000000b3;"
       >
         Inputs
       </div>
