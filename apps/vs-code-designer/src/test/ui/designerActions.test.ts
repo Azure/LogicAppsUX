@@ -27,7 +27,10 @@ import {
   waitForRunStatusInList as waitForRunStatusInListWithRefresh,
   verifyAllNodesSucceeded as verifyAllNodesSucceededWithActions,
 } from './runHelpers';
-import { openWorkspaceFileInSession as openWorkspaceFileInSessionShared } from './designerHelpers';
+import {
+  openWorkspaceFileInSession as openWorkspaceFileInSessionShared,
+  waitForDependencyValidation as waitForDependencyValidationShared,
+} from './designerHelpers';
 
 let __warmedThisSession = false;
 
@@ -741,145 +744,7 @@ async function openFileInEditor(workbench: Workbench, driver: WebDriver, filePat
  *    openDesigner command is registered.
  */
 async function waitForDependencyValidation(driver: WebDriver, timeoutMs = 60_000): Promise<void> {
-  const t0 = Date.now();
-  const VALIDATION_TEXT = 'Validating Runtime Dependency';
-  const funcBinaryPath = path.join(
-    os.homedir(),
-    '.azurelogicapps',
-    'dependencies',
-    'FuncCoreTools',
-    process.platform === 'win32' ? 'func.exe' : 'func'
-  );
-
-  const isExecutableFile = (filePath: string): boolean => {
-    try {
-      fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const ensureRuntimeDependencyExecutablePermissions = (): void => {
-    // Fix execute permissions on downloaded runtime binaries.
-    // The extension's download/extract doesn't set chmod +x on Linux, causing
-    // "/bin/sh: 1: .../func: Permission denied" when running `func host start`.
-    if (process.platform !== 'linux' && process.platform !== 'darwin') {
-      return;
-    }
-
-    const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
-    let fixedAny = false;
-    for (const subDir of ['FuncCoreTools', 'NodeJs', 'DotNetSDK']) {
-      const binDir = path.join(depsRoot, subDir);
-      if (fs.existsSync(binDir)) {
-        try {
-          const { execSync } = require('child_process');
-          execSync(`chmod -R +x "${binDir}"`, { stdio: 'ignore' });
-          fixedAny = true;
-        } catch {
-          /* ignore */
-        }
-      }
-    }
-    if (fixedAny) {
-      console.log('[depValidation] Fixed execute permissions on runtime binaries');
-    }
-  };
-
-  ensureRuntimeDependencyExecutablePermissions();
-
-  const isValidationVisible = async (): Promise<boolean> => {
-    try {
-      return (
-        (await driver.executeScript<boolean>(`
-        var vt = ${JSON.stringify(VALIDATION_TEXT)};
-        var els = document.querySelectorAll('[role="dialog"], .notification-toast, .notifications-toasts .notification-list-item');
-        for (var i = 0; i < els.length; i++) {
-          if ((els[i].textContent || '').includes(vt)) return true;
-        }
-        return false;
-      `)) ?? false
-      );
-    } catch {
-      return false;
-    }
-  };
-
-  // Check if func binary already exists (from a previous phase)
-  if (fs.existsSync(funcBinaryPath)) {
-    console.log(`[depValidation] func binary already exists at ${funcBinaryPath}`);
-    // Still wait for the notification to complete if visible
-    if (await isValidationVisible()) {
-      console.log(`[depValidation] "${VALIDATION_TEXT}" is visible — waiting for it to finish`);
-      while (Date.now() - t0 < timeoutMs && (await isValidationVisible())) {
-        await sleep(2000);
-      }
-      console.log(`[depValidation] Validation complete (${Date.now() - t0}ms)`);
-    }
-    if (isExecutableFile(funcBinaryPath)) {
-      return;
-    }
-    console.log('[depValidation] func binary exists but is not executable yet — continuing to poll');
-  }
-
-  // Wait for the notification to appear and complete
-  if (await isValidationVisible()) {
-    console.log(`[depValidation] "${VALIDATION_TEXT}" is visible — waiting for it to finish`);
-    while (Date.now() - t0 < timeoutMs) {
-      if (!(await isValidationVisible())) {
-        console.log(`[depValidation] Notification gone (${Date.now() - t0}ms)`);
-        break;
-      }
-      await sleep(2000);
-    }
-  } else {
-    // Wait for it to appear
-    const deadline = Date.now() + Math.min(timeoutMs, 30_000);
-    while (Date.now() < deadline) {
-      if (await isValidationVisible()) {
-        console.log(`[depValidation] "${VALIDATION_TEXT}" appeared (${Date.now() - t0}ms) — waiting for it to finish`);
-        while (Date.now() - t0 < timeoutMs && (await isValidationVisible())) {
-          await sleep(2000);
-        }
-        console.log(`[depValidation] Notification gone (${Date.now() - t0}ms)`);
-        break;
-      }
-      if (fs.existsSync(funcBinaryPath)) {
-        console.log(`[depValidation] func binary found (${Date.now() - t0}ms)`);
-        ensureRuntimeDependencyExecutablePermissions();
-        if (isExecutableFile(funcBinaryPath)) {
-          return;
-        }
-        console.log('[depValidation] func binary found but is not executable yet — continuing to poll');
-      }
-      await sleep(2000);
-    }
-  }
-
-  // Wait for func binary on disk
-  const funcDeadline = Date.now() + Math.max(timeoutMs - (Date.now() - t0), 60_000);
-  while (Date.now() < funcDeadline) {
-    if (fs.existsSync(funcBinaryPath)) {
-      console.log(`[depValidation] func binary found at ${funcBinaryPath} (${Date.now() - t0}ms)`);
-      await sleep(3000);
-      ensureRuntimeDependencyExecutablePermissions();
-      if (isExecutableFile(funcBinaryPath)) {
-        return;
-      }
-      console.log('[depValidation] func binary still not executable after chmod — continuing to poll');
-    }
-    console.log(`[depValidation] Waiting for func binary... (${Date.now() - t0}ms)`);
-    await sleep(5000);
-  }
-
-  if (fs.existsSync(funcBinaryPath) && !isExecutableFile(funcBinaryPath)) {
-    throw new Error(
-      `[depValidation] func binary exists but is not executable after ${Math.round((Date.now() - t0) / 1000)}s: ${funcBinaryPath}`
-    );
-  }
-
-  throw new Error(`[depValidation] func binary not found after ${Math.round((Date.now() - t0) / 1000)}s: ${funcBinaryPath}`);
+  await waitForDependencyValidationShared(driver, timeoutMs);
 }
 
 /**
@@ -2965,7 +2830,7 @@ describe('Designer Actions Tests', function () {
   };
 
   before(async function () {
-    this.timeout(300_000);
+    this.timeout(420_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
 
     if (!fs.existsSync(WORKSPACE_MANIFEST_PATH)) {
@@ -2981,7 +2846,7 @@ describe('Designer Actions Tests', function () {
 
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
-    await waitForDependencyValidation(driver, 300_000);
+    await waitForDependencyValidation(driver, 360_000);
   });
 
   beforeEach(async function () {

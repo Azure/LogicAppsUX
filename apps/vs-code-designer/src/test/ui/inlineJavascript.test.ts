@@ -246,6 +246,8 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
       // Debug → Run → Verify
       workbench = new Workbench();
       await startDebugging(workbench, driver);
+      const runtimeReady = await waitForRuntimeReady(driver, { requireHostRunning: true, workspacePaths: [entry.appDir] });
+      assert.ok(runtimeReady, 'Functions runtime should start and become ready before opening overview');
       try {
         await new EditorView().closeAllEditors();
         await sleep(1000);
@@ -254,8 +256,6 @@ describe(`Inline JavaScript Tests (shape=${TARGET_SHAPE})`, function () {
       }
       workbench = new Workbench();
       const ovWv = await waitForOverviewView(workbench, driver, wjp);
-      const runtimeReady = await waitForRuntimeReady(driver);
-      assert.ok(runtimeReady, 'Functions runtime should start and become ready');
       assert.ok(await invokeWorkflowCallback(driver, { workflowName: entry.wfName }), 'Workflow callback should be invokable');
       await sleep(1000);
       await clickRefresh(driver);

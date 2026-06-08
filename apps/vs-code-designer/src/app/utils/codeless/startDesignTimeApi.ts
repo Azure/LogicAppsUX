@@ -27,7 +27,7 @@ const processValidationCache = new Map<string, { timestamp: number; isValid: boo
 const VALIDATION_CACHE_TTL = 60000; // Cache for 60 seconds - revalidate every minute to catch process changes
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
-import { getAzureConnectorDetailsForLocalProject, updateFuncIgnore } from '../codeless/common';
+import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
@@ -56,6 +56,81 @@ import { getChildProcessesWithScript } from '../findChildProcess/findChildProces
 import { isCodefulProject } from '../codeful';
 
 const maxDesignTimeValidationRestarts = 1;
+
+function isFailingHealthCheckLogLine(line: string): boolean {
+  const normalizedLine = line.toLowerCase();
+  return (
+    (normalizedLine.includes('health check') || normalizedLine.includes('healthcheck')) &&
+    /(fail|unhealthy|timeout|timed out|did not respond|error)/i.test(line)
+  );
+}
+
+function normalizeHealthCheckLogLine(line: string): string {
+  return line
+    .replace(/\d{4}-\d{2}-\d{2}t\d{2}:\d{2}:\d{2}(?:\.\d+)?z/gi, '<timestamp>')
+    .replace(/\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}(?:\.\d+)?/g, '<timestamp>')
+    .replace(/\[\d{1,2}:\d{2}:\d{2}(?:\.\d+)?\]/g, '[<timestamp>]')
+    .replace(/\[[0-9a-f-]{16,}\]/gi, '[<id>]')
+    .replace(/\bid=[0-9a-f-]{16,}/gi, 'id=<id>')
+    .replace(/\bduration=\d+(?:\.\d+)?ms/gi, 'duration=<duration>')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function createDesignTimeHostOutputAppender(outputChannel: IAzExtOutputChannel): { append: (data: string) => void; flush: () => void } {
+  const seenFailingHealthChecks = new Set<string>();
+  const suppressedFailingHealthChecks = new Set<string>();
+  let bufferedData = '';
+
+  const appendLine = (line: string): void => {
+    if (!isFailingHealthCheckLogLine(line)) {
+      outputChannel.append(line);
+      return;
+    }
+
+    const normalizedLine = normalizeHealthCheckLogLine(line);
+    if (!seenFailingHealthChecks.has(normalizedLine)) {
+      seenFailingHealthChecks.add(normalizedLine);
+      outputChannel.append(line);
+      return;
+    }
+
+    if (!suppressedFailingHealthChecks.has(normalizedLine)) {
+      suppressedFailingHealthChecks.add(normalizedLine);
+      outputChannel.append('[Azure Logic Apps] Repeated failing health-check output suppressed.\n');
+    }
+  };
+
+  const append = (data: string): void => {
+    bufferedData += data;
+    const completeLinePattern = /.*(?:\r\n|\n|\r)/g;
+    let match: RegExpExecArray | null;
+    let lastCompleteLineIndex = 0;
+
+    while ((match = completeLinePattern.exec(bufferedData))) {
+      appendLine(match[0]);
+      lastCompleteLineIndex = completeLinePattern.lastIndex;
+    }
+
+    bufferedData = bufferedData.slice(lastCompleteLineIndex);
+    if (bufferedData.length > 8192) {
+      outputChannel.append(bufferedData);
+      bufferedData = '';
+    }
+  };
+
+  const flush = (): void => {
+    if (!bufferedData) {
+      return;
+    }
+
+    appendLine(bufferedData);
+    bufferedData = '';
+  };
+
+  return { append, flush };
+}
 
 function normalizeTrackedChildProcessId(parentProcessId: number, childFuncPid?: string): string | undefined {
   return childFuncPid && childFuncPid !== parentProcessId.toString() ? childFuncPid : undefined;
@@ -242,7 +317,6 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           actionContext.telemetry.properties.startDesignTimeApi = 'true';
           updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
           actionContext.telemetry.measurements.startDesignTimeApiDuration = (Date.now() - loadDesignTimeStart) / 1000;
-          getAzureConnectorDetailsForLocalProject(actionContext, projectPath).catch(() => {});
         } catch (error) {
           const errorMessage = getErrorMessage(error);
           const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
@@ -494,14 +568,16 @@ export function startDesignTimeProcess(
   }
 
   const projectPath = workingDirectory ? path.dirname(workingDirectory) : '';
+  const appendStdout = outputChannel ? createDesignTimeHostOutputAppender(outputChannel) : undefined;
+  const appendStderr = outputChannel ? createDesignTimeHostOutputAppender(outputChannel) : undefined;
   const stdout = designChildProcess.stdout;
   stdout?.on('data', (data: string | Buffer) => {
     data = data.toString();
     cmdOutput = cmdOutput.concat(data);
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
     const languageWorkerText = 'Failed to start a new language worker for runtime: node';
-    if (outputChannel) {
-      outputChannel.append(data);
+    if (appendStdout) {
+      appendStdout.append(data);
     }
     if (data.toLowerCase().includes(languageWorkerText.toLowerCase())) {
       ext.outputChannel.appendLog(
@@ -512,14 +588,16 @@ export function startDesignTimeProcess(
       scheduleStartDesignTimeApi(projectPath);
     }
   });
+  stdout?.on('end', () => appendStdout?.flush());
+  stdout?.on('close', () => appendStdout?.flush());
 
   const stderr = designChildProcess.stderr;
   stderr?.on('data', (data: string | Buffer) => {
     data = data.toString();
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
     const portUnavailableText = 'is unavailable. Close the process using that port, or specify another port using';
-    if (outputChannel) {
-      outputChannel.append(data);
+    if (appendStderr) {
+      appendStderr.append(data);
     }
     if (data.toLowerCase().includes(portUnavailableText.toLowerCase())) {
       ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting design-time process.');
@@ -528,6 +606,8 @@ export function startDesignTimeProcess(
       scheduleStartDesignTimeApi(projectPath);
     }
   });
+  stderr?.on('end', () => appendStderr?.flush());
+  stderr?.on('close', () => appendStderr?.flush());
 
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (designTimeInst) {
