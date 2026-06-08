@@ -11,7 +11,7 @@ export default defineProject({
     coverage: {
       enabled: true,
       provider: 'istanbul',
-      include: ['src/app/**/*', 'src/state/**/*', 'src/stateWrapper.tsx'],
+      include: ['src/app/**/*.{ts,tsx,js,jsx}', 'src/state/**/*.{ts,tsx,js,jsx}', 'src/stateWrapper.tsx'],
       exclude: ['src/intl/**/*'],
       reporter: ['html', 'cobertura', 'lcov'],
     },

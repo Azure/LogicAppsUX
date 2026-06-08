@@ -296,7 +296,9 @@ describe('A2AClient', () => {
       };
 
       // Mock SSEClient constructor
-      vi.mocked(SSEClient).mockImplementation(() => mockSSEClient as any);
+      vi.mocked(SSEClient).mockImplementation(function (this: any) {
+        return mockSSEClient as any;
+      });
 
       // Call sendAuthenticationCompleted and get the stream iterator
       const stream = await client.sendAuthenticationCompleted(contextId, taskId);

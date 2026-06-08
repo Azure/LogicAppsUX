@@ -47,8 +47,8 @@
     "@types/prismjs": "^1.26.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.2.2",
-    "@vitest/coverage-istanbul": "^3.2.4",
-    "@vitest/ui": "^3.2.4",
+    "@vitest/coverage-istanbul": "^4.1.0",
+    "@vitest/ui": "^4.1.0",
     "jsdom": "^26.1.0",
     "postcss": "^8.5.10",
     "postcss-modules": "^6.0.1",
@@ -57,7 +57,7 @@
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "vite": "^6.4.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.0"
   },
   "peerDependencies": {
     "react": ">=19.2.1"

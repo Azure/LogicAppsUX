@@ -5,15 +5,17 @@ import type { AgentCard } from '../types';
 // Mock http-client
 vi.mock('./http-client', () => {
   return {
-    HttpClient: vi.fn().mockImplementation(() => ({
-      post: vi.fn().mockResolvedValue({
-        id: 'invalid-task',
-        // Missing required fields
-      }),
-      get: vi.fn().mockResolvedValue({
-        invalid: 'response',
-      }),
-    })),
+    HttpClient: vi.fn().mockImplementation(function (this: any) {
+      return {
+        post: vi.fn().mockResolvedValue({
+          id: 'invalid-task',
+          // Missing required fields
+        }),
+        get: vi.fn().mockResolvedValue({
+          invalid: 'response',
+        }),
+      };
+    }),
   };
 });
 
