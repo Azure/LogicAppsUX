@@ -183,12 +183,10 @@ export default class LogicAppsLanguageServer {
       const sdkNupkgPath = getGlobalSetting<string>(languageServerNupkgPathSettingKey) || undefined;
 
       if (lspServerPath && !(await fse.pathExists(lspServerPath))) {
-        window.showWarningMessage(`Language server DLL not found at configured path: ${lspServerPath}`);
         return { lspServerPath: undefined, sdkNupkgPath };
       }
 
       if (sdkNupkgPath && !(await fse.pathExists(sdkNupkgPath))) {
-        window.showWarningMessage(`Language server SDK nupkg not found at configured path: ${sdkNupkgPath}`);
         return { lspServerPath, sdkNupkgPath: undefined };
       }
 

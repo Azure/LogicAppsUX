@@ -235,22 +235,24 @@ describe('LogicAppsLanguageServer', () => {
       expect(languageClient.start).toHaveBeenCalledOnce();
     });
 
-    it('warns and returns undefined lspServerPath when DLL path does not exist', async () => {
+    it('warns and does not start when DLL path does not exist', async () => {
       mocks.pathExists.mockImplementation(async (filePath: string) => filePath !== manualDllPath);
 
       await new LogicAppsLanguageServer({} as any).start();
 
-      expect(mocks.showWarningMessage).toHaveBeenCalledWith(expect.stringContaining('Language server DLL not found at configured path'));
+      expect(mocks.showWarningMessage).toHaveBeenCalledWith(
+        expect.stringContaining('Install or repair Logic Apps language server dependencies')
+      );
       expect(mocks.languageClient).not.toHaveBeenCalled();
     });
 
-    it('warns and returns undefined sdkNupkgPath when nupkg path does not exist', async () => {
+    it('warns and does not start when nupkg path does not exist', async () => {
       mocks.pathExists.mockImplementation(async (filePath: string) => filePath !== manualNupkgPath);
 
       await new LogicAppsLanguageServer({} as any).start();
 
       expect(mocks.showWarningMessage).toHaveBeenCalledWith(
-        expect.stringContaining('Language server SDK nupkg not found at configured path')
+        expect.stringContaining('Install or repair Logic Apps language server SDK dependencies')
       );
       expect(mocks.languageClient).not.toHaveBeenCalled();
     });

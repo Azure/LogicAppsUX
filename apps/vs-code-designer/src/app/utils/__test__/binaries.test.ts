@@ -576,7 +576,21 @@ describe('binaries', () => {
     });
 
     it('should not overwrite existing paths in devContainer workspace', async () => {
-      (getGlobalSetting as Mock).mockReturnValue(true);
+      (getGlobalSetting as Mock).mockImplementation((key: string) => {
+        if (key === 'autoRuntimeDependenciesValidationAndInstallation') {
+          return true;
+        }
+        if (key === 'dotnetBinaryPath') {
+          return '/custom/path/dotnet';
+        }
+        if (key === 'nodeJsBinaryPath') {
+          return '/custom/path/node';
+        }
+        if (key === 'funcCoreToolsBinaryPath') {
+          return '/custom/path/func';
+        }
+        return undefined;
+      });
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
 
