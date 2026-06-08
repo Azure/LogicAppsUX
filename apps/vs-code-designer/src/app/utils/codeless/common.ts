@@ -7,6 +7,7 @@ import {
   workflowManagementBaseURIKey,
   managementApiPrefix,
   workflowFileName,
+  workflowAuthenticationMethodKey,
   artifactsDirectory,
   mapsDirectory,
   schemasDirectory,
@@ -19,11 +20,11 @@ import { localize } from '../../../localize';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import { getLocalSettingsJson } from '../appSettings/localSettings';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { getAuthData } from './getAuthorizationToken';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { DialogResponses } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
   StandardApp,
@@ -192,6 +193,17 @@ export async function getArtifactsPathInLocalProject(projectPath: string): Promi
 const azureDetailsCache = new Map<string, { timestamp: number; details: AzureConnectorDetails }>();
 const AZURE_DETAILS_CACHE_TTL = 300000; // 5 minutes
 
+async function defaultAzureConnectorDetailsToRawKeys(context: IActionContext, projectPath: string): Promise<AzureConnectorDetails> {
+  await addOrUpdateLocalAppSettings(context, projectPath, {
+    [workflowSubscriptionIdKey]: '',
+    [workflowAuthenticationMethodKey]: 'rawKeys',
+  });
+
+  return {
+    enabled: false,
+  };
+}
+
 /**
  * Invalidates the cached Azure connector details for a project.
  * Call after Azure settings change (e.g., enabling Azure connectors).
@@ -225,8 +237,19 @@ export async function getAzureConnectorDetailsForLocalProject(
 
   if (subscriptionId === undefined) {
     const wizard = createAzureWizard(connectorsContext, projectPath);
-    await wizard.prompt();
-    await wizard.execute();
+    try {
+      await wizard.prompt();
+      await wizard.execute();
+    } catch (error) {
+      if (!parseError(error).isUserCancelledError) {
+        throw error;
+      }
+
+      context.telemetry.properties.azureConnectorsDefaulted = 'rawKeys';
+      const defaultDetails = await defaultAzureConnectorDetailsToRawKeys(context, projectPath);
+      azureDetailsCache.set(projectPath, { timestamp: now, details: defaultDetails });
+      return defaultDetails;
+    }
 
     tenantId = connectorsContext.tenantId;
     subscriptionId = connectorsContext.subscriptionId;

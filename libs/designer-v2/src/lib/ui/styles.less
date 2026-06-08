@@ -28,6 +28,23 @@
 	}
 }
 
+// Multi-selection box styling (marquee while dragging + bounding rect around selected nodes)
+.react-flow__selection {
+	border-radius: 16px;
+}
+
+.react-flow__nodesselection-rect {
+	border-radius: 16px;
+	box-sizing: content-box;
+	padding: 12px;
+	margin: -12px;
+	pointer-events: none !important;
+}
+
+.react-flow__nodesselection {
+	pointer-events: none !important;
+}
+
 .edge-drop-zone-container {
   margin: 8px auto;
   position: absolute;

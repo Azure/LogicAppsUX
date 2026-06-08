@@ -374,6 +374,11 @@ const selectNodeIds = createSelector(getWorkflowState, (state: WorkflowState) =>
 
 export const useNodeIds = () => useSelector(selectNodeIds);
 
+// All selectable node ids (triggers, actions, and scopes). Used for "select all".
+const selectSelectableNodeIds = createSelector(getWorkflowState, (state: WorkflowState) => Object.keys(state.operations));
+
+export const useAllSelectableNodeIds = () => useSelector(selectSelectableNodeIds);
+
 export const useNewAdditiveSubgraphId = (baseId: string) =>
   useSelector(
     useMemo(

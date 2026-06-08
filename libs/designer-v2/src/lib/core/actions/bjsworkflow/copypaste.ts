@@ -7,7 +7,14 @@ import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
-import { createIdCopy, getRecordEntry, LOCAL_STORAGE_KEYS, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import {
+  createIdCopy,
+  getRecordEntry,
+  isScopeOperation,
+  LOCAL_STORAGE_KEYS,
+  removeIdTag,
+  type LogicAppsV2,
+} from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
@@ -22,6 +29,7 @@ import { addDynamicTokens } from '../../state/tokens/tokensSlice';
 import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
 import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
 import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
+import { storeStateToUndoRedoHistory } from './undoRedo';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -106,6 +114,123 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
   });
 });
 
+type CopyOperationsPayload = {
+  nodeIds: string[];
+};
+
+const buildActionClipboardEntry = (state: RootState, nodeId: string) => {
+  const newNodeId = createIdCopy(nodeId);
+  const nodeData = getNodeOperationData(state.operations, nodeId);
+  const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+  const nodeComment = getRecordEntry(state.workflow.operations, nodeId)?.description;
+  const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, nodeId);
+  const nodeTokenData = getRecordEntry(state.tokens.outputTokens, nodeId);
+
+  return {
+    nodeId: newNodeId,
+    nodeData,
+    nodeTokenData,
+    nodeOperationInfo,
+    nodeConnectionData,
+    nodeComment,
+    isScopeNode: false,
+  };
+};
+
+const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string) => {
+  const normalizedScopeId = removeIdTag(scopeNodeId);
+  const newNodeId = createIdCopy(normalizedScopeId);
+
+  const serializedOperation = await serializeOperation(state, normalizedScopeId, {
+    skipValidation: true,
+    ignoreNonCriticalErrors: true,
+  });
+
+  const allActionNames = getAllActionNames({ [normalizedScopeId]: serializedOperation as ActionDefinition });
+  const allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }> = {};
+  const staticResults: Record<string, any> = {};
+
+  allActionNames.forEach((actionName) => {
+    const connectionReference = getConnectionReferenceForNodeId(state.connections, actionName);
+    if (connectionReference) {
+      allConnectionData[actionName] = connectionReference;
+    }
+
+    const staticResult = getStaticResultForNodeId(state.staticResults, actionName);
+    if (staticResult) {
+      staticResults[actionName] = staticResult;
+    }
+  });
+
+  return {
+    nodeId: newNodeId,
+    serializedOperation,
+    allConnectionData,
+    staticResults,
+    isScopeNode: true,
+  };
+};
+
+const writeClipboardItem = (clipboardItem: string) => {
+  if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+    navigator.clipboard.writeText(clipboardItem);
+  } else {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
+  }
+};
+
+// Copies multiple selected nodes to the clipboard as a single multi-node payload so they can be
+// pasted together. Scope nodes are serialized in full; plain actions copy their operation data.
+export const copyOperations = createAsyncThunk('copyOperations', async (payload: CopyOperationsPayload, { getState }) => {
+  const { nodeIds } = payload;
+  if (!nodeIds || nodeIds.length === 0) {
+    return;
+  }
+  const state = getState() as RootState;
+
+  const nodes = [];
+  for (const nodeId of nodeIds) {
+    const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+    if (isScopeOperation(operationInfo?.type ?? '')) {
+      nodes.push(await buildScopeClipboardEntry(state, nodeId));
+    } else {
+      nodes.push(buildActionClipboardEntry(state, nodeId));
+    }
+  }
+
+  // Extract internal edges between selected nodes from their runAfter relationships
+  const normalizedIds = nodeIds.map((id) => removeIdTag(id));
+  const edges: Array<{ source: string; target: string }> = [];
+  for (const nodeId of normalizedIds) {
+    const op = getRecordEntry(state.workflow.operations, nodeId) as LogicAppsV2.ActionDefinition | undefined;
+    if (op?.runAfter) {
+      for (const depId of Object.keys(op.runAfter)) {
+        if (normalizedIds.includes(depId)) {
+          edges.push({ source: createIdCopy(depId), target: createIdCopy(nodeId) });
+        }
+      }
+    }
+  }
+
+  writeClipboardItem(JSON.stringify({ mslaNode: true, isMultiNode: true, nodes, edges }));
+});
+
+// Cut = copy to clipboard then delete. Re-uses copyOperations logic, then dispatches deleteOperations.
+export const cutOperations = createAsyncThunk('cutOperations', async (payload: CopyOperationsPayload, { dispatch }) => {
+  const { nodeIds } = payload;
+  if (!nodeIds || nodeIds.length === 0) {
+    return;
+  }
+
+  // Copy to clipboard first
+  await dispatch(copyOperations({ nodeIds }));
+
+  // Then delete — import is inline to avoid circular dependency
+  const { deleteOperations } = await import('./delete');
+  dispatch(storeStateToUndoRedoHistory({ type: cutOperations.pending } as any));
+  await dispatch(deleteOperations({ nodeIds }));
+});
+
 interface PasteOperationPayload {
   relationshipIds: RelationshipIds;
   nodeId: string;
@@ -170,6 +295,8 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   }
 
   dispatch(setIsPanelLoading(false));
+
+  return nodeId;
 });
 
 interface PasteScopeOperationPayload {
@@ -268,6 +395,8 @@ export const pasteScopeOperation = createAsyncThunk(
 
     updateAllUpstreamNodes(getState() as RootState, dispatch);
     dispatch(setIsPanelLoading(false));
+
+    return nodeId;
   }
 );
 
@@ -317,3 +446,62 @@ const filterRecordByArray = (record: Record<string, NodeTokens>, upstreamNodeIds
   }
   return filteredRecord;
 };
+
+type DuplicateOperationsPayload = {
+  nodeIds: string[];
+};
+
+// Duplicates each selected node, inserting the copy directly below its source node. Reuses the
+// copy/paste building blocks but keeps everything in-memory so the user's clipboard is untouched.
+export const duplicateOperations = createAsyncThunk(
+  'duplicateOperations',
+  async (payload: DuplicateOperationsPayload, { dispatch, getState }) => {
+    const { nodeIds } = payload;
+    if (!nodeIds || nodeIds.length === 0) {
+      return;
+    }
+
+    dispatch(storeStateToUndoRedoHistory({ type: duplicateOperations.pending } as any));
+
+    for (const nodeId of nodeIds) {
+      // Re-read state each iteration because prior pastes mutate the workflow graph.
+      const state = getState() as RootState;
+      const graphId = getRecordEntry(state.workflow.nodesMetadata, nodeId)?.graphId;
+      if (!graphId) {
+        continue;
+      }
+
+      // parentId set with no childId inserts the duplicate right below the source node.
+      const relationshipIds = { graphId, parentId: nodeId, childId: undefined };
+      const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+
+      if (isScopeOperation(operationInfo?.type ?? '')) {
+        const entry = await buildScopeClipboardEntry(state, nodeId);
+        const upstreamNodeIds = getRecordEntry(state.tokens.outputTokens, removeIdTag(nodeId))?.upstreamNodeIds ?? [];
+        await dispatch(
+          pasteScopeOperation({
+            relationshipIds,
+            nodeId: entry.nodeId,
+            serializedValue: entry.serializedOperation,
+            allConnectionData: entry.allConnectionData,
+            staticResults: entry.staticResults,
+            upstreamNodeIds,
+          })
+        );
+      } else {
+        const entry = JSON.parse(JSON.stringify(buildActionClipboardEntry(state, nodeId)));
+        await dispatch(
+          pasteOperation({
+            relationshipIds,
+            nodeId: entry.nodeId,
+            nodeData: entry.nodeData,
+            nodeTokenData: entry.nodeTokenData,
+            operationInfo: entry.nodeOperationInfo,
+            connectionData: entry.nodeConnectionData,
+            comment: entry.nodeComment,
+          })
+        );
+      }
+    }
+  }
+);

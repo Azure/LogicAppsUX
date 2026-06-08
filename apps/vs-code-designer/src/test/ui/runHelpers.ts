@@ -404,7 +404,7 @@ export async function startDebugging(workbench: Workbench, driver: WebDriver): P
  */
 export async function waitForRuntimeReady(
   driver: WebDriver,
-  opts: { requireHostRunning?: boolean; timeoutMs?: number } = {}
+  opts: { requireHostRunning?: boolean; timeoutMs?: number; workspacePaths?: string[] } = {}
 ): Promise<boolean> {
   const timeoutMs = opts.timeoutMs ?? 300_000;
   const requireHostRunning = opts.requireHostRunning ?? false;
@@ -676,28 +676,36 @@ export async function waitForRuntimeReady(
     /* ignore - diagnostic only */
   }
 
-  // Dump E — launch.json from the test workspace (best-effort env probe)
+  // Dump E — workspace config from the active test workspace (best-effort)
   try {
     const candidates = [
+      ...(opts.workspacePaths ?? []),
       process.env.LA_E2E_LEGACY_PROJECT_DIR,
       process.env.LA_E2E_CODEFUL_MODERN_DIR,
       process.env.LA_E2E_CODEFUL_LEGACY_DIR,
-    ].filter((p): p is string => typeof p === 'string' && p.length > 0);
+    ].filter((p, index, arr): p is string => typeof p === 'string' && p.length > 0 && arr.indexOf(p) === index);
     let logged = false;
     for (const wsDir of candidates) {
-      const launchPath = path.join(wsDir, '.vscode', 'launch.json');
-      if (fs.existsSync(launchPath)) {
-        const content = fs.readFileSync(launchPath, 'utf8').slice(0, 2000);
-        console.log(`[waitForRuntimeReady][diag] launch.json (${launchPath}): ${content}`);
+      console.log(`[waitForRuntimeReady][diag] workspace candidate: ${wsDir}`);
+      for (const relativePath of ['.vscode/launch.json', '.vscode/tasks.json', 'host.json', 'local.settings.json']) {
+        const configPath = path.join(wsDir, relativePath);
+        if (!fs.existsSync(configPath)) {
+          console.log(`[waitForRuntimeReady][diag] ${relativePath} (${configPath}): (missing)`);
+          continue;
+        }
+        let content = fs.readFileSync(configPath, 'utf8').slice(0, 4000);
+        if (relativePath === 'local.settings.json') {
+          content = content.replace(/"([^"]*(?:KEY|TOKEN|SECRET|PASSWORD|CONNECTION|STRING)[^"]*)"\s*:\s*"[^"]*"/gi, '"$1":"<redacted>"');
+        }
+        console.log(`[waitForRuntimeReady][diag] ${relativePath} (${configPath}): ${content}`);
         logged = true;
-        break;
       }
     }
     if (!logged) {
-      console.log('[waitForRuntimeReady][diag] launch.json: not found (no workspace path in scope)');
+      console.log('[waitForRuntimeReady][diag] workspace config: not found (no workspace path in scope)');
     }
   } catch (e: any) {
-    console.log(`[waitForRuntimeReady][diag] launch.json read failed: ${e?.message ?? e}`);
+    console.log(`[waitForRuntimeReady][diag] workspace config read failed: ${e?.message ?? e}`);
   }
 
   return false;

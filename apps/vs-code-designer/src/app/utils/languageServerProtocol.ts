@@ -1,9 +1,9 @@
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import path from 'path';
 import * as fse from 'fs-extra';
-import { autoRuntimeDependenciesPathSettingKey, assetsFolderName, lspDirectory } from '../../constants';
+import { assetsFolderName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
-import { getGlobalSetting } from './vsCodeConfig/settings';
+import { ensureRuntimeDependenciesPath } from './runtimeDependenciesPath';
 import AdmZip from 'adm-zip';
 import { createHash } from 'crypto';
 
@@ -13,8 +13,7 @@ const lspSdkHashMarkerName = '.lspsdk-hash';
 
 export async function installLSPSDK(): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
-    const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-    await fse.ensureDir(targetDirectory);
+    const targetDirectory = await ensureRuntimeDependenciesPath();
 
     // Check if LSPServer needs to be extracted or updated
     const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
