@@ -18,7 +18,7 @@ import {
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
 import type { AppDispatch } from '../../core';
 import { HandoffIcon } from './dynamicsvgs/handoffIcon';
 import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
@@ -134,8 +134,13 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
 
   const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
   const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
+  const isSourceMultiSelected = useIsNodeInMultiSelection(sourceId);
+  const isTargetMultiSelected = useIsNodeInMultiSelection(targetId);
 
-  const selected = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
+  const selected = useMemo(
+    () => isSourceSelected || isTargetSelected || isSourceMultiSelected || isTargetMultiSelected,
+    [isSourceSelected, isTargetSelected, isSourceMultiSelected, isTargetMultiSelected]
+  );
 
   const colorClass = useMemo(() => {
     if (selected) {
@@ -162,7 +167,6 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
         }
       }
       return { x: 0, y: 0 };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [pathRef, pathReady]
   );

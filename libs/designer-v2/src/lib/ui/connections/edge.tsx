@@ -7,7 +7,7 @@ import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex, useGuid } from '@microsoft/logic-apps-shared';
 
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
@@ -135,7 +135,12 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
   const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
-  const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
+  const isSourceMultiSelected = useIsNodeInMultiSelection(sourceId);
+  const isTargetMultiSelected = useIsNodeInMultiSelection(targetId);
+  const highlighted = useMemo(
+    () => isSourceSelected || isTargetSelected || isSourceMultiSelected || isTargetMultiSelected,
+    [isSourceSelected, isTargetSelected, isSourceMultiSelected, isTargetMultiSelected]
+  );
 
   const capGuid = useGuid();
 

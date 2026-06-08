@@ -7,6 +7,7 @@ export const initialState: DesignerViewState = {
   showMinimap: false,
   clampPan: true,
   showDeleteModalNodeId: undefined,
+  showMultiSelectDeleteModal: false,
   nodeContextMenuData: undefined,
   edgeContextMenuData: undefined,
 };
@@ -23,6 +24,9 @@ export const designerViewSlice = createSlice({
     },
     setShowDeleteModalNodeId: (state, action: PayloadAction<string | undefined>) => {
       state.showDeleteModalNodeId = action.payload;
+    },
+    setShowMultiSelectDeleteModal: (state, action: PayloadAction<boolean>) => {
+      state.showMultiSelectDeleteModal = action.payload;
     },
     setNodeContextMenuData: (state, action: PayloadAction<NodeContextMenuObject>) => {
       state.nodeContextMenuData = action.payload;
@@ -41,6 +45,7 @@ export const {
   toggleMinimap,
   toggleClampPan,
   setShowDeleteModalNodeId,
+  setShowMultiSelectDeleteModal,
   setNodeContextMenuData,
   setEdgeContextMenuData,
   resetDesignerView,
