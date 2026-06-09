@@ -1,3 +1,4 @@
+import './nodeUtilCompatibility';
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';

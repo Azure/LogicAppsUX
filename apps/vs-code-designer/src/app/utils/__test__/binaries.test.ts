@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import * as fs from 'fs';
+import * as path from 'path';
 import axios from 'axios';
 import * as vscode from 'vscode';
 import {
@@ -17,7 +18,7 @@ import {
   useBinariesDependencies,
 } from '../binaries';
 import { ext } from '../../../extensionVariables';
-import { DependencyVersion } from '../../../constants';
+import { DependencyVersion, dotnetDependencyName, funcCoreToolsBinaryPathSettingKey, funcDependencyName } from '../../../constants';
 import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
@@ -54,18 +55,24 @@ describe('binaries', () => {
     it('should download and extract dependency', async () => {
       const downloadUrl = 'https://example.com/dependency.zip';
       const targetFolder = 'targetFolder';
-      const dependencyName = 'dependency';
+      const dependencyName = dotnetDependencyName;
       const folderName = 'folderName';
       const dotNetVersion = '6.0';
 
       const writer = {
-        on: vi.fn(),
+        on: vi.fn((event: string, callback: () => void) => {
+          if (event === 'finish') {
+            callback();
+          }
+          return writer;
+        }),
       } as any;
 
       (axios.get as Mock).mockResolvedValue({
         data: {
+          on: vi.fn(),
           pipe: vi.fn().mockImplementation((writer) => {
-            writer.on('finish');
+            return writer;
           }),
         },
       });
@@ -77,6 +84,102 @@ describe('binaries', () => {
       expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), { recursive: true });
       expect(fs.chmodSync).toHaveBeenCalledWith(expect.any(String), 0o777);
       expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+    });
+
+    it('rejects when the file writer fails while downloading a dependency', async () => {
+      const downloadUrl = 'https://example.com/dependency.zip';
+      const targetFolder = 'targetFolder';
+      const dependencyName = dotnetDependencyName;
+      const folderName = 'folderName';
+      const writerError = new Error('disk full');
+      const writer = {
+        on: vi.fn((event: string, callback: (error: Error) => void) => {
+          if (event === 'error') {
+            callback(writerError);
+          }
+          return writer;
+        }),
+      } as any;
+
+      (axios.get as Mock).mockResolvedValue({
+        data: {
+          on: vi.fn(),
+          pipe: vi.fn().mockImplementation((writer) => writer),
+        },
+      });
+
+      (fs.createWriteStream as Mock).mockReturnValue(writer);
+
+      await expect(downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName)).rejects.toThrow(
+        'Error downloading and extracting the DotNetSDK zip file: disk full'
+      );
+      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('disk full'));
+      expect(context.telemetry.properties.error).toContain('disk full');
+    });
+
+    it('rejects when the readable download stream fails', async () => {
+      const downloadUrl = 'https://example.com/dependency.zip';
+      const targetFolder = 'targetFolder';
+      const dependencyName = dotnetDependencyName;
+      const folderName = 'folderName';
+      const streamError = new Error('connection reset');
+      const writer = {
+        on: vi.fn(),
+      } as any;
+
+      (axios.get as Mock).mockResolvedValue({
+        data: {
+          on: vi.fn((event: string, callback: (error: Error) => void) => {
+            if (event === 'error') {
+              callback(streamError);
+            }
+          }),
+          pipe: vi.fn().mockImplementation((writer) => writer),
+        },
+      });
+
+      (fs.createWriteStream as Mock).mockReturnValue(writer);
+
+      await expect(downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName)).rejects.toThrow(
+        'Error downloading and extracting the DotNetSDK zip file: connection reset'
+      );
+      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('connection reset'));
+      expect(context.telemetry.properties.error).toContain('connection reset');
+    });
+
+    it('rejects when download cleanup fails after a file writer error', async () => {
+      const downloadUrl = 'https://example.com/dependency.zip';
+      const targetFolder = 'targetFolder';
+      const dependencyName = dotnetDependencyName;
+      const folderName = 'folderName';
+      const writerError = new Error('disk full');
+      const cleanupError = new Error('folder locked');
+      const writer = {
+        on: vi.fn((event: string, callback: (error: Error) => void) => {
+          if (event === 'error') {
+            callback(writerError);
+          }
+          return writer;
+        }),
+      } as any;
+
+      (axios.get as Mock).mockResolvedValue({
+        data: {
+          on: vi.fn(),
+          pipe: vi.fn().mockImplementation((writer) => writer),
+        },
+      });
+      (fs.createWriteStream as Mock).mockReturnValue(writer);
+      (fs.rmSync as Mock).mockImplementationOnce(() => {
+        throw cleanupError;
+      });
+
+      await expect(downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName)).rejects.toThrow(
+        'Error downloading and extracting the DotNetSDK zip file: disk full'
+      );
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', expect.stringContaining('Failed to remove'));
+      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('disk full'));
+      expect(context.telemetry.properties.error).toContain('disk full');
     });
 
     it('should throw error when the compression file extension is not supported', async () => {
@@ -116,6 +219,22 @@ describe('binaries', () => {
       const result = await binariesExist('dependencyName');
 
       expect(result).toBe(false);
+    });
+
+    it('should return false if Func Core Tools folder exists but configured binary is missing', async () => {
+      const funcCoreToolsFolder = path.join('binariesLocation', funcDependencyName);
+      const funcBinary = path.join(funcCoreToolsFolder, 'func');
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcCoreToolsFolder);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+        settingName === funcCoreToolsBinaryPathSettingKey ? funcBinary : 'binariesLocation'
+      );
+
+      const result = await binariesExist(funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `FuncCoreTools binary is missing: ${funcBinary}`);
     });
 
     it('should return false if useBinariesDependencies returns false', async () => {

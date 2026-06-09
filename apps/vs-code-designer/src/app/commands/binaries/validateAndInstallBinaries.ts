@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getDependencyTimeout } from '../../utils/binaries';
@@ -12,9 +11,9 @@ import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
+import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { runWithDurationTelemetry } from '../../utils/telemetry';
 import { timeout } from '../../utils/timeout';
-import { getGlobalSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
@@ -43,10 +42,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       const dependencyTimeout = getDependencyTimeout() * 1000;
 
       context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
-      if (!getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey)) {
-        await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
-        context.telemetry.properties.dependencyPath = defaultDependencyPathValue;
-      }
+      context.telemetry.properties.dependencyPath = await ensureRuntimeDependenciesPath();
 
       context.telemetry.properties.lastStep = 'getDependenciesVersion';
       progress.report({ increment: 10, message: 'Get dependency version from CDN' });

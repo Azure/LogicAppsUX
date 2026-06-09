@@ -14,6 +14,7 @@ const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
+  useIsNodeInMultiSelection: vi.fn().mockReturnValue(false),
 }));
 
 const mockUseActionMetadata = vi.fn().mockReturnValue({ runAfter: {} });
