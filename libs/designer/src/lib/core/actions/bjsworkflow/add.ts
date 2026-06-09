@@ -37,6 +37,7 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
+import { fetchSettingDefaults, getSupportedSettingKeys, mergeSettingDefaults } from '../../queries/settingDefaults';
 import {
   ConnectionService,
   OperationManifestService,
@@ -233,6 +234,15 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
+    const mcpDefaults = await fetchSettingDefaults(
+      connectorId,
+      operationId,
+      getSupportedSettingKeys(settings),
+      state.workflow.workflowKind
+    );
+    if (mcpDefaults) {
+      settings = mergeSettingDefaults(settings, mcpDefaults);
+    }
     const updatedOutputs = nodeOutputs;
     initData = {
       id: nodeId,
@@ -289,6 +299,15 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
+    const manifestDefaults = await fetchSettingDefaults(
+      connectorId,
+      operationId,
+      getSupportedSettingKeys(settings),
+      state.workflow.workflowKind
+    );
+    if (manifestDefaults) {
+      settings = mergeSettingDefaults(settings, manifestDefaults);
+    }
 
     // TODO: This seems redundant now since in line: 143 outputs are already updated with a splitOnExpression. Should remove it.
     // We should update the outputs when splitOn is enabled.
@@ -349,6 +368,15 @@ export const initializeOperationDetails = async (
     );
 
     settings = addDefaultSecureSettings(settings, connector?.properties?.isSecureByDefault ?? false);
+    const swaggerDefaults = await fetchSettingDefaults(
+      connectorId,
+      operationId,
+      getSupportedSettingKeys(settings),
+      state.workflow.workflowKind
+    );
+    if (swaggerDefaults) {
+      settings = mergeSettingDefaults(settings, swaggerDefaults);
+    }
 
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;

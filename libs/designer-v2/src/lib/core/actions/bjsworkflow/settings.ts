@@ -87,6 +87,7 @@ export interface GraphEdge {
 export interface SettingData<T> {
   isSupported: boolean;
   value?: T;
+  readOnly?: boolean;
 }
 
 export interface Settings {

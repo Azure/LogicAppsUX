@@ -200,6 +200,26 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
   override getBuiltInConnector(connectorId: string): Connector {
     return this.allBuiltInConnectors[connectorId.toLowerCase()];
   }
+
+  async getSettingDefaults(
+    connectorId: string,
+    operationId: string,
+    supportedSettings: string[],
+    workflowKind?: string
+  ): Promise<Record<string, any> | undefined> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const operationName = operationId.split('/').slice(-1)[0];
+
+    try {
+      return await httpClient.post<Record<string, any>, { settings: string[]; workflowKind?: string }>({
+        uri: `${baseUrl}${connectorId}/apiOperations/${operationName}/settingDefaults`,
+        queryParameters: { 'api-version': apiVersion },
+        content: { settings: supportedSettings, workflowKind },
+      });
+    } catch {
+      return undefined;
+    }
+  }
 }
 
 const openapiconnection = 'openapiconnection';
