@@ -152,5 +152,16 @@ describe('ConnectorDynamicQueries', () => {
       expect(spy).toHaveBeenNthCalledWith(1, connectionId, connectorId, operationId, {}, dynamicState, undefined, undefined, uamiA);
       expect(spy).toHaveBeenNthCalledWith(2, connectionId, connectorId, operationId, {}, dynamicState, undefined, undefined, uamiB);
     });
+
+    test('treats the identity case-insensitively in the cache key to avoid duplicate fetches', async () => {
+      const spy = vitest.spyOn(ConnectorService(), 'getListDynamicValues').mockResolvedValue([]);
+      const uamiLower = '/subscriptions/sub/resourcegroups/rg/providers/microsoft.managedidentity/userassignedidentities/case-test';
+      const uamiMixed = '/subscriptions/SUB/resourceGroups/RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/Case-Test';
+
+      await getListDynamicValues(connectionId, connectorId, operationId, {}, dynamicState, undefined, uamiLower);
+      await getListDynamicValues(connectionId, connectorId, operationId, {}, dynamicState, undefined, uamiMixed);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
   });
 });
