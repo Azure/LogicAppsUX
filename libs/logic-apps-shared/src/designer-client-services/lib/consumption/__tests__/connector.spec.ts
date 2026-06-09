@@ -234,6 +234,106 @@ describe('ConsumptionConnectorService', () => {
 
         expect(content.mcpServerPath).toBe('/custom/mcp/path');
       });
+
+      it('should propagate explicit identity to MSI authentication for built-in MCP', async () => {
+        const uami = '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myUami';
+        InitConnectionService({
+          getConnection: vi.fn().mockResolvedValue({
+            id: builtInConnectionId,
+            name: 'test-mcp',
+            properties: {
+              displayName: 'Test MCP Server',
+              parameterValueSet: {
+                name: 'managedServiceIdentity',
+                values: {
+                  mcpServerUrl: { value: 'https://mcp.example.com' },
+                  authenticationType: { value: 'ManagedServiceIdentity' },
+                  audience: { value: 'https://my-mcp-server.example.com' },
+                },
+              },
+              parameterValues: {
+                mcpServerUrl: 'https://mcp.example.com',
+                authenticationType: 'ManagedServiceIdentity',
+                audience: 'https://my-mcp-server.example.com',
+              },
+            },
+          } as unknown as Connection),
+        } as any);
+        InitWorkflowService({
+          getAppIdentity: vi.fn().mockReturnValue({ type: 'SystemAssigned' }),
+        } as any);
+
+        vi.mocked(mockHttpClient.post).mockResolvedValue(mockMcpToolsResponse);
+
+        await connectorService.getListDynamicValues(
+          builtInConnectionId,
+          '/connectionProviders/mcpclient',
+          'nativemcpclient',
+          {},
+          mcpDynamicState,
+          false,
+          '/mcp/path',
+          uami
+        );
+
+        const postCallArgs = vi.mocked(mockHttpClient.post).mock.calls[0][0];
+        const content = postCallArgs.content as any;
+
+        expect(content.connection.authentication).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+          identity: uami,
+        });
+      });
+
+      it('should fall back to identity stored in parameterValueSet when no explicit identity is provided', async () => {
+        const storedUami =
+          '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/storedUami';
+        InitConnectionService({
+          getConnection: vi.fn().mockResolvedValue({
+            id: builtInConnectionId,
+            name: 'test-mcp',
+            properties: {
+              displayName: 'Test MCP Server',
+              parameterValueSet: {
+                name: 'managedServiceIdentity',
+                values: {
+                  identity: { value: storedUami },
+                },
+              },
+              parameterValues: {
+                mcpServerUrl: 'https://mcp.example.com',
+                authenticationType: 'ManagedServiceIdentity',
+                audience: 'https://my-mcp-server.example.com',
+              },
+            },
+          } as unknown as Connection),
+        } as any);
+        InitWorkflowService({
+          getAppIdentity: vi.fn().mockReturnValue({ type: 'SystemAssigned' }),
+        } as any);
+
+        vi.mocked(mockHttpClient.post).mockResolvedValue(mockMcpToolsResponse);
+
+        await connectorService.getListDynamicValues(
+          builtInConnectionId,
+          '/connectionProviders/mcpclient',
+          'nativemcpclient',
+          {},
+          mcpDynamicState,
+          false,
+          '/mcp/path'
+        );
+
+        const postCallArgs = vi.mocked(mockHttpClient.post).mock.calls[0][0];
+        const content = postCallArgs.content as any;
+
+        expect(content.connection.authentication).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+          identity: storedUami,
+        });
+      });
     });
 
     describe('MCP managed connections', () => {
@@ -429,6 +529,64 @@ describe('ConsumptionConnectorService', () => {
         type: 'ManagedServiceIdentity',
         audience: 'https://my-mcp-server.example.com',
         identity: '/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity',
+      });
+    });
+
+    describe('ManagedServiceIdentity identity resolution', () => {
+      const overrideIdentity =
+        '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/override-uami';
+      const storedIdentity = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/stored-uami';
+      const appIdentity = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/app-uami';
+
+      it('should prefer identityOverride over connectionProperties identity', () => {
+        const result = (connectorService as any)._buildMcpAuthentication(
+          {
+            authenticationType: 'ManagedServiceIdentity',
+            audience: 'https://my-mcp-server.example.com',
+            identity: storedIdentity,
+          },
+          overrideIdentity
+        );
+
+        expect(result).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+          identity: overrideIdentity,
+        });
+      });
+
+      it('should fall back to connectionProperties identity when no override is provided', () => {
+        const result = (connectorService as any)._buildMcpAuthentication({
+          authenticationType: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+          identity: storedIdentity,
+        });
+
+        expect(result).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+          identity: storedIdentity,
+        });
+      });
+
+      it('should fall back to Logic App user-assigned identity when neither override nor connectionProperties identity is set', () => {
+        InitWorkflowService({
+          getAppIdentity: vi.fn().mockReturnValue({
+            type: 'UserAssigned',
+            userAssignedIdentities: { [appIdentity]: {} },
+          }),
+        } as any);
+
+        const result = (connectorService as any)._buildMcpAuthentication({
+          authenticationType: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+        });
+
+        expect(result).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+          identity: appIdentity,
+        });
       });
     });
   });

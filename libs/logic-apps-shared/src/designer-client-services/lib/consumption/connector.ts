@@ -99,13 +99,15 @@ export class ConsumptionConnectorService extends BaseConnectorService {
 
       let content: any;
       const parameterValues = connection?.properties?.parameterValues;
+      const effectiveIdentity =
+        identity ?? parameterValues?.['identity'] ?? connection?.properties?.parameterValueSet?.values?.identity?.value;
       if (parameterValues?.mcpServerUrl) {
         // Built-in MCP connection — has mcpServerUrl in parameterValues
         const connectionData: any = {
           mcpServerUrl: parameterValues.mcpServerUrl,
           displayName: connection.properties.displayName,
         };
-        const authentication = this._buildMcpAuthentication(parameterValues);
+        const authentication = this._buildMcpAuthentication(parameterValues, effectiveIdentity);
         if (authentication) {
           connectionData.authentication = authentication;
         }
@@ -255,7 +257,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     return undefined;
   }
 
-  private _buildMcpAuthentication(connectionProperties: Record<string, any>): Record<string, any> | undefined {
+  private _buildMcpAuthentication(connectionProperties: Record<string, any>, identityOverride?: string): Record<string, any> | undefined {
     const authType = connectionProperties['authenticationType'];
     if (!authType || authType === 'None') {
       return undefined;
@@ -285,9 +287,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       authentication['value'] = connectionProperties['value'];
     } else if (mappedAuthType === 'ManagedServiceIdentity') {
       authentication['audience'] = connectionProperties['audience'];
-      // Identity may be stored in parameterValues (round-tripped from workflow definition)
-      // or must be derived from the workflow's managed identity configuration.
-      const storedIdentity = connectionProperties['identity'];
+      // Prefer the explicit override so a UAMI isn't dropped on hybrid 'SystemAssigned, UserAssigned' apps.
+      const storedIdentity = identityOverride ?? connectionProperties['identity'];
       if (storedIdentity) {
         authentication['identity'] = storedIdentity;
       } else {
