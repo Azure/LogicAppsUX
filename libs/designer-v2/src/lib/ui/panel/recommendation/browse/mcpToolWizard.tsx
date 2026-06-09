@@ -26,7 +26,11 @@ import {
 } from '../../../../core/state/panel/panelSlice';
 import { MCP_WIZARD_STEP } from '../../../../core/state/panel/panelTypes';
 import { useConnectionsForConnector, getConnectorWithSwagger } from '../../../../core/queries/connections';
-import { isConnectionValid, getAssistedConnectionProps } from '../../../../core/utils/connectors/connections';
+import {
+  isConnectionValid,
+  getAssistedConnectionProps,
+  getManagedIdentityFromConnection,
+} from '../../../../core/utils/connectors/connections';
 import { addOperation } from '../../../../core/actions/bjsworkflow/add';
 import { useMcpToolWizardStyles } from './styles/McpToolWizard.styles';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
@@ -175,6 +179,13 @@ export const McpToolWizard = () => {
   // Track local selection before committing
   const [localConnectionId, setLocalConnectionId] = useState<string | undefined>(connectionId);
 
+  // Identity (UAMI) selected on the connection — must thread to listMcpTools and the cache key
+  // so different identities don't share cached results.
+  const selectedIdentity = useMemo(
+    () => getManagedIdentityFromConnection(connectionsData?.find((c) => c.id === localConnectionId)),
+    [connectionsData, localConnectionId]
+  );
+
   // Track if connection was pre-selected from browse when wizard opened (locked - can't go back to step 1)
   // Read from Redux state - this is set once when the wizard opens and survives re-mounts
   const isConnectionLocked = wizardState?.isConnectionLocked ?? false;
@@ -190,7 +201,14 @@ export const McpToolWizard = () => {
     error: toolsError,
     refetch: refetchTools,
   } = useQuery({
-    queryKey: ['mcpTools', localConnectionId, wizardState?.operation?.id, isManagedMcpServer, connectorId],
+    queryKey: [
+      'mcpTools',
+      localConnectionId,
+      wizardState?.operation?.id,
+      isManagedMcpServer,
+      connectorId,
+      (selectedIdentity ?? '').toLowerCase(),
+    ],
     queryFn: async () => {
       if (!localConnectionId) {
         return [];
@@ -219,7 +237,8 @@ export const McpToolWizard = () => {
         {}, // parameters
         dynamicState,
         false, // isManagedIdentityConnection
-        mcpServerPath
+        mcpServerPath,
+        selectedIdentity
       );
 
       return tools;

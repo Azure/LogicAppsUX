@@ -120,7 +120,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         const connectionProperties = {
           authentication: {
             type: 'ManagedServiceIdentity',
-            ...optional('identity', identity),
+            ...optional('identity', effectiveIdentity),
           },
         };
         content = {

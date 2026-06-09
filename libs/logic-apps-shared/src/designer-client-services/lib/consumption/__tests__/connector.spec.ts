@@ -381,6 +381,44 @@ describe('ConsumptionConnectorService', () => {
         expect(content.mcpServerPath).toBe('/mcp/path');
         expect(content.connection).toBeUndefined();
       });
+
+      it('should include UAMI from connection parameterValueSet when no explicit identity is provided', async () => {
+        const uami = '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami-1';
+        InitConnectionService({
+          getConnection: vi.fn().mockResolvedValue({
+            id: managedConnectionId,
+            name: 'mcp-managed',
+            properties: {
+              displayName: 'Managed MCP',
+              parameterValueSet: {
+                name: 'ManagedServiceIdentity',
+                values: {
+                  identity: { value: uami },
+                },
+              },
+            },
+          } as unknown as Connection),
+        } as any);
+
+        vi.mocked(mockHttpClient.post).mockResolvedValue(mockMcpToolsResponse);
+
+        await connectorService.getListDynamicValues(
+          managedConnectionId,
+          '/connectionProviders/mcpclient',
+          'nativemcpclient',
+          {},
+          mcpDynamicState,
+          false,
+          '/mcp/path'
+          // no explicit identity arg — must be resolved from the connection
+        );
+
+        const content = vi.mocked(mockHttpClient.post).mock.calls[0][0].content as any;
+        expect(content.managedConnection.connectionProperties.authentication).toEqual({
+          type: 'ManagedServiceIdentity',
+          identity: uami,
+        });
+      });
     });
 
     describe('MCP with no connectionId', () => {
