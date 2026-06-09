@@ -19,6 +19,7 @@ export interface ConnectorWithSwagger {
 export interface ConnectionCreationInfo {
   connectionParametersSet?: ConnectionParameterSetValues;
   connectionParameters?: Record<string, any>;
+  operationParameterValues?: Record<string, any>;
   alternativeParameterValues?: Record<string, any>;
   displayName?: string;
   features?: ConnectionFeatureType;
