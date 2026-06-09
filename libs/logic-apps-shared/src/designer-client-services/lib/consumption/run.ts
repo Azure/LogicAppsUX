@@ -1,6 +1,6 @@
 import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { IRunService } from '../run';
+import type { IRunService, RunFilterOptions } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
@@ -121,15 +121,32 @@ export class ConsumptionRunService implements IRunService {
     }
   }
 
+  private buildFilterString(filters?: RunFilterOptions): string {
+    const parts: string[] = [];
+    if (filters?.status) {
+      parts.push(`status eq '${filters.status}'`);
+    }
+    if (filters?.startTimeFrom) {
+      parts.push(`startTime ge ${filters.startTimeFrom}`);
+    }
+    if (filters?.startTimeTo) {
+      parts.push(`startTime le ${filters.startTimeTo}`);
+    }
+    return parts.join(' and ');
+  }
+
   /**
    * Gets workflow run history
+   * @param {RunFilterOptions} filters - Optional server-side filters.
    * @returns {Promise<Runs>} Workflow runs.
    */
-  async getRuns(): Promise<Runs> {
+  async getRuns(filters?: RunFilterOptions): Promise<Runs> {
     const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}`;
+    const filterString = this.buildFilterString(filters);
+    const filterParam = filterString ? `&$filter=${encodeURIComponent(filterString)}` : '';
+    const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}${filterParam}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri,

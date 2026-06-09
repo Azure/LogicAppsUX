@@ -18,14 +18,16 @@ import {
   Tab,
   Dropdown,
   Option,
+  Tag,
+  TagGroup,
   Tooltip,
 } from '@fluentui/react-components';
-import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
+import { equals, HostService, parseErrorMessage, type RunFilterOptions } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import { useAllRuns, useRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
+import { useRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import RunHistoryEntry from './runHistoryEntry';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
@@ -73,8 +75,53 @@ export const RunHistoryPanel = () => {
 
   const styles = useRunHistoryPanelStyles();
 
-  const runsQuery = useRunsInfiniteQuery(isMonitoringView);
-  const runs = useAllRuns();
+  // MARK: Filtering
+  const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
+
+  const [customStart, setCustomStart] = useState<Date | null>(null);
+  const [customEnd, setCustomEnd] = useState<Date | null>(null);
+
+  // Build server-side filter options from UI filter state
+  const serverFilters = useMemo((): RunFilterOptions | undefined => {
+    const opts: RunFilterOptions = {};
+    if (filters?.['status']) {
+      opts.status = filters['status'];
+    }
+
+    const interval = filters?.['timeInterval'];
+    if (interval && interval !== 'custom') {
+      const now = Date.now();
+      const durations: Record<string, number> = {
+        last24h: Durations.day,
+        last48h: 2 * Durations.day,
+        last7d: Durations.week,
+        last14d: 2 * Durations.week,
+        last30d: 30 * Durations.day,
+      };
+      const duration = durations[interval];
+      if (duration) {
+        opts.startTimeFrom = new Date(now - duration).toISOString();
+      }
+    } else if (interval === 'custom') {
+      if (customStart) {
+        opts.startTimeFrom = customStart.toISOString();
+      }
+      if (customEnd) {
+        // Round up to the end of the selected minute for inclusive filtering
+        const endAdjusted = new Date(customEnd);
+        endAdjusted.setSeconds(59, 999);
+        opts.startTimeTo = endAdjusted.toISOString();
+      }
+    }
+
+    return opts.status || opts.startTimeFrom || opts.startTimeTo ? opts : undefined;
+  }, [filters, customStart, customEnd]);
+
+  const runsQuery = useRunsInfiniteQuery(isMonitoringView, serverFilters);
+  const runs = useMemo(() => {
+    return (runsQuery.data?.pages ?? []).flatMap((p) => p.runs ?? []);
+  }, [runsQuery.data]);
   const selectedRunInstance = useRunInstance();
   const runQuery = useRun(selectedRunInstance?.id);
 
@@ -86,15 +133,8 @@ export const RunHistoryPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMonitoringView, selectedRunInstance]);
 
-  // MARK: Filtering
-  const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
-  const [filtersExpanded, setFiltersExpanded] = useState(false);
-
-  const [customStart, setCustomStart] = useState<Date | null>(null);
-  const [customEnd, setCustomEnd] = useState<Date | null>(null);
-
   const onCustomDateSelect = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (date: Date | null | undefined) => {
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>) => (date: Date | null | undefined) => {
       if (!date) {
         setter(null);
         return;
@@ -102,9 +142,7 @@ export const RunHistoryPanel = () => {
       setter((prev) => {
         const updated = new Date(date);
         if (prev) {
-          updated.setHours(prev.getHours(), prev.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
-        } else if (isEnd) {
-          updated.setHours(23, 59, 59, 999);
+          updated.setHours(prev.getHours(), prev.getMinutes(), 0, 0);
         }
         return updated;
       });
@@ -113,13 +151,13 @@ export const RunHistoryPanel = () => {
   );
 
   const onCustomTimeChange = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (_e: unknown, data: { selectedTime: Date | null }) => {
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>) => (_e: unknown, data: { selectedTime: Date | null }) => {
       setter((prev) => {
         const base = prev ? new Date(prev) : new Date();
         if (data.selectedTime) {
-          base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
+          base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), 0, 0);
         } else {
-          base.setHours(isEnd ? 23 : 0, isEnd ? 59 : 0, isEnd ? 59 : 0, isEnd ? 999 : 0);
+          base.setHours(0, 0, 0, 0);
         }
         return base;
       });
@@ -130,13 +168,11 @@ export const RunHistoryPanel = () => {
   const filteredRuns = useMemo(() => {
     return (
       runs?.filter((run) => {
+        // Client-side filters for properties not supported by the API
         if (filters?.['runId'] && run.name !== filters['runId']) {
           return false;
         }
         if (filters?.['workflowVersion'] && (run.properties.workflow as any)?.name !== filters['workflowVersion']) {
-          return false;
-        }
-        if (filters?.['status'] && run.properties.status !== filters['status']) {
           return false;
         }
         if (filters?.['mode'] === 'Draft' && (run.properties.workflow as any)?.mode !== 'Draft') {
@@ -145,39 +181,10 @@ export const RunHistoryPanel = () => {
         if (filters?.['mode'] === 'Prod' && (run.properties.workflow as any)?.mode !== undefined) {
           return false;
         }
-        // Time interval filter
-        if (filters?.['timeInterval'] && run.properties.startTime) {
-          const runTime = new Date(run.properties.startTime).getTime();
-          const now = Date.now();
-          const interval = filters['timeInterval'];
-          if (interval === 'last24h' && runTime < now - Durations.day) {
-            return false;
-          }
-          if (interval === 'last48h' && runTime < now - 2 * Durations.day) {
-            return false;
-          }
-          if (interval === 'last7d' && runTime < now - Durations.week) {
-            return false;
-          }
-          if (interval === 'last14d' && runTime < now - 2 * Durations.week) {
-            return false;
-          }
-          if (interval === 'last30d' && runTime < now - 30 * Durations.day) {
-            return false;
-          }
-          if (interval === 'custom') {
-            if (customStart && runTime < customStart.getTime()) {
-              return false;
-            }
-            if (customEnd && runTime > customEnd.getTime()) {
-              return false;
-            }
-          }
-        }
         return true;
       }) ?? []
     );
-  }, [filters, runs, customStart, customEnd]);
+  }, [filters, runs]);
 
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
@@ -279,15 +286,15 @@ export const RunHistoryPanel = () => {
   });
 
   const customStartLabel = intl.formatMessage({
-    defaultMessage: 'From',
+    defaultMessage: 'Start',
     description: 'Custom time range start label',
-    id: '3nbg4r',
+    id: 'afCjXx',
   });
 
   const customEndLabel = intl.formatMessage({
-    defaultMessage: 'To',
+    defaultMessage: 'End',
     description: 'Custom time range end label',
-    id: 'BOD0+G',
+    id: 'oua+Hn',
   });
 
   const selectDatePlaceholder = intl.formatMessage({
@@ -308,6 +315,7 @@ export const RunHistoryPanel = () => {
     Running: intl.formatMessage({ defaultMessage: 'In progress', description: 'Running status', id: 'eXcejw' }),
     Failed: intl.formatMessage({ defaultMessage: 'Failed', description: 'Failed status', id: 'Mrge1g' }),
     Cancelled: intl.formatMessage({ defaultMessage: 'Cancelled', description: 'Cancelled status', id: 'xfIp1j' }),
+    Waiting: intl.formatMessage({ defaultMessage: 'Waiting', description: 'Waiting status', id: 'F67pEe' }),
   };
 
   const modeTexts: Record<string, string> = {
@@ -389,6 +397,7 @@ export const RunHistoryPanel = () => {
       { value: 'Running', children: runStatusTexts['Running'] },
       { value: 'Failed', children: runStatusTexts['Failed'] },
       { value: 'Cancelled', children: runStatusTexts['Cancelled'] },
+      { value: 'Waiting', children: runStatusTexts['Waiting'] },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -458,6 +467,26 @@ export const RunHistoryPanel = () => {
   );
 
   const chatEnabled = useWorkflowHasAgentLoop();
+
+  const activeFilterTags = useMemo(() => {
+    const tags: { key: FilterTypes; label: string; value: string }[] = [];
+    if (filters?.['status']) {
+      tags.push({ key: 'status', label: statusFilterLabel, value: runStatusTexts[filters['status']] ?? filters['status'] });
+    }
+    if (filters?.['mode']) {
+      tags.push({ key: 'mode', label: modeFilterLabel, value: modeTexts[filters['mode']] ?? filters['mode'] });
+    }
+    if (filters?.['timeInterval']) {
+      tags.push({
+        key: 'timeInterval',
+        label: timeIntervalFilterLabel,
+        value: timeIntervalTexts[filters['timeInterval']] ?? filters['timeInterval'],
+      });
+    }
+    return tags;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, statusFilterLabel, modeFilterLabel, timeIntervalFilterLabel]);
+
   const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
 
   useEffect(() => {
@@ -652,7 +681,7 @@ export const RunHistoryPanel = () => {
                         placeholder={selectDatePlaceholder}
                         value={customStart}
                         isMonthPickerVisible={false}
-                        onSelectDate={onCustomDateSelect(setCustomStart, false)}
+                        onSelectDate={onCustomDateSelect(setCustomStart)}
                         style={{ marginBottom: '4px' }}
                         mountNode={compatMountNode}
                       />
@@ -660,8 +689,9 @@ export const RunHistoryPanel = () => {
                         className={styles.smallInput}
                         size="small"
                         placeholder={selectTimePlaceholder}
+                        dateAnchor={customStart ?? undefined}
                         selectedTime={customStart}
-                        onTimeChange={onCustomTimeChange(setCustomStart, false)}
+                        onTimeChange={onCustomTimeChange(setCustomStart)}
                         clearable
                         mountNode={compatMountNode}
                       />
@@ -673,7 +703,7 @@ export const RunHistoryPanel = () => {
                         placeholder={selectDatePlaceholder}
                         value={customEnd}
                         isMonthPickerVisible={false}
-                        onSelectDate={onCustomDateSelect(setCustomEnd, true)}
+                        onSelectDate={onCustomDateSelect(setCustomEnd)}
                         style={{ marginBottom: '4px' }}
                         mountNode={compatMountNode}
                       />
@@ -681,8 +711,9 @@ export const RunHistoryPanel = () => {
                         className={styles.smallInput}
                         size="small"
                         placeholder={selectTimePlaceholder}
+                        dateAnchor={customEnd ?? undefined}
                         selectedTime={customEnd}
-                        onTimeChange={onCustomTimeChange(setCustomEnd, true)}
+                        onTimeChange={onCustomTimeChange(setCustomEnd)}
                         clearable
                         mountNode={compatMountNode}
                       />
@@ -690,6 +721,30 @@ export const RunHistoryPanel = () => {
                   </div>
                 )}
               </div>
+            )}
+            {!filtersExpanded && activeFilterTags.length > 0 && (
+              <TagGroup className={styles.activeFilterTags} role="list">
+                {activeFilterTags.map((tag) => (
+                  <Tag
+                    key={tag.key}
+                    size="small"
+                    shape="rounded"
+                    appearance="brand"
+                    dismissible
+                    dismissIcon={{ 'aria-label': 'remove' }}
+                    value={tag.key}
+                    onClick={() => {
+                      addFilterCallback({ key: tag.key, value: undefined });
+                      if (tag.key === 'timeInterval') {
+                        setCustomStart(null);
+                        setCustomEnd(null);
+                      }
+                    }}
+                  >
+                    {tag.label}: {tag.value}
+                  </Tag>
+                ))}
+              </TagGroup>
             )}
             {runsQuery.error ? (
               <MessageBar intent={'error'} layout={'multiline'}>
