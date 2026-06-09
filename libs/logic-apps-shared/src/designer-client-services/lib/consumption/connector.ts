@@ -98,16 +98,14 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       const isRealConnectionId = connectionId && !connectionId.includes('__MOCK');
 
       let content: any;
-      const parameterValues = connection?.properties?.parameterValues;
-      const effectiveIdentity =
-        identity ?? parameterValues?.['identity'] ?? connection?.properties?.parameterValueSet?.values?.identity?.value;
-      if (parameterValues?.mcpServerUrl) {
-        // Built-in MCP connection — has mcpServerUrl in parameterValues
+      const flatParams = this._flattenConnectionParameters(connection);
+      const effectiveIdentity = identity ?? flatParams['identity'];
+      if (flatParams['mcpServerUrl']) {
         const connectionData: any = {
-          mcpServerUrl: parameterValues.mcpServerUrl,
+          mcpServerUrl: flatParams['mcpServerUrl'],
           displayName: connection.properties.displayName,
         };
-        const authentication = this._buildMcpAuthentication(parameterValues, effectiveIdentity);
+        const authentication = this._buildMcpAuthentication(flatParams, effectiveIdentity);
         if (authentication) {
           connectionData.authentication = authentication;
         }
@@ -255,6 +253,28 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     }
 
     return undefined;
+  }
+
+  private _flattenConnectionParameters(connection: any): Record<string, any> {
+    const flat: Record<string, any> = {};
+    const valueSetValues = connection?.properties?.parameterValueSet?.values;
+    if (valueSetValues) {
+      for (const key of Object.keys(valueSetValues)) {
+        const entry = valueSetValues[key];
+        if (entry?.value != null) {
+          flat[key] = entry.value;
+        }
+      }
+    }
+    const parameterValues = connection?.properties?.parameterValues;
+    if (parameterValues) {
+      for (const key of Object.keys(parameterValues)) {
+        if (flat[key] == null) {
+          flat[key] = parameterValues[key];
+        }
+      }
+    }
+    return flat;
   }
 
   private _buildMcpAuthentication(connectionProperties: Record<string, any>, identityOverride?: string): Record<string, any> | undefined {

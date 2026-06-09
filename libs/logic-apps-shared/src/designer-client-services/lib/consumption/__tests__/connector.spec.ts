@@ -251,11 +251,6 @@ describe('ConsumptionConnectorService', () => {
                   audience: { value: 'https://my-mcp-server.example.com' },
                 },
               },
-              parameterValues: {
-                mcpServerUrl: 'https://mcp.example.com',
-                authenticationType: 'ManagedServiceIdentity',
-                audience: 'https://my-mcp-server.example.com',
-              },
             },
           } as unknown as Connection),
         } as any);
@@ -279,6 +274,7 @@ describe('ConsumptionConnectorService', () => {
         const postCallArgs = vi.mocked(mockHttpClient.post).mock.calls[0][0];
         const content = postCallArgs.content as any;
 
+        expect(content.connection.mcpServerUrl).toBe('https://mcp.example.com');
         expect(content.connection.authentication).toEqual({
           type: 'ManagedServiceIdentity',
           audience: 'https://my-mcp-server.example.com',
@@ -298,13 +294,11 @@ describe('ConsumptionConnectorService', () => {
               parameterValueSet: {
                 name: 'managedServiceIdentity',
                 values: {
+                  mcpServerUrl: { value: 'https://mcp.example.com' },
+                  authenticationType: { value: 'ManagedServiceIdentity' },
+                  audience: { value: 'https://my-mcp-server.example.com' },
                   identity: { value: storedUami },
                 },
-              },
-              parameterValues: {
-                mcpServerUrl: 'https://mcp.example.com',
-                authenticationType: 'ManagedServiceIdentity',
-                audience: 'https://my-mcp-server.example.com',
               },
             },
           } as unknown as Connection),
