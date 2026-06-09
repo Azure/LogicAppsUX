@@ -440,13 +440,23 @@ export class StandardRunService implements IRunService {
         noAuth = false;
       }
 
+      // Parse JSON body string to avoid double-encoding when HttpClient calls JSON.stringify
+      let bodyContent = options?.body;
+      if (typeof bodyContent === 'string') {
+        try {
+          bodyContent = JSON.parse(bodyContent);
+        } catch {
+          // Not valid JSON, send as-is
+        }
+      }
+
       return await this.getHttpRequestByMethod(httpClient, method, {
         uri: baseUri,
         noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,
-        content: options?.body,
+        content: bodyContent,
       });
     } catch (e: any) {
       throw new Error(parseErrorMessage(e));
