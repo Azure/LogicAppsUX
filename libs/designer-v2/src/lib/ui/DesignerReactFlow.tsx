@@ -193,9 +193,16 @@ const DesignerReactFlow = (props: any) => {
   const allNodes = useMemo(() => {
     const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
     const selectedSet = new Set(panelSelectedNodeIds);
-    return [...nodesWithPlaceholder, ...noteNodes].map((node) =>
-      selectedSet.has(node.id) ? { ...node, selected: true } : node.selected ? { ...node, selected: false } : node
-    );
+    return [...nodesWithPlaceholder, ...noteNodes].map((node) => {
+      // Only operation and scope card nodes participate in selection (both marquee and click).
+      // All other node types (containers, subgraph cards, placeholders, hidden, etc.) must be
+      // marked selectable:false so React Flow excludes them from the selection bounding box.
+      const isSelectable = node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE;
+      if (!isSelectable) {
+        return node.selected || node.selectable !== false ? { ...node, selected: false, selectable: false } : node;
+      }
+      return selectedSet.has(node.id) ? { ...node, selected: true } : node.selected ? { ...node, selected: false } : node;
+    });
   }, [isEmpty, isReadOnly, emptyWorkflowPlaceholderNodes, actionNodes, noteNodes, panelSelectedNodeIds]);
 
   const clampPan = useClampPan();
@@ -484,10 +491,25 @@ const DesignerReactFlow = (props: any) => {
     [dispatch]
   );
 
+  // Track whether a box-selection gesture has occurred so we can ignore spurious
+  // onSelectionChange calls caused by single-click node selection.  Without this guard,
+  // clicking a node whose type is not in `toSelectableNodeIds` (e.g. SUBGRAPH_CARD_NODE)
+  // produces an empty id list which races with the node's own `changePanelNode` dispatch
+  // and clears the panel.
+  const hasBoxSelectedRef = useRef(false);
+
   const onSelectionChange = useCallback(
     (params: OnSelectionChangeParams) => {
       const ids = toSelectableNodeIds(params?.nodes ?? []);
       pendingBoxSelectionRef.current = ids;
+
+      // Only commit if a box-selection gesture is active or has just ended.  Single-click
+      // selections also fire onSelectionChange but should be handled by the individual node
+      // click handlers, not the box-selection pipeline.
+      if (!hasBoxSelectedRef.current) {
+        return;
+      }
+
       // If the marquee has already ended, this is the deferred final flush — commit it now. During
       // the drag we hold off so the panel doesn't thrash while the box is still being drawn.
       if (!isBoxSelectingRef.current) {
@@ -502,6 +524,7 @@ const DesignerReactFlow = (props: any) => {
   // would then be wrongly re-committed.
   const onSelectionStart = useCallback(() => {
     isBoxSelectingRef.current = true;
+    hasBoxSelectedRef.current = true;
     pendingBoxSelectionRef.current = [];
     lastCommittedSelectionRef.current = '';
     selectionAtMarqueeStartRef.current = [...currentSelectionRef.current];
@@ -512,6 +535,10 @@ const DesignerReactFlow = (props: any) => {
     // Commit what we have. If the final onSelectionChange hasn't flushed yet (quick release), the
     // ref may be stale/empty here — the deferred onSelectionChange will then commit the final set.
     commitBoxSelection(pendingBoxSelectionRef.current);
+    // Allow one more deferred onSelectionChange flush, then stop listening until the next marquee.
+    requestAnimationFrame(() => {
+      hasBoxSelectedRef.current = false;
+    });
   }, [commitBoxSelection]);
 
   const onPaneContextMenu = useCallback(

@@ -49,6 +49,7 @@
   margin: 8px auto;
   position: absolute;
   width: 100%;
+  pointer-events: auto;
 }
 
 .msla-graph-container-wrapper {
@@ -99,6 +100,14 @@
   
 	&.react-flow__node-NOTE_NODE {
     z-index: -1 !important;
+	}
+
+	// Let pointer events pass through scope/subgraph container backgrounds so marquee
+	// selection can start on top of them (they are purely visual wrappers).
+	// !important is needed to override React Flow's inline `pointerEvents: 'all'` style.
+	&.react-flow__node-GRAPH_NODE,
+	&.react-flow__node-SUBGRAPH_NODE {
+		pointer-events: none !important;
 	}
 }
 
