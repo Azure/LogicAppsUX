@@ -466,6 +466,15 @@ const DesignerReactFlow = (props: any) => {
           finalIds = [...new Set([...snapshot, ...ids])];
         }
       } else {
+        // Outside a marquee, an empty `ids` doesn't represent user intent to clear — it usually
+        // means React Flow's internal selection was deselected by our own controlled `selected`
+        // stamping (e.g. a clicked node whose React-Flow id has an idTag suffix doesn't match
+        // the un-tagged id in the redux selection). Tearing down the panel here would close it
+        // immediately after a single-click open. Real "clear" paths (pane click, Escape) go
+        // through their own handlers.
+        if (ids.length === 0) {
+          return;
+        }
         finalIds = ids;
       }
 
