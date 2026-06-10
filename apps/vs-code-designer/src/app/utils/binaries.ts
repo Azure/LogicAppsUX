@@ -131,7 +131,7 @@ export async function downloadAndExtractDependency(
             stopAllDesignTimeApis();
           }
           await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-          vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+          ext.outputChannel.appendLog(localize('successInstall', `Successfully installed ${dependencyName}`));
           if (dependencyName === funcDependencyName) {
             // Add execute permissions for func and gozip binaries
             if (process.platform !== Platform.windows) {
