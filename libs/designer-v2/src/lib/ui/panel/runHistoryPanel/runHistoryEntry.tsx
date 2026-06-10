@@ -14,7 +14,7 @@ import {
 import { RunMenu } from './runMenu';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
 import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRun, useCancelRun, useResubmitRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
 import {
   bundleIcon,
@@ -28,12 +28,16 @@ import {
   DismissCircleRegular,
 } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { TeachingPopup } from '@microsoft/designer-ui';
+import { useIsFirstDesignerV2Load } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
 const OpenRunIcon = bundleIcon(TextBulletListSquareFilled, TextBulletListSquareRegular);
 const CopyIcon = bundleIcon(CopyFilled, CopyRegular);
 const ResubmitIcon = bundleIcon(ArrowRedoFilled, ArrowRedoRegular);
 const CancelIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
+
+let teachingBubbleDismissed = false;
 
 const RunHistoryEntry = (props: {
   runId: string;
@@ -41,14 +45,28 @@ const RunHistoryEntry = (props: {
   onRunSelected: (id: string) => void;
   onRunOpened: (id: string) => void;
   addFilterCallback: (filter: any) => void;
+  showTeachingBubble?: boolean;
   size?: 'small' | 'medium';
 }) => {
-  const { runId, isSelected, onRunSelected, onRunOpened, addFilterCallback, size = 'medium' } = props;
+  const { runId, isSelected, onRunSelected, onRunOpened, addFilterCallback, showTeachingBubble, size = 'medium' } = props;
 
   const { data: run } = useRun(runId);
 
   const intl = useIntl();
   const styles = useRunHistoryPanelStyles();
+  const [openRunButtonEl, setOpenRunButtonEl] = useState<HTMLButtonElement | null>(null);
+  const isFirstV2Load = useIsFirstDesignerV2Load();
+  const [shouldDisplayTeaching, setShouldDisplayTeaching] = useState(false);
+
+  useEffect(() => {
+    if (showTeachingBubble && isFirstV2Load && !teachingBubbleDismissed) {
+      setShouldDisplayTeaching(true);
+    }
+  }, [showTeachingBubble, isFirstV2Load]);
+
+  const openRunButtonRef = useCallback((el: HTMLButtonElement | null) => {
+    setOpenRunButtonEl(el);
+  }, []);
 
   const runsQuery = useRunsInfiniteQuery();
   const runQuery = useRun(runId);
@@ -88,6 +106,24 @@ const RunHistoryEntry = (props: {
     }
   }, [isSelected]);
 
+  const handleOpenRunLogs = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      LoggerService().log({
+        area: 'RunHistoryEntry:openRunLogs',
+        level: LogEntryLevel.Verbose,
+        message: 'Open run logs button clicked.',
+      });
+      onRunOpened(run?.name ?? '');
+    },
+    [onRunOpened, run?.name]
+  );
+
+  const dismissTeachingBubble = useCallback(() => {
+    teachingBubbleDismissed = true;
+    setShouldDisplayTeaching(false);
+  }, []);
+
   if (!run) {
     return null;
   }
@@ -118,6 +154,18 @@ const RunHistoryEntry = (props: {
     id: '56TR3P',
   });
 
+  const teachingTitle = intl.formatMessage({
+    defaultMessage: 'View run logs',
+    description: 'Teaching bubble title for the open run logs button',
+    id: 'Pb7KmG',
+  });
+
+  const teachingMessage = intl.formatMessage({
+    defaultMessage: 'Clicking this button will open the run log tree and agent activity log.',
+    description: 'Teaching bubble message explaining the open run logs button',
+    id: 'GzIQLR',
+  });
+
   const contextMenu = (
     <MenuPopover>
       <MenuList>
@@ -135,7 +183,7 @@ const RunHistoryEntry = (props: {
         <MenuItem disabled={isDraftRun} icon={<ResubmitIcon />} onClick={onResubmit}>
           {resubmitText}
         </MenuItem>
-        <MenuItem icon={<OpenRunIcon />} onClick={() => onRunOpened(run?.name ?? '')}>
+        <MenuItem icon={<OpenRunIcon />} onClick={() => handleOpenRunLogs()}>
           {openRunAria}
         </MenuItem>
       </MenuList>
@@ -156,20 +204,27 @@ const RunHistoryEntry = (props: {
               <RunHistoryEntryInfo run={run} size="small" />
               <Tooltip content={openRunAria} relationship="label">
                 <Button
+                  ref={openRunButtonRef}
                   appearance="transparent"
                   size="small"
                   icon={<OpenRunIcon />}
                   aria-label={openRunAria}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRunOpened(run?.name ?? '');
-                  }}
+                  onClick={handleOpenRunLogs}
                 />
               </Tooltip>
             </div>
           </MenuTrigger>
           {contextMenu}
         </Menu>
+        {shouldDisplayTeaching && openRunButtonEl ? (
+          <TeachingPopup
+            targetElement={openRunButtonEl}
+            title={teachingTitle}
+            message={teachingMessage}
+            withArrow={true}
+            handlePopupPrimaryOnClick={dismissTeachingBubble}
+          />
+        ) : null}
         <Divider />
       </>
     );
@@ -189,20 +244,27 @@ const RunHistoryEntry = (props: {
             <RunMenu run={run} addFilterCallback={addFilterCallback} />
             <Tooltip content={openRunAria} relationship="label">
               <Button
+                ref={openRunButtonRef}
                 appearance="transparent"
                 size="small"
                 icon={<OpenRunIcon />}
                 aria-label={openRunAria}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRunOpened(run?.name ?? '');
-                }}
+                onClick={handleOpenRunLogs}
               />
             </Tooltip>
           </div>
         </MenuTrigger>
         {contextMenu}
       </Menu>
+      {shouldDisplayTeaching && openRunButtonEl ? (
+        <TeachingPopup
+          targetElement={openRunButtonEl}
+          title={teachingTitle}
+          message={teachingMessage}
+          withArrow={true}
+          handlePopupPrimaryOnClick={dismissTeachingBubble}
+        />
+      ) : null}
       <Divider style={{ margin: '4px 0' }} />
     </>
   );

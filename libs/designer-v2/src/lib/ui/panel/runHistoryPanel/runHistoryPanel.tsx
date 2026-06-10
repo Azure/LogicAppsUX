@@ -785,7 +785,7 @@ export const RunHistoryPanel = () => {
               </Text>
             ) : (
               <>
-                {filteredRuns.map((run) => (
+                {filteredRuns.map((run, index) => (
                   <RunHistoryEntry
                     key={run.id}
                     runId={run.id}
@@ -800,6 +800,7 @@ export const RunHistoryPanel = () => {
                       setInRunList(false);
                     }}
                     addFilterCallback={addFilterCallback}
+                    showTeachingBubble={index === 0}
                     size="small"
                   />
                 ))}

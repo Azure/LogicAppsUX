@@ -43,6 +43,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
   panelTabHideKeys: [],
+  isFirstDesignerV2Load: false,
   hostOptions: {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
@@ -178,6 +179,7 @@ export const designerOptionsSlice = createSlice({
         ...action.payload.hostOptions,
       };
       state.showPerformanceDebug = action.payload.showPerformanceDebug;
+      state.isFirstDesignerV2Load = action.payload.isFirstDesignerV2Load;
       state.designerOptionsInitialized = true;
       state.isVSCode = action.payload.isVSCode ?? false;
     },
