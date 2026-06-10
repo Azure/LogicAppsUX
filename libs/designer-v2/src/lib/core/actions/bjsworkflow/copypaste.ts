@@ -188,8 +188,29 @@ export const copyOperations = createAsyncThunk('copyOperations', async (payload:
   }
   const state = getState() as RootState;
 
+  // First pass: identify scope nodes and collect all action names nested inside them.
+  // Children already embedded in a scope's serialized definition should not be copied again.
+  const scopeChildIds = new Set<string>();
+  for (const nodeId of nodeIds) {
+    const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+    if (isScopeOperation(operationInfo?.type ?? '')) {
+      const normalizedId = removeIdTag(nodeId);
+      const serialized = await serializeOperation(state, normalizedId, { skipValidation: true, ignoreNonCriticalErrors: true });
+      const childNames = getAllActionNames({ [normalizedId]: serialized as ActionDefinition }, [], true);
+      for (const name of childNames) {
+        if (name !== normalizedId) {
+          scopeChildIds.add(name);
+        }
+      }
+    }
+  }
+
   const nodes = [];
   for (const nodeId of nodeIds) {
+    const normalizedId = removeIdTag(nodeId);
+    if (scopeChildIds.has(normalizedId)) {
+      continue;
+    }
     const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
     if (isScopeOperation(operationInfo?.type ?? '')) {
       nodes.push(await buildScopeClipboardEntry(state, nodeId));
