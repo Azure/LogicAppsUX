@@ -171,7 +171,7 @@ describe('RunHistoryPanel', () => {
     (RunsQueries.useAllRuns as Mock).mockReturnValue(mockRuns);
     (RunsQueries.useRun as Mock).mockReturnValue({ data: null, isFetching: false, refetch: mockRunRefetch });
     (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
-      data: { pages: [mockRuns] },
+      data: { pages: [{ runs: mockRuns }] },
       error: null,
       isLoading: false,
       isFetching: false,
@@ -232,7 +232,17 @@ describe('RunHistoryPanel', () => {
     });
 
     it('should display "No runs found" when filtered list is empty', () => {
-      (RunsQueries.useAllRuns as Mock).mockReturnValue([]);
+      (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
+        data: { pages: [{ runs: [] }] },
+        error: null,
+        isLoading: false,
+        isFetching: false,
+        isRefetching: false,
+        isFetchingNextPage: false,
+        hasNextPage: false,
+        refetch: mockRefetch,
+        fetchNextPage: vi.fn(),
+      });
       renderPanel();
       expect(screen.getByText('No runs found')).toBeInTheDocument();
     });
@@ -320,8 +330,8 @@ describe('RunHistoryPanel', () => {
       const customOption = screen.getByText('Custom range');
       fireEvent.click(customOption);
 
-      expect(screen.getByText('From')).toBeInTheDocument();
-      expect(screen.getByText('To')).toBeInTheDocument();
+      expect(screen.getByText('Start')).toBeInTheDocument();
+      expect(screen.getByText('End')).toBeInTheDocument();
       expect(screen.getAllByPlaceholderText('Select date')).toHaveLength(2);
       expect(screen.getAllByPlaceholderText('Select time')).toHaveLength(2);
     });
@@ -577,7 +587,7 @@ describe('RunHistoryPanel', () => {
 
     it('should disable refresh button when fetching', () => {
       (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
-        data: { pages: [mockRuns] },
+        data: { pages: [{ runs: mockRuns }] },
         error: null,
         isLoading: false,
         isFetching: true,
@@ -646,7 +656,7 @@ describe('RunHistoryPanel', () => {
     it('should show load more button when there are more pages', () => {
       const fetchNextPage = vi.fn();
       (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
-        data: { pages: [mockRuns] },
+        data: { pages: [{ runs: mockRuns }] },
         error: null,
         isLoading: false,
         isFetching: false,
