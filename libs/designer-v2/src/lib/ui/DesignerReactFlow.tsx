@@ -186,14 +186,25 @@ const DesignerReactFlow = (props: any) => {
 
   ///
 
-  // Stamp `selected: true` on nodes that are in the Redux selection so React Flow renders them with
-  // their selected visual. Without this, starting a new marquee clears React Flow's internal
-  // selection state and the previously-selected nodes lose their highlight.
+  // Stamp `selected: true` on the card nodes that are in the Redux selection so React Flow
+  // renders them with their selected visual. Without this, starting a new marquee clears React
+  // Flow's internal selection state and the previously-selected nodes lose their highlight.
+  //
+  // Redux `selectedNodeIds` holds bare action ids (e.g. 'WorkflowAgent'), but the visible card
+  // for a scope/agent is `SCOPE_CARD_NODE` with id `'WorkflowAgent-#scope'`. We must normalize
+  // the idTag suffix when looking up, and only stamp the user-facing card variants — stamping a
+  // GRAPH/SUBGRAPH container would shift React Flow's internal selection onto a node that has
+  // no visible selected state and would then be filtered out of `onSelectionChange`, causing
+  // spurious empty selection events.
   const panelSelectedNodeIds = useOperationPanelSelectedNodeIds();
   const allNodes = useMemo(() => {
     const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : actionNodes;
     const selectedSet = new Set(panelSelectedNodeIds);
     return [...nodesWithPlaceholder, ...noteNodes].map((node) => {
+      // Notes manage their own selection independently of redux.
+      if (node.type === WORKFLOW_NODE_TYPES.NOTE_NODE) {
+        return node;
+      }
       // Only operation and scope card nodes participate in selection (both marquee and click).
       // All other node types (containers, subgraph cards, placeholders, hidden, etc.) must be
       // marked selectable:false so React Flow excludes them from the selection bounding box.
@@ -201,7 +212,12 @@ const DesignerReactFlow = (props: any) => {
       if (!isSelectable) {
         return node.selected || node.selectable !== false ? { ...node, selected: false, selectable: false } : node;
       }
-      return selectedSet.has(node.id) ? { ...node, selected: true } : node.selected ? { ...node, selected: false } : node;
+      const baseId = containsIdTag(node.id) ? removeIdTag(node.id) : node.id;
+      const shouldBeSelected = selectedSet.has(baseId);
+      if (shouldBeSelected) {
+        return node.selected ? node : { ...node, selected: true };
+      }
+      return node.selected ? { ...node, selected: false } : node;
     });
   }, [isEmpty, isReadOnly, emptyWorkflowPlaceholderNodes, actionNodes, noteNodes, panelSelectedNodeIds]);
 
@@ -500,7 +516,8 @@ const DesignerReactFlow = (props: any) => {
 
   const onSelectionChange = useCallback(
     (params: OnSelectionChangeParams) => {
-      const ids = toSelectableNodeIds(params?.nodes ?? []);
+      const rawNodes = params?.nodes ?? [];
+      const ids = toSelectableNodeIds(rawNodes);
       pendingBoxSelectionRef.current = ids;
 
       // Only commit if a box-selection gesture is active or has just ended.  Single-click
@@ -513,6 +530,14 @@ const DesignerReactFlow = (props: any) => {
       // If the marquee has already ended, this is the deferred final flush — commit it now. During
       // the drag we hold off so the panel doesn't thrash while the box is still being drawn.
       if (!isBoxSelectingRef.current) {
+        // Distinguish a true pane deselect (no nodes at all) from selecting a non-card node such
+        // as a note. For the latter, leave the operation selection untouched — clearing it would
+        // both close the user's panel and cause a re-render storm: `clearPanel` always builds new
+        // state refs, which would re-fire `onSelectionChange` against the still-internally-selected
+        // note, looping until React bails with "Maximum update depth exceeded".
+        if (rawNodes.length > 0 && ids.length === 0) {
+          return;
+        }
         commitBoxSelection(ids);
       }
     },
