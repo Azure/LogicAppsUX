@@ -31,6 +31,13 @@ export const useRunHistoryPanelStyles = makeStyles({
     marginTop: '4px',
   },
 
+  activeFilterTags: {
+    display: 'flex',
+    flexWrap: 'wrap' as const,
+    gap: '4px',
+    marginTop: '4px',
+  },
+
   compatComponent: {
     zIndex: 10,
   },

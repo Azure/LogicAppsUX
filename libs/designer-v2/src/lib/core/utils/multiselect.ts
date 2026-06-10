@@ -36,8 +36,17 @@ const getChildEdgeTargets = (graph: WorkflowNode, nodeId: string): string[] =>
  * Returns a topological ordering when valid, otherwise undefined.
  */
 export const getOrderedSelectedChain = (state: WorkflowState, nodeIds: string[]): string[] | undefined => {
-  if (nodeIds.length < 2) {
+  if (nodeIds.length === 0) {
     return undefined;
+  }
+
+  // A single node is trivially a valid chain — it can be wrapped in a scope by itself.
+  if (nodeIds.length === 1) {
+    const metadata = getRecordEntry(state.nodesMetadata, nodeIds[0]);
+    if (metadata?.isTrigger || metadata?.isRoot) {
+      return undefined;
+    }
+    return nodeIds;
   }
 
   const graphId = getCommonGraphId(state, nodeIds);

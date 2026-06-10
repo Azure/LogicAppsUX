@@ -1,6 +1,6 @@
 import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { IRunService } from '../run';
+import type { IRunService, RunFilterOptions } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
@@ -118,14 +118,32 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  private buildFilterString(filters?: RunFilterOptions): string {
+    const parts: string[] = [];
+    if (filters?.status) {
+      const status = filters.status.replace(/'/g, "''");
+      parts.push(`status eq '${status}'`);
+    }
+    if (filters?.startTimeFrom) {
+      parts.push(`startTime ge ${filters.startTimeFrom}`);
+    }
+    if (filters?.startTimeTo) {
+      parts.push(`startTime le ${filters.startTimeTo}`);
+    }
+    return parts.join(' and ');
+  }
+
   /**
    * Gets workflow run history
+   * @param {RunFilterOptions} filters - Optional server-side filters.
    * @returns {Promise<Runs>} Workflow runs.
    */
-  async getRuns(): Promise<Runs> {
+  async getRuns(filters?: RunFilterOptions): Promise<Runs> {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
+    const filterString = this.buildFilterString(filters);
+    const filterParam = filterString ? `&$filter=${encodeURIComponent(filterString)}` : '';
+    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}${filterParam}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri,
@@ -423,13 +441,26 @@ export class StandardRunService implements IRunService {
         noAuth = false;
       }
 
+      // Parse JSON body string to avoid double-encoding when HttpClient calls JSON.stringify
+      let bodyContent = options?.body;
+      if (typeof bodyContent === 'string') {
+        const trimmed = bodyContent.trim();
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+          try {
+            bodyContent = JSON.parse(bodyContent);
+          } catch {
+            // Not valid JSON, send as-is
+          }
+        }
+      }
+
       return await this.getHttpRequestByMethod(httpClient, method, {
         uri: baseUri,
         noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,
-        content: options?.body,
+        content: bodyContent,
       });
     } catch (e: any) {
       throw new Error(parseErrorMessage(e));
