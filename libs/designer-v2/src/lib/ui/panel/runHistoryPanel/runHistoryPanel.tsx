@@ -392,6 +392,7 @@ export const RunHistoryPanel = () => {
 
   const isRunHistoryCollapsed = useIsRunHistoryCollapsed();
   const [inRunList, setInRunList] = useState(true);
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 
   const statusTags = useMemo(
     () => [
@@ -788,8 +789,13 @@ export const RunHistoryPanel = () => {
                   <RunHistoryEntry
                     key={run.id}
                     runId={run.id}
-                    isSelected={selectedRunInstance?.id === run.id}
+                    isSelected={selectedRunId === run.name || selectedRunInstance?.id === run.id}
                     onRunSelected={(id) => {
+                      setSelectedRunId(id);
+                      HostService().openRun?.(id);
+                    }}
+                    onRunOpened={(id) => {
+                      setSelectedRunId(id);
                       HostService().openRun?.(id);
                       setInRunList(false);
                     }}
@@ -797,10 +803,11 @@ export const RunHistoryPanel = () => {
                     size="small"
                   />
                 ))}
-                {!runsQuery.isFetching && runsQuery.hasNextPage && (
+                {runsQuery.hasNextPage && (
                   <Button
                     onClick={() => runsQuery.fetchNextPage()}
                     appearance="subtle"
+                    disabled={runsQuery.isFetching}
                     style={{
                       margin: '16px auto',
                       display: 'block',
