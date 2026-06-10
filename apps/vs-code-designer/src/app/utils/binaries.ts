@@ -131,7 +131,7 @@ export async function downloadAndExtractDependency(
             stopAllDesignTimeApis();
           }
           await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-          ext.outputChannel.appendLog(localize('successInstall', `Successfully installed ${dependencyName}`));
+          ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
           if (dependencyName === funcDependencyName) {
             // Add execute permissions for func and gozip binaries
             if (process.platform !== Platform.windows) {
