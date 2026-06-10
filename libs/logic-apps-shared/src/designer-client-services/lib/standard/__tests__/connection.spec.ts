@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { StandardConnectionService, microsoftFoundryModelsRegex, foundryServiceConnectionRegex, apimanagementRegex } from '../connection';
+import {
+  StandardConnectionService,
+  microsoftFoundryModelsRegex,
+  foundryServiceConnectionRegex,
+  apimanagementRegex,
+  normalizeAgentConnectionResourceIdForRoleAssignment,
+} from '../connection';
 import type { StandardConnectionServiceOptions, ConnectionsData } from '../connection';
 import { agentConnectorId, mcpclientConnectorId } from '../../base/operationmanifest';
 import { ConnectionType } from '../../../../utils/src';
@@ -225,7 +231,7 @@ describe('StandardConnectionService', () => {
       },
     };
 
-    it('should append /models to resourceId for standard Cognitive Services connections', async () => {
+    it('should keep AzureOpenAI resourceId at the account scope for standard Cognitive Services connections', async () => {
       InitLoggerService([mockLoggerService]);
       let capturedConnectionData: any;
       const writeConnection = vi.fn().mockImplementation((data: any) => {
@@ -247,6 +253,55 @@ describe('StandardConnectionService', () => {
             },
           },
         },
+        operationParameterValues: {
+          agentModelType: 'AzureOpenAI',
+        },
+      };
+
+      const parametersMetadata = {
+        connectionMetadata: { type: ConnectionType.Agent },
+      };
+
+      await service.createConnection('test-agent', agentConnector as any, connectionInfo, parametersMetadata as any);
+
+      expect(writeConnection).toHaveBeenCalledOnce();
+      expect(capturedConnectionData.connectionData.resourceId).toBe(
+        '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount'
+      );
+      expect(capturedConnectionData.connectionData.type).toBe('model');
+    });
+
+    it('should append /models to resourceId for MicrosoftFoundry model connections', async () => {
+      InitLoggerService([mockLoggerService]);
+      let capturedConnectionData: any;
+      const writeConnection = vi.fn().mockImplementation((data: any) => {
+        capturedConnectionData = data;
+        return Promise.resolve();
+      });
+
+      const options = createMockOptions({});
+      (options as any).writeConnection = writeConnection;
+      const service = new StandardConnectionService(options);
+
+      const connectionInfo = {
+        displayName: 'test-agent-foundry-models',
+        connectionParametersSet: {
+          name: 'Key',
+          values: {
+            cognitiveServiceAccountId: {
+              value: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount',
+            },
+            openAIEndpoint: {
+              value: 'https://myaccount.cognitiveservices.azure.com/',
+            },
+            openAIKey: {
+              value: 'test-key',
+            },
+          },
+        },
+        operationParameterValues: {
+          agentModelType: 'MicrosoftFoundry',
+        },
       };
 
       const parametersMetadata = {
@@ -260,6 +315,51 @@ describe('StandardConnectionService', () => {
         '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/models'
       );
       expect(capturedConnectionData.connectionData.type).toBe('model');
+    });
+
+    it('should not double-append /models for MicrosoftFoundry model connections', async () => {
+      InitLoggerService([mockLoggerService]);
+      let capturedConnectionData: any;
+      const writeConnection = vi.fn().mockImplementation((data: any) => {
+        capturedConnectionData = data;
+        return Promise.resolve();
+      });
+
+      const options = createMockOptions({});
+      (options as any).writeConnection = writeConnection;
+      const service = new StandardConnectionService(options);
+
+      const connectionInfo = {
+        displayName: 'test-agent-foundry-models',
+        connectionParametersSet: {
+          name: 'Key',
+          values: {
+            cognitiveServiceAccountId: {
+              value: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/models',
+            },
+            openAIEndpoint: {
+              value: 'https://myaccount.cognitiveservices.azure.com/',
+            },
+            openAIKey: {
+              value: 'test-key',
+            },
+          },
+        },
+        operationParameterValues: {
+          agentModelType: 'MicrosoftFoundry',
+        },
+      };
+
+      const parametersMetadata = {
+        connectionMetadata: { type: ConnectionType.Agent },
+      };
+
+      await service.createConnection('test-agent', agentConnector as any, connectionInfo, parametersMetadata as any);
+
+      expect(writeConnection).toHaveBeenCalledOnce();
+      expect(capturedConnectionData.connectionData.resourceId).toBe(
+        '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/models'
+      );
     });
 
     it('should NOT append /models for Foundry project connections and should save type as model', async () => {
@@ -341,6 +441,28 @@ describe('Connection regex patterns', () => {
           '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/models'
         )
       ).toBe(true);
+    });
+
+    describe('normalizeAgentConnectionResourceIdForRoleAssignment', () => {
+      it('should strip terminal /models for role assignment scope', () => {
+        expect(
+          normalizeAgentConnectionResourceIdForRoleAssignment(
+            '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/models'
+          )
+        ).toBe('/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount');
+      });
+
+      it('should leave account-level resourceIds unchanged', () => {
+        expect(
+          normalizeAgentConnectionResourceIdForRoleAssignment(
+            '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount'
+          )
+        ).toBe('/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount');
+      });
+
+      it('should not strip /models from the middle of a path', () => {
+        expect(normalizeAgentConnectionResourceIdForRoleAssignment('/some/path/models/deployments')).toBe('/some/path/models/deployments');
+      });
     });
 
     it('should not match resourceIds without /models suffix', () => {

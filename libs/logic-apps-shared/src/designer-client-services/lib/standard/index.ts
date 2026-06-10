@@ -7,6 +7,7 @@ export {
   foundryServiceConnectionRegex,
   apimanagementRegex,
   microsoftFoundryModelsRegex,
+  normalizeAgentConnectionResourceIdForRoleAssignment,
 } from './connection';
 export { StandardConnectorService, type StandardConnectorServiceOptions } from './connector';
 export { StandardOperationManifestService, isServiceProviderOperation } from './operationmanifest';
