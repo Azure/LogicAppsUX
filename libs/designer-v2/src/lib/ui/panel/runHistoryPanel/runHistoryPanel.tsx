@@ -1,4 +1,4 @@
-import type { SelectTabEvent, SelectTabData } from '@fluentui/react-components';
+import type { SelectTabEvent, SelectTabData, TagDismissData } from '@fluentui/react-components';
 import {
   Button,
   Drawer,
@@ -726,7 +726,18 @@ export const RunHistoryPanel = () => {
               </div>
             )}
             {!filtersExpanded && activeFilterTags.length > 0 && (
-              <TagGroup className={styles.activeFilterTags} role="list">
+              <TagGroup
+                className={styles.activeFilterTags}
+                role="list"
+                onDismiss={(_e: unknown, data: TagDismissData) => {
+                  const key = data.value as FilterTypes;
+                  addFilterCallback({ key, value: undefined });
+                  if (key === 'timeInterval') {
+                    setCustomStart(null);
+                    setCustomEnd(null);
+                  }
+                }}
+              >
                 {activeFilterTags.map((tag) => (
                   <Tag
                     key={tag.key}
@@ -736,13 +747,6 @@ export const RunHistoryPanel = () => {
                     dismissible
                     dismissIcon={{ 'aria-label': 'remove' }}
                     value={tag.key}
-                    onClick={() => {
-                      addFilterCallback({ key: tag.key, value: undefined });
-                      if (tag.key === 'timeInterval') {
-                        setCustomStart(null);
-                        setCustomEnd(null);
-                      }
-                    }}
                   >
                     {tag.label}: {tag.value}
                   </Tag>
