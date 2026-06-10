@@ -121,7 +121,8 @@ export class StandardRunService implements IRunService {
   private buildFilterString(filters?: RunFilterOptions): string {
     const parts: string[] = [];
     if (filters?.status) {
-      parts.push(`status eq '${filters.status}'`);
+      const status = filters.status.replace(/'/g, "''");
+      parts.push(`status eq '${status}'`);
     }
     if (filters?.startTimeFrom) {
       parts.push(`startTime ge ${filters.startTimeFrom}`);
@@ -443,10 +444,13 @@ export class StandardRunService implements IRunService {
       // Parse JSON body string to avoid double-encoding when HttpClient calls JSON.stringify
       let bodyContent = options?.body;
       if (typeof bodyContent === 'string') {
-        try {
-          bodyContent = JSON.parse(bodyContent);
-        } catch {
-          // Not valid JSON, send as-is
+        const trimmed = bodyContent.trim();
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+          try {
+            bodyContent = JSON.parse(bodyContent);
+          } catch {
+            // Not valid JSON, send as-is
+          }
         }
       }
 

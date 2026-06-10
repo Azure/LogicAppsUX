@@ -134,19 +134,22 @@ export const RunHistoryPanel = () => {
   }, [isMonitoringView, selectedRunInstance]);
 
   const onCustomDateSelect = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<Date | null>>) => (date: Date | null | undefined) => {
-      if (!date) {
-        setter(null);
-        return;
-      }
-      setter((prev) => {
-        const updated = new Date(date);
-        if (prev) {
-          updated.setHours(prev.getHours(), prev.getMinutes(), 0, 0);
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>, defaultHour = 0, defaultMinute = 0) =>
+      (date: Date | null | undefined) => {
+        if (!date) {
+          setter(null);
+          return;
         }
-        return updated;
-      });
-    },
+        setter((prev) => {
+          const updated = new Date(date);
+          if (prev) {
+            updated.setHours(prev.getHours(), prev.getMinutes(), 0, 0);
+          } else {
+            updated.setHours(defaultHour, defaultMinute, 0, 0);
+          }
+          return updated;
+        });
+      },
     []
   );
 
@@ -703,7 +706,7 @@ export const RunHistoryPanel = () => {
                         placeholder={selectDatePlaceholder}
                         value={customEnd}
                         isMonthPickerVisible={false}
-                        onSelectDate={onCustomDateSelect(setCustomEnd)}
+                        onSelectDate={onCustomDateSelect(setCustomEnd, 23, 59)}
                         style={{ marginBottom: '4px' }}
                         mountNode={compatMountNode}
                       />
