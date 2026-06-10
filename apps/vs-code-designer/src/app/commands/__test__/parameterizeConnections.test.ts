@@ -92,7 +92,7 @@ describe('parameterizeConnections', () => {
     expect(parameterUtil.saveWorkflowParameter).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, testParametersJson);
     expect(connectionUtil.saveConnectionReferences).toHaveBeenCalledOnce();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      localizeUtil.localize('finishedParameterizingConnections', 'Successfully parameterized connections.')
+      localizeUtil.localize('connectionsParameterized', 'Successfully parameterized connections.')
     );
   });
 
