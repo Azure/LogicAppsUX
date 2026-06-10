@@ -99,7 +99,9 @@ export class ConsumptionConnectorService extends BaseConnectorService {
 
       let content: any;
       const flatParams = this._flattenConnectionParameters(connection);
-      const effectiveIdentity = identity ?? flatParams['identity'];
+      const nestedAuth = flatParams['authentication'];
+      const nestedIdentity = nestedAuth?.type === 'ManagedServiceIdentity' ? nestedAuth.identity : undefined;
+      const effectiveIdentity = identity ?? flatParams['identity'] ?? nestedIdentity;
       if (flatParams['mcpServerUrl']) {
         const connectionData: any = {
           mcpServerUrl: flatParams['mcpServerUrl'],

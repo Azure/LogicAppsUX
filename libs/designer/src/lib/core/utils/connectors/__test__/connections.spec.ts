@@ -69,6 +69,38 @@ describe('getManagedIdentityFromConnection', () => {
     expect(getManagedIdentityFromConnection(connection)).toBeUndefined();
   });
 
+  it('returns the UAMI from parameterValues.authentication.identity (managed MCP shape)', () => {
+    const connection = {
+      id: 'c1',
+      properties: {
+        parameterValues: {
+          authentication: {
+            type: 'ManagedServiceIdentity',
+            identity: uami,
+          },
+        },
+      },
+    } as unknown as Connection;
+
+    expect(getManagedIdentityFromConnection(connection)).toBe(uami);
+  });
+
+  it('ignores parameterValues.authentication.identity when the auth type is not ManagedServiceIdentity', () => {
+    const connection = {
+      id: 'c1',
+      properties: {
+        parameterValues: {
+          authentication: {
+            type: 'ApiKey',
+            identity: uami,
+          },
+        },
+      },
+    } as unknown as Connection;
+
+    expect(getManagedIdentityFromConnection(connection)).toBeUndefined();
+  });
+
   it('returns undefined for undefined connection', () => {
     expect(getManagedIdentityFromConnection(undefined)).toBeUndefined();
   });
