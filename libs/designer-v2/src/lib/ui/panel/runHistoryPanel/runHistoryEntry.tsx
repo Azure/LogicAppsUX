@@ -96,12 +96,14 @@ const RunHistoryEntry = (props: {
   const onResubmit = useCallback(async () => {
     await resubmitRun();
     runsQuery.refetch();
-  }, [resubmitRun, runsQuery]);
+    runQuery.refetch();
+  }, [resubmitRun, runsQuery, runQuery]);
 
   const onCancel = useCallback(async () => {
     await cancelRun();
+    runsQuery.refetch();
     runQuery.refetch();
-  }, [cancelRun, runQuery]);
+  }, [cancelRun, runsQuery, runQuery]);
 
   const indicatorColor = useMemo(() => {
     if (run?.properties.status === 'Succeeded') {

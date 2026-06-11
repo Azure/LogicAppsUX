@@ -36,7 +36,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import { useRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
+import { useRun, useRunsByIds, useRunsInfiniteQuery } from '../../../core/queries/runs';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import RunHistoryEntry from './runHistoryEntry';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
@@ -149,6 +149,19 @@ export const RunHistoryPanel = () => {
   const runs = useMemo(() => {
     return (runsQuery.data?.pages ?? []).flatMap((p) => p.runs ?? []);
   }, [runsQuery.data]);
+
+  // When runId filter is set, fetch runs directly by ID (handles old runs not in paginated list)
+  const runIdFilterIds = useMemo(() => {
+    if (!filters?.['runId']) {
+      return [];
+    }
+    return filters['runId']
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => runIdRegex.test(id));
+  }, [filters]);
+  const runsByIdsQuery = useRunsByIds(runIdFilterIds);
+
   const selectedRunInstance = useRunInstance();
   const runQuery = useRun(selectedRunInstance?.id);
 
@@ -196,15 +209,11 @@ export const RunHistoryPanel = () => {
   );
 
   const filteredRuns = useMemo(() => {
+    // When filtering by run IDs, use directly-fetched results instead of paginated list
+    const source = runIdFilterIds.length > 0 ? runsByIdsQuery.data : runs;
     return (
-      runs?.filter((run) => {
+      source?.filter((run) => {
         // Client-side filters for properties not supported by the API
-        if (filters?.['runId']) {
-          const runIds = filters['runId'].split(',').map((id) => id.trim());
-          if (!runIds.includes(run.name)) {
-            return false;
-          }
-        }
         if (filters?.['workflowVersion'] && (run.properties.workflow as any)?.name !== filters['workflowVersion']) {
           return false;
         }
@@ -217,7 +226,7 @@ export const RunHistoryPanel = () => {
         return true;
       }) ?? []
     );
-  }, [filters, runs]);
+  }, [filters, runs, runIdFilterIds, runsByIdsQuery.data]);
 
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
@@ -567,12 +576,13 @@ export const RunHistoryPanel = () => {
     }
     setIsBulkActionInProgress(false);
     runsQuery.refetch();
+    runsByIdsQuery.refetch();
     LoggerService().log({
       area: 'RunHistoryPanel:bulkRetry',
       level: LogEntryLevel.Verbose,
       message: `Retried ${selectedRuns.length} runs.`,
     });
-  }, [filteredRuns, multiSelectedIds, runsQuery]);
+  }, [filteredRuns, multiSelectedIds, runsQuery, runsByIdsQuery]);
 
   const onBulkCancel = useCallback(async () => {
     setIsBulkActionInProgress(true);
@@ -586,12 +596,13 @@ export const RunHistoryPanel = () => {
     }
     setIsBulkActionInProgress(false);
     runsQuery.refetch();
+    runsByIdsQuery.refetch();
     LoggerService().log({
       area: 'RunHistoryPanel:bulkCancel',
       level: LogEntryLevel.Verbose,
       message: `Cancelled ${selectedRuns.length} runs.`,
     });
-  }, [filteredRuns, multiSelectedIds, runsQuery]);
+  }, [filteredRuns, multiSelectedIds, runsQuery, runsByIdsQuery]);
 
   const statusTags = useMemo(
     () => [
@@ -704,9 +715,8 @@ export const RunHistoryPanel = () => {
     }
   }, [isMonitoringView]);
 
-  // If a single runId filter is set, prefetch that run's data
-  const singleRunIdFilter = filters?.['runId'] && !filters['runId'].includes(',') ? filters['runId'] : undefined;
-  const { isFetching: isFetchingFilteredRun } = useRun(singleRunIdFilter, runIdRegex.test(singleRunIdFilter ?? ''));
+  // Track fetching state for run ID lookups
+  const isFetchingFilteredRun = runsByIdsQuery.isFetching;
 
   const [compatMountNode, setCompatMountNode] = useState<HTMLElement | undefined>(undefined);
   useEffect(() => {
@@ -1088,7 +1098,7 @@ export const RunHistoryPanel = () => {
                     onMultiSelectToggle={toggleRunMultiSelect}
                   />
                 ))}
-                {runsQuery.hasNextPage && (
+                {runsQuery.hasNextPage && runIdFilterIds.length === 0 && (
                   <Button
                     onClick={() => runsQuery.fetchNextPage()}
                     appearance="subtle"
