@@ -226,7 +226,7 @@ const RunHistoryEntry = (props: {
                     onMultiSelectToggle?.(run.id);
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  style={{ minWidth: 'auto', flexShrink: 0 }}
+                  style={{ minWidth: 'auto', flexShrink: 0, marginLeft: '-8px' }}
                 />
               )}
               <RunHistoryEntryInfo run={run} size="small" />
