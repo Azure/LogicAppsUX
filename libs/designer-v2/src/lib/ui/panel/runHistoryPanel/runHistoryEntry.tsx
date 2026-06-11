@@ -16,7 +16,8 @@ import { RunMenu } from './runMenu';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
 import { RunHistoryEntryInfo } from './runHistoryEntryInfo';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRun, useCancelRun, useResubmitRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRun, useCancelRun, useResubmitRun, runsQueriesKeys } from '../../../core/queries/runs';
 import {
   bundleIcon,
   TextBulletListSquareFilled,
@@ -44,7 +45,7 @@ const RunHistoryEntry = (props: {
   runId: string;
   isSelected: boolean;
   onRunSelected: (id: string) => void;
-  onRunOpened: (id: string) => void;
+  onRunOpened?: (id: string) => void;
   addFilterCallback: (filter: any) => void;
   showTeachingBubble?: boolean;
   size?: 'small' | 'medium';
@@ -65,10 +66,11 @@ const RunHistoryEntry = (props: {
     onMultiSelectToggle,
   } = props;
 
-  const { data: run } = useRun(runId);
+  const { data: run, refetch: refetchRun } = useRun(runId);
 
   const intl = useIntl();
   const styles = useRunHistoryPanelStyles();
+  const queryClient = useQueryClient();
   const [openRunButtonEl, setOpenRunButtonEl] = useState<HTMLButtonElement | null>(null);
   const isFirstV2Load = useIsFirstDesignerV2Load();
   const [shouldDisplayTeaching, setShouldDisplayTeaching] = useState(false);
@@ -83,10 +85,13 @@ const RunHistoryEntry = (props: {
     setOpenRunButtonEl(el);
   }, []);
 
-  const runsQuery = useRunsInfiniteQuery();
-  const runQuery = useRun(runId);
   const { mutateAsync: resubmitRun } = useResubmitRun(run?.name ?? '', (run?.properties.trigger as any)?.name ?? '');
   const { mutateAsync: cancelRun } = useCancelRun(run?.id ?? '');
+
+  const invalidateRuns = useCallback(() => {
+    queryClient.invalidateQueries([runsQueriesKeys.runs]);
+    refetchRun();
+  }, [queryClient, refetchRun]);
 
   const onCopy = useCallback(() => {
     const shortId = run?.id.split('/').at(-1) ?? '';
@@ -95,15 +100,13 @@ const RunHistoryEntry = (props: {
 
   const onResubmit = useCallback(async () => {
     await resubmitRun();
-    runsQuery.refetch();
-    runQuery.refetch();
-  }, [resubmitRun, runsQuery, runQuery]);
+    invalidateRuns();
+  }, [resubmitRun, invalidateRuns]);
 
   const onCancel = useCallback(async () => {
     await cancelRun();
-    runsQuery.refetch();
-    runQuery.refetch();
-  }, [cancelRun, runsQuery, runQuery]);
+    invalidateRuns();
+  }, [cancelRun, invalidateRuns]);
 
   const indicatorColor = useMemo(() => {
     if (run?.properties.status === 'Succeeded') {
@@ -131,7 +134,7 @@ const RunHistoryEntry = (props: {
         level: LogEntryLevel.Verbose,
         message: 'Open run logs button clicked.',
       });
-      onRunOpened(run?.name ?? '');
+      onRunOpened?.(run?.name ?? '');
     },
     [onRunOpened, run?.name]
   );

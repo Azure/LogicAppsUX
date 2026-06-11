@@ -33,10 +33,11 @@ import {
   type RunFilterOptions,
 } from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import { useRun, useRunsByIds, useRunsInfiniteQuery } from '../../../core/queries/runs';
+import { useRun, useRunsByIds, useRunsInfiniteQuery, runsQueriesKeys } from '../../../core/queries/runs';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import RunHistoryEntry from './runHistoryEntry';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
@@ -95,6 +96,7 @@ export type FilterTypes = 'runId' | 'workflowVersion' | 'status' | 'mode' | 'tim
 
 export const RunHistoryPanel = () => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
 
   const dispatch = useDispatch();
 
@@ -596,14 +598,14 @@ export const RunHistoryPanel = () => {
       }
     }
     setIsBulkActionInProgress(false);
-    runsQuery.refetch();
-    runsByIdsQuery.refetch();
+    queryClient.invalidateQueries([runsQueriesKeys.runs]);
+    queryClient.invalidateQueries([runsQueriesKeys.run]);
     LoggerService().log({
       area: 'RunHistoryPanel:bulkRetry',
       level: LogEntryLevel.Verbose,
       message: `Retried ${selectedRuns.length} runs.`,
     });
-  }, [filteredRuns, multiSelectedIds, runsQuery, runsByIdsQuery]);
+  }, [filteredRuns, multiSelectedIds, queryClient]);
 
   const onBulkCancel = useCallback(async () => {
     setIsBulkActionInProgress(true);
@@ -616,14 +618,14 @@ export const RunHistoryPanel = () => {
       }
     }
     setIsBulkActionInProgress(false);
-    runsQuery.refetch();
-    runsByIdsQuery.refetch();
+    queryClient.invalidateQueries([runsQueriesKeys.runs]);
+    queryClient.invalidateQueries([runsQueriesKeys.run]);
     LoggerService().log({
       area: 'RunHistoryPanel:bulkCancel',
       level: LogEntryLevel.Verbose,
       message: `Cancelled ${selectedRuns.length} runs.`,
     });
-  }, [filteredRuns, multiSelectedIds, runsQuery, runsByIdsQuery]);
+  }, [filteredRuns, multiSelectedIds, queryClient]);
 
   const statusTags = useMemo(
     () => [
