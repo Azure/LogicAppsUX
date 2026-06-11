@@ -25,7 +25,7 @@ import { getParameterFromName, updateDynamicDataInNode } from '../../utils/param
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
+import { getApiHubAuthentication, getConnectionProperties, isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
@@ -81,10 +81,20 @@ type AddOperationPayload = {
   isAddingHandoff?: boolean;
   isAddingMcpServer?: boolean;
   connectionId?: string;
+  connectionIdentity?: string;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false, isTrigger, connectionId } = payload;
+  const {
+    operation,
+    nodeId: actionId,
+    presetParameterValues,
+    actionMetadata,
+    isAddingHandoff = false,
+    isTrigger,
+    connectionId,
+    connectionIdentity,
+  } = payload;
   if (!operation) {
     throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   }
@@ -166,7 +176,8 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
       presetParameterValues,
       actionMetadata,
       !isAddingHandoff,
-      connectionId
+      connectionId,
+      connectionIdentity
     );
 
     // Adjust workflow for kind change if needed
@@ -253,7 +264,8 @@ export const initializeOperationDetails = async (
   presetParameterValues?: Record<string, any>,
   actionMetadata?: Record<string, any>,
   openPanel = true,
-  connectionId?: string
+  connectionId?: string,
+  connectionIdentity?: string
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isTriggerNode(nodeId, state.workflow.nodesMetadata);
@@ -468,7 +480,8 @@ export const initializeOperationDetails = async (
         dispatch as AppDispatch,
         isConnectionRequired,
         (c: Connection) => AgentUtils.filterDynamicConnectionFeatures(c, nodeId, state),
-        connectionId
+        connectionId,
+        connectionIdentity
       );
     } catch (e: any) {
       dispatch(
@@ -561,7 +574,8 @@ export const trySetDefaultConnectionForNode = async (
   dispatch: AppDispatch,
   isConnectionRequired: boolean,
   connectionFilterFunc?: (connection: Connection) => boolean,
-  preferredConnectionId?: string
+  preferredConnectionId?: string,
+  preferredConnectionIdentity?: string
 ) => {
   const connectorId = connector.id;
   const connections = (await getConnectionsForConnector(connectorId)).filter(
@@ -571,8 +585,24 @@ export const trySetDefaultConnectionForNode = async (
     // Use preferred connection if provided and found, otherwise fall back to most recently used or first available
     const preferredConnection = preferredConnectionId ? connections.find((c) => c.id === preferredConnectionId) : undefined;
     const connection = preferredConnection ?? (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
-    await ConnectionService().setupConnectionIfNeeded(connection);
-    dispatch(updateNodeConnection({ nodeId, connection, connector }));
+    const userAssignedIdentity =
+      preferredConnectionIdentity && preferredConnectionIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
+        ? preferredConnectionIdentity
+        : undefined;
+    await ConnectionService().setupConnectionIfNeeded(connection, userAssignedIdentity);
+    if (preferredConnectionIdentity) {
+      dispatch(
+        updateNodeConnection({
+          nodeId,
+          connection,
+          connector,
+          connectionProperties: getConnectionProperties(connector, userAssignedIdentity),
+          authentication: getApiHubAuthentication(userAssignedIdentity),
+        })
+      );
+    } else {
+      dispatch(updateNodeConnection({ nodeId, connection, connector }));
+    }
   } else if (isConnectionRequired) {
     dispatch(initEmptyConnectionMap([nodeId]));
     dispatch(
