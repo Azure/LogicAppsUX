@@ -12,6 +12,7 @@ import {
   useQueryCachePersist,
   useIsMultiVariableEnabled,
   useShowEdgeDrawing,
+  useIsFirstDesignerV2Load,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -27,6 +28,7 @@ import {
   setQueryCachePersist,
   setEnableMultiVariable,
   setShowEdgeDrawing,
+  setIsFirstDesignerV2Load,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -45,6 +47,7 @@ const ContextSettings = () => {
   const showTestStringOverride = useStringOverrides();
   const queryCachePersist = useQueryCachePersist();
   const isMultiVariableEnabled = useIsMultiVariableEnabled();
+  const isFirstDesignerV2Load = useIsFirstDesignerV2Load();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -130,6 +133,11 @@ const ContextSettings = () => {
         label="Enable Multivariable"
         checked={isMultiVariableEnabled}
         onChange={(_, checked) => dispatch(setEnableMultiVariable(!!checked))}
+      />
+      <Checkbox
+        label="First Designer V2 Load"
+        checked={isFirstDesignerV2Load}
+        onChange={(_, checked) => dispatch(setIsFirstDesignerV2Load(!!checked))}
       />
       <TextField
         label="Max State History Size"

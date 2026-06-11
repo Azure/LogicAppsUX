@@ -58,6 +58,10 @@ export const useShowPerformanceDebug = () => {
   return useSelector((state: RootState) => state.designerOptions.showPerformanceDebug ?? false);
 };
 
+export const useIsFirstDesignerV2Load = () => {
+  return useSelector((state: RootState) => state.designerOptions.isFirstDesignerV2Load ?? false);
+};
+
 export const useEnableNestedAgentLoops = () => {
   return useSelector((state: RootState) => state.designerOptions.hostOptions?.enableNestedAgentLoops ?? false);
 };

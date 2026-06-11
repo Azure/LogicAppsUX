@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueries, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import {
   type ChatHistory,
   isNullOrUndefined,
@@ -133,6 +133,38 @@ export const useRun = (runId: string | undefined, enabled = true) => {
         return false;
       },
     }
+  );
+};
+
+export const useRunsByIds = (runIds: string[]) => {
+  const queryClient = useQueryClient();
+  const results = useQueries({
+    queries: runIds.map((runId) => ({
+      queryKey: [runsQueriesKeys.run, runId],
+      queryFn: async () => {
+        const fetchedRun = await RunService().getRun(runId);
+        if (isRunError(fetchedRun)) {
+          throw new Error('Run not found');
+        }
+        queryClient.setQueryData([runsQueriesKeys.allRuns], (old: Record<string, Run> | undefined) => ({
+          ...old,
+          [fetchedRun.id]: fetchedRun,
+        }));
+        return fetchedRun;
+      },
+      ...queryOpts,
+      enabled: !!runId,
+    })),
+  });
+
+  return useMemo(
+    () => ({
+      data: results.filter((r) => r.isSuccess && r.data).map((r) => r.data as Run),
+      isFetching: results.some((r) => r.isFetching),
+      isError: results.some((r) => r.isError),
+      refetch: () => results.forEach((r) => r.refetch()),
+    }),
+    [results]
   );
 };
 
