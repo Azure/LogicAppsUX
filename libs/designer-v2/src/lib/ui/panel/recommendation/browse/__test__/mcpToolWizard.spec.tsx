@@ -60,6 +60,7 @@ vi.mock('../../../../../core/queries/connections', () => ({
     isLoading: false,
     refetch: vi.fn(),
   })),
+  useConnectionResource: vi.fn(() => ({ data: undefined, isLoading: false })),
   getConnectorWithSwagger: vi.fn(() => Promise.resolve({ parsedSwagger: { getOperationByOperationId: vi.fn() } })),
 }));
 
@@ -78,6 +79,7 @@ vi.mock('../../../../../core/state/connection/connectionSelector', () => ({
 vi.mock('../../../../../core/utils/connectors/connections', () => ({
   isConnectionValid: vi.fn(() => true),
   getAssistedConnectionProps: vi.fn(() => undefined),
+  getManagedIdentityFromConnection: vi.fn(() => undefined),
 }));
 
 vi.mock('../../../../../core/actions/bjsworkflow/add', () => ({

@@ -25,8 +25,12 @@ import {
   setMcpWizardHeaders,
 } from '../../../../core/state/panel/panelSlice';
 import { MCP_WIZARD_STEP } from '../../../../core/state/panel/panelTypes';
-import { useConnectionsForConnector, getConnectorWithSwagger } from '../../../../core/queries/connections';
-import { isConnectionValid, getAssistedConnectionProps } from '../../../../core/utils/connectors/connections';
+import { useConnectionsForConnector, useConnectionResource, getConnectorWithSwagger } from '../../../../core/queries/connections';
+import {
+  isConnectionValid,
+  getAssistedConnectionProps,
+  getManagedIdentityFromConnection,
+} from '../../../../core/utils/connectors/connections';
 import { addOperation } from '../../../../core/actions/bjsworkflow/add';
 import { useMcpToolWizardStyles } from './styles/McpToolWizard.styles';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
@@ -175,6 +179,27 @@ export const McpToolWizard = () => {
   // Track local selection before committing
   const [localConnectionId, setLocalConnectionId] = useState<string | undefined>(connectionId);
 
+  // Identity captured from the create-connection form. Microsoft.Web/connections resources
+  // do not persist the UAMI ARM id, so for newly created UAMI connections the only
+  // authoritative source is the payload the create flow emits.
+  const [createdIdentity, setCreatedIdentity] = useState<string | undefined>(undefined);
+
+  // The connection list response strips parameterValues, so the cached entry has no identity info.
+  // Fetch the full connection resource so we can detect UAMI for connections whose resource does
+  // expose it (some shapes do — e.g. via parameterValues.identity).
+  const { data: fullConnection } = useConnectionResource(localConnectionId ?? '');
+
+  // Identity (UAMI) for the selected connection — threaded to listMcpTools and to addOperation so
+  // the workflow node and the tools query both bind to the user-chosen identity. Prefer the
+  // create-form payload; fall back to whatever the connection resource exposes.
+  const selectedIdentity = useMemo(() => {
+    if (createdIdentity) {
+      return createdIdentity;
+    }
+    const listEntry = connectionsData?.find((c) => c.id === localConnectionId);
+    return getManagedIdentityFromConnection(fullConnection) ?? getManagedIdentityFromConnection(listEntry);
+  }, [createdIdentity, fullConnection, connectionsData, localConnectionId]);
+
   // Track if connection was pre-selected from browse when wizard opened (locked - can't go back to step 1)
   // Read from Redux state - this is set once when the wizard opens and survives re-mounts
   const isConnectionLocked = wizardState?.isConnectionLocked ?? false;
@@ -190,7 +215,14 @@ export const McpToolWizard = () => {
     error: toolsError,
     refetch: refetchTools,
   } = useQuery({
-    queryKey: ['mcpTools', localConnectionId, wizardState?.operation?.id, isManagedMcpServer, connectorId],
+    queryKey: [
+      'mcpTools',
+      localConnectionId,
+      wizardState?.operation?.id,
+      isManagedMcpServer,
+      connectorId,
+      (selectedIdentity ?? '').toLowerCase(),
+    ],
     queryFn: async () => {
       if (!localConnectionId) {
         return [];
@@ -219,7 +251,8 @@ export const McpToolWizard = () => {
         {}, // parameters
         dynamicState,
         false, // isManagedIdentityConnection
-        mcpServerPath
+        mcpServerPath,
+        selectedIdentity
       );
 
       return tools;
@@ -340,9 +373,13 @@ export const McpToolWizard = () => {
     }
   }, [dispatch, wasOpenedAtCreateConnection, validConnections.length]);
 
-  // No-op function for updateConnectionInState - we handle this separately
-  const updateConnectionInState = useCallback((_payload: CreatedConnectionPayload) => {
-    // Connection state is managed by the connection service
+  // Capture identity from the create-connection payload so it survives into addOperation.
+  // The connection resource itself often does not store the UAMI ARM id for managed-identity
+  // parameter sets. Identity can land in either payload.authentication (legacy MI flow) or
+  // payload.connectionProperties.authentication (multi-auth ManagedServiceIdentity parameter set
+  // used by managed MCP connectors).
+  const updateConnectionInState = useCallback((payload: CreatedConnectionPayload) => {
+    setCreatedIdentity(payload.authentication?.identity ?? payload.connectionProperties?.authentication?.identity);
   }, []);
 
   const handleNext = useCallback(async () => {
@@ -407,6 +444,7 @@ export const McpToolWizard = () => {
             isAddingMcpServer: true,
             presetParameterValues,
             connectionId: localConnectionId,
+            connectionIdentity: selectedIdentity,
           })
         );
 
@@ -424,11 +462,13 @@ export const McpToolWizard = () => {
     isManagedMcpServer,
     toolSelectionMode,
     toolsData,
+    selectedIdentity,
   ]);
 
   const handleConnectionSelect = useCallback(
     (id: string) => {
       setLocalConnectionId(id);
+      setCreatedIdentity(undefined);
       dispatch(setMcpWizardConnection(id));
       // Reset tool selection when connection changes
       setLocalAllowedTools([]);

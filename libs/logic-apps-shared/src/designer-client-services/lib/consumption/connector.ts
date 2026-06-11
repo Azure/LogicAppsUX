@@ -98,14 +98,16 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       const isRealConnectionId = connectionId && !connectionId.includes('__MOCK');
 
       let content: any;
-      const parameterValues = connection?.properties?.parameterValues;
-      if (parameterValues?.mcpServerUrl) {
-        // Built-in MCP connection — has mcpServerUrl in parameterValues
+      const flatParams = this._flattenConnectionParameters(connection);
+      const nestedAuth = flatParams['authentication'];
+      const nestedIdentity = nestedAuth?.type === 'ManagedServiceIdentity' ? nestedAuth.identity : undefined;
+      const effectiveIdentity = identity ?? flatParams['identity'] ?? nestedIdentity;
+      if (flatParams['mcpServerUrl']) {
         const connectionData: any = {
-          mcpServerUrl: parameterValues.mcpServerUrl,
+          mcpServerUrl: flatParams['mcpServerUrl'],
           displayName: connection.properties.displayName,
         };
-        const authentication = this._buildMcpAuthentication(parameterValues);
+        const authentication = this._buildMcpAuthentication(flatParams, effectiveIdentity);
         if (authentication) {
           connectionData.authentication = authentication;
         }
@@ -118,7 +120,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         const connectionProperties = {
           authentication: {
             type: 'ManagedServiceIdentity',
-            ...optional('identity', identity),
+            ...optional('identity', effectiveIdentity),
           },
         };
         content = {
@@ -255,7 +257,29 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     return undefined;
   }
 
-  private _buildMcpAuthentication(connectionProperties: Record<string, any>): Record<string, any> | undefined {
+  private _flattenConnectionParameters(connection: any): Record<string, any> {
+    const flat: Record<string, any> = {};
+    const valueSetValues = connection?.properties?.parameterValueSet?.values;
+    if (valueSetValues) {
+      for (const key of Object.keys(valueSetValues)) {
+        const entry = valueSetValues[key];
+        if (entry?.value != null) {
+          flat[key] = entry.value;
+        }
+      }
+    }
+    const parameterValues = connection?.properties?.parameterValues;
+    if (parameterValues) {
+      for (const key of Object.keys(parameterValues)) {
+        if (flat[key] == null) {
+          flat[key] = parameterValues[key];
+        }
+      }
+    }
+    return flat;
+  }
+
+  private _buildMcpAuthentication(connectionProperties: Record<string, any>, identityOverride?: string): Record<string, any> | undefined {
     const authType = connectionProperties['authenticationType'];
     if (!authType || authType === 'None') {
       return undefined;
@@ -285,9 +309,8 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       authentication['value'] = connectionProperties['value'];
     } else if (mappedAuthType === 'ManagedServiceIdentity') {
       authentication['audience'] = connectionProperties['audience'];
-      // Identity may be stored in parameterValues (round-tripped from workflow definition)
-      // or must be derived from the workflow's managed identity configuration.
-      const storedIdentity = connectionProperties['identity'];
+      // Prefer the explicit override so a UAMI isn't dropped on hybrid 'SystemAssigned, UserAssigned' apps.
+      const storedIdentity = identityOverride ?? connectionProperties['identity'];
       if (storedIdentity) {
         authentication['identity'] = storedIdentity;
       } else {
