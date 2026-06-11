@@ -295,12 +295,12 @@ describe('RunHistoryPanel', () => {
 
     it('should hide filter container when toggle is clicked again', () => {
       renderPanel();
-      const toggleButton = screen.getByRole('button', { name: 'Toggle filters' });
 
-      fireEvent.click(toggleButton);
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle filters' }));
       expect(screen.getByText('Status')).toBeInTheDocument();
 
-      fireEvent.click(toggleButton);
+      // Re-query the button after re-render (FilterButton is an inline component that remounts)
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle filters' }));
       expect(screen.queryByText('Status')).not.toBeInTheDocument();
     });
   });
