@@ -118,6 +118,7 @@ const DesignerEditor = () => {
     showPerformanceDebug,
     suppressDefaultNodeSelect,
     areCustomEditorsEnabled,
+    isFirstDesignerV2Load,
   } = useSelector((state: RootState) => state.workflowLoader);
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -658,6 +659,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showPerformanceDebug,
+          isFirstDesignerV2Load,
         }}
       >
         {workflow?.definition ? (
