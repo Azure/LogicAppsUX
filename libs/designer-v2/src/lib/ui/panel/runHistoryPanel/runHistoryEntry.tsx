@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Divider,
   Menu,
   MenuDivider,
@@ -47,8 +48,22 @@ const RunHistoryEntry = (props: {
   addFilterCallback: (filter: any) => void;
   showTeachingBubble?: boolean;
   size?: 'small' | 'medium';
+  multiSelectEnabled?: boolean;
+  isMultiSelected?: boolean;
+  onMultiSelectToggle?: (runId: string) => void;
 }) => {
-  const { runId, isSelected, onRunSelected, onRunOpened, addFilterCallback, showTeachingBubble, size = 'medium' } = props;
+  const {
+    runId,
+    isSelected,
+    onRunSelected,
+    onRunOpened,
+    addFilterCallback,
+    showTeachingBubble,
+    size = 'medium',
+    multiSelectEnabled,
+    isMultiSelected,
+    onMultiSelectToggle,
+  } = props;
 
   const { data: run } = useRun(runId);
 
@@ -201,6 +216,17 @@ const RunHistoryEntry = (props: {
               onClick={() => onRunSelected(run?.name ?? '')}
             >
               {isSelected && <div className={styles.runEntrySelectedIndicator} style={{ backgroundColor: indicatorColor }} />}
+              {multiSelectEnabled && (
+                <Checkbox
+                  checked={isMultiSelected}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onMultiSelectToggle?.(run.id);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{ minWidth: 'auto', flexShrink: 0 }}
+                />
+              )}
               <RunHistoryEntryInfo run={run} size="small" />
               <Tooltip content={openRunAria} relationship="label">
                 <Button

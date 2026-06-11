@@ -1,6 +1,7 @@
 import type { SelectTabEvent, SelectTabData, TagDismissData } from '@fluentui/react-components';
 import {
   Button,
+  Caption1,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -22,7 +23,15 @@ import {
   TagGroup,
   Tooltip,
 } from '@fluentui/react-components';
-import { equals, HostService, parseErrorMessage, type RunFilterOptions } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  HostService,
+  LogEntryLevel,
+  LoggerService,
+  parseErrorMessage,
+  RunService,
+  type RunFilterOptions,
+} from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -45,6 +54,18 @@ import {
   ArrowLeftRegular,
   FilterFilled,
   FilterRegular,
+  CheckboxCheckedFilled,
+  CheckboxCheckedRegular,
+  SelectAllOnFilled,
+  SelectAllOnRegular,
+  SelectAllOffFilled,
+  SelectAllOffRegular,
+  ArrowRedoFilled,
+  ArrowRedoRegular,
+  DismissCircleFilled,
+  DismissCircleRegular,
+  CopyFilled,
+  CopyRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
 import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
@@ -61,6 +82,12 @@ const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const CollapseIcon = bundleIcon(ChevronDoubleLeftFilled, ChevronDoubleLeftRegular);
 const ReturnIcon = bundleIcon(ArrowLeftFilled, ArrowLeftRegular);
 const FilterIcon = bundleIcon(FilterFilled, FilterRegular);
+const MultiSelectIcon = bundleIcon(CheckboxCheckedFilled, CheckboxCheckedRegular);
+const SelectAllIcon = bundleIcon(SelectAllOnFilled, SelectAllOnRegular);
+const DeselectAllIcon = bundleIcon(SelectAllOffFilled, SelectAllOffRegular);
+const ResubmitIcon = bundleIcon(ArrowRedoFilled, ArrowRedoRegular);
+const CancelIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
+const CopyIcon = bundleIcon(CopyFilled, CopyRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
 
@@ -172,8 +199,11 @@ export const RunHistoryPanel = () => {
     return (
       runs?.filter((run) => {
         // Client-side filters for properties not supported by the API
-        if (filters?.['runId'] && run.name !== filters['runId']) {
-          return false;
+        if (filters?.['runId']) {
+          const runIds = filters['runId'].split(',').map((id) => id.trim());
+          if (!runIds.includes(run.name)) {
+            return false;
+          }
         }
         if (filters?.['workflowVersion'] && (run.properties.workflow as any)?.name !== filters['workflowVersion']) {
           return false;
@@ -349,6 +379,42 @@ export const RunHistoryPanel = () => {
     id: 'YV6qd0',
   });
 
+  const toggleMultiSelectAria = intl.formatMessage({
+    defaultMessage: 'Toggle multi-select',
+    description: 'Aria label for the multi-select toggle button',
+    id: 'CS/1SY',
+  });
+
+  const selectAllAria = intl.formatMessage({
+    defaultMessage: 'Select all',
+    description: 'Aria label for select all button',
+    id: '/ZyaN4',
+  });
+
+  const deselectAllAria = intl.formatMessage({
+    defaultMessage: 'Deselect all',
+    description: 'Aria label for deselect all button',
+    id: '1webqh',
+  });
+
+  const retrySelectedText = intl.formatMessage({
+    defaultMessage: 'Retry',
+    description: 'Retry selected runs button text',
+    id: 'oKxHWW',
+  });
+
+  const cancelSelectedText = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Cancel selected runs button text',
+    id: 't8HhGz',
+  });
+
+  const copySelectedText = intl.formatMessage({
+    defaultMessage: 'Copy run IDs',
+    description: 'Copy selected run IDs button text',
+    id: '5qdGCJ',
+  });
+
   const [searchError, setSearchError] = useState<string | null>(null);
 
   // MARK: Drawer resize
@@ -393,6 +459,139 @@ export const RunHistoryPanel = () => {
   const isRunHistoryCollapsed = useIsRunHistoryCollapsed();
   const [inRunList, setInRunList] = useState(true);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
+
+  // MARK: Multi-select
+  const [multiSelectEnabled, setMultiSelectEnabled] = useState(false);
+  const [multiSelectedIds, setMultiSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkActionInProgress, setIsBulkActionInProgress] = useState(false);
+
+  const toggleMultiSelect = useCallback(() => {
+    setMultiSelectEnabled((prev) => {
+      if (prev) {
+        setMultiSelectedIds(new Set());
+      }
+      return !prev;
+    });
+  }, []);
+
+  const toggleRunMultiSelect = useCallback((runId: string) => {
+    setMultiSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(runId)) {
+        next.delete(runId);
+      } else {
+        next.add(runId);
+      }
+      return next;
+    });
+  }, []);
+
+  const selectAllRuns = useCallback(() => {
+    setMultiSelectedIds(new Set(filteredRuns.map((r) => r.id)));
+  }, [filteredRuns]);
+
+  const deselectAllRuns = useCallback(() => {
+    setMultiSelectedIds(new Set());
+  }, []);
+
+  const selectedCountText = intl.formatMessage(
+    {
+      defaultMessage: '{count} selected',
+      description: 'Number of selected runs',
+      id: 'nUCvFK',
+    },
+    { count: multiSelectedIds.size }
+  );
+
+  const selectedRunDetails = useMemo(() => {
+    const selected = filteredRuns.filter((r) => multiSelectedIds.has(r.id));
+    const resubmittable = selected.filter((r) => !equals((r.properties?.workflow as any)?.mode, 'Draft'));
+    const cancellable = selected.filter((r) => r.properties.status === 'Running');
+    return {
+      total: selected.length,
+      resubmittableCount: resubmittable.length,
+      cancellableCount: cancellable.length,
+    };
+  }, [filteredRuns, multiSelectedIds]);
+
+  const retryPartialWarning = intl.formatMessage(
+    {
+      defaultMessage: 'Retry ({count} of {total} eligible)',
+      description: 'Tooltip when only some selected runs can be retried',
+      id: 'OtYFr2',
+    },
+    { count: selectedRunDetails.resubmittableCount, total: selectedRunDetails.total }
+  );
+
+  const cancelPartialWarning = intl.formatMessage(
+    {
+      defaultMessage: 'Cancel ({count} of {total} eligible)',
+      description: 'Tooltip when only some selected runs can be cancelled',
+      id: 'Fpkufw',
+    },
+    { count: selectedRunDetails.cancellableCount, total: selectedRunDetails.total }
+  );
+
+  const retryTooltip =
+    selectedRunDetails.resubmittableCount > 0 && selectedRunDetails.resubmittableCount < selectedRunDetails.total
+      ? retryPartialWarning
+      : retrySelectedText;
+
+  const cancelTooltip =
+    selectedRunDetails.cancellableCount > 0 && selectedRunDetails.cancellableCount < selectedRunDetails.total
+      ? cancelPartialWarning
+      : cancelSelectedText;
+
+  const onBulkCopyIds = useCallback(() => {
+    const ids = [...multiSelectedIds].map((id) => id.split('/').at(-1) ?? '');
+    navigator.clipboard.writeText(ids.join(', '));
+    LoggerService().log({
+      area: 'RunHistoryPanel:bulkCopyIds',
+      level: LogEntryLevel.Verbose,
+      message: `Copied ${ids.length} run IDs.`,
+    });
+  }, [multiSelectedIds]);
+
+  const onBulkRetry = useCallback(async () => {
+    setIsBulkActionInProgress(true);
+    const selectedRuns = filteredRuns.filter((r) => multiSelectedIds.has(r.id) && !equals((r.properties?.workflow as any)?.mode, 'Draft'));
+    for (const run of selectedRuns) {
+      const triggerName = (run.properties.trigger as any)?.name;
+      if (triggerName) {
+        try {
+          await RunService().resubmitRun?.(run.name, triggerName);
+        } catch {
+          // continue with remaining runs
+        }
+      }
+    }
+    setIsBulkActionInProgress(false);
+    runsQuery.refetch();
+    LoggerService().log({
+      area: 'RunHistoryPanel:bulkRetry',
+      level: LogEntryLevel.Verbose,
+      message: `Retried ${selectedRuns.length} runs.`,
+    });
+  }, [filteredRuns, multiSelectedIds, runsQuery]);
+
+  const onBulkCancel = useCallback(async () => {
+    setIsBulkActionInProgress(true);
+    const selectedRuns = filteredRuns.filter((r) => multiSelectedIds.has(r.id) && r.properties.status === 'Running');
+    for (const run of selectedRuns) {
+      try {
+        await RunService().cancelRun(run.id);
+      } catch {
+        // continue with remaining runs
+      }
+    }
+    setIsBulkActionInProgress(false);
+    runsQuery.refetch();
+    LoggerService().log({
+      area: 'RunHistoryPanel:bulkCancel',
+      level: LogEntryLevel.Verbose,
+      message: `Cancelled ${selectedRuns.length} runs.`,
+    });
+  }, [filteredRuns, multiSelectedIds, runsQuery]);
 
   const statusTags = useMemo(
     () => [
@@ -505,8 +704,9 @@ export const RunHistoryPanel = () => {
     }
   }, [isMonitoringView]);
 
-  // If a runId filter is set, prefetch that run's data
-  const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
+  // If a single runId filter is set, prefetch that run's data
+  const singleRunIdFilter = filters?.['runId'] && !filters['runId'].includes(',') ? filters['runId'] : undefined;
+  const { isFetching: isFetchingFilteredRun } = useRun(singleRunIdFilter, runIdRegex.test(singleRunIdFilter ?? ''));
 
   const [compatMountNode, setCompatMountNode] = useState<HTMLElement | undefined>(undefined);
   useEffect(() => {
@@ -530,7 +730,30 @@ export const RunHistoryPanel = () => {
         }}
         icon={(runsQuery.isRefetching && !runsQuery.isLoading) || isFetchingFilteredRun ? <Spinner size={'tiny'} /> : <RefreshIcon />}
         aria-label={refreshAria}
-        style={{ marginRight: '-8px' }}
+      />
+    </Tooltip>
+  );
+
+  const FilterButton = () => (
+    <Tooltip content={toggleFiltersAria} relationship="label">
+      <Button
+        appearance={filtersExpanded ? 'primary' : 'subtle'}
+        icon={<FilterIcon />}
+        onClick={() => setFiltersExpanded((prev) => !prev)}
+        aria-label={toggleFiltersAria}
+        aria-pressed={filtersExpanded}
+      />
+    </Tooltip>
+  );
+
+  const MultiSelectButton = () => (
+    <Tooltip content={toggleMultiSelectAria} relationship="label">
+      <Button
+        appearance={multiSelectEnabled ? 'primary' : 'subtle'}
+        icon={<MultiSelectIcon />}
+        onClick={toggleMultiSelect}
+        aria-label={toggleMultiSelectAria}
+        aria-pressed={multiSelectEnabled}
       />
     </Tooltip>
   );
@@ -576,8 +799,12 @@ export const RunHistoryPanel = () => {
         ) : null}
         {inRunList ? (
           <>
-            <div className={styles.flexbox}>
-              <Field validationState={searchError ? 'error' : 'none'} validationMessage={searchError} style={{ flex: 1 }}>
+            <div className={styles.flexbox} style={{ gap: '2px', marginRight: '-8px' }}>
+              <Field
+                validationState={searchError ? 'error' : 'none'}
+                validationMessage={searchError}
+                style={{ flex: 1, marginRight: '6px' }}
+              >
                 <SearchBox
                   placeholder={searchPlaceholder}
                   defaultValue={filters['runId'] ?? undefined}
@@ -585,11 +812,17 @@ export const RunHistoryPanel = () => {
                     addFilterCallback({ key: 'runId', value: undefined });
                     if (data.value === '') {
                       setSearchError(null);
-                    } else if (runIdRegex.test(data.value)) {
-                      addFilterCallback({ key: 'runId', value: data.value });
-                      setSearchError(null);
                     } else {
-                      setSearchError(invalidRunId);
+                      const ids = data.value
+                        .split(',')
+                        .map((id) => id.trim())
+                        .filter(Boolean);
+                      if (ids.length > 0 && ids.every((id) => runIdRegex.test(id))) {
+                        addFilterCallback({ key: 'runId', value: data.value });
+                        setSearchError(null);
+                      } else {
+                        setSearchError(invalidRunId);
+                      }
                     }
                   }}
                   // When the user presses enter, try to open the run if the runId is valid
@@ -598,23 +831,22 @@ export const RunHistoryPanel = () => {
                       return;
                     }
                     const value = filters?.['runId'];
-                    if (value && runIdRegex.test(value)) {
-                      HostService().openRun?.(value);
+                    if (value) {
+                      const ids = value
+                        .split(',')
+                        .map((id: string) => id.trim())
+                        .filter(Boolean);
+                      const firstValid = ids.find((id: string) => runIdRegex.test(id));
+                      if (firstValid) {
+                        HostService().openRun?.(firstValid);
+                      }
                     }
                   }}
                 />
               </Field>
               <RefreshButton />
-              <Tooltip content={toggleFiltersAria} relationship="label">
-                <Button
-                  appearance="subtle"
-                  icon={<FilterIcon />}
-                  onClick={() => setFiltersExpanded((prev) => !prev)}
-                  aria-label={toggleFiltersAria}
-                  aria-expanded={filtersExpanded}
-                  style={{ marginRight: '-8px' }}
-                />
-              </Tooltip>
+              <FilterButton />
+              <MultiSelectButton />
             </div>
             {filtersExpanded && (
               <div className={styles.filterContainer}>
@@ -754,6 +986,55 @@ export const RunHistoryPanel = () => {
                 ))}
               </TagGroup>
             )}
+            {multiSelectEnabled && (
+              <div className={styles.multiSelectBar}>
+                <Caption1>{selectedCountText}</Caption1>
+                <div className={styles.multiSelectActions}>
+                  <Tooltip content={selectAllAria} relationship="label">
+                    <Button appearance="subtle" icon={<SelectAllIcon />} size="small" onClick={selectAllRuns} aria-label={selectAllAria} />
+                  </Tooltip>
+                  <Tooltip content={deselectAllAria} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<DeselectAllIcon />}
+                      size="small"
+                      onClick={deselectAllRuns}
+                      aria-label={deselectAllAria}
+                    />
+                  </Tooltip>
+                  <Tooltip content={retryTooltip} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<ResubmitIcon />}
+                      size="small"
+                      onClick={onBulkRetry}
+                      disabled={selectedRunDetails.resubmittableCount === 0 || isBulkActionInProgress}
+                      aria-label={retryTooltip}
+                    />
+                  </Tooltip>
+                  <Tooltip content={cancelTooltip} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<CancelIcon />}
+                      size="small"
+                      onClick={onBulkCancel}
+                      disabled={selectedRunDetails.cancellableCount === 0 || isBulkActionInProgress}
+                      aria-label={cancelTooltip}
+                    />
+                  </Tooltip>
+                  <Tooltip content={copySelectedText} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<CopyIcon />}
+                      size="small"
+                      onClick={onBulkCopyIds}
+                      disabled={multiSelectedIds.size === 0}
+                      aria-label={copySelectedText}
+                    />
+                  </Tooltip>
+                </div>
+              </div>
+            )}
             {runsQuery.error ? (
               <MessageBar intent={'error'} layout={'multiline'}>
                 <MessageBarBody>
@@ -802,6 +1083,9 @@ export const RunHistoryPanel = () => {
                     addFilterCallback={addFilterCallback}
                     showTeachingBubble={index === 0}
                     size="small"
+                    multiSelectEnabled={multiSelectEnabled}
+                    isMultiSelected={multiSelectedIds.has(run.id)}
+                    onMultiSelectToggle={toggleRunMultiSelect}
                   />
                 ))}
                 {runsQuery.hasNextPage && (
