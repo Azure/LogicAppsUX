@@ -47,6 +47,7 @@ export const SelectConnectionWrapper = () => {
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = usePreviousPanelMode();
   const [isInlineCreatingConnection, setIsInlineCreatingConnection] = useState(false);
+  const references = useConnectionRefs();
 
   const closeConnectionsFlow = useCallback(() => {
     const panelMode = referencePanelMode ?? 'Operation';
@@ -106,7 +107,6 @@ export const SelectConnectionWrapper = () => {
 
     return connectionData;
   }, [connectionQuery?.data, connector?.id, isA2A, connectionReferencesForConnector, isAgentSubgraph]);
-  const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
@@ -191,6 +191,7 @@ export const SelectConnectionWrapper = () => {
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={closeConnectionsFlow}
       isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+      connectionReferences={references}
       addButton={{
         text: isInlineCreatingConnection ? buttonAddingText : buttonAddText,
         disabled: isInlineCreatingConnection,
@@ -213,6 +214,7 @@ export const SelectConnection = ({
   saveSelectionCallback,
   cancelSelectionCallback,
   isXrmConnectionReferenceMode,
+  connectionReferences,
 }: ConnectionTableProps & {
   addButton: {
     text: string;
@@ -277,6 +279,7 @@ export const SelectConnection = ({
             saveSelectionCallback={saveSelectionCallback}
             cancelSelectionCallback={cancelSelectionCallback}
             isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+            connectionReferences={connectionReferences}
           />
         </>
       )}
