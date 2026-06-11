@@ -182,7 +182,7 @@ describe('ConnectionTable', () => {
   });
 
   describe('connection selection behavior', () => {
-    it('should call saveSelectionCallback when selecting unconfigured connection', async () => {
+    it('should render without accessing the store when connectionReferences is empty', async () => {
       const saveCallback = vi.fn();
       const mockConnections = [createMockConnection('conn1', 'Connection 1')];
 
@@ -197,7 +197,6 @@ describe('ConnectionTable', () => {
         />
       );
 
-      // Component should render without accessing store
       expect(useConnectionRefsSpy).not.toHaveBeenCalled();
     });
   });

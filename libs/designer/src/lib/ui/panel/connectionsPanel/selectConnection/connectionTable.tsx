@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { cleanResourceId, getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { cleanResourceId, equals, getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
@@ -67,7 +67,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     }
     return Object.values(connectionReferences).some((ref: any) => {
       const refConnectionId = ref?.connection?.id;
-      return refConnectionId && getIdLeaf(refConnectionId) === currentConnectionId;
+      return refConnectionId && equals(refConnectionId, currentConnectionId);
     });
   }, [currentConnectionId, connectionReferences]);
 
@@ -93,7 +93,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     [connections, isSelectedConnection]
   );
 
-  const areIdLeavesEqual = (id1?: string, id2?: string): boolean => getIdLeaf(id1) === getIdLeaf(id2);
+  const areIdLeavesEqual = (id1?: string, id2?: string): boolean => equals(getIdLeaf(id1), getIdLeaf(id2));
 
   const onConnectionSelect = useCallback(
     (connection: Connection) => {
