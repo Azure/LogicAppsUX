@@ -473,27 +473,48 @@ export const RunHistoryPanel = () => {
   const [multiSelectEnabled, setMultiSelectEnabled] = useState(false);
   const [multiSelectedIds, setMultiSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkActionInProgress, setIsBulkActionInProgress] = useState(false);
+  const lastMultiSelectIndex = useRef<number | null>(null);
 
   const toggleMultiSelect = useCallback(() => {
     setMultiSelectEnabled((prev) => {
       if (prev) {
         setMultiSelectedIds(new Set());
+        lastMultiSelectIndex.current = null;
       }
       return !prev;
     });
   }, []);
 
-  const toggleRunMultiSelect = useCallback((runId: string) => {
-    setMultiSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(runId)) {
-        next.delete(runId);
+  const toggleRunMultiSelect = useCallback(
+    (runId: string, shiftKey?: boolean) => {
+      const currentIndex = filteredRuns.findIndex((r) => r.id === runId);
+
+      if (shiftKey && lastMultiSelectIndex.current !== null && currentIndex !== -1) {
+        const start = Math.min(lastMultiSelectIndex.current, currentIndex);
+        const end = Math.max(lastMultiSelectIndex.current, currentIndex);
+        setMultiSelectedIds((prev) => {
+          const next = new Set(prev);
+          for (let i = start; i <= end; i++) {
+            next.add(filteredRuns[i].id);
+          }
+          return next;
+        });
       } else {
-        next.add(runId);
+        setMultiSelectedIds((prev) => {
+          const next = new Set(prev);
+          if (next.has(runId)) {
+            next.delete(runId);
+          } else {
+            next.add(runId);
+          }
+          return next;
+        });
       }
-      return next;
-    });
-  }, []);
+
+      lastMultiSelectIndex.current = currentIndex;
+    },
+    [filteredRuns]
+  );
 
   const selectAllRuns = useCallback(() => {
     setMultiSelectedIds(new Set(filteredRuns.map((r) => r.id)));

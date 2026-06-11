@@ -50,7 +50,7 @@ const RunHistoryEntry = (props: {
   size?: 'small' | 'medium';
   multiSelectEnabled?: boolean;
   isMultiSelected?: boolean;
-  onMultiSelectToggle?: (runId: string) => void;
+  onMultiSelectToggle?: (runId: string, shiftKey?: boolean) => void;
 }) => {
   const {
     runId,
@@ -223,7 +223,7 @@ const RunHistoryEntry = (props: {
                   checked={isMultiSelected}
                   onChange={(e) => {
                     e.stopPropagation();
-                    onMultiSelectToggle?.(run.id);
+                    onMultiSelectToggle?.(run.id, (e.nativeEvent as MouseEvent).shiftKey);
                   }}
                   onClick={(e) => e.stopPropagation()}
                   style={{ minWidth: 'auto', flexShrink: 0, marginLeft: '-8px' }}
