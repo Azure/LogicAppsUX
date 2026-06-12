@@ -575,8 +575,37 @@ describe('binaries', () => {
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
     });
 
-    it('should set default paths in devContainer workspace', async () => {
-      (getGlobalSetting as Mock).mockReturnValue(true);
+    it('should not overwrite existing paths in devContainer workspace', async () => {
+      (getGlobalSetting as Mock).mockImplementation((key: string) => {
+        if (key === 'autoRuntimeDependenciesValidationAndInstallation') {
+          return true;
+        }
+        if (key === 'dotnetBinaryPath') {
+          return '/custom/path/dotnet';
+        }
+        if (key === 'nodeJsBinaryPath') {
+          return '/custom/path/node';
+        }
+        if (key === 'funcCoreToolsBinaryPath') {
+          return '/custom/path/func';
+        }
+        return undefined;
+      });
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
+
+      await installBinaries(context);
+
+      expect(updateGlobalSetting).not.toHaveBeenCalled();
+    });
+
+    it('should set default paths in devContainer workspace when paths are not set', async () => {
+      (getGlobalSetting as Mock).mockImplementation((key: string) => {
+        if (key === 'autoRuntimeDependenciesValidationAndInstallation') {
+          return true;
+        }
+        return undefined;
+      });
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
 

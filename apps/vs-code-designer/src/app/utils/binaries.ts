@@ -476,9 +476,15 @@ export async function installBinaries(context: IActionContext) {
     await onboardBinaries(context);
     context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
   } else {
-    await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-    await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-    await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+    if (!getGlobalSetting<string>(dotNetBinaryPathSettingKey)) {
+      await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+    }
+    if (!getGlobalSetting<string>(nodeJsBinaryPathSettingKey)) {
+      await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+    }
+    if (!getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey)) {
+      await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+    }
     context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
   }
 }

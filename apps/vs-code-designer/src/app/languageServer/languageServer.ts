@@ -2,7 +2,10 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import {
   autoRuntimeDependenciesPathSettingKey,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   connectionsFileName,
+  languageServerDLLPathSettingKey,
+  languageServerNupkgPathSettingKey,
   lspDirectory,
   onStartLanguageServerProtocol,
   workflowAppApiVersion,
@@ -20,7 +23,6 @@ import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-ap
 import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/common';
 import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
-import { tryGetLogicAppCustomCodeFunctionsProjects } from '../utils/customCodeUtils';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 
 export default class LogicAppsLanguageServer {
@@ -43,11 +45,6 @@ export default class LogicAppsLanguageServer {
     this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
 
     if (!this.projectPath) {
-      return;
-    }
-
-    const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(this.projectPath);
-    if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
       return;
     }
 
@@ -178,6 +175,25 @@ export default class LogicAppsLanguageServer {
   }
 
   private async getSDKPaths() {
+    const autoValidate = getGlobalSetting<boolean>(autoRuntimeDependenciesValidationAndInstallationSetting);
+
+    if (!autoValidate) {
+      // Manual mode: read explicit path settings
+      const lspServerPath = getGlobalSetting<string>(languageServerDLLPathSettingKey) || undefined;
+      const sdkNupkgPath = getGlobalSetting<string>(languageServerNupkgPathSettingKey) || undefined;
+
+      if (lspServerPath && !(await fse.pathExists(lspServerPath))) {
+        return { lspServerPath: undefined, sdkNupkgPath };
+      }
+
+      if (sdkNupkgPath && !(await fse.pathExists(sdkNupkgPath))) {
+        return { lspServerPath, sdkNupkgPath: undefined };
+      }
+
+      return { lspServerPath, sdkNupkgPath };
+    }
+
+    // Auto mode: construct paths from dependenciesPath
     const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
     if (!dependenciesPath) {
       return { lspServerPath: undefined, sdkNupkgPath: undefined };
