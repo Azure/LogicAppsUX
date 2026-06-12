@@ -267,6 +267,17 @@ describe('codefulProjectsExist', () => {
     expect(result).toBe(false);
   });
 
+  it('returns false when WORKFLOW_CODEFUL_ENABLED is set to "false"', async () => {
+    const folderPath = 'D:\\workspace\\disabled-codeful-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue(JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'false' } }));
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
   it('returns true when at least one of multiple folders is codeful', async () => {
     const standardPath = 'D:\\workspace\\standard-project';
     const codefulPath = 'D:\\workspace\\codeful-project';
