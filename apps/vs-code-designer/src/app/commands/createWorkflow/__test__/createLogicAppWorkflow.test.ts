@@ -58,7 +58,7 @@ describe('createLogicAppWorkflow', () => {
       functionFolderName: 'Functions',
       targetFramework: 'net8.0',
     });
-    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(options, logicAppFolderPath);
+    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(options, logicAppFolderPath, context);
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Finished creating workflow.');
   });
 
