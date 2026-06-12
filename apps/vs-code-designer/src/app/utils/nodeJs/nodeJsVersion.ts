@@ -72,7 +72,7 @@ export async function setNodeJsCommand(): Promise<void> {
     if (binariesExist) {
       // windows the executable is at root folder, linux & macos its in <node-v*>/bin
       if (process.platform === Platform.windows) {
-        command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
+        command = resolveNodeJsCommand(nodeJsBinariesPath);
       } else {
         const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
         if (nodeSubFolder) {
@@ -83,6 +83,19 @@ export async function setNodeJsCommand(): Promise<void> {
     }
   }
   await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
+}
+
+/**
+ * Resolves the Node.js command on Windows by trying .exe candidates.
+ * Mirrors the pattern used by resolveFuncCoreToolsCommand() in funcVersion.ts.
+ */
+function resolveNodeJsCommand(nodeJsBinariesPath: string): string {
+  const candidates = ext.nodeJsCliPath.toLowerCase().endsWith('.exe')
+    ? [ext.nodeJsCliPath, `${ext.nodeJsCliPath}.exe`]
+    : [`${ext.nodeJsCliPath}.exe`, ext.nodeJsCliPath];
+  const uniqueCandidates = [...new Set(candidates)];
+  const fullPaths = uniqueCandidates.map((name) => path.join(nodeJsBinariesPath, name));
+  return fullPaths.find((candidate) => fs.existsSync(candidate)) ?? fullPaths[0];
 }
 
 function getNodeSubFolder(directoryPath: string): string | undefined {

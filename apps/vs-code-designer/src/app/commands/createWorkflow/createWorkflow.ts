@@ -7,6 +7,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 import { localize } from '../../../localize';
+import * as vscode from 'vscode';
 import { createLogicAppWorkflow } from './createLogicAppWorkflow';
 import { getWorkspaceRoot } from '../../utils/workspace';
 import { isCodefulProject } from '../../utils/codeful';
@@ -15,7 +16,21 @@ import * as path from 'path';
 
 export const createWorkflow = async (context: IActionContext) => {
   const workspaceFolderPath = await getWorkspaceRoot(context);
-  const projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true);
+  let projectRoot = workspaceFolderPath ? await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true) : undefined;
+
+  if (!projectRoot && vscode.workspace.workspaceFolders) {
+    for (const folder of vscode.workspace.workspaceFolders) {
+      projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
+      if (projectRoot) {
+        break;
+      }
+    }
+  }
+
+  if (!projectRoot) {
+    throw new Error(localize('noLogicAppProject', 'No Logic App project found in the current workspace.'));
+  }
+
   const isCodeful = await isCodefulProject(projectRoot);
   const logicAppName = path.basename(projectRoot);
 

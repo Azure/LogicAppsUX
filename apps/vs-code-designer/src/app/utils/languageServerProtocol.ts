@@ -10,6 +10,9 @@ import { createHash } from 'crypto';
 const lspServerDirectoryName = 'LSPServer';
 const lspServerHashMarkerName = '.lspserver-hash';
 const lspSdkHashMarkerName = '.lspsdk-hash';
+const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
+const lockedFileRetryDelayMs = 2000;
+const lockedFileRetryAttempts = 3;
 
 export async function installLSPSDK(): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
@@ -39,7 +42,7 @@ export async function installLSPSDK(): Promise<void> {
     if (shouldExtract) {
       try {
         if (await fse.pathExists(lspServerPath)) {
-          await fse.remove(lspServerPath);
+          await removeWithRetry(lspServerPath);
         }
 
         const zip = new AdmZip(serverZipFile);
@@ -147,13 +150,42 @@ async function stopLanguageClientForUpdate(): Promise<void> {
   }
 }
 
-function formatLockedFileError(error: unknown): string {
+async function removeWithRetry(targetPath: string): Promise<void> {
+  for (let attempt = 1; attempt <= lockedFileRetryAttempts; attempt++) {
+    try {
+      await fse.remove(targetPath);
+      return;
+    } catch (error) {
+      if (!isLockedFileError(error) || attempt === lockedFileRetryAttempts) {
+        throw error;
+      }
+
+      await sleep(lockedFileRetryDelayMs);
+    }
+  }
+}
+
+function sleep(delayMs: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, delayMs));
+}
+
+function isLockedFileError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   const code = error instanceof Error && 'code' in error ? String(error.code) : '';
-  const isLockedFileError =
-    code === 'EBUSY' || message.includes('EBUSY') || message.includes('resource busy') || message.includes('locked');
 
-  if (!isLockedFileError) {
+  return (
+    lockedFileErrorCodes.has(code) ||
+    message.includes('EBUSY') ||
+    message.includes('EPERM') ||
+    message.includes('resource busy') ||
+    message.includes('locked')
+  );
+}
+
+export function formatLockedFileError(error: unknown): string {
+  const lockedFileError = isLockedFileError(error);
+
+  if (!lockedFileError) {
     return String(error);
   }
 

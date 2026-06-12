@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dotnetDependencyName,
@@ -24,6 +25,7 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies';
+import { isDevContainerWorkspaceSync } from './devContainerUtils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -128,7 +130,7 @@ export async function downloadAndExtractDependency(
           }
         } else {
           if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
-            stopAllDesignTimeApis();
+            await stopAllDesignTimeApis();
           }
           await extractDependency(dependencyFilePath, targetFolder, dependencyName);
           ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
@@ -319,25 +321,62 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
     return false;
   }
 
+  return await binariesExistFromSettings(dependencyName, true);
+}
+
+export function binariesExistSync(dependencyName: string): boolean {
+  if (!useBinariesDependenciesFromSettings()) {
+    return false;
+  }
+
+  return binariesExistFromSettings(dependencyName, false);
+}
+
+function useBinariesDependenciesFromSettings(): boolean {
+  if (isDevContainerWorkspaceSync()) {
+    return false;
+  }
+
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
+  return !!binariesInstallation;
+}
+
+function getExpectedBinaryPath(dependencyName: string): string | undefined {
+  if (dependencyName === funcDependencyName) {
+    return getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  }
+  if (dependencyName === dotnetDependencyName) {
+    return getGlobalSetting<string>(dotNetBinaryPathSettingKey);
+  }
+  if (dependencyName === nodeJsDependencyName) {
+    return getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
+  }
+  return undefined;
+}
+
+async function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: true): Promise<boolean>;
+function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: false): boolean;
+function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: boolean): boolean | Promise<boolean> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   if (!binariesLocation) {
     return false;
   }
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
-  let expectedBinaryPath: string | undefined;
-  if (binariesExist) {
-    if (dependencyName === funcDependencyName) {
-      expectedBinaryPath = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
-    } else if (dependencyName === dotnetDependencyName) {
-      expectedBinaryPath = getGlobalSetting<string>(dotNetBinaryPathSettingKey);
-    } else if (dependencyName === nodeJsDependencyName) {
-      expectedBinaryPath = getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
-    }
-  }
+  const expectedBinaryPath = binariesExist ? getExpectedBinaryPath(dependencyName) : undefined;
 
   executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} Binaries: ${binariesPath}`);
   if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
+    // On Windows, binaries have .exe extension but the setting may have been stored without it.
+    // Try the .exe variant before declaring the binary missing.
+    const exeVariant = `${expectedBinaryPath}.exe`;
+    if (process.platform === Platform.windows && !expectedBinaryPath.toLowerCase().endsWith('.exe') && fs.existsSync(exeVariant)) {
+      // Update the setting to the correct .exe path so future checks are fast
+      if (updateMissingExeSetting) {
+        return updateBinaryPathSetting(dependencyName, exeVariant).then(() => true);
+      }
+      return true;
+    }
     executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} binary is missing: ${expectedBinaryPath}`);
     return false;
   }
@@ -345,18 +384,22 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
   return binariesExist;
 }
 
-async function readJsonFromUrl(url: string): Promise<any> {
-  try {
-    const response = await axios.get(url);
-    if (response.status === 200) {
-      return response.data;
-    }
-    throw new Error(`Request failed with status: ${response.status}`);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${errorMessage}`);
-    throw error;
+async function updateBinaryPathSetting(dependencyName: string, binaryPath: string): Promise<void> {
+  if (dependencyName === funcDependencyName) {
+    await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, binaryPath);
+  } else if (dependencyName === dotnetDependencyName) {
+    await updateGlobalSetting<string>(dotNetBinaryPathSettingKey, binaryPath);
+  } else if (dependencyName === nodeJsDependencyName) {
+    await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, binaryPath);
   }
+}
+
+async function readJsonFromUrl(url: string): Promise<any> {
+  const response = await axios.get(url);
+  if (response.status === 200) {
+    return response.data;
+  }
+  throw new Error(`Request failed with status: ${response.status}`);
 }
 
 function getCompressionFileExtension(binariesUrl: string): string {

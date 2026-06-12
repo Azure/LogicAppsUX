@@ -161,16 +161,49 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
       expect(fs.chmodSync).not.toHaveBeenCalled();
     });
 
-    it('writes the root-level node path on Windows and does not chmod the binaries directory', async () => {
+    it('writes the root-level node.exe path on Windows when the .exe binary exists', async () => {
       setPlatform(Platform.windows as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockReturnValue(true);
+      vi.mocked(fs.existsSync).mockImplementation((p) => {
+        const s = String(p);
+        // NodeJs directory exists, and node.exe exists
+        return s === NODE_DIR || s === path.join(NODE_DIR, 'node.exe');
+      });
+
+      await setNodeJsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe'));
+      expect(fs.chmodSync).not.toHaveBeenCalled();
+      expect(fs.readdirSync).not.toHaveBeenCalled();
+    });
+
+    it('writes the root-level node path on Windows when only the extensionless binary exists', async () => {
+      setPlatform(Platform.windows as NodeJS.Platform);
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
+      vi.mocked(fs.existsSync).mockImplementation((p) => {
+        const s = String(p);
+        // NodeJs directory exists, node (no .exe) exists, but node.exe does not
+        return s === NODE_DIR || s === path.join(NODE_DIR, 'node');
+      });
 
       await setNodeJsCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node'));
       expect(fs.chmodSync).not.toHaveBeenCalled();
-      expect(fs.readdirSync).not.toHaveBeenCalled();
+    });
+
+    it('writes node.exe as first candidate on Windows when neither variant exists yet', async () => {
+      setPlatform(Platform.windows as NodeJS.Platform);
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
+      vi.mocked(fs.existsSync).mockImplementation((p) => {
+        // Only the NodeJs directory exists, no executables found
+        return String(p) === NODE_DIR;
+      });
+
+      await setNodeJsCommand();
+
+      // Falls back to first candidate (node.exe) when none exist on disk
+      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe'));
     });
 
     it('writes the <node-v*>/bin/node path on Linux, reads the binaries directory, and chmods it', async () => {
