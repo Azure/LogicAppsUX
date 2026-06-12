@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { foundryServiceConnectionRegex, microsoftFoundryModelsRegex } from '@microsoft/logic-apps-shared';
-import { AgentUtils } from '../../../../common/utilities/Utils';
+import { resolveAgentModelType } from '../connections';
 
 /**
  * Regression tests for the agent connection parameter mapping logic
@@ -9,31 +8,6 @@ import { AgentUtils } from '../../../../common/utilities/Utils';
  * These tests validate the mapping/fallback logic without wiring up
  * the full Redux store + dispatch.
  */
-
-/** Mirrors the mapping logic from connections.ts */
-function resolveAgentModelType(rawDisplayName: string, cognitiveServiceId: string, existingValue?: string): string {
-  let agentModelTypeValue = AgentUtils.DisplayNameToManifest[rawDisplayName] ?? '';
-
-  if (!agentModelTypeValue) {
-    if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'FoundryAgentServiceV2';
-    } else if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'MicrosoftFoundry';
-    } else {
-      agentModelTypeValue = 'AzureOpenAI';
-    }
-  }
-
-  // Preserve existing valid non-AzureOpenAI value
-  if (agentModelTypeValue === 'AzureOpenAI') {
-    const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
-    if (existingValue && validManifestValues.includes(existingValue) && existingValue !== 'AzureOpenAI') {
-      agentModelTypeValue = existingValue;
-    }
-  }
-
-  return agentModelTypeValue;
-}
 
 /**
  * Mirrors the clearing logic from connections.ts:
@@ -57,6 +31,15 @@ describe('updateAgentParametersForConnection – model type resolution', () => {
       expect(resolveAgentModelType('Foundry Models', '')).toBe('MicrosoftFoundry');
       expect(resolveAgentModelType('Foundry project', '')).toBe('FoundryAgentServiceV2');
       expect(resolveAgentModelType('APIM Gen AI Gateway', '')).toBe('APIMGenAIGateway');
+    });
+
+    it('accepts manifest values stored directly on the connection (connections.json type)', () => {
+      expect(resolveAgentModelType('APIMGenAIGateway', '')).toBe('APIMGenAIGateway');
+      expect(resolveAgentModelType('MicrosoftFoundry', '')).toBe('MicrosoftFoundry');
+    });
+
+    it("falls through for the generic 'model' type stored on non-APIM agent connections", () => {
+      expect(resolveAgentModelType('model', '')).toBe('AzureOpenAI');
     });
   });
 
@@ -98,18 +81,18 @@ describe('updateAgentParametersForConnection – model type resolution', () => {
     });
   });
 
-  describe('preserving existing valid values', () => {
-    it('preserves existing MicrosoftFoundry when fallback would yield AzureOpenAI', () => {
+  describe('preserving existing valid values (only when the connection has no resource id)', () => {
+    it('preserves existing MicrosoftFoundry when the connection has no resource id', () => {
       const result = resolveAgentModelType('', '', 'MicrosoftFoundry');
       expect(result).toBe('MicrosoftFoundry');
     });
 
-    it('preserves existing APIMGenAIGateway when fallback would yield AzureOpenAI', () => {
+    it('preserves existing APIMGenAIGateway when the connection has no resource id', () => {
       const result = resolveAgentModelType('', '', 'APIMGenAIGateway');
       expect(result).toBe('APIMGenAIGateway');
     });
 
-    it('preserves existing FoundryAgentServiceV2 when fallback would yield AzureOpenAI', () => {
+    it('preserves existing FoundryAgentServiceV2 when the connection has no resource id', () => {
       const result = resolveAgentModelType('', '', 'FoundryAgentServiceV2');
       expect(result).toBe('FoundryAgentServiceV2');
     });
@@ -124,10 +107,39 @@ describe('updateAgentParametersForConnection – model type resolution', () => {
       expect(result).toBe('AzureOpenAI');
     });
 
-    it('does NOT override when display name explicitly maps to AzureOpenAI', () => {
-      // Even with existing MicrosoftFoundry, explicit 'Azure OpenAI' display name wins
-      const result = resolveAgentModelType('Azure OpenAI', '', 'MicrosoftFoundry');
+    it('does NOT preserve existing MicrosoftFoundry when the connection has an account-level resource id', () => {
+      // Regression: switching from a Foundry Models agent to an Azure OpenAI connection (no /models
+      // suffix) must flip the model type, otherwise the serialized workflow pairs an Azure OpenAI MSI
+      // connection with agentModelType 'MicrosoftFoundry' and the runtime rejects it.
+      const result = resolveAgentModelType(
+        'model',
+        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount',
+        'MicrosoftFoundry'
+      );
+      expect(result).toBe('AzureOpenAI');
+    });
+
+    it('does NOT preserve existing FoundryAgentServiceV2 when the connection has an account-level resource id', () => {
+      const result = resolveAgentModelType(
+        '',
+        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount',
+        'FoundryAgentServiceV2'
+      );
+      expect(result).toBe('AzureOpenAI');
+    });
+
+    it('detects MicrosoftFoundry from the resource id even when the existing value is AzureOpenAI', () => {
+      const result = resolveAgentModelType(
+        'model',
+        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/models',
+        'AzureOpenAI'
+      );
       expect(result).toBe('MicrosoftFoundry');
+    });
+
+    it('uses the declared display name over the existing value', () => {
+      const result = resolveAgentModelType('Azure OpenAI', '', 'MicrosoftFoundry');
+      expect(result).toBe('AzureOpenAI');
     });
   });
 });
