@@ -369,10 +369,24 @@ export const initializeOperationDetailsForManifest = async (
 
     const { connectorId, operationId } = nodeOperationInfo;
     const parsedManifest = new ManifestParser(manifest, OperationManifestService().isAliasingSupported(operation.type, operation.kind));
+    console.log('[DEBUG StaticResult] operationdeserializer - fetching schema', {
+      nodeId,
+      connectorId,
+      operationId,
+      manifestOutputs: JSON.stringify(manifest.properties.outputs, null, 2),
+    });
     const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
     schema.then((schema) => {
       if (schema) {
+        console.log('[DEBUG StaticResult] operationdeserializer - dispatching schema to Redux', {
+          schemaId: `${connectorId}-${operationId}`,
+          schemaProperties: schema.properties ? Object.keys(schema.properties) : 'none',
+          outputsProperties: schema.properties?.outputs?.properties ? Object.keys(schema.properties.outputs.properties) : 'none',
+          fullSchema: JSON.stringify(schema, null, 2),
+        });
         dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema }));
+      } else {
+        console.log('[DEBUG StaticResult] operationdeserializer - no schema returned for', { connectorId, operationId });
       }
     });
 
