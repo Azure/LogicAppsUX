@@ -1,23 +1,14 @@
-import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
-import { useOperationInfo, type AppDispatch } from '../../../../core';
+import type { AppDispatch } from '../../../../core';
 import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import {
-  useConnectionRefs,
-  useConnectionRefsByConnectorId,
-  useConnectorByNodeId,
-  useNodeConnectionId,
-} from '../../../../core/state/connection/connectionSelector';
+import { useConnectionRefs, useConnector } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
-import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { ActionList } from '../actionList/actionList';
 import { ConnectionTable, type ConnectionTableProps } from './connectionTable';
 import { Body1Strong, Button, Divider, Spinner, MessageBar, MessageBarTitle, MessageBarBody, Text } from '@fluentui/react-components';
 import {
   ConnectionService,
-  equals,
-  foundryServiceConnectionRegex,
   getIconUriFromConnector,
   parseErrorMessage,
   type Connection,
@@ -26,71 +17,37 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { AgentUtils } from '../../../../common/utilities/Utils';
 
-export const SelectConnectionWrapper = () => {
+export const SelectConnectionWrapper = ({
+  connectorId,
+  connectorName,
+  onConnectionSuccessful,
+  onConnectionClose,
+  currentConnectionId,
+}: {
+  connectorId: string;
+  connectorName: string;
+  currentConnectionId: string;
+  onConnectionSuccessful: (connection: Connection) => void;
+  onConnectionClose: () => void;
+}) => {
   const dispatch = useDispatch<AppDispatch>();
-
   const intl = useIntl();
-  const selectedNodeIds = useConnectionPanelSelectedNodeIds();
-  const isA2A = useIsA2AWorkflow();
-  const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
-  const referencePanelMode = usePreviousPanelMode();
   const [isInlineCreatingConnection, setIsInlineCreatingConnection] = useState(false);
-  const references = useConnectionRefs();
 
-  const closeConnectionsFlow = useCallback(() => {
-    const panelMode = referencePanelMode ?? 'Operation';
-    const nodeId = panelMode === 'Operation' ? selectedNodeIds?.[0] : undefined;
-    dispatch(openPanel({ nodeId, panelMode }));
-  }, [dispatch, referencePanelMode, selectedNodeIds]);
-
-  const operationInfo = useOperationInfo(selectedNodeIds?.[0]);
-  const connector = useConnectorByNodeId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
+  const { data: connector } = useConnector(connectorId);
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
-  const connectionReferencesForConnector = useConnectionRefsByConnectorId(connector?.id ?? '');
-  const connections = useMemo(() => {
-    const connectionData = connectionQuery?.data ?? [];
-
-    if (AgentUtils.isConnector(connector?.id)) {
-      return connectionData.filter((c) => {
-        const connectionReference = connectionReferencesForConnector.find((ref) => equals(ref.connection.id, c?.id, true));
-        let isAzureOpenAI = true;
-        if (connectionReference?.resourceId) {
-          if (foundryServiceConnectionRegex.test(connectionReference.resourceId ?? '')) {
-            isAzureOpenAI = false;
-          }
-        }
-
-        // Add a tag for Foundry Service/OpenAI
-        c.properties.connectionParameters = {
-          ...(c.properties.connectionParameters ?? {}),
-          agentModelType: {
-            type: isAzureOpenAI ? AgentUtils.ModelType.AzureOpenAI : AgentUtils.ModelType.FoundryService,
-          },
-        };
-
-        // For A2A, hide the foundry connection from the list
-        return isA2A ? isAzureOpenAI : true;
-      });
-    }
-
-    if (!isA2A) {
-      // Filter out dynamic connections
-      return connectionData.filter((c) => !equals(c.properties.feature ?? '', 'DynamicUserInvoked', true));
-    }
-
-    return connectionData;
-  }, [connectionQuery?.data, connector?.id, isA2A, connectionReferencesForConnector]);
+  const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
+  const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
       if (!connection) {
         return;
       }
-      for (const nodeId of selectedNodeIds) {
+      for (const nodeId of ['temp-node-id']) {
         dispatch(
           updateNodeConnection({
             nodeId,
@@ -98,28 +55,29 @@ export const SelectConnectionWrapper = () => {
             connector: connector as Connector,
           })
         );
+
         ConnectionService().setupConnectionIfNeeded(connection);
       }
-      closeConnectionsFlow();
+      onConnectionSuccessful(connection);
     },
-    [dispatch, selectedNodeIds, connector, closeConnectionsFlow]
+    [onConnectionSuccessful, dispatch, connector]
   );
 
   const createConnectionCallback = useCallback(() => {
     setIsInlineCreatingConnection(true);
     autoCreateConnectionIfPossible({
       connector: connector as Connector,
-      operationInfo,
+      operationInfo: undefined, // Needs to be updated
       referenceKeys: Object.keys(references),
       skipOAuth: true,
       applyNewConnection: saveSelectionCallback,
-      onSuccess: closeConnectionsFlow,
+      onSuccess: () => {},
       onManualConnectionCreation: () => {
         setIsInlineCreatingConnection(false);
         dispatch(setIsCreatingConnection(true));
       },
     });
-  }, [closeConnectionsFlow, connector, dispatch, operationInfo, references, saveSelectionCallback]);
+  }, [connector, dispatch, references, saveSelectionCallback]);
 
   useEffect(() => {
     if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
@@ -130,11 +88,11 @@ export const SelectConnectionWrapper = () => {
   const actionBar = useMemo(() => {
     return (
       <>
-        <ActionList nodeIds={selectedNodeIds} iconUri={connectorIconUri} />
+        <ActionList nodeIds={[connectorName]} iconUri={connectorIconUri} />
         <Divider />
       </>
     );
-  }, [connectorIconUri, selectedNodeIds]);
+  }, [connectorIconUri, connectorName]);
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
     id: 'faUrud',
@@ -166,7 +124,7 @@ export const SelectConnectionWrapper = () => {
       connections={connections}
       currentConnectionId={currentConnectionId}
       saveSelectionCallback={saveSelectionCallback}
-      cancelSelectionCallback={closeConnectionsFlow}
+      cancelSelectionCallback={onConnectionClose}
       isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
       connectionReferences={references}
       addButton={{
@@ -174,7 +132,7 @@ export const SelectConnectionWrapper = () => {
         disabled: isInlineCreatingConnection,
         onAdd: createConnectionCallback,
       }}
-      cancelButton={{ onCancel: closeConnectionsFlow }}
+      cancelButton={{ onCancel: onConnectionClose }}
       actionBar={actionBar}
       errorMessage={connectionQuery.isError ? parseErrorMessage(connectionQuery.error) : undefined}
     />
@@ -236,6 +194,7 @@ export const SelectConnection = ({
     id: 'GtDOFg',
     description: 'Aria label description for cancel button',
   });
+
   return (
     <div className="msla-edit-connection-container">
       {actionBar ? actionBar : null}
@@ -256,6 +215,7 @@ export const SelectConnection = ({
             saveSelectionCallback={saveSelectionCallback}
             cancelSelectionCallback={cancelSelectionCallback}
             isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+            shouldRenderDetails={true}
             connectionReferences={connectionReferences}
           />
         </>

@@ -2,8 +2,13 @@ import { type Connection, ConnectionService, type Connector, parseErrorMessage }
 import { updateMcpConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
-import { useAllReferenceKeys, useAreMappingsInitialized, useConnectionReference } from '../../../core/state/mcp/selector';
-import type { AppDispatch } from '../../../core/state/mcp/store';
+import {
+  useAllReferenceKeys,
+  useAreMappingsInitialized,
+  useConnectionReference,
+  useConnectionReferences,
+} from '../../../core/state/mcp/selector';
+import type { AppDispatch, RootState } from '../../../core/state/mcp/store';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionInternal';
 import type { CreatedConnectionPayload } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
@@ -22,6 +27,7 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
   const connectionsQuery = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
   const existingReferences = useAllReferenceKeys();
   const reference = useConnectionReference();
+  const connectionReferences = useConnectionReferences();
   const areMappingsInitialized = useAreMappingsInitialized(operations);
 
   const validConnections = useMemo(() => (connectionsQuery.data ?? []).filter(isConnectionValid), [connectionsQuery.data]);
@@ -96,6 +102,7 @@ export const ConnectionSelection = ({ connectorId, operations }: { connectorId: 
           currentConnectionId={reference?.connection.id ?? ''}
           saveSelectionCallback={saveSelectionCallback}
           isXrmConnectionReferenceMode={false}
+          connectionReferences={connectionReferences}
           addButton={{
             text: buttonAddText,
             onAdd: handleOnAdd,

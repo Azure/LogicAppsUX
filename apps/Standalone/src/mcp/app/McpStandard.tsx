@@ -46,8 +46,9 @@ export const McpStandard = () => {
   const resourceDetails = useMemo(
     () => ({
       subscriptionId: 'f34b22a3-2202-4fb1-b040-1332bd928c84',
-      resourceGroup: 'TestACSRG',
+      resourceGroup: 'priti-rg',
       location: 'westus',
+      logicAppName: 'pritiemptyapp',
     }),
     []
   );
