@@ -297,13 +297,29 @@ const DesignerEditor = () => {
     }
   }, [isMonitoringView, toggleMonitoringView]);
 
-  const hideMonitoringView = useCallback(() => {
+  const hideMonitoringView = useCallback(async () => {
     if (isMonitoringView) {
       toggleMonitoringView();
+      if (isDraftMode) {
+        // Restore the draft, not workflow.json (the published version) — the monitoring view
+        // replaced the canvas with the run's definition. The draft autosaves before every run,
+        // so the server copy is current, but the cached query data may be stale; refetch first.
+        let freshCustomCodeData: typeof customCodeData;
+        try {
+          freshCustomCodeData = (await customCodeRefetch()).data;
+        } catch {
+          freshCustomCodeData = undefined;
+        }
+        const draft = (freshCustomCodeData ?? customCodeData)?.[Artifact.DraftFile];
+        if (draft) {
+          setWorkflow(draft as any);
+          return;
+        }
+      }
       const wf = artifactData?.properties.files[Artifact.WorkflowFile];
       setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
     }
-  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
+  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView, isDraftMode, customCodeRefetch, customCodeData]);
 
   const onRun = useCallback(
     (runId: string | undefined) => {
