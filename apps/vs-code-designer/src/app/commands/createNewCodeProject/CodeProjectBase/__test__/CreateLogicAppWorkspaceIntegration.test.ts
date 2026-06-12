@@ -180,7 +180,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       // Create parent directory
       await fse.ensureDir(workspaceRootFolder);
 
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       // Verify logic app folder exists
       const logicAppExists = await fse.pathExists(logicAppFolderPath);
@@ -223,7 +223,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -247,7 +247,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -271,7 +271,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -587,7 +587,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
       const workflowContent = await fse.readJson(workflowPath);
@@ -633,7 +633,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -676,7 +676,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -714,7 +714,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, workflowName, 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -744,7 +744,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'AgentWithTools', 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -775,7 +775,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'StandardWorkflow', 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -804,7 +804,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'CustomCodeWorkflow', 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -851,7 +851,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'RulesWorkflow', 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -898,7 +898,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'CustomWorkflow', 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
@@ -930,7 +930,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       };
 
       await fse.ensureDir(workspaceRootFolder);
-      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath);
+      await createLogicAppAndWorkflow(mockContextIntegration, logicAppFolderPath, mockContext);
 
       const workflowJsonPath = path.join(logicAppFolderPath, 'XmlRulesWorkflow', 'workflow.json');
       const workflowContent = await fse.readJson(workflowJsonPath);
