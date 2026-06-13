@@ -14,6 +14,8 @@ import {
   updateWorkspaceFile,
 } from '../CreateLogicAppWorkspace';
 import { createLogicAppVsCodeContents } from '../CreateLogicAppVSCodeContents';
+import { getAzureConnectorDetailsForLocalProject } from '../../../../utils/codeless/common';
+import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
@@ -28,6 +30,8 @@ import * as fse from 'fs-extra';
 vi.mock('../../../../utils/funcCoreTools/funcVersion');
 vi.mock('../../../../utils/git');
 vi.mock('../../../../utils/codeless/artifacts');
+vi.mock('../../../../utils/codeless/common');
+vi.mock('../../../../utils/codeless/startDesignTimeApi');
 
 // Keep these mocked for unit tests, but will unmock for integration tests
 vi.mock('../CreateFunctionAppFiles');
@@ -105,6 +109,8 @@ describe('createLogicAppProject', () => {
     (createRulesFiles as Mock).mockResolvedValue(undefined);
     (createLibFolder as Mock).mockResolvedValue(undefined);
     (gitInit as Mock).mockResolvedValue(undefined);
+    (getAzureConnectorDetailsForLocalProject as Mock).mockResolvedValue(undefined);
+    (startDesignTimeApi as Mock).mockResolvedValue(undefined);
   });
 
   afterEach(async () => {
@@ -261,6 +267,27 @@ describe('createLogicAppProject', () => {
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
+  });
+
+  it('should call getAzureConnectorDetailsForLocalProject on successful creation', async () => {
+    await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
+
+    expect(getAzureConnectorDetailsForLocalProject).toHaveBeenCalledWith(mockContext, logicAppFolderPath);
+  });
+
+  it('should call startDesignTimeApi on successful creation', async () => {
+    await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
+
+    expect(startDesignTimeApi).toHaveBeenCalledWith(logicAppFolderPath);
+  });
+
+  it('should not call design-time functions when not in a workspace', async () => {
+    (vscode.workspace as any).workspaceFile = undefined;
+
+    await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
+
+    expect(getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
+    expect(startDesignTimeApi).not.toHaveBeenCalled();
   });
 
   it('should set shouldCreateLogicAppProject to false when logic app exists', async () => {
