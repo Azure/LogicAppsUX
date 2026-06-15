@@ -79,5 +79,20 @@ test.describe(
       expect(toolKeys).toContain('Managed_MCP_Server');
       expect(toolKeys.length).toBe(3);
     });
+
+    test('Should round-trip UAMI identity on a managed MCP connection from $connections.value', async ({ page }) => {
+      await page.goto('/');
+
+      await GoToMockWorkflow(page, 'Agent with MCP UAMI');
+
+      const serialized: any = await getSerializedWorkflowFromState(page);
+
+      const mcpRef = serialized.connectionReferences?.mcp;
+      expect(mcpRef).toBeDefined();
+      expect(mcpRef.connectionProperties?.authentication?.type).toBe('ManagedServiceIdentity');
+      expect(mcpRef.connectionProperties?.authentication?.identity).toBe(
+        '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-uami'
+      );
+    });
   }
 );

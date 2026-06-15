@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Text, Spinner, Button, MessageBar, MessageBarBody, Label, Radio, RadioGroup } from '@fluentui/react-components';
 import { AddRegular, CheckmarkLockRegular } from '@fluentui/react-icons';
 import { TemplatesPanelFooter, type TemplatePanelFooterProps, SimpleDictionary, SearchableDropdown } from '@microsoft/designer-ui';
-import { ConnectionType, ConnectorService, removeConnectionPrefix } from '@microsoft/logic-apps-shared';
+import { ConnectionType, ConnectorService, LoggerService, LogEntryLevel, removeConnectionPrefix } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../../core';
 import { ConnectionTable } from '../../../panel/connectionsPanel/selectConnection/connectionTable';
 import { CreateConnectionInternal } from '../../../panel/connectionsPanel/createConnection/createConnectionInternal';
@@ -187,11 +187,10 @@ export const McpToolWizard = () => {
   // The connection list response strips parameterValues, so the cached entry has no identity info.
   // Fetch the full connection resource so we can detect UAMI for connections whose resource does
   // expose it (some shapes do — e.g. via parameterValues.identity).
-  const { data: fullConnection } = useConnectionResource(localConnectionId ?? '');
+  const { data: fullConnection, isLoading: isFullConnectionLoading } = useConnectionResource(localConnectionId ?? '');
 
-  // Identity (UAMI) for the selected connection — threaded to listMcpTools and to addOperation so
-  // the workflow node and the tools query both bind to the user-chosen identity. Prefer the
-  // create-form payload; fall back to whatever the connection resource exposes.
+  // Identity threaded to both listMcpTools and addOperation. Prefer the create-form payload
+  // (authoritative for new UAMI connections); fall back to whatever the resource exposes.
   const selectedIdentity = useMemo(() => {
     if (createdIdentity) {
       return createdIdentity;
@@ -199,6 +198,33 @@ export const McpToolWizard = () => {
     const listEntry = connectionsData?.find((c) => c.id === localConnectionId);
     return getManagedIdentityFromConnection(fullConnection) ?? getManagedIdentityFromConnection(listEntry);
   }, [createdIdentity, fullConnection, connectionsData, localConnectionId]);
+
+  // Guard the Next button while the full connection resource is in-flight so we don't thread
+  // an undefined identity into addOperation.
+  const isFetchingFullConnection = !!localConnectionId && !createdIdentity && isFullConnectionLoading;
+
+  // For managed MCP connectors the connection must surface an identity, otherwise listMcpTools
+  // returns 401. Surface a non-blocking warning + disable Next when we know the connection has
+  // resolved but no identity is available.
+  const needsManagedIdentityWarning = !!localConnectionId && !isFullConnectionLoading && !selectedIdentity && isManagedMcpServer;
+
+  useEffect(() => {
+    if (currentStep === MCP_WIZARD_STEP.CREATE_CONNECTION) {
+      // Defensive reset: starting a fresh create flow must not inherit identity from a prior create.
+      setCreatedIdentity(undefined);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (needsManagedIdentityWarning) {
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'mcpToolWizard',
+        message: 'Managed MCP connection has no resolvable identity.',
+        args: [{ connectionId: localConnectionId, connectorId }],
+      });
+    }
+  }, [needsManagedIdentityWarning, localConnectionId, connectorId]);
 
   // Track if connection was pre-selected from browse when wizard opened (locked - can't go back to step 1)
   // Read from Redux state - this is set once when the wizard opens and survives re-mounts
@@ -540,6 +566,12 @@ export const McpToolWizard = () => {
         id: 'h6EWNm',
         description: 'Message when no connections are available',
       }),
+      managedIdentityWarning: intl.formatMessage({
+        defaultMessage:
+          'This MCP connection has no resolvable managed identity. Re-create the connection and select a managed identity to load tools.',
+        id: 'yh8XAc',
+        description: 'Warning shown when a managed MCP connection does not expose an identity',
+      }),
       noTools: intl.formatMessage({
         defaultMessage: 'No tools available for this connection.',
         id: 'jw62uq',
@@ -659,9 +691,10 @@ export const McpToolWizard = () => {
       },
     ];
 
-    // Disable Done button if in "selected tools" mode with no tools selected
+    // Disable Done button if connection is missing/loading/in-warning state or if no tools are selected
     const isDoneDisabled =
-      (isConnectionStep && !localConnectionId) || (isParametersStep && toolSelectionMode === 'selected' && localAllowedTools.length === 0);
+      (isConnectionStep && (!localConnectionId || isFetchingFullConnection || needsManagedIdentityWarning)) ||
+      (isParametersStep && toolSelectionMode === 'selected' && localAllowedTools.length === 0);
 
     buttonContents.push({
       type: 'action',
@@ -681,6 +714,8 @@ export const McpToolWizard = () => {
     handleAddConnectionClick,
     toolSelectionMode,
     localAllowedTools.length,
+    isFetchingFullConnection,
+    needsManagedIdentityWarning,
   ]);
 
   const handleConnectionTableSelect = useCallback(
@@ -711,6 +746,11 @@ export const McpToolWizard = () => {
 
     return (
       <div className={classes.connectionStepContainer}>
+        {needsManagedIdentityWarning && (
+          <MessageBar intent="warning">
+            <MessageBarBody>{INTL_TEXT.managedIdentityWarning}</MessageBarBody>
+          </MessageBar>
+        )}
         <ConnectionTable
           connections={validConnections}
           currentConnectionId={localConnectionId}

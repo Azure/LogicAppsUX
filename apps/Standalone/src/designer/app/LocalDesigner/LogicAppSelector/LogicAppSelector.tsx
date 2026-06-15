@@ -24,6 +24,7 @@ const fileOptions = [
   { key: 'Agent.json', text: 'Simple Agent' },
   { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
   { key: 'AgentWithMcp.json', text: 'Agent with MCP Tools' },
+  { key: 'AgentWithMcpUami.json', text: 'Agent with MCP UAMI' },
 
   // A2A
   { key: 'divider_A2A', text: '-', itemType: DropdownMenuItemType.Divider },

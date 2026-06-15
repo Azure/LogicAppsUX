@@ -199,7 +199,8 @@ export function flattenWorkflowNodes(nodes: WorkflowNode[]): WorkflowNode[] {
 
 // Consumption workflows store connections in parameters.$connections.value rather than
 // connectionReferences. Reconstruct a Record<string, ConnectionReference> so downstream
-// deserialization can resolve connector metadata, authentication, and identity.
+// deserialization can resolve connector metadata. connectionProperties is preserved so
+// managed-identity workflows surface their auth on load.
 export function buildConnectionReferencesFromConnectionsParameter(
   connectionsParam: Record<string, any> | undefined
 ): Record<string, ConnectionReference> {
@@ -213,9 +214,6 @@ export function buildConnectionReferencesFromConnectionsParameter(
       connection: { id: conn.connectionId ?? '' },
       connectionName: conn.connectionName ?? key,
       ...(conn.connectionProperties ? { connectionProperties: conn.connectionProperties } : {}),
-      ...(conn.connectionRuntimeUrl ? { connectionRuntimeUrl: conn.connectionRuntimeUrl } : {}),
-      ...(conn.authentication ? { authentication: conn.authentication } : {}),
-      ...(conn.impersonation ? { impersonation: conn.impersonation } : {}),
     };
   }
   return references;

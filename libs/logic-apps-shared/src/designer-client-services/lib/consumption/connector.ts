@@ -98,7 +98,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       const isRealConnectionId = connectionId && !connectionId.includes('__MOCK');
 
       let content: any;
-      const flatParams = this._flattenConnectionParameters(connection);
+      const flatParams = this._flattenMcpConnectionParameters(connection);
       const nestedAuth = flatParams['authentication'];
       const nestedIdentity = nestedAuth?.type === 'ManagedServiceIdentity' ? nestedAuth.identity : undefined;
       const effectiveIdentity = identity ?? flatParams['identity'] ?? nestedIdentity;
@@ -257,7 +257,13 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     return undefined;
   }
 
-  private _flattenConnectionParameters(connection: any): Record<string, any> {
+  /**
+   * Flattens connection parameters used by the MCP listMcpTools call. Multi-auth
+   * `parameterValueSet.values` wins; single-auth `parameterValues` only fills gaps.
+   * Specific to MCP because the precedence rule mirrors how the listMcpTools backend
+   * resolves auth fields — generic callers should not assume this ordering.
+   */
+  private _flattenMcpConnectionParameters(connection: any): Record<string, any> {
     const flat: Record<string, any> = {};
     const valueSetValues = connection?.properties?.parameterValueSet?.values;
     if (valueSetValues) {
@@ -315,12 +321,20 @@ export class ConsumptionConnectorService extends BaseConnectorService {
         authentication['identity'] = storedIdentity;
       } else {
         const appIdentity = WorkflowService().getAppIdentity?.();
-        const userIdentity =
-          equals(appIdentity?.type, ResourceIdentityType.USER_ASSIGNED) && appIdentity?.userAssignedIdentities
-            ? Object.keys(appIdentity.userAssignedIdentities)[0]
-            : undefined;
-        if (userIdentity) {
-          authentication['identity'] = userIdentity;
+        // Pure UAMI apps cannot fall back to SAMI — pick a UAMI (warn if ambiguous).
+        // For SYSTEM_ASSIGNED / SYSTEM_ASSIGNED_USER_ASSIGNED, omit identity so the backend uses SAMI.
+        if (equals(appIdentity?.type, ResourceIdentityType.USER_ASSIGNED) && appIdentity?.userAssignedIdentities) {
+          const identityKeys = Object.keys(appIdentity.userAssignedIdentities);
+          if (identityKeys.length > 1) {
+            LoggerService().log({
+              level: LogEntryLevel.Warning,
+              area: 'ConsumptionConnectorService._buildMcpAuthentication',
+              message:
+                'Multiple user-assigned identities are configured but no explicit identity was provided; defaulting to the first one. Pass an explicit identity to disambiguate.',
+              args: [{ identityCount: identityKeys.length }],
+            });
+          }
+          authentication['identity'] = identityKeys[0];
         }
       }
     }

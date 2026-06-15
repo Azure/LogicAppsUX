@@ -25,6 +25,7 @@ import { getParameterFromName, updateDynamicDataInNode } from '../../utils/param
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { isConnectionMultiAuthManagedIdentityType, isConnectionSingleAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { getApiHubAuthentication, getConnectionProperties, isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
@@ -590,7 +591,9 @@ export const trySetDefaultConnectionForNode = async (
         ? preferredConnectionIdentity
         : undefined;
     await ConnectionService().setupConnectionIfNeeded(connection, userAssignedIdentity);
-    if (preferredConnectionIdentity) {
+    const connectorSupportsManagedIdentity =
+      isConnectionMultiAuthManagedIdentityType(connection, connector) || isConnectionSingleAuthManagedIdentityType(connection);
+    if (preferredConnectionIdentity && connectorSupportsManagedIdentity) {
       dispatch(
         updateNodeConnection({
           nodeId,

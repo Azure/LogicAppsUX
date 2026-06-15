@@ -3,7 +3,16 @@ import { ConsumptionConnectorService } from '../connector';
 import type { IHttpClient } from '../../httpClient';
 import { InitConnectionService } from '../../connection';
 import { InitWorkflowService } from '../../workflow';
+import { InitLoggerService } from '../../logger';
+import { LogEntryLevel } from '../../logging/logEntry';
 import type { Connection } from '../../../../utils/src';
+
+const mockLoggerService = {
+  log: vi.fn(),
+  startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+  endTrace: vi.fn(),
+  logErrorWithFormatting: vi.fn(),
+};
 
 describe('ConsumptionConnectorService', () => {
   let mockHttpClient: IHttpClient;
@@ -657,6 +666,71 @@ describe('ConsumptionConnectorService', () => {
           audience: 'https://my-mcp-server.example.com',
           identity: appIdentity,
         });
+      });
+
+      it('should omit identity for SystemAssigned apps so the backend uses SAMI', () => {
+        InitWorkflowService({
+          getAppIdentity: vi.fn().mockReturnValue({ type: 'SystemAssigned' }),
+        } as any);
+
+        const result = (connectorService as any)._buildMcpAuthentication({
+          authenticationType: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+        });
+
+        expect(result).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+        });
+      });
+
+      it('should omit identity for SystemAssigned, UserAssigned hybrid apps so the backend uses SAMI by default', () => {
+        InitWorkflowService({
+          getAppIdentity: vi.fn().mockReturnValue({
+            type: 'SystemAssigned, UserAssigned',
+            userAssignedIdentities: { [appIdentity]: {} },
+          }),
+        } as any);
+
+        const result = (connectorService as any)._buildMcpAuthentication({
+          authenticationType: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+        });
+
+        expect(result).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+        });
+      });
+
+      it('should log a warning when picking from multiple user-assigned identities without an override', () => {
+        const secondIdentity =
+          '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/second-uami';
+        InitWorkflowService({
+          getAppIdentity: vi.fn().mockReturnValue({
+            type: 'UserAssigned',
+            userAssignedIdentities: { [appIdentity]: {}, [secondIdentity]: {} },
+          }),
+        } as any);
+        InitLoggerService([mockLoggerService]);
+
+        const result = (connectorService as any)._buildMcpAuthentication({
+          authenticationType: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+        });
+
+        expect(result).toEqual({
+          type: 'ManagedServiceIdentity',
+          audience: 'https://my-mcp-server.example.com',
+          identity: appIdentity,
+        });
+        expect(mockLoggerService.log).toHaveBeenCalledWith(
+          expect.objectContaining({
+            level: LogEntryLevel.Warning,
+            area: 'ConsumptionConnectorService._buildMcpAuthentication',
+            args: [{ identityCount: 2 }],
+          })
+        );
       });
     });
   });
