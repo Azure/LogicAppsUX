@@ -1,7 +1,7 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
+import { codefulProjectsExist, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
@@ -11,7 +11,16 @@ const mocks = vi.hoisted(() => ({
   readFile: vi.fn(),
   remove: vi.fn(),
   statSync: vi.fn(),
+  workspaceFolders: undefined as { uri: { fsPath: string } }[] | undefined,
   writeFile: vi.fn(),
+}));
+
+vi.mock('vscode', () => ({
+  workspace: {
+    get workspaceFolders() {
+      return mocks.workspaceFolders;
+    },
+  },
 }));
 
 vi.mock('fs-extra', () => ({
@@ -201,5 +210,107 @@ describe('parseCsprojCopyToCodefulInfo', () => {
       replaceLangAfterTargets: 'Build;Publish',
       runsOnBuild: false,
     });
+  });
+});
+
+describe('codefulProjectsExist', () => {
+  const codefulSettingsJson = JSON.stringify({
+    IsEncrypted: false,
+    Values: { WORKFLOW_CODEFUL_ENABLED: 'true' },
+  });
+  const nonCodefulSettingsJson = JSON.stringify({
+    IsEncrypted: false,
+    Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true' },
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.workspaceFolders = undefined;
+  });
+
+  it('returns false when there are no workspace folders', async () => {
+    mocks.workspaceFolders = undefined;
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns false when workspace folders array is empty', async () => {
+    mocks.workspaceFolders = [];
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns true when a workspace folder has WORKFLOW_CODEFUL_ENABLED', async () => {
+    const folderPath = 'D:\\workspace\\codeful-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue(codefulSettingsJson);
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(true);
+    expect(mocks.pathExists).toHaveBeenCalledWith(path.join(folderPath, 'local.settings.json'));
+  });
+
+  it('returns false when workspace folder does not have WORKFLOW_CODEFUL_ENABLED', async () => {
+    const folderPath = 'D:\\workspace\\standard-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue(nonCodefulSettingsJson);
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns false when WORKFLOW_CODEFUL_ENABLED is set to "false"', async () => {
+    const folderPath = 'D:\\workspace\\disabled-codeful-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue(JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'false' } }));
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns true when at least one of multiple folders is codeful', async () => {
+    const standardPath = 'D:\\workspace\\standard-project';
+    const codefulPath = 'D:\\workspace\\codeful-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: standardPath } }, { uri: { fsPath: codefulPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockImplementation(async (filePath: string) => {
+      if (filePath === path.join(codefulPath, 'local.settings.json')) {
+        return codefulSettingsJson;
+      }
+      return nonCodefulSettingsJson;
+    });
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(true);
+  });
+
+  it('returns false when local.settings.json does not exist', async () => {
+    mocks.workspaceFolders = [{ uri: { fsPath: 'D:\\workspace\\empty-project' } }];
+    mocks.pathExists.mockResolvedValue(false);
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns false when local.settings.json contains invalid JSON', async () => {
+    mocks.workspaceFolders = [{ uri: { fsPath: 'D:\\workspace\\broken-project' } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue('not valid json');
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
   });
 });
