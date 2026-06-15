@@ -42,7 +42,7 @@ import {
   downloadDocumentAsFile,
   flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
@@ -97,6 +97,27 @@ export const DesignerCommandBar = ({
   selectRun?: (runId: string) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
+  // The standalone designer renders this command bar directly above the designer canvas. The node
+  // details panel (and the agent chat panel) are sized to 100% height of an ancestor that includes
+  // the command bar, so the bottom of their content (e.g. the change-connection section) is pushed
+  // off-screen. Offset the panel height by the command bar height so the full panel stays visible.
+  // Standalone-only: the Portal and VS Code hosts lay out the panel differently and are unaffected.
+  useEffect(() => {
+    const styleId = 'standalone-panel-command-bar-offset';
+    if (document.getElementById(styleId)) {
+      return;
+    }
+    const commandBarHeightPx = 53;
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `.msla-panel-container { height: calc(100% - ${commandBarHeightPx}px) !important; }`;
+    document.head.appendChild(style);
+    return () => {
+      document.getElementById(styleId)?.remove();
+    };
+  }, []);
+
   const isCopilotReady = useNodesInitialized();
   const queryClient = useQueryClient();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
