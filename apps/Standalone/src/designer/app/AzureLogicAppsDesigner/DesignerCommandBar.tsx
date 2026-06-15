@@ -105,16 +105,30 @@ export const DesignerCommandBar = ({
   // Standalone-only: the Portal and VS Code hosts lay out the panel differently and are unaffected.
   useEffect(() => {
     const styleId = 'standalone-panel-command-bar-offset';
-    if (document.getElementById(styleId)) {
-      return;
-    }
     const commandBarHeightPx = 53;
-    const style = document.createElement('style');
-    style.id = styleId;
+
+    let style = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!style) {
+      style = document.createElement('style');
+      style.id = styleId;
+      style.dataset.refCount = '0';
+      document.head.appendChild(style);
+    }
+
     style.textContent = `.msla-panel-container { height: calc(100% - ${commandBarHeightPx}px) !important; }`;
-    document.head.appendChild(style);
+    style.dataset.refCount = String(Number(style.dataset.refCount ?? '0') + 1);
+
     return () => {
-      document.getElementById(styleId)?.remove();
+      const current = document.getElementById(styleId) as HTMLStyleElement | null;
+      if (!current) {
+        return;
+      }
+      const nextCount = Number(current.dataset.refCount ?? '1') - 1;
+      if (nextCount <= 0) {
+        current.remove();
+      } else {
+        current.dataset.refCount = String(nextCount);
+      }
     };
   }, []);
 
