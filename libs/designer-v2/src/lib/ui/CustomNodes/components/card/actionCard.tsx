@@ -31,7 +31,7 @@ export interface ActionCardProps {
   rootRef?: React.RefObject<HTMLDivElement>;
   staticResultsEnabled?: boolean;
   title: string;
-  onClick?(): void;
+  onClick?(e?: React.MouseEvent): void;
   onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
   onCopyClick?(): void;
@@ -78,7 +78,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    onClick?.();
+    onClick?.(e);
   };
   const focusRef = useRef<HTMLElement | null>(null);
   const keyboardInteraction = useKeyboardInteraction(onClick, onDeleteClick, onCopyClick);

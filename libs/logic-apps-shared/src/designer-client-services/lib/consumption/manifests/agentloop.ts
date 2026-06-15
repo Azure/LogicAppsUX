@@ -89,11 +89,10 @@ export default {
           properties: {
             maxTokens: {
               title: 'Max tokens',
-              description: 'Max tokens to use (value should be between 1 and 8192)',
+              description: 'Max tokens to use',
               type: 'integer',
               format: 'int32',
               minimum: 1,
-              maximum: 8192,
               'x-ms-input-dependencies': {
                 type: 'visibility',
                 parameters: [

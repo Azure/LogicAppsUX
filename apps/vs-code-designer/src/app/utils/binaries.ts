@@ -15,6 +15,7 @@ import {
   funcCoreToolsBinaryPathSettingKey,
   funcDependencyName,
   extensionBundleId,
+  nodeJsDependencyName,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -69,68 +70,92 @@ export async function downloadAndExtractDependency(
 
   executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
 
-  axios.get(downloadUrl, { responseType: 'stream' }).then((response) => {
+  const response = await axios.get(downloadUrl, { responseType: 'stream' });
+  await new Promise<void>((resolve, reject) => {
+    const rejectDownload = async (error: Error) => {
+      const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
+      vscode.window.showErrorMessage(errorMessage);
+      context.telemetry.properties.error = errorMessage;
+
+      try {
+        fs.rmSync(targetFolder, { recursive: true, force: true });
+        await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
+      } catch (cleanupError) {
+        try {
+          await executeCommand(
+            ext.outputChannel,
+            undefined,
+            'echo',
+            `[ExtractError]: Failed to remove ${targetFolder}: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`
+          );
+        } catch {
+          // Keep rejection behavior deterministic even if cleanup logging fails.
+        }
+      } finally {
+        reject(new Error(errorMessage));
+      }
+    };
+
     executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
 
     const writer = fs.createWriteStream(dependencyFilePath);
+    response.data.on?.('error', rejectDownload);
     response.data.pipe(writer);
 
     writer.on('finish', async () => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
-      fs.chmodSync(dependencyFilePath, 0o777);
+      try {
+        executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
+        fs.chmodSync(dependencyFilePath, 0o777);
 
-      // Extract to targetFolder
-      if (dependencyName === dotnetDependencyName) {
-        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
-        if (process.platform === Platform.windows) {
-          await executeCommand(
-            ext.outputChannel,
-            undefined,
-            'powershell -ExecutionPolicy Bypass -File',
-            dependencyFilePath,
-            '-InstallDir',
-            targetFolder,
-            '-Channel',
-            `${version}.0`
-          );
-        } else {
-          await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
-        }
-      } else {
-        if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
-          stopAllDesignTimeApis();
-        }
-        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-        vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-        if (dependencyName === funcDependencyName) {
-          // Add execute permissions for func and gozip binaries
-          if (process.platform !== Platform.windows) {
-            fs.chmodSync(`${targetFolder}/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/gozip`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
+        // Extract to targetFolder
+        if (dependencyName === dotnetDependencyName) {
+          const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
+          if (process.platform === Platform.windows) {
+            await executeCommand(
+              ext.outputChannel,
+              undefined,
+              'powershell -ExecutionPolicy Bypass -File',
+              dependencyFilePath,
+              '-InstallDir',
+              targetFolder,
+              '-Channel',
+              `${version}.0`
+            );
+          } else {
+            await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
           }
-          await setFunctionsCommand();
-          await startAllDesignTimeApis();
-        } else if (dependencyName === extensionBundleId) {
-          await startAllDesignTimeApis();
+        } else {
+          if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
+            stopAllDesignTimeApis();
+          }
+          await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+          ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
+          if (dependencyName === funcDependencyName) {
+            // Add execute permissions for func and gozip binaries
+            if (process.platform !== Platform.windows) {
+              fs.chmodSync(`${targetFolder}/func`, 0o755);
+              fs.chmodSync(`${targetFolder}/gozip`, 0o755);
+              fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
+              fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
+            }
+            await setFunctionsCommand();
+            await startAllDesignTimeApis();
+          } else if (dependencyName === extensionBundleId) {
+            await startAllDesignTimeApis();
+          }
         }
+        // remove the temp folder.
+        fs.rmSync(tempFolderPath, { recursive: true });
+        executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
+        resolve();
+      } catch (error) {
+        reject(error);
       }
-      // remove the temp folder.
-      fs.rmSync(tempFolderPath, { recursive: true });
-      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
     });
     writer.on('error', async (error) => {
-      // log the error message the VSCode window and to telemetry.
-      const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
-      vscode.window.showErrorMessage(errorMessage);
-      context.telemetry.properties.error = errorMessage;
-
-      // remove the target folder.
-      fs.rmSync(targetFolder, { recursive: true });
-      await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
+      await rejectDownload(error);
     });
   });
 }
@@ -300,8 +325,23 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
   }
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
+  let expectedBinaryPath: string | undefined;
+  if (binariesExist) {
+    if (dependencyName === funcDependencyName) {
+      expectedBinaryPath = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+    } else if (dependencyName === dotnetDependencyName) {
+      expectedBinaryPath = getGlobalSetting<string>(dotNetBinaryPathSettingKey);
+    } else if (dependencyName === nodeJsDependencyName) {
+      expectedBinaryPath = getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
+    }
+  }
 
   executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} Binaries: ${binariesPath}`);
+  if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
+    executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} binary is missing: ${expectedBinaryPath}`);
+    return false;
+  }
+
   return binariesExist;
 }
 

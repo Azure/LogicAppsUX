@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { lspDirectory } from '../../../constants';
+import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, lspDirectory } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { installLSPSDK } from '../languageServerProtocol';
 import path from 'path';
@@ -20,6 +20,7 @@ const mocks = vi.hoisted(() => {
     readFile: vi.fn(),
     remove: vi.fn(),
     stat: vi.fn(),
+    updateGlobalSetting: vi.fn(),
     writeFile: vi.fn(),
   };
 });
@@ -41,6 +42,7 @@ vi.mock('fs-extra', () => ({
 
 vi.mock('../vsCodeConfig/settings', () => ({
   getGlobalSetting: mocks.getGlobalSetting,
+  updateGlobalSetting: mocks.updateGlobalSetting,
 }));
 
 vi.mock('../../../extensionVariables', () => ({
@@ -82,6 +84,7 @@ describe('installLSPSDK', () => {
     mocks.pathExists.mockResolvedValue(false);
     mocks.readdir.mockResolvedValue([]);
     mocks.remove.mockResolvedValue(undefined);
+    mocks.updateGlobalSetting.mockResolvedValue(undefined);
     mocks.writeFile.mockResolvedValue(undefined);
     lspServerExtracted = false;
     configureReadFileMocks();
@@ -91,7 +94,7 @@ describe('installLSPSDK', () => {
   function setExistingPaths(paths: string[]): void {
     const existingPaths = new Set(paths);
     mocks.pathExists.mockImplementation(async (filePath: string) => {
-      return existingPaths.has(filePath) || (filePath === lspServerDllPath && lspServerExtracted);
+      return existingPaths.has(filePath) || (filePath.endsWith(path.join('LSPServer', 'SdkLspServer.dll')) && lspServerExtracted);
     });
   }
 
@@ -137,6 +140,17 @@ describe('installLSPSDK', () => {
     expect(mocks.copyFile).toHaveBeenCalledWith(expect.stringContaining(sdkPackageName), sdkDestinationFile);
     expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
     expect(mocks.writeFile).toHaveBeenCalledWith(sdkHashMarker, sdkPackageHash);
+  });
+
+  it('defaults the dependencies path before extracting LSP assets when the setting is unset', async () => {
+    mocks.getGlobalSetting.mockReturnValue(undefined);
+    setExistingPaths([]);
+
+    await installLSPSDK();
+
+    expect(mocks.updateGlobalSetting).toHaveBeenCalledWith(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
+    expect(mocks.ensureDir).toHaveBeenCalledWith(defaultDependencyPathValue);
+    expect(mocks.extractAllTo).toHaveBeenCalledWith(defaultDependencyPathValue, true, true);
   });
 
   it('updates both assets when target files exist but hash markers are missing', async () => {

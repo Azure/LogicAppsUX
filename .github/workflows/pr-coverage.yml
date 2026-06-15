@@ -154,8 +154,13 @@ jobs:
             apps/vs-code-designer/src/app/commands/deploy/deploy.ts
             apps/vs-code-designer/src/app/commands/workflows/exportLogicApp.ts
             apps/vs-code-designer/src/app/utils/startRuntimeApi.ts
+            apps/vs-code-designer/src/app/utils/codeless/startDesignTimeApi.ts
+            apps/vs-code-designer/src/app/utils/binaries.ts
             apps/vs-code-designer/src/extensionVariables.ts
             apps/vs-code-designer/src/main.ts
+            # VS Code connector/runtime orchestration glue; focused behavior is
+            # covered by command/helper unit tests and VS Code E2E scenarios.
+            apps/vs-code-designer/src/app/utils/codeless/common.ts
             # VS Code project-scaffolding files (depend on VS Code APIs; tested via E2E).
             # The pure-function PATH helper `funcHostTaskEnv.ts` has its own unit
             # tests in `src/app/utils/codeless/__test__/funcHostTaskEnv.test.ts`;

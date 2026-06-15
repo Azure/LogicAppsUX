@@ -54,62 +54,6 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
         </div>
       </div>
       <button
-        aria-haspopup="menu"
-        aria-label="More commands"
-        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-        data-automation-id="msla-panel-header-more-options"
-        data-tabster="{"restorer":{"type":1}}"
-        id="menur1"
-        onBlur={[Function]}
-        onClick={[Function]}
-        onContextMenu={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseEnter={[Function]}
-        onMouseLeave={[Function]}
-        onMouseMove={[Function]}
-        onMouseOver={[Function]}
-        onPointerEnter={[Function]}
-        onPointerLeave={[Function]}
-        role="button"
-        tabIndex={0}
-        type="button"
-      >
-        <span
-          className="fui-Button__icon rywnvv2"
-        >
-          <svg
-            aria-hidden={true}
-            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-2 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden={true}
-            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
-      </button>
-      <button
         aria-label="Close"
         className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-close-nav"
@@ -213,62 +157,6 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
           </div>
         </div>
       </div>
-      <button
-        aria-haspopup="menu"
-        aria-label="More commands"
-        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-        data-automation-id="msla-panel-header-more-options"
-        data-tabster="{"restorer":{"type":1}}"
-        id="menur9"
-        onBlur={[Function]}
-        onClick={[Function]}
-        onContextMenu={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseEnter={[Function]}
-        onMouseLeave={[Function]}
-        onMouseMove={[Function]}
-        onMouseOver={[Function]}
-        onPointerEnter={[Function]}
-        onPointerLeave={[Function]}
-        role="button"
-        tabIndex={0}
-        type="button"
-      >
-        <span
-          className="fui-Button__icon rywnvv2"
-        >
-          <svg
-            aria-hidden={true}
-            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-2 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden={true}
-            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
-      </button>
       <button
         aria-label="Close"
         className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
@@ -461,7 +349,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
         className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-more-options"
         data-tabster="{"restorer":{"type":1}}"
-        id="menur5"
+        id="menur3"
         onBlur={[Function]}
         onClick={[Function]}
         onContextMenu={[Function]}
@@ -616,62 +504,6 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
         </div>
       </div>
       <button
-        aria-haspopup="menu"
-        aria-label="More commands"
-        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
-        data-automation-id="msla-panel-header-more-options"
-        data-tabster="{"restorer":{"type":1}}"
-        id="menurd"
-        onBlur={[Function]}
-        onClick={[Function]}
-        onContextMenu={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseEnter={[Function]}
-        onMouseLeave={[Function]}
-        onMouseMove={[Function]}
-        onMouseOver={[Function]}
-        onPointerEnter={[Function]}
-        onPointerLeave={[Function]}
-        role="button"
-        tabIndex={0}
-        type="button"
-      >
-        <span
-          className="fui-Button__icon rywnvv2"
-        >
-          <svg
-            aria-hidden={true}
-            className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-2 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden={true}
-            className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 7.75a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5Zm0 6a1.75 1.75 0 1 1 0-3.5 1.75 1.75 0 0 1 0 3.5ZM10.25 18a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
-      </button>
-      <button
         aria-label="Close"
         className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-close-nav"
@@ -724,7 +556,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
   >
     <div
       aria-label="Trigger name update message information bar"
-      aria-labelledby="fui-rg"
+      aria-labelledby="fui-ra"
       className="fui-MessageBar r2oyxsj ___1jsax0e_zcmvgw0 f6juhto f1s2louj f1ngh7ph f17g0uqy f1w7oly7"
       data-automation-id="msla-panel-header-trigger-info"
       data-testid="msla-panel-header-trigger-info"

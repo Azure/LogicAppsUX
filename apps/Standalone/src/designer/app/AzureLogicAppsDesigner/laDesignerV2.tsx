@@ -59,6 +59,7 @@ import {
   optional,
   BaseCognitiveServiceService,
   RoleService,
+  normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
@@ -117,6 +118,7 @@ const DesignerEditor = () => {
     showPerformanceDebug,
     suppressDefaultNodeSelect,
     areCustomEditorsEnabled,
+    isFirstDesignerV2Load,
   } = useSelector((state: RootState) => state.workflowLoader);
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -430,16 +432,17 @@ const DesignerEditor = () => {
            */
           for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
             if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+              const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
               const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-              const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+              const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
               const assignmentPromises = [];
               for (const roleDefinition of missingRoleAssignments) {
-                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
               }
               await Promise.all(assignmentPromises);
 
               // Invalidate the cache for the role assignments
-              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
               const queryClient = getReactQueryClient();
               queryClient.invalidateQueries(cacheKey);
             }
@@ -656,6 +659,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showPerformanceDebug,
+          isFirstDesignerV2Load,
         }}
       >
         {workflow?.definition ? (

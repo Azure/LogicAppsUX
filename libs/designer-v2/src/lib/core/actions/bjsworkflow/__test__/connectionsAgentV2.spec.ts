@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { foundryServiceConnectionRegex, microsoftFoundryModelsRegex } from '@microsoft/logic-apps-shared';
 import { AgentUtils } from '../../../../common/utilities/Utils';
 
 /**
@@ -14,9 +15,10 @@ function resolveAgentModelType(rawDisplayName: string, cognitiveServiceId: strin
   let agentModelTypeValue = AgentUtils.DisplayNameToManifest[rawDisplayName] ?? '';
 
   if (!agentModelTypeValue) {
-    const foundryServiceConnectionRegex = /Microsoft\.CognitiveServices\/accounts/i;
     if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
       agentModelTypeValue = 'FoundryAgentServiceV2';
+    } else if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
+      agentModelTypeValue = 'MicrosoftFoundry';
     } else {
       agentModelTypeValue = 'AzureOpenAI';
     }
@@ -41,25 +43,33 @@ describe('updateAgentParametersForConnection – model type resolution', () => {
     });
   });
 
-  describe('Foundry fallback via cognitiveServiceAccountId', () => {
-    it('falls back to FoundryAgentServiceV2 when cognitiveServiceId matches CognitiveServices pattern', () => {
+  describe('resource ID fallback via cognitiveServiceAccountId', () => {
+    it('falls back to FoundryAgentServiceV2 when cognitiveServiceId matches Foundry project pattern', () => {
       const result = resolveAgentModelType(
         '',
-        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount'
+        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/projects/myproject'
       );
       expect(result).toBe('FoundryAgentServiceV2');
     });
 
-    it('does NOT fall back to FoundryAgentService (V1)', () => {
+    it('falls back to MicrosoftFoundry when cognitiveServiceId has a /models suffix', () => {
       const result = resolveAgentModelType(
         '',
-        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount'
+        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount/models'
       );
-      expect(result).not.toBe('FoundryAgentService');
+      expect(result).toBe('MicrosoftFoundry');
     });
   });
 
   describe('AzureOpenAI fallback', () => {
+    it('falls back to AzureOpenAI for account-level Azure OpenAI resource IDs', () => {
+      const result = resolveAgentModelType(
+        '',
+        '/subscriptions/abc/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/myaccount'
+      );
+      expect(result).toBe('AzureOpenAI');
+    });
+
     it('falls back to AzureOpenAI when no display name and no CognitiveServices pattern', () => {
       const result = resolveAgentModelType('', '');
       expect(result).toBe('AzureOpenAI');

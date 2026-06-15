@@ -97,7 +97,7 @@ export async function parameterizeConnections(context: IActionContext, projectPa
       });
       await saveWorkflowParameter(context, projectPath, parametersJson);
       await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
-      window.showInformationMessage(localize('connectionsParameterized', 'Successfully parameterized connections.'));
+      ext.outputChannel.appendLog(localize('connectionsParameterized', 'Successfully parameterized connections.'));
     } catch (error) {
       const errorMessage = localize(
         'errorParameterizeConnections',
