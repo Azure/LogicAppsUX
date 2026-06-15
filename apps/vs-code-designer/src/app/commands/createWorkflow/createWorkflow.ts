@@ -32,7 +32,7 @@ export const createWorkflow = async (context: IActionContext) => {
   }
 
   const isCodeful = await isCodefulProject(projectRoot);
-  const logicAppName = path.basename(projectRoot);
+  const logicAppName = path.basename(projectRoot.replace(/\\/g, '/'));
 
   const logicAppType = isCodeful ? ProjectType.codeful : '';
 
