@@ -299,7 +299,12 @@ const DesignerEditor = () => {
 
   const hideMonitoringView = useCallback(async () => {
     if (isMonitoringView) {
-      toggleMonitoringView();
+      // Restore the workflow *before* leaving monitoring view. toggleMonitoringView() clears
+      // read-only, so if it ran first there would be a transient window — widened by the await
+      // below on slow networks — where the designer is editable while the canvas still shows the
+      // selected run's definition. Editing in that window reintroduces the data-loss scenario.
+      // Setting the workflow first guarantees the first render outside monitoring view already
+      // has the correct draft/published definition.
       if (isDraftMode) {
         // Restore the draft, not workflow.json (the published version) — the monitoring view
         // replaced the canvas with the run's definition. The draft autosaves before every run,
@@ -313,11 +318,13 @@ const DesignerEditor = () => {
         const draft = (freshCustomCodeData ?? customCodeData)?.[Artifact.DraftFile];
         if (draft) {
           setWorkflow(draft as any);
+          toggleMonitoringView();
           return;
         }
       }
       const wf = artifactData?.properties.files[Artifact.WorkflowFile];
       setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
+      toggleMonitoringView();
     }
   }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView, isDraftMode, customCodeRefetch, customCodeData]);
 
