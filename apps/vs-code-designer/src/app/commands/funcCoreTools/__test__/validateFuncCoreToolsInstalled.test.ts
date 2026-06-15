@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { validateFuncCoreToolsInstalled } from '../validateFuncCoreToolsInstalled';
 import { useBinariesDependencies } from '../../../utils/binaries';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
+import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
+import { ensureFuncCoreToolsCommandExecutablePermissions } from '../../../utils/funcCoreTools/funcVersion';
 
 vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
@@ -17,15 +19,12 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
   updateGlobalSetting: vi.fn(),
 }));
 vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
+  ensureFuncCoreToolsCommandExecutablePermissions: vi.fn(() => true),
   getFunctionsCommand: vi.fn(() => 'func'),
   tryParseFuncVersion: vi.fn(),
   tryGetLocalFuncVersion: vi.fn(),
   getLocalFuncCoreToolsVersion: vi.fn(),
   setFunctionsCommand: vi.fn(),
-}));
-vi.mock('../funcVersion', () => ({
-  tryGetLocalFuncVersion: vi.fn(),
-  isFuncToolsInstalled: vi.fn(() => Promise.resolve(false)),
 }));
 vi.mock('../../../utils/funcCoreTools/cpUtils', () => ({
   executeCommand: vi.fn(() => Promise.reject(new Error('not installed'))),
@@ -66,6 +65,8 @@ describe('validateFuncCoreToolsInstalled', () => {
       },
       valuesToMask: [],
     };
+    vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+    vi.mocked(executeCommand).mockRejectedValue(new Error('not installed'));
   });
 
   describe('devContainer workspace', () => {
@@ -88,6 +89,30 @@ describe('validateFuncCoreToolsInstalled', () => {
 
       // The UI showWarningMessage should be called for system validation, not binaries
       expect(useBinariesDependencies).toHaveBeenCalled();
+    });
+  });
+
+  describe('managed FuncCoreTools readiness', () => {
+    it('returns true when top-level func works and nested managed executables are executable', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(executeCommand).mockResolvedValue('4.12.0');
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(executeCommand).toHaveBeenCalledWith(undefined, undefined, 'func', '--version');
+      expect(ensureFuncCoreToolsCommandExecutablePermissions).toHaveBeenCalledWith('func');
+    });
+
+    it('returns false when managed nested executables are not executable even if top-level func exists', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(false);
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(executeCommand).not.toHaveBeenCalled();
     });
   });
 
@@ -115,12 +140,10 @@ describe('validateFuncCoreToolsInstalled', () => {
 
   describe('return value based on environment', () => {
     it('should return false when func tools not installed in devContainer', async () => {
-      const { isFuncToolsInstalled } = await import('../funcVersion');
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
       vi.mocked(useBinariesDependencies).mockResolvedValue(false);
-      vi.mocked(isFuncToolsInstalled).mockResolvedValue(false);
 
-      const result = await validateFuncCoreToolsInstalled(mockContext, 'test message');
+      await validateFuncCoreToolsInstalled(mockContext, 'test message');
 
       // Should handle system validation path
       expect(useBinariesDependencies).toHaveBeenCalled();

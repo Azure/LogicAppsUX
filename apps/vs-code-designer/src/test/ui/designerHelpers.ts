@@ -152,12 +152,17 @@ function isExecutableFile(filePath: string): boolean {
 
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
+  const gozipName = process.platform === 'win32' ? 'gozip.exe' : 'gozip';
   const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
   const candidates = [
     path.join(funcToolsRoot, executableName),
+    path.join(funcToolsRoot, gozipName),
     path.join(funcToolsRoot, 'in-proc8', executableName),
+    path.join(funcToolsRoot, 'in-proc8', gozipName),
     path.join(funcToolsRoot, 'in-proc6', executableName),
+    path.join(funcToolsRoot, 'in-proc6', gozipName),
   ];
+  const executableNames = new Set([executableName, gozipName]);
 
   const directoriesToScan = [funcToolsRoot];
   for (const directory of directoriesToScan) {
@@ -168,7 +173,7 @@ function getFuncCoreToolsCandidatePaths(): string[] {
       const entryPath = path.join(directory, entry.name);
       if (entry.isDirectory()) {
         directoriesToScan.push(entryPath);
-      } else if (entry.name === executableName) {
+      } else if (executableNames.has(entry.name)) {
         candidates.push(entryPath);
       }
     }
@@ -179,17 +184,22 @@ function getFuncCoreToolsCandidatePaths(): string[] {
 
 function getFuncCoreToolsPath(): string {
   const candidates = getFuncCoreToolsCandidatePaths();
-  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
+  const funcCandidates = candidates.filter((candidate) => path.basename(candidate).toLowerCase().startsWith('func'));
+  return funcCandidates.find((candidate) => fs.existsSync(candidate)) ?? funcCandidates[0];
 }
 
 function assertFuncCoreToolsExecutable(context: string): void {
-  const funcBinaryPath = getFuncCoreToolsPath();
   ensureRuntimeDependencyExecutablePermissions();
-  if (!fs.existsSync(funcBinaryPath)) {
+  const funcBinaryPath = getFuncCoreToolsPath();
+  const existingCandidates = getFuncCoreToolsCandidatePaths().filter((candidate) => fs.existsSync(candidate));
+  if (existingCandidates.length === 0) {
     throw new Error(`[depValidation] func binary not found after ${context}: ${funcBinaryPath}`);
   }
-  if (!isExecutableFile(funcBinaryPath)) {
-    throw new Error(`[depValidation] func binary exists but is not executable after ${context}: ${funcBinaryPath}`);
+
+  for (const candidate of existingCandidates) {
+    if (!isExecutableFile(candidate)) {
+      throw new Error(`[depValidation] FuncCoreTools binary exists but is not executable after ${context}: ${candidate}`);
+    }
   }
 }
 

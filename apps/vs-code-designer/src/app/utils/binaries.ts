@@ -37,7 +37,7 @@ import * as vscode from 'vscode';
 
 import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { setFunctionsCommand } from './funcCoreTools/funcVersion';
+import { repairFuncCoreToolsExecutablePermissions, setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
 
 export { useBinariesDependencies } from './runtimeDependencies';
@@ -135,13 +135,7 @@ export async function downloadAndExtractDependency(
           await extractDependency(dependencyFilePath, targetFolder, dependencyName);
           ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
           if (dependencyName === funcDependencyName) {
-            // Add execute permissions for func and gozip binaries
-            if (process.platform !== Platform.windows) {
-              fs.chmodSync(`${targetFolder}/func`, 0o755);
-              fs.chmodSync(`${targetFolder}/gozip`, 0o755);
-              fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
-              fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
-            }
+            repairFuncCoreToolsExecutablePermissions(targetFolder);
             await setFunctionsCommand();
             await startAllDesignTimeApis();
           } else if (dependencyName === extensionBundleId) {

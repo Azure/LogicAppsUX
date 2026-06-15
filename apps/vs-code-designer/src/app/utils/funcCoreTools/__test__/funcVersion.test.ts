@@ -2,11 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
   chmodSync: vi.fn(),
+  statSync: vi.fn(() => ({ mode: 0o644 })),
+  accessSync: vi.fn(),
+  readdirSync: vi.fn(() => []),
+  constants: {
+    X_OK: 1,
+  },
 }));
 
 vi.mock('../../../../localize', () => ({
@@ -47,10 +53,13 @@ import { executeCommand } from '../cpUtils';
 import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../../vsCodeConfig/settings';
 import {
   addLocalFuncTelemetry,
+  areFuncCoreToolsExecutablePermissionsValid,
   checkSupportedFuncVersion,
+  ensureFuncCoreToolsCommandExecutablePermissions,
   getDefaultFuncVersion,
   getFunctionsCommand,
   getLocalFuncCoreToolsVersion,
+  repairFuncCoreToolsExecutablePermissions,
   setFunctionsCommand,
   tryGetLocalFuncVersion,
   tryGetMajorVersion,
@@ -61,9 +70,15 @@ const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
 const FUNC_DIR = path.join(BIN_ROOT, 'FuncCoreTools');
 const FUNC_EXE = path.join(FUNC_DIR, 'func');
 const FUNC_WIN_EXE = path.join(FUNC_DIR, 'func.exe');
-const PREFERRED_FUNC_EXE = process.platform === 'win32' ? FUNC_WIN_EXE : FUNC_EXE;
+const FUNC_GOZIP = path.join(FUNC_DIR, 'gozip');
 const FUNC_INPROC8_EXE = path.join(FUNC_DIR, 'in-proc8', 'func');
 const FUNC_INPROC8_WIN_EXE = path.join(FUNC_DIR, 'in-proc8', 'func.exe');
+const FUNC_INPROC6_EXE = path.join(FUNC_DIR, 'in-proc6', 'func');
+const originalPlatform = process.platform;
+
+function mockPlatform(platform: NodeJS.Platform): void {
+  Object.defineProperty(process, 'platform', { value: platform, configurable: true });
+}
 
 describe('funcVersion - command resolution', () => {
   beforeEach(() => {
@@ -74,6 +89,15 @@ describe('funcVersion - command resolution', () => {
     vi.mocked(executeCommand).mockReset();
     vi.mocked(fs.existsSync).mockReset();
     vi.mocked(fs.chmodSync).mockReset();
+    vi.mocked(fs.statSync).mockReset();
+    vi.mocked(fs.statSync).mockReturnValue({ mode: 0o644 } as fs.Stats);
+    vi.mocked(fs.accessSync).mockReset();
+    vi.mocked(fs.readdirSync).mockReset();
+    vi.mocked(fs.readdirSync).mockReturnValue([]);
+  });
+
+  afterEach(() => {
+    mockPlatform(originalPlatform);
   });
 
   describe('getFunctionsCommand', () => {
@@ -86,6 +110,7 @@ describe('funcVersion - command resolution', () => {
     });
 
     it('self-heals by inspecting the local binaries folder when the setting is empty', () => {
+      mockPlatform('linux');
       vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
         if (key === 'funcCoreToolsBinaryPath') {
           return undefined;
@@ -98,9 +123,11 @@ describe('funcVersion - command resolution', () => {
       vi.mocked(fs.existsSync).mockImplementation((p: any) => p === FUNC_DIR || p === FUNC_EXE);
 
       expect(getFunctionsCommand()).toBe(FUNC_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
     });
 
     it('self-heals to the in-proc8 binary when the top-level func binary is missing', () => {
+      mockPlatform('linux');
       vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
         if (key === 'funcCoreToolsBinaryPath') {
           return undefined;
@@ -113,9 +140,11 @@ describe('funcVersion - command resolution', () => {
       vi.mocked(fs.existsSync).mockImplementation((p: any) => p === FUNC_DIR || p === FUNC_INPROC8_EXE);
 
       expect(getFunctionsCommand()).toBe(FUNC_INPROC8_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
     });
 
     it('self-heals to func.exe when that is the extracted binary name', () => {
+      mockPlatform('win32');
       vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
         if (key === 'funcCoreToolsBinaryPath') {
           return undefined;
@@ -128,6 +157,7 @@ describe('funcVersion - command resolution', () => {
       vi.mocked(fs.existsSync).mockImplementation((p: any) => p === FUNC_DIR || p === FUNC_WIN_EXE);
 
       expect(getFunctionsCommand()).toBe(FUNC_WIN_EXE);
+      expect(fs.chmodSync).not.toHaveBeenCalled();
     });
 
     it('throws when the setting is empty and the local binaries are not yet on disk', () => {
@@ -175,49 +205,130 @@ describe('funcVersion - command resolution', () => {
     });
 
     it('writes the preferred func path and chmods only the directory when the executable is missing', async () => {
+      mockPlatform('linux');
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR);
 
       await setFunctionsCommand();
 
-      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', PREFERRED_FUNC_EXE);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
-      expect(fs.chmodSync).not.toHaveBeenCalledWith(PREFERRED_FUNC_EXE, 0o777);
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_EXE, 0o755);
     });
 
     it('writes the preferred func path and chmods both the directory and the executable when both exist', async () => {
+      mockPlatform('linux');
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       await setFunctionsCommand();
 
-      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', PREFERRED_FUNC_EXE);
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
       expect(fs.existsSync).toHaveBeenCalledWith(FUNC_DIR);
-      expect(fs.existsSync).toHaveBeenCalledWith(PREFERRED_FUNC_EXE);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
-      expect(fs.chmodSync).toHaveBeenCalledWith(PREFERRED_FUNC_EXE, 0o777);
+      expect(fs.existsSync).toHaveBeenCalledWith(FUNC_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
     });
 
     it('writes the in-proc8 func path when the top-level executable is missing', async () => {
+      mockPlatform('linux');
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR || p === FUNC_INPROC8_EXE);
 
       await setFunctionsCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_INPROC8_EXE);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o777);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
     });
 
     it('writes the in-proc8 func.exe path when that is the extracted binary name', async () => {
+      mockPlatform('win32');
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR || p === FUNC_INPROC8_WIN_EXE);
 
       await setFunctionsCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_INPROC8_WIN_EXE);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_WIN_EXE, 0o777);
+      expect(fs.chmodSync).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('repairFuncCoreToolsExecutablePermissions', () => {
+    it('repairs top-level and nested FuncCoreTools executables independently', () => {
+      mockPlatform('linux');
+      vi.mocked(fs.existsSync).mockImplementation((p) =>
+        [FUNC_DIR, FUNC_EXE, FUNC_GOZIP, FUNC_INPROC8_EXE, FUNC_INPROC6_EXE].includes(p as string)
+      );
+
+      repairFuncCoreToolsExecutablePermissions(FUNC_DIR);
+
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_GOZIP, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC6_EXE, 0o755);
+    });
+
+    it('repairs nested in-proc8 when optional candidates are missing', () => {
+      mockPlatform('linux');
+      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_EXE, FUNC_INPROC8_EXE].includes(p as string));
+
+      repairFuncCoreToolsExecutablePermissions(FUNC_DIR);
+
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_GOZIP, expect.any(Number));
+    });
+
+    it('continues repairing later candidates after one chmod failure', () => {
+      mockPlatform('linux');
+      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_GOZIP, FUNC_INPROC8_EXE].includes(p as string));
+      vi.mocked(fs.chmodSync).mockImplementation((p) => {
+        if (p === FUNC_GOZIP) {
+          throw new Error('permission denied');
+        }
+      });
+
+      repairFuncCoreToolsExecutablePermissions(FUNC_DIR);
+
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_GOZIP, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
+    });
+
+    it('does not chmod on Windows', () => {
+      mockPlatform('win32');
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+
+      repairFuncCoreToolsExecutablePermissions(FUNC_DIR);
+
+      expect(fs.chmodSync).not.toHaveBeenCalled();
+    });
+
+    it('returns false when a managed nested executable remains non-executable after repair', () => {
+      mockPlatform('linux');
+      vi.mocked(getGlobalSetting).mockImplementation((key: string) =>
+        key === 'autoRuntimeDependenciesPath' ? (BIN_ROOT as any) : undefined
+      );
+      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_EXE, FUNC_INPROC8_EXE].includes(p as string));
+      vi.mocked(fs.accessSync).mockImplementation((p) => {
+        if (p === FUNC_INPROC8_EXE) {
+          throw new Error('not executable');
+        }
+      });
+
+      expect(ensureFuncCoreToolsCommandExecutablePermissions(FUNC_EXE)).toBe(false);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
+    });
+
+    it('returns true for managed FuncCoreTools when existing candidates are executable', () => {
+      mockPlatform('linux');
+      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_EXE, FUNC_INPROC8_EXE].includes(p as string));
+
+      expect(areFuncCoreToolsExecutablePermissionsValid(FUNC_DIR, FUNC_EXE)).toBe(true);
+      expect(fs.accessSync).toHaveBeenCalledWith(FUNC_EXE, fs.constants.X_OK);
+      expect(fs.accessSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, fs.constants.X_OK);
     });
   });
 });

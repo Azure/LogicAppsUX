@@ -826,15 +826,23 @@ async function main() {
     const nodeJsDir = resolveNodeBinDir(depsRoot);
     const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
     const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
-    const funcBinaryCandidates = [
+    const gozipExecutable = process.platform === 'win32' ? 'gozip.exe' : 'gozip';
+    const funcExecutableCandidates = [
       path.join(funcToolsDir, funcExecutable),
       path.join(funcToolsDir, 'in-proc8', funcExecutable),
       path.join(funcToolsDir, 'in-proc6', funcExecutable),
     ];
-    const funcBinary = funcBinaryCandidates.find((candidate) => fs.existsSync(candidate)) || funcBinaryCandidates[0];
+    const funcUtilityCandidates = [
+      path.join(funcToolsDir, gozipExecutable),
+      path.join(funcToolsDir, 'in-proc8', gozipExecutable),
+      path.join(funcToolsDir, 'in-proc6', gozipExecutable),
+    ];
+    const funcBinary = funcExecutableCandidates.find((candidate) => fs.existsSync(candidate)) || funcExecutableCandidates[0];
     return {
       depsRoot,
       funcToolsDir,
+      funcExecutableCandidates,
+      funcUtilityCandidates,
       dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
       nodeJsDir,
       funcBinary,
@@ -843,11 +851,93 @@ async function main() {
     };
   };
 
-  const runtimeDependenciesReady = () => {
-    const { funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
-    return [funcBinary, dotnetBinary, nodeBinary].every((binaryPath) => fs.existsSync(binaryPath));
+  const runtimeExecutableAccessMode = () => (process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
+
+  const isRuntimeExecutable = (binaryPath) => {
+    try {
+      fs.accessSync(binaryPath, runtimeExecutableAccessMode());
+      return true;
+    } catch {
+      return false;
+    }
   };
-  const shouldValidateRuntimeDependencies = () => !runtimeDependenciesReady();
+
+  const runtimePermissionStatus = (binaryPath) => {
+    if (!fs.existsSync(binaryPath)) {
+      return 'missing';
+    }
+    const mode = process.platform === 'win32' ? 'n/a' : `0${(fs.statSync(binaryPath).mode & 0o777).toString(8)}`;
+    return `${isRuntimeExecutable(binaryPath) ? 'executable' : 'not-executable'} mode=${mode}`;
+  };
+
+  const logRuntimeDependencyPermissions = (label) => {
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates, funcUtilityCandidates } = getRuntimeDependencyPaths();
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates, ...funcUtilityCandidates];
+    for (const candidate of [...new Set(candidates)]) {
+      console.log(`  [${label}] runtime binary ${candidate}: ${runtimePermissionStatus(candidate)}`);
+    }
+  };
+
+  const repairRuntimeDependencyExecutablePermissions = (label, failOnExistingNonExecutable = false) => {
+    if (process.platform !== 'linux' && process.platform !== 'darwin') {
+      return;
+    }
+
+    const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir, funcExecutableCandidates, funcUtilityCandidates } =
+      getRuntimeDependencyPaths();
+    const { execSync } = require('child_process');
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates, ...funcUtilityCandidates];
+    let fixedAny = false;
+    for (const bin of [...new Set(candidates)]) {
+      if (!fs.existsSync(bin)) {
+        continue;
+      }
+      try {
+        execSync(`chmod +x "${bin}"`, { stdio: 'ignore' });
+        fixedAny = true;
+      } catch (error) {
+        console.log(`  [${label}] failed to chmod runtime binary ${bin}: ${error?.message ?? error}`);
+      }
+    }
+
+    if (fs.existsSync(funcToolsDir)) {
+      try {
+        execSync(`chmod -R +x "${funcToolsDir}"`, { stdio: 'ignore' });
+        fixedAny = true;
+      } catch (error) {
+        console.log(`  [${label}] failed to chmod FuncCoreTools directory ${funcToolsDir}: ${error?.message ?? error}`);
+      }
+    }
+
+    if (fixedAny) {
+      console.log(`  [${label}] Fixed execute permissions on runtime binaries`);
+    }
+    logRuntimeDependencyPermissions(label);
+
+    if (failOnExistingNonExecutable) {
+      const brokenCandidates = [...new Set([...funcExecutableCandidates, ...funcUtilityCandidates])]
+        .filter((candidate) => fs.existsSync(candidate))
+        .filter((candidate) => !isRuntimeExecutable(candidate));
+      if (brokenCandidates.length > 0) {
+        throw new Error(`[${label}] FuncCoreTools binaries exist but are not executable: ${brokenCandidates.join(', ')}`);
+      }
+    }
+  };
+
+  const runtimeDependenciesReady = () => {
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates, funcUtilityCandidates } = getRuntimeDependencyPaths();
+    const requiredBinariesReady = [funcBinary, dotnetBinary, nodeBinary].every(
+      (binaryPath) => fs.existsSync(binaryPath) && isRuntimeExecutable(binaryPath)
+    );
+    const existingFuncToolsExecutable = [...funcExecutableCandidates, ...funcUtilityCandidates]
+      .filter((binaryPath) => fs.existsSync(binaryPath))
+      .every((binaryPath) => isRuntimeExecutable(binaryPath));
+    return requiredBinariesReady && existingFuncToolsExecutable;
+  };
+  const shouldValidateRuntimeDependencies = () => {
+    repairRuntimeDependencyExecutablePermissions('runtime dependency readiness', true);
+    return !runtimeDependenciesReady();
+  };
 
   // Create a VS Code settings file. Called before each phase group so we can
   // enable dependency validation for Phase 4.1 (first run) and disable it
@@ -1291,29 +1381,7 @@ async function main() {
     // The extension's download/extract process doesn't set chmod +x on Linux,
     // causing "/bin/sh: 1: .../func: Permission denied" when the extension
     // tries to run `func host start` to start the design-time API.
-    if (process.platform === 'linux' || process.platform === 'darwin') {
-      const { execSync } = require('child_process');
-      const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir } = getRuntimeDependencyPaths();
-      for (const bin of [funcBinary, dotnetBinary, nodeBinary]) {
-        if (fs.existsSync(bin)) {
-          try {
-            execSync(`chmod +x "${bin}"`, { stdio: 'ignore' });
-          } catch {
-            /* ignore */
-          }
-        }
-      }
-      // Also chmod the entire FuncCoreTools directory — it contains sub-binaries
-      // (e.g., gozip, func) that all need execute permission.
-      if (fs.existsSync(funcToolsDir)) {
-        try {
-          execSync(`chmod -R +x "${funcToolsDir}"`, { stdio: 'ignore' });
-          console.log(`  [${label}] ✓ Fixed execute permissions on runtime binaries`);
-        } catch {
-          /* ignore */
-        }
-      }
-    }
+    repairRuntimeDependencyExecutablePermissions(label, true);
   };
 
   const runPhase = async (phaseName, files, optionsOverride = {}) => {
