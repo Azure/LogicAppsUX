@@ -269,6 +269,26 @@ describe('CreateWorkspace', () => {
       expect(nextButton).toBeDisabled();
     });
 
+    it('should disable Next while workspace existence validation is pending', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'pending-ws',
+        logicAppType: ProjectType.logicApp,
+        logicAppName: 'valid-app',
+        workflowType: 'Stateful-Codeless',
+        workflowName: 'valid-workflow',
+        workspaceExistenceResults: {
+          '/valid/path/pending-ws': false,
+        },
+        currentStep: 0,
+      });
+      const buttons = screen.getAllByRole('button');
+      const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
+      expect(nextButton).toBeDisabled();
+    });
+
     it('should disable Next when logic app name is empty for createWorkspace', () => {
       renderWithStore({
         flowType: 'createWorkspace',
@@ -286,6 +306,10 @@ describe('CreateWorkspace', () => {
         workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
         pathValidationResults: { '/valid/path': true },
         workspaceName: 'valid-name',
+        workspaceExistenceResults: {
+          '/valid/path/valid-name': false,
+          '/valid/path/valid-name/valid-name.code-workspace': false,
+        },
         logicAppType: ProjectType.logicApp,
         logicAppName: 'valid-app',
         workflowType: 'Stateful-Codeless',
@@ -304,6 +328,10 @@ describe('CreateWorkspace', () => {
           workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
           pathValidationResults: { '/valid/path': true },
           workspaceName: 'valid-name',
+          workspaceExistenceResults: {
+            '/valid/path/valid-name': false,
+            '/valid/path/valid-name/valid-name.code-workspace': false,
+          },
           logicAppType: '',
           logicAppName: '',
           currentStep: 0,
@@ -519,6 +547,10 @@ describe('CreateWorkspace', () => {
         workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
         pathValidationResults: { '/valid/path': true },
         workspaceName: 'valid-name',
+        workspaceExistenceResults: {
+          '/valid/path/valid-name': false,
+          '/valid/path/valid-name/valid-name.code-workspace': false,
+        },
         logicAppType: ProjectType.logicApp,
         logicAppName: 'valid-app',
         workflowType: 'Stateful-Codeless',
@@ -529,11 +561,12 @@ describe('CreateWorkspace', () => {
       const buttons = screen.getAllByRole('button');
       const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
 
-      if (nextButton && !nextButton.hasAttribute('disabled')) {
-        fireEvent.click(nextButton);
-        const state = store.getState().createWorkspace;
-        expect(state.currentStep).toBe(1);
-      }
+      expect(nextButton).toBeDefined();
+      expect(nextButton?.hasAttribute('disabled')).toBe(false);
+
+      fireEvent.click(nextButton as HTMLElement);
+      const state = store.getState().createWorkspace;
+      expect(state.currentStep).toBe(1);
     });
 
     it('should enable Next button for custom code with dotted namespace', () => {
@@ -542,6 +575,10 @@ describe('CreateWorkspace', () => {
         workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
         pathValidationResults: { '/valid/path': true },
         workspaceName: 'valid-name',
+        workspaceExistenceResults: {
+          '/valid/path/valid-name': false,
+          '/valid/path/valid-name/valid-name.code-workspace': false,
+        },
         logicAppType: ProjectType.customCode,
         logicAppName: 'valid-app',
         workflowType: 'Stateful-Codeless',

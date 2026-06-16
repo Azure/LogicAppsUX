@@ -81,6 +81,36 @@ function getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath: string): s
   return [...new Set([...knownCandidates, ...discoveredCandidates])];
 }
 
+function getRequiredFuncCoreToolsExecutableCandidates(funcBinariesPath: string): string[] {
+  const executableNames = process.platform === 'win32' ? ['func.exe', 'func'] : ['func'];
+  const knownCandidates = ['', 'in-proc8', 'in-proc6'].flatMap((subdir) =>
+    executableNames.map((executableName) => path.join(funcBinariesPath, subdir, executableName))
+  );
+  const discoveredCandidates: string[] = [];
+  const directoriesToScan = [funcBinariesPath];
+
+  for (const directory of directoriesToScan) {
+    if (!fs.existsSync(directory)) {
+      continue;
+    }
+
+    try {
+      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+        const entryPath = path.join(directory, entry.name);
+        if (entry.isDirectory()) {
+          directoriesToScan.push(entryPath);
+        } else if (executableNames.includes(entry.name)) {
+          discoveredCandidates.push(entryPath);
+        }
+      }
+    } catch (error) {
+      ext.outputChannel.appendLog(`Unable to inspect FuncCoreTools directory ${directory}: ${error}`);
+    }
+  }
+
+  return [...new Set([...knownCandidates, ...discoveredCandidates])];
+}
+
 function getFuncCoreToolsDirectories(funcBinariesPath: string): string[] {
   const directoriesToScan = [funcBinariesPath];
 
@@ -146,8 +176,8 @@ export function areFuncCoreToolsExecutablePermissionsValid(funcBinariesPath: str
   }
 
   const candidates = selectedCommand
-    ? [selectedCommand, ...getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath)]
-    : getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath);
+    ? [selectedCommand, ...getRequiredFuncCoreToolsExecutableCandidates(funcBinariesPath)]
+    : getRequiredFuncCoreToolsExecutableCandidates(funcBinariesPath);
   return [...new Set(candidates)].every((candidate) => !fs.existsSync(candidate) || isExecutable(candidate));
 }
 

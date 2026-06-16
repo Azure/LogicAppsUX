@@ -98,12 +98,7 @@ describe('LSP SDK extraction EPERM repro', function () {
         if (message) {
           lastNotificationText = message;
         }
-        if (
-          type === NotificationType.Error &&
-          /Validation and Installation of Runtime Dependencies|Runtime Dependencies encountered an error|Error extracting LSP server:.*EPERM.*LSPServer/i.test(
-            message
-          )
-        ) {
+        if (type === NotificationType.Error && /Error extracting LSP server:.*EPERM.*LSPServer/i.test(message)) {
           console.log(`[lspeperm] Observed dependency failure notification: ${message}`);
           return;
         }

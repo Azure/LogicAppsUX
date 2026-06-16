@@ -918,7 +918,7 @@ async function main() {
     logRuntimeDependencyPermissions(label);
 
     if (failOnExistingNonExecutable) {
-      const brokenCandidates = [...new Set([...funcExecutableCandidates, ...funcUtilityCandidates])]
+      const brokenCandidates = [...new Set(funcExecutableCandidates)]
         .filter((candidate) => fs.existsSync(candidate))
         .filter((candidate) => !isRuntimeExecutable(candidate));
       if (brokenCandidates.length > 0) {
@@ -928,11 +928,11 @@ async function main() {
   };
 
   const runtimeDependenciesReady = () => {
-    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates, funcUtilityCandidates } = getRuntimeDependencyPaths();
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates } = getRuntimeDependencyPaths();
     const requiredBinariesReady = [funcBinary, dotnetBinary, nodeBinary].every(
       (binaryPath) => fs.existsSync(binaryPath) && isRuntimeExecutable(binaryPath)
     );
-    const existingFuncToolsExecutable = [...funcExecutableCandidates, ...funcUtilityCandidates]
+    const existingFuncToolsExecutable = funcExecutableCandidates
       .filter((binaryPath) => fs.existsSync(binaryPath))
       .every((binaryPath) => isRuntimeExecutable(binaryPath));
     return requiredBinariesReady && existingFuncToolsExecutable;

@@ -191,7 +191,9 @@ function getFuncCoreToolsPath(): string {
 function assertFuncCoreToolsExecutable(context: string): void {
   ensureRuntimeDependencyExecutablePermissions();
   const funcBinaryPath = getFuncCoreToolsPath();
-  const existingCandidates = getFuncCoreToolsCandidatePaths().filter((candidate) => fs.existsSync(candidate));
+  const existingCandidates = getFuncCoreToolsCandidatePaths()
+    .filter((candidate) => path.basename(candidate).toLowerCase().startsWith('func'))
+    .filter((candidate) => fs.existsSync(candidate));
   if (existingCandidates.length === 0) {
     throw new Error(`[depValidation] func binary not found after ${context}: ${funcBinaryPath}`);
   }

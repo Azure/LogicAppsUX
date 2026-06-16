@@ -154,10 +154,15 @@ const CreateWorkspaceInternal = () => {
     return workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name);
   };
 
-  const isWorkspaceNameAvailable = () => {
+  const getWorkspaceExistencePaths = () => {
     const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
     const workspaceFile = `${workspaceFolder}${separator}${workspaceName}.code-workspace`;
-    return workspaceExistenceResults[workspaceFolder] !== true && workspaceExistenceResults[workspaceFile] !== true;
+    return { workspaceFolder, workspaceFile };
+  };
+
+  const isWorkspaceNameAvailable = () => {
+    const { workspaceFolder, workspaceFile } = getWorkspaceExistencePaths();
+    return workspaceExistenceResults[workspaceFolder] === false && workspaceExistenceResults[workspaceFile] === false;
   };
 
   // Helper function to validate logic app name with support for existing logic apps

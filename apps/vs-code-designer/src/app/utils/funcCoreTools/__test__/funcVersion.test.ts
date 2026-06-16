@@ -330,6 +330,21 @@ describe('funcVersion - command resolution', () => {
       expect(fs.accessSync).toHaveBeenCalledWith(FUNC_EXE, fs.constants.X_OK);
       expect(fs.accessSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, fs.constants.X_OK);
     });
+
+    it('does not require gozip to be executable for managed FuncCoreTools readiness', () => {
+      mockPlatform('linux');
+      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_EXE, FUNC_GOZIP, FUNC_INPROC8_EXE].includes(p as string));
+      vi.mocked(fs.accessSync).mockImplementation((p) => {
+        if (p === FUNC_GOZIP) {
+          throw new Error('not executable');
+        }
+      });
+
+      expect(areFuncCoreToolsExecutablePermissionsValid(FUNC_DIR, FUNC_EXE)).toBe(true);
+      expect(fs.accessSync).toHaveBeenCalledWith(FUNC_EXE, fs.constants.X_OK);
+      expect(fs.accessSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, fs.constants.X_OK);
+      expect(fs.accessSync).not.toHaveBeenCalledWith(FUNC_GOZIP, fs.constants.X_OK);
+    });
   });
 });
 
