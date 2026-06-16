@@ -1,5 +1,6 @@
 import path from 'path';
 import * as fse from 'fs-extra';
+import * as vscode from 'vscode';
 import { autoRuntimeDependenciesPathSettingKey, localSettingsFileName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
@@ -8,6 +9,23 @@ const codefulSdkPackageId = 'Microsoft.Azure.Workflows.Sdk';
 const codefulSdkPackageVersion = '1.0.0-preview.1';
 const lspSdkHashMarkerName = '.lspsdk-hash';
 const codefulSdkProjectHashMarkerName = '.logicapps-lspsdk-hash';
+
+/**
+ * Checks whether any workspace folder contains a codeful Logic Apps project.
+ */
+export async function codefulProjectsExist(): Promise<boolean> {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return false;
+  }
+
+  for (const folder of workspaceFolders) {
+    if (await hasCodefulWorkflowSetting(folder.uri.fsPath)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /**
  * Checks if the codeful agent is enabled for a given folder by examining the local settings file.
@@ -27,7 +45,7 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
   try {
     const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
     const localSettings = JSON.parse(localSettingsData);
-    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED ? true : false;
+    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED === "true" ? true : false;
   } catch {
     return false;
   }

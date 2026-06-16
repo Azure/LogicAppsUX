@@ -59,6 +59,7 @@ import {
   optional,
   BaseCognitiveServiceService,
   RoleService,
+  normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
@@ -117,6 +118,7 @@ const DesignerEditor = () => {
     showPerformanceDebug,
     suppressDefaultNodeSelect,
     areCustomEditorsEnabled,
+    isFirstDesignerV2Load,
   } = useSelector((state: RootState) => state.workflowLoader);
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -295,13 +297,36 @@ const DesignerEditor = () => {
     }
   }, [isMonitoringView, toggleMonitoringView]);
 
-  const hideMonitoringView = useCallback(() => {
+  const hideMonitoringView = useCallback(async () => {
     if (isMonitoringView) {
-      toggleMonitoringView();
+      // Restore the workflow *before* leaving monitoring view. toggleMonitoringView() clears
+      // read-only, so if it ran first there would be a transient window — widened by the await
+      // below on slow networks — where the designer is editable while the canvas still shows the
+      // selected run's definition. Editing in that window reintroduces the data-loss scenario.
+      // Setting the workflow first guarantees the first render outside monitoring view already
+      // has the correct draft/published definition.
+      if (isDraftMode) {
+        // Restore the draft, not workflow.json (the published version) — the monitoring view
+        // replaced the canvas with the run's definition. The draft autosaves before every run,
+        // so the server copy is current, but the cached query data may be stale; refetch first.
+        let freshCustomCodeData: typeof customCodeData;
+        try {
+          freshCustomCodeData = (await customCodeRefetch()).data;
+        } catch {
+          freshCustomCodeData = undefined;
+        }
+        const draft = (freshCustomCodeData ?? customCodeData)?.[Artifact.DraftFile];
+        if (draft) {
+          setWorkflow(draft as any);
+          toggleMonitoringView();
+          return;
+        }
+      }
       const wf = artifactData?.properties.files[Artifact.WorkflowFile];
       setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
+      toggleMonitoringView();
     }
-  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
+  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView, isDraftMode, customCodeRefetch, customCodeData]);
 
   const onRun = useCallback(
     (runId: string | undefined) => {
@@ -430,16 +455,17 @@ const DesignerEditor = () => {
            */
           for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
             if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+              const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
               const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-              const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+              const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
               const assignmentPromises = [];
               for (const roleDefinition of missingRoleAssignments) {
-                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
               }
               await Promise.all(assignmentPromises);
 
               // Invalidate the cache for the role assignments
-              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
               const queryClient = getReactQueryClient();
               queryClient.invalidateQueries(cacheKey);
             }
@@ -656,6 +682,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showPerformanceDebug,
+          isFirstDesignerV2Load,
         }}
       >
         {workflow?.definition ? (

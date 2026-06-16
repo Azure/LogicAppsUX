@@ -109,9 +109,14 @@ describe('multiselect utils', () => {
       expect(getOrderedSelectedChain(state, ['Trigger', 'A'])).toBeUndefined();
     });
 
-    test('returns undefined for a single node', () => {
+    test('returns the node for a single non-root non-trigger node', () => {
       const state = buildLinearState();
-      expect(getOrderedSelectedChain(state, ['A'])).toBeUndefined();
+      expect(getOrderedSelectedChain(state, ['A'])).toEqual(['A']);
+    });
+
+    test('returns undefined for a single trigger node', () => {
+      const state = buildLinearState();
+      expect(getOrderedSelectedChain(state, ['Trigger'])).toBeUndefined();
     });
 
     test('returns undefined for parallel (non-chained) siblings', () => {

@@ -121,18 +121,18 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
 
   const durationMillisecond = intl.formatMessage(
     {
-      defaultMessage: '{count} Millisecond',
-      description: 'Millisecond',
-      id: 'og5JOA',
+      defaultMessage: '{count} ms',
+      description: 'Millisecond duration abbreviation',
+      id: 'cHoWHO',
     },
     { count }
   );
 
   const durationMilliseconds = intl.formatMessage(
     {
-      defaultMessage: '{count} Milliseconds',
-      description: 'Milliseconds',
-      id: 'hesDPs',
+      defaultMessage: '{count} ms',
+      description: 'Milliseconds duration abbreviation',
+      id: '21a7FD',
     },
     { count }
   );

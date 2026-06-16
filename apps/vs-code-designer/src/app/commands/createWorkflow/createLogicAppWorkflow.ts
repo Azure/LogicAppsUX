@@ -33,7 +33,7 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
     mySubContext.functionFolderName = options.functionFolderName;
     mySubContext.targetFramework = options.targetFramework;
 
-    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath);
+    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath, context);
     vscode.window.showInformationMessage(localize('finishedCreatingWorkflow', 'Finished creating workflow.'));
   } else {
     // Fall back to the newly created workspace folder if not in a workspace

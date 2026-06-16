@@ -4,7 +4,7 @@ import {
   autoRuntimeDependenciesPathSettingKey,
   connectionsFileName,
   lspDirectory,
-  onStartLanguageServerProtocol,
+  onStartLanguageServer,
   workflowAppApiVersion,
 } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
@@ -20,7 +20,6 @@ import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-ap
 import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/common';
 import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
-import { tryGetLogicAppCustomCodeFunctionsProjects } from '../utils/customCodeUtils';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 
 export default class LogicAppsLanguageServer {
@@ -43,11 +42,6 @@ export default class LogicAppsLanguageServer {
     this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
 
     if (!this.projectPath) {
-      return;
-    }
-
-    const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(this.projectPath);
-    if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
       return;
     }
 
@@ -272,8 +266,8 @@ export default class LogicAppsLanguageServer {
   }
 }
 
-export const startLanguageServerProtocol = async () => {
-  await callWithTelemetryAndErrorHandling(onStartLanguageServerProtocol, async (context: IActionContext) => {
+export const startLanguageServer = async () => {
+  await callWithTelemetryAndErrorHandling(onStartLanguageServer, async (context: IActionContext) => {
     const languageServer = new LogicAppsLanguageServer(context);
     await languageServer.start();
   });
