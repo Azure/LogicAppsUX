@@ -821,12 +821,14 @@ async function main() {
     return nodeJsRoot;
   };
 
-  const getRuntimeDependencyPaths = () => {
-    const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+  const getRuntimeDependencyPaths = (depsRootOverride) => {
+    const depsRoot = depsRootOverride || path.join(os.homedir(), '.azurelogicapps', 'dependencies');
     const nodeJsDir = resolveNodeBinDir(depsRoot);
     const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
     const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
     const gozipExecutable = process.platform === 'win32' ? 'gozip.exe' : 'gozip';
+    const dotnetExecutable = process.platform === 'win32' ? 'dotnet.exe' : 'dotnet';
+    const nodeExecutable = process.platform === 'win32' ? 'node.exe' : 'node';
     const funcExecutableCandidates = [
       path.join(funcToolsDir, funcExecutable),
       path.join(funcToolsDir, 'in-proc8', funcExecutable),
@@ -846,8 +848,8 @@ async function main() {
       dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
       nodeJsDir,
       funcBinary,
-      dotnetBinary: path.join(depsRoot, 'DotNetSDK', 'dotnet'),
-      nodeBinary: path.join(nodeJsDir, 'node'),
+      dotnetBinary: path.join(depsRoot, 'DotNetSDK', dotnetExecutable),
+      nodeBinary: path.join(nodeJsDir, nodeExecutable),
     };
   };
 
@@ -870,8 +872,9 @@ async function main() {
     return `${isRuntimeExecutable(binaryPath) ? 'executable' : 'not-executable'} mode=${mode}`;
   };
 
-  const logRuntimeDependencyPermissions = (label) => {
-    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates, funcUtilityCandidates } = getRuntimeDependencyPaths();
+  const logRuntimeDependencyPermissions = (label, depsRootOverride) => {
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates, funcUtilityCandidates } =
+      getRuntimeDependencyPaths(depsRootOverride);
     const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates, ...funcUtilityCandidates];
     for (const candidate of [...new Set(candidates)]) {
       console.log(`  [${label}] runtime binary ${candidate}: ${runtimePermissionStatus(candidate)}`);
@@ -945,7 +948,12 @@ async function main() {
   const settingsFile = path.join(projectDir, 'out', 'test', 'vscode-settings.json');
   fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
 
-  const writeTestSettings = ({ validateDependencies = false, autoStartDesignTime = true, includeRuntimeDependencyPaths = true } = {}) => {
+  const writeTestSettings = ({
+    validateDependencies = false,
+    autoStartDesignTime = true,
+    includeRuntimeDependencyPaths = true,
+    runtimeDependenciesPathOverride,
+  } = {}) => {
     const settings = {
       'extensions.autoUpdate': false,
       'extensions.autoCheckUpdates': false,
@@ -983,9 +991,11 @@ async function main() {
       // the generated task chain has started instead of waiting the default
       // 60 s. Other phases never reach pickProcess so this is harmless.
       'azureLogicAppsStandard.pickProcessTimeout': 15,
+      // Keep dependency validation non-interactive in explicit command tests.
+      'azureLogicAppsStandard.showNodeJsWarning': false,
     };
     if (includeRuntimeDependencyPaths) {
-      const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
+      const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths(runtimeDependenciesPathOverride);
       Object.assign(settings, {
         // Point to auto-downloaded runtime binaries so the extension can start
         // the design-time API process (func host start) without relying on PATH.
@@ -999,6 +1009,9 @@ async function main() {
     console.log(
       `  Settings: validateDependencies=${validateDependencies}, autoStartDesignTime=${autoStartDesignTime}, includeRuntimeDependencyPaths=${includeRuntimeDependencyPaths}`
     );
+    if (runtimeDependenciesPathOverride) {
+      console.log(`  Settings dependency path override: ${runtimeDependenciesPathOverride}`);
+    }
   };
 
   // Write initial settings — keep dependency validation ON for all phases.
@@ -1047,6 +1060,7 @@ async function main() {
   const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
 
   const phase0Files = [testFile('nonLogicAppStartup.test.js')];
+  const lspEpermFiles = [testFile('lspSdkExtractionEperm.test.js')];
 
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
   // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
@@ -1425,6 +1439,51 @@ async function main() {
     const code = await phaseTester.runTests(files, phaseRunOptions);
     console.log(`  ${phaseName} exit code: ${code}`);
     return code;
+  };
+
+  const prepareLspEpermDependencyRoot = () => {
+    if (process.platform !== 'win32') {
+      throw new Error('The LSP EPERM repro uses Windows ACLs and can only run on Windows.');
+    }
+
+    const source = getRuntimeDependencyPaths();
+    const requiredSourceDirs = [
+      ['NodeJs', source.nodeJsDir],
+      ['FuncCoreTools', source.funcToolsDir],
+      ['DotNetSDK', source.dotnetSdkDir],
+    ];
+    const missing = requiredSourceDirs.filter(([, dir]) => !fs.existsSync(dir)).map(([name, dir]) => `${name}: ${dir}`);
+    if (missing.length > 0) {
+      throw new Error(
+        `E2E_MODE=lspeperm requires existing runtime dependencies before cloning an isolated dependency root. ` +
+          `Run a normal dependency-validation E2E phase first. Missing: ${missing.join(', ')}`
+      );
+    }
+
+    const depsRoot = path.join(os.tmpdir(), 'la-e2e-test', 'lsp-eperm-dependencies');
+    fs.rmSync(depsRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+    fs.mkdirSync(depsRoot, { recursive: true });
+
+    for (const [name, sourceDir] of requiredSourceDirs) {
+      fs.cpSync(sourceDir, path.join(depsRoot, name), { recursive: true });
+    }
+
+    for (const stalePath of [
+      path.join(depsRoot, 'LSPServer'),
+      path.join(depsRoot, '.lspserver-hash'),
+      path.join(depsRoot, 'LanguageServerLogicApps'),
+      path.join(depsRoot, '.lspsdk-hash'),
+      path.join(depsRoot, '.lspserver-version'),
+      path.join(depsRoot, '.lspserver-path'),
+      path.join(depsRoot, '.lspsdk-version'),
+    ]) {
+      fs.rmSync(stalePath, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+    }
+
+    process.env.LA_E2E_LSP_EPERM_DEPS_ROOT = depsRoot;
+    console.log(`  Prepared isolated LSP EPERM dependency root: ${depsRoot}`);
+    logRuntimeDependencyPermissions('lspeperm isolated root', depsRoot);
+    return depsRoot;
   };
 
   const configureCodefulRecorderEnvironment = () => {
@@ -1896,6 +1955,24 @@ namespace ${namespaceName}
       await prepareFreshSession('nonlogicappstartup-only');
       const startupExit = await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files);
       process.exit(startupExit);
+    }
+
+    if (e2eMode === 'lspeperm') {
+      if (process.platform !== 'win32') {
+        console.log('E2E_MODE=lspeperm is Windows-only because it uses icacls ACL mutation; skipping on this platform.');
+        process.exit(0);
+      }
+
+      await downloadExTesterAssets();
+      const lspEpermDepsRoot = prepareLspEpermDependencyRoot();
+      writeTestSettings({
+        validateDependencies: false,
+        autoStartDesignTime: false,
+        runtimeDependenciesPathOverride: lspEpermDepsRoot,
+      });
+      await prepareFreshSession('lspeperm-only');
+      const lspEpermExit = await runPhase('Manual: LSP SDK EPERM repro', lspEpermFiles);
+      process.exit(lspEpermExit);
     }
 
     if (e2eMode === 'designeronly') {

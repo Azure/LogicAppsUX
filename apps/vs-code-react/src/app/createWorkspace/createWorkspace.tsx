@@ -154,6 +154,12 @@ const CreateWorkspaceInternal = () => {
     return workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name);
   };
 
+  const isWorkspaceNameAvailable = () => {
+    const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+    const workspaceFile = `${workspaceFolder}${separator}${workspaceName}.code-workspace`;
+    return workspaceExistenceResults[workspaceFolder] !== true && workspaceExistenceResults[workspaceFile] !== true;
+  };
+
   // Helper function to validate logic app name with support for existing logic apps
   const validateLogicAppNameForNavigation = (name: string) => {
     if (!name.trim() || !nameValidation.test(name.trim())) {
@@ -195,9 +201,7 @@ const CreateWorkspaceInternal = () => {
 
         // Workspace name validation (not needed for createLogicApp)
         if (requirements.needsWorkspaceName) {
-          const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
-          const workspaceNameValid =
-            workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true;
+          const workspaceNameValid = workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable();
           if (!workspaceNameValid) {
             return false;
           }
@@ -299,9 +303,7 @@ const CreateWorkspaceInternal = () => {
         // For convertToWorkspace, only validate workspace path and name
         if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
           const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
-          const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
-          const workspaceNameValid =
-            workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true;
+          const workspaceNameValid = workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable();
           return workspacePathValid && workspaceNameValid;
         }
 
@@ -309,9 +311,8 @@ const CreateWorkspaceInternal = () => {
         const workspacePathValid = requirements.needsWorkspacePath
           ? workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true
           : true;
-        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
         const workspaceNameValid = requirements.needsWorkspaceName
-          ? workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true
+          ? workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable()
           : true;
         const logicAppTypeValid = requirements.needsLogicAppType ? logicAppType !== '' : true;
         const logicAppNameValid = requirements.needsLogicAppName

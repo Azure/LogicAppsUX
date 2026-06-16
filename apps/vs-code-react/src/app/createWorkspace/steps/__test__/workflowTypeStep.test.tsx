@@ -21,11 +21,13 @@ vi.mock('../../../../intl', () => ({
   useIntlMessages: () => ({
     AGENT_TITLE: 'Conversational agents (Preview)',
     AUTONOMOUS_TITLE: 'Autonomous agents (Preview)',
+    EMPTY_WORKFLOW_NAME: 'Workflow name cannot be empty.',
     ENTER_WORKFLOW_NAME: 'Enter workflow name',
     SELECT_WORKFLOW_TYPE: 'Select workflow type',
     STATEFUL_TITLE: 'Stateful',
     STATELESS_TITLE: 'Stateless',
     WORKFLOW_CONFIGURATION: 'Workflow configuration',
+    WORKFLOW_NAME_VALIDATION_MESSAGE: 'Workflow name must start with a letter and can only contain letters, digits, "_" and "-".',
     WORKFLOW_NAME: 'Workflow name',
     WORKFLOW_TYPE: 'Workflow type',
   }),
@@ -124,5 +126,38 @@ describe('WorkflowTypeStep', () => {
     fireEvent.click(screen.getByText('Choose autonomous'));
 
     expect(store.getState().createWorkspace.workflowType).toBe(WorkflowType.agenticCodeful);
+  });
+
+  it('allows hyphenated workflow names', () => {
+    const store = renderWorkflowTypeStep({
+      workflowName: '',
+    });
+
+    fireEvent.change(screen.getByLabelText('Enter workflow name'), { target: { value: 'la-trigger-github' } });
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(store.getState().createWorkspace.workflowName).toBe('la-trigger-github');
+  });
+
+  it('shows the empty workflow name message', () => {
+    renderWorkflowTypeStep({
+      workflowName: 'workflow',
+    });
+
+    fireEvent.change(screen.getByLabelText('Enter workflow name'), { target: { value: '' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Workflow name cannot be empty.');
+  });
+
+  it('shows the workflow name validation message for invalid names', () => {
+    renderWorkflowTypeStep({
+      workflowName: '',
+    });
+
+    fireEvent.change(screen.getByLabelText('Enter workflow name'), { target: { value: '1workflow' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Workflow name must start with a letter and can only contain letters, digits, "_" and "-".'
+    );
   });
 });

@@ -46,7 +46,7 @@ export async function installLSPSDK(): Promise<void> {
         }
 
         const zip = new AdmZip(serverZipFile);
-        await zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true);
+        await runWithLockedFileRetry(() => zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true));
 
         if (!(await fse.pathExists(lspServerDllPath))) {
           throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);
@@ -151,9 +151,13 @@ async function stopLanguageClientForUpdate(): Promise<void> {
 }
 
 async function removeWithRetry(targetPath: string): Promise<void> {
+  await runWithLockedFileRetry(() => fse.remove(targetPath));
+}
+
+async function runWithLockedFileRetry(operation: () => Promise<void> | void): Promise<void> {
   for (let attempt = 1; attempt <= lockedFileRetryAttempts; attempt++) {
     try {
-      await fse.remove(targetPath);
+      await operation();
       return;
     } catch (error) {
       if (!isLockedFileError(error) || attempt === lockedFileRetryAttempts) {

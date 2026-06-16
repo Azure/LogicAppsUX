@@ -8,7 +8,7 @@ export const validateWorkflowName = (name: string, intlText: any) => {
   if (!name) {
     return intlText.EMPTY_WORKFLOW_NAME;
   }
-  if (!functionNameValidation.test(name)) {
+  if (!nameValidation.test(name)) {
     return intlText.WORKFLOW_NAME_VALIDATION_MESSAGE;
   }
   return undefined;

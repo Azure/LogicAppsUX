@@ -170,4 +170,20 @@ describe('LogicAppTypeStep', () => {
 
     expect(screen.getByRole('alert')).toHaveTextContent('Logic app name must differ from the function name');
   });
+
+  it('shows validation for invalid logic app names', () => {
+    renderLogicAppType({ logicAppName: '' });
+
+    fireEvent.change(screen.getByPlaceholderText('Enter logic app name'), { target: { value: '1logicapp' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Logic app name is invalid');
+  });
+
+  it('shows validation when the logic app project already exists', () => {
+    renderLogicAppType({ logicAppName: '' });
+
+    fireEvent.change(screen.getByPlaceholderText('Enter logic app name'), { target: { value: 'DuplicateApp' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Project already exists');
+  });
 });

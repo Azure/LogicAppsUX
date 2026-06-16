@@ -236,6 +236,39 @@ describe('CreateWorkspace', () => {
       expect(nextButton).toBeDisabled();
     });
 
+    it('should disable Next when the workspace folder already exists', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'existing-ws',
+        workspaceExistenceResults: {
+          '/valid/path/existing-ws': true,
+        },
+        currentStep: 0,
+      });
+      const buttons = screen.getAllByRole('button');
+      const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
+      expect(nextButton).toBeDisabled();
+    });
+
+    it('should disable Next when the workspace file already exists', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'existing-ws',
+        workspaceExistenceResults: {
+          '/valid/path/existing-ws': false,
+          '/valid/path/existing-ws/existing-ws.code-workspace': true,
+        },
+        currentStep: 0,
+      });
+      const buttons = screen.getAllByRole('button');
+      const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
+      expect(nextButton).toBeDisabled();
+    });
+
     it('should disable Next when logic app name is empty for createWorkspace', () => {
       renderWithStore({
         flowType: 'createWorkspace',

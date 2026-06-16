@@ -176,6 +176,56 @@ describe('WorkspaceNameStep', () => {
   });
 
   describe('workspace name validation display', () => {
+    it('should show empty path validation message when path is cleared', () => {
+      renderWithStore({
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+      });
+      const pathInput = screen.getAllByRole('textbox')[0];
+
+      fireEvent.change(pathInput, { target: { value: '' } });
+
+      expect(screen.getByText('Workspace parent folder path cannot be empty.')).toBeInTheDocument();
+    });
+
+    it('should show invalid path validation message when path validation fails', () => {
+      renderWithStore({
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/invalid/path': false },
+      });
+      const pathInput = screen.getAllByRole('textbox')[0];
+
+      fireEvent.change(pathInput, { target: { value: '/invalid/path' } });
+
+      expect(screen.getByText('The specified path does not exist or is not accessible.')).toBeInTheDocument();
+    });
+
+    it('should show workspace name validation message for invalid names', () => {
+      renderWithStore();
+      const nameInput = screen.getAllByRole('textbox')[1];
+
+      fireEvent.change(nameInput, { target: { value: '1workspace' } });
+
+      expect(
+        screen.getByText('Workspace name must start with a letter and can only contain letters, digits, "_" and "-".')
+      ).toBeInTheDocument();
+    });
+
+    it('should show existing workspace file message', async () => {
+      renderWithStore({
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        workspaceName: 'existing-ws',
+        pathValidationResults: { '/valid/path': true },
+        workspaceExistenceResults: {
+          '/valid/path/existing-ws': false,
+          '/valid/path/existing-ws/existing-ws.code-workspace': true,
+        },
+      });
+
+      await vi.advanceTimersByTimeAsync(400);
+
+      expect(screen.getByText('A workspace file "existing-ws.code-workspace" already exists.')).toBeInTheDocument();
+    });
+
     it('should show availability indicator when workspace name and path are valid', () => {
       renderWithStore({
         workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },

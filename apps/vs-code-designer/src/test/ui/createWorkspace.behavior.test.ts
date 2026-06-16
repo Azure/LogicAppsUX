@@ -898,6 +898,33 @@ describe('Create Workspace Tests', function () {
       console.log('[validWfSep] PASSED');
     });
 
+    it('should allow valid stateful workflow names with internal hyphens', async () => {
+      const pathInput = await findInputByLabel(driver, 'Workspace parent folder path');
+      const wsNameInput = await findInputByLabel(driver, 'Workspace name');
+      const appNameInput = await findInputByLabel(driver, 'Logic app name');
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+
+      await clearAndType(pathInput, tempDir);
+      await waitForPathValidation(driver);
+      await clearAndType(wsNameInput, uniqueName('hyphenws'));
+      await clearAndType(appNameInput, uniqueName('hyphenapp'));
+      await selectRadioOption(driver, 'Logic app (Standard)');
+
+      await clearAndType(wfNameInput, 'la-trigger-');
+      await findValidationMessage(driver, 'Workflow name must start with a letter and can only contain letters, digits');
+
+      await clearAndType(wfNameInput, 'la-trigger-github');
+      await assertNoValidationMessage(driver, 'Workflow name must start with a letter and can only contain letters, digits');
+
+      const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
+      await selectDropdownOption(driver, wfTypeDropdown, 'Stateful');
+      await assertNoValidationMessage(driver, 'Workflow name must start with a letter and can only contain letters, digits');
+
+      await waitForNextButton(driver, 30_000);
+      await captureScreenshot(driver, 'validWfHyphen-passed');
+      console.log('[validWfHyphen] PASSED: "la-trigger-github" is valid for a stateful workflow');
+    });
+
     // -----------------------------------------------------------------------
     // Next button gating
     // -----------------------------------------------------------------------
