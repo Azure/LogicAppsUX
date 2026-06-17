@@ -39,21 +39,7 @@
     "outputs": {},
     "parameters": {
       "$connections": {
-        "defaultValue": {},
-        "type": "Object",
-        "value": {
-          "mcp": {
-            "id": "/subscriptions/test-sub/providers/Microsoft.Web/locations/eastus/managedApis/mcp-connector",
-            "connectionId": "/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Web/connections/mcp-connector-uami",
-            "connectionName": "mcp-connector-uami",
-            "connectionProperties": {
-              "authentication": {
-                "type": "ManagedServiceIdentity",
-                "identity": "/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-uami"
-              }
-            }
-          }
-        }
+        "type": "Object"
       }
     },
     "triggers": {
@@ -64,5 +50,22 @@
     }
   },
   "connections": {},
-  "parameters": {}
+  "parameters": {
+    "$connections": {
+      "type": "Object",
+      "value": {
+        "mcp": {
+          "id": "/subscriptions/test-sub/providers/Microsoft.Web/locations/eastus/managedApis/mcp-connector",
+          "connectionId": "/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Web/connections/mcp-connector-uami",
+          "connectionName": "mcp-connector-uami",
+          "connectionProperties": {
+            "authentication": {
+              "type": "ManagedServiceIdentity",
+              "identity": "/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-uami"
+            }
+          }
+        }
+      }
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
-import { getSerializedWorkflowFromState } from './utils/designerFunctions';
+import { getConnectionReferencesFromState, getSerializedWorkflowFromState } from './utils/designerFunctions';
 
 test.describe(
   'MCP Serialization Tests',
@@ -80,14 +80,22 @@ test.describe(
       expect(toolKeys.length).toBe(3);
     });
 
-    test('Should round-trip UAMI identity on a managed MCP connection from $connections.value', async ({ page }) => {
-      await page.goto('/');
+    test('Should surface UAMI identity on a managed MCP connection loaded from $connections.value', async ({ page }) => {
+      // The connectionReferences rebuild from $connections.value lives in the designer-v2 deserializer.
+      await page.goto('/v2');
 
       await GoToMockWorkflow(page, 'Agent with MCP UAMI');
 
-      const serialized: any = await getSerializedWorkflowFromState(page);
+      // Consumption workflows store connections in parameters.$connections.value. The deserializer
+      // rebuilds connectionReferences from that, preserving connectionProperties so the UAMI surfaces on load.
+      await page.waitForFunction(() => {
+        const state = (window as any).DesignerStoreV2?.getState?.();
+        return !!state?.connections?.connectionReferences?.mcp;
+      });
 
-      const mcpRef = serialized.connectionReferences?.mcp;
+      const references: any = await getConnectionReferencesFromState(page);
+
+      const mcpRef = references?.mcp;
       expect(mcpRef).toBeDefined();
       expect(mcpRef.connectionProperties?.authentication?.type).toBe('ManagedServiceIdentity');
       expect(mcpRef.connectionProperties?.authentication?.identity).toBe(
