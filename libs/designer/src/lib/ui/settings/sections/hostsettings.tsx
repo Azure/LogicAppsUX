@@ -1,5 +1,5 @@
 import type { HeaderClickHandler } from '..';
-import { SettingSectionName } from '..';
+import { SettingSectionName } from '../../../core/state/setting/settingInterface';
 import { SettingsSection } from '../settingsection';
 import type { SettingsSectionProps, Settings as SettingEntry } from '../settingsection';
 import type { SettingData } from '../../../core/actions/bjsworkflow/settings';

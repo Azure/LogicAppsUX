@@ -45,7 +45,7 @@ export const getSupportedSettingKeys = (settings: Settings): string[] => {
 /**
  * Fetches default setting values from the backend for the given operation.
  * Uses React Query to deduplicate concurrent requests with the same
- * (connectorId, operationId, workflowKind) key — so 50 identical HTTP actions
+ * (connectorId, operationId, workflowKind, supportedSettings) key — so 50 identical HTTP actions
  * during deserialization result in a single POST to the backend.
  * Returns undefined if the host does not implement getSettingDefaults or the call fails.
  */
@@ -62,7 +62,13 @@ export const fetchSettingDefaults = async (
 
   try {
     return await getReactQueryClient().fetchQuery(
-      ['settingDefaults', connectorId.toLowerCase(), operationId.toLowerCase(), workflowKind ?? ''],
+      [
+        'settingDefaults',
+        connectorId.toLowerCase(),
+        operationId.toLowerCase(),
+        workflowKind ?? '',
+        [...supportedSettings].sort().join(','),
+      ],
       () => service.getSettingDefaults!(connectorId, operationId, supportedSettings, workflowKind)
     );
   } catch {

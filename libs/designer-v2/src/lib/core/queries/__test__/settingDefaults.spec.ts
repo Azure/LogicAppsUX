@@ -148,5 +148,25 @@ describe('settingDefaults', () => {
 
       expect(spy).toHaveBeenCalledTimes(2);
     });
+
+    it('does not dedupe across different supported setting lists', async () => {
+      const spy = vi.fn().mockResolvedValue({ timeout: { value: 'PT1H' } });
+      InitOperationManifestService({ getSettingDefaults: spy } as any);
+
+      await fetchSettingDefaults('connector', 'operation', ['timeout'], 'stateful');
+      await fetchSettingDefaults('connector', 'operation', ['timeout', 'retryPolicy'], 'stateful');
+
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('dedupes regardless of supported setting order', async () => {
+      const spy = vi.fn().mockResolvedValue({ timeout: { value: 'PT1H' } });
+      InitOperationManifestService({ getSettingDefaults: spy } as any);
+
+      await fetchSettingDefaults('connector', 'operation', ['timeout', 'retryPolicy'], 'stateful');
+      await fetchSettingDefaults('connector', 'operation', ['retryPolicy', 'timeout'], 'stateful');
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
   });
 });
