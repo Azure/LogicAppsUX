@@ -1,4 +1,4 @@
-import { fetchSettingDefaults, getSupportedSettingKeys, mergeSettingDefaults } from '../settingDefaults';
+import { applySettingDefaults, fetchSettingDefaults, getSupportedSettingKeys, mergeSettingDefaults } from '../settingDefaults';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -167,6 +167,30 @@ describe('settingDefaults', () => {
       await fetchSettingDefaults('connector', 'operation', ['retryPolicy', 'timeout'], 'stateful');
 
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('applySettingDefaults', () => {
+    it('returns the settings unchanged when there are no fetched defaults', async () => {
+      InitOperationManifestService({} as any);
+
+      const settings = { timeout: { isSupported: true, value: 'PT5M' } } as unknown as Settings;
+
+      const result = await applySettingDefaults(settings, 'connector', 'operation', 'stateful');
+
+      expect(result).toBe(settings);
+    });
+
+    it('merges fetched defaults into the settings', async () => {
+      InitOperationManifestService({
+        getSettingDefaults: vi.fn().mockResolvedValue({ timeout: { value: 'PT1H' } }),
+      } as any);
+
+      const settings = { timeout: { isSupported: true, value: undefined } } as unknown as Settings;
+
+      const result = await applySettingDefaults(settings, 'connector', 'operation', 'stateful');
+
+      expect(result.timeout?.value).toBe('PT1H');
     });
   });
 });
