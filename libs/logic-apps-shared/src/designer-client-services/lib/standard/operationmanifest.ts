@@ -8,6 +8,8 @@ import { getClientBuiltInConnectors } from '../base/search';
 import { aiOperationsGroup } from './operations/operationgroups';
 import mcpclientconnector from './manifest/mcpclientconnector';
 import builtinMcpClientManifest from './manifest/builtinmcpclient';
+import { LoggerService } from '../logger';
+import { LogEntryLevel } from '../logging/logEntry';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   getCachedOperation?: (connectorName: string, operationName: string) => Promise<any>;
@@ -242,7 +244,15 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
         queryParameters: { 'api-version': apiVersion },
         content: { settings: supportedSettings, workflowKind },
       });
-    } catch {
+    } catch (error) {
+      // Setting defaults are a best-effort enhancement; a failure here must not block operation
+      // initialization, so we swallow the error and log it for observability instead of throwing.
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'StandardOperationManifestService.getSettingDefaults',
+        message: `Failed to fetch setting defaults for ${connectorId}/${operationId}.`,
+        error: error instanceof Error ? error : undefined,
+      });
       return undefined;
     }
   }

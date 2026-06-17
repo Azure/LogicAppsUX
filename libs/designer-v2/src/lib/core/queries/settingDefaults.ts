@@ -3,35 +3,13 @@ import type { Settings, SettingData } from '../actions/bjsworkflow/settings';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import Constants from '../../common/constants';
 
-const KNOWN_SETTING_KEYS = new Set<string>([
-  'asynchronous',
-  'correlation',
-  'secureInputs',
-  'secureOutputs',
-  'disableAsyncPattern',
-  'disableAutomaticDecompression',
-  'splitOn',
-  'retryPolicy',
-  'concurrency',
-  'requestOptions',
-  'sequential',
-  'singleInstance',
-  'splitOnConfiguration',
-  'suppressWorkflowHeaders',
-  'suppressWorkflowHeadersOnResponse',
-  'timeout',
-  'paging',
-  'trackedProperties',
-  'requestSchemaValidation',
-  'conditionExpressions',
-  'uploadChunk',
-  'downloadChunkSize',
-  'runAfter',
-  'invokerConnection',
-  'count',
-  'shouldFailOperation',
-  'hostSettings',
-]);
+/**
+ * Determines whether a key returned by the backend maps to a known, typed setting.
+ * The settings object produced by getOperationSettings is the single source of truth
+ * for the supported setting surface, so deriving "known" keys from it (rather than a
+ * hand-maintained list) keeps the two from drifting as settings are added or removed.
+ */
+const isKnownSettingKey = (settings: Settings, key: string): boolean => Object.prototype.hasOwnProperty.call(settings, key);
 
 /**
  * Extracts the list of setting keys that have isSupported === true.
@@ -55,8 +33,8 @@ export const fetchSettingDefaults = async (
   supportedSettings: string[],
   workflowKind?: string
 ): Promise<Record<string, any> | undefined> => {
-  const service = OperationManifestService();
-  if (!service.getSettingDefaults || supportedSettings.length === 0) {
+  const operationManifestService = OperationManifestService();
+  if (!operationManifestService.getSettingDefaults || supportedSettings.length === 0) {
     return undefined;
   }
 
@@ -69,11 +47,27 @@ export const fetchSettingDefaults = async (
         workflowKind ?? '',
         [...supportedSettings].sort().join(','),
       ],
-      () => service.getSettingDefaults!(connectorId, operationId, supportedSettings, workflowKind)
+      () => operationManifestService.getSettingDefaults!(connectorId, operationId, supportedSettings, workflowKind)
     );
   } catch {
     return undefined;
   }
+};
+
+/**
+ * Fetches backend defaults for the operation and merges them into the provided
+ * settings in a single step. Returns the settings unchanged when the host does
+ * not provide defaults. Callers should prefer this over wiring getSupportedSettingKeys,
+ * fetchSettingDefaults, and mergeSettingDefaults together by hand.
+ */
+export const applySettingDefaults = async (
+  settings: Settings,
+  connectorId: string,
+  operationId: string,
+  workflowKind?: string
+): Promise<Settings> => {
+  const defaults = await fetchSettingDefaults(connectorId, operationId, getSupportedSettingKeys(settings), workflowKind);
+  return defaults ? mergeSettingDefaults(settings, defaults) : settings;
 };
 
 /**
@@ -93,7 +87,7 @@ export const mergeSettingDefaults = (settings: Settings, defaults: Record<string
     const isReadOnly = entry?.readOnly === true;
     const defaultValue = entry?.value;
 
-    if (!KNOWN_SETTING_KEYS.has(key)) {
+    if (!isKnownSettingKey(settings, key)) {
       // Unknown key from the API — store as a host-level setting for display
       hostSettings[key] = { isSupported: true, value: defaultValue, readOnly: isReadOnly };
       continue;

@@ -58,7 +58,7 @@ import {
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
-import { fetchSettingDefaults, getSupportedSettingKeys, mergeSettingDefaults } from '../../queries/settingDefaults';
+import { applySettingDefaults } from '../../queries/settingDefaults';
 import {
   LogEntryLevel,
   LoggerService,
@@ -409,15 +409,7 @@ export const initializeOperationDetailsForManifest = async (
     const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
 
     let settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
-    const defaults = await fetchSettingDefaults(
-      nodeOperationInfo.connectorId,
-      nodeOperationInfo.operationId,
-      getSupportedSettingKeys(settings),
-      workflowKind
-    );
-    if (defaults) {
-      settings = mergeSettingDefaults(settings, defaults);
-    }
+    settings = await applySettingDefaults(settings, nodeOperationInfo.connectorId, nodeOperationInfo.operationId, workflowKind);
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 

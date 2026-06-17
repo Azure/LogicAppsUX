@@ -2,6 +2,8 @@ import type { Connector, OperationInfo, OperationManifest } from '../../../utils
 import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
+import { LoggerService } from '../logger';
+import { LogEntryLevel } from '../logging/logEntry';
 import {
   agentType,
   getBuiltInOperationInfo,
@@ -216,7 +218,15 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
         queryParameters: { 'api-version': apiVersion },
         content: { settings: supportedSettings, workflowKind },
       });
-    } catch {
+    } catch (error) {
+      // Setting defaults are a best-effort enhancement; a failure here must not block operation
+      // initialization, so we swallow the error and log it for observability instead of throwing.
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'ConsumptionOperationManifestService.getSettingDefaults',
+        message: `Failed to fetch setting defaults for ${connectorId}/${operationId}.`,
+        error: error instanceof Error ? error : undefined,
+      });
       return undefined;
     }
   }
