@@ -70,7 +70,6 @@ const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
 const FUNC_DIR = path.join(BIN_ROOT, 'FuncCoreTools');
 const FUNC_EXE = path.join(FUNC_DIR, 'func');
 const FUNC_WIN_EXE = path.join(FUNC_DIR, 'func.exe');
-const FUNC_GOZIP = path.join(FUNC_DIR, 'gozip');
 const FUNC_INPROC8_EXE = path.join(FUNC_DIR, 'in-proc8', 'func');
 const FUNC_INPROC8_WIN_EXE = path.join(FUNC_DIR, 'in-proc8', 'func.exe');
 const FUNC_INPROC6_EXE = path.join(FUNC_DIR, 'in-proc6', 'func');
@@ -258,15 +257,12 @@ describe('funcVersion - command resolution', () => {
   describe('repairFuncCoreToolsExecutablePermissions', () => {
     it('repairs top-level and nested FuncCoreTools executables independently', () => {
       mockPlatform('linux');
-      vi.mocked(fs.existsSync).mockImplementation((p) =>
-        [FUNC_DIR, FUNC_EXE, FUNC_GOZIP, FUNC_INPROC8_EXE, FUNC_INPROC6_EXE].includes(p as string)
-      );
+      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_EXE, FUNC_INPROC8_EXE, FUNC_INPROC6_EXE].includes(p as string));
 
       repairFuncCoreToolsExecutablePermissions(FUNC_DIR);
 
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_GOZIP, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC6_EXE, 0o755);
     });
@@ -279,21 +275,20 @@ describe('funcVersion - command resolution', () => {
 
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
-      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_GOZIP, expect.any(Number));
     });
 
     it('continues repairing later candidates after one chmod failure', () => {
       mockPlatform('linux');
-      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_GOZIP, FUNC_INPROC8_EXE].includes(p as string));
+      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_EXE, FUNC_INPROC8_EXE].includes(p as string));
       vi.mocked(fs.chmodSync).mockImplementation((p) => {
-        if (p === FUNC_GOZIP) {
+        if (p === FUNC_EXE) {
           throw new Error('permission denied');
         }
       });
 
       repairFuncCoreToolsExecutablePermissions(FUNC_DIR);
 
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_GOZIP, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
     });
 
@@ -329,21 +324,6 @@ describe('funcVersion - command resolution', () => {
       expect(areFuncCoreToolsExecutablePermissionsValid(FUNC_DIR, FUNC_EXE)).toBe(true);
       expect(fs.accessSync).toHaveBeenCalledWith(FUNC_EXE, fs.constants.X_OK);
       expect(fs.accessSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, fs.constants.X_OK);
-    });
-
-    it('does not require gozip to be executable for managed FuncCoreTools readiness', () => {
-      mockPlatform('linux');
-      vi.mocked(fs.existsSync).mockImplementation((p) => [FUNC_DIR, FUNC_EXE, FUNC_GOZIP, FUNC_INPROC8_EXE].includes(p as string));
-      vi.mocked(fs.accessSync).mockImplementation((p) => {
-        if (p === FUNC_GOZIP) {
-          throw new Error('not executable');
-        }
-      });
-
-      expect(areFuncCoreToolsExecutablePermissionsValid(FUNC_DIR, FUNC_EXE)).toBe(true);
-      expect(fs.accessSync).toHaveBeenCalledWith(FUNC_EXE, fs.constants.X_OK);
-      expect(fs.accessSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, fs.constants.X_OK);
-      expect(fs.accessSync).not.toHaveBeenCalledWith(FUNC_GOZIP, fs.constants.X_OK);
     });
   });
 });

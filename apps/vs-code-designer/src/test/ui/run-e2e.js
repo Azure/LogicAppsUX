@@ -826,7 +826,6 @@ async function main() {
     const nodeJsDir = resolveNodeBinDir(depsRoot);
     const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
     const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
-    const gozipExecutable = process.platform === 'win32' ? 'gozip.exe' : 'gozip';
     const dotnetExecutable = process.platform === 'win32' ? 'dotnet.exe' : 'dotnet';
     const nodeExecutable = process.platform === 'win32' ? 'node.exe' : 'node';
     const funcExecutableCandidates = [
@@ -834,17 +833,11 @@ async function main() {
       path.join(funcToolsDir, 'in-proc8', funcExecutable),
       path.join(funcToolsDir, 'in-proc6', funcExecutable),
     ];
-    const funcUtilityCandidates = [
-      path.join(funcToolsDir, gozipExecutable),
-      path.join(funcToolsDir, 'in-proc8', gozipExecutable),
-      path.join(funcToolsDir, 'in-proc6', gozipExecutable),
-    ];
     const funcBinary = funcExecutableCandidates.find((candidate) => fs.existsSync(candidate)) || funcExecutableCandidates[0];
     return {
       depsRoot,
       funcToolsDir,
       funcExecutableCandidates,
-      funcUtilityCandidates,
       dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
       nodeJsDir,
       funcBinary,
@@ -873,9 +866,8 @@ async function main() {
   };
 
   const logRuntimeDependencyPermissions = (label, depsRootOverride) => {
-    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates, funcUtilityCandidates } =
-      getRuntimeDependencyPaths(depsRootOverride);
-    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates, ...funcUtilityCandidates];
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates } = getRuntimeDependencyPaths(depsRootOverride);
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates];
     for (const candidate of [...new Set(candidates)]) {
       console.log(`  [${label}] runtime binary ${candidate}: ${runtimePermissionStatus(candidate)}`);
     }
@@ -886,10 +878,9 @@ async function main() {
       return;
     }
 
-    const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir, funcExecutableCandidates, funcUtilityCandidates } =
-      getRuntimeDependencyPaths();
+    const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir, funcExecutableCandidates } = getRuntimeDependencyPaths();
     const { execSync } = require('child_process');
-    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates, ...funcUtilityCandidates];
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates];
     let fixedAny = false;
     for (const bin of [...new Set(candidates)]) {
       if (!fs.existsSync(bin)) {

@@ -152,17 +152,13 @@ function isExecutableFile(filePath: string): boolean {
 
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
-  const gozipName = process.platform === 'win32' ? 'gozip.exe' : 'gozip';
   const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
   const candidates = [
     path.join(funcToolsRoot, executableName),
-    path.join(funcToolsRoot, gozipName),
     path.join(funcToolsRoot, 'in-proc8', executableName),
-    path.join(funcToolsRoot, 'in-proc8', gozipName),
     path.join(funcToolsRoot, 'in-proc6', executableName),
-    path.join(funcToolsRoot, 'in-proc6', gozipName),
   ];
-  const executableNames = new Set([executableName, gozipName]);
+  const executableNames = new Set([executableName]);
 
   const directoriesToScan = [funcToolsRoot];
   for (const directory of directoriesToScan) {

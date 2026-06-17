@@ -33,14 +33,10 @@ import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEdit
 function getFuncCoreToolsDiagnosticPaths(): string[] {
   const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
   const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
-  const gozipExecutable = process.platform === 'win32' ? 'gozip.exe' : 'gozip';
   return [
     path.join(funcToolsRoot, funcExecutable),
-    path.join(funcToolsRoot, gozipExecutable),
     path.join(funcToolsRoot, 'in-proc8', funcExecutable),
-    path.join(funcToolsRoot, 'in-proc8', gozipExecutable),
     path.join(funcToolsRoot, 'in-proc6', funcExecutable),
-    path.join(funcToolsRoot, 'in-proc6', gozipExecutable),
   ];
 }
 
