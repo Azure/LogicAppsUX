@@ -175,3 +175,26 @@ export async function fetchExpectedMd5(url: string): Promise<string | undefined>
   }
   return undefined;
 }
+
+/**
+ * Returns true for errors that indicate "the configured CDN does not have the
+ * package right now" — HTTP 404 / 4xx, plus the common Node network failure
+ * codes (no DNS, refused connection, timeout). Genuine integrity failures
+ * (corrupt bytes returned with the right size/headers) and 5xx errors are NOT
+ * "missing package" — they're transient or actively wrong, and the caller
+ * should retry / surface them rather than silently fall back.
+ */
+export function isMissingPackageError(error: unknown): boolean {
+  if (error instanceof DownloadIntegrityError) {
+    return false;
+  }
+  const status = (error as { response?: { status?: number } })?.response?.status;
+  if (typeof status === 'number') {
+    return status >= 400 && status < 500;
+  }
+  const code = (error as { code?: string })?.code;
+  if (typeof code === 'string') {
+    return code === 'ENOTFOUND' || code === 'ECONNREFUSED' || code === 'ETIMEDOUT' || code === 'EAI_AGAIN' || code === 'ECONNRESET';
+  }
+  return false;
+}

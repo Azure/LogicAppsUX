@@ -100,6 +100,17 @@ vi.mock('../binaries', () => ({
 // Mock integrity helpers (used by bundleFeed for HEAD-based hash verification)
 vi.mock('../integrity', () => ({
   fetchExpectedMd5: vi.fn(),
+  isMissingPackageError: (error: unknown) => {
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    if (typeof status === 'number') {
+      return status >= 400 && status < 500;
+    }
+    const code = (error as { code?: string })?.code;
+    if (typeof code === 'string') {
+      return code === 'ENOTFOUND' || code === 'ECONNREFUSED' || code === 'ETIMEDOUT' || code === 'EAI_AGAIN' || code === 'ECONNRESET';
+    }
+    return false;
+  },
 }));
 
 // Mock vsCodeConfig/settings — bundleFeed reads experimental settings from here.
@@ -788,6 +799,47 @@ describe('downloadExtensionBundle', () => {
     );
   });
 
+  it('does not re-download when the env-var-pinned version is one of several local versions', async () => {
+    // Phase 5 bug fix: previously this used `semver.eq(envVarVer, latestLocalBundleVersion)`,
+    // which returned false when the pin was not the *highest* local version, causing a
+    // pointless redownload. Membership in localVersions is the right check.
+    const localSettingsMod = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({
+      Values: { AzureFunctionsJobHost_extensionBundle_version: '1.50.0' },
+    } as any);
+    setupLocalDisk(['1.50.0', '1.60.0']);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.extensionBundleVersionSource).toBe('envVar');
+    expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('false');
+  });
+
+  it('downloads exactly the env-var-pinned version when not on disk', async () => {
+    const localSettingsMod = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({
+      Values: { AzureFunctionsJobHost_extensionBundle_version: '1.50.0' },
+    } as any);
+    setupLocalDisk(['1.60.0']);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('1.50.0'),
+      defaultExtensionBundlePathValue,
+      extensionBundleId,
+      '1.50.0'
+    );
+  });
+
   describe('experimental extension bundle', () => {
     const setExperimentalSettings = async (values: { useExperimental?: boolean; sourceUri?: string; pinnedVersion?: string } = {}) => {
       const settingsModule = await import('../vsCodeConfig/settings');
@@ -825,13 +877,18 @@ describe('downloadExtensionBundle', () => {
         sourceUri: 'https://private-cdn.example.com/public',
       });
       setupLocalDisk(['1.20.0']); // pin not on disk
+      // Source URI's index lists the pin.
+      mockedGetJsonFeed.mockResolvedValue(['1.10.0', '1.21.0-preview'] as any);
       mockedDownloadAndExtract.mockResolvedValue(undefined);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
 
       expect(result).toBe(true);
-      expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+      // Index is probed against the experimental URI only — never the public CDN.
+      const indexCall = (mockedGetJsonFeed.mock.calls[0]?.[1] as string) ?? '';
+      expect(indexCall).toContain('https://private-cdn.example.com/public');
+      expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(1);
       expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
         expect.anything(),
         expect.stringContaining('https://private-cdn.example.com/public'),
@@ -840,19 +897,29 @@ describe('downloadExtensionBundle', () => {
         '1.21.0-preview'
       );
       expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalFirstDownload');
+      expect(context.telemetry.properties.experimentalSourceFallback).toBeUndefined();
     });
 
-    it('falls back to latest local version when pin is set but missing and source URI is empty', async () => {
+    it('falls back to the public CDN for the pin when source URI is empty and pin is not on disk', async () => {
+      // I3 in the plan: pin set, not on disk, no sourceUri → download `pin` from public CDN.
       await setExperimentalSettings({ useExperimental: true, pinnedVersion: '1.21.0', sourceUri: '' });
       setupLocalDisk(['1.20.0']); // pin not on disk
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
 
-      expect(result).toBe(false);
+      expect(result).toBe(true);
+      // No index probe (no sourceUri to probe).
       expect(mockedGetJsonFeed).not.toHaveBeenCalled();
-      expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
-      expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalLocalLatest');
+      expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.stringContaining('cdn.functions.azure.com/public'),
+        defaultExtensionBundlePathValue,
+        extensionBundleId,
+        '1.21.0'
+      );
+      expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalFirstDownload');
     });
 
     it('uses latest local without consulting the public feed when no pin is set', async () => {
@@ -912,6 +979,148 @@ describe('downloadExtensionBundle', () => {
         extensionBundleId,
         '1.95.0'
       );
+    });
+
+    // ----- Phase 5 fallback tests -----
+
+    const make404 = () => {
+      const err: any = new Error('Request failed with status code 404');
+      err.response = { status: 404, headers: {}, data: '' };
+      err.isAxiosError = true;
+      return err;
+    };
+    const makeNetworkError = () => {
+      const err: any = new Error('getaddrinfo ENOTFOUND private-cdn.example.com');
+      err.code = 'ENOTFOUND';
+      err.isAxiosError = true;
+      return err;
+    };
+
+    it('falls back to the public CDN when the experimental URI returns 404 for the pinned zip', async () => {
+      await setExperimentalSettings({
+        useExperimental: true,
+        pinnedVersion: '1.21.0-preview',
+        sourceUri: 'https://private-cdn.example.com/public',
+      });
+      setupLocalDisk(['1.20.0']);
+      // Index probe lists the pin so we proceed to download from the source.
+      mockedGetJsonFeed.mockResolvedValue(['1.21.0-preview'] as any);
+      // Source download 404s, public download succeeds.
+      mockedDownloadAndExtract.mockRejectedValueOnce(make404()).mockResolvedValueOnce(undefined as any);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(2);
+      const firstUrl = mockedDownloadAndExtract.mock.calls[0]?.[1] as string;
+      const secondUrl = mockedDownloadAndExtract.mock.calls[1]?.[1] as string;
+      expect(firstUrl).toContain('private-cdn.example.com');
+      expect(secondUrl).toContain('cdn.functions.azure.com/public');
+      expect(secondUrl).toContain('1.21.0-preview');
+      expect(context.telemetry.properties.experimentalSourceFallback).toBe('zip404');
+      expect(context.telemetry.properties.experimentalSourceFallbackTarget).toBe('public');
+    });
+
+    it('falls back to the public CDN when the experimental index does not list the pin', async () => {
+      await setExperimentalSettings({
+        useExperimental: true,
+        pinnedVersion: '1.21.0-preview',
+        sourceUri: 'https://private-cdn.example.com/public',
+      });
+      setupLocalDisk(['1.20.0']);
+      // Index probe succeeds but pin is missing.
+      mockedGetJsonFeed.mockResolvedValue(['1.10.0', '1.20.0'] as any);
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      // Only one download — straight to public, no source-zip attempt.
+      expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(1);
+      const url = mockedDownloadAndExtract.mock.calls[0]?.[1] as string;
+      expect(url).toContain('cdn.functions.azure.com/public');
+      expect(url).toContain('1.21.0-preview');
+      expect(context.telemetry.properties.experimentalSourceFallback).toBe('pinNotInIndex');
+    });
+
+    it('falls back to the public feed when the experimental index returns 404 (cold start, no pin)', async () => {
+      await setExperimentalSettings({
+        useExperimental: true,
+        sourceUri: 'https://private-cdn.example.com/public',
+      });
+      setupLocalDisk([]);
+      // First getJsonFeed call (experimental index) 404s, second call (public feed) succeeds.
+      mockedGetJsonFeed.mockRejectedValueOnce(make404()).mockResolvedValueOnce(['1.0.0', '1.95.0'] as any);
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.experimentalSourceFallback).toBe('index404');
+      expect(context.telemetry.properties.experimentalFellThroughToPublic).toBe('true');
+      const url = mockedDownloadAndExtract.mock.calls.at(-1)?.[1] as string;
+      expect(url).toContain('cdn.functions.azure.com/public');
+      expect(url).toContain('1.95.0');
+    });
+
+    it('falls back to the public feed on a network error to the experimental URI (cold start, no pin)', async () => {
+      await setExperimentalSettings({
+        useExperimental: true,
+        sourceUri: 'https://private-cdn.example.com/public',
+      });
+      setupLocalDisk([]);
+      mockedGetJsonFeed.mockRejectedValueOnce(makeNetworkError()).mockResolvedValueOnce(['1.0.0', '1.95.0'] as any);
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.experimentalSourceFallback).toBe('networkError');
+      expect(context.telemetry.properties.experimentalFellThroughToPublic).toBe('true');
+    });
+
+    it('throws when both the experimental URI and the public CDN 404 for the pinned version', async () => {
+      await setExperimentalSettings({
+        useExperimental: true,
+        pinnedVersion: '9.9.9-bogus',
+        sourceUri: 'https://private-cdn.example.com/public',
+      });
+      setupLocalDisk(['1.20.0']);
+      mockedGetJsonFeed.mockResolvedValue(['9.9.9-bogus'] as any);
+      mockedDownloadAndExtract.mockRejectedValueOnce(make404()).mockRejectedValueOnce(make404());
+
+      const context = createMockContext();
+      // The outer try/catch in downloadExtensionBundle swallows + records the
+      // error; result is `false` and telemetry preserves the failure reason.
+      const result = await downloadExtensionBundle(context as any);
+      expect(result).toBe(false);
+      expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not honor the source URI when the master toggle is off', async () => {
+      await setExperimentalSettings({
+        useExperimental: false,
+        sourceUri: 'https://private-cdn.example.com/public',
+        pinnedVersion: '1.21.0-preview',
+      });
+      setupLocalDisk(['1.20.0']);
+      mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      // Public CDN, public latest — toggle off means experimental settings are ignored.
+      const url = mockedDownloadAndExtract.mock.calls[0]?.[1] as string;
+      expect(url).toContain('cdn.functions.azure.com/public');
+      expect(url).toContain('1.95.0');
+      expect(url).not.toContain('private-cdn.example.com');
+      expect(url).not.toContain('1.21.0-preview');
     });
   });
 });

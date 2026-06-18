@@ -14,7 +14,7 @@ import {
 } from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
-import { fetchExpectedMd5 } from './integrity';
+import { fetchExpectedMd5, isMissingPackageError } from './integrity';
 import { getJsonFeed } from './feed';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -38,6 +38,12 @@ export type BundleVersionSource =
   | 'experimentalLocalLatest'
   | 'publicFeedLatest'
   | 'localLatest';
+
+/**
+ * Why the extension fell back from the configured experimental source URI to
+ * the public CDN. Recorded only when a fallback actually fired.
+ */
+export type ExperimentalSourceFallbackReason = 'pinNotInIndex' | 'zip404' | 'index404' | 'networkError' | 'integrityFailure';
 
 interface ExtensionBundleBaseUrlResult {
   baseUrl: string;
@@ -239,6 +245,70 @@ async function downloadBundleAndWriteSidecar(context: IActionContext, baseUrl: s
 }
 
 /**
+ * Same as `downloadBundleAndWriteSidecar` but returns `undefined` when the
+ * configured CDN doesn't have the package (HTTP 404 / network failure) so
+ * callers can fall back to a different source. Genuine integrity failures
+ * (corrupt bytes despite valid headers) still throw — those should not be
+ * silently retried against another CDN.
+ */
+async function tryDownloadBundleAndWriteSidecar(
+  context: IActionContext,
+  baseUrl: string,
+  version: string
+): Promise<{ ok: true } | { ok: false; reason: ExperimentalSourceFallbackReason; error: unknown }> {
+  try {
+    await downloadBundleAndWriteSidecar(context, baseUrl, version);
+    return { ok: true };
+  } catch (error) {
+    if (isMissingPackageError(error)) {
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      const reason: ExperimentalSourceFallbackReason = typeof status === 'number' && status === 404 ? 'zip404' : 'networkError';
+      return { ok: false, reason, error };
+    }
+    throw error;
+  }
+}
+
+/**
+ * Fetches the index.json for the given (experimental) base URL. Returns the
+ * version array on success, `undefined` on 404 / network error so the caller
+ * can fall back. Other errors (e.g. malformed JSON) propagate.
+ */
+async function tryFetchSourceIndex(
+  context: IActionContext,
+  baseUrl: string
+): Promise<{ ok: true; versions: string[] } | { ok: false; reason: ExperimentalSourceFallbackReason; error: unknown }> {
+  const url = `${baseUrl}/ExtensionBundles/${extensionBundleId}/index.json`;
+  try {
+    const versions: string[] = await getJsonFeed(context, url);
+    return { ok: true, versions };
+  } catch (error) {
+    if (isMissingPackageError(error)) {
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      const reason: ExperimentalSourceFallbackReason = typeof status === 'number' && status === 404 ? 'index404' : 'networkError';
+      return { ok: false, reason, error };
+    }
+    throw error;
+  }
+}
+
+function logExperimentalFallback(context: IActionContext, reason: ExperimentalSourceFallbackReason, detail: string, error?: unknown): void {
+  context.telemetry.properties.experimentalSourceFallback = reason;
+  context.telemetry.properties.experimentalSourceFallbackTarget = 'public';
+  if (ext.outputChannel) {
+    const message = error instanceof Error ? `${detail} (${error.message})` : detail;
+    ext.outputChannel.appendLog(
+      localize(
+        'experimentalSourceFallback',
+        'Experimental extension-bundle source could not deliver ({0}); falling back to public CDN. {1}',
+        reason,
+        message
+      )
+    );
+  }
+}
+
+/**
  * Verifies the on-disk bundle's source MD5 against what the public CDN currently
  * reports via HEAD. Used only when the experimental toggle is OFF.
  */
@@ -305,10 +375,18 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
     context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
 
-    // 1. Pinned via env / local.settings.json — existing behavior.
+    // 1. Pinned via env / local.settings.json.
+    //    Use a *membership* test against the full set of local versions, not
+    //    equality with `latestLocalBundleVersion`. The runtime is happy with
+    //    any matching cached version, so re-downloading just because a newer
+    //    version also happens to be on disk is wasteful — and it's the
+    //    "later version present locally wouldn't be used" complaint.
     if (envVarVer) {
       context.telemetry.properties.extensionBundleVersionSource = 'envVar';
-      if (latestLocalBundleVersion !== '0.0.0' && semver.valid(envVarVer) && semver.eq(envVarVer, latestLocalBundleVersion)) {
+      if (semver.valid(envVarVer) && localVersions.some((v) => v === envVarVer)) {
+        ext.defaultBundleVersion = envVarVer;
+        ext.latestBundleVersion = envVarVer;
+        context.telemetry.properties.didUpdateExtensionBundle = 'false';
         return false;
       }
       await downloadBundleAndWriteSidecar(context, baseUrlInfo.baseUrl, envVarVer);
@@ -317,7 +395,11 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
       return true;
     }
 
-    // 2. Experimental toggle on — never call the public feed.
+    // 2. Experimental toggle on. Never consults the public CDN's *latest*
+    //    feed for version selection — but if the configured private source
+    //    cannot deliver the package AND we have no usable local copy, we
+    //    fall back to downloading from the public CDN as a last resort so
+    //    the dev isn't left with a non-running environment.
     if (baseUrlInfo.isExperimental) {
       const pin = baseUrlInfo.experimentalPinnedVersion;
 
@@ -330,16 +412,46 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
           context.telemetry.properties.didUpdateExtensionBundle = 'false';
           return false;
         }
+
+        // Pin not on disk: try the configured experimental source URI first
+        // (if any), then fall back to the public CDN for the same pin.
         if (baseUrlInfo.experimentalSourceUri.length > 0) {
-          await downloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, pin);
-          ext.defaultBundleVersion = pin;
-          ext.latestBundleVersion = pin;
-          context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
-          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-          context.telemetry.properties.didUpdateExtensionBundle = 'true';
-          return true;
+          // Optionally probe the source's index first — this lets us
+          // distinguish "private CDN doesn't have this pin" from "private
+          // CDN is fine but the zip URL was momentarily unreachable" so the
+          // telemetry reason is accurate.
+          const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.experimentalSourceUri);
+          if (indexProbe.ok && indexProbe.versions.includes(pin)) {
+            const result = await tryDownloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, pin);
+            if (result.ok) {
+              ext.defaultBundleVersion = pin;
+              ext.latestBundleVersion = pin;
+              context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
+              context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+              context.telemetry.properties.didUpdateExtensionBundle = 'true';
+              return true;
+            }
+            logExperimentalFallback(
+              context,
+              result.reason,
+              `Pin ${pin} listed in experimental index but its zip could not be downloaded.`,
+              result.error
+            );
+          } else if (indexProbe.ok) {
+            logExperimentalFallback(context, 'pinNotInIndex', `Pin ${pin} is not present in the experimental source index.`);
+          } else {
+            logExperimentalFallback(context, indexProbe.reason, 'Could not read the experimental source index.', indexProbe.error);
+          }
         }
-        // Pin set, not on disk, no source URI — fall through to "no pin" path below.
+
+        // Fallback: download the pin from the public CDN.
+        await downloadBundleAndWriteSidecar(context, PUBLIC_BUNDLE_BASE_URL, pin);
+        ext.defaultBundleVersion = pin;
+        ext.latestBundleVersion = pin;
+        context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
+        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+        context.telemetry.properties.didUpdateExtensionBundle = 'true';
+        return true;
       }
 
       if (latestLocalBundleVersion !== '0.0.0') {
@@ -350,37 +462,57 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
         return false;
       }
 
+      // No pin, no local copy — try the experimental source URI for its
+      // latest. If that fails (404 / network error / empty index), fall
+      // through to the public-CDN default flow below.
       if (baseUrlInfo.experimentalSourceUri.length > 0) {
-        // Cold start with no pin: ask the experimental source for its index and grab its latest.
-        const experimentalIndexUrl = `${baseUrlInfo.experimentalSourceUri}/ExtensionBundles/${extensionBundleId}/index.json`;
-        const experimentalFeed: string[] = await getJsonFeed(context, experimentalIndexUrl);
-        const experimentalLatest = pickLatestVersion(experimentalFeed);
-        if (experimentalLatest === '0.0.0') {
-          throw new Error(
-            localize(
-              'experimentalBundleEmpty',
-              'Experimental extension-bundle source "{0}" returned no versions.',
-              baseUrlInfo.experimentalSourceUri
-            )
-          );
+        const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.experimentalSourceUri);
+        if (indexProbe.ok) {
+          const experimentalLatest = pickLatestVersion(indexProbe.versions);
+          if (experimentalLatest !== '0.0.0') {
+            const result = await tryDownloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, experimentalLatest);
+            if (result.ok) {
+              ext.defaultBundleVersion = experimentalLatest;
+              ext.latestBundleVersion = experimentalLatest;
+              context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
+              context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+              context.telemetry.properties.didUpdateExtensionBundle = 'true';
+              return true;
+            }
+            logExperimentalFallback(
+              context,
+              result.reason,
+              `Latest ${experimentalLatest} from experimental source failed to download.`,
+              result.error
+            );
+          } else {
+            logExperimentalFallback(context, 'index404', 'Experimental source index returned no versions.');
+          }
+        } else {
+          logExperimentalFallback(context, indexProbe.reason, 'Could not read the experimental source index.', indexProbe.error);
         }
-        await downloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, experimentalLatest);
-        ext.defaultBundleVersion = experimentalLatest;
-        ext.latestBundleVersion = experimentalLatest;
-        context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
-        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-        context.telemetry.properties.didUpdateExtensionBundle = 'true';
-        return true;
       }
-      // Toggle is on but no pin, no local, no experimental URI — fall through to public-feed flow
-      // so the dev isn't dead-in-the-water just because they enabled the toggle without configuring
-      // anything else.
+      // Toggle is on but no pin, no local, and the experimental URI either
+      // wasn't set or couldn't deliver — fall through to public-feed flow
+      // so the dev isn't dead-in-the-water.
       context.telemetry.properties.experimentalFellThroughToPublic = 'true';
     }
 
     // 3. Default flow: use latest local if intact; otherwise re-download from CDN.
+    //    If we got here via the experimental fall-through, force the public CDN —
+    //    using the (broken) experimental baseUrl would defeat the whole point of
+    //    the fallback.
+    const fellThroughFromExperimental = baseUrlInfo.isExperimental;
+    const effectiveBaseUrl = fellThroughFromExperimental ? PUBLIC_BUNDLE_BASE_URL : baseUrlInfo.baseUrl;
+
     let latestFeedBundleVersion = '0.0.0';
-    const feedVersions: string[] = await getWorkflowBundleFeed(context);
+    let feedVersions: string[];
+    if (fellThroughFromExperimental) {
+      const publicIndexUrl = `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${extensionBundleId}/index.json`;
+      feedVersions = await getJsonFeed(context, publicIndexUrl);
+    } else {
+      feedVersions = await getWorkflowBundleFeed(context);
+    }
     latestFeedBundleVersion = pickLatestVersion(feedVersions);
 
     context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
@@ -391,7 +523,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     ext.latestBundleVersion = context.telemetry.properties.latestBundleVersion;
 
     if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
-      await downloadBundleAndWriteSidecar(context, baseUrlInfo.baseUrl, latestFeedBundleVersion);
+      await downloadBundleAndWriteSidecar(context, effectiveBaseUrl, latestFeedBundleVersion);
       context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
       context.telemetry.properties.localBundleHashCheck = 'skipped';
       context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
@@ -402,10 +534,10 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     // Local is at least as new as the feed — verify the on-disk bundle's source MD5
     // and re-download if it's missing or has drifted (e.g. CDN republished the same version).
     if (latestLocalBundleVersion !== '0.0.0') {
-      const hashCheck = await verifyLocalBundleHash(context, baseUrlInfo.baseUrl, latestLocalBundleVersion);
+      const hashCheck = await verifyLocalBundleHash(context, effectiveBaseUrl, latestLocalBundleVersion);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
       if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch') {
-        await downloadBundleAndWriteSidecar(context, baseUrlInfo.baseUrl, latestLocalBundleVersion);
+        await downloadBundleAndWriteSidecar(context, effectiveBaseUrl, latestLocalBundleVersion);
         context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
         context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
         context.telemetry.properties.didUpdateExtensionBundle = 'true';
