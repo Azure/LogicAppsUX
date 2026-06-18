@@ -309,6 +309,133 @@ function logExperimentalFallback(context: IActionContext, reason: ExperimentalSo
 }
 
 /**
+ * Why we're about to (re)download a bundle — drives the user-facing
+ * notification copy so the user understands *why* something is being
+ * downloaded, not just *that* it is.
+ */
+type DownloadReason =
+  | 'newerVersion'
+  | 'sidecarMissing'
+  | 'sidecarMismatch'
+  | 'experimentalPin'
+  | 'experimentalLatest'
+  | 'envVarPin'
+  | 'fallbackPublic';
+
+function describeSource(baseUrl: string): string {
+  if (baseUrl.startsWith(PUBLIC_BUNDLE_BASE_URL)) {
+    return localize('bundleSourcePublic', 'public Azure CDN');
+  }
+  return baseUrl;
+}
+
+function buildProgressTitle(version: string, reason: DownloadReason, baseUrl: string): string {
+  const source = describeSource(baseUrl);
+  switch (reason) {
+    case 'sidecarMissing':
+    case 'sidecarMismatch':
+      return localize(
+        'bundleProgressRedownload',
+        'Re-downloading Logic Apps extension bundle {0} from {1} (local copy was incomplete)…',
+        version,
+        source
+      );
+    case 'newerVersion':
+      return localize('bundleProgressNewer', 'Downloading newer Logic Apps extension bundle {0} from {1}…', version, source);
+    case 'experimentalPin':
+      return localize('bundleProgressPin', 'Downloading pinned Logic Apps extension bundle {0} from {1}…', version, source);
+    case 'experimentalLatest':
+      return localize(
+        'bundleProgressExperimental',
+        'Downloading Logic Apps extension bundle {0} from experimental source {1}…',
+        version,
+        source
+      );
+    case 'envVarPin':
+      return localize(
+        'bundleProgressEnvVar',
+        'Downloading Logic Apps extension bundle {0} pinned by host.json/env from {1}…',
+        version,
+        source
+      );
+    case 'fallbackPublic':
+      return localize(
+        'bundleProgressFallback',
+        'Experimental source could not deliver Logic Apps extension bundle {0}; downloading from public Azure CDN…',
+        version
+      );
+    default:
+      return localize('bundleProgressGeneric', 'Downloading Logic Apps extension bundle {0}…', version);
+  }
+}
+
+/**
+ * Surfaces a one-time warning toast when we detect that the local copy of
+ * the bundle is corrupt / incomplete. We always follow it with the actual
+ * download (which the user also sees via the progress notification), so
+ * the warning is informational only — no buttons.
+ */
+function notifyCorruptionDetected(version: string, source: string): void {
+  vscode.window.showWarningMessage(
+    localize(
+      'bundleCorruptionDetected',
+      'Logic Apps extension bundle {0} on disk is incomplete or its checksum no longer matches {1}. Re-downloading.',
+      version,
+      source
+    )
+  );
+}
+
+/**
+ * Wraps `downloadBundleAndWriteSidecar` in a `withProgress` notification and
+ * shows a success toast so the user can see what's happening rather than
+ * silently waiting on activation.
+ *
+ * Tests stub `vscode.window.withProgress` to immediately invoke its task, so
+ * this stays unit-testable.
+ */
+async function downloadBundleWithProgress(
+  context: IActionContext,
+  baseUrl: string,
+  version: string,
+  reason: DownloadReason
+): Promise<void> {
+  const title = buildProgressTitle(version, reason, baseUrl);
+  if (ext.outputChannel) {
+    ext.outputChannel.appendLog(title);
+  }
+  await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title, cancellable: false }, async () => {
+    await downloadBundleAndWriteSidecar(context, baseUrl, version);
+  });
+  vscode.window.showInformationMessage(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
+}
+
+/**
+ * Progress-wrapped variant of `tryDownloadBundleAndWriteSidecar` for the
+ * experimental → public fallback chain. Behaves identically to the bare
+ * helper but surfaces a progress notification during the attempt.
+ */
+async function tryDownloadBundleWithProgress(
+  context: IActionContext,
+  baseUrl: string,
+  version: string,
+  reason: DownloadReason
+): Promise<{ ok: true } | { ok: false; reason: ExperimentalSourceFallbackReason; error: unknown }> {
+  const title = buildProgressTitle(version, reason, baseUrl);
+  if (ext.outputChannel) {
+    ext.outputChannel.appendLog(title);
+  }
+  let outcome: { ok: true } | { ok: false; reason: ExperimentalSourceFallbackReason; error: unknown } = { ok: true };
+  await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title, cancellable: false }, async () => {
+    outcome = await tryDownloadBundleAndWriteSidecar(context, baseUrl, version);
+  });
+  if (outcome.ok) {
+    vscode.window.showInformationMessage(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
+  }
+  return outcome;
+}
+
+/**
  * Verifies the on-disk bundle's source MD5 against what the public CDN currently
  * reports via HEAD. Used only when the experimental toggle is OFF.
  */
@@ -389,7 +516,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
         context.telemetry.properties.didUpdateExtensionBundle = 'false';
         return false;
       }
-      await downloadBundleAndWriteSidecar(context, baseUrlInfo.baseUrl, envVarVer);
+      await downloadBundleWithProgress(context, baseUrlInfo.baseUrl, envVarVer, 'envVarPin');
       context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
       context.telemetry.properties.didUpdateExtensionBundle = 'true';
       return true;
@@ -422,7 +549,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
           // telemetry reason is accurate.
           const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.experimentalSourceUri);
           if (indexProbe.ok && indexProbe.versions.includes(pin)) {
-            const result = await tryDownloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, pin);
+            const result = await tryDownloadBundleWithProgress(context, baseUrlInfo.experimentalSourceUri, pin, 'experimentalPin');
             if (result.ok) {
               ext.defaultBundleVersion = pin;
               ext.latestBundleVersion = pin;
@@ -445,7 +572,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
         }
 
         // Fallback: download the pin from the public CDN.
-        await downloadBundleAndWriteSidecar(context, PUBLIC_BUNDLE_BASE_URL, pin);
+        await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, pin, 'fallbackPublic');
         ext.defaultBundleVersion = pin;
         ext.latestBundleVersion = pin;
         context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
@@ -470,7 +597,12 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
         if (indexProbe.ok) {
           const experimentalLatest = pickLatestVersion(indexProbe.versions);
           if (experimentalLatest !== '0.0.0') {
-            const result = await tryDownloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, experimentalLatest);
+            const result = await tryDownloadBundleWithProgress(
+              context,
+              baseUrlInfo.experimentalSourceUri,
+              experimentalLatest,
+              'experimentalLatest'
+            );
             if (result.ok) {
               ext.defaultBundleVersion = experimentalLatest;
               ext.latestBundleVersion = experimentalLatest;
@@ -523,7 +655,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     ext.latestBundleVersion = context.telemetry.properties.latestBundleVersion;
 
     if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
-      await downloadBundleAndWriteSidecar(context, effectiveBaseUrl, latestFeedBundleVersion);
+      await downloadBundleWithProgress(context, effectiveBaseUrl, latestFeedBundleVersion, 'newerVersion');
       context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
       context.telemetry.properties.localBundleHashCheck = 'skipped';
       context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
@@ -537,7 +669,10 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
       const hashCheck = await verifyLocalBundleHash(context, effectiveBaseUrl, latestLocalBundleVersion);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
       if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch') {
-        await downloadBundleAndWriteSidecar(context, effectiveBaseUrl, latestLocalBundleVersion);
+        // Surface a one-shot warning so the user understands *why* we're
+        // suddenly downloading on what looks like a steady-state activation.
+        notifyCorruptionDetected(latestLocalBundleVersion, describeSource(effectiveBaseUrl));
+        await downloadBundleWithProgress(context, effectiveBaseUrl, latestLocalBundleVersion, hashCheck);
         context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
         context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
         context.telemetry.properties.didUpdateExtensionBundle = 'true';

@@ -85,6 +85,15 @@ vi.mock('vscode', () => ({
       },
     ],
   },
+  window: {
+    // Invoke the task immediately so the wrapped download still runs and
+    // produces its side effects (mockedDownloadAndExtract calls, etc.).
+    withProgress: vi.fn(async (_opts: unknown, task: (...args: unknown[]) => Promise<unknown>) => task()),
+    showInformationMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
+    showErrorMessage: vi.fn(),
+  },
+  ProgressLocation: { Notification: 15, SourceControl: 1, Window: 10 },
 }));
 
 // Mock feed module
@@ -751,6 +760,45 @@ describe('downloadExtensionBundle', () => {
     expect(result).toBe(false);
     expect(context.telemetry.properties.localBundleHashCheck).toBe('headRequestFailed');
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('shows a warning toast + progress notification when a corrupt local bundle is re-downloaded', async () => {
+    const vscode = await import('vscode');
+    const feedVersions = ['1.0.0', '1.95.0'];
+    // Local 1.95.0 with a sidecar that mismatches the CDN's published MD5.
+    setupLocalDisk(['1.95.0'], { '1.95.0': 'stale-on-disk-md5' });
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('fresh-cdn-md5');
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMismatch');
+    expect(vi.mocked(vscode.window.showWarningMessage)).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(vscode.window.showWarningMessage).mock.calls[0]?.[0]).toMatch(/incomplete|checksum/i);
+    expect(vi.mocked(vscode.window.withProgress)).toHaveBeenCalled();
+    const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
+    expect(progressTitle).toMatch(/Re-downloading.*1\.95\.0/);
+    expect(vi.mocked(vscode.window.showInformationMessage)).toHaveBeenCalledWith(expect.stringMatching(/1\.95\.0.*ready/i));
+  });
+
+  it('shows a progress notification when a newer feed version is downloaded (no corruption warning)', async () => {
+    const vscode = await import('vscode');
+    setupLocalDisk(['1.75.0']);
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(vi.mocked(vscode.window.showWarningMessage)).not.toHaveBeenCalled();
+    const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
+    expect(progressTitle).toMatch(/Downloading newer.*1\.95\.0/);
+    expect(vi.mocked(vscode.window.showInformationMessage)).toHaveBeenCalledWith(expect.stringMatching(/1\.95\.0.*ready/i));
   });
 
   it('should correctly identify the latest version from an unordered feed list', async () => {
