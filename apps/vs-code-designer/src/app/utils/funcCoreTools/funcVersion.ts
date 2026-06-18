@@ -81,28 +81,6 @@ function getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath: string): s
   return [...new Set([...knownCandidates, ...discoveredCandidates])];
 }
 
-function getFuncCoreToolsDirectories(funcBinariesPath: string): string[] {
-  const directoriesToScan = [funcBinariesPath];
-
-  for (const directory of directoriesToScan) {
-    if (!fs.existsSync(directory)) {
-      continue;
-    }
-
-    try {
-      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-        if (entry.isDirectory()) {
-          directoriesToScan.push(path.join(directory, entry.name));
-        }
-      }
-    } catch (error) {
-      ext.outputChannel.appendLog(`Unable to inspect FuncCoreTools directory ${directory}: ${error}`);
-    }
-  }
-
-  return [...new Set(directoriesToScan)];
-}
-
 function addExecutePermission(filePath: string): void {
   const stats = fs.statSync(filePath);
   fs.chmodSync(filePath, stats.mode | 0o111);
@@ -126,7 +104,7 @@ export function repairFuncCoreToolsExecutablePermissions(funcBinariesPath: strin
     return;
   }
 
-  const pathsToRepair = [...getFuncCoreToolsDirectories(funcBinariesPath), ...getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath)];
+  const pathsToRepair = getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath);
   for (const candidate of pathsToRepair) {
     if (!fs.existsSync(candidate)) {
       continue;
@@ -302,7 +280,6 @@ export function getFunctionsCommand(): string {
     const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
     const funcBinariesPath = binariesLocation ? path.join(binariesLocation, funcDependencyName) : undefined;
     if (funcBinariesPath && fs.existsSync(funcBinariesPath)) {
-      repairFuncCoreToolsExecutablePermissions(funcBinariesPath);
       const candidate = resolveFuncCoreToolsCommand(funcBinariesPath);
       if (fs.existsSync(candidate)) {
         command = candidate;

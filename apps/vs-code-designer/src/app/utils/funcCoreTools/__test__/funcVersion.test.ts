@@ -203,7 +203,7 @@ describe('funcVersion - command resolution', () => {
       expect(fs.chmodSync).not.toHaveBeenCalled();
     });
 
-    it('writes the preferred func path and chmods only the directory when the executable is missing', async () => {
+    it('writes the preferred func path without chmoding when the executable is missing', async () => {
       mockPlatform('linux');
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR);
@@ -211,11 +211,10 @@ describe('funcVersion - command resolution', () => {
       await setFunctionsCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
-      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_EXE, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalled();
     });
 
-    it('writes the preferred func path and chmods both the directory and the executable when both exist', async () => {
+    it('writes the preferred func path and chmods the executable when both exist', async () => {
       mockPlatform('linux');
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockReturnValue(true);
@@ -225,9 +224,9 @@ describe('funcVersion - command resolution', () => {
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
       expect(fs.existsSync).toHaveBeenCalledWith(FUNC_DIR);
       expect(fs.existsSync).toHaveBeenCalledWith(FUNC_EXE);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_DIR, 0o755);
     });
 
     it('writes the in-proc8 func path when the top-level executable is missing', async () => {
@@ -238,8 +237,8 @@ describe('funcVersion - command resolution', () => {
       await setFunctionsCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_INPROC8_EXE);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_DIR, 0o755);
     });
 
     it('writes the in-proc8 func.exe path when that is the extracted binary name', async () => {
@@ -261,10 +260,10 @@ describe('funcVersion - command resolution', () => {
 
       repairFuncCoreToolsExecutablePermissions(FUNC_DIR);
 
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o755);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC6_EXE, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_DIR, 0o755);
     });
 
     it('repairs nested in-proc8 when optional candidates are missing', () => {

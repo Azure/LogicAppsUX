@@ -73,7 +73,7 @@ async function isFuncToolsInstalled(): Promise<boolean> {
 
   try {
     await executeCommand(undefined, undefined, funcCommand, '--version');
-    return ensureFuncCoreToolsCommandExecutablePermissions(funcCommand);
+    return true;
   } catch {
     return false;
   }

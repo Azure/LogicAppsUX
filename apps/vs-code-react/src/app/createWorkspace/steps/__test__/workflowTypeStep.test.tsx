@@ -128,7 +128,7 @@ describe('WorkflowTypeStep', () => {
     expect(store.getState().createWorkspace.workflowType).toBe(WorkflowType.agenticCodeful);
   });
 
-  it('allows hyphenated workflow names', () => {
+  it('clears validation for a valid workflow name', () => {
     const store = renderWorkflowTypeStep({
       workflowName: '',
     });

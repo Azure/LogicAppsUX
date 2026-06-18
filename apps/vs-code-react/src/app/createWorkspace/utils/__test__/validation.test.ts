@@ -29,8 +29,8 @@ describe('create workspace validation utilities', () => {
   });
 
   describe('validateWorkflowName', () => {
-    it('allows hyphenated workflow names', () => {
-      expect(validateWorkflowName('la-trigger-github', intlText)).toBeUndefined();
+    it.each(['workflow', 'my_app', 'la-trigger-github'])('returns undefined for valid workflow name "%s"', (name) => {
+      expect(validateWorkflowName(name, intlText)).toBeUndefined();
     });
 
     it('returns the empty workflow name message', () => {
