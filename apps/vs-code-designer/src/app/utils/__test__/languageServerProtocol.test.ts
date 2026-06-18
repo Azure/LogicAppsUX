@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, lspDirectory } from '../../../constants';
+import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { installLSPSDK } from '../languageServerProtocol';
+import { installLSPServer } from '../languageServerProtocol';
 import path from 'path';
 import { createHash } from 'crypto';
 
@@ -11,7 +11,6 @@ const mocks = vi.hoisted(() => {
 
   return {
     admZip,
-    copyFile: vi.fn(),
     ensureDir: vi.fn(),
     extractAllTo,
     getGlobalSetting: vi.fn(),
@@ -19,7 +18,6 @@ const mocks = vi.hoisted(() => {
     readdir: vi.fn(),
     readFile: vi.fn(),
     remove: vi.fn(),
-    stat: vi.fn(),
     updateGlobalSetting: vi.fn(),
     writeFile: vi.fn(),
   };
@@ -30,13 +28,11 @@ vi.mock('adm-zip', () => ({
 }));
 
 vi.mock('fs-extra', () => ({
-  copyFile: mocks.copyFile,
   ensureDir: mocks.ensureDir,
   pathExists: mocks.pathExists,
   readdir: mocks.readdir,
   readFile: mocks.readFile,
   remove: mocks.remove,
-  stat: mocks.stat,
   writeFile: mocks.writeFile,
 }));
 
@@ -51,24 +47,15 @@ vi.mock('../../../extensionVariables', () => ({
   },
 }));
 
-describe('installLSPSDK', () => {
+describe('installLSPServer', () => {
   const targetDirectory = 'D:\\runtime-dependencies';
   const lspServerPath = path.join(targetDirectory, 'LSPServer');
   const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
   const lspHashMarker = path.join(targetDirectory, '.lspserver-hash');
-  const sdkDirectoryPath = path.join(targetDirectory, lspDirectory);
-  const sdkHashMarker = path.join(targetDirectory, '.lspsdk-hash');
-  const sdkPackageName = 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg';
-  const sdkDestinationFile = path.join(sdkDirectoryPath, sdkPackageName);
   const legacyLspVersionMarker = path.join(targetDirectory, '.lspserver-version');
-  const legacyLspPathMarker = path.join(targetDirectory, '.lspserver-path');
-  const legacySdkVersionMarker = path.join(targetDirectory, '.lspsdk-version');
   const staleVersionedLspFolder = path.join(targetDirectory, 'LSPServer-1778130324219');
   const serverZipContent = Buffer.from('server zip content');
-  const sdkPackageContent = Buffer.from('sdk package content');
-  const staleSdkPackageContent = Buffer.from('stale sdk package content');
   const serverZipHash = createHash('sha256').update(serverZipContent).digest('hex');
-  const sdkPackageHash = createHash('sha256').update(sdkPackageContent).digest('hex');
   const oldHash = 'old-hash';
   let lspServerExtracted = false;
 
@@ -76,7 +63,6 @@ describe('installLSPSDK', () => {
     vi.clearAllMocks();
     mocks.extractAllTo.mockReset();
     mocks.getGlobalSetting.mockReturnValue(targetDirectory);
-    mocks.copyFile.mockResolvedValue(undefined);
     mocks.ensureDir.mockResolvedValue(undefined);
     mocks.extractAllTo.mockImplementation(() => {
       lspServerExtracted = true;
@@ -98,18 +84,11 @@ describe('installLSPSDK', () => {
     });
   }
 
-  function configureReadFileMocks(options?: {
-    lspHashMarker?: string;
-    sdkHashMarker?: string;
-    installedSdkContent?: Buffer;
-  }): void {
+  function configureReadFileMocks(options?: { lspHashMarker?: string }): void {
     mocks.readFile.mockImplementation(async (filePath: string, encoding?: BufferEncoding) => {
       if (encoding === 'utf-8') {
         if (filePath === lspHashMarker) {
           return options?.lspHashMarker ?? oldHash;
-        }
-        if (filePath === sdkHashMarker) {
-          return options?.sdkHashMarker ?? oldHash;
         }
         return '';
       }
@@ -117,115 +96,80 @@ describe('installLSPSDK', () => {
       if (filePath.includes('LSPServer.zip')) {
         return serverZipContent;
       }
-      if (filePath === sdkDestinationFile) {
-        return options?.installedSdkContent ?? staleSdkPackageContent;
-      }
-      if (filePath.includes(sdkPackageName)) {
-        return sdkPackageContent;
-      }
 
       return Buffer.from('');
     });
   }
 
-  it('extracts the LSP server and copies the SDK when target directories are missing', async () => {
+  it('extracts the LSP server when target directory is missing', async () => {
     setExistingPaths([]);
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(mocks.ensureDir).toHaveBeenCalledWith(targetDirectory);
     expect(mocks.admZip).toHaveBeenCalledWith(expect.stringContaining('LSPServer.zip'));
     expect(mocks.extractAllTo).toHaveBeenCalledWith(targetDirectory, true, true);
-    expect(mocks.ensureDir).toHaveBeenCalledWith(sdkDirectoryPath);
-    expect(mocks.copyFile).toHaveBeenCalledWith(expect.stringContaining(sdkPackageName), sdkDestinationFile);
     expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
-    expect(mocks.writeFile).toHaveBeenCalledWith(sdkHashMarker, sdkPackageHash);
   });
 
-  it('defaults the dependencies path before extracting LSP assets when the setting is unset', async () => {
+  it('defaults the dependencies path before extracting when the setting is unset', async () => {
     mocks.getGlobalSetting.mockReturnValue(undefined);
     setExistingPaths([]);
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(mocks.updateGlobalSetting).toHaveBeenCalledWith(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
     expect(mocks.ensureDir).toHaveBeenCalledWith(defaultDependencyPathValue);
     expect(mocks.extractAllTo).toHaveBeenCalledWith(defaultDependencyPathValue, true, true);
   });
 
-  it('updates both assets when target files exist but hash markers are missing', async () => {
-    setExistingPaths([lspServerPath, lspServerDllPath, sdkDestinationFile]);
+  it('extracts when target file exists but hash marker is missing', async () => {
+    setExistingPaths([lspServerPath, lspServerDllPath]);
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(mocks.remove).toHaveBeenCalledWith(lspServerPath);
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
-    expect(mocks.copyFile).toHaveBeenCalledOnce();
   });
 
-  it('updates both assets when source hashes differ from their stored markers', async () => {
-    setExistingPaths([lspServerPath, lspServerDllPath, lspHashMarker, sdkDestinationFile, sdkHashMarker]);
+  it('extracts when source hash differs from stored marker', async () => {
+    setExistingPaths([lspServerPath, lspServerDllPath, lspHashMarker]);
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
-    expect(mocks.copyFile).toHaveBeenCalledOnce();
     expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
-    expect(mocks.writeFile).toHaveBeenCalledWith(sdkHashMarker, sdkPackageHash);
   });
 
-  it('does not update assets when hash markers and installed SDK package are current', async () => {
-    setExistingPaths([lspServerDllPath, lspHashMarker, sdkDestinationFile, sdkHashMarker]);
-    configureReadFileMocks({
-      lspHashMarker: serverZipHash,
-      sdkHashMarker: sdkPackageHash,
-      installedSdkContent: sdkPackageContent,
-    });
+  it('does not extract when hash marker is current', async () => {
+    setExistingPaths([lspServerDllPath, lspHashMarker]);
+    configureReadFileMocks({ lspHashMarker: serverZipHash });
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
-    expect(mocks.copyFile).not.toHaveBeenCalled();
     expect(mocks.writeFile).not.toHaveBeenCalled();
     expect(mocks.ensureDir).toHaveBeenCalledTimes(1);
     expect(mocks.ensureDir).toHaveBeenCalledWith(targetDirectory);
   });
 
-  it('copies the SDK when the marker is current but the installed same-version package is stale', async () => {
-    setExistingPaths([lspServerDllPath, lspHashMarker, sdkDestinationFile, sdkHashMarker]);
-    configureReadFileMocks({
-      lspHashMarker: serverZipHash,
-      sdkHashMarker: sdkPackageHash,
-      installedSdkContent: staleSdkPackageContent,
-    });
-
-    await installLSPSDK();
-
-    expect(mocks.extractAllTo).not.toHaveBeenCalled();
-    expect(mocks.copyFile).toHaveBeenCalledWith(expect.stringContaining(sdkPackageName), sdkDestinationFile);
-    expect(mocks.writeFile).toHaveBeenCalledWith(sdkHashMarker, sdkPackageHash);
-  });
-
-  it('treats legacy mtime markers as stale and refreshes assets', async () => {
-    setExistingPaths([lspServerPath, lspServerDllPath, legacyLspVersionMarker, sdkDestinationFile, legacySdkVersionMarker]);
+  it('treats legacy mtime markers as stale and refreshes', async () => {
+    setExistingPaths([lspServerPath, lspServerDllPath, legacyLspVersionMarker]);
     configureReadFileMocks({
       lspHashMarker: '2026-05-06T09:17:03.798Z',
-      sdkHashMarker: '2026-05-06T09:17:03.860Z',
     });
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
-    expect(mocks.copyFile).toHaveBeenCalledOnce();
     expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
-    expect(mocks.writeFile).toHaveBeenCalledWith(sdkHashMarker, sdkPackageHash);
   });
 
-  it('cleans stale versioned LSP folders after refreshing the stable LSP folder', async () => {
+  it('cleans stale versioned LSP folders after refreshing', async () => {
     setExistingPaths([lspServerPath]);
-    mocks.readdir.mockResolvedValue(['LSPServer', 'LSPServer-1778130324219', 'LanguageServerLogicApps']);
+    mocks.readdir.mockResolvedValue(['LSPServer', 'LSPServer-1778130324219', 'OtherFolder']);
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(mocks.remove).toHaveBeenCalledWith(staleVersionedLspFolder);
   });
@@ -235,8 +179,7 @@ describe('installLSPSDK', () => {
       throw new Error('zip failed');
     });
 
-    await expect(installLSPSDK()).rejects.toThrow('Error extracting LSP server: Error: zip failed');
-    expect(mocks.copyFile).not.toHaveBeenCalled();
+    await expect(installLSPServer()).rejects.toThrow('Error extracting LSP server: Error: zip failed');
   });
 
   it('adds actionable guidance for locked LSP files during stable folder removal', async () => {
@@ -250,9 +193,8 @@ describe('installLSPSDK', () => {
       }
     });
 
-    await expect(installLSPSDK()).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
+    await expect(installLSPServer()).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
-    expect(mocks.copyFile).not.toHaveBeenCalled();
   });
 
   it('adds actionable guidance for locked LSP files during extraction', async () => {
@@ -263,8 +205,7 @@ describe('installLSPSDK', () => {
       throw lockedError;
     });
 
-    await expect(installLSPSDK()).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
-    expect(mocks.copyFile).not.toHaveBeenCalled();
+    await expect(installLSPServer()).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
   });
 
   it('stops a running language client before replacing LSP assets', async () => {
@@ -272,32 +213,19 @@ describe('installLSPSDK', () => {
     ext.languageClient = { stop } as any;
     setExistingPaths([]);
 
-    await installLSPSDK();
+    await installLSPServer();
 
     expect(stop).toHaveBeenCalledOnce();
     expect(ext.languageClient).toBeUndefined();
     expect(stop.mock.invocationCallOrder[0]).toBeLessThan(mocks.extractAllTo.mock.invocationCallOrder[0]);
-    expect(stop.mock.invocationCallOrder[0]).toBeLessThan(mocks.copyFile.mock.invocationCallOrder[0]);
   });
 
-  it('does not extract or copy assets when stopping the language client fails', async () => {
+  it('does not extract when stopping the language client fails', async () => {
     const stop = vi.fn().mockRejectedValue(new Error('stop failed'));
     ext.languageClient = { stop } as any;
 
-    await expect(installLSPSDK()).rejects.toThrow('Error stopping LSP server before update: Error: stop failed');
+    await expect(installLSPServer()).rejects.toThrow('Error stopping LSP server before update: Error: stop failed');
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
-    expect(mocks.copyFile).not.toHaveBeenCalled();
     expect(ext.languageClient).toBeDefined();
-  });
-
-  it('wraps SDK copy errors with SDK context', async () => {
-    setExistingPaths([lspServerDllPath, lspHashMarker]);
-    configureReadFileMocks({
-      lspHashMarker: serverZipHash,
-    });
-    mocks.copyFile.mockRejectedValue(new Error('copy failed'));
-
-    await expect(installLSPSDK()).rejects.toThrow('Error copying sdk: Error: copy failed');
-    expect(mocks.extractAllTo).not.toHaveBeenCalled();
   });
 });

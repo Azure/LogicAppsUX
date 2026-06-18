@@ -8,7 +8,7 @@ import { ext } from '../../extensionVariables';
 import { getWorkspaceRoot } from '../utils/workspace';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded, isCodefulProject } from '../utils/codeful';
+import { inspectCodefulCsprojBuildHooks, isCodefulProject } from '../utils/codeful';
 
 /**
  * Optional behaviors for {@link publishCodefulProject}.
@@ -58,8 +58,6 @@ export async function publishCodefulProject(
     ext.outputChannel.appendLog(message);
     return;
   }
-
-  await invalidateCodefulSdkCacheIfNeeded(nodePath);
 
   if (options?.skipIfBuildPopulatesCodeful) {
     const buildHooks = await inspectCodefulCsprojBuildHooks(nodePath);

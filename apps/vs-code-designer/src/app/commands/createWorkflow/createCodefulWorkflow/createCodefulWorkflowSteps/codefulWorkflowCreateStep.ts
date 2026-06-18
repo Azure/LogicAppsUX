@@ -25,9 +25,6 @@ import {
   extensionCommand,
   launchFileName,
   vscodeFolderName,
-  assetsFolderName,
-  autoRuntimeDependenciesPathSettingKey,
-  lspDirectory,
 } from '../../../../../constants';
 import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../../../utils/dotnet/executeDotnetTemplateCommand';
@@ -38,7 +35,6 @@ import { createEmptyParametersJson } from '../../../../utils/codeless/parameter'
 import { getDebugConfigs, updateDebugConfigs } from '../../../../utils/vsCodeConfig/launch';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../../../utils/workspace';
 import { getDebugConfiguration } from '../../../../utils/debug';
-import { getGlobalSetting } from '../../../../utils/vsCodeConfig/settings';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
@@ -54,7 +50,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
 
     await createConnectionsJson(context.projectPath);
     await createEmptyParametersJson(context.projectPath);
-    await this.addNugetConfig(context.projectPath);
 
     await this.createSystemArtifacts(context);
 
@@ -191,64 +186,5 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       // Log but don't fail if OmniSharp settings can't be updated
       console.warn('Failed to configure OmniSharp settings:', error);
     }
-  }
-
-  private async addNugetConfig(projectPath: string): Promise<void> {
-    const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-    const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-    const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
-    const getNugetConfigTemplate = (await fse.readFile(templateNugetPath, 'utf-8')).replace(
-      /<%= lspDirectory %>/g,
-      `"${lspDirectoryPath}"`
-    );
-    const nugetConfigPath: string = path.join(projectPath, 'nuget.config');
-
-    if (!(await fse.pathExists(nugetConfigPath))) {
-      await fse.writeFile(nugetConfigPath, getNugetConfigTemplate);
-      return;
-    }
-
-    const existingNugetConfig = await fse.readFile(nugetConfigPath, 'utf-8');
-    const updatedNugetConfig = this.mergeCodefulNugetConfig(existingNugetConfig, lspDirectoryPath);
-    if (updatedNugetConfig !== existingNugetConfig) {
-      await fse.writeFile(nugetConfigPath, updatedNugetConfig);
-    }
-  }
-
-  private mergeCodefulNugetConfig(nugetConfig: string, lspDirectoryPath: string): string {
-    let updatedNugetConfig = this.upsertXmlAddElement(
-      nugetConfig,
-      'config',
-      'globalPackagesFolder',
-      '.nuget\\packages',
-      '<config>\n  </config>'
-    );
-
-    updatedNugetConfig = this.upsertXmlAddElement(
-      updatedNugetConfig,
-      'packageSources',
-      'current',
-      lspDirectoryPath,
-      '<packageSources>\n  </packageSources>'
-    );
-
-    return updatedNugetConfig;
-  }
-
-  private upsertXmlAddElement(nugetConfig: string, sectionName: string, key: string, value: string, emptySection: string): string {
-    const addLine = `    <add key="${key}" value="${value}" />`;
-    const addElementRegex = new RegExp(`<add\\s+key="${key}"\\s+value="[^"]*"\\s*/>`);
-    if (addElementRegex.test(nugetConfig)) {
-      return nugetConfig.replace(addElementRegex, addLine.trim());
-    }
-
-    const sectionCloseTag = `</${sectionName}>`;
-    if (nugetConfig.includes(sectionCloseTag)) {
-      return nugetConfig.replace(sectionCloseTag, `${addLine}\n  ${sectionCloseTag}`);
-    }
-
-    const configurationCloseTag = '</configuration>';
-    const sectionWithValue = emptySection.replace(`</${sectionName}>`, `${addLine}\n  </${sectionName}>`);
-    return nugetConfig.replace(configurationCloseTag, `  ${sectionWithValue}\n${configurationCloseTag}`);
   }
 }

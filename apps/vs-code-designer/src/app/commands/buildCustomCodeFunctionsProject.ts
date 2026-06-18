@@ -13,7 +13,6 @@ import {
 } from '../utils/customCodeUtils';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { invalidateCodefulSdkCacheIfNeeded } from '../utils/codeful';
 
 /**
  * Builds a custom code functions project if exists.
@@ -92,8 +91,6 @@ export async function buildWorkspaceCustomCodeFunctionsProjects(context: IAction
 }
 
 async function buildCustomCodeProject(functionsProjectPath: string): Promise<void> {
-  await invalidateCodefulSdkCacheIfNeeded(functionsProjectPath);
-
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const buildTask = tasks.find((task) => {
     const currTaskPath = (task.scope as vscode.WorkspaceFolder)?.uri.fsPath;

@@ -1,7 +1,7 @@
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import path from 'path';
 import * as fse from 'fs-extra';
-import { assetsFolderName, lspDirectory } from '../../constants';
+import { assetsFolderName } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { ensureRuntimeDependenciesPath } from './runtimeDependenciesPath';
 import AdmZip from 'adm-zip';
@@ -9,10 +9,9 @@ import { createHash } from 'crypto';
 
 const lspServerDirectoryName = 'LSPServer';
 const lspServerHashMarkerName = '.lspserver-hash';
-const lspSdkHashMarkerName = '.lspsdk-hash';
 
-export async function installLSPSDK(): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
+export async function installLSPServer(): Promise<void> {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPServer', async () => {
     const targetDirectory = await ensureRuntimeDependenciesPath();
 
     // Check if LSPServer needs to be extracted or updated
@@ -23,20 +22,9 @@ export async function installLSPSDK(): Promise<void> {
     const serverZipHash = await getFileHash(serverZipFile);
     const shouldExtract = await shouldUpdateFromHash(serverZipHash, serverHashMarkerFile, lspServerDllPath);
 
-    // Check if SDK needs to be copied or updated
-    const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-    const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
-    const sdkHashMarkerFile = path.join(targetDirectory, lspSdkHashMarkerName);
-    const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
-    const sdkHash = await getFileHash(sdkNupkgFile);
-
-    const shouldCopy = await shouldCopySdkFromHash(sdkHash, sdkHashMarkerFile, destinationFile);
-
-    if (shouldExtract || shouldCopy) {
-      await stopLanguageClientForUpdate();
-    }
-
     if (shouldExtract) {
+      await stopLanguageClientForUpdate();
+
       try {
         if (await fse.pathExists(lspServerPath)) {
           await fse.remove(lspServerPath);
@@ -54,19 +42,6 @@ export async function installLSPSDK(): Promise<void> {
         await cleanupStaleLspServerFolders(targetDirectory);
       } catch (error) {
         throw new Error(`Error extracting LSP server: ${formatLockedFileError(error)}`);
-      }
-    }
-
-    if (shouldCopy) {
-      try {
-        await fse.ensureDir(lspDirectoryPath);
-
-        await fse.copyFile(sdkNupkgFile, destinationFile);
-
-        await fse.writeFile(sdkHashMarkerFile, sdkHash);
-        await fse.remove(path.join(targetDirectory, '.lspsdk-version'));
-      } catch (error) {
-        throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
       }
     }
   });
@@ -91,18 +66,6 @@ async function shouldUpdateFromHash(sourceHash: string, hashMarkerFile: string, 
   try {
     const storedHash = (await fse.readFile(hashMarkerFile, 'utf-8')).trim();
     return storedHash !== sourceHash;
-  } catch {
-    return true;
-  }
-}
-
-async function shouldCopySdkFromHash(sourceHash: string, hashMarkerFile: string, destinationFile: string): Promise<boolean> {
-  if (await shouldUpdateFromHash(sourceHash, hashMarkerFile, destinationFile)) {
-    return true;
-  }
-
-  try {
-    return (await getFileHash(destinationFile)) !== sourceHash;
   } catch {
     return true;
   }

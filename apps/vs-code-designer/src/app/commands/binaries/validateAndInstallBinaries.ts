@@ -9,7 +9,7 @@ import { getDependenciesVersion } from '../../utils/bundleFeed';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
-import { installLSPSDK } from '../../utils/languageServerProtocol';
+import { installLSPServer } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { runWithDurationTelemetry } from '../../utils/telemetry';
@@ -97,10 +97,10 @@ export async function validateAndInstallBinaries(context: IActionContext) {
           await setDotNetCommand();
         });
 
-        context.telemetry.properties.lastStep = 'installLSPSDK';
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.installLSPSDK', async () => {
-          progress.report({ increment: 10, message: 'LSP SDK' });
-          await timeout(installLSPSDK, 'LSP SDK', dependencyTimeout);
+        context.telemetry.properties.lastStep = 'installLSPServer';
+        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.installLSPServer', async () => {
+          progress.report({ increment: 10, message: 'LSP Server' });
+          await timeout(installLSPServer, 'LSP Server', dependencyTimeout);
           await setDotNetCommand();
         });
 
