@@ -261,6 +261,33 @@ async function parallelLimit(taskFns, limit) {
 }
 
 async function main() {
+  // Fast path: bundleintegrityonly is a pure-Node Mocha probe that needs
+  // neither the built extension (dist/package.json) nor ExTester / VS Code.
+  // Short-circuit before any of those checks so the phase can run on a
+  // fresh checkout (or any shard) without first running the extension build.
+  const earlyMode = (process.env.E2E_MODE || 'full').toLowerCase();
+  if (earlyMode === 'bundleintegrityonly') {
+    const outTestDir = path.resolve(__dirname, '..', '..', '..', 'out', 'test');
+    const file = path.join(outTestDir, 'bundleCdnHealth.test.js').replace(/\\/g, '/');
+    if (!fs.existsSync(file)) {
+      console.error(`\n✖ Compiled test not found: ${file}\n  Run: npx tsup --config tsup.e2e.test.config.ts`);
+      process.exit(2);
+    }
+    try {
+      delete require.cache[require.resolve(file)];
+    } catch {
+      /* ignore */
+    }
+    const Mocha = require('mocha');
+    const mocha = new Mocha({ color: true, timeout: 60_000, reporter: 'spec' });
+    mocha.addFile(file);
+    const exit = await new Promise((resolve) => {
+      mocha.run((failures) => resolve(failures > 0 ? 1 : 0));
+    });
+    console.log(`\n=== bundleintegrityonly exit code: ${exit} ===`);
+    process.exit(exit);
+  }
+
   const { ExTester } = require('vscode-extension-tester');
 
   // ------------------------------------------------------------------
@@ -775,7 +802,14 @@ async function main() {
   const settingsFile = path.join(projectDir, 'out', 'test', 'vscode-settings.json');
   fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
 
-  const writeTestSettings = ({ validateDependencies = false, autoStartDesignTime = true, includeRuntimeDependencyPaths = true } = {}) => {
+  const writeTestSettings = ({
+    validateDependencies = false,
+    autoStartDesignTime = true,
+    includeRuntimeDependencyPaths = true,
+    useExperimentalBundle = false,
+    experimentalBundleSourceUri = '',
+    experimentalBundleVersion = '',
+  } = {}) => {
     const settings = {
       'extensions.autoUpdate': false,
       'extensions.autoCheckUpdates': false,
@@ -813,6 +847,13 @@ async function main() {
       // the generated task chain has started instead of waiting the default
       // 60 s. Other phases never reach pickProcess so this is harmless.
       'azureLogicAppsStandard.pickProcessTimeout': 15,
+      // Experimental-bundle opt-ins. Off by default for every phase so the
+      // standard CDN flow continues to be tested. The bundleintegrityonly
+      // phase or any future phase that wants to test a private bundle can
+      // flip these via writeTestSettings options.
+      'azureLogicAppsStandard.useExperimentalExtensionBundle': useExperimentalBundle,
+      'azureLogicAppsStandard.experimentalExtensionBundleSourceUri': experimentalBundleSourceUri,
+      'azureLogicAppsStandard.experimentalExtensionBundleVersion': experimentalBundleVersion,
     };
     if (includeRuntimeDependencyPaths) {
       const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
@@ -907,6 +948,12 @@ async function main() {
 
   const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
   const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
+
+  // Phase 4.11 — Bundle CDN integrity probe. Pure Mocha (no ExTester / VS Code).
+  // Verifies that cdn.functions.azure.com still emits Content-Length +
+  // Content-MD5 headers we depend on for download integrity verification, and
+  // does a small live download through the verifier helper.
+  const phaseBundleIntegrityFiles = [testFile('bundleCdnHealth.test.js')];
 
   // ------------------------------------------------------------------
   // Per-scenario inventory (Phase A scaffold).
@@ -1268,6 +1315,34 @@ async function main() {
     const code = await phaseTester.runTests(files, phaseRunOptions);
     console.log(`  ${phaseName} exit code: ${code}`);
     return code;
+  };
+
+  // Runs Mocha against compiled test files directly, without spawning a VS Code
+  // session. Used for the bundle CDN integrity probe, which is a pure Node
+  // test (HTTP HEAD + small download) and does not need ExTester.
+  const runMochaPhase = async (phaseName, files) => {
+    console.log(`\n=== ${phaseName} (Mocha-only, no VS Code) ===`);
+    console.log(`  Files: ${files.join(', ')}`);
+    for (const file of files) {
+      try {
+        delete require.cache[require.resolve(file)];
+      } catch {
+        /* ignore */
+      }
+    }
+    // Lazy-require Mocha so other phases don't pay the cost.
+    const Mocha = require('mocha');
+    const mocha = new Mocha({ color: true, timeout: 60_000, reporter: 'spec' });
+    for (const file of files) {
+      mocha.addFile(file);
+    }
+    return await new Promise((resolve) => {
+      mocha.run((failures) => {
+        const code = failures > 0 ? 1 : 0;
+        console.log(`  ${phaseName} exit code: ${code}`);
+        resolve(code);
+      });
+    });
   };
 
   const configureCodefulRecorderEnvironment = () => {
@@ -1730,6 +1805,14 @@ namespace ${namespaceName}
       process.exit(phase10Exit);
     }
 
+    if (e2eMode === 'bundleintegrityonly') {
+      // Pure Node Mocha — no ExTester, no VS Code session needed. Probes
+      // cdn.functions.azure.com to confirm the integrity headers we depend
+      // on are still emitted.
+      const exit = await runMochaPhase('Phase 4.11: bundleCdnHealth', phaseBundleIntegrityFiles);
+      process.exit(exit);
+    }
+
     if (e2eMode === 'nonlogicappstartup') {
       // Startup regression test: intentionally omit runtime dependency paths to
       // exercise extension activation in a plain, non-Logic-App folder.
@@ -1926,8 +2009,12 @@ namespace ${namespaceName}
       process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
       exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
 
+      // Phase 4.11: bundleCdnHealth — pure Mocha, no VS Code. Confirms the
+      // CDN still emits Content-Length + Content-MD5 headers we rely on.
+      exits.push(await runMochaPhase('Phase 4.11: bundleCdnHealth', phaseBundleIntegrityFiles));
+
       const finalExit = Math.max(...exits);
-      console.log(`\n=== Independent shard results: 4.0=${exits[0]}, 4.8b=${exits[1]} → exit ${finalExit} ===`);
+      console.log(`\n=== Independent shard results: 4.0=${exits[0]}, 4.8b=${exits[1]}, 4.11=${exits[2]} → exit ${finalExit} ===`);
       process.exit(finalExit);
     }
 

@@ -2,10 +2,21 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultVersionRange, extensionBundleId, localSettingsFileName, defaultExtensionBundlePathValue } from '../../constants';
+import {
+  defaultVersionRange,
+  extensionBundleId,
+  localSettingsFileName,
+  defaultExtensionBundlePathValue,
+  bundleSourceMd5SidecarFile,
+  useExperimentalExtensionBundleSettingKey,
+  experimentalExtensionBundleSourceUriSettingKey,
+  experimentalExtensionBundleVersionSettingKey,
+} from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
+import { fetchExpectedMd5 } from './integrity';
 import { getJsonFeed } from './feed';
+import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
@@ -17,16 +28,83 @@ import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
 
+const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
+
+export type BundleBaseUrlSource = 'localSettings' | 'envVar' | 'experimentalSetting' | 'default';
+export type BundleVersionSource =
+  | 'envVar'
+  | 'experimentalLocalPin'
+  | 'experimentalFirstDownload'
+  | 'experimentalLocalLatest'
+  | 'publicFeedLatest'
+  | 'localLatest';
+
+interface ExtensionBundleBaseUrlResult {
+  baseUrl: string;
+  source: BundleBaseUrlSource;
+  isExperimental: boolean;
+  experimentalSourceUri: string;
+  experimentalPinnedVersion: string;
+}
+
+/**
+ * Resolves the base URL used for fetching the extension bundle index, dependency feed,
+ * and zip — plus the experimental settings that may alter version-selection behavior.
+ *
+ * Precedence (highest → lowest):
+ *   1. Workspace `local.settings.json` value `FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI`.
+ *   2. `process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI`.
+ *   3. VS Code experimental setting `experimentalExtensionBundleSourceUri` (only when
+ *      `useExperimentalExtensionBundle` is `true` and the URI is non-empty).
+ *   4. Default public CDN.
+ */
+export async function getExtensionBundleBaseUrl(context: IActionContext): Promise<ExtensionBundleBaseUrlResult> {
+  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+  let localSettingsUri: string | undefined;
+  if (projectPath) {
+    try {
+      localSettingsUri = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+        ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+    } catch {
+      // Missing/invalid local.settings.json is fine; fall through to other sources.
+    }
+  }
+
+  const envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+  const isExperimental = getGlobalSetting<boolean>(useExperimentalExtensionBundleSettingKey) === true;
+  const experimentalSourceUri = (getGlobalSetting<string>(experimentalExtensionBundleSourceUriSettingKey) ?? '').trim();
+  const experimentalPinnedVersion = (getGlobalSetting<string>(experimentalExtensionBundleVersionSettingKey) ?? '').trim();
+
+  let baseUrl: string;
+  let source: BundleBaseUrlSource;
+  if (localSettingsUri && localSettingsUri.length > 0) {
+    baseUrl = localSettingsUri;
+    source = 'localSettings';
+  } else if (envVarUri && envVarUri.length > 0) {
+    baseUrl = envVarUri;
+    source = 'envVar';
+  } else if (isExperimental && experimentalSourceUri.length > 0) {
+    baseUrl = experimentalSourceUri;
+    source = 'experimentalSetting';
+  } else {
+    baseUrl = PUBLIC_BUNDLE_BASE_URL;
+    source = 'default';
+  }
+
+  context.telemetry.properties.extensionBundleBaseUrlSource = source;
+  context.telemetry.properties.useExperimentalExtensionBundle = String(isExperimental);
+
+  return { baseUrl, source, isExperimental, experimentalSourceUri, experimentalPinnedVersion };
+}
+
 /**
  * Gets Workflow bundle extension feed.
  * @param {IActionContext} context - Command context.
  * @returns {Promise<string[]>} Returns array of available bundle versions.
  */
 async function getWorkflowBundleFeed(context: IActionContext): Promise<string[]> {
-  const envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
-  const baseUrl: string = envVarUri || 'https://cdn.functions.azure.com/public';
+  const { baseUrl } = await getExtensionBundleBaseUrl(context);
   const url = `${baseUrl}/ExtensionBundles/${extensionBundleId}/index.json`;
-
   return getJsonFeed(context, url);
 }
 
@@ -41,14 +119,7 @@ async function getBundleDependencyFeed(
   bundleMetadata: IBundleMetadata | undefined
 ): Promise<IBundleDependencyFeed> {
   const bundleId: string = (bundleMetadata && bundleMetadata?.id) || extensionBundleId;
-  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
-  let envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
-  if (projectPath) {
-    envVarUri = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
-      ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
-  }
-
-  const baseUrl: string = envVarUri || 'https://cdn.functions.azure.com/public';
+  const { baseUrl } = await getExtensionBundleBaseUrl(context);
   const url = `${baseUrl}/ExtensionBundles/${bundleId}/dependency.json`;
   return getJsonFeed(context, url);
 }
@@ -83,22 +154,46 @@ export function addDefaultBundle(hostJson: IHostJsonV2): void {
 }
 
 /**
- * Gets bundle extension zip. Microsoft.Azure.Functions.ExtensionBundle.Workflows.<version>.
- * @param {IActionContext} context - Command context.
- * @param {string} extensionVersion - Bundle Extension Version.
- * @returns {string} Returns bundle extension zip url.
+ * Builds the URL to the bundle's zip on the configured base URL.
  */
-async function getExtensionBundleZip(context: IActionContext, extensionVersion: string): Promise<string> {
-  let envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
-  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
-  if (projectPath) {
-    envVarUri = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
-      ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
-  }
-  const baseUrl: string = envVarUri || 'https://cdn.functions.azure.com/public';
-  const url = `${baseUrl}/ExtensionBundles/${extensionBundleId}/${extensionVersion}/${extensionBundleId}.${extensionVersion}_any-any.zip`;
+function buildExtensionBundleZipUrl(baseUrl: string, extensionVersion: string): string {
+  return `${baseUrl}/ExtensionBundles/${extensionBundleId}/${extensionVersion}/${extensionBundleId}.${extensionVersion}_any-any.zip`;
+}
 
-  return url;
+/**
+ * Returns the absolute path of the on-disk MD5 sidecar for a given bundle version.
+ * The sidecar is written by `downloadExtensionBundle` after a successful download
+ * so subsequent startups can confirm the bundle still matches the publisher's
+ * `Content-MD5` header without re-downloading.
+ */
+function getBundleSidecarPath(version: string): string {
+  return path.join(defaultExtensionBundlePathValue, version, bundleSourceMd5SidecarFile);
+}
+
+async function readBundleSidecar(version: string): Promise<string | undefined> {
+  const sidecarPath = getBundleSidecarPath(version);
+  try {
+    if (!(await fse.pathExists(sidecarPath))) {
+      return undefined;
+    }
+    const value = (await fse.readFile(sidecarPath, 'utf8')).trim();
+    return value.length > 0 ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function writeBundleSidecar(version: string, md5: string): Promise<void> {
+  const sidecarPath = getBundleSidecarPath(version);
+  try {
+    await fse.outputFile(sidecarPath, md5, 'utf8');
+  } catch (writeError) {
+    if (ext.outputChannel) {
+      ext.outputChannel.appendLog(
+        localize('bundleSidecarWriteFailed', 'Failed to write extension-bundle MD5 sidecar at "{0}": {1}', sidecarPath, String(writeError))
+      );
+    }
+  }
 }
 
 /**
@@ -121,6 +216,69 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
   return folders;
 }
 
+function pickLatestVersion(versions: string[]): string {
+  let latest = '0.0.0';
+  for (const v of versions) {
+    if (semver.valid(v) && semver.gt(v, latest)) {
+      latest = v;
+    }
+  }
+  return latest;
+}
+
+/**
+ * Downloads the bundle zip from the resolved base URL and writes the sidecar.
+ * Used both for the standard "feed wins" path and for the experimental cold-start path.
+ */
+async function downloadBundleAndWriteSidecar(context: IActionContext, baseUrl: string, version: string): Promise<void> {
+  const zipUrl = buildExtensionBundleZipUrl(baseUrl, version);
+  const result = await downloadAndExtractDependency(context, zipUrl, defaultExtensionBundlePathValue, extensionBundleId, version);
+  if (result?.actualMd5) {
+    await writeBundleSidecar(version, result.actualMd5);
+  }
+}
+
+/**
+ * Verifies the on-disk bundle's source MD5 against what the public CDN currently
+ * reports via HEAD. Used only when the experimental toggle is OFF.
+ */
+async function verifyLocalBundleHash(
+  context: IActionContext,
+  publicBaseUrl: string,
+  localVersion: string
+): Promise<'passed' | 'sidecarMissing' | 'sidecarMismatch' | 'headRequestFailed'> {
+  const sidecarValue = await readBundleSidecar(localVersion);
+  if (!sidecarValue) {
+    return 'sidecarMissing';
+  }
+
+  const headUrl = buildExtensionBundleZipUrl(publicBaseUrl, localVersion);
+  let publishedMd5: string | undefined;
+  try {
+    publishedMd5 = await fetchExpectedMd5(headUrl);
+  } catch (error) {
+    if (ext.outputChannel) {
+      ext.outputChannel.appendLog(
+        localize(
+          'bundleHashHeadFailed',
+          'Failed to verify extension-bundle MD5 against {0}: {1}',
+          headUrl,
+          error instanceof Error ? error.message : String(error)
+        )
+      );
+    }
+    context.telemetry.properties.bundleHashHeadError = error instanceof Error ? error.message : String(error);
+    return 'headRequestFailed';
+  }
+
+  if (!publishedMd5) {
+    // Server didn't return a Content-MD5 — can't verify either way; treat as passed
+    // so we don't pointlessly re-download just because the CDN dropped the header.
+    return 'passed';
+  }
+  return publishedMd5 === sidecarValue ? 'passed' : 'sidecarMismatch';
+}
+
 /**
  * Download Microsoft.Azure.Functions.ExtensionBundle.Workflows.<version>
  * Destination: C:\Users\<USERHOME>\.azure-functions-core-tools\Functions\ExtensionBundles\<version>
@@ -128,41 +286,102 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
  * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
 export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
+  const downloadExtensionBundleStartTime = Date.now();
   try {
-    const downloadExtensionBundleStartTime = Date.now();
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
     const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
     if (projectPath) {
-      envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
-        ?.AzureFunctionsJobHost_extensionBundle_version;
+      try {
+        envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+          ?.AzureFunctionsJobHost_extensionBundle_version;
+      } catch {
+        // ignore
+      }
     }
 
-    // Check for latest version at directory.
-    let latestLocalBundleVersion = '1.0.0';
     const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
-    for (const localVersion of localVersions) {
-      latestLocalBundleVersion = semver.gt(latestLocalBundleVersion, localVersion) ? latestLocalBundleVersion : localVersion;
-    }
+    const latestLocalBundleVersion = pickLatestVersion(localVersions);
+    const baseUrlInfo = await getExtensionBundleBaseUrl(context);
 
     context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
+
+    // 1. Pinned via env / local.settings.json — existing behavior.
     if (envVarVer) {
-      if (semver.eq(envVarVer, latestLocalBundleVersion)) {
+      context.telemetry.properties.extensionBundleVersionSource = 'envVar';
+      if (latestLocalBundleVersion !== '0.0.0' && semver.valid(envVarVer) && semver.eq(envVarVer, latestLocalBundleVersion)) {
         return false;
       }
-
-      const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
-      await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+      await downloadBundleAndWriteSidecar(context, baseUrlInfo.baseUrl, envVarVer);
       context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
       context.telemetry.properties.didUpdateExtensionBundle = 'true';
       return true;
     }
 
-    // Check the latest from feed.
-    let latestFeedBundleVersion = '1.0.0';
-    const feedVersions: string[] = await getWorkflowBundleFeed(context);
-    for (const bundleVersion of feedVersions) {
-      latestFeedBundleVersion = semver.gt(latestFeedBundleVersion, bundleVersion) ? latestFeedBundleVersion : bundleVersion;
+    // 2. Experimental toggle on — never call the public feed.
+    if (baseUrlInfo.isExperimental) {
+      const pin = baseUrlInfo.experimentalPinnedVersion;
+
+      if (pin && pin.length > 0) {
+        const pinIsLocal = localVersions.some((v) => v === pin);
+        if (pinIsLocal) {
+          ext.defaultBundleVersion = pin;
+          ext.latestBundleVersion = pin;
+          context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalPin';
+          context.telemetry.properties.didUpdateExtensionBundle = 'false';
+          return false;
+        }
+        if (baseUrlInfo.experimentalSourceUri.length > 0) {
+          await downloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, pin);
+          ext.defaultBundleVersion = pin;
+          ext.latestBundleVersion = pin;
+          context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
+          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+          context.telemetry.properties.didUpdateExtensionBundle = 'true';
+          return true;
+        }
+        // Pin set, not on disk, no source URI — fall through to "no pin" path below.
+      }
+
+      if (latestLocalBundleVersion !== '0.0.0') {
+        ext.defaultBundleVersion = latestLocalBundleVersion;
+        ext.latestBundleVersion = latestLocalBundleVersion;
+        context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatest';
+        context.telemetry.properties.didUpdateExtensionBundle = 'false';
+        return false;
+      }
+
+      if (baseUrlInfo.experimentalSourceUri.length > 0) {
+        // Cold start with no pin: ask the experimental source for its index and grab its latest.
+        const experimentalIndexUrl = `${baseUrlInfo.experimentalSourceUri}/ExtensionBundles/${extensionBundleId}/index.json`;
+        const experimentalFeed: string[] = await getJsonFeed(context, experimentalIndexUrl);
+        const experimentalLatest = pickLatestVersion(experimentalFeed);
+        if (experimentalLatest === '0.0.0') {
+          throw new Error(
+            localize(
+              'experimentalBundleEmpty',
+              'Experimental extension-bundle source "{0}" returned no versions.',
+              baseUrlInfo.experimentalSourceUri
+            )
+          );
+        }
+        await downloadBundleAndWriteSidecar(context, baseUrlInfo.experimentalSourceUri, experimentalLatest);
+        ext.defaultBundleVersion = experimentalLatest;
+        ext.latestBundleVersion = experimentalLatest;
+        context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
+        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+        context.telemetry.properties.didUpdateExtensionBundle = 'true';
+        return true;
+      }
+      // Toggle is on but no pin, no local, no experimental URI — fall through to public-feed flow
+      // so the dev isn't dead-in-the-water just because they enabled the toggle without configuring
+      // anything else.
+      context.telemetry.properties.experimentalFellThroughToPublic = 'true';
     }
+
+    // 3. Default flow: use latest local if intact; otherwise re-download from CDN.
+    let latestFeedBundleVersion = '0.0.0';
+    const feedVersions: string[] = await getWorkflowBundleFeed(context);
+    latestFeedBundleVersion = pickLatestVersion(feedVersions);
 
     context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
       ? latestFeedBundleVersion
@@ -172,25 +391,36 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     ext.latestBundleVersion = context.telemetry.properties.latestBundleVersion;
 
     if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
-      const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
-      await downloadAndExtractDependency(
-        context,
-        extensionBundleUrl,
-        defaultExtensionBundlePathValue,
-        extensionBundleId,
-        latestFeedBundleVersion
-      );
-
+      await downloadBundleAndWriteSidecar(context, baseUrlInfo.baseUrl, latestFeedBundleVersion);
+      context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
+      context.telemetry.properties.localBundleHashCheck = 'skipped';
       context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
       context.telemetry.properties.didUpdateExtensionBundle = 'true';
       return true;
     }
 
+    // Local is at least as new as the feed — verify the on-disk bundle's source MD5
+    // and re-download if it's missing or has drifted (e.g. CDN republished the same version).
+    if (latestLocalBundleVersion !== '0.0.0') {
+      const hashCheck = await verifyLocalBundleHash(context, baseUrlInfo.baseUrl, latestLocalBundleVersion);
+      context.telemetry.properties.localBundleHashCheck = hashCheck;
+      if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch') {
+        await downloadBundleAndWriteSidecar(context, baseUrlInfo.baseUrl, latestLocalBundleVersion);
+        context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
+        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+        context.telemetry.properties.didUpdateExtensionBundle = 'true';
+        return true;
+      }
+    } else {
+      context.telemetry.properties.localBundleHashCheck = 'skipped';
+    }
+
+    context.telemetry.properties.extensionBundleVersionSource = 'localLatest';
     context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
     context.telemetry.properties.didUpdateExtensionBundle = 'false';
     return false;
   } catch (error) {
-    const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
+    const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error instanceof Error ? error.message : String(error)}`;
     context.telemetry.properties.errorMessage = errorMessage;
     return false;
   }

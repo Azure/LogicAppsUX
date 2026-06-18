@@ -279,6 +279,9 @@ export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
+export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
+export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
+export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
@@ -287,6 +290,7 @@ export const onStartLanguageServerProtocol = 'onStartLanguageServerProtocol';
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';

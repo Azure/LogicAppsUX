@@ -5,7 +5,7 @@ import {
   getLatestVersionRange,
   addDefaultBundle,
   downloadExtensionBundle,
-  resetCachedBundleVersion
+  resetCachedBundleVersion,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -27,6 +27,8 @@ vi.mock('fs-extra', async (importOriginal) => {
     pathExists: vi.fn(),
     readdirSync: vi.fn(),
     statSync: vi.fn(),
+    readFile: vi.fn(),
+    outputFile: vi.fn().mockResolvedValue(undefined),
   };
 });
 
@@ -93,6 +95,16 @@ vi.mock('../feed', () => ({
 // Mock binaries module
 vi.mock('../binaries', () => ({
   downloadAndExtractDependency: vi.fn(),
+}));
+
+// Mock integrity helpers (used by bundleFeed for HEAD-based hash verification)
+vi.mock('../integrity', () => ({
+  fetchExpectedMd5: vi.fn(),
+}));
+
+// Mock vsCodeConfig/settings — bundleFeed reads experimental settings from here.
+vi.mock('../vsCodeConfig/settings', () => ({
+  getGlobalSetting: vi.fn().mockReturnValue(undefined),
 }));
 
 // Mock localSettings
@@ -583,21 +595,52 @@ describe('downloadExtensionBundle', () => {
     },
   });
 
-  beforeEach(() => {
+  // Helper: configure fs-extra so that the bundle versions in `localVersions` exist on disk
+  // and the sidecar contents (if provided) round-trip when readBundleSidecar reads them.
+  const setupLocalDisk = (localVersions: string[], sidecarByVersion: Record<string, string> = {}) => {
+    mockedFse.readdirSync.mockReturnValue(localVersions as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    mockedFse.pathExists.mockImplementation(((p: string) => {
+      // Default: bundle root and version folders exist; sidecar exists only when registered.
+      if (typeof p !== 'string') {
+        return Promise.resolve(true);
+      }
+      if (p.endsWith('.bundle-source-md5')) {
+        const matches = Object.keys(sidecarByVersion).some((v) => p.includes(v));
+        return Promise.resolve(matches);
+      }
+      return Promise.resolve(true);
+    }) as any);
+    mockedFse.readFile.mockImplementation(((p: string) => {
+      if (typeof p !== 'string') {
+        return Promise.resolve('' as any);
+      }
+      const match = Object.entries(sidecarByVersion).find(([v]) => p.includes(v));
+      return Promise.resolve((match?.[1] ?? '') as any);
+    }) as any);
+  };
+
+  beforeEach(async () => {
     vi.clearAllMocks();
     // Reset environment variables
     delete process.env.AzureFunctionsJobHost_extensionBundle_version;
     delete process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+    // Default: experimental settings disabled
+    const settingsModule = await import('../vsCodeConfig/settings');
+    vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(undefined);
+    // Default: HEAD request returns nothing — keeps tests that don't care about sidecar simple.
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue(undefined);
+    // Reset fs-extra mocks
+    mockedFse.readFile.mockReset();
+    mockedFse.outputFile.mockResolvedValue(undefined as any);
   });
 
   it('should download newer version when feed has higher version than local', async () => {
     // Feed versions (simulating index.json format)
     const feedVersions = ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.95.0'];
 
-    // Local version is 1.75.0
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue(['1.75.0'] as any);
-    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    setupLocalDisk(['1.75.0']);
 
     // Mock the feed to return the versions array
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
@@ -622,23 +665,80 @@ describe('downloadExtensionBundle', () => {
     );
   });
 
-  it('should not download when local version is higher than feed versions', async () => {
-    // Feed only has older versions
+  it('should not download when local version is higher than feed versions and the on-disk sidecar matches the published MD5', async () => {
     const feedVersions = ['1.0.0', '1.1.0', '1.2.0'];
-
-    // Local version is already 1.75.0
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue(['1.75.0'] as any);
-    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    // Local version is already 1.75.0 with a valid sidecar.
+    const matchingMd5 = 'matching-md5-base64';
+    setupLocalDisk(['1.75.0'], { '1.75.0': matchingMd5 });
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue(matchingMd5);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
 
-    // Should not download
     expect(result).toBe(false);
     expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('false');
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('passed');
+    expect(context.telemetry.properties.extensionBundleVersionSource).toBe('localLatest');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('should re-download when local version equals feed but the sidecar is missing', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupLocalDisk(['1.95.0']); // no sidecar registered → readBundleSidecar returns undefined
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMissing');
+    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('1.95.0'),
+      defaultExtensionBundlePathValue,
+      extensionBundleId,
+      '1.95.0'
+    );
+  });
+
+  it('should re-download when local version equals feed but the sidecar drifted from the published MD5', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupLocalDisk(['1.95.0'], { '1.95.0': 'old-md5' });
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('new-md5');
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMismatch');
+    expect(mockedDownloadAndExtract).toHaveBeenCalled();
+  });
+
+  it('should keep using local when the HEAD request fails', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupLocalDisk(['1.95.0'], { '1.95.0': 'some-md5' });
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockRejectedValue(new Error('network down'));
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('headRequestFailed');
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
@@ -646,9 +746,7 @@ describe('downloadExtensionBundle', () => {
     // Feed versions in random order
     const feedVersions = ['1.3.0', '1.95.0', '1.0.0', '1.50.0', '1.1.0'];
 
-    // No local versions
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue([] as any);
+    setupLocalDisk([]);
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
     mockedDownloadAndExtract.mockResolvedValue(undefined);
@@ -671,10 +769,7 @@ describe('downloadExtensionBundle', () => {
     // Feed has 1.95.0
     const feedVersions = ['1.0.0', '1.95.0'];
 
-    // Multiple local versions, highest is 1.75.0
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue(['1.50.0', '1.75.0', '1.60.0'] as any);
-    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    setupLocalDisk(['1.50.0', '1.75.0', '1.60.0']);
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
     mockedDownloadAndExtract.mockResolvedValue(undefined);
@@ -691,5 +786,199 @@ describe('downloadExtensionBundle', () => {
       extensionBundleId,
       '1.95.0'
     );
+  });
+
+  describe('experimental extension bundle', () => {
+    const setExperimentalSettings = async (values: { useExperimental?: boolean; sourceUri?: string; pinnedVersion?: string } = {}) => {
+      const settingsModule = await import('../vsCodeConfig/settings');
+      vi.mocked(settingsModule.getGlobalSetting).mockImplementation((key: string) => {
+        if (key === 'useExperimentalExtensionBundle') {
+          return values.useExperimental as any;
+        }
+        if (key === 'experimentalExtensionBundleSourceUri') {
+          return (values.sourceUri ?? '') as any;
+        }
+        if (key === 'experimentalExtensionBundleVersion') {
+          return (values.pinnedVersion ?? '') as any;
+        }
+        return undefined;
+      });
+    };
+
+    it('uses the pinned local version and never calls the public feed', async () => {
+      await setExperimentalSettings({ useExperimental: true, pinnedVersion: '1.21.0' });
+      setupLocalDisk(['1.21.0']);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(false);
+      expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+      expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+      expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalLocalPin');
+    });
+
+    it('downloads the pinned version from the experimental URI when missing on disk', async () => {
+      await setExperimentalSettings({
+        useExperimental: true,
+        pinnedVersion: '1.21.0-preview',
+        sourceUri: 'https://private-cdn.example.com/public',
+      });
+      setupLocalDisk(['1.20.0']); // pin not on disk
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+      expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.stringContaining('https://private-cdn.example.com/public'),
+        defaultExtensionBundlePathValue,
+        extensionBundleId,
+        '1.21.0-preview'
+      );
+      expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalFirstDownload');
+    });
+
+    it('falls back to latest local version when pin is set but missing and source URI is empty', async () => {
+      await setExperimentalSettings({ useExperimental: true, pinnedVersion: '1.21.0', sourceUri: '' });
+      setupLocalDisk(['1.20.0']); // pin not on disk
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(false);
+      expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+      expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+      expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalLocalLatest');
+    });
+
+    it('uses latest local without consulting the public feed when no pin is set', async () => {
+      await setExperimentalSettings({ useExperimental: true });
+      setupLocalDisk(['1.50.0', '1.75.0']);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(false);
+      expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+      expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+      expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalLocalLatest');
+    });
+
+    it('cold-starts from the experimental URI when nothing is on disk', async () => {
+      await setExperimentalSettings({
+        useExperimental: true,
+        sourceUri: 'https://private-cdn.example.com/public',
+      });
+      setupLocalDisk([]);
+      mockedGetJsonFeed.mockResolvedValue(['1.10.0', '1.21.0-preview'] as any);
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      // Should fetch the experimental index, not the public one.
+      const calledWith = (mockedGetJsonFeed.mock.calls[0]?.[1] as string) ?? '';
+      expect(calledWith).toContain('https://private-cdn.example.com/public');
+      expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.stringContaining('https://private-cdn.example.com/public'),
+        defaultExtensionBundlePathValue,
+        extensionBundleId,
+        '1.21.0-preview'
+      );
+      expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalFirstDownload');
+    });
+
+    it('falls through to the public feed when toggle is on but no pin / no local / no source URI', async () => {
+      await setExperimentalSettings({ useExperimental: true });
+      setupLocalDisk([]);
+      mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.experimentalFellThroughToPublic).toBe('true');
+      expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.stringContaining('1.95.0'),
+        defaultExtensionBundlePathValue,
+        extensionBundleId,
+        '1.95.0'
+      );
+    });
+  });
+});
+
+describe('getExtensionBundleBaseUrl', () => {
+  let getExtensionBundleBaseUrl: typeof import('../bundleFeed').getExtensionBundleBaseUrl;
+  let settingsModule: typeof import('../vsCodeConfig/settings');
+  let localSettingsMod: typeof import('../appSettings/localSettings');
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    delete process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+    ({ getExtensionBundleBaseUrl } = await import('../bundleFeed'));
+    settingsModule = await import('../vsCodeConfig/settings');
+    localSettingsMod = await import('../appSettings/localSettings');
+    vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(undefined);
+    vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({} as any);
+  });
+
+  const ctx = () => ({
+    telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
+  });
+
+  it('uses local.settings.json over everything else', async () => {
+    vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({
+      Values: { FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://from-local-settings' },
+    } as any);
+    process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI = 'https://from-env';
+    vi.mocked(settingsModule.getGlobalSetting).mockImplementation((key: string) =>
+      key === 'useExperimentalExtensionBundle'
+        ? (true as any)
+        : key === 'experimentalExtensionBundleSourceUri'
+          ? ('https://from-vscode' as any)
+          : undefined
+    );
+
+    const c = ctx();
+    const result = await getExtensionBundleBaseUrl(c as any);
+    expect(result.baseUrl).toBe('https://from-local-settings');
+    expect(result.source).toBe('localSettings');
+    expect(c.telemetry.properties.extensionBundleBaseUrlSource).toBe('localSettings');
+  });
+
+  it('uses process.env when local.settings.json is empty', async () => {
+    process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI = 'https://from-env';
+    const result = await getExtensionBundleBaseUrl(ctx() as any);
+    expect(result.baseUrl).toBe('https://from-env');
+    expect(result.source).toBe('envVar');
+  });
+
+  it('uses experimental setting when toggle is on and the higher-precedence sources are empty', async () => {
+    vi.mocked(settingsModule.getGlobalSetting).mockImplementation((key: string) =>
+      key === 'useExperimentalExtensionBundle'
+        ? (true as any)
+        : key === 'experimentalExtensionBundleSourceUri'
+          ? ('https://from-vscode' as any)
+          : undefined
+    );
+    const result = await getExtensionBundleBaseUrl(ctx() as any);
+    expect(result.baseUrl).toBe('https://from-vscode');
+    expect(result.source).toBe('experimentalSetting');
+    expect(result.isExperimental).toBe(true);
+  });
+
+  it('falls back to the public CDN when nothing is configured', async () => {
+    const result = await getExtensionBundleBaseUrl(ctx() as any);
+    expect(result.baseUrl).toBe('https://cdn.functions.azure.com/public');
+    expect(result.source).toBe('default');
   });
 });
