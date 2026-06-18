@@ -97,9 +97,21 @@ export async function downloadFileWithVerification(
 function downloadFileAttempt(url: string, destPath: string): Promise<DownloadAttemptResult> {
   return new Promise<DownloadAttemptResult>((resolve, reject) => {
     axios
-      .get(url, { responseType: 'stream' })
+      .get(url, {
+        responseType: 'stream',
+        // Force identity so Content-Length describes the bytes we actually
+        // pipe to disk. Without this, axios negotiates gzip/br and
+        // auto-decompresses the stream, leaving Content-Length pointing at the
+        // compressed size — which would cause spurious size mismatches against
+        // the decoded byte count we measure (e.g. dot.net/v1/dotnet-install.ps1).
+        headers: { 'Accept-Encoding': 'identity' },
+        decompress: false,
+      })
       .then((response) => {
         const headers = response.headers ?? {};
+        const contentEncodingRaw = headers['content-encoding'] ?? headers['Content-Encoding'];
+        const contentEncoding = typeof contentEncodingRaw === 'string' ? contentEncodingRaw.trim().toLowerCase() : '';
+        const responseIsEncoded = contentEncoding.length > 0 && contentEncoding !== 'identity';
         const contentLengthRaw = headers['content-length'] ?? headers['Content-Length'];
         const expectedSize = contentLengthRaw === undefined ? undefined : Number.parseInt(String(contentLengthRaw), 10);
         const expectedMd5Raw = headers['content-md5'] ?? headers['Content-MD5'];
@@ -126,7 +138,13 @@ function downloadFileAttempt(url: string, destPath: string): Promise<DownloadAtt
         writer.on('error', (err: Error) => settle(() => reject(err)));
         writer.on('finish', () =>
           settle(() => {
-            if (expectedSize !== undefined && Number.isFinite(expectedSize) && actualSize !== expectedSize) {
+            // If the server ignored our identity hint and gzipped/br-encoded
+            // the body anyway, Content-Length describes the compressed bytes
+            // and is meaningless next to the byte count we recorded (which
+            // for `decompress: false` is the compressed stream too — but
+            // skipping the size check here keeps us safe regardless of which
+            // layer ends up decoding). MD5 is still checked when present.
+            if (!responseIsEncoded && expectedSize !== undefined && Number.isFinite(expectedSize) && actualSize !== expectedSize) {
               reject(new DownloadIntegrityError(url, 'size', String(expectedSize), String(actualSize)));
               return;
             }
@@ -167,7 +185,7 @@ function delay(ms: number): Promise<void> {
  * fall back gracefully.
  */
 export async function fetchExpectedMd5(url: string): Promise<string | undefined> {
-  const response = await axios.head(url);
+  const response = await axios.head(url, { headers: { 'Accept-Encoding': 'identity' } });
   const headers = response.headers ?? {};
   const expectedMd5Raw = headers['content-md5'] ?? headers['Content-MD5'];
   if (typeof expectedMd5Raw === 'string' && expectedMd5Raw.length > 0) {

@@ -183,6 +183,51 @@ describe('binaries', () => {
       expect(result.actualSize).toBe(2);
       expect(axios.get).toHaveBeenCalledTimes(2);
     }, 10000);
+
+    it('requests identity encoding so Content-Length matches the bytes piped to disk', async () => {
+      mockWriter();
+      mockAxiosStream(['hello world'], { 'content-length': '11' });
+
+      await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(axios.get).toHaveBeenCalledWith(
+        url,
+        expect.objectContaining({
+          responseType: 'stream',
+          headers: expect.objectContaining({ 'Accept-Encoding': 'identity' }),
+          decompress: false,
+        })
+      );
+    });
+
+    it('tolerates Content-Encoding by skipping the size check (regression: dotnet-install.ps1 gzip)', async () => {
+      mockWriter();
+      // Server ignored our identity hint and gzipped anyway. Content-Length describes
+      // the compressed bytes (24942) but we record the decoded bytes piped to disk
+      // (76680). Previously this threw DownloadIntegrityError; now it succeeds.
+      const decoded = 'a'.repeat(76680);
+      mockAxiosStream([decoded], {
+        'content-encoding': 'gzip',
+        'content-length': '24942',
+      });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(result.actualSize).toBe(76680);
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('1');
+    });
+
+    it('still enforces size mismatches when no Content-Encoding is present', async () => {
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999' });
+
+      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(DownloadIntegrityError);
+      expect(axios.get).toHaveBeenCalledTimes(3);
+    }, 10000);
   });
 
   describe('binariesExist', () => {

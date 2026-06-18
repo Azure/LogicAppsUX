@@ -137,6 +137,30 @@ describe('Bundle CDN integrity headers (live)', function () {
       assert.strictEqual(result.actualMd5, result.expectedMd5, 'actualMd5 !== expectedMd5');
     }
   });
+
+  it('downloadFileWithVerification round-trips dot.net/v1/dotnet-install.ps1 (gzip regression guard)', async () => {
+    // Regression: this URL is served gzipped by the dot.net CDN, which used
+    // to trip our Content-Length check (Content-Length describes the
+    // compressed bytes but axios decompresses the stream). The fix forces
+    // Accept-Encoding: identity *and* tolerates Content-Encoding if the
+    // server ignores the hint. If this test fails with DownloadIntegrityError
+    // again the CDN or axios behavior drifted — see integrity.ts.
+    const destPath = path.join(scratchDir, 'dotnet-install.ps1');
+    const result = await downloadFileWithVerification('https://dot.net/v1/dotnet-install.ps1', destPath, {
+      maxAttempts: DEFAULT_DOWNLOAD_MAX_ATTEMPTS,
+    });
+
+    assert.ok(fs.existsSync(destPath), 'dotnet-install.ps1 was not written to disk');
+    const stat = fs.statSync(destPath);
+    assert.ok(stat.size > 1024, `dotnet-install.ps1 on disk is suspiciously small: ${stat.size} bytes`);
+    assert.ok(result.actualSize === stat.size, `actualSize (${result.actualSize}) !== stat.size (${stat.size})`);
+
+    const body = fs.readFileSync(destPath, 'utf8');
+    assert.ok(
+      body.includes('param') || body.includes('Param') || body.includes('<#'),
+      'dotnet-install.ps1 does not look like a PowerShell script — likely truncated or HTML error page'
+    );
+  });
 });
 
 describe('Bundle CDN integrity headers (experimental settings smoke)', function () {
