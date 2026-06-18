@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import * as fs from 'fs';
 import axios from 'axios';
+import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
 import {
   downloadAndExtractDependency,
+  downloadFileWithVerification,
+  DownloadIntegrityError,
   binariesExist,
   getLatestDotNetVersion,
   getLatestFunctionCoreToolsVersion,
@@ -47,36 +50,9 @@ describe('binaries', () => {
       context = {
         telemetry: {
           properties: {},
+          measurements: {},
         },
       } as IActionContext;
-    });
-
-    it('should download and extract dependency', async () => {
-      const downloadUrl = 'https://example.com/dependency.zip';
-      const targetFolder = 'targetFolder';
-      const dependencyName = 'dependency';
-      const folderName = 'folderName';
-      const dotNetVersion = '6.0';
-
-      const writer = {
-        on: vi.fn(),
-      } as any;
-
-      (axios.get as Mock).mockResolvedValue({
-        data: {
-          pipe: vi.fn().mockImplementation((writer) => {
-            writer.on('finish');
-          }),
-        },
-      });
-
-      (fs.createWriteStream as Mock).mockReturnValue(writer);
-
-      await downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion);
-
-      expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), { recursive: true });
-      expect(fs.chmodSync).toHaveBeenCalledWith(expect.any(String), 0o777);
-      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
     });
 
     it('should throw error when the compression file extension is not supported', async () => {
@@ -90,6 +66,123 @@ describe('binaries', () => {
         downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion)
       ).rejects.toThrowError();
     });
+  });
+
+  describe('downloadFileWithVerification', () => {
+    let context: IActionContext;
+    const url = 'https://cdn.example.com/Microsoft.Azure.Functions.ExtensionBundle.Workflows.1.2.3_any-any.zip';
+    const destPath = '/tmp/dep.zip';
+    const dependencyName = 'TestDep';
+
+    beforeEach(() => {
+      context = {
+        telemetry: { properties: {}, measurements: {} },
+      } as IActionContext;
+      (fs.existsSync as Mock).mockReturnValue(false);
+    });
+
+    // Build a fake axios stream response. `chunks` are streamed in order;
+    // `headers` lets each test choose what the CDN reports.
+    function mockAxiosStream(chunks: string[], headers: Record<string, string>) {
+      const data = new EventEmitter() as EventEmitter & { pipe: (w: any) => any };
+      data.pipe = (writer: any) => {
+        // Schedule emission on the next microtask so test code can wire listeners.
+        setImmediate(() => {
+          for (const chunk of chunks) {
+            data.emit('data', Buffer.from(chunk));
+          }
+          writer.emit('finish');
+        });
+        return writer;
+      };
+      (axios.get as Mock).mockResolvedValueOnce({ headers, data });
+    }
+
+    function mockWriter() {
+      const writer = new EventEmitter() as EventEmitter & { write: Mock; end: Mock };
+      writer.write = vi.fn();
+      writer.end = vi.fn();
+      (fs.createWriteStream as Mock).mockReturnValueOnce(writer);
+      return writer;
+    }
+
+    it('verifies size and md5 from response headers on success', async () => {
+      mockWriter();
+      // MD5 of "hello world" in base64 = XrY7u+Ae7tCTyyK7j1rNww==
+      mockAxiosStream(['hello world'], {
+        'content-length': '11',
+        'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==',
+      });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(result.actualSize).toBe(11);
+      expect(result.expectedSize).toBe(11);
+      expect(result.expectedMd5).toBe('XrY7u+Ae7tCTyyK7j1rNww==');
+      expect(result.actualMd5).toBe('XrY7u+Ae7tCTyyK7j1rNww==');
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('1');
+      expect(context.telemetry.properties[`${dependencyName}Md5Match`]).toBe('true');
+    });
+
+    it('succeeds and reports skipped checks when headers are missing', async () => {
+      mockWriter();
+      mockAxiosStream(['abc'], {});
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(result.expectedSize).toBeUndefined();
+      expect(result.expectedMd5).toBeUndefined();
+      expect(result.actualSize).toBe(3);
+      expect(context.telemetry.properties[`${dependencyName}Md5Match`]).toBe('skipped');
+      expect(context.telemetry.properties[`${dependencyName}ExpectedSize`]).toBe('unknown');
+    });
+
+    it('retries on size mismatch and ultimately fails with DownloadIntegrityError', async () => {
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+
+      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(DownloadIntegrityError);
+      expect(axios.get).toHaveBeenCalledTimes(3);
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('3');
+    });
+
+    it('retries on md5 mismatch then succeeds on a later attempt', async () => {
+      // First attempt: corrupt body (md5 of 'corrupt' is not the expected one).
+      mockWriter();
+      mockAxiosStream(['corrupt'], { 'content-length': '11', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+      // Second attempt: matching body.
+      mockWriter();
+      mockAxiosStream(['hello world'], { 'content-length': '11', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName, 3);
+
+      expect(result.actualSize).toBe(11);
+      expect(axios.get).toHaveBeenCalledTimes(2);
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('2');
+    }, 10000);
+
+    it('does not retry on 4xx HTTP errors', async () => {
+      const err = Object.assign(new Error('Not Found'), { response: { status: 404 } });
+      (axios.get as Mock).mockRejectedValueOnce(err);
+
+      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBe(err);
+      expect(axios.get).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries on 5xx HTTP errors', async () => {
+      const err5xx = Object.assign(new Error('Server Error'), { response: { status: 503 } });
+      (axios.get as Mock).mockRejectedValueOnce(err5xx);
+      mockWriter();
+      mockAxiosStream(['ok'], { 'content-length': '2' });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName, 3);
+      expect(result.actualSize).toBe(2);
+      expect(axios.get).toHaveBeenCalledTimes(2);
+    }, 10000);
   });
 
   describe('binariesExist', () => {

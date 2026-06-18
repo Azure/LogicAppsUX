@@ -26,6 +26,7 @@ import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies'
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -68,71 +69,236 @@ export async function downloadAndExtractDependency(
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
   executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+  fs.mkdirSync(tempFolderPath, { recursive: true });
+  fs.chmodSync(tempFolderPath, 0o777);
 
-  axios.get(downloadUrl, { responseType: 'stream' }).then((response) => {
-    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
-    fs.mkdirSync(tempFolderPath, { recursive: true });
-    fs.chmodSync(tempFolderPath, 0o777);
-
-    const writer = fs.createWriteStream(dependencyFilePath);
-    response.data.pipe(writer);
-
-    writer.on('finish', async () => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
-      fs.chmodSync(dependencyFilePath, 0o777);
-
-      // Extract to targetFolder
-      if (dependencyName === dotnetDependencyName) {
-        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
-        if (process.platform === Platform.windows) {
-          await executeCommand(
-            ext.outputChannel,
-            undefined,
-            'powershell -ExecutionPolicy Bypass -File',
-            dependencyFilePath,
-            '-InstallDir',
-            targetFolder,
-            '-Channel',
-            `${version}.0`
-          );
-        } else {
-          await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
-        }
-      } else {
-        if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
-          stopAllDesignTimeApis();
-        }
-        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-        vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-        if (dependencyName === funcDependencyName) {
-          // Add execute permissions for func and gozip binaries
-          if (process.platform !== Platform.windows) {
-            fs.chmodSync(`${targetFolder}/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/gozip`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
-          }
-          await setFunctionsCommand();
-          await startAllDesignTimeApis();
-        } else if (dependencyName === extensionBundleId) {
-          await startAllDesignTimeApis();
-        }
+  try {
+    await downloadFileWithVerification(context, downloadUrl, dependencyFilePath, dependencyName);
+  } catch (error) {
+    const errorMessage = `Error downloading the ${dependencyName} file: ${error instanceof Error ? error.message : String(error)}`;
+    vscode.window.showErrorMessage(errorMessage);
+    context.telemetry.properties.error = errorMessage;
+    // Clean up partials before bailing.
+    try {
+      if (fs.existsSync(tempFolderPath)) {
+        fs.rmSync(tempFolderPath, { recursive: true, force: true });
       }
-      // remove the temp folder.
-      fs.rmSync(tempFolderPath, { recursive: true });
-      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
-    });
-    writer.on('error', async (error) => {
-      // log the error message the VSCode window and to telemetry.
-      const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
-      vscode.window.showErrorMessage(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      if (fs.existsSync(targetFolder)) {
+        fs.rmSync(targetFolder, { recursive: true, force: true });
+      }
+    } catch {
+      // Best-effort cleanup; ignore secondary errors.
+    }
+    throw error;
+  }
 
-      // remove the target folder.
-      fs.rmSync(targetFolder, { recursive: true });
-      await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
-    });
+  executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
+  fs.chmodSync(dependencyFilePath, 0o777);
+
+  try {
+    // Extract to targetFolder
+    if (dependencyName === dotnetDependencyName) {
+      const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
+      if (process.platform === Platform.windows) {
+        await executeCommand(
+          ext.outputChannel,
+          undefined,
+          'powershell -ExecutionPolicy Bypass -File',
+          dependencyFilePath,
+          '-InstallDir',
+          targetFolder,
+          '-Channel',
+          `${version}.0`
+        );
+      } else {
+        await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+      }
+    } else {
+      if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
+        stopAllDesignTimeApis();
+      }
+      await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+      vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+      if (dependencyName === funcDependencyName) {
+        // Add execute permissions for func and gozip binaries
+        if (process.platform !== Platform.windows) {
+          fs.chmodSync(`${targetFolder}/func`, 0o755);
+          fs.chmodSync(`${targetFolder}/gozip`, 0o755);
+          fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
+          fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
+        }
+        await setFunctionsCommand();
+        await startAllDesignTimeApis();
+      } else if (dependencyName === extensionBundleId) {
+        await startAllDesignTimeApis();
+      }
+    }
+  } finally {
+    // remove the temp folder.
+    if (fs.existsSync(tempFolderPath)) {
+      fs.rmSync(tempFolderPath, { recursive: true, force: true });
+      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
+    }
+  }
+}
+
+/**
+ * Error thrown when a downloaded file fails integrity verification
+ * (size or MD5 mismatch against the response headers).
+ */
+export class DownloadIntegrityError extends Error {
+  constructor(
+    public readonly url: string,
+    public readonly reason: 'size' | 'md5',
+    public readonly expected: string,
+    public readonly actual: string
+  ) {
+    super(`Download integrity check failed for ${url}: ${reason} mismatch (expected ${expected}, got ${actual}).`);
+    this.name = 'DownloadIntegrityError';
+  }
+}
+
+interface DownloadAttemptResult {
+  expectedSize?: number;
+  actualSize: number;
+  expectedMd5?: string;
+  actualMd5: string;
+}
+
+const DEFAULT_DOWNLOAD_MAX_ATTEMPTS = 3;
+
+/**
+ * Streams a file from `url` to `destPath`, verifying integrity against
+ * `Content-Length` and `Content-MD5` response headers when present.
+ *
+ * Azure Blob Storage (which backs cdn.functions.azure.com) sets both headers
+ * on upload, so this catches CDN-edge truncation/corruption end-to-end without
+ * any publishing-pipeline changes.
+ *
+ * Retries on network errors and integrity failures with exponential backoff.
+ */
+export async function downloadFileWithVerification(
+  context: IActionContext,
+  url: string,
+  destPath: string,
+  dependencyName: string,
+  maxAttempts: number = DEFAULT_DOWNLOAD_MAX_ATTEMPTS
+): Promise<DownloadAttemptResult> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const attemptStart = Date.now();
+    try {
+      const result = await downloadFileAttempt(url, destPath);
+
+      context.telemetry.properties[`${dependencyName}DownloadAttempts`] = String(attempt);
+      context.telemetry.properties[`${dependencyName}ExpectedSize`] =
+        result.expectedSize === undefined ? 'unknown' : String(result.expectedSize);
+      context.telemetry.properties[`${dependencyName}ActualSize`] = String(result.actualSize);
+      context.telemetry.properties[`${dependencyName}Md5Match`] = result.expectedMd5 ? 'true' : 'skipped';
+      context.telemetry.measurements ??= {};
+      context.telemetry.measurements[`${dependencyName}DownloadDurationMs`] = Date.now() - attemptStart;
+
+      return result;
+    } catch (error) {
+      lastError = error;
+      // Clean up the partial file before retrying.
+      try {
+        if (fs.existsSync(destPath)) {
+          fs.rmSync(destPath, { force: true });
+        }
+      } catch {
+        // ignore cleanup failures
+      }
+
+      const isRetryable = isRetryableDownloadError(error);
+      const willRetry = isRetryable && attempt < maxAttempts;
+      executeCommand(
+        ext.outputChannel,
+        undefined,
+        'echo',
+        `Download attempt ${attempt}/${maxAttempts} for ${dependencyName} failed: ${
+          error instanceof Error ? error.message : String(error)
+        }${willRetry ? ' — retrying.' : ''}`
+      );
+
+      if (!willRetry) {
+        context.telemetry.properties[`${dependencyName}DownloadAttempts`] = String(attempt);
+        throw error;
+      }
+      // Exponential backoff: 1s, 2s, 4s, ...
+      await delay(1000 * 2 ** (attempt - 1));
+    }
+  }
+  // Unreachable — the loop either returns or throws — but TypeScript needs this.
+  throw lastError;
+}
+
+function downloadFileAttempt(url: string, destPath: string): Promise<DownloadAttemptResult> {
+  return new Promise<DownloadAttemptResult>((resolve, reject) => {
+    axios
+      .get(url, { responseType: 'stream' })
+      .then((response) => {
+        const headers = response.headers ?? {};
+        const contentLengthRaw = headers['content-length'] ?? headers['Content-Length'];
+        const expectedSize = contentLengthRaw === undefined ? undefined : Number.parseInt(String(contentLengthRaw), 10);
+        const expectedMd5Raw = headers['content-md5'] ?? headers['Content-MD5'];
+        const expectedMd5 = typeof expectedMd5Raw === 'string' && expectedMd5Raw.length > 0 ? expectedMd5Raw : undefined;
+
+        const writer = fs.createWriteStream(destPath);
+        const hash = createHash('md5');
+        let actualSize = 0;
+        let settled = false;
+
+        const settle = (fn: () => void) => {
+          if (settled) {
+            return;
+          }
+          settled = true;
+          fn();
+        };
+
+        response.data.on('data', (chunk: Buffer) => {
+          actualSize += chunk.length;
+          hash.update(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength));
+        });
+        response.data.on('error', (err: Error) => settle(() => reject(err)));
+        writer.on('error', (err: Error) => settle(() => reject(err)));
+        writer.on('finish', () =>
+          settle(() => {
+            if (expectedSize !== undefined && Number.isFinite(expectedSize) && actualSize !== expectedSize) {
+              reject(new DownloadIntegrityError(url, 'size', String(expectedSize), String(actualSize)));
+              return;
+            }
+            const actualMd5 = hash.digest('base64');
+            if (expectedMd5 && actualMd5 !== expectedMd5) {
+              reject(new DownloadIntegrityError(url, 'md5', expectedMd5, actualMd5));
+              return;
+            }
+            resolve({ expectedSize, actualSize, expectedMd5, actualMd5 });
+          })
+        );
+
+        response.data.pipe(writer);
+      })
+      .catch((err) => reject(err));
   });
+}
+
+function isRetryableDownloadError(error: unknown): boolean {
+  if (error instanceof DownloadIntegrityError) {
+    return true;
+  }
+  // Axios errors carry a `response` only for HTTP responses; treat 5xx/network as retryable, 4xx as fatal.
+  const status = (error as { response?: { status?: number } })?.response?.status;
+  if (typeof status === 'number') {
+    return status >= 500 && status < 600;
+  }
+  // No HTTP response at all — likely a network/socket error worth retrying.
+  return true;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, majorVersion: string): Promise<string> => {
