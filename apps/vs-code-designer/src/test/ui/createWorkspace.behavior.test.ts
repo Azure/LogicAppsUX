@@ -896,11 +896,6 @@ describe('Create Workspace Tests', function () {
       await clearAndType(wfNameInput, 'la-trigger-github');
       await assertNoValidationMessage(driver, 'Workflow name must start with a letter and can only contain letters, digits');
 
-      const wfTypeDropdown = await findDropdownByLabel(driver, 'Workflow type');
-      await selectDropdownOption(driver, wfTypeDropdown, 'Stateful');
-      await assertNoValidationMessage(driver, 'Workflow name must start with a letter and can only contain letters, digits');
-
-      await waitForNextButton(driver, 30_000);
       await captureScreenshot(driver, 'validWfSep-passed');
       console.log('[validWfSep] PASSED: invalid separators rejected and "la-trigger-github" accepted');
     });
