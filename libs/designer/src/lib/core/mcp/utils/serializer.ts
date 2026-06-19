@@ -266,7 +266,7 @@ const getConnectionsDataToSerialize = async (
       if (isArmResourceId(reference?.connection?.id)) {
         managedApiConnections[referenceKey] = await getUpdatedConnectionForManagedApiReference(reference, /* isHybridApp */ false);
       } else if (reference?.connection?.id && isMcpConnectionReference(reference.api?.id)) {
-        const mcpConnectionData = await getMcpConnectionData(reference.connection.id, referenceKey);
+        const mcpConnectionData = await getMcpConnectionData(reference.connection.id);
         if (mcpConnectionData) {
           agentMcpConnections[referenceKey] = mcpConnectionData;
         }
@@ -297,13 +297,19 @@ const getExistingWorkflowNames = async (subscriptionId: string, resourceGroup: s
   }
 };
 
-const isMcpConnectionReference = (apiId: string | undefined): boolean => {
-  return !!apiId && apiId.toLowerCase().includes('mcpclient');
+const mcpConnectorId = 'connectionProviders/mcpclient';
+
+export const isMcpConnectionReference = (apiId: string | undefined): boolean => {
+  if (!apiId) {
+    return false;
+  }
+  const normalized = apiId.toLowerCase();
+  const expected = mcpConnectorId.toLowerCase();
+  return normalized === expected || normalized === `/${expected}`;
 };
 
 const getMcpConnectionData = async (
-  connectionId: string,
-  _referenceKey: string
+  connectionId: string
 ): Promise<{ mcpServerUrl: string; displayName?: string; authentication?: any } | undefined> => {
   try {
     const connection = await ConnectionService().getConnection(connectionId);
@@ -320,7 +326,13 @@ const getMcpConnectionData = async (
       displayName,
       ...(authentication ? { authentication } : {}),
     };
-  } catch {
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'McpServer.getMcpConnectionData',
+      message: `Failed to fetch MCP connection data for connectionId: ${connectionId}`,
+      error: error instanceof Error ? error : undefined,
+    });
     return undefined;
   }
 };
