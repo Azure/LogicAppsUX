@@ -688,6 +688,18 @@ export function isExtensionBundleDownloadInFlight(): boolean {
 }
 
 /**
+ * True iff the current async call stack is *inside* a `downloadExtensionBundle`
+ * invocation (set by AsyncLocalStorage). Callers that gate on bundle health
+ * (e.g. the design-time-host launcher) use this to suppress the misleading
+ * "Waiting for bundle…" log when the call originates from the download's own
+ * post-extract hook — the bundle is on disk by then, so there's nothing to
+ * wait for and the message is just noise.
+ */
+export function isInsideBundleDownloadScope(): boolean {
+  return bundleDownloadScope.getStore() === true;
+}
+
+/**
  * Awaits any in-flight bundle work and throws if the most recent install
  * attempt failed. Callers that must not proceed without a healthy bundle
  * (e.g. design-time host startup, runtime dependency validation) should
@@ -721,6 +733,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   inFlightBundleWork = new Promise<void>((resolve) => {
     resolveInFlight = resolve;
   });
+  let installSucceededAndChanged = false;
   try {
     // Mark this whole call-stack as "inside the bundle download". Any nested
     // `waitForExtensionBundleReady()` will short-circuit instead of awaiting
@@ -728,6 +741,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     const result = await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context));
     lastBundleInstallResult = 'ok';
     lastBundleInstallError = undefined;
+    installSucceededAndChanged = result;
     return result;
   } catch (error) {
     lastBundleInstallResult = 'failed';
@@ -736,6 +750,32 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   } finally {
     inFlightBundleWork = undefined;
     resolveInFlight?.();
+    // Defer the post-install design-time restart until AFTER both the
+    // in-flight promise is cleared AND `lastBundleInstallResult` is settled.
+    // Earlier this restart fired from inside `downloadAndExtractDependency`
+    // — while the install was still mid-flight and not yet verified — which
+    // caused the design-time launcher to log a misleading "Waiting for
+    // bundle download to complete…" line and then immediately spawn
+    // `func.exe` (short-circuiting via `bundleDownloadScope`). With the
+    // restart hoisted out here, `startDesignTimeApi` sees a clean
+    // `lastBundleInstallResult === 'ok'` and an idle `inFlightBundleWork`.
+    if (installSucceededAndChanged) {
+      // Dynamic import to dodge the circular dependency between this module
+      // and `startDesignTimeApi.ts` (which imports `waitForExtensionBundleReady`).
+      // Fire-and-forget — we don't block the caller of `downloadExtensionBundle`
+      // on the restart; failures are surfaced through the output channel.
+      const restartPromise = (async () => {
+        try {
+          const { startAllDesignTimeApis } = await import('./codeless/startDesignTimeApi');
+          await startAllDesignTimeApis();
+        } catch (restartError) {
+          ext.outputChannel?.appendLog(
+            `Post-bundle-install design-time restart failed: ${restartError instanceof Error ? restartError.message : String(restartError)}`
+          );
+        }
+      })();
+      restartPromise.catch(() => undefined);
+    }
   }
 }
 

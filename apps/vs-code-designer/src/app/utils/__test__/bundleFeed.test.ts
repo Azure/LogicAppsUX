@@ -135,6 +135,13 @@ vi.mock('../appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn().mockResolvedValue({}),
 }));
 
+// Mock the design-time launcher so we can observe the deferred post-install
+// restart fire AFTER `inFlightBundleWork` is cleared and the install result
+// is settled.
+vi.mock('../codeless/startDesignTimeApi', () => ({
+  startAllDesignTimeApis: vi.fn(),
+}));
+
 const mockedFse = vi.mocked(fse);
 const mockedExecSync = vi.mocked(cp.execSync);
 const mockedExecuteCommand = vi.mocked(cpUtils.executeCommand);
@@ -1294,6 +1301,54 @@ describe('downloadExtensionBundle', () => {
       expect(url).toContain('1.95.0');
       expect(url).not.toContain('private-cdn.example.com');
       expect(url).not.toContain('1.21.0-preview');
+    });
+  });
+
+  describe('deferred post-install design-time restart', () => {
+    it('fires startAllDesignTimeApis after the install settles when an update happened', async () => {
+      const startApiModule = await import('../codeless/startDesignTimeApi');
+      const mockedStart = vi.mocked(startApiModule.startAllDesignTimeApis);
+      let inFlightWhenCalled: boolean | undefined;
+      let lastResultWhenCalled: ReturnType<typeof getLastBundleInstallResult> | undefined;
+      mockedStart.mockImplementation(async () => {
+        inFlightWhenCalled = isExtensionBundleDownloadInFlight();
+        lastResultWhenCalled = getLastBundleInstallResult();
+      });
+
+      setupLocalDisk(['1.75.0']);
+      mockedGetJsonFeed.mockResolvedValue(['1.95.0'] as any);
+      mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+      const context = createMockContext();
+      const result = await downloadExtensionBundle(context as any);
+      expect(result).toBe(true);
+
+      // Restart is fire-and-forget — yield to the microtask queue so the IIFE runs.
+      await new Promise((resolve) => setImmediate(resolve));
+      await new Promise((resolve) => setImmediate(resolve));
+
+      expect(mockedStart).toHaveBeenCalledTimes(1);
+      expect(inFlightWhenCalled).toBe(false);
+      expect(lastResultWhenCalled).toBe('ok');
+    });
+
+    it('does NOT fire startAllDesignTimeApis when the download throws', async () => {
+      const startApiModule = await import('../codeless/startDesignTimeApi');
+      const mockedStart = vi.mocked(startApiModule.startAllDesignTimeApis);
+      mockedStart.mockResolvedValue(undefined as any);
+
+      setupLocalDisk(['1.75.0']);
+      mockedGetJsonFeed.mockResolvedValue(['1.95.0'] as any);
+      mockedDownloadAndExtract.mockRejectedValue(new Error('boom'));
+
+      const context = createMockContext();
+      await expect(downloadExtensionBundle(context as any)).rejects.toThrow();
+
+      await new Promise((resolve) => setImmediate(resolve));
+      await new Promise((resolve) => setImmediate(resolve));
+
+      expect(mockedStart).not.toHaveBeenCalled();
+      expect(getLastBundleInstallResult()).toBe('failed');
     });
   });
 });

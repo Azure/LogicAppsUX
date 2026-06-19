@@ -153,9 +153,14 @@ export async function downloadAndExtractDependency(
         }
         await setFunctionsCommand();
         await startAllDesignTimeApis();
-      } else if (dependencyName === extensionBundleId) {
-        await startAllDesignTimeApis();
       }
+      // NB: when dependencyName === extensionBundleId we intentionally do NOT
+      // restart design-time here. The bundle download flow defers the restart
+      // until after the full install is verified (sidecar written + install
+      // marked 'ok' + in-flight promise cleared) so the design-time host
+      // doesn't spawn against a bundle that's still mid-install. See the
+      // restart hook in `downloadExtensionBundle`'s finally block in
+      // `bundleFeed.ts`.
     }
   } catch (error) {
     // Extraction (or verification) failed. Do NOT delete targetFolder: on

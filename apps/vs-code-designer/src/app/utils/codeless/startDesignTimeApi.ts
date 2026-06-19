@@ -54,7 +54,12 @@ import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
 import { isCodefulProject } from '../codeful';
-import { ensureExtensionBundleHealthy, isExtensionBundleDownloadInFlight, waitForExtensionBundleReady } from '../bundleFeed';
+import {
+  ensureExtensionBundleHealthy,
+  isExtensionBundleDownloadInFlight,
+  isInsideBundleDownloadScope,
+  waitForExtensionBundleReady,
+} from '../bundleFeed';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -226,7 +231,12 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           // func.exe. Launching while the extension bundle is being re-extracted can
           // lock the bundle folder on Windows and leave the design-time host pointing
           // at a half-extracted bundle.
-          if (isExtensionBundleDownloadInFlight()) {
+          //
+          // When this call originates from inside `downloadExtensionBundle` itself
+          // (the post-install restart hook), `isInsideBundleDownloadScope()` is true
+          // and there is nothing to wait for — the bundle is on disk by then.
+          // Suppress the misleading "Waiting…" log in that case.
+          if (isExtensionBundleDownloadInFlight() && !isInsideBundleDownloadScope()) {
             ext.outputChannel.appendLog(
               localize(
                 'waitingForBundleReady',
