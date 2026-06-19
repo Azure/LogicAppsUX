@@ -648,4 +648,111 @@ describe('binaries', () => {
       expect(result).toBe(true);
     });
   });
+
+  describe('verifyExtractedZip', () => {
+    const realFs = require('node:fs');
+    const os = require('os');
+    const pathMod = require('path');
+    const AdmZip = require('adm-zip');
+    let workDir: string;
+    let zipPath: string;
+    let extractDir: string;
+
+    beforeEach(() => {
+      // The global test-setup mocks fs.existsSync and fs.statSync to return undefined,
+      // which would make verifyExtractedZip see every file as missing. Re-route the
+      // sync filesystem calls to the real Node fs implementation for these tests.
+      (fs.existsSync as Mock).mockImplementation((p: string) => realFs.existsSync(p));
+      (fs.statSync as unknown as Mock) = vi.fn();
+      (fs.statSync as Mock).mockImplementation((p: string) => realFs.statSync(p));
+
+      workDir = realFs.mkdtempSync(pathMod.join(os.tmpdir(), 'verifyextract-'));
+      zipPath = pathMod.join(workDir, 'test.zip');
+      extractDir = pathMod.join(workDir, 'extracted');
+      realFs.mkdirSync(extractDir);
+
+      const zip = new AdmZip();
+      zip.addFile('a.txt', Buffer.from('hello'));
+      zip.addFile('sub/b.txt', Buffer.from('world!'));
+      zip.addFile('sub/c.bin', Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04]));
+      zip.writeZip(zipPath);
+    });
+
+    afterEach(() => {
+      try {
+        realFs.rmSync(workDir, { recursive: true, force: true });
+      } catch {
+        // best effort
+      }
+    });
+
+    it('passes when every zip entry exists on disk with the expected size', async () => {
+      const { verifyExtractedZip } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      zip.extractAllTo(extractDir, true, true);
+
+      expect(() => verifyExtractedZip(zip, extractDir)).not.toThrow();
+    });
+
+    it('throws BundleExtractionError(missing) when an extracted file is deleted', async () => {
+      const { verifyExtractedZip, BundleExtractionError } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      zip.extractAllTo(extractDir, true, true);
+      realFs.rmSync(pathMod.join(extractDir, 'sub', 'b.txt'));
+
+      let caught: unknown;
+      try {
+        verifyExtractedZip(zip, extractDir);
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeInstanceOf(BundleExtractionError);
+      expect((caught as InstanceType<typeof BundleExtractionError>).kind).toBe('missing');
+      expect((caught as InstanceType<typeof BundleExtractionError>).entryName).toContain('b.txt');
+    });
+
+    it('throws BundleExtractionError(sizeMismatch) when an extracted file is truncated', async () => {
+      const { verifyExtractedZip, BundleExtractionError } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      zip.extractAllTo(extractDir, true, true);
+      const target = pathMod.join(extractDir, 'sub', 'c.bin');
+      realFs.writeFileSync(target, Buffer.from([0x00])); // truncate from 5 bytes to 1
+
+      let caught: unknown;
+      try {
+        verifyExtractedZip(zip, extractDir);
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeInstanceOf(BundleExtractionError);
+      expect((caught as InstanceType<typeof BundleExtractionError>).kind).toBe('sizeMismatch');
+      expect((caught as InstanceType<typeof BundleExtractionError>).expectedSize).toBe(5);
+      expect((caught as InstanceType<typeof BundleExtractionError>).actualSize).toBe(1);
+    });
+
+    it('throws BundleExtractionError(missing) when extractDir is empty but the zip lists files', async () => {
+      const { verifyExtractedZip, BundleExtractionError } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      // skip extractAllTo: simulate "extraction failed completely"
+
+      let caught: unknown;
+      try {
+        verifyExtractedZip(zip, extractDir);
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeInstanceOf(BundleExtractionError);
+      expect((caught as InstanceType<typeof BundleExtractionError>).kind).toBe('missing');
+    });
+
+    it('is a no-op for a zip that contains no file entries', async () => {
+      const { verifyExtractedZip } = await import('../binaries');
+      const emptyZipPath = pathMod.join(workDir, 'empty.zip');
+      const emptyZip = new AdmZip();
+      emptyZip.writeZip(emptyZipPath);
+      const zip = new AdmZip(emptyZipPath);
+
+      expect(() => verifyExtractedZip(zip, extractDir)).not.toThrow();
+    });
+  });
 });

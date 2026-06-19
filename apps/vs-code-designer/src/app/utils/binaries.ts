@@ -136,6 +136,26 @@ export async function downloadAndExtractDependency(
         await startAllDesignTimeApis();
       }
     }
+  } catch (error) {
+    // Extraction (or verification) failed. Tear down any partial state at
+    // targetFolder so the next activation re-downloads from scratch instead
+    // of treating the partial tree as authoritative.
+    try {
+      if (fs.existsSync(targetFolder)) {
+        fs.rmSync(targetFolder, { recursive: true, force: true });
+      }
+    } catch {
+      // Best-effort cleanup; ignore secondary errors.
+    }
+    const baseMessage =
+      error instanceof BundleExtractionError
+        ? `Extension bundle ${dependencyName} extraction was incomplete (${error.kind}${
+            error.entryName ? `: ${error.entryName}` : ''
+          }). Removed partial install at ${targetFolder}.`
+        : `Failed to install ${dependencyName} after download. Removed partial install at ${targetFolder}.`;
+    ext.outputChannel.appendLog(baseMessage);
+    context.telemetry.properties.extractError = error instanceof Error ? error.message : String(error);
+    throw error;
   } finally {
     // remove the temp folder.
     if (fs.existsSync(tempFolderPath)) {
@@ -416,23 +436,142 @@ function cleanDirectory(targetFolder: string): void {
   }
 }
 
-async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
-  // Clear targetFolder's contents without deleting the folder itself
-  // TODO(aeldridge): It is possible there is a lock on a file in targetFolder, should be handled.
-  cleanDirectory(targetFolder);
-  await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${dependencyFilePath}`);
-  try {
-    if (dependencyFilePath.endsWith('.zip')) {
-      const zip = new AdmZip(dependencyFilePath);
-      zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
-    } else {
-      await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
+/**
+ * Maximum number of times to attempt extracting a dependency archive before
+ * giving up and propagating the error to the caller. The retry is in place to
+ * absorb transient Windows file-system errors (EBUSY/EPERM from antivirus or
+ * Windows search indexer) and partial-extract verification failures.
+ */
+const MAX_EXTRACT_ATTEMPTS = 2;
+
+/**
+ * Delay between extract attempts.
+ */
+const EXTRACT_RETRY_DELAY_MS = 750;
+
+/**
+ * Discriminator for the kinds of post-extract verification failures we surface
+ * to callers. Use this to distinguish "the zip extracted, but the resulting
+ * tree is wrong" from a download integrity error or a generic I/O error.
+ */
+export type BundleExtractionFailureKind = 'missing' | 'sizeMismatch' | 'empty';
+
+/**
+ * Thrown when the on-disk extracted bundle does not match the archive's
+ * central directory. Triggers a retry inside `extractDependency` and, on the
+ * final attempt, propagates so the caller can drop the partial tree and
+ * re-download.
+ */
+export class BundleExtractionError extends Error {
+  public readonly kind: BundleExtractionFailureKind;
+  public readonly entryName?: string;
+  public readonly expectedSize?: number;
+  public readonly actualSize?: number;
+
+  constructor(kind: BundleExtractionFailureKind, entryName?: string, expectedSize?: number, actualSize?: number) {
+    let message: string;
+    switch (kind) {
+      case 'missing':
+        message = `Extracted bundle is missing expected file: ${entryName}`;
+        break;
+      case 'sizeMismatch':
+        message = `Extracted bundle file ${entryName} is ${actualSize ?? '?'} bytes, expected ${expectedSize ?? '?'}`;
+        break;
+      default:
+        message = 'Extracted bundle is empty (zip listed entries but none reached disk)';
+        break;
     }
-    extractContainerFolder(targetFolder);
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
-  } catch (error) {
-    throw new Error(`Error extracting ${dependencyName}: ${error}`);
+    super(message);
+    this.name = 'BundleExtractionError';
+    this.kind = kind;
+    this.entryName = entryName;
+    this.expectedSize = expectedSize;
+    this.actualSize = actualSize;
   }
+}
+
+function isTransientLockError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+  const code = (error as { code?: string }).code;
+  return code === 'EBUSY' || code === 'EPERM' || code === 'EACCES';
+}
+
+/**
+ * Verifies every file entry in the zip's central directory exists on disk at
+ * `targetFolder` with the size the archive claims it should have. Must be
+ * called before `extractContainerFolder` (which may rename a single root
+ * directory away, breaking the entry-name → on-disk-path mapping).
+ *
+ * Throws `BundleExtractionError` on the first mismatch.
+ */
+export function verifyExtractedZip(zip: AdmZip, targetFolder: string): void {
+  const fileEntries = zip.getEntries().filter((entry) => !entry.isDirectory);
+  if (fileEntries.length === 0) {
+    return;
+  }
+  let verified = 0;
+  for (const entry of fileEntries) {
+    const onDisk = path.join(targetFolder, entry.entryName);
+    if (!fs.existsSync(onDisk)) {
+      throw new BundleExtractionError('missing', entry.entryName);
+    }
+    const stat = fs.statSync(onDisk);
+    if (stat.size !== entry.header.size) {
+      throw new BundleExtractionError('sizeMismatch', entry.entryName, entry.header.size, stat.size);
+    }
+    verified++;
+  }
+  if (verified === 0) {
+    throw new BundleExtractionError('empty');
+  }
+}
+
+async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= MAX_EXTRACT_ATTEMPTS; attempt++) {
+    try {
+      // Clear targetFolder's contents without deleting the folder itself.
+      cleanDirectory(targetFolder);
+      await executeCommand(
+        ext.outputChannel,
+        undefined,
+        'echo',
+        `Extracting ${dependencyFilePath} (attempt ${attempt}/${MAX_EXTRACT_ATTEMPTS})`
+      );
+      if (dependencyFilePath.endsWith('.zip')) {
+        const zip = new AdmZip(dependencyFilePath);
+        zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
+        // Verify before extractContainerFolder rewrites paths.
+        verifyExtractedZip(zip, targetFolder);
+      } else {
+        await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
+      }
+      extractContainerFolder(targetFolder);
+      await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
+      return;
+    } catch (error) {
+      lastError = error;
+      const isLastAttempt = attempt === MAX_EXTRACT_ATTEMPTS;
+      const isRetryable = error instanceof BundleExtractionError || isTransientLockError(error);
+      if (isLastAttempt || !isRetryable) {
+        break;
+      }
+      const reason =
+        error instanceof BundleExtractionError
+          ? `verification failed (${error.kind}${error.entryName ? `: ${error.entryName}` : ''})`
+          : `transient lock (${(error as { code?: string }).code ?? 'unknown'})`;
+      ext.outputChannel.appendLog(
+        `Extraction attempt ${attempt} for ${dependencyName} failed (${reason}); retrying in ${EXTRACT_RETRY_DELAY_MS}ms.`
+      );
+      await new Promise((resolve) => setTimeout(resolve, EXTRACT_RETRY_DELAY_MS));
+    }
+  }
+  if (lastError instanceof BundleExtractionError) {
+    throw lastError;
+  }
+  throw new Error(`Error extracting ${dependencyName}: ${lastError}`);
 }
 
 /**

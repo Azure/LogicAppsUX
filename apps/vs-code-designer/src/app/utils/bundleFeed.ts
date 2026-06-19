@@ -351,13 +351,18 @@ function pickLatestVersion(versions: string[]): string {
 async function downloadBundleAndWriteSidecar(context: IActionContext, baseUrl: string, version: string): Promise<void> {
   const zipUrl = buildExtensionBundleZipUrl(baseUrl, version);
   const result = await downloadAndExtractDependency(context, zipUrl, defaultExtensionBundlePathValue, extensionBundleId, version);
-  if (result?.actualMd5) {
-    const bundleDir = path.join(defaultExtensionBundlePathValue, version);
-    const contentHash = await computeBundleContentHash(bundleDir);
-    if (contentHash) {
-      await writeBundleSidecar(version, result.actualMd5, contentHash);
-    }
+  if (!result?.actualMd5) {
+    return;
   }
+  const bundleDir = path.join(defaultExtensionBundlePathValue, version);
+  const contentHash = await computeBundleContentHash(bundleDir);
+  if (!contentHash) {
+    // No files were hashed — the extracted bundle directory is empty. Refuse to
+    // bless this state with a sidecar, otherwise the next activation would treat
+    // the partial install as "good" and never re-download.
+    throw new Error(`Bundle ${version} was downloaded but the extracted directory at ${bundleDir} is empty. Refusing to write sidecar.`);
+  }
+  await writeBundleSidecar(version, result.actualMd5, contentHash);
 }
 
 /**
