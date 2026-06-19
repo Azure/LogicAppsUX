@@ -1,5 +1,6 @@
 import {
   type ConnectionsData,
+  ConnectionService,
   equals,
   guid,
   isArmResourceId,
@@ -257,17 +258,23 @@ const getConnectionsDataToSerialize = async (
 
   const originalConnectionsData = await getConnectionsInWorkflowApp(subscriptionId, resourceGroup, logicAppName as string, queryClient);
   const managedApiConnections = { ...(originalConnectionsData?.managedApiConnections ?? {}) };
+  const agentMcpConnections = { ...(originalConnectionsData?.agentMcpConnections ?? {}) };
 
   await Promise.all(
     referencesToSerialize.map(async (referenceKey) => {
       const reference = connectionReferences[referenceKey];
       if (isArmResourceId(reference?.connection?.id)) {
         managedApiConnections[referenceKey] = await getUpdatedConnectionForManagedApiReference(reference, /* isHybridApp */ false);
+      } else if (reference?.connection?.id && isMcpConnectionReference(reference.api?.id)) {
+        const mcpConnectionData = await getMcpConnectionData(reference.connection.id, referenceKey);
+        if (mcpConnectionData) {
+          agentMcpConnections[referenceKey] = mcpConnectionData;
+        }
       }
     })
   );
 
-  const updatedConnectionsData = { ...originalConnectionsData, managedApiConnections };
+  const updatedConnectionsData = { ...originalConnectionsData, managedApiConnections, agentMcpConnections };
 
   return {
     connectionsData: getConnectionsToUpdate(originalConnectionsData, updatedConnectionsData),
@@ -287,5 +294,33 @@ const getExistingWorkflowNames = async (subscriptionId: string, resourceGroup: s
       message: `Error while fetching existing workflow names for the logicApp: ${logicAppName}`,
     });
     return [];
+  }
+};
+
+const isMcpConnectionReference = (apiId: string | undefined): boolean => {
+  return !!apiId && apiId.toLowerCase().includes('mcpclient');
+};
+
+const getMcpConnectionData = async (
+  connectionId: string,
+  _referenceKey: string
+): Promise<{ mcpServerUrl: string; displayName?: string; authentication?: any } | undefined> => {
+  try {
+    const connection = await ConnectionService().getConnection(connectionId);
+    if (!connection) {
+      return undefined;
+    }
+
+    const mcpServerUrl = connection.properties?.connectionParameters?.mcpServerUrl?.metadata?.value ?? '';
+    const authentication = connection.properties?.connectionParameters?.authentication?.metadata?.value ?? null;
+    const displayName = connection.properties?.displayName;
+
+    return {
+      mcpServerUrl,
+      displayName,
+      ...(authentication ? { authentication } : {}),
+    };
+  } catch {
+    return undefined;
   }
 };

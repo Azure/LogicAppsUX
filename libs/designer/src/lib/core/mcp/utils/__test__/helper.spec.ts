@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isHttpRequestTrigger } from '../helper';
+import { convertConnectionsDataToReferences, isHttpRequestTrigger } from '../helper';
 
 describe('isHttpRequestTrigger', () => {
   describe('when trigger is an HTTP request trigger', () => {
@@ -99,5 +99,63 @@ describe('isHttpRequestTrigger', () => {
       };
       expect(isHttpRequestTrigger(trigger)).toBe(false);
     });
+  });
+});
+
+describe('convertConnectionsDataToReferences', () => {
+  it('should return empty object when connectionsData is undefined', () => {
+    const result = convertConnectionsDataToReferences(undefined);
+    expect(result).toEqual({});
+  });
+
+  it('should handle agentMcpConnections', () => {
+    const connectionsData = {
+      agentMcpConnections: {
+        'my-mcp-connection': {
+          mcpServerUrl: 'https://example.com/mcp',
+          displayName: 'My MCP Server',
+          authentication: { type: 'Basic' },
+        },
+      },
+    };
+    const result = convertConnectionsDataToReferences(connectionsData as any);
+    expect(result['my-mcp-connection']).toEqual({
+      connection: { id: '/connectionProviders/mcpclient/connections/my-mcp-connection' },
+      connectionName: 'My MCP Server',
+      api: { id: 'connectionProviders/mcpclient' },
+    });
+  });
+
+  it('should use connectionKey as connectionName when displayName is missing in agentMcpConnections', () => {
+    const connectionsData = {
+      agentMcpConnections: {
+        'mcp-no-display': {
+          mcpServerUrl: 'https://example.com/mcp',
+        },
+      },
+    };
+    const result = convertConnectionsDataToReferences(connectionsData as any);
+    expect(result['mcp-no-display'].connectionName).toBe('mcp-no-display');
+  });
+
+  it('should handle both managedApiConnections and agentMcpConnections', () => {
+    const connectionsData = {
+      managedApiConnections: {
+        kusto: {
+          connection: { id: '/subscriptions/sub1/connections/kusto1' },
+          api: { id: '/subscriptions/sub1/managedApis/kusto' },
+        },
+      },
+      agentMcpConnections: {
+        'mcp-conn': {
+          mcpServerUrl: 'https://example.com/mcp',
+          displayName: 'Custom MCP',
+        },
+      },
+    };
+    const result = convertConnectionsDataToReferences(connectionsData as any);
+    expect(Object.keys(result)).toHaveLength(2);
+    expect(result['kusto']).toBeDefined();
+    expect(result['mcp-conn']).toBeDefined();
   });
 });
