@@ -6,6 +6,8 @@ import {
   addDefaultBundle,
   downloadExtensionBundle,
   resetCachedBundleVersion,
+  isExtensionBundleDownloadInFlight,
+  waitForExtensionBundleReady,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -872,6 +874,51 @@ describe('downloadExtensionBundle', () => {
     expect(result).toBe(false);
     expect(context.telemetry.properties.localBundleHashCheck).toBe('passed');
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('dedupes concurrent downloadExtensionBundle calls + waitForExtensionBundleReady blocks until done', async () => {
+    setupLocalDisk(['1.75.0']);
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+    // Hold the download open so the second call has time to observe the in-flight state.
+    let releaseDownload: () => void = () => undefined;
+    const downloadGate = new Promise<void>((resolve) => {
+      releaseDownload = resolve;
+    });
+    mockedDownloadAndExtract.mockImplementation(async () => {
+      await downloadGate;
+      return undefined as any;
+    });
+
+    expect(isExtensionBundleDownloadInFlight()).toBe(false);
+
+    const context1 = createMockContext();
+    const context2 = createMockContext();
+    const first = downloadExtensionBundle(context1 as any);
+    // Yield so the first call records itself as in-flight before the second starts.
+    await Promise.resolve();
+    expect(isExtensionBundleDownloadInFlight()).toBe(true);
+
+    const second = downloadExtensionBundle(context2 as any);
+    const readyWait = waitForExtensionBundleReady();
+    let readyResolved = false;
+    readyWait.then(() => {
+      readyResolved = true;
+    });
+    // Give the event loop a tick to confirm the readyWait promise is still pending.
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(readyResolved).toBe(false);
+
+    releaseDownload();
+    const [firstResult, secondResult] = await Promise.all([first, second]);
+    await readyWait;
+
+    expect(firstResult).toBe(true);
+    // The deduped second call returns false (no new work) and doesn't fire another download.
+    expect(secondResult).toBe(false);
+    expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(1);
+    expect(isExtensionBundleDownloadInFlight()).toBe(false);
+    expect(readyResolved).toBe(true);
   });
 
   it('should correctly identify the latest version from an unordered feed list', async () => {

@@ -624,12 +624,55 @@ async function verifyLocalBundle(
 }
 
 /**
+ * Tracks any in-flight `downloadExtensionBundle` so other parts of the
+ * extension (e.g. `startDesignTimeApi` which spawns `func.exe` against the
+ * extracted bundle folder) can `await waitForExtensionBundleReady()` and
+ * avoid racing against an active re-extract — which on Windows can lock the
+ * bundle folder, kill the design-time host, and leave the user with a half-
+ * extracted bundle until the next activation.
+ *
+ * Activation itself fires `downloadExtensionBundle` without awaiting so the
+ * UI stays responsive; this gives any code path that *does* depend on the
+ * extracted bundle a way to block on completion when needed. Stays a noop
+ * (resolved promise) when no download is in flight.
+ */
+let inFlightBundleWork: Promise<void> | undefined;
+
+export function waitForExtensionBundleReady(): Promise<void> {
+  return inFlightBundleWork ?? Promise.resolve();
+}
+
+export function isExtensionBundleDownloadInFlight(): boolean {
+  return inFlightBundleWork !== undefined;
+}
+
+/**
  * Download Microsoft.Azure.Functions.ExtensionBundle.Workflows.<version>
  * Destination: C:\Users\<USERHOME>\.azure-functions-core-tools\Functions\ExtensionBundles\<version>
  * @param {IActionContext} context - Command context.
  * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
 export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
+  // Dedupe concurrent calls: if a download is already in flight, await it
+  // instead of kicking off a parallel attempt that would race for the same
+  // extraction directory.
+  if (inFlightBundleWork) {
+    await inFlightBundleWork;
+    return false;
+  }
+  let resolveInFlight: (() => void) | undefined;
+  inFlightBundleWork = new Promise<void>((resolve) => {
+    resolveInFlight = resolve;
+  });
+  try {
+    return await downloadExtensionBundleCore(context);
+  } finally {
+    inFlightBundleWork = undefined;
+    resolveInFlight?.();
+  }
+}
+
+async function downloadExtensionBundleCore(context: IActionContext): Promise<boolean> {
   const downloadExtensionBundleStartTime = Date.now();
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;

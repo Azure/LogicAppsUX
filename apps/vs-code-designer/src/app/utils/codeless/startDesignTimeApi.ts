@@ -54,6 +54,7 @@ import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
 import { isCodefulProject } from '../codeful';
+import { isExtensionBundleDownloadInFlight, waitForExtensionBundleReady } from '../bundleFeed';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -219,6 +220,22 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
               designTimeInst.port
             )
           );
+
+          // If activation triggered a bundle (re)download (newer version, corruption
+          // detected, sidecar missing/drifted), wait for it to finish before spawning
+          // func.exe. Launching while the extension bundle is being re-extracted can
+          // lock the bundle folder on Windows and leave the design-time host pointing
+          // at a half-extracted bundle.
+          if (isExtensionBundleDownloadInFlight()) {
+            ext.outputChannel.appendLog(
+              localize(
+                'waitingForBundleReady',
+                'Waiting for Logic Apps extension bundle download to complete before starting design-time host for project "{0}"…',
+                projectPath
+              )
+            );
+            await waitForExtensionBundleReady();
+          }
 
           startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
           await waitForDesignTimeStartUp(actionContext, projectPath, url, true);
