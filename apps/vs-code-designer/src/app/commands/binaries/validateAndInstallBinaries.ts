@@ -6,7 +6,7 @@ import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue } fro
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getDependencyTimeout } from '../../utils/binaries';
-import { getDependenciesVersion } from '../../utils/bundleFeed';
+import { getDependenciesVersion, ensureExtensionBundleHealthy } from '../../utils/bundleFeed';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
@@ -107,6 +107,16 @@ export async function validateAndInstallBinaries(context: IActionContext) {
           await timeout(installLSPSDK, 'LSP SDK', dependencyTimeout);
           await setDotNetCommand();
         });
+
+        // Block validation success on a healthy extension bundle. The bundle
+        // download is fired-and-forgotten from activation so the UI stays
+        // responsive, but validation is the right place to surface a failed
+        // install: without a healthy bundle, the design-time host and any
+        // workflow runtime will be broken, and we'd rather fail loudly here
+        // than let func.exe spawn against a missing/corrupt bundle.
+        context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
+        progress.report({ increment: 5, message: 'Extension Bundle' });
+        await ensureExtensionBundleHealthy();
 
         ext.outputChannel.appendLog(
           localize(

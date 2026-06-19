@@ -54,7 +54,7 @@ import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
 import { isCodefulProject } from '../codeful';
-import { isExtensionBundleDownloadInFlight, waitForExtensionBundleReady } from '../bundleFeed';
+import { ensureExtensionBundleHealthy, isExtensionBundleDownloadInFlight, waitForExtensionBundleReady } from '../bundleFeed';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -236,6 +236,11 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
             );
             await waitForExtensionBundleReady();
           }
+          // Refuse to spawn func.exe if the most recent bundle install attempt
+          // failed. Without a healthy bundle, func reports "No job functions
+          // found" and unhealthy storage forever — surfacing a clear, actionable
+          // error here is strictly better than letting the host start broken.
+          await ensureExtensionBundleHealthy();
 
           startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
           await waitForDesignTimeStartUp(actionContext, projectPath, url, true);

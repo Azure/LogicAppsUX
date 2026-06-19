@@ -645,6 +645,25 @@ async function verifyLocalBundle(
 let inFlightBundleWork: Promise<void> | undefined;
 
 /**
+ * Outcome of the most recent extension-bundle install attempt this session.
+ * `'unknown'` until `downloadExtensionBundle` has finished at least once.
+ * `'failed'` when extraction/install threw (e.g. EPERM from a locked dir),
+ * so callers can refuse to proceed with downstream work that requires a
+ * known-healthy bundle (design-time host startup, dependency validation).
+ */
+export type BundleInstallResult = 'unknown' | 'ok' | 'failed';
+let lastBundleInstallResult: BundleInstallResult = 'unknown';
+let lastBundleInstallError: Error | undefined;
+
+export function getLastBundleInstallResult(): BundleInstallResult {
+  return lastBundleInstallResult;
+}
+
+export function getLastBundleInstallError(): Error | undefined {
+  return lastBundleInstallError;
+}
+
+/**
  * Tracks call-stacks that are currently *inside* `downloadExtensionBundle`.
  * Anything awaited from within that scope — most importantly the post-extract
  * `startAllDesignTimeApis` call that itself awaits `waitForExtensionBundleReady`
@@ -669,6 +688,22 @@ export function isExtensionBundleDownloadInFlight(): boolean {
 }
 
 /**
+ * Awaits any in-flight bundle work and throws if the most recent install
+ * attempt failed. Callers that must not proceed without a healthy bundle
+ * (e.g. design-time host startup, runtime dependency validation) should
+ * call this rather than the lower-level `waitForExtensionBundleReady`.
+ */
+export async function ensureExtensionBundleHealthy(): Promise<void> {
+  await waitForExtensionBundleReady();
+  if (lastBundleInstallResult === 'failed') {
+    const cause = lastBundleInstallError?.message ?? 'unknown error';
+    throw new Error(
+      `Logic Apps extension bundle is not installed correctly. Last install attempt failed: ${cause}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
+    );
+  }
+}
+
+/**
  * Download Microsoft.Azure.Functions.ExtensionBundle.Workflows.<version>
  * Destination: C:\Users\<USERHOME>\.azure-functions-core-tools\Functions\ExtensionBundles\<version>
  * @param {IActionContext} context - Command context.
@@ -690,7 +725,14 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     // Mark this whole call-stack as "inside the bundle download". Any nested
     // `waitForExtensionBundleReady()` will short-circuit instead of awaiting
     // the in-flight promise we own.
-    return await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context));
+    const result = await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context));
+    lastBundleInstallResult = 'ok';
+    lastBundleInstallError = undefined;
+    return result;
+  } catch (error) {
+    lastBundleInstallResult = 'failed';
+    lastBundleInstallError = error instanceof Error ? error : new Error(String(error));
+    throw error;
   } finally {
     inFlightBundleWork = undefined;
     resolveInFlight?.();

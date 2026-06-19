@@ -27,6 +27,7 @@ vi.mock('../../../utils/binaries', () => ({
 
 vi.mock('../../../utils/bundleFeed', () => ({
   getDependenciesVersion: vi.fn(),
+  ensureExtensionBundleHealthy: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('../../../utils/dotnet/dotnet', () => ({
