@@ -197,3 +197,8 @@ describe('Bundle CDN integrity headers (experimental settings smoke)', function 
     }
   });
 });
+
+// NOTE: computeBundleContentHash deterministic + mutation-sensitivity coverage lives in the
+// vitest unit suite (`src/app/utils/__test__/bundleContentHash.test.ts`) because importing
+// `bundleFeed` from this plain-Mocha E2E entry pulls in `vscode` transitively. The unit
+// tests use real fs against a tmpdir, so the live behavior is fully exercised there.

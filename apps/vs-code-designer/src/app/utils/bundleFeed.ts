@@ -24,6 +24,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
+import { createHash } from 'crypto';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
@@ -172,27 +173,75 @@ function buildExtensionBundleZipUrl(baseUrl: string, extensionVersion: string): 
  * so subsequent startups can confirm the bundle still matches the publisher's
  * `Content-MD5` header without re-downloading.
  */
+/**
+ * Sidecar shape persisted next to the extracted bundle:
+ *  - `sourceMd5` is the MD5 of the downloaded zip (matches what the CDN publishes
+ *    as `Content-MD5` on a HEAD of the zip URL), used to detect CDN-side republish.
+ *  - `contentHash` is a deterministic sha256 over the extracted file tree, recomputed
+ *    on every activation to detect post-download mutation (manual edits, disk bit-rot,
+ *    AV restore, partial overwrite, etc.).
+ *
+ * The sidecar is NOT a snapshot of the bundle's state — it is a tiny *expected* value
+ * that we compare against a freshly-computed `actual`. A corrupted sidecar produces a
+ * false-positive mismatch (we redownload), which is harmless. Both fields are present
+ * iff the bundle was downloaded by this version of the extension.
+ */
+interface BundleSidecar {
+  version: number;
+  sourceMd5: string;
+  contentHash: string;
+}
+
+const SIDECAR_FORMAT_VERSION = 1;
+
 function getBundleSidecarPath(version: string): string {
   return path.join(defaultExtensionBundlePathValue, version, bundleSourceMd5SidecarFile);
 }
 
-async function readBundleSidecar(version: string): Promise<string | undefined> {
+async function readBundleSidecar(version: string): Promise<BundleSidecar | undefined> {
   const sidecarPath = getBundleSidecarPath(version);
   try {
     if (!(await fse.pathExists(sidecarPath))) {
       return undefined;
     }
-    const value = (await fse.readFile(sidecarPath, 'utf8')).trim();
-    return value.length > 0 ? value : undefined;
+    const raw = (await fse.readFile(sidecarPath, 'utf8')).trim();
+    if (raw.length === 0) {
+      return undefined;
+    }
+    // Lenient: legacy bare-MD5 sidecars (no JSON braces) and JSON missing the
+    // contentHash field both fall through to undefined, forcing a one-time
+    // migration redownload to upgrade the format.
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return undefined;
+    }
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      typeof (parsed as Record<string, unknown>).sourceMd5 === 'string' &&
+      typeof (parsed as Record<string, unknown>).contentHash === 'string' &&
+      typeof (parsed as Record<string, unknown>).version === 'number'
+    ) {
+      const obj = parsed as Record<string, unknown>;
+      return {
+        version: obj.version as number,
+        sourceMd5: obj.sourceMd5 as string,
+        contentHash: obj.contentHash as string,
+      };
+    }
+    return undefined;
   } catch {
     return undefined;
   }
 }
 
-async function writeBundleSidecar(version: string, md5: string): Promise<void> {
+async function writeBundleSidecar(version: string, sourceMd5: string, contentHash: string): Promise<void> {
   const sidecarPath = getBundleSidecarPath(version);
+  const payload: BundleSidecar = { version: SIDECAR_FORMAT_VERSION, sourceMd5, contentHash };
   try {
-    await fse.outputFile(sidecarPath, md5, 'utf8');
+    await fse.outputFile(sidecarPath, JSON.stringify(payload), 'utf8');
   } catch (writeError) {
     if (ext.outputChannel) {
       ext.outputChannel.appendLog(
@@ -200,6 +249,68 @@ async function writeBundleSidecar(version: string, md5: string): Promise<void> {
       );
     }
   }
+}
+
+/**
+ * Deterministic streaming sha256 over every regular file in `bundleDir`.
+ *
+ * - Sorts entries by POSIX-normalized relative path so the hash is stable across
+ *   filesystems / OSes.
+ * - Skips the sidecar file itself (otherwise writing the sidecar would invalidate
+ *   the hash we just computed).
+ * - For each entry we feed `<relPath>\0<size>\0<file-bytes>\0` so renames and
+ *   truncations both shift the hash.
+ *
+ * Returns the base64 digest, or `undefined` if `bundleDir` doesn't exist.
+ */
+export async function computeBundleContentHash(bundleDir: string): Promise<string | undefined> {
+  if (!(await fse.pathExists(bundleDir))) {
+    return undefined;
+  }
+  const entries: string[] = [];
+  const walk = async (dir: string): Promise<void> => {
+    const items = await fse.readdir(dir);
+    for (const item of items) {
+      const abs = path.join(dir, item);
+      const stat = await fse.lstat(abs);
+      if (stat.isDirectory()) {
+        await walk(abs);
+      } else if (stat.isFile()) {
+        const rel = path.relative(bundleDir, abs).split(path.sep).join('/');
+        if (rel === bundleSourceMd5SidecarFile) {
+          continue;
+        }
+        entries.push(rel);
+      }
+    }
+  };
+  await walk(bundleDir);
+  entries.sort();
+
+  const hash = createHash('sha256');
+  const NUL = Buffer.from([0]);
+  for (const rel of entries) {
+    const abs = path.join(bundleDir, ...rel.split('/'));
+    const stat = await fse.stat(abs);
+    hash.update(Buffer.from(rel, 'utf8'));
+    hash.update(NUL);
+    hash.update(Buffer.from(String(stat.size), 'utf8'));
+    hash.update(NUL);
+    await new Promise<void>((resolve, reject) => {
+      const stream = fse.createReadStream(abs);
+      stream.on('data', (chunk: Buffer | string) => {
+        if (typeof chunk === 'string') {
+          hash.update(Buffer.from(chunk));
+        } else {
+          hash.update(chunk);
+        }
+      });
+      stream.on('error', reject);
+      stream.on('end', () => resolve());
+    });
+    hash.update(NUL);
+  }
+  return hash.digest('base64');
 }
 
 /**
@@ -233,14 +344,19 @@ function pickLatestVersion(versions: string[]): string {
 }
 
 /**
- * Downloads the bundle zip from the resolved base URL and writes the sidecar.
+ * Downloads the bundle zip from the resolved base URL and writes the sidecar
+ * (source MD5 from the download + a fresh content-hash of the extracted tree).
  * Used both for the standard "feed wins" path and for the experimental cold-start path.
  */
 async function downloadBundleAndWriteSidecar(context: IActionContext, baseUrl: string, version: string): Promise<void> {
   const zipUrl = buildExtensionBundleZipUrl(baseUrl, version);
   const result = await downloadAndExtractDependency(context, zipUrl, defaultExtensionBundlePathValue, extensionBundleId, version);
   if (result?.actualMd5) {
-    await writeBundleSidecar(version, result.actualMd5);
+    const bundleDir = path.join(defaultExtensionBundlePathValue, version);
+    const contentHash = await computeBundleContentHash(bundleDir);
+    if (contentHash) {
+      await writeBundleSidecar(version, result.actualMd5, contentHash);
+    }
   }
 }
 
@@ -317,6 +433,7 @@ type DownloadReason =
   | 'newerVersion'
   | 'sidecarMissing'
   | 'sidecarMismatch'
+  | 'contentMismatch'
   | 'experimentalPin'
   | 'experimentalLatest'
   | 'envVarPin'
@@ -337,6 +454,13 @@ function buildProgressTitle(version: string, reason: DownloadReason, baseUrl: st
       return localize(
         'bundleProgressRedownload',
         'Re-downloading Logic Apps extension bundle {0} from {1} (local copy was incomplete)…',
+        version,
+        source
+      );
+    case 'contentMismatch':
+      return localize(
+        'bundleProgressCorruption',
+        'Re-downloading Logic Apps extension bundle {0} from {1} — files on disk were modified or corrupted…',
         version,
         source
       );
@@ -436,17 +560,42 @@ async function tryDownloadBundleWithProgress(
 }
 
 /**
- * Verifies the on-disk bundle's source MD5 against what the public CDN currently
- * reports via HEAD. Used only when the experimental toggle is OFF.
+ * Verifies the on-disk bundle:
+ *   1. Sidecar present and parseable (else `sidecarMissing` — also fires for
+ *      legacy bare-MD5 sidecars to drive one-time migration).
+ *   2. Recompute the extracted tree's content hash and compare to the sidecar's
+ *      `contentHash` — catches post-download mutation (manual edits, bit-rot,
+ *      AV restore, partial overwrite). On mismatch: `contentMismatch`.
+ *   3. HEAD the public CDN for the zip's `Content-MD5` and compare to the
+ *      sidecar's `sourceMd5` — catches publisher republish under same version.
+ *      On mismatch: `sidecarMismatch`. HEAD failure → `headRequestFailed`
+ *      (treated as passed by the caller so CDN flakes don't punish offline users).
  */
-async function verifyLocalBundleHash(
+async function verifyLocalBundle(
   context: IActionContext,
   publicBaseUrl: string,
   localVersion: string
-): Promise<'passed' | 'sidecarMissing' | 'sidecarMismatch' | 'headRequestFailed'> {
-  const sidecarValue = await readBundleSidecar(localVersion);
-  if (!sidecarValue) {
+): Promise<'passed' | 'sidecarMissing' | 'contentMismatch' | 'sidecarMismatch' | 'headRequestFailed'> {
+  const sidecar = await readBundleSidecar(localVersion);
+  if (!sidecar) {
     return 'sidecarMissing';
+  }
+
+  const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
+  const actualContentHash = await computeBundleContentHash(bundleDir);
+  if (!actualContentHash || actualContentHash !== sidecar.contentHash) {
+    if (ext.outputChannel) {
+      ext.outputChannel.appendLog(
+        localize(
+          'bundleContentHashMismatch',
+          'Logic Apps extension bundle {0} content hash mismatch (expected {1}, got {2}).',
+          localVersion,
+          sidecar.contentHash,
+          actualContentHash ?? '<missing>'
+        )
+      );
+    }
+    return 'contentMismatch';
   }
 
   const headUrl = buildExtensionBundleZipUrl(publicBaseUrl, localVersion);
@@ -469,11 +618,9 @@ async function verifyLocalBundleHash(
   }
 
   if (!publishedMd5) {
-    // Server didn't return a Content-MD5 — can't verify either way; treat as passed
-    // so we don't pointlessly re-download just because the CDN dropped the header.
     return 'passed';
   }
-  return publishedMd5 === sidecarValue ? 'passed' : 'sidecarMismatch';
+  return publishedMd5 === sidecar.sourceMd5 ? 'passed' : 'sidecarMismatch';
 }
 
 /**
@@ -666,12 +813,17 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     // Local is at least as new as the feed — verify the on-disk bundle's source MD5
     // and re-download if it's missing or has drifted (e.g. CDN republished the same version).
     if (latestLocalBundleVersion !== '0.0.0') {
-      const hashCheck = await verifyLocalBundleHash(context, effectiveBaseUrl, latestLocalBundleVersion);
+      const hashCheck = await verifyLocalBundle(context, effectiveBaseUrl, latestLocalBundleVersion);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
-      if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch') {
+      if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
         // Surface a one-shot warning so the user understands *why* we're
         // suddenly downloading on what looks like a steady-state activation.
-        notifyCorruptionDetected(latestLocalBundleVersion, describeSource(effectiveBaseUrl));
+        // sidecarMissing fires on first-run-after-upgrade for legacy bare-MD5
+        // sidecars; keep that path quieter (no toast) to avoid alarming users
+        // during the one-time migration.
+        if (hashCheck !== 'sidecarMissing') {
+          notifyCorruptionDetected(latestLocalBundleVersion, describeSource(effectiveBaseUrl));
+        }
         await downloadBundleWithProgress(context, effectiveBaseUrl, latestLocalBundleVersion, hashCheck);
         context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
         context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;

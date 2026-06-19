@@ -617,17 +617,32 @@ describe('downloadExtensionBundle', () => {
 
   // Helper: configure fs-extra so that the bundle versions in `localVersions` exist on disk
   // and the sidecar contents (if provided) round-trip when readBundleSidecar reads them.
-  const setupLocalDisk = (localVersions: string[], sidecarByVersion: Record<string, string> = {}) => {
+  // `sidecarByVersion` keys are version strings; values are the publisher's MD5 to embed
+  // in the JSON sidecar's `sourceMd5` field. The sidecar's `contentHash` field is always
+  // set to the empty-tree hash (no files inside the version folder) so verifyLocalBundle's
+  // content-hash recompute returns the same value.
+  const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
+  const buildSidecarJson = (sourceMd5: string, contentHash: string = EMPTY_TREE_HASH): string =>
+    JSON.stringify({ version: 1, sourceMd5, contentHash });
+  const setupLocalDisk = (
+    localVersions: string[],
+    sidecarByVersion: Record<string, string> = {},
+    options: { sidecarRaw?: Record<string, string>; sidecarContentHashOverride?: Record<string, string> } = {}
+  ) => {
     mockedFse.readdirSync.mockReturnValue(localVersions as any);
     mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    // Async readdir is used by computeBundleContentHash's walk; return [] so it treats
+    // every version folder as an empty tree → content hash = EMPTY_TREE_HASH.
+    mockedFse.readdir.mockResolvedValue([] as any);
     mockedFse.pathExists.mockImplementation(((p: string) => {
       // Default: bundle root and version folders exist; sidecar exists only when registered.
       if (typeof p !== 'string') {
         return Promise.resolve(true);
       }
       if (p.endsWith('.bundle-source-md5')) {
-        const matches = Object.keys(sidecarByVersion).some((v) => p.includes(v));
-        return Promise.resolve(matches);
+        const inJson = Object.keys(sidecarByVersion).some((v) => p.includes(v));
+        const inRaw = Object.keys(options.sidecarRaw ?? {}).some((v) => p.includes(v));
+        return Promise.resolve(inJson || inRaw);
       }
       return Promise.resolve(true);
     }) as any);
@@ -635,8 +650,16 @@ describe('downloadExtensionBundle', () => {
       if (typeof p !== 'string') {
         return Promise.resolve('' as any);
       }
+      const rawMatch = Object.entries(options.sidecarRaw ?? {}).find(([v]) => p.includes(v));
+      if (rawMatch) {
+        return Promise.resolve(rawMatch[1] as any);
+      }
       const match = Object.entries(sidecarByVersion).find(([v]) => p.includes(v));
-      return Promise.resolve((match?.[1] ?? '') as any);
+      if (!match) {
+        return Promise.resolve('' as any);
+      }
+      const overrideHash = options.sidecarContentHashOverride?.[match[0]];
+      return Promise.resolve(buildSidecarJson(match[1], overrideHash ?? EMPTY_TREE_HASH) as any);
     }) as any);
   };
 
@@ -799,6 +822,56 @@ describe('downloadExtensionBundle', () => {
     const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
     expect(progressTitle).toMatch(/Downloading newer.*1\.95\.0/);
     expect(vi.mocked(vscode.window.showInformationMessage)).toHaveBeenCalledWith(expect.stringMatching(/1\.95\.0.*ready/i));
+  });
+
+  // --- Phase 8: content-hash recompute ---
+
+  it('legacy bare-MD5 sidecar is treated as sidecarMissing (silent migration, no warning toast)', async () => {
+    const vscode = await import('vscode');
+    setupLocalDisk(['1.95.0'], {}, { sidecarRaw: { '1.95.0': 'legacy-bare-md5-string' } });
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMissing');
+    // Migration path: silent — no warning toast for legacy users.
+    expect(vi.mocked(vscode.window.showWarningMessage)).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).toHaveBeenCalled();
+  });
+
+  it('JSON sidecar with wrong contentHash → contentMismatch + warning toast + redownload', async () => {
+    const vscode = await import('vscode');
+    setupLocalDisk(['1.95.0'], { '1.95.0': 'sourceMd5-ok' }, { sidecarContentHashOverride: { '1.95.0': 'wrong-content-hash' } });
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+    mockedDownloadAndExtract.mockResolvedValue(undefined);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('contentMismatch');
+    expect(vi.mocked(vscode.window.showWarningMessage)).toHaveBeenCalledTimes(1);
+    const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
+    expect(progressTitle).toMatch(/modified or corrupted/);
+    expect(mockedDownloadAndExtract).toHaveBeenCalled();
+  });
+
+  it('JSON sidecar with correct contentHash + matching CDN MD5 → passed (no download)', async () => {
+    const matchingMd5 = 'matching-md5';
+    setupLocalDisk(['1.95.0'], { '1.95.0': matchingMd5 });
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue(matchingMd5);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('passed');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
   it('should correctly identify the latest version from an unordered feed list', async () => {
