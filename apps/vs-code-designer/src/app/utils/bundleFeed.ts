@@ -19,6 +19,7 @@ import { getJsonFeed } from './feed';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
@@ -643,7 +644,23 @@ async function verifyLocalBundle(
  */
 let inFlightBundleWork: Promise<void> | undefined;
 
+/**
+ * Tracks call-stacks that are currently *inside* `downloadExtensionBundle`.
+ * Anything awaited from within that scope — most importantly the post-extract
+ * `startAllDesignTimeApis` call that itself awaits `waitForExtensionBundleReady`
+ * — must NOT block on `inFlightBundleWork`, or we self-deadlock: the in-flight
+ * promise is resolved in `downloadExtensionBundle`'s `finally`, which can only
+ * run once the awaited restart finishes.
+ */
+const bundleDownloadScope = new AsyncLocalStorage<true>();
+
 export function waitForExtensionBundleReady(): Promise<void> {
+  // Re-entrant call from within the download's own post-extract hook —
+  // returning the in-flight promise here would deadlock. The caller is by
+  // definition already running because the bundle is on disk.
+  if (bundleDownloadScope.getStore() === true) {
+    return Promise.resolve();
+  }
   return inFlightBundleWork ?? Promise.resolve();
 }
 
@@ -670,7 +687,10 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     resolveInFlight = resolve;
   });
   try {
-    return await downloadExtensionBundleCore(context);
+    // Mark this whole call-stack as "inside the bundle download". Any nested
+    // `waitForExtensionBundleReady()` will short-circuit instead of awaiting
+    // the in-flight promise we own.
+    return await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context));
   } finally {
     inFlightBundleWork = undefined;
     resolveInFlight?.();
