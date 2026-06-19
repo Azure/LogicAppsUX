@@ -119,7 +119,11 @@ export async function downloadAndExtractDependency(
       }
     } else {
       if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
-        stopAllDesignTimeApis();
+        // Await actual process exit (not just SIGTERM) so our own func.exe
+        // releases its handles on the bundle dir before we try to delete it.
+        // Without this, the immediately-following rmSync can leave the dir
+        // in a Windows pending-deletion state and mkdir then EPERMs.
+        await stopAllDesignTimeApisAndWait();
       }
       try {
         await extractDependency(dependencyFilePath, targetFolder, dependencyName);
@@ -528,6 +532,231 @@ function isTransientLockError(error: unknown): boolean {
 }
 
 /**
+ * Wall-clock budget we'll wait for a Windows file lock to release before
+ * giving up and failing the install. 30s is generous but reflects what we
+ * actually see: a dying `func.exe` plus a Defender scan plus a pending
+ * `rmSync` flush can easily eat 5–15s on a slow profile, and failing fast
+ * leaves the user with a broken bundle until they reload.
+ */
+const LOCK_WAIT_BUDGET_MS = 30_000;
+
+/**
+ * How often to retry the locked filesystem operation. Tight at first (most
+ * locks clear in <1s) — the wall-clock budget caps total wait time.
+ */
+const LOCK_WAIT_POLL_MS = 250;
+
+/**
+ * How often to surface "still waiting" progress to the user during a long
+ * lock wait so it's clear we're not hung.
+ */
+const LOCK_WAIT_LOG_INTERVAL_MS = 5_000;
+
+/**
+ * After this much persistent locking, offer the orphan-`func.exe` prompt
+ * once. We don't offer it immediately because most locks clear within the
+ * first second on their own and surfacing a modal-ish prompt every install
+ * would be noisy.
+ */
+const LOCK_WAIT_ORPHAN_PROMPT_AFTER_MS = 5_000;
+
+/**
+ * Max time to wait for our own design-time `func.exe` processes to fully
+ * exit after `stopAllDesignTimeApis()`. Short by design — these are our
+ * processes and SIGTERM/SIGKILL should land within a couple of seconds.
+ */
+const DESIGN_TIME_EXIT_TIMEOUT_MS = 5_000;
+
+/**
+ * Returns true when a process with the given PID is still running. Uses
+ * `process.kill(pid, 0)`, a no-op signal that throws ESRCH when the process
+ * is gone. Works on Windows and POSIX.
+ */
+function isProcessAlive(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    const code = (err as { code?: string }).code;
+    // ESRCH = no such process. EPERM means we don't have permission to
+    // signal, but the process exists → treat as alive.
+    if (code === 'EPERM') {
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Polls until every PID in `pids` has exited, or `timeoutMs` elapses.
+ * Best-effort: never throws, just returns when done. Designed for the
+ * window after `stopAllDesignTimeApis()` where our own `func.exe` is
+ * draining file handles.
+ */
+async function waitForFuncProcessExit(pids: readonly number[], timeoutMs: number): Promise<void> {
+  if (pids.length === 0) {
+    return;
+  }
+  const deadline = Date.now() + timeoutMs;
+  let remaining = pids.filter((pid) => isProcessAlive(pid));
+  while (remaining.length > 0 && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, LOCK_WAIT_POLL_MS));
+    remaining = remaining.filter((pid) => isProcessAlive(pid));
+  }
+  if (remaining.length > 0 && ext.outputChannel) {
+    ext.outputChannel.appendLog(
+      `Some design-time func.exe process(es) still alive after ${timeoutMs}ms wait: PID(s) ${remaining.join(', ')}. Proceeding anyway.`
+    );
+  }
+}
+
+/**
+ * Stops all tracked design-time hosts and waits for the underlying
+ * `func.exe` processes to actually exit before returning. The plain
+ * `stopAllDesignTimeApis()` is fire-and-forget — control returns while
+ * Windows is still flushing the file handles those processes held, which
+ * leaves the bundle directory in a locked / pending-deletion state when we
+ * try to extract immediately after.
+ */
+async function stopAllDesignTimeApisAndWait(timeoutMs: number = DESIGN_TIME_EXIT_TIMEOUT_MS): Promise<void> {
+  const trackedBefore = Array.from(getTrackedFuncPids());
+  stopAllDesignTimeApis();
+  if (trackedBefore.length === 0) {
+    return;
+  }
+  await waitForFuncProcessExit(trackedBefore, timeoutMs);
+}
+
+/**
+ * Result classification for the inner attempt of a lock-wait helper.
+ */
+type LockWaitAttempt = { ok: true } | { ok: false; error: unknown; retry: boolean };
+
+/**
+ * Generic retry loop used by `removeWithLockWait` and `mkdirWithLockWait`.
+ * Polls `attempt` until success or `budgetMs` elapses. Logs progress every
+ * ~5s and offers the orphan-`func.exe` prompt once after ~5s of persistent
+ * locking. On budget exhaustion, throws the last seen error.
+ */
+async function withLockWait(
+  opLabel: string,
+  targetPath: string,
+  dependencyName: string,
+  budgetMs: number,
+  attempt: () => LockWaitAttempt
+): Promise<void> {
+  const start = Date.now();
+  const deadline = start + budgetMs;
+  let lastProgressLog = start;
+  let orphanPromptOffered = false;
+  let lastError: unknown;
+
+  while (true) {
+    const result = attempt();
+    if (result.ok) {
+      const waited = Date.now() - start;
+      if (waited >= LOCK_WAIT_LOG_INTERVAL_MS && ext.outputChannel) {
+        ext.outputChannel.appendLog(
+          `${opLabel} ${targetPath} succeeded after waiting ${(waited / 1000).toFixed(1)}s for the lock to release.`
+        );
+      }
+      return;
+    }
+    const failure = result as { ok: false; error: unknown; retry: boolean };
+    lastError = failure.error;
+    if (!failure.retry) {
+      throw lastError;
+    }
+    const now = Date.now();
+    if (now >= deadline) {
+      throw lastError;
+    }
+    if (now - lastProgressLog >= LOCK_WAIT_LOG_INTERVAL_MS && ext.outputChannel) {
+      const waited = ((now - start) / 1000).toFixed(1);
+      const remaining = ((deadline - now) / 1000).toFixed(1);
+      const code = (lastError as { code?: string })?.code ?? 'lock';
+      ext.outputChannel.appendLog(
+        `Still waiting on ${dependencyName} (${code}) to ${opLabel.toLowerCase()} ${targetPath}: ${waited}s elapsed, up to ${remaining}s remaining.`
+      );
+      lastProgressLog = now;
+    }
+    if (!orphanPromptOffered && now - start >= LOCK_WAIT_ORPHAN_PROMPT_AFTER_MS) {
+      orphanPromptOffered = true;
+      // Best-effort — even if the user cancels we keep waiting for the
+      // budget to elapse, since some lock holders (Defender, indexer) clear
+      // on their own and there's no point bailing early.
+      try {
+        await offerToTerminateOrphanFuncProcesses(dependencyName);
+      } catch (promptErr) {
+        if (ext.outputChannel) {
+          ext.outputChannel.appendLog(
+            `Orphan func.exe prompt failed during ${opLabel.toLowerCase()} wait: ${promptErr instanceof Error ? promptErr.message : String(promptErr)}`
+          );
+        }
+      }
+    }
+    await new Promise((resolve) => setTimeout(resolve, LOCK_WAIT_POLL_MS));
+  }
+}
+
+/**
+ * Removes `targetPath` recursively, retrying for up to `budgetMs` on
+ * transient Windows lock errors (EPERM/EBUSY/EACCES). Returns silently
+ * when the path doesn't exist.
+ *
+ * Why: on Windows, `fs.rmSync(force: true)` may "succeed" while silently
+ * skipping locked files — leaving the directory in a pending-deletion state
+ * that makes the immediately-following `mkdirSync` throw EPERM. This helper
+ * keeps retrying until the path is genuinely gone (or budget exhausted).
+ */
+export async function removeWithLockWait(
+  targetPath: string,
+  dependencyName: string,
+  budgetMs: number = LOCK_WAIT_BUDGET_MS
+): Promise<void> {
+  await withLockWait('Remove', targetPath, dependencyName, budgetMs, () => {
+    if (!fs.existsSync(targetPath)) {
+      return { ok: true };
+    }
+    try {
+      fs.rmSync(targetPath, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    } catch (error) {
+      return { ok: false, error, retry: isTransientLockError(error) };
+    }
+    // Even after rmSync returns success, Windows may have left the dir in
+    // place because some files are still locked. Treat lingering existence
+    // as a transient lock and keep waiting.
+    if (fs.existsSync(targetPath)) {
+      return {
+        ok: false,
+        error: Object.assign(new Error(`Path ${targetPath} still exists after rmSync (locked files held by another process).`), {
+          code: 'EBUSY',
+        }),
+        retry: true,
+      };
+    }
+    return { ok: true };
+  });
+}
+
+/**
+ * Creates `targetPath` (recursive), retrying for up to `budgetMs` on
+ * transient Windows lock errors. The common case this exists for: we just
+ * `rmSync`'d the same path and Windows hasn't finished flushing the
+ * deletion, so `mkdirSync` returns EPERM until the FS catches up.
+ */
+export async function mkdirWithLockWait(targetPath: string, dependencyName: string, budgetMs: number = LOCK_WAIT_BUDGET_MS): Promise<void> {
+  await withLockWait('Mkdir', targetPath, dependencyName, budgetMs, () => {
+    try {
+      fs.mkdirSync(targetPath, { recursive: true });
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error, retry: isTransientLockError(error) };
+    }
+  });
+}
+
+/**
  * Enumerates all running `func.exe` processes on Windows via `tasklist`.
  * Returns an empty array on non-Windows or if `tasklist` fails.
  */
@@ -682,24 +911,17 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
   // truly empty state. This is critical when replacing a corrupt bundle: the
   // old files (which may be stale, partial, or from a different version) must
   // be gone before AdmZip writes the new ones, because AdmZip's overwrite
-  // mode does NOT delete files that are absent from the new zip. If the
-  // delete fails — typically EPERM from an orphan func.exe locking a DLL —
-  // we throw and let the caller offer to terminate the lock holder.
+  // mode does NOT delete files that are absent from the new zip.
+  //
+  // On Windows the delete + recreate pair is racy when something else (a
+  // recently-stopped func.exe, Defender, the search indexer) is still
+  // draining handles. Both helpers wait up to 30s for the lock to clear and
+  // log progress every ~5s so the user sees we're working, not stuck.
   if (fs.existsSync(targetFolder)) {
-    try {
-      ext.outputChannel.appendLog(`Removing existing ${dependencyName} install at ${targetFolder} before re-extracting.`);
-      fs.rmSync(targetFolder, { recursive: true, force: true });
-    } catch (deleteError) {
-      const code = (deleteError as { code?: string }).code;
-      ext.outputChannel.appendLog(
-        `Could not remove existing ${dependencyName} at ${targetFolder} (${code ?? 'rmSync failed'}: ${
-          deleteError instanceof Error ? deleteError.message : String(deleteError)
-        }). Another process may be holding files open.`
-      );
-      throw deleteError;
-    }
+    ext.outputChannel.appendLog(`Removing existing ${dependencyName} install at ${targetFolder} before re-extracting.`);
+    await removeWithLockWait(targetFolder, dependencyName);
   }
-  fs.mkdirSync(targetFolder, { recursive: true });
+  await mkdirWithLockWait(targetFolder, dependencyName);
   try {
     fs.chmodSync(targetFolder, 0o777);
   } catch {

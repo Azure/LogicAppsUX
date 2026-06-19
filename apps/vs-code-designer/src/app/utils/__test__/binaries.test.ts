@@ -18,6 +18,8 @@ import {
   getDependencyTimeout,
   installBinaries,
   useBinariesDependencies,
+  removeWithLockWait,
+  mkdirWithLockWait,
 } from '../binaries';
 import { ext } from '../../../extensionVariables';
 import { DependencyVersion } from '../../../constants';
@@ -604,6 +606,129 @@ describe('binaries', () => {
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotnetBinaryPath', 'dotnet');
       expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', 'node');
       expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
+    });
+  });
+
+  describe('removeWithLockWait', () => {
+    beforeEach(() => {
+      (fs as any).rmSync = vi.fn();
+      vi.mocked(fs.existsSync).mockReset();
+      vi.mocked(ext.outputChannel.appendLog).mockReset();
+    });
+
+    afterEach(() => {
+      delete (fs as any).rmSync;
+    });
+
+    it('returns immediately when the path does not exist', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false);
+      await removeWithLockWait('C:/nope', 'TestDep', 1000);
+      expect((fs as any).rmSync).not.toHaveBeenCalled();
+    });
+
+    it('calls rmSync once when the directory is removable on the first attempt', async () => {
+      // exists -> true (so we try rmSync), then false (rmSync flushed).
+      vi.mocked(fs.existsSync).mockReturnValueOnce(true).mockReturnValueOnce(false);
+      (fs as any).rmSync.mockImplementation(() => undefined);
+      await removeWithLockWait('C:/dep', 'TestDep', 1000);
+      expect((fs as any).rmSync).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries when rmSync throws EPERM and eventually succeeds', async () => {
+      let calls = 0;
+      vi.mocked(fs.existsSync).mockImplementation(() => calls < 3); // true for first 3 checks, then false
+      (fs as any).rmSync.mockImplementation(() => {
+        calls += 1;
+        if (calls < 3) {
+          const err = new Error('EPERM') as Error & { code: string };
+          err.code = 'EPERM';
+          throw err;
+        }
+      });
+      await removeWithLockWait('C:/dep', 'TestDep', 5000);
+      expect((fs as any).rmSync).toHaveBeenCalledTimes(3);
+    });
+
+    it('throws after the budget elapses when rmSync keeps failing with EPERM', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      (fs as any).rmSync.mockImplementation(() => {
+        const err = new Error('EPERM') as Error & { code: string };
+        err.code = 'EPERM';
+        throw err;
+      });
+      await expect(removeWithLockWait('C:/dep', 'TestDep', 600)).rejects.toThrow(/EPERM/);
+    });
+
+    it('throws immediately on a non-transient error (e.g. EINVAL)', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      (fs as any).rmSync.mockImplementation(() => {
+        const err = new Error('EINVAL') as Error & { code: string };
+        err.code = 'EINVAL';
+        throw err;
+      });
+      await expect(removeWithLockWait('C:/dep', 'TestDep', 5000)).rejects.toThrow(/EINVAL/);
+      expect((fs as any).rmSync).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps waiting when rmSync silently leaves the directory in place (Windows pending-deletion)', async () => {
+      let existsCalls = 0;
+      // Stays true until the 5th existsSync call; rmSync always "succeeds" (returns undefined).
+      vi.mocked(fs.existsSync).mockImplementation(() => {
+        existsCalls += 1;
+        return existsCalls < 5;
+      });
+      (fs as any).rmSync.mockImplementation(() => undefined);
+      await removeWithLockWait('C:/dep', 'TestDep', 5000);
+      // rmSync attempted multiple times because each attempt found existsSync still true post-rm.
+      expect((fs as any).rmSync.mock.calls.length).toBeGreaterThan(1);
+    });
+  });
+
+  describe('mkdirWithLockWait', () => {
+    beforeEach(() => {
+      vi.mocked(fs.mkdirSync).mockReset();
+      vi.mocked(ext.outputChannel.appendLog).mockReset();
+    });
+
+    it('calls mkdirSync once on success', async () => {
+      vi.mocked(fs.mkdirSync).mockImplementation(() => undefined);
+      await mkdirWithLockWait('C:/dep', 'TestDep', 1000);
+      expect(fs.mkdirSync).toHaveBeenCalledWith('C:/dep', { recursive: true });
+      expect(fs.mkdirSync).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries on EPERM and ultimately resolves', async () => {
+      let calls = 0;
+      vi.mocked(fs.mkdirSync).mockImplementation(() => {
+        calls += 1;
+        if (calls < 3) {
+          const err = new Error('EPERM') as Error & { code: string };
+          err.code = 'EPERM';
+          throw err;
+        }
+        return undefined;
+      });
+      await mkdirWithLockWait('C:/dep', 'TestDep', 5000);
+      expect(calls).toBe(3);
+    });
+
+    it('throws after budget elapses when mkdirSync keeps failing', async () => {
+      vi.mocked(fs.mkdirSync).mockImplementation(() => {
+        const err = new Error('EPERM') as Error & { code: string };
+        err.code = 'EPERM';
+        throw err;
+      });
+      await expect(mkdirWithLockWait('C:/dep', 'TestDep', 600)).rejects.toThrow(/EPERM/);
+    });
+
+    it('throws immediately on a non-transient error', async () => {
+      vi.mocked(fs.mkdirSync).mockImplementation(() => {
+        const err = new Error('ENOSPC') as Error & { code: string };
+        err.code = 'ENOSPC';
+        throw err;
+      });
+      await expect(mkdirWithLockWait('C:/dep', 'TestDep', 5000)).rejects.toThrow(/ENOSPC/);
+      expect(fs.mkdirSync).toHaveBeenCalledTimes(1);
     });
   });
 
