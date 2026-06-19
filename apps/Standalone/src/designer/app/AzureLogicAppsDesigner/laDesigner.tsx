@@ -350,12 +350,12 @@ const DesignerEditor = () => {
         ...connectionsData?.agentMcpConnections,
         ...newAgentMcpConnections,
       };
-      if (isAgentWorkflow(workflow?.kind ?? '') || Object.keys(newAgentConnections).length > 0) {
-        (connectionsData as ConnectionsData).agentConnections = {
-          ...connectionsData?.agentConnections,
-          ...newAgentConnections,
-        };
+      (connectionsData as ConnectionsData).agentConnections = {
+        ...connectionsData?.agentConnections,
+        ...newAgentConnections,
+      };
 
+      if (isAgentWorkflow(workflow?.kind ?? '')) {
         // Assign MSI roles if needed
         /**
          *  This is currently only for Agentic workflows,
