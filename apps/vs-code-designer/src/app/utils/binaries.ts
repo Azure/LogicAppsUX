@@ -30,6 +30,7 @@ import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import * as cp from 'child_process';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 
@@ -120,7 +121,23 @@ export async function downloadAndExtractDependency(
       if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
         stopAllDesignTimeApis();
       }
-      await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+      try {
+        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+      } catch (firstError) {
+        const lockLike = isTransientLockError(firstError) || firstError instanceof BundleExtractionError;
+        if (!lockLike) {
+          throw firstError;
+        }
+        // Likely an orphan func.exe holding the bundle directory open. Offer
+        // to terminate orphan processes and retry once. If the user declines
+        // or no orphans are found, propagate the original error.
+        const terminated = await offerToTerminateOrphanFuncProcesses(dependencyName);
+        if (!terminated) {
+          throw firstError;
+        }
+        ext.outputChannel.appendLog(`Retrying ${dependencyName} install after terminating orphan func.exe processes.`);
+        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+      }
       vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
       if (dependencyName === funcDependencyName) {
         // Add execute permissions for func and gozip binaries
@@ -137,23 +154,35 @@ export async function downloadAndExtractDependency(
       }
     }
   } catch (error) {
-    // Extraction (or verification) failed. Tear down any partial state at
-    // targetFolder so the next activation re-downloads from scratch instead
-    // of treating the partial tree as authoritative.
-    try {
-      if (fs.existsSync(targetFolder)) {
-        fs.rmSync(targetFolder, { recursive: true, force: true });
-      }
-    } catch {
-      // Best-effort cleanup; ignore secondary errors.
-    }
+    // Extraction (or verification) failed. Do NOT delete targetFolder: on
+    // Windows the most common cause is EPERM/EBUSY from another process
+    // (typically an orphan func.exe from a previous session) holding bundle
+    // DLLs open. Deleting the folder is impossible while it's locked, and
+    // leaving the user with NO bundle is strictly worse than leaving them
+    // with the partial one they already had. The Phase 8 sidecar/content-hash
+    // check will detect the bad state on the next activation and trigger
+    // another re-download, which can succeed once the lock holder exits.
+    const lockHint =
+      isTransientLockError(error) || error instanceof BundleExtractionError
+        ? ` Another process (often an orphan func.exe from a prior session) may be holding files in ${targetFolder}. Close all VS Code windows running Logic Apps, kill any leftover func.exe processes, and reload to retry.`
+        : '';
     const baseMessage =
       error instanceof BundleExtractionError
         ? `Extension bundle ${dependencyName} extraction was incomplete (${error.kind}${
             error.entryName ? `: ${error.entryName}` : ''
-          }). Removed partial install at ${targetFolder}.`
-        : `Failed to install ${dependencyName} after download. Removed partial install at ${targetFolder}.`;
+          }) at ${targetFolder}.${lockHint}`
+        : `Failed to install ${dependencyName} after download at ${targetFolder}: ${
+            error instanceof Error ? error.message : String(error)
+          }.${lockHint}`;
     ext.outputChannel.appendLog(baseMessage);
+    vscode.window.showErrorMessage(
+      localize(
+        'bundleInstallFailed',
+        'Logic Apps extension bundle {0} could not be installed at {1}. Another process may be holding the folder. Close other VS Code windows and any running func.exe processes, then reload this window to retry.',
+        dependencyName,
+        targetFolder
+      )
+    );
     context.telemetry.properties.extractError = error instanceof Error ? error.message : String(error);
     throw error;
   } finally {
@@ -499,6 +528,126 @@ function isTransientLockError(error: unknown): boolean {
 }
 
 /**
+ * Enumerates all running `func.exe` processes on Windows via `tasklist`.
+ * Returns an empty array on non-Windows or if `tasklist` fails.
+ */
+async function listFuncExePidsWindows(): Promise<number[]> {
+  if (process.platform !== Platform.windows) {
+    return [];
+  }
+  return new Promise<number[]>((resolve) => {
+    cp.exec('tasklist /FI "IMAGENAME eq func.exe" /FO CSV /NH', (error, stdout) => {
+      if (error) {
+        resolve([]);
+        return;
+      }
+      const pids: number[] = [];
+      for (const line of stdout.split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          continue;
+        }
+        // CSV: "func.exe","12345","Console","1","12,345 K"
+        const fields = trimmed.split(',').map((s) => s.replace(/^"|"$/g, '').trim());
+        if (fields[0]?.toLowerCase() === 'func.exe') {
+          const pid = Number.parseInt(fields[1], 10);
+          if (!Number.isNaN(pid)) {
+            pids.push(pid);
+          }
+        }
+      }
+      resolve(pids);
+    });
+  });
+}
+
+/**
+ * Returns the set of `func.exe` PIDs the extension knows about — i.e. the
+ * design-time hosts it spawned and tracks in `ext.designTimeInstances`.
+ * Anything not in this set is an orphan from a prior session.
+ */
+function getTrackedFuncPids(): Set<number> {
+  const known = new Set<number>();
+  for (const inst of ext.designTimeInstances.values()) {
+    if (!inst) {
+      continue;
+    }
+    if (inst.childFuncPid !== undefined && inst.childFuncPid !== null) {
+      const pid = Number(inst.childFuncPid);
+      if (!Number.isNaN(pid)) {
+        known.add(pid);
+      }
+    }
+    const directPid = inst.process?.pid;
+    if (typeof directPid === 'number') {
+      known.add(directPid);
+    }
+  }
+  return known;
+}
+
+/**
+ * Detects orphan `func.exe` processes (not tracked by this extension session)
+ * that are likely holding files in the bundle install directory. If any are
+ * found, prompts the user to terminate them. Returns true if at least one
+ * orphan was killed (caller should retry the operation).
+ *
+ * No-op on non-Windows since the EPERM/EBUSY scenarios reported by users are
+ * Windows-specific.
+ */
+async function offerToTerminateOrphanFuncProcesses(dependencyName: string): Promise<boolean> {
+  if (process.platform !== Platform.windows) {
+    return false;
+  }
+  const allFuncPids = await listFuncExePidsWindows();
+  if (allFuncPids.length === 0) {
+    return false;
+  }
+  const tracked = getTrackedFuncPids();
+  const orphans = allFuncPids.filter((pid) => !tracked.has(pid));
+  if (orphans.length === 0) {
+    return false;
+  }
+  ext.outputChannel.appendLog(
+    `Detected ${orphans.length} orphan func.exe process(es) not managed by this VS Code session (PID${
+      orphans.length > 1 ? 's' : ''
+    } ${orphans.join(', ')}). These may be locking the ${dependencyName} install directory.`
+  );
+  const terminateLabel = localize('terminateOrphanFuncBtn', 'Terminate {0} process(es)', orphans.length);
+  const choice = await vscode.window.showWarningMessage(
+    localize(
+      'orphanFuncDetected',
+      'Logic Apps detected {0} leftover func.exe process(es) from a previous session that may be blocking the {1} update. Terminate them now to unblock the install?',
+      orphans.length,
+      dependencyName
+    ),
+    { modal: false },
+    terminateLabel
+  );
+  if (choice !== terminateLabel) {
+    ext.outputChannel.appendLog('User declined to terminate orphan func.exe processes.');
+    return false;
+  }
+  let killed = 0;
+  for (const pid of orphans) {
+    try {
+      process.kill(pid);
+      killed++;
+    } catch (killErr) {
+      ext.outputChannel.appendLog(
+        `Could not terminate func.exe PID ${pid}: ${killErr instanceof Error ? killErr.message : String(killErr)}`
+      );
+    }
+  }
+  ext.outputChannel.appendLog(`Terminated ${killed}/${orphans.length} orphan func.exe process(es).`);
+  if (killed > 0) {
+    // Give Windows a beat to release file handles before any retry.
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+  return killed > 0;
+}
+
+/**
  * Verifies every file entry in the zip's central directory exists on disk at
  * `targetFolder` with the size the archive claims it should have. Must be
  * called before `extractContainerFolder` (which may rename a single root
@@ -529,11 +678,41 @@ export function verifyExtractedZip(zip: AdmZip, targetFolder: string): void {
 }
 
 async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
+  // Delete the existing target folder before extraction so we start from a
+  // truly empty state. This is critical when replacing a corrupt bundle: the
+  // old files (which may be stale, partial, or from a different version) must
+  // be gone before AdmZip writes the new ones, because AdmZip's overwrite
+  // mode does NOT delete files that are absent from the new zip. If the
+  // delete fails — typically EPERM from an orphan func.exe locking a DLL —
+  // we throw and let the caller offer to terminate the lock holder.
+  if (fs.existsSync(targetFolder)) {
+    try {
+      ext.outputChannel.appendLog(`Removing existing ${dependencyName} install at ${targetFolder} before re-extracting.`);
+      fs.rmSync(targetFolder, { recursive: true, force: true });
+    } catch (deleteError) {
+      const code = (deleteError as { code?: string }).code;
+      ext.outputChannel.appendLog(
+        `Could not remove existing ${dependencyName} at ${targetFolder} (${code ?? 'rmSync failed'}: ${
+          deleteError instanceof Error ? deleteError.message : String(deleteError)
+        }). Another process may be holding files open.`
+      );
+      throw deleteError;
+    }
+  }
+  fs.mkdirSync(targetFolder, { recursive: true });
+  try {
+    fs.chmodSync(targetFolder, 0o777);
+  } catch {
+    // Permission tweak is best-effort.
+  }
+
   let lastError: unknown;
   for (let attempt = 1; attempt <= MAX_EXTRACT_ATTEMPTS; attempt++) {
     try {
-      // Clear targetFolder's contents without deleting the folder itself.
-      cleanDirectory(targetFolder);
+      if (attempt > 1) {
+        // Clear the failed partial extract before retrying.
+        cleanDirectory(targetFolder);
+      }
       await executeCommand(
         ext.outputChannel,
         undefined,
