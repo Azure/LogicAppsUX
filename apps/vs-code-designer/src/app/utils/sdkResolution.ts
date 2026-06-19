@@ -8,6 +8,7 @@ import { parseString } from 'xml2js';
 import { getDotNetCommand } from './dotnet/dotnet';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
 
 const SDK_PACKAGE_ID = 'Microsoft.Azure.Workflows.Sdk';
 const SDK_PACKAGE_ID_LOWER = 'microsoft.azure.workflows.sdk';
@@ -29,23 +30,19 @@ export async function resolveSdkFromProject(projectPath: string): Promise<SdkRes
   try {
     const csprojPath = await findCsprojFile(projectPath);
     if (!csprojPath) {
-      ext.outputChannel?.appendLog(`[SDK Resolution] No .csproj file found in ${projectPath}`);
+      ext.outputChannel.appendLog(localize('csprojFileNotFound', '[SDK Resolution] No .csproj file found in "{0}".', projectPath));
       return undefined;
     }
 
     const sdkVersion = await parseSdkVersion(csprojPath);
     if (!sdkVersion) {
-      ext.outputChannel?.appendLog(
-        `[SDK Resolution] No ${SDK_PACKAGE_ID} PackageReference found in ${csprojPath}`
-      );
+      ext.outputChannel.appendLog(localize('sdkVersionNotFound', '[SDK Resolution] No "{0}" PackageReference found in "{1}".', SDK_PACKAGE_ID, csprojPath));
       return undefined;
     }
 
-    ext.outputChannel?.appendLog(`[SDK Resolution] Found SDK version ${sdkVersion} in ${csprojPath}`);
-
     const cacheRoot = await getNuGetGlobalPackagesPath();
     if (!cacheRoot) {
-      ext.outputChannel?.appendLog('[SDK Resolution] Failed to determine NuGet global packages path');
+      ext.outputChannel.appendLog(localize('nuGetCachePathNotFound', '[SDK Resolution] Failed to determine NuGet global packages path.'));
       return undefined;
     }
 
@@ -57,7 +54,7 @@ export async function resolveSdkFromProject(projectPath: string): Promise<SdkRes
     );
 
     if (await fse.pathExists(nupkgPath)) {
-      ext.outputChannel?.appendLog(`[SDK Resolution] Resolved SDK nupkg: ${nupkgPath}`);
+      ext.outputChannel.appendLog(localize('sdkNupkgFound', '[SDK Resolution] Resolved SDK nupkg: "{0}".', nupkgPath));
       return { sdkNupkgPath: nupkgPath, version: sdkVersion };
     }
 
@@ -72,17 +69,14 @@ export async function resolveSdkFromProject(projectPath: string): Promise<SdkRes
     );
 
     if (await fse.pathExists(localNupkgPath)) {
-      ext.outputChannel?.appendLog(`[SDK Resolution] Resolved SDK nupkg from project-local cache: ${localNupkgPath}`);
+      ext.outputChannel.appendLog(localize('sdkNupkgFoundLocal', '[SDK Resolution] Resolved SDK nupkg from project-local cache: "{0}".', localNupkgPath));
       return { sdkNupkgPath: localNupkgPath, version: sdkVersion };
     }
 
-    ext.outputChannel?.appendLog(
-      `[SDK Resolution] SDK package not found at ${nupkgPath} or ${localNupkgPath}. ` +
-        `Ensure 'dotnet restore' has been run on the project.`
-    );
+    ext.outputChannel.appendLog(localize('sdkNupkgNotFound', '[SDK Resolution] SDK package not found at "{0}" or "{1}". Ensure \'dotnet restore\' has been run on the project.', nupkgPath, localNupkgPath));
     return undefined;
   } catch (error) {
-    ext.outputChannel?.appendLog(`[SDK Resolution] Unexpected error: ${error}`);
+    ext.outputChannel.appendLog(localize('sdkResolutionError', '[SDK Resolution] Unexpected error occurred: {0}', (error as Error).message));
     return undefined;
   }
 }
@@ -123,9 +117,7 @@ async function parseSdkVersion(csprojPath: string): Promise<string | undefined> 
             continue;
           }
           if (version.startsWith('$(') || version.startsWith('@(')) {
-            ext.outputChannel?.appendLog(
-              `[SDK Resolution] SDK version is an MSBuild variable (${version}), cannot resolve statically`
-            );
+            ext.outputChannel.appendLog(localize('sdkVersionIsVariable', '[SDK Resolution] SDK version is an MSBuild variable "{0}", cannot resolve statically.', version));
             return undefined;
           }
           return version;
@@ -166,19 +158,19 @@ async function getNuGetGlobalPackagesPath(): Promise<string | undefined> {
     const prefix = 'global-packages:';
     const line = output.split('\n').find((l) => l.trim().toLowerCase().startsWith(prefix.toLowerCase()));
     if (!line) {
-      ext.outputChannel?.appendLog(`[SDK Resolution] Unexpected dotnet nuget locals output: ${output}`);
+      ext.outputChannel.appendLog(localize('sdkUnexpectedNuGetOutput', '[SDK Resolution] Unexpected dotnet nuget locals output: "{0}".', output));
       return undefined;
     }
 
     const cachePath = line.substring(line.indexOf(':') + 1).trim();
     if (!cachePath || !(await fse.pathExists(cachePath))) {
-      ext.outputChannel?.appendLog(`[SDK Resolution] NuGet cache path does not exist: ${cachePath}`);
+      ext.outputChannel.appendLog(localize('sdkNuGetCachePathDoesNotExist', '[SDK Resolution] NuGet cache path does not exist: "{0}".', cachePath));
       return undefined;
     }
 
     return cachePath;
   } catch (error) {
-    ext.outputChannel?.appendLog(`[SDK Resolution] Failed to query NuGet cache path: ${error}`);
+    ext.outputChannel.appendLog(localize('sdkResolutionError', '[SDK Resolution] Failed to query NuGet cache path: "{0}".', (error as Error).message));
     return getDefaultNuGetCachePath();
   }
 }

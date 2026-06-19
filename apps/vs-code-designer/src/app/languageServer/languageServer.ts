@@ -21,6 +21,7 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { resolveSdkFromProject } from '../utils/sdkResolution';
+import { localize } from '../../localize';
 
 export default class LogicAppsLanguageServer {
   protected lspServerDllPath: string | undefined;
@@ -174,18 +175,20 @@ export default class LogicAppsLanguageServer {
   private async getSDKPaths() {
     const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
     if (!dependenciesPath) {
+      ext.outputChannel.appendLog(localize('dependenciesPathNotSet', '[LSP] Could not resolve SDK paths. The dependencies path is not set.'));
       return { lspServerDllPath: undefined, sdkNupkgPath: undefined };
     }
 
     const lspServerDllPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
     if (!(await fse.pathExists(lspServerDllPath))) {
+      ext.outputChannel.appendLog(localize('lspServerDllNotFound', '[LSP] Could not find LSP server DLL at "{0}".', lspServerDllPath));
       return { lspServerDllPath: undefined, sdkNupkgPath: undefined };
     }
 
     const resolvedSdk = await resolveSdkFromProject(this.projectPath!);
     const sdkNupkgPath = resolvedSdk ? resolvedSdk.sdkNupkgPath : undefined;
-    if (resolvedSdk) {
-      console.log(`[LSP] Resolved SDK v${resolvedSdk.version} from NuGet cache: ${sdkNupkgPath}`);
+    if (!sdkNupkgPath) {
+      ext.outputChannel.appendLog(localize('sdkNupkgNotFound', '[LSP] Could not resolve SDK nupkg for project at "{0}".', this.projectPath));
     }
 
     return { lspServerDllPath, sdkNupkgPath };
