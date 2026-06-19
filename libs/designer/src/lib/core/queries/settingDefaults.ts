@@ -1,4 +1,4 @@
-import { OperationManifestService } from '@microsoft/logic-apps-shared';
+import { OperationManifestService, isSettingDefaultsSkippedOperationType } from '@microsoft/logic-apps-shared';
 import type { Settings, SettingData } from '../actions/bjsworkflow/settings';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import Constants from '../../common/constants';
@@ -31,7 +31,8 @@ export const fetchSettingDefaults = async (
   connectorId: string,
   operationId: string,
   supportedSettings: string[],
-  workflowKind?: string
+  workflowKind?: string,
+  operationType?: string
 ): Promise<Record<string, any> | undefined> => {
   const operationManifestService = OperationManifestService();
   if (!operationManifestService.getSettingDefaults || supportedSettings.length === 0) {
@@ -45,9 +46,10 @@ export const fetchSettingDefaults = async (
         connectorId.toLowerCase(),
         operationId.toLowerCase(),
         workflowKind ?? '',
+        (operationType ?? '').toLowerCase(),
         [...supportedSettings].sort().join(','),
       ],
-      () => operationManifestService.getSettingDefaults!(connectorId, operationId, supportedSettings, workflowKind)
+      () => operationManifestService.getSettingDefaults!(connectorId, operationId, supportedSettings, workflowKind, operationType)
     );
   } catch {
     return undefined;
@@ -64,9 +66,14 @@ export const applySettingDefaults = async (
   settings: Settings,
   connectorId: string,
   operationId: string,
-  workflowKind?: string
+  workflowKind?: string,
+  operationType?: string
 ): Promise<Settings> => {
-  const defaults = await fetchSettingDefaults(connectorId, operationId, getSupportedSettingKeys(settings), workflowKind);
+  // Operation types with no retry policy have nothing to fetch — skip the round trip entirely.
+  if (isSettingDefaultsSkippedOperationType(operationType)) {
+    return settings;
+  }
+  const defaults = await fetchSettingDefaults(connectorId, operationId, getSupportedSettingKeys(settings), workflowKind, operationType);
   return defaults ? mergeSettingDefaults(settings, defaults) : settings;
 };
 

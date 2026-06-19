@@ -192,5 +192,28 @@ describe('settingDefaults', () => {
 
       expect(result.timeout?.value).toBe('PT1H');
     });
+
+    it('skips the fetch entirely for operation types with no retry policy', async () => {
+      const spy = vi.fn();
+      InitOperationManifestService({ getSettingDefaults: spy } as any);
+
+      const settings = { timeout: { isSupported: true, value: 'PT5M' } } as unknown as Settings;
+
+      const result = await applySettingDefaults(settings, 'connector', 'operation', 'stateful', 'Request');
+
+      expect(result).toBe(settings);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('forwards the operation type to the service for HTTP-family built-ins', async () => {
+      const spy = vi.fn().mockResolvedValue({ retryPolicy: { value: { type: 'default' } } });
+      InitOperationManifestService({ getSettingDefaults: spy } as any);
+
+      const settings = { retryPolicy: { isSupported: true, value: undefined } } as unknown as Settings;
+
+      await applySettingDefaults(settings, 'connectionProviders/http', 'httpaction', 'stateful', 'Http');
+
+      expect(spy).toHaveBeenCalledWith('connectionProviders/http', 'httpaction', ['retryPolicy'], 'stateful', 'Http');
+    });
   });
 });

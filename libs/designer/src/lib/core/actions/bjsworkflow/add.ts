@@ -234,7 +234,7 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
-    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind);
+    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind, type);
     const updatedOutputs = nodeOutputs;
     initData = {
       id: nodeId,
@@ -291,7 +291,7 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
-    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind);
+    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind, type);
 
     // TODO: This seems redundant now since in line: 143 outputs are already updated with a splitOnExpression. Should remove it.
     // We should update the outputs when splitOn is enabled.
@@ -352,7 +352,7 @@ export const initializeOperationDetails = async (
     );
 
     settings = addDefaultSecureSettings(settings, connector?.properties?.isSecureByDefault ?? false);
-    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind);
+    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind, type);
 
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;

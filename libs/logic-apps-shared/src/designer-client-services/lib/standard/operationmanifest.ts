@@ -10,6 +10,7 @@ import mcpclientconnector from './manifest/mcpclientconnector';
 import builtinMcpClientManifest from './manifest/builtinmcpclient';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
+import { usesSettingDefaultsTypeRoute } from '../operationmanifest';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   getCachedOperation?: (connectorName: string, operationName: string) => Promise<any>;
@@ -221,18 +222,26 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     connectorId: string,
     operationId: string,
     supportedSettings: string[],
-    workflowKind?: string
+    workflowKind?: string,
+    operationType?: string
   ): Promise<Record<string, any> | undefined> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];
     const operationName = operationId.split('/').slice(-1)[0];
+
+    // HTTP-family built-ins are synthetic on the client and are not resolvable through the
+    // operationGroups catalog, so their defaults are served from the type-keyed route. The
+    // operationType is sent verbatim in its definition PascalCase to keep backend telemetry clean.
+    const managementPath = usesSettingDefaultsTypeRoute(operationType)
+      ? `operationTypes/${operationType}/settingDefaults`
+      : `operationGroups/${connectorName}/operations/${operationName}/settingDefaults`;
 
     try {
       if (isHybridLogicApp(baseUrl)) {
         return await httpClient.post<Record<string, any>, { settings: string[]; workflowKind?: string }>({
           uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
           headers: {
-            'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorName}/operations/${operationName}/settingDefaults`,
+            'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/${managementPath}`,
             'x-ms-logicapps-proxy-method': 'POST',
           },
           content: { settings: supportedSettings, workflowKind },
@@ -240,7 +249,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       }
 
       return await httpClient.post<Record<string, any>, { settings: string[]; workflowKind?: string }>({
-        uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}/settingDefaults`,
+        uri: `${baseUrl}/${managementPath}`,
         queryParameters: { 'api-version': apiVersion },
         content: { settings: supportedSettings, workflowKind },
       });

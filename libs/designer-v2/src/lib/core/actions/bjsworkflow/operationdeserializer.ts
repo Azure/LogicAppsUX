@@ -409,7 +409,13 @@ export const initializeOperationDetailsForManifest = async (
     const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
 
     let settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
-    settings = await applySettingDefaults(settings, nodeOperationInfo.connectorId, nodeOperationInfo.operationId, workflowKind);
+    settings = await applySettingDefaults(
+      settings,
+      nodeOperationInfo.connectorId,
+      nodeOperationInfo.operationId,
+      workflowKind,
+      nodeOperationInfo.type
+    );
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 
