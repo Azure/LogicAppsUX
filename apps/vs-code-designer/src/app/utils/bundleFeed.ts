@@ -951,7 +951,15 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
   } catch (error) {
     const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error instanceof Error ? error.message : String(error)}`;
     context.telemetry.properties.errorMessage = errorMessage;
-    return false;
+    if (ext.outputChannel) {
+      ext.outputChannel.appendLog(errorMessage);
+    }
+    // Re-throw so the outer `downloadExtensionBundle` wrapper sets
+    // `lastBundleInstallResult = 'failed'`. Without this, downstream callers
+    // (validateAndInstallBinaries, startDesignTimeApi) see the install as
+    // healthy and proceed to spawn func.exe against a missing/corrupt bundle,
+    // producing the silent "No job functions found" failure mode.
+    throw error instanceof Error ? error : new Error(errorMessage);
   }
 }
 

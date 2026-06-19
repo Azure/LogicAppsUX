@@ -8,6 +8,7 @@ import {
   resetCachedBundleVersion,
   isExtensionBundleDownloadInFlight,
   waitForExtensionBundleReady,
+  getLastBundleInstallResult,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -1262,11 +1263,15 @@ describe('downloadExtensionBundle', () => {
       mockedDownloadAndExtract.mockRejectedValueOnce(make404()).mockRejectedValueOnce(make404());
 
       const context = createMockContext();
-      // The outer try/catch in downloadExtensionBundle swallows + records the
-      // error; result is `false` and telemetry preserves the failure reason.
-      const result = await downloadExtensionBundle(context as any);
-      expect(result).toBe(false);
+      // Phase 12+: `downloadExtensionBundleCore` now re-throws on failure so
+      // the outer wrapper records `lastBundleInstallResult = 'failed'` and
+      // downstream consumers (validateAndInstallBinaries, startDesignTimeApi)
+      // can refuse to spawn func.exe. The test originally asserted a swallow
+      // returning `false`; that silently let func start against a missing
+      // bundle.
+      await expect(downloadExtensionBundle(context as any)).rejects.toThrow();
       expect(mockedDownloadAndExtract).toHaveBeenCalledTimes(2);
+      expect(getLastBundleInstallResult()).toBe('failed');
     });
 
     it('does not honor the source URI when the master toggle is off', async () => {
