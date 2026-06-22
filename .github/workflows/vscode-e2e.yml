@@ -202,30 +202,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v3
-
-      - name: Prune incomplete Logic Apps runtime dependencies
-        run: |
-          set -euo pipefail
-          DEPS="${HOME}/.azurelogicapps/dependencies"
-          if [ ! -d "$DEPS" ]; then
-            exit 0
-          fi
-
-          if [ -d "$DEPS/FuncCoreTools" ] && [ ! -x "$DEPS/FuncCoreTools/func" ]; then
-            echo "Removing incomplete FuncCoreTools cache entry"
-            rm -rf "$DEPS/FuncCoreTools"
-          fi
-
-          if [ -d "$DEPS/NodeJs" ] && [ ! -x "$DEPS/NodeJs/bin/node" ]; then
-            echo "Removing incomplete NodeJs cache entry"
-            rm -rf "$DEPS/NodeJs"
-          fi
-
-          if [ -d "$DEPS/DotNetSDK" ] && [ ! -x "$DEPS/DotNetSDK/dotnet" ]; then
-            echo "Removing incomplete DotNetSDK cache entry"
-            rm -rf "$DEPS/DotNetSDK"
-          fi
+          key: la-runtime-deps-${{ runner.os }}-v2
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+          save-always: true
 
       - name: Run fixtures scenario (p41a-fixtures)
         run: |
@@ -240,36 +220,6 @@ jobs:
           # so the artifact upload below has a stable, scoped path.
           TEMP: ${{ runner.temp }}
           TMPDIR: ${{ runner.temp }}
-
-      - name: Prune incomplete Logic Apps runtime dependencies before cache save
-        if: always()
-        run: |
-          set -euo pipefail
-          DEPS="${HOME}/.azurelogicapps/dependencies"
-          if [ ! -d "$DEPS" ]; then
-            exit 0
-          fi
-
-          INVALID_CACHE=0
-          if [ -d "$DEPS/FuncCoreTools" ] && [ ! -x "$DEPS/FuncCoreTools/func" ]; then
-            echo "Found incomplete FuncCoreTools cache entry before cache save"
-            INVALID_CACHE=1
-          fi
-
-          if [ -d "$DEPS/NodeJs" ] && [ ! -x "$DEPS/NodeJs/bin/node" ]; then
-            echo "Found incomplete NodeJs cache entry before cache save"
-            INVALID_CACHE=1
-          fi
-
-          if [ -d "$DEPS/DotNetSDK" ] && [ ! -x "$DEPS/DotNetSDK/dotnet" ]; then
-            echo "Found incomplete DotNetSDK cache entry before cache save"
-            INVALID_CACHE=1
-          fi
-
-          if [ "$INVALID_CACHE" -eq 1 ]; then
-            echo "Removing incomplete Logic Apps runtime dependency cache root"
-            rm -rf "$DEPS"
-          fi
 
       - name: Verify fixtures manifest exists
         run: |
@@ -427,30 +377,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v3
-
-      - name: Prune incomplete Logic Apps runtime dependencies
-        run: |
-          set -euo pipefail
-          DEPS="${HOME}/.azurelogicapps/dependencies"
-          if [ ! -d "$DEPS" ]; then
-            exit 0
-          fi
-
-          if [ -d "$DEPS/FuncCoreTools" ] && [ ! -x "$DEPS/FuncCoreTools/func" ]; then
-            echo "Removing incomplete FuncCoreTools cache entry"
-            rm -rf "$DEPS/FuncCoreTools"
-          fi
-
-          if [ -d "$DEPS/NodeJs" ] && [ ! -x "$DEPS/NodeJs/bin/node" ]; then
-            echo "Removing incomplete NodeJs cache entry"
-            rm -rf "$DEPS/NodeJs"
-          fi
-
-          if [ -d "$DEPS/DotNetSDK" ] && [ ! -x "$DEPS/DotNetSDK/dotnet" ]; then
-            echo "Removing incomplete DotNetSDK cache entry"
-            rm -rf "$DEPS/DotNetSDK"
-          fi
+          key: la-runtime-deps-${{ runner.os }}-v2
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
 
       - name: Run scenario (${{ matrix.scenario }})
         # Phase 4.1 (commits 2672168f7 + d866b3368) targeted the 5 historically-
@@ -478,36 +407,6 @@ jobs:
           # setup-fixtures job uploaded (same RUNNER_TEMP layout).
           TEMP: ${{ runner.temp }}
           TMPDIR: ${{ runner.temp }}
-
-      - name: Prune incomplete Logic Apps runtime dependencies before cache save
-        if: always()
-        run: |
-          set -euo pipefail
-          DEPS="${HOME}/.azurelogicapps/dependencies"
-          if [ ! -d "$DEPS" ]; then
-            exit 0
-          fi
-
-          INVALID_CACHE=0
-          if [ -d "$DEPS/FuncCoreTools" ] && [ ! -x "$DEPS/FuncCoreTools/func" ]; then
-            echo "Found incomplete FuncCoreTools cache entry before cache save"
-            INVALID_CACHE=1
-          fi
-
-          if [ -d "$DEPS/NodeJs" ] && [ ! -x "$DEPS/NodeJs/bin/node" ]; then
-            echo "Found incomplete NodeJs cache entry before cache save"
-            INVALID_CACHE=1
-          fi
-
-          if [ -d "$DEPS/DotNetSDK" ] && [ ! -x "$DEPS/DotNetSDK/dotnet" ]; then
-            echo "Found incomplete DotNetSDK cache entry before cache save"
-            INVALID_CACHE=1
-          fi
-
-          if [ "$INVALID_CACHE" -eq 1 ]; then
-            echo "Removing incomplete Logic Apps runtime dependency cache root"
-            rm -rf "$DEPS"
-          fi
 
       - name: Upload test screenshots (always)
         uses: actions/upload-artifact@v4
