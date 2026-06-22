@@ -116,7 +116,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         // than let func.exe spawn against a missing/corrupt bundle.
         context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
         progress.report({ increment: 5, message: 'Extension Bundle' });
-        await ensureExtensionBundleHealthy();
+        await ensureExtensionBundleHealthy(context);
 
         ext.outputChannel.appendLog(
           localize(

@@ -9,6 +9,8 @@ import {
   isExtensionBundleDownloadInFlight,
   waitForExtensionBundleReady,
   getLastBundleInstallResult,
+  assertExtensionBundleOnDiskHealthy,
+  ensureExtensionBundleHealthy,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -983,7 +985,11 @@ describe('downloadExtensionBundle', () => {
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({
       Values: { AzureFunctionsJobHost_extensionBundle_version: '1.50.0' },
     } as any);
-    setupLocalDisk(['1.50.0', '1.60.0']);
+    // Phase 14: pinned-version short-circuit now verifies the on-disk bundle
+    // before trusting it. Provide a sidecar so verifyLocalBundle returns 'passed'.
+    setupLocalDisk(['1.50.0', '1.60.0'], { '1.50.0': 'pinSourceMd5' });
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('pinSourceMd5');
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -1035,7 +1041,10 @@ describe('downloadExtensionBundle', () => {
 
     it('uses the pinned local version and never calls the public feed', async () => {
       await setExperimentalSettings({ useExperimental: true, pinnedVersion: '1.21.0' });
-      setupLocalDisk(['1.21.0']);
+      // Phase 14: experimental pin short-circuit now verifies on disk.
+      setupLocalDisk(['1.21.0'], { '1.21.0': 'pinSourceMd5' });
+      const integrityModule = await import('../integrity');
+      vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('pinSourceMd5');
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1100,7 +1109,10 @@ describe('downloadExtensionBundle', () => {
 
     it('uses latest local without consulting the public feed when no pin is set', async () => {
       await setExperimentalSettings({ useExperimental: true });
-      setupLocalDisk(['1.50.0', '1.75.0']);
+      // Phase 14: experimental no-pin short-circuit now verifies on disk.
+      setupLocalDisk(['1.50.0', '1.75.0'], { '1.75.0': 'latestSourceMd5' });
+      const integrityModule = await import('../integrity');
+      vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('latestSourceMd5');
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1417,5 +1429,224 @@ describe('getExtensionBundleBaseUrl', () => {
     const result = await getExtensionBundleBaseUrl(ctx() as any);
     expect(result.baseUrl).toBe('https://cdn.functions.azure.com/public');
     expect(result.source).toBe('default');
+  });
+});
+
+describe('assertExtensionBundleOnDiskHealthy', () => {
+  const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
+  const sidecarJson = (sourceMd5: string, contentHash: string) => JSON.stringify({ version: 1, sourceMd5, contentHash });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(fse.readFile).mockReset();
+    vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
+  });
+
+  it('returns ok when sidecar contentHash matches the recomputed on-disk hash', async () => {
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('anyMd5', EMPTY_TREE_HASH) as any);
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.version).toBe('1.50.0');
+    }
+  });
+
+  it('returns contentMismatch when the recomputed hash does not match the sidecar', async () => {
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    // Sidecar claims a different hash than what computeBundleContentHash would
+    // return for an empty tree.
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('anyMd5', 'TOTALLY-DIFFERENT-HASH') as any);
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBe('contentMismatch');
+      expect(result.version).toBe('1.50.0');
+    }
+  });
+
+  it('returns sidecarMissing when no sidecar exists', async () => {
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    // pathExists returns true for bundle dir, false for sidecar file.
+    vi.mocked(fse.pathExists).mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(true);
+    }) as any);
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBe('sidecarMissing');
+    }
+  });
+
+  it('returns noBundle when no local bundle version exists', async () => {
+    vi.mocked(fse.readdirSync).mockReturnValue([] as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    const result = await assertExtensionBundleOnDiskHealthy();
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBe('noBundle');
+    }
+  });
+});
+
+describe('ensureExtensionBundleHealthy repair gate', () => {
+  const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
+  const sidecarJson = (sourceMd5: string, contentHash: string) => JSON.stringify({ version: 1, sourceMd5, contentHash });
+
+  const ctx = () => ({
+    telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCachedBundleVersion();
+    vi.mocked(fse.readFile).mockReset();
+    vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
+  });
+
+  it('passes through when on-disk health check returns ok', async () => {
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', EMPTY_TREE_HASH) as any);
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
+  });
+
+  it('triggers a repair download when on-disk health check fails', async () => {
+    let callIdx = 0;
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    // 1st read (initial assertExtensionBundleOnDiskHealthy): WRONG → mismatch.
+    // 2nd read (downloadExtensionBundle default-flow verifyLocalBundle): WRONG → triggers download.
+    // 3rd+ reads (post-repair re-check): CORRECT.
+    vi.mocked(fse.readFile).mockImplementation((async () => {
+      callIdx++;
+      return callIdx <= 2 ? sidecarJson('md5', 'WRONG') : sidecarJson('md5', EMPTY_TREE_HASH);
+    }) as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
+  });
+
+  it('throws when repair download fails and on-disk health still bad', async () => {
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', 'WRONG') as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockRejectedValue(new Error('CDN down'));
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).rejects.toThrow(/Logic Apps extension bundle is not installed correctly/);
+  });
+});
+
+describe('short-circuit verification (envVar / experimental pins)', () => {
+  const sidecarJson = (sourceMd5: string, contentHash: string) => JSON.stringify({ version: 1, sourceMd5, contentHash });
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    resetCachedBundleVersion();
+    delete process.env.AzureFunctionsJobHost_extensionBundle_version;
+    const settingsMod = await import('../vsCodeConfig/settings');
+    vi.mocked(settingsMod.getGlobalSetting).mockReturnValue(undefined);
+    const localSettingsMod = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({} as any);
+    vi.mocked(fse.readFile).mockReset();
+    vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
+  });
+
+  it('env-var pin: re-downloads when on-disk content hash drifts', async () => {
+    const localSettingsMod = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({
+      Values: { AzureFunctionsJobHost_extensionBundle_version: '1.50.0' },
+    } as any);
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    // Sidecar says contentHash X, recompute returns empty-tree hash ≠ X.
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', 'STALE') as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
+
+    const context = { telemetry: { properties: {} as any, measurements: {} as any } };
+    const result = await downloadExtensionBundle(context as any);
+    expect(result).toBe(true);
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
+  });
+
+  it('experimental pin: re-downloads when on-disk content hash drifts', async () => {
+    const settingsMod = await import('../vsCodeConfig/settings');
+    vi.mocked(settingsMod.getGlobalSetting).mockImplementation((key: string) => {
+      if (key === 'useExperimentalExtensionBundle') {
+        return true as any;
+      }
+      if (key === 'experimentalExtensionBundlePinnedVersion') {
+        return '1.50.0' as any;
+      }
+      return undefined as any;
+    });
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', 'STALE') as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
+
+    const context = { telemetry: { properties: {} as any, measurements: {} as any } };
+    const result = await downloadExtensionBundle(context as any);
+    expect(result).toBe(true);
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
+  });
+
+  it('experimental no-pin local latest: re-downloads when on-disk content hash drifts', async () => {
+    const settingsMod = await import('../vsCodeConfig/settings');
+    vi.mocked(settingsMod.getGlobalSetting).mockImplementation((key: string) => {
+      if (key === 'useExperimentalExtensionBundle') {
+        return true as any;
+      }
+      return undefined as any;
+    });
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', 'STALE') as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
+
+    const context = { telemetry: { properties: {} as any, measurements: {} as any } };
+    const result = await downloadExtensionBundle(context as any);
+    expect(result).toBe(true);
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 });

@@ -250,7 +250,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           // failed. Without a healthy bundle, func reports "No job functions
           // found" and unhealthy storage forever — surfacing a clear, actionable
           // error here is strictly better than letting the host start broken.
-          await ensureExtensionBundleHealthy();
+          await ensureExtensionBundleHealthy(actionContext);
 
           startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
           await waitForDesignTimeStartUp(actionContext, projectPath, url, true);

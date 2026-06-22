@@ -443,6 +443,9 @@ type DownloadReason =
   | 'experimentalPin'
   | 'experimentalLatest'
   | 'envVarPin'
+  | 'envVarRepair'
+  | 'experimentalPinRepair'
+  | 'experimentalLocalLatestRepair'
   | 'fallbackPublic';
 
 function describeSource(baseUrl: string): string {
@@ -485,6 +488,27 @@ function buildProgressTitle(version: string, reason: DownloadReason, baseUrl: st
       return localize(
         'bundleProgressEnvVar',
         'Downloading Logic Apps extension bundle {0} pinned by host.json/env from {1}…',
+        version,
+        source
+      );
+    case 'envVarRepair':
+      return localize(
+        'bundleProgressEnvVarRepair',
+        'Re-downloading pinned Logic Apps extension bundle {0} from {1} — on-disk integrity check failed…',
+        version,
+        source
+      );
+    case 'experimentalPinRepair':
+      return localize(
+        'bundleProgressExperimentalPinRepair',
+        'Re-downloading experimental pinned Logic Apps extension bundle {0} from {1} — on-disk integrity check failed…',
+        version,
+        source
+      );
+    case 'experimentalLocalLatestRepair':
+      return localize(
+        'bundleProgressExperimentalLatestRepair',
+        'Re-downloading Logic Apps extension bundle {0} (experimental local latest) from {1} — on-disk integrity check failed…',
         version,
         source
       );
@@ -700,12 +724,84 @@ export function isInsideBundleDownloadScope(): boolean {
 }
 
 /**
+ * Pure on-disk health check for the installed extension bundle. Reads the
+ * sidecar, recomputes the content hash of the extracted tree from disk, and
+ * compares them. Has NO side effects — no downloads, no writes — so it's
+ * safe to call from any number of places (gate, scheduled re-check, etc.).
+ *
+ * Returns `{ ok: true, version }` when the latest local bundle's recomputed
+ * content hash matches the sidecar's stored value. Otherwise returns
+ * `{ ok: false, reason, version?, detail? }` so the caller can decide
+ * whether to repair, warn, or fail.
+ *
+ * Why this exists: prior to Phase 14 we trusted the sidecar's `contentHash`
+ * field as proof the on-disk tree was intact, but a user manually deleting
+ * a subfolder (e.g. `bin/.../PowerShell`) leaves the sidecar untouched while
+ * the tree is corrupt. `ensureExtensionBundleHealthy` now uses this helper
+ * to proactively detect that drift and force a synchronous repair download.
+ */
+export type BundleOnDiskHealthResult =
+  | { ok: true; version: string }
+  | {
+      ok: false;
+      reason: 'noBundle' | 'sidecarMissing' | 'sidecarUnreadable' | 'emptyBundleDir' | 'contentMismatch';
+      version?: string;
+      detail?: string;
+    };
+
+export async function assertExtensionBundleOnDiskHealthy(version?: string): Promise<BundleOnDiskHealthResult> {
+  let targetVersion = version;
+  if (!targetVersion) {
+    const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
+    const latest = pickLatestVersion(localVersions);
+    if (latest === '0.0.0') {
+      return { ok: false, reason: 'noBundle' };
+    }
+    targetVersion = latest;
+  }
+  const bundleDir = path.join(defaultExtensionBundlePathValue, targetVersion);
+  if (!(await fse.pathExists(bundleDir))) {
+    return { ok: false, reason: 'noBundle', version: targetVersion };
+  }
+  const sidecar = await readBundleSidecar(targetVersion);
+  if (!sidecar) {
+    return { ok: false, reason: 'sidecarMissing', version: targetVersion };
+  }
+  if (!sidecar.contentHash) {
+    return { ok: false, reason: 'sidecarUnreadable', version: targetVersion, detail: 'sidecar missing contentHash field' };
+  }
+  const actualHash = await computeBundleContentHash(bundleDir);
+  if (!actualHash) {
+    return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
+  }
+  if (actualHash !== sidecar.contentHash) {
+    return {
+      ok: false,
+      reason: 'contentMismatch',
+      version: targetVersion,
+      detail: `expected ${sidecar.contentHash}, got ${actualHash}`,
+    };
+  }
+  return { ok: true, version: targetVersion };
+}
+
+/**
  * Awaits any in-flight bundle work and throws if the most recent install
  * attempt failed. Callers that must not proceed without a healthy bundle
  * (e.g. design-time host startup, runtime dependency validation) should
  * call this rather than the lower-level `waitForExtensionBundleReady`.
+ *
+ * Phase 14: when a context is supplied this also proactively re-checks the
+ * on-disk bundle (see `assertExtensionBundleOnDiskHealthy`). If the disk
+ * has drifted from the sidecar (user deleted a subfolder, AV restored a
+ * stale copy, etc.) we kick off a synchronous repair download, then
+ * re-check. If repair still fails the function throws so the dependency
+ * validation refuses to mark the runtime "successfully installed" and the
+ * design-time host never spawns against a corrupt bundle.
+ *
+ * Callers without a context (legacy) still get the old await-only behavior.
  */
-export async function ensureExtensionBundleHealthy(): Promise<void> {
+export async function ensureExtensionBundleHealthy(context?: IActionContext): Promise<void> {
   await waitForExtensionBundleReady();
   if (lastBundleInstallResult === 'failed') {
     const cause = lastBundleInstallError?.message ?? 'unknown error';
@@ -713,6 +809,52 @@ export async function ensureExtensionBundleHealthy(): Promise<void> {
       `Logic Apps extension bundle is not installed correctly. Last install attempt failed: ${cause}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
     );
   }
+
+  if (!context) {
+    return;
+  }
+
+  const initialHealth = await assertExtensionBundleOnDiskHealthy();
+  if (initialHealth.ok) {
+    return;
+  }
+  const initialFailure = initialHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
+
+  // No bundle at all and no in-flight install — let the caller's normal
+  // path (downloadExtensionBundle from main.ts:157) handle first-run
+  // bootstrap. We don't want to race that on a fresh install.
+  if (initialFailure.reason === 'noBundle' && lastBundleInstallResult === 'unknown') {
+    return;
+  }
+
+  const versionLabel = initialFailure.version ? ` ${initialFailure.version}` : '';
+  const reasonLabel = initialFailure.detail ? `${initialFailure.reason} (${initialFailure.detail})` : initialFailure.reason;
+  ext.outputChannel?.appendLog(
+    `Logic Apps extension bundle${versionLabel} on-disk integrity check failed: ${reasonLabel}. Attempting repair.`
+  );
+
+  if (context.telemetry?.properties) {
+    context.telemetry.properties.bundleOnDiskHealthCheck = initialFailure.reason;
+  }
+
+  try {
+    await downloadExtensionBundle(context);
+  } catch (repairError) {
+    const cause = repairError instanceof Error ? repairError.message : String(repairError);
+    throw new Error(
+      `Logic Apps extension bundle is not installed correctly. Repair attempt failed: ${cause}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
+    );
+  }
+
+  const postRepairHealth = await assertExtensionBundleOnDiskHealthy();
+  if (postRepairHealth.ok) {
+    return;
+  }
+  const postFailure = postRepairHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
+  const reLabel = postFailure.detail ? `${postFailure.reason} (${postFailure.detail})` : postFailure.reason;
+  throw new Error(
+    `Logic Apps extension bundle is not installed correctly. Repair completed but on-disk integrity still failed: ${reLabel}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
+  );
 }
 
 /**
@@ -808,6 +950,20 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
     if (envVarVer) {
       context.telemetry.properties.extensionBundleVersionSource = 'envVar';
       if (semver.valid(envVarVer) && localVersions.some((v) => v === envVarVer)) {
+        // Verify the on-disk bundle for the pinned version. Without this,
+        // a corrupt local copy would silently satisfy the env-var pin and
+        // we'd never repair it.
+        const hashCheck = await verifyLocalBundle(context, baseUrlInfo.baseUrl, envVarVer);
+        context.telemetry.properties.localBundleHashCheck = hashCheck;
+        if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
+          if (hashCheck !== 'sidecarMissing') {
+            notifyCorruptionDetected(envVarVer, describeSource(baseUrlInfo.baseUrl));
+          }
+          await downloadBundleWithProgress(context, baseUrlInfo.baseUrl, envVarVer, 'envVarRepair');
+          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+          context.telemetry.properties.didUpdateExtensionBundle = 'true';
+          return true;
+        }
         ext.defaultBundleVersion = envVarVer;
         ext.latestBundleVersion = envVarVer;
         context.telemetry.properties.didUpdateExtensionBundle = 'false';
@@ -830,6 +986,36 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
       if (pin && pin.length > 0) {
         const pinIsLocal = localVersions.some((v) => v === pin);
         if (pinIsLocal) {
+          // Verify before trusting the local pin. The experimental URI is
+          // the publisher of record for hash verification here.
+          const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
+          const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, pin);
+          context.telemetry.properties.localBundleHashCheck = hashCheck;
+          if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
+            if (hashCheck !== 'sidecarMissing') {
+              notifyCorruptionDetected(pin, describeSource(verifyBaseUrl));
+            }
+            // Prefer the experimental source for the repair if configured.
+            if (baseUrlInfo.experimentalSourceUri.length > 0) {
+              const repair = await tryDownloadBundleWithProgress(context, baseUrlInfo.experimentalSourceUri, pin, 'experimentalPinRepair');
+              if (repair.ok) {
+                ext.defaultBundleVersion = pin;
+                ext.latestBundleVersion = pin;
+                context.telemetry.properties.extensionBundleVersionSource = 'experimentalPinRepair';
+                context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+                context.telemetry.properties.didUpdateExtensionBundle = 'true';
+                return true;
+              }
+              logExperimentalFallback(context, repair.reason, `Repair of pin ${pin} from experimental source failed.`, repair.error);
+            }
+            await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, pin, 'experimentalPinRepair');
+            ext.defaultBundleVersion = pin;
+            ext.latestBundleVersion = pin;
+            context.telemetry.properties.extensionBundleVersionSource = 'experimentalPinRepair';
+            context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+            context.telemetry.properties.didUpdateExtensionBundle = 'true';
+            return true;
+          }
           ext.defaultBundleVersion = pin;
           ext.latestBundleVersion = pin;
           context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalPin';
@@ -879,6 +1065,44 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
       }
 
       if (latestLocalBundleVersion !== '0.0.0') {
+        // Verify on disk before trusting the cached experimental local latest.
+        const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
+        const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, latestLocalBundleVersion);
+        context.telemetry.properties.localBundleHashCheck = hashCheck;
+        if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
+          if (hashCheck !== 'sidecarMissing') {
+            notifyCorruptionDetected(latestLocalBundleVersion, describeSource(verifyBaseUrl));
+          }
+          if (baseUrlInfo.experimentalSourceUri.length > 0) {
+            const repair = await tryDownloadBundleWithProgress(
+              context,
+              baseUrlInfo.experimentalSourceUri,
+              latestLocalBundleVersion,
+              'experimentalLocalLatestRepair'
+            );
+            if (repair.ok) {
+              ext.defaultBundleVersion = latestLocalBundleVersion;
+              ext.latestBundleVersion = latestLocalBundleVersion;
+              context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
+              context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+              context.telemetry.properties.didUpdateExtensionBundle = 'true';
+              return true;
+            }
+            logExperimentalFallback(
+              context,
+              repair.reason,
+              `Repair of local latest ${latestLocalBundleVersion} from experimental source failed.`,
+              repair.error
+            );
+          }
+          await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, latestLocalBundleVersion, 'experimentalLocalLatestRepair');
+          ext.defaultBundleVersion = latestLocalBundleVersion;
+          ext.latestBundleVersion = latestLocalBundleVersion;
+          context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
+          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+          context.telemetry.properties.didUpdateExtensionBundle = 'true';
+          return true;
+        }
         ext.defaultBundleVersion = latestLocalBundleVersion;
         ext.latestBundleVersion = latestLocalBundleVersion;
         context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatest';
@@ -1071,6 +1295,12 @@ let cachedBundleVersion: string | null = null;
 
 export function resetCachedBundleVersion(): void {
   cachedBundleVersion = null;
+  // Phase 14: also reset bundle install state so tests that intentionally fail
+  // an install (e.g. mockRejectedValue) don't poison subsequent tests with a
+  // stale `lastBundleInstallResult === 'failed'`.
+  lastBundleInstallResult = 'unknown';
+  lastBundleInstallError = undefined;
+  inFlightBundleWork = undefined;
 }
 
 /**
