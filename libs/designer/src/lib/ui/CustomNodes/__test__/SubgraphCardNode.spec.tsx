@@ -157,7 +157,7 @@ vi.mock(import('@microsoft/designer-ui'), async (importOriginal) => {
 import SubgraphCardNode from '../SubgraphCardNode';
 
 describe('SubgraphCardNode', () => {
-  const defaultProps = { id: 'testNode-#subgraph' } as NodeProps;
+  const defaultProps = { id: 'testNode-%subgraph' } as NodeProps;
 
   beforeEach(() => {
     vi.clearAllMocks();

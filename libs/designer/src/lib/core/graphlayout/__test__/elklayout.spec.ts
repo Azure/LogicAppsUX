@@ -56,16 +56,16 @@ describe('elklayout', () => {
             id: 'ActionIf',
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE),
+              createWorkflowNode('ActionIf-%scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE),
               {
                 id: 'ActionIf-actions',
                 children: [
-                  createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
+                  createWorkflowNode('ActionIf-actions-%subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createWorkflowNode('Increment_variable2'),
                   createWorkflowNode('Increment_variable4'),
                 ],
                 edges: [
-                  createWorkflowEdge('ActionIf-actions-#subgraph', 'Increment_variable2'),
+                  createWorkflowEdge('ActionIf-actions-%subgraph', 'Increment_variable2'),
                   createWorkflowEdge('Increment_variable2', 'Increment_variable4'),
                 ],
                 type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
@@ -73,16 +73,16 @@ describe('elklayout', () => {
               {
                 id: 'ActionIf-elseActions',
                 children: [
-                  createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
+                  createWorkflowNode('ActionIf-elseActions-%subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createWorkflowNode('Increment_variable3'),
                 ],
-                edges: [createWorkflowEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3')],
+                edges: [createWorkflowEdge('ActionIf-elseActions-%subgraph', 'Increment_variable3')],
                 type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
               },
             ],
             edges: [
-              createWorkflowEdge('ActionIf-#scope', 'ActionIf-actions'),
-              createWorkflowEdge('ActionIf-#scope', 'ActionIf-elseActions'),
+              createWorkflowEdge('ActionIf-%scope', 'ActionIf-actions'),
+              createWorkflowEdge('ActionIf-%scope', 'ActionIf-elseActions'),
             ],
           },
           createWorkflowNode('Response'),
@@ -105,17 +105,17 @@ describe('elklayout', () => {
             id: 'ActionIf',
             layoutOptions: elkGraphLayoutOptions,
             children: [
-              createElkNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE),
+              createElkNode('ActionIf-%scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE),
               {
                 id: 'ActionIf-actions',
                 layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  createElkNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
+                  createElkNode('ActionIf-actions-%subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createElkNode('Increment_variable2'),
                   createElkNode('Increment_variable4'),
                 ],
                 edges: [
-                  createElkEdge('ActionIf-actions-#subgraph', 'Increment_variable2'),
+                  createElkEdge('ActionIf-actions-%subgraph', 'Increment_variable2'),
                   createElkEdge('Increment_variable2', 'Increment_variable4'),
                 ],
               },
@@ -123,13 +123,13 @@ describe('elklayout', () => {
                 id: 'ActionIf-elseActions',
                 layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  createElkNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
+                  createElkNode('ActionIf-elseActions-%subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createElkNode('Increment_variable3'),
                 ],
-                edges: [createElkEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3')],
+                edges: [createElkEdge('ActionIf-elseActions-%subgraph', 'Increment_variable3')],
               },
             ],
-            edges: [createElkEdge('ActionIf-#scope', 'ActionIf-actions'), createElkEdge('ActionIf-#scope', 'ActionIf-elseActions')],
+            edges: [createElkEdge('ActionIf-%scope', 'ActionIf-actions'), createElkEdge('ActionIf-%scope', 'ActionIf-elseActions')],
           },
           createElkNode('Response'),
         ],
@@ -215,17 +215,17 @@ describe('elklayout', () => {
             x: 307,
             y: 308,
             children: [
-              { ...createElkNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE), x: 307, y: 308 },
+              { ...createElkNode('ActionIf-%scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE), x: 307, y: 308 },
               {
                 id: 'ActionIf-actions',
                 layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  { ...createElkNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE), x: 50, y: 100 },
+                  { ...createElkNode('ActionIf-actions-%subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE), x: 50, y: 100 },
                   { ...createElkNode('Increment_variable2'), x: 150, y: 200 },
                   { ...createElkNode('Increment_variable4'), x: 300, y: 301 },
                 ],
                 edges: [
-                  createElkEdge('ActionIf-actions-#subgraph', 'Increment_variable2'),
+                  createElkEdge('ActionIf-actions-%subgraph', 'Increment_variable2'),
                   createElkEdge('Increment_variable2', 'Increment_variable4'),
                 ],
               },
@@ -233,15 +233,15 @@ describe('elklayout', () => {
                 id: 'ActionIf-elseActions',
                 layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  { ...createElkNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE), x: 0, y: 0 },
+                  { ...createElkNode('ActionIf-elseActions-%subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE), x: 0, y: 0 },
                   { ...createElkNode('Increment_variable3'), x: 302, y: 303 },
                 ],
-                edges: [createElkEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3')],
+                edges: [createElkEdge('ActionIf-elseActions-%subgraph', 'Increment_variable3')],
               },
             ],
             edges: [
-              createElkEdge('ActionIf-#scope', 'ActionIf-actions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
-              createElkEdge('ActionIf-#scope', 'ActionIf-elseActions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+              createElkEdge('ActionIf-%scope', 'ActionIf-actions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+              createElkEdge('ActionIf-%scope', 'ActionIf-elseActions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
             ],
           },
           {
@@ -249,7 +249,7 @@ describe('elklayout', () => {
             layoutOptions: elkGraphLayoutOptions,
             x: 307,
             y: 308,
-            children: [createElkNode('EmptyScope-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)],
+            children: [createElkNode('EmptyScope-%scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)],
             edges: [],
           },
           { ...createElkNode('Response'), x: 304, y: 305 },
@@ -293,10 +293,10 @@ describe('elklayout', () => {
             parentId: undefined,
           },
           {
-            id: 'ActionIf-#scope',
+            id: 'ActionIf-%scope',
             type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE,
             position: { x: 307, y: 308 },
-            data: { label: 'ActionIf-#scope' },
+            data: { label: 'ActionIf-%scope' },
             parentId: 'ActionIf',
           },
           {
@@ -307,10 +307,10 @@ describe('elklayout', () => {
             parentId: 'ActionIf',
           },
           {
-            id: 'ActionIf-actions-#subgraph',
+            id: 'ActionIf-actions-%subgraph',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
             position: { x: 50, y: 100 },
-            data: { label: 'ActionIf-actions-#subgraph' },
+            data: { label: 'ActionIf-actions-%subgraph' },
             parentId: 'ActionIf-actions',
           },
           {
@@ -335,10 +335,10 @@ describe('elklayout', () => {
             parentId: 'ActionIf',
           },
           {
-            id: 'ActionIf-elseActions-#subgraph',
+            id: 'ActionIf-elseActions-%subgraph',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
             position: { x: 0, y: 0 },
-            data: { label: 'ActionIf-elseActions-#subgraph' },
+            data: { label: 'ActionIf-elseActions-%subgraph' },
             parentId: 'ActionIf-elseActions',
           },
           {
@@ -356,10 +356,10 @@ describe('elklayout', () => {
             parentId: undefined,
           },
           {
-            id: 'EmptyScope-#scope',
+            id: 'EmptyScope-%scope',
             type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE,
             position: { x: 0, y: 0 },
-            data: { label: 'EmptyScope-#scope' },
+            data: { label: 'EmptyScope-%scope' },
             parentId: 'EmptyScope',
           },
           {
@@ -375,11 +375,11 @@ describe('elklayout', () => {
           createSharedEdge('Increment_variable', 'ActionIf'),
           createSharedEdge('ActionIf', 'EmptyScope'),
           createSharedEdge('EmptyScope', 'Response'),
-          createSharedEdge('ActionIf-#scope', 'ActionIf-actions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
-          createSharedEdge('ActionIf-#scope', 'ActionIf-elseActions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
-          createSharedEdge('ActionIf-actions-#subgraph', 'Increment_variable2'),
+          createSharedEdge('ActionIf-%scope', 'ActionIf-actions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createSharedEdge('ActionIf-%scope', 'ActionIf-elseActions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createSharedEdge('ActionIf-actions-%subgraph', 'Increment_variable2'),
           createSharedEdge('Increment_variable2', 'Increment_variable4'),
-          createSharedEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3'),
+          createSharedEdge('ActionIf-elseActions-%subgraph', 'Increment_variable3'),
         ],
         [507, 348],
       ];

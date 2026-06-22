@@ -76,7 +76,7 @@ describe('workflowSlice - wrapNodesInScope', () => {
 
     // The else branch only contains its header.
     const elseChildIds = (elseActions?.children ?? []).map((c) => c.id);
-    expect(elseChildIds).toEqual(['Condition-elseActions-#subgraph']);
+    expect(elseChildIds).toEqual(['Condition-elseActions-%subgraph']);
   });
 
   test('connects the subgraph header to the first node so it lays out inside the branch', () => {
@@ -95,7 +95,7 @@ describe('workflowSlice - wrapNodesInScope', () => {
 
     // The fix: header -> first node edge keeps the chain inside the true branch
     // instead of beside the true/false labels.
-    expect(edges).toContain('Condition-actions-#subgraph->Initialize_variable');
+    expect(edges).toContain('Condition-actions-%subgraph->Initialize_variable');
     expect(edges).toContain('Initialize_variable->Increment_variable');
     expect(edges).toContain('Increment_variable->Response');
 
@@ -126,7 +126,7 @@ describe('workflowSlice - wrapNodesInScope', () => {
     }
 
     const edges = edgeStrings(scope);
-    expect(edges).toContain('Scope-#scope->Initialize_variable');
+    expect(edges).toContain('Scope-%scope->Initialize_variable');
     expect(edges).toContain('Initialize_variable->Increment_variable');
     expect(edges).toContain('Increment_variable->Response');
   });

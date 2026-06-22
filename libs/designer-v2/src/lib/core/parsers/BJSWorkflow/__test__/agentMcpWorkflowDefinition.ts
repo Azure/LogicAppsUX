@@ -77,7 +77,7 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
         children: [
           {
             height: 40,
-            id: 'WorkflowAgent-#scope',
+            id: 'WorkflowAgent-%scope',
             type: 'SCOPE_CARD_NODE',
             width: 200,
           },
@@ -92,7 +92,7 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
             children: [
               {
                 height: 40,
-                id: 'WorkflowAgent-addCase-#subgraph',
+                id: 'WorkflowAgent-addCase-%subgraph',
                 type: 'SUBGRAPH_CARD_NODE',
                 width: 200,
               },
@@ -105,14 +105,14 @@ export const expectedAgentMcpWorkflowDefinitionOutput = {
         ],
         edges: [
           {
-            id: 'WorkflowAgent-#scope-McpFileServer',
-            source: 'WorkflowAgent-#scope',
+            id: 'WorkflowAgent-%scope-McpFileServer',
+            source: 'WorkflowAgent-%scope',
             target: 'McpFileServer',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'WorkflowAgent-#scope-WorkflowAgent-addCase',
-            source: 'WorkflowAgent-#scope',
+            id: 'WorkflowAgent-%scope-WorkflowAgent-addCase',
+            source: 'WorkflowAgent-%scope',
             target: 'WorkflowAgent-addCase',
             type: 'HIDDEN_EDGE',
           },

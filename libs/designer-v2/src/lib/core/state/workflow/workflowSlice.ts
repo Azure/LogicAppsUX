@@ -211,7 +211,7 @@ export const workflowSlice = createSlice({
         targetGraph = getWorkflowNodeFromGraphState(state, targetGraphId) as WorkflowNode;
         // Chain the first moved node off the subgraph header so it lays out inside the
         // "true" branch (below the header) instead of beside the true/false branch labels.
-        previousNodeId = `${targetGraphId}-#subgraph`;
+        previousNodeId = `${targetGraphId}-%subgraph`;
       }
 
       if (!targetGraph) {

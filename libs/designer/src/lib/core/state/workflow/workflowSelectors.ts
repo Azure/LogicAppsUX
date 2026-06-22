@@ -288,7 +288,7 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   const edges = useEdges()
     .filter((edge) => edge.source === nodeId)
-    .filter((edge) => !edge.target.includes('-#footer'));
+    .filter((edge) => !edge.target.includes('-%footer'));
   return edges.map((edge) => edge.target);
 };
 
@@ -324,7 +324,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       let caseId = baseId;
       let caseCount = 1;
       const idList = Object.keys(state.nodesMetadata);
-      // eslint-disable-next-line no-loop-func
+
       while (idList.some((id) => id === caseId)) {
         caseCount++;
         caseId = `${baseId}_${caseCount}`;

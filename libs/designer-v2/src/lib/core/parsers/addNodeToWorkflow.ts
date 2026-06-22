@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
@@ -114,7 +113,7 @@ const createSubgraphNode = (
   const node = createWorkflowNode(id, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
   node.subGraphLocation = location;
   addChildNode(parent, node);
-  const graphHeading = createWorkflowNode(`${id}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  const graphHeading = createWorkflowNode(`${id}-%subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
   addChildNode(node, graphHeading);
   nodesMetadata[id] = {
     graphId: parent.id,
@@ -122,7 +121,7 @@ const createSubgraphNode = (
     actionCount: 0,
     parentNodeId: parent.id === 'root' ? undefined : parent.id,
   };
-  addChildEdge(parent, createWorkflowEdge(`${parent.id}-#scope`, node.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+  addChildEdge(parent, createWorkflowEdge(`${parent.id}-%scope`, node.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 };
 
 const handleExtraScopeNodeSetup = (
@@ -133,10 +132,10 @@ const handleExtraScopeNodeSetup = (
 ) => {
   node.type = WORKFLOW_NODE_TYPES.GRAPH_NODE;
 
-  let scopeHeadingId = `${node.id}-#scope`;
+  let scopeHeadingId = `${node.id}-%scope`;
   let scopeHeadingType = WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE;
   if (operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.UNTIL) {
-    scopeHeadingId = `${node.id}-#subgraph`;
+    scopeHeadingId = `${node.id}-%subgraph`;
     scopeHeadingType = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
   }
   const scopeHeadingNode = createWorkflowNode(scopeHeadingId, scopeHeadingType);
@@ -161,7 +160,7 @@ const handleExtraScopeNodeSetup = (
     const addCaseGraph = createWorkflowNode(addCaseGraphId, WORKFLOW_NODE_TYPES.HIDDEN_NODE);
     addCaseGraph.subGraphLocation = 'addCase';
     addChildNode(node, addCaseGraph);
-    const addCaseGraphHeading = createWorkflowNode(`${addCaseGraphId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+    const addCaseGraphHeading = createWorkflowNode(`${addCaseGraphId}-%subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
     addChildNode(addCaseGraph, addCaseGraphHeading);
     nodesMetadata[addCaseGraphId] = {
       graphId: node.id,
@@ -190,7 +189,7 @@ const handleExtraScopeNodeSetup = (
     const addCaseGraph = createWorkflowNode(addCaseGraphId, WORKFLOW_NODE_TYPES.HIDDEN_NODE);
     addCaseGraph.subGraphLocation = 'addCase';
     addChildNode(node, addCaseGraph);
-    const addCaseGraphHeading = createWorkflowNode(`${addCaseGraphId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+    const addCaseGraphHeading = createWorkflowNode(`${addCaseGraphId}-%subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
     addChildNode(addCaseGraph, addCaseGraphHeading);
     nodesMetadata[addCaseGraphId] = {
       graphId: node.id,
@@ -210,7 +209,7 @@ const handleExtraScopeNodeSetup = (
 
   if (operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.UNTIL) {
     // Create Footer node
-    const footerNode = createWorkflowNode(`${node.id}-#footer`, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
+    const footerNode = createWorkflowNode(`${node.id}-%footer`, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
     addChildNode(node, footerNode);
     addChildEdge(node, createWorkflowEdge(scopeHeadingNode.id, footerNode.id, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE));
   }
@@ -221,7 +220,7 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
   caseNode.subGraphLocation = 'cases';
   // addChildNode(switchNode, caseNode);
   switchNode.children?.splice(switchNode.children.length - 2, 0, caseNode);
-  const caseHeading = createWorkflowNode(`${caseId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  const caseHeading = createWorkflowNode(`${caseId}-%subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
   addChildNode(caseNode, caseHeading);
   nodesMetadata[caseId] = {
     graphId: switchNode.id,
@@ -229,7 +228,7 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
     subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
     actionCount: 0,
   };
-  addChildEdge(switchNode, createWorkflowEdge(`${switchNode.id}-#scope`, caseId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+  addChildEdge(switchNode, createWorkflowEdge(`${switchNode.id}-%scope`, caseId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 
   // Add Case to Switch operation data
   const switchAction = state.operations[switchNode.id] as LogicAppsV2.SwitchAction;
@@ -248,7 +247,7 @@ export const addAgentToolToWorkflow = (toolId: string, agentNode: WorkflowNode, 
   const conditionNode = createWorkflowNode(toolId, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
   conditionNode.subGraphLocation = 'tools';
   agentNode.children?.splice(agentNode.children.length - 2, 0, conditionNode);
-  const conditionHeading = createWorkflowNode(`${toolId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  const conditionHeading = createWorkflowNode(`${toolId}-%subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
   addChildNode(conditionNode, conditionHeading);
   nodesMetadata[toolId] = {
     graphId: agentNode.id,
@@ -256,7 +255,7 @@ export const addAgentToolToWorkflow = (toolId: string, agentNode: WorkflowNode, 
     subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
     actionCount: 0,
   };
-  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-%scope`, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 
   // Add Condion to Agent operation data
   const agentAction = state.operations[agentNode.id] as LogicAppsV2.AgentAction;
@@ -288,7 +287,7 @@ export const addMcpServerToWorkflow = (
     subgraphType: SUBGRAPH_TYPES.MCP_CLIENT,
   };
 
-  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-%scope`, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 
   if (operation) {
     state.operations[toolId] = { ...state.operations[toolId], type: operation.type };

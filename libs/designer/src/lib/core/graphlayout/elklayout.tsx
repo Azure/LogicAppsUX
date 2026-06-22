@@ -205,7 +205,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
         'elk.layered.spacing.nodeNodeBetweenLayers': spacing.onlyEdge,
         'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
       }),
-      ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
+      ...(node.children?.findIndex((child) => child.id.endsWith('%footer')) !== -1 && {
         'elk.padding': '[top=0,left=16,bottom=0,right=16]',
       }),
     },

@@ -337,7 +337,7 @@ export { getWorkflowNodeFromGraphState };
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   const edges = useEdges()
     .filter((edge) => edge.source === nodeId)
-    .filter((edge) => !edge.target.includes('-#footer'));
+    .filter((edge) => !edge.target.includes('-%footer'));
   return edges.map((edge) => edge.target);
 };
 

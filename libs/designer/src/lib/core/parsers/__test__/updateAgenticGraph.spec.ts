@@ -29,15 +29,15 @@ const createMockState = (overrides: Partial<WorkflowState> = {}): WorkflowState 
 const createMockAgentGraph = (overrides: Partial<WorkflowNode> = {}): WorkflowNode => ({
   id: 'agent1',
   children: [
-    { id: 'agent1-#scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
+    { id: 'agent1-%scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
     {
       id: 'myTool',
-      children: [{ id: 'myTool-#subgraph', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }],
+      children: [{ id: 'myTool-%subgraph', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }],
       edges: [],
       type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
     },
   ],
-  edges: [{ id: 'agent1-#scope-myTool', source: 'agent1-#scope', target: 'myTool', type: WORKFLOW_EDGE_TYPES.ONLY_EDGE }],
+  edges: [{ id: 'agent1-%scope-myTool', source: 'agent1-%scope', target: 'myTool', type: WORKFLOW_EDGE_TYPES.ONLY_EDGE }],
   type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
   ...overrides,
 });
@@ -98,12 +98,12 @@ describe('updateAgenticSubgraph', () => {
     const codeInterpreterChild = agentGraph.children?.find((c) => c.id === 'code_interpreter');
     expect(codeInterpreterChild).toBeDefined();
     expect(codeInterpreterChild?.type).toBe(WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
-    expect(codeInterpreterChild?.children?.[0]?.id).toBe('code_interpreter-#subgraph');
+    expect(codeInterpreterChild?.children?.[0]?.id).toBe('code_interpreter-%subgraph');
   });
 
   it('should not inject non-built-in tools as new children', () => {
     const agentGraph = createMockAgentGraph({
-      children: [{ id: 'agent1-#scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }],
+      children: [{ id: 'agent1-%scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }],
       edges: [],
     });
     const state = createMockState();
@@ -122,12 +122,12 @@ describe('updateAgenticSubgraph', () => {
   it('should not duplicate already-existing built-in tool child nodes', () => {
     const existingCodeInterpreter: WorkflowNode = {
       id: 'code_interpreter',
-      children: [{ id: 'code_interpreter-#subgraph', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }],
+      children: [{ id: 'code_interpreter-%subgraph', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }],
       edges: [],
       type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
     };
     const agentGraph = createMockAgentGraph({
-      children: [{ id: 'agent1-#scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }, existingCodeInterpreter],
+      children: [{ id: 'agent1-%scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE }, existingCodeInterpreter],
     });
     const state = createMockState();
     const payload: UpdateAgenticGraphPayload = {
@@ -160,12 +160,12 @@ describe('updateAgenticSubgraph', () => {
   it('should filter children to only visible tools from scopeRepetitionRunData.tools', () => {
     const agentGraph = createMockAgentGraph({
       children: [
-        { id: 'agent1-#scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
+        { id: 'agent1-%scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
         { id: 'toolA', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE },
         { id: 'toolB', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE },
       ],
       edges: [
-        { id: 'agent1-#scope-toolA', source: 'agent1-#scope', target: 'toolA', type: WORKFLOW_EDGE_TYPES.ONLY_EDGE },
+        { id: 'agent1-%scope-toolA', source: 'agent1-%scope', target: 'toolA', type: WORKFLOW_EDGE_TYPES.ONLY_EDGE },
         { id: 'toolA-toolB', source: 'toolA', target: 'toolB', type: WORKFLOW_EDGE_TYPES.ONLY_EDGE },
       ],
     });
@@ -179,7 +179,7 @@ describe('updateAgenticSubgraph', () => {
     updateAgenticSubgraph(payload, agentGraph, state);
 
     const childIds = agentGraph.children?.map((c) => c.id);
-    expect(childIds).toContain('agent1-#scope');
+    expect(childIds).toContain('agent1-%scope');
     expect(childIds).toContain('toolA');
     expect(childIds).not.toContain('toolB');
   });
@@ -187,7 +187,7 @@ describe('updateAgenticSubgraph', () => {
   it('should preserve #scope and -addCase children regardless of visibility', () => {
     const agentGraph = createMockAgentGraph({
       children: [
-        { id: 'agent1-#scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
+        { id: 'agent1-%scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
         { id: 'agent1-addCase', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
         { id: 'someTool', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE },
       ],
@@ -203,7 +203,7 @@ describe('updateAgenticSubgraph', () => {
     updateAgenticSubgraph(payload, agentGraph, state);
 
     const childIds = agentGraph.children?.map((c) => c.id);
-    expect(childIds).toContain('agent1-#scope');
+    expect(childIds).toContain('agent1-%scope');
     expect(childIds).toContain('agent1-addCase');
     expect(childIds).not.toContain('someTool');
   });
@@ -211,10 +211,10 @@ describe('updateAgenticSubgraph', () => {
   it('should call reassignEdgeSources and removeEdge for hidden tools', () => {
     const agentGraph = createMockAgentGraph({
       children: [
-        { id: 'agent1-#scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
+        { id: 'agent1-%scope', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE },
         { id: 'hiddenTool', children: [], edges: [], type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE },
       ],
-      edges: [{ id: 'agent1-#scope-hiddenTool', source: 'agent1-#scope', target: 'hiddenTool', type: WORKFLOW_EDGE_TYPES.ONLY_EDGE }],
+      edges: [{ id: 'agent1-%scope-hiddenTool', source: 'agent1-%scope', target: 'hiddenTool', type: WORKFLOW_EDGE_TYPES.ONLY_EDGE }],
     });
     const state = createMockState();
     const payload: UpdateAgenticGraphPayload = {
@@ -224,8 +224,8 @@ describe('updateAgenticSubgraph', () => {
 
     updateAgenticSubgraph(payload, agentGraph, state);
 
-    expect(mockReassignEdgeSources).toHaveBeenCalledWith(state, 'hiddenTool', 'agent1-#scope', agentGraph, true);
-    expect(mockRemoveEdge).toHaveBeenCalledWith(state, 'agent1-#scope', 'hiddenTool', agentGraph);
+    expect(mockReassignEdgeSources).toHaveBeenCalledWith(state, 'hiddenTool', 'agent1-%scope', agentGraph, true);
+    expect(mockRemoveEdge).toHaveBeenCalledWith(state, 'agent1-%scope', 'hiddenTool', agentGraph);
   });
 
   it('should be a no-op when scopeRepetitionRunData is falsy', () => {

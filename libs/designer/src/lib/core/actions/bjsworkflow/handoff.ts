@@ -71,7 +71,7 @@ export const addAgentHandoff = createAsyncThunk('addAgentHandoff', async (payloa
         relationshipIds: {
           graphId: sourceId,
           subgraphId: newToolId,
-          parentId: `${newToolId}-#subgraph`,
+          parentId: `${newToolId}-%subgraph`,
         },
       })
     );

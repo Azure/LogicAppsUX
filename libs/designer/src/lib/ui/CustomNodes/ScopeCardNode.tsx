@@ -406,7 +406,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
       ? intlText.caseString
       : intlText.actionString;
 
-  const isFooter = id.endsWith('#footer');
+  const isFooter = id.endsWith('%footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
 
   const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;

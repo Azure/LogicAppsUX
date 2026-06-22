@@ -191,7 +191,7 @@ const DesignerReactFlow = (props: any) => {
   // Flow's internal selection state and the previously-selected nodes lose their highlight.
   //
   // Redux `selectedNodeIds` holds bare action ids (e.g. 'WorkflowAgent'), but the visible card
-  // for a scope/agent is `SCOPE_CARD_NODE` with id `'WorkflowAgent-#scope'`. We must normalize
+  // for a scope/agent is `SCOPE_CARD_NODE` with id `'WorkflowAgent-%scope'`. We must normalize
   // the idTag suffix when looking up, and only stamp the user-facing card variants — stamping a
   // GRAPH/SUBGRAPH container would shift React Flow's internal selection onto a node that has
   // no visible selected state and would then be filtered out of `onSelectionChange`, causing

@@ -37,7 +37,7 @@ describe('respect existing workflow dimensions', () => {
       type: 'GRAPH_NODE',
       children: [
         {
-          id: 'Condition-#scope',
+          id: 'Condition-%scope',
           width: 200,
           height: 40,
           type: 'SCOPE_CARD_NODE',
@@ -46,7 +46,7 @@ describe('respect existing workflow dimensions', () => {
           id: 'Condition-actions',
           children: [
             {
-              id: 'Condition-actions-#subgraph',
+              id: 'Condition-actions-%subgraph',
               width: 200,
               height: 40,
               type: 'SUBGRAPH_CARD_NODE',
@@ -84,8 +84,8 @@ describe('respect existing workflow dimensions', () => {
               type: 'BUTTON_EDGE',
             },
             {
-              id: 'Condition-actions-#subgraph-Create_file',
-              source: 'Condition-actions-#subgraph',
+              id: 'Condition-actions-%subgraph-Create_file',
+              source: 'Condition-actions-%subgraph',
               target: 'Create_file',
               type: 'HEADING_EDGE',
             },
@@ -97,7 +97,7 @@ describe('respect existing workflow dimensions', () => {
           id: 'Condition-elseActions',
           children: [
             {
-              id: 'Condition-elseActions-#subgraph',
+              id: 'Condition-elseActions-%subgraph',
               width: 200,
               height: 40,
               type: 'SUBGRAPH_CARD_NODE',
@@ -110,14 +110,14 @@ describe('respect existing workflow dimensions', () => {
       ],
       edges: [
         {
-          id: 'Condition-#scope-Condition-actions',
-          source: 'Condition-#scope',
+          id: 'Condition-%scope-Condition-actions',
+          source: 'Condition-%scope',
           target: 'Condition-actions',
           type: 'ONLY_EDGE',
         },
         {
-          id: 'Condition-#scope-Condition-elseActions',
-          source: 'Condition-#scope',
+          id: 'Condition-%scope-Condition-elseActions',
+          source: 'Condition-%scope',
           target: 'Condition-elseActions',
           type: 'ONLY_EDGE',
         },
@@ -140,13 +140,13 @@ describe('respect existing workflow dimensions', () => {
         type: 'OPERATION_NODE',
       },
       {
-        id: 'Condition-#scope',
+        id: 'Condition-%scope',
         width: 200,
         height: 40,
         type: 'SCOPE_CARD_NODE',
       },
       {
-        id: 'Condition-actions-#subgraph',
+        id: 'Condition-actions-%subgraph',
         width: 200,
         height: 40,
         type: 'SUBGRAPH_CARD_NODE',
@@ -185,8 +185,8 @@ describe('respect existing workflow dimensions', () => {
             type: 'BUTTON_EDGE',
           },
           {
-            id: 'Condition-actions-#subgraph-Create_file',
-            source: 'Condition-actions-#subgraph',
+            id: 'Condition-actions-%subgraph-Create_file',
+            source: 'Condition-actions-%subgraph',
             target: 'Create_file',
             type: 'HEADING_EDGE',
           },
@@ -195,7 +195,7 @@ describe('respect existing workflow dimensions', () => {
         subGraphLocation: 'actions',
       },
       {
-        id: 'Condition-elseActions-#subgraph',
+        id: 'Condition-elseActions-%subgraph',
         width: 200,
         height: 40,
         type: 'SUBGRAPH_CARD_NODE',
@@ -213,14 +213,14 @@ describe('respect existing workflow dimensions', () => {
         type: 'GRAPH_NODE',
         edges: [
           {
-            id: 'Condition-#scope-Condition-actions',
-            source: 'Condition-#scope',
+            id: 'Condition-%scope-Condition-actions',
+            source: 'Condition-%scope',
             target: 'Condition-actions',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'Condition-#scope-Condition-elseActions',
-            source: 'Condition-#scope',
+            id: 'Condition-%scope-Condition-elseActions',
+            source: 'Condition-%scope',
             target: 'Condition-elseActions',
             type: 'ONLY_EDGE',
           },
@@ -339,7 +339,7 @@ describe('respect existing workflow dimensions', () => {
   it('should update the dimensions of currentChildren recursively', () => {
     const previousChildren: WorkflowNode[] = [
       {
-        id: 'Condition-actions-#subgraph',
+        id: 'Condition-actions-%subgraph',
         width: 200,
         height: 28,
         type: 'SUBGRAPH_CARD_NODE',
@@ -378,7 +378,7 @@ describe('respect existing workflow dimensions', () => {
         type: 'GRAPH_NODE',
         children: [
           {
-            id: 'Condition-#scope',
+            id: 'Condition-%scope',
             width: 200,
             height: 40,
             type: 'SCOPE_CARD_NODE',
@@ -387,7 +387,7 @@ describe('respect existing workflow dimensions', () => {
             id: 'Condition-actions',
             children: [
               {
-                id: 'Condition-actions-#subgraph',
+                id: 'Condition-actions-%subgraph',
                 width: 200,
                 height: 28,
                 type: 'SUBGRAPH_CARD_NODE',
@@ -425,8 +425,8 @@ describe('respect existing workflow dimensions', () => {
                 type: 'BUTTON_EDGE',
               },
               {
-                id: 'Condition-actions-#subgraph-Create_file',
-                source: 'Condition-actions-#subgraph',
+                id: 'Condition-actions-%subgraph-Create_file',
+                source: 'Condition-actions-%subgraph',
                 target: 'Create_file',
                 type: 'HEADING_EDGE',
               },
@@ -438,7 +438,7 @@ describe('respect existing workflow dimensions', () => {
             id: 'Condition-elseActions',
             children: [
               {
-                id: 'Condition-elseActions-#subgraph',
+                id: 'Condition-elseActions-%subgraph',
                 width: 200,
                 height: 40,
                 type: 'SUBGRAPH_CARD_NODE',
@@ -451,14 +451,14 @@ describe('respect existing workflow dimensions', () => {
         ],
         edges: [
           {
-            id: 'Condition-#scope-Condition-actions',
-            source: 'Condition-#scope',
+            id: 'Condition-%scope-Condition-actions',
+            source: 'Condition-%scope',
             target: 'Condition-actions',
             type: 'ONLY_EDGE',
           },
           {
-            id: 'Condition-#scope-Condition-elseActions',
-            source: 'Condition-#scope',
+            id: 'Condition-%scope-Condition-elseActions',
+            source: 'Condition-%scope',
             target: 'Condition-elseActions',
             type: 'ONLY_EDGE',
           },

@@ -124,7 +124,7 @@ export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: 
 
 export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
   return (graph?.edges ?? [])
-    .filter((edge) => edge.target === nodeId && !/#(scope|subgraph|footer)/i.test(edge.id))
+    .filter((edge) => edge.target === nodeId && !/%(scope|subgraph|footer)/i.test(edge.id))
     .map((edge) => edge.source);
 };
 
@@ -243,7 +243,7 @@ export const isOperationNameValid = (
     return { isValid: false, message: messages.DEFAULT };
   }
 
-  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#'])) {
+  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':'])) {
     return { isValid: false, message: messages.DEFAULT };
   }
 

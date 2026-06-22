@@ -533,7 +533,7 @@ export const processScopeActions = (
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
 
-  const headerId = `${actionName}-#scope`;
+  const headerId = `${actionName}-%scope`;
   const scopeCardNode = createWorkflowNode(headerId, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
   nodes.push(scopeCardNode);
 
@@ -606,7 +606,7 @@ export const processScopeActions = (
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
 
-    const rootId = `${subgraphId}-#subgraph`;
+    const rootId = `${subgraphId}-%subgraph`;
     const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
 
     const isAddCase = subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
@@ -639,7 +639,7 @@ export const processScopeActions = (
   //   having the main node at the bottom and a subgraph node at the top,
   //   use this instead of complicating the other setup functions
   const applyUntilActions = (graphId: string, actions: LogicAppsV2.Actions | undefined) => {
-    scopeCardNode.id = scopeCardNode.id.replace('#scope', '#subgraph');
+    scopeCardNode.id = scopeCardNode.id.replace('%scope', '%subgraph');
     scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
 
     const [graph, operations, metadata] = processNestedActions(
@@ -679,7 +679,7 @@ export const processScopeActions = (
       }
     }
 
-    const footerId = `${graphId}-#footer`;
+    const footerId = `${graphId}-%footer`;
     const allEdgeSources = edges.map((edge) => edge.source);
     const leafNodes = nodes.filter((node) => !allEdgeSources.includes(node.id));
     leafNodes.forEach((node) => {

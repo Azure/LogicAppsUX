@@ -18,7 +18,7 @@ describe('Graph Utilities', () => {
         height: 40,
         type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         children: [
-          createWorkflowNode('Scope-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+          createWorkflowNode('Scope-%scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
           createWorkflowNode('Compose_10'),
           createWorkflowNode('Compose_3'),
           createWorkflowNode('Compose_4'),
@@ -30,7 +30,7 @@ describe('Graph Utilities', () => {
             height: 40,
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('Scope_2-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+              createWorkflowNode('Scope_2-%scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
               createWorkflowNode('Compose_7'),
               createWorkflowNode('Compose_8'),
               createWorkflowNode('Compose_9'),
@@ -38,7 +38,7 @@ describe('Graph Utilities', () => {
             edges: [
               createWorkflowEdge('Compose_7', 'Compose_8'),
               createWorkflowEdge('Compose_7', 'Compose_9'),
-              createWorkflowEdge('Scope_2-#scope', 'Compose_7'),
+              createWorkflowEdge('Scope_2-%scope', 'Compose_7'),
             ],
           },
         ],
@@ -48,7 +48,7 @@ describe('Graph Utilities', () => {
           createWorkflowEdge('Compose_3', 'Compose_5'),
           createWorkflowEdge('Compose_4', 'Compose_6'),
           createWorkflowEdge('Compose_5', 'Scope_2'),
-          createWorkflowEdge('Scope-#scope', 'Compose_10'),
+          createWorkflowEdge('Scope-%scope', 'Compose_10'),
         ],
       },
     ],

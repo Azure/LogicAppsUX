@@ -39,7 +39,7 @@ export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentG
 
       // Create graph node only if it doesn't exist yet
       if (!existingChildIds.has(toolId)) {
-        const subgraphCardNode = createWorkflowNode(`${toolId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+        const subgraphCardNode = createWorkflowNode(`${toolId}-%subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
         const toolGraph: WorkflowNode = {
           id: toolId,
           children: [subgraphCardNode],
@@ -49,7 +49,7 @@ export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentG
         };
         agentGraph.children = [...(agentGraph.children ?? []), toolGraph];
 
-        const headerId = `${agentGraph.id}-#scope`;
+        const headerId = `${agentGraph.id}-%scope`;
         agentGraph.edges = [...(agentGraph.edges ?? []), createWorkflowEdge(headerId, toolId, WORKFLOW_EDGE_TYPES.ONLY_EDGE)];
 
         // Update the saved original graph so the node persists across iteration switches
@@ -81,7 +81,7 @@ export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentG
     const hidingTools: string[] = [];
 
     const filteredTools = agentTools.filter((tool) => {
-      if (tool.id.includes('#scope') || tool.id.includes('-addCase')) {
+      if (tool.id.includes('%scope') || tool.id.includes('-addCase')) {
         return true;
       }
 

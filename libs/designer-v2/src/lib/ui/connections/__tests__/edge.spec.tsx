@@ -184,8 +184,8 @@ describe('ButtonEdge', () => {
   it('should strip id tags from source and target for selection check', () => {
     const propsWithIdTags = {
       ...defaultProps,
-      source: 'sourceNode-#scope',
-      target: 'targetNode-#scope',
+      source: 'sourceNode-%scope',
+      target: 'targetNode-%scope',
     };
 
     render(

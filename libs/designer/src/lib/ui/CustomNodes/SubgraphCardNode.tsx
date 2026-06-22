@@ -112,7 +112,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
               setEdgeContextMenuData({
                 graphId,
                 subgraphId: newAdditiveSubgraphId,
-                parentId: `${newAdditiveSubgraphId}-#subgraph`,
+                parentId: `${newAdditiveSubgraphId}-%subgraph`,
                 isLeaf: true,
                 location: {
                   x: rect ? rect.left + rect.width / 2 : window.innerWidth / 2,
@@ -125,7 +125,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
             const relationshipIds = {
               graphId,
               subgraphId: newAdditiveSubgraphId,
-              parentId: `${newAdditiveSubgraphId}-#subgraph`,
+              parentId: `${newAdditiveSubgraphId}-%subgraph`,
             };
             dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds, isAgentTool: true }));
           }

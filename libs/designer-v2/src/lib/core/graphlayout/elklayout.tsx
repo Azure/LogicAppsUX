@@ -220,7 +220,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
           'elk.padding': '[top=0,left=20,bottom=60,right=20]',
         }),
       // If graph has a footer, reduce bottom padding further
-      ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
+      ...(node.children?.findIndex((child) => child.id.endsWith('%footer')) !== -1 && {
         'elk.padding': '[top=0,left=20,bottom=0,right=20]',
       }),
     },

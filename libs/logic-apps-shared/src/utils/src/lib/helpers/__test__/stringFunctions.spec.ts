@@ -12,7 +12,7 @@ describe('label_case', () => {
 
 describe('idDisplayCase', () => {
   it('should correctly format a string with an ID tag', () => {
-    expect(idDisplayCase('Test_ID-#Scope')).toEqual('Test ID');
+    expect(idDisplayCase('Test_ID-%scope')).toEqual('Test ID');
   });
 
   it('should correctly format a string without an ID tag', () => {
@@ -24,7 +24,7 @@ describe('idDisplayCase', () => {
   });
 
   it('should handle a string with only an ID tag', () => {
-    expect(idDisplayCase('-#Scope')).toEqual('');
+    expect(idDisplayCase('-%scope')).toEqual('');
   });
 });
 

@@ -126,7 +126,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
           const relationshipIds = {
             graphId,
             subgraphId: newAdditiveSubgraphId,
-            parentId: `${newAdditiveSubgraphId}-#subgraph`,
+            parentId: `${newAdditiveSubgraphId}-%subgraph`,
           };
           dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds, isAgentTool: true }));
         } else {

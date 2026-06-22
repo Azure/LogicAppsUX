@@ -167,7 +167,7 @@ vi.mock('../components/card/subgraphCard', () => ({
 import SubgraphCardNode from '../SubgraphCardNode';
 
 describe('SubgraphCardNode (v2)', () => {
-  const defaultProps = { id: 'testNode-#subgraph' } as NodeProps;
+  const defaultProps = { id: 'testNode-%subgraph' } as NodeProps;
 
   beforeEach(() => {
     vi.clearAllMocks();

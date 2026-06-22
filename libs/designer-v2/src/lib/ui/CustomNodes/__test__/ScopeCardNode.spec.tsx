@@ -211,7 +211,7 @@ vi.mock('../../common/DesignerContextualMenu/CopyTooltip', () => ({
 import ScopeCardNode from '../ScopeCardNode';
 
 describe('ScopeCardNode (v2)', () => {
-  const defaultProps = { id: 'testScope-#scope' } as NodeProps;
+  const defaultProps = { id: 'testScope-%scope' } as NodeProps;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -271,14 +271,14 @@ describe('ScopeCardNode (v2)', () => {
   });
 
   it('should render EdgeDrawSourceHandle for footer nodes', () => {
-    const footerProps = { id: 'testScope-#footer' } as NodeProps;
+    const footerProps = { id: 'testScope-%footer' } as NodeProps;
     render(<ScopeCardNode {...footerProps} />);
     expect(screen.getByTestId('edge-draw-source-handle')).toBeInTheDocument();
   });
 
   it('should pass highlighted=true to EdgeDrawSourceHandle on footer when selected', () => {
     mockUseIsNodeSelectedInOperationPanel.mockReturnValue(true);
-    const footerProps = { id: 'testScope-#footer' } as NodeProps;
+    const footerProps = { id: 'testScope-%footer' } as NodeProps;
 
     render(<ScopeCardNode {...footerProps} />);
     const sourceHandle = screen.getByTestId('edge-draw-source-handle');
@@ -287,7 +287,7 @@ describe('ScopeCardNode (v2)', () => {
 
   it('should pass highlighted=false to EdgeDrawSourceHandle on footer when not selected', () => {
     mockUseIsNodeSelectedInOperationPanel.mockReturnValue(false);
-    const footerProps = { id: 'testScope-#footer' } as NodeProps;
+    const footerProps = { id: 'testScope-%footer' } as NodeProps;
 
     render(<ScopeCardNode {...footerProps} />);
     const sourceHandle = screen.getByTestId('edge-draw-source-handle');
@@ -357,7 +357,7 @@ describe('ScopeCardNode (v2)', () => {
 
   it('should not show collapsed text for footer nodes even when collapsed', () => {
     mockUseIsGraphCollapsed.mockReturnValue(true);
-    const footerProps = { id: 'testScope-#footer' } as NodeProps;
+    const footerProps = { id: 'testScope-%footer' } as NodeProps;
 
     render(<ScopeCardNode {...footerProps} />);
     expect(screen.queryByText(/2 Actions/)).not.toBeInTheDocument();

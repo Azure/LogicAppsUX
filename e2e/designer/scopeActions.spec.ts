@@ -19,7 +19,7 @@ test.describe(
       await page.getByLabel('True condition, collapse').click();
 
       // Check no actions message is visible
-      await expect(page.getByTestId('subgraph-Condition-actions-#subgraph-no-actions')).toBeVisible();
+      await expect(page.getByTestId('subgraph-Condition-actions-%subgraph-no-actions')).toBeVisible();
 
       // Check items inside true side are hidden
       await expect(page.getByTestId('card-terminate').getByRole('button', { name: 'Terminate' })).not.toBeVisible();
@@ -31,7 +31,7 @@ test.describe(
       await page.getByLabel('False condition, collapse').click();
 
       // Check no actions message is visible
-      await expect(page.getByTestId('subgraph-Condition-elseActions-#subgraph-no-actions')).toBeVisible();
+      await expect(page.getByTestId('subgraph-Condition-elseActions-%subgraph-no-actions')).toBeVisible();
 
       // Check items inside false side are hidden
       await expect(page.getByTestId('card-terminate 2').getByRole('button', { name: 'Terminate' })).not.toBeVisible();
@@ -44,7 +44,7 @@ test.describe(
       await expect(page.getByLabel('False condition, collapse')).not.toBeVisible();
 
       // Check no actions message is visible
-      await expect(page.getByTestId('scope-Condition-#scope-no-actions')).toBeVisible();
+      await expect(page.getByTestId('scope-Condition-%scope-no-actions')).toBeVisible();
     });
 
     test('Should collapse for each actions', async ({ page }) => {
@@ -80,8 +80,8 @@ test.describe(
       await expect(page.getByLabel('ForEach empty operation')).toBeVisible();
 
       // Check message no actions is visible
-      await expect(page.getByTestId('scope-ForEach_nested-#scope-no-actions')).toBeVisible();
-      await expect(page.getByTestId('scope-ForEach_empty-#scope-no-actions')).toBeVisible();
+      await expect(page.getByTestId('scope-ForEach_nested-%scope-no-actions')).toBeVisible();
+      await expect(page.getByTestId('scope-ForEach_empty-%scope-no-actions')).toBeVisible();
     });
 
     test('Should collapse do until actions', async ({ page }) => {
@@ -100,7 +100,7 @@ test.describe(
       await expect(page.getByTestId('card-until_action_2').getByRole('button', { name: 'Until Action' })).not.toBeVisible();
 
       // Check no actions message is visible
-      await expect(page.getByTestId('subgraph-Until-#subgraph-no-actions')).toBeVisible();
+      await expect(page.getByTestId('subgraph-Until-%subgraph-no-actions')).toBeVisible();
 
       // Check until box is visible
       await expect(page.getByLabel('Until operation')).toBeVisible();
@@ -125,7 +125,7 @@ test.describe(
       await page.getByTestId('Conditional_Case-collapse-toggle').click();
 
       // Check no actions message is visible in case
-      await expect(page.getByTestId('subgraph-Conditional_Case-#subgraph-no-actions')).toBeVisible();
+      await expect(page.getByTestId('subgraph-Conditional_Case-%subgraph-no-actions')).toBeVisible();
 
       // Check items inside default are visible
       await expect(page.getByTestId('card-default_compose').getByRole('button', { name: 'Default-Compose' })).toBeVisible();
@@ -138,18 +138,18 @@ test.describe(
       await expect(page.getByTestId('card-foreach_action_2').getByRole('button', { name: 'ForEach Action' })).toBeVisible();
 
       // Check no actions message is visible in default case
-      await expect(page.getByTestId('subgraph-Switch-defaultCase-#subgraph-no-actions')).toBeVisible();
+      await expect(page.getByTestId('subgraph-Switch-defaultCase-%subgraph-no-actions')).toBeVisible();
 
       // Collapse whole switcha action
       await page.getByTestId('Switch-collapse-toggle').click();
 
       // Check items inside switch action are non visible
-      await expect(page.getByTestId('subgraph-Switch-defaultCase-#subgraph-no-actions')).not.toBeVisible();
+      await expect(page.getByTestId('subgraph-Switch-defaultCase-%subgraph-no-actions')).not.toBeVisible();
       await expect(page.getByTestId('card-foreach_action_2').getByRole('button', { name: 'ForEach Action' })).not.toBeVisible();
       await expect(page.getByTestId('card-default_compose').getByRole('button', { name: 'Default-Compose' })).not.toBeVisible();
 
       // Check no actions message is visible in switch action
-      await expect(page.getByTestId('scope-Switch-#scope-no-actions')).toBeVisible();
+      await expect(page.getByTestId('scope-Switch-%scope-no-actions')).toBeVisible();
     });
   }
 );

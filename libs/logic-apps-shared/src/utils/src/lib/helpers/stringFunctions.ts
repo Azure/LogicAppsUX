@@ -5,8 +5,8 @@ export const replaceWhiteSpaceWithUnderscore = (uiElementName: string): string =
   return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
 };
 
-export const containsIdTag = (id: string) => id?.includes('-#');
-export const removeIdTag = (id: string) => id?.split('-#')[0];
+export const containsIdTag = (id: string) => id?.includes('-%');
+export const removeIdTag = (id: string) => id?.split('-%')[0];
 export const containsCaseTag = (id: string) => id?.includes('-addCase');
 
 export const getIdLeaf = (id?: string) => id?.split('/').at(-1) ?? '';

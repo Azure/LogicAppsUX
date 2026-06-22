@@ -25,7 +25,7 @@ export const getCommonGraphId = (state: WorkflowState, nodeIds: string[]): strin
 };
 
 const getChildEdgeTargets = (graph: WorkflowNode, nodeId: string): string[] =>
-  (graph?.edges ?? []).filter((edge) => edge.source === nodeId && !/#(scope|subgraph|footer)/i.test(edge.id)).map((edge) => edge.target);
+  (graph?.edges ?? []).filter((edge) => edge.source === nodeId && !/%(scope|subgraph|footer)/i.test(edge.id)).map((edge) => edge.target);
 
 /**
  * Determines whether the selected nodes form a contiguous connected subgraph on

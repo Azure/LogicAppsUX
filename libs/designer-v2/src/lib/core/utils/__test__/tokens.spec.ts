@@ -20,7 +20,7 @@ describe('Token Picker Utilities', () => {
         height: 40,
         type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         children: [
-          createWorkflowNode('Until-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+          createWorkflowNode('Until-%scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
           createWorkflowNode('Compose_10'),
           createWorkflowNode('Compose_3'),
           createWorkflowNode('Compose_4'),
@@ -32,7 +32,7 @@ describe('Token Picker Utilities', () => {
             height: 40,
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('Until_2-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+              createWorkflowNode('Until_2-%scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
               createWorkflowNode('Compose_7'),
               createWorkflowNode('Compose_8'),
               createWorkflowNode('Compose_9'),
@@ -40,7 +40,7 @@ describe('Token Picker Utilities', () => {
             edges: [
               createWorkflowEdge('Compose_7', 'Compose_8'),
               createWorkflowEdge('Compose_7', 'Compose_9'),
-              createWorkflowEdge('Until_2-#scope', 'Compose_7'),
+              createWorkflowEdge('Until_2-%scope', 'Compose_7'),
             ],
           },
         ],
@@ -50,7 +50,7 @@ describe('Token Picker Utilities', () => {
           createWorkflowEdge('Compose_3', 'Compose_5'),
           createWorkflowEdge('Compose_4', 'Compose_6'),
           createWorkflowEdge('Compose_5', 'Until_2'),
-          createWorkflowEdge('Until-#scope', 'Compose_10'),
+          createWorkflowEdge('Until-%scope', 'Compose_10'),
         ],
       },
     ],

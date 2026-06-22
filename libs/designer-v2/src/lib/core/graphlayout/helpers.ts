@@ -1,7 +1,7 @@
 import { WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 
-export const footerMarker = '#footer';
+export const footerMarker = '%footer';
 
 export interface LayoutRelevantData {
   id: string;
