@@ -675,7 +675,7 @@ jobs:
   - task: AzureLogicAppsHybridBuild@0
     displayName: 'Azure Logic Apps Hybrid Build'
     inputs:
-      sourceFolder: '${'$'}(Build.SourcesDirectory)/${'$'}(logicAppName)'
+      sourceFolder: '${'$'}(Build.SourcesDirectory)/${'$'}(sourceFolderName)'
       deploymentFolder: '${'$'}(System.DefaultWorkingDirectory)/deployment/${'$'}(logicAppName)/'
       archiveFile: '${'$'}(Build.ArtifactStagingDirectory)/${'$'}(Build.BuildId).zip'
 
@@ -798,8 +798,11 @@ jobs:
     fs.writeFileSync(path.join(pipelinesFolder, 'CD-pipeline-variables.yml'), cdVariablesContent);
 
     // CI variables
+    // sourceFolderName is the local project folder in the repo (host.json, workflows). It can differ from
+    // logicAppName, which is the deployed Logic App (Container App) name entered in the wizard.
     const ciVariablesContent = `variables:
   logicAppName: '${context.logicAppName}'
+  sourceFolderName: '${path.basename(context.projectPath)}'
   logicAppCIArtifactName: 'logic-app-artifact'
 `;
 
