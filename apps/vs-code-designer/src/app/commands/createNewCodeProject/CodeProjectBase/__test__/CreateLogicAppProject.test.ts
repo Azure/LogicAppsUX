@@ -144,7 +144,7 @@ describe('createLogicAppProject', () => {
     // Logic app folder doesn't exist yet
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
-    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
+    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath, mockContext);
     expect(createLogicAppVsCodeContents).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
     expect(createLocalConfigurationFiles).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
   });
@@ -191,7 +191,7 @@ describe('createLogicAppProject', () => {
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
     // Should still create logic app files since it's not a valid logic app
-    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
+    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath, mockContext);
     expect(createLogicAppVsCodeContents).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
     expect(createLocalConfigurationFiles).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
   });
@@ -483,7 +483,7 @@ describe('createLogicAppProject', () => {
 
       // Verify the logic app folder path was constructed correctly
       const expectedPath = path.join(workspaceRootFolder, 'TestLogicApp');
-      expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(expect.anything(), expectedPath);
+      expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(expect.anything(), expectedPath, mockContext);
     });
 
     it('should verify workspace file path is set correctly', async () => {
@@ -591,7 +591,8 @@ describe('createLogicAppProject', () => {
         expect.objectContaining({
           logicAppName: longName,
         }),
-        expect.stringContaining(longName)
+        expect.stringContaining(longName),
+        mockContext
       );
     });
 

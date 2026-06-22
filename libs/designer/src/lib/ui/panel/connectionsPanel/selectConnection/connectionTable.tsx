@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { cleanResourceId, getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { cleanResourceId, equals, getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
@@ -23,7 +23,7 @@ import {
   getLabelForConnection,
   getSubLabelForConnection,
 } from './selectConnection.helpers';
-import { useConnectionRefs } from '../../../../core/state/connection/connectionSelector';
+import type { ConnectionReferences } from '../../../../common/models/workflow';
 
 export interface ConnectionTableProps {
   connections: Connection[];
@@ -32,6 +32,8 @@ export interface ConnectionTableProps {
   cancelSelectionCallback?: () => void;
   isXrmConnectionReferenceMode: boolean;
   shouldRenderDetails?: boolean;
+  /** Required connection references, should be provided in all cases. */
+  connectionReferences: ConnectionReferences;
 }
 
 const statusColumnWidth = 36;
@@ -52,11 +54,11 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     cancelSelectionCallback,
     isXrmConnectionReferenceMode,
     shouldRenderDetails = false,
+    connectionReferences,
   } = props;
 
   const intl = useIntl();
   const initiallySelectedConnectionId = useRef(currentConnectionId);
-  const connectionReferences = useConnectionRefs();
 
   // Check if the currentConnectionId is actually configured in connectionReferences
   const isCurrentConnectionConfigured = useMemo(() => {
@@ -65,13 +67,16 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     }
     return Object.values(connectionReferences).some((ref: any) => {
       const refConnectionId = ref?.connection?.id;
-      return refConnectionId && getIdLeaf(refConnectionId) === currentConnectionId;
+      return refConnectionId && equals(refConnectionId, currentConnectionId);
     });
   }, [currentConnectionId, connectionReferences]);
 
-  const isSelectedConnection = (connection: ConnectionWithFlattenedProperties): boolean => {
-    return isCurrentConnectionConfigured && cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
-  };
+  const isSelectedConnection = useCallback(
+    (connection: ConnectionWithFlattenedProperties): boolean => {
+      return isCurrentConnectionConfigured && cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
+    },
+    [isCurrentConnectionConfigured]
+  );
 
   // We need to flatten the connection to allow the detail list access to nested props
   const items = useMemo(
@@ -85,10 +90,10 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         }
         return compareFlattenedConnections(a, b);
       }),
-    [connections]
+    [connections, isSelectedConnection]
   );
 
-  const areIdLeavesEqual = (id1?: string, id2?: string): boolean => getIdLeaf(id1) === getIdLeaf(id2);
+  const areIdLeavesEqual = (id1?: string, id2?: string): boolean => equals(getIdLeaf(id1), getIdLeaf(id2));
 
   const onConnectionSelect = useCallback(
     (connection: Connection) => {
@@ -105,7 +110,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         saveSelectionCallback(connection); // User clicked a different connection or unconfigured connection
       }
     },
-    [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]
+    [cancelSelectionCallback, currentConnectionId, saveSelectionCallback, isCurrentConnectionConfigured]
   );
   const displayNameColumnWidth = shouldRenderDetails ? 180 : 420;
 

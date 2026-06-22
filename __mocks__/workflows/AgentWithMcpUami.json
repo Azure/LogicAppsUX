@@ -1,0 +1,71 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "WorkflowAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "deploymentId": "gpt-4o",
+            "messages": [
+              {
+                "role": "System",
+                "content": "You are a helpful assistant that can use a UAMI-backed managed MCP tool."
+              }
+            ]
+          }
+        },
+        "tools": {
+          "Managed_MCP_Server": {
+            "type": "McpClientTool",
+            "kind": "Managed",
+            "inputs": {
+              "connectionReference": {
+                "connectionName": "mcp"
+              },
+              "parameters": {
+                "mcpServerPath": "/"
+              }
+            }
+          }
+        },
+        "runAfter": {},
+        "limit": {
+          "count": 100
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {
+      "$connections": {
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "When_an_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    }
+  },
+  "connections": {},
+  "parameters": {
+    "$connections": {
+      "type": "Object",
+      "value": {
+        "mcp": {
+          "id": "/subscriptions/test-sub/providers/Microsoft.Web/locations/eastus/managedApis/mcp-connector",
+          "connectionId": "/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Web/connections/mcp-connector-uami",
+          "connectionName": "mcp-connector-uami",
+          "connectionProperties": {
+            "authentication": {
+              "type": "ManagedServiceIdentity",
+              "identity": "/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-uami"
+            }
+          }
+        }
+      }
+    }
+  }
+}

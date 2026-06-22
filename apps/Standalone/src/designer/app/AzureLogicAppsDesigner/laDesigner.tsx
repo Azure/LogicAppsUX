@@ -52,6 +52,7 @@ import {
   optional,
   BaseCognitiveServiceService,
   RoleService,
+  normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
   BaseResourceService,
 } from '@microsoft/logic-apps-shared';
@@ -291,6 +292,7 @@ const DesignerEditor = () => {
     };
     const newServiceProviderConnections: Record<string, any> = {};
     const newAgentConnections: Record<string, any> = {};
+    const newAgentMcpConnections: Record<string, any> = {};
 
     const referenceKeys = Object.keys(connectionReferences ?? {});
     if (referenceKeys.length) {
@@ -324,6 +326,11 @@ const DesignerEditor = () => {
             // We need to move the data out to a new object, delete the old data, then apply the new data at the end
             newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
             delete connectionsData?.agentConnections?.[connectionKey];
+          } else if (reference?.connection?.id.startsWith('/connectionProviders/mcpclient/')) {
+            // MCP Connection
+            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+            newAgentMcpConnections[referenceKey] = connectionsData?.agentMcpConnections?.[connectionKey];
+            delete connectionsData?.agentMcpConnections?.[connectionKey];
           } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
             // Service Provider Connection
             const connectionKey = reference.connection.id.split('/').splice(-1)[0];
@@ -339,12 +346,16 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      if (isAgentWorkflow(workflow?.kind ?? '') || Object.keys(newAgentConnections).length > 0) {
-        (connectionsData as ConnectionsData).agentConnections = {
-          ...connectionsData?.agentConnections,
-          ...newAgentConnections,
-        };
+      (connectionsData as ConnectionsData).agentMcpConnections = {
+        ...connectionsData?.agentMcpConnections,
+        ...newAgentMcpConnections,
+      };
+      (connectionsData as ConnectionsData).agentConnections = {
+        ...connectionsData?.agentConnections,
+        ...newAgentConnections,
+      };
 
+      if (isAgentWorkflow(workflow?.kind ?? '')) {
         // Assign MSI roles if needed
         /**
          *  This is currently only for Agentic workflows,
@@ -357,16 +368,17 @@ const DesignerEditor = () => {
          */
         for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
           if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+            const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
             const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-            const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+            const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
             const assignmentPromises = [];
             for (const roleDefinition of missingRoleAssignments) {
-              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
             }
             await Promise.all(assignmentPromises);
 
             // Invalidate the cache for the role assignments
-            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
             const queryClient = getReactQueryClient();
             queryClient.invalidateQueries(cacheKey);
           }

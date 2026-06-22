@@ -31,6 +31,13 @@ export const useRunHistoryPanelStyles = makeStyles({
     marginTop: '4px',
   },
 
+  activeFilterTags: {
+    display: 'flex',
+    flexWrap: 'wrap' as const,
+    gap: '4px',
+    marginTop: '4px',
+  },
+
   compatComponent: {
     zIndex: 10,
   },
@@ -133,5 +140,23 @@ export const useRunHistoryPanelStyles = makeStyles({
   resizerActive: {
     borderRightWidth: '4px',
     borderRightColor: tokens.colorNeutralBackground5Pressed,
+  },
+
+  multiSelectBar: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '4px 8px',
+    backgroundColor: tokens.colorNeutralBackground4,
+    borderRadius: tokens.borderRadiusLarge,
+    border: `1px solid ${tokens.colorNeutralStroke1}`,
+    marginTop: '4px',
+  },
+
+  multiSelectActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '2px',
+    marginLeft: 'auto',
   },
 });

@@ -15,6 +15,7 @@ import {
   funcCoreToolsBinaryPathSettingKey,
   funcDependencyName,
   extensionBundleId,
+  nodeJsDependencyName,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -142,7 +143,7 @@ export async function downloadAndExtractDependency(
         ext.outputChannel.appendLog(`Retrying ${dependencyName} install after terminating orphan func.exe processes.`);
         await extractDependency(dependencyFilePath, targetFolder, dependencyName);
       }
-      vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+      ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
       if (dependencyName === funcDependencyName) {
         // Add execute permissions for func and gozip binaries
         if (process.platform !== Platform.windows) {
@@ -421,8 +422,23 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
   }
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
+  let expectedBinaryPath: string | undefined;
+  if (binariesExist) {
+    if (dependencyName === funcDependencyName) {
+      expectedBinaryPath = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+    } else if (dependencyName === dotnetDependencyName) {
+      expectedBinaryPath = getGlobalSetting<string>(dotNetBinaryPathSettingKey);
+    } else if (dependencyName === nodeJsDependencyName) {
+      expectedBinaryPath = getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
+    }
+  }
 
   executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} Binaries: ${binariesPath}`);
+  if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
+    executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} binary is missing: ${expectedBinaryPath}`);
+    return false;
+  }
+
   return binariesExist;
 }
 

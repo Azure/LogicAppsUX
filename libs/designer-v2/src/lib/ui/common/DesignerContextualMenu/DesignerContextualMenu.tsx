@@ -1,6 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from 'react-intl';
 import { CardContextMenu } from '@microsoft/designer-ui';
+import { MenuItem } from '@fluentui/react-components';
+import {
+  bundleIcon,
+  Clipboard24Filled,
+  Clipboard24Regular,
+  Cut24Filled,
+  Cut24Regular,
+  Delete24Filled,
+  Delete24Regular,
+} from '@fluentui/react-icons';
 import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
 import {
   SUBGRAPH_TYPES,
@@ -20,8 +31,8 @@ import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { AddNoteMenuItem } from '../../../ui/menuItems/addNoteMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
-import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { useOperationAlternateSelectedNodeId } from '../../../core/state/panel/panelSelectors';
+import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../../../core/state/designerView/designerViewSlice';
+import { useOperationAlternateSelectedNodeId, useOperationPanelSelectedNodeIds } from '../../../core/state/panel/panelSelectors';
 import {
   changePanelNode,
   setSelectedPanelActiveTab,
@@ -43,7 +54,7 @@ import {
   useSuppressDefaultNodeSelectFunctionality,
   useNodeSelectAdditionalCallback,
 } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { copyOperation, copyScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
+import { copyOperation, copyScopeOperation, copyOperations, cutOperations } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from './CopyTooltip';
 import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
@@ -53,6 +64,10 @@ import { addNote } from '../../../core/state/notes/notesSlice';
 import { useReactFlow } from '@xyflow/react';
 import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from '../../panel/nodeDetailsPanel/childWorkflowHelpers';
 import { useRawInputsOutputs } from '../../panel/nodeDetailsPanel/useRawInputsOutputs';
+
+const BulkDeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
+const BulkCopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);
+const BulkCutIcon = bundleIcon(Cut24Filled, Cut24Regular);
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -65,9 +80,13 @@ export const DesignerContextualMenu = () => {
   useEffect(() => setOpen(!!menuData?.location), [menuData?.location]);
 
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
 
   const rootState = useSelector((state: RootState) => state);
   const alternateSelectedNodeId = useOperationAlternateSelectedNodeId();
+
+  const selectedNodeIds = useOperationPanelSelectedNodeIds();
+  const isMultiSelect = useMemo(() => selectedNodeIds.length > 1 && selectedNodeIds.includes(nodeId), [selectedNodeIds, nodeId]);
 
   const runInstance = useRunInstance();
   const runMode = useRunMode();
@@ -268,10 +287,72 @@ export const DesignerContextualMenu = () => {
     return [<AddNoteMenuItem onClick={onAddNoteClick} key="add-note" />];
   }, [onAddNoteClick]);
 
+  const bulkDeleteClick = useCallback(() => {
+    setOpen(false);
+    dispatch(setShowMultiSelectDeleteModal(true));
+  }, [dispatch]);
+
+  const bulkCopyClick = useCallback(() => {
+    setOpen(false);
+    setShowCopyCallout(true);
+    dispatch(copyOperations({ nodeIds: selectedNodeIds }));
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
+  }, [dispatch, selectedNodeIds]);
+
+  const bulkCutClick = useCallback(() => {
+    setOpen(false);
+    setShowCopyCallout(true);
+    dispatch(cutOperations({ nodeIds: selectedNodeIds }));
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
+  }, [dispatch, selectedNodeIds]);
+
+  const bulkMenuItems = useMemo(() => {
+    const deleteText = intl.formatMessage(
+      {
+        defaultMessage: 'Delete {count} actions',
+        id: 'Spxi/T',
+        description: 'Context menu label to delete multiple selected actions',
+      },
+      { count: selectedNodeIds.length }
+    );
+    const copyText = intl.formatMessage(
+      {
+        defaultMessage: 'Copy {count} actions',
+        id: 'BnRLjw',
+        description: 'Context menu label to copy multiple selected actions',
+      },
+      { count: selectedNodeIds.length }
+    );
+    const cutText = intl.formatMessage(
+      {
+        defaultMessage: 'Cut {count} actions',
+        id: 'gxAtNf',
+        description: 'Context menu label to cut multiple selected actions',
+      },
+      { count: selectedNodeIds.length }
+    );
+    return [
+      <MenuItem key={'bulk-cut'} icon={<BulkCutIcon />} onClick={bulkCutClick} data-automation-id={'msla-bulk-cut-menu-option'}>
+        {cutText}
+      </MenuItem>,
+      <MenuItem key={'bulk-copy'} icon={<BulkCopyIcon />} onClick={bulkCopyClick} data-automation-id={'msla-bulk-copy-menu-option'}>
+        {copyText}
+      </MenuItem>,
+      <MenuItem key={'bulk-delete'} icon={<BulkDeleteIcon />} onClick={bulkDeleteClick} data-automation-id={'msla-bulk-delete-menu-option'}>
+        {deleteText}
+      </MenuItem>,
+    ];
+  }, [intl, selectedNodeIds.length, bulkDeleteClick, bulkCopyClick, bulkCutClick]);
+
   const menuItems = useMemo(() => {
     // If no node id, show canvas menu items
     if (!nodeId) {
       return canvasMenuItems;
+    }
+
+    // If the right-clicked node is part of a multi-selection, show bulk actions
+    if (isMultiSelect) {
+      return bulkMenuItems;
     }
 
     const items: JSX.Element[] = [];
@@ -290,7 +371,17 @@ export const DesignerContextualMenu = () => {
     }
 
     return items;
-  }, [nodeId, canvasMenuItems, metadata?.subgraphType, isScopeNode, actionContextMenuItems, subgraphMenuItems, graphMenuItems]);
+  }, [
+    nodeId,
+    canvasMenuItems,
+    isMultiSelect,
+    bulkMenuItems,
+    metadata?.subgraphType,
+    isScopeNode,
+    actionContextMenuItems,
+    subgraphMenuItems,
+    graphMenuItems,
+  ]);
 
   return (
     <>

@@ -412,13 +412,11 @@ export async function getConnectionsAndSettingsToUpdate(
     connectionsData.managedApiConnections = referencesToAdd;
 
     if (areKeysRefreshed) {
-      window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed and are valid for 7 days.'));
+      ext.outputChannel.appendLog(localize('connectionKeysRefreshed', 'Connection keys have been refreshed and are valid for 7 days.'));
     }
 
     if (areKeysGenerated) {
-      window.showInformationMessage(
-        localize('connectionKeysGenerated', 'New connection keys have been generated and are valid for 7 days.')
-      );
+      ext.outputChannel.appendLog(localize('connectionKeysGenerated', 'New connection keys have been generated and are valid for 7 days.'));
     }
 
     return {

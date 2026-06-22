@@ -76,6 +76,12 @@ vi.mock('fs', () => ({
   mkdirSync: vi.fn(),
   chmodSync: vi.fn(),
   createWriteStream: vi.fn(),
+  readdirSync: vi.fn(() => []),
+  renameSync: vi.fn(),
+  rmSync: vi.fn(),
+  statSync: vi.fn(() => ({
+    isDirectory: vi.fn(() => false),
+  })),
   dirent: vi.fn().mockImplementation(() => ({
     isDirectory: vi.fn().mockImplementation(() => {
       return true;

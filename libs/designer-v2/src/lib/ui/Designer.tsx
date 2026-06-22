@@ -7,10 +7,16 @@ import {
   useIsVSCode,
   useIsDarkMode,
 } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
+import { setNodeSelection } from '../core/state/panel/panelSlice';
+import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
+import { useAllSelectableNodeIds } from '../core/state/workflow/workflowSelectors';
+import { copyOperation, copyOperations, cutOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
 import DeleteModal from './common/DeleteModal/DeleteModal';
+import { MultiSelectDeleteModal } from './common/DeleteModal/MultiSelectDeleteModal';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { mergeClasses, PanelLocation } from '@microsoft/designer-ui';
@@ -112,6 +118,78 @@ export const Designer = (props: DesignerProps) => {
     { enabled: !isReadOnly && canRedo }
   );
 
+  const selectedNodeId = useOperationPanelSelectedNodeId();
+  const selectedNodeIds = useOperationPanelSelectedNodeIds();
+  const allSelectableNodeIds = useAllSelectableNodeIds();
+
+  // Delete / Backspace: open the delete confirmation for the current selection (single or multi).
+  useHotkeys(
+    ['delete', 'backspace'],
+    (event) => {
+      if (selectedNodeIds.length > 1) {
+        event.preventDefault();
+        dispatch(setShowMultiSelectDeleteModal(true));
+      } else if (selectedNodeId) {
+        event.preventDefault();
+        dispatch(setShowDeleteModalNodeId(selectedNodeId));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+D: duplicate the selected node(s) directly below themselves.
+  useHotkeys(
+    ['meta+d', 'ctrl+d'],
+    (event) => {
+      event.preventDefault();
+      const idsToDuplicate = selectedNodeIds.length > 0 ? selectedNodeIds : selectedNodeId ? [selectedNodeId] : [];
+      if (idsToDuplicate.length > 0) {
+        dispatch(duplicateOperations({ nodeIds: idsToDuplicate }));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+C: copy selected node(s) to clipboard.
+  useHotkeys(
+    ['meta+c', 'ctrl+c'],
+    (event) => {
+      event.preventDefault();
+      if (selectedNodeIds.length > 1) {
+        dispatch(copyOperations({ nodeIds: selectedNodeIds }));
+      } else if (selectedNodeId) {
+        dispatch(copyOperation({ nodeId: selectedNodeId }));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+X: cut selected node(s) (copy + delete).
+  useHotkeys(
+    ['meta+x', 'ctrl+x'],
+    (event) => {
+      event.preventDefault();
+      if (selectedNodeIds.length > 1) {
+        dispatch(cutOperations({ nodeIds: selectedNodeIds }));
+      } else if (selectedNodeId) {
+        dispatch(cutOperations({ nodeIds: [selectedNodeId] }));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
+  // Ctrl/Cmd+A: select all actions on the canvas.
+  useHotkeys(
+    ['meta+a', 'ctrl+a'],
+    (event) => {
+      event.preventDefault();
+      if (allSelectableNodeIds.length > 0) {
+        dispatch(setNodeSelection(allSelectableNodeIds));
+      }
+    },
+    { enabled: !isReadOnly }
+  );
+
   const isMonitoringView = useMonitoringView();
 
   const DND_OPTIONS: any = {
@@ -173,6 +251,7 @@ export const Designer = (props: DesignerProps) => {
                 />
               )}
               <DeleteModal />
+              <MultiSelectDeleteModal />
               <DesignerContextualMenu />
               <EdgeContextualMenu />
               <RunDisplay />

@@ -134,14 +134,14 @@ const DesignerReactFlow = (props: any) => {
     if (!hasFitViewRun.current && nodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
         const defaultZoom = 1.0;
-        const topNode = nodes.reduce((top, node) => (node.position.y < top.position.y ? node : top));
+        const topNode = nodes.reduce((top, node) => ((node.position?.y ?? 0) < (top.position?.y ?? 0) ? node : top));
 
         const centerX = containerDimensions.width / 2;
         const topPadding = 120;
 
         reactFlowInstance.setViewport({
-          x: centerX - (topNode.position.x + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
-          y: topPadding - topNode.position.y * defaultZoom,
+          x: centerX - ((topNode.position?.x ?? 0) + (topNode.width || DEFAULT_NODE_SIZE.width) / 2) * defaultZoom,
+          y: topPadding - (topNode.position?.y ?? 0) * defaultZoom,
           zoom: defaultZoom,
         });
 

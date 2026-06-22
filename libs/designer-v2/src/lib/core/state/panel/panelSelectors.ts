@@ -1,4 +1,5 @@
 import type { RootState } from '../../store';
+import { canWrapSelectedNodes } from '../../utils/multiselect';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -83,6 +84,15 @@ export const useOperationPanelAlternateNodeActiveTabId = () =>
 
 export const useOperationPanelSelectedNodeId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent?.selectedNodeId ?? ''));
+
+export const useOperationPanelSelectedNodeIds = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent?.selectedNodeIds ?? []));
+
+export const useCanWrapSelectedNodes = () =>
+  useSelector((state: RootState) => canWrapSelectedNodes(state.workflow, state.panel.operationContent?.selectedNodeIds ?? []));
+
+export const useIsNodeInMultiSelection = (nodeId: string) =>
+  useSelector(createSelector(getPanelState, (state) => (state.operationContent?.selectedNodeIds ?? []).includes(nodeId)));
 
 export const useOperationPanelSelectedNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));

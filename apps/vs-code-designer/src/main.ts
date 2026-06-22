@@ -1,3 +1,4 @@
+import './nodeUtilCompatibility';
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
@@ -36,8 +37,9 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { startLanguageServerProtocol } from './app/languageServer/languageServer';
+import { startLanguageServer } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
+import { codefulProjectsExist } from './app/utils/codeful';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -163,7 +165,10 @@ export async function activate(context: vscode.ExtensionContext) {
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
 
-    startLanguageServerProtocol();
+    const hasCodefulProjects = await codefulProjectsExist();
+    if (hasCodefulProjects) {
+      startLanguageServer();
+    }
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider

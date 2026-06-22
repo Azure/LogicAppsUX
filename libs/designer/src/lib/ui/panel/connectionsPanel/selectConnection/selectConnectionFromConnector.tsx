@@ -126,6 +126,7 @@ export const SelectConnectionWrapper = ({
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={onConnectionClose}
       isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+      connectionReferences={references}
       addButton={{
         text: isInlineCreatingConnection ? buttonAddingText : buttonAddText,
         disabled: isInlineCreatingConnection,
@@ -148,6 +149,7 @@ export const SelectConnection = ({
   saveSelectionCallback,
   cancelSelectionCallback,
   isXrmConnectionReferenceMode,
+  connectionReferences,
 }: ConnectionTableProps & {
   addButton: {
     text: string;
@@ -192,6 +194,7 @@ export const SelectConnection = ({
     id: 'GtDOFg',
     description: 'Aria label description for cancel button',
   });
+
   return (
     <div className="msla-edit-connection-container">
       {actionBar ? actionBar : null}
@@ -213,6 +216,7 @@ export const SelectConnection = ({
             cancelSelectionCallback={cancelSelectionCallback}
             isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
             shouldRenderDetails={true}
+            connectionReferences={connectionReferences}
           />
         </>
       )}

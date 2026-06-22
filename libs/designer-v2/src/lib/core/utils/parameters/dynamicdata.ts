@@ -113,7 +113,6 @@ export async function getDynamicValues(
       shouldEncodeBasedOnMetadata
     );
 
-    // Thread the selected identity from connectionReference if present
     const selectedIdentity = connectionReference?.connectionProperties?.authentication?.identity;
     return getListDynamicValues(
       connectionReference?.connection.id,
