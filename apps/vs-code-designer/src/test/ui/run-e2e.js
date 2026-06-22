@@ -1826,13 +1826,8 @@ namespace ${namespaceName}
       process.exit(phase10Exit);
     }
 
-    if (e2eMode === 'bundleintegrityonly') {
-      // Pure Node Mocha — no ExTester, no VS Code session needed. Probes
-      // cdn.functions.azure.com to confirm the integrity headers we depend
-      // on are still emitted.
-      const exit = await runMochaPhase('Phase 4.11: bundleCdnHealth', phaseBundleIntegrityFiles);
-      process.exit(exit);
-    }
+    // bundleintegrityonly is handled by the early short-circuit at the top
+    // of main() (search for `earlyMode === 'bundleintegrityonly'`).
 
     if (e2eMode === 'bundlerepaironly') {
       // Phase 4.12 — Real ExTester run. Opens a Standard/Stateful workspace

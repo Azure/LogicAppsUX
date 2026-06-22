@@ -113,7 +113,12 @@ function downloadFileAttempt(url: string, destPath: string): Promise<DownloadAtt
         const contentEncoding = typeof contentEncodingRaw === 'string' ? contentEncodingRaw.trim().toLowerCase() : '';
         const responseIsEncoded = contentEncoding.length > 0 && contentEncoding !== 'identity';
         const contentLengthRaw = headers['content-length'] ?? headers['Content-Length'];
-        const expectedSize = contentLengthRaw === undefined ? undefined : Number.parseInt(String(contentLengthRaw), 10);
+        const parsedSize = contentLengthRaw === undefined ? Number.NaN : Number.parseInt(String(contentLengthRaw), 10);
+        // Coerce non-finite / zero / negative values to undefined so callers
+        // (and telemetry) can reliably distinguish "unknown size" from a real
+        // byte count, and so we don't ship literal "NaN" strings via
+        // String(expectedSize) into Application Insights.
+        const expectedSize = Number.isFinite(parsedSize) && parsedSize > 0 ? parsedSize : undefined;
         const expectedMd5Raw = headers['content-md5'] ?? headers['Content-MD5'];
         const expectedMd5 = typeof expectedMd5Raw === 'string' && expectedMd5Raw.length > 0 ? expectedMd5Raw : undefined;
 
@@ -144,7 +149,7 @@ function downloadFileAttempt(url: string, destPath: string): Promise<DownloadAtt
             // for `decompress: false` is the compressed stream too — but
             // skipping the size check here keeps us safe regardless of which
             // layer ends up decoding). MD5 is still checked when present.
-            if (!responseIsEncoded && expectedSize !== undefined && Number.isFinite(expectedSize) && actualSize !== expectedSize) {
+            if (!responseIsEncoded && expectedSize !== undefined && actualSize !== expectedSize) {
               reject(new DownloadIntegrityError(url, 'size', String(expectedSize), String(actualSize)));
               return;
             }
@@ -179,13 +184,25 @@ function delay(ms: number): Promise<void> {
 }
 
 /**
+ * Timeout (ms) for the HEAD request issued by `fetchExpectedMd5`. Activation
+ * waits on this synchronously when verifying an installed bundle, so a stalled
+ * connection (flaky network, captive portal, mis-configured proxy) must not
+ * be allowed to hang VS Code indefinitely — the caller falls back to the
+ * cached bundle when the CDN cannot be reached promptly.
+ */
+const FETCH_EXPECTED_MD5_TIMEOUT_MS = 30_000;
+
+/**
  * Issues a HEAD request against `url` and returns the published `Content-MD5`
  * (base64) value, if any. Returns `undefined` when the header is missing.
  * Throws when the request itself fails so callers can decide whether to
  * fall back gracefully.
  */
 export async function fetchExpectedMd5(url: string): Promise<string | undefined> {
-  const response = await axios.head(url, { headers: { 'Accept-Encoding': 'identity' } });
+  const response = await axios.head(url, {
+    headers: { 'Accept-Encoding': 'identity' },
+    timeout: FETCH_EXPECTED_MD5_TIMEOUT_MS,
+  });
   const headers = response.headers ?? {};
   const expectedMd5Raw = headers['content-md5'] ?? headers['Content-MD5'];
   if (typeof expectedMd5Raw === 'string' && expectedMd5Raw.length > 0) {

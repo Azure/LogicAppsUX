@@ -459,6 +459,15 @@ function buildProgressTitle(version: string, reason: DownloadReason, baseUrl: st
   const source = describeSource(baseUrl);
   switch (reason) {
     case 'sidecarMissing':
+      // First-run-after-upgrade case (no `.bundle-source-md5` yet) — the
+      // bundle isn't necessarily corrupt, just unverifiable, so we phrase
+      // the toast as "couldn't be verified" rather than "incomplete".
+      return localize(
+        'bundleProgressRedownloadUnverified',
+        'Re-downloading Logic Apps extension bundle {0} from {1} (local copy could not be verified)…',
+        version,
+        source
+      );
     case 'sidecarMismatch':
       return localize(
         'bundleProgressRedownload',
