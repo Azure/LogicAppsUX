@@ -14,6 +14,7 @@ export interface PanelNodeData {
   selectedTab: string | undefined;
   subgraphType: string | undefined;
   tabs: PanelTab[];
+  warningMessage?: string;
 }
 
 export type SearchResultSortOption = 'unsorted' | 'ascending' | 'descending';

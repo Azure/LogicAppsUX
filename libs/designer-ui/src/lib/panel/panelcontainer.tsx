@@ -220,7 +220,7 @@ export const PanelContainer = ({
 
   const renderPanelContents = useCallback(
     (contentsNode: NonNullable<typeof node>, type: 'pinned' | 'selected', isAlternateSelectedNode: boolean): JSX.Element => {
-      const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = contentsNode;
+      const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs, warningMessage } = contentsNode;
       return (
         <div
           className={mergeClasses('msla-panel-layout', `msla-panel-border-${type}`, isAlternateSelectedNode && 'msla-panel-layout-pinned')}
@@ -240,7 +240,16 @@ export const PanelContainer = ({
                 </MessageBarBody>
               </MessageBar>
             ) : (
-              <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
+              <>
+                {warningMessage ? (
+                  <MessageBar intent={'warning'} style={{ marginBottom: '8px' }}>
+                    <MessageBarBody>
+                      <Text>{warningMessage}</Text>
+                    </MessageBarBody>
+                  </MessageBar>
+                ) : null}
+                <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
+              </>
             )}
           </div>
         </div>

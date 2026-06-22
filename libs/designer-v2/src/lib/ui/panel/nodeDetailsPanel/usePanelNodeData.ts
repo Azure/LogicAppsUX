@@ -12,7 +12,7 @@ import { useOperationQuery } from '../../../core/state/selectors/actionMetadataS
 import { useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { usePanelTabs } from './usePanelTabs';
 import type { PanelNodeData } from '@microsoft/designer-ui';
-import { isBuiltInAgentTool } from '@microsoft/logic-apps-shared';
+import { isBuiltInAgentTool, hasInvalidChars } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
 
 // SVG icon for built-in agent tools (code brackets icon: </>)
@@ -55,6 +55,12 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
   const isBuiltInTool = isBuiltInAgentTool(nonNullNodeId);
   const effectiveIconUri = iconUri || (isBuiltInTool ? BUILT_IN_TOOL_ICON_URI : '');
 
+  // Warn if the action name contains characters that break URL paths (ARM proxy limitation)
+  const invalidActionNameChars = [':', '#', '<', '>', '%', '&', '\\', '?', '/'];
+  const warningMessage = hasInvalidChars(nonNullNodeId, invalidActionNameChars)
+    ? 'This action name contains characters that may prevent run history and monitoring data from loading correctly. Consider renaming the action to remove special characters.'
+    : undefined;
+
   return {
     comment,
     displayName,
@@ -70,5 +76,6 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
     selectedTab,
     subgraphType,
     tabs,
+    warningMessage,
   };
 };
