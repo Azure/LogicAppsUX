@@ -810,7 +810,14 @@ export async function assertExtensionBundleOnDiskHealthy(version?: string): Prom
  *
  * Callers without a context (legacy) still get the old await-only behavior.
  */
-export async function ensureExtensionBundleHealthy(context?: IActionContext): Promise<void> {
+interface EnsureExtensionBundleHealthyOptions {
+  requireInstalled?: boolean;
+}
+
+export async function ensureExtensionBundleHealthy(
+  context?: IActionContext,
+  options: EnsureExtensionBundleHealthyOptions = {}
+): Promise<void> {
   await waitForExtensionBundleReady();
   if (lastBundleInstallResult === 'failed') {
     const cause = lastBundleInstallError?.message ?? 'unknown error';
@@ -833,7 +840,20 @@ export async function ensureExtensionBundleHealthy(context?: IActionContext): Pr
   // path (downloadExtensionBundle from main.ts:157) handle first-run
   // bootstrap. We don't want to race that on a fresh install.
   if (initialFailure.reason === 'noBundle' && lastBundleInstallResult === 'unknown') {
-    return;
+    if (!options.requireInstalled || !context) {
+      return;
+    }
+    ext.outputChannel?.appendLog('Logic Apps extension bundle is not installed. Downloading before dependency validation can complete.');
+    await downloadExtensionBundle(context);
+    const postInstallHealth = await assertExtensionBundleOnDiskHealthy();
+    if (postInstallHealth.ok) {
+      return;
+    }
+    const postFailure = postInstallHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
+    const postLabel = postFailure.detail ? `${postFailure.reason} (${postFailure.detail})` : postFailure.reason;
+    throw new Error(
+      `Logic Apps extension bundle is not installed correctly. Install completed but on-disk integrity still failed: ${postLabel}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
+    );
   }
 
   const versionLabel = initialFailure.version ? ` ${initialFailure.version}` : '';

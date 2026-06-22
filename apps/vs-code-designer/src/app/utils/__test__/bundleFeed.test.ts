@@ -1563,6 +1563,45 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
 
     await expect(ensureExtensionBundleHealthy(ctx() as any)).rejects.toThrow(/Logic Apps extension bundle is not installed correctly/);
   });
+
+  it('downloads and verifies the bundle when required mode starts with no local bundle', async () => {
+    let readdirSyncCalls = 0;
+    vi.mocked(fse.readdirSync).mockImplementation((() => {
+      readdirSyncCalls++;
+      return readdirSyncCalls <= 2 ? [] : ['1.50.0'];
+    }) as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', EMPTY_TREE_HASH) as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any, { requireInstalled: true })).resolves.toBeUndefined();
+
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
+  });
+
+  it('rejects required mode when bundle install does not leave a sidecar', async () => {
+    let readdirSyncCalls = 0;
+    vi.mocked(fse.readdirSync).mockImplementation((() => {
+      readdirSyncCalls++;
+      return readdirSyncCalls <= 2 ? [] : ['1.50.0'];
+    }) as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockImplementation(((p: string) => Promise.resolve(!p.endsWith('.bundle-source-md5'))) as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any, { requireInstalled: true })).rejects.toThrow(
+      /on-disk integrity still failed: sidecarMissing/
+    );
+  });
 });
 
 describe('short-circuit verification (envVar / experimental pins)', () => {

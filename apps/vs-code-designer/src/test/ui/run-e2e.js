@@ -16,6 +16,7 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 const { exec, execSync } = require('child_process');
 const { ExTester } = require('vscode-extension-tester');
 
@@ -39,12 +40,122 @@ if (process.env.E2E_VSCODE_VERSION && process.env.CODE_VERSION && process.env.E2
 const VSCODE_VERSION = process.env.E2E_VSCODE_VERSION || process.env.CODE_VERSION || DEFAULT_VSCODE_VERSION;
 process.env.CODE_VERSION = VSCODE_VERSION;
 const DOWNLOAD_RETRY_ATTEMPTS = 3;
+const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
+const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
 
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
 // would destroy cached marketplace extension installs.
 const extDir = path.join(os.tmpdir(), 'test-resources', 'test-extensions');
 const testGlob = path.resolve(projectDir, 'out', 'test', '*.js').replace(/\\/g, '/');
+
+function compareSemverDesc(a, b) {
+  const pa = a.split('.').map((part) => Number.parseInt(part, 10));
+  const pb = b.split('.').map((part) => Number.parseInt(part, 10));
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const diff = (pb[i] || 0) - (pa[i] || 0);
+    if (diff !== 0) {
+      return diff;
+    }
+  }
+  return 0;
+}
+
+function findLatestExtensionBundle() {
+  if (!fs.existsSync(EXTENSION_BUNDLE_ROOT)) {
+    return undefined;
+  }
+  const versions = fs
+    .readdirSync(EXTENSION_BUNDLE_ROOT)
+    .filter((name) => {
+      const fullPath = path.join(EXTENSION_BUNDLE_ROOT, name);
+      return /^\d+\.\d+\.\d+/.test(name) && fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
+    })
+    .sort(compareSemverDesc);
+  const version = versions[0];
+  if (!version) {
+    return undefined;
+  }
+  const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+  return {
+    version,
+    bundleDir,
+    sidecarPath: path.join(bundleDir, BUNDLE_SIDECAR_FILE),
+  };
+}
+
+function listBundleFiles(bundleDir) {
+  const files = [];
+  const stack = [bundleDir];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const fullPath = path.join(current, entry.name);
+      const relPath = path.relative(bundleDir, fullPath).split(path.sep).join('/');
+      if (relPath === BUNDLE_SIDECAR_FILE) {
+        continue;
+      }
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+      } else if (entry.isFile()) {
+        files.push({ relPath, fullPath });
+      }
+    }
+  }
+  files.sort((a, b) => (a.relPath < b.relPath ? -1 : a.relPath > b.relPath ? 1 : 0));
+  return files;
+}
+
+function computeBundleContentHash(bundleDir, files) {
+  const hash = crypto.createHash('sha256');
+  const nul = Buffer.from([0]);
+  for (const file of files) {
+    const stat = fs.statSync(file.fullPath);
+    hash.update(Buffer.from(file.relPath, 'utf8'));
+    hash.update(nul);
+    hash.update(Buffer.from(String(stat.size), 'utf8'));
+    hash.update(nul);
+    hash.update(fs.readFileSync(file.fullPath));
+    hash.update(nul);
+  }
+  return hash.digest('base64');
+}
+
+function verifyLogicAppsExtensionBundle(label) {
+  const state = findLatestExtensionBundle();
+  if (!state) {
+    throw new Error(`[${label}] Logic Apps extension bundle root is missing or has no version folders: ${EXTENSION_BUNDLE_ROOT}`);
+  }
+  if (!fs.existsSync(state.sidecarPath)) {
+    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing: ${state.sidecarPath}`);
+  }
+
+  let sidecar;
+  try {
+    sidecar = JSON.parse(fs.readFileSync(state.sidecarPath, 'utf8'));
+  } catch (error) {
+    throw new Error(`[${label}] Logic Apps extension bundle sidecar is not valid JSON: ${error.message}`);
+  }
+  if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
+    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing sourceMd5/contentHash: ${state.sidecarPath}`);
+  }
+
+  const files = listBundleFiles(state.bundleDir);
+  if (files.length === 0) {
+    throw new Error(`[${label}] Logic Apps extension bundle directory is empty: ${state.bundleDir}`);
+  }
+  const contentHash = computeBundleContentHash(state.bundleDir, files);
+  if (contentHash !== sidecar.contentHash) {
+    throw new Error(
+      `[${label}] Logic Apps extension bundle content hash mismatch for ${state.bundleDir}: expected ${sidecar.contentHash}, got ${contentHash}`
+    );
+  }
+  console.log(
+    `[${label}] Logic Apps extension bundle healthy: version=${state.version}, files=${files.length}, sidecar=${state.sidecarPath}`
+  );
+  return state;
+}
 
 function createExTester() {
   return new ExTester(
@@ -1842,7 +1953,13 @@ namespace ${namespaceName}
         if (!monolithic && fileList.length !== 1) {
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
         }
+        if (process.env.LA_E2E_BUNDLE_PREFLIGHT === '1') {
+          verifyLogicAppsExtensionBundle(`preflight:${id}`);
+        }
         const exit = await runPhase(`Scenario ${id}`, fileList, { resources });
+        if (exit === 0 && id === 'p41a-fixtures') {
+          verifyLogicAppsExtensionBundle('p41a-fixtures');
+        }
         // Restore env overrides so subsequent scenarios aren't contaminated.
         for (const { key, prev } of envOverridesApplied) {
           if (prev === undefined) {

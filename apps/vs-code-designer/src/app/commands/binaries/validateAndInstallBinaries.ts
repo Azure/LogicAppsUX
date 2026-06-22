@@ -21,8 +21,13 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
+function shouldRequireStrictDependencyValidation(): boolean {
+  return process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1';
+}
+
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
+  const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
 
   await vscode.window.withProgress(
     {
@@ -112,7 +117,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         // than let func.exe spawn against a missing/corrupt bundle.
         context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
         progress.report({ increment: 5, message: 'Extension Bundle' });
-        await ensureExtensionBundleHealthy(context);
+        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation });
 
         ext.outputChannel.appendLog(
           localize(
@@ -121,16 +126,20 @@ export async function validateAndInstallBinaries(context: IActionContext) {
           )
         );
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         ext.outputChannel.appendLog(
-          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error?.message)
+          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', errorMessage)
         );
-        context.telemetry.properties.dependenciesError = error?.message;
+        context.telemetry.properties.dependenciesError = errorMessage;
         vscode.window.showErrorMessage(
           localize(
             'binariesTroubleshoot',
             `The Validation and Installation of Runtime Dependencies encountered an error. To resolve this issue, please click [here](${helpLink}) to access our troubleshooting documentation for step-by-step instructions.`
           )
         );
+        if (requireStrictDependencyValidation) {
+          throw error;
+        }
       }
     }
   );

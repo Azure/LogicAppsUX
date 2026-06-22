@@ -205,7 +205,6 @@ jobs:
           key: la-runtime-deps-${{ runner.os }}-v1
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
-          save-always: true
 
       - name: Run fixtures scenario (p41a-fixtures)
         run: |
@@ -214,12 +213,46 @@ jobs:
             node apps/vs-code-designer/src/test/ui/run-e2e.js
         env:
           LA_E2E_SCENARIO: p41a-fixtures
+          LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
           NODE_OPTIONS: --max-old-space-size=4096
           # Node's os.tmpdir() honors TMPDIR/TMP/TEMP on Linux; setting TEMP
           # pins workspace + manifest creation under $RUNNER_TEMP/la-e2e-test
           # so the artifact upload below has a stable, scoped path.
           TEMP: ${{ runner.temp }}
           TMPDIR: ${{ runner.temp }}
+
+      - name: Verify Logic Apps extension bundle sidecar
+        run: |
+          BUNDLE_ROOT="${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows"
+          node - "$BUNDLE_ROOT" <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const root = process.argv[2];
+          if (!fs.existsSync(root)) {
+            throw new Error(`Bundle root missing: ${root}`);
+          }
+          const versions = fs.readdirSync(root)
+            .filter((name) => /^\d+\.\d+\.\d+/.test(name) && fs.statSync(path.join(root, name)).isDirectory())
+            .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+          if (versions.length === 0) {
+            throw new Error(`No bundle version folders under ${root}`);
+          }
+          const bundleDir = path.join(root, versions[0]);
+          const sidecarPath = path.join(bundleDir, '.bundle-source-md5');
+          if (!fs.existsSync(sidecarPath)) {
+            throw new Error(`Bundle sidecar missing: ${sidecarPath}`);
+          }
+          const sidecar = JSON.parse(fs.readFileSync(sidecarPath, 'utf8'));
+          if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
+            throw new Error(`Bundle sidecar missing sourceMd5/contentHash: ${sidecarPath}`);
+          }
+          const entries = fs.readdirSync(bundleDir).filter((name) => name !== '.bundle-source-md5');
+          if (entries.length === 0) {
+            throw new Error(`Bundle directory has no extracted content: ${bundleDir}`);
+          }
+          console.log(`Bundle verified: ${bundleDir}`);
+          console.log(`Sidecar: ${sidecarPath}`);
+          NODE
 
       - name: Verify fixtures manifest exists
         run: |
@@ -236,11 +269,25 @@ jobs:
         run: |
           tar -czf workspace-fixtures.tar.gz -C "${RUNNER_TEMP}" la-e2e-test
 
+      - name: Tar Logic Apps extension bundle
+        run: |
+          tar -czf logic-apps-extension-bundle.tar.gz \
+            -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles" \
+            Microsoft.Azure.Functions.ExtensionBundle.Workflows
+
       - name: Upload workspace fixtures artifact
         uses: actions/upload-artifact@v4
         with:
           name: workspace-fixtures-${{ github.sha }}
           path: workspace-fixtures.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Upload Logic Apps extension bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: logic-apps-extension-bundle-${{ github.sha }}
+          path: logic-apps-extension-bundle.tar.gz
           retention-days: 1
           if-no-files-found: error
 
@@ -368,6 +415,20 @@ jobs:
             cat "${RUNNER_TEMP}/la-e2e-test/created-workspaces.json"
           fi
 
+      - name: Download Logic Apps extension bundle artifact
+        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        uses: actions/download-artifact@v4
+        with:
+          name: logic-apps-extension-bundle-${{ github.sha }}
+          path: .
+
+      - name: Extract Logic Apps extension bundle
+        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        run: |
+          mkdir -p "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
+          tar -xzf logic-apps-extension-bundle.tar.gz -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
+          find "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows" -maxdepth 2 -type f -name '.bundle-source-md5' -print
+
       - name: Install system dependencies for virtual display
         run: |
           sudo apt-get update
@@ -402,6 +463,7 @@ jobs:
         env:
           # Per-scenario matrix: each shard runs exactly one scenarios[] entry.
           LA_E2E_SCENARIO: ${{ matrix.scenario }}
+          LA_E2E_BUNDLE_PREFLIGHT: ${{ (matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior') && '1' || '0' }}
           NODE_OPTIONS: --max-old-space-size=4096
           # Pin os.tmpdir() so the bootstrapper finds the manifest the
           # setup-fixtures job uploaded (same RUNNER_TEMP layout).
