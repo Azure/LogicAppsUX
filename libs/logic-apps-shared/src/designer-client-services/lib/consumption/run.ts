@@ -181,7 +181,7 @@ export class ConsumptionRunService implements IRunService {
     const headers = this.getAccessTokenHeaders();
 
     const filter = status ? `&$filter=status eq '${status}'` : '';
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/scopeRepetitions?api-version=${apiVersion}${filter}`;
 
     try {
       const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
@@ -262,7 +262,7 @@ export class ConsumptionRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/agentRepetitions/${repetitionId}?api-version=${apiVersion}`;
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
@@ -290,7 +290,7 @@ export class ConsumptionRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/agentRepetitions?api-version=${apiVersion}`;
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition[]>({
@@ -316,7 +316,7 @@ export class ConsumptionRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/agentRepetitions/${repetitionId}/actions?api-version=${apiVersion}`;
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
@@ -366,7 +366,7 @@ export class ConsumptionRunService implements IRunService {
     const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/repetitions/${repetitionId}?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
@@ -388,7 +388,7 @@ export class ConsumptionRunService implements IRunService {
     const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/repetitions?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition[]>({
         uri,
@@ -553,7 +553,7 @@ export class ConsumptionRunService implements IRunService {
     const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/chatHistory?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<any>({
         uri,

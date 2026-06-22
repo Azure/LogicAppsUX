@@ -44,7 +44,7 @@ describe('StandardRunService', () => {
 
     it('should construct correct filter query parameter when status is provided', async () => {
       const status = 'Succeeded';
-      const expectedUri = `${mockOptions.baseUrl}${mockAction.runId}/actions/${mockAction.nodeId}/scopeRepetitions`;
+      const expectedUri = `${mockOptions.baseUrl}${mockAction.runId}/actions/${encodeURIComponent(mockAction.nodeId)}/scopeRepetitions`;
 
       vi.mocked(mockHttpClient.get).mockResolvedValue(mockRepetitionsResponse);
 

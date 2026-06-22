@@ -178,7 +178,7 @@ export class StandardRunService implements IRunService {
     if (status) {
       queryParameters['$filter'] = `status eq '${status}'`;
     }
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/scopeRepetitions`;
 
     try {
       if (isHybridLogicApp(uri)) {
@@ -261,7 +261,7 @@ export class StandardRunService implements IRunService {
   ): Promise<LogicAppsV2.RunRepetition> {
     const { nodeId, runId } = action;
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/agentRepetitions/${repetitionId}`;
 
     try {
       if (isHybridLogicApp(uri)) {
@@ -289,7 +289,7 @@ export class StandardRunService implements IRunService {
   async getAgentRepetitions(action: { nodeId: string; runId: string | undefined }): Promise<LogicAppsV2.RunRepetition[]> {
     const { nodeId, runId } = action;
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/agentRepetitions`;
     try {
       if (isHybridLogicApp(uri)) {
         return this.fetchHybridLogicAppRunRepetitions(uri, 'GET', httpClient);
@@ -318,7 +318,7 @@ export class StandardRunService implements IRunService {
   async getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any> {
     const { nodeId, runId } = action;
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/agentRepetitions/${repetitionId}/actions`;
 
     try {
       if (isHybridLogicApp(uri)) {
@@ -368,7 +368,7 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/repetitions/${repetitionId}`;
 
     try {
       if (isHybridLogicApp(uri)) {
@@ -393,7 +393,7 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/repetitions`;
 
     try {
       if (isHybridLogicApp(uri)) {
@@ -558,7 +558,7 @@ export class StandardRunService implements IRunService {
   async getActionChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory`;
+    const uri = `${baseUrl}${runId}/actions/${encodeURIComponent(nodeId)}/chatHistory`;
 
     try {
       if (isHybridLogicApp(uri)) {
