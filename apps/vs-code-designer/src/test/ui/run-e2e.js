@@ -1127,6 +1127,20 @@ async function main() {
       workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'appDir' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
+
+    // Phase 4.12 — On-disk bundle repair / integrity gate (Phase 14 code path).
+    // Reuses a Standard/Stateful workspace from the fixtures manifest, lets the
+    // initial bundle install, deletes a couple .dll files from inside the
+    // installed bundle, invokes the validate-and-install-binaries command, and
+    // asserts the bundle is repaired on disk (sidecar back, .dlls back,
+    // recomputed content hash matches sidecar). autoStartDesignTime is OFF so
+    // func.exe does not lock the .dlls we tamper with.
+    {
+      id: 'p412-bundlerepair',
+      testFile: phaseBundleRepairFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
   ];
 
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();

@@ -288,6 +288,9 @@ jobs:
           - p48c-multipledesigners
           - p48d-conversionyes
           - p48e-conversionsubfolder
+          # Bundle on-disk repair / integrity gate (Phase 14 code path).
+          # Consumes the standard/Stateful fixture from setup-fixtures.
+          - p412-bundlerepair
 
     steps:
       - name: Checkout
