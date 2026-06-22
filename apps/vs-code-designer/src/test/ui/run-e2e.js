@@ -955,6 +955,13 @@ async function main() {
   // does a small live download through the verifier helper.
   const phaseBundleIntegrityFiles = [testFile('bundleCdnHealth.test.js')];
 
+  // Phase 4.12 — Bundle on-disk repair E2E. Real ExTester / VS Code session.
+  // Reproduces the user-reported regression (deleting files from inside an
+  // installed bundle is detected on next validate-and-install, repaired
+  // synchronously, and the sidecar is rewritten so the cached hash matches
+  // disk). See bundleRepair.test.ts for the full scenario.
+  const phaseBundleRepairFiles = [testFile('bundleRepair.test.js')];
+
   // ------------------------------------------------------------------
   // Per-scenario inventory (Phase A scaffold).
   //
@@ -1811,6 +1818,28 @@ namespace ${namespaceName}
       // on are still emitted.
       const exit = await runMochaPhase('Phase 4.11: bundleCdnHealth', phaseBundleIntegrityFiles);
       process.exit(exit);
+    }
+
+    if (e2eMode === 'bundlerepaironly') {
+      // Phase 4.12 — Real ExTester run. Opens a Standard/Stateful workspace
+      // from the prior Phase 4.1 manifest, lets the activation install the
+      // bundle, deletes a few .dll files from inside the installed bundle
+      // dir, runs the validate-and-install command, and asserts the on-disk
+      // bundle is repaired (deleted files restored + sidecar rewritten with
+      // a content hash that matches disk).
+      await downloadExTesterAssets(extest);
+      // validateDependencies must be ON so the integrity gate actually runs
+      // during activation + when we invoke the validate command. We disable
+      // autoStartDesignTime so func.exe doesn't take a file lock on .dlls
+      // inside the bundle bin folder — that would block our tamper step.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+
+      await prepareFreshSession('phase12-bundlerepair-only');
+      const phase12Resources = getPhase2Resources();
+      const phase12Exit = await runPhase('Phase 4.12: bundleRepair', phaseBundleRepairFiles, {
+        resources: phase12Resources,
+      });
+      process.exit(phase12Exit);
     }
 
     if (e2eMode === 'nonlogicappstartup') {
