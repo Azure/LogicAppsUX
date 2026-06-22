@@ -202,7 +202,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v2
+          key: la-runtime-deps-${{ runner.os }}-v1
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
           save-always: true
@@ -377,7 +377,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v2
+          key: la-runtime-deps-${{ runner.os }}-v1
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
 

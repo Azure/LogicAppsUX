@@ -152,7 +152,6 @@ function findFileMatching(root: string, predicate: (rel: string) => boolean, lim
 /** Computes SHA256 of all files under root (sorted) — same algorithm as `computeBundleContentHash`. */
 function computeBundleContentHashSync(root: string): string {
   const hash = crypto.createHash('sha256');
-  const nul = Buffer.from([0]);
   const stack: string[] = [root];
   const files: { rel: string; abs: string }[] = [];
   while (stack.length > 0) {
@@ -178,14 +177,11 @@ function computeBundleContentHashSync(root: string): string {
   }
   files.sort((a, b) => (a.rel < b.rel ? -1 : a.rel > b.rel ? 1 : 0));
   for (const f of files) {
-    const stat = fs.statSync(f.abs);
-    hash.update(Buffer.from(f.rel, 'utf8'));
-    hash.update(nul);
-    hash.update(Buffer.from(String(stat.size), 'utf8'));
-    hash.update(nul);
+    hash.update(f.rel);
+    hash.update('\0');
     const buf = fs.readFileSync(f.abs);
     hash.update(buf);
-    hash.update(nul);
+    hash.update('\0');
   }
   return hash.digest('base64');
 }
