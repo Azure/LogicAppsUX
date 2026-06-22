@@ -236,7 +236,7 @@ export const isOperationNameValid = (
     return { isValid: false, message: messages.DEFAULT };
   }
 
-  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':'])) {
+  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '<', '>', '%', '&', '\\', '?', '/'])) {
     return { isValid: false, message: messages.DEFAULT };
   }
 
