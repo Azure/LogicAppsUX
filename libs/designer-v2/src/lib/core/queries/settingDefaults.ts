@@ -1,4 +1,8 @@
-import { OperationManifestService, isSettingDefaultsSkippedOperationType } from '@microsoft/logic-apps-shared';
+import {
+  OperationManifestService,
+  enableOperationSettingDefaults,
+  isSettingDefaultsSkippedOperationType,
+} from '@microsoft/logic-apps-shared';
 import type { Settings, SettingData } from '../actions/bjsworkflow/settings';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import Constants from '../../common/constants';
@@ -71,6 +75,11 @@ export const applySettingDefaults = async (
 ): Promise<Settings> => {
   // Operation types with no retry policy have nothing to fetch — skip the round trip entirely.
   if (isSettingDefaultsSkippedOperationType(operationType)) {
+    return settings;
+  }
+  // Backend-dependent feature: gated behind an experimentation flag so the UI can ship ahead of
+  // full backend availability without firing 404s, and so it can be killed without a redeploy.
+  if (!(await enableOperationSettingDefaults())) {
     return settings;
   }
   const defaults = await fetchSettingDefaults(connectorId, operationId, getSupportedSettingKeys(settings), workflowKind, operationType);

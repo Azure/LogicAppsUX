@@ -1,6 +1,6 @@
 import { applySettingDefaults, fetchSettingDefaults, getSupportedSettingKeys, mergeSettingDefaults } from '../settingDefaults';
 import { getReactQueryClient } from '../../ReactQueryProvider';
-import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
+import { InitExperimentationServiceService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 
@@ -171,6 +171,12 @@ describe('settingDefaults', () => {
   });
 
   describe('applySettingDefaults', () => {
+    beforeEach(() => {
+      // applySettingDefaults is gated behind the experimentation flag; enable it by default so the
+      // fetch/merge behavior is exercised. Individual tests override this to assert the gate.
+      InitExperimentationServiceService({ isFeatureEnabled: vi.fn().mockResolvedValue(true), getFeatureValue: vi.fn() } as any);
+    });
+
     it('returns the settings unchanged when there are no fetched defaults', async () => {
       InitOperationManifestService({} as any);
 
@@ -214,6 +220,19 @@ describe('settingDefaults', () => {
       await applySettingDefaults(settings, 'connectionProviders/http', 'httpaction', 'stateful', 'Http');
 
       expect(spy).toHaveBeenCalledWith('connectionProviders/http', 'httpaction', ['retryPolicy'], 'stateful', 'Http');
+    });
+
+    it('does not fetch when the experimentation flag is disabled', async () => {
+      InitExperimentationServiceService({ isFeatureEnabled: vi.fn().mockResolvedValue(false), getFeatureValue: vi.fn() } as any);
+      const spy = vi.fn().mockResolvedValue({ retryPolicy: { value: { type: 'default' } } });
+      InitOperationManifestService({ getSettingDefaults: spy } as any);
+
+      const settings = { retryPolicy: { isSupported: true, value: undefined } } as unknown as Settings;
+
+      const result = await applySettingDefaults(settings, 'connectionProviders/http', 'httpaction', 'stateful', 'Http');
+
+      expect(result).toBe(settings);
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 });
