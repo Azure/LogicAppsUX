@@ -60,6 +60,7 @@ const EXTENSION_BUNDLE_DIR = path.join(
 );
 const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
 const VALIDATE_DEPENDENCIES_COMMAND = 'Azure Logic Apps: Validate and install dependency binaries';
+const VS_CODE_LOGS_DIR = path.join(os.tmpdir(), 'test-resources', 'settings', 'logs');
 
 function compareSemverDesc(a: string, b: string): number {
   const pa = a.split('.').map((part) => Number.parseInt(part, 10));
@@ -163,6 +164,96 @@ function assertWorkflowsBundleSidecarReady(): void {
     throw new Error(
       `[fixtures:setup] Logic Apps extension bundle content hash mismatch: ${bundle.bundleDir} sidecar=${sidecar.contentHash} actual=${contentHash}`
     );
+  }
+}
+
+function dumpBundleDirectoryState(label: string): void {
+  console.log(`[fixtures:setup] ${label}: bundle root=${EXTENSION_BUNDLE_DIR}`);
+  if (!fs.existsSync(EXTENSION_BUNDLE_DIR)) {
+    console.log(`[fixtures:setup] ${label}: bundle root is missing`);
+    return;
+  }
+
+  const versions = fs
+    .readdirSync(EXTENSION_BUNDLE_DIR)
+    .filter((entry) => {
+      const fullPath = path.join(EXTENSION_BUNDLE_DIR, entry);
+      return fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
+    })
+    .sort(compareSemverDesc);
+  console.log(`[fixtures:setup] ${label}: versions=[${versions.join(', ')}]`);
+
+  for (const version of versions.slice(0, 5)) {
+    const bundleDir = path.join(EXTENSION_BUNDLE_DIR, version);
+    const sidecarPath = path.join(bundleDir, BUNDLE_SIDECAR_FILE);
+    const entries = fs.readdirSync(bundleDir).slice(0, 30);
+    console.log(`[fixtures:setup] ${label}: version=${version}, sidecar=${fs.existsSync(sidecarPath)}, entries=[${entries.join(', ')}]`);
+  }
+}
+
+function listFilesRecursive(root: string, limit = 200): string[] {
+  const files: string[] = [];
+  const stack = [root];
+  while (stack.length > 0 && files.length < limit) {
+    const current = stack.pop();
+    if (!current) {
+      continue;
+    }
+
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const fullPath = path.join(current, entry.name);
+      if (entry.isFile()) {
+        files.push(fullPath);
+      }
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+      }
+      if (files.length >= limit) {
+        break;
+      }
+    }
+  }
+  return files;
+}
+
+function dumpRelevantVSCodeLogs(label: string): void {
+  if (!fs.existsSync(VS_CODE_LOGS_DIR)) {
+    console.log(`[fixtures:setup] ${label}: VS Code logs dir is missing: ${VS_CODE_LOGS_DIR}`);
+    return;
+  }
+
+  const candidates = listFilesRecursive(VS_CODE_LOGS_DIR)
+    .filter((file) => /\.(log|txt)$/i.test(file))
+    .map((file) => ({ file, mtimeMs: fs.statSync(file).mtimeMs }))
+    .sort((a, b) => b.mtimeMs - a.mtimeMs)
+    .slice(0, 30);
+
+  console.log(`[fixtures:setup] ${label}: scanning ${candidates.length} recent VS Code log files under ${VS_CODE_LOGS_DIR}`);
+  let dumped = 0;
+  for (const { file } of candidates) {
+    const raw = fs.readFileSync(file, 'utf8');
+    if (!/Logic Apps|extension bundle|Runtime Dependencies|dependencies validation|validateAndInstallBinaries/i.test(raw)) {
+      continue;
+    }
+    const relativePath = path.relative(VS_CODE_LOGS_DIR, file);
+    console.log(`[fixtures:setup] ${label}: log tail from ${relativePath}\n${raw.slice(-6000)}`);
+    dumped++;
+  }
+
+  if (dumped === 0) {
+    console.log(`[fixtures:setup] ${label}: no recent VS Code logs contained Logic Apps dependency markers`);
+  }
+}
+
+async function captureSetupDiagnostics(label: string, driver: WebDriver): Promise<void> {
+  dumpBundleDirectoryState(label);
+  dumpRelevantVSCodeLogs(label);
+  try {
+    await driver.switchTo().defaultContent();
+    await captureScreenshot(driver, `fixtures-setup-${label.replace(/[^a-z0-9_-]+/gi, '-')}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`[fixtures:setup] ${label}: screenshot capture failed: ${message}`);
   }
 }
 
@@ -297,10 +388,17 @@ describe('Create Workspace Fixtures', function () {
     console.log('[fixtures:setup] Extension is ready');
 
     if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
-      console.log('[fixtures:setup] Strict dependency validation enabled; invoking product validation before fixtures...');
-      await validateDependenciesThroughProductCommand(workbench, driver);
-      await waitForWorkflowsBundleSidecarReady();
-      console.log('[fixtures:setup] Dependency/bundle validation produced a bundle sidecar before fixture creation');
+      try {
+        console.log('[fixtures:setup] Strict dependency validation enabled; invoking product validation before fixtures...');
+        dumpBundleDirectoryState('before-product-validation');
+        await validateDependenciesThroughProductCommand(workbench, driver);
+        dumpBundleDirectoryState('after-product-validation-command-returned');
+        await waitForWorkflowsBundleSidecarReady();
+        console.log('[fixtures:setup] Dependency/bundle validation produced a bundle sidecar before fixture creation');
+      } catch (error: unknown) {
+        await captureSetupDiagnostics('strict-validation-failed', driver);
+        throw error;
+      }
     }
 
     // Clear any stale manifest from a previous run so this run starts fresh.
