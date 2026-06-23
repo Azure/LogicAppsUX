@@ -177,7 +177,10 @@ function computeBundleContentHashSync(root: string): string {
   }
   files.sort((a, b) => (a.rel < b.rel ? -1 : a.rel > b.rel ? 1 : 0));
   for (const f of files) {
+    const stat = fs.statSync(f.abs);
     hash.update(f.rel);
+    hash.update('\0');
+    hash.update(String(stat.size));
     hash.update('\0');
     const buf = fs.readFileSync(f.abs);
     hash.update(buf);
