@@ -984,6 +984,11 @@ async function main() {
     }
 
     try {
+      const rootBinDir = path.join(nodeJsRoot, 'bin');
+      if (fs.existsSync(path.join(rootBinDir, 'node'))) {
+        return rootBinDir;
+      }
+
       const nodeSubfolder = fs
         .readdirSync(nodeJsRoot, { withFileTypes: true })
         .find((entry) => entry.isDirectory() && entry.name.includes('node'))?.name;
