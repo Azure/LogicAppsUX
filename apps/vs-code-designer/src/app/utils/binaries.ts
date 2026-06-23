@@ -956,12 +956,7 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
         // Clear the failed partial extract before retrying.
         cleanDirectory(targetFolder);
       }
-      await executeCommand(
-        ext.outputChannel,
-        undefined,
-        'echo',
-        `Extracting ${dependencyFilePath} (attempt ${attempt}/${MAX_EXTRACT_ATTEMPTS})`
-      );
+      ext.outputChannel.appendLog(`Extracting ${dependencyFilePath} (attempt ${attempt}/${MAX_EXTRACT_ATTEMPTS})`);
       if (dependencyFilePath.endsWith('.zip')) {
         const zip = new AdmZip(dependencyFilePath);
         zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
