@@ -270,8 +270,9 @@ describe('Create Workspace Fixtures', function () {
     console.log('[fixtures:setup] Extension is ready');
 
     if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
-      console.log('[fixtures:setup] Strict dependency validation enabled; invoking dependency/bundle validation before fixtures...');
-      await workbench.executeCommand('Azure Logic Apps: Validate and install dependency binaries');
+      console.log(
+        '[fixtures:setup] Strict dependency validation enabled; verifying activation produced a healthy bundle before fixtures...'
+      );
       await waitForWorkflowsBundleSidecarReady();
       console.log('[fixtures:setup] Dependency/bundle validation produced a bundle sidecar before fixture creation');
     }

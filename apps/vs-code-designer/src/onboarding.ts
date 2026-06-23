@@ -23,11 +23,19 @@ import { ext } from './extensionVariables';
 export const startOnboarding = async (activateContext: IActionContext) => {
   const isDevContainer = await isDevContainerWorkspace();
   activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
+  const requireStrictDependencyValidation = process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1';
 
   if (isDevContainer) {
     activateContext.telemetry.properties.skippedDependencyOnboarding = 'true';
     activateContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
     ext.outputChannel.appendLog('Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.');
+  } else if (requireStrictDependencyValidation) {
+    const binariesInstallStartTime = Date.now();
+    await runWithDurationTelemetry(activateContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
+      activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
+      await installBinaries(activateContext);
+    });
+    activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
   } else {
     await callWithTelemetryAndErrorHandling(
       autoRuntimeDependenciesValidationAndInstallationSetting,

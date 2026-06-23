@@ -21,15 +21,28 @@ export const useBinariesDependencies = async (): Promise<boolean> => {
   return !!binariesInstallation;
 };
 
+function shouldRequireStrictDependencyValidation(): boolean {
+  return process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1';
+}
+
+async function validateRuntimeDependencies(actionContext: IActionContext, activateContext: IActionContext): Promise<void> {
+  await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
+    const binariesInstallation = await useBinariesDependencies();
+    if (binariesInstallation) {
+      activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
+      await validateAndInstallBinaries(actionContext);
+      await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
+    }
+  });
+}
+
 export const onboardBinaries = async (activateContext: IActionContext) => {
+  if (shouldRequireStrictDependencyValidation()) {
+    await validateRuntimeDependencies(activateContext, activateContext);
+    return;
+  }
+
   await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
-      const binariesInstallation = await useBinariesDependencies();
-      if (binariesInstallation) {
-        activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
-        await validateAndInstallBinaries(actionContext);
-        await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
-      }
-    });
+    await validateRuntimeDependencies(actionContext, activateContext);
   });
 };
