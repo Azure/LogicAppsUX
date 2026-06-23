@@ -151,16 +151,20 @@ export async function activate(context: vscode.ExtensionContext) {
       await convertToWorkspace(activateContext);
     }
 
-    // Intentionally not awaited so activation stays snappy. Downstream code
-    // that depends on the extracted bundle (startDesignTimeApi) calls
-    // waitForExtensionBundleReady() to block on the in-flight work and avoid
-    // racing the re-extract — which on Windows can lock the bundle folder and
-    // leave the design-time host pointing at a half-extracted bundle.
-    downloadExtensionBundle(activateContext).catch((error) => {
-      ext.outputChannel?.appendLog(
-        `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
-      );
-    });
+    if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+      await downloadExtensionBundle(activateContext);
+    } else {
+      // Intentionally not awaited so activation stays snappy. Downstream code
+      // that depends on the extracted bundle (startDesignTimeApi) calls
+      // waitForExtensionBundleReady() to block on the in-flight work and avoid
+      // racing the re-extract — which on Windows can lock the bundle folder and
+      // leave the design-time host pointing at a half-extracted bundle.
+      downloadExtensionBundle(activateContext).catch((error) => {
+        ext.outputChannel?.appendLog(
+          `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
+        );
+      });
+    }
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
