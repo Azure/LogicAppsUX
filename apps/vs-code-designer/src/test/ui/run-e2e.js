@@ -1281,7 +1281,7 @@ async function main() {
       id: 'p41b-createworkspace-behavior',
       testFile: phase1Files,
       workspaceSpec: 'self-creates',
-      settings: { validateDependencies: true, autoStartDesignTime: true },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
       monolithic: true,
     },
 

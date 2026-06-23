@@ -392,7 +392,7 @@ jobs:
       - name: Extract build artifacts
         run: tar -xzf extension-build.tar.gz
 
-      # Scenarios that self-create their workspaces skip the fixtures download:
+      # Scenarios that self-create their workspaces skip the workspace fixtures download:
       #   - p40-nonlogicapp        (plain folder, no workspace)
       #   - p48b-conversioncreate  (builds its own legacy fixture)
       #   - p41b-createworkspace-behavior (full 12-shape wizard run)
@@ -416,14 +416,14 @@ jobs:
           fi
 
       - name: Download Logic Apps extension bundle artifact
-        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate'
         uses: actions/download-artifact@v4
         with:
           name: logic-apps-extension-bundle-${{ github.sha }}
           path: .
 
       - name: Extract Logic Apps extension bundle
-        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate'
         run: |
           mkdir -p "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
           tar -xzf logic-apps-extension-bundle.tar.gz -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
@@ -463,7 +463,7 @@ jobs:
         env:
           # Per-scenario matrix: each shard runs exactly one scenarios[] entry.
           LA_E2E_SCENARIO: ${{ matrix.scenario }}
-          LA_E2E_BUNDLE_PREFLIGHT: ${{ (matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior') && '1' || '0' }}
+          LA_E2E_BUNDLE_PREFLIGHT: ${{ (matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate') && '1' || '0' }}
           NODE_OPTIONS: --max-old-space-size=4096
           # Pin os.tmpdir() so the bootstrapper finds the manifest the
           # setup-fixtures job uploaded (same RUNNER_TEMP layout).
