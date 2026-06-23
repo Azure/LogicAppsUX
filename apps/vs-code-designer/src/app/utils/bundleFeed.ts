@@ -244,11 +244,14 @@ async function writeBundleSidecar(version: string, sourceMd5: string, contentHas
   try {
     await fse.outputFile(sidecarPath, JSON.stringify(payload), 'utf8');
   } catch (writeError) {
-    if (ext.outputChannel) {
-      ext.outputChannel.appendLog(
-        localize('bundleSidecarWriteFailed', 'Failed to write extension-bundle MD5 sidecar at "{0}": {1}', sidecarPath, String(writeError))
-      );
-    }
+    const message = localize(
+      'bundleSidecarWriteFailed',
+      'Failed to write extension-bundle MD5 sidecar at "{0}": {1}',
+      sidecarPath,
+      String(writeError)
+    );
+    ext.outputChannel?.appendLog(message);
+    throw new Error(message);
   }
 }
 
@@ -353,7 +356,7 @@ async function downloadBundleAndWriteSidecar(context: IActionContext, baseUrl: s
   const zipUrl = buildExtensionBundleZipUrl(baseUrl, version);
   const result = await downloadAndExtractDependency(context, zipUrl, defaultExtensionBundlePathValue, extensionBundleId, version);
   if (!result?.actualMd5) {
-    return;
+    throw new Error(`Bundle ${version} was downloaded but no source MD5 was available. Refusing to install without a sidecar.`);
   }
   const bundleDir = path.join(defaultExtensionBundlePathValue, version);
   const contentHash = await computeBundleContentHash(bundleDir);

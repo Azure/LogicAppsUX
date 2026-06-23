@@ -701,7 +701,7 @@ describe('downloadExtensionBundle', () => {
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
 
     // Mock download to succeed
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -746,7 +746,7 @@ describe('downloadExtensionBundle', () => {
     setupLocalDisk(['1.95.0']); // no sidecar registered → readBundleSidecar returns undefined
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -767,7 +767,7 @@ describe('downloadExtensionBundle', () => {
     setupLocalDisk(['1.95.0'], { '1.95.0': 'old-md5' });
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('new-md5');
@@ -805,7 +805,7 @@ describe('downloadExtensionBundle', () => {
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('fresh-cdn-md5');
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -824,7 +824,7 @@ describe('downloadExtensionBundle', () => {
     const vscode = await import('vscode');
     setupLocalDisk(['1.75.0']);
     mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -842,7 +842,7 @@ describe('downloadExtensionBundle', () => {
     const vscode = await import('vscode');
     setupLocalDisk(['1.95.0'], {}, { sidecarRaw: { '1.95.0': 'legacy-bare-md5-string' } });
     mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -858,7 +858,7 @@ describe('downloadExtensionBundle', () => {
     const vscode = await import('vscode');
     setupLocalDisk(['1.95.0'], { '1.95.0': 'sourceMd5-ok' }, { sidecarContentHashOverride: { '1.95.0': 'wrong-content-hash' } });
     mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -896,7 +896,7 @@ describe('downloadExtensionBundle', () => {
     });
     mockedDownloadAndExtract.mockImplementation(async () => {
       await downloadGate;
-      return undefined as any;
+      return { actualMd5: 'md5' } as any;
     });
 
     expect(isExtensionBundleDownloadInFlight()).toBe(false);
@@ -938,7 +938,7 @@ describe('downloadExtensionBundle', () => {
     setupLocalDisk([]);
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -961,7 +961,7 @@ describe('downloadExtensionBundle', () => {
     setupLocalDisk(['1.50.0', '1.75.0', '1.60.0']);
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -1007,7 +1007,7 @@ describe('downloadExtensionBundle', () => {
       Values: { AzureFunctionsJobHost_extensionBundle_version: '1.50.0' },
     } as any);
     setupLocalDisk(['1.60.0']);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -1064,7 +1064,7 @@ describe('downloadExtensionBundle', () => {
       setupLocalDisk(['1.20.0']); // pin not on disk
       // Source URI's index lists the pin.
       mockedGetJsonFeed.mockResolvedValue(['1.10.0', '1.21.0-preview'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1089,7 +1089,7 @@ describe('downloadExtensionBundle', () => {
       // I3 in the plan: pin set, not on disk, no sourceUri → download `pin` from public CDN.
       await setExperimentalSettings({ useExperimental: true, pinnedVersion: '1.21.0', sourceUri: '' });
       setupLocalDisk(['1.20.0']); // pin not on disk
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1130,7 +1130,7 @@ describe('downloadExtensionBundle', () => {
       });
       setupLocalDisk([]);
       mockedGetJsonFeed.mockResolvedValue(['1.10.0', '1.21.0-preview'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1153,7 +1153,7 @@ describe('downloadExtensionBundle', () => {
       await setExperimentalSettings({ useExperimental: true });
       setupLocalDisk([]);
       mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1194,7 +1194,7 @@ describe('downloadExtensionBundle', () => {
       // Index probe lists the pin so we proceed to download from the source.
       mockedGetJsonFeed.mockResolvedValue(['1.21.0-preview'] as any);
       // Source download 404s, public download succeeds.
-      mockedDownloadAndExtract.mockRejectedValueOnce(make404()).mockResolvedValueOnce(undefined as any);
+      mockedDownloadAndExtract.mockRejectedValueOnce(make404()).mockResolvedValueOnce({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1219,7 +1219,7 @@ describe('downloadExtensionBundle', () => {
       setupLocalDisk(['1.20.0']);
       // Index probe succeeds but pin is missing.
       mockedGetJsonFeed.mockResolvedValue(['1.10.0', '1.20.0'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1241,7 +1241,7 @@ describe('downloadExtensionBundle', () => {
       setupLocalDisk([]);
       // First getJsonFeed call (experimental index) 404s, second call (public feed) succeeds.
       mockedGetJsonFeed.mockRejectedValueOnce(make404()).mockResolvedValueOnce(['1.0.0', '1.95.0'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1261,7 +1261,7 @@ describe('downloadExtensionBundle', () => {
       });
       setupLocalDisk([]);
       mockedGetJsonFeed.mockRejectedValueOnce(makeNetworkError()).mockResolvedValueOnce(['1.0.0', '1.95.0'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1301,7 +1301,7 @@ describe('downloadExtensionBundle', () => {
       });
       setupLocalDisk(['1.20.0']);
       mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1329,7 +1329,7 @@ describe('downloadExtensionBundle', () => {
 
       setupLocalDisk(['1.75.0']);
       mockedGetJsonFeed.mockResolvedValue(['1.95.0'] as any);
-      mockedDownloadAndExtract.mockResolvedValue(undefined);
+      mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
       const context = createMockContext();
       const result = await downloadExtensionBundle(context as any);
@@ -1544,7 +1544,7 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
     vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
-    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
 
     await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
@@ -1635,8 +1635,7 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
 
     const context = { telemetry: { properties: {} as any, measurements: {} as any } };
-    const result = await downloadExtensionBundle(context as any);
-    expect(result).toBe(true);
+    await expect(downloadExtensionBundle(context as any)).rejects.toThrow(/no source MD5 was available/);
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
@@ -1661,8 +1660,7 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
 
     const context = { telemetry: { properties: {} as any, measurements: {} as any } };
-    const result = await downloadExtensionBundle(context as any);
-    expect(result).toBe(true);
+    await expect(downloadExtensionBundle(context as any)).rejects.toThrow(/no source MD5 was available/);
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
@@ -1684,8 +1682,7 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
 
     const context = { telemetry: { properties: {} as any, measurements: {} as any } };
-    const result = await downloadExtensionBundle(context as any);
-    expect(result).toBe(true);
+    await expect(downloadExtensionBundle(context as any)).rejects.toThrow(/no source MD5 was available/);
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 });
