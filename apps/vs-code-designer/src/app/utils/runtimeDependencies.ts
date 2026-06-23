@@ -10,6 +10,7 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import * as vscode from 'vscode';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import { isDevContainerWorkspace } from './devContainerUtils';
+import { shouldRequireStrictDependencyValidation } from './strictDependencyValidation';
 
 export const useBinariesDependencies = async (): Promise<boolean> => {
   const isDevContainer = await isDevContainerWorkspace();
@@ -20,10 +21,6 @@ export const useBinariesDependencies = async (): Promise<boolean> => {
   const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
   return !!binariesInstallation;
 };
-
-function shouldRequireStrictDependencyValidation(): boolean {
-  return process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1';
-}
 
 async function validateRuntimeDependencies(actionContext: IActionContext, activateContext: IActionContext): Promise<void> {
   await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {

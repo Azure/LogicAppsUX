@@ -279,6 +279,7 @@ export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
+export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValidation';
 export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';

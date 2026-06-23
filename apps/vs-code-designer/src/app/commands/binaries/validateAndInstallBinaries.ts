@@ -12,6 +12,7 @@ import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
+import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
 import { runWithDurationTelemetry } from '../../utils/telemetry';
 import { timeout } from '../../utils/timeout';
 import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
@@ -20,10 +21,6 @@ import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-
-function shouldRequireStrictDependencyValidation(): boolean {
-  return process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1';
-}
 
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';

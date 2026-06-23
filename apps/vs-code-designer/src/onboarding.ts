@@ -13,6 +13,7 @@ import {
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { ext } from './extensionVariables';
+import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 
 /**
  * Start onboarding experience prompting inputs for user.
@@ -23,7 +24,7 @@ import { ext } from './extensionVariables';
 export const startOnboarding = async (activateContext: IActionContext) => {
   const isDevContainer = await isDevContainerWorkspace();
   activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
-  const requireStrictDependencyValidation = process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1';
+  const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
 
   if (isDevContainer) {
     activateContext.telemetry.properties.skippedDependencyOnboarding = 'true';

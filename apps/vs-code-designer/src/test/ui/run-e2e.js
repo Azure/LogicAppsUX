@@ -1095,6 +1095,7 @@ async function main() {
       // Dependency validation: Phase 4.1 needs this ON (first run downloads/validates
       // binaries). All subsequent phases set it OFF since paths are already resolved.
       'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': validateDependencies,
+      'azureLogicAppsStandard.e2eStrictDependencyValidation': process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1',
       // Design-time auto-start: ON for tests that need the runtime (designer, run),
       // OFF for tests that only check UI/conversion to save startup time.
       'azureLogicAppsStandard.autoStartDesignTime': autoStartDesignTime,

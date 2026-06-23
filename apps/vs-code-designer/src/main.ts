@@ -15,6 +15,7 @@ import {
   updateLogicAppsContext,
 } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
@@ -151,7 +152,7 @@ export async function activate(context: vscode.ExtensionContext) {
       await convertToWorkspace(activateContext);
     }
 
-    if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+    if (shouldRequireStrictDependencyValidation()) {
       await downloadExtensionBundle(activateContext);
     } else {
       // Intentionally not awaited so activation stays snappy. Downstream code

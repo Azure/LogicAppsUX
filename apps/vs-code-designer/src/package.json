@@ -994,6 +994,11 @@
             "description": "Enable automatic validation and installation for runtime dependencies at the configured path.",
             "default": true
           },
+          "azureLogicAppsStandard.e2eStrictDependencyValidation": {
+            "type": "boolean",
+            "description": "Fail dependency and extension-bundle validation instead of showing success-shaped UI fallbacks. Intended for automated VS Code E2E setup only.",
+            "default": false
+          },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
             "description": "Show a warning asking if user's would like to configure Azurite auto start.",
