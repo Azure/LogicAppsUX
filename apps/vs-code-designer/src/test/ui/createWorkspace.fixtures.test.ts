@@ -59,6 +59,7 @@ const EXTENSION_BUNDLE_DIR = path.join(
   'Microsoft.Azure.Functions.ExtensionBundle.Workflows'
 );
 const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+const VALIDATE_DEPENDENCIES_COMMAND = 'Azure Logic Apps: Validate and install dependency binaries';
 
 function compareSemverDesc(a: string, b: string): number {
   const pa = a.split('.').map((part) => Number.parseInt(part, 10));
@@ -182,6 +183,32 @@ async function waitForWorkflowsBundleSidecarReady(timeoutMs = 300_000): Promise<
   throw lastError ?? new Error('[fixtures:setup] Timed out waiting for Logic Apps extension bundle sidecar');
 }
 
+async function validateDependenciesThroughProductCommand(workbench: Workbench, driver: WebDriver): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`[fixtures:setup] Invoking product dependency validation command (attempt ${attempt}/3)...`);
+      await workbench.executeCommand(VALIDATE_DEPENDENCIES_COMMAND);
+      console.log('[fixtures:setup] Product dependency validation command completed');
+      return;
+    } catch (error: unknown) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : String(error);
+      console.log(`[fixtures:setup] Product dependency validation command failed on attempt ${attempt}/3: ${message}`);
+      try {
+        await driver.switchTo().defaultContent();
+        await dismissNotifications(driver);
+      } catch {
+        /* ignore cleanup failures between retries */
+      }
+      await sleep(2000);
+    }
+  }
+
+  const message = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new Error(`[fixtures:setup] Product dependency validation command failed after retries: ${message}`);
+}
+
 /**
  * Minimal manifest-shape smoke assertion for a freshly created workspace.
  * Reads (not writes) workspace files; D-001 compliant.
@@ -270,9 +297,8 @@ describe('Create Workspace Fixtures', function () {
     console.log('[fixtures:setup] Extension is ready');
 
     if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
-      console.log(
-        '[fixtures:setup] Strict dependency validation enabled; verifying activation produced a healthy bundle before fixtures...'
-      );
+      console.log('[fixtures:setup] Strict dependency validation enabled; invoking product validation before fixtures...');
+      await validateDependenciesThroughProductCommand(workbench, driver);
       await waitForWorkflowsBundleSidecarReady();
       console.log('[fixtures:setup] Dependency/bundle validation produced a bundle sidecar before fixture creation');
     }
