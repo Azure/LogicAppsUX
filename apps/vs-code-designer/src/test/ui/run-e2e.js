@@ -157,6 +157,43 @@ function verifyLogicAppsExtensionBundle(label) {
   return state;
 }
 
+function pruneUnhealthyLogicAppsExtensionBundles(label) {
+  if (!fs.existsSync(EXTENSION_BUNDLE_ROOT)) {
+    return;
+  }
+
+  const versions = fs
+    .readdirSync(EXTENSION_BUNDLE_ROOT)
+    .filter((name) => {
+      const fullPath = path.join(EXTENSION_BUNDLE_ROOT, name);
+      return /^\d+\.\d+\.\d+/.test(name) && fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
+    })
+    .sort(compareSemverDesc);
+
+  for (const version of versions) {
+    const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+    try {
+      const sidecarPath = path.join(bundleDir, BUNDLE_SIDECAR_FILE);
+      if (!fs.existsSync(sidecarPath)) {
+        console.log(`[${label}] Removing bundle ${version}: missing sidecar ${sidecarPath}`);
+        fs.rmSync(bundleDir, { recursive: true, force: true });
+        continue;
+      }
+
+      const sidecar = JSON.parse(fs.readFileSync(sidecarPath, 'utf8'));
+      const files = listBundleFiles(bundleDir);
+      const contentHash = files.length > 0 ? computeBundleContentHash(bundleDir, files) : undefined;
+      if (!sidecar || typeof sidecar.contentHash !== 'string' || files.length === 0 || contentHash !== sidecar.contentHash) {
+        console.log(`[${label}] Removing bundle ${version}: invalid sidecar/content hash`);
+        fs.rmSync(bundleDir, { recursive: true, force: true });
+      }
+    } catch (error) {
+      console.log(`[${label}] Removing bundle ${version}: health check failed (${error.message})`);
+      fs.rmSync(bundleDir, { recursive: true, force: true });
+    }
+  }
+}
+
 function createExTester() {
   return new ExTester(
     undefined, // storageFolder — use default (os.tmpdir()/test-resources)
@@ -966,6 +1003,8 @@ async function main() {
     const nodeJsDir = resolveNodeBinDir(depsRoot);
     const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
     const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
+    const nodeExecutable = process.platform === 'win32' ? 'node.exe' : 'node';
+    const dotnetExecutable = process.platform === 'win32' ? 'dotnet.exe' : 'dotnet';
     const funcBinaryCandidates = [
       path.join(funcToolsDir, funcExecutable),
       path.join(funcToolsDir, 'in-proc8', funcExecutable),
@@ -978,8 +1017,8 @@ async function main() {
       dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
       nodeJsDir,
       funcBinary,
-      dotnetBinary: path.join(depsRoot, 'DotNetSDK', 'dotnet'),
-      nodeBinary: path.join(nodeJsDir, 'node'),
+      dotnetBinary: path.join(depsRoot, 'DotNetSDK', dotnetExecutable),
+      nodeBinary: path.join(nodeJsDir, nodeExecutable),
     };
   };
 
@@ -988,6 +1027,30 @@ async function main() {
     return [funcBinary, dotnetBinary, nodeBinary].every((binaryPath) => fs.existsSync(binaryPath));
   };
   const shouldValidateRuntimeDependencies = () => !runtimeDependenciesReady();
+
+  const pruneInvalidRuntimeDependencyRoots = (label) => {
+    const { depsRoot, funcToolsDir, dotnetSdkDir, nodeJsDir, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
+    const dependencyRoots = [
+      { label: 'NodeJs', root: path.join(depsRoot, 'NodeJs'), probes: [nodeBinary] },
+      { label: 'FuncCoreTools', root: funcToolsDir, probes: [funcBinary] },
+      { label: 'DotNetSDK', root: dotnetSdkDir, probes: [dotnetBinary] },
+    ];
+
+    for (const dependency of dependencyRoots) {
+      if (!fs.existsSync(dependency.root)) {
+        continue;
+      }
+
+      const hasProbe = dependency.probes.some((probe) => fs.existsSync(probe));
+      if (!hasProbe) {
+        const children = fs.readdirSync(dependency.root).slice(0, 10);
+        console.log(
+          `[${label}] Removing incomplete ${dependency.label} dependency root: ${dependency.root} children=[${children.join(', ')}] probes=[${dependency.probes.join(', ')}]`
+        );
+        fs.rmSync(dependency.root, { recursive: true, force: true });
+      }
+    }
+  };
 
   // Create a VS Code settings file. Called before each phase group so we can
   // enable dependency validation for Phase 4.1 (first run) and disable it
@@ -1945,6 +2008,11 @@ namespace ${namespaceName}
         }
 
         await prepareFreshSession(id);
+        if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+          pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
+          pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
+        }
+
         const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
         if (legacyDir) {
           process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
