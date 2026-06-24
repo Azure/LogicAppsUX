@@ -606,14 +606,25 @@ describe('binaries', () => {
     });
 
     it('should return the latest Node.js version', async () => {
-      const response = [{ tag_name: 'v14.0.0' }];
+      const response = [{ tag_name: 'v14.1.0' }, { tag_name: 'v14.0.0' }];
       (axios.get as any).mockResolvedValue({ data: response, status: 200 });
       const result = await getLatestNodeJsVersion(context, majorVersion);
 
-      expect(result).toBe('14.0.0');
+      expect(result).toBe('14.1.0');
+      expect(context.telemetry.properties.latestVersionSource).toBe('github');
+      expect(context.telemetry.properties.latestNodeJSVersion).toBe('14.1.0');
     });
 
-    it('should return fallback Node.js version without showing an error when GitHub latest-version lookup fails', async () => {
+    it('should return the latest Node.js version when requested version includes minor and patch', async () => {
+      const response = [{ tag_name: 'v20.0.0' }, { tag_name: 'v18.20.8' }, { tag_name: 'v18.0.0' }];
+      (axios.get as any).mockResolvedValue({ data: response, status: 200 });
+
+      const result = await getLatestNodeJsVersion(context, '18.0.0');
+
+      expect(result).toBe('18.20.8');
+    });
+
+    it('should return fallback Node.js version without showing an error when latest-version lookups fail', async () => {
       const showErrorMessage = vi.fn();
       (axios.get as Mock).mockRejectedValue(new Error('Request failed with status code 403'));
 
@@ -623,6 +634,7 @@ describe('binaries', () => {
       expect(result).toBe(DependencyVersion.nodeJs);
       expect(showErrorMessage).not.toHaveBeenCalled();
       expect(context.telemetry.properties.latestNodeJSVersion).toBe('fallback');
+      expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
       expect(context.telemetry.properties.errorLatestNodeJsVersion).toContain('Request failed with status code 403');
     });
 
@@ -634,12 +646,14 @@ describe('binaries', () => {
 
       expect(result).toBe(DependencyVersion.nodeJs);
       expect(context.telemetry.properties.latestNodeJSVersion).toBe('fallback-no-match');
+      expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
       expect(context.telemetry.properties.errorLatestNodeJsVersion).toBe('No matching Node JS version found.');
     });
 
     it('should return fallback nodejs version when no major version is sent', async () => {
       const result = await getLatestNodeJsVersion(context);
       expect(result).toBe(DependencyVersion.nodeJs);
+      expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
     });
   });
 

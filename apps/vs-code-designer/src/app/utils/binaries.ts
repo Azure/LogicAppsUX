@@ -253,28 +253,35 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
   context.telemetry.properties.nodeMajorVersion = majorVersion;
 
   if (majorVersion) {
-    return await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
-      .then((response: IGitHubReleaseInfo[]) => {
-        context.telemetry.properties.latestVersionSource = 'github';
-        for (const releaseInfo of response) {
-          const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
-          context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
-          if (releaseVersion && checkMajorVersion(releaseVersion, majorVersion)) {
-            return releaseVersion;
-          }
+    try {
+      const response: IGitHubReleaseInfo[] = await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases');
+      let latestVersion: string | undefined;
+      for (const releaseInfo of response) {
+        const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
+        context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
+        if (releaseVersion && checkMajorVersion(releaseVersion, majorVersion)) {
+          latestVersion = latestVersion && semver.gt(latestVersion, releaseVersion) ? latestVersion : releaseVersion;
         }
-        context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
-        context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
-        return DependencyVersion.nodeJs;
-      })
-      .catch((error) => {
-        context.telemetry.properties.latestNodeJSVersion = 'fallback';
-        context.telemetry.properties.errorLatestNodeJsVersion = `Error getting latest Node JS version: ${error}`;
-        return DependencyVersion.nodeJs;
-      });
+      }
+      if (latestVersion) {
+        context.telemetry.properties.latestVersionSource = 'github';
+        context.telemetry.properties.latestNodeJSVersion = latestVersion;
+        return latestVersion;
+      }
+      context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
+      context.telemetry.properties.latestVersionSource = 'fallback';
+      context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
+      return DependencyVersion.nodeJs;
+    } catch (error) {
+      context.telemetry.properties.latestNodeJSVersion = 'fallback';
+      context.telemetry.properties.latestVersionSource = 'fallback';
+      context.telemetry.properties.errorLatestNodeJsVersion = `Error getting latest Node JS version from GitHub: ${error}`;
+      return DependencyVersion.nodeJs;
+    }
   }
 
   context.telemetry.properties.latestNodeJSVersion = 'fallback';
+  context.telemetry.properties.latestVersionSource = 'fallback';
   return DependencyVersion.nodeJs;
 }
 
@@ -456,7 +463,13 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
  * @returns A boolean indicating whether the major version matches.
  */
 function checkMajorVersion(version: string, majorVersion: string): boolean {
-  return semver.major(version) === Number(majorVersion);
+  const requestedMajorVersion = getMajorVersion(majorVersion);
+  return requestedMajorVersion !== undefined && semver.major(version) === requestedMajorVersion;
+}
+
+function getMajorVersion(version: string): number | undefined {
+  const coercedVersion = semver.coerce(version);
+  return coercedVersion ? semver.major(coercedVersion) : undefined;
 }
 
 /**
