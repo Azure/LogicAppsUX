@@ -310,34 +310,89 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scenario:
-          # Independent / no-workspace (don't need fixtures artifact)
-          - p40-nonlogicapp
-          - p48b-conversioncreate
+        include:
+          # Independent / no-workspace (don't need fixtures or bundle artifacts)
+          - scenario: p40-nonlogicapp
+            use_workspace_fixtures: false
+            use_bundle_artifact: false
+            bundle_preflight: false
+          - scenario: p48b-conversioncreate
+            use_workspace_fixtures: false
+            use_bundle_artifact: false
+            bundle_preflight: false
           # Full 12-shape behavior validation — self-creates its own workspaces,
-          # so it doesn't consume the fixtures artifact either.
-          - p41b-createworkspace-behavior
+          # so it doesn't consume the fixtures artifact, but it still consumes
+          # the setup-fixtures bundle artifact and runs bundle preflight.
+          - scenario: p41b-createworkspace-behavior
+            use_workspace_fixtures: false
+            use_bundle_artifact: true
+            bundle_preflight: true
           # Designer lifecycle (consume fixtures from setup-fixtures)
-          - p42-standard
-          - p42-customcode
-          - p42-rulesengine
+          - scenario: p42-standard
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p42-customcode
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p42-rulesengine
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
           # Runtime-touching consumer tests (consume fixtures)
-          - p43-inlinejavascript
-          - p43-customcode
-          - p43-rulesengine
-          - p44-statelessvariables
-          - p45-designerviewextended
-          - p46-keyboardnav
+          - scenario: p43-inlinejavascript
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p43-customcode
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p43-rulesengine
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p44-statelessvariables
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p45-designerviewextended
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p46-keyboardnav
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
           # Multi-designer + dataMapper suite (manifest-multi)
-          - p47-suite
+          - scenario: p47-suite
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
           # Conversion suite
-          - p48a-conversionno
-          - p48c-multipledesigners
-          - p48d-conversionyes
-          - p48e-conversionsubfolder
+          - scenario: p48a-conversionno
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p48c-multipledesigners
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p48d-conversionyes
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
+          - scenario: p48e-conversionsubfolder
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
           # Bundle on-disk repair / integrity gate (Phase 14 code path).
           # Consumes the standard/Stateful fixture from setup-fixtures.
-          - p412-bundlerepair
+          - scenario: p412-bundlerepair
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+            bundle_preflight: true
 
     steps:
       - name: Checkout
@@ -392,19 +447,16 @@ jobs:
       - name: Extract build artifacts
         run: tar -xzf extension-build.tar.gz
 
-      # Scenarios that self-create their workspaces skip the workspace fixtures download:
-      #   - p40-nonlogicapp        (plain folder, no workspace)
-      #   - p48b-conversioncreate  (builds its own legacy fixture)
-      #   - p41b-createworkspace-behavior (full 12-shape wizard run)
+      # Scenarios that self-create their workspaces set use_workspace_fixtures=false.
       - name: Download workspace fixtures artifact
-        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        if: matrix.use_workspace_fixtures == true
         uses: actions/download-artifact@v4
         with:
           name: workspace-fixtures-${{ github.sha }}
           path: .
 
       - name: Extract workspace fixtures into $RUNNER_TEMP
-        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        if: matrix.use_workspace_fixtures == true
         run: |
           mkdir -p "${RUNNER_TEMP}"
           tar -xzf workspace-fixtures.tar.gz -C "${RUNNER_TEMP}"
@@ -416,14 +468,14 @@ jobs:
           fi
 
       - name: Download Logic Apps extension bundle artifact
-        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate'
+        if: matrix.use_bundle_artifact == true
         uses: actions/download-artifact@v4
         with:
           name: logic-apps-extension-bundle-${{ github.sha }}
           path: .
 
       - name: Extract Logic Apps extension bundle
-        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate'
+        if: matrix.use_bundle_artifact == true
         run: |
           mkdir -p "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
           tar -xzf logic-apps-extension-bundle.tar.gz -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
@@ -463,7 +515,7 @@ jobs:
         env:
           # Per-scenario matrix: each shard runs exactly one scenarios[] entry.
           LA_E2E_SCENARIO: ${{ matrix.scenario }}
-          LA_E2E_BUNDLE_PREFLIGHT: ${{ (matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate') && '1' || '0' }}
+          LA_E2E_BUNDLE_PREFLIGHT: ${{ matrix.bundle_preflight && '1' || '0' }}
           NODE_OPTIONS: --max-old-space-size=4096
           # Pin os.tmpdir() so the bootstrapper finds the manifest the
           # setup-fixtures job uploaded (same RUNNER_TEMP layout).

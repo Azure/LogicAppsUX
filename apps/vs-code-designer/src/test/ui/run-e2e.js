@@ -1357,7 +1357,7 @@ async function main() {
     {
       id: 'p46-keyboardnav',
       testFile: phase6Files[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'p41a-fixtures' },
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: false, autoStartDesignTime: true },
     },
 
@@ -2112,24 +2112,12 @@ namespace ${namespaceName}
     // of main() (search for `earlyMode === 'bundleintegrityonly'`).
 
     if (e2eMode === 'bundlerepaironly') {
-      // Phase 4.12 — Real ExTester run. Opens a Standard/Stateful workspace
-      // from the prior Phase 4.1 manifest, lets the activation install the
-      // bundle, deletes a few .dll files from inside the installed bundle
-      // dir, runs the validate-and-install command, and asserts the on-disk
-      // bundle is repaired (deleted files restored + sidecar rewritten with
-      // a content hash that matches disk).
-      await downloadExTesterAssets(extest);
-      // validateDependencies must be ON so the integrity gate actually runs
-      // during activation + when we invoke the validate command. We disable
-      // autoStartDesignTime so func.exe doesn't take a file lock on .dlls
-      // inside the bundle bin folder — that would block our tamper step.
-      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
-
-      await prepareFreshSession('phase12-bundlerepair-only');
-      const phase12Resources = getPhase2Resources();
-      const phase12Exit = await runPhase('Phase 4.12: bundleRepair', phaseBundleRepairFiles, {
-        resources: phase12Resources,
-      });
+      const bundleRepairScenario = scenarios.find((s) => s.id === 'p412-bundlerepair');
+      if (!bundleRepairScenario) {
+        throw new Error('bundlerepaironly: p412-bundlerepair scenario not found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
       process.exit(phase12Exit);
     }
 

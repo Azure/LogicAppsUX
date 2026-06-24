@@ -665,6 +665,21 @@ async function verifyLocalBundle(
   return publishedMd5 === sidecar.sourceMd5 ? 'passed' : 'sidecarMismatch';
 }
 
+type LocalBundleVerificationResult = Awaited<ReturnType<typeof verifyLocalBundle>>;
+type RepairableLocalBundleFailure = Extract<LocalBundleVerificationResult, 'sidecarMissing' | 'sidecarMismatch' | 'contentMismatch'>;
+
+function requiresBundleRepair(hashCheck: LocalBundleVerificationResult): hashCheck is RepairableLocalBundleFailure {
+  return hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch';
+}
+
+function notifyCorruptionIfNeeded(hashCheck: RepairableLocalBundleFailure, version: string, baseUrl: string): void {
+  // sidecarMissing fires on first-run-after-upgrade for legacy bare-MD5
+  // sidecars; keep that path quieter to avoid alarming users during migration.
+  if (hashCheck !== 'sidecarMissing') {
+    notifyCorruptionDetected(version, describeSource(baseUrl));
+  }
+}
+
 /**
  * Tracks any in-flight `downloadExtensionBundle` so other parts of the
  * extension (e.g. `startDesignTimeApi` which spawns `func.exe` against the
@@ -761,6 +776,18 @@ export type BundleOnDiskHealthResult =
       detail?: string;
     };
 
+type BundleOnDiskHealthFailure = Extract<BundleOnDiskHealthResult, { ok: false }>;
+
+function formatBundleHealthFailure(failure: BundleOnDiskHealthFailure): string {
+  return failure.detail ? `${failure.reason} (${failure.detail})` : failure.reason;
+}
+
+function throwBundleHealthError(prefix: string, failure: BundleOnDiskHealthFailure): never {
+  throw new Error(
+    `Logic Apps extension bundle is not installed correctly. ${prefix}: ${formatBundleHealthFailure(failure)}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
+  );
+}
+
 export async function assertExtensionBundleOnDiskHealthy(version?: string): Promise<BundleOnDiskHealthResult> {
   let targetVersion = version;
   if (!targetVersion) {
@@ -852,15 +879,11 @@ export async function ensureExtensionBundleHealthy(
     if (postInstallHealth.ok) {
       return;
     }
-    const postFailure = postInstallHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
-    const postLabel = postFailure.detail ? `${postFailure.reason} (${postFailure.detail})` : postFailure.reason;
-    throw new Error(
-      `Logic Apps extension bundle is not installed correctly. Install completed but on-disk integrity still failed: ${postLabel}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
-    );
+    throwBundleHealthError('Install completed but on-disk integrity still failed', postInstallHealth as BundleOnDiskHealthFailure);
   }
 
   const versionLabel = initialFailure.version ? ` ${initialFailure.version}` : '';
-  const reasonLabel = initialFailure.detail ? `${initialFailure.reason} (${initialFailure.detail})` : initialFailure.reason;
+  const reasonLabel = formatBundleHealthFailure(initialFailure);
   ext.outputChannel?.appendLog(
     `Logic Apps extension bundle${versionLabel} on-disk integrity check failed: ${reasonLabel}. Attempting repair.`
   );
@@ -882,11 +905,7 @@ export async function ensureExtensionBundleHealthy(
   if (postRepairHealth.ok) {
     return;
   }
-  const postFailure = postRepairHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
-  const reLabel = postFailure.detail ? `${postFailure.reason} (${postFailure.detail})` : postFailure.reason;
-  throw new Error(
-    `Logic Apps extension bundle is not installed correctly. Repair completed but on-disk integrity still failed: ${reLabel}. Close other VS Code windows running Logic Apps, terminate any leftover func.exe processes, and reload this window to retry.`
-  );
+  throwBundleHealthError('Repair completed but on-disk integrity still failed', postRepairHealth as BundleOnDiskHealthFailure);
 }
 
 /**
@@ -987,10 +1006,8 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
         // we'd never repair it.
         const hashCheck = await verifyLocalBundle(context, baseUrlInfo.baseUrl, envVarVer);
         context.telemetry.properties.localBundleHashCheck = hashCheck;
-        if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
-          if (hashCheck !== 'sidecarMissing') {
-            notifyCorruptionDetected(envVarVer, describeSource(baseUrlInfo.baseUrl));
-          }
+        if (requiresBundleRepair(hashCheck)) {
+          notifyCorruptionIfNeeded(hashCheck, envVarVer, baseUrlInfo.baseUrl);
           await downloadBundleWithProgress(context, baseUrlInfo.baseUrl, envVarVer, 'envVarRepair');
           context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
           context.telemetry.properties.didUpdateExtensionBundle = 'true';
@@ -1023,10 +1040,8 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
           const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
           const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, pin);
           context.telemetry.properties.localBundleHashCheck = hashCheck;
-          if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
-            if (hashCheck !== 'sidecarMissing') {
-              notifyCorruptionDetected(pin, describeSource(verifyBaseUrl));
-            }
+          if (requiresBundleRepair(hashCheck)) {
+            notifyCorruptionIfNeeded(hashCheck, pin, verifyBaseUrl);
             // Prefer the experimental source for the repair if configured.
             if (baseUrlInfo.experimentalSourceUri.length > 0) {
               const repair = await tryDownloadBundleWithProgress(context, baseUrlInfo.experimentalSourceUri, pin, 'experimentalPinRepair');
@@ -1101,10 +1116,8 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
         const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
         const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, latestLocalBundleVersion);
         context.telemetry.properties.localBundleHashCheck = hashCheck;
-        if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
-          if (hashCheck !== 'sidecarMissing') {
-            notifyCorruptionDetected(latestLocalBundleVersion, describeSource(verifyBaseUrl));
-          }
+        if (requiresBundleRepair(hashCheck)) {
+          notifyCorruptionIfNeeded(hashCheck, latestLocalBundleVersion, verifyBaseUrl);
           if (baseUrlInfo.experimentalSourceUri.length > 0) {
             const repair = await tryDownloadBundleWithProgress(
               context,
@@ -1221,15 +1234,13 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
     if (latestLocalBundleVersion !== '0.0.0') {
       const hashCheck = await verifyLocalBundle(context, effectiveBaseUrl, latestLocalBundleVersion);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
-      if (hashCheck === 'sidecarMissing' || hashCheck === 'sidecarMismatch' || hashCheck === 'contentMismatch') {
+      if (requiresBundleRepair(hashCheck)) {
         // Surface a one-shot warning so the user understands *why* we're
         // suddenly downloading on what looks like a steady-state activation.
         // sidecarMissing fires on first-run-after-upgrade for legacy bare-MD5
         // sidecars; keep that path quieter (no toast) to avoid alarming users
         // during the one-time migration.
-        if (hashCheck !== 'sidecarMissing') {
-          notifyCorruptionDetected(latestLocalBundleVersion, describeSource(effectiveBaseUrl));
-        }
+        notifyCorruptionIfNeeded(hashCheck, latestLocalBundleVersion, effectiveBaseUrl);
         await downloadBundleWithProgress(context, effectiveBaseUrl, latestLocalBundleVersion, hashCheck);
         context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
         context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;

@@ -48,6 +48,17 @@ describe('computeBundleContentHash', () => {
     expect(h1).toBe(h2);
   });
 
+  it('matches the E2E preflight hash contract', async () => {
+    await fse.outputFile(path.join(tmpDir, 'a.txt'), 'alpha');
+    await fse.outputFile(path.join(tmpDir, 'sub', 'b.bin'), Buffer.from([0, 1, 2, 3]));
+    await fse.outputFile(path.join(tmpDir, bundleSourceMd5SidecarFile), JSON.stringify({ version: 1, sourceMd5: 'x', contentHash: 'y' }));
+
+    // Contract shared with run-e2e.js and bundleRepair.test.ts:
+    // sorted POSIX relative path, NUL, file size, NUL, file bytes, NUL;
+    // sidecar excluded; digest is base64 SHA-256.
+    await expect(computeBundleContentHash(tmpDir)).resolves.toBe('NCnH5Zy1riTeL6oGcO8/SmGZodVJojldZ8auMRwr2EM=');
+  });
+
   it('changes when a single byte in a file is mutated', async () => {
     await fse.outputFile(path.join(tmpDir, 'file.txt'), 'hello');
     const before = await computeBundleContentHash(tmpDir);
