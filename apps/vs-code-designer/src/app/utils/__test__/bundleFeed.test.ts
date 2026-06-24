@@ -21,6 +21,7 @@ import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as cpUtils from '../funcCoreTools/cpUtils';
 import * as feedModule from '../feed';
 import * as binariesModule from '../binaries';
+import { ext } from '../../../extensionVariables';
 
 // Mock fs-extra
 vi.mock('fs-extra', async (importOriginal) => {
@@ -446,6 +447,7 @@ describe('getBundleVersionNumber', () => {
     const result = await getBundleVersionNumber();
 
     expect(result).toBe('2.1.0');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Current Logic Apps extension bundle version: 2.1.0');
     expect(mockedFse.readdir).toHaveBeenCalledWith(mockBundleFolder);
   });
 
@@ -1525,6 +1527,7 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
     vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', EMPTY_TREE_HASH) as any);
 
     await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Logic Apps extension bundle 1.50.0 on-disk integrity check passed.');
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
   });
 

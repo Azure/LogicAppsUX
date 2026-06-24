@@ -862,6 +862,7 @@ export async function ensureExtensionBundleHealthy(
 
   const initialHealth = await assertExtensionBundleOnDiskHealthy();
   if (initialHealth.ok) {
+    ext.outputChannel?.appendLog(`Logic Apps extension bundle ${initialHealth.version} on-disk integrity check passed.`);
     return;
   }
   const initialFailure = initialHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
@@ -1380,6 +1381,7 @@ export async function getBundleVersionNumber(workingDirectory?: string): Promise
 
   // Cache the result
   cachedBundleVersion = bundleVersionNumber;
+  ext.outputChannel?.appendLog(`Current Logic Apps extension bundle version: ${bundleVersionNumber}`);
   return bundleVersionNumber;
 }
 

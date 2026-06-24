@@ -315,84 +315,66 @@ jobs:
           - scenario: p40-nonlogicapp
             use_workspace_fixtures: false
             use_bundle_artifact: false
-            bundle_preflight: false
           - scenario: p48b-conversioncreate
             use_workspace_fixtures: false
             use_bundle_artifact: false
-            bundle_preflight: false
           # Full 12-shape behavior validation — self-creates its own workspaces,
           # so it doesn't consume the fixtures artifact, but it still consumes
           # the setup-fixtures bundle artifact and runs bundle preflight.
           - scenario: p41b-createworkspace-behavior
             use_workspace_fixtures: false
             use_bundle_artifact: true
-            bundle_preflight: true
           # Designer lifecycle (consume fixtures from setup-fixtures)
           - scenario: p42-standard
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p42-customcode
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p42-rulesengine
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           # Runtime-touching consumer tests (consume fixtures)
           - scenario: p43-inlinejavascript
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p43-customcode
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p43-rulesengine
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p44-statelessvariables
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p45-designerviewextended
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p46-keyboardnav
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           # Multi-designer + dataMapper suite (manifest-multi)
           - scenario: p47-suite
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           # Conversion suite
           - scenario: p48a-conversionno
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p48c-multipledesigners
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p48d-conversionyes
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           - scenario: p48e-conversionsubfolder
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
           # Bundle on-disk repair / integrity gate (Phase 14 code path).
           # Consumes the standard/Stateful fixture from setup-fixtures.
           - scenario: p412-bundlerepair
             use_workspace_fixtures: true
             use_bundle_artifact: true
-            bundle_preflight: true
 
     steps:
       - name: Checkout
@@ -515,7 +497,7 @@ jobs:
         env:
           # Per-scenario matrix: each shard runs exactly one scenarios[] entry.
           LA_E2E_SCENARIO: ${{ matrix.scenario }}
-          LA_E2E_BUNDLE_PREFLIGHT: ${{ matrix.bundle_preflight && '1' || '0' }}
+          LA_E2E_BUNDLE_PREFLIGHT: ${{ matrix.use_bundle_artifact && '1' || '0' }}
           NODE_OPTIONS: --max-old-space-size=4096
           # Pin os.tmpdir() so the bootstrapper finds the manifest the
           # setup-fixtures job uploaded (same RUNNER_TEMP layout).
