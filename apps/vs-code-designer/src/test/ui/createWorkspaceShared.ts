@@ -222,6 +222,18 @@ export function createTempDir(): string {
   return tmpBase;
 }
 
+async function typeQuickInputQuery(driver: WebDriver, query: string): Promise<void> {
+  const inputEl = await driver.wait(
+    until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
+    30_000,
+    'QuickInput input element not located'
+  );
+  await driver.wait(until.elementIsVisible(inputEl), 30_000, 'QuickInput input not visible');
+  await driver.wait(until.elementIsEnabled(inputEl), 5_000, 'QuickInput input not enabled');
+  await inputEl.sendKeys(Key.chord(Key.CONTROL, 'a'));
+  await inputEl.sendKeys(query);
+}
+
 /**
  * Open the command palette, type a search query, and select a specific pick.
  *
@@ -259,23 +271,11 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
       input = await workbench.openCommandPrompt();
       await sleep(500);
 
-      // Ensure the QuickPick <input> element is actually visible and enabled
-      // before driving it. Up to 30s — generous because slow runners take a
-      // while to mount the widget after the keybind fires.
-      const inputEl = await driver.wait(
-        until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
-        30_000,
-        'QuickInput input element not located'
-      );
-      await driver.wait(until.elementIsVisible(inputEl), 30_000, 'QuickInput input not visible');
-      await driver.wait(until.elementIsEnabled(inputEl), 5_000, 'QuickInput input not enabled');
-
       // CRITICAL: Use '> ' prefix to stay in command mode (file search otherwise).
       // We bypass ExTester InputBox.setText() which calls clear() and throws
       // ElementNotInteractableError when the element is transiently busy.
       // Raw sendKeys with select-all is reliable.
-      await inputEl.sendKeys(Key.chord(Key.CONTROL, 'a'));
-      await inputEl.sendKeys('> logic app workspace');
+      await typeQuickInputQuery(driver, '> logic app workspace');
       await sleep(2_000); // Wait for picks to populate
       break; // success
     } catch (e: any) {
@@ -339,7 +339,7 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
   if (!bestPick) {
     // Try a different search term
     console.log('[selectCreateWorkspaceCommand] No match, trying "> Create new logic"');
-    await input.setText('> Create new logic');
+    await typeQuickInputQuery(driver, '> Create new logic');
     await sleep(2000);
 
     picks = await input.getQuickPicks();
