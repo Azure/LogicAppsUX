@@ -19,7 +19,7 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
     context.telemetry.properties.isActivationEvent = 'true';
     const showNodeJsWarningKey = 'showNodeJsWarning';
     const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
-    const binaries = binariesExist(nodeJsDependencyName);
+    const binaries = await binariesExist(nodeJsDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
 
     if (!binaries) {
