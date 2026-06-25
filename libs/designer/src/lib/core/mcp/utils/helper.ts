@@ -82,6 +82,16 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
     };
   }
 
+  const mcpConnectorId = 'connectionProviders/mcpclient';
+  const agentMcpConnections = connectionsData.agentMcpConnections || {};
+  for (const connectionKey of Object.keys(agentMcpConnections)) {
+    references[connectionKey] = {
+      connection: { id: `/${mcpConnectorId}/connections/${connectionKey}` },
+      connectionName: agentMcpConnections[connectionKey].displayName ?? connectionKey,
+      api: { id: mcpConnectorId },
+    };
+  }
+
   return references;
 };
 

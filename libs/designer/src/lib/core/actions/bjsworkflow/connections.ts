@@ -16,6 +16,7 @@ import type { RootState as TemplateRootState } from '../../state/templates/store
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
+  getManagedIdentityFromConnection,
   isConnectionMultiAuthManagedIdentityType,
   isConnectionSingleAuthManagedIdentityType,
 } from '../../utils/connectors/connections';
@@ -332,6 +333,12 @@ const getConnectionPropertiesIfRequired = (connection: Connection, connector: Co
     !isConnectionSingleAuthManagedIdentityType(connection)
   ) {
     return undefined;
+  }
+
+  // Prefer the identity stored on the connection so a UAMI selection isn't lost on hybrid 'SystemAssigned, UserAssigned' apps.
+  const connectionIdentity = getManagedIdentityFromConnection(connection);
+  if (connectionIdentity) {
+    return getConnectionProperties(connector, connectionIdentity);
   }
 
   const identity = WorkflowService().getAppIdentity?.();
