@@ -435,11 +435,40 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
 
   executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} Binaries: ${binariesPath}`);
   if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
+    if (await tryRepairWindowsNodeJsBinaryPath(dependencyName, binariesPath, expectedBinaryPath)) {
+      return true;
+    }
+
     executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} binary is missing: ${expectedBinaryPath}`);
     return false;
   }
 
   return binariesExist;
+}
+
+async function tryRepairWindowsNodeJsBinaryPath(
+  dependencyName: string,
+  binariesPath: string,
+  expectedBinaryPath: string
+): Promise<boolean> {
+  if (dependencyName !== nodeJsDependencyName || process.platform !== Platform.windows) {
+    return false;
+  }
+
+  const nodeCommand = DependencyDefaultPath.node;
+  const staleNodePath = path.join(binariesPath, nodeCommand);
+  if (path.normalize(expectedBinaryPath).toLowerCase() !== path.normalize(staleNodePath).toLowerCase()) {
+    return false;
+  }
+
+  const nodeExePath = path.join(binariesPath, `${nodeCommand}.exe`);
+  if (!fs.existsSync(nodeExePath)) {
+    return false;
+  }
+
+  await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, nodeExePath);
+  executeCommand(ext.outputChannel, undefined, 'echo', `${nodeJsDependencyName} binary path updated: ${nodeExePath}`);
+  return true;
 }
 
 async function readJsonFromUrl(url: string): Promise<any> {

@@ -23,7 +23,14 @@ import {
   mkdirWithLockWait,
 } from '../binaries';
 import { ext } from '../../../extensionVariables';
-import { DependencyVersion, dotnetDependencyName, funcCoreToolsBinaryPathSettingKey, funcDependencyName } from '../../../constants';
+import {
+  DependencyVersion,
+  dotnetDependencyName,
+  funcCoreToolsBinaryPathSettingKey,
+  funcDependencyName,
+  nodeJsBinaryPathSettingKey,
+  nodeJsDependencyName,
+} from '../../../constants';
 import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
@@ -237,6 +244,11 @@ describe('binaries', () => {
     beforeEach(() => {
       (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
     });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     it('should return true if binaries exist', async () => {
       (fs.existsSync as Mock).mockReturnValue(true);
       const devContainerModule = await import('../devContainerUtils');
@@ -273,6 +285,49 @@ describe('binaries', () => {
 
       expect(result).toBe(false);
       expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `FuncCoreTools binary is missing: ${funcBinary}`);
+    });
+
+    it('should repair a stale Windows NodeJs binary path when node.exe exists', async () => {
+      vi.spyOn(process, 'platform', 'get').mockReturnValue(Platform.windows);
+      const nodeJsFolder = path.join('binariesLocation', nodeJsDependencyName);
+      const staleNodeBinary = path.join(nodeJsFolder, 'node');
+      const nodeExeBinary = path.join(nodeJsFolder, 'node.exe');
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === nodeJsFolder || filePath === nodeExeBinary);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+        settingName === nodeJsBinaryPathSettingKey ? staleNodeBinary : 'binariesLocation'
+      );
+
+      const result = await binariesExist(nodeJsDependencyName);
+
+      expect(result).toBe(true);
+      expect(updateGlobalSetting).toHaveBeenCalledWith(nodeJsBinaryPathSettingKey, nodeExeBinary);
+      expect(executeCommand).toHaveBeenCalledWith(
+        ext.outputChannel,
+        undefined,
+        'echo',
+        `${nodeJsDependencyName} binary path updated: ${nodeExeBinary}`
+      );
+      expect(executeCommand).not.toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `NodeJs binary is missing: ${staleNodeBinary}`);
+    });
+
+    it('should return false for a stale Windows NodeJs binary path when node.exe is also missing', async () => {
+      vi.spyOn(process, 'platform', 'get').mockReturnValue(Platform.windows);
+      const nodeJsFolder = path.join('binariesLocation', nodeJsDependencyName);
+      const staleNodeBinary = path.join(nodeJsFolder, 'node');
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === nodeJsFolder);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+        settingName === nodeJsBinaryPathSettingKey ? staleNodeBinary : 'binariesLocation'
+      );
+
+      const result = await binariesExist(nodeJsDependencyName);
+
+      expect(result).toBe(false);
+      expect(updateGlobalSetting).not.toHaveBeenCalledWith(nodeJsBinaryPathSettingKey, expect.any(String));
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `NodeJs binary is missing: ${staleNodeBinary}`);
     });
 
     it('should return false if useBinariesDependencies returns false', async () => {

@@ -5,7 +5,7 @@
 import { nodeJsDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { binariesExist, getLatestNodeJsVersion } from '../../utils/binaries';
-import { getLocalNodeJsVersion, getNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
+import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installNodeJs } from './installNodeJs';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
@@ -19,6 +19,7 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
     context.telemetry.properties.isActivationEvent = 'true';
     const showNodeJsWarningKey = 'showNodeJsWarning';
     const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
+    await setNodeJsCommand();
     const binaries = await binariesExist(nodeJsDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
 
