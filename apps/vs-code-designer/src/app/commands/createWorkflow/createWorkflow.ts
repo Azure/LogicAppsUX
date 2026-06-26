@@ -9,48 +9,66 @@ import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebview
 import { localize } from '../../../localize';
 import * as vscode from 'vscode';
 import { createLogicAppWorkflow } from './createLogicAppWorkflow';
-import { getWorkspaceRoot } from '../../utils/workspace';
 import { isCodefulProject } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import * as path from 'path';
 
-export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) => {
-  let projectRoot: string | undefined;
+interface AvailableProject {
+  name: string;
+  path: string;
+  isCodeful: boolean;
+}
 
-  // When invoked from explorer context menu, resolve project from the clicked URI
+/**
+ * Collects all Logic App projects across workspace folders.
+ */
+async function collectAvailableProjects(context: IActionContext): Promise<AvailableProject[]> {
+  const projects: AvailableProject[] = [];
+  if (!vscode.workspace.workspaceFolders) {
+    return projects;
+  }
+
+  for (const folder of vscode.workspace.workspaceFolders) {
+    const projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
+    if (projectRoot) {
+      const isCodeful = await isCodefulProject(projectRoot);
+      projects.push({
+        name: path.basename(projectRoot.replace(/\\/g, '/')),
+        path: projectRoot,
+        isCodeful,
+      });
+    }
+  }
+  return projects;
+}
+
+export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) => {
+  // Collect all available projects
+  const availableProjects = await collectAvailableProjects(context);
+
+  // Determine pre-selected project from URI context
+  let selectedProject: AvailableProject | undefined;
   if (uri) {
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
     if (workspaceFolder) {
-      projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolder.uri.fsPath, true);
-    }
-  }
-
-  // Fallback: scan workspace folders in order (command palette invocation or URI resolution failed)
-  if (!projectRoot) {
-    const workspaceFolderPath = await getWorkspaceRoot(context);
-    projectRoot = workspaceFolderPath ? await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true) : undefined;
-
-    if (!projectRoot && vscode.workspace.workspaceFolders) {
-      for (const folder of vscode.workspace.workspaceFolders) {
-        projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
-        if (projectRoot) {
-          break;
-        }
+      const projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolder.uri.fsPath, true);
+      if (projectRoot) {
+        selectedProject = availableProjects.find((p) => p.path === projectRoot);
       }
     }
   }
 
-  if (!projectRoot) {
+  // If no projects found at all, throw
+  if (availableProjects.length === 0) {
     throw new Error(localize('noLogicAppProject', 'No Logic App project found in the current workspace.'));
   }
 
-  const isCodeful = await isCodefulProject(projectRoot);
-  const logicAppName = path.basename(projectRoot.replace(/\\/g, '/'));
+  // If only one project and no URI selection, auto-select it
+  if (!selectedProject && availableProjects.length === 1) {
+    selectedProject = availableProjects[0];
+  }
 
-  const logicAppType = isCodeful ? ProjectType.codeful : '';
-
-  // Include logicAppName in panel name so each project gets its own panel
-  const panelName = localize('createWorkflowForProject', 'Create workflow - {0}', logicAppName);
+  const panelName = localize('createWorkflow', 'Create workflow');
 
   await createWorkspaceWebviewCommandHandler({
     panelName,
@@ -58,11 +76,19 @@ export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) 
     projectName: ProjectName.createWorkflow,
     createCommand: ExtensionCommand.createWorkflow,
     createHandler: async (context: IActionContext, data: any) => {
+      // Resolve project root from the user's selection in the webview
+      const selectedName = data.logicAppName;
+      const project = availableProjects.find((p) => p.name === selectedName);
+      const projectRoot = project?.path;
+      if (!projectRoot) {
+        throw new Error(localize('noProjectSelected', 'No project selected. Please select a project and try again.'));
+      }
       await createLogicAppWorkflow(context, data, projectRoot);
     },
     extraInitializeData: {
-      logicAppType,
-      logicAppName,
+      logicAppType: selectedProject?.isCodeful ? ProjectType.codeful : '',
+      logicAppName: selectedProject?.name || '',
+      availableProjects,
     },
   });
 };

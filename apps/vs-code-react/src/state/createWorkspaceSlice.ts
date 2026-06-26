@@ -8,6 +8,12 @@ import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { ITargetDirectory } from '../run-service';
 
+export interface AvailableProject {
+  name: string;
+  path: string;
+  isCodeful: boolean;
+}
+
 export interface CreateWorkspaceState {
   currentStep: number;
   packagePath: ITargetDirectory;
@@ -37,6 +43,7 @@ export interface CreateWorkspaceState {
   separator: string;
   platform: Platform | null;
   isDevContainerProject: boolean;
+  availableProjects: AvailableProject[];
 }
 
 const initialState: CreateWorkspaceState = {
@@ -73,6 +80,7 @@ const initialState: CreateWorkspaceState = {
   separator: '/',
   platform: null,
   isDevContainerProject: false,
+  availableProjects: [],
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -85,11 +93,12 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform, logicAppType, logicAppName } = action.payload;
+      const { separator, platform, logicAppType, logicAppName, availableProjects } = action.payload;
       state.separator = separator;
       state.platform = platform;
       state.logicAppType = logicAppType || '';
       state.logicAppName = logicAppName || '';
+      state.availableProjects = availableProjects || [];
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;

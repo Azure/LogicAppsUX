@@ -156,29 +156,34 @@ describe('workspace webview command wrappers', () => {
 
   it('createWorkflow passes codeful metadata and wires createLogicAppWorkflow', async () => {
     const projectRoot = path.join(workspaceRoot, 'CodefulLogicApp');
-    (getWorkspaceRoot as Mock).mockResolvedValue(workspaceRoot);
+    const folder = {
+      name: 'workspace',
+      uri: { fsPath: workspaceRoot },
+      index: 0,
+    } as vscode.WorkspaceFolder;
+    (vscode.workspace as any).workspaceFolders = [folder];
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(projectRoot);
     (isCodefulProject as Mock).mockResolvedValue(true);
 
     await createWorkflow(context);
 
-    expect(getWorkspaceRoot).toHaveBeenCalledWith(context);
     expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, workspaceRoot, true);
     expect(isCodefulProject).toHaveBeenCalledWith(projectRoot);
 
     const config = getLastWebviewConfig();
     expect(config).toMatchObject({
-      panelName: 'Create workflow - CodefulLogicApp',
+      panelName: 'Create workflow',
       panelGroupKey: ext.webViewKey.createWorkflow,
       projectName: ProjectName.createWorkflow,
       createCommand: ExtensionCommand.createWorkflow,
       extraInitializeData: {
         logicAppType: ProjectType.codeful,
         logicAppName: 'CodefulLogicApp',
+        availableProjects: [{ name: 'CodefulLogicApp', path: projectRoot, isCodeful: true }],
       },
     });
 
-    const data = { workflowName: 'ProcessOrder' };
+    const data = { workflowName: 'ProcessOrder', logicAppName: 'CodefulLogicApp' };
     await config.createHandler(context, data);
 
     expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, projectRoot);
