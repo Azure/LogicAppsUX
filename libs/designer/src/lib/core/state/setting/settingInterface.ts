@@ -3,6 +3,7 @@ import type { ValidationError } from '../../../ui/settings/validation/validation
 export const SettingSectionName = {
   DATAHANDLING: 'datahandling',
   GENERAL: 'general',
+  HOSTSETTINGS: 'hostsettings',
   NETWORKING: 'networking',
   RUNAFTER: 'runafter',
   SECURITY: 'security',
