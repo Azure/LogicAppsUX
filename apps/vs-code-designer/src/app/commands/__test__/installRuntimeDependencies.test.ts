@@ -3,6 +3,7 @@ import { PackageManager, dotnetDependencyName, funcDependencyName, nodeJsDepende
 import { downloadAndExtractDependency } from '../../utils/binaries';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
+import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import { installDotNet } from '../dotnet/installDotNet';
@@ -42,6 +43,10 @@ vi.mock('../../utils/funcCoreTools/getBrewPackageName', () => ({
 
 vi.mock('../../utils/funcCoreTools/getNpmDistTag', () => ({
   getNpmDistTag: vi.fn(),
+}));
+
+vi.mock('../../utils/nodeJs/nodeJsVersion', () => ({
+  setNodeJsCommand: vi.fn(),
 }));
 
 vi.mock('../../utils/vsCodeConfig/settings', () => ({
@@ -115,6 +120,7 @@ describe('runtime dependency installers', () => {
       'D:\\dependencies',
       nodeJsDependencyName
     );
+    expect(setNodeJsCommand).toHaveBeenCalledOnce();
   });
 
   it('uses the Linux Node.js binary release when running on Linux', async () => {
@@ -128,6 +134,7 @@ describe('runtime dependency installers', () => {
       'D:\\dependencies',
       nodeJsDependencyName
     );
+    expect(setNodeJsCommand).toHaveBeenCalledOnce();
   });
 
   it('installs Functions Core Tools through npm when system installation is selected', async () => {

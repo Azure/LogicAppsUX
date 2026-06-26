@@ -994,6 +994,11 @@
             "description": "Enable automatic validation and installation for runtime dependencies at the configured path.",
             "default": true
           },
+          "azureLogicAppsStandard.e2eStrictDependencyValidation": {
+            "type": "boolean",
+            "description": "Fail dependency and extension-bundle validation instead of showing success-shaped UI fallbacks. Intended for automated VS Code E2E setup only.",
+            "default": false
+          },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
             "description": "Show a warning asking if user's would like to configure Azurite auto start.",
@@ -1037,6 +1042,21 @@
             "type": "string",
             "default": "",
             "markdownDescription": "Absolute path to the .nupkg file."
+          },
+          "azureLogicAppsStandard.useExperimentalExtensionBundle": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Experimental master opt-in. When enabled, the Logic Apps extension bundle is sourced from local disk first, then from `#azureLogicAppsStandard.experimentalExtensionBundleSourceUri#` if configured. The public CDN's *latest* feed is **not** consulted for version selection while this is on. If the configured private source cannot deliver the requested package and no usable local copy exists, the extension automatically falls back to a single download from the public CDN so the environment stays runnable. **The other two `experimental*` settings have no effect while this is `false`.** Use this to test preview bundles that have not yet been published to `cdn.functions.azure.com`."
+          },
+          "azureLogicAppsStandard.experimentalExtensionBundleSourceUri": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Experimental: alternative base URL for the Logic Apps extension bundle (mirrors the shape of `FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI`, e.g. `https://my-private-cdn/public`). **Only honored when `#azureLogicAppsStandard.useExperimentalExtensionBundle#` is `true`.** If the configured URL cannot deliver the requested bundle (HTTP 404, unreachable, or missing version), the extension automatically falls back to the public Azure CDN to avoid leaving you with a broken environment; check the output channel for the `experimentalSourceFallback` reason."
+          },
+          "azureLogicAppsStandard.experimentalExtensionBundleVersion": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "Experimental: optional pinned version (for example `1.21.0-preview`). **Only honored when `#azureLogicAppsStandard.useExperimentalExtensionBundle#` is `true`.** While set, no 'latest' feed is consulted; the version is fetched from the configured source URL with the same public-CDN fallback as `#azureLogicAppsStandard.experimentalExtensionBundleSourceUri#`. If empty, the highest local version is used."
           }
         }
       }

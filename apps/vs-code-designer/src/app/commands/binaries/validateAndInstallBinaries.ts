@@ -5,13 +5,14 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getDependencyTimeout } from '../../utils/binaries';
-import { getDependenciesVersion } from '../../utils/bundleFeed';
+import { getDependenciesVersion, ensureExtensionBundleHealthy } from '../../utils/bundleFeed';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
+import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
 import { runWithDurationTelemetry } from '../../utils/telemetry';
 import { timeout } from '../../utils/timeout';
 import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
@@ -23,6 +24,7 @@ import * as vscode from 'vscode';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
+  const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
 
   await vscode.window.withProgress(
     {
@@ -104,6 +106,16 @@ export async function validateAndInstallBinaries(context: IActionContext) {
           await setDotNetCommand();
         });
 
+        // Block validation success on a healthy extension bundle. The bundle
+        // download is fired-and-forgotten from activation so the UI stays
+        // responsive, but validation is the right place to surface a failed
+        // install: without a healthy bundle, the design-time host and any
+        // workflow runtime will be broken, and we'd rather fail loudly here
+        // than let func.exe spawn against a missing/corrupt bundle.
+        context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
+        progress.report({ increment: 5, message: 'Extension Bundle' });
+        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation });
+
         ext.outputChannel.appendLog(
           localize(
             'azureLogicApsBinariesSucessfull',
@@ -111,16 +123,20 @@ export async function validateAndInstallBinaries(context: IActionContext) {
           )
         );
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         ext.outputChannel.appendLog(
-          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', error?.message)
+          localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', errorMessage)
         );
-        context.telemetry.properties.dependenciesError = error?.message;
+        context.telemetry.properties.dependenciesError = errorMessage;
         vscode.window.showErrorMessage(
           localize(
             'binariesTroubleshoot',
             `The Validation and Installation of Runtime Dependencies encountered an error. To resolve this issue, please click [here](${helpLink}) to access our troubleshooting documentation for step-by-step instructions.`
           )
         );
+        if (requireStrictDependencyValidation) {
+          throw error;
+        }
       }
     }
   );

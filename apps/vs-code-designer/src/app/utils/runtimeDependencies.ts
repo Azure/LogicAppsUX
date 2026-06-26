@@ -10,6 +10,7 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import * as vscode from 'vscode';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import { isDevContainerWorkspace } from './devContainerUtils';
+import { shouldRequireStrictDependencyValidation } from './strictDependencyValidation';
 
 export const useBinariesDependencies = async (): Promise<boolean> => {
   const isDevContainer = await isDevContainerWorkspace();
@@ -21,15 +22,24 @@ export const useBinariesDependencies = async (): Promise<boolean> => {
   return !!binariesInstallation;
 };
 
+async function validateRuntimeDependencies(actionContext: IActionContext, activateContext: IActionContext): Promise<void> {
+  await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
+    const binariesInstallation = await useBinariesDependencies();
+    if (binariesInstallation) {
+      activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
+      await validateAndInstallBinaries(actionContext);
+      await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
+    }
+  });
+}
+
 export const onboardBinaries = async (activateContext: IActionContext) => {
+  if (shouldRequireStrictDependencyValidation()) {
+    await validateRuntimeDependencies(activateContext, activateContext);
+    return;
+  }
+
   await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
-      const binariesInstallation = await useBinariesDependencies();
-      if (binariesInstallation) {
-        activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
-        await validateAndInstallBinaries(actionContext);
-        await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
-      }
-    });
+    await validateRuntimeDependencies(actionContext, activateContext);
   });
 };

@@ -72,7 +72,7 @@ export async function setNodeJsCommand(): Promise<void> {
     if (binariesExist) {
       // windows the executable is at root folder, linux & macos its in <node-v*>/bin
       if (process.platform === Platform.windows) {
-        command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
+        command = path.join(nodeJsBinariesPath, `${ext.nodeJsCliPath}.exe`);
       } else {
         const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
         if (nodeSubFolder) {
