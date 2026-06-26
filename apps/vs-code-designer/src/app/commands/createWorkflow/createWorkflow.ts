@@ -14,15 +14,28 @@ import { isCodefulProject } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import * as path from 'path';
 
-export const createWorkflow = async (context: IActionContext) => {
-  const workspaceFolderPath = await getWorkspaceRoot(context);
-  let projectRoot = workspaceFolderPath ? await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true) : undefined;
+export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) => {
+  let projectRoot: string | undefined;
 
-  if (!projectRoot && vscode.workspace.workspaceFolders) {
-    for (const folder of vscode.workspace.workspaceFolders) {
-      projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
-      if (projectRoot) {
-        break;
+  // When invoked from explorer context menu, resolve project from the clicked URI
+  if (uri) {
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+    if (workspaceFolder) {
+      projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolder.uri.fsPath, true);
+    }
+  }
+
+  // Fallback: scan workspace folders in order (command palette invocation or URI resolution failed)
+  if (!projectRoot) {
+    const workspaceFolderPath = await getWorkspaceRoot(context);
+    projectRoot = workspaceFolderPath ? await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true) : undefined;
+
+    if (!projectRoot && vscode.workspace.workspaceFolders) {
+      for (const folder of vscode.workspace.workspaceFolders) {
+        projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
+        if (projectRoot) {
+          break;
+        }
       }
     }
   }
@@ -36,8 +49,11 @@ export const createWorkflow = async (context: IActionContext) => {
 
   const logicAppType = isCodeful ? ProjectType.codeful : '';
 
+  // Include logicAppName in panel name so each project gets its own panel
+  const panelName = localize('createWorkflowForProject', 'Create workflow - {0}', logicAppName);
+
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createWorkflow', 'Create workflow'),
+    panelName,
     panelGroupKey: ext.webViewKey.createWorkflow,
     projectName: ProjectName.createWorkflow,
     createCommand: ExtensionCommand.createWorkflow,

@@ -168,7 +168,7 @@ describe('workspace webview command wrappers', () => {
 
     const config = getLastWebviewConfig();
     expect(config).toMatchObject({
-      panelName: 'Create workflow',
+      panelName: 'Create workflow - CodefulLogicApp',
       panelGroupKey: ext.webViewKey.createWorkflow,
       projectName: ProjectName.createWorkflow,
       createCommand: ExtensionCommand.createWorkflow,

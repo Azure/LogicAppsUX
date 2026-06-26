@@ -90,7 +90,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createProject, createNewProject);
   registerCommand(extensionCommand.createWorkspace, createWorkspace);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
-  registerCommand(extensionCommand.createWorkflow, createWorkflow);
+  registerCommand(extensionCommand.createWorkflow, (context: IActionContext, uri: vscode.Uri) => createWorkflow(context, uri));
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
