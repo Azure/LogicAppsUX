@@ -16,7 +16,7 @@ import {
   type WebElement,
   Key,
 } from 'vscode-extension-tester';
-import { clearBlockingUI } from './helpers';
+import { clearBlockingUI, waitForQuickInputAndType } from './helpers';
 
 /**
  * Create Workspace E2E Tests
@@ -223,15 +223,7 @@ export function createTempDir(): string {
 }
 
 async function typeQuickInputQuery(driver: WebDriver, query: string): Promise<void> {
-  const inputEl = await driver.wait(
-    until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
-    30_000,
-    'QuickInput input element not located'
-  );
-  await driver.wait(until.elementIsVisible(inputEl), 30_000, 'QuickInput input not visible');
-  await driver.wait(until.elementIsEnabled(inputEl), 5_000, 'QuickInput input not enabled');
-  await inputEl.sendKeys(Key.chord(Key.CONTROL, 'a'));
-  await inputEl.sendKeys(query);
+  await waitForQuickInputAndType(driver, query, 30_000);
 }
 
 /**
