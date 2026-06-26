@@ -240,10 +240,13 @@ async function readBundleSidecar(version: string): Promise<BundleSidecar | undef
 
 async function writeBundleSidecar(version: string, sourceMd5: string, contentHash: string): Promise<void> {
   const sidecarPath = getBundleSidecarPath(version);
+  const tempSidecarPath = `${sidecarPath}.${process.pid}.${Date.now()}.tmp`;
   const payload: BundleSidecar = { version: SIDECAR_FORMAT_VERSION, sourceMd5, contentHash };
   try {
-    await fse.outputFile(sidecarPath, JSON.stringify(payload), 'utf8');
+    await fse.outputFile(tempSidecarPath, JSON.stringify(payload), 'utf8');
+    await fse.move(tempSidecarPath, sidecarPath, { overwrite: true });
   } catch (writeError) {
+    await fse.remove(tempSidecarPath).catch(() => undefined);
     const message = localize(
       'bundleSidecarWriteFailed',
       'Failed to write extension-bundle MD5 sidecar at "{0}": {1}',
@@ -253,6 +256,40 @@ async function writeBundleSidecar(version: string, sourceMd5: string, contentHas
     ext.outputChannel?.appendLog(message);
     throw new Error(message);
   }
+}
+
+async function hasRequiredBundleContent(bundleDir: string): Promise<boolean> {
+  if (!(await fse.pathExists(bundleDir))) {
+    return false;
+  }
+
+  // Workflows extension bundles carry their runtime assemblies under bin/.
+  // A lone manifest/config file is not enough to bless an old install with a
+  // new sidecar because that would preserve a partial extraction as healthy.
+  const binDir = path.join(bundleDir, 'bin');
+  if (!(await fse.pathExists(binDir))) {
+    return false;
+  }
+
+  const walk = async (dir: string): Promise<boolean> => {
+    const items = await fse.readdir(dir);
+    for (const item of items) {
+      const abs = path.join(dir, item);
+      const stat = await fse.lstat(abs);
+      if (stat.isDirectory()) {
+        if (await walk(abs)) {
+          return true;
+        }
+      } else if (stat.isFile()) {
+        const rel = path.relative(bundleDir, abs).split(path.sep).join('/');
+        if (rel !== bundleSourceMd5SidecarFile) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  return walk(binDir);
 }
 
 /**
@@ -617,9 +654,13 @@ async function verifyLocalBundle(
   context: IActionContext,
   publicBaseUrl: string,
   localVersion: string
-): Promise<'passed' | 'sidecarMissing' | 'contentMismatch' | 'sidecarMismatch' | 'headRequestFailed'> {
+): Promise<'passed' | 'sidecarBackfilled' | 'sidecarMissing' | 'contentMismatch' | 'sidecarMismatch' | 'headRequestFailed'> {
   const sidecar = await readBundleSidecar(localVersion);
   if (!sidecar) {
+    const backfilled = await tryBackfillBundleSidecar(context, publicBaseUrl, localVersion);
+    if (backfilled) {
+      return 'sidecarBackfilled';
+    }
     return 'sidecarMissing';
   }
 
@@ -662,7 +703,56 @@ async function verifyLocalBundle(
   if (!publishedMd5) {
     return 'passed';
   }
+  if (!sidecar.sourceMd5) {
+    return 'passed';
+  }
   return publishedMd5 === sidecar.sourceMd5 ? 'passed' : 'sidecarMismatch';
+}
+
+async function tryBackfillBundleSidecar(context: IActionContext, publicBaseUrl: string, localVersion: string): Promise<boolean> {
+  const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
+  if (!(await hasRequiredBundleContent(bundleDir))) {
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${localVersion} is missing sidecar metadata, but the extracted bundle folder is incomplete. Re-downloading.`
+    );
+    return false;
+  }
+
+  const actualContentHash = await computeBundleContentHash(bundleDir);
+  if (!actualContentHash) {
+    return false;
+  }
+
+  const headUrl = buildExtensionBundleZipUrl(publicBaseUrl, localVersion);
+  let publishedMd5: string | undefined;
+  try {
+    publishedMd5 = await fetchExpectedMd5(headUrl);
+  } catch (error) {
+    ext.outputChannel?.appendLog(
+      localize(
+        'bundleBackfillHashHeadFailed',
+        'Failed to backfill extension-bundle sidecar from {0}: {1}',
+        headUrl,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
+    context.telemetry.properties.bundleBackfillHeadError = error instanceof Error ? error.message : String(error);
+    publishedMd5 = '';
+  }
+
+  if (!publishedMd5) {
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${localVersion} is missing sidecar metadata, and the bundle source did not publish Content-MD5. Backfilling content hash only.`
+    );
+  }
+
+  try {
+    await writeBundleSidecar(localVersion, publishedMd5 ?? '', actualContentHash);
+  } catch {
+    return false;
+  }
+  ext.outputChannel?.appendLog(`Logic Apps extension bundle ${localVersion} sidecar metadata backfilled from existing install.`);
+  return true;
 }
 
 type LocalBundleVerificationResult = Awaited<ReturnType<typeof verifyLocalBundle>>;
@@ -866,6 +956,14 @@ export async function ensureExtensionBundleHealthy(
     return;
   }
   const initialFailure = initialHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
+
+  if (initialFailure.reason === 'sidecarMissing' && initialFailure.version) {
+    const { baseUrl } = await getExtensionBundleBaseUrl(context);
+    if (await tryBackfillBundleSidecar(context, baseUrl, initialFailure.version)) {
+      ext.outputChannel?.appendLog(`Logic Apps extension bundle ${initialFailure.version} on-disk integrity check passed.`);
+      return;
+    }
+  }
 
   // No bundle at all and no in-flight install — let the caller's normal
   // path (downloadExtensionBundle from main.ts:157) handle first-run

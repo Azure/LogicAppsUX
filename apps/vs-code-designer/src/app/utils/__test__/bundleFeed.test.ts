@@ -16,6 +16,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as cp from 'child_process';
+import { Readable } from 'stream';
 import { extensionBundleId, defaultVersionRange, defaultExtensionBundlePathValue } from '../../../constants';
 import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as cpUtils from '../funcCoreTools/cpUtils';
@@ -30,11 +31,15 @@ vi.mock('fs-extra', async (importOriginal) => {
     ...(actual as object),
     readdir: vi.fn(),
     stat: vi.fn(),
+    lstat: vi.fn(),
     pathExists: vi.fn(),
     readdirSync: vi.fn(),
     statSync: vi.fn(),
     readFile: vi.fn(),
+    createReadStream: vi.fn(),
     outputFile: vi.fn().mockResolvedValue(undefined),
+    move: vi.fn().mockResolvedValue(undefined),
+    remove: vi.fn().mockResolvedValue(undefined),
   };
 });
 
@@ -638,6 +643,121 @@ describe('downloadExtensionBundle', () => {
   const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
   const buildSidecarJson = (sourceMd5: string, contentHash: string = EMPTY_TREE_HASH): string =>
     JSON.stringify({ version: 1, sourceMd5, contentHash });
+  const setupHashableLocalDisk = (localVersion: string, fileContents = 'bundle-content') => {
+    const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
+    const filePath = path.join(bundleDir, 'bin', 'bundle.dll');
+
+    mockedFse.readdirSync.mockReturnValue([localVersion] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    mockedFse.pathExists.mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(true);
+    }) as any);
+    mockedFse.readdir.mockImplementation(((p: string) => {
+      if (p === bundleDir) {
+        return Promise.resolve(['bin'] as any);
+      }
+      if (p === path.join(bundleDir, 'bin')) {
+        return Promise.resolve(['bundle.dll'] as any);
+      }
+      return Promise.resolve([] as any);
+    }) as any);
+    mockedFse.lstat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        isDirectory: () => p === path.join(bundleDir, 'bin'),
+        isFile: () => p === filePath,
+      } as any)) as any);
+    mockedFse.stat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        size: p === filePath ? Buffer.byteLength(fileContents) : 0,
+        isDirectory: () => p === bundleDir || p === path.join(bundleDir, 'bin'),
+        isFile: () => p === filePath,
+      } as any)) as any);
+    mockedFse.createReadStream.mockImplementation(((p: string) => {
+      if (p === filePath) {
+        return Readable.from([Buffer.from(fileContents)]) as any;
+      }
+      return Readable.from([]) as any;
+    }) as any);
+  };
+  const setupSingleFileLocalDisk = (localVersion: string, fileName = 'bundle.json') => {
+    const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
+    const filePath = path.join(bundleDir, fileName);
+
+    mockedFse.readdirSync.mockReturnValue([localVersion] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    mockedFse.pathExists.mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(p !== path.join(bundleDir, 'bin'));
+    }) as any);
+    mockedFse.readdir.mockImplementation(((p: string) => {
+      if (p === bundleDir) {
+        return Promise.resolve([fileName] as any);
+      }
+      return Promise.resolve([] as any);
+    }) as any);
+    mockedFse.lstat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        isDirectory: () => false,
+        isFile: () => p === filePath,
+      } as any)) as any);
+    mockedFse.stat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        size: p === filePath ? 2 : 0,
+        isDirectory: () => p === bundleDir,
+        isFile: () => p === filePath,
+      } as any)) as any);
+    mockedFse.createReadStream.mockImplementation(((p: string) => {
+      if (p === filePath) {
+        return Readable.from([Buffer.from('{}')]) as any;
+      }
+      return Readable.from([]) as any;
+    }) as any);
+  };
+  const setupRootFileWithEmptyBinLocalDisk = (localVersion: string) => {
+    const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
+    const rootFilePath = path.join(bundleDir, 'bundle.json');
+    const binDir = path.join(bundleDir, 'bin');
+
+    mockedFse.readdirSync.mockReturnValue([localVersion] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    mockedFse.pathExists.mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(true);
+    }) as any);
+    mockedFse.readdir.mockImplementation(((p: string) => {
+      if (p === bundleDir) {
+        return Promise.resolve(['bundle.json', 'bin'] as any);
+      }
+      if (p === binDir) {
+        return Promise.resolve([] as any);
+      }
+      return Promise.resolve([] as any);
+    }) as any);
+    mockedFse.lstat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        isDirectory: () => p === binDir,
+        isFile: () => p === rootFilePath,
+      } as any)) as any);
+    mockedFse.stat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        size: p === rootFilePath ? 2 : 0,
+        isDirectory: () => p === bundleDir || p === binDir,
+        isFile: () => p === rootFilePath,
+      } as any)) as any);
+    mockedFse.createReadStream.mockImplementation(((p: string) => {
+      if (p === rootFilePath) {
+        return Readable.from([Buffer.from('{}')]) as any;
+      }
+      return Readable.from([]) as any;
+    }) as any);
+  };
   const setupLocalDisk = (
     localVersions: string[],
     sidecarByVersion: Record<string, string> = {},
@@ -648,6 +768,8 @@ describe('downloadExtensionBundle', () => {
     // Async readdir is used by computeBundleContentHash's walk; return [] so it treats
     // every version folder as an empty tree → content hash = EMPTY_TREE_HASH.
     mockedFse.readdir.mockResolvedValue([] as any);
+    mockedFse.lstat.mockResolvedValue({ isDirectory: () => false, isFile: () => false } as any);
+    mockedFse.createReadStream.mockImplementation((() => Readable.from([])) as any);
     mockedFse.pathExists.mockImplementation(((p: string) => {
       // Default: bundle root and version folders exist; sidecar exists only when registered.
       if (typeof p !== 'string') {
@@ -691,6 +813,8 @@ describe('downloadExtensionBundle', () => {
     // Reset fs-extra mocks
     mockedFse.readFile.mockReset();
     mockedFse.outputFile.mockResolvedValue(undefined as any);
+    mockedFse.move.mockResolvedValue(undefined as any);
+    mockedFse.remove.mockResolvedValue(undefined as any);
   });
 
   it('should download newer version when feed has higher version than local', async () => {
@@ -743,7 +867,111 @@ describe('downloadExtensionBundle', () => {
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
-  it('should re-download when local version equals feed but the sidecar is missing', async () => {
+  it('backfills sidecar metadata for a valid local bundle without re-downloading', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupHashableLocalDisk('1.95.0');
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('published-md5');
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarBackfilled');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(mockedFse.outputFile).toHaveBeenCalledWith(expect.stringContaining('.bundle-source-md5.'), expect.any(String), 'utf8');
+    expect(mockedFse.move).toHaveBeenCalledWith(
+      expect.stringContaining('.bundle-source-md5.'),
+      expect.stringContaining('.bundle-source-md5'),
+      { overwrite: true }
+    );
+    const payload = JSON.parse(mockedFse.outputFile.mock.calls[0]?.[1] as string);
+    expect(payload.sourceMd5).toBe('published-md5');
+    expect(payload.contentHash).toEqual(expect.any(String));
+  });
+
+  it('backfills content-hash-only sidecar metadata when CDN HEAD fails', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupHashableLocalDisk('1.95.0');
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockRejectedValue(new Error('network unavailable'));
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarBackfilled');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    const payload = JSON.parse(mockedFse.outputFile.mock.calls[0]?.[1] as string);
+    expect(payload.sourceMd5).toBe('');
+    expect(payload.contentHash).toEqual(expect.any(String));
+  });
+
+  it('does not redownload a bundle whose existing sidecar was backfilled without source MD5', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupLocalDisk(['1.95.0'], { '1.95.0': '' });
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('published-md5');
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('passed');
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('should re-download when local version equals feed but the sidecar is missing and the bundle has no bin content', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupSingleFileLocalDisk('1.95.0');
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMissing');
+    expect(mockedDownloadAndExtract).toHaveBeenCalled();
+  });
+
+  it('should re-download when a root file exists but the bundle bin folder is empty', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupRootFileWithEmptyBinLocalDisk('1.95.0');
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMissing');
+    expect(mockedDownloadAndExtract).toHaveBeenCalled();
+  });
+
+  it('falls back to redownload when sidecar backfill cannot write metadata', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupHashableLocalDisk('1.95.0');
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('published-md5');
+    mockedFse.move.mockRejectedValueOnce(new Error('sidecar locked'));
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMissing');
+    expect(mockedDownloadAndExtract).toHaveBeenCalled();
+  });
+
+  it('should re-download when local version equals feed but the sidecar is missing and the bundle has no content', async () => {
     const feedVersions = ['1.0.0', '1.95.0'];
     setupLocalDisk(['1.95.0']); // no sidecar registered → readBundleSidecar returns undefined
 
@@ -1551,6 +1779,58 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
 
     await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
+  });
+
+  it('backfills sidecar metadata instead of repairing when on-disk health only lacks sidecar', async () => {
+    const localVersion = '1.50.0';
+    const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
+    const filePath = path.join(bundleDir, 'bin', 'bundle.dll');
+
+    vi.mocked(fse.readdirSync).mockReturnValue([localVersion] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(true);
+    }) as any);
+    vi.mocked(fse.readdir).mockImplementation(((p: string) => {
+      if (p === bundleDir) {
+        return Promise.resolve(['bin'] as any);
+      }
+      if (p === path.join(bundleDir, 'bin')) {
+        return Promise.resolve(['bundle.dll'] as any);
+      }
+      return Promise.resolve([] as any);
+    }) as any);
+    vi.mocked(fse.lstat).mockImplementation(((p: string) =>
+      Promise.resolve({
+        isDirectory: () => p === path.join(bundleDir, 'bin'),
+        isFile: () => p === filePath,
+      } as any)) as any);
+    vi.mocked(fse.stat).mockImplementation(((p: string) =>
+      Promise.resolve({
+        size: p === filePath ? Buffer.byteLength('bundle-content') : 0,
+        isDirectory: () => p === bundleDir || p === path.join(bundleDir, 'bin'),
+        isFile: () => p === filePath,
+      } as any)) as any);
+    vi.mocked(fse.createReadStream).mockImplementation(((p: string) => {
+      if (p === filePath) {
+        return Readable.from([Buffer.from('bundle-content')]) as any;
+      }
+      return Readable.from([]) as any;
+    }) as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
+    expect(vi.mocked(fse.move)).toHaveBeenCalledWith(
+      expect.stringContaining('.bundle-source-md5.'),
+      expect.stringContaining('.bundle-source-md5'),
+      { overwrite: true }
+    );
   });
 
   it('throws when repair download fails and on-disk health still bad', async () => {
