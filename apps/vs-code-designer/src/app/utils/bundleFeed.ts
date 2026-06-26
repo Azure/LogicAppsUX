@@ -263,33 +263,64 @@ async function hasRequiredBundleContent(bundleDir: string): Promise<boolean> {
     return false;
   }
 
-  // Workflows extension bundles carry their runtime assemblies under bin/.
-  // A lone manifest/config file is not enough to bless an old install with a
-  // new sidecar because that would preserve a partial extraction as healthy.
   const binDir = path.join(bundleDir, 'bin');
-  if (!(await fse.pathExists(binDir))) {
+  const depsPath = path.join(binDir, 'function.deps.json');
+  if (!(await fse.pathExists(depsPath))) {
     return false;
   }
 
-  const walk = async (dir: string): Promise<boolean> => {
-    const items = await fse.readdir(dir);
-    for (const item of items) {
-      const abs = path.join(dir, item);
-      const stat = await fse.lstat(abs);
-      if (stat.isDirectory()) {
-        if (await walk(abs)) {
-          return true;
+  let parsedDeps: unknown;
+  try {
+    parsedDeps = JSON.parse(await fse.readFile(depsPath, 'utf8'));
+  } catch {
+    return false;
+  }
+
+  const requiredRuntimeFiles = new Set<string>();
+  const targets = (parsedDeps as { targets?: unknown })?.targets;
+  if (typeof targets === 'object' && targets !== null) {
+    for (const target of Object.values(targets as Record<string, unknown>)) {
+      if (typeof target !== 'object' || target === null) {
+        continue;
+      }
+      for (const dependency of Object.values(target as Record<string, unknown>)) {
+        const runtime = (dependency as { runtime?: unknown })?.runtime;
+        if (typeof runtime !== 'object' || runtime === null) {
+          continue;
         }
-      } else if (stat.isFile()) {
-        const rel = path.relative(bundleDir, abs).split(path.sep).join('/');
-        if (rel !== bundleSourceMd5SidecarFile) {
-          return true;
+        for (const relPath of Object.keys(runtime as Record<string, unknown>)) {
+          requiredRuntimeFiles.add(relPath);
         }
       }
     }
+  }
+
+  if (requiredRuntimeFiles.size === 0) {
     return false;
-  };
-  return walk(binDir);
+  }
+
+  const normalizedBinDir = path.normalize(binDir);
+  for (const relPath of requiredRuntimeFiles) {
+    const candidates = [
+      path.normalize(path.join(binDir, ...relPath.split('/'))),
+      path.normalize(path.join(binDir, path.basename(relPath))),
+    ];
+    const hasRuntimeFile = await candidates.reduce(async (previous, candidate) => {
+      if (await previous) {
+        return true;
+      }
+      if (!candidate.startsWith(`${normalizedBinDir}${path.sep}`)) {
+        return false;
+      }
+      return (await fse.pathExists(candidate)) && (await fse.stat(candidate)).isFile();
+    }, Promise.resolve(false));
+
+    if (!hasRuntimeFile) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /**
@@ -329,27 +360,26 @@ export async function computeBundleContentHash(bundleDir: string): Promise<strin
   entries.sort();
 
   const hash = createHash('sha256');
-  const NUL = Buffer.from([0]);
   for (const rel of entries) {
     const abs = path.join(bundleDir, ...rel.split('/'));
     const stat = await fse.stat(abs);
-    hash.update(Buffer.from(rel, 'utf8'));
-    hash.update(NUL);
-    hash.update(Buffer.from(String(stat.size), 'utf8'));
-    hash.update(NUL);
+    hash.update(rel);
+    hash.update('\0');
+    hash.update(String(stat.size));
+    hash.update('\0');
     await new Promise<void>((resolve, reject) => {
       const stream = fse.createReadStream(abs);
       stream.on('data', (chunk: Buffer | string) => {
         if (typeof chunk === 'string') {
-          hash.update(Buffer.from(chunk));
-        } else {
           hash.update(chunk);
+        } else {
+          hash.update(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength));
         }
       });
       stream.on('error', reject);
       stream.on('end', () => resolve());
     });
-    hash.update(NUL);
+    hash.update('\0');
   }
   return hash.digest('base64');
 }
@@ -653,13 +683,16 @@ async function tryDownloadBundleWithProgress(
 async function verifyLocalBundle(
   context: IActionContext,
   publicBaseUrl: string,
-  localVersion: string
+  localVersion: string,
+  options: { allowSidecarBackfill?: boolean } = {}
 ): Promise<'passed' | 'sidecarBackfilled' | 'sidecarMissing' | 'contentMismatch' | 'sidecarMismatch' | 'headRequestFailed'> {
   const sidecar = await readBundleSidecar(localVersion);
   if (!sidecar) {
-    const backfilled = await tryBackfillBundleSidecar(context, publicBaseUrl, localVersion);
-    if (backfilled) {
-      return 'sidecarBackfilled';
+    if (options.allowSidecarBackfill !== false) {
+      const backfilled = await tryBackfillBundleSidecar(context, publicBaseUrl, localVersion);
+      if (backfilled) {
+        return 'sidecarBackfilled';
+      }
     }
     return 'sidecarMissing';
   }
@@ -934,6 +967,10 @@ interface EnsureExtensionBundleHealthyOptions {
   requireInstalled?: boolean;
 }
 
+interface DownloadExtensionBundleOptions {
+  allowSidecarBackfill?: boolean;
+}
+
 export async function ensureExtensionBundleHealthy(
   context?: IActionContext,
   options: EnsureExtensionBundleHealthyOptions = {}
@@ -957,14 +994,6 @@ export async function ensureExtensionBundleHealthy(
   }
   const initialFailure = initialHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
 
-  if (initialFailure.reason === 'sidecarMissing' && initialFailure.version) {
-    const { baseUrl } = await getExtensionBundleBaseUrl(context);
-    if (await tryBackfillBundleSidecar(context, baseUrl, initialFailure.version)) {
-      ext.outputChannel?.appendLog(`Logic Apps extension bundle ${initialFailure.version} on-disk integrity check passed.`);
-      return;
-    }
-  }
-
   // No bundle at all and no in-flight install — let the caller's normal
   // path (downloadExtensionBundle from main.ts:157) handle first-run
   // bootstrap. We don't want to race that on a fresh install.
@@ -973,7 +1002,7 @@ export async function ensureExtensionBundleHealthy(
       return;
     }
     ext.outputChannel?.appendLog('Logic Apps extension bundle is not installed. Downloading before dependency validation can complete.');
-    await downloadExtensionBundle(context);
+    await downloadExtensionBundle(context, { allowSidecarBackfill: false });
     const postInstallHealth = await assertExtensionBundleOnDiskHealthy();
     if (postInstallHealth.ok) {
       return;
@@ -992,7 +1021,7 @@ export async function ensureExtensionBundleHealthy(
   }
 
   try {
-    await downloadExtensionBundle(context);
+    await downloadExtensionBundle(context, { allowSidecarBackfill: false });
   } catch (repairError) {
     const cause = repairError instanceof Error ? repairError.message : String(repairError);
     throw new Error(
@@ -1013,7 +1042,7 @@ export async function ensureExtensionBundleHealthy(
  * @param {IActionContext} context - Command context.
  * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
-export async function downloadExtensionBundle(context: IActionContext): Promise<boolean> {
+export async function downloadExtensionBundle(context: IActionContext, options: DownloadExtensionBundleOptions = {}): Promise<boolean> {
   // Dedupe concurrent calls: if a download is already in flight, await it
   // instead of kicking off a parallel attempt that would race for the same
   // extraction directory.
@@ -1030,7 +1059,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     // Mark this whole call-stack as "inside the bundle download". Any nested
     // `waitForExtensionBundleReady()` will short-circuit instead of awaiting
     // the in-flight promise we own.
-    const result = await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context));
+    const result = await bundleDownloadScope.run(true, () => downloadExtensionBundleCore(context, options));
     lastBundleInstallResult = 'ok';
     lastBundleInstallError = undefined;
     installSucceededAndChanged = result;
@@ -1071,7 +1100,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   }
 }
 
-async function downloadExtensionBundleCore(context: IActionContext): Promise<boolean> {
+async function downloadExtensionBundleCore(context: IActionContext, options: DownloadExtensionBundleOptions): Promise<boolean> {
   const downloadExtensionBundleStartTime = Date.now();
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
@@ -1103,7 +1132,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
         // Verify the on-disk bundle for the pinned version. Without this,
         // a corrupt local copy would silently satisfy the env-var pin and
         // we'd never repair it.
-        const hashCheck = await verifyLocalBundle(context, baseUrlInfo.baseUrl, envVarVer);
+        const hashCheck = await verifyLocalBundle(context, baseUrlInfo.baseUrl, envVarVer, options);
         context.telemetry.properties.localBundleHashCheck = hashCheck;
         if (requiresBundleRepair(hashCheck)) {
           notifyCorruptionIfNeeded(hashCheck, envVarVer, baseUrlInfo.baseUrl);
@@ -1137,14 +1166,14 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
           // Verify before trusting the local pin. The experimental URI is
           // the publisher of record for hash verification here.
           const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
-          const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, pin);
+          const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, pin, options);
           context.telemetry.properties.localBundleHashCheck = hashCheck;
           if (requiresBundleRepair(hashCheck)) {
             notifyCorruptionIfNeeded(hashCheck, pin, verifyBaseUrl);
             // Prefer the experimental source for the repair if configured.
             if (baseUrlInfo.experimentalSourceUri.length > 0) {
               const repair = await tryDownloadBundleWithProgress(context, baseUrlInfo.experimentalSourceUri, pin, 'experimentalPinRepair');
-              if (repair.ok) {
+              if (repair.ok === true) {
                 ext.defaultBundleVersion = pin;
                 ext.latestBundleVersion = pin;
                 context.telemetry.properties.extensionBundleVersionSource = 'experimentalPinRepair';
@@ -1177,9 +1206,9 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
           // CDN is fine but the zip URL was momentarily unreachable" so the
           // telemetry reason is accurate.
           const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.experimentalSourceUri);
-          if (indexProbe.ok && indexProbe.versions.includes(pin)) {
+          if (indexProbe.ok === true && indexProbe.versions.includes(pin)) {
             const result = await tryDownloadBundleWithProgress(context, baseUrlInfo.experimentalSourceUri, pin, 'experimentalPin');
-            if (result.ok) {
+            if (result.ok === true) {
               ext.defaultBundleVersion = pin;
               ext.latestBundleVersion = pin;
               context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
@@ -1193,7 +1222,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
               `Pin ${pin} listed in experimental index but its zip could not be downloaded.`,
               result.error
             );
-          } else if (indexProbe.ok) {
+          } else if (indexProbe.ok === true) {
             logExperimentalFallback(context, 'pinNotInIndex', `Pin ${pin} is not present in the experimental source index.`);
           } else {
             logExperimentalFallback(context, indexProbe.reason, 'Could not read the experimental source index.', indexProbe.error);
@@ -1213,7 +1242,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
       if (latestLocalBundleVersion !== '0.0.0') {
         // Verify on disk before trusting the cached experimental local latest.
         const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
-        const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, latestLocalBundleVersion);
+        const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, latestLocalBundleVersion, options);
         context.telemetry.properties.localBundleHashCheck = hashCheck;
         if (requiresBundleRepair(hashCheck)) {
           notifyCorruptionIfNeeded(hashCheck, latestLocalBundleVersion, verifyBaseUrl);
@@ -1224,7 +1253,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
               latestLocalBundleVersion,
               'experimentalLocalLatestRepair'
             );
-            if (repair.ok) {
+            if (repair.ok === true) {
               ext.defaultBundleVersion = latestLocalBundleVersion;
               ext.latestBundleVersion = latestLocalBundleVersion;
               context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
@@ -1259,7 +1288,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
       // through to the public-CDN default flow below.
       if (baseUrlInfo.experimentalSourceUri.length > 0) {
         const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.experimentalSourceUri);
-        if (indexProbe.ok) {
+        if (indexProbe.ok === true) {
           const experimentalLatest = pickLatestVersion(indexProbe.versions);
           if (experimentalLatest !== '0.0.0') {
             const result = await tryDownloadBundleWithProgress(
@@ -1268,7 +1297,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
               experimentalLatest,
               'experimentalLatest'
             );
-            if (result.ok) {
+            if (result.ok === true) {
               ext.defaultBundleVersion = experimentalLatest;
               ext.latestBundleVersion = experimentalLatest;
               context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
@@ -1331,7 +1360,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
     // Local is at least as new as the feed — verify the on-disk bundle's source MD5
     // and re-download if it's missing or has drifted (e.g. CDN republished the same version).
     if (latestLocalBundleVersion !== '0.0.0') {
-      const hashCheck = await verifyLocalBundle(context, effectiveBaseUrl, latestLocalBundleVersion);
+      const hashCheck = await verifyLocalBundle(context, effectiveBaseUrl, latestLocalBundleVersion, options);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
       if (requiresBundleRepair(hashCheck)) {
         // Surface a one-shot warning so the user understands *why* we're

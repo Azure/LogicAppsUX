@@ -646,6 +646,8 @@ describe('downloadExtensionBundle', () => {
   const setupHashableLocalDisk = (localVersion: string, fileContents = 'bundle-content') => {
     const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
     const filePath = path.join(bundleDir, 'bin', 'bundle.dll');
+    const depsPath = path.join(bundleDir, 'bin', 'function.deps.json');
+    const depsContents = JSON.stringify({ targets: { bundle: { 'bundle/1.0.0': { runtime: { 'lib/netstandard2.0/bundle.dll': {} } } } } });
 
     mockedFse.readdirSync.mockReturnValue([localVersion] as any);
     mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
@@ -660,24 +662,33 @@ describe('downloadExtensionBundle', () => {
         return Promise.resolve(['bin'] as any);
       }
       if (p === path.join(bundleDir, 'bin')) {
-        return Promise.resolve(['bundle.dll'] as any);
+        return Promise.resolve(['bundle.dll', 'function.deps.json'] as any);
       }
       return Promise.resolve([] as any);
     }) as any);
     mockedFse.lstat.mockImplementation(((p: string) =>
       Promise.resolve({
         isDirectory: () => p === path.join(bundleDir, 'bin'),
-        isFile: () => p === filePath,
+        isFile: () => p === filePath || p === depsPath,
       } as any)) as any);
     mockedFse.stat.mockImplementation(((p: string) =>
       Promise.resolve({
-        size: p === filePath ? Buffer.byteLength(fileContents) : 0,
+        size: p === filePath ? Buffer.byteLength(fileContents) : p === depsPath ? Buffer.byteLength(depsContents) : 0,
         isDirectory: () => p === bundleDir || p === path.join(bundleDir, 'bin'),
-        isFile: () => p === filePath,
+        isFile: () => p === filePath || p === depsPath,
       } as any)) as any);
+    mockedFse.readFile.mockImplementation(((p: string) => {
+      if (p === depsPath) {
+        return Promise.resolve(depsContents as any);
+      }
+      return Promise.resolve('' as any);
+    }) as any);
     mockedFse.createReadStream.mockImplementation(((p: string) => {
       if (p === filePath) {
         return Readable.from([Buffer.from(fileContents)]) as any;
+      }
+      if (p === depsPath) {
+        return Readable.from([Buffer.from(depsContents)]) as any;
       }
       return Readable.from([]) as any;
     }) as any);
@@ -714,6 +725,59 @@ describe('downloadExtensionBundle', () => {
     mockedFse.createReadStream.mockImplementation(((p: string) => {
       if (p === filePath) {
         return Readable.from([Buffer.from('{}')]) as any;
+      }
+      return Readable.from([]) as any;
+    }) as any);
+  };
+  const setupBundleMissingRuntimeFile = (localVersion: string) => {
+    const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
+    const binDir = path.join(bundleDir, 'bin');
+    const filePath = path.join(binDir, 'bundle.dll');
+    const depsPath = path.join(binDir, 'function.deps.json');
+    const depsContents = JSON.stringify({
+      targets: { bundle: { 'bundle/1.0.0': { runtime: { 'lib/netstandard2.0/bundle.dll': {}, 'lib/netstandard2.0/missing.dll': {} } } } },
+    });
+
+    mockedFse.readdirSync.mockReturnValue([localVersion] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    mockedFse.pathExists.mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(false);
+      }
+      return Promise.resolve(p !== path.join(binDir, 'missing.dll'));
+    }) as any);
+    mockedFse.readdir.mockImplementation(((p: string) => {
+      if (p === bundleDir) {
+        return Promise.resolve(['bin'] as any);
+      }
+      if (p === binDir) {
+        return Promise.resolve(['bundle.dll', 'function.deps.json'] as any);
+      }
+      return Promise.resolve([] as any);
+    }) as any);
+    mockedFse.lstat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        isDirectory: () => p === binDir,
+        isFile: () => p === filePath || p === depsPath,
+      } as any)) as any);
+    mockedFse.stat.mockImplementation(((p: string) =>
+      Promise.resolve({
+        size: p === filePath ? 2 : p === depsPath ? Buffer.byteLength(depsContents) : 0,
+        isDirectory: () => p === bundleDir || p === binDir,
+        isFile: () => p === filePath || p === depsPath,
+      } as any)) as any);
+    mockedFse.readFile.mockImplementation(((p: string) => {
+      if (p === depsPath) {
+        return Promise.resolve(depsContents as any);
+      }
+      return Promise.resolve('' as any);
+    }) as any);
+    mockedFse.createReadStream.mockImplementation(((p: string) => {
+      if (p === filePath) {
+        return Readable.from([Buffer.from('{}')]) as any;
+      }
+      if (p === depsPath) {
+        return Readable.from([Buffer.from(depsContents)]) as any;
       }
       return Readable.from([]) as any;
     }) as any);
@@ -927,6 +991,21 @@ describe('downloadExtensionBundle', () => {
   it('should re-download when local version equals feed but the sidecar is missing and the bundle has no bin content', async () => {
     const feedVersions = ['1.0.0', '1.95.0'];
     setupSingleFileLocalDisk('1.95.0');
+
+    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMissing');
+    expect(mockedDownloadAndExtract).toHaveBeenCalled();
+  });
+
+  it('should re-download when the sidecar is missing and the bundle manifest references a missing runtime file', async () => {
+    const feedVersions = ['1.0.0', '1.95.0'];
+    setupBundleMissingRuntimeFile('1.95.0');
 
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
     mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
@@ -1781,16 +1860,20 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
-  it('backfills sidecar metadata instead of repairing when on-disk health only lacks sidecar', async () => {
+  it('repairs instead of backfilling when the strict on-disk health gate lacks a sidecar', async () => {
     const localVersion = '1.50.0';
     const bundleDir = path.join(defaultExtensionBundlePathValue, localVersion);
     const filePath = path.join(bundleDir, 'bin', 'bundle.dll');
+    const depsPath = path.join(bundleDir, 'bin', 'function.deps.json');
+    const depsContents = JSON.stringify({ targets: { bundle: { 'bundle/1.0.0': { runtime: { 'lib/netstandard2.0/bundle.dll': {} } } } } });
+    let sidecarExists = false;
+    let sidecarPayload = '';
 
     vi.mocked(fse.readdirSync).mockReturnValue([localVersion] as any);
     vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
     vi.mocked(fse.pathExists).mockImplementation(((p: string) => {
       if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
-        return Promise.resolve(false);
+        return Promise.resolve(sidecarExists);
       }
       return Promise.resolve(true);
     }) as any);
@@ -1799,38 +1882,48 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
         return Promise.resolve(['bin'] as any);
       }
       if (p === path.join(bundleDir, 'bin')) {
-        return Promise.resolve(['bundle.dll'] as any);
+        return Promise.resolve(['bundle.dll', 'function.deps.json'] as any);
       }
       return Promise.resolve([] as any);
     }) as any);
     vi.mocked(fse.lstat).mockImplementation(((p: string) =>
       Promise.resolve({
         isDirectory: () => p === path.join(bundleDir, 'bin'),
-        isFile: () => p === filePath,
+        isFile: () => p === filePath || p === depsPath,
       } as any)) as any);
     vi.mocked(fse.stat).mockImplementation(((p: string) =>
       Promise.resolve({
-        size: p === filePath ? Buffer.byteLength('bundle-content') : 0,
+        size: p === filePath ? Buffer.byteLength('bundle-content') : p === depsPath ? Buffer.byteLength(depsContents) : 0,
         isDirectory: () => p === bundleDir || p === path.join(bundleDir, 'bin'),
-        isFile: () => p === filePath,
+        isFile: () => p === filePath || p === depsPath,
       } as any)) as any);
     vi.mocked(fse.createReadStream).mockImplementation(((p: string) => {
       if (p === filePath) {
         return Readable.from([Buffer.from('bundle-content')]) as any;
       }
+      if (p === depsPath) {
+        return Readable.from([Buffer.from(depsContents)]) as any;
+      }
       return Readable.from([]) as any;
     }) as any);
-    const integrityModule = await import('../integrity');
-    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(fse.readFile).mockImplementation(((p: string) => {
+      if (p === depsPath) {
+        return Promise.resolve(depsContents as any);
+      }
+      return Promise.resolve(sidecarPayload as any);
+    }) as any);
+    vi.mocked(fse.outputFile).mockImplementation((async (_p: string, payload: string) => {
+      sidecarPayload = payload;
+    }) as any);
+    vi.mocked(fse.move).mockImplementation((async () => {
+      sidecarExists = true;
+    }) as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue([localVersion] as any);
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
 
     await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
 
-    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
-    expect(vi.mocked(fse.move)).toHaveBeenCalledWith(
-      expect.stringContaining('.bundle-source-md5.'),
-      expect.stringContaining('.bundle-source-md5'),
-      { overwrite: true }
-    );
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
   it('throws when repair download fails and on-disk health still bad', async () => {
