@@ -88,7 +88,15 @@ describe('LogicAppsLanguageServer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.createFileSystemWatcher.mockReturnValue({ onDidChange: vi.fn() });
-    mocks.getGlobalSetting.mockReturnValue(dependenciesPath);
+    mocks.getGlobalSetting.mockImplementation((key: string) => {
+      if (key === 'autoRuntimeDependenciesValidationAndInstallation') {
+        return true;
+      }
+      if (key === 'autoRuntimeDependenciesPath') {
+        return dependenciesPath;
+      }
+      return undefined;
+    });
     mocks.getWorkspaceFolderPath.mockResolvedValue('D:\\workspace');
     mocks.languageClient.mockImplementation(() => ({ start: vi.fn().mockResolvedValue(undefined) }));
     mocks.pathExists.mockResolvedValue(false);
@@ -175,5 +183,94 @@ describe('LogicAppsLanguageServer', () => {
       })
     );
     expect(languageClient.start).toHaveBeenCalledOnce();
+  });
+
+  describe('manual mode (autoRuntimeDependenciesValidationAndInstallation = false)', () => {
+    const manualDllPath = 'C:\\custom\\LSPServer\\SdkLspServer.dll';
+    const manualNupkgPath = 'C:\\custom\\LanguageServerLogicApps\\Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg';
+
+    beforeEach(() => {
+      mocks.getGlobalSetting.mockImplementation((key: string) => {
+        if (key === 'autoRuntimeDependenciesValidationAndInstallation') {
+          return false;
+        }
+        if (key === 'languageServerDLLPath') {
+          return manualDllPath;
+        }
+        if (key === 'languageServerNupkgPath') {
+          return manualNupkgPath;
+        }
+        return undefined;
+      });
+    });
+
+    it('uses explicit path settings when auto-validation is off', async () => {
+      const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
+      mocks.languageClient.mockReturnValue(languageClient);
+      mocks.pathExists.mockResolvedValue(true);
+
+      await new LogicAppsLanguageServer({} as any).start();
+
+      expect(mocks.languageClient).toHaveBeenCalledWith(
+        'logicAppsLanguageServer',
+        'Logic Apps language server',
+        {
+          run: {
+            command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
+            args: [manualDllPath, '--sdk', manualNupkgPath],
+          },
+          debug: {
+            command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
+            args: [manualDllPath, '--sdk', manualNupkgPath],
+          },
+        },
+        expect.objectContaining({
+          initializationOptions: expect.objectContaining({
+            apiConfig: expect.objectContaining({
+              bearerToken: 'Bearer token',
+            }),
+          }),
+        })
+      );
+      expect(languageClient.start).toHaveBeenCalledOnce();
+    });
+
+    it('warns and does not start when DLL path does not exist', async () => {
+      mocks.pathExists.mockImplementation(async (filePath: string) => filePath !== manualDllPath);
+
+      await new LogicAppsLanguageServer({} as any).start();
+
+      expect(mocks.showWarningMessage).toHaveBeenCalledWith(
+        expect.stringContaining('Install or repair Logic Apps language server dependencies')
+      );
+      expect(mocks.languageClient).not.toHaveBeenCalled();
+    });
+
+    it('warns and does not start when nupkg path does not exist', async () => {
+      mocks.pathExists.mockImplementation(async (filePath: string) => filePath !== manualNupkgPath);
+
+      await new LogicAppsLanguageServer({} as any).start();
+
+      expect(mocks.showWarningMessage).toHaveBeenCalledWith(
+        expect.stringContaining('Install or repair Logic Apps language server SDK dependencies')
+      );
+      expect(mocks.languageClient).not.toHaveBeenCalled();
+    });
+
+    it('returns undefined for both paths when settings are empty', async () => {
+      mocks.getGlobalSetting.mockImplementation((key: string) => {
+        if (key === 'autoRuntimeDependenciesValidationAndInstallation') {
+          return false;
+        }
+        return undefined;
+      });
+
+      await new LogicAppsLanguageServer({} as any).start();
+
+      expect(mocks.showWarningMessage).toHaveBeenCalledWith(
+        'Install or repair Logic Apps language server dependencies before starting C# workflow authoring.'
+      );
+      expect(mocks.languageClient).not.toHaveBeenCalled();
+    });
   });
 });
