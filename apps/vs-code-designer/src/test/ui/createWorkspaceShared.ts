@@ -16,7 +16,7 @@ import {
   type WebElement,
   Key,
 } from 'vscode-extension-tester';
-import { clearBlockingUI, waitForQuickInputAndType } from './helpers';
+import { clearBlockingUI } from './helpers';
 
 /**
  * Create Workspace E2E Tests
@@ -223,7 +223,15 @@ export function createTempDir(): string {
 }
 
 async function typeQuickInputQuery(driver: WebDriver, query: string): Promise<void> {
-  await waitForQuickInputAndType(driver, query, 30_000);
+  const inputEl = await driver.wait(
+    until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
+    30_000,
+    'QuickInput input element not located'
+  );
+  await driver.wait(until.elementIsVisible(inputEl), 30_000, 'QuickInput input not visible');
+  await driver.wait(until.elementIsEnabled(inputEl), 5_000, 'QuickInput input not enabled');
+  await inputEl.sendKeys(Key.chord(Key.CONTROL, 'a'));
+  await inputEl.sendKeys(query);
 }
 
 /**
@@ -329,8 +337,13 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
   }
 
   if (!bestPick) {
-    // Try a different search term
+    // Try a different search term against a fresh command palette. Reusing a
+    // no-pick widget can race VS Code clearing the palette and leave the input
+    // hidden in CI.
     console.log('[selectCreateWorkspaceCommand] No match, trying "> Create new logic"');
+    await safeCancelQuickInput(input, 'selectCreateWorkspaceCommand:fallback');
+    input = await workbench.openCommandPrompt();
+    await sleep(500);
     await typeQuickInputQuery(driver, '> Create new logic');
     await sleep(2000);
 
