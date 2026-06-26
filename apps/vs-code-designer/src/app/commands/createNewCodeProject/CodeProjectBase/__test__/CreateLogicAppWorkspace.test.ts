@@ -86,7 +86,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         'utf-8'
       );
 
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather');
+      expect(templateContent).toContain('WorkflowActions.Managed.Msnweather("msnweather").CurrentWeather');
       expect(templateContent).toContain('location: () => "98058"');
       expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
@@ -109,7 +109,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger()');
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow)');
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
       expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
@@ -127,7 +127,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).toContain('MessageRole.User');
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
   });
