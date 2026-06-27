@@ -207,6 +207,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       const preservedLogicAppName = preserveLogicAppData ? state.logicAppName : '';
       const preservedSeparator = preserveLogicAppData ? state.separator : '/';
       const preservedPlatform = preserveLogicAppData ? state.platform : null;
+      const preservedAvailableProjects = preserveLogicAppData ? state.availableProjects : [];
 
       Object.assign(state, initialState);
 
@@ -215,6 +216,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
         state.logicAppName = preservedLogicAppName;
         state.separator = preservedSeparator;
         state.platform = preservedPlatform;
+        state.availableProjects = preservedAvailableProjects;
       }
     },
     nextStep: (state) => {

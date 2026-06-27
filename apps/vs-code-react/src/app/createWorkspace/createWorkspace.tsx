@@ -222,10 +222,16 @@ const CreateWorkspaceInternal = () => {
 
         // Logic app name validation
         if (requirements.needsLogicAppName) {
-          const logicAppNameValid =
-            flowType === FLOW_TYPES.CREATE_LOGIC_APP
-              ? validateLogicAppNameForNavigation(logicAppName)
-              : logicAppName.trim() !== '' && nameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
+          let logicAppNameValid: boolean;
+          if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
+            logicAppNameValid = validateLogicAppNameForNavigation(logicAppName);
+          } else if (flowType === FLOW_TYPES.CREATE_WORKFLOW) {
+            // For createWorkflow, logicAppName is a pre-existing project selected from a dropdown
+            logicAppNameValid = logicAppName.trim() !== '';
+          } else {
+            logicAppNameValid =
+              logicAppName.trim() !== '' && nameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
+          }
           if (!logicAppNameValid) {
             return false;
           }
