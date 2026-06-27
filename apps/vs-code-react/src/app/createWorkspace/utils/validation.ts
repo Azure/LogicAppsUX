@@ -4,12 +4,15 @@ export const nameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
 export const functionNameValidation = /^[a-z][a-z\d_]*$/i;
 
-export const validateWorkflowName = (name: string, intlText: any) => {
+export const validateWorkflowName = (name: string, intlText: any, existingWorkflows?: string[]) => {
   if (!name) {
     return intlText.EMPTY_WORKFLOW_NAME;
   }
   if (!nameValidation.test(name)) {
     return intlText.WORKFLOW_NAME_VALIDATION_MESSAGE;
+  }
+  if (existingWorkflows?.some((w) => w.toLowerCase() === name.trim().toLowerCase())) {
+    return intlText.WORKFLOW_NAME_EXISTS ?? 'A workflow with this name already exists in the selected project.';
   }
   return undefined;
 };

@@ -41,6 +41,28 @@ describe('create workspace validation utilities', () => {
       expect(validateWorkflowName('1workflow', intlText)).toBe(intlText.WORKFLOW_NAME_VALIDATION_MESSAGE);
       expect(validateWorkflowName('workflow.name', intlText)).toBe(intlText.WORKFLOW_NAME_VALIDATION_MESSAGE);
     });
+
+    it('returns collision message when workflow name exists in project (case-insensitive)', () => {
+      const existingWorkflows = ['MyWorkflow', 'another-workflow'];
+      const collisionMessage = 'A workflow with this name already exists in the selected project.';
+      const intlWithCollision = { ...intlText, WORKFLOW_NAME_EXISTS: collisionMessage };
+
+      expect(validateWorkflowName('MyWorkflow', intlWithCollision, existingWorkflows)).toBe(collisionMessage);
+      expect(validateWorkflowName('myworkflow', intlWithCollision, existingWorkflows)).toBe(collisionMessage);
+      expect(validateWorkflowName('MYWORKFLOW', intlWithCollision, existingWorkflows)).toBe(collisionMessage);
+      expect(validateWorkflowName('another-workflow', intlWithCollision, existingWorkflows)).toBe(collisionMessage);
+    });
+
+    it('returns undefined when workflow name does not collide', () => {
+      const existingWorkflows = ['MyWorkflow', 'another-workflow'];
+      expect(validateWorkflowName('new-workflow', intlText, existingWorkflows)).toBeUndefined();
+      expect(validateWorkflowName('unique-name', intlText, existingWorkflows)).toBeUndefined();
+    });
+
+    it('returns undefined when existingWorkflows is empty or not provided', () => {
+      expect(validateWorkflowName('workflow', intlText, [])).toBeUndefined();
+      expect(validateWorkflowName('workflow', intlText, undefined)).toBeUndefined();
+    });
   });
 
   describe('functionNameValidation', () => {

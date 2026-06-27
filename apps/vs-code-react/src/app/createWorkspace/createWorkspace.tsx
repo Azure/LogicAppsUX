@@ -60,6 +60,7 @@ const CreateWorkspaceInternal = () => {
     logicAppsWithoutCustomCode,
     separator,
     isDevContainerProject,
+    availableProjects,
   } = createWorkspaceState;
 
   // Calculate total steps - always 2: Setup and Review + Create
@@ -183,6 +184,15 @@ const CreateWorkspaceInternal = () => {
     return !isNameAlreadyInWorkspace(name.trim());
   };
 
+  // Helper to check if a workflow name already exists in the selected project
+  const isWorkflowNameTakenInProject = (name: string) => {
+    const selectedProject = (availableProjects || []).find((p) => p.name === logicAppName);
+    if (!selectedProject?.existingWorkflows) {
+      return false;
+    }
+    return selectedProject.existingWorkflows.some((w) => w.toLowerCase() === name.toLowerCase());
+  };
+
   const canProceed = () => {
     switch (currentStep) {
       case 0: {
@@ -256,7 +266,10 @@ const CreateWorkspaceInternal = () => {
             // For other flows, always validate workflow fields
             const workflowTypeValid = workflowType !== '';
             const workflowNameValid =
-              workflowName.trim() !== '' && nameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim());
+              workflowName.trim() !== '' &&
+              nameValidation.test(workflowName.trim()) &&
+              !isNameAlreadyInWorkspace(workflowName.trim()) &&
+              !isWorkflowNameTakenInProject(workflowName.trim());
             if (!workflowTypeValid || !workflowNameValid) {
               return false;
             }
@@ -331,7 +344,10 @@ const CreateWorkspaceInternal = () => {
           : true;
         const workflowTypeValid = requirements.needsWorkflowFields ? workflowType !== '' : true;
         const workflowNameValid = requirements.needsWorkflowFields
-          ? workflowName.trim() !== '' && nameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim())
+          ? workflowName.trim() !== '' &&
+            nameValidation.test(workflowName.trim()) &&
+            !isNameAlreadyInWorkspace(workflowName.trim()) &&
+            !isWorkflowNameTakenInProject(workflowName.trim())
           : true;
 
         const baseFieldsValid =

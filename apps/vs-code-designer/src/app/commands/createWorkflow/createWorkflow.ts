@@ -11,12 +11,14 @@ import * as vscode from 'vscode';
 import { createLogicAppWorkflow } from './createLogicAppWorkflow';
 import { isCodefulProject } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { getWorkflowsInLocalProject } from '../../utils/codeless/common';
 import * as path from 'path';
 
 interface AvailableProject {
   name: string;
   path: string;
   isCodeful: boolean;
+  existingWorkflows: string[];
 }
 
 /**
@@ -32,10 +34,12 @@ async function collectAvailableProjects(context: IActionContext): Promise<Availa
     const projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
     if (projectRoot) {
       const isCodeful = await isCodefulProject(projectRoot);
+      const workflows = await getWorkflowsInLocalProject(projectRoot);
       projects.push({
         name: path.basename(projectRoot.replace(/\\/g, '/')),
         path: projectRoot,
         isCodeful,
+        existingWorkflows: Object.keys(workflows || {}),
       });
     }
   }

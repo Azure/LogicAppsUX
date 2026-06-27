@@ -12,6 +12,7 @@ export interface AvailableProject {
   name: string;
   path: string;
   isCodeful: boolean;
+  existingWorkflows: string[];
 }
 
 export interface CreateWorkspaceState {

@@ -19,6 +19,10 @@ vi.mock('../../../utils/verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: vi.fn(),
 }));
 
+vi.mock('../../../utils/codeless/common', () => ({
+  getWorkflowsInLocalProject: vi.fn().mockResolvedValue({}),
+}));
+
 vi.mock('../createLogicAppWorkflow', () => ({
   createLogicAppWorkflow: vi.fn(),
 }));
@@ -68,8 +72,8 @@ describe('createWorkflow', () => {
         expect.objectContaining({
           extraInitializeData: expect.objectContaining({
             availableProjects: [
-              { name: 'ProjectA', path: 'D:\\workspace\\ProjectA', isCodeful: false },
-              { name: 'ProjectB', path: 'D:\\workspace\\ProjectB', isCodeful: true },
+              { name: 'ProjectA', path: 'D:\\workspace\\ProjectA', isCodeful: false, existingWorkflows: [] },
+              { name: 'ProjectB', path: 'D:\\workspace\\ProjectB', isCodeful: true, existingWorkflows: [] },
             ],
           }),
         })
