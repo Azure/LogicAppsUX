@@ -43,29 +43,41 @@ async function collectAvailableProjects(context: IActionContext): Promise<Availa
 }
 
 export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) => {
+  ext.outputChannel.appendLog(`[createWorkflow] Started. uri=${uri?.fsPath ?? 'undefined'}`);
+
   // Collect all available projects
   let availableProjects: AvailableProject[];
   try {
     availableProjects = await collectAvailableProjects(context);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    ext.outputChannel.appendLog(`[createWorkflow] collectAvailableProjects failed: ${message}`);
     throw new Error(localize('failedToCollectProjects', 'Failed to collect Logic App projects: {0}', message));
   }
 
+  ext.outputChannel.appendLog(
+    `[createWorkflow] Found ${availableProjects.length} projects: ${availableProjects.map((p) => p.name).join(', ')}`
+  );
+
   // Determine pre-selected project from URI context
   let selectedProject: AvailableProject | undefined;
-  if (uri) {
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-    if (workspaceFolder) {
-      const projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolder.uri.fsPath, true);
-      if (projectRoot) {
-        selectedProject = availableProjects.find((p) => p.path === projectRoot);
+  if (uri && typeof uri === 'object' && 'fsPath' in uri) {
+    try {
+      const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+      if (workspaceFolder) {
+        const projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolder.uri.fsPath, true);
+        if (projectRoot) {
+          selectedProject = availableProjects.find((p) => p.path === projectRoot);
+        }
       }
+    } catch {
+      ext.outputChannel.appendLog(`[createWorkflow] getWorkspaceFolder failed for uri=${uri.fsPath}, continuing without pre-selection`);
     }
   }
 
   // If no projects found at all, show user-friendly error
   if (availableProjects.length === 0) {
+    ext.outputChannel.appendLog('[createWorkflow] No projects found — throwing');
     throw new Error(localize('noLogicAppProject', 'No Logic App project found in the current workspace.'));
   }
 
@@ -73,6 +85,8 @@ export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) 
   if (!selectedProject && availableProjects.length === 1) {
     selectedProject = availableProjects[0];
   }
+
+  ext.outputChannel.appendLog(`[createWorkflow] Pre-selected project: ${selectedProject?.name ?? 'none (user must choose from dropdown)'}`);
 
   const panelName = localize('createWorkflow', 'Create workflow');
 
@@ -82,11 +96,13 @@ export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) 
     projectName: ProjectName.createWorkflow,
     createCommand: ExtensionCommand.createWorkflow,
     createHandler: async (context: IActionContext, data: any) => {
+      ext.outputChannel.appendLog(`[createWorkflow] createHandler invoked. logicAppName="${data.logicAppName}"`);
       // Resolve project root from the user's selection in the webview
       const selectedName = data.logicAppName;
       const project = availableProjects.find((p) => p.name === selectedName);
       const projectRoot = project?.path;
       if (!projectRoot) {
+        ext.outputChannel.appendLog(`[createWorkflow] Project "${selectedName}" not found in available projects`);
         throw new Error(localize('noProjectSelected', 'No project selected. Please select a project and try again.'));
       }
       await createLogicAppWorkflow(context, data, projectRoot);

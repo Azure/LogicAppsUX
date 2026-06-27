@@ -55,6 +55,7 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
   const options: vscode.WebviewOptions & vscode.WebviewPanelOptions = {
     enableScripts: true,
     retainContextWhenHidden: true,
+    localResourceRoots: [vscode.Uri.file(path.join(ext.context.extensionPath, 'vs-code-react'))],
   };
 
   const panel = vscode.window.createWebviewPanel('CreateWorkspace', panelName, vscode.ViewColumn.Active, options);
