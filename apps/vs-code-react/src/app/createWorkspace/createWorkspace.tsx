@@ -750,7 +750,9 @@ export const CreateWorkflow = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetState({ preserveLogicAppData: true }));
+    // Only set the flow type — do NOT call resetState here.
+    // The webview is always created fresh (new panel) so state starts from initialState.
+    // Calling resetState races with initializeWorkspace and can wipe availableProjects.
     dispatch(setFlowType(FLOW_TYPES.CREATE_WORKFLOW));
   }, [dispatch]);
 

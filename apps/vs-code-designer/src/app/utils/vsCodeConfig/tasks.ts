@@ -93,7 +93,7 @@ export async function validateTasksJson(context: IActionContext, folders: readon
   try {
     if (folders) {
       for (const folder of folders) {
-        const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder);
+        const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder, true);
         context.telemetry.properties.projectPath = projectPath;
         if (projectPath) {
           const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);

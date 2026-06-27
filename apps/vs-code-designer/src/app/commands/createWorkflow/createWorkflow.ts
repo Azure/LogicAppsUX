@@ -44,7 +44,13 @@ async function collectAvailableProjects(context: IActionContext): Promise<Availa
 
 export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) => {
   // Collect all available projects
-  const availableProjects = await collectAvailableProjects(context);
+  let availableProjects: AvailableProject[];
+  try {
+    availableProjects = await collectAvailableProjects(context);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(localize('failedToCollectProjects', 'Failed to collect Logic App projects: {0}', message));
+  }
 
   // Determine pre-selected project from URI context
   let selectedProject: AvailableProject | undefined;
@@ -58,7 +64,7 @@ export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) 
     }
   }
 
-  // If no projects found at all, throw
+  // If no projects found at all, show user-friendly error
   if (availableProjects.length === 0) {
     throw new Error(localize('noLogicAppProject', 'No Logic App project found in the current workspace.'));
   }
