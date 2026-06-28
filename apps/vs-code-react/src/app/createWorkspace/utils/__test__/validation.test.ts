@@ -3,6 +3,7 @@ import {
   functionNameValidation,
   nameValidation,
   namespaceValidation,
+  reservedWorkflowNames,
   validateFunctionName,
   validateFunctionNamespace,
   validateWorkflowName,
@@ -62,6 +63,28 @@ describe('create workspace validation utilities', () => {
     it('returns undefined when existingWorkflows is empty or not provided', () => {
       expect(validateWorkflowName('workflow', intlText, [])).toBeUndefined();
       expect(validateWorkflowName('workflow', intlText, undefined)).toBeUndefined();
+    });
+
+    it('rejects reserved project folder names (case-insensitive)', () => {
+      const reservedMessage = 'This name is reserved and cannot be used as a workflow name.';
+      const intlWithReserved = { ...intlText, WORKFLOW_NAME_RESERVED: reservedMessage };
+
+      expect(validateWorkflowName('Artifacts', intlWithReserved)).toBe(reservedMessage);
+      expect(validateWorkflowName('artifacts', intlWithReserved)).toBe(reservedMessage);
+      expect(validateWorkflowName('lib', intlWithReserved)).toBe(reservedMessage);
+      expect(validateWorkflowName('Tests', intlWithReserved)).toBe(reservedMessage);
+      expect(validateWorkflowName('custom', intlWithReserved)).toBe(reservedMessage);
+      expect(validateWorkflowName('diagnostics', intlWithReserved)).toBe(reservedMessage);
+      expect(validateWorkflowName('wwwroot', intlWithReserved)).toBe(reservedMessage);
+    });
+
+    it('exports the reservedWorkflowNames list', () => {
+      expect(reservedWorkflowNames).toContain('Artifacts');
+      expect(reservedWorkflowNames).toContain('lib');
+      expect(reservedWorkflowNames).toContain('workflow-designtime');
+      expect(reservedWorkflowNames).toContain('.vscode');
+      expect(reservedWorkflowNames).toContain('.debug');
+      expect(reservedWorkflowNames).toContain('Tests');
     });
   });
 
