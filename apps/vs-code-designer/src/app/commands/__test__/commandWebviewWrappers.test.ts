@@ -119,6 +119,11 @@ describe('workspace webview command wrappers', () => {
     const logicAppsWithoutCustomCode = ['LogicApp'];
     (vscode.workspace as any).workspaceFile = workspaceFile;
     (vscode.workspace.fs.readFile as Mock).mockResolvedValue(Buffer.from(JSON.stringify(workspaceFileJson)));
+    (vscode.workspace.fs.readDirectory as Mock).mockResolvedValue([
+      ['LogicApp', 'directory'],
+      ['CSharpProject', 'directory'],
+      ['MyWorkspace.code-workspace', 'file'],
+    ]);
     (getLogicAppWithoutCustomCode as Mock).mockResolvedValue(logicAppsWithoutCustomCode);
 
     await createNewProject(context);
@@ -133,6 +138,7 @@ describe('workspace webview command wrappers', () => {
     expect(config.extraInitializeData).toEqual({
       workspaceFileJson,
       logicAppsWithoutCustomCode,
+      existingFolders: ['LogicApp', 'CSharpProject'],
     });
     expect(config.dialogOptions?.workspace).toMatchObject({
       canSelectMany: false,

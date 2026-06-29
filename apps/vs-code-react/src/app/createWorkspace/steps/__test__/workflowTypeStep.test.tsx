@@ -91,6 +91,9 @@ function createState(overrides: Partial<CreateWorkspaceState> = {}): CreateWorks
     workspaceFileJson: '',
     workspaceName: 'Workspace',
     workspaceProjectPath: { fsPath: '/tmp/projects', path: '/tmp/projects' },
+    existingFolders: [],
+    logicAppsWithoutCustomCode: undefined,
+    availableProjects: [],
     ...overrides,
   };
 }

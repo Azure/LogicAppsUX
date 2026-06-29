@@ -67,6 +67,7 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     isComplete: false,
     workspaceFileJson: '',
     logicAppsWithoutCustomCode: undefined,
+    existingFolders: [],
     flowType: 'createWorkspace',
     pathValidationResults: { '/home/user/projects': true },
     packageValidationResults: {},
@@ -76,6 +77,7 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     separator: '/',
     platform: null,
     isDevContainerProject: false,
+    availableProjects: [],
     ...overrides,
   };
 };

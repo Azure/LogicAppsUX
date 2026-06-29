@@ -48,6 +48,7 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     isComplete: false,
     workspaceFileJson: '',
     logicAppsWithoutCustomCode: undefined,
+    existingFolders: [],
     flowType: 'createWorkspace',
     pathValidationResults: {},
     packageValidationResults: {},
@@ -57,6 +58,7 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     separator: '/',
     platform: null,
     isDevContainerProject: false,
+    availableProjects: [],
     ...overrides,
   };
 

@@ -35,6 +35,7 @@ export interface CreateWorkspaceState {
   isComplete: boolean;
   workspaceFileJson: any;
   logicAppsWithoutCustomCode: any | undefined;
+  existingFolders: string[];
   flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace' | 'createWorkflow';
   pathValidationResults: Record<string, boolean>;
   packageValidationResults: Record<string, boolean>;
@@ -72,6 +73,7 @@ const initialState: CreateWorkspaceState = {
   isComplete: false,
   workspaceFileJson: '',
   logicAppsWithoutCustomCode: undefined,
+  existingFolders: [],
   flowType: 'createWorkspace',
   pathValidationResults: {},
   packageValidationResults: {},
@@ -89,9 +91,10 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
   initialState,
   reducers: {
     initializeProject: (state, action: PayloadAction<any>) => {
-      const { workspaceFileJson, logicAppsWithoutCustomCode } = action.payload;
+      const { workspaceFileJson, logicAppsWithoutCustomCode, existingFolders } = action.payload;
       state.workspaceFileJson = workspaceFileJson;
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
+      state.existingFolders = existingFolders || [];
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
       const { separator, platform, logicAppType, logicAppName, availableProjects } = action.payload;

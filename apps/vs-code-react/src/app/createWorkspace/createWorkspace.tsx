@@ -58,6 +58,7 @@ const CreateWorkspaceInternal = () => {
     workspaceExistenceResults,
     packageValidationResults,
     logicAppsWithoutCustomCode,
+    existingFolders,
     separator,
     isDevContainerProject,
     availableProjects,
@@ -150,9 +151,13 @@ const CreateWorkspaceInternal = () => {
     STEP_REVIEW_CREATE: intlText.REVIEW_CREATE_LABEL,
   };
 
-  // Helper function to check if a name already exists in workspace folders
+  // Helper function to check if a name already exists in workspace folders or on disk
   const isNameAlreadyInWorkspace = (name: string) => {
-    return workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name);
+    if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
+      return true;
+    }
+    // Also check actual directories on disk (case-insensitive) — catches C# project folders etc.
+    return existingFolders.some((folder: string) => folder.toLowerCase() === name.trim().toLowerCase());
   };
 
   const getWorkspaceExistencePaths = () => {
