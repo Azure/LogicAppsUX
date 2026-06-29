@@ -49,6 +49,7 @@ export async function createNewProject(context: IActionContext): Promise<void> {
 
   // Enumerate all existing directories on disk (includes C# project folders, etc.)
   const existingFolders = await getExistingFoldersOnDisk(workspaceRootFolder);
+  ext.outputChannel.appendLog(`[createProject] workspaceRoot=${workspaceRootFolder}, existingFolders=${JSON.stringify(existingFolders)}`);
 
   await createWorkspaceWebviewCommandHandler({
     panelName: localize('createLogicAppProject', 'Create project'),

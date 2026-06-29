@@ -900,6 +900,92 @@ describe('Create Workspace Tests', function () {
       console.log('[validWfSep] PASSED: invalid separators rejected and "la-trigger-github" accepted');
     });
 
+    it('should show reserved name error for workflow name "Artifacts"', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+      await clearAndType(wfNameInput, 'Artifacts');
+
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReserved] Error shown for "Artifacts"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfReserved-artifacts-passed');
+      console.log('[validWfReserved] PASSED: "Artifacts" blocked as reserved');
+    });
+
+    it('should show reserved name error for workflow name "lib"', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+      await clearAndType(wfNameInput, 'lib');
+
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedLib] Error shown for "lib"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfReserved-lib-passed');
+      console.log('[validWfReservedLib] PASSED: "lib" blocked as reserved');
+    });
+
+    it('should show reserved name error case-insensitively for workflow name', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+
+      // 'artifacts' (lowercase of 'Artifacts')
+      await clearAndType(wfNameInput, 'artifacts');
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedCase] Error shown for "artifacts" (lowercase)');
+
+      // 'ARTIFACTS' (uppercase)
+      await clearAndType(wfNameInput, 'ARTIFACTS');
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedCase] Error shown for "ARTIFACTS" (uppercase)');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await assertNoValidationMessage(driver, 'reserved and cannot be used');
+      await captureScreenshot(driver, 'validWfReserved-case-passed');
+      console.log('[validWfReservedCase] PASSED: case-insensitive reserved name check works');
+    });
+
+    it('should show reserved name error for workflow name "workflow-designtime"', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+      await clearAndType(wfNameInput, 'workflow-designtime');
+
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedDesigntime] Error shown for "workflow-designtime"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfReserved-designtime-passed');
+      console.log('[validWfReservedDesigntime] PASSED: "workflow-designtime" blocked as reserved');
+    });
+
+    it('should clear reserved name error when valid workflow name is typed', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+
+      // Start with reserved name
+      await clearAndType(wfNameInput, 'custom');
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedClear] Error shown for "custom"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Type a valid name
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await assertNoValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedClear] Error cleared after typing valid name');
+
+      await captureScreenshot(driver, 'validWfReserved-clear-passed');
+      console.log('[validWfReservedClear] PASSED: reserved error clears when valid name typed');
+    });
+
     // -----------------------------------------------------------------------
     // Next button gating
     // -----------------------------------------------------------------------

@@ -43,7 +43,7 @@ vi.mock('react-router-dom', () => ({
   useOutletContext: vi.fn(),
 }));
 
-import { CreateWorkspace, CreateWorkspaceFromPackage, CreateWorkspaceStructure, CreateLogicApp } from '../createWorkspace';
+import { CreateWorkspace, CreateWorkspaceFromPackage, CreateWorkspaceStructure, CreateLogicApp, CreateWorkflow } from '../createWorkspace';
 
 const setTestCreateWorkspaceState = 'test/setCreateWorkspaceState';
 
@@ -651,5 +651,95 @@ describe('Flow type wrapper components', () => {
 
     const state = store.getState().createWorkspace;
     expect(state.flowType).toBe('createLogicApp');
+  });
+});
+
+describe('CreateLogicApp state preservation (resetState race condition)', () => {
+  it('should preserve existingFolders after mount when initializeProject has populated them', () => {
+    const store = configureStore({
+      reducer: { createWorkspace: createWorkspaceSlice.reducer },
+    });
+
+    // Simulate initializeProject being dispatched (as extension host sends initialize_frame)
+    act(() => {
+      store.dispatch(
+        createWorkspaceSlice.actions.initializeProject({
+          workspaceFileJson: { folders: [{ name: 'TestApp', path: './TestApp' }] },
+          logicAppsWithoutCustomCode: [],
+          existingFolders: ['TestApp', 'CustomCodeProject', '.vscode'],
+        })
+      );
+    });
+
+    // Verify state has existingFolders before mount
+    expect(store.getState().createWorkspace.existingFolders).toEqual(['TestApp', 'CustomCodeProject', '.vscode']);
+
+    // Mount CreateLogicApp — this previously called resetState which wiped existingFolders
+    render(
+      <Provider store={store}>
+        <CreateLogicApp />
+      </Provider>
+    );
+
+    // After mount, existingFolders must still be preserved
+    const stateAfterMount = store.getState().createWorkspace;
+    expect(stateAfterMount.existingFolders).toEqual(['TestApp', 'CustomCodeProject', '.vscode']);
+    expect(stateAfterMount.flowType).toBe('createLogicApp');
+  });
+
+  it('should preserve workspaceFileJson after mount when initializeProject has populated it', () => {
+    const store = configureStore({
+      reducer: { createWorkspace: createWorkspaceSlice.reducer },
+    });
+
+    const workspaceFileJson = { folders: [{ name: 'MyApp', path: './MyApp' }] };
+
+    act(() => {
+      store.dispatch(
+        createWorkspaceSlice.actions.initializeProject({
+          workspaceFileJson,
+          logicAppsWithoutCustomCode: [{ label: 'MyApp' }],
+          existingFolders: ['MyApp'],
+        })
+      );
+    });
+
+    render(
+      <Provider store={store}>
+        <CreateLogicApp />
+      </Provider>
+    );
+
+    const stateAfterMount = store.getState().createWorkspace;
+    expect(stateAfterMount.workspaceFileJson).toEqual(workspaceFileJson);
+    expect(stateAfterMount.logicAppsWithoutCustomCode).toEqual([{ label: 'MyApp' }]);
+  });
+
+  it('should not interfere with CreateWorkflow preserving availableProjects', () => {
+    const store = configureStore({
+      reducer: { createWorkspace: createWorkspaceSlice.reducer },
+    });
+
+    const availableProjects = [
+      { name: 'Project1', path: '/workspace/Project1', isCodeful: false, existingWorkflows: ['workflow-a'] },
+      { name: 'Project2', path: '/workspace/Project2', isCodeful: true, existingWorkflows: [] },
+    ];
+
+    act(() => {
+      store.dispatch(createWorkspaceSlice.actions.initializeWorkspace({ availableProjects }));
+    });
+
+    expect(store.getState().createWorkspace.availableProjects).toEqual(availableProjects);
+
+    // Dynamically import CreateWorkflow
+    render(
+      <Provider store={store}>
+        <CreateWorkflow />
+      </Provider>
+    );
+
+    const stateAfterMount = store.getState().createWorkspace;
+    expect(stateAfterMount.availableProjects).toEqual(availableProjects);
+    expect(stateAfterMount.flowType).toBe('createWorkflow');
   });
 });

@@ -760,7 +760,9 @@ export const CreateLogicApp = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetState(undefined));
+    // Only set the flow type — do NOT call resetState here.
+    // The webview is always created fresh (new panel) so state starts from initialState.
+    // Calling resetState races with initializeProject and can wipe existingFolders/workspaceFileJson.
     dispatch(setFlowType(FLOW_TYPES.CREATE_LOGIC_APP));
   }, [dispatch]);
 
