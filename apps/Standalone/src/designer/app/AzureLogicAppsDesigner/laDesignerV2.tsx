@@ -297,13 +297,36 @@ const DesignerEditor = () => {
     }
   }, [isMonitoringView, toggleMonitoringView]);
 
-  const hideMonitoringView = useCallback(() => {
+  const hideMonitoringView = useCallback(async () => {
     if (isMonitoringView) {
-      toggleMonitoringView();
+      // Restore the workflow *before* leaving monitoring view. toggleMonitoringView() clears
+      // read-only, so if it ran first there would be a transient window — widened by the await
+      // below on slow networks — where the designer is editable while the canvas still shows the
+      // selected run's definition. Editing in that window reintroduces the data-loss scenario.
+      // Setting the workflow first guarantees the first render outside monitoring view already
+      // has the correct draft/published definition.
+      if (isDraftMode) {
+        // Restore the draft, not workflow.json (the published version) — the monitoring view
+        // replaced the canvas with the run's definition. The draft autosaves before every run,
+        // so the server copy is current, but the cached query data may be stale; refetch first.
+        let freshCustomCodeData: typeof customCodeData;
+        try {
+          freshCustomCodeData = (await customCodeRefetch()).data;
+        } catch {
+          freshCustomCodeData = undefined;
+        }
+        const draft = (freshCustomCodeData ?? customCodeData)?.[Artifact.DraftFile];
+        if (draft) {
+          setWorkflow(draft as any);
+          toggleMonitoringView();
+          return;
+        }
+      }
       const wf = artifactData?.properties.files[Artifact.WorkflowFile];
       setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
+      toggleMonitoringView();
     }
-  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
+  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView, isDraftMode, customCodeRefetch, customCodeData]);
 
   const onRun = useCallback(
     (runId: string | undefined) => {
@@ -366,6 +389,7 @@ const DesignerEditor = () => {
       };
       const newServiceProviderConnections: Record<string, any> = {};
       const newAgentConnections: Record<string, any> = {};
+      const newAgentMcpConnections: Record<string, any> = {};
 
       const referenceKeys = Object.keys(connectionReferences ?? {});
       if (referenceKeys.length) {
@@ -399,6 +423,11 @@ const DesignerEditor = () => {
               // We need to move the data out to a new object, delete the old data, then apply the new data at the end
               newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
               delete connectionsData?.agentConnections?.[connectionKey];
+            } else if (reference?.connection?.id.startsWith('/connectionProviders/mcpclient/')) {
+              // MCP Connection
+              const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+              newAgentMcpConnections[referenceKey] = connectionsData?.agentMcpConnections?.[connectionKey];
+              delete connectionsData?.agentMcpConnections?.[connectionKey];
             } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
               // Service Provider Connection
               const connectionKey = reference.connection.id.split('/').splice(-1)[0];
@@ -414,12 +443,16 @@ const DesignerEditor = () => {
           ...connectionsData?.serviceProviderConnections,
           ...newServiceProviderConnections,
         };
-        if (isAgentWorkflow(workflow?.kind ?? '') || Object.keys(newAgentConnections).length > 0) {
-          (connectionsData as ConnectionsData).agentConnections = {
-            ...connectionsData?.agentConnections,
-            ...newAgentConnections,
-          };
+        (connectionsData as ConnectionsData).agentMcpConnections = {
+          ...connectionsData?.agentMcpConnections,
+          ...newAgentMcpConnections,
+        };
+        (connectionsData as ConnectionsData).agentConnections = {
+          ...connectionsData?.agentConnections,
+          ...newAgentConnections,
+        };
 
+        if (isAgentWorkflow(workflow?.kind ?? '')) {
           // Assign MSI roles if needed
           /**
            *  This is currently only for Agentic workflows,
@@ -1222,9 +1255,18 @@ const getConnectionsToUpdate = (
     connectionsJson.managedApiConnections ?? {}
   );
 
+  const hasNewMcpConnectionKeys = hasNewKeys(originalConnectionsJson.agentMcpConnections ?? {}, connectionsJson.agentMcpConnections ?? {});
+
   const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
 
-  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
+  if (
+    !hasNewFunctionKeys &&
+    !hasNewApimKeys &&
+    !hasNewManagedApiKeys &&
+    !hasNewServiceProviderKeys &&
+    !hasNewAgentKeys &&
+    !hasNewMcpConnectionKeys
+  ) {
     return undefined;
   }
 
@@ -1277,6 +1319,15 @@ const getConnectionsToUpdate = (
     for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
+      }
+    }
+  }
+
+  if (hasNewMcpConnectionKeys) {
+    for (const agentMcpConnectionName of Object.keys(connectionsJson.agentMcpConnections ?? {})) {
+      if (originalConnectionsJson.agentMcpConnections?.[agentMcpConnectionName]) {
+        (connectionsToUpdate.agentMcpConnections as any)[agentMcpConnectionName] =
+          originalConnectionsJson.agentMcpConnections[agentMcpConnectionName];
       }
     }
   }

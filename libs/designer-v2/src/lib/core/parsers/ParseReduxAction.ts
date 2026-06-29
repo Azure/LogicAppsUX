@@ -14,6 +14,7 @@ import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
+import type { ConnectionReference, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   LOCAL_STORAGE_KEYS,
   LoggerService,
@@ -21,7 +22,6 @@ import {
   VARIABLE_EDITOR_MAX_VARIABLES,
   WORKFLOW_NODE_TYPES,
 } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 
@@ -101,19 +101,12 @@ export const initializeGraphState = createAsyncThunk<
       // For Consumption workflows, connectionReferences may be empty because connections
       // are stored in parameters.$connections.value instead. Build connectionReferences from
       // $connections so that operation deserialization can resolve connector metadata.
-      const resolvedConnectionReferences = { ...(connectionReferences ?? {}) };
-      if (Object.keys(resolvedConnectionReferences).length === 0) {
-        const connectionsParam = workflowDefinition.parameters?.['$connections']?.value ?? {};
-        for (const [key, conn] of Object.entries(connectionsParam) as [string, any][]) {
-          if (conn?.id) {
-            resolvedConnectionReferences[key] = {
-              api: { id: conn.id },
-              connection: { id: conn.connectionId ?? '' },
-              connectionName: conn.connectionName ?? key,
-            };
-          }
-        }
-      }
+      const resolvedConnectionReferences = {
+        ...(connectionReferences ?? {}),
+        ...(Object.keys(connectionReferences ?? {}).length === 0
+          ? buildConnectionReferencesFromConnectionsParameter(workflowDefinition.parameters?.['$connections']?.value)
+          : {}),
+      };
 
       dispatch(initializeConnectionReferences(resolvedConnectionReferences));
       dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
@@ -202,6 +195,28 @@ export function flattenWorkflowNodes(nodes: WorkflowNode[]): WorkflowNode[] {
   }
 
   return result;
+}
+
+// Consumption workflows store connections in parameters.$connections.value rather than
+// connectionReferences. Reconstruct a Record<string, ConnectionReference> so downstream
+// deserialization can resolve connector metadata. connectionProperties is preserved so
+// managed-identity workflows surface their auth on load.
+export function buildConnectionReferencesFromConnectionsParameter(
+  connectionsParam: Record<string, any> | undefined
+): Record<string, ConnectionReference> {
+  const references: Record<string, ConnectionReference> = {};
+  for (const [key, conn] of Object.entries(connectionsParam ?? {})) {
+    if (!conn?.id) {
+      continue;
+    }
+    references[key] = {
+      api: { id: conn.id },
+      connection: { id: conn.connectionId ?? '' },
+      connectionName: conn.connectionName ?? key,
+      ...(conn.connectionProperties ? { connectionProperties: conn.connectionProperties } : {}),
+    };
+  }
+  return references;
 }
 
 export const detectSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDefinition): boolean => {

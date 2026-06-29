@@ -86,16 +86,11 @@ export async function setNodeJsCommand(): Promise<void> {
 }
 
 /**
- * Resolves the Node.js command on Windows by trying .exe candidates.
- * Mirrors the pattern used by resolveFuncCoreToolsCommand() in funcVersion.ts.
+ * Resolves the preferred Node.js command on Windows while normalizing the .exe suffix.
  */
 function resolveNodeJsCommand(nodeJsBinariesPath: string): string {
-  const candidates = ext.nodeJsCliPath.toLowerCase().endsWith('.exe')
-    ? [ext.nodeJsCliPath, `${ext.nodeJsCliPath}.exe`]
-    : [`${ext.nodeJsCliPath}.exe`, ext.nodeJsCliPath];
-  const uniqueCandidates = [...new Set(candidates)];
-  const fullPaths = uniqueCandidates.map((name) => path.join(nodeJsBinariesPath, name));
-  return fullPaths.find((candidate) => fs.existsSync(candidate)) ?? fullPaths[0];
+  const executableName = ext.nodeJsCliPath.toLowerCase().endsWith('.exe') ? ext.nodeJsCliPath : `${ext.nodeJsCliPath}.exe`;
+  return path.join(nodeJsBinariesPath, executableName);
 }
 
 function getNodeSubFolder(directoryPath: string): string | undefined {

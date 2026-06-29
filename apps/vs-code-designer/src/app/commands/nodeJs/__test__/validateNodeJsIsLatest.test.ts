@@ -1,3 +1,4 @@
+import { DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { nodeJsDependencyName } from '../../../../constants';
@@ -7,7 +8,6 @@ import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../..
 import { getWorkspaceSetting, updateGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { installNodeJs } from '../installNodeJs';
 import { validateNodeJsIsLatest } from '../validateNodeJsIsLatest';
-import { DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 
 const contextRef = vi.hoisted(() => ({ current: undefined as any }));
 
@@ -16,7 +16,9 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
     contextRef.current = {
       errorHandling: {},
       telemetry: { properties: {} },
-      ui: {},
+      ui: {
+        showWarningMessage: vi.fn(),
+      },
     };
     await callback(contextRef.current);
   }),
@@ -25,6 +27,12 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
     learnMore: { title: 'Learn more' },
   },
   openUrl: vi.fn(),
+}));
+
+vi.mock('../../../../extensionVariables', () => ({
+  ext: {
+    outputChannel: { appendLog: vi.fn() },
+  },
 }));
 
 vi.mock('../../../utils/binaries', () => ({
@@ -47,6 +55,12 @@ vi.mock('../installNodeJs', () => ({
   installNodeJs: vi.fn(),
 }));
 
+vi.mock('../../../localize', () => ({
+  localize: vi.fn((_key: string, defaultValue: string, ...args: unknown[]) =>
+    defaultValue.replace(/\{(\d+)\}/g, (_match, index) => String(args[Number(index)] ?? `{${index}}`))
+  ),
+}));
+
 const flushPromises = async () => {
   for (let i = 0; i < 10; i += 1) {
     await Promise.resolve();
@@ -60,6 +74,7 @@ describe('validateNodeJsIsLatest', () => {
     vi.mocked(getWorkspaceSetting).mockReturnValue(false);
     vi.mocked(getNodeJsCommand).mockReturnValue('node');
     vi.mocked(setNodeJsCommand).mockResolvedValue(undefined);
+    vi.mocked(installNodeJs).mockResolvedValue(undefined);
     vi.mocked(updateGlobalSetting).mockResolvedValue(undefined);
     vi.mocked(vscode.window.withProgress).mockImplementation(async (_options, task) => task({} as any, {} as any));
     vi.mocked(vscode.window.showInformationMessage).mockResolvedValue(undefined);
@@ -71,11 +86,32 @@ describe('validateNodeJsIsLatest', () => {
 
     await validateNodeJsIsLatest('18');
 
+    expect(setNodeJsCommand).toHaveBeenCalledOnce();
     expect(binariesExist).toHaveBeenCalledWith(nodeJsDependencyName);
+    expect(setNodeJsCommand.mock.invocationCallOrder[0]).toBeLessThan(binariesExist.mock.invocationCallOrder[0]);
     expect(installNodeJs).toHaveBeenCalledWith(contextRef.current, '18');
     expect(getLocalNodeJsVersion).not.toHaveBeenCalled();
     expect(getLatestNodeJsVersion).not.toHaveBeenCalled();
     expect(contextRef.current.telemetry.properties.binariesExist).toBe('false');
+  });
+
+  it('repairs the NodeJS command before checking whether binaries exist', async () => {
+    vi.mocked(binariesExist).mockResolvedValue(true);
+
+    await validateNodeJsIsLatest('20');
+
+    expect(setNodeJsCommand).toHaveBeenCalledOnce();
+    expect(binariesExist).toHaveBeenCalledOnce();
+    expect(setNodeJsCommand.mock.invocationCallOrder[0]).toBeLessThan(binariesExist.mock.invocationCallOrder[0]);
+  });
+
+  it('does not reinstall after the first validation repairs the NodeJS binary state', async () => {
+    vi.mocked(binariesExist).mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+
+    await validateNodeJsIsLatest('20');
+    await validateNodeJsIsLatest('20');
+
+    expect(installNodeJs).toHaveBeenCalledOnce();
   });
 
   it('checks latest version only when binaries are present and warnings are enabled', async () => {
@@ -212,7 +248,7 @@ describe('validateNodeJsIsLatest', () => {
     await flushPromises();
 
     expect(installNodeJs).toHaveBeenCalledWith(contextRef.current, '18');
-    expect(setNodeJsCommand).toHaveBeenCalled();
+    expect(setNodeJsCommand).toHaveBeenCalledTimes(2);
     expect(vscode.window.withProgress).toHaveBeenCalledWith(
       {
         location: vscode.ProgressLocation.Notification,

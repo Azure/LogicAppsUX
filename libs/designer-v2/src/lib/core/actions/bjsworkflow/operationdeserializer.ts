@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
@@ -59,6 +58,7 @@ import {
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
+import { applySettingDefaults } from '../../queries/settingDefaults';
 import {
   LogEntryLevel,
   LoggerService,
@@ -408,7 +408,14 @@ export const initializeOperationDetailsForManifest = async (
 
     const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
 
-    const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
+    let settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
+    settings = await applySettingDefaults(
+      settings,
+      nodeOperationInfo.connectorId,
+      nodeOperationInfo.operationId,
+      workflowKind,
+      nodeOperationInfo.type
+    );
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 

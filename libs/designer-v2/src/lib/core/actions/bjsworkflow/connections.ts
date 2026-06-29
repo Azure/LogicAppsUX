@@ -17,6 +17,7 @@ import type { RootState as TemplateRootState } from '../../state/templates/store
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
+  getManagedIdentityFromConnection,
   isConnectionMultiAuthManagedIdentityType,
   isConnectionSingleAuthManagedIdentityType,
 } from '../../utils/connectors/connections';
@@ -112,6 +113,41 @@ export const updateTemplateConnection = createAsyncThunk(
   }
 );
 
+/**
+ * Resolves the agent model type for a connection.
+ * Precedence:
+ * 1. The connection's declared model type when it maps to a known manifest value
+ * 2. The connection's cognitiveServiceAccountId resource pattern ('/projects/' -> FoundryAgentServiceV2,
+ *    trailing '/models' -> MicrosoftFoundry, any other account-level id -> AzureOpenAI)
+ * 3. When the connection carries no resource id to detect from (e.g. key-based connections),
+ *    the node's existing valid value is preserved
+ */
+export const resolveAgentModelType = (rawModelType: string, cognitiveServiceId: string, existingValue?: string): string => {
+  const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
+
+  // Connections store either a display name (e.g. 'Azure OpenAI') or a manifest value (e.g. 'APIMGenAIGateway')
+  const declaredValue = AgentUtils.DisplayNameToManifest[rawModelType] ?? (validManifestValues.includes(rawModelType) ? rawModelType : '');
+  if (declaredValue) {
+    return declaredValue;
+  }
+
+  if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
+    return 'FoundryAgentServiceV2';
+  }
+  if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
+    return 'MicrosoftFoundry';
+  }
+  if (cognitiveServiceId) {
+    // An account-level resource id without a Foundry marker identifies an Azure OpenAI connection
+    return 'AzureOpenAI';
+  }
+
+  if (existingValue && validManifestValues.includes(existingValue) && existingValue !== 'AzureOpenAI') {
+    return existingValue;
+  }
+  return 'AzureOpenAI';
+};
+
 const updateAgentParametersForConnection = (
   nodeId: string,
   dispatch: Dispatch,
@@ -120,34 +156,13 @@ const updateAgentParametersForConnection = (
 ): void => {
   const state = getState();
 
-  // Extract modelType from connection
   const rawModelType = connection.properties.connectionParameters?.agentModelType?.type?.trim() ?? '';
-
-  // Map display name to manifest parameter value
-  let agentModelTypeValue = AgentUtils.DisplayNameToManifest[rawModelType] ?? '';
-
-  // Fallback: detect connection type by cognitiveServiceAccountId resource pattern
-  if (!agentModelTypeValue) {
-    const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
-    if (foundryServiceConnectionRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'FoundryAgentServiceV2';
-    } else if (microsoftFoundryModelsRegex.test(cognitiveServiceId)) {
-      agentModelTypeValue = 'MicrosoftFoundry';
-    } else {
-      // Default to AzureOpenAI, but preserve other existing valid values
-      // (e.g., 'FoundryAgentServiceV2', 'APIMGenAIGateway') that the regex couldn't detect
-      agentModelTypeValue = 'AzureOpenAI';
-      const paramGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
-      const defaultGrp = paramGroups?.[ParameterGroupKeys.DEFAULT];
-      const existingParam = defaultGrp?.parameters?.find((p) => p.parameterKey === 'inputs.$.agentModelType');
-      const currentValue = existingParam?.value?.[0]?.value;
-
-      const validManifestValues = Object.values(AgentUtils.DisplayNameToManifest);
-      if (currentValue && validManifestValues.includes(currentValue) && currentValue !== 'AzureOpenAI') {
-        agentModelTypeValue = currentValue;
-      }
-    }
-  }
+  const cognitiveServiceId = connection.properties.connectionParameters?.cognitiveServiceAccountId?.metadata?.value ?? '';
+  const currentParamGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
+  const currentModelTypeParam = currentParamGroups?.[ParameterGroupKeys.DEFAULT]?.parameters?.find(
+    (p) => p.parameterKey === 'inputs.$.agentModelType'
+  );
+  const agentModelTypeValue = resolveAgentModelType(rawModelType, cognitiveServiceId, currentModelTypeParam?.value?.[0]?.value);
 
   // Get current parameter groups
   const parameterGroups = state.operations.inputParameters[nodeId]?.parameterGroups;
@@ -318,6 +333,12 @@ const getConnectionPropertiesIfRequired = (connection: Connection, connector: Co
     !isConnectionSingleAuthManagedIdentityType(connection)
   ) {
     return undefined;
+  }
+
+  // Prefer the identity stored on the connection so a UAMI selection isn't lost on hybrid 'SystemAssigned, UserAssigned' apps.
+  const connectionIdentity = getManagedIdentityFromConnection(connection);
+  if (connectionIdentity) {
+    return getConnectionProperties(connector, connectionIdentity);
   }
 
   const identity = WorkflowService().getAppIdentity?.();

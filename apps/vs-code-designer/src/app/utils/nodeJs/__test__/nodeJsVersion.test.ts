@@ -188,7 +188,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
 
       await setNodeJsCommand();
 
-      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node'));
+      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe'));
       expect(fs.chmodSync).not.toHaveBeenCalled();
     });
 

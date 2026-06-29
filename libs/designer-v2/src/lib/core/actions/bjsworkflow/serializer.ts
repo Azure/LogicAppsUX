@@ -1477,6 +1477,11 @@ export const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | un
     return undefined;
   }
 
+  // If the value came from API defaults (defaultHint is set), treat as unset — omit from definition
+  if (settings.retryPolicy?.defaultHint) {
+    return undefined;
+  }
+
   const retryPolicyType = retryPolicy.type && retryPolicy.type.toLowerCase();
   switch (retryPolicyType) {
     case Constants.RETRY_POLICY_TYPE.DEFAULT:

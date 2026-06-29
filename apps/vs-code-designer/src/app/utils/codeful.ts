@@ -45,7 +45,7 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
   try {
     const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
     const localSettings = JSON.parse(localSettingsData);
-    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED === "true" ? true : false;
+    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED === 'true' ? true : false;
   } catch {
     return false;
   }

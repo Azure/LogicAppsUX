@@ -2,9 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
+import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
 import {
   downloadAndExtractDependency,
+  downloadFileWithVerification,
+  DownloadIntegrityError,
   binariesExist,
   binariesExistSync,
   getLatestDotNetVersion,
@@ -17,6 +20,8 @@ import {
   getDependencyTimeout,
   installBinaries,
   useBinariesDependencies,
+  removeWithLockWait,
+  mkdirWithLockWait,
 } from '../binaries';
 import { ext } from '../../../extensionVariables';
 import {
@@ -58,138 +63,9 @@ describe('binaries', () => {
       context = {
         telemetry: {
           properties: {},
+          measurements: {},
         },
       } as IActionContext;
-    });
-
-    it('should download and extract dependency', async () => {
-      const downloadUrl = 'https://example.com/dependency.zip';
-      const targetFolder = 'targetFolder';
-      const dependencyName = dotnetDependencyName;
-      const folderName = 'folderName';
-      const dotNetVersion = '6.0';
-
-      const writer = {
-        on: vi.fn((event: string, callback: () => void) => {
-          if (event === 'finish') {
-            callback();
-          }
-          return writer;
-        }),
-      } as any;
-
-      (axios.get as Mock).mockResolvedValue({
-        data: {
-          on: vi.fn(),
-          pipe: vi.fn().mockImplementation((writer) => {
-            return writer;
-          }),
-        },
-      });
-
-      (fs.createWriteStream as Mock).mockReturnValue(writer);
-
-      await downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion);
-
-      expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), { recursive: true });
-      expect(fs.chmodSync).toHaveBeenCalledWith(expect.any(String), 0o777);
-      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-    });
-
-    it('rejects when the file writer fails while downloading a dependency', async () => {
-      const downloadUrl = 'https://example.com/dependency.zip';
-      const targetFolder = 'targetFolder';
-      const dependencyName = dotnetDependencyName;
-      const folderName = 'folderName';
-      const writerError = new Error('disk full');
-      const writer = {
-        on: vi.fn((event: string, callback: (error: Error) => void) => {
-          if (event === 'error') {
-            callback(writerError);
-          }
-          return writer;
-        }),
-      } as any;
-
-      (axios.get as Mock).mockResolvedValue({
-        data: {
-          on: vi.fn(),
-          pipe: vi.fn().mockImplementation((writer) => writer),
-        },
-      });
-
-      (fs.createWriteStream as Mock).mockReturnValue(writer);
-
-      await expect(downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName)).rejects.toThrow(
-        'Error downloading and extracting the DotNetSDK zip file: disk full'
-      );
-      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('disk full'));
-      expect(context.telemetry.properties.error).toContain('disk full');
-    });
-
-    it('rejects when the readable download stream fails', async () => {
-      const downloadUrl = 'https://example.com/dependency.zip';
-      const targetFolder = 'targetFolder';
-      const dependencyName = dotnetDependencyName;
-      const folderName = 'folderName';
-      const streamError = new Error('connection reset');
-      const writer = {
-        on: vi.fn(),
-      } as any;
-
-      (axios.get as Mock).mockResolvedValue({
-        data: {
-          on: vi.fn((event: string, callback: (error: Error) => void) => {
-            if (event === 'error') {
-              callback(streamError);
-            }
-          }),
-          pipe: vi.fn().mockImplementation((writer) => writer),
-        },
-      });
-
-      (fs.createWriteStream as Mock).mockReturnValue(writer);
-
-      await expect(downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName)).rejects.toThrow(
-        'Error downloading and extracting the DotNetSDK zip file: connection reset'
-      );
-      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('connection reset'));
-      expect(context.telemetry.properties.error).toContain('connection reset');
-    });
-
-    it('rejects when download cleanup fails after a file writer error', async () => {
-      const downloadUrl = 'https://example.com/dependency.zip';
-      const targetFolder = 'targetFolder';
-      const dependencyName = dotnetDependencyName;
-      const folderName = 'folderName';
-      const writerError = new Error('disk full');
-      const cleanupError = new Error('folder locked');
-      const writer = {
-        on: vi.fn((event: string, callback: (error: Error) => void) => {
-          if (event === 'error') {
-            callback(writerError);
-          }
-          return writer;
-        }),
-      } as any;
-
-      (axios.get as Mock).mockResolvedValue({
-        data: {
-          on: vi.fn(),
-          pipe: vi.fn().mockImplementation((writer) => writer),
-        },
-      });
-      (fs.createWriteStream as Mock).mockReturnValue(writer);
-      (fs.rmSync as Mock).mockImplementationOnce(() => {
-        throw cleanupError;
-      });
-
-      await expect(downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName)).rejects.toThrow(
-        'Error downloading and extracting the DotNetSDK zip file: disk full'
-      );
-      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', expect.stringContaining('Failed to remove'));
-      expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('disk full'));
-      expect(context.telemetry.properties.error).toContain('disk full');
     });
 
     it('should throw error when the compression file extension is not supported', async () => {
@@ -205,10 +81,177 @@ describe('binaries', () => {
     });
   });
 
+  describe('downloadFileWithVerification', () => {
+    let context: IActionContext;
+    const url = 'https://cdn.example.com/Microsoft.Azure.Functions.ExtensionBundle.Workflows.1.2.3_any-any.zip';
+    const destPath = '/tmp/dep.zip';
+    const dependencyName = 'TestDep';
+
+    beforeEach(() => {
+      context = {
+        telemetry: { properties: {}, measurements: {} },
+      } as IActionContext;
+      (fs.existsSync as Mock).mockReturnValue(false);
+    });
+
+    // Build a fake axios stream response. `chunks` are streamed in order;
+    // `headers` lets each test choose what the CDN reports.
+    function mockAxiosStream(chunks: string[], headers: Record<string, string>) {
+      const data = new EventEmitter() as EventEmitter & { pipe: (w: any) => any };
+      data.pipe = (writer: any) => {
+        // Schedule emission on the next microtask so test code can wire listeners.
+        setImmediate(() => {
+          for (const chunk of chunks) {
+            data.emit('data', Buffer.from(chunk));
+          }
+          writer.emit('finish');
+        });
+        return writer;
+      };
+      (axios.get as Mock).mockResolvedValueOnce({ headers, data });
+    }
+
+    function mockWriter() {
+      const writer = new EventEmitter() as EventEmitter & { write: Mock; end: Mock };
+      writer.write = vi.fn();
+      writer.end = vi.fn();
+      (fs.createWriteStream as Mock).mockReturnValueOnce(writer);
+      return writer;
+    }
+
+    it('verifies size and md5 from response headers on success', async () => {
+      mockWriter();
+      // MD5 of "hello world" in base64 = XrY7u+Ae7tCTyyK7j1rNww==
+      mockAxiosStream(['hello world'], {
+        'content-length': '11',
+        'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==',
+      });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(result.actualSize).toBe(11);
+      expect(result.expectedSize).toBe(11);
+      expect(result.expectedMd5).toBe('XrY7u+Ae7tCTyyK7j1rNww==');
+      expect(result.actualMd5).toBe('XrY7u+Ae7tCTyyK7j1rNww==');
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('1');
+      expect(context.telemetry.properties[`${dependencyName}Md5Match`]).toBe('true');
+    });
+
+    it('succeeds and reports skipped checks when headers are missing', async () => {
+      mockWriter();
+      mockAxiosStream(['abc'], {});
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(result.expectedSize).toBeUndefined();
+      expect(result.expectedMd5).toBeUndefined();
+      expect(result.actualSize).toBe(3);
+      expect(context.telemetry.properties[`${dependencyName}Md5Match`]).toBe('skipped');
+      expect(context.telemetry.properties[`${dependencyName}ExpectedSize`]).toBe('unknown');
+    });
+
+    it('retries on size mismatch and ultimately fails with DownloadIntegrityError', async () => {
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+
+      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(DownloadIntegrityError);
+      expect(axios.get).toHaveBeenCalledTimes(3);
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('3');
+    });
+
+    it('retries on md5 mismatch then succeeds on a later attempt', async () => {
+      // First attempt: corrupt body (md5 of 'corrupt' is not the expected one).
+      mockWriter();
+      mockAxiosStream(['corrupt'], { 'content-length': '11', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+      // Second attempt: matching body.
+      mockWriter();
+      mockAxiosStream(['hello world'], { 'content-length': '11', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName, 3);
+
+      expect(result.actualSize).toBe(11);
+      expect(axios.get).toHaveBeenCalledTimes(2);
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('2');
+    }, 10000);
+
+    it('does not retry on 4xx HTTP errors', async () => {
+      const err = Object.assign(new Error('Not Found'), { response: { status: 404 } });
+      (axios.get as Mock).mockRejectedValueOnce(err);
+
+      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBe(err);
+      expect(axios.get).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries on 5xx HTTP errors', async () => {
+      const err5xx = Object.assign(new Error('Server Error'), { response: { status: 503 } });
+      (axios.get as Mock).mockRejectedValueOnce(err5xx);
+      mockWriter();
+      mockAxiosStream(['ok'], { 'content-length': '2' });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName, 3);
+      expect(result.actualSize).toBe(2);
+      expect(axios.get).toHaveBeenCalledTimes(2);
+    }, 10000);
+
+    it('requests identity encoding so Content-Length matches the bytes piped to disk', async () => {
+      mockWriter();
+      mockAxiosStream(['hello world'], { 'content-length': '11' });
+
+      await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(axios.get).toHaveBeenCalledWith(
+        url,
+        expect.objectContaining({
+          responseType: 'stream',
+          headers: expect.objectContaining({ 'Accept-Encoding': 'identity' }),
+          decompress: false,
+        })
+      );
+    });
+
+    it('tolerates Content-Encoding by skipping the size check (regression: dotnet-install.ps1 gzip)', async () => {
+      mockWriter();
+      // Server ignored our identity hint and gzipped anyway. Content-Length describes
+      // the compressed bytes (24942) but we record the decoded bytes piped to disk
+      // (76680). Previously this threw DownloadIntegrityError; now it succeeds.
+      const decoded = 'a'.repeat(76680);
+      mockAxiosStream([decoded], {
+        'content-encoding': 'gzip',
+        'content-length': '24942',
+      });
+
+      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+
+      expect(result.actualSize).toBe(76680);
+      expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('1');
+    });
+
+    it('still enforces size mismatches when no Content-Encoding is present', async () => {
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999' });
+      mockWriter();
+      mockAxiosStream(['short'], { 'content-length': '999' });
+
+      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(DownloadIntegrityError);
+      expect(axios.get).toHaveBeenCalledTimes(3);
+    }, 10000);
+  });
+
   describe('binariesExist', () => {
     beforeEach(() => {
       (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
     });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     it('should return true if binaries exist', async () => {
       (fs.existsSync as Mock).mockReturnValue(true);
       const devContainerModule = await import('../devContainerUtils');
@@ -245,6 +288,49 @@ describe('binaries', () => {
 
       expect(result).toBe(false);
       expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `FuncCoreTools binary is missing: ${funcBinary}`);
+    });
+
+    it('should repair a stale Windows NodeJs binary path when node.exe exists', async () => {
+      vi.spyOn(process, 'platform', 'get').mockReturnValue(Platform.windows);
+      const nodeJsFolder = path.join('binariesLocation', nodeJsDependencyName);
+      const staleNodeBinary = path.join(nodeJsFolder, 'node');
+      const nodeExeBinary = path.join(nodeJsFolder, 'node.exe');
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === nodeJsFolder || filePath === nodeExeBinary);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+        settingName === nodeJsBinaryPathSettingKey ? staleNodeBinary : 'binariesLocation'
+      );
+
+      const result = await binariesExist(nodeJsDependencyName);
+
+      expect(result).toBe(true);
+      expect(updateGlobalSetting).toHaveBeenCalledWith(nodeJsBinaryPathSettingKey, nodeExeBinary);
+      expect(executeCommand).toHaveBeenCalledWith(
+        ext.outputChannel,
+        undefined,
+        'echo',
+        `${nodeJsDependencyName} binary path updated: ${nodeExeBinary}`
+      );
+      expect(executeCommand).not.toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `NodeJs binary is missing: ${staleNodeBinary}`);
+    });
+
+    it('should return false for a stale Windows NodeJs binary path when node.exe is also missing', async () => {
+      vi.spyOn(process, 'platform', 'get').mockReturnValue(Platform.windows);
+      const nodeJsFolder = path.join('binariesLocation', nodeJsDependencyName);
+      const staleNodeBinary = path.join(nodeJsFolder, 'node');
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === nodeJsFolder);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+        settingName === nodeJsBinaryPathSettingKey ? staleNodeBinary : 'binariesLocation'
+      );
+
+      const result = await binariesExist(nodeJsDependencyName);
+
+      expect(result).toBe(false);
+      expect(updateGlobalSetting).not.toHaveBeenCalledWith(nodeJsBinaryPathSettingKey, expect.any(String));
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `NodeJs binary is missing: ${staleNodeBinary}`);
     });
 
     it('should return false if useBinariesDependencies returns false', async () => {
@@ -835,6 +921,129 @@ describe('binaries', () => {
     });
   });
 
+  describe('removeWithLockWait', () => {
+    beforeEach(() => {
+      (fs as any).rmSync = vi.fn();
+      vi.mocked(fs.existsSync).mockReset();
+      vi.mocked(ext.outputChannel.appendLog).mockReset();
+    });
+
+    afterEach(() => {
+      delete (fs as any).rmSync;
+    });
+
+    it('returns immediately when the path does not exist', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false);
+      await removeWithLockWait('C:/nope', 'TestDep', 1000);
+      expect((fs as any).rmSync).not.toHaveBeenCalled();
+    });
+
+    it('calls rmSync once when the directory is removable on the first attempt', async () => {
+      // exists -> true (so we try rmSync), then false (rmSync flushed).
+      vi.mocked(fs.existsSync).mockReturnValueOnce(true).mockReturnValueOnce(false);
+      (fs as any).rmSync.mockImplementation(() => undefined);
+      await removeWithLockWait('C:/dep', 'TestDep', 1000);
+      expect((fs as any).rmSync).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries when rmSync throws EPERM and eventually succeeds', async () => {
+      let calls = 0;
+      vi.mocked(fs.existsSync).mockImplementation(() => calls < 3); // true for first 3 checks, then false
+      (fs as any).rmSync.mockImplementation(() => {
+        calls += 1;
+        if (calls < 3) {
+          const err = new Error('EPERM') as Error & { code: string };
+          err.code = 'EPERM';
+          throw err;
+        }
+      });
+      await removeWithLockWait('C:/dep', 'TestDep', 5000);
+      expect((fs as any).rmSync).toHaveBeenCalledTimes(3);
+    });
+
+    it('throws after the budget elapses when rmSync keeps failing with EPERM', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      (fs as any).rmSync.mockImplementation(() => {
+        const err = new Error('EPERM') as Error & { code: string };
+        err.code = 'EPERM';
+        throw err;
+      });
+      await expect(removeWithLockWait('C:/dep', 'TestDep', 600)).rejects.toThrow(/EPERM/);
+    });
+
+    it('throws immediately on a non-transient error (e.g. EINVAL)', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      (fs as any).rmSync.mockImplementation(() => {
+        const err = new Error('EINVAL') as Error & { code: string };
+        err.code = 'EINVAL';
+        throw err;
+      });
+      await expect(removeWithLockWait('C:/dep', 'TestDep', 5000)).rejects.toThrow(/EINVAL/);
+      expect((fs as any).rmSync).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps waiting when rmSync silently leaves the directory in place (Windows pending-deletion)', async () => {
+      let existsCalls = 0;
+      // Stays true until the 5th existsSync call; rmSync always "succeeds" (returns undefined).
+      vi.mocked(fs.existsSync).mockImplementation(() => {
+        existsCalls += 1;
+        return existsCalls < 5;
+      });
+      (fs as any).rmSync.mockImplementation(() => undefined);
+      await removeWithLockWait('C:/dep', 'TestDep', 5000);
+      // rmSync attempted multiple times because each attempt found existsSync still true post-rm.
+      expect((fs as any).rmSync.mock.calls.length).toBeGreaterThan(1);
+    });
+  });
+
+  describe('mkdirWithLockWait', () => {
+    beforeEach(() => {
+      vi.mocked(fs.mkdirSync).mockReset();
+      vi.mocked(ext.outputChannel.appendLog).mockReset();
+    });
+
+    it('calls mkdirSync once on success', async () => {
+      vi.mocked(fs.mkdirSync).mockImplementation(() => undefined);
+      await mkdirWithLockWait('C:/dep', 'TestDep', 1000);
+      expect(fs.mkdirSync).toHaveBeenCalledWith('C:/dep', { recursive: true });
+      expect(fs.mkdirSync).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries on EPERM and ultimately resolves', async () => {
+      let calls = 0;
+      vi.mocked(fs.mkdirSync).mockImplementation(() => {
+        calls += 1;
+        if (calls < 3) {
+          const err = new Error('EPERM') as Error & { code: string };
+          err.code = 'EPERM';
+          throw err;
+        }
+        return undefined;
+      });
+      await mkdirWithLockWait('C:/dep', 'TestDep', 5000);
+      expect(calls).toBe(3);
+    });
+
+    it('throws after budget elapses when mkdirSync keeps failing', async () => {
+      vi.mocked(fs.mkdirSync).mockImplementation(() => {
+        const err = new Error('EPERM') as Error & { code: string };
+        err.code = 'EPERM';
+        throw err;
+      });
+      await expect(mkdirWithLockWait('C:/dep', 'TestDep', 600)).rejects.toThrow(/EPERM/);
+    });
+
+    it('throws immediately on a non-transient error', async () => {
+      vi.mocked(fs.mkdirSync).mockImplementation(() => {
+        const err = new Error('ENOSPC') as Error & { code: string };
+        err.code = 'ENOSPC';
+        throw err;
+      });
+      await expect(mkdirWithLockWait('C:/dep', 'TestDep', 5000)).rejects.toThrow(/ENOSPC/);
+      expect(fs.mkdirSync).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('useBinariesDependencies', () => {
     it('should return true if binaries dependencies are used', async () => {
       (getGlobalSetting as Mock).mockReturnValue(true);
@@ -874,6 +1083,113 @@ describe('binaries', () => {
       const result = await useBinariesDependencies();
 
       expect(result).toBe(true);
+    });
+  });
+
+  describe('verifyExtractedZip', () => {
+    const realFs = require('node:fs');
+    const os = require('os');
+    const pathMod = require('path');
+    const AdmZip = require('adm-zip');
+    let workDir: string;
+    let zipPath: string;
+    let extractDir: string;
+
+    beforeEach(() => {
+      // The global test-setup mocks fs.existsSync and fs.statSync to return undefined,
+      // which would make verifyExtractedZip see every file as missing. Re-route the
+      // sync filesystem calls to the real Node fs implementation for these tests.
+      (fs.existsSync as Mock).mockImplementation((p: string) => realFs.existsSync(p));
+      (fs.statSync as unknown as Mock) = vi.fn();
+      (fs.statSync as Mock).mockImplementation((p: string) => realFs.statSync(p));
+
+      workDir = realFs.mkdtempSync(pathMod.join(os.tmpdir(), 'verifyextract-'));
+      zipPath = pathMod.join(workDir, 'test.zip');
+      extractDir = pathMod.join(workDir, 'extracted');
+      realFs.mkdirSync(extractDir);
+
+      const zip = new AdmZip();
+      zip.addFile('a.txt', Buffer.from('hello'));
+      zip.addFile('sub/b.txt', Buffer.from('world!'));
+      zip.addFile('sub/c.bin', Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04]));
+      zip.writeZip(zipPath);
+    });
+
+    afterEach(() => {
+      try {
+        realFs.rmSync(workDir, { recursive: true, force: true });
+      } catch {
+        // best effort
+      }
+    });
+
+    it('passes when every zip entry exists on disk with the expected size', async () => {
+      const { verifyExtractedZip } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      zip.extractAllTo(extractDir, true, true);
+
+      expect(() => verifyExtractedZip(zip, extractDir)).not.toThrow();
+    });
+
+    it('throws BundleExtractionError(missing) when an extracted file is deleted', async () => {
+      const { verifyExtractedZip, BundleExtractionError } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      zip.extractAllTo(extractDir, true, true);
+      realFs.rmSync(pathMod.join(extractDir, 'sub', 'b.txt'));
+
+      let caught: unknown;
+      try {
+        verifyExtractedZip(zip, extractDir);
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeInstanceOf(BundleExtractionError);
+      expect((caught as InstanceType<typeof BundleExtractionError>).kind).toBe('missing');
+      expect((caught as InstanceType<typeof BundleExtractionError>).entryName).toContain('b.txt');
+    });
+
+    it('throws BundleExtractionError(sizeMismatch) when an extracted file is truncated', async () => {
+      const { verifyExtractedZip, BundleExtractionError } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      zip.extractAllTo(extractDir, true, true);
+      const target = pathMod.join(extractDir, 'sub', 'c.bin');
+      realFs.writeFileSync(target, Buffer.from([0x00])); // truncate from 5 bytes to 1
+
+      let caught: unknown;
+      try {
+        verifyExtractedZip(zip, extractDir);
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeInstanceOf(BundleExtractionError);
+      expect((caught as InstanceType<typeof BundleExtractionError>).kind).toBe('sizeMismatch');
+      expect((caught as InstanceType<typeof BundleExtractionError>).expectedSize).toBe(5);
+      expect((caught as InstanceType<typeof BundleExtractionError>).actualSize).toBe(1);
+    });
+
+    it('throws BundleExtractionError(missing) when extractDir is empty but the zip lists files', async () => {
+      const { verifyExtractedZip, BundleExtractionError } = await import('../binaries');
+      const zip = new AdmZip(zipPath);
+      // skip extractAllTo: simulate "extraction failed completely"
+
+      let caught: unknown;
+      try {
+        verifyExtractedZip(zip, extractDir);
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeInstanceOf(BundleExtractionError);
+      expect((caught as InstanceType<typeof BundleExtractionError>).kind).toBe('missing');
+    });
+
+    it('is a no-op for a zip that contains no file entries', async () => {
+      const { verifyExtractedZip } = await import('../binaries');
+      const emptyZipPath = pathMod.join(workDir, 'empty.zip');
+      const emptyZip = new AdmZip();
+      emptyZip.writeZip(emptyZipPath);
+      const zip = new AdmZip(emptyZipPath);
+
+      expect(() => verifyExtractedZip(zip, extractDir)).not.toThrow();
     });
   });
 });

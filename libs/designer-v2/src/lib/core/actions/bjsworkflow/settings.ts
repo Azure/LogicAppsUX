@@ -87,6 +87,8 @@ export interface GraphEdge {
 export interface SettingData<T> {
   isSupported: boolean;
   value?: T;
+  readOnly?: boolean;
+  defaultHint?: T;
 }
 
 export interface Settings {
@@ -116,6 +118,7 @@ export interface Settings {
   invokerConnection?: SettingData<SimpleSetting<boolean>>;
   count?: SettingData<string | number>;
   shouldFailOperation?: SettingData<boolean>;
+  hostSettings?: Record<string, SettingData<unknown>>;
 }
 
 /**

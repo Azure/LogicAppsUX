@@ -120,7 +120,7 @@ export const getListDynamicValues = async (
       operationId.toLowerCase(),
       dynamicState.operationId?.toLowerCase(),
       getParametersKey({ ...dynamicState.parameters, ...parameters }),
-      identity ?? '',
+      (identity ?? '').toLowerCase(),
     ],
     () => service.getListDynamicValues(connectionId, connectorId, operationId, parameters, dynamicState, undefined, operationPath, identity)
   );

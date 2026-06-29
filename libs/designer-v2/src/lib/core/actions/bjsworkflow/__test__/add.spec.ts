@@ -2,6 +2,7 @@ import { describe, vi, beforeEach, it, expect } from 'vitest';
 import { trySetDefaultConnectionForNode } from '../add';
 import * as connectionsModule from '../../../queries/connections';
 import * as connectionActionsModule from '../connections';
+import * as connectorUtilsModule from '../../../utils/connectors/connections';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 
 vi.mock('../../../queries/connections', () => ({
@@ -26,6 +27,14 @@ vi.mock('@microsoft/logic-apps-shared', async () => {
 
 vi.mock('../connections', () => ({
   updateNodeConnection: vi.fn(() => vi.fn()),
+  getApiHubAuthentication: vi.fn(() => ({ type: 'ManagedServiceIdentity' })),
+  getConnectionProperties: vi.fn(() => ({ authentication: { type: 'ManagedServiceIdentity' } })),
+  isConnectionRequiredForOperation: vi.fn(() => true),
+}));
+
+vi.mock('../../../utils/connectors/connections', () => ({
+  isConnectionMultiAuthManagedIdentityType: vi.fn(() => false),
+  isConnectionSingleAuthManagedIdentityType: vi.fn(() => false),
 }));
 
 vi.mock('../../../state/connection/connectionSlice', () => ({
@@ -38,6 +47,8 @@ vi.mock('../../../state/panel/panelSlice', () => ({
 
 const mockGetConnectionsForConnector = vi.mocked(connectionsModule.getConnectionsForConnector);
 const mockUpdateNodeConnection = vi.mocked(connectionActionsModule.updateNodeConnection);
+const mockIsMultiAuthMI = vi.mocked(connectorUtilsModule.isConnectionMultiAuthManagedIdentityType);
+const mockIsSingleAuthMI = vi.mocked(connectorUtilsModule.isConnectionSingleAuthManagedIdentityType);
 
 describe('trySetDefaultConnectionForNode', () => {
   const mockDispatch = vi.fn();
@@ -176,6 +187,46 @@ describe('trySetDefaultConnectionForNode', () => {
       expect(mockDispatch).toHaveBeenCalledTimes(2);
       expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({ type: 'mock/initEmptyConnectionMap' }));
       expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({ type: 'mock/openPanel' }));
+    });
+  });
+
+  describe('preferredConnectionIdentity gating', () => {
+    const uamiId = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-uami';
+
+    it('should NOT dispatch MSI-shape when identity is provided but connector does not support managed identity', async () => {
+      const connector = createMockConnector('/connectors/no-msi');
+      const connection = createMockConnection('conn-1');
+      mockGetConnectionsForConnector.mockResolvedValue([connection]);
+      mockIsMultiAuthMI.mockReturnValue(false);
+      mockIsSingleAuthMI.mockReturnValue(false);
+
+      await trySetDefaultConnectionForNode('test-node', connector, mockDispatch, true, undefined, 'conn-1', uamiId);
+
+      expect(mockUpdateNodeConnection).toHaveBeenCalledWith({
+        nodeId: 'test-node',
+        connection,
+        connector,
+      });
+    });
+
+    it('should dispatch MSI-shape when identity is provided and connector supports managed identity', async () => {
+      const connector = createMockConnector('/connectors/msi-capable');
+      const connection = createMockConnection('conn-1');
+      mockGetConnectionsForConnector.mockResolvedValue([connection]);
+      mockIsMultiAuthMI.mockReturnValue(true);
+      mockIsSingleAuthMI.mockReturnValue(false);
+
+      await trySetDefaultConnectionForNode('test-node', connector, mockDispatch, true, undefined, 'conn-1', uamiId);
+
+      expect(mockUpdateNodeConnection).toHaveBeenCalledWith(
+        expect.objectContaining({
+          nodeId: 'test-node',
+          connection,
+          connector,
+          connectionProperties: expect.anything(),
+          authentication: expect.anything(),
+        })
+      );
     });
   });
 });
