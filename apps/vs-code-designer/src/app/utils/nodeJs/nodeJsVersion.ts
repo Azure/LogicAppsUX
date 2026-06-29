@@ -88,7 +88,7 @@ export async function setNodeJsCommand(): Promise<void> {
 /**
  * Resolves the preferred Node.js command on Windows while normalizing the .exe suffix.
  */
-function resolveNodeJsCommand(nodeJsBinariesPath: string): string {
+export function resolveNodeJsCommand(nodeJsBinariesPath: string): string {
   const executableName = ext.nodeJsCliPath.toLowerCase().endsWith('.exe') ? ext.nodeJsCliPath : `${ext.nodeJsCliPath}.exe`;
   return path.join(nodeJsBinariesPath, executableName);
 }

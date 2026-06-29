@@ -38,7 +38,7 @@ vi.mock('../../../../constants', async () => {
 import * as fs from 'fs';
 import * as path from 'path';
 import { ext } from '../../../../extensionVariables';
-import { getNpmCommand, getNodeJsCommand, setNodeJsCommand } from '../nodeJsVersion';
+import { getNpmCommand, getNodeJsCommand, resolveNodeJsCommand, setNodeJsCommand } from '../nodeJsVersion';
 import { getGlobalSetting, updateGlobalSetting } from '../../vsCodeConfig/settings';
 
 const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
@@ -208,21 +208,6 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
       expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe'));
     });
 
-    it('does not produce node.exe.exe when ext.nodeJsCliPath already ends with .exe', async () => {
-      ext.nodeJsCliPath = 'node.exe';
-      setPlatform(Platform.windows as NodeJS.Platform);
-      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
-      vi.mocked(fs.existsSync).mockImplementation((p) => {
-        const s = String(p);
-        return s === NODE_DIR || s === path.join(NODE_DIR, 'node.exe');
-      });
-
-      await setNodeJsCommand();
-
-      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe'));
-      expect(updateGlobalSetting).not.toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe.exe'));
-    });
-
     it('writes the <node-v*>/bin/node path on Linux, reads the binaries directory, and chmods it', async () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
@@ -264,6 +249,32 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', 'node');
       expect(fs.chmodSync).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('resolveNodeJsCommand', () => {
+    it('appends .exe when nodeJsCliPath has no extension', () => {
+      ext.nodeJsCliPath = 'node';
+
+      expect(resolveNodeJsCommand('/deps/NodeJs')).toBe(path.join('/deps/NodeJs', 'node.exe'));
+    });
+
+    it('does not double .exe when nodeJsCliPath already ends with .exe', () => {
+      ext.nodeJsCliPath = 'node.exe';
+
+      expect(resolveNodeJsCommand('/deps/NodeJs')).toBe(path.join('/deps/NodeJs', 'node.exe'));
+    });
+
+    it('handles uppercase .EXE extension without doubling', () => {
+      ext.nodeJsCliPath = 'node.EXE';
+
+      expect(resolveNodeJsCommand('/deps/NodeJs')).toBe(path.join('/deps/NodeJs', 'node.EXE'));
+    });
+
+    it('handles mixed case .Exe extension without doubling', () => {
+      ext.nodeJsCliPath = 'node.Exe';
+
+      expect(resolveNodeJsCommand('/deps/NodeJs')).toBe(path.join('/deps/NodeJs', 'node.Exe'));
     });
   });
 
