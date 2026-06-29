@@ -690,7 +690,11 @@ export async function stopDesignTimeApi(projectPath: string): Promise<void> {
  * Runs taskkill and waits for it to complete so file locks are released
  * before subsequent build steps.
  */
-function execTaskkill(pid: number): Promise<void> {
+function execTaskkill(pid: number | string | undefined): Promise<void> {
+  if (pid === undefined) {
+    return Promise.resolve();
+  }
+
   return new Promise((resolve) => {
     cp.exec(`taskkill /pid ${pid} /t /f`, () => {
       resolve();

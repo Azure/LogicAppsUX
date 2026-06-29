@@ -37,6 +37,7 @@ vi.mock('../../../../constants', async () => {
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { ext } from '../../../../extensionVariables';
 import { getNpmCommand, getNodeJsCommand, setNodeJsCommand } from '../nodeJsVersion';
 import { getGlobalSetting, updateGlobalSetting } from '../../vsCodeConfig/settings';
 
@@ -53,6 +54,7 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    ext.nodeJsCliPath = 'node';
   });
 
   afterEach(() => {
@@ -204,6 +206,21 @@ describe('nodeJsVersion - cross-platform binary path resolution', () => {
 
       // Falls back to first candidate (node.exe) when none exist on disk
       expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe'));
+    });
+
+    it('does not produce node.exe.exe when ext.nodeJsCliPath already ends with .exe', async () => {
+      ext.nodeJsCliPath = 'node.exe';
+      setPlatform(Platform.windows as NodeJS.Platform);
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
+      vi.mocked(fs.existsSync).mockImplementation((p) => {
+        const s = String(p);
+        return s === NODE_DIR || s === path.join(NODE_DIR, 'node.exe');
+      });
+
+      await setNodeJsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe'));
+      expect(updateGlobalSetting).not.toHaveBeenCalledWith('nodeJsBinaryPath', path.join(NODE_DIR, 'node.exe.exe'));
     });
 
     it('writes the <node-v*>/bin/node path on Linux, reads the binaries directory, and chmods it', async () => {
