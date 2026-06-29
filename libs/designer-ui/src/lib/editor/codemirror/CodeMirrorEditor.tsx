@@ -212,7 +212,9 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         highlightActiveLine(),
         highlightActiveLineGutter(),
         keymap.of([...closeBracketsKeymap, ...completionKeymap, ...searchKeymap, ...defaultKeymap]),
-        search(),
+        // Center the match in the viewport when navigating search results so users don't
+        // have to scroll after each "Find Next" (default reveals at the nearest edge).
+        search({ scrollToMatch: (range) => EditorView.scrollIntoView(range, { y: 'center' }) }),
         themeCompartment.of(createFluentTheme(isInverted)),
         languageCompartment.of(getLanguageExtension(language)),
         readOnlyCompartment.of(EditorState.readOnly.of(readOnly)),
