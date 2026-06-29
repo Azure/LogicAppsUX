@@ -81,7 +81,13 @@ export function ExpressionEditor({
   }, []);
 
   const handleBlur = (): void => {
-    setSignature(null);
+    // NOTE: Do not clear the signature here. Clearing it on blur removes the in-flow
+    // signature panel, which shifts the elements below the editor (the token-picker
+    // tabs and token list) upward. When the blur is triggered by clicking one of those
+    // elements, the layout shift moves the target out from under the cursor mid-click,
+    // so the click misses (e.g. switching to the "Dynamic content" tab silently fails).
+    // The signature is instead cleared by recomputeSignature when the expression no
+    // longer has a function at the cursor. See issue #9292 and its follow-up.
     if (onBlur && editorRef?.current) {
       const currentSelection = editorRef.current.getSelection();
       const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1;
