@@ -13,6 +13,19 @@ export interface ExpressionEditorEvent {
   selectionEnd: number;
 }
 
+// Two signatures are equivalent when they describe the same function and active
+// argument. `definition` is a stable reference keyed by function name, so comparing
+// functionName + activeParameter is sufficient.
+const isSameSignature = (a: SignatureInfo | null, b: SignatureInfo | null): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  return a.functionName === b.functionName && a.activeParameter === b.activeParameter;
+};
+
 export interface ExpressionEditorProps {
   initialValue: string;
   editorRef?: MutableRefObject<CodeMirrorEditorRef | null>;
@@ -73,11 +86,12 @@ export function ExpressionEditor({
     const text = latestValueRef.current;
     const offset = latestOffsetRef.current;
     const textBefore = text.slice(Math.max(0, offset - 200), offset);
-    if (!textBefore.includes('(')) {
-      setSignature(null);
-      return;
-    }
-    setSignature(getSignatureAtPosition(text, offset));
+    const next = textBefore.includes('(') ? getSignatureAtPosition(text, offset) : null;
+    // Only update state when the signature meaningfully changes. recomputeSignature
+    // runs on every cursor/content change, but moving the cursor within the same
+    // argument produces an equivalent signature. Bailing out keeps the aria-live
+    // panel stable (no redundant re-renders or screen-reader announcements).
+    setSignature((prev) => (isSameSignature(prev, next) ? prev : next));
   }, []);
 
   const handleBlur = (): void => {
