@@ -153,6 +153,29 @@ describe('workspace webview command wrappers', () => {
     expect(createLogicAppProject).toHaveBeenCalledWith(context, data, path.dirname(workspaceFile.fsPath));
   });
 
+  it('getExistingFoldersOnDisk filters out non-directory entries using FileType mock', async () => {
+    const workspaceFile = { fsPath: 'D:\\workspace\\MyWorkspace.code-workspace' };
+    const workspaceFileJson = { folders: [{ path: './LogicApp' }] };
+    (vscode.workspace as any).workspaceFile = workspaceFile;
+    (vscode.workspace.fs.readFile as Mock).mockResolvedValue(Buffer.from(JSON.stringify(workspaceFileJson)));
+    (vscode.workspace.fs.readDirectory as Mock).mockResolvedValue([
+      ['LogicApp', 'directory'],
+      ['notes.txt', 'file'],
+      ['SomeLink', 'symlink'],
+      ['AnotherProject', 'directory'],
+      ['UnknownEntry', ''],
+    ]);
+
+    await createNewProject(context);
+
+    const config = getLastWebviewConfig();
+    expect(config.extraInitializeData).toEqual({
+      workspaceFileJson,
+      logicAppsWithoutCustomCode: [],
+      existingFolders: ['LogicApp', 'AnotherProject'],
+    });
+  });
+
   it('createNewProject falls back to convertToWorkspace when no workspace file is open', async () => {
     await createNewProject(context);
 

@@ -172,6 +172,29 @@ describe('createWorkflow', () => {
       expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, 'D:\\workspace\\ProjectA');
     });
 
+    it('resolves to first matching project when duplicate basenames exist in multi-root workspace', async () => {
+      const folderA = { name: 'FolderA', uri: { fsPath: 'D:\\workspace\\FolderA' }, index: 0 } as vscode.WorkspaceFolder;
+      const folderB = { name: 'FolderB', uri: { fsPath: 'D:\\workspace\\FolderB' }, index: 1 } as vscode.WorkspaceFolder;
+      (vscode.workspace as any).workspaceFolders = [folderA, folderB];
+      vi.mocked(tryGetLogicAppProjectRoot).mockImplementation(async (_ctx, folder) => {
+        if (folder === 'D:\\workspace\\FolderA') {
+          return 'D:\\repoA\\SharedProject';
+        }
+        if (folder === 'D:\\workspace\\FolderB') {
+          return 'D:\\repoB\\SharedProject';
+        }
+        return undefined;
+      });
+
+      await createWorkflow(context);
+
+      const webviewOptions = vi.mocked(createWorkspaceWebviewCommandHandler).mock.calls[0][0] as any;
+      const data = { workflowName: 'MyWorkflow', logicAppName: 'SharedProject' };
+      await webviewOptions.createHandler(context, data);
+
+      expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, 'D:\\repoA\\SharedProject');
+    });
+
     it('throws when webview sends unrecognized project name', async () => {
       const folder = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
       (vscode.workspace as any).workspaceFolders = [folder];
