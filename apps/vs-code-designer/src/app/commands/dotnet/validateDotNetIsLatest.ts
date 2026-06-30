@@ -17,7 +17,7 @@ export async function validateDotNetIsLatest(majorVersion?: string): Promise<voi
     context.telemetry.properties.isActivationEvent = 'true';
     const majorVersions = majorVersion.split(',');
 
-    const binaries = binariesExist(dotnetDependencyName);
+    const binaries = await binariesExist(dotnetDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
 
     if (binaries) {

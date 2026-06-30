@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { binariesExist } from '../../../utils/binaries';
+import { binariesExistSync } from '../../../utils/binaries';
 import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
 import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
 import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
@@ -49,7 +49,7 @@ export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBa
   }
 
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
+    const funcBinariesExist = binariesExistSync(funcDependencyName);
     const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv() : {};
     return [
       {

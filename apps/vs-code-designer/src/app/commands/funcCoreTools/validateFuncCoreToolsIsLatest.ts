@@ -50,7 +50,7 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     if (shouldInstall) {
       if (isOutdated) {
         context.telemetry.properties.outOfDateFunc = 'true';
-        stopAllDesignTimeApis();
+        await stopAllDesignTimeApis();
       }
 
       await installFuncCoreToolsBinaries(context, majorVersion);
@@ -114,7 +114,7 @@ async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
 
       if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
         context.telemetry.properties.outOfDateFunc = 'true';
-        stopAllDesignTimeApis();
+        await stopAllDesignTimeApis();
         await updateFuncCoreTools(context, packageManager, versionFromSetting);
         await startAllDesignTimeApis();
       }
