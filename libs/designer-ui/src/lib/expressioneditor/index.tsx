@@ -1,15 +1,30 @@
-import type { EditorContentChangedEventArgs, CodeMirrorEditorRef } from '../editor/monaco';
+import type { EditorContentChangedEventArgs, CodeMirrorEditorRef, CursorPositionChangedEvent } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
+import { getSignatureAtPosition, type SignatureInfo } from '../editor/codemirror/languages/workflow/signature';
+import { ExpressionEditorSignature } from './expressioneditorsignature';
 import { EditorLanguage, clamp } from '@microsoft/logic-apps-shared';
 import type { MutableRefObject } from 'react';
-import { useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 
 export interface ExpressionEditorEvent {
   value: string;
   selectionStart: number;
   selectionEnd: number;
 }
+
+// Two signatures are equivalent when they describe the same function and active
+// argument. `definition` is a stable reference keyed by function name, so comparing
+// functionName + activeParameter is sufficient.
+const isSameSignature = (a: SignatureInfo | null, b: SignatureInfo | null): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  return a.functionName === b.functionName && a.activeParameter === b.activeParameter;
+};
 
 export interface ExpressionEditorProps {
   initialValue: string;
@@ -42,13 +57,51 @@ export function ExpressionEditor({
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
   const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
+  const [signature, setSignature] = useState<SignatureInfo | null>(null);
+  const latestValueRef = useRef(initialValue);
+  const latestOffsetRef = useRef(0);
   useEffect(() => {
     if (isDragging && dragDistance) {
       setCurrentHeight(clamp(heightOnMouseDown + dragDistance - mouseDownLocation, 50, 200));
     }
   }, [isDragging, dragDistance, mouseDownLocation, currentHeight, setCurrentHeight, heightOnMouseDown]);
 
+  useEffect(() => {
+    latestValueRef.current = initialValue;
+  }, [initialValue]);
+
+  // Compute the absolute character offset from a line/column position.
+  const getOffset = (text: string, lineNumber: number, column: number): number => {
+    const lines = text.split('\n');
+    let offset = 0;
+    for (let i = 0; i < lineNumber - 1 && i < lines.length; i++) {
+      offset += lines[i].length + 1; // +1 for the newline character
+    }
+    return offset + (column - 1);
+  };
+
+  // Recompute the signature help shown below the editor (issue #9292: this is
+  // rendered in-flow instead of as a floating tooltip so it never covers text).
+  const recomputeSignature = useCallback(() => {
+    const text = latestValueRef.current;
+    const offset = latestOffsetRef.current;
+    const textBefore = text.slice(Math.max(0, offset - 200), offset);
+    const next = textBefore.includes('(') ? getSignatureAtPosition(text, offset) : null;
+    // Only update state when the signature meaningfully changes. recomputeSignature
+    // runs on every cursor/content change, but moving the cursor within the same
+    // argument produces an equivalent signature. Bailing out keeps the aria-live
+    // panel stable (no redundant re-renders or screen-reader announcements).
+    setSignature((prev) => (isSameSignature(prev, next) ? prev : next));
+  }, []);
+
   const handleBlur = (): void => {
+    // NOTE: Do not clear the signature here. Clearing it on blur removes the in-flow
+    // signature panel, which shifts the elements below the editor (the token-picker
+    // tabs and token list) upward. When the blur is triggered by clicking one of those
+    // elements, the layout shift moves the target out from under the cursor mid-click,
+    // so the click misses (e.g. switching to the "Dynamic content" tab silently fails).
+    // The signature is instead cleared by recomputeSignature when the expression no
+    // longer has a function at the cursor. See issue #9292 and its follow-up.
     if (onBlur && editorRef?.current) {
       const currentSelection = editorRef.current.getSelection();
       const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1;
@@ -63,44 +116,59 @@ export function ExpressionEditor({
     }
   };
 
-  const handleChangeEvent = (): void => {
-    setExpressionEditorError('');
+  const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
+    latestValueRef.current = e.value ?? '';
+    recomputeSignature();
+    if (onContentChanged) {
+      onContentChanged(e);
+    } else {
+      setExpressionEditorError('');
+    }
+  };
+
+  const handleCursorPositionChanged = (e: CursorPositionChangedEvent): void => {
+    latestOffsetRef.current = getOffset(latestValueRef.current, e.position.lineNumber, e.position.column);
+    recomputeSignature();
   };
 
   return (
-    <div className="msla-expression-editor-container" style={{ height: currentHeight }}>
-      <MonacoEditor
-        ref={editorRef}
-        language={EditorLanguage.templateExpressionLanguage}
-        lineNumbers="off"
-        value={initialValue}
-        scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}
-        minimapEnabled={false}
-        overviewRulerLanes={0}
-        overviewRulerBorder={false}
-        contextMenu={false}
-        onBlur={handleBlur}
-        onFocus={onFocus}
-        onContentChanged={onContentChanged ?? handleChangeEvent}
-        width={'100%'}
-        wordWrap="bounded"
-        wordWrapColumn={200}
-        automaticLayout={true}
-        data-automation-id="msla-expression-editor"
-        height={`${currentHeight}px`}
-        readOnly={isReadOnly}
-        tabSize={2}
-      />
-      <div
-        className="msla-expression-editor-expand"
-        onMouseDown={(e) => {
-          setMouseDownLocation(e.clientY);
-          setIsDragging(true);
-          setHeightOnMouseDown(currentHeight);
-        }}
-      >
-        <div className="msla-expression-editor-expand-icon" /> <div className="msla-expression-editor-expand-icon-2" />
+    <div className="msla-expression-editor">
+      <div className="msla-expression-editor-container" style={{ height: currentHeight }}>
+        <MonacoEditor
+          ref={editorRef}
+          language={EditorLanguage.templateExpressionLanguage}
+          lineNumbers="off"
+          value={initialValue}
+          scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}
+          minimapEnabled={false}
+          overviewRulerLanes={0}
+          overviewRulerBorder={false}
+          contextMenu={false}
+          onBlur={handleBlur}
+          onFocus={onFocus}
+          onContentChanged={handleContentChanged}
+          onCursorPositionChanged={handleCursorPositionChanged}
+          width={'100%'}
+          wordWrap="bounded"
+          wordWrapColumn={200}
+          automaticLayout={true}
+          data-automation-id="msla-expression-editor"
+          height={`${currentHeight}px`}
+          readOnly={isReadOnly}
+          tabSize={2}
+        />
+        <div
+          className="msla-expression-editor-expand"
+          onMouseDown={(e) => {
+            setMouseDownLocation(e.clientY);
+            setIsDragging(true);
+            setHeightOnMouseDown(currentHeight);
+          }}
+        >
+          <div className="msla-expression-editor-expand-icon" /> <div className="msla-expression-editor-expand-icon-2" />
+        </div>
       </div>
+      {signature ? <ExpressionEditorSignature signature={signature} /> : null}
     </div>
   );
 }
