@@ -101,12 +101,8 @@ export abstract class BaseSearchService implements ISearchService {
 
     const headers = locale ? { 'Accept-Language': locale } : undefined;
 
-    try {
-      const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
-      return { value, hasMore: !!nextLink };
-    } catch (_error) {
-      return { value: [], hasMore: false };
-    }
+    const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
+    return { value, hasMore: !!nextLink };
   }
 
   async getAzureResourceRecursive(uri: string, queryParams: any): Promise<any[]> {
