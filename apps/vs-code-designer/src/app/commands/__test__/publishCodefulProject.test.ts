@@ -17,10 +17,9 @@ vi.mock('../../utils/workspace', () => ({
 vi.mock('../../utils/codeful', () => ({
   isCodefulProject: vi.fn(),
   inspectCodefulCsprojBuildHooks: vi.fn(),
-  invalidateCodefulSdkCacheIfNeeded: vi.fn(),
 }));
 
-import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded } from '../../utils/codeful';
+import { inspectCodefulCsprojBuildHooks } from '../../utils/codeful';
 
 describe('publishCodefulProject', () => {
   const projectPath = 'D:\\workspace\\CodefulLogicApp';
@@ -45,7 +44,6 @@ describe('publishCodefulProject', () => {
     };
     (getWorkspaceRoot as Mock).mockResolvedValue(projectPath);
     (isCodefulProject as Mock).mockResolvedValue(true);
-    (invalidateCodefulSdkCacheIfNeeded as Mock).mockResolvedValue(false);
     (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue({
       copyAfterTargets: 'Build;Publish',
       replaceLangAfterTargets: 'Build;Publish',
@@ -96,7 +94,6 @@ describe('publishCodefulProject', () => {
     await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri);
 
     expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
-    expect(invalidateCodefulSdkCacheIfNeeded).toHaveBeenCalledWith(projectPath);
     expect(dispose).toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`Codeful project published successfully at ${projectPath}.`);
     expect(context.telemetry.properties.result).toBe('Succeeded');

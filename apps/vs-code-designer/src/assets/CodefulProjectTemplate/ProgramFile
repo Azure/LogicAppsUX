@@ -28,9 +28,6 @@ namespace <%= logicAppNamespace %>
                 })
                 .Build();
 
-            // Build all workflows
-            <%= workflowBuilders %>
-
             host.Run();
         }
     }
