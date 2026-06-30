@@ -4,7 +4,7 @@ import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import * as vscode from 'vscode';
 import { createLogicAppAndWorkflow } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { localize } from '../../../localize';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 
 export async function createLogicAppWorkflow(context: IActionContext, options: any, logicAppFolderPath: string) {
   addLocalFuncTelemetry(context);
@@ -13,7 +13,7 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
 
   // If logicAppType is not set in options, check if this is a codeful project
   if (!webviewProjectContext.logicAppType) {
-    const isCodeful = await isCodefulProject(logicAppFolderPath);
+    const isCodeful = await hasCodefulWorkflowSetting(logicAppFolderPath);
     if (isCodeful) {
       webviewProjectContext.logicAppType = ProjectType.codeful;
     }

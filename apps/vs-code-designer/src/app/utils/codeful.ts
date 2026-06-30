@@ -31,10 +31,6 @@ export async function codefulProjectsExist(): Promise<boolean> {
  * Checks if the codeful agent is enabled for a given folder by examining the local settings file.
  * @param folderPath - The path to the folder containing the local settings file
  * @returns A promise that resolves to true if the codeful agent is enabled, false otherwise
- * @remarks
- * This function reads the local settings file (typically local.settings.json) from the specified
- * folder path and checks for the WORKFLOW_CODEFUL_ENABLED flag in the Values section.
- * Returns false if the file doesn't exist, cannot be read, or doesn't contain valid JSON.
  */
 export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boolean> => {
   const localSettingsFilePath = path.join(folderPath, localSettingsFileName);
@@ -52,11 +48,11 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
 };
 
 /**
- * Checks if the folder is a custom code functions project.
+ * Checks if the folder contains a .NET 8 project with a reference to the codeful SDK.
  * @param {string} folderPath - The folder path.
- * @returns {Promise<boolean>} Returns true if the folder is a custom code functions project, otherwise false.
+ * @returns {Promise<boolean>} Returns true if the folder contains a .NET 8 project with a reference to the codeful SDK, otherwise false.
  */
-export const isCodefulProject = async (folderPath: string): Promise<boolean> => {
+export const hasCodefulSdkReference = async (folderPath: string): Promise<boolean> => {
   try {
     if (!fse.statSync(folderPath).isDirectory()) {
       return false;
@@ -79,7 +75,7 @@ export const isCodefulProject = async (folderPath: string): Promise<boolean> => 
  * when the VSIX ships changed nupkg bits with the same package ID/version.
  */
 export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Promise<boolean> => {
-  if (!(await isCodefulProject(projectPath))) {
+  if (!(await hasCodefulWorkflowSetting(projectPath))) {
     return false;
   }
 

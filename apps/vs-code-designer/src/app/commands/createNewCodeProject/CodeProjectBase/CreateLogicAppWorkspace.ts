@@ -26,7 +26,7 @@ import {
   testsDirectoryName,
   vscodeFolderName,
   workerRuntimeKey,
-  workflowCodefulEnabled,
+  workflowCodefulEnabledKey,
   workflowFileName,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
@@ -230,10 +230,8 @@ export async function createLocalConfigurationFiles(
     localSettingsJson.Values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }
 
-  // TODO(aeldridge): Update to point to codeful private bundle once it's published.
   if (logicAppType === ProjectType.codeful) {
-    localSettingsJson.Values[workflowCodefulEnabled] = 'true';
-    localSettingsJson.Values['AzureFunctionsJobHost__extensionBundle__id'] = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+    localSettingsJson.Values[workflowCodefulEnabledKey] = 'true';
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);

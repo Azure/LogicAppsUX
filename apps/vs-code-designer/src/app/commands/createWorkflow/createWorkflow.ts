@@ -9,14 +9,14 @@ import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebview
 import { localize } from '../../../localize';
 import { createLogicAppWorkflow } from './createLogicAppWorkflow';
 import { getWorkspaceRoot } from '../../utils/workspace';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import * as path from 'path';
 
 export const createWorkflow = async (context: IActionContext) => {
   const workspaceFolderPath = await getWorkspaceRoot(context);
   const projectRoot = await tryGetLogicAppProjectRoot(context, workspaceFolderPath, true);
-  const isCodeful = await isCodefulProject(projectRoot);
+  const isCodeful = await hasCodefulWorkflowSetting(projectRoot);
   const logicAppName = path.basename(projectRoot);
 
   const logicAppType = isCodeful ? ProjectType.codeful : '';
