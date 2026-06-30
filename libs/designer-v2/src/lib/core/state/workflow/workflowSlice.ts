@@ -16,8 +16,8 @@ import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
-import { addNewEdge, removeEdge, reassignEdgeSources, reassignEdgeTargets } from '../../parsers/restructuringHelpers';
-import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
+import { addNewEdge, removeEdge, reassignEdgeSources, reassignEdgeTargets, applyIsRootNode } from '../../parsers/restructuringHelpers';
+import { createWorkflowEdge, createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { AddSettingsPayload, NodeOperation } from '../operation/operationMetadataSlice';
 import {
@@ -41,6 +41,7 @@ import {
   containsIdTag,
   containsCaseTag,
   SUBGRAPH_TYPES,
+  WORKFLOW_EDGE_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -65,6 +66,90 @@ export interface WrapNodesInScopePayload {
   graphId: string;
   operation: any;
 }
+
+/**
+ * Reconciles the graph edges (and isRoot metadata) for a single node after its
+ * `runAfter` has changed via an inline code-view edit. This keeps the node's
+ * visual position in sync with its new run-after dependencies, mirroring how the
+ * BJS deserializer builds edges from `runAfter`:
+ *   - a node with run-after parents gets one BUTTON_EDGE per parent;
+ *   - a top-level node with no run-after runs after the trigger (trigger edge);
+ *   - a scoped node with no run-after attaches to its scope header (heading edge).
+ * Structural scope edges that don't represent run-after relationships are left alone.
+ */
+const reconcileRunAfterEdges = (
+  state: WorkflowState,
+  nodeId: string,
+  oldRunAfter: Record<string, string[] | null> | undefined,
+  newRunAfter: Record<string, string[] | null> | undefined
+) => {
+  const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+  if (!nodeMetadata || nodeMetadata.isTrigger) {
+    return;
+  }
+
+  // Only reconcile when the set of run-after parents actually changed. Status-only
+  // changes (e.g. Succeeded -> Failed) keep the same edges and need no graph update.
+  const oldKeys = Object.keys(oldRunAfter ?? {}).sort();
+  const newKeys = Object.keys(newRunAfter ?? {}).sort();
+  const sameParents = oldKeys.length === newKeys.length && oldKeys.every((key, index) => key === newKeys[index]);
+  if (sameParents) {
+    return;
+  }
+
+  // Resolve the graph (scope) that owns this node's incoming edges.
+  const graphPath: string[] = [];
+  let operationGraph: NodeMetadata | undefined = nodeMetadata;
+  while (operationGraph && !equals(operationGraph.graphId, 'root')) {
+    graphPath.push(operationGraph.graphId);
+    operationGraph = getRecordEntry(state.nodesMetadata, operationGraph.graphId);
+  }
+  let graph: WorkflowNode | null = state.graph;
+  for (const id of graphPath.reverse()) {
+    graph = graph?.children?.find((child) => child.id === id) ?? null;
+  }
+  if (!graph) {
+    return;
+  }
+
+  // Remove the existing connection edges that point at this node. We only touch
+  // run-after (BUTTON_EDGE) and scope-attachment (HEADING_EDGE) edges so other
+  // structural edges (footer/only/hidden) are preserved.
+  graph.edges = (graph.edges ?? []).filter(
+    (edge) => edge.target !== nodeId || (edge.type !== WORKFLOW_EDGE_TYPES.BUTTON_EDGE && edge.type !== WORKFLOW_EDGE_TYPES.HEADING_EDGE)
+  );
+
+  const pushEdge = (source: string, type?: (typeof WORKFLOW_EDGE_TYPES)[keyof typeof WORKFLOW_EDGE_TYPES]) => {
+    const edgeId = `${source}-${nodeId}`;
+    if (!graph?.edges?.some((edge) => edge.id === edgeId)) {
+      graph?.edges?.push(createWorkflowEdge(source, nodeId, type));
+    }
+  };
+
+  if (newKeys.length > 0) {
+    // Node runs after one or more sibling actions.
+    for (const source of newKeys) {
+      pushEdge(source);
+    }
+  } else if (equals(nodeMetadata.graphId, 'root')) {
+    // Top-level action with no run-after runs after the trigger.
+    const triggerNodeId = Object.entries(state.nodesMetadata).find(([, node]) => node?.isTrigger ?? false)?.[0];
+    if (triggerNodeId) {
+      pushEdge(triggerNodeId);
+    }
+  } else {
+    // Scoped action with no run-after attaches to its scope/subgraph header.
+    const headerNode = graph.children?.find(
+      (child) => child.type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE || child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE
+    );
+    if (headerNode) {
+      pushEdge(headerNode.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE);
+    }
+  }
+
+  // Keep isRoot metadata (and root run-after cleanup) in sync with the new edges.
+  applyIsRootNode(state, graph, state.nodesMetadata);
+};
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
@@ -119,10 +204,14 @@ export const workflowSlice = createSlice({
       action: PayloadAction<{ nodeId: string; operationDefinition: LogicAppsV2.OperationDefinition }>
     ) => {
       const { nodeId, operationDefinition } = action.payload;
-      if (!getRecordEntry(state.operations, nodeId)) {
+      const existingOperation = getRecordEntry(state.operations, nodeId);
+      if (!existingOperation) {
         return;
       }
+      const oldRunAfter = (existingOperation as LogicAppsV2.ActionDefinition).runAfter ?? undefined;
       state.operations[nodeId] = operationDefinition;
+      const newRunAfter = (operationDefinition as LogicAppsV2.ActionDefinition).runAfter ?? undefined;
+      reconcileRunAfterEdges(state, nodeId, oldRunAfter, newRunAfter);
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       if (!state.graph) {

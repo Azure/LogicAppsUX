@@ -33,9 +33,10 @@ export interface UpdateNodeFromCodeViewPayload {
  * the designer state. Only the edited node is re-initialized; other nodes (and their
  * unsaved edits) are left untouched.
  *
- * Note: structural/graph changes (renaming the action key, changing runAfter / nesting,
- * adding or removing child actions) are NOT applied here -- those still require the
- * whole-workflow code view.
+ * Changes to the edited node's `runAfter` are reconciled into the graph (via
+ * replaceOperationDefinition) so the node's position updates. Other structural changes
+ * (renaming the action key, adding or removing child actions, re-nesting into a different
+ * scope) are NOT applied here -- those still require the whole-workflow code view.
  */
 export const updateNodeFromCodeView = createAsyncThunk(
   'updateNodeFromCodeView',
