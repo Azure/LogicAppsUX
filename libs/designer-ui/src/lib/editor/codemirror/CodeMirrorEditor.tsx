@@ -111,8 +111,15 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         setSelection: (range) => {
           if (viewRef.current) {
             const doc = viewRef.current.state.doc;
-            const startPos = doc.line(range.startLineNumber).from + range.startColumn - 1;
-            const endPos = doc.line(range.endLineNumber).from + range.endColumn - 1;
+            // Clamp line/column to valid ranges. Monaco silently clamped out-of-range
+            // positions, but CodeMirror's doc.line() throws a RangeError, so we guard here.
+            const toPos = (lineNumber: number, column: number) => {
+              const clampedLine = Math.min(Math.max(lineNumber, 1), doc.lines);
+              const line = doc.line(clampedLine);
+              return Math.min(Math.max(line.from + column - 1, line.from), line.to);
+            };
+            const startPos = toPos(range.startLineNumber, range.startColumn);
+            const endPos = toPos(range.endLineNumber, range.endColumn);
             viewRef.current.dispatch({
               selection: { anchor: startPos, head: endPos },
             });
@@ -212,7 +219,9 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorRef, CodeMirrorEditor
         highlightActiveLine(),
         highlightActiveLineGutter(),
         keymap.of([...closeBracketsKeymap, ...completionKeymap, ...searchKeymap, ...defaultKeymap]),
-        search(),
+        // Center the match in the viewport when navigating search results so users don't
+        // have to scroll after each "Find Next" (default reveals at the nearest edge).
+        search({ scrollToMatch: (range) => EditorView.scrollIntoView(range, { y: 'center' }) }),
         themeCompartment.of(createFluentTheme(isInverted)),
         languageCompartment.of(getLanguageExtension(language)),
         readOnlyCompartment.of(EditorState.readOnly.of(readOnly)),
