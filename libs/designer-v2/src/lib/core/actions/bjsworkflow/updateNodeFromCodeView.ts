@@ -4,7 +4,7 @@ import { OperationManifestService, getRecordEntry } from '@microsoft/logic-apps-
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { initializeNodes } from '../../state/operation/operationMetadataSlice';
-import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
+import { deinitializeTokensAndVariables, initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { replaceOperationDefinition } from '../../state/workflow/workflowSlice';
 import { isManagedMcpOperation } from '../../state/workflow/helper';
 import { isTriggerNode } from '../../utils/graph';
@@ -115,6 +115,10 @@ export const updateNodeFromCodeView = createAsyncThunk(
       const singleOperation = { [nodeId]: serializedOperation };
       const outputTokens = graph ? initializeOutputTokensForOperations(nodeData, singleOperation, graph, nodesMetadata) : {};
       const variables = initializeVariables(singleOperation, nodeData);
+      // Clear any existing variable declarations for this node first. initializeVariables skips
+      // operations with no variables, so without this an edit that removes a node's variables
+      // would leave stale entries in tokens.variables.
+      dispatch(deinitializeTokensAndVariables({ id: nodeId }));
       dispatch(initializeTokensAndVariables({ outputTokens, variables }));
 
       await initializeDynamicDataInNodes(getState as () => RootState, dispatch, [nodeId]);
