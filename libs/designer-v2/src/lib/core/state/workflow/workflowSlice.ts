@@ -114,6 +114,16 @@ export const workflowSlice = createSlice({
       }
       nodeOperation.description = description;
     },
+    replaceOperationDefinition: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; operationDefinition: LogicAppsV2.OperationDefinition }>
+    ) => {
+      const { nodeId, operationDefinition } = action.payload;
+      if (!getRecordEntry(state.operations, nodeId)) {
+        return;
+      }
+      state.operations[nodeId] = operationDefinition;
+    },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       if (!state.graph) {
         return; // log exception
@@ -1059,6 +1069,7 @@ export const workflowSlice = createSlice({
         wrapNodesInScope,
         pasteScopeNode,
         setNodeDescription,
+        replaceOperationDefinition,
         updateRunAfter,
         removeRunAfter,
         addRunAfter,
@@ -1092,6 +1103,7 @@ export const {
   deleteMcpServer,
   updateNodeSizes,
   setNodeDescription,
+  replaceOperationDefinition,
   toggleCollapsedGraphId,
   addSwitchCase,
   addAgentTool,

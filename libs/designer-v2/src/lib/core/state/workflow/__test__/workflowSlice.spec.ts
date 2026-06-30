@@ -208,3 +208,57 @@ describe('workflowSlice - setRepetitionRunData', () => {
     expect(updatedRunData.error).toBeUndefined();
   });
 });
+
+describe('workflowSlice - replaceOperationDefinition', () => {
+  const nodeId = 'testNode';
+
+  const buildState = (operations: Record<string, any>): WorkflowState =>
+    ({
+      graph: null,
+      operations,
+      nodesMetadata: {},
+      collapsedGraphIds: {},
+      collapsedActionIds: {},
+      idReplacements: {},
+      newlyAddedOperations: {},
+      runInstance: null,
+      isDirty: false,
+      workflowKind: undefined,
+      originalDefinition: {} as LogicAppsV2.WorkflowDefinition,
+      hostData: { errorMessages: {} },
+      agentsGraph: {},
+      timelineRepetitionIndex: 0,
+      changeCount: 0,
+      timelineRepetitionArray: [],
+      flowErrors: {},
+    }) as WorkflowState;
+
+  test('should replace the operation definition for an existing node', () => {
+    const initialState = buildState({
+      [nodeId]: { type: 'InitializeVariable', inputs: { variables: [{ name: 'old', type: 'String', value: 'a' }] } },
+    });
+
+    const operationDefinition = {
+      type: 'InitializeVariable',
+      inputs: { variables: [{ name: 'renamed', type: 'String', value: 'b' }] },
+    } as unknown as LogicAppsV2.OperationDefinition;
+
+    const newState = workflowSlice.reducer(initialState, workflowSlice.actions.replaceOperationDefinition({ nodeId, operationDefinition }));
+
+    expect(newState.operations[nodeId]).toEqual(operationDefinition);
+    expect(newState.isDirty).toBe(true);
+  });
+
+  test('should no-op when the node does not exist', () => {
+    const initialState = buildState({});
+
+    const operationDefinition = { type: 'Compose', inputs: {} } as unknown as LogicAppsV2.OperationDefinition;
+
+    const newState = workflowSlice.reducer(
+      initialState,
+      workflowSlice.actions.replaceOperationDefinition({ nodeId: 'missing', operationDefinition })
+    );
+
+    expect(newState.operations['missing']).toBeUndefined();
+  });
+});

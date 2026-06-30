@@ -505,7 +505,7 @@ const processChildGraphAndItsInputs = (
   return nodesData;
 };
 
-export const updateTokenMetadataInParameters = (
+const updateTokenMetadataInParameters = (
   nodes: NodeDataWithOperationMetadata[],
   operations: Operations,
   workflowParameters: Record<string, WorkflowParameter>,
@@ -583,7 +583,7 @@ export const updateTokenMetadataInParameters = (
   }
 };
 
-export const initializeOutputTokensForOperations = (
+const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
@@ -645,7 +645,7 @@ export const initializeOutputTokensForOperations = (
   return result;
 };
 
-export const initializeVariables = (
+const initializeVariables = (
   operations: Operations,
   allNodesData: NodeDataWithOperationMetadata[]
 ): Record<string, VariableDeclaration[]> => {
@@ -670,7 +670,7 @@ export const initializeVariables = (
   return declarations;
 };
 
-export const initializeRepetitionInfos = async (
+const initializeRepetitionInfos = async (
   triggerNodeId: string,
   allOperations: Operations,
   nodesData: NodeDataWithOperationMetadata[],
