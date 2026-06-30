@@ -19,6 +19,7 @@ const os = require('os');
 const crypto = require('crypto');
 const { exec, execSync } = require('child_process');
 const { ExTester } = require('vscode-extension-tester');
+const { isExecutableFile } = require('./sharedDepUtils');
 
 const projectDir = path.resolve(__dirname, '..', '..', '..');
 const distDir = path.join(projectDir, 'dist');
@@ -43,6 +44,28 @@ const DOWNLOAD_RETRY_ATTEMPTS = 3;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
 const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+
+/**
+ * LSP-related artifact names that must be removed when preparing an isolated
+ * dependency root for the EPERM repro test. This forces the extension to
+ * re-extract the LSP server/SDK during the test.
+ *
+ * Source of truth for these names:
+ * - 'LSPServer' → languageServerProtocol.ts (lspServerDirectoryName)
+ * - '.lspserver-hash' → languageServerProtocol.ts (lspServerHashMarkerName)
+ * - 'LanguageServerLogicApps' → constants.ts (lspDirectory)
+ * - '.lspsdk-hash' → languageServerProtocol.ts (lspSdkHashMarkerName)
+ * - '.lspserver-version', '.lspserver-path', '.lspsdk-version' → legacy markers
+ */
+const LSP_STALE_ARTIFACT_NAMES = [
+  'LSPServer',
+  '.lspserver-hash',
+  'LanguageServerLogicApps',
+  '.lspsdk-hash',
+  '.lspserver-version',
+  '.lspserver-path',
+  '.lspsdk-version',
+];
 
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
@@ -1028,23 +1051,14 @@ async function main() {
     };
   };
 
-  const runtimeExecutableAccessMode = () => (process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
-
-  const isRuntimeExecutable = (binaryPath) => {
-    try {
-      fs.accessSync(binaryPath, runtimeExecutableAccessMode());
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  // isExecutableFile is imported from ./sharedDepUtils
 
   const runtimePermissionStatus = (binaryPath) => {
     if (!fs.existsSync(binaryPath)) {
       return 'missing';
     }
     const mode = process.platform === 'win32' ? 'n/a' : `0${(fs.statSync(binaryPath).mode & 0o777).toString(8)}`;
-    return `${isRuntimeExecutable(binaryPath) ? 'executable' : 'not-executable'} mode=${mode}`;
+    return `${isExecutableFile(binaryPath) ? 'executable' : 'not-executable'} mode=${mode}`;
   };
 
   const logRuntimeDependencyPermissions = (label, depsRootOverride) => {
@@ -1093,7 +1107,7 @@ async function main() {
     if (failOnExistingNonExecutable) {
       const brokenCandidates = [...new Set(funcExecutableCandidates)]
         .filter((candidate) => fs.existsSync(candidate))
-        .filter((candidate) => !isRuntimeExecutable(candidate));
+        .filter((candidate) => !isExecutableFile(candidate));
       if (brokenCandidates.length > 0) {
         throw new Error(`[${label}] FuncCoreTools binaries exist but are not executable: ${brokenCandidates.join(', ')}`);
       }
@@ -1103,11 +1117,11 @@ async function main() {
   const runtimeDependenciesReady = () => {
     const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates } = getRuntimeDependencyPaths();
     const requiredBinariesReady = [funcBinary, dotnetBinary, nodeBinary].every(
-      (binaryPath) => fs.existsSync(binaryPath) && isRuntimeExecutable(binaryPath)
+      (binaryPath) => fs.existsSync(binaryPath) && isExecutableFile(binaryPath)
     );
     const existingFuncToolsExecutable = funcExecutableCandidates
       .filter((binaryPath) => fs.existsSync(binaryPath))
-      .every((binaryPath) => isRuntimeExecutable(binaryPath));
+      .every((binaryPath) => isExecutableFile(binaryPath));
     return requiredBinariesReady && existingFuncToolsExecutable;
   };
   const shouldValidateRuntimeDependencies = () => {
@@ -1703,16 +1717,8 @@ async function main() {
       fs.cpSync(sourceDir, path.join(depsRoot, name), { recursive: true });
     }
 
-    for (const stalePath of [
-      path.join(depsRoot, 'LSPServer'),
-      path.join(depsRoot, '.lspserver-hash'),
-      path.join(depsRoot, 'LanguageServerLogicApps'),
-      path.join(depsRoot, '.lspsdk-hash'),
-      path.join(depsRoot, '.lspserver-version'),
-      path.join(depsRoot, '.lspserver-path'),
-      path.join(depsRoot, '.lspsdk-version'),
-    ]) {
-      fs.rmSync(stalePath, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+    for (const artifactName of LSP_STALE_ARTIFACT_NAMES) {
+      fs.rmSync(path.join(depsRoot, artifactName), { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
     }
 
     process.env.LA_E2E_LSP_EPERM_DEPS_ROOT = depsRoot;

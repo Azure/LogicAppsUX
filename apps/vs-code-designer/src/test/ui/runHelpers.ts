@@ -30,6 +30,8 @@ import * as path from 'path';
 import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
 
+// Uses the default dependency path (~/.azurelogicapps/dependencies) since E2E tests
+// always configure autoRuntimeDependenciesPath to this default via run-e2e.js settings injection.
 function getFuncCoreToolsDiagnosticPaths(): string[] {
   const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
   const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';

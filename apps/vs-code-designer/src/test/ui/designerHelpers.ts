@@ -69,6 +69,7 @@ import {
   waitForQuickInputAndType,
 } from './helpers';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
+import { isExecutableFile } from './sharedDepUtils';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -141,14 +142,7 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
   }
 }
 
-function isExecutableFile(filePath: string): boolean {
-  try {
-    fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
+// isExecutableFile is imported from ./sharedDepUtils (shared with run-e2e.js)
 
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
@@ -180,16 +174,17 @@ function getFuncCoreToolsCandidatePaths(): string[] {
 
 function getFuncCoreToolsPath(): string {
   const candidates = getFuncCoreToolsCandidatePaths();
-  const funcCandidates = candidates.filter((candidate) => path.basename(candidate).toLowerCase().startsWith('func'));
-  return funcCandidates.find((candidate) => fs.existsSync(candidate)) ?? funcCandidates[0];
+  // All candidates are already func binaries (getFuncCoreToolsCandidatePaths only matches executableNames)
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
 
 function assertFuncCoreToolsExecutable(context: string): void {
   ensureRuntimeDependencyExecutablePermissions();
   const funcBinaryPath = getFuncCoreToolsPath();
-  const existingCandidates = getFuncCoreToolsCandidatePaths()
-    .filter((candidate) => path.basename(candidate).toLowerCase().startsWith('func'))
-    .filter((candidate) => fs.existsSync(candidate));
+  // Multiple existing candidates are expected: FuncCoreTools installs copies under
+  // in-proc8/, in-proc6/, etc. for different .NET versions. We validate ALL of them
+  // have execute permissions since the extension picks one at runtime based on project config.
+  const existingCandidates = getFuncCoreToolsCandidatePaths().filter((candidate) => fs.existsSync(candidate));
   if (existingCandidates.length === 0) {
     throw new Error(`[depValidation] func binary not found after ${context}: ${funcBinaryPath}`);
   }
