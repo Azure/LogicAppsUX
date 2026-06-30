@@ -90,7 +90,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createProject, createNewProject);
   registerCommand(extensionCommand.createWorkspace, createWorkspace);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
-  registerCommand(extensionCommand.createWorkflow, createWorkflow);
+  registerCommand(extensionCommand.createWorkflow, (context: IActionContext, uri: vscode.Uri) => createWorkflow(context, uri));
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
@@ -179,6 +179,34 @@ export function registerCommands(): void {
     errorContext.errorHandling.suppressReportIssue = true;
     const errorData: IParsedError = parseError(errorContext.error);
     const correlationId = guid();
+
+    // Diagnostic: log raw error details for debugging opaque errors like "Error: {}"
+    if (errorData.message === '{}' || errorData.message === 'Unknown Error') {
+      const rawError = errorContext.error;
+      const diagnosticInfo = {
+        callbackId: errorContext.callbackId,
+        type: typeof rawError,
+        constructor: rawError?.constructor?.name,
+        message: rawError?.message,
+        keys: rawError ? Object.keys(rawError) : [],
+        stringified: (() => {
+          try {
+            return JSON.stringify(rawError);
+          } catch {
+            return '<circular>';
+          }
+        })(),
+        fullStack: rawError?.stack,
+      };
+      ext.outputChannel.appendLog(
+        `[Error Diagnostics] Raw error producing "${errorData.message}": ${JSON.stringify(diagnosticInfo, null, 2)}`
+      );
+
+      // Suppress display of opaque internal errors that provide no useful info to users
+      if (errorData.message === '{}') {
+        errorContext.errorHandling.suppressDisplay = true;
+      }
+    }
 
     if (errorContext.error instanceof UserCancelledError) {
       errorContext.errorHandling.suppressDisplay = true;

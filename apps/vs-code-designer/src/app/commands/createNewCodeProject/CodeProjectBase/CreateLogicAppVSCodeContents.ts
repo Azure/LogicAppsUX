@@ -30,7 +30,7 @@ import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
 import { getCustomCodeRuntime } from '../../../utils/debug';
 import { isDebugConfigEqual } from '../../../utils/vsCodeConfig/launch';
-import { binariesExist } from '../../../utils/binaries';
+import { binariesExistSync } from '../../../utils/binaries';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import {
   type CustomCodeFunctionsProjectMetadata,
@@ -94,7 +94,7 @@ export async function writeExtensionsJson(webviewProjectContext: IWebviewProject
 const getCodefulTasks = (targetFramework: string) => {
   const commonDotnetArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
   const releaseDotnetArgs: string[] = ['--configuration', 'Release'];
-  const funcBinariesExist = binariesExist(funcDependencyName);
+  const funcBinariesExist = binariesExistSync(funcDependencyName);
   const debugSubpath = path.posix.join('bin', 'Debug', targetFramework);
   const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv({ cwd: debugSubpath }) : {};
   return [
