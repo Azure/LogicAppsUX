@@ -81,6 +81,32 @@ test.describe(
       expect(toolKeys.length).toBe(3);
     });
 
+    test('Should preserve inline Connection shape for built-in MCP tool on Consumption', async ({ page }) => {
+      await page.goto('/');
+
+      // Consumption workflows have no `workflowKind`. Standalone's localDesigner unsets `kind` when
+      // hostingPlan is Consumption, which routes the serializer through the Consumption path
+      // (serializeConsumptionBuiltInMcpOperation) that emits `inputs.Connection` inline instead of
+      // `inputs.connectionReference.connectionName`.
+      await page.getByRole('radio', { name: 'Consumption' }).click();
+
+      await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
+
+      const serialized: any = await getSerializedWorkflowFromState(page);
+      const tool = serialized.definition.actions.WorkflowAgent.tools.BuiltIn_MCP_Server;
+
+      expect(tool).toBeDefined();
+      expect(tool.type).toBe('McpClientTool');
+      expect(tool.kind).toBe('BuiltIn');
+      expect(tool.inputs).toBeDefined();
+      // Consumption preserves the inline Connection block (introduced by PR #8953).
+      expect(tool.inputs.Connection).toBeDefined();
+      expect(tool.inputs.Connection.McpServerUrl).toBe('https://mcp.time.mcpcentral.io/');
+      expect(tool.inputs.Connection.Authentication).toBe('None');
+      // Standard's connectionReference shape must NOT appear on Consumption.
+      expect(tool.inputs.connectionReference).toBeUndefined();
+    });
+
     test('Should surface UAMI identity on a managed MCP connection loaded from $connections.value', async ({ page }) => {
       // The connectionReferences rebuild from $connections.value lives in the designer-v2 deserializer.
       await page.goto('/v2');

@@ -245,7 +245,10 @@ export const LocalDesigner = () => {
             definition: workflowDefinition,
             connectionReferences: connections,
             parameters: parameters,
-            kind: workflowKind,
+            // Real Consumption workflows have no `kind` field; only Standard sets one. Unsetting here
+            // makes Standalone faithful to Consumption behavior so serializer/deserializer SKU checks
+            // that read `rootState.workflow.workflowKind` route correctly.
+            kind: isConsumption ? undefined : workflowKind,
           }}
           runInstance={runInstance}
           isMultiVariableEnabled={hostOptions.enableMultiVariable}
