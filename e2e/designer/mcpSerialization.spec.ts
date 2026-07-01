@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
-import { getConnectionReferencesFromState, getSerializedWorkflowFromState } from './utils/designerFunctions';
+import {
+  getConnectionReferencesFromState,
+  getSerializedWorkflowFromState,
+  getSerializedWorkflowFromStateV2,
+} from './utils/designerFunctions';
 
 test.describe(
   'MCP Serialization Tests',
@@ -42,12 +46,16 @@ test.describe(
       expect(agent.tools.BuiltIn_MCP_Server.inputs.connectionReference.connectionName).toBe('mcpclient');
       expect(agent.tools.BuiltIn_MCP_Server.inputs.Connection).toBeUndefined();
 
-      // Managed MCP tool should be serialized with connectionReference
+      // Managed MCP tool should be serialized with connectionReference AND preserve its parameters
+      // (mcpServerPath) — serializeManagedMcpOperation injects the swagger path into inputs.parameters.
       expect(agent.tools.Managed_MCP_Server).toBeDefined();
       expect(agent.tools.Managed_MCP_Server.type).toBe('McpClientTool');
       expect(agent.tools.Managed_MCP_Server.kind).toBe('Managed');
       expect(agent.tools.Managed_MCP_Server.inputs).toBeDefined();
       expect(agent.tools.Managed_MCP_Server.inputs.connectionReference).toBeDefined();
+      expect(agent.tools.Managed_MCP_Server.inputs.connectionReference.connectionName).toBe('office365');
+      expect(agent.tools.Managed_MCP_Server.inputs.parameters).toBeDefined();
+      expect(agent.tools.Managed_MCP_Server.inputs.parameters.mcpServerPath).toBe('/mcp/contacts');
     });
 
     test('Should not include built-in MCP connections in connectionReferences', async ({ page }) => {
@@ -100,6 +108,43 @@ test.describe(
       expect(tool.inputs.Connection.McpServerUrl).toBe('https://mcp.time.mcpcentral.io/');
       expect(tool.inputs.Connection.Authentication).toBe('None');
       expect(tool.inputs.connectionReference).toBeUndefined();
+    });
+
+    test('Should serialize Standard built-in MCP as connectionReference on designer-v2', async ({ page }) => {
+      // Mirrors the v1 shape assertion on the v2 designer to catch divergence between the two
+      // packages' serializers — both must emit `inputs.connectionReference.connectionName` on Standard.
+      await page.goto('/v2');
+
+      await GoToMockWorkflow(page, 'Agent with MCP Tools');
+
+      const serialized: any = await getSerializedWorkflowFromStateV2(page);
+      const tool = serialized.definition.actions.WorkflowAgent.tools.BuiltIn_MCP_Server;
+
+      expect(tool).toBeDefined();
+      expect(tool.type).toBe('McpClientTool');
+      expect(tool.kind).toBe('BuiltIn');
+      expect(tool.inputs?.connectionReference?.connectionName).toBe('mcpclient');
+      expect(tool.inputs?.Connection).toBeUndefined();
+    });
+
+    test('Should preserve inline Connection shape for built-in MCP tool on Consumption (designer-v2)', async ({ page }) => {
+      // Mirrors the v1 Consumption test on the v2 designer so a regression on
+      // serializeConsumptionBuiltInMcpOperation in the v2 package is caught.
+      await page.goto('/v2');
+
+      await page.getByRole('radio', { name: 'Consumption' }).click();
+
+      await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
+
+      const serialized: any = await getSerializedWorkflowFromStateV2(page);
+      const tool = serialized.definition.actions.WorkflowAgent.tools.BuiltIn_MCP_Server;
+
+      expect(tool).toBeDefined();
+      expect(tool.type).toBe('McpClientTool');
+      expect(tool.kind).toBe('BuiltIn');
+      expect(tool.inputs?.Connection?.McpServerUrl).toBe('https://mcp.time.mcpcentral.io/');
+      expect(tool.inputs?.Connection?.Authentication).toBe('None');
+      expect(tool.inputs?.connectionReference).toBeUndefined();
     });
 
     test('Should surface UAMI identity on a managed MCP connection loaded from $connections.value', async ({ page }) => {
