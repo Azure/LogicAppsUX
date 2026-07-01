@@ -14,6 +14,7 @@ import {
   azureStorageTypeSetting,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
+  workflowCodefulEnabledKey,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -199,9 +200,7 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
 
   // Add codeful-specific settings
   if (isCodeful) {
-    Object.assign(baseSettings.Values, {
-      WORKFLOW_CODEFUL_ENABLED: 'true',
-    });
+    baseSettings.Values[workflowCodefulEnabledKey] = 'true';
   }
 
   return baseSettings;

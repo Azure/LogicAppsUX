@@ -1,7 +1,7 @@
 import path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
-import { autoRuntimeDependenciesPathSettingKey, localSettingsFileName, lspDirectory } from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, localSettingsFileName, lspDirectory, workflowCodefulEnabledKey } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 
@@ -41,7 +41,7 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
   try {
     const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
     const localSettings = JSON.parse(localSettingsData);
-    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED === 'true' ? true : false;
+    return localSettings.Values?.[workflowCodefulEnabledKey] === 'true';
   } catch {
     return false;
   }
