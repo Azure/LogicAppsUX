@@ -101,7 +101,7 @@ $env:E2E_MODE = "designeronly"
 node out/test/run-e2e.js
 ```
 
-Key files: `designerActions.test.ts`, `run-e2e.js`, `SKILL.md` (detailed learning document)
+Key files: `designerActions.test.ts`, `run-e2e.ts`, `SKILL.md` (detailed learning document)
 
 ## Configuration
 
@@ -239,3 +239,4 @@ Do NOT stop after pushing and tell the user "I'll wait" — proactively check an
 ## Graphify
 
 Read `apps/vs-code-designer/src/graphify-out/GRAPH_REPORT.md` for structural context (god nodes, communities, surprising connections).
+

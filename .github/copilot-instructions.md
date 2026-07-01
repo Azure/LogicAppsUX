@@ -368,3 +368,4 @@ Each package has detailed guidance in `docs/ai-setup/packages/<name>.md`. Read t
 ## Squad Agents
 
 This repo uses Squad for AI agent specialization. See `.squad/README.md` for the team roster and `.squad/routing.md` for work dispatch.
+
