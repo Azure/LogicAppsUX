@@ -973,7 +973,13 @@ export const saveWorkflowStandard = async (
     skipValidation?: boolean;
     throwError?: boolean;
   },
-  isDraftSave?: boolean
+  isDraftSave?: boolean,
+  // `connectionsData` above is a delta (see getConnectionsToUpdate) — correct for the partial
+  // deployWorkflowArtifacts write, but validate needs the FULL connections object so the backend
+  // can resolve `connectionReference.connectionName` lookups (e.g. built-in MCP -> agentMcpConnections).
+  // When the tool references a connection that already exists on the server, the delta is empty and
+  // the validate payload omits `connections` entirely, producing `InvalidActionToolMcpConnection`.
+  fullConnectionsForValidation?: ConnectionsData
 ): Promise<any> => {
   const data: any = {
     files: {},
@@ -1023,7 +1029,14 @@ export const saveWorkflowStandard = async (
     if (!options?.skipValidation) {
       for (const { name, workflow } of workflows) {
         try {
-          await validateWorkflowStandard(siteResourceId, name, workflow, connectionsData, parametersData, settings);
+          await validateWorkflowStandard(
+            siteResourceId,
+            name,
+            workflow,
+            fullConnectionsForValidation ?? connectionsData,
+            parametersData,
+            settings
+          );
         } catch (error: any) {
           if (error.status !== 404) {
             return;
