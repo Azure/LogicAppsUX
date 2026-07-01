@@ -142,7 +142,7 @@ export const PanelContainer = ({
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
-      const isAlternateNode = rest.alternateSelectedNode?.nodeId === nodeId;
+      const isAlternateNode = !!alternateSelectedNode && alternateSelectedNode.nodeId === nodeId;
       const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
@@ -172,7 +172,7 @@ export const PanelContainer = ({
       );
     },
     [
-      rest.alternateSelectedNode?.nodeId,
+      alternateSelectedNode,
       onUnpinAction,
       alternateSelectedNodePersistence,
       alternateSelectedNodeHeaderItems,
