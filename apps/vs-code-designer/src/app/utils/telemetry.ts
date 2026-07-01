@@ -51,7 +51,7 @@ export const logSubscriptions = async (context: IActionContext) => {
   context.telemetry.properties.subscriptions = JSON.stringify(azureSubscriptions);
 };
 
-export const logExtensionSettings = async (context: IActionContext) => {
+export const logExtensionSettings = (context: IActionContext) => {
   const settingsToLog = [
     'autoRuntimeDependenciesValidationAndInstallation',
     'autoStartAzurite',
