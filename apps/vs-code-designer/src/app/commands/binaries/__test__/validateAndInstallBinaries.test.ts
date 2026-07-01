@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { getDependencyTimeout } from '../../../utils/binaries';
-import { getDependenciesVersion } from '../../../utils/bundleFeed';
+import { ensureExtensionBundleHealthy, getDependenciesVersion } from '../../../utils/bundleFeed';
 import { setDotNetCommand } from '../../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../../utils/languageServerProtocol';
@@ -27,6 +27,7 @@ vi.mock('../../../utils/binaries', () => ({
 
 vi.mock('../../../utils/bundleFeed', () => ({
   getDependenciesVersion: vi.fn(),
+  ensureExtensionBundleHealthy: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('../../../utils/dotnet/dotnet', () => ({
@@ -106,6 +107,8 @@ describe('validateAndInstallBinaries', () => {
     (setNodeJsCommand as Mock).mockResolvedValue(undefined);
     (setFunctionsCommand as Mock).mockResolvedValue(undefined);
     (setDotNetCommand as Mock).mockResolvedValue(undefined);
+    (ensureExtensionBundleHealthy as Mock).mockResolvedValue(undefined);
+    delete process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
   });
 
   it('orchestrates dependency validation, command setup, and success logging', async () => {
@@ -145,6 +148,7 @@ describe('validateAndInstallBinaries', () => {
     expect(setNodeJsCommand).toHaveBeenCalled();
     expect(setFunctionsCommand).toHaveBeenCalled();
     expect(setDotNetCommand).toHaveBeenCalledTimes(2);
+    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: false });
     expect(progress.report).toHaveBeenCalledWith({ increment: 20, message: 'NodeJS' });
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
@@ -165,6 +169,22 @@ describe('validateAndInstallBinaries', () => {
     );
     expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
       expect.stringContaining('The Validation and Installation of Runtime Dependencies encountered an error.')
+    );
+  });
+
+  it('requires an installed bundle and rethrows dependency validation errors in strict E2E mode', async () => {
+    process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = '1';
+    (ensureExtensionBundleHealthy as Mock).mockRejectedValueOnce(new Error('Bundle sidecar missing'));
+
+    await expect(validateAndInstallBinaries(context)).rejects.toThrow('Bundle sidecar missing');
+
+    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: true });
+    expect(context.telemetry.properties).toMatchObject({
+      lastStep: 'ensureExtensionBundleHealthy',
+      dependenciesError: 'Bundle sidecar missing',
+    });
+    expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(
+      'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
     );
   });
 });

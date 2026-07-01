@@ -11,6 +11,7 @@ import {
   getLatestNodeJsVersion,
   getNodeJsBinariesReleaseUrl,
 } from '../../utils/binaries';
+import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -42,4 +43,5 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
 
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
   await downloadAndExtractDependency(context, nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
+  await setNodeJsCommand();
 }
