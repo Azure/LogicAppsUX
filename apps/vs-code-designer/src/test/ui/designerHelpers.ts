@@ -69,7 +69,7 @@ import {
   waitForQuickInputAndType,
 } from './helpers';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { isExecutableFile } from './sharedDepUtils';
+import { isExecutableFile } from './runtimeBinaryCheck';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -142,7 +142,7 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
   }
 }
 
-// isExecutableFile is imported from ./sharedDepUtils (shared with run-e2e.js)
+// isExecutableFile is imported from ./runtimeBinaryCheck (shared with run-e2e.js)
 
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';

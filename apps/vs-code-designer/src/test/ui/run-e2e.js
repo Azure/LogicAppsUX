@@ -19,7 +19,7 @@ const os = require('os');
 const crypto = require('crypto');
 const { exec, execSync } = require('child_process');
 const { ExTester } = require('vscode-extension-tester');
-const { isExecutableFile } = require('./sharedDepUtils');
+const { isExecutableFile } = require('./runtimeBinaryCheck');
 
 const projectDir = path.resolve(__dirname, '..', '..', '..');
 const distDir = path.join(projectDir, 'dist');
@@ -1051,7 +1051,7 @@ async function main() {
     };
   };
 
-  // isExecutableFile is imported from ./sharedDepUtils
+  // isExecutableFile is imported from ./runtimeBinaryCheck
 
   const runtimePermissionStatus = (binaryPath) => {
     if (!fs.existsSync(binaryPath)) {
