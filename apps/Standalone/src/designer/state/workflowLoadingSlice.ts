@@ -79,7 +79,6 @@ type WorkflowPayload = {
   parameters: Record<string, WorkflowParameter>;
   runFiles: any[];
   workflowKind?: string;
-  hostingPlan?: HostingPlanTypes;
 };
 
 type RunPayload = {
@@ -102,9 +101,6 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
     connectionReferences: wf.connections as ConnectionReferences,
     parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
     workflowKind: wf?.kind,
-    // Mocks can opt into Consumption by setting `hostingPlan: 'consumption'` at the top level, so the
-    // fixture doesn't require the user to toggle Plan in the settings box before loading.
-    hostingPlan: wf?.hostingPlan as HostingPlanTypes | undefined,
     runFiles,
   } as WorkflowPayload;
 });
@@ -249,9 +245,6 @@ export const workflowLoadingSlice = createSlice({
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
       state.workflowKind = action.payload?.workflowKind ?? 'stateful';
-      if (action.payload?.hostingPlan) {
-        state.hostingPlan = action.payload.hostingPlan;
-      }
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;

@@ -1,5 +1,4 @@
 {
-  "hostingPlan": "consumption",
   "definition": {
     "metadata": {
       "agentType": "autonomous"
@@ -38,7 +37,7 @@
             "kind": "BuiltIn",
             "inputs": {
               "Connection": {
-                "McpServerUrl": "https://gateway.mcpservers.org/yahoo-finance/mcp",
+                "McpServerUrl": "https://mcp.time.mcpcentral.io/",
                 "Authentication": "None"
               }
             }
