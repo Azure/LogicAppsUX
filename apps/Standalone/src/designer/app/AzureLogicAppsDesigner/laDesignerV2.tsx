@@ -494,10 +494,6 @@ const DesignerEditor = () => {
         isDraftSave
       );
 
-      // Invalidate cached workflow artifacts so the next load fetches fresh data
-      // (including any new connection references added during this session)
-      getReactQueryClient().invalidateQueries(['workflowArtifactsStandard', workflowId]);
-
       return workflowToSave;
     },
     [
@@ -511,7 +507,6 @@ const DesignerEditor = () => {
       settingsData?.properties,
       siteResourceId,
       workflow,
-      workflowId,
       workflowName,
     ]
   );
