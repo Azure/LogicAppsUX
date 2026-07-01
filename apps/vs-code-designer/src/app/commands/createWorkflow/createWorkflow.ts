@@ -92,7 +92,7 @@ export async function createWorkflow(context: IActionContext, uri?: vscode.Uri) 
       availableProjects,
     },
   });
-};
+}
 
 /**
  * Collects all Logic App projects across workspace folders.
