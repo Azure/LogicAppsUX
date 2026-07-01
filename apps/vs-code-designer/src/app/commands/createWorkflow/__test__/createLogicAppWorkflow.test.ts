@@ -62,15 +62,19 @@ describe('createLogicAppWorkflow', () => {
     expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Finished creating workflow.');
   });
 
-  it('shows an error and skips creation when no workspace file is open', async () => {
+  it('creates a workflow in a folder-opened Logic App project when no workspace file is open', async () => {
     (vscode.workspace as any).workspaceFile = undefined;
     const options: any = { logicAppName: 'Orders', logicAppType: ProjectType.logicApp };
 
     await createLogicAppWorkflow(context, options, logicAppFolderPath);
 
-    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
-      'Please open an existing logic app workspace before trying to add a new logic app project.'
-    );
-    expect(createLogicAppAndWorkflow).not.toHaveBeenCalled();
+    expect(options).toMatchObject({
+      logicAppType: ProjectType.logicApp,
+      shouldCreateLogicAppProject: false,
+    });
+    expect(options.workspaceFilePath).toBeUndefined();
+    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(options, logicAppFolderPath, context);
+    expect(vscode.window.showErrorMessage).not.toHaveBeenCalled();
+    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Finished creating workflow.');
   });
 });

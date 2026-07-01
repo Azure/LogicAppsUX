@@ -131,7 +131,7 @@ export async function getFuncPortFromTaskOrProject(
     if (isString(projectPathOrTaskScope)) {
       projectPath = projectPathOrTaskScope;
     } else if (typeof projectPathOrTaskScope === 'object') {
-      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope);
+      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope, true);
     }
 
     if (projectPath) {

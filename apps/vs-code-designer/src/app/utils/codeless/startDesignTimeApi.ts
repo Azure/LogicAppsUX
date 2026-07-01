@@ -436,7 +436,7 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
     )
   );
   processValidationCache.delete(projectPath);
-  stopDesignTimeApi(projectPath);
+  await stopDesignTimeApi(projectPath);
   await startDesignTimeApi(projectPath);
 }
 
@@ -616,8 +616,13 @@ export function startDesignTimeProcess(
         'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
       );
 
-      stopDesignTimeApi(projectPath);
-      scheduleStartDesignTimeApi(projectPath);
+      stopDesignTimeApi(projectPath)
+        .catch((error) => {
+          ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
+        })
+        .finally(() => {
+          scheduleStartDesignTimeApi(projectPath);
+        });
     }
   });
   stdout?.on('end', () => appendStdout?.flush());
@@ -634,8 +639,13 @@ export function startDesignTimeProcess(
     if (data.toLowerCase().includes(portUnavailableText.toLowerCase())) {
       ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting design-time process.');
 
-      stopDesignTimeApi(projectPath);
-      scheduleStartDesignTimeApi(projectPath);
+      stopDesignTimeApi(projectPath)
+        .catch((error) => {
+          ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
+        })
+        .finally(() => {
+          scheduleStartDesignTimeApi(projectPath);
+        });
     }
   });
   stderr?.on('end', () => appendStderr?.flush());
@@ -647,33 +657,49 @@ export function startDesignTimeProcess(
   }
 }
 
-export function stopAllDesignTimeApis(): void {
-  for (const projectPath of ext.designTimeInstances.keys()) {
-    stopDesignTimeApi(projectPath);
-  }
+export async function stopAllDesignTimeApis(): Promise<void> {
+  await Promise.allSettled([...ext.designTimeInstances.keys()].map((projectPath) => stopDesignTimeApi(projectPath)));
 }
 
-export function stopDesignTimeApi(projectPath: string): void {
+export async function stopDesignTimeApi(projectPath: string): Promise<void> {
   ext.outputChannel.appendLog(`Stopping Design Time Api for project: ${projectPath}`);
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
     return;
   }
 
-  const { process, childFuncPid } = designTimeInst;
+  const { process: proc, childFuncPid } = designTimeInst;
   ext.designTimeInstances.delete(projectPath);
-  if (process === null || process === undefined) {
+  if (proc === null || proc === undefined) {
     return;
   }
 
   if (os.platform() === Platform.windows) {
+    const killPromises: Promise<void>[] = [];
     if (childFuncPid) {
-      cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+      killPromises.push(execTaskkill(childFuncPid));
     }
-    cp.exec(`taskkill /pid ${process.pid} /t /f`);
+    killPromises.push(execTaskkill(proc.pid));
+    await Promise.allSettled(killPromises);
   } else {
-    killTrackedUnixProcesses(process, childFuncPid);
+    killTrackedUnixProcesses(proc, childFuncPid);
   }
+}
+
+/**
+ * Runs taskkill and waits for it to complete so file locks are released
+ * before subsequent build steps.
+ */
+function execTaskkill(pid: number | string | undefined): Promise<void> {
+  if (pid === undefined) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    cp.exec(`taskkill /pid ${pid} /t /f`, () => {
+      resolve();
+    });
+  });
 }
 
 export function scheduleStartAllDesignTimeApis(): void {

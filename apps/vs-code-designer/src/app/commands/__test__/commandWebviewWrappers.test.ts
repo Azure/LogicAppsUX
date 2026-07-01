@@ -119,6 +119,11 @@ describe('workspace webview command wrappers', () => {
     const logicAppsWithoutCustomCode = ['LogicApp'];
     (vscode.workspace as any).workspaceFile = workspaceFile;
     (vscode.workspace.fs.readFile as Mock).mockResolvedValue(Buffer.from(JSON.stringify(workspaceFileJson)));
+    (vscode.workspace.fs.readDirectory as Mock).mockResolvedValue([
+      ['LogicApp', 'directory'],
+      ['CSharpProject', 'directory'],
+      ['MyWorkspace.code-workspace', 'file'],
+    ]);
     (getLogicAppWithoutCustomCode as Mock).mockResolvedValue(logicAppsWithoutCustomCode);
 
     await createNewProject(context);
@@ -133,6 +138,7 @@ describe('workspace webview command wrappers', () => {
     expect(config.extraInitializeData).toEqual({
       workspaceFileJson,
       logicAppsWithoutCustomCode,
+      existingFolders: ['LogicApp', 'CSharpProject'],
     });
     expect(config.dialogOptions?.workspace).toMatchObject({
       canSelectMany: false,
@@ -147,6 +153,29 @@ describe('workspace webview command wrappers', () => {
     expect(createLogicAppProject).toHaveBeenCalledWith(context, data, path.dirname(workspaceFile.fsPath));
   });
 
+  it('getExistingFoldersOnDisk filters out non-directory entries using FileType mock', async () => {
+    const workspaceFile = { fsPath: 'D:\\workspace\\MyWorkspace.code-workspace' };
+    const workspaceFileJson = { folders: [{ path: './LogicApp' }] };
+    (vscode.workspace as any).workspaceFile = workspaceFile;
+    (vscode.workspace.fs.readFile as Mock).mockResolvedValue(Buffer.from(JSON.stringify(workspaceFileJson)));
+    (vscode.workspace.fs.readDirectory as Mock).mockResolvedValue([
+      ['LogicApp', 'directory'],
+      ['notes.txt', 'file'],
+      ['SomeLink', 'symlink'],
+      ['AnotherProject', 'directory'],
+      ['UnknownEntry', ''],
+    ]);
+
+    await createNewProject(context);
+
+    const config = getLastWebviewConfig();
+    expect(config.extraInitializeData).toEqual({
+      workspaceFileJson,
+      logicAppsWithoutCustomCode: [],
+      existingFolders: ['LogicApp', 'AnotherProject'],
+    });
+  });
+
   it('createNewProject falls back to convertToWorkspace when no workspace file is open', async () => {
     await createNewProject(context);
 
@@ -156,13 +185,17 @@ describe('workspace webview command wrappers', () => {
 
   it('createWorkflow passes codeful metadata and wires createLogicAppWorkflow', async () => {
     const projectRoot = path.join(workspaceRoot, 'CodefulLogicApp');
-    (getWorkspaceRoot as Mock).mockResolvedValue(workspaceRoot);
+    const folder = {
+      name: 'workspace',
+      uri: { fsPath: workspaceRoot },
+      index: 0,
+    } as vscode.WorkspaceFolder;
+    (vscode.workspace as any).workspaceFolders = [folder];
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(projectRoot);
     (hasCodefulWorkflowSetting as Mock).mockResolvedValue(true);
 
     await createWorkflow(context);
 
-    expect(getWorkspaceRoot).toHaveBeenCalledWith(context);
     expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, workspaceRoot, true);
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectRoot);
 
@@ -175,10 +208,11 @@ describe('workspace webview command wrappers', () => {
       extraInitializeData: {
         logicAppType: ProjectType.codeful,
         logicAppName: 'CodefulLogicApp',
+        availableProjects: [{ name: 'CodefulLogicApp', path: projectRoot, isCodeful: true }],
       },
     });
 
-    const data = { workflowName: 'ProcessOrder' };
+    const data = { workflowName: 'ProcessOrder', logicAppName: 'CodefulLogicApp' };
     await config.createHandler(context, data);
 
     expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, projectRoot);

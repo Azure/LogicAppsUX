@@ -29,7 +29,7 @@ export async function verifyVSCodeConfigOnActivate(
   if (folders) {
     for (const folder of folders) {
       const workspacePath: string = folder.uri.fsPath;
-      const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder);
+      const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder, true);
 
       if (projectPath) {
         ext.defaultLogicAppPath = projectPath;

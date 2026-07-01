@@ -20,8 +20,8 @@ export async function verifyLocalConnectionKeys(context: IActionContext, project
   const verifyConnectionKeysStartTime = Date.now();
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
-      const workspaceFolder = await getWorkspaceFolder(context);
-      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, true);
       if (!projectPath) {
         return;
       }

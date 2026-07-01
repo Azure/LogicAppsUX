@@ -19,27 +19,18 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
     }
   }
 
-  // Check if we're in a workspace and get the workspace folder
   if (vscode.workspace.workspaceFile) {
-    // Get the directory containing the .code-workspace file
-    const workspaceFilePath = vscode.workspace.workspaceFile.fsPath;
-    webviewProjectContext.workspaceFilePath = workspaceFilePath;
-    webviewProjectContext.shouldCreateLogicAppProject = false;
-
-    const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
-    mySubContext.logicAppName = options.logicAppName;
-    mySubContext.projectPath = logicAppFolderPath;
-    mySubContext.projectType = webviewProjectContext.logicAppType;
-    mySubContext.functionFolderName = options.functionFolderName;
-    mySubContext.targetFramework = options.targetFramework;
-
-    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath, context);
-    vscode.window.showInformationMessage(localize('finishedCreatingWorkflow', 'Finished creating workflow.'));
-  } else {
-    // Fall back to the newly created workspace folder if not in a workspace
-    vscode.window.showErrorMessage(
-      localize('notInWorkspace', 'Please open an existing logic app workspace before trying to add a new logic app project.')
-    );
-    return;
+    webviewProjectContext.workspaceFilePath = vscode.workspace.workspaceFile.fsPath;
   }
+  webviewProjectContext.shouldCreateLogicAppProject = false;
+
+  const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
+  mySubContext.logicAppName = options.logicAppName;
+  mySubContext.projectPath = logicAppFolderPath;
+  mySubContext.projectType = webviewProjectContext.logicAppType;
+  mySubContext.functionFolderName = options.functionFolderName;
+  mySubContext.targetFramework = options.targetFramework;
+
+  await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath, context);
+  vscode.window.showInformationMessage(localize('finishedCreatingWorkflow', 'Finished creating workflow.'));
 }

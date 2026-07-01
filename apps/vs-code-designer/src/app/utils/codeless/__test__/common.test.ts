@@ -76,6 +76,15 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     expect(context.telemetry.properties.azureConnectorsDefaulted).toBe('rawKeys');
   });
 
+  it('handles undefined projectPath', async () => {
+    const details = await getAzureConnectorDetailsForLocalProject(context, undefined as any);
+
+    expect(details).toEqual({ enabled: false });
+    expect(getLocalSettingsJson).not.toHaveBeenCalled();
+    expect(createAzureWizard).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.azureConnectorDetailsProjectPathMissing).toBe('true');
+  });
+
   it('treats explicitly skipped Azure connectors as disabled without requesting auth', async () => {
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: { [workflowSubscriptionIdKey]: '' } } as any);
 
