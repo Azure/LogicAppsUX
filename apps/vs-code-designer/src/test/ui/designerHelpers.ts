@@ -142,7 +142,7 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
   }
 }
 
-// isExecutableFile is imported from ./runtimeBinaryCheck (shared with run-e2e.js)
+// isExecutableFile is imported from ./runtimeBinaryCheck (shared with run-e2e.ts)
 
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';

@@ -1,14 +1,12 @@
 /**
  * Shared dependency-validation utilities used by both:
- * - run-e2e.js (plain Node.js launcher, runs before VS Code sessions)
- * - designerHelpers.ts (TypeScript, compiled by tsup, runs inside ExTester/VS Code)
+ * - run-e2e.ts (E2E launcher, compiled by tsup)
+ * - designerHelpers.ts (ExTester test helpers, compiled by tsup)
  *
  * This module avoids duplication of the executable-check logic across contexts.
  */
 
-'use strict';
-
-const fs = require('fs');
+import * as fs from 'fs';
 
 /**
  * Returns the appropriate fs.access mode for checking runtime binary executability.
@@ -22,16 +20,14 @@ const fs = require('fs');
  *
  * On Unix (Linux/macOS), X_OK checks the actual execute permission bit.
  */
-function runtimeExecutableAccessMode() {
+export function runtimeExecutableAccessMode(): number {
   return process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK;
 }
 
 /**
  * Checks whether a file exists and is executable on the current platform.
- * @param {string} filePath - Absolute path to the binary.
- * @returns {boolean}
  */
-function isExecutableFile(filePath) {
+export function isExecutableFile(filePath: string): boolean {
   try {
     fs.accessSync(filePath, runtimeExecutableAccessMode());
     return true;
@@ -39,5 +35,3 @@ function isExecutableFile(filePath) {
     return false;
   }
 }
-
-module.exports = { runtimeExecutableAccessMode, isExecutableFile };

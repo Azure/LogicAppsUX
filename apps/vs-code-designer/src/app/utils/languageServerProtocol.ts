@@ -3,13 +3,12 @@ import path from 'path';
 import * as fse from 'fs-extra';
 import { assetsFolderName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
+import { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName } from './languageServerProtocolConstants';
 import { ensureRuntimeDependenciesPath } from './runtimeDependenciesPath';
 import AdmZip from 'adm-zip';
 import { createHash } from 'crypto';
 
-const lspServerDirectoryName = 'LSPServer';
-const lspServerHashMarkerName = '.lspserver-hash';
-const lspSdkHashMarkerName = '.lspsdk-hash';
+export { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
 const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;

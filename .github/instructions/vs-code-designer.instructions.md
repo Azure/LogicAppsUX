@@ -98,7 +98,7 @@ Run Phase 4.2 only (requires workspaces from a prior Phase 4.1 run):
 cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts
 $env:E2E_MODE = "designeronly"
-node src/test/ui/run-e2e.js
+node out/test/run-e2e.js
 ```
 
 Key files: `designerActions.test.ts`, `run-e2e.js`, `SKILL.md` (detailed learning document)
@@ -178,7 +178,7 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 
 11. **Only use built-in operations (Request, Response) for reliable tests**: Connector operations (Compose) may not appear if the design-time API hasn't loaded the catalog.
 
-12. **Always run tests automatically after creating or modifying them**: After writing or editing any test file, immediately: lint (`npx biome check --write`), build (`npx tsup`), and run (`node src/test/ui/run-e2e.js`) — don't wait for the user to ask. Report pass/fail results with any failure details.
+12. **Always run tests automatically after creating or modifying them**: After writing or editing any test file, immediately: lint (`npx biome check --write`), build (`npx tsup`), and run (`node out/test/run-e2e.js`) — don't wait for the user to ask. Report pass/fail results with any failure details.
 
 ### Running Tests
 
@@ -201,7 +201,7 @@ $env:E2E_MODE = "independentonly"         # 4.0 + 4.8b + 4.11 — no Phase 4.1 d
 $env:E2E_MODE = "createplusdesigner"      # 4.1 → 4.2, 4.7
 $env:E2E_MODE = "createplusnewtests"      # 4.1 → 4.3, 4.4, 4.5, 4.6
 $env:E2E_MODE = "createplusconversion"    # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
-node src/test/ui/run-e2e.js
+node out/test/run-e2e.js
 ```
 
 The four `createplus*` / `independentonly` modes are how `.github/workflows/vscode-e2e.yml` shards the suite across parallel runners. `full` remains the single-runner debug fallback.
