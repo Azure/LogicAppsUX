@@ -167,7 +167,10 @@ export const initializeOperationMetadata = async (
 
     const failedNodeId = promiseNodeIds[index];
     const error = result.reason;
-    const message = `Unable to initialize operation details for '${failedNodeId}'. Error details - ${parseErrorMessage(error)}`;
+    const message = `Unable to initialize operation details for '${failedNodeId}'. Error details - ${parseErrorMessage(
+      error,
+      `Unknown error initializing operation '${failedNodeId}'.`
+    )}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',

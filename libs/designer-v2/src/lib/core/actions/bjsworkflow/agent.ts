@@ -208,7 +208,10 @@ export const initializeConnectorOperationDetails = async (
 
     return [];
   } catch (error: any) {
-    const message = `Unable to initialize connector operation details for '${nodeId}'. Error details - ${parseErrorMessage(error)}`;
+    const message = `Unable to initialize connector operation details for '${nodeId}'. Error details - ${parseErrorMessage(
+      error,
+      `Unknown error initializing connector operation '${nodeId}'.`
+    )}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
