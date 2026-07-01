@@ -309,7 +309,11 @@ export const serializeOperation = async (
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
-  } else if (isBuiltInMcpClient) {
+  } else if (isBuiltInMcpClient && !rootState.workflow.workflowKind) {
+    // Consumption inlines the connection as `inputs.Connection.{McpServerUrl,Authentication}` (PR #8953).
+    // Standard falls through to the manifest branch below, whose `mcpconnection` referenceKeyFormat
+    // (see builtinmcpclient.ts) drives serializeHost to emit `inputs.connectionReference.connectionName` —
+    // the shape the Standard backend uses to resolve the tool against `connections.agentMcpConnections`.
     serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
@@ -593,6 +597,10 @@ export const readBuiltInMcpConnectionData = (connection: Connection | undefined)
   };
 };
 
+// Consumption-only serializer. Consumption has no `agentMcpConnections` category, so built-in MCP
+// tools must inline the connection as `inputs.Connection.{McpServerUrl,Authentication}` (introduced
+// by PR #8953). Standard is routed through serializeManifestBasedOperation from the dispatch above,
+// which emits `inputs.connectionReference.connectionName` via the manifest's mcpconnection host.
 const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
   if (!operationInfo) {
@@ -614,76 +622,52 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
 
-  // Two shapes exist for the tool's inputs:
-  //  - Standard SKU (workflowKind is set): `inputs.connectionReference.connectionName` referring to a key
-  //    in the top-level `connections.agentMcpConnections` block. This is what the Standard backend expects
-  //    (matches the manifest's `referenceKeyFormat: 'mcpconnection'` load path in
-  //    getConnectionReferenceKeyForManifest) and what shipped in the original v2 MCP support (PR #8525).
-  //  - Consumption SKU (no workflowKind): `inputs.Connection.{McpServerUrl,Authentication}` inline. This
-  //    was introduced by PR #8953 which is Consumption-only; Consumption has no agentMcpConnections
-  //    category, so connections must be inlined in the tool.
-  const isStandard = !!rootState.workflow.workflowKind;
-
-  let inputs: Record<string, any> | undefined;
-  if (isStandard) {
-    // Prefer the connection.id's last segment: it matches the key in agentMcpConnections regardless of
-    // whether Redux uniquified the referenceKey when the wizard added the connection.
-    const connectionName = connectionId ? (connectionId.split('/').pop() ?? referenceKey) : referenceKey;
-    if (connectionName) {
-      inputs = {
-        connectionReference: { connectionName },
-        ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
-      };
-    } else if (hasParameters) {
-      inputs = { parameters: { ...inputParameters.parameters } };
+  // Try existing operation inputs first (round-trip), then look up the connection to fill McpServerUrl
+  // / Authentication.
+  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
+  let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
+  let authenticationType = 'None';
+  let authParams: Record<string, any> = {};
+  const existingAuth = existingConnectionInput?.Authentication;
+  if (typeof existingAuth === 'object' && existingAuth !== null) {
+    authenticationType = existingAuth.type ?? 'None';
+    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+      if (existingAuth[prop] != null) {
+        authParams[prop] = existingAuth[prop];
+      }
     }
   } else {
-    // Consumption: fall back to inline Connection block. Try existing operation inputs first (round-trip),
-    // then look up the connection to fill McpServerUrl / Authentication.
-    const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
-    let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
-    let authenticationType = 'None';
-    let authParams: Record<string, any> = {};
-    const existingAuth = existingConnectionInput?.Authentication;
-    if (typeof existingAuth === 'object' && existingAuth !== null) {
-      authenticationType = existingAuth.type ?? 'None';
-      for (const prop of MCP_AUTH_PROPERTY_KEYS) {
-        if (existingAuth[prop] != null) {
-          authParams[prop] = existingAuth[prop];
-        }
+    authenticationType = existingAuth ?? 'None';
+  }
+
+  if (connectionId) {
+    try {
+      const connection = await ConnectionService().getConnection(connectionId);
+      const resolved = readBuiltInMcpConnectionData(connection);
+      if (resolved) {
+        mcpServerUrl = resolved.mcpServerUrl ?? mcpServerUrl;
+        authenticationType = resolved.authenticationType ?? authenticationType;
+        authParams = resolved.authParams;
       }
+    } catch {
+      // Keep existing values when connection lookup fails.
+    }
+  }
+
+  let inputs: Record<string, any> | undefined;
+  if (mcpServerUrl) {
+    const connectionBlock: Record<string, any> = { McpServerUrl: mcpServerUrl };
+    if (authenticationType && authenticationType !== 'None') {
+      connectionBlock.Authentication = { type: authenticationType, ...authParams };
     } else {
-      authenticationType = existingAuth ?? 'None';
+      connectionBlock.Authentication = authenticationType;
     }
-
-    if (connectionId) {
-      try {
-        const connection = await ConnectionService().getConnection(connectionId);
-        const resolved = readBuiltInMcpConnectionData(connection);
-        if (resolved) {
-          mcpServerUrl = resolved.mcpServerUrl ?? mcpServerUrl;
-          authenticationType = resolved.authenticationType ?? authenticationType;
-          authParams = resolved.authParams;
-        }
-      } catch {
-        // Keep existing values when connection lookup fails.
-      }
-    }
-
-    if (mcpServerUrl) {
-      const connectionBlock: Record<string, any> = { McpServerUrl: mcpServerUrl };
-      if (authenticationType && authenticationType !== 'None') {
-        connectionBlock.Authentication = { type: authenticationType, ...authParams };
-      } else {
-        connectionBlock.Authentication = authenticationType;
-      }
-      inputs = {
-        Connection: connectionBlock,
-        ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
-      };
-    } else if (hasParameters) {
-      inputs = { parameters: { ...inputParameters.parameters } };
-    }
+    inputs = {
+      Connection: connectionBlock,
+      ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
+    };
+  } else if (hasParameters) {
+    inputs = { parameters: { ...inputParameters.parameters } };
   }
 
   return {
@@ -1131,12 +1115,23 @@ const serializeHost = (
           },
         },
       };
-    case ConnectionReferenceKeyFormat.McpConnection:
+    case ConnectionReferenceKeyFormat.McpConnection: {
+      // Prefer the connection.id's last segment: it's the authoritative key in
+      // `connections.agentMcpConnections` (by construction — see convertMcpConnectionDataToConnection
+      // in standard/connection.ts). Redux's `referenceKey` can diverge when the picker's
+      // changeConnectionMapping flow fails to match a pre-loaded MCP reference in
+      // getExistingReferenceKey and mints a fresh key that has no matching agentMcpConnections
+      // entry. Resolving via connection.id guarantees the emitted name always resolves at the
+      // backend. TODO: remove once the reference-key mismatch is fixed at source.
+      const reference = getRecordEntry(rootState.connections.connectionReferences, referenceKey);
+      const connectionId = reference?.connection?.id;
+      const connectionName = connectionId ? (connectionId.split('/').pop() ?? referenceKey) : referenceKey;
       return {
         connectionReference: {
-          connectionName: referenceKey,
+          connectionName,
         },
       };
+    }
     default:
       throw new AssertionException(
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
