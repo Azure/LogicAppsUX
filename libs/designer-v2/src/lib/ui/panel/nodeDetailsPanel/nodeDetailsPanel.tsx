@@ -250,9 +250,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
             );
           });
         });
-        // Closing the non-pinned (selected) action should keep a pinned action open;
-        // clearPanel preserves the pinned alternate node. Otherwise collapse the panel.
-        if (alternateSelectedNodeId && alternateSelectedNodePersistence === 'pinned') {
+        // Closing the non-pinned (selected) action should keep a distinct pinned action open;
+        // clearPanel preserves the pinned alternate node. When the pinned node is the same as the
+        // selected node (single-pane), there is no separate pane to keep, so collapse the panel.
+        if (alternateSelectedNodeId && alternateSelectedNodeId !== selectedNode && alternateSelectedNodePersistence === 'pinned') {
           dispatch(clearPanel());
         } else {
           collapse();

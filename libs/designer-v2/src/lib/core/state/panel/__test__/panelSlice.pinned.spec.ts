@@ -59,6 +59,28 @@ describe('panelSlice - pinned action close behavior (issue #9304)', () => {
       expect(state.operationContent.alternateSelectedNode?.nodeId).toBeUndefined();
       expect(state.isCollapsed).toBe(true);
     });
+
+    // clearPanel preserves any pinned alternate regardless of identity, so when the pinned node is
+    // the same as the selected node (single-pane, right after pinning the current selection) it would
+    // keep the panel open. This is why NodeDetailsPanel only routes close to clearPanel when the pinned
+    // node differs from the selected node, and collapses directly otherwise.
+    test('keeps the panel open when the pinned alternate is the same node as the selected node', () => {
+      const state = reducer(
+        {
+          ...initialState,
+          isCollapsed: false,
+          operationContent: {
+            ...initialState.operationContent,
+            selectedNodeId: 'A',
+            alternateSelectedNode: { nodeId: 'A', activeTabId: undefined, persistence: 'pinned' },
+          },
+        },
+        clearPanel()
+      );
+
+      expect(state.isCollapsed).toBe(false);
+      expect(state.operationContent.alternateSelectedNode?.nodeId).toBe('A');
+    });
   });
 
   describe('closing the pinned action via setAlternateSelectedNode', () => {
