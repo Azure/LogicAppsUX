@@ -207,8 +207,9 @@ const ScopeCardNode = ({ id }: NodeProps) => {
 
   const nodeClick = useCallback(
     (e?: React.MouseEvent) => {
-      // Shift/Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
-      if (e?.shiftKey || e?.ctrlKey || e?.metaKey) {
+      // Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
+      // Shift is intentionally excluded so it stays reserved for expand/collapse-nested on the toggle.
+      if (e?.ctrlKey || e?.metaKey) {
         e?.stopPropagation();
         dispatch(toggleNodeSelection(scopeId));
         return;
