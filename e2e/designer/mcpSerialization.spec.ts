@@ -33,14 +33,15 @@ test.describe(
       expect(agent.tools.Regular_Tool.actions).toBeDefined();
       expect(agent.tools.Regular_Tool.actions.Compose).toBeDefined();
 
-      // Built-in MCP tool should be serialized with Connection block
+      // Built-in MCP tool on Standard should serialize as a connectionReference pointing to
+      // agentMcpConnections. Inline `Connection` is a Consumption-only shape (see serializeBuiltInMcpOperation).
       expect(agent.tools.BuiltIn_MCP_Server).toBeDefined();
       expect(agent.tools.BuiltIn_MCP_Server.type).toBe('McpClientTool');
       expect(agent.tools.BuiltIn_MCP_Server.kind).toBe('BuiltIn');
       expect(agent.tools.BuiltIn_MCP_Server.inputs).toBeDefined();
-      expect(agent.tools.BuiltIn_MCP_Server.inputs.Connection).toBeDefined();
-      expect(agent.tools.BuiltIn_MCP_Server.inputs.Connection.McpServerUrl).toBe('https://mcp.time.mcpcentral.io/');
-      expect(agent.tools.BuiltIn_MCP_Server.inputs.Connection.Authentication).toBe('None');
+      expect(agent.tools.BuiltIn_MCP_Server.inputs.connectionReference).toBeDefined();
+      expect(agent.tools.BuiltIn_MCP_Server.inputs.connectionReference.connectionName).toBe('mcpclient');
+      expect(agent.tools.BuiltIn_MCP_Server.inputs.Connection).toBeUndefined();
 
       // Managed MCP tool should be serialized with connectionReference
       expect(agent.tools.Managed_MCP_Server).toBeDefined();
