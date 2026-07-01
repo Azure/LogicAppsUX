@@ -33,8 +33,7 @@ test.describe(
       expect(agent.tools.Regular_Tool.actions).toBeDefined();
       expect(agent.tools.Regular_Tool.actions.Compose).toBeDefined();
 
-      // Built-in MCP tool on Standard should serialize as a connectionReference pointing to
-      // agentMcpConnections. Inline `Connection` is a Consumption-only shape (see serializeConsumptionBuiltInMcpOperation).
+      // Standard emits connectionReference; inline Connection is Consumption-only.
       expect(agent.tools.BuiltIn_MCP_Server).toBeDefined();
       expect(agent.tools.BuiltIn_MCP_Server.type).toBe('McpClientTool');
       expect(agent.tools.BuiltIn_MCP_Server.kind).toBe('BuiltIn');
@@ -84,9 +83,7 @@ test.describe(
     test('Should preserve inline Connection shape for built-in MCP tool on Consumption', async ({ page }) => {
       await page.goto('/');
 
-      // Consumption workflows have no `workflowKind`. Toggling Plan to Consumption before loading
-      // routes the serializer through serializeConsumptionBuiltInMcpOperation, which emits
-      // `inputs.Connection` inline instead of `inputs.connectionReference.connectionName`.
+      // Toggle Plan to Consumption to route through serializeConsumptionBuiltInMcpOperation.
       await page.getByRole('radio', { name: 'Consumption' }).click();
 
       await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
@@ -98,11 +95,10 @@ test.describe(
       expect(tool.type).toBe('McpClientTool');
       expect(tool.kind).toBe('BuiltIn');
       expect(tool.inputs).toBeDefined();
-      // Consumption preserves the inline Connection block (introduced by PR #8953).
+      // Consumption preserves inline Connection; Standard's connectionReference shape must not appear.
       expect(tool.inputs.Connection).toBeDefined();
       expect(tool.inputs.Connection.McpServerUrl).toBe('https://mcp.time.mcpcentral.io/');
       expect(tool.inputs.Connection.Authentication).toBe('None');
-      // Standard's connectionReference shape must NOT appear on Consumption.
       expect(tool.inputs.connectionReference).toBeUndefined();
     });
 

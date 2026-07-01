@@ -308,13 +308,8 @@ export const serializeOperation = async (
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   const isManagedMcpClient = isManagedMcpOperation(operation);
-  // Consumption-only branch: Consumption has no `agentMcpConnections` category, so built-in MCP tools
-  // must inline the connection as `inputs.Connection.{McpServerUrl,Authentication}` (introduced by
-  // PR #8953). Standard falls through to the manifest branch below — its `mcpconnection`
-  // referenceKeyFormat (see builtinmcpclient.ts) drives serializeHost to emit
-  // `inputs.connectionReference.connectionName`, which the Standard backend resolves against
-  // `connections.agentMcpConnections`. `workflowKind` is undefined on Consumption and set (e.g.
-  // 'stateful') on Standard, so its falsiness is our SKU discriminator.
+  // Consumption-only: inline `inputs.Connection` (PR #8953). Standard has workflowKind set and
+  // falls through to the manifest branch, which emits `inputs.connectionReference.connectionName`.
   const isConsumptionBuiltInMcpClient = isBuiltInMcpOperation(operation) && !rootState.workflow.workflowKind;
 
   if (isManagedMcpClient) {
@@ -561,12 +556,8 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   };
 };
 
-// Consumption-only serializer for built-in MCP tools. Consumption workflows store connections in
-// `parameters.$connections.value` and have no `agentMcpConnections` category, so the tool cannot
-// reference a connection by name — the URL and authentication must be inlined at
-// `inputs.Connection.{McpServerUrl,Authentication}` (shape introduced by PR #8953). Standard is
-// routed through serializeManifestBasedOperation from the dispatch above, which emits
-// `inputs.connectionReference.connectionName` via the manifest's `mcpconnection` host format.
+// Consumption has no `agentMcpConnections` category, so the tool must inline
+// `inputs.Connection.{McpServerUrl,Authentication}`. Standard is routed via the manifest path.
 const serializeConsumptionBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
   if (!operationInfo) {
@@ -1115,13 +1106,8 @@ const serializeHost = (
         },
       };
     case ConnectionReferenceKeyFormat.McpConnection: {
-      // Prefer the connection.id's last segment: it's the authoritative key in
-      // `connections.agentMcpConnections` (by construction — see convertMcpConnectionDataToConnection
-      // in standard/connection.ts). Redux's `referenceKey` can diverge when the picker's
-      // changeConnectionMapping flow fails to match a pre-loaded MCP reference in
-      // getExistingReferenceKey and mints a fresh key that has no matching agentMcpConnections
-      // entry. Resolving via connection.id guarantees the emitted name always resolves at the
-      // backend. TODO: remove once the reference-key mismatch is fixed at source.
+      // Use connection.id's last segment — the authoritative `agentMcpConnections` key. Redux's
+      // referenceKey can diverge when the picker mints a fresh key. TODO: fix at source.
       const reference = getRecordEntry(rootState.connections.connectionReferences, referenceKey);
       const connectionId = reference?.connection?.id;
       const connectionName = connectionId ? (connectionId.split('/').pop() ?? referenceKey) : referenceKey;
