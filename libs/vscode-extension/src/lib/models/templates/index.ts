@@ -10,6 +10,11 @@ export interface ITemplatesRelease {
   resources: string;
 }
 
+export const TemplatePromptResult = {
+  skipForNow: 'skipForNow',
+} as const;
+export type TemplatePromptResult = (typeof TemplatePromptResult)[keyof typeof TemplatePromptResult];
+
 export interface ITemplates {
   workflowTemplates: IWorkflowTemplate[];
   bindingTemplates: IBindingTemplate[];
