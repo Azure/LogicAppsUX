@@ -96,12 +96,6 @@ export interface ISettingToAdd {
   prefix?: string;
 }
 
-export interface IWorkflowStateTypeStepOptions {
-  isProjectWizard: boolean;
-  templateId: string | undefined;
-  triggerSettings: { [key: string]: string | undefined } | undefined;
-}
-
 export const MismatchBehavior = {
   /**
    * Asks the user if they want to overwrite
