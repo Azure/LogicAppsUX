@@ -84,11 +84,11 @@ test.describe(
     test('Should preserve inline Connection shape for built-in MCP tool on Consumption', async ({ page }) => {
       await page.goto('/');
 
-      // The fixture declares `hostingPlan: 'consumption'` at its top level, which the mock loader
-      // reads and dispatches into state.hostingPlan on load. That triggers Standalone's Consumption
-      // wiring in localDesigner (which passes `kind: undefined` to BJSWorkflowProvider), so
-      // `workflow.workflowKind` ends up undefined and the serializer routes through the Consumption
-      // path (serializeConsumptionBuiltInMcpOperation) that emits `inputs.Connection` inline.
+      // Consumption workflows have no `workflowKind`. Toggling Plan to Consumption before loading
+      // routes the serializer through serializeConsumptionBuiltInMcpOperation, which emits
+      // `inputs.Connection` inline instead of `inputs.connectionReference.connectionName`.
+      await page.getByRole('radio', { name: 'Consumption' }).click();
+
       await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
 
       const serialized: any = await getSerializedWorkflowFromState(page);
@@ -100,7 +100,7 @@ test.describe(
       expect(tool.inputs).toBeDefined();
       // Consumption preserves the inline Connection block (introduced by PR #8953).
       expect(tool.inputs.Connection).toBeDefined();
-      expect(tool.inputs.Connection.McpServerUrl).toBe('https://gateway.mcpservers.org/yahoo-finance/mcp');
+      expect(tool.inputs.Connection.McpServerUrl).toBe('https://mcp.time.mcpcentral.io/');
       expect(tool.inputs.Connection.Authentication).toBe('None');
       // Standard's connectionReference shape must NOT appear on Consumption.
       expect(tool.inputs.connectionReference).toBeUndefined();
