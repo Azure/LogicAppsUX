@@ -72,7 +72,6 @@ import type {
   AssertionDefinition,
   Assertion,
   UnitTestDefinition,
-  Connection,
 } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
@@ -540,70 +539,6 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   };
 };
 
-interface McpConnectionData {
-  mcpServerUrl?: string;
-  authenticationType?: string;
-  authParams: Record<string, any>;
-}
-
-// Used by the Consumption inline-Connection path in serializeConsumptionBuiltInMcpOperation to fill
-// `inputs.Connection.{McpServerUrl,Authentication}`. Consumption's cached Connection objects show up
-// in two shapes:
-//  - flat `properties.parameterValues.{mcpServerUrl,authenticationType,...}` (from the workflow-load
-//    reconstructor in connections.ts)
-//  - nested `properties.connectionParameters.{mcpServerUrl,authentication}.metadata.value` (from
-//    convertMcpConnectionDataToConnection).
-// The helper normalizes both so the caller can build a single Connection block regardless of source.
-// Not used by Standard, which references connections by name (`connectionReference.connectionName`)
-// against `connections.agentMcpConnections` and never inlines the URL/auth into the tool.
-export const readConsumptionBuiltInMcpConnectionData = (connection: Connection | undefined): McpConnectionData | undefined => {
-  const properties = (connection?.properties as any) ?? undefined;
-  if (!properties) {
-    return undefined;
-  }
-
-  const parameterValues = properties.parameterValues;
-  if (parameterValues?.mcpServerUrl) {
-    const authParams: Record<string, any> = {};
-    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
-      if (parameterValues[prop] != null) {
-        authParams[prop] = parameterValues[prop];
-      }
-    }
-    return {
-      mcpServerUrl: parameterValues.mcpServerUrl,
-      authenticationType: parameterValues.authenticationType,
-      authParams,
-    };
-  }
-
-  const connectionParameters = properties.connectionParameters;
-  const urlFromMetadata = connectionParameters?.mcpServerUrl?.metadata?.value;
-  if (!urlFromMetadata) {
-    return undefined;
-  }
-
-  const authFromMetadata = connectionParameters?.authentication?.metadata?.value;
-  let authenticationType: string | undefined;
-  const authParams: Record<string, any> = {};
-  if (authFromMetadata && typeof authFromMetadata === 'object') {
-    authenticationType = authFromMetadata.type ?? 'None';
-    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
-      if (authFromMetadata[prop] != null) {
-        authParams[prop] = authFromMetadata[prop];
-      }
-    }
-  } else if (typeof authFromMetadata === 'string') {
-    authenticationType = authFromMetadata;
-  }
-
-  return {
-    mcpServerUrl: urlFromMetadata,
-    authenticationType,
-    authParams,
-  };
-};
-
 // Consumption-only serializer for built-in MCP tools. Consumption workflows store connections in
 // `parameters.$connections.value` and have no `agentMcpConnections` category, so the tool cannot
 // reference a connection by name — the URL and authentication must be inlined at
@@ -656,11 +591,17 @@ const serializeConsumptionBuiltInMcpOperation = async (rootState: RootState, nod
   if (connectionId) {
     try {
       const connection = await ConnectionService().getConnection(connectionId);
-      const resolved = readConsumptionBuiltInMcpConnectionData(connection);
-      if (resolved) {
-        mcpServerUrl = resolved.mcpServerUrl ?? mcpServerUrl;
-        authenticationType = resolved.authenticationType ?? authenticationType;
-        authParams = resolved.authParams;
+      const parameterValues = (connection?.properties as any)?.parameterValues;
+      if (parameterValues) {
+        mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
+        authenticationType = parameterValues.authenticationType ?? authenticationType;
+        // Collect all auth-related params from parameterValues
+        authParams = {};
+        for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+          if (parameterValues[prop] != null) {
+            authParams[prop] = parameterValues[prop];
+          }
+        }
       }
     } catch {
       // Keep existing values when connection lookup fails.
