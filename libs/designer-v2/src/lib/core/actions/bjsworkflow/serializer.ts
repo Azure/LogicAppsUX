@@ -309,16 +309,19 @@ export const serializeOperation = async (
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   const isManagedMcpClient = isManagedMcpOperation(operation);
-  const isBuiltInMcpClient = isBuiltInMcpOperation(operation);
+  // Consumption-only branch: Consumption has no `agentMcpConnections` category, so built-in MCP tools
+  // must inline the connection as `inputs.Connection.{McpServerUrl,Authentication}` (introduced by
+  // PR #8953). Standard falls through to the manifest branch below — its `mcpconnection`
+  // referenceKeyFormat (see builtinmcpclient.ts) drives serializeHost to emit
+  // `inputs.connectionReference.connectionName`, which the Standard backend resolves against
+  // `connections.agentMcpConnections`. `workflowKind` is undefined on Consumption and set (e.g.
+  // 'stateful') on Standard, so its falsiness is our SKU discriminator.
+  const isConsumptionBuiltInMcpClient = isBuiltInMcpOperation(operation) && !rootState.workflow.workflowKind;
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
-  } else if (isBuiltInMcpClient && !rootState.workflow.workflowKind) {
-    // Consumption inlines the connection as `inputs.Connection.{McpServerUrl,Authentication}` (PR #8953).
-    // Standard falls through to the manifest branch below, whose `mcpconnection` referenceKeyFormat
-    // (see builtinmcpclient.ts) drives serializeHost to emit `inputs.connectionReference.connectionName` —
-    // the shape the Standard backend uses to resolve the tool against `connections.agentMcpConnections`.
-    serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
+  } else if (isConsumptionBuiltInMcpClient) {
+    serializedOperation = await serializeConsumptionBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
@@ -565,13 +568,17 @@ interface McpConnectionData {
   authParams: Record<string, any>;
 }
 
-// Used by the Consumption inline-Connection path in serializeBuiltInMcpOperation. Consumption cached
-// connections show up in two shapes: flat `properties.parameterValues.{mcpServerUrl,authenticationType,...}`
-// (from the workflow-load reconstructor in connections.ts) or nested
-// `properties.connectionParameters.{mcpServerUrl,authentication}.metadata.value` (from
-// convertMcpConnectionDataToConnection). The helper normalizes both so the caller can build a single
-// Connection block regardless of source.
-export const readBuiltInMcpConnectionData = (connection: Connection | undefined): McpConnectionData | undefined => {
+// Used by the Consumption inline-Connection path in serializeConsumptionBuiltInMcpOperation to fill
+// `inputs.Connection.{McpServerUrl,Authentication}`. Consumption's cached Connection objects show up
+// in two shapes:
+//  - flat `properties.parameterValues.{mcpServerUrl,authenticationType,...}` (from the workflow-load
+//    reconstructor in connections.ts)
+//  - nested `properties.connectionParameters.{mcpServerUrl,authentication}.metadata.value` (from
+//    convertMcpConnectionDataToConnection).
+// The helper normalizes both so the caller can build a single Connection block regardless of source.
+// Not used by Standard, which references connections by name (`connectionReference.connectionName`)
+// against `connections.agentMcpConnections` and never inlines the URL/auth into the tool.
+export const readConsumptionBuiltInMcpConnectionData = (connection: Connection | undefined): McpConnectionData | undefined => {
   const properties = (connection?.properties as any) ?? undefined;
   if (!properties) {
     return undefined;
@@ -619,11 +626,13 @@ export const readBuiltInMcpConnectionData = (connection: Connection | undefined)
   };
 };
 
-// Consumption-only serializer. Consumption has no `agentMcpConnections` category, so built-in MCP
-// tools must inline the connection as `inputs.Connection.{McpServerUrl,Authentication}` (introduced
-// by PR #8953). Standard is routed through serializeManifestBasedOperation from the dispatch above,
-// which emits `inputs.connectionReference.connectionName` via the manifest's mcpconnection host.
-const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+// Consumption-only serializer for built-in MCP tools. Consumption workflows store connections in
+// `parameters.$connections.value` and have no `agentMcpConnections` category, so the tool cannot
+// reference a connection by name — the URL and authentication must be inlined at
+// `inputs.Connection.{McpServerUrl,Authentication}` (shape introduced by PR #8953). Standard is
+// routed through serializeManifestBasedOperation from the dispatch above, which emits
+// `inputs.connectionReference.connectionName` via the manifest's `mcpconnection` host format.
+const serializeConsumptionBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
   if (!operationInfo) {
     throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
@@ -669,7 +678,7 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
   if (connectionId) {
     try {
       const connection = await ConnectionService().getConnection(connectionId);
-      const resolved = readBuiltInMcpConnectionData(connection);
+      const resolved = readConsumptionBuiltInMcpConnectionData(connection);
       if (resolved) {
         mcpServerUrl = resolved.mcpServerUrl ?? mcpServerUrl;
         authenticationType = resolved.authenticationType ?? authenticationType;
