@@ -616,16 +616,20 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
 
+  // Built-in MCP operations should serialize Connection settings when available.
+  // If we can resolve the connection URL, emit the Connection block.
+  // Otherwise fall back to the parameter-based format to avoid sending an
+  // incomplete Connection object that the backend would reject.
+  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
   const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
   const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
   const connectionId = connectionReference?.connection?.id;
 
-  const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
+  // All auth-related property keys that can appear in parameterValues
 
-  // Try existing operation inputs first (round-trip), then look up the connection to fill McpServerUrl
-  // / Authentication.
-  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
   let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
+  // Authentication can be a string (e.g., 'None') or an object (e.g., { type: 'ManagedServiceIdentity', audience: '...' })
+  // Collect all auth-related params so we can rebuild the full Authentication object
   let authenticationType = 'None';
   let authParams: Record<string, any> = {};
   const existingAuth = existingConnectionInput?.Authentication;
@@ -654,9 +658,16 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
     }
   }
 
+  // Merge the Connection block with manifest-serialized parameters (e.g., allowedTools, headers)
+  // so user-configured inputs are preserved alongside the connection settings.
+  const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
+
   let inputs: Record<string, any> | undefined;
   if (mcpServerUrl) {
-    const connectionBlock: Record<string, any> = { McpServerUrl: mcpServerUrl };
+    const connectionBlock: Record<string, any> = {
+      McpServerUrl: mcpServerUrl,
+    };
+    // Build Authentication as an object for non-None auth types (expected by consumption backend)
     if (authenticationType && authenticationType !== 'None') {
       connectionBlock.Authentication = { type: authenticationType, ...authParams };
     } else {
@@ -667,13 +678,15 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
       ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
     };
   } else if (hasParameters) {
-    inputs = { parameters: { ...inputParameters.parameters } };
+    inputs = {
+      parameters: { ...inputParameters.parameters },
+    };
   }
 
   return {
     type: type,
     kind: kind,
-    ...optional('description', operationFromWorkflow?.description),
+    ...optional('description', operationFromWorkflow.description),
     ...optional('inputs', inputs),
   };
 };
