@@ -84,12 +84,11 @@ test.describe(
     test('Should preserve inline Connection shape for built-in MCP tool on Consumption', async ({ page }) => {
       await page.goto('/');
 
-      // Consumption workflows have no `workflowKind`. Standalone's localDesigner unsets `kind` when
-      // hostingPlan is Consumption, which routes the serializer through the Consumption path
-      // (serializeConsumptionBuiltInMcpOperation) that emits `inputs.Connection` inline instead of
-      // `inputs.connectionReference.connectionName`.
-      await page.getByRole('radio', { name: 'Consumption' }).click();
-
+      // The fixture declares `hostingPlan: 'consumption'` at its top level, which the mock loader
+      // reads and dispatches into state.hostingPlan on load. That triggers Standalone's Consumption
+      // wiring in localDesigner (which passes `kind: undefined` to BJSWorkflowProvider), so
+      // `workflow.workflowKind` ends up undefined and the serializer routes through the Consumption
+      // path (serializeConsumptionBuiltInMcpOperation) that emits `inputs.Connection` inline.
       await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
 
       const serialized: any = await getSerializedWorkflowFromState(page);

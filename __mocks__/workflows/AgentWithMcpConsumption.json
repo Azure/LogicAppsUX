@@ -1,4 +1,5 @@
 {
+  "hostingPlan": "consumption",
   "definition": {
     "metadata": {
       "agentType": "autonomous"
