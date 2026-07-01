@@ -767,7 +767,8 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
 
       for (const projectPath of logicAppFolders) {
         if (!fs.existsSync(path.join(projectPath, localSettingsFileName))) {
-          const settingsFileContent = getLocalSettingsSchema(false, projectPath);
+          const isCodeful = (await hasCodefulSdkReference(projectPath)) ?? false;
+          const settingsFileContent = getLocalSettingsSchema(false, projectPath, isCodeful);
           const projectUri: Uri = Uri.file(projectPath);
           await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
         }
