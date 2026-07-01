@@ -1026,6 +1026,13 @@ interface McpConnectionInfo {
   };
 }
 
+// Resolve the authoritative `agentMcpConnections` key from a Redux reference. Prefers connection.id's
+// last segment (which by construction matches the connections.json key) and falls back to the raw
+// referenceKey when the id is missing or produces an empty segment (e.g. trailing slash). Exported
+// for unit tests.
+export const resolveMcpConnectionName = (referenceKey: string, connectionId: string | undefined): string =>
+  connectionId?.split('/').pop() || referenceKey;
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -1106,14 +1113,10 @@ const serializeHost = (
         },
       };
     case ConnectionReferenceKeyFormat.McpConnection: {
-      // Use connection.id's last segment — the authoritative `agentMcpConnections` key. Redux's
-      // referenceKey can diverge when the picker mints a fresh key. TODO: fix at source.
       const reference = getRecordEntry(rootState.connections.connectionReferences, referenceKey);
-      const connectionId = reference?.connection?.id;
-      const connectionName = connectionId ? (connectionId.split('/').pop() ?? referenceKey) : referenceKey;
       return {
         connectionReference: {
-          connectionName,
+          connectionName: resolveMcpConnectionName(referenceKey, reference?.connection?.id),
         },
       };
     }
