@@ -1,16 +1,16 @@
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { describe, it, expect } from 'vitest';
-import { readBuiltInMcpConnectionData } from '../serializer';
+import { readConsumptionBuiltInMcpConnectionData } from '../serializer';
 
 // The helper resolves the MCP server URL and authentication out of a Connection object.
 // Two shapes exist in the wild:
 //  - flat `properties.parameterValues.*` (Consumption + reconstructor)
 //  - nested `properties.connectionParameters.*.metadata.value` (Standard)
 // Both must yield the same downstream serialization.
-describe('readBuiltInMcpConnectionData', () => {
+describe('readConsumptionBuiltInMcpConnectionData', () => {
   it('returns undefined when the connection has no properties', () => {
-    expect(readBuiltInMcpConnectionData(undefined)).toBeUndefined();
-    expect(readBuiltInMcpConnectionData({} as Connection)).toBeUndefined();
+    expect(readConsumptionBuiltInMcpConnectionData(undefined)).toBeUndefined();
+    expect(readConsumptionBuiltInMcpConnectionData({} as Connection)).toBeUndefined();
   });
 
   it('reads flat parameterValues shape (Consumption / reconstructed)', () => {
@@ -25,7 +25,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    expect(readBuiltInMcpConnectionData(connection)).toEqual({
+    expect(readConsumptionBuiltInMcpConnectionData(connection)).toEqual({
       mcpServerUrl: 'https://example.com/mcp',
       authenticationType: 'Key',
       authParams: { key: 'secret-value', keyHeaderName: 'x-api-key' },
@@ -42,7 +42,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    expect(readBuiltInMcpConnectionData(connection)).toEqual({
+    expect(readConsumptionBuiltInMcpConnectionData(connection)).toEqual({
       mcpServerUrl: 'https://example.com/mcp',
       authenticationType: 'None',
       authParams: {},
@@ -64,7 +64,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    expect(readBuiltInMcpConnectionData(connection)).toEqual({
+    expect(readConsumptionBuiltInMcpConnectionData(connection)).toEqual({
       mcpServerUrl: 'https://gateway.example.com/mcp',
       authenticationType: 'Key',
       authParams: { key: "@appsetting('mcp_key')", keyHeaderName: '123' },
@@ -81,7 +81,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    expect(readBuiltInMcpConnectionData(connection)).toEqual({
+    expect(readConsumptionBuiltInMcpConnectionData(connection)).toEqual({
       mcpServerUrl: 'https://gateway.example.com/mcp',
       authenticationType: 'None',
       authParams: {},
@@ -97,7 +97,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    expect(readBuiltInMcpConnectionData(connection)).toEqual({
+    expect(readConsumptionBuiltInMcpConnectionData(connection)).toEqual({
       mcpServerUrl: 'https://gateway.example.com/mcp',
       authenticationType: undefined,
       authParams: {},
@@ -117,7 +117,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    expect(readBuiltInMcpConnectionData(connection)?.mcpServerUrl).toBe('https://flat.example.com/mcp');
+    expect(readConsumptionBuiltInMcpConnectionData(connection)?.mcpServerUrl).toBe('https://flat.example.com/mcp');
   });
 
   it('returns undefined when neither shape yields an mcpServerUrl', () => {
@@ -128,7 +128,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    expect(readBuiltInMcpConnectionData(connection)).toBeUndefined();
+    expect(readConsumptionBuiltInMcpConnectionData(connection)).toBeUndefined();
   });
 
   it('extracts every MCP_AUTH_PROPERTY_KEYS entry when present in nested auth object', () => {
@@ -159,7 +159,7 @@ describe('readBuiltInMcpConnectionData', () => {
       },
     } as unknown as Connection;
 
-    const result = readBuiltInMcpConnectionData(connection);
+    const result = readConsumptionBuiltInMcpConnectionData(connection);
     expect(result?.authenticationType).toBe('ActiveDirectoryOAuth');
     expect(result?.authParams).toEqual({
       audience: 'aud',

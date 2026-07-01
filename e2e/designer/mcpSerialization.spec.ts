@@ -34,7 +34,7 @@ test.describe(
       expect(agent.tools.Regular_Tool.actions.Compose).toBeDefined();
 
       // Built-in MCP tool on Standard should serialize as a connectionReference pointing to
-      // agentMcpConnections. Inline `Connection` is a Consumption-only shape (see serializeBuiltInMcpOperation).
+      // agentMcpConnections. Inline `Connection` is a Consumption-only shape (see serializeConsumptionBuiltInMcpOperation).
       expect(agent.tools.BuiltIn_MCP_Server).toBeDefined();
       expect(agent.tools.BuiltIn_MCP_Server.type).toBe('McpClientTool');
       expect(agent.tools.BuiltIn_MCP_Server.kind).toBe('BuiltIn');
