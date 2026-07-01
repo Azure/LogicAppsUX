@@ -162,7 +162,7 @@ export const PanelContainer = ({
           // Closing the pinned pane should only unpin it (keep the selected node); closing the
           // selected pane uses onClose (which keeps a pinned node open). This prevents one pane's
           // close button from dismissing the other pane.
-          onClose={canUnpin && onUnpinAction ? onUnpinAction : onClose}
+          onClose={canUnpin ? onUnpinAction : onClose}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
           showTriggerInfo={showTriggerInfo}
