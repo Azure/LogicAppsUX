@@ -85,6 +85,10 @@ export const PanelContainer = ({
     [node, rest.alternateSelectedNode]
   );
 
+  // Dual view = a selected node AND a distinct pinned/alternate node are both shown side-by-side.
+  // A pinned node can also render on its own (no selected node), which is a single-pane view.
+  const isDualView = !!node && !!alternateSelectedNode;
+
   const alternateSelectedNodeContainerId = useMemo(
     () =>
       alternateSelectedNode?.subgraphType &&
@@ -127,18 +131,18 @@ export const PanelContainer = ({
     }
 
     // Dual-view (pinned / alternate selected node) → 680px
-    if (alternateSelectedNode) {
+    if (isDualView) {
       return PanelSize.DualView;
     }
 
     // Single-node or multi-select → 480px
     return '480px';
-  }, [isCollapsed, canResize, overrideWidth, alternateSelectedNode, viewportWidth]);
+  }, [isCollapsed, canResize, overrideWidth, isDualView, viewportWidth]);
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
-      const isAlternateNode = rest.alternateSelectedNode?.nodeId === nodeId;
+      const isAlternateNode = !!alternateSelectedNode && alternateSelectedNode.nodeId === nodeId;
       const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
@@ -155,7 +159,10 @@ export const PanelContainer = ({
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
-          onClose={onClose}
+          // Closing the pinned pane should only unpin it (keep the selected node); closing the
+          // selected pane uses onClose (which keeps a pinned node open). This prevents one pane's
+          // close button from dismissing the other pane.
+          onClose={canUnpin ? onUnpinAction : onClose}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
           showTriggerInfo={showTriggerInfo}
@@ -165,7 +172,7 @@ export const PanelContainer = ({
       );
     },
     [
-      rest.alternateSelectedNode?.nodeId,
+      alternateSelectedNode,
       onUnpinAction,
       alternateSelectedNodePersistence,
       alternateSelectedNodeHeaderItems,
@@ -249,7 +256,7 @@ export const PanelContainer = ({
     [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle, alternateSelectedNodeContainerId]
   );
 
-  const minWidth = alternateSelectedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
+  const minWidth = isDualView ? Number.parseInt(PanelSize.DualView, 10) : undefined;
 
   if (suppressDefaultNodeSelectFunctionality) {
     // Used in cases like BPT where we do not want to show the panel during node selection
@@ -260,7 +267,8 @@ export const PanelContainer = ({
     return null;
   }
 
-  if (!customContent && !node) {
+  // Render when there is custom content, a selected node, or a pinned/alternate node on its own.
+  if (!customContent && !node && !alternateSelectedNode) {
     return null;
   }
 
@@ -291,13 +299,13 @@ export const PanelContainer = ({
           className={mergeClasses(
             'msla-panel-container-nested',
             `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-            alternateSelectedNode && 'msla-panel-container-nested-dual'
+            isDualView && 'msla-panel-container-nested-dual'
           )}
         >
           {node ? renderPanelContents(node, 'selected', false) : null}
           {alternateSelectedNode ? (
             <>
-              <Divider vertical={true} />
+              {node ? <Divider vertical={true} /> : null}
               {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
               {shouldDisplayPopup && targetElement ? (
                 <TeachingPopup
