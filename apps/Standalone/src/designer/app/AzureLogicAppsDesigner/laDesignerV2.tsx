@@ -491,7 +491,8 @@ const DesignerEditor = () => {
         /*mcpServer*/ undefined,
         clearDirtyState,
         /*options*/ undefined,
-        isDraftSave
+        isDraftSave,
+        /*fullConnectionsForValidation*/ connectionsData ?? undefined
       );
 
       // Invalidate cached workflow artifacts so the next load fetches fresh data

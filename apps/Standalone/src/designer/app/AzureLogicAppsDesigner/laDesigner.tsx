@@ -391,7 +391,10 @@ const DesignerEditor = () => {
       customCodeToUpdate,
       /*notes*/ undefined,
       /*mcpServer*/ undefined,
-      clearDirtyState
+      clearDirtyState,
+      /*options*/ undefined,
+      /*isDraftSave*/ undefined,
+      /*fullConnectionsForValidation*/ connectionsData ?? undefined
     );
   };
 
