@@ -438,7 +438,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
             onClick={nodeClick}
             onContextMenu={onContextMenu}
             onDeleteClick={deleteClick}
-            selectionMode={isPinned ? 'pinned' : selected ? 'selected' : false}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             runData={runData}
             commentBox={comment}
             setFocus={shouldFocus}

@@ -236,7 +236,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
                 title={title}
-                selectionMode={isPinned ? 'pinned' : selected ? 'selected' : false}
+                selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}
                 onContextMenu={onContextMenu}

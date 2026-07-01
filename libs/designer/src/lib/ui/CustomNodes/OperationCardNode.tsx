@@ -383,7 +383,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           onContextMenu={onContextMenu}
           onDeleteClick={deleteClick}
           onCopyClick={copyClick}
-          selectionMode={isPinned ? 'pinned' : selected ? 'selected' : false}
+          selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults && staticResults.staticResultOptions === StaticResultOption.ENABLED}
           isSecureInputsOutputs={isSecureInputsOutputs}

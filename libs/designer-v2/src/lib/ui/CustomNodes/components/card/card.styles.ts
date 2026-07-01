@@ -53,6 +53,9 @@ export const useCardStyles = makeStyles({
   selected: {
     border: `2px solid ${colors.brand}`,
   },
+  pinned: {
+    border: '2px solid #f2610c',
+  },
   statusSuccess: {
     border: `2px solid ${colors.success}`,
   },
