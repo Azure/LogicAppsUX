@@ -35,7 +35,7 @@ import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from './publishCodefulProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
-import { isCodefulProject } from '../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
@@ -94,7 +94,7 @@ export async function pickFuncProcessInternal(
   // (e.g. GenerateFunctionMetadata failing on obj/Debug/net8/WorkerExtensions)
   await waitForPrevFuncTaskToStop(workspaceFolder);
 
-  if (await isCodefulProject(projectPath)) {
+  if (await hasCodefulWorkflowSetting(projectPath)) {
     // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
     // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
     // `AfterTargets="Build;Publish"`. Running an explicit Release `publish` first would just
