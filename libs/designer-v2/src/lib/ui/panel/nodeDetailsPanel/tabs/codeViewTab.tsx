@@ -1,7 +1,7 @@
 import constants from '../../../../common/constants';
 import { serializeOperation } from '../../../../core/actions/bjsworkflow/serializer';
 import { updateNodeFromCodeView } from '../../../../core/actions/bjsworkflow/updateNodeFromCodeView';
-import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly, useEditableCodeViewEnabled } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useActionMetadata } from '../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
@@ -17,6 +17,7 @@ export const CodeViewTab: React.FC<PanelTabProps> = (props) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
+  const editableCodeViewEnabled = useEditableCodeViewEnabled();
   const nodeMetaData = useActionMetadata(nodeId) as any;
   // Read the store directly so that each (re)serialization—including the refetch after a
   // save—reflects the latest state rather than a snapshot captured at render time.
@@ -104,7 +105,7 @@ export const CodeViewTab: React.FC<PanelTabProps> = (props) => {
     return <Peek input={'Loading ...'} />;
   }
 
-  if (readOnly) {
+  if (readOnly || !editableCodeViewEnabled) {
     return <Peek input={serializedContent} />;
   }
 

@@ -99,6 +99,11 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setHostOptions({ collapseGraphsByDefault: !!checked }))}
       />
       <Checkbox
+        label="Editable Code View"
+        checked={hostOptions.enableEditableCodeView}
+        onChange={(_, checked) => dispatch(setHostOptions({ enableEditableCodeView: !!checked }))}
+      />
+      <Checkbox
         label="Suppress default node click"
         checked={suppressDefaultNodeSelect}
         onChange={(_, checked) => dispatch(setSuppressDefaultNodeSelect(!!checked))}

@@ -71,6 +71,7 @@ describe('CodeViewTab', () => {
     vi.clearAllMocks();
     mockSerialize.mockResolvedValue(originalDefinition as any);
     vi.spyOn(designerOptionsSelectors, 'useReadOnly').mockReturnValue(false);
+    vi.spyOn(designerOptionsSelectors, 'useEditableCodeViewEnabled').mockReturnValue(true);
     vi.spyOn(workflowSelectors, 'useActionMetadata').mockReturnValue({ inputs: {} } as any);
     mockUpdateNode.mockReturnValue({ type: 'mock/updateNodeFromCodeView' } as any);
   });
@@ -84,6 +85,14 @@ describe('CodeViewTab', () => {
 
   test('renders a read-only peek when the designer is read-only', async () => {
     vi.spyOn(designerOptionsSelectors, 'useReadOnly').mockReturnValue(true);
+    renderTab();
+    const peek = await screen.findByTestId('peek');
+    expect(peek.textContent).toBe(JSON.stringify(originalDefinition, null, 2));
+    expect(screen.queryByTestId('editable-code-view')).not.toBeInTheDocument();
+  });
+
+  test('renders a read-only peek when the editable code view host option is disabled', async () => {
+    vi.spyOn(designerOptionsSelectors, 'useEditableCodeViewEnabled').mockReturnValue(false);
     renderTab();
     const peek = await screen.findByTestId('peek');
     expect(peek.textContent).toBe(JSON.stringify(originalDefinition, null, 2));
