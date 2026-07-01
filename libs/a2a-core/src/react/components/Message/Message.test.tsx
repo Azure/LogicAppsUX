@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -121,13 +120,15 @@ vi.mock('prismjs/components/prism-scss', () => ({}));
 
 // Mock Intl.DateTimeFormat
 const mockFormat = vi.fn(() => '2:30 PM');
-global.Intl.DateTimeFormat = vi.fn(() => ({
-  format: mockFormat,
-  resolvedOptions: vi.fn(),
-  formatToParts: vi.fn(),
-  formatRange: vi.fn(),
-  formatRangeToParts: vi.fn(),
-})) as any;
+global.Intl.DateTimeFormat = vi.fn(function (this: any) {
+  return {
+    format: mockFormat,
+    resolvedOptions: vi.fn(),
+    formatToParts: vi.fn(),
+    formatRange: vi.fn(),
+    formatRangeToParts: vi.fn(),
+  };
+}) as any;
 
 describe('Message', () => {
   beforeEach(() => {

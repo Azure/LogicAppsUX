@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useA2A } from './use-a2a';
@@ -17,15 +16,17 @@ let mockStreamReturnValue: any = {
 };
 
 vi.mock('../client/a2a-client', () => ({
-  A2AClient: vi.fn().mockImplementation(() => ({
-    message: {
-      stream: vi.fn().mockImplementation(() => mockStreamReturnValue),
-    },
-    getCapabilities: vi.fn().mockReturnValue({
-      streaming: true,
-      stateTransitionHistory: true,
-    }),
-  })),
+  A2AClient: vi.fn().mockImplementation(function (this: any) {
+    return {
+      message: {
+        stream: vi.fn().mockImplementation(() => mockStreamReturnValue),
+      },
+      getCapabilities: vi.fn().mockReturnValue({
+        streaming: true,
+        stateTransitionHistory: true,
+      }),
+    };
+  }),
 }));
 
 describe('useA2A', () => {
@@ -258,6 +259,7 @@ describe('useA2A', () => {
     // Mock error in stream
     mockStreamReturnValue = {
       async *[Symbol.asyncIterator]() {
+        yield* [] as never[];
         throw new Error('Stream failed');
       },
     };

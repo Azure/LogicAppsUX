@@ -12,7 +12,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts', '../../libs/shared-test-utils/fluentui-react-icons-mock.ts'],
     root: './',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*.{ts,tsx,js,jsx}'], reporter: ['html', 'cobertura', 'lcov'] },
   },
   resolve: {
     alias: {

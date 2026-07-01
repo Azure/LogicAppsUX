@@ -12,7 +12,7 @@ exports[`lib/flyout/flyoutcallout > should render 1`] = `
     }
   }
   gapSpace={0}
-  onDismiss={[MockFunction spy]}
+  onDismiss={[MockFunction]}
   setInitialFocus={true}
   styles={
     {

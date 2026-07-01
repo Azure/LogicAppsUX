@@ -31,7 +31,7 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
     >
       <PanelHeader
         commentChange={[Function]}
-        handleTitleUpdate={[MockFunction spy]}
+        handleTitleUpdate={[MockFunction]}
         headerItems={[]}
         headerLocation="RIGHT"
         nodeData={
@@ -43,15 +43,15 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
             "isError": false,
             "isLoading": false,
             "nodeId": "nodeId",
-            "onSelectTab": [MockFunction spy],
+            "onSelectTab": [MockFunction],
             "runData": undefined,
             "selectedTab": undefined,
             "subgraphType": undefined,
             "tabs": [],
           }
         }
-        onClose={[MockFunction spy]}
-        onTitleChange={[MockFunction spy]}
+        onClose={[MockFunction]}
+        onTitleChange={[MockFunction]}
         panelScope="CARD_LEVEL"
         resubmitOperation={[Function]}
       />
@@ -60,9 +60,9 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
       >
         <PanelContent
           nodeId="nodeId"
-          selectTab={[MockFunction spy]}
+          selectTab={[MockFunction]}
           tabs={[]}
-          trackEvent={[MockFunction spy]}
+          trackEvent={[MockFunction]}
         />
       </div>
     </div>
