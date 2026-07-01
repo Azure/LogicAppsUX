@@ -31,16 +31,26 @@ on:
       - 'libs/chatbot/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/vscode-e2e.yml'
+  # Manual trigger so PR authors and chief-engineer agents can force a CI
+  # re-run on the latest PR head (useful when path-filter coalescing
+  # suppresses an expected auto-trigger after rapid pushes).
+  workflow_dispatch:
 
 concurrency:
   group: vscode-e2e-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  vscode-e2e:
-    timeout-minutes: 90
+  # Build the extension + compile the E2E test bundle ONCE per workflow run,
+  # then fan out to the matrix shards which download the resulting artifact.
+  # This eliminates ~3min of duplicated pnpm install + turbo build + tsup
+  # work that previously ran on each of the 5 matrix shards in parallel.
+  setup-extension-build:
+    name: setup-extension-build
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
+    outputs:
+      build-artifact: extension-build-${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,7 +61,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          # Content-based key: hits across pushes that don't change source.
+          # Previously keyed on github.sha which missed on every push.
+          key: ${{ runner.os }}-turbo-${{ hashFiles('apps/**/*.ts', 'apps/**/*.tsx', 'libs/**/*.ts', 'libs/**/*.tsx', 'pnpm-lock.yaml', 'turbo.json') }}
           restore-keys: |
             ${{ runner.os }}-turbo-
 
@@ -60,10 +72,38 @@ jobs:
         with:
           node-version: 20.x
 
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          # Mirrors the matrix-job symlink step. Kept here so any tooling
+          # invoked during build (turbo, tsup) that shells out to /usr/bin/node
+          # resolves correctly. The matrix shards re-do this on their own
+          # runners because each matrix entry is an independent VM.
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+
+      # Cache the pnpm content-addressed store so matrix shards can rehydrate
+      # node_modules faster on warm runs. The setup-extension-build job warms
+      # this cache by running a full install below; shards restore the cache
+      # and pnpm reuses store entries while falling back to the network for
+      # anything missing (no --offline strictness).
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -80,13 +120,84 @@ jobs:
         working-directory: apps/vs-code-designer
         run: npx tsup --config tsup.e2e.test.config.ts
 
+      - name: Tar build artifacts
+        # Tar preserves symlinks/permissions and dramatically speeds upload
+        # vs uploading thousands of small files in node_modules-adjacent dirs.
+        run: |
+          tar -czf extension-build.tar.gz \
+            apps/vs-code-designer/dist/ \
+            apps/vs-code-designer/out/ \
+            $(find apps/vs-code-designer/node_modules/.cache -maxdepth 0 -type d 2>/dev/null)
+
+      - name: Upload extension build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-build-${{ github.sha }}
+          path: extension-build.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+  # Run the fixtures-only scenario (p41a) ONCE per workflow run. Uploads
+  # the resulting workspace tree + created-workspaces.json manifest so the
+  # downstream per-scenario matrix shards can hydrate them instead of
+  # paying the wizard-driven workspace creation cost on every shard.
+  setup-fixtures:
+    name: setup-fixtures (p41a)
+    needs: setup-extension-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
       - name: Install system dependencies for virtual display
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
 
-      # Cache the auto-downloaded runtime dependencies (func, dotnet, node)
-      # so subsequent runs don't re-download ~500MB each time.
       - name: Cache Logic Apps runtime dependencies
         uses: actions/cache@v4
         with:
@@ -94,32 +205,234 @@ jobs:
           key: la-runtime-deps-${{ runner.os }}-v1
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
-          # Save even when tests fail so deps are available on next run
           save-always: true
 
-      - name: Run VS Code Extension E2E tests
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/src/test/ui/run-e2e.js
+      - name: Run fixtures scenario (p41a-fixtures)
+        run: |
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/src/test/ui/run-e2e.js
         env:
-          # Run all phases (4.1 workspace creation through 4.7 smoke tests)
-          E2E_MODE: full
-          # Increase Node memory for CI
+          LA_E2E_SCENARIO: p41a-fixtures
           NODE_OPTIONS: --max-old-space-size=4096
-          # Set TEMP so screenshot paths are predictable on Linux
-          # (process.env.TEMP is undefined on Ubuntu, causing fallback to cwd)
+          # Node's os.tmpdir() honors TMPDIR/TMP/TEMP on Linux; setting TEMP
+          # pins workspace + manifest creation under $RUNNER_TEMP/la-e2e-test
+          # so the artifact upload below has a stable, scoped path.
           TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
 
-      # Screenshots are written to $TEMP/test-resources/screenshots/ by both:
-      #   - Explicit test screenshots (e.g., inlineJS-after-request-trigger.png)
-      #   - ExTester auto-failure screenshots (captured on test failure)
-      # Upload ALL screenshots as artifacts so they're available for debugging
-      # after the pipeline finishes, even if the runner is recycled.
-      - name: Upload test screenshots (always)
+      - name: Verify fixtures manifest exists
+        run: |
+          MANIFEST="${RUNNER_TEMP}/la-e2e-test/created-workspaces.json"
+          if [ ! -f "$MANIFEST" ]; then
+            echo "::error::Fixtures manifest missing at $MANIFEST"
+            ls -la "${RUNNER_TEMP}/la-e2e-test" || true
+            exit 1
+          fi
+          echo "Manifest contents:"
+          cat "$MANIFEST"
+
+      - name: Tar created workspaces + manifest
+        run: |
+          tar -czf workspace-fixtures.tar.gz -C "${RUNNER_TEMP}" la-e2e-test
+
+      - name: Upload workspace fixtures artifact
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: vscode-e2e-screenshots
+          name: workspace-fixtures-${{ github.sha }}
+          path: workspace-fixtures.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Upload fixture screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: vscode-e2e-screenshots-setup-fixtures
           path: |
             ${{ runner.temp }}/test-resources/screenshots/
             test-resources/screenshots/
           if-no-files-found: ignore
           retention-days: 30
+
+  vscode-e2e:
+    name: vscode-e2e (${{ matrix.scenario }})
+    needs: [setup-extension-build, setup-fixtures]
+    timeout-minutes: 25
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          # Independent / no-workspace (don't need fixtures artifact)
+          - p40-nonlogicapp
+          - p48b-conversioncreate
+          # Full 12-shape behavior validation — self-creates its own workspaces,
+          # so it doesn't consume the fixtures artifact either.
+          - p41b-createworkspace-behavior
+          # Designer lifecycle (consume fixtures from setup-fixtures)
+          - p42-standard
+          - p42-customcode
+          - p42-rulesengine
+          # Runtime-touching consumer tests (consume fixtures)
+          - p43-inlinejavascript
+          - p43-customcode
+          - p43-rulesengine
+          - p44-statelessvariables
+          - p45-designerviewextended
+          - p46-keyboardnav
+          # Multi-designer + dataMapper suite (manifest-multi)
+          - p47-suite
+          # Conversion suite
+          - p48a-conversionno
+          - p48c-multipledesigners
+          - p48d-conversionyes
+          - p48e-conversionsubfolder
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          # See setup-extension-build for the rationale. The Functions host
+          # spawned by xvfb-run -> VS Code -> extension does not inherit the
+          # workflow PATH from actions/setup-node, so we symlink into
+          # /usr/bin and /usr/local/bin where any sanitized PATH will find it.
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+          echo "Symlinked node $(node --version) into /usr/local/bin and /usr/bin"
+          env -i /usr/bin/node --version
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      # Scenarios that self-create their workspaces skip the fixtures download:
+      #   - p40-nonlogicapp        (plain folder, no workspace)
+      #   - p48b-conversioncreate  (builds its own legacy fixture)
+      #   - p41b-createworkspace-behavior (full 12-shape wizard run)
+      - name: Download workspace fixtures artifact
+        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-fixtures-${{ github.sha }}
+          path: .
+
+      - name: Extract workspace fixtures into $RUNNER_TEMP
+        if: matrix.scenario != 'p40-nonlogicapp' && matrix.scenario != 'p48b-conversioncreate' && matrix.scenario != 'p41b-createworkspace-behavior'
+        run: |
+          mkdir -p "${RUNNER_TEMP}"
+          tar -xzf workspace-fixtures.tar.gz -C "${RUNNER_TEMP}"
+          echo "Extracted fixtures:"
+          ls -la "${RUNNER_TEMP}/la-e2e-test" || true
+          if [ -f "${RUNNER_TEMP}/la-e2e-test/created-workspaces.json" ]; then
+            echo "Manifest:"
+            cat "${RUNNER_TEMP}/la-e2e-test/created-workspaces.json"
+          fi
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      - name: Cache Logic Apps runtime dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Run scenario (${{ matrix.scenario }})
+        # Phase 4.1 (commits 2672168f7 + d866b3368) targeted the 5 historically-
+        # flaky shards (p42-standard, p42-customcode, p42-rulesengine,
+        # p46-keyboardnav, p47-suite) at the root cause, and added a focus-reset
+        # for the pre-existing p48d-conversionyes xvfb race. Run 25970697053
+        # had all 17 shards green at the step level with masks active.
+        #
+        # Dropping continue-on-error so any future regression in those shards
+        # is surfaced as a job-level failure (no longer masked). Flake closure
+        # gating is now structural: a red shard fails the workflow. If the
+        # fixes don't hold under runner-image churn, the failure mode and CI
+        # diff will be visible immediately instead of hidden behind allowFailure.
+        run: |
+          # Belt-and-suspenders PATH export (see grouped-shard rationale in git history).
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          echo "PATH=$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/src/test/ui/run-e2e.js
+        env:
+          # Per-scenario matrix: each shard runs exactly one scenarios[] entry.
+          LA_E2E_SCENARIO: ${{ matrix.scenario }}
+          NODE_OPTIONS: --max-old-space-size=4096
+          # Pin os.tmpdir() so the bootstrapper finds the manifest the
+          # setup-fixtures job uploaded (same RUNNER_TEMP layout).
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-${{ matrix.scenario }}
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # Rollup status check so branch protection can require a single check name
+  # ("vscode-e2e-summary") regardless of how many scenarios we add later.
+  vscode-e2e-summary:
+    name: vscode-e2e-summary
+    needs: [setup-extension-build, setup-fixtures, vscode-e2e]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all jobs passed
+        run: |
+          echo "setup-extension-build: ${{ needs.setup-extension-build.result }}"
+          echo "setup-fixtures:        ${{ needs.setup-fixtures.result }}"
+          echo "vscode-e2e (matrix):   ${{ needs.vscode-e2e.result }}"
+          if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
+             [ "${{ needs.setup-fixtures.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e.result }}" != "success" ]; then
+            echo "::error::One or more vscode-e2e jobs failed"
+            exit 1
+          fi
+          echo "All vscode-e2e jobs passed."

@@ -308,6 +308,12 @@ export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 export const azureWebJobsFeatureFlagsKey = 'AzureWebJobsFeatureFlags';
 export const multiLanguageWorkerSetting = 'EnableMultiLanguageWorker';
+// Azure Functions runtime setting (passed as env var via local.settings.json
+// Values) that pins the absolute path of the `node` binary used by the
+// in-proc8 InlineCodeDependencyGenerator. Keeps inline-JS workflows working
+// even when the task-level PATH override doesn't propagate to dep generator
+// child processes.
+export const inlineCodeNodeExecutablePathKey = 'languageWorkers__node__defaultExecutablePath';
 
 // Project
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed

@@ -60,6 +60,10 @@ import {
 const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
 const FUNC_DIR = path.join(BIN_ROOT, 'FuncCoreTools');
 const FUNC_EXE = path.join(FUNC_DIR, 'func');
+const FUNC_WIN_EXE = path.join(FUNC_DIR, 'func.exe');
+const PREFERRED_FUNC_EXE = process.platform === 'win32' ? FUNC_WIN_EXE : FUNC_EXE;
+const FUNC_INPROC8_EXE = path.join(FUNC_DIR, 'in-proc8', 'func');
+const FUNC_INPROC8_WIN_EXE = path.join(FUNC_DIR, 'in-proc8', 'func.exe');
 
 describe('funcVersion - command resolution', () => {
   beforeEach(() => {
@@ -94,6 +98,36 @@ describe('funcVersion - command resolution', () => {
       vi.mocked(fs.existsSync).mockImplementation((p: any) => p === FUNC_DIR || p === FUNC_EXE);
 
       expect(getFunctionsCommand()).toBe(FUNC_EXE);
+    });
+
+    it('self-heals to the in-proc8 binary when the top-level func binary is missing', () => {
+      vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
+        if (key === 'funcCoreToolsBinaryPath') {
+          return undefined;
+        }
+        if (key === 'autoRuntimeDependenciesPath') {
+          return BIN_ROOT as any;
+        }
+        return undefined;
+      });
+      vi.mocked(fs.existsSync).mockImplementation((p: any) => p === FUNC_DIR || p === FUNC_INPROC8_EXE);
+
+      expect(getFunctionsCommand()).toBe(FUNC_INPROC8_EXE);
+    });
+
+    it('self-heals to func.exe when that is the extracted binary name', () => {
+      vi.mocked(getGlobalSetting).mockImplementation((key: string) => {
+        if (key === 'funcCoreToolsBinaryPath') {
+          return undefined;
+        }
+        if (key === 'autoRuntimeDependenciesPath') {
+          return BIN_ROOT as any;
+        }
+        return undefined;
+      });
+      vi.mocked(fs.existsSync).mockImplementation((p: any) => p === FUNC_DIR || p === FUNC_WIN_EXE);
+
+      expect(getFunctionsCommand()).toBe(FUNC_WIN_EXE);
     });
 
     it('throws when the setting is empty and the local binaries are not yet on disk', () => {
@@ -140,28 +174,50 @@ describe('funcVersion - command resolution', () => {
       expect(fs.chmodSync).not.toHaveBeenCalled();
     });
 
-    it('writes the joined func path and chmods only the directory when the executable is missing', async () => {
+    it('writes the preferred func path and chmods only the directory when the executable is missing', async () => {
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR);
 
       await setFunctionsCommand();
 
-      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', PREFERRED_FUNC_EXE);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
-      expect(fs.chmodSync).not.toHaveBeenCalledWith(FUNC_EXE, 0o777);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(PREFERRED_FUNC_EXE, 0o777);
     });
 
-    it('writes the joined func path and chmods both the directory and the executable when both exist', async () => {
+    it('writes the preferred func path and chmods both the directory and the executable when both exist', async () => {
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       await setFunctionsCommand();
 
-      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_EXE);
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', PREFERRED_FUNC_EXE);
       expect(fs.existsSync).toHaveBeenCalledWith(FUNC_DIR);
-      expect(fs.existsSync).toHaveBeenCalledWith(FUNC_EXE);
+      expect(fs.existsSync).toHaveBeenCalledWith(PREFERRED_FUNC_EXE);
       expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
-      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_EXE, 0o777);
+      expect(fs.chmodSync).toHaveBeenCalledWith(PREFERRED_FUNC_EXE, 0o777);
+    });
+
+    it('writes the in-proc8 func path when the top-level executable is missing', async () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
+      vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR || p === FUNC_INPROC8_EXE);
+
+      await setFunctionsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_INPROC8_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_EXE, 0o777);
+    });
+
+    it('writes the in-proc8 func.exe path when that is the extracted binary name', async () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT as any);
+      vi.mocked(fs.existsSync).mockImplementation((p) => p === FUNC_DIR || p === FUNC_INPROC8_WIN_EXE);
+
+      await setFunctionsCommand();
+
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', FUNC_INPROC8_WIN_EXE);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_DIR, 0o777);
+      expect(fs.chmodSync).toHaveBeenCalledWith(FUNC_INPROC8_WIN_EXE, 0o777);
     });
   });
 });

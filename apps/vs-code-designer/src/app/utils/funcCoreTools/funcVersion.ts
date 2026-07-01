@@ -19,6 +19,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 
+function getFuncCoreToolsCandidatePaths(funcBinariesPath: string): string[] {
+  const executableNames =
+    process.platform === 'win32' && !ext.funcCliPath.toLowerCase().endsWith('.exe')
+      ? [`${ext.funcCliPath}.exe`, ext.funcCliPath]
+      : [ext.funcCliPath, `${ext.funcCliPath}.exe`];
+  const uniqueExecutableNames = [...new Set(executableNames)];
+  return ['', 'in-proc8', 'in-proc6'].flatMap((subdir) =>
+    uniqueExecutableNames.map((executableName) => path.join(funcBinariesPath, subdir, executableName))
+  );
+}
+
+function resolveFuncCoreToolsCommand(funcBinariesPath: string): string {
+  const candidates = getFuncCoreToolsCandidatePaths(funcBinariesPath);
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
+}
+
 /**
  * Parses functions core tools version.
  * @param {string | undefined} data - Functions core tools package version.
@@ -160,7 +176,7 @@ export function getFunctionsCommand(): string {
     const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
     const funcBinariesPath = binariesLocation ? path.join(binariesLocation, funcDependencyName) : undefined;
     if (funcBinariesPath && fs.existsSync(funcBinariesPath)) {
-      const candidate = path.join(funcBinariesPath, ext.funcCliPath);
+      const candidate = resolveFuncCoreToolsCommand(funcBinariesPath);
       if (fs.existsSync(candidate)) {
         command = candidate;
       }
@@ -180,7 +196,7 @@ export async function setFunctionsCommand(): Promise<void> {
     const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
     const binariesExist = fs.existsSync(funcBinariesPath);
     if (binariesExist) {
-      command = path.join(funcBinariesPath, ext.funcCliPath);
+      command = resolveFuncCoreToolsCommand(funcBinariesPath);
       fs.chmodSync(funcBinariesPath, 0o777);
 
       const funcExist = fs.existsSync(command);

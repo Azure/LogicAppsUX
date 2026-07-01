@@ -156,6 +156,20 @@ jobs:
             apps/vs-code-designer/src/app/utils/startRuntimeApi.ts
             apps/vs-code-designer/src/extensionVariables.ts
             apps/vs-code-designer/src/main.ts
+            # VS Code project-scaffolding files (depend on VS Code APIs; tested via E2E).
+            # The pure-function PATH helper `funcHostTaskEnv.ts` has its own unit
+            # tests in `src/app/utils/codeless/__test__/funcHostTaskEnv.test.ts`;
+            # these callers just thread its output into VS Code task / project
+            # init pipelines and cannot be exercised in the vitest node env.
+            apps/vs-code-designer/src/app/utils/vsCodeConfig/tasks.ts
+            apps/vs-code-designer/src/app/debug/validatePreDebug.ts
+            apps/vs-code-designer/src/app/commands/createNewCodeProject/CodeProjectBase/CreateLogicAppVSCodeContents.ts
+            apps/vs-code-designer/src/app/commands/createProject/createCustomCodeProjectSteps/initCustomCodeProjectStep.ts
+            apps/vs-code-designer/src/app/commands/createProject/createCustomCodeProjectSteps/initCustomCodeProjectStepBase.ts
+            apps/vs-code-designer/src/app/commands/createProject/createCustomCodeProjectSteps/initCustomCodeScriptProjectStep.ts
+            apps/vs-code-designer/src/app/commands/initProjectForVSCode/initDotnetProjectStep.ts
+            apps/vs-code-designer/src/app/commands/initProjectForVSCode/initProjectStep.ts
+            apps/vs-code-designer/src/app/commands/initProjectForVSCode/initScriptProjectStep.ts
 
       - name: Check coverage on changed files
         id: coverage-check
