@@ -44,7 +44,7 @@ export interface ActionCardProps {
   copilotModified?: boolean;
   isScope?: boolean;
   collapsed?: boolean;
-  handleCollapse?(): void;
+  handleCollapse?(includeNested?: boolean): void;
 }
 
 export const ActionCard: React.FC<ActionCardProps> = ({
