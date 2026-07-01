@@ -54,6 +54,12 @@ import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
 import { isCodefulProject } from '../codeful';
+import {
+  ensureExtensionBundleHealthy,
+  isExtensionBundleDownloadInFlight,
+  isInsideBundleDownloadScope,
+  waitForExtensionBundleReady,
+} from '../bundleFeed';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -294,6 +300,32 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
               designTimeInst.port
             )
           );
+
+          // If activation triggered a bundle (re)download (newer version, corruption
+          // detected, sidecar missing/drifted), wait for it to finish before spawning
+          // func.exe. Launching while the extension bundle is being re-extracted can
+          // lock the bundle folder on Windows and leave the design-time host pointing
+          // at a half-extracted bundle.
+          //
+          // When this call originates from inside `downloadExtensionBundle` itself
+          // (the post-install restart hook), `isInsideBundleDownloadScope()` is true
+          // and there is nothing to wait for — the bundle is on disk by then.
+          // Suppress the misleading "Waiting…" log in that case.
+          if (isExtensionBundleDownloadInFlight() && !isInsideBundleDownloadScope()) {
+            ext.outputChannel.appendLog(
+              localize(
+                'waitingForBundleReady',
+                'Waiting for Logic Apps extension bundle download to complete before starting design-time host for project "{0}"…',
+                projectPath
+              )
+            );
+            await waitForExtensionBundleReady();
+          }
+          // Refuse to spawn func.exe if the most recent bundle install attempt
+          // failed. Without a healthy bundle, func reports "No job functions
+          // found" and unhealthy storage forever — surfacing a clear, actionable
+          // error here is strictly better than letting the host start broken.
+          await ensureExtensionBundleHealthy(actionContext);
 
           startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
           await waitForDesignTimeStartUp(actionContext, projectPath, url, true);
