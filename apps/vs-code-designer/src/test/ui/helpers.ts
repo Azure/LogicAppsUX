@@ -1054,7 +1054,7 @@ export async function openFolderInSession(driver: WebDriver, folderPath: string)
   // Pre-flight: wait until the workbench is interactable. Without this the
   // first retry attempt almost always fails with ElementNotInteractableError
   // and wastes ~13 s before the second attempt succeeds.
-  await waitForWorkbenchReady(driver, 15_000);
+  await waitForWorkbenchReady(driver, 20_000);
 
   // Aggressively dismiss ALL blocking UI before opening command palette.
   // On CI, dialogs like "C# Dev Kit Sign In" appear and block keyboard input.
@@ -1088,45 +1088,85 @@ export async function openFolderInSession(driver: WebDriver, folderPath: string)
       }
       await sleep(500);
 
+      // Click the workbench area to ensure VS Code has keyboard focus.
+      // On CI runners, focus can be lost to notification toasts or other OS
+      // windows, causing Ctrl+Shift+P to never reach the editor.
+      try {
+        const workbench = await driver.findElement(By.css('.monaco-workbench'));
+        await driver.actions().move({ origin: workbench, x: 100, y: 100 }).click().perform();
+        await sleep(300);
+      } catch {
+        /* best-effort focus — proceed regardless */
+      }
+
       // Use Ctrl+Shift+P (more reliable than F1 when dialogs are present)
       await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('p').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
-      await sleep(1000);
 
-      const cmdInput = await driver.findElement(By.css('.quick-input-box input'));
+      // Wait for the command palette input to become interactive (not just present in DOM).
+      // This replaces a fixed 1s sleep that was too short on cold CI runners.
+      const cmdInput = await driver.wait(
+        until.elementIsEnabled(await waitForElement(driver, '.quick-input-box input', 5000)),
+        5000,
+        '[openFolderInSession] Command palette input not interactive within 5s'
+      );
+
       await cmdInput.sendKeys(Key.chord(Key.CONTROL, 'a'));
       await cmdInput.sendKeys('> File: Open Folder...');
-      await sleep(1000);
+
+      // Wait for the filtered command list to appear before pressing Enter.
+      await driver
+        .wait(
+          async () => {
+            const rows = await driver.findElements(By.css('.quick-input-list .monaco-list-row'));
+            return rows.length > 0;
+          },
+          5000,
+          '[openFolderInSession] Command list did not populate within 5s'
+        )
+        .catch(() => {
+          /* proceed anyway — the command may still work */
+        });
+      await sleep(300);
 
       // Press Enter to execute the command
       await cmdInput.sendKeys(Key.ENTER);
-      await sleep(2000);
 
-      // The simple dialog input should appear. Type the path.
-      // ExTester sets files.simpleDialog.enable=true.
-      const dialogInput = await driver.findElement(By.css('.quick-input-box input'));
+      // Wait for the simple file dialog input to appear (ExTester sets
+      // files.simpleDialog.enable=true so this is a quick-input, not native OS dialog).
+      const dialogInput = await driver.wait(
+        until.elementIsEnabled(await waitForElement(driver, '.quick-input-box input', 8000)),
+        5000,
+        '[openFolderInSession] File dialog input not interactive within 5s'
+      );
+
       await dialogInput.sendKeys(Key.chord(Key.CONTROL, 'a'));
       await dialogInput.sendKeys(folderPath);
-      await sleep(500);
+      await sleep(300);
       await dialogInput.sendKeys(Key.ENTER);
-      await sleep(5000);
 
-      // Check if folder opened by looking at the title
-      const title = await driver.getTitle().catch(() => '');
-      console.log(`[openFolderInSession] VS Code title: "${title}"`);
-
-      if (title !== 'Visual Studio Code') {
-        console.log('[openFolderInSession] Folder opened successfully');
-        return;
-      }
-
-      // Also check Explorer rows
-      const rows = await driver
-        .executeScript<number>(
-          'return document.querySelectorAll(".explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row").length'
+      // Wait for the folder to open — poll title and Explorer for up to 10s
+      const folderOpened = await driver
+        .wait(
+          async () => {
+            const title = await driver.getTitle().catch(() => '');
+            if (title !== 'Visual Studio Code' && title !== '') {
+              return true;
+            }
+            const rows = await driver
+              .executeScript<number>(
+                'return document.querySelectorAll(".explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row").length'
+              )
+              .catch(() => 0);
+            return rows > 0;
+          },
+          10_000,
+          '[openFolderInSession] Folder did not open within 10s'
         )
-        .catch(() => 0);
-      if (rows > 0) {
-        console.log(`[openFolderInSession] Folder opened (${rows} Explorer rows)`);
+        .catch(() => false);
+
+      if (folderOpened) {
+        const title = await driver.getTitle().catch(() => '');
+        console.log(`[openFolderInSession] Folder opened successfully (title: "${title}")`);
         return;
       }
 
@@ -1142,4 +1182,13 @@ export async function openFolderInSession(driver: WebDriver, folderPath: string)
     }
   }
   console.log('[openFolderInSession] All attempts exhausted');
+}
+
+/**
+ * Wait for an element to appear in the DOM (polling until present).
+ * Unlike `driver.findElement`, this won't throw immediately if the element
+ * doesn't exist yet — it retries until the timeout expires.
+ */
+async function waitForElement(driver: WebDriver, cssSelector: string, timeoutMs: number): Promise<WebElement> {
+  return driver.wait(until.elementLocated(By.css(cssSelector)), timeoutMs);
 }
