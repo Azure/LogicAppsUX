@@ -98,9 +98,8 @@ import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
-// Merge server-side connections with in-flight local mutations. Local entries win per category so
-// a connection the user just created (mutated into `local` via addConnectionInJson) survives a
-// re-sync from server data. See connectionsData state comment in DesignerEditor for context.
+// Merge server data with local mutations; local wins per category so in-flight new connections
+// survive re-sync when the workflow-artifacts fetch resolves.
 const mergeConnectionsData = (fromServer: ConnectionsData, local: ConnectionsData | undefined): ConnectionsData => {
   if (!local) {
     return fromServer;
@@ -204,14 +203,8 @@ const DesignerEditor = () => {
     setCurrentParameters(parameters ?? {});
   }, [parameters]);
   const queryClient = getReactQueryClient();
-  // `addConnectionDataInternal` mutates `connectionsData` in place (via `addConnectionInJson`) when the
-  // user creates a new connection. A pure useMemo derivation raced with the initial workflow-artifacts
-  // fetch: once the fetch completed, `originalConnectionsData` reference changed and useMemo recomputed,
-  // cloning a fresh copy from server data — wiping the in-flight mutation. The next save then saw no
-  // delta and skipped writing connections.json, so validate later failed on the missing MCP name.
-  // Hold connectionsData in state, and on server-data change MERGE (server ∪ local) rather than
-  // replace. Local per-category entries win over server, so brand-new connections created before the
-  // fetch completed survive the reconciliation.
+  // State + merge (not useMemo) so in-place mutations from addConnectionDataInternal survive the
+  // initial workflow-artifacts fetch. Pure useMemo would clone fresh server data on fetch complete.
   const [connectionsData, setConnectionsData] = useState<ConnectionsData>(() =>
     resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {})
   );
