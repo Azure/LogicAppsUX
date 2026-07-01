@@ -208,9 +208,8 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const nodeClick = useCallback(
     (e?: React.MouseEvent) => {
-      // Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
-      // Shift is intentionally excluded so it stays reserved for expand/collapse-nested on scope toggles.
-      if (e?.ctrlKey || e?.metaKey) {
+      // Shift/Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
+      if (e?.shiftKey || e?.ctrlKey || e?.metaKey) {
         // Stop React Flow's own click-selection from racing with our toggle and re-asserting the
         // node as selected after we just removed it from the set.
         e?.stopPropagation();

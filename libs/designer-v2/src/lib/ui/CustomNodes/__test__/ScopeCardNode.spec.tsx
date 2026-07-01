@@ -344,15 +344,14 @@ describe('ScopeCardNode (v2)', () => {
     );
   });
 
-  it('should not multi-select on shift-click (Shift is reserved for expand-nested)', () => {
+  it('should dispatch toggleNodeSelection on shift-click of the card body', () => {
     render(<ScopeCardNode {...defaultProps} />);
     const card = screen.getByTestId('action-card-testScope');
     fireEvent.click(card, { shiftKey: true });
 
-    expect(mockDispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'panel/toggleNodeSelection' }));
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'panel/changePanelNode',
+        type: 'panel/toggleNodeSelection',
         payload: 'testScope',
       })
     );
