@@ -1,18 +1,34 @@
 {
   "definition": {
+    "metadata": {
+      "agentType": "autonomous"
+    },
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    },
     "actions": {
       "WorkflowAgent": {
         "type": "Agent",
         "inputs": {
           "parameters": {
-            "deploymentId": "gpt-4o",
             "messages": [
               {
-                "role": "System",
-                "content": "You are a helpful assistant using an MCP server (Consumption)."
+                "role": "system",
+                "content": "You are a helpful assistant that can use an MCP server."
               }
-            ]
+            ],
+            "agentModelType": "AzureOpenAI",
+            "agentModelSettings": {
+              "agentHistoryReductionSettings": {
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              }
+            }
           }
         },
         "tools": {
@@ -21,7 +37,7 @@
             "kind": "BuiltIn",
             "inputs": {
               "Connection": {
-                "McpServerUrl": "https://mcp.time.mcpcentral.io/",
+                "McpServerUrl": "https://gateway.mcpservers.org/yahoo-finance/mcp",
                 "Authentication": "None"
               }
             }
@@ -33,21 +49,14 @@
         }
       }
     },
-    "contentVersion": "1.0.0.0",
     "outputs": {},
     "parameters": {
       "$connections": {
-        "type": "Object"
-      }
-    },
-    "triggers": {
-      "When_an_HTTP_request_is_received": {
-        "type": "Request",
-        "kind": "Http"
+        "type": "Object",
+        "defaultValue": {}
       }
     }
   },
-  "connections": {},
   "parameters": {
     "$connections": {
       "type": "Object",

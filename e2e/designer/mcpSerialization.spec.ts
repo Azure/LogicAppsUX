@@ -101,7 +101,7 @@ test.describe(
       expect(tool.inputs).toBeDefined();
       // Consumption preserves the inline Connection block (introduced by PR #8953).
       expect(tool.inputs.Connection).toBeDefined();
-      expect(tool.inputs.Connection.McpServerUrl).toBe('https://mcp.time.mcpcentral.io/');
+      expect(tool.inputs.Connection.McpServerUrl).toBe('https://gateway.mcpservers.org/yahoo-finance/mcp');
       expect(tool.inputs.Connection.Authentication).toBe('None');
       // Standard's connectionReference shape must NOT appear on Consumption.
       expect(tool.inputs.connectionReference).toBeUndefined();
