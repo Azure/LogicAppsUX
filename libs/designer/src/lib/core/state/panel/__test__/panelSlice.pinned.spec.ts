@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import reducer, { clearPanel, initialState, setAlternateSelectedNode } from '../panelSlice';
+import reducer, { clearPanel, collapsePanel, initialState, setAlternateSelectedNode } from '../panelSlice';
 import type { PanelState } from '../panelTypes';
 
 // State representing the dual pinned view: a selected (non-pinned) node on the left
@@ -97,6 +97,39 @@ describe('panelSlice - pinned action close behavior (issue #9304)', () => {
 
       expect(state.operationContent.alternateSelectedNode?.nodeId).toBe('');
       expect(state.isCollapsed).toBe(true);
+    });
+  });
+
+  // When the pinned action is the currently selected node (single-pane, right after pinning the
+  // current selection), closing the panel via the header "x" collapses the drawer AND must unpin
+  // the action so its context menu no longer shows "Unpin". NodeDetailsPanel does this by
+  // dispatching setAlternateSelectedNode({ nodeId: '' }) followed by collapsePanel().
+  describe('closing a single-pane pinned action (pinned === selected)', () => {
+    const stateWithPinnedEqualsSelected = (): PanelState => ({
+      ...initialState,
+      isCollapsed: false,
+      operationContent: {
+        ...initialState.operationContent,
+        selectedNodeId: 'A',
+        alternateSelectedNode: { nodeId: 'A', activeTabId: undefined, persistence: 'pinned' },
+      },
+    });
+
+    test('unpins the action without collapsing when only the pin is cleared', () => {
+      const state = reducer(stateWithPinnedEqualsSelected(), setAlternateSelectedNode({ nodeId: '' }));
+
+      expect(state.operationContent.alternateSelectedNode?.nodeId).toBe('');
+      expect(state.operationContent.selectedNodeId).toBe('A');
+      expect(state.isCollapsed).toBe(false);
+    });
+
+    test('collapses the panel and leaves the action unpinned after the full close sequence', () => {
+      const unpinned = reducer(stateWithPinnedEqualsSelected(), setAlternateSelectedNode({ nodeId: '' }));
+      const state = reducer(unpinned, collapsePanel());
+
+      expect(state.isCollapsed).toBe(true);
+      expect(state.operationContent.alternateSelectedNode?.nodeId).toBe('');
+      expect(state.operationContent.alternateSelectedNode?.nodeId).not.toBe('A');
     });
   });
 });

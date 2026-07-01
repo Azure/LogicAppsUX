@@ -274,6 +274,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         if (alternateSelectedNodeId && alternateSelectedNodeId !== selectedNode && alternateSelectedNodePersistence === 'pinned') {
           dispatch(clearPanel());
         } else {
+          // When the pinned action is the currently selected node (single-pane), closing the panel
+          // should also unpin it so its context menu no longer shows "Unpin".
+          if (alternateSelectedNodeId === selectedNode && alternateSelectedNodePersistence === 'pinned') {
+            dispatch(setAlternateSelectedNode({ nodeId: '' }));
+          }
           collapse();
         }
       }}
