@@ -9,6 +9,7 @@ import {
   localSettingsFileName,
   managementApiPrefix,
   workflowAppApiVersion,
+  workflowCodefulEnabledKey,
   workflowTenantIdKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -296,7 +297,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             azureDetails: azureDetails,
             kind: workflowProps.kind ?? kind,
             isCodeful: isCodefulOverview,
-            supportsUnitTest: isLocal && localSettings['WORKFLOW_CODEFUL_ENABLED'] !== 'true',
+            supportsUnitTest: isLocal && localSettings[workflowCodefulEnabledKey] !== 'true',
             connectionData: connectionData,
           },
         });

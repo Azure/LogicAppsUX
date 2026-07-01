@@ -98,6 +98,7 @@ export const customConnectorResourceGroupNameKey = 'CUSTOM_CONNECTOR_RESOURCE_GR
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
+export const workflowCodefulEnabledKey = 'WORKFLOW_CODEFUL_ENABLED';
 export const workflowAppApiVersion = '2018-11-01';
 export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
@@ -112,8 +113,6 @@ export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
-// Codeful settings
-export const workflowCodefulEnabled = 'WORKFLOW_CODEFUL_ENABLED';
 
 export const WorkflowKind = {
   stateful: 'Stateful',
@@ -223,8 +222,6 @@ export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionC
 // Extension context
 export const customExtensionContext = {
   isCodeful: 'azureLogicAppsStandard.isCodeful',
-  isCodefulWorkflowFile: 'azureLogicAppsStandard.isCodefulWorkflowFile',
-  codefulWorkflowFiles: 'azureLogicAppsStandard.codefulWorkflowFiles',
 } as const;
 export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
 

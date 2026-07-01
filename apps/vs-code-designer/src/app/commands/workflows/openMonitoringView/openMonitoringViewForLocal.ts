@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { assetsFolderName, localSettingsFileName, managementApiPrefix } from '../../../../constants';
+import { assetsFolderName, localSettingsFileName, managementApiPrefix, workflowCodefulEnabledKey } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -127,7 +127,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             isMonitoringView: this.isMonitoringView,
             runId: this.runId,
             hostVersion: ext.extensionVersion,
-            supportsUnitTest: this.isLocal && this.localSettings?.['WORKFLOW_CODEFUL_ENABLED'] !== 'true',
+            supportsUnitTest: this.isLocal && this.localSettings?.[workflowCodefulEnabledKey] !== 'true',
           },
         });
         break;

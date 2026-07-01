@@ -96,21 +96,21 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
 
   const hasValidCodefulWorkflow = validCodefulWorkflowChecks.some((valid) => valid);
   const hasValidCodelessWorkflow = validWorkflowChecks.some((valid) => valid);
-  const isCodefulAgent = await hasCodefulWorkflowSetting(folderPath);
+  const isCodeful = await hasCodefulWorkflowSetting(folderPath);
 
-  if (isCodefulAgent) {
+  if (isCodeful) {
     vscode.commands.executeCommand('setContext', customExtensionContext.isCodeful, true);
   }
 
   // Only return false if none of the possible validation mechanisms are present
-  if (!(hasValidCodelessWorkflow || hasValidCodefulWorkflow || isCodefulAgent)) {
+  if (!(hasValidCodelessWorkflow || hasValidCodefulWorkflow || isCodeful)) {
     return false;
   }
 
   try {
     const hostJsonData = await fse.readFile(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
-    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow || isCodefulAgent;
+    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow || isCodeful;
   } catch {
     return false;
   }

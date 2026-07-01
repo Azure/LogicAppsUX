@@ -53,7 +53,7 @@ import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
-import { isCodefulProject } from '../codeful';
+import { hasCodefulSdkReference } from '../codeful';
 import {
   ensureExtensionBundleHealthy,
   isExtensionBundleDownloadInFlight,
@@ -255,7 +255,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
           const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-          const isCodeful = (await isCodefulProject(projectPath)) ?? false;
+          const isCodeful = (await hasCodefulSdkReference(projectPath)) ?? false;
           const settingsFileContent = getLocalSettingsSchema(true, projectPath, isCodeful);
 
           const hostFileContent: any = {
@@ -767,7 +767,8 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
 
       for (const projectPath of logicAppFolders) {
         if (!fs.existsSync(path.join(projectPath, localSettingsFileName))) {
-          const settingsFileContent = getLocalSettingsSchema(false, projectPath);
+          const isCodeful = (await hasCodefulSdkReference(projectPath)) ?? false;
+          const settingsFileContent = getLocalSettingsSchema(false, projectPath, isCodeful);
           const projectUri: Uri = Uri.file(projectPath);
           await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
         }
