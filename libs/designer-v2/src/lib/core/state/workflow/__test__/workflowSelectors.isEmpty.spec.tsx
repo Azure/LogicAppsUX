@@ -7,18 +7,21 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import type { ReactNode } from 'react';
 import commonConstants from '../../../../common/constants';
-import workflowReducer from '../workflowSlice';
+import workflowReducer, { initialWorkflowState } from '../workflowSlice';
+import type { Operations } from '../workflowInterfaces';
 import { useIsWorkflowEmpty } from '../workflowSelectors';
 
 const placeholderTriggerId = commonConstants.NODE.TYPE.PLACEHOLDER_TRIGGER;
 
-const createTestStore = (operations: Record<string, any>) => {
+const createTestStore = (operations: Record<string, unknown>) => {
   return configureStore({
     reducer: {
       workflow: workflowReducer,
     },
     preloadedState: {
-      workflow: { operations } as any,
+      // Spread the real initial state so the slice shape stays consistent; the selector
+      // only inspects operation ids, so the operation values are intentionally minimal.
+      workflow: { ...initialWorkflowState, operations: operations as Operations },
     },
   });
 };
