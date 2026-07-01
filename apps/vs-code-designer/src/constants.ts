@@ -223,6 +223,7 @@ export const extensionCommand = {
   openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
   sdkLspApplyEdits: 'sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
+  logSubscriptions: 'azureLogicAppsStandard.logSubscriptions',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 

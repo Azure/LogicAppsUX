@@ -147,6 +147,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
+    callWithTelemetryAndErrorHandling(extensionCommand.logSubscriptions, async (actionContext: IActionContext) => {
+      await logSubscriptions(actionContext);
+    });
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await convertToWorkspace(activateContext);
@@ -212,7 +215,6 @@ export async function activate(context: vscode.ExtensionContext) {
     perfStats.loadEndTime = Date.now();
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
-    logSubscriptions(activateContext);
     logExtensionSettings(activateContext);
   });
 }
