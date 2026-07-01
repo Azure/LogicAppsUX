@@ -72,6 +72,7 @@ import type {
   AssertionDefinition,
   Assertion,
   UnitTestDefinition,
+  Connection,
 } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
@@ -532,6 +533,66 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   };
 };
 
+interface McpConnectionData {
+  mcpServerUrl?: string;
+  authenticationType?: string;
+  authParams: Record<string, any>;
+}
+
+// Used by the Consumption inline-Connection path in serializeBuiltInMcpOperation. Consumption cached
+// connections show up in two shapes: flat `properties.parameterValues.{mcpServerUrl,authenticationType,...}`
+// (from the workflow-load reconstructor in connections.ts) or nested
+// `properties.connectionParameters.{mcpServerUrl,authentication}.metadata.value` (from
+// convertMcpConnectionDataToConnection). The helper normalizes both so the caller can build a single
+// Connection block regardless of source.
+export const readBuiltInMcpConnectionData = (connection: Connection | undefined): McpConnectionData | undefined => {
+  const properties = (connection?.properties as any) ?? undefined;
+  if (!properties) {
+    return undefined;
+  }
+
+  const parameterValues = properties.parameterValues;
+  if (parameterValues?.mcpServerUrl) {
+    const authParams: Record<string, any> = {};
+    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+      if (parameterValues[prop] != null) {
+        authParams[prop] = parameterValues[prop];
+      }
+    }
+    return {
+      mcpServerUrl: parameterValues.mcpServerUrl,
+      authenticationType: parameterValues.authenticationType,
+      authParams,
+    };
+  }
+
+  const connectionParameters = properties.connectionParameters;
+  const urlFromMetadata = connectionParameters?.mcpServerUrl?.metadata?.value;
+  if (!urlFromMetadata) {
+    return undefined;
+  }
+
+  const authFromMetadata = connectionParameters?.authentication?.metadata?.value;
+  let authenticationType: string | undefined;
+  const authParams: Record<string, any> = {};
+  if (authFromMetadata && typeof authFromMetadata === 'object') {
+    authenticationType = authFromMetadata.type ?? 'None';
+    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+      if (authFromMetadata[prop] != null) {
+        authParams[prop] = authFromMetadata[prop];
+      }
+    }
+  } else if (typeof authFromMetadata === 'string') {
+    authenticationType = authFromMetadata;
+  }
+
+  return {
+    mcpServerUrl: urlFromMetadata,
+    authenticationType,
+    authParams,
+  };
+};
+
 const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
   if (!operationInfo) {
@@ -547,83 +608,88 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
 
-  // Built-in MCP operations should serialize Connection settings when available.
-  // If we can resolve the connection URL, emit the Connection block.
-  // Otherwise fall back to the parameter-based format to avoid sending an
-  // incomplete Connection object that the backend would reject.
-  const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
   const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
   const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
   const connectionId = connectionReference?.connection?.id;
 
-  // All auth-related property keys that can appear in parameterValues
-
-  let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
-  // Authentication can be a string (e.g., 'None') or an object (e.g., { type: 'ManagedServiceIdentity', audience: '...' })
-  // Collect all auth-related params so we can rebuild the full Authentication object
-  let authenticationType = 'None';
-  let authParams: Record<string, any> = {};
-  const existingAuth = existingConnectionInput?.Authentication;
-  if (typeof existingAuth === 'object' && existingAuth !== null) {
-    authenticationType = existingAuth.type ?? 'None';
-    for (const prop of MCP_AUTH_PROPERTY_KEYS) {
-      if (existingAuth[prop] != null) {
-        authParams[prop] = existingAuth[prop];
-      }
-    }
-  } else {
-    authenticationType = existingAuth ?? 'None';
-  }
-
-  if (connectionId) {
-    try {
-      const connection = await ConnectionService().getConnection(connectionId);
-      const parameterValues = (connection?.properties as any)?.parameterValues;
-      if (parameterValues) {
-        mcpServerUrl = parameterValues.mcpServerUrl ?? mcpServerUrl;
-        authenticationType = parameterValues.authenticationType ?? authenticationType;
-        // Collect all auth-related params from parameterValues
-        authParams = {};
-        for (const prop of MCP_AUTH_PROPERTY_KEYS) {
-          if (parameterValues[prop] != null) {
-            authParams[prop] = parameterValues[prop];
-          }
-        }
-      }
-    } catch {
-      // Keep existing values when connection lookup fails.
-    }
-  }
-
-  // Merge the Connection block with manifest-serialized parameters (e.g., allowedTools, headers)
-  // so user-configured inputs are preserved alongside the connection settings.
   const hasParameters = !!inputParameters?.parameters && Object.keys(inputParameters.parameters).length > 0;
 
+  // Two shapes exist for the tool's inputs:
+  //  - Standard SKU (workflowKind is set): `inputs.connectionReference.connectionName` referring to a key
+  //    in the top-level `connections.agentMcpConnections` block. This is what the Standard backend expects
+  //    (matches the manifest's `referenceKeyFormat: 'mcpconnection'` load path in
+  //    getConnectionReferenceKeyForManifest) and what shipped in the original v2 MCP support (PR #8525).
+  //  - Consumption SKU (no workflowKind): `inputs.Connection.{McpServerUrl,Authentication}` inline. This
+  //    was introduced by PR #8953 which is Consumption-only; Consumption has no agentMcpConnections
+  //    category, so connections must be inlined in the tool.
+  const isStandard = !!rootState.workflow.workflowKind;
+
   let inputs: Record<string, any> | undefined;
-  if (mcpServerUrl) {
-    const connectionBlock: Record<string, any> = {
-      McpServerUrl: mcpServerUrl,
-    };
-    // Build Authentication as an object for non-None auth types (expected by consumption backend)
-    if (authenticationType && authenticationType !== 'None') {
-      connectionBlock.Authentication = { type: authenticationType, ...authParams };
-    } else {
-      connectionBlock.Authentication = authenticationType;
+  if (isStandard) {
+    // Prefer the connection.id's last segment: it matches the key in agentMcpConnections regardless of
+    // whether Redux uniquified the referenceKey when the wizard added the connection.
+    const connectionName = connectionId ? (connectionId.split('/').pop() ?? referenceKey) : referenceKey;
+    if (connectionName) {
+      inputs = {
+        connectionReference: { connectionName },
+        ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
+      };
+    } else if (hasParameters) {
+      inputs = { parameters: { ...inputParameters.parameters } };
     }
-    inputs = {
-      Connection: connectionBlock,
-      ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
-    };
-  } else if (hasParameters) {
-    inputs = {
-      parameters: { ...inputParameters.parameters },
-    };
+  } else {
+    // Consumption: fall back to inline Connection block. Try existing operation inputs first (round-trip),
+    // then look up the connection to fill McpServerUrl / Authentication.
+    const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
+    let mcpServerUrl = existingConnectionInput?.McpServerUrl ?? '';
+    let authenticationType = 'None';
+    let authParams: Record<string, any> = {};
+    const existingAuth = existingConnectionInput?.Authentication;
+    if (typeof existingAuth === 'object' && existingAuth !== null) {
+      authenticationType = existingAuth.type ?? 'None';
+      for (const prop of MCP_AUTH_PROPERTY_KEYS) {
+        if (existingAuth[prop] != null) {
+          authParams[prop] = existingAuth[prop];
+        }
+      }
+    } else {
+      authenticationType = existingAuth ?? 'None';
+    }
+
+    if (connectionId) {
+      try {
+        const connection = await ConnectionService().getConnection(connectionId);
+        const resolved = readBuiltInMcpConnectionData(connection);
+        if (resolved) {
+          mcpServerUrl = resolved.mcpServerUrl ?? mcpServerUrl;
+          authenticationType = resolved.authenticationType ?? authenticationType;
+          authParams = resolved.authParams;
+        }
+      } catch {
+        // Keep existing values when connection lookup fails.
+      }
+    }
+
+    if (mcpServerUrl) {
+      const connectionBlock: Record<string, any> = { McpServerUrl: mcpServerUrl };
+      if (authenticationType && authenticationType !== 'None') {
+        connectionBlock.Authentication = { type: authenticationType, ...authParams };
+      } else {
+        connectionBlock.Authentication = authenticationType;
+      }
+      inputs = {
+        Connection: connectionBlock,
+        ...(hasParameters ? { parameters: { ...inputParameters.parameters } } : {}),
+      };
+    } else if (hasParameters) {
+      inputs = { parameters: { ...inputParameters.parameters } };
+    }
   }
 
   return {
     type: type,
     kind: kind,
-    ...optional('description', operationFromWorkflow.description),
+    ...optional('description', operationFromWorkflow?.description),
     ...optional('inputs', inputs),
   };
 };
