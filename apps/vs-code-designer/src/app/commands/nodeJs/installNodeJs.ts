@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
-import { autoRuntimeDependenciesPathSettingKey, nodeJsDependencyName } from '../../../constants';
+import { nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import {
   downloadAndExtractDependency,
@@ -11,13 +11,14 @@ import {
   getLatestNodeJsVersion,
   getNodeJsBinariesReleaseUrl,
 } from '../../utils/binaries';
-import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
+import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 export async function installNodeJs(context: IActionContext, majorVersion?: string): Promise<void> {
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
-  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const targetDirectory = await ensureRuntimeDependenciesPath();
   context.telemetry.properties.lastStep = 'getLatestNodeJsVersion';
   const version = await getLatestNodeJsVersion(context, majorVersion);
   let nodeJsReleaseUrl: string;
@@ -42,4 +43,5 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
 
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
   await downloadAndExtractDependency(context, nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
+  await setNodeJsCommand();
 }

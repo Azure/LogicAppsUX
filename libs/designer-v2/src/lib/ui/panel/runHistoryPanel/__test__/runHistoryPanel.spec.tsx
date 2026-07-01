@@ -1,5 +1,6 @@
+// @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
@@ -51,6 +52,7 @@ vi.mock('../../../../core/queries/runs', async (importOriginal) => {
     ...original,
     useAllRuns: vi.fn(),
     useRun: vi.fn(),
+    useRunsByIds: vi.fn(),
     useRunsInfiniteQuery: vi.fn(),
   };
 });
@@ -65,9 +67,29 @@ vi.mock('../../../../core/state/panel/panelSlice', async (importOriginal) => {
 
 // Mock child components to simplify
 vi.mock('../runHistoryEntry', () => ({
-  default: ({ runId, onRunSelected }: { runId: string; onRunSelected: (id: string) => void }) => (
+  default: ({
+    runId,
+    onRunSelected,
+    multiSelectEnabled,
+    isMultiSelected,
+    onMultiSelectToggle,
+  }: {
+    runId: string;
+    onRunSelected: (id: string) => void;
+    multiSelectEnabled?: boolean;
+    isMultiSelected?: boolean;
+    onMultiSelectToggle?: (runId: string, shiftKey?: boolean) => void;
+  }) => (
     <div data-testid={`run-entry-${runId}`} onClick={() => onRunSelected(runId)}>
       {runId}
+      {multiSelectEnabled && (
+        <input
+          type="checkbox"
+          data-testid={`multi-select-checkbox-${runId}`}
+          checked={isMultiSelected}
+          onChange={(e) => onMultiSelectToggle?.(runId, e.nativeEvent.shiftKey)}
+        />
+      )}
     </div>
   ),
 }));
@@ -92,14 +114,18 @@ vi.mock('../statusIndicator', () => ({
   default: ({ status }: { status: string }) => <span data-testid={`status-${status}`}>{status}</span>,
 }));
 
-// Mock HostService
+// Mock @microsoft/logic-apps-shared — avoid importOriginal() to prevent transitive
+// navigator access from designer-ui barrel exports before jsdom is ready.
+// Use vi.hoisted to define the mock before vi.mock hoisting.
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
+  // Polyfill navigator before the real module loads (isFirefox accesses it at top-level)
+  if (typeof globalThis.navigator === 'undefined') {
+    Object.defineProperty(globalThis, 'navigator', { value: { userAgent: '', platform: '' }, writable: true });
+  }
   const original = (await importOriginal()) as object;
   return {
     ...original,
-    HostService: vi.fn(() => ({
-      openRun: vi.fn(),
-    })),
+    HostService: vi.fn(() => ({ openRun: vi.fn() })),
   };
 });
 
@@ -170,8 +196,9 @@ describe('RunHistoryPanel', () => {
     (DesignerViewSelectors.useWorkflowHasAgentLoop as Mock).mockReturnValue(false);
     (RunsQueries.useAllRuns as Mock).mockReturnValue(mockRuns);
     (RunsQueries.useRun as Mock).mockReturnValue({ data: null, isFetching: false, refetch: mockRunRefetch });
+    (RunsQueries.useRunsByIds as Mock).mockReturnValue({ data: [], isFetching: false, isError: false, refetch: vi.fn() });
     (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
-      data: { pages: [mockRuns] },
+      data: { pages: [{ runs: mockRuns }] },
       error: null,
       isLoading: false,
       isFetching: false,
@@ -232,7 +259,17 @@ describe('RunHistoryPanel', () => {
     });
 
     it('should display "No runs found" when filtered list is empty', () => {
-      (RunsQueries.useAllRuns as Mock).mockReturnValue([]);
+      (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
+        data: { pages: [{ runs: [] }] },
+        error: null,
+        isLoading: false,
+        isFetching: false,
+        isRefetching: false,
+        isFetchingNextPage: false,
+        hasNextPage: false,
+        refetch: mockRefetch,
+        fetchNextPage: vi.fn(),
+      });
       renderPanel();
       expect(screen.getByText('No runs found')).toBeInTheDocument();
     });
@@ -258,12 +295,12 @@ describe('RunHistoryPanel', () => {
 
     it('should hide filter container when toggle is clicked again', () => {
       renderPanel();
-      const toggleButton = screen.getByRole('button', { name: 'Toggle filters' });
 
-      fireEvent.click(toggleButton);
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle filters' }));
       expect(screen.getByText('Status')).toBeInTheDocument();
 
-      fireEvent.click(toggleButton);
+      // Re-query the button after re-render (FilterButton is an inline component that remounts)
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle filters' }));
       expect(screen.queryByText('Status')).not.toBeInTheDocument();
     });
   });
@@ -320,8 +357,8 @@ describe('RunHistoryPanel', () => {
       const customOption = screen.getByText('Custom range');
       fireEvent.click(customOption);
 
-      expect(screen.getByText('From')).toBeInTheDocument();
-      expect(screen.getByText('To')).toBeInTheDocument();
+      expect(screen.getByText('Start')).toBeInTheDocument();
+      expect(screen.getByText('End')).toBeInTheDocument();
       expect(screen.getAllByPlaceholderText('Select date')).toHaveLength(2);
       expect(screen.getAllByPlaceholderText('Select time')).toHaveLength(2);
     });
@@ -577,7 +614,7 @@ describe('RunHistoryPanel', () => {
 
     it('should disable refresh button when fetching', () => {
       (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
-        data: { pages: [mockRuns] },
+        data: { pages: [{ runs: mockRuns }] },
         error: null,
         isLoading: false,
         isFetching: true,
@@ -646,7 +683,7 @@ describe('RunHistoryPanel', () => {
     it('should show load more button when there are more pages', () => {
       const fetchNextPage = vi.fn();
       (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
-        data: { pages: [mockRuns] },
+        data: { pages: [{ runs: mockRuns }] },
         error: null,
         isLoading: false,
         isFetching: false,
@@ -695,6 +732,215 @@ describe('RunHistoryPanel', () => {
 
     it('should have correct week duration', () => {
       expect(WEEK_MS).toBe(604800000);
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────
+  // MARK: Multi-select
+  // ──────────────────────────────────────────────────────────
+
+  describe('Multi-select', () => {
+    it('should render multi-select toggle button', () => {
+      renderPanel();
+      expect(screen.getByRole('button', { name: 'Toggle multi-select' })).toBeInTheDocument();
+    });
+
+    it('should not show checkboxes by default', () => {
+      renderPanel();
+      expect(screen.queryByTestId(/^multi-select-checkbox-/)).not.toBeInTheDocument();
+    });
+
+    it('should show checkboxes when multi-select is enabled', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      for (const run of mockRuns) {
+        expect(screen.getByTestId(`multi-select-checkbox-${run.id}`)).toBeInTheDocument();
+      }
+    });
+
+    it('should show bulk action bar when multi-select is enabled', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      expect(screen.getByText('0 selected')).toBeInTheDocument();
+    });
+
+    it('should mark toggle button as pressed when multi-select is enabled', () => {
+      renderPanel();
+      const toggleBtn = screen.getByRole('button', { name: 'Toggle multi-select' });
+      expect(toggleBtn).toHaveAttribute('aria-pressed', 'false');
+
+      fireEvent.click(toggleBtn);
+      expect(screen.getByRole('button', { name: 'Toggle multi-select' })).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('should update selected count when a checkbox is clicked', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      expect(screen.getByText('0 selected')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId(`multi-select-checkbox-${mockRuns[0].id}`));
+      expect(screen.getByText('1 selected')).toBeInTheDocument();
+    });
+
+    it('should deselect a run when its checkbox is clicked again', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+
+      fireEvent.click(screen.getByTestId(`multi-select-checkbox-${mockRuns[0].id}`));
+      expect(screen.getByText('1 selected')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId(`multi-select-checkbox-${mockRuns[0].id}`));
+      expect(screen.getByText('0 selected')).toBeInTheDocument();
+    });
+
+    it('should select all runs when select all button is clicked', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+
+      fireEvent.click(screen.getByRole('button', { name: 'Select all' }));
+      expect(screen.getByText(`${mockRuns.length} selected`)).toBeInTheDocument();
+    });
+
+    it('should deselect all runs when deselect all button is clicked', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+
+      fireEvent.click(screen.getByRole('button', { name: 'Select all' }));
+      expect(screen.getByText(`${mockRuns.length} selected`)).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Deselect all' }));
+      expect(screen.getByText('0 selected')).toBeInTheDocument();
+    });
+
+    it('should select multiple runs individually', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+
+      fireEvent.click(screen.getByTestId(`multi-select-checkbox-${mockRuns[0].id}`));
+      fireEvent.click(screen.getByTestId(`multi-select-checkbox-${mockRuns[1].id}`));
+      expect(screen.getByText('2 selected')).toBeInTheDocument();
+    });
+
+    it('should disable retry button when no runs are selected', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      expect(screen.getByRole('button', { name: 'Retry' })).toBeDisabled();
+    });
+
+    it('should disable cancel button when no runs are selected', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    });
+
+    it('should disable copy button when no runs are selected', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      expect(screen.getByRole('button', { name: 'Copy run IDs' })).toBeDisabled();
+    });
+
+    it('should enable copy button when runs are selected', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      fireEvent.click(screen.getByTestId(`multi-select-checkbox-${mockRuns[0].id}`));
+      expect(screen.getByRole('button', { name: 'Copy run IDs' })).not.toBeDisabled();
+    });
+
+    it('should disable retry when only draft runs are selected', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      // run-draft is a draft run
+      fireEvent.click(screen.getByTestId('multi-select-checkbox-run-draft'));
+      expect(screen.getByRole('button', { name: 'Retry' })).toBeDisabled();
+    });
+
+    it('should disable cancel when no running runs are selected', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      // run-1 is Succeeded, not Running
+      fireEvent.click(screen.getByTestId(`multi-select-checkbox-${mockRuns[0].id}`));
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    });
+
+    it('should enable cancel when a running run is selected', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      // run-3 is Running
+      fireEvent.click(screen.getByTestId('multi-select-checkbox-run-3'));
+      expect(screen.getByRole('button', { name: 'Cancel' })).not.toBeDisabled();
+    });
+
+    it('should show partial warning tooltip for retry when mixed selection', () => {
+      renderPanel();
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle multi-select' }));
+      // Select all — mix of draft and non-draft
+      fireEvent.click(screen.getByRole('button', { name: 'Select all' }));
+      // The retry button should show partial warning (6 of 7 eligible since 1 is draft)
+      const retryButton = screen.getByRole('button', { name: /Retry \(\d+ of \d+ eligible\)/ });
+      expect(retryButton).toBeInTheDocument();
+      expect(retryButton).not.toBeDisabled();
+    });
+  });
+
+  // ──────────────────────────────────────────────────────────
+  // MARK: Comma-separated run ID search
+  // ──────────────────────────────────────────────────────────
+
+  describe('Comma-separated run ID search', () => {
+    // Must match /^\d{29}CU\d{2,8}$/ — 29 digits + CU + 2-8 digits
+    const validRunId = '08585131767789969671234567890CU00';
+
+    it('should accept a single valid run ID', () => {
+      renderPanel();
+      const searchBox = screen.getByPlaceholderText('Enter run ID');
+      fireEvent.change(searchBox, { target: { value: validRunId } });
+      expect(screen.queryByText('Enter a valid run identifier')).not.toBeInTheDocument();
+    });
+
+    it('should accept comma-separated valid run IDs', () => {
+      renderPanel();
+      const searchBox = screen.getByPlaceholderText('Enter run ID');
+      fireEvent.change(searchBox, { target: { value: `${validRunId}, ${validRunId}` } });
+      expect(screen.queryByText('Enter a valid run identifier')).not.toBeInTheDocument();
+    });
+
+    it('should show error when one ID in comma-separated list is invalid', () => {
+      renderPanel();
+      const searchBox = screen.getByPlaceholderText('Enter run ID');
+      fireEvent.change(searchBox, { target: { value: `${validRunId}, invalid-id` } });
+      expect(screen.getByText('Enter a valid run identifier')).toBeInTheDocument();
+    });
+
+    it('should hide load more button when filtering by run IDs', () => {
+      const fetchNextPage = vi.fn();
+      (RunsQueries.useRunsInfiniteQuery as Mock).mockReturnValue({
+        data: { pages: [{ runs: mockRuns }] },
+        error: null,
+        isLoading: false,
+        isFetching: false,
+        isRefetching: false,
+        isFetchingNextPage: false,
+        hasNextPage: true,
+        refetch: mockRefetch,
+        fetchNextPage,
+      });
+      (RunsQueries.useRunsByIds as Mock).mockReturnValue({
+        data: [mockRuns[0]],
+        isFetching: false,
+        isError: false,
+        refetch: vi.fn(),
+      });
+      renderPanel();
+
+      // Load more should be visible before filtering
+      expect(screen.getByText('Load more')).toBeInTheDocument();
+
+      // Search for a specific run ID
+      const searchBox = screen.getByPlaceholderText('Enter run ID');
+      fireEvent.change(searchBox, { target: { value: validRunId } });
+
+      // Load more should be hidden now
+      expect(screen.queryByText('Load more')).not.toBeInTheDocument();
     });
   });
 });

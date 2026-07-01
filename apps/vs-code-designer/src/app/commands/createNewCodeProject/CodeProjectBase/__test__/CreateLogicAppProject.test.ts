@@ -150,7 +150,7 @@ describe('createLogicAppProject', () => {
     // Logic app folder doesn't exist yet
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
-    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
+    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath, mockContext);
     expect(createLogicAppVsCodeContents).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
     expect(createLocalConfigurationFiles).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
   });
@@ -197,7 +197,7 @@ describe('createLogicAppProject', () => {
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
     // Should still create logic app files since it's not a valid logic app
-    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
+    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(mockOptions, logicAppFolderPath, mockContext);
     expect(createLogicAppVsCodeContents).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
     expect(createLocalConfigurationFiles).toHaveBeenCalledWith(mockOptions, logicAppFolderPath);
   });
@@ -510,7 +510,7 @@ describe('createLogicAppProject', () => {
 
       // Verify the logic app folder path was constructed correctly
       const expectedPath = path.join(workspaceRootFolder, 'TestLogicApp');
-      expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(expect.anything(), expectedPath);
+      expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(expect.anything(), expectedPath, mockContext);
     });
 
     it('should verify workspace file path is set correctly', async () => {
@@ -618,7 +618,8 @@ describe('createLogicAppProject', () => {
         expect.objectContaining({
           logicAppName: longName,
         }),
-        expect.stringContaining(longName)
+        expect.stringContaining(longName),
+        mockContext
       );
     });
 
@@ -835,14 +836,14 @@ describe('createLogicAppProject - Integration Tests', () => {
         // Create VS Code config files (call parent's private methods aren't accessible, so recreate)
         const vscodePath = path.join(functionFolderPath, '.vscode');
         await fse.ensureDir(vscodePath);
-        await fse.writeJSON(path.join(vscodePath, 'extensions.json'), {
+        await fse.writeJson(path.join(vscodePath, 'extensions.json'), {
           recommendations: ['ms-azuretools.vscode-azurefunctions', 'ms-dotnettools.csharp'],
         });
-        await fse.writeJSON(path.join(vscodePath, 'settings.json'), {
+        await fse.writeJson(path.join(vscodePath, 'settings.json'), {
           'azureFunctions.projectRuntime': '~4',
           'azureFunctions.projectLanguage': 'C#',
         });
-        await fse.writeJSON(path.join(vscodePath, 'tasks.json'), { version: '2.0.0', tasks: [] });
+        await fse.writeJson(path.join(vscodePath, 'tasks.json'), { version: '2.0.0', tasks: [] });
       },
     };
   }
@@ -873,7 +874,7 @@ describe('createLogicAppProject - Integration Tests', () => {
 
     // Create workspace directory and workspace file
     await fse.ensureDir(workspaceRootFolder);
-    await fse.writeJSON(workspaceFilePath, { folders: [], settings: {} });
+    await fse.writeJson(workspaceFilePath, { folders: [], settings: {} });
 
     // Mock VS Code workspace
     (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
@@ -891,14 +892,14 @@ describe('createLogicAppProject - Integration Tests', () => {
 
     // Mock createLocalConfigurationFiles with a custom implementation that creates files without templates
     vi.mocked(createLocalConfigurationFiles).mockImplementation(async (ctx, logicAppPath) => {
-      await fse.writeJSON(path.join(logicAppPath, hostFileName), {
+      await fse.writeJson(path.join(logicAppPath, hostFileName), {
         version: '2.0',
         extensionBundle: {
           id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
           version: '[1.*, 2.0.0)',
         },
       });
-      await fse.writeJSON(path.join(logicAppPath, 'local.settings.json'), {
+      await fse.writeJson(path.join(logicAppPath, 'local.settings.json'), {
         IsEncrypted: false,
         Values: {
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
@@ -932,18 +933,18 @@ local.settings.json`
       await fse.ensureDir(vscodePath);
 
       // Create simple valid files instead of copying from templates
-      await fse.writeJSON(path.join(vscodePath, 'extensions.json'), {
-        recommendations: ['ms-azuretools.vscode-azurelogicapps', 'ms-vscode-remote.remote-containers'],
+      await fse.writeJson(path.join(vscodePath, 'extensions.json'), {
+        recommendations: ['ms-azuretools.vscode-azurelogicapps'],
       });
-      await fse.writeJSON(path.join(vscodePath, 'tasks.json'), {
+      await fse.writeJson(path.join(vscodePath, 'tasks.json'), {
         version: '2.0.0',
         tasks: [],
       });
-      await fse.writeJSON(path.join(vscodePath, 'launch.json'), {
+      await fse.writeJson(path.join(vscodePath, 'launch.json'), {
         version: '0.2.0',
         configurations: [],
       });
-      await fse.writeJSON(path.join(vscodePath, 'settings.json'), {
+      await fse.writeJson(path.join(vscodePath, 'settings.json'), {
         'azureLogicAppsStandard.deploySubpath': '.',
         'azureLogicAppsStandard.projectLanguage': 'JavaScript',
         'azureLogicAppsStandard.funcVersion': '~4',
@@ -984,7 +985,7 @@ local.settings.json`
       expect(workflowExists).toBe(true);
 
       // Verify workflow.json content
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
       expect(workflowContent).toHaveProperty('definition');
       expect(workflowContent.definition).toHaveProperty('$schema');
       expect(workflowContent.definition.$schema).toContain('Microsoft.Logic');
@@ -1012,7 +1013,7 @@ local.settings.json`
       expect(hostExists).toBe(true);
 
       // Verify host.json content
-      const hostContent = await fse.readJSON(hostJsonPath);
+      const hostContent = await fse.readJson(hostJsonPath);
       expect(hostContent).toHaveProperty('version');
       expect(hostContent.version).toBe('2.0');
       expect(hostContent).toHaveProperty('extensionBundle');
@@ -1039,7 +1040,7 @@ local.settings.json`
       expect(localSettingsExists).toBe(true);
 
       // Verify local.settings.json content
-      const localSettings = await fse.readJSON(localSettingsPath);
+      const localSettings = await fse.readJson(localSettingsPath);
       expect(localSettings).toHaveProperty('IsEncrypted');
       expect(localSettings.IsEncrypted).toBe(false);
       expect(localSettings).toHaveProperty('Values');
@@ -1076,7 +1077,7 @@ local.settings.json`
       expect(tasksExists).toBe(true);
 
       // Verify launch.json content
-      const launchContent = await fse.readJSON(launchJsonPath);
+      const launchContent = await fse.readJson(launchJsonPath);
       expect(launchContent).toHaveProperty('version');
       expect(launchContent).toHaveProperty('configurations');
       expect(Array.isArray(launchContent.configurations)).toBe(true);
@@ -1305,7 +1306,7 @@ local.settings.json`
       const settingsExists = await fse.pathExists(settingsPath);
       expect(settingsExists).toBe(true);
 
-      const settingsContent = await fse.readJSON(settingsPath);
+      const settingsContent = await fse.readJson(settingsPath);
       expect(settingsContent).toHaveProperty('azureFunctions.projectRuntime');
     });
 
@@ -1630,7 +1631,7 @@ local.settings.json`
       expect(workflowExists).toBe(true);
 
       // Verify workflow contains rules engine specific configuration
-      const workflowContent = await fse.readJSON(workflowJsonPath);
+      const workflowContent = await fse.readJson(workflowJsonPath);
       expect(workflowContent).toHaveProperty('definition');
       expect(workflowContent.definition).toHaveProperty('$schema');
     });
@@ -1651,7 +1652,7 @@ local.settings.json`
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
       // Verify workspace file was updated
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       expect(workspaceContent).toHaveProperty('folders');
       expect(Array.isArray(workspaceContent.folders)).toBe(true);
 
@@ -1688,7 +1689,7 @@ local.settings.json`
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
       // Verify workspace file contains both logic app and functions folders
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
 
       const logicAppFolder = workspaceContent.folders.find((f: any) => f.name === 'TestLogicApp');
       expect(logicAppFolder).toBeDefined();

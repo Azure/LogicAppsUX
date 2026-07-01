@@ -11,7 +11,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import { isString } from '@microsoft/logic-apps-shared';
-import { binariesExist } from '../binaries';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 /**
@@ -38,15 +37,20 @@ export async function getLocalNodeJsVersion(context: IActionContext): Promise<st
  */
 export function getNpmCommand(): string {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
-  const binaries = binariesExist(nodeJsDependencyName);
   let command = ext.npmCliPath;
-  if (binaries) {
-    // windows the executable is at root folder, linux & macos its in the bin
-    command = path.join(nodeJsBinariesPath, ext.npmCliPath);
-    if (process.platform !== Platform.windows) {
-      const nodeSubFolder = getNodeSubFolder(command);
-      command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
+  if (!binariesLocation) {
+    return command;
+  }
+  const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
+  if (fs.existsSync(nodeJsBinariesPath)) {
+    // windows the executable is at root folder, linux & macos its in <node-v*>/bin
+    if (process.platform === Platform.windows) {
+      command = path.join(nodeJsBinariesPath, ext.npmCliPath);
+    } else {
+      const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
+      if (nodeSubFolder) {
+        command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
+      }
     }
   }
   return command;
@@ -56,29 +60,40 @@ export function getNpmCommand(): string {
  * Get the nodejs binaries executable or use the system nodejs executable.
  */
 export function getNodeJsCommand(): string {
-  const command = getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
-  return command;
+  return getGlobalSetting<string>(nodeJsBinaryPathSettingKey) ?? ext.nodeJsCliPath;
 }
 
 export async function setNodeJsCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
-  const binariesExist = fs.existsSync(nodeJsBinariesPath);
   let command = ext.nodeJsCliPath;
-  if (binariesExist) {
-    // windows the executable is at root folder, linux & macos its in the bin
-    command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
-    if (process.platform !== Platform.windows) {
-      const nodeSubFolder = getNodeSubFolder(command);
-      command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
-
-      fs.chmodSync(nodeJsBinariesPath, 0o777);
+  if (binariesLocation) {
+    const nodeJsBinariesPath = path.join(binariesLocation, nodeJsDependencyName);
+    const binariesExist = fs.existsSync(nodeJsBinariesPath);
+    if (binariesExist) {
+      // windows the executable is at root folder, linux & macos its in <node-v*>/bin
+      if (process.platform === Platform.windows) {
+        command = resolveNodeJsCommand(nodeJsBinariesPath);
+      } else {
+        const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
+        if (nodeSubFolder) {
+          command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
+          fs.chmodSync(nodeJsBinariesPath, 0o777);
+        }
+      }
     }
   }
   await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
 }
 
-function getNodeSubFolder(directoryPath: string): string | null {
+/**
+ * Resolves the preferred Node.js command on Windows while normalizing the .exe suffix.
+ */
+export function resolveNodeJsCommand(nodeJsBinariesPath: string): string {
+  const executableName = ext.nodeJsCliPath.toLowerCase().endsWith('.exe') ? ext.nodeJsCliPath : `${ext.nodeJsCliPath}.exe`;
+  return path.join(nodeJsBinariesPath, executableName);
+}
+
+function getNodeSubFolder(directoryPath: string): string | undefined {
   try {
     const items = fs.readdirSync(directoryPath);
 
@@ -91,8 +106,9 @@ function getNodeSubFolder(directoryPath: string): string | null {
       }
     }
   } catch (error) {
-    console.error('Error:', error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error:', errorMessage);
   }
 
-  return ''; // No 'node' subfolders found
+  return undefined;
 }

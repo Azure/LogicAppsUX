@@ -19,6 +19,7 @@ export interface ConnectorWithSwagger {
 export interface ConnectionCreationInfo {
   connectionParametersSet?: ConnectionParameterSetValues;
   connectionParameters?: Record<string, any>;
+  operationParameterValues?: Record<string, any>;
   alternativeParameterValues?: Record<string, any>;
   displayName?: string;
   features?: ConnectionFeatureType;
@@ -60,6 +61,7 @@ export interface IConnectionService {
   setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
   getAuthSetHideKeys?(): string[];
+  getSubscriptionLocationWebUrl?(): string;
 }
 
 let service: IConnectionService;

@@ -2,6 +2,7 @@ export interface DesignerViewState {
   showMinimap?: boolean;
   clampPan?: boolean;
   showDeleteModalNodeId?: string;
+  showMultiSelectDeleteModal?: boolean;
   nodeContextMenuData?: NodeContextMenuObject;
   edgeContextMenuData?: EdgeContextMenuObject;
 }

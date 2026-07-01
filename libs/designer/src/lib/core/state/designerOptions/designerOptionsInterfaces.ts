@@ -56,7 +56,6 @@ export interface DesignerOptionsState {
     integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
-  showConnectionsPanel?: boolean;
   showEdgeDrawing?: boolean;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;

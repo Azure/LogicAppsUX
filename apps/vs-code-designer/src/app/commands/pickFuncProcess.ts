@@ -33,7 +33,9 @@ import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { publishCodefulProject } from './publishCodefulProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
+import { isCodefulProject } from '../utils/codeful';
 import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
@@ -88,9 +90,22 @@ export async function pickFuncProcessInternal(
     throw new UserCancelledError('preDebugValidate');
   }
 
-  await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
-
+  // Stop any previous func process BEFORE building to avoid file lock errors
+  // (e.g. GenerateFunctionMetadata failing on obj/Debug/net8/WorkerExtensions)
   await waitForPrevFuncTaskToStop(workspaceFolder);
+
+  if (await isCodefulProject(projectPath)) {
+    // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
+    // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
+    // `AfterTargets="Build;Publish"`. Running an explicit Release `publish` first would just
+    // duplicate the clean+build cycle and its output would be overwritten by the subsequent
+    // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
+    // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
+    await publishCodefulProject(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+  } else {
+    await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
+  }
+
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 

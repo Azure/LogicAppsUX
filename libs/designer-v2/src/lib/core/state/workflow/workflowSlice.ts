@@ -16,7 +16,7 @@ import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
-import { addNewEdge } from '../../parsers/restructuringHelpers';
+import { addNewEdge, removeEdge, reassignEdgeSources, reassignEdgeTargets } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { AddSettingsPayload, NodeOperation } from '../operation/operationMetadataSlice';
@@ -59,6 +59,13 @@ export interface AddImplicitForeachPayload {
   operation: any;
 }
 
+export interface WrapNodesInScopePayload {
+  scopeId: string;
+  nodeIds: string[];
+  graphId: string;
+  operation: any;
+}
+
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   workflowKind: undefined,
@@ -83,6 +90,7 @@ export const initialWorkflowState: WorkflowState = {
   timelineRepetitionIndex: 0,
   timelineRepetitionArray: [],
   flowErrors: {},
+  copilotModifiedNodeIds: {},
 };
 
 export const workflowSlice = createSlice({
@@ -164,6 +172,146 @@ export const workflowSlice = createSlice({
         state.nodesMetadata,
         state
       );
+    },
+    wrapNodesInScope: (state: WorkflowState, action: PayloadAction<WrapNodesInScopePayload>) => {
+      if (!state.graph) {
+        return;
+      }
+      const { scopeId, nodeIds, graphId, operation } = action.payload;
+      const currentGraph = getWorkflowNodeFromGraphState(state, graphId) as WorkflowNode;
+      if (!currentGraph || nodeIds.length === 0) {
+        return;
+      }
+
+      const firstNodeId = nodeIds[0];
+      const parentIds = getImmediateSourceNodeIds(currentGraph, firstNodeId);
+      const parentId = parentIds.length === 1 ? parentIds[0] : undefined;
+
+      // Insert the new scope node where the first selected node currently sits.
+      addNodeToWorkflow(
+        { nodeId: scopeId, operation, relationshipIds: { graphId, parentId, childId: firstNodeId } } as AddNodePayload,
+        currentGraph,
+        state.nodesMetadata,
+        state
+      );
+
+      const scopeNode = getWorkflowNodeFromGraphState(state, scopeId) as WorkflowNode;
+      if (!scopeNode) {
+        return;
+      }
+
+      // Determine the container the selected nodes should move into.
+      const operationType = (operation.type ?? '').toLowerCase();
+      let targetGraph = scopeNode;
+      let targetGraphId = scopeId;
+      // For plain scopes the actions are direct children, parented off the scope header.
+      let previousNodeId: string | undefined = scopeNode.children?.[0]?.id;
+      if (operationType === 'if') {
+        targetGraphId = `${scopeId}-actions`;
+        targetGraph = getWorkflowNodeFromGraphState(state, targetGraphId) as WorkflowNode;
+        // Chain the first moved node off the subgraph header so it lays out inside the
+        // "true" branch (below the header) instead of beside the true/false branch labels.
+        previousNodeId = `${targetGraphId}-#subgraph`;
+      }
+
+      if (!targetGraph) {
+        return;
+      }
+
+      // Pre-compute each selected node's selected parents from the original graph
+      // BEFORE any moves, so we can preserve parallel branch structure.
+      const selected = new Set(nodeIds);
+      const selectedParentsMap = new Map<string, string[]>();
+      for (const nid of nodeIds) {
+        selectedParentsMap.set(
+          nid,
+          getImmediateSourceNodeIds(currentGraph, nid).filter((p) => selected.has(p))
+        );
+      }
+
+      const scopeHeaderId = previousNodeId;
+
+      // Move each selected node (in topological order) into the scope container.
+      for (const nodeId of nodeIds) {
+        const currentNode = getWorkflowNodeFromGraphState(state, nodeId);
+        if (!currentNode) {
+          continue;
+        }
+
+        const selParents = selectedParentsMap.get(nodeId) ?? [];
+
+        if (selParents.length === 0) {
+          // Entry node (no selected parent) — use moveNodeInWorkflow normally.
+          moveNodeInWorkflow(
+            currentNode,
+            currentGraph,
+            targetGraph,
+            { graphId: targetGraphId, parentId: scopeHeaderId },
+            state.nodesMetadata,
+            state
+          );
+        } else {
+          // Non-entry node — manually remove from old graph and add to scope
+          // with correct edges so parallel branch structure is preserved.
+
+          // --- Remove from old graph ---
+          const currentRunAfter = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter;
+          const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
+          const isOldRoot = getRecordEntry(state.nodesMetadata, nodeId)?.isRoot;
+
+          if (isOldRoot) {
+            const childIds = (currentGraph.edges ?? []).filter((e) => e.source === nodeId).map((e) => e.target);
+            for (const cid of childIds) {
+              const childMeta = getRecordEntry(state.nodesMetadata, cid);
+              if (childMeta) {
+                childMeta.isRoot = true;
+              }
+              delete (getRecordEntry(state.operations, cid) as any)?.runAfter;
+            }
+          }
+
+          if (multipleParents) {
+            const childEdge = (currentGraph.edges ?? []).find((e) => e.source === nodeId);
+            if (childEdge) {
+              reassignEdgeTargets(state, nodeId, childEdge.target, currentGraph);
+              removeEdge(state, nodeId, childEdge.target, currentGraph);
+            } else {
+              for (const pid of Object.keys(currentRunAfter ?? {})) {
+                removeEdge(state, pid, nodeId, currentGraph);
+              }
+            }
+          } else {
+            const oldParentId = (currentGraph.edges ?? []).find((e) => e.target === nodeId)?.source ?? '';
+            const allowRunAfterTrigger = isA2AWorkflow(state);
+            const isAfterTrigger = getRecordEntry(state.nodesMetadata, oldParentId)?.isTrigger;
+            const shouldAddRA = allowRunAfterTrigger || (!isOldRoot && !isAfterTrigger);
+            reassignEdgeSources(state, nodeId, oldParentId, currentGraph, shouldAddRA);
+            removeEdge(state, oldParentId, nodeId, currentGraph);
+          }
+
+          currentGraph.children = (currentGraph.children ?? []).filter((c) => c.id !== nodeId);
+          if (state.nodesMetadata[currentGraph.id]) {
+            state.nodesMetadata[currentGraph.id].actionCount = (state.nodesMetadata[currentGraph.id].actionCount ?? 1) - 1;
+          }
+
+          // --- Add to scope graph ---
+          targetGraph.children = [...(targetGraph.children ?? []), currentNode];
+
+          const newGraphId = targetGraph.id;
+          const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
+          state.nodesMetadata[nodeId] = {
+            ...getRecordEntry(state.nodesMetadata, nodeId),
+            graphId: newGraphId,
+            parentNodeId,
+            isRoot: false,
+          };
+
+          // Add edges from each selected parent already in the scope.
+          for (const selParent of selParents) {
+            addNewEdge(state, selParent, nodeId, targetGraph, true);
+          }
+        }
+      }
     },
     pasteNode: (
       state: WorkflowState,
@@ -816,6 +964,16 @@ export const workflowSlice = createSlice({
     setFlowErrors: (state, action: PayloadAction<{ flowErrors: Record<string, string[]> }>) => {
       state.flowErrors = action.payload.flowErrors;
     },
+    setCopilotModifiedNodeIds: (state, action: PayloadAction<string[]>) => {
+      const nodeIds: Record<string, boolean> = {};
+      for (const nodeId of action.payload) {
+        nodeIds[nodeId] = true;
+      }
+      state.copilotModifiedNodeIds = nodeIds;
+    },
+    clearCopilotModifiedNodeIds: (state) => {
+      state.copilotModifiedNodeIds = {};
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -832,7 +990,10 @@ export const workflowSlice = createSlice({
         state.changeCount += 1;
       }
     });
-    builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(resetWorkflowState, (state) => ({
+      ...initialWorkflowState,
+      copilotModifiedNodeIds: state.copilotModifiedNodeIds,
+    }));
     builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
       const { nodeId, inputs, outputs } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -895,6 +1056,7 @@ export const workflowSlice = createSlice({
         addAgentTool,
         addMcpServer,
         addImplicitForeachNode,
+        wrapNodesInScope,
         pasteScopeNode,
         setNodeDescription,
         updateRunAfter,
@@ -920,6 +1082,7 @@ export const {
   setRunInstance,
   addNode,
   addImplicitForeachNode,
+  wrapNodesInScope,
   pasteNode,
   pasteScopeNode,
   moveNode,
@@ -961,6 +1124,8 @@ export const {
   updateAgenticMetadata,
   setFocusElement,
   clearFocusElement,
+  setCopilotModifiedNodeIds,
+  clearCopilotModifiedNodeIds,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

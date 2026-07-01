@@ -49,10 +49,6 @@ export const useShowChatBot = () => {
   return useSelector((state: RootState) => state.workflowLoader.showChatBot);
 };
 
-export const useShowConnectionsPanel = () => {
-  return useSelector((state: RootState) => state.workflowLoader?.showConnectionsPanel ?? false);
-};
-
 export const useShowEdgeDrawing = () => {
   return useSelector((state: RootState) => state.workflowLoader?.showEdgeDrawing ?? false);
 };
@@ -67,6 +63,10 @@ export const useSuppressDefaultNodeSelect = () => {
 
 export const useShowPerformanceDebug = () => {
   return useSelector((state: RootState) => state.workflowLoader.showPerformanceDebug);
+};
+
+export const useIsFirstDesignerV2Load = () => {
+  return useSelector((state: RootState) => state.workflowLoader.isFirstDesignerV2Load);
 };
 
 export const useStringOverrides = () => {

@@ -186,9 +186,9 @@ export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string
   return getProjectTemplateKey(runtimeInfo.targetFramework, isIsolated);
 }
 
-export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): Promise<string> {
+export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): Promise<string | null> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const sdkVersionFolder = path.join(binariesLocation, dotnetDependencyName, 'sdk');
+  const sdkVersionFolder = binariesLocation ? path.join(binariesLocation, dotnetDependencyName, 'sdk') : undefined;
 
   if (isNullOrUndefined(majorVersion)) {
     try {
@@ -202,7 +202,7 @@ export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): 
     }
   }
 
-  const files = fs.existsSync(sdkVersionFolder) ? fs.readdirSync(sdkVersionFolder, { withFileTypes: true }) : null;
+  const files = sdkVersionFolder && fs.existsSync(sdkVersionFolder) ? fs.readdirSync(sdkVersionFolder, { withFileTypes: true }) : null;
   if (Array.isArray(files)) {
     const sdkFolders = files.filter((file) => file.isDirectory()).map((file) => file.name);
     const version = semver.maxSatisfying(sdkFolders, `~${majorVersion}`);
@@ -219,15 +219,18 @@ export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): 
  * Get the nodejs binaries executable or use the system nodejs executable.
  */
 export function getDotNetCommand(): string {
-  const command = getGlobalSetting<string>(dotNetBinaryPathSettingKey);
-  return command;
+  return getGlobalSetting<string>(dotNetBinaryPathSettingKey) ?? ext.dotNetCliPath;
 }
 
 export async function setDotNetCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  let command = ext.dotNetCliPath;
+  if (!binariesLocation) {
+    await updateGlobalSetting<string>(dotNetBinaryPathSettingKey, command);
+    return;
+  }
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const binariesExist = fs.existsSync(dotNetBinariesPath);
-  let command = ext.dotNetCliPath;
   if (binariesExist) {
     // Explicit executable for tasks.json
     command =

@@ -55,6 +55,7 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
   const options: vscode.WebviewOptions & vscode.WebviewPanelOptions = {
     enableScripts: true,
     retainContextWhenHidden: true,
+    localResourceRoots: [vscode.Uri.file(path.join(ext.context.extensionPath, 'vs-code-react'))],
   };
 
   const panel = vscode.window.createWebviewPanel('CreateWorkspace', panelName, vscode.ViewColumn.Active, options);
@@ -65,27 +66,49 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
   };
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
+  let isCreateInProgress = false;
 
   // Standard message handlers
   const messageHandlers = {
     [ExtensionCommand.initialize]: async () => {
+      const initData = {
+        apiVersion,
+        project: projectName,
+        hostVersion: ext.extensionVersion,
+        separator: path.sep,
+        platform: os.platform(),
+        ...extraInitializeData,
+      };
+      ext.outputChannel.appendLog(
+        `[WebviewInit] Sending initialize_frame for ${projectName}. existingFolders=${JSON.stringify(initData.existingFolders ?? 'NOT_SET')}`
+      );
       panel.webview.postMessage({
         command: ExtensionCommand.initialize_frame,
-        data: {
-          apiVersion,
-          project: projectName,
-          hostVersion: ext.extensionVersion,
-          separator: path.sep,
-          platform: os.platform(),
-          ...extraInitializeData,
-        },
+        data: initData,
       });
     },
 
     [createCommand]: async (message: any) => {
+      if (isCreateInProgress) {
+        return;
+      }
+
+      isCreateInProgress = true;
+      let createSucceeded = false;
       await callWithTelemetryAndErrorHandling(panelName.replace(/\s+/g, ''), async (activateContext: IActionContext) => {
-        await createHandler(activateContext, message.data);
+        try {
+          await createHandler(activateContext, message.data);
+          createSucceeded = true;
+        } finally {
+          if (!createSucceeded) {
+            isCreateInProgress = false;
+          }
+        }
       });
+      if (!createSucceeded) {
+        isCreateInProgress = false;
+        return;
+      }
       if (onResolve) {
         onResolve(true);
       }

@@ -99,13 +99,19 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
   public async getCallbackUrl(
     node: RemoteWorkflowTreeItem,
     baseUrl: string,
-    triggerName: string,
+    triggerName: string | undefined,
     apiVersion: string
   ): Promise<ICallbackUrlResponse | undefined> {
     const requestTriggerName = getRequestTriggerName(node.workflowFileContent.definition);
+    const runTriggerName = requestTriggerName ?? triggerName;
+
+    if (!runTriggerName) {
+      return undefined;
+    }
+
     if (requestTriggerName) {
       try {
-        const url = `${this.parent.parent.id}/hostruntime${managementApiPrefix}/workflows/${this.name}/triggers/${triggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
+        const url = `${this.parent.parent.id}/hostruntime${managementApiPrefix}/workflows/${this.name}/triggers/${runTriggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
         const response = await sendAzureRequest(url, this.parent._context, HTTP_METHODS.POST, node.subscription);
         return response.parsedBody;
       } catch {
@@ -113,7 +119,7 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
       }
     } else {
       return {
-        value: `${baseUrl}/workflows/${node.name}/triggers/${triggerName}/run?api-version=${apiVersion}`,
+        value: `${baseUrl}/workflows/${node.name}/triggers/${runTriggerName}/run?api-version=${apiVersion}`,
         method: HTTP_METHODS.POST,
       };
     }

@@ -4,7 +4,6 @@ import {
   useIsDarkMode,
   useIsMonitoringView,
   useIsReadOnly,
-  useShowConnectionsPanel,
   useHostOptions,
   useIsUnitTestView,
   useShowPerformanceDebug,
@@ -13,6 +12,7 @@ import {
   useQueryCachePersist,
   useIsMultiVariableEnabled,
   useShowEdgeDrawing,
+  useIsFirstDesignerV2Load,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -20,7 +20,6 @@ import {
   setReadOnly,
   loadWorkflow,
   setAreCustomEditorsEnabled,
-  setShowConnectionsPanel,
   setHostOptions,
   setUnitTest,
   setShowPerformanceDebug,
@@ -29,6 +28,7 @@ import {
   setQueryCachePersist,
   setEnableMultiVariable,
   setShowEdgeDrawing,
+  setIsFirstDesignerV2Load,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -39,7 +39,6 @@ const ContextSettings = () => {
   const isMonitoringView = useIsMonitoringView();
   const isUnitTest = useIsUnitTestView();
   const isDarkMode = useIsDarkMode();
-  const showConnectionsPanel = useShowConnectionsPanel();
   const showEdgeDrawing = useShowEdgeDrawing();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelect();
@@ -48,6 +47,7 @@ const ContextSettings = () => {
   const showTestStringOverride = useStringOverrides();
   const queryCachePersist = useQueryCachePersist();
   const isMultiVariableEnabled = useIsMultiVariableEnabled();
+  const isFirstDesignerV2Load = useIsFirstDesignerV2Load();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -86,11 +86,6 @@ const ContextSettings = () => {
         label="Custom Editors"
         checked={areCustomEditorsEnabled}
         onChange={(_, checked) => dispatch(setAreCustomEditorsEnabled(!!checked))}
-      />
-      <Checkbox
-        label="Connections Panel"
-        checked={showConnectionsPanel}
-        onChange={(_, checked) => dispatch(setShowConnectionsPanel(!!checked))}
       />
       <Checkbox label="Show Edge Drawing" checked={showEdgeDrawing} onChange={(_, checked) => dispatch(setShowEdgeDrawing(!!checked))} />
       <Checkbox
@@ -138,6 +133,11 @@ const ContextSettings = () => {
         label="Enable Multivariable"
         checked={isMultiVariableEnabled}
         onChange={(_, checked) => dispatch(setEnableMultiVariable(!!checked))}
+      />
+      <Checkbox
+        label="First Designer V2 Load"
+        checked={isFirstDesignerV2Load}
+        onChange={(_, checked) => dispatch(setIsFirstDesignerV2Load(!!checked))}
       />
       <TextField
         label="Max State History Size"

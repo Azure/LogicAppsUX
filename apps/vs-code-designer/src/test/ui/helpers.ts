@@ -13,7 +13,9 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { By, Key, ModalDialog, type WebDriver } from 'vscode-extension-tester';
+import { By, Key, ModalDialog, until, type WebDriver, type WebElement, type Workbench } from 'vscode-extension-tester';
+
+type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 
 // ===========================================================================
 // General utilities
@@ -22,6 +24,203 @@ import { By, Key, ModalDialog, type WebDriver } from 'vscode-extension-tester';
 /** Sleep for ms milliseconds */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Raw Selenium quick-input typing that bypasses ExTester's InputBox page object.
+ *
+ * The ExTester InputBox.setText/clear API can throw ElementNotInteractableError
+ * on cold sessions because it matches hidden cached widgets. This helper uses
+ * the proven `.quick-input-widget:not(.hidden) .quick-input-box input` selector
+ * (see createWorkspaceShared.ts:266), with `until.elementLocated` so the wait
+ * absorbs the widget-not-yet-rendered race, plus explicit visibility +
+ * isEnabled checks and a 3-attempt retry with backoff for cold-session
+ * settling.
+ *
+ * CAVEAT: this helper calls `input.clear()`, which deletes ALL existing text
+ * in the widget — including the leading `>` prefix that
+ * `Workbench.openCommandPrompt()` inserts to switch the widget into
+ * command-palette mode. After clearing, the widget is in FILE / quick-open
+ * mode. Callers that want command-palette behaviour must re-type the `>`
+ * prefix themselves (e.g. `waitForQuickInputAndType(driver, '>Help')`), or
+ * use ExTester's InputBox.setText directly. For plain file Quick Open
+ * (Ctrl+P), no prefix is needed.
+ *
+ * Returns the input WebElement on success; throws after all retries fail.
+ */
+export async function waitForQuickInputAndType(driver: WebDriver, text: string, timeoutMs = 15000): Promise<WebElement> {
+  // Phase 2 F2: bumped default timeoutMs 5000 -> 15000. Phase 1 CI evidence
+  // (run 25949973119, smoke + multipleDesigners) showed
+  // `Waiting until element is visible / 5140ms` timeouts where the widget DOM
+  // exists but never paints visible. 3x headroom per senior-swe-planner I3.
+  //
+  // Phase 3 R2: Drop the `.quick-input-widget:not(.hidden) .quick-input-box
+  // input` selector — the `.show` / `.hidden` CSS class transitions can take
+  // >5s on slow CI runners (the widget paints before the class is removed).
+  // F4 fix: use `offsetParent !== null` as the canonical "actually rendered"
+  // check (hidden inputs are still .isEnabled() === true, so isEnabled was
+  // a false-positive gate). Locate the input by structural selector only,
+  // then validate visibility via computed style + offsetParent.
+  // Phase 3 r1 BLOCKER #1: VS Code maintains a `.quick-input-widget` pool —
+  // `document.querySelector('.quick-input-widget')` returns the first DOM
+  // match, which may be a hidden cached widget. The old `offsetParent !== null`
+  // check then stayed false for the whole timeout even when a visible palette
+  // was rendered alongside. Iterate every widget, find the visible one, and
+  // bind the input lookup to that widget so we don't grab a hidden input.
+  let lastErr: Error | undefined;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await driver.wait(
+        async () =>
+          driver
+            .executeScript<boolean>(
+              'const widgets = Array.from(document.querySelectorAll(".quick-input-widget"));' +
+                'for (const w of widgets) {' +
+                '  const s = getComputedStyle(w);' +
+                '  if (s.display !== "none" && s.visibility !== "hidden" && w.offsetParent !== null) {' +
+                '    const inp = w.querySelector(".quick-input-box input");' +
+                '    if (inp) return true;' +
+                '  }' +
+                '}' +
+                'return false;'
+            )
+            .catch(() => false),
+        timeoutMs,
+        'Expected a visible quick-input widget containing an input to be rendered'
+      );
+      const inputs = await driver.findElements(By.css('.quick-input-widget .quick-input-box input'));
+      let input: WebElement | null = null;
+      for (const candidate of inputs) {
+        const visible = await driver
+          .executeScript<boolean>(
+            'const w = arguments[0].closest(".quick-input-widget");' +
+              'if (!w) return false;' +
+              'const s = getComputedStyle(w);' +
+              'return s.display !== "none" && s.visibility !== "hidden" && w.offsetParent !== null;',
+            candidate
+          )
+          .catch(() => false);
+        if (visible) {
+          input = candidate;
+          break;
+        }
+      }
+      if (!input) {
+        throw new Error('No visible quick-input widget found among candidates');
+      }
+      // Phase 4: Skip Selenium-level interactability check. R2's widget
+      // iteration above correctly locates the visible widget + input, but
+      // `input.clear()` then throws `element not interactable` because
+      // Selenium's interactability check is stricter than
+      // `display !== "none" && visibility !== "hidden" && offsetParent !== null`
+      // — it also requires a non-zero bounding rect with the center not
+      // occluded, and VS Code's input can have a 0x0 layout briefly while
+      // the widget animates in. Use JS to focus + clear + dispatch input
+      // event, then Actions.sendKeys to type into whatever element has
+      // focus (the input we just focused).
+      // r1 (critic): target the resolved input WebElement directly via
+      // arguments[0] instead of re-querying widgets. Eliminates risk of
+      // targeting a different widget than R2's iteration located if two
+      // are momentarily visible.
+      await driver.executeScript(
+        'const i = arguments[0];' + 'i.focus();' + 'i.value = "";' + 'i.dispatchEvent(new Event("input", { bubbles: true }));',
+        input
+      );
+      await sleep(100);
+      await driver.actions().sendKeys(text).perform();
+      await sleep(300);
+      return input;
+    } catch (e: any) {
+      lastErr = e;
+      const firstLine = e?.message?.split('\n')[0] ?? e?.message ?? 'unknown';
+      console.log(`[waitForQuickInputAndType] attempt ${attempt + 1}/3 failed: ${firstLine}`);
+      await sleep(500 * (attempt + 1));
+    }
+  }
+  throw new Error(`[waitForQuickInputAndType] failed after 3 attempts: ${lastErr?.message ?? 'unknown'}`);
+}
+
+/**
+ * Phase 2 F2 — Pre-condition gate before opening the command palette on cold
+ * sessions.
+ *
+ * Phase 1 CI evidence (run 25949973119, p47-suite + p48c-multipledesigners)
+ * showed `waitForQuickInputAndType` timing out with
+ * `Waiting until element is visible / 5140ms`. The Quick Input widget exists
+ * in the DOM but never becomes visible/interactable because:
+ *   - notification toasts (extension activation, Azurite startup) steal focus,
+ *   - a phantom Quick Input from a prior step still holds the input lock.
+ *
+ * This helper clears competing UI surfaces and asserts no Quick Input is
+ * currently visible BEFORE the caller opens a fresh one. Per planner B4: poll
+ * for state, do NOT trust fixed sleeps. Per planner B4: do NOT close the
+ * auxiliary bar (could TOGGLE it open if it wasn't already open).
+ */
+export async function waitForQuickInputReady(workbench: Workbench, driver: WebDriver, timeoutMs = 5000): Promise<void> {
+  // Phase 3 F3 fix: Switch to defaultContent BEFORE clearing notifications +
+  // sending Escape. If a prior test left us inside a webview iframe, the
+  // Escape would go to the React app instead of the VS Code workbench.
+  try {
+    await driver.switchTo().defaultContent();
+  } catch {
+    /* ignore */
+  }
+  // Clear notifications (extension activation toasts, Azurite startup, etc.)
+  try {
+    await workbench.executeCommand('workbench.action.notifications.clearAll');
+  } catch {
+    /* ignore */
+  }
+  await sleep(200);
+  // Phase 3 (planner improvement): Double Escape. The first dismisses an
+  // inline decoration (selection / IME / link hover popup) and the second
+  // closes the quick-input pool itself. Sending only one Escape was observed
+  // to leave the widget visible on cold sessions.
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  } catch {
+    /* ignore */
+  }
+  await sleep(100);
+  try {
+    await driver.actions().sendKeys(Key.ESCAPE).perform();
+  } catch {
+    /* ignore */
+  }
+  // Phase 2 R1 (review board #4) — positive log when the gate is doing real work.
+  // If a Quick Input widget is visible at entry, callers can see in CI logs that
+  // this helper actually waited for clearance rather than no-opping.
+  const initiallyVisible = await driver.findElements(By.css('.quick-input-widget.show'));
+  if (initiallyVisible.length > 0) {
+    console.log('[waitForQuickInputReady] Quick Input visible at entry — waiting for clear');
+  }
+  // Poll for "no Quick Input visible" state before returning. On timeout we
+  // try a second Escape + brief re-poll before degrading to non-fatal so
+  // callers can distinguish "gate closed cleanly" from "still busy".
+  await driver
+    .wait(
+      async () => {
+        const visible = await driver.findElements(By.css('.quick-input-widget.show'));
+        return visible.length === 0;
+      },
+      timeoutMs,
+      'No Quick Input widget should be visible before opening a fresh one'
+    )
+    .catch(async () => {
+      console.log('[waitForQuickInputReady] First poll timed out — sending second Escape');
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(500);
+      const stillVisible = await driver.findElements(By.css('.quick-input-widget.show'));
+      if (stillVisible.length > 0) {
+        console.log('[waitForQuickInputReady] WARN: Quick Input still visible after 2 Escapes; caller may race');
+      } else {
+        console.log('[waitForQuickInputReady] Second Escape cleared widget');
+      }
+    });
 }
 
 /** Replace invalid filename characters with underscores */
@@ -118,6 +317,17 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       return false;
     }
 
+    if (message.includes('AzureWebJobsStorage') || message.includes('local emulator installed and running')) {
+      try {
+        await dialog.pushButton('Debug anyway');
+        console.log('[dismissAllDialogs] Clicked "Debug anyway" on storage verification dialog');
+        await sleep(1000);
+        return true;
+      } catch {
+        // Button not found — fall through to raw selectors.
+      }
+    }
+
     // Dismiss GitHub API rate-limit errors (403) that block the UI.
     // These occur when the extension checks for latest versions in CI.
     if (message.includes('Error reading JSON from URL') || message.includes('status code 403')) {
@@ -200,6 +410,23 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       if (messageText.includes('Validating Runtime Dependency') || messageText.includes('Successfully installed')) {
         console.log('[dismissAllDialogs] Skipping dependency validation notification — must complete');
         continue;
+      }
+
+      if (messageText.includes('AzureWebJobsStorage') || messageText.includes('local emulator installed and running')) {
+        try {
+          const buttons = await dialogs[0].findElements(By.css('button, .monaco-text-button, .monaco-button'));
+          for (const btn of buttons) {
+            const label = await btn.getText().catch(() => '');
+            if (label.toLowerCase().includes('debug anyway')) {
+              console.log('[dismissAllDialogs] Clicking "Debug anyway" on storage verification dialog');
+              await btn.click();
+              await sleep(1000);
+              return true;
+            }
+          }
+        } catch {
+          /* fall through to other dismiss strategies */
+        }
       }
 
       // Dismiss GitHub API rate-limit errors (403) via raw selector
@@ -297,6 +524,186 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
   }
 
   return false;
+}
+
+// ===========================================================================
+// Modal-dialog click helpers (used by workspace conversion tests)
+// ===========================================================================
+
+/**
+ * Returns true if a Selenium error indicates the WebDriver session has ended
+ * (e.g. VS Code reloaded, killing chromedriver). This is expected on the
+ * workspace-conversion "Yes" path where clicking the button reloads the
+ * window and tears down the Selenium session.
+ */
+export function isSessionEnded(e: unknown): boolean {
+  const msg = e instanceof Error ? e.message : String(e);
+  return /invalid session id|NoSuchSession|session deleted|chrome not reachable|target window already closed|disconnected: not connected/i.test(
+    msg
+  );
+}
+
+/**
+ * Force-focus the primary button of the active modal dialog. xvfb does not
+ * auto-raise modal windows, so the focused element on the underlying editor
+ * can swallow click events directed at the dialog. Calling .focus() via JS
+ * on the modal's primary button bypasses this and ensures Tab+Enter / click
+ * targets the dialog.
+ */
+export async function focusModalPrimaryButton(driver: WebDriver): Promise<boolean> {
+  try {
+    const focused = await driver.executeScript<boolean>(`
+      const btn = document.querySelector('.monaco-dialog-box button.primary, .monaco-dialog-box button');
+      if (btn) { btn.focus(); return true; }
+      return false;
+    `);
+    return focused === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Capture diagnostic information about modal dialogs / notifications / the
+ * active element to disk. Used as a fallback when clicking a dialog button
+ * fails so CI artifacts contain enough context to root-cause the failure.
+ */
+export async function dumpDialogDiagnostics(driver: WebDriver, label: string, dir: string): Promise<void> {
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const lines: string[] = [`[${ts}] ${label}`];
+  try {
+    lines.push(`title: ${await driver.getTitle()}`);
+    lines.push(`url: ${await driver.getCurrentUrl()}`);
+    const bodyLen = await driver.executeScript('return document.body.outerHTML.length');
+    lines.push(`bodyHtmlLen: ${bodyLen}`);
+    const dialogs = await driver.findElements(By.css('.monaco-dialog-box'));
+    lines.push(`dialogCount: ${dialogs.length}`);
+    for (let i = 0; i < dialogs.length; i++) {
+      const txt = (await dialogs[i].getText().catch(() => '')).slice(0, 200);
+      lines.push(`dialog[${i}]: ${txt}`);
+    }
+    const toasts = await driver.findElements(By.css('.notification-toast'));
+    lines.push(`notificationCount: ${toasts.length}`);
+    const active = await driver.switchTo().activeElement();
+    const tag = await active.getTagName().catch(() => '?');
+    const cls = await active.getAttribute('class').catch(() => '?');
+    lines.push(`activeElement: <${tag} class="${cls}">`);
+  } catch (e) {
+    lines.push(`(diagnostic capture errored: ${e instanceof Error ? e.message : String(e)})`);
+  }
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, `${sanitizeFileSegment(label)}-${ts}.txt`), lines.join('\n'));
+  } catch (e) {
+    console.log(`[dumpDialogDiagnostics] failed to write: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
+/**
+ * Resolve a single ModalDialog handle and click the named button, retrying
+ * on StaleElementReferenceError. Two prior bugs in workspaceConversionYes
+ * were caused by (a) instantiating two `new ModalDialog()` references and
+ * having the second go stale, and (b) the first click silently failing
+ * because xvfb hadn't routed focus to the dialog yet.
+ *
+ * The retry path force-focuses the primary button before re-attempting,
+ * waits for it to be visible, and finally falls back to Tab+Enter — which
+ * is the most xvfb-robust way to activate the default modal button.
+ */
+export async function pushDialogButtonWithRetry(driver: WebDriver, label: string, retries = 3, diagnosticsDir?: string): Promise<void> {
+  let lastErr: Error | undefined;
+  for (let i = 0; i < retries; i++) {
+    try {
+      const dialog = new ModalDialog();
+      // AbstractElement.wait() exists on older versions; guard with optional chain.
+      try {
+        await (dialog as unknown as { wait?: (timeout: number) => Promise<void> }).wait?.(5000);
+      } catch {
+        /* ignore — pushButton will throw the real error if dialog is missing */
+      }
+      // Force focus + wait for visibility BEFORE click — xvfb sometimes leaves
+      // focus on the underlying editor, which swallows the click.
+      await focusModalPrimaryButton(driver);
+      await sleep(200);
+      try {
+        const btn = await driver.findElement(By.css('.monaco-dialog-box button.primary, .monaco-dialog-box button'));
+        await driver.wait(until.elementIsVisible(btn), 5000).catch(() => undefined);
+      } catch {
+        /* dialog may have closed already */
+      }
+      await dialog.pushButton(label);
+      console.log(`[pushDialogButtonWithRetry] Clicked "${label}" (attempt ${i + 1})`);
+      return;
+    } catch (e) {
+      lastErr = e as Error;
+      const msg = e instanceof Error ? e.message : String(e);
+      console.log(`[pushDialogButtonWithRetry] attempt ${i + 1} failed: ${msg.substring(0, 200)}`);
+      if (isSessionEnded(e)) {
+        // Session is gone — the click probably worked and VS Code reloaded.
+        throw e;
+      }
+      if (diagnosticsDir) {
+        await dumpDialogDiagnostics(driver, `pushDialogButton-attempt${i + 1}`, diagnosticsDir);
+      }
+      if ((i < retries - 1 && e instanceof Error && e.name === 'StaleElementReferenceError') || /stale|detached/i.test(msg)) {
+        await sleep(500);
+        continue;
+      }
+      // Final fallback on the last attempt: Tab+Enter — xvfb-robust default-button activation.
+      if (i === retries - 1) {
+        try {
+          await focusModalPrimaryButton(driver);
+          await sleep(200);
+          await driver.actions().sendKeys(Key.TAB).perform();
+          await sleep(150);
+          await driver.actions().sendKeys(Key.ENTER).perform();
+          console.log('[pushDialogButtonWithRetry] Fell back to Tab+Enter');
+          return;
+        } catch (fallbackErr) {
+          if (isSessionEnded(fallbackErr)) {
+            throw fallbackErr;
+          }
+          lastErr = fallbackErr as Error;
+        }
+      }
+      await sleep(500);
+    }
+  }
+  throw lastErr ?? new Error(`Failed to push '${label}' after ${retries} retries`);
+}
+
+/**
+ * Cancel any currently open VS Code quick-input widget (command palette,
+ * quick-pick, input box). Pressing Escape is safe even if no widget is
+ * showing — this is a defensive pre-flight before opening a new prompt.
+ */
+export async function safeCancelAnyQuickInput(driver: WebDriver): Promise<void> {
+  try {
+    const visible = await driver.executeScript<boolean>(`
+      const w = document.querySelector('.quick-input-widget:not(.hidden)');
+      return !!(w && w.offsetHeight > 0);
+    `);
+    if (!visible) {
+      return;
+    }
+    for (let i = 0; i < 3; i++) {
+      try {
+        await driver.actions().sendKeys(Key.ESCAPE).perform();
+      } catch {
+        /* ignore */
+      }
+      await sleep(200);
+      const stillVisible = await driver.executeScript<boolean>(`
+        const w = document.querySelector('.quick-input-widget:not(.hidden)');
+        return !!(w && w.offsetHeight > 0);
+      `);
+      if (!stillVisible) {
+        return;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
 }
 
 /**
@@ -500,9 +907,9 @@ export async function openActivityBarItem(driver: WebDriver, title: string): Pro
  * Expand a tree-view item in the sidebar by navigating through the given path.
  * Returns the final tree item element.
  */
-export async function expandTreeViewItem(driver: WebDriver, path: string[]): Promise<import('selenium-webdriver').WebElement | null> {
+export async function expandTreeViewItem(driver: WebDriver, path: string[]): Promise<WebDriverElement | null> {
   let currentElements = await driver.findElements(By.css('.pane-body .monaco-list-row'));
-  let lastFound: import('selenium-webdriver').WebElement | null = null;
+  let lastFound: WebDriverElement | null = null;
 
   for (const segment of path) {
     let found = false;
@@ -573,6 +980,65 @@ export async function clickTreeViewAction(driver: WebDriver, itemLabel: string, 
 // ===========================================================================
 
 /**
+ * Pre-flight: wait until the VS Code workbench is ready to accept keyboard input.
+ *
+ * Checks that:
+ *   - The activity bar is rendered and has non-zero width.
+ *   - No blocking modal dialog (workspace trust, sign-in, etc.) is visible.
+ *   - Any startup "Restore unsaved files" / Welcome quick-input is dismissed.
+ *
+ * Tests that launch immediately after a fresh VS Code session (e.g. Phase 4.8b
+ * `openFolderInSession`) otherwise burn an entire retry attempt — typically
+ * ~13 s — waiting on `ElementNotInteractableError` from the command palette.
+ * Returns true if ready, false on timeout (callers should proceed regardless).
+ */
+export async function waitForWorkbenchReady(driver: WebDriver, timeoutMs = 15_000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  let lastLog = 0;
+  while (Date.now() < deadline) {
+    try {
+      try {
+        await dismissAllDialogs(driver);
+      } catch {
+        /* ignore */
+      }
+      try {
+        await dismissNotifications(driver);
+      } catch {
+        /* ignore */
+      }
+
+      const ready = await driver.executeScript<boolean>(`
+        const ab = document.querySelector('.activitybar');
+        if (!ab || ab.offsetWidth === 0 || ab.offsetHeight === 0) return false;
+        const dialog = document.querySelector('.monaco-dialog-box, [role="dialog"].dialog-box');
+        if (dialog && dialog.offsetWidth > 0 && dialog.offsetHeight > 0) return false;
+        const widget = document.querySelector('.quick-input-widget:not(.hidden)');
+        if (widget && widget.offsetHeight > 0) {
+          const inputEl = widget.querySelector('.quick-input-box input');
+          const v = inputEl ? (inputEl.value || '') : '';
+          // Startup "Restore unsaved files" / Welcome prompts are not command-mode
+          if (!v.startsWith('>')) return false;
+        }
+        return true;
+      `);
+      if (ready) {
+        return true;
+      }
+    } catch {
+      /* ignore */
+    }
+    if (Date.now() - lastLog > 10_000) {
+      console.log('[waitForWorkbenchReady] still waiting for workbench…');
+      lastLog = Date.now();
+    }
+    await sleep(500);
+  }
+  console.log('[waitForWorkbenchReady] timeout — proceeding anyway');
+  return false;
+}
+
+/**
  * Open a folder in VS Code via the command palette.
  *
  * ExTester's openResources / startup resources use `code -r` CLI IPC which
@@ -584,6 +1050,11 @@ export async function clickTreeViewAction(driver: WebDriver, itemLabel: string, 
  */
 export async function openFolderInSession(driver: WebDriver, folderPath: string): Promise<void> {
   console.log(`[openFolderInSession] Opening folder: ${folderPath}`);
+
+  // Pre-flight: wait until the workbench is interactable. Without this the
+  // first retry attempt almost always fails with ElementNotInteractableError
+  // and wastes ~13 s before the second attempt succeeds.
+  await waitForWorkbenchReady(driver, 15_000);
 
   // Aggressively dismiss ALL blocking UI before opening command palette.
   // On CI, dialogs like "C# Dev Kit Sign In" appear and block keyboard input.

@@ -1,11 +1,6 @@
+import './nodeUtilCompatibility';
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
-import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
-import {
-  supportedDataMapDefinitionFileExts,
-  supportedDataMapperFolders,
-  supportedSchemaFileExts,
-} from './app/commands/dataMapper/extensionConfig';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -13,8 +8,14 @@ import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTr
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
-import { getExtensionVersion } from './app/utils/extension';
+import {
+  getExtensionVersion,
+  initializeCustomExtensionContext,
+  registerCodefulWorkflowContextListener,
+  updateLogicAppsContext,
+} from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
@@ -37,8 +38,9 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { getWorkspaceFolderWithoutPrompting } from './app/utils/workspace';
-import { isLogicAppProjectInRoot } from './app/utils/verifyIsProject';
+import { startLanguageServer } from './app/languageServer/languageServer';
+import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
+import { codefulProjectsExist } from './app/utils/codeful';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -48,24 +50,13 @@ const perfStats = {
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
+  initializeCustomExtensionContext();
   await updateLogicAppsContext();
+
   const workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders(() => {
     updateLogicAppsContext();
   });
   context.subscriptions.push(workspaceWatcher);
-
-  // Data Mapper context
-  vscode.commands.executeCommand(
-    'setContext',
-    extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
-    supportedDataMapDefinitionFileExts
-  );
-  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedSchemaFileExts, supportedSchemaFileExts);
-  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetSupportedFileExts, [
-    ...supportedDataMapDefinitionFileExts,
-    ...supportedSchemaFileExts,
-  ]);
-  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', {
     resolveDebugConfiguration: async (folder, debugConfig) => {
@@ -156,18 +147,36 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
+    callWithTelemetryAndErrorHandling(extensionCommand.logSubscriptions, async (actionContext: IActionContext) => {
+      await logSubscriptions(actionContext);
+    });
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await convertToWorkspace(activateContext);
     }
 
-    downloadExtensionBundle(activateContext);
+    if (shouldRequireStrictDependencyValidation()) {
+      await downloadExtensionBundle(activateContext);
+    } else {
+      // Intentionally not awaited so activation stays snappy. Downstream code
+      // that depends on the extracted bundle (startDesignTimeApi) calls
+      // waitForExtensionBundleReady() to block on the in-flight work and avoid
+      // racing the re-extract — which on Windows can lock the bundle folder and
+      // leave the design-time host pointing at a half-extracted bundle.
+      downloadExtensionBundle(activateContext).catch((error) => {
+        ext.outputChannel?.appendLog(
+          `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
+        );
+      });
+    }
     promptParameterizeConnections(activateContext, false);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
 
-    // Removed for unit test codefull experience standby
-    //await prepareTestExplorer(context, activateContext);
+    const hasCodefulProjects = await codefulProjectsExist();
+    if (hasCodefulProjects) {
+      startLanguageServer();
+    }
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
@@ -195,6 +204,9 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
+    // Register codeful workflow context listener
+    registerCodefulWorkflowContextListener(context);
+
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
     const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
     ext.rgApiV2 = azureResourcesApi;
@@ -203,24 +215,17 @@ export async function activate(context: vscode.ExtensionContext) {
     perfStats.loadEndTime = Date.now();
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
-    logSubscriptions(activateContext);
     logExtensionSettings(activateContext);
   });
 }
 
-export function deactivate(): Promise<any> {
-  stopAllDesignTimeApis();
+export async function deactivate(): Promise<void> {
+  await stopAllDesignTimeApis();
   ext.unitTestController?.dispose();
-  ext.telemetryReporter.dispose();
-  return undefined;
-}
-
-export async function updateLogicAppsContext() {
-  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-    await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', false);
-  } else {
-    const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
-    const logicAppOpened = await isLogicAppProjectInRoot(workspaceFolder);
-    await vscode.commands.executeCommand('setContext', 'logicApps.hasProject', logicAppOpened);
+  try {
+    await ext.languageClient?.stop();
+  } finally {
+    ext.languageClient = undefined;
+    ext.telemetryReporter.dispose();
   }
 }

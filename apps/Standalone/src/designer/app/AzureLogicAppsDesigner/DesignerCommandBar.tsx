@@ -42,7 +42,7 @@ import {
   downloadDocumentAsFile,
   flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
@@ -69,7 +69,6 @@ export const DesignerCommandBar = ({
   isDesignerView,
   isMonitoringView,
   isDarkMode,
-  showConnectionsPanel,
   showRunHistory,
   toggleRunHistory,
   enableCopilot,
@@ -88,7 +87,6 @@ export const DesignerCommandBar = ({
   isMonitoringView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
-  showConnectionsPanel?: boolean;
   showRunHistory?: boolean;
   toggleRunHistory: () => void;
   enableCopilot?: () => void;
@@ -99,6 +97,41 @@ export const DesignerCommandBar = ({
   selectRun?: (runId: string) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
+  // The standalone designer renders this command bar directly above the designer canvas. The node
+  // details panel (and the agent chat panel) are sized to 100% height of an ancestor that includes
+  // the command bar, so the bottom of their content (e.g. the change-connection section) is pushed
+  // off-screen. Offset the panel height by the command bar height so the full panel stays visible.
+  // Standalone-only: the Portal and VS Code hosts lay out the panel differently and are unaffected.
+  useEffect(() => {
+    const styleId = 'standalone-panel-command-bar-offset';
+    const commandBarHeightPx = 53;
+
+    let style = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!style) {
+      style = document.createElement('style');
+      style.id = styleId;
+      style.dataset.refCount = '0';
+      document.head.appendChild(style);
+    }
+
+    style.textContent = `.msla-panel-container { height: calc(100% - ${commandBarHeightPx}px) !important; }`;
+    style.dataset.refCount = String(Number(style.dataset.refCount ?? '0') + 1);
+
+    return () => {
+      const current = document.getElementById(styleId) as HTMLStyleElement | null;
+      if (!current) {
+        return;
+      }
+      const nextCount = Number(current.dataset.refCount ?? '1') - 1;
+      if (nextCount <= 0) {
+        current.remove();
+      } else {
+        current.dataset.refCount = String(nextCount);
+      }
+    };
+  }, []);
+
   const isCopilotReady = useNodesInitialized();
   const queryClient = useQueryClient();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
@@ -396,17 +429,13 @@ export const DesignerCommandBar = ({
           dispatch(resetDesignerView());
         },
       },
-      ...(showConnectionsPanel
-        ? [
-            {
-              key: 'connections',
-              text: 'Connections',
-              iconProps: { iconName: 'Link' },
-              onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
-              onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
-            },
-          ]
-        : []),
+      {
+        key: 'connections',
+        text: 'Connections',
+        iconProps: { iconName: 'Link' },
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
+      },
       {
         key: 'errors',
         text: 'Errors',
@@ -461,7 +490,6 @@ export const DesignerCommandBar = ({
       saveUnitTestIsDisabled,
       isCreateUnitTestDisabled,
       isUnitTest,
-      showConnectionsPanel,
       haveErrors,
       isDarkMode,
       isCopilotReady,

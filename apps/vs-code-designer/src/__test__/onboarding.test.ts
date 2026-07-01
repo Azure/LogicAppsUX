@@ -32,6 +32,7 @@ describe('onboardBinaries', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
     mockContext = {
       telemetry: {
         properties: {},
@@ -97,6 +98,18 @@ describe('onboardBinaries', () => {
       expect(validateAndInstallBinaries).not.toHaveBeenCalled();
       expect(validateTasksJson).not.toHaveBeenCalled();
     });
+
+    it('should rethrow dependency validation failures in strict E2E mode', async () => {
+      process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = '1';
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(getGlobalSetting).mockReturnValue(true);
+      vi.mocked(validateAndInstallBinaries).mockRejectedValue(new Error('Bundle sidecar missing'));
+
+      await expect(onboardBinaries(mockContext)).rejects.toThrow('Bundle sidecar missing');
+
+      expect(validateAndInstallBinaries).toHaveBeenCalled();
+      expect(validateTasksJson).not.toHaveBeenCalled();
+    });
   });
 
   describe('validateTasksJson integration', () => {
@@ -131,6 +144,7 @@ describe('startOnboarding', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
     mockContext = {
       telemetry: {
         properties: {},
@@ -166,7 +180,6 @@ describe('startOnboarding', () => {
     vi.mocked(promptStartDesignTimeOption).mockResolvedValue(undefined);
 
     await startOnboarding(mockContext);
-    await vi.waitFor(() => expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeDefined());
 
     expect(mockContext.telemetry.properties.isDevContainer).toBe('false');
     expect(mockContext.telemetry.properties.lastStep).toBeDefined();
@@ -175,6 +188,41 @@ describe('startOnboarding', () => {
     expect(scheduleStartAllDesignTimeApis).not.toHaveBeenCalled();
     expect(typeof mockContext.telemetry.measurements.binariesInstallDuration).toBe('number');
     expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeGreaterThanOrEqual(0);
+  });
+
+  it('should rethrow dependency onboarding failures before design-time startup in strict E2E mode', async () => {
+    process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = '1';
+    vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+    vi.mocked(getGlobalSetting).mockReturnValue(true);
+    vi.mocked(validateAndInstallBinaries).mockRejectedValue(new Error('Bundle sidecar missing'));
+    vi.mocked(promptStartDesignTimeOption).mockResolvedValue(undefined);
+
+    await expect(startOnboarding(mockContext)).rejects.toThrow('Bundle sidecar missing');
+
+    expect(validateAndInstallBinaries).toHaveBeenCalled();
+    expect(promptStartDesignTimeOption).not.toHaveBeenCalled();
+  });
+
+  it('should wait for dependency onboarding before prompting for design-time startup', async () => {
+    let resolveInstallBinaries = () => {};
+    const installBinariesSpy = vi.spyOn(binaries, 'installBinaries').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveInstallBinaries = resolve;
+        })
+    );
+    vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+    vi.mocked(promptStartDesignTimeOption).mockResolvedValue(undefined);
+
+    const onboardingPromise = startOnboarding(mockContext);
+    await vi.waitFor(() => expect(installBinariesSpy).toHaveBeenCalled());
+
+    expect(promptStartDesignTimeOption).not.toHaveBeenCalled();
+
+    resolveInstallBinaries();
+    await onboardingPromise;
+
+    expect(promptStartDesignTimeOption).toHaveBeenCalledWith(mockContext);
   });
 
   it('should bypass the auto-start prompt path entirely for devContainer workspaces', async () => {

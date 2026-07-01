@@ -1,20 +1,25 @@
-import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach, type Mock } from 'vitest';
 import * as CreateLogicAppVSCodeContentsModule from '../CreateLogicAppVSCodeContents';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as fsUtils from '../../../../utils/fs';
 import { ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+import { assetsFolderName, workspaceTemplatesFolderName } from '../../../../../constants';
 
 vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(),
   copyFile: vi.fn(),
   pathExists: vi.fn(),
-  readJson: vi.fn(),
-  writeJSON: vi.fn(),
+  readFile: vi.fn(),
+  writeJson: vi.fn(),
 }));
 vi.mock('../../../../utils/fs', () => ({
   confirmEditJsonFile: vi.fn(),
+}));
+vi.mock('../../../../utils/binaries', () => ({
+  binariesExist: vi.fn().mockReturnValue(false),
+  binariesExistSync: vi.fn().mockReturnValue(false),
 }));
 
 describe('CreateLogicAppVSCodeContents', () => {
@@ -52,7 +57,27 @@ describe('CreateLogicAppVSCodeContents', () => {
     isDevContainerProject: false,
   } as any;
 
+  const mockContextCodeful: IWebviewProjectContext = {
+    logicAppName: 'TestLogicAppCodeful',
+    logicAppType: ProjectType.codeful,
+    targetFramework: TargetFramework.NetFx,
+    isDevContainerProject: false,
+  } as any;
+
   const logicAppFolderPath = path.join('test', 'workspace', 'TestLogicApp');
+
+  let extensionsJsonFileContent: string;
+  let tasksJsonFileContent: string;
+  let devContainerTasksJsonFileContent: string;
+
+  beforeAll(async () => {
+    const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
+    const templatesFolderPath = path.join(__dirname, '..', '..', '..', '..', '..', assetsFolderName, workspaceTemplatesFolderName);
+
+    extensionsJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'ExtensionsJsonFile'), 'utf8');
+    tasksJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'TasksJsonFile'), 'utf8');
+    devContainerTasksJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'DevContainerTasksJsonFile'), 'utf8');
+  });
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -61,8 +86,20 @@ describe('CreateLogicAppVSCodeContents', () => {
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
     vi.mocked(fse.pathExists).mockResolvedValue(false); // File doesn't exist
-    vi.mocked(fse.readJson).mockResolvedValue({});
-    vi.mocked(fse.writeJSON).mockResolvedValue(undefined);
+    vi.mocked(fse.readFile).mockImplementation(async (filePath: any) => {
+      const filePathStr = String(filePath);
+      if (filePathStr.endsWith('ExtensionsJsonFile')) {
+        return extensionsJsonFileContent;
+      }
+      if (filePathStr.endsWith('DevContainerTasksJsonFile')) {
+        return devContainerTasksJsonFileContent;
+      }
+      if (filePathStr.endsWith('TasksJsonFile')) {
+        return tasksJsonFileContent;
+      }
+      return '{}';
+    });
+    vi.mocked(fse.writeJson).mockResolvedValue(undefined);
 
     // Mock confirmEditJsonFile to capture what would be written
     vi.mocked(fsUtils.confirmEditJsonFile).mockImplementation(async (context, filePath, callback) => {
@@ -279,23 +316,60 @@ describe('CreateLogicAppVSCodeContents', () => {
       });
     });
 
+    it('should create settings.json with codeful-specific settings for codeful project', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
+
+      const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
+      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
+      const settingsCallback = settingsCall[2];
+      const settingsData = settingsCallback({});
+
+      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'C#');
+      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectRuntime', '~4');
+      expect(settingsData).toHaveProperty('debug.internalConsoleOptions', 'neverOpen');
+      expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
+      expect(settingsData).toHaveProperty('azureFunctions.deploySubpath');
+      expect(settingsData).toHaveProperty('azureFunctions.preDeployTask', 'publish');
+      expect(settingsData).toHaveProperty('azureFunctions.projectSubpath');
+      expect(settingsData).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
+      expect(settingsData).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
+      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.deploySubpath');
+    });
+
+    it('should create launch.json with logicapp configuration for codeful projects', async () => {
+      await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
+
+      const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
+      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
+      const launchCallback = launchCall[2];
+      const launchData = launchCallback({ configurations: [] });
+
+      const config = launchData.configurations[0];
+      expect(config).toMatchObject({
+        name: expect.stringContaining('Run/Debug logic app TestLogicAppCodeful'),
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: false,
+      });
+      expect(config).not.toHaveProperty('customCodeRuntime');
+    });
+
     it('should copy extensions.json from template', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
       const extensionsJsonPath = path.join(logicAppFolderPath, '.vscode', 'extensions.json');
-      expect(fse.copyFile).toHaveBeenCalledWith(expect.stringContaining('ExtensionsJsonFile'), extensionsJsonPath);
+      expect(fse.writeJson).toHaveBeenCalledWith(extensionsJsonPath, JSON.parse(extensionsJsonFileContent), { spaces: 2 });
     });
 
-    it('should use an extensions.json template that recommends reopening in containers', async () => {
+    it('should use an extensions.json template that does not recommend Dev Containers', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
       const extensionsJsonPath = path.join(logicAppFolderPath, '.vscode', 'extensions.json');
-      const copyCall = vi.mocked(fse.copyFile).mock.calls.find((call) => call[1] === extensionsJsonPath);
-      const [templatePath] = copyCall as [string, string];
-      const realFs = await vi.importActual<typeof import('fs')>('fs');
-      const templateContent = JSON.parse(realFs.readFileSync(templatePath, 'utf8')) as { recommendations: string[] };
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === extensionsJsonPath);
+      const extensionsData = writeCall?.[1] as { recommendations: string[] };
 
-      expect(templateContent.recommendations).toContain('ms-vscode-remote.remote-containers');
+      expect(extensionsData.recommendations).not.toContain('ms-vscode-remote.remote-containers');
     });
 
     it('should copy tasks.json from template', async () => {
@@ -390,6 +464,19 @@ describe('CreateLogicAppVSCodeContents', () => {
         customCodeRuntime: 'clr',
         isCodeless: true,
       });
+    });
+
+    it('should return logicapp configuration with isCodeless false for codeful project', () => {
+      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', undefined, true);
+
+      expect(config).toMatchObject({
+        name: expect.stringContaining('Run/Debug logic app TestLogicApp'),
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: false,
+      });
+      expect(config).not.toHaveProperty('customCodeRuntime');
     });
   });
 });

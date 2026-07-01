@@ -567,7 +567,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
     const artifacts = await getArtifactsInLocalProject(projectPath);
-    const bundleVersionNumber = await getBundleVersionNumber();
+    const bundleVersionNumber = await getBundleVersionNumber(projectPath);
 
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;

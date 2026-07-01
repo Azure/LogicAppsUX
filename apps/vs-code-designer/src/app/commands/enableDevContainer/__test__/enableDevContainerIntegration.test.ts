@@ -44,7 +44,9 @@ describe('enableDevContainer - Integration Tests', () => {
 
     // Mock ext.outputChannel
     const { ext } = await import('../../../../extensionVariables');
+    ext.designTimeInstances.clear();
     ext.outputChannel = {
+      appendLog: vi.fn(),
       appendLine: vi.fn(),
       show: vi.fn(),
     } as any;
@@ -56,6 +58,8 @@ describe('enableDevContainer - Integration Tests', () => {
   });
 
   afterEach(async () => {
+    const { ext } = await import('../../../../extensionVariables');
+    ext.designTimeInstances.clear();
     if (tempDir) {
       await fse.remove(tempDir);
     }
@@ -118,13 +122,13 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(await fse.pathExists(devContainerJsonPath)).toBe(true);
 
       // Verify devcontainer.json has valid JSON
-      const devContainerContent = await fse.readJSON(devContainerJsonPath);
+      const devContainerContent = await fse.readJson(devContainerJsonPath);
       expect(devContainerContent).toBeDefined();
       expect(devContainerContent.name).toBeDefined();
       expect(devContainerContent.image).toBeDefined();
 
       // Verify .devcontainer was added to workspace file
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       expect(workspaceContent.folders).toBeDefined();
       const devContainerFolder = workspaceContent.folders.find((folder: any) => folder.path === devContainerFolderName);
       expect(devContainerFolder).toBeDefined();
@@ -188,13 +192,13 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(await fse.pathExists(tasksJsonPath)).toBe(true);
 
       // Read original tasks.json
-      const originalTasks = await fse.readJSON(tasksJsonPath);
+      const originalTasks = await fse.readJson(tasksJsonPath);
 
       // Run enableDevContainer with real workspace file path
       await enableDevContainer(mockContext, workspaceFilePath);
 
       // Read converted tasks.json
-      const convertedTasks = await fse.readJSON(tasksJsonPath);
+      const convertedTasks = await fse.readJson(tasksJsonPath);
 
       // Verify tasks were converted
       expect(convertedTasks.tasks).toBeDefined();
@@ -235,9 +239,9 @@ describe('enableDevContainer - Integration Tests', () => {
 
       // Update workspace file to include second Logic App
       const workspaceFilePath = path.join(workspaceRootFolder, `${workspaceName}.code-workspace`);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
       workspaceContent.folders.push({ path: logicApp2, name: logicApp2 });
-      await fse.writeJSON(workspaceFilePath, workspaceContent, { spaces: 2 });
+      await fse.writeJson(workspaceFilePath, workspaceContent, { spaces: 2 });
 
       // Run enableDevContainer with real workspace file path
       await enableDevContainer(mockContext, workspaceFilePath);
@@ -249,8 +253,8 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(await fse.pathExists(tasksJson1Path)).toBe(true);
       expect(await fse.pathExists(tasksJson2Path)).toBe(true);
 
-      const tasks1 = await fse.readJSON(tasksJson1Path);
-      const tasks2 = await fse.readJSON(tasksJson2Path);
+      const tasks1 = await fse.readJson(tasksJson1Path);
+      const tasks2 = await fse.readJson(tasksJson2Path);
 
       // Both should have devcontainer-compatible paths
       expect(tasks1.tasks[1].command).toContain('${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}');
@@ -279,7 +283,7 @@ describe('enableDevContainer - Integration Tests', () => {
       // Create .devcontainer folder manually
       const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
       await fse.ensureDir(devContainerPath);
-      await fse.writeJSON(path.join(devContainerPath, devContainerFileName), { name: 'existing' });
+      await fse.writeJson(path.join(devContainerPath, devContainerFileName), { name: 'existing' });
 
       // Mock vscode.window.showWarningMessage to simulate user canceling
       const showWarningMessageSpy = vi.spyOn(vscode.window, 'showWarningMessage').mockResolvedValue(undefined);
@@ -307,7 +311,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const devContainerPath = path.join(workspaceRootFolder, devContainerFolderName);
       await fse.ensureDir(devContainerPath);
       const oldDevContainerJsonPath = path.join(devContainerPath, devContainerFileName);
-      await fse.writeJSON(oldDevContainerJsonPath, { name: 'old-config', version: '1.0' });
+      await fse.writeJson(oldDevContainerJsonPath, { name: 'old-config', version: '1.0' });
 
       // Mock vscode.window.showWarningMessage to simulate user choosing to overwrite
       vi.spyOn(vscode.window, 'showWarningMessage').mockResolvedValue('Overwrite' as any);
@@ -316,7 +320,7 @@ describe('enableDevContainer - Integration Tests', () => {
       await enableDevContainer(mockContext, workspaceFilePath);
 
       // Verify devcontainer.json was overwritten with new content
-      const newDevContainerContent = await fse.readJSON(oldDevContainerJsonPath);
+      const newDevContainerContent = await fse.readJson(oldDevContainerJsonPath);
       expect(newDevContainerContent.name).not.toBe('old-config');
       expect(newDevContainerContent.image).toBeDefined();
 
@@ -354,7 +358,7 @@ describe('enableDevContainer - Integration Tests', () => {
 
       // Read devcontainer.json
       const devContainerJsonPath = path.join(workspaceRootFolder, devContainerFolderName, devContainerFileName);
-      const devContainerContent = await fse.readJSON(devContainerJsonPath);
+      const devContainerContent = await fse.readJson(devContainerJsonPath);
 
       // Verify required properties
       expect(devContainerContent.name).toBeDefined();
@@ -437,7 +441,7 @@ describe('enableDevContainer - Integration Tests', () => {
 
       // Read the workspace file
       const workspaceFilePath = path.join(workspaceRootFolder, `${workspaceName}.code-workspace`);
-      const workspaceContent = await fse.readJSON(workspaceFilePath);
+      const workspaceContent = await fse.readJson(workspaceFilePath);
 
       // Verify .devcontainer folder is in the workspace
       expect(workspaceContent.folders).toBeDefined();
@@ -500,7 +504,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const tasksJsonPath = path.join(secondLogicAppPath, vscodeFolderName, tasksFileName);
       expect(await fse.pathExists(tasksJsonPath)).toBe(true);
 
-      const tasksContent = await fse.readJSON(tasksJsonPath);
+      const tasksContent = await fse.readJson(tasksJsonPath);
 
       // Verify devcontainer-specific paths
       const funcHostStartTask = tasksContent.tasks.find((task: any) => task.label === 'func: host start');
@@ -544,7 +548,7 @@ describe('enableDevContainer - Integration Tests', () => {
       const tasksJsonPath = path.join(secondLogicAppPath, vscodeFolderName, tasksFileName);
       expect(await fse.pathExists(tasksJsonPath)).toBe(true);
 
-      const tasksContent = await fse.readJSON(tasksJsonPath);
+      const tasksContent = await fse.readJson(tasksJsonPath);
 
       // Verify regular paths
       const funcHostStartTask = tasksContent.tasks.find((task: any) => task.label === 'func: host start');

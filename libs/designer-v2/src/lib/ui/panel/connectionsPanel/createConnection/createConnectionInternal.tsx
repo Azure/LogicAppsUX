@@ -9,6 +9,7 @@ import { CreateConnection, type CreateButtonTexts } from './createConnection';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type {
   ConnectionParameterSetValues,
+  ConnectionParameterSets,
   ConnectionMetadata,
   ConnectionCreationInfo,
   ConnectionParametersMetadata,
@@ -18,7 +19,15 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/logic-apps-shared';
-import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
+import {
+  ConnectionParameterTypes,
+  ConnectionService,
+  LogEntryLevel,
+  LoggerService,
+  WorkflowService,
+  equals,
+  getIconUriFromConnector,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -46,6 +55,8 @@ export const CreateConnectionInternal = (props: {
   operationManifest?: OperationManifest;
   workflowKind?: string;
   workflowMetadata?: { agentType?: string };
+  connectionParameterSetsOverride?: ConnectionParameterSets;
+  enableManagedIdentityPicker?: boolean;
 }) => {
   const {
     classes,
@@ -68,6 +79,8 @@ export const CreateConnectionInternal = (props: {
     operationManifest,
     workflowKind,
     workflowMetadata,
+    connectionParameterSetsOverride,
+    enableManagedIdentityPicker,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -212,6 +225,7 @@ export const CreateConnectionInternal = (props: {
               )
             : undefined,
           connectionParameters: outputParameterValues,
+          operationParameterValues,
           alternativeParameterValues,
           additionalParameterValues,
           features: isUsingDynamicConnection ? 'DynamicUserInvoked' : undefined,
@@ -245,12 +259,17 @@ export const CreateConnectionInternal = (props: {
         if (connection) {
           updateNewConnectionInCache(connection);
 
-          // For multi-auth ManagedServiceIdentity parameter sets (e.g., managed MCP connectors),
-          // build connectionProperties.authentication from the user-provided values since these
-          // aren't handled by the legacy managed identity flow.
+          // For multi-auth managed identity parameter sets (e.g., managed MCP connectors), build
+          // connectionProperties.authentication from the user-provided values. Connectors can name
+          // the parameter set anything (e.g. 'oauthMI'), so detect by parameter type/editor.
           let msiConnectionProperties: Record<string, any> | undefined;
-          if (!identitySelected && selectedParameterSet?.name === 'ManagedServiceIdentity') {
-            const userIdentity = outputParameterValues['identity'];
+          const identityParameterKey = Object.entries(selectedParameterSet?.parameters ?? {}).find(
+            ([, p]: [string, any]) =>
+              p?.type === ConnectionParameterTypes.managedIdentity || equals(p?.uiDefinition?.constraints?.editor, 'identitypicker')
+          )?.[0];
+          const isMsiParameterSet = equals(selectedParameterSet?.name, 'ManagedServiceIdentity') || !!identityParameterKey;
+          if (!identitySelected && isMsiParameterSet) {
+            const userIdentity = identityParameterKey ? outputParameterValues[identityParameterKey] : outputParameterValues['identity'];
             const mcpAudience = outputParameterValues['audience'];
             msiConnectionProperties = {
               authentication: {
@@ -320,7 +339,7 @@ export const CreateConnectionInternal = (props: {
       classes={classes}
       connector={connector}
       connectionParameterSets={getSupportedParameterSets(
-        connector.properties.connectionParameterSets,
+        connector.properties.connectionParameterSets ?? connectionParameterSetsOverride,
         operationType,
         connector.properties.capabilities
       )}
@@ -345,6 +364,7 @@ export const CreateConnectionInternal = (props: {
       operationManifest={operationManifest}
       workflowKind={workflowKind}
       workflowMetadata={workflowMetadata}
+      enableManagedIdentityPicker={enableManagedIdentityPicker}
     />
   );
 };

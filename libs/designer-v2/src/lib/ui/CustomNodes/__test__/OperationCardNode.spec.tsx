@@ -88,6 +88,7 @@ const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
+  useIsNodeInMultiSelection: vi.fn().mockReturnValue(false),
 }));
 
 vi.mock('../../../core/state/panel/panelSlice', () => ({
@@ -135,6 +136,7 @@ const mockUseRunIndex = vi.fn().mockReturnValue(undefined);
 const mockUseFlowErrorsForNode = vi.fn().mockReturnValue([]);
 const mockUseToolRunIndex = vi.fn().mockReturnValue(undefined);
 const mockUseActionMetadata = vi.fn().mockReturnValue(undefined);
+const mockUseIsCopilotModifiedNode = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useNodeDisplayName: (...args: any[]) => mockUseNodeDisplayName(...args),
@@ -151,6 +153,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useFlowErrorsForNode: (...args: any[]) => mockUseFlowErrorsForNode(...args),
   useToolRunIndex: (...args: any[]) => mockUseToolRunIndex(...args),
   useActionMetadata: (...args: any[]) => mockUseActionMetadata(...args),
+  useIsCopilotModifiedNode: (...args: any[]) => mockUseIsCopilotModifiedNode(...args),
 }));
 
 vi.mock('../../../core/state/workflow/workflowSlice', () => ({

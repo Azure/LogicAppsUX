@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
-import type { Progress } from 'vscode';
 import {
   defaultMsiAudience,
   workflowAuthenticationMethodKey,
@@ -59,7 +58,19 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
       { label: localize('useConnectorsFromAzure', 'Use connectors from Azure'), data: 'yes' },
       { label: localize('skipConnectorsFromAzure', 'Skip for now'), data: 'no' },
     ];
-    context.enabled = (await context.ui.showQuickPick(picks, { placeHolder })).data === 'yes';
+    const selectedAction = await context.ui.showQuickPick(picks, { placeHolder }).catch((error) => {
+      if (parseError(error).isUserCancelledError) {
+        context.telemetry.properties.azureConnectorsDefaulted = 'rawKeys';
+        return { data: 'no' };
+      }
+
+      throw error;
+    });
+
+    context.enabled = selectedAction.data === 'yes';
+    if (!context.enabled) {
+      context.authenticationMethod = 'rawKeys';
+    }
   }
 
   public shouldPrompt(context: IAzureConnectorsContext): boolean {
@@ -92,13 +103,11 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
     this._projectPath = projectPath;
   }
 
-  public async execute(
-    context: IAzureConnectorsContext,
-    _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
-  ): Promise<void> {
+  public async execute(context: IAzureConnectorsContext): Promise<void> {
     const valuesToUpdateInSettings: Record<string, string> = {};
     if (context.enabled === false) {
       valuesToUpdateInSettings[workflowSubscriptionIdKey] = '';
+      valuesToUpdateInSettings[workflowAuthenticationMethodKey] = 'rawKeys';
     } else {
       const { resourceGroup, subscriptionId, tenantId, environment } = context;
       valuesToUpdateInSettings[workflowTenantIdKey] = tenantId;
@@ -111,6 +120,12 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
         valuesToUpdateInSettings[workflowAuthenticationMethodKey] = context.authenticationMethod;
         valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
       }
+
+      // Then send notifications for runtime updates
+      ext?.languageClient?.sendNotification('custom/updateApiConfig', {
+        subscriptionId: subscriptionId,
+        resourceGroup: resourceGroup,
+      });
     }
 
     await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);

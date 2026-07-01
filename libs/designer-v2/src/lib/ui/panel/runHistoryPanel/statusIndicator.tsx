@@ -2,6 +2,7 @@ import * as React from 'react';
 import StatusSucceededIcon from '../../../../lib/common/images/status_success.svg';
 import StatusFailedIcon from '../../../../lib/common/images/status_failure.svg';
 import StatusCancelledIcon from '../../../../lib/common/images/status_cancelled.svg';
+import StatusWaitingIcon from '../../../../lib/common/images/status_waiting.svg';
 import { Text, Spinner } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
@@ -59,8 +60,9 @@ const StatusIndicator = (props: { status: string; onlyIcon?: boolean }) => {
         return <img src={StatusFailedIcon} title={text} />;
       case 'Cancelled':
         return <img src={StatusCancelledIcon} title={text} />;
-      case 'Running':
       case 'Waiting':
+        return <img src={StatusWaitingIcon} title={text} />;
+      case 'Running':
       case 'Resuming':
         return <Spinner size={'extra-tiny'} title={text} />;
       default:

@@ -16,6 +16,7 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: vi.fn(),
+  useIsNodeInMultiSelection: vi.fn(),
 }));
 
 vi.mock('../../../core/state/workflow/workflowSelectors', () => ({

@@ -1,6 +1,7 @@
-import type { SelectTabEvent, SelectTabData } from '@fluentui/react-components';
+import type { SelectTabEvent, SelectTabData, TagDismissData } from '@fluentui/react-components';
 import {
   Button,
+  Caption1,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -18,14 +19,25 @@ import {
   Tab,
   Dropdown,
   Option,
+  Tag,
+  TagGroup,
   Tooltip,
 } from '@fluentui/react-components';
-import { equals, HostService, parseErrorMessage } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  HostService,
+  LogEntryLevel,
+  LoggerService,
+  parseErrorMessage,
+  RunService,
+  type RunFilterOptions,
+} from '@microsoft/logic-apps-shared';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-import { useAllRuns, useRun, useRunsInfiniteQuery } from '../../../core/queries/runs';
+import { useRun, useRunsByIds, useRunsInfiniteQuery, runsQueriesKeys } from '../../../core/queries/runs';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import RunHistoryEntry from './runHistoryEntry';
 import { useRunHistoryPanelStyles } from './runHistoryPanel.styles';
@@ -43,6 +55,18 @@ import {
   ArrowLeftRegular,
   FilterFilled,
   FilterRegular,
+  CheckboxCheckedFilled,
+  CheckboxCheckedRegular,
+  SelectAllOnFilled,
+  SelectAllOnRegular,
+  SelectAllOffFilled,
+  SelectAllOffRegular,
+  ArrowRedoFilled,
+  ArrowRedoRegular,
+  DismissCircleFilled,
+  DismissCircleRegular,
+  CopyFilled,
+  CopyRegular,
 } from '@fluentui/react-icons';
 import { RunTreeView } from '../runTreeView';
 import { useWorkflowHasAgentLoop } from '../../../core/state/designerView/designerViewSelectors';
@@ -59,6 +83,12 @@ const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const CollapseIcon = bundleIcon(ChevronDoubleLeftFilled, ChevronDoubleLeftRegular);
 const ReturnIcon = bundleIcon(ArrowLeftFilled, ArrowLeftRegular);
 const FilterIcon = bundleIcon(FilterFilled, FilterRegular);
+const MultiSelectIcon = bundleIcon(CheckboxCheckedFilled, CheckboxCheckedRegular);
+const SelectAllIcon = bundleIcon(SelectAllOnFilled, SelectAllOnRegular);
+const DeselectAllIcon = bundleIcon(SelectAllOffFilled, SelectAllOffRegular);
+const ResubmitIcon = bundleIcon(ArrowRedoFilled, ArrowRedoRegular);
+const CancelIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
+const CopyIcon = bundleIcon(CopyFilled, CopyRegular);
 
 const runIdRegex = /^\d{29}CU\d{2,8}$/;
 
@@ -66,6 +96,7 @@ export type FilterTypes = 'runId' | 'workflowVersion' | 'status' | 'mode' | 'tim
 
 export const RunHistoryPanel = () => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
 
   const dispatch = useDispatch();
 
@@ -73,8 +104,66 @@ export const RunHistoryPanel = () => {
 
   const styles = useRunHistoryPanelStyles();
 
-  const runsQuery = useRunsInfiniteQuery(isMonitoringView);
-  const runs = useAllRuns();
+  // MARK: Filtering
+  const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
+
+  const [customStart, setCustomStart] = useState<Date | null>(null);
+  const [customEnd, setCustomEnd] = useState<Date | null>(null);
+
+  // Build server-side filter options from UI filter state
+  const serverFilters = useMemo((): RunFilterOptions | undefined => {
+    const opts: RunFilterOptions = {};
+    if (filters?.['status']) {
+      opts.status = filters['status'];
+    }
+
+    const interval = filters?.['timeInterval'];
+    if (interval && interval !== 'custom') {
+      const now = Date.now();
+      const durations: Record<string, number> = {
+        last24h: Durations.day,
+        last48h: 2 * Durations.day,
+        last7d: Durations.week,
+        last14d: 2 * Durations.week,
+        last30d: 30 * Durations.day,
+      };
+      const duration = durations[interval];
+      if (duration) {
+        opts.startTimeFrom = new Date(now - duration).toISOString();
+      }
+    } else if (interval === 'custom') {
+      if (customStart) {
+        opts.startTimeFrom = customStart.toISOString();
+      }
+      if (customEnd) {
+        // Round up to the end of the selected minute for inclusive filtering
+        const endAdjusted = new Date(customEnd);
+        endAdjusted.setSeconds(59, 999);
+        opts.startTimeTo = endAdjusted.toISOString();
+      }
+    }
+
+    return opts.status || opts.startTimeFrom || opts.startTimeTo ? opts : undefined;
+  }, [filters, customStart, customEnd]);
+
+  const runsQuery = useRunsInfiniteQuery(isMonitoringView, serverFilters);
+  const runs = useMemo(() => {
+    return (runsQuery.data?.pages ?? []).flatMap((p) => p.runs ?? []);
+  }, [runsQuery.data]);
+
+  // When runId filter is set, fetch runs directly by ID (handles old runs not in paginated list)
+  const runIdFilterIds = useMemo(() => {
+    if (!filters?.['runId']) {
+      return [];
+    }
+    return filters['runId']
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => runIdRegex.test(id));
+  }, [filters]);
+  const runsByIdsQuery = useRunsByIds(runIdFilterIds);
+
   const selectedRunInstance = useRunInstance();
   const runQuery = useRun(selectedRunInstance?.id);
 
@@ -86,40 +175,34 @@ export const RunHistoryPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMonitoringView, selectedRunInstance]);
 
-  // MARK: Filtering
-  const [filters, setFilters] = useState<Partial<Record<FilterTypes, string | null>>>({});
-  const [filtersExpanded, setFiltersExpanded] = useState(false);
-
-  const [customStart, setCustomStart] = useState<Date | null>(null);
-  const [customEnd, setCustomEnd] = useState<Date | null>(null);
-
   const onCustomDateSelect = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (date: Date | null | undefined) => {
-      if (!date) {
-        setter(null);
-        return;
-      }
-      setter((prev) => {
-        const updated = new Date(date);
-        if (prev) {
-          updated.setHours(prev.getHours(), prev.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
-        } else if (isEnd) {
-          updated.setHours(23, 59, 59, 999);
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>, defaultHour = 0, defaultMinute = 0) =>
+      (date: Date | null | undefined) => {
+        if (!date) {
+          setter(null);
+          return;
         }
-        return updated;
-      });
-    },
+        setter((prev) => {
+          const updated = new Date(date);
+          if (prev) {
+            updated.setHours(prev.getHours(), prev.getMinutes(), 0, 0);
+          } else {
+            updated.setHours(defaultHour, defaultMinute, 0, 0);
+          }
+          return updated;
+        });
+      },
     []
   );
 
   const onCustomTimeChange = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<Date | null>>, isEnd: boolean) => (_e: unknown, data: { selectedTime: Date | null }) => {
+    (setter: React.Dispatch<React.SetStateAction<Date | null>>) => (_e: unknown, data: { selectedTime: Date | null }) => {
       setter((prev) => {
         const base = prev ? new Date(prev) : new Date();
         if (data.selectedTime) {
-          base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), isEnd ? 59 : 0, isEnd ? 999 : 0);
+          base.setHours(data.selectedTime.getHours(), data.selectedTime.getMinutes(), 0, 0);
         } else {
-          base.setHours(isEnd ? 23 : 0, isEnd ? 59 : 0, isEnd ? 59 : 0, isEnd ? 999 : 0);
+          base.setHours(0, 0, 0, 0);
         }
         return base;
       });
@@ -128,15 +211,12 @@ export const RunHistoryPanel = () => {
   );
 
   const filteredRuns = useMemo(() => {
+    // When filtering by run IDs, use directly-fetched results instead of paginated list
+    const source = runIdFilterIds.length > 0 ? runsByIdsQuery.data : runs;
     return (
-      runs?.filter((run) => {
-        if (filters?.['runId'] && run.name !== filters['runId']) {
-          return false;
-        }
+      source?.filter((run) => {
+        // Client-side filters for properties not supported by the API
         if (filters?.['workflowVersion'] && (run.properties.workflow as any)?.name !== filters['workflowVersion']) {
-          return false;
-        }
-        if (filters?.['status'] && run.properties.status !== filters['status']) {
           return false;
         }
         if (filters?.['mode'] === 'Draft' && (run.properties.workflow as any)?.mode !== 'Draft') {
@@ -145,39 +225,10 @@ export const RunHistoryPanel = () => {
         if (filters?.['mode'] === 'Prod' && (run.properties.workflow as any)?.mode !== undefined) {
           return false;
         }
-        // Time interval filter
-        if (filters?.['timeInterval'] && run.properties.startTime) {
-          const runTime = new Date(run.properties.startTime).getTime();
-          const now = Date.now();
-          const interval = filters['timeInterval'];
-          if (interval === 'last24h' && runTime < now - Durations.day) {
-            return false;
-          }
-          if (interval === 'last48h' && runTime < now - 2 * Durations.day) {
-            return false;
-          }
-          if (interval === 'last7d' && runTime < now - Durations.week) {
-            return false;
-          }
-          if (interval === 'last14d' && runTime < now - 2 * Durations.week) {
-            return false;
-          }
-          if (interval === 'last30d' && runTime < now - 30 * Durations.day) {
-            return false;
-          }
-          if (interval === 'custom') {
-            if (customStart && runTime < customStart.getTime()) {
-              return false;
-            }
-            if (customEnd && runTime > customEnd.getTime()) {
-              return false;
-            }
-          }
-        }
         return true;
       }) ?? []
     );
-  }, [filters, runs, customStart, customEnd]);
+  }, [filters, runs, runIdFilterIds, runsByIdsQuery.data]);
 
   const addFilterCallback = useCallback(({ key, value }: { key: FilterTypes; value: string | undefined }) => {
     setFilters((prev) => {
@@ -279,15 +330,15 @@ export const RunHistoryPanel = () => {
   });
 
   const customStartLabel = intl.formatMessage({
-    defaultMessage: 'From',
+    defaultMessage: 'Start',
     description: 'Custom time range start label',
-    id: '3nbg4r',
+    id: 'afCjXx',
   });
 
   const customEndLabel = intl.formatMessage({
-    defaultMessage: 'To',
+    defaultMessage: 'End',
     description: 'Custom time range end label',
-    id: 'BOD0+G',
+    id: 'oua+Hn',
   });
 
   const selectDatePlaceholder = intl.formatMessage({
@@ -308,6 +359,7 @@ export const RunHistoryPanel = () => {
     Running: intl.formatMessage({ defaultMessage: 'In progress', description: 'Running status', id: 'eXcejw' }),
     Failed: intl.formatMessage({ defaultMessage: 'Failed', description: 'Failed status', id: 'Mrge1g' }),
     Cancelled: intl.formatMessage({ defaultMessage: 'Cancelled', description: 'Cancelled status', id: 'xfIp1j' }),
+    Waiting: intl.formatMessage({ defaultMessage: 'Waiting', description: 'Waiting status', id: 'F67pEe' }),
   };
 
   const modeTexts: Record<string, string> = {
@@ -336,6 +388,42 @@ export const RunHistoryPanel = () => {
     defaultMessage: 'Agent activity',
     description: 'Chat view tab title',
     id: 'YV6qd0',
+  });
+
+  const toggleMultiSelectAria = intl.formatMessage({
+    defaultMessage: 'Toggle multi-select',
+    description: 'Aria label for the multi-select toggle button',
+    id: 'CS/1SY',
+  });
+
+  const selectAllAria = intl.formatMessage({
+    defaultMessage: 'Select all',
+    description: 'Aria label for select all button',
+    id: '/ZyaN4',
+  });
+
+  const deselectAllAria = intl.formatMessage({
+    defaultMessage: 'Deselect all',
+    description: 'Aria label for deselect all button',
+    id: '1webqh',
+  });
+
+  const retrySelectedText = intl.formatMessage({
+    defaultMessage: 'Retry',
+    description: 'Retry selected runs button text',
+    id: 'oKxHWW',
+  });
+
+  const cancelSelectedText = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Cancel selected runs button text',
+    id: 't8HhGz',
+  });
+
+  const copySelectedText = intl.formatMessage({
+    defaultMessage: 'Copy run IDs',
+    description: 'Copy selected run IDs button text',
+    id: '5qdGCJ',
   });
 
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -381,6 +469,163 @@ export const RunHistoryPanel = () => {
 
   const isRunHistoryCollapsed = useIsRunHistoryCollapsed();
   const [inRunList, setInRunList] = useState(true);
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
+
+  // MARK: Multi-select
+  const [multiSelectEnabled, setMultiSelectEnabled] = useState(false);
+  const [multiSelectedIds, setMultiSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkActionInProgress, setIsBulkActionInProgress] = useState(false);
+  const lastMultiSelectIndex = useRef<number | null>(null);
+
+  const toggleMultiSelect = useCallback(() => {
+    setMultiSelectEnabled((prev) => {
+      if (prev) {
+        setMultiSelectedIds(new Set());
+        lastMultiSelectIndex.current = null;
+      }
+      return !prev;
+    });
+  }, []);
+
+  const toggleRunMultiSelect = useCallback(
+    (runId: string, shiftKey?: boolean) => {
+      const currentIndex = filteredRuns.findIndex((r) => r.id === runId);
+
+      if (shiftKey && lastMultiSelectIndex.current !== null && currentIndex !== -1) {
+        const start = Math.min(lastMultiSelectIndex.current, currentIndex);
+        const end = Math.max(lastMultiSelectIndex.current, currentIndex);
+        setMultiSelectedIds((prev) => {
+          const next = new Set(prev);
+          for (let i = start; i <= end; i++) {
+            next.add(filteredRuns[i].id);
+          }
+          return next;
+        });
+      } else {
+        setMultiSelectedIds((prev) => {
+          const next = new Set(prev);
+          if (next.has(runId)) {
+            next.delete(runId);
+          } else {
+            next.add(runId);
+          }
+          return next;
+        });
+      }
+
+      lastMultiSelectIndex.current = currentIndex;
+    },
+    [filteredRuns]
+  );
+
+  const selectAllRuns = useCallback(() => {
+    setMultiSelectedIds(new Set(filteredRuns.map((r) => r.id)));
+  }, [filteredRuns]);
+
+  const deselectAllRuns = useCallback(() => {
+    setMultiSelectedIds(new Set());
+  }, []);
+
+  const selectedCountText = intl.formatMessage(
+    {
+      defaultMessage: '{count} selected',
+      description: 'Number of selected runs',
+      id: 'nUCvFK',
+    },
+    { count: multiSelectedIds.size }
+  );
+
+  const selectedRunDetails = useMemo(() => {
+    const selected = filteredRuns.filter((r) => multiSelectedIds.has(r.id));
+    const resubmittable = selected.filter((r) => !equals((r.properties?.workflow as any)?.mode, 'Draft'));
+    const cancellable = selected.filter((r) => r.properties.status === 'Running');
+    return {
+      total: selected.length,
+      resubmittableCount: resubmittable.length,
+      cancellableCount: cancellable.length,
+    };
+  }, [filteredRuns, multiSelectedIds]);
+
+  const retryPartialWarning = intl.formatMessage(
+    {
+      defaultMessage: 'Retry ({count} of {total} eligible)',
+      description: 'Tooltip when only some selected runs can be retried',
+      id: 'OtYFr2',
+    },
+    { count: selectedRunDetails.resubmittableCount, total: selectedRunDetails.total }
+  );
+
+  const cancelPartialWarning = intl.formatMessage(
+    {
+      defaultMessage: 'Cancel ({count} of {total} eligible)',
+      description: 'Tooltip when only some selected runs can be cancelled',
+      id: 'Fpkufw',
+    },
+    { count: selectedRunDetails.cancellableCount, total: selectedRunDetails.total }
+  );
+
+  const retryTooltip =
+    selectedRunDetails.resubmittableCount > 0 && selectedRunDetails.resubmittableCount < selectedRunDetails.total
+      ? retryPartialWarning
+      : retrySelectedText;
+
+  const cancelTooltip =
+    selectedRunDetails.cancellableCount > 0 && selectedRunDetails.cancellableCount < selectedRunDetails.total
+      ? cancelPartialWarning
+      : cancelSelectedText;
+
+  const onBulkCopyIds = useCallback(() => {
+    const ids = [...multiSelectedIds].map((id) => id.split('/').at(-1) ?? '');
+    navigator.clipboard.writeText(ids.join(', '));
+    LoggerService().log({
+      area: 'RunHistoryPanel:bulkCopyIds',
+      level: LogEntryLevel.Verbose,
+      message: `Copied ${ids.length} run IDs.`,
+    });
+  }, [multiSelectedIds]);
+
+  const onBulkRetry = useCallback(async () => {
+    setIsBulkActionInProgress(true);
+    const selectedRuns = filteredRuns.filter((r) => multiSelectedIds.has(r.id) && !equals((r.properties?.workflow as any)?.mode, 'Draft'));
+    for (const run of selectedRuns) {
+      const triggerName = (run.properties.trigger as any)?.name;
+      if (triggerName) {
+        try {
+          await RunService().resubmitRun?.(run.name, triggerName);
+        } catch {
+          // continue with remaining runs
+        }
+      }
+    }
+    setIsBulkActionInProgress(false);
+    queryClient.invalidateQueries([runsQueriesKeys.runs]);
+    queryClient.invalidateQueries([runsQueriesKeys.run]);
+    LoggerService().log({
+      area: 'RunHistoryPanel:bulkRetry',
+      level: LogEntryLevel.Verbose,
+      message: `Retried ${selectedRuns.length} runs.`,
+    });
+  }, [filteredRuns, multiSelectedIds, queryClient]);
+
+  const onBulkCancel = useCallback(async () => {
+    setIsBulkActionInProgress(true);
+    const selectedRuns = filteredRuns.filter((r) => multiSelectedIds.has(r.id) && r.properties.status === 'Running');
+    for (const run of selectedRuns) {
+      try {
+        await RunService().cancelRun(run.id);
+      } catch {
+        // continue with remaining runs
+      }
+    }
+    setIsBulkActionInProgress(false);
+    queryClient.invalidateQueries([runsQueriesKeys.runs]);
+    queryClient.invalidateQueries([runsQueriesKeys.run]);
+    LoggerService().log({
+      area: 'RunHistoryPanel:bulkCancel',
+      level: LogEntryLevel.Verbose,
+      message: `Cancelled ${selectedRuns.length} runs.`,
+    });
+  }, [filteredRuns, multiSelectedIds, queryClient]);
 
   const statusTags = useMemo(
     () => [
@@ -389,6 +634,7 @@ export const RunHistoryPanel = () => {
       { value: 'Running', children: runStatusTexts['Running'] },
       { value: 'Failed', children: runStatusTexts['Failed'] },
       { value: 'Cancelled', children: runStatusTexts['Cancelled'] },
+      { value: 'Waiting', children: runStatusTexts['Waiting'] },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -458,6 +704,26 @@ export const RunHistoryPanel = () => {
   );
 
   const chatEnabled = useWorkflowHasAgentLoop();
+
+  const activeFilterTags = useMemo(() => {
+    const tags: { key: FilterTypes; label: string; value: string }[] = [];
+    if (filters?.['status']) {
+      tags.push({ key: 'status', label: statusFilterLabel, value: runStatusTexts[filters['status']] ?? filters['status'] });
+    }
+    if (filters?.['mode']) {
+      tags.push({ key: 'mode', label: modeFilterLabel, value: modeTexts[filters['mode']] ?? filters['mode'] });
+    }
+    if (filters?.['timeInterval']) {
+      tags.push({
+        key: 'timeInterval',
+        label: timeIntervalFilterLabel,
+        value: timeIntervalTexts[filters['timeInterval']] ?? filters['timeInterval'],
+      });
+    }
+    return tags;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, statusFilterLabel, modeFilterLabel, timeIntervalFilterLabel]);
+
   const [selectedContentTab, setSelectedContentTab] = useState<'tree' | 'chat'>('tree');
 
   useEffect(() => {
@@ -472,11 +738,12 @@ export const RunHistoryPanel = () => {
     }
   }, [isMonitoringView]);
 
-  // If a runId filter is set, prefetch that run's data
-  const { isFetching: isFetchingFilteredRun } = useRun(filters?.['runId'] ?? undefined, runIdRegex.test(filters?.['runId'] ?? ''));
+  // Track fetching state for run ID lookups
+  const isFetchingFilteredRun = runsByIdsQuery.isFetching;
 
-  const compatMountNode = useMemo(() => {
-    return document.getElementById('fluent-compat-component-mount') ?? undefined;
+  const [compatMountNode, setCompatMountNode] = useState<HTMLElement | undefined>(undefined);
+  useEffect(() => {
+    setCompatMountNode(document.getElementById('fluent-compat-component-mount') ?? undefined);
   }, []);
 
   // MARK: Components
@@ -496,7 +763,30 @@ export const RunHistoryPanel = () => {
         }}
         icon={(runsQuery.isRefetching && !runsQuery.isLoading) || isFetchingFilteredRun ? <Spinner size={'tiny'} /> : <RefreshIcon />}
         aria-label={refreshAria}
-        style={{ marginRight: '-8px' }}
+      />
+    </Tooltip>
+  );
+
+  const FilterButton = () => (
+    <Tooltip content={toggleFiltersAria} relationship="label">
+      <Button
+        appearance={filtersExpanded ? 'primary' : 'subtle'}
+        icon={<FilterIcon />}
+        onClick={() => setFiltersExpanded((prev) => !prev)}
+        aria-label={toggleFiltersAria}
+        aria-pressed={filtersExpanded}
+      />
+    </Tooltip>
+  );
+
+  const MultiSelectButton = () => (
+    <Tooltip content={toggleMultiSelectAria} relationship="label">
+      <Button
+        appearance={multiSelectEnabled ? 'primary' : 'subtle'}
+        icon={<MultiSelectIcon />}
+        onClick={toggleMultiSelect}
+        aria-label={toggleMultiSelectAria}
+        aria-pressed={multiSelectEnabled}
       />
     </Tooltip>
   );
@@ -542,8 +832,12 @@ export const RunHistoryPanel = () => {
         ) : null}
         {inRunList ? (
           <>
-            <div className={styles.flexbox}>
-              <Field validationState={searchError ? 'error' : 'none'} validationMessage={searchError} style={{ flex: 1 }}>
+            <div className={styles.flexbox} style={{ gap: '2px', marginRight: '-8px' }}>
+              <Field
+                validationState={searchError ? 'error' : 'none'}
+                validationMessage={searchError}
+                style={{ flex: 1, marginRight: '6px' }}
+              >
                 <SearchBox
                   placeholder={searchPlaceholder}
                   defaultValue={filters['runId'] ?? undefined}
@@ -551,11 +845,17 @@ export const RunHistoryPanel = () => {
                     addFilterCallback({ key: 'runId', value: undefined });
                     if (data.value === '') {
                       setSearchError(null);
-                    } else if (runIdRegex.test(data.value)) {
-                      addFilterCallback({ key: 'runId', value: data.value });
-                      setSearchError(null);
                     } else {
-                      setSearchError(invalidRunId);
+                      const ids = data.value
+                        .split(',')
+                        .map((id) => id.trim())
+                        .filter(Boolean);
+                      if (ids.length > 0 && ids.every((id) => runIdRegex.test(id))) {
+                        addFilterCallback({ key: 'runId', value: data.value });
+                        setSearchError(null);
+                      } else {
+                        setSearchError(invalidRunId);
+                      }
                     }
                   }}
                   // When the user presses enter, try to open the run if the runId is valid
@@ -564,23 +864,22 @@ export const RunHistoryPanel = () => {
                       return;
                     }
                     const value = filters?.['runId'];
-                    if (value && runIdRegex.test(value)) {
-                      HostService().openRun?.(value);
+                    if (value) {
+                      const ids = value
+                        .split(',')
+                        .map((id: string) => id.trim())
+                        .filter(Boolean);
+                      const firstValid = ids.find((id: string) => runIdRegex.test(id));
+                      if (firstValid) {
+                        HostService().openRun?.(firstValid);
+                      }
                     }
                   }}
                 />
               </Field>
               <RefreshButton />
-              <Tooltip content={toggleFiltersAria} relationship="label">
-                <Button
-                  appearance="subtle"
-                  icon={<FilterIcon />}
-                  onClick={() => setFiltersExpanded((prev) => !prev)}
-                  aria-label={toggleFiltersAria}
-                  aria-expanded={filtersExpanded}
-                  style={{ marginRight: '-8px' }}
-                />
-              </Tooltip>
+              <FilterButton />
+              <MultiSelectButton />
             </div>
             {filtersExpanded && (
               <div className={styles.filterContainer}>
@@ -651,7 +950,7 @@ export const RunHistoryPanel = () => {
                         placeholder={selectDatePlaceholder}
                         value={customStart}
                         isMonthPickerVisible={false}
-                        onSelectDate={onCustomDateSelect(setCustomStart, false)}
+                        onSelectDate={onCustomDateSelect(setCustomStart)}
                         style={{ marginBottom: '4px' }}
                         mountNode={compatMountNode}
                       />
@@ -659,8 +958,9 @@ export const RunHistoryPanel = () => {
                         className={styles.smallInput}
                         size="small"
                         placeholder={selectTimePlaceholder}
+                        dateAnchor={customStart ?? undefined}
                         selectedTime={customStart}
-                        onTimeChange={onCustomTimeChange(setCustomStart, false)}
+                        onTimeChange={onCustomTimeChange(setCustomStart)}
                         clearable
                         mountNode={compatMountNode}
                       />
@@ -672,7 +972,7 @@ export const RunHistoryPanel = () => {
                         placeholder={selectDatePlaceholder}
                         value={customEnd}
                         isMonthPickerVisible={false}
-                        onSelectDate={onCustomDateSelect(setCustomEnd, true)}
+                        onSelectDate={onCustomDateSelect(setCustomEnd, 23, 59)}
                         style={{ marginBottom: '4px' }}
                         mountNode={compatMountNode}
                       />
@@ -680,14 +980,92 @@ export const RunHistoryPanel = () => {
                         className={styles.smallInput}
                         size="small"
                         placeholder={selectTimePlaceholder}
+                        dateAnchor={customEnd ?? undefined}
                         selectedTime={customEnd}
-                        onTimeChange={onCustomTimeChange(setCustomEnd, true)}
+                        onTimeChange={onCustomTimeChange(setCustomEnd)}
                         clearable
                         mountNode={compatMountNode}
                       />
                     </Field>
                   </div>
                 )}
+              </div>
+            )}
+            {!filtersExpanded && activeFilterTags.length > 0 && (
+              <TagGroup
+                className={styles.activeFilterTags}
+                role="list"
+                onDismiss={(_e: unknown, data: TagDismissData) => {
+                  const key = data.value as FilterTypes;
+                  addFilterCallback({ key, value: undefined });
+                  if (key === 'timeInterval') {
+                    setCustomStart(null);
+                    setCustomEnd(null);
+                  }
+                }}
+              >
+                {activeFilterTags.map((tag) => (
+                  <Tag
+                    key={tag.key}
+                    size="small"
+                    shape="rounded"
+                    appearance="brand"
+                    dismissible
+                    dismissIcon={{ 'aria-label': 'remove' }}
+                    value={tag.key}
+                  >
+                    {tag.label}: {tag.value}
+                  </Tag>
+                ))}
+              </TagGroup>
+            )}
+            {multiSelectEnabled && (
+              <div className={styles.multiSelectBar}>
+                <Caption1>{selectedCountText}</Caption1>
+                <div className={styles.multiSelectActions}>
+                  <Tooltip content={selectAllAria} relationship="label">
+                    <Button appearance="subtle" icon={<SelectAllIcon />} size="small" onClick={selectAllRuns} aria-label={selectAllAria} />
+                  </Tooltip>
+                  <Tooltip content={deselectAllAria} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<DeselectAllIcon />}
+                      size="small"
+                      onClick={deselectAllRuns}
+                      aria-label={deselectAllAria}
+                    />
+                  </Tooltip>
+                  <Tooltip content={retryTooltip} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<ResubmitIcon />}
+                      size="small"
+                      onClick={onBulkRetry}
+                      disabled={selectedRunDetails.resubmittableCount === 0 || isBulkActionInProgress}
+                      aria-label={retryTooltip}
+                    />
+                  </Tooltip>
+                  <Tooltip content={cancelTooltip} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<CancelIcon />}
+                      size="small"
+                      onClick={onBulkCancel}
+                      disabled={selectedRunDetails.cancellableCount === 0 || isBulkActionInProgress}
+                      aria-label={cancelTooltip}
+                    />
+                  </Tooltip>
+                  <Tooltip content={copySelectedText} relationship="label">
+                    <Button
+                      appearance="subtle"
+                      icon={<CopyIcon />}
+                      size="small"
+                      onClick={onBulkCopyIds}
+                      disabled={multiSelectedIds.size === 0}
+                      aria-label={copySelectedText}
+                    />
+                  </Tooltip>
+                </div>
               </div>
             )}
             {runsQuery.error ? (
@@ -721,23 +1099,33 @@ export const RunHistoryPanel = () => {
               </Text>
             ) : (
               <>
-                {filteredRuns.map((run) => (
+                {filteredRuns.map((run, index) => (
                   <RunHistoryEntry
                     key={run.id}
                     runId={run.id}
-                    isSelected={selectedRunInstance?.id === run.id}
+                    isSelected={selectedRunId === run.name || selectedRunInstance?.id === run.id}
                     onRunSelected={(id) => {
+                      setSelectedRunId(id);
+                      HostService().openRun?.(id);
+                    }}
+                    onRunOpened={(id) => {
+                      setSelectedRunId(id);
                       HostService().openRun?.(id);
                       setInRunList(false);
                     }}
                     addFilterCallback={addFilterCallback}
+                    showTeachingBubble={index === 0}
                     size="small"
+                    multiSelectEnabled={multiSelectEnabled}
+                    isMultiSelected={multiSelectedIds.has(run.id)}
+                    onMultiSelectToggle={toggleRunMultiSelect}
                   />
                 ))}
-                {!runsQuery.isFetching && runsQuery.hasNextPage && (
+                {runsQuery.hasNextPage && runIdFilterIds.length === 0 && (
                   <Button
                     onClick={() => runsQuery.fetchNextPage()}
                     appearance="subtle"
+                    disabled={runsQuery.isFetching}
                     style={{
                       margin: '16px auto',
                       display: 'block',

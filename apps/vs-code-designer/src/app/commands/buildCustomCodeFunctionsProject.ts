@@ -22,8 +22,8 @@ import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
  */
 export async function tryBuildCustomCodeFunctionsProject(context: IActionContext, node: vscode.Uri): Promise<boolean> {
   const workspaceFolderPath = await getWorkspaceRoot(context);
-
   const nodePath = node?.fsPath || workspaceFolderPath;
+
   if (isNullOrUndefined(nodePath)) {
     return false;
   }

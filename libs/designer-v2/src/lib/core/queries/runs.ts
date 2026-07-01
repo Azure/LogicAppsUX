@@ -1,5 +1,12 @@
-import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { type ChatHistory, isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
+import { useMutation, useQuery, useQueries, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type ChatHistory,
+  isNullOrUndefined,
+  type LogicAppsV2,
+  type Run,
+  type RunFilterOptions,
+  RunService,
+} from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
 import constants from '../../common/constants';
@@ -29,15 +36,15 @@ export const runsQueriesKeys = {
   useCancelRun: 'useCancelRun',
 };
 
-export const useRunsInfiniteQuery = (enabled = false) => {
+export const useRunsInfiniteQuery = (enabled = false, filters?: RunFilterOptions) => {
   const queryClient = useQueryClient();
 
   return useInfiniteQuery(
-    [runsQueriesKeys.runs],
+    [runsQueriesKeys.runs, filters],
     async ({ pageParam }: { pageParam?: string }) => {
       // pageParam is the nextLink when provided
       if (!pageParam) {
-        const firstRuns = await RunService().getRuns();
+        const firstRuns = await RunService().getRuns(filters);
         return { runs: firstRuns.runs ?? [], nextLink: firstRuns?.nextLink };
       }
       const moreRuns = await RunService().getMoreRuns(pageParam);
@@ -46,6 +53,7 @@ export const useRunsInfiniteQuery = (enabled = false) => {
     {
       enabled,
       ...queryOpts,
+      refetchInterval: enabled ? constants.RUN_POLLING_INTERVAL_IN_MS : false,
       getNextPageParam: (lastPage) => lastPage.nextLink ?? undefined,
       // Seed flattened runs and per-run cache entries so `useRun` can read
       // them without an extra fetch when available.
@@ -105,6 +113,12 @@ export const useRun = (runId: string | undefined, enabled = true) => {
         ...old,
         [fetchedRun.id]: fetchedRun,
       }));
+
+      // When a run reaches terminal status, refresh the runs list
+      if (fetchedRun.properties.status !== constants.FLOW_STATUS.RUNNING) {
+        queryClient.invalidateQueries([runsQueriesKeys.runs]);
+      }
+
       return fetchedRun;
     },
     {
@@ -119,6 +133,38 @@ export const useRun = (runId: string | undefined, enabled = true) => {
         return false;
       },
     }
+  );
+};
+
+export const useRunsByIds = (runIds: string[]) => {
+  const queryClient = useQueryClient();
+  const results = useQueries({
+    queries: runIds.map((runId) => ({
+      queryKey: [runsQueriesKeys.run, runId],
+      queryFn: async () => {
+        const fetchedRun = await RunService().getRun(runId);
+        if (isRunError(fetchedRun)) {
+          throw new Error('Run not found');
+        }
+        queryClient.setQueryData([runsQueriesKeys.allRuns], (old: Record<string, Run> | undefined) => ({
+          ...old,
+          [fetchedRun.id]: fetchedRun,
+        }));
+        return fetchedRun;
+      },
+      ...queryOpts,
+      enabled: !!runId,
+    })),
+  });
+
+  return useMemo(
+    () => ({
+      data: results.filter((r) => r.isSuccess && r.data).map((r) => r.data as Run),
+      isFetching: results.some((r) => r.isFetching),
+      isError: results.some((r) => r.isError),
+      refetch: () => results.forEach((r) => r.refetch()),
+    }),
+    [results]
   );
 };
 

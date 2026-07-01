@@ -20,14 +20,21 @@ export async function verifyLocalConnectionKeys(context: IActionContext, project
   const verifyConnectionKeysStartTime = Date.now();
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
-      const workspaceFolder = await getWorkspaceFolder(context);
-      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, true);
       if (!projectPath) {
         return;
       }
     }
 
     const azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+    if (!azureDetails.enabled) {
+      ext.outputChannel.appendLog(
+        localize('azureConnectorsDisabled', 'Azure connectors are disabled. Skipping connection key verification.')
+      );
+      return;
+    }
+
     try {
       const connectionsJson = await getConnectionsJson(projectPath);
       if (isEmptyString(connectionsJson)) {

@@ -6,6 +6,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { ProjectFile } from '../dotnet/dotnet';
 import { getDotnetDebugSubpath, getProjFiles, getTargetFramework } from '../dotnet/dotnet';
+import { getFuncHostTaskEnv } from '../codeless/funcHostTaskEnv';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
@@ -92,7 +93,7 @@ export async function validateTasksJson(context: IActionContext, folders: readon
   try {
     if (folders) {
       for (const folder of folders) {
-        const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder);
+        const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder, true);
         context.telemetry.properties.projectPath = projectPath;
         if (projectPath) {
           const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);
@@ -228,12 +229,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
             type: 'shell',
             command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
             args: ['host', 'start'],
-            options: {
-              cwd: debugSubpath,
-              env: {
-                PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\DotNetSDK;$env:PATH',
-              },
-            },
+            ...getFuncHostTaskEnv({ cwd: debugSubpath }),
             problemMatcher: '$func-watch',
             isBackground: true,
           },
@@ -262,11 +258,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
             type: 'shell',
             command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
             args: ['host', 'start'],
-            options: {
-              env: {
-                PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\DotNetSDK;$env:PATH',
-              },
-            },
+            ...getFuncHostTaskEnv(),
             problemMatcher: '$func-watch',
             isBackground: true,
             label: 'func: host start',

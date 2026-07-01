@@ -13,6 +13,7 @@ import {
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { ext } from './extensionVariables';
+import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 
 /**
  * Start onboarding experience prompting inputs for user.
@@ -23,20 +24,31 @@ import { ext } from './extensionVariables';
 export const startOnboarding = async (activateContext: IActionContext) => {
   const isDevContainer = await isDevContainerWorkspace();
   activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
+  const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
 
   if (isDevContainer) {
     activateContext.telemetry.properties.skippedDependencyOnboarding = 'true';
     activateContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
     ext.outputChannel.appendLog('Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.');
-  } else {
-    callWithTelemetryAndErrorHandling(autoRuntimeDependenciesValidationAndInstallationSetting, async (actionContext: IActionContext) => {
-      const binariesInstallStartTime = Date.now();
-      await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
-        activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
-        await installBinaries(actionContext);
-      });
-      activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
+  } else if (requireStrictDependencyValidation) {
+    const binariesInstallStartTime = Date.now();
+    await runWithDurationTelemetry(activateContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
+      activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
+      await installBinaries(activateContext);
     });
+    activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
+  } else {
+    await callWithTelemetryAndErrorHandling(
+      autoRuntimeDependenciesValidationAndInstallationSetting,
+      async (actionContext: IActionContext) => {
+        const binariesInstallStartTime = Date.now();
+        await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
+          activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
+          await installBinaries(actionContext);
+        });
+        activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
+      }
+    );
   }
 
   await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {

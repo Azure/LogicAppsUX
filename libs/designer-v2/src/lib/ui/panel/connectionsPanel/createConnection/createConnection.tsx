@@ -115,6 +115,7 @@ export interface CreateConnectionProps {
   operationManifest?: OperationManifest;
   workflowKind?: string;
   workflowMetadata?: ConsumptionWorkflowMetadata;
+  enableManagedIdentityPicker?: boolean;
 }
 
 export const CreateConnection = (props: CreateConnectionProps) => {
@@ -406,6 +407,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
+  // Show MI picker only when explicitly enabled by the caller (e.g. MCP wizard) AND
+  // there are no visible parameters (form would be empty without it).
+  const isMultiAuthManagedIdentitySet = useMemo(() => {
+    if (!props.enableManagedIdentityPicker || !isMultiAuth) {
+      return false;
+    }
+    return Object.keys(capabilityEnabledParameters ?? {}).length === 0;
+  }, [props.enableManagedIdentityPicker, isMultiAuth, capabilityEnabledParameters]);
+
   // Don't show name for simple connections
   const showNameInput = useMemo(() => {
     const isMcpClientConnection = connectorId?.toLowerCase().includes('mcpclient');
@@ -439,6 +449,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     if (legacyManagedIdentitySelected && !selectedManagedIdentity) {
       return false;
     }
+    if (isMultiAuthManagedIdentitySet && !selectedManagedIdentity) {
+      return false;
+    }
     if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) {
       return true;
     }
@@ -451,6 +464,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     resourceSelectorProps,
     legacyManagedIdentitySelected,
     selectedManagedIdentity,
+    isMultiAuthManagedIdentitySet,
     capabilityEnabledParameters,
     parameterValues,
   ]);
@@ -497,7 +511,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
-    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
+    const identitySelected = legacyManagedIdentitySelected || isMultiAuthManagedIdentitySet ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : undefined,
@@ -530,6 +544,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     operationParameterValues,
     isUsingDynamicConnection,
     isDynamicConnectionOptionValidForConnector,
+    isMultiAuthManagedIdentitySet,
   ]);
 
   // INTL STRINGS
@@ -917,6 +932,25 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               onChange={onAuthDropdownChange}
               connectionParameterSets={connectionParameterSets}
             />
+          )}
+
+          {/* Multi-auth Managed Identity Selection (for MCP custom connectors with MI parameter set) */}
+          {isMultiAuthManagedIdentitySet && (
+            <div className="param-row">
+              <Label
+                className="label"
+                isRequiredField={true}
+                text={legacyManagedIdentityLabelText}
+                htmlFor={'multi-auth-managed-identity-select'}
+                disabled={isLoading}
+              />
+              <LegacyManagedIdentityDropdown
+                id={'multi-auth-managed-identity-select'}
+                identity={identity}
+                onChange={onLegacyManagedIdentityChange}
+                disabled={isLoading}
+              />
+            </div>
           )}
 
           {/* OAuth tenant ID selection */}

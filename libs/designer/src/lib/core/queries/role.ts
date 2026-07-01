@@ -120,13 +120,16 @@ export const getMissingRoleDefinitions = async (resourceId: string, definitionNa
 
   const missingDefinitions: ArmResource<RoleDefinition>[] = [];
   for (const name of definitionNames) {
+    const definition = definitions[name];
+    if (!definition) {
+      continue; // Role definition does not exist in this environment, nothing to assign
+    }
     if (
       !assignments.some(
-        (assignment) =>
-          assignment?.properties?.roleDefinitionId.endsWith(definitions[name].id) && assignment.properties.scope === resourceId
+        (assignment) => assignment?.properties?.roleDefinitionId?.endsWith(definition.id) && assignment.properties.scope === resourceId
       )
     ) {
-      missingDefinitions.push(definitions[name]);
+      missingDefinitions.push(definition);
     }
   }
   return missingDefinitions;

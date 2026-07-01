@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
-import { binariesExist } from '../../utils/binaries';
+import { binariesExistSync } from '../../utils/binaries';
+import { getFuncHostTaskEnv } from '../../utils/codeless/funcHostTaskEnv';
 import { getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
 import { InitProjectStepBase } from './initProjectStepBase';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
@@ -50,16 +51,8 @@ export class InitScriptProjectStep extends InitProjectStepBase {
   }
 
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
+    const funcBinariesExist = binariesExistSync(funcDependencyName);
+    const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv() : {};
     return [
       {
         label: 'func: host start',

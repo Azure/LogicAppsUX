@@ -3,6 +3,18 @@
 
 # Logic Apps UX — AI Assistant Guide
 
+## Always Do These First (every task, no exceptions)
+
+These rules apply to **every** task — including ones that look trivial. Skipping them because a task "looks like a one-liner" is a known failure mode.
+
+1. **Check repo git aliases before running any `git` command.**
+   - Run `git config --get-regexp '^alias\.'` and prefer repo aliases over raw `git` invocations.
+   - Examples in this repo: `git new <branch>` creates a worktree at `../<branch>` from `origin/main` and overlays `.github` / `.squad` with skip-worktree. Do **not** hand-roll `git worktree add` for new branches.
+2. **Scan the knowledge index before planning or acting.**
+   - Read `.squad/knowledge/INDEX.md` and open any listed file whose triggers match the task domain (git/worktree, e2e, CI, reviews, customer repro, unit tests, etc.).
+   - For non-trivial work also follow the chief-engineer charter's subagent workflow.
+3. **Never skip steps 1–2 because the task "looks trivial."** Trivial-looking requests (worktree creation, branch setup, running a single test) are exactly where repo-specific conventions get missed.
+
 ## Repository Overview
 
 Azure Logic Apps UX is a monorepo containing the UI components for Azure Logic Apps visual workflow designer. It powers the designer experience across Azure Portal, VS Code extension, Power Automate, and standalone environments.
@@ -58,6 +70,12 @@ node src/test/ui/run-e2e.js
 E2E_MODE="createonly"    # Phase 4.1: workspace creation
 E2E_MODE="designeronly"  # Phase 4.2: designer lifecycle
 E2E_MODE="newtestsonly"  # Phases 4.3-4.6: new tests
+
+# CI matrix shard modes (each runs on its own GitHub Actions runner):
+E2E_MODE="independentonly"      # 4.0 + 4.8b (no Phase 4.1 dep)
+E2E_MODE="createplusdesigner"   # 4.1 → 4.2, 4.7
+E2E_MODE="createplusnewtests"   # 4.1 → 4.3-4.6
+E2E_MODE="createplusconversion" # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
 ```
 
 Key knowledge files for E2E tests:

@@ -108,6 +108,7 @@ describe('DesignerContextualMenu', () => {
     vi.spyOn(workflowSelectors, 'useRunMode').mockReturnValue('Draft');
     vi.spyOn(workflowSelectors, 'useIsAgentLoop').mockReturnValue(false);
     vi.spyOn(panelSelectors, 'useOperationAlternateSelectedNodeId').mockReturnValue('');
+    vi.spyOn(panelSelectors, 'useOperationPanelSelectedNodeIds').mockReturnValue([]);
     vi.spyOn(designerOptionsSelectors, 'useSuppressDefaultNodeSelectFunctionality').mockReturnValue(false);
     vi.spyOn(designerOptionsSelectors, 'useNodeSelectAdditionalCallback').mockReturnValue(undefined);
     vi.spyOn(operationInfoHook, 'useOperationInfo').mockReturnValue({ type: 'action' } as any);

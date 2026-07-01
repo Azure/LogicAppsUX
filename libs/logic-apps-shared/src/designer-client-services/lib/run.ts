@@ -2,11 +2,17 @@ import type { ContentLink, Runs, Run, RunError, LogicAppsV2, MessageEntry } from
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 import type { CallbackInfo } from './callbackInfo';
 
+export interface RunFilterOptions {
+  status?: string;
+  startTimeFrom?: string;
+  startTimeTo?: string;
+}
+
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
   getMoreRuns(continuationToken: string): Promise<Runs>;
   getRun(runId: string): Promise<Run | RunError>;
-  getRuns(): Promise<Runs>;
+  getRuns(filters?: RunFilterOptions): Promise<Runs>;
   runTrigger(callbackInfo: CallbackInfo, options?: any): Promise<any>;
   getActionLinks(action: any, nodeId: string): Promise<any>;
   getScopeRepetitions(

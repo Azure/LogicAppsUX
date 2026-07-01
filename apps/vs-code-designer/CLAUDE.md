@@ -141,8 +141,9 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 | 4.3 | inlineJavascript.test.ts | Execute JavaScript Code action (ADO #10109800) |
 | 4.4 | statelessVariables.test.ts | Initialize Variable action (ADO #10109878) |
 | 4.5 | designerViewExtended.test.ts | Parallel branches + run-after (ADO #10109401) |
-| 4.6 | keyboardNavigation.test.ts | Ctrl+Up/Down navigation (ADO #10273324) |
+| 4.6 | keyboardNavigation.test.ts | Ctrl+Up/Down + Ctrl+Alt+P / Ctrl+Shift+P hotkey contract |
 | 4.7 | dataMapper.test.ts, demo, smoke, standalone | Data Mapper + generic tests |
+| 4.11 | bundleCdnHealth.test.ts | CDN integrity headers probe (`Content-Length` / `Content-MD5` on the Workflows extension bundle). Pure Mocha — no VS Code session. |
 
 ### Shared Helper Modules
 
@@ -186,12 +187,24 @@ cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts   # Compile
 
 # Run modes:
-$env:E2E_MODE = "full"           # All phases (4.1-4.7)
-$env:E2E_MODE = "createonly"     # Phase 4.1 only
-$env:E2E_MODE = "designeronly"   # Phase 4.2 only
-$env:E2E_MODE = "newtestsonly"   # Phases 4.3-4.6 only
+$env:E2E_MODE = "full"                    # All phases (single runner, ~30+ min) — local debug fallback
+$env:E2E_MODE = "createonly"              # Phase 4.1 only
+$env:E2E_MODE = "designeronly"            # Phase 4.2 only (requires prior 4.1 manifest)
+$env:E2E_MODE = "newtestsonly"            # Phases 4.3-4.6 only (requires prior 4.1 manifest)
+$env:E2E_MODE = "conversiononly"          # Phases 4.8a-e only (requires prior 4.1 manifest)
+$env:E2E_MODE = "conversioncreateonly"    # Phase 4.8b only (builds own legacy fixture)
+$env:E2E_MODE = "nonlogicappstartup"      # Phase 4.0 only
+$env:E2E_MODE = "bundleintegrityonly"     # Phase 4.11 — pure-Mocha CDN integrity probe (no VS Code)
+
+# CI matrix shard modes (each runs on its own GitHub Actions runner):
+$env:E2E_MODE = "independentonly"         # 4.0 + 4.8b + 4.11 — no Phase 4.1 dep
+$env:E2E_MODE = "createplusdesigner"      # 4.1 → 4.2, 4.7
+$env:E2E_MODE = "createplusnewtests"      # 4.1 → 4.3, 4.4, 4.5, 4.6
+$env:E2E_MODE = "createplusconversion"    # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
 node src/test/ui/run-e2e.js
 ```
+
+The four `createplus*` / `independentonly` modes are how `.github/workflows/vscode-e2e.yml` shards the suite across parallel runners. `full` remains the single-runner debug fallback.
 
 ### Mandatory: Lint and Format After Every Edit
 

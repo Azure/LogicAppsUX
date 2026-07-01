@@ -31,7 +31,7 @@ export interface ActionCardProps {
   rootRef?: React.RefObject<HTMLDivElement>;
   staticResultsEnabled?: boolean;
   title: string;
-  onClick?(): void;
+  onClick?(e?: React.MouseEvent): void;
   onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
   onCopyClick?(): void;
@@ -41,6 +41,7 @@ export interface ActionCardProps {
   isMockSupported?: boolean;
   isLoadingDynamicData?: boolean;
   subtleBackground?: boolean;
+  copilotModified?: boolean;
   isScope?: boolean;
   collapsed?: boolean;
   handleCollapse?(): void;
@@ -69,6 +70,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   setFocus,
   isLoadingDynamicData,
   isScope = false,
+  copilotModified,
   collapsed = false,
   handleCollapse,
 }) => {
@@ -76,7 +78,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    onClick?.();
+    onClick?.(e);
   };
   const focusRef = useRef<HTMLElement | null>(null);
   const keyboardInteraction = useKeyboardInteraction(onClick, onDeleteClick, onCopyClick);
@@ -151,7 +153,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         runData?.status === 'Succeeded' && styles.statusSuccess,
         runData?.status === 'Failed' && styles.statusError,
         isSelected && styles.selected,
-        isScope && styles.scope
+        isScope && styles.scope,
+        copilotModified && styles.copilotModified
       )}
       data-testid={`card-${title}`}
       data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}

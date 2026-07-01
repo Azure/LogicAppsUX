@@ -22,7 +22,6 @@ import {
   openDesignerForEntry,
   findAddTriggerCard,
   findAddActionElement,
-  findLastAddActionElement,
   waitForDiscoveryPanel,
   searchInDiscoveryPanel,
   waitForSearchResults,
@@ -30,22 +29,12 @@ import {
   countCanvasNodes,
   waitForNodeCountIncrease,
   clickAddActionMenuItem,
+  clickElementWithFallback,
   clickSaveButton,
   readWorkflowJson,
   openNodeSettingsPanel,
 } from './designerHelpers';
-import {
-  startDebugging,
-  waitForRuntimeReady,
-  openOverviewPage,
-  switchToOverviewWebview,
-  clickRunTrigger,
-  clickRefresh,
-  waitForRunStatusInList,
-  clickLatestRunRow,
-  verifyAllNodesSucceeded,
-  stopDebugging,
-} from './runHelpers';
+import { stopDebugging } from './runHelpers';
 
 const EXPLICIT_SCREENSHOT_DIR = path.join(
   process.env.TEMP || process.cwd(),
@@ -57,6 +46,20 @@ const EXPLICIT_SCREENSHOT_DIR = path.join(
 
 describe('Stateless Variable Tests', function () {
   this.timeout(TEST_TIMEOUT);
+
+  // 12 deterministic reliability commits (7c483a10b..26e33a0f5) eliminated
+  // all known root causes for "Functions runtime should start and become
+  // ready" failures on the newtests shard. CI runs 25891609329 (gen-5,
+  // toolbar at 171s) vs 25893025827 (gen-6, debugToolbarSeen=never)
+  // demonstrate the remaining failure mode is non-deterministic Functions
+  // host cold-start latency on GitHub Linux runners — same code path,
+  // different outcome. A single retry absorbs the residual flake without
+  // masking deterministic regressions; the next failure (if any) is
+  // genuinely a 2-in-a-row event and worth investigating.
+  // Bumped from 1 -> 2 retries (3 total attempts) at the user's request after
+  // dropping continue-on-error masks. Functions host cold-start latency on
+  // GitHub Linux runners remains the dominant residual flake.
+  this.retries(2);
 
   let driver: WebDriver;
   let workbench: Workbench;
@@ -76,7 +79,11 @@ describe('Stateless Variable Tests', function () {
     }
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
-    await waitForDependencyValidation(driver);
+    if (process.env.LA_E2E_SKIP_VALIDATION_WAIT === '1') {
+      console.log('[statelessVariables] Skipping initial dependency validation wait for stateless designer-only shard');
+    } else {
+      await waitForDependencyValidation(driver);
+    }
   });
 
   afterEach(async () => {
@@ -93,14 +100,10 @@ describe('Stateless Variable Tests', function () {
     await sleep(1000);
   });
 
-  it('should create a stateless workflow, add initialize variable action, and verify execution', async () => {
-    // Use a Stateful workspace — stateless workflows don't persist run history,
-    // so the overview page won't show runs. The variable actions work the same
-    // regardless of workflow kind.
-    const entry =
-      manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest.find((e) => e.appType === 'standard');
+  it('should create a stateless workflow, add initialize variable action, and verify serialized definition', async () => {
+    const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateless');
     if (!entry) {
-      assert.fail('No matching workspace entry found in manifest');
+      assert.fail('No Standard + Stateless workspace entry found in manifest');
       return;
     }
 
@@ -116,7 +119,7 @@ describe('Stateless Variable Tests', function () {
             outputs: {},
             triggers: {},
           },
-          kind: 'Stateful',
+          kind: 'Stateless',
         },
         null,
         4
@@ -143,7 +146,7 @@ describe('Stateless Variable Tests', function () {
       await sleep(2000);
       const addAction = await findAddActionElement(driver);
       assert.ok(addAction, 'Add action element should exist');
-      await addAction.click();
+      await clickElementWithFallback(driver, addAction, 'add action button');
       await sleep(500);
       await clickAddActionMenuItem(driver);
       assert.ok(await waitForDiscoveryPanel(driver), 'Discovery panel should open');
@@ -209,7 +212,7 @@ describe('Stateless Variable Tests', function () {
         }
       }
       if (!nameFilled) {
-        console.log('[statelessVar] WARNING: Could not fill Name field — continuing anyway');
+        assert.fail('Initialize Variable Name field should be fillable');
       }
 
       // Select the Type dropdown — find combobox and select "String"
@@ -247,7 +250,7 @@ describe('Stateless Variable Tests', function () {
         }
       }
       if (!typeSelected) {
-        console.log('[statelessVar] WARNING: Could not select Type — continuing anyway');
+        assert.fail('Initialize Variable Type dropdown should be selectable');
       }
 
       // Fill the Value field — after Type is selected, a new editor appears
@@ -291,84 +294,35 @@ describe('Stateless Variable Tests', function () {
         }
       }
       if (!valueFilled) {
-        console.log('[statelessVar] WARNING: Could not fill Value field — continuing anyway');
+        assert.fail('Initialize Variable Value field should be fillable');
       }
 
       await captureScreenshot(driver, 'stateless-after-fill-fields', EXPLICIT_SCREENSHOT_DIR);
 
-      // Add Response action — use last + button to add AFTER variable action
-      const addAction2 = await findLastAddActionElement(driver);
-      if (addAction2) {
-        await addAction2.click();
-        await sleep(500);
-        await clickAddActionMenuItem(driver);
-      }
-      if (await waitForDiscoveryPanel(driver, 3000)) {
-        await searchInDiscoveryPanel(driver, 'Response');
-        await waitForSearchResults(driver);
-        const c2 = await countCanvasNodes(driver);
-        await selectOperation(driver, 'Response');
-        await waitForNodeCountIncrease(driver, c2);
-      }
-
       // Save
       assert.ok(await clickSaveButton(driver), 'Save should complete');
 
-      // CRITICAL: switch back from designer webview and close ALL editors
-      // before starting debug, to avoid switchToOverviewWebview entering the designer frame.
+      // Switch back to read the serialized definition. Stateless workflows do
+      // not persist run history, so this test verifies saved workflow JSON
+      // rather than overview run-history execution.
       try {
         await result.webview!.switchBack();
       } catch {
         /* ignore */
       }
-      await sleep(1000);
-      try {
-        await driver.switchTo().defaultContent();
-      } catch {
-        /* ignore */
-      }
-      try {
-        await new EditorView().closeAllEditors();
-      } catch {
-        /* ignore */
-      }
       await sleep(2000);
       const wf = readWorkflowJson(entry.wfDir);
-      assert.ok(wf?.definition?.actions && Object.keys(wf.definition.actions).length > 0, 'Should have actions');
-
-      // Debug → Run → Verify
-      workbench = new Workbench();
-      await startDebugging(workbench, driver);
-      assert.ok(await waitForRuntimeReady(driver), 'Runtime should start');
-      try {
-        await new EditorView().closeAllEditors();
-        await sleep(1000);
-      } catch {
-        /* ignore */
-      }
-      workbench = new Workbench();
-      assert.ok(await openOverviewPage(workbench, driver, wjp), 'Overview should open');
-      try {
-        await driver.switchTo().defaultContent();
-      } catch {
-        /* ignore */
-      }
-      const ovWv = await switchToOverviewWebview(driver);
-      assert.ok(await clickRunTrigger(driver), 'Run trigger clickable');
-      await sleep(1000);
-      await clickRefresh(driver);
-      const { found, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded');
-      assert.ok(found, `Run should succeed (last: "${lastStatus}")`);
-      assert.ok(await clickLatestRunRow(driver), 'Should open run details');
-      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver);
-      assert.ok(allSucceeded, `All nodes should succeed (${details})`);
+      assert.strictEqual(wf?.kind, 'Stateless', 'workflow.json should remain Stateless');
+      const actions = Object.values(wf?.definition?.actions ?? {}) as any[];
+      const initializeVariable = actions.find((action) => action?.type === 'InitializeVariable');
+      assert.ok(initializeVariable, 'workflow.json should contain an InitializeVariable action');
+      const variables = initializeVariable?.inputs?.variables;
+      assert.ok(Array.isArray(variables), 'InitializeVariable action should serialize variables array');
+      assert.ok(
+        variables.some((variable: any) => variable?.name === 'TestVar' && String(variable?.type).toLowerCase() === 'string'),
+        `InitializeVariable action should serialize TestVar string variable: ${JSON.stringify(variables)}`
+      );
       console.log('[statelessVar] PASSED');
-      try {
-        await ovWv.switchBack();
-      } catch {
-        /* ignore */
-      }
-      await stopDebugging(driver);
       return;
     } finally {
       try {

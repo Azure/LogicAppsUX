@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isDevContainerWorkspace } from '../devContainerUtils';
+import { isDevContainerWorkspace, isDevContainerWorkspaceSync } from '../devContainerUtils';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
@@ -51,7 +51,7 @@ describe('devContainerUtils', () => {
 
     it('should return false when workspace file does not contain devcontainer folder', async () => {
       const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
-      await fse.writeJSON(workspaceFilePath, {
+      await fse.writeJson(workspaceFilePath, {
         folders: [{ path: './LogicApp' }, { path: './Functions' }],
       });
 
@@ -65,7 +65,7 @@ describe('devContainerUtils', () => {
 
     it('should return false when devcontainer folder is listed but devcontainer.json does not exist', async () => {
       const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
-      await fse.writeJSON(workspaceFilePath, {
+      await fse.writeJson(workspaceFilePath, {
         folders: [{ path: './.devcontainer' }, { path: './LogicApp' }],
       });
 
@@ -83,8 +83,8 @@ describe('devContainerUtils', () => {
       const devcontainerJsonPath = path.join(devcontainerDir, 'devcontainer.json');
 
       await fse.ensureDir(devcontainerDir);
-      await fse.writeJSON(devcontainerJsonPath, { name: 'Test DevContainer' });
-      await fse.writeJSON(workspaceFilePath, {
+      await fse.writeJson(devcontainerJsonPath, { name: 'Test DevContainer' });
+      await fse.writeJson(workspaceFilePath, {
         folders: [{ path: './.devcontainer' }, { path: './LogicApp' }],
       });
 
@@ -102,8 +102,8 @@ describe('devContainerUtils', () => {
       const devcontainerJsonPath = path.join(devcontainerDir, 'devcontainer.json');
 
       await fse.ensureDir(devcontainerDir);
-      await fse.writeJSON(devcontainerJsonPath, { name: 'Test DevContainer' });
-      await fse.writeJSON(workspaceFilePath, {
+      await fse.writeJson(devcontainerJsonPath, { name: 'Test DevContainer' });
+      await fse.writeJson(workspaceFilePath, {
         folders: [{ path: '.devcontainer' }, { path: 'LogicApp' }],
       });
 
@@ -117,7 +117,7 @@ describe('devContainerUtils', () => {
 
     it('should return false when workspace file has no folders array', async () => {
       const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
-      await fse.writeJSON(workspaceFilePath, {
+      await fse.writeJson(workspaceFilePath, {
         settings: {},
       });
 
@@ -129,7 +129,7 @@ describe('devContainerUtils', () => {
       expect(result).toBe(false);
     });
 
-    it('should return false when readJSON throws an error', async () => {
+    it('should return false when readJson throws an error', async () => {
       const workspaceFilePath = path.join(tempDir, 'nonexistent.code-workspace');
 
       (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
@@ -142,7 +142,7 @@ describe('devContainerUtils', () => {
 
     it('should return false when pathExists throws an error', async () => {
       const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
-      await fse.writeJSON(workspaceFilePath, {
+      await fse.writeJson(workspaceFilePath, {
         folders: [{ path: './.devcontainer' }],
       });
 
@@ -150,6 +150,65 @@ describe('devContainerUtils', () => {
       (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
 
       const result = await isDevContainerWorkspace();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return false when no workspace file exists', () => {
+      (vscode.workspace as any).workspaceFile = undefined;
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return false when no workspace folders exist', () => {
+      (vscode.workspace as any).workspaceFile = { fsPath: path.join(tempDir, 'test.code-workspace') };
+      (vscode.workspace as any).workspaceFolders = [];
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return true when devcontainer folder is listed and devcontainer.json exists', async () => {
+      const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
+      const devcontainerDir = path.join(tempDir, '.devcontainer');
+      const devcontainerJsonPath = path.join(devcontainerDir, 'devcontainer.json');
+
+      await fse.ensureDir(devcontainerDir);
+      await fse.writeJson(devcontainerJsonPath, { name: 'Test DevContainer' });
+      await fse.writeJson(workspaceFilePath, {
+        folders: [{ path: './.devcontainer' }, { path: './LogicApp' }],
+      });
+
+      (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(true);
+    });
+
+    it('should synchronously return false when devcontainer folder is listed but devcontainer.json does not exist', async () => {
+      const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
+      await fse.writeJson(workspaceFilePath, {
+        folders: [{ path: './.devcontainer' }, { path: './LogicApp' }],
+      });
+
+      (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return false when workspace file cannot be read', () => {
+      (vscode.workspace as any).workspaceFile = { fsPath: path.join(tempDir, 'missing.code-workspace') };
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
+
+      const result = isDevContainerWorkspaceSync();
 
       expect(result).toBe(false);
     });

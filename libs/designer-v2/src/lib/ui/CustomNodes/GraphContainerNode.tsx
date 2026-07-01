@@ -1,5 +1,5 @@
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
 import {
   useActionMetadata,
   useIsLeafNode,
@@ -20,6 +20,7 @@ const GraphContainerNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
 
   const selected = useIsNodeSelectedInOperationPanel(id);
+  const isMultiSelected = useIsNodeInMultiSelection(id);
   const actionMetadata = useActionMetadata(id);
   const nodeMetadata = useNodeMetadata(id);
   const isLeaf = useIsLeafNode(id);
@@ -44,7 +45,7 @@ const GraphContainerNode = ({ id }: NodeProps) => {
       >
         <DefaultHandle type="target" />
         <GraphContainer id={id} active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
-        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle highlighted={selected} />}
+        {isSubgraphContainer ? <DefaultHandle type="source" /> : <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} />}
       </div>
       {showLeafComponents && (
         <div className="edge-drop-zone-container">

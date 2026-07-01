@@ -1,6 +1,6 @@
 import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { IRunService } from '../run';
+import type { IRunService, RunFilterOptions } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
@@ -121,15 +121,33 @@ export class ConsumptionRunService implements IRunService {
     }
   }
 
+  private buildFilterString(filters?: RunFilterOptions): string {
+    const parts: string[] = [];
+    if (filters?.status) {
+      const status = filters.status.replace(/'/g, "''");
+      parts.push(`status eq '${status}'`);
+    }
+    if (filters?.startTimeFrom) {
+      parts.push(`startTime ge ${filters.startTimeFrom}`);
+    }
+    if (filters?.startTimeTo) {
+      parts.push(`startTime le ${filters.startTimeTo}`);
+    }
+    return parts.join(' and ');
+  }
+
   /**
    * Gets workflow run history
+   * @param {RunFilterOptions} filters - Optional server-side filters.
    * @returns {Promise<Runs>} Workflow runs.
    */
-  async getRuns(): Promise<Runs> {
+  async getRuns(filters?: RunFilterOptions): Promise<Runs> {
     const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}`;
+    const filterString = this.buildFilterString(filters);
+    const filterParam = filterString ? `&$filter=${encodeURIComponent(filterString)}` : '';
+    const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}${filterParam}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri,
@@ -414,13 +432,26 @@ export class ConsumptionRunService implements IRunService {
         noAuth = false;
       }
 
+      // Parse JSON body string to avoid double-encoding when HttpClient calls JSON.stringify
+      let bodyContent = options?.body;
+      if (typeof bodyContent === 'string') {
+        const trimmed = bodyContent.trim();
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+          try {
+            bodyContent = JSON.parse(bodyContent);
+          } catch {
+            // Not valid JSON, send as-is
+          }
+        }
+      }
+
       return await this.getHttpRequestByMethod(httpClient, method, {
         uri: baseUri,
         noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,
-        content: options?.body,
+        content: bodyContent,
       });
     } catch (e: any) {
       throw new Error(parseErrorMessage(e));
@@ -581,10 +612,10 @@ export class ConsumptionRunService implements IRunService {
   }
 
   async resubmitRun(runId: string, triggerName: string): Promise<any> {
-    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
 
     try {
-      const resubmitUrl = `${baseUrl}/triggers/${triggerName}/histories/${runId}/resubmit?api-version=${apiVersion}`;
+      const resubmitUrl = `${baseUrl}${workflowId}/triggers/${triggerName}/histories/${runId}/resubmit?api-version=${apiVersion}`;
       const headers = { 'If-Match': '*' };
       const response = await httpClient.post({
         uri: resubmitUrl,
@@ -592,7 +623,7 @@ export class ConsumptionRunService implements IRunService {
       });
       return response;
     } catch (e: any) {
-      return new Error(e.message);
+      throw new Error(e.message);
     }
   }
 

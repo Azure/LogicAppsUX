@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { binariesExist } from '../../../utils/binaries';
+import { binariesExistSync } from '../../../utils/binaries';
+import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
 import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
 import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { InitCustomCodeProjectStepBase } from './initCustomCodeProjectStepBase';
@@ -48,16 +49,8 @@ export class InitCustomCodeScriptProjectStep extends InitCustomCodeProjectStepBa
   }
 
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
+    const funcBinariesExist = binariesExistSync(funcDependencyName);
+    const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv() : {};
     return [
       {
         label: 'func: host start',

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import type { RootState } from './store';
-import { equals, type ConnectionReference } from '@microsoft/logic-apps-shared';
+import { equals, type ConnectionReference, type ConnectionReferences } from '@microsoft/logic-apps-shared';
 
 export const useAreMappingsInitialized = (operations: string[]): boolean => {
   const state = useSelector((state: RootState) => state.connection);
@@ -11,6 +11,11 @@ export const useAreMappingsInitialized = (operations: string[]): boolean => {
 export const useAllReferenceKeys = (): string[] => {
   const state = useSelector((state: RootState) => state.connection);
   return Object.keys(state.connectionReferences);
+};
+
+/** Returns all connection references from the MCP store */
+export const useConnectionReferences = (): ConnectionReferences => {
+  return useSelector((state: RootState) => state.connection.connectionReferences);
 };
 
 export const useConnectionReference = (): ConnectionReference | undefined => {

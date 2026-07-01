@@ -79,6 +79,30 @@ describe('debugLogicApp', () => {
     );
   });
 
+  it('starts a single debug session for codeful projects', async () => {
+    await debugLogicApp(
+      context,
+      {
+        funcRuntime: 'coreclr',
+        isCodeless: false,
+      } as vscode.DebugConfiguration,
+      workspaceFolder
+    );
+
+    expect(vscode.debug.startDebugging).toHaveBeenCalledTimes(1);
+    expect(vscode.debug.startDebugging).toHaveBeenCalledWith(
+      workspaceFolder,
+      expect.objectContaining({
+        name: 'Debug logic app MyLogicApp',
+        type: 'coreclr',
+        request: 'attach',
+        processId: '1234',
+      })
+    );
+    expect(pickCustomCodeNetHostProcessInternal).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(expect.stringContaining('Skipping custom code debug attach'));
+  });
+
   it('logs custom code attach attempts and results for coreclr', async () => {
     vi.mocked(pickCustomCodeNetHostProcessInternal).mockResolvedValue('5678');
 

@@ -12,7 +12,8 @@ import {
   show64BitWarningSetting,
 } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExist } from '../../utils/binaries';
+import { binariesExistSync } from '../../utils/binaries';
+import { getFuncHostTaskEnv } from '../../utils/codeless/funcHostTaskEnv';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -108,17 +109,8 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
   protected getTasks(): TaskDefinition[] {
     const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
     const releaseArgs: string[] = ['--configuration', 'Release'];
-    const funcBinariesExist = binariesExist(funcDependencyName);
-    const binariesOptions = funcBinariesExist
-      ? {
-          options: {
-            cwd: this.debugSubpath,
-            env: {
-              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
-            },
-          },
-        }
-      : {};
+    const funcBinariesExist = binariesExistSync(funcDependencyName);
+    const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv({ cwd: this.debugSubpath }) : {};
     return [
       {
         label: 'clean',

@@ -46,13 +46,16 @@ export default {
           title: 'Agent model source',
           description: 'Source where your agent model is hosted.',
           'x-ms-editor': 'dropdown',
-          'x-ms-visibility': 'hideInUI',
           'x-ms-editor-options': {
             readOnly: true,
             options: [
               {
                 value: 'MicrosoftFoundry',
                 displayName: 'Foundry Models (Preview)',
+              },
+              {
+                value: 'AzureOpenAI',
+                displayName: 'Azure OpenAI',
               },
               {
                 value: 'FoundryAgentServiceV2',
@@ -188,11 +191,10 @@ export default {
               properties: {
                 maxTokens: {
                   title: 'Max tokens',
-                  description: 'Max tokens to use (value should be between 1 and 8192)',
+                  description: 'Max tokens to use',
                   type: 'integer',
                   format: 'int32',
                   minimum: 1,
-                  maximum: 8192,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [

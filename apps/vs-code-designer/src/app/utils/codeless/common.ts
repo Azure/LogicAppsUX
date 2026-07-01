@@ -7,6 +7,7 @@ import {
   workflowManagementBaseURIKey,
   managementApiPrefix,
   workflowFileName,
+  workflowAuthenticationMethodKey,
   artifactsDirectory,
   mapsDirectory,
   schemasDirectory,
@@ -19,11 +20,11 @@ import { localize } from '../../../localize';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import { getLocalSettingsJson } from '../appSettings/localSettings';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { getAuthData } from './getAuthorizationToken';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { DialogResponses } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
   StandardApp,
@@ -187,10 +188,48 @@ export async function getArtifactsPathInLocalProject(projectPath: string): Promi
   return artifacts;
 }
 
+// Cache Azure connector details to avoid repeated auth calls (expensive operation)
+// Key: projectPath, Value: { timestamp, details }
+const azureDetailsCache = new Map<string, { timestamp: number; details: AzureConnectorDetails }>();
+const AZURE_DETAILS_CACHE_TTL = 300000; // 5 minutes
+
+async function defaultAzureConnectorDetailsToRawKeys(context: IActionContext, projectPath: string): Promise<AzureConnectorDetails> {
+  await addOrUpdateLocalAppSettings(context, projectPath, {
+    [workflowSubscriptionIdKey]: '',
+    [workflowAuthenticationMethodKey]: 'rawKeys',
+  });
+
+  return {
+    enabled: false,
+  };
+}
+
+/**
+ * Invalidates the cached Azure connector details for a project.
+ * Call after Azure settings change (e.g., enabling Azure connectors).
+ */
+export function invalidateAzureDetailsCache(projectPath: string): void {
+  azureDetailsCache.delete(projectPath);
+}
+
 export async function getAzureConnectorDetailsForLocalProject(
   context: IActionContext,
   projectPath: string
 ): Promise<AzureConnectorDetails> {
+  if (!projectPath) {
+    context.telemetry.properties.azureConnectorDetailsProjectPathMissing = 'true';
+    return {
+      enabled: false,
+    };
+  }
+
+  // Check cache first
+  const cached = azureDetailsCache.get(projectPath);
+  const now = Date.now();
+  if (cached && now - cached.timestamp < AZURE_DETAILS_CACHE_TTL) {
+    return cached.details;
+  }
+
   const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
   const connectorsContext = context as IAzureConnectorsContext;
   const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
@@ -202,21 +241,34 @@ export async function getAzureConnectorDetailsForLocalProject(
   let clientId = undefined;
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
   let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
-  const enabled = !!subscriptionId;
 
   if (subscriptionId === undefined) {
     const wizard = createAzureWizard(connectorsContext, projectPath);
-    await wizard.prompt();
-    await wizard.execute();
+    try {
+      await wizard.prompt();
+      await wizard.execute();
+    } catch (error) {
+      if (!parseError(error).isUserCancelledError) {
+        throw error;
+      }
+
+      context.telemetry.properties.azureConnectorsDefaulted = 'rawKeys';
+      const defaultDetails = await defaultAzureConnectorDetailsToRawKeys(context, projectPath);
+      azureDetailsCache.set(projectPath, { timestamp: now, details: defaultDetails });
+      return defaultDetails;
+    }
 
     tenantId = connectorsContext.tenantId;
     subscriptionId = connectorsContext.subscriptionId;
     resourceGroupName = connectorsContext.resourceGroup?.name || '';
     location = connectorsContext.resourceGroup?.location || '';
     workflowManagementBaseUrl = connectorsContext.environment?.resourceManagerEndpointUrl;
-  } else {
+  }
+
+  // Get auth token if we have a valid subscription (whether from wizard or local.settings.json)
+  if (subscriptionId) {
     const authData = await getAuthData(tenantId);
-    accessToken = enabled ? `Bearer ${authData?.accessToken}` : undefined;
+    accessToken = `Bearer ${authData?.accessToken}`;
     if (authData?.account?.id) {
       const [parsedClientId, parsedTenantId] = authData.account.id.split('.');
       tenantId = parsedTenantId;
@@ -224,7 +276,10 @@ export async function getAzureConnectorDetailsForLocalProject(
     }
   }
 
-  return {
+  // Compute enabled AFTER the wizard block — subscriptionId may now have a value
+  const enabled = !!subscriptionId;
+
+  const details: AzureConnectorDetails = {
     enabled,
     accessToken: accessToken,
     subscriptionId: enabled ? subscriptionId : undefined,
@@ -234,6 +289,11 @@ export async function getAzureConnectorDetailsForLocalProject(
     clientId: enabled ? clientId : undefined,
     workflowManagementBaseUrl: enabled ? workflowManagementBaseUrl : undefined,
   };
+
+  // Cache the result
+  azureDetailsCache.set(projectPath, { timestamp: now, details });
+
+  return details;
 }
 
 export async function getManualWorkflowsInLocalProject(projectPath: string, workflowToExclude: string): Promise<Record<string, any>> {

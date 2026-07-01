@@ -1,0 +1,32 @@
+// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
+
+namespace <%= logicAppNamespace %>
+{
+    using Microsoft.Azure.Workflows.Sdk;
+    using Microsoft.Azure.Workflows.Sdk.Connectors.Msnweather;
+
+    /// <summary>
+    /// <%= flowName %> Stateful Workflow.
+    /// </summary>
+    public class <%= flowNameClass %> : IWorkflowProvider
+    {
+        /// <summary>
+        /// Gets the HTTP request/response workflow definition.
+        /// </summary>
+        public FlowDefinition[] GetWorkflows()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+
+            var getCurrentWeatherAction = WorkflowActions.Managed.Msnweather("msnweather").CurrentWeather(
+                location: () => "98058",
+                units: () => unitsInput.Imperial);
+
+            var response = WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}");
+            var workflow = trigger.Then(getCurrentWeatherAction).Then(response);
+
+            return new[] { WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow) };
+        }
+    }
+}

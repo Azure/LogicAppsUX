@@ -14,7 +14,21 @@ import path from 'path';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
 import { getLogicAppWithoutCustomCode } from '../../utils/workspace';
 
-export async function createNewProjectFromCommand(context: IActionContext): Promise<void> {
+/**
+ * Enumerates all directory names in the workspace root folder.
+ * This captures folders that may not be in the .code-workspace file (e.g., C# custom code projects).
+ */
+async function getExistingFoldersOnDisk(workspaceRootFolder: string): Promise<string[]> {
+  try {
+    const rootUri = vscode.Uri.file(workspaceRootFolder);
+    const entries = await vscode.workspace.fs.readDirectory(rootUri);
+    return entries.filter(([, type]) => type === vscode.FileType.Directory).map(([name]) => name);
+  } catch {
+    return [];
+  }
+}
+
+export async function createNewProject(context: IActionContext): Promise<void> {
   // Determine if in workspace, if not in workspace but there is a logic app project found,
   // prompt to see if they want to move the project over to a logic app workspace
   let workspaceRootFolder = '';
@@ -33,8 +47,12 @@ export async function createNewProjectFromCommand(context: IActionContext): Prom
   const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
   const logicAppsWithoutCustomCode = await getLogicAppWithoutCustomCode(context);
 
+  // Enumerate all existing directories on disk (includes C# project folders, etc.)
+  const existingFolders = await getExistingFoldersOnDisk(workspaceRootFolder);
+  ext.outputChannel.appendLog(`[createProject] workspaceRoot=${workspaceRootFolder}, existingFolders=${JSON.stringify(existingFolders)}`);
+
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('createLogicAppProject', 'Create Project'),
+    panelName: localize('createLogicAppProject', 'Create project'),
     panelGroupKey: ext.webViewKey.createLogicApp,
     projectName: ProjectName.createLogicApp,
     createCommand: ExtensionCommand.createLogicApp,
@@ -52,6 +70,7 @@ export async function createNewProjectFromCommand(context: IActionContext): Prom
     extraInitializeData: {
       workspaceFileJson,
       logicAppsWithoutCustomCode,
+      existingFolders,
     },
   });
 }

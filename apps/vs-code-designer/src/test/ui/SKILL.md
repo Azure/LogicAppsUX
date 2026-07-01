@@ -12,10 +12,59 @@ TRUE end-to-end tests using `vscode-extension-tester` (ExTester v8.21.0) that la
 
 **Not** filesystem-only tests. **Not** `@vscode/test-cli` tests (those exist separately in `src/test/e2e/`).
 
+## 1.5. Critical Rules — Read Before Writing Any New Test
+
+These are the rules whose violation has caused entire test suites to be rewritten. Read them first.
+
+### Rule 1. Use Create Workspace + reopen — NEVER synthesize Logic App fixtures on disk
+
+For any test that touches debug, the design-time API, the language server, the overview page, or anything that runs after a workspace opens:
+
+1. Create the workspace via the real **Create Workspace** webview in one `run-e2e.js` phase.
+2. After it generates the `.code-workspace`, end that VS Code session.
+3. Open a fresh phase with the generated `.code-workspace` as the `resources` argument.
+4. Wait for design-time startup evidence (e.g., `workflow-designtime/`) before any debug or designer assertion.
+
+**Why this matters**: Hand-written project folders skip everything the wizard does — `local.settings.json` shape, `.vscode/launch.json`, extension activation order, project-type detection, language-server registration, the prompts that the extension expects to have already been answered. A synthetic fixture passes locally and fails in CI for invisible reasons, or worse, passes everywhere while testing a non-existent code path.
+
+**Exceptions** (and ONLY these):
+- Pure non-Logic-App smoke tests (e.g., `nonLogicAppStartup.test.ts`).
+- Standalone-runner unit tests that explicitly do not start VS Code.
+
+**Anti-precedents in this repo**: `createLegacyProjectFixture` in `run-e2e.js` exists because it predates this rule, and the former `createCodefulProjectFixture` was deleted after Phase 4.10 moved to Create Workspace + reopen. **Do not use synthetic helpers as templates for new tests.**
+
+**If the wizard helper does not yet support your project type**, the correct fix is to extend `createWorkspace.test.ts`'s helper to support the new `appType`, not to synthesize a fixture. The extension already supports codeful project creation via `CreateLogicAppWorkspace.ts` -> `createCodefulWorkflowFile`, and the E2E helper now exposes that flow for Phase 4.10.
+
+**Source**: `.squad/knowledge/vscode-e2e-testing.md` — "Debug regressions need the real workspace and launch path".
+
+### Rule 2. One test per phase — fresh VS Code session
+
+Tests sharing a Phase 4.x session fail due to lingering func.exe, language-server file locks, and webview iframes still in the DOM after a workspace switch. Every new test owns its own phase via `prepareFreshSession()`.
+
+### Rule 3. Use Selenium Actions API for clicks inside webview iframes
+
+Direct `element.click()` does not dispatch native events that React's synthetic event system captures. Use `driver.actions().move({ origin: element }).click().perform()`.
+
+### Rule 4. Find inputs by label, not by DOM index
+
+`findInputByLabel('Workspace name')` survives re-renders; index-based lookups silently write into the wrong field when the wizard reorders inputs.
+
+### Rule 5. Gate Next/Create clicks on validation success, not on button visibility
+
+Webview validators are async. Wait for the button to be enabled and for error decorators to clear, not just for it to appear.
+
+### Rule 6. Lint and rebuild after every test edit
+
+Run `npx biome check --write <files>` and `npx tsup --config tsup.e2e.test.config.ts` before claiming the test passes. Biome failures break CI; an un-rebuilt test runs the stale compiled JS.
+
+---
+
 ## 2. File Inventory
 
 | File | Purpose |
 |------|---------|
+| `src/test/ui/nonLogicAppStartup.test.ts` | Plain-folder startup regression test. Phase 4.0 |
+| `src/test/ui/bundleCdnHealth.test.ts` | CDN integrity probe (`Content-Length` + `Content-MD5` on Microsoft.Azure.Functions.ExtensionBundle.Workflows). Pure Mocha — runs without VS Code. Phase 4.11 / `E2E_MODE=bundleintegrityonly`. |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
@@ -45,12 +94,17 @@ cd apps/vs-code-designer
 # 2. Compile the test TypeScript (uses tsup → CJS for Mocha)
 npx tsup --config tsup.e2e.test.config.ts
 
-# 3. Run all tests (Phase 4.1 + 4.2)
+# 3. Run all tests (Phase 4.0+)
 node src/test/ui/run-e2e.js
 
 # 4. Run only Phase 4.2 (designer tests) using existing workspaces
 $env:E2E_MODE="designeronly"    # PowerShell
 export E2E_MODE=designeronly    # bash
+node src/test/ui/run-e2e.js
+
+# 5. Run only the plain-folder startup regression test
+$env:E2E_MODE="nonlogicappstartup"  # PowerShell
+export E2E_MODE=nonlogicappstartup  # bash
 node src/test/ui/run-e2e.js
 
 # Or use the PowerShell helper (kills stuck processes first):
@@ -68,8 +122,10 @@ pnpm run test:ui        # Runs node src/test/ui/run-e2e.js
 
 | Value | Behavior |
 |-------|----------|
-| (unset) | Runs Phase 4.1 (createWorkspace) first, then Phase 4.2 (designer) if Phase 4.1 passes |
+| (unset) | Runs Phase 4.0 (non-Logic-App startup), Phase 4.1 (createWorkspace), then later designer/conversion phases |
+| `nonlogicappstartup` | Runs only Phase 4.0 with minimal settings and no runtime dependency paths |
 | `designeronly` | Skips Phase 4.1, runs Phase 4.2 using workspaces from a previous Phase 4.1 run |
+| `bundleintegrityonly` | Runs Phase 4.11 (`bundleCdnHealth.test.ts`) — pure-Mocha probe of `cdn.functions.azure.com` integrity headers. No VS Code session, no compiled extension required (only `npx tsup --config tsup.e2e.test.config.ts`). Bundled into the `independentonly` shard for CI. |
 
 **IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.
 
@@ -740,3 +796,73 @@ Key settings:
 - **`silentAuth: true`**: Prevents the auth dialog when opening the overview page
 - **`git.enabled: false`**: Prevents git operations that slow down workspace switching
 - **Auto-update disabled**: Prevents marketplace extension replacement
+
+---
+
+## 16. Pattern: Deterministic Task-Event Capture via a Fake Listener Extension (Phase 4.10)
+
+**Use this pattern when you need to assert which VS Code tasks the product invokes during a workflow (debug, build, deploy, etc.) without depending on the tasks producing real artifacts.**
+
+### Why this pattern exists
+
+`vscode-extension-tester` runs Mocha tests *inside* the extension host, but the Mocha process and the extension host run in different V8 isolates. Test code cannot subscribe to `vscode.tasks.onDidStartTask` / `onDidEndTaskProcess` from outside the extension host — only an extension can. Polling the VS Code UI for task progress is also unreliable (the Output panel scrolls, terminal IDs are unstable, and dotnet/func binaries hang the test for minutes if their feeds are slow).
+
+### The pattern
+
+Ship a **tiny test-only "recorder" extension** alongside the product extension and observe its JSONL output from the Mocha test.
+
+**Files for Phase 4.10** (regression guard for `pickFuncProcess` skipping `publishCodefulProject` when the modern codeful csproj already populates `lib/codeful` via Build hooks):
+
+- `src/test/ui/codefulTaskRecorderExtension/package.json` — `publisher: la-e2e`, `name: la-e2e-codeful-task-recorder`, `activationEvents: ["onStartupFinished"]`.
+- `src/test/ui/codefulTaskRecorderExtension/main.js` — CommonJS extension that:
+  1. Writes an `activate` JSONL entry to `${LA_E2E_TASK_EVENTS_JSONL}` synchronously on activation (acts as the "recorder is ready" signal).
+  2. Subscribes to `vscode.tasks.onDidStartTask`, `onDidEndTask`, `onDidStartTaskProcess`, `onDidEndTaskProcess` and appends `{ phase, taskName, scopeFsPath, processId, exitCode, timestamp }` for each.
+  3. Polls `${LA_E2E_TRIGGER_DIR}` every 500 ms for marker files (`start-debug`, `stop-debug`, `ping`); consumes (unlinks) them and dispatches.
+  4. For `start-debug`: waits for `azureLogicAppsStandard.debugLogicApp` to appear in `vscode.commands.getCommands(true)`, reads launch.json from disk (JSONC-stripped), picks the first `type: 'logicapp'` config, calls `vscode.debug.startDebugging(folder, configName)`, and writes `debugStarted` / `debugStartFailed` accordingly.
+
+- `src/test/ui/createWorkspace.test.ts` — Phase 4.10A creates real codeful workspaces through the Create Workspace webview and records them in the shared manifest.
+- `src/test/ui/codefulDebugTasks.test.ts` — Mocha test that:
+  1. Reads the JSONL file once for the `activate` entry (waits up to 90 s).
+  2. Runs one variant per fresh Phase 4.10B session, with the generated `.code-workspace` passed as the startup resource.
+  3. Waits for design-time evidence (`workflow-designtime/`), truncates the JSONL, drops a `start-debug` marker, and polls the JSONL for the expected task chain.
+  4. Summarizes counts of `processStart` per task name and asserts the modern variant has `publishStart === 0` and the legacy variant has `publishStart === 1`.
+
+- `src/test/ui/run-e2e.js`:
+  - `runCodefulDebugPhases()` runs Phase 4.10A (Create Workspace) and Phase 4.10B (fresh reopen + recorder) using the D-001 create-and-reopen pattern.
+  - `patchLegacyCodefulCsproj(entry)` minimally changes only the generated legacy control `.csproj`, replacing `CopyToCodefulFolder AfterTargets="Build;Publish"` with `AfterTargets="Publish"`.
+  - `installCodefulTaskRecorderExtension(extDir)` copies the recorder source dir to `${extDir}/la-e2e.la-e2e-codeful-task-recorder-0.0.1/` and refreshes `extensions.json`.
+  - `e2eMode === 'codefuldebugonly'` branch runs Phase 4.10 standalone.
+
+### Wire-up checklist
+
+1. **Package the recorder as a real extension.** Real `publisher`, `name`, `version`, and `activationEvents`. Install it into `<extDir>/<publisher>.<name>-<version>/` (note the dot between publisher and name in the folder name). Refresh `extensions.json` with `rebuildExtensionsJson(extDir)` so VS Code picks it up.
+2. **Use the `activate` JSONL entry as the readiness signal, NOT a command palette ping.** The command palette is `element not interactable` right after a workspace switch. Drop the palette dependency entirely.
+3. **Use file-watcher triggers for test → recorder communication.** Drop marker files via `fs.writeFileSync` and let the recorder poll. This bypasses ExTester's flaky `workbench.executeCommand` path.
+4. **Wait for `azureLogicAppsStandard.debugLogicApp` before calling `vscode.debug.startDebugging`.** The LA extension's `activate()` registers the `logicapp` debug provider synchronously but only registers commands after several awaits (`getResourceGroupsApi`, `startOnboarding`, `tasks.fetchTasks`). Calling `startDebugging` before commands register fails with `command 'azureLogicAppsStandard.debugLogicApp' not found`.
+5. **Open the generated `.code-workspace`, NOT the project folder.** Phase 4.10B passes the real `.code-workspace` created by Phase 4.10A as the `runPhase()` startup resource. Do not hand-write a wrapper or open only the project folder.
+6. **Use the generated tasks as-is for the modern control.** The regression guard must exercise the real codeful launch/tasks shape produced by the Create Workspace flow.
+7. **Patch only the legacy control `.csproj`.** To simulate the legacy template, change the generated `CopyToCodefulFolder` target from `AfterTargets="Build;Publish"` to `AfterTargets="Publish"`; do not synthesize project files or tasks.
+8. **Pre-set `azureLogicAppsStandard.pickProcessTimeout: 15` in test settings.** This bounds the debug process picker after the task chain has been dispatched.
+9. **Allow 10-15 minutes for the LA extension's cold-start activation per variant.** `vscode.tasks.fetchTasks()` activates every task-type provider (grunt, gulp, jake, npm) and waits for all of them. Combined with the LA extension's own awaits, the first `taskStart` event can arrive 4-10 minutes after `vscode.debug.startDebugging` is called.
+10. **Sleep ≥ 30 s after `stopDebug()` before reading events.** The task chain may finish writing `processEnd` entries after the wait deadline. The post-stop sleep gives the recorder time to flush remaining events to disk.
+11. **Assert on the JSONL summary, not the wait result.** The wall-clock wait is an upper-bound optimization. The actual signal is what's in the JSONL after `stopDebug` + sleep + readEvents.
+
+### Reusing this pattern
+
+This pattern generalizes to any test that needs to observe extension-host-only events deterministically:
+
+- **Task events**: as above (Phase 4.10).
+- **Debug session events**: subscribe to `vscode.debug.onDidStartDebugSession` / `onDidTerminateDebugSession`.
+- **Workspace events**: `onDidChangeWorkspaceFolders`, `onDidChangeConfiguration`.
+- **Command invocations** (via `commands.registerCommand` shimming for assert-on-invocation): wrap a product command at registration and log invocations to JSONL.
+
+Always:
+- Put the recorder in `src/test/ui/<feature>RecorderExtension/`.
+- Use a unique publisher (e.g., `la-e2e`) so it won't collide with the marketplace.
+- Activate `onStartupFinished`.
+- Write structured JSONL with a `phase` discriminator.
+- Use file-watcher triggers for one-way test → recorder commands.
+
+### Anti-precedent flag
+
+Synthetic codeful Phase 4.10 fixtures are prohibited by Rule 1 and D-001. Keep Phase 4.10 on the real Create Workspace + fresh reopen pattern; if the codeful wizard flow changes, update `createWorkspace.test.ts` helpers rather than writing project files directly to disk.
