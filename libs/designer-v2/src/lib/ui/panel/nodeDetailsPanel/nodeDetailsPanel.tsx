@@ -161,7 +161,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const dismissPanel = () => dispatch(clearPanel());
 
-  const unpinAction = () => dispatch(setAlternateSelectedNode({ nodeId: '' }));
+  const unpinAction = () => dispatch(setAlternateSelectedNode({ nodeId: '', updatePanelOpenState: true }));
 
   const runInstance = useRunInstance();
 
@@ -250,7 +250,13 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
             );
           });
         });
-        collapse();
+        // Closing the non-pinned (selected) action should keep a pinned action open;
+        // clearPanel preserves the pinned alternate node. Otherwise collapse the panel.
+        if (alternateSelectedNodeId && alternateSelectedNodePersistence === 'pinned') {
+          dispatch(clearPanel());
+        } else {
+          collapse();
+        }
       }}
       showTriggerInfo={showTriggerInfo && !readOnly}
       isTrigger={isTrigger}
