@@ -98,6 +98,25 @@ import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
+// Merge server-side connections with in-flight local mutations. Local entries win per category so
+// a connection the user just created (mutated into `local` via addConnectionInJson) survives a
+// re-sync from server data. See connectionsData state comment in DesignerEditor for context.
+const mergeConnectionsData = (fromServer: ConnectionsData, local: ConnectionsData | undefined): ConnectionsData => {
+  if (!local) {
+    return fromServer;
+  }
+  return {
+    ...fromServer,
+    ...local,
+    managedApiConnections: { ...(fromServer?.managedApiConnections ?? {}), ...(local?.managedApiConnections ?? {}) },
+    serviceProviderConnections: { ...(fromServer?.serviceProviderConnections ?? {}), ...(local?.serviceProviderConnections ?? {}) },
+    functionConnections: { ...(fromServer?.functionConnections ?? {}), ...(local?.functionConnections ?? {}) },
+    apiManagementConnections: { ...(fromServer?.apiManagementConnections ?? {}), ...(local?.apiManagementConnections ?? {}) },
+    agentConnections: { ...(fromServer?.agentConnections ?? {}), ...(local?.agentConnections ?? {}) },
+    agentMcpConnections: { ...(fromServer?.agentMcpConnections ?? {}), ...(local?.agentMcpConnections ?? {}) },
+  };
+};
+
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
     id: state.workflowLoader.resourcePath!,
@@ -185,11 +204,27 @@ const DesignerEditor = () => {
     setCurrentParameters(parameters ?? {});
   }, [parameters]);
   const queryClient = getReactQueryClient();
-  const connectionsData = useMemo(
-    () =>
-      resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {}),
-    [originalConnectionsData, currentParameters, settingsData?.properties]
+  // `addConnectionDataInternal` mutates `connectionsData` in place (via `addConnectionInJson`) when the
+  // user creates a new connection. A pure useMemo derivation raced with the initial workflow-artifacts
+  // fetch: once the fetch completed, `originalConnectionsData` reference changed and useMemo recomputed,
+  // cloning a fresh copy from server data — wiping the in-flight mutation. The next save then saw no
+  // delta and skipped writing connections.json, so validate later failed on the missing MCP name.
+  // Hold connectionsData in state, and on server-data change MERGE (server ∪ local) rather than
+  // replace. Local per-category entries win over server, so brand-new connections created before the
+  // fetch completed survive the reconciliation.
+  const [connectionsData, setConnectionsData] = useState<ConnectionsData>(() =>
+    resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {})
   );
+  useEffect(() => {
+    setConnectionsData((prev) => {
+      const fromServer = resolveConnectionsReferences(
+        JSON.stringify(clone(originalConnectionsData ?? {})),
+        currentParameters,
+        settingsData?.properties ?? {}
+      );
+      return mergeConnectionsData(fromServer, prev);
+    });
+  }, [originalConnectionsData, currentParameters, settingsData?.properties]);
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const { data: runInstanceData } = useRun(runId);
 
