@@ -64,6 +64,12 @@
       }
     }
   },
-  "connectionReferences": {},
+  "connectionReferences": {
+    "mcpclient": {
+      "connection": { "id": "/connectionProviders/mcpclient/connections/mcpclient" },
+      "connectionName": "mcpclient",
+      "api": { "id": "connectionProviders/mcpclient" }
+    }
+  },
   "parameters": {}
 }
