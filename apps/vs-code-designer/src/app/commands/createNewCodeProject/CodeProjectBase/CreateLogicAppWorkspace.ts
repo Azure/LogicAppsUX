@@ -106,7 +106,6 @@ export async function createLogicAppAndWorkflow(
 
   context.telemetry.properties.logicAppType = logicAppType || 'logicApp';
   context.telemetry.properties.workflowType = workflowType || 'unknown';
-  context.telemetry.properties.isCodefulWorkflow = String(logicAppType === ProjectType.codeful);
 
   await fse.ensureDir(logicAppFolderPath);
   if (logicAppType === ProjectType.codeful) {

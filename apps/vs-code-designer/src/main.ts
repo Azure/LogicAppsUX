@@ -11,7 +11,6 @@ import { UriHandler } from './app/utils/codeless/urihandler';
 import {
   getExtensionVersion,
   initializeCustomExtensionContext,
-  registerCodefulWorkflowContextListener,
   updateLogicAppsContext,
 } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -200,9 +199,6 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands();
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
-
-    // Register codeful workflow context listener
-    registerCodefulWorkflowContextListener(context);
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
     const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
