@@ -1,6 +1,5 @@
 import './nodeUtilCompatibility';
 import { LogicAppResolver } from './LogicAppResolver';
-import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -139,9 +138,10 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     activateContext.telemetry.properties.isActivationEvent = 'true';
-
-    runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
+    callWithTelemetryAndErrorHandling(extensionCommand.logSubscriptions, async (actionContext: IActionContext) => {
+      await logSubscriptions(actionContext);
+    });
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await convertToWorkspace(activateContext);
@@ -204,7 +204,6 @@ export async function activate(context: vscode.ExtensionContext) {
     perfStats.loadEndTime = Date.now();
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
-    logSubscriptions(activateContext);
     logExtensionSettings(activateContext);
   });
 }

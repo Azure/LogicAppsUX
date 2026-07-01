@@ -10,7 +10,7 @@ export interface CollapseToggleProps {
   tabIndex?: number;
   disabled?: boolean;
   collapsed?: boolean;
-  handleCollapse: () => void;
+  handleCollapse: (includeNested?: boolean) => void;
   isSmall?: boolean;
 }
 
@@ -40,7 +40,8 @@ export const CollapseToggle = (props: CollapseToggleProps) => {
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          handleCollapse();
+          // Shift-click collapses/expands this scope and all of its nested scopes.
+          handleCollapse(e.shiftKey);
         }}
         icon={collapsed ? <ChevronUp /> : <ChevronDown />}
         size={'small'}
