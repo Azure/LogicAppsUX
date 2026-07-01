@@ -8,11 +8,7 @@ import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTr
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
-import {
-  getExtensionVersion,
-  initializeCustomExtensionContext,
-  updateLogicAppsContext,
-} from './app/utils/extension';
+import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
@@ -43,7 +39,7 @@ import { codefulProjectsExist } from './app/utils/codeful';
 
 const perfStats = {
   loadStartTime: Date.now(),
-  loadEndTime: undefined,
+  loadEndTime: undefined as number | undefined,
 };
 
 const telemetryString = 'setInGitHubBuild';
@@ -200,7 +196,7 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 
-    ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
+    ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter)!, new LogicAppResolver());
     const azureResourcesApi = await getAzureResourcesExtensionApi(context, '2.0.0');
     ext.rgApiV2 = azureResourcesApi;
 

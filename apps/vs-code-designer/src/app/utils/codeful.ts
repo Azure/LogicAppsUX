@@ -1,7 +1,7 @@
 import path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
-import { autoRuntimeDependenciesPathSettingKey, localSettingsFileName, lspDirectory, workflowCodefulEnabledKey } from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, localSettingsFileName, lspDirectory, workflowCodefulEnabledKey } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 
@@ -79,7 +79,7 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
     return false;
   }
 
-  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey) || defaultDependencyPathValue;
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
   const installedSdkHashMarkerPath = path.join(targetDirectory, lspSdkHashMarkerName);

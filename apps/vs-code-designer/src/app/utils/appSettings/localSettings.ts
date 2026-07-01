@@ -100,6 +100,8 @@ export async function getLocalSettingsJson(
       try {
         const localSettings = parseJson(data) as ILocalSettingsJson;
         const decryptedlocalSettings = await getDecryptedLocalSettings(context, localSettings, localSettingsUri, localSettingsPath);
+        decryptedlocalSettings.Values ??= {};
+
         if (isDesignTime) {
           decryptedlocalSettings.Values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
           delete decryptedlocalSettings.Values[azureWebJobsStorageKey];
@@ -185,22 +187,22 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
 
   // Add project path if provided
   if (projectPath) {
-    baseSettings.Values[ProjectDirectoryPathKey] = projectPath;
+    baseSettings.Values![ProjectDirectoryPathKey] = projectPath;
   }
 
   // Add runtime-specific settings
   if (isDesignTime) {
-    baseSettings.Values[workerRuntimeKey] = WorkerRuntime.Node;
-    baseSettings.Values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
+    baseSettings.Values![workerRuntimeKey] = WorkerRuntime.Node;
+    baseSettings.Values![azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
   } else {
-    baseSettings.Values[workerRuntimeKey] = WorkerRuntime.Dotnet;
-    baseSettings.Values[azureWebJobsStorageKey] = localEmulatorConnectionString;
-    baseSettings.Values[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+    baseSettings.Values![workerRuntimeKey] = WorkerRuntime.Dotnet;
+    baseSettings.Values![azureWebJobsStorageKey] = localEmulatorConnectionString;
+    baseSettings.Values![functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
   }
 
   // Add codeful-specific settings
   if (isCodeful) {
-    baseSettings.Values[workflowCodefulEnabledKey] = 'true';
+    baseSettings.Values![workflowCodefulEnabledKey] = 'true';
   }
 
   return baseSettings;
