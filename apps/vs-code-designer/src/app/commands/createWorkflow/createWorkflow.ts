@@ -21,32 +21,7 @@ interface AvailableProject {
   existingWorkflows: string[];
 }
 
-/**
- * Collects all Logic App projects across workspace folders.
- */
-async function collectAvailableProjects(context: IActionContext): Promise<AvailableProject[]> {
-  const projects: AvailableProject[] = [];
-  if (!vscode.workspace.workspaceFolders) {
-    return projects;
-  }
-
-  for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
-    if (projectRoot) {
-      const isCodeful = await isCodefulProject(projectRoot);
-      const workflows = await getWorkflowsInLocalProject(projectRoot);
-      projects.push({
-        name: path.basename(projectRoot.replace(/\\/g, '/')),
-        path: projectRoot,
-        isCodeful,
-        existingWorkflows: Object.keys(workflows || {}),
-      });
-    }
-  }
-  return projects;
-}
-
-export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) => {
+export async function createWorkflow(context: IActionContext, uri?: vscode.Uri) {
   ext.outputChannel.appendLog(`[createWorkflow] Started. uri=${uri?.fsPath ?? 'undefined'}`);
 
   // Collect all available projects
@@ -118,3 +93,28 @@ export const createWorkflow = async (context: IActionContext, uri?: vscode.Uri) 
     },
   });
 };
+
+/**
+ * Collects all Logic App projects across workspace folders.
+ */
+async function collectAvailableProjects(context: IActionContext): Promise<AvailableProject[]> {
+  const projects: AvailableProject[] = [];
+  if (!vscode.workspace.workspaceFolders) {
+    return projects;
+  }
+
+  for (const folder of vscode.workspace.workspaceFolders) {
+    const projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
+    if (projectRoot) {
+      const isCodeful = await isCodefulProject(projectRoot);
+      const workflows = await getWorkflowsInLocalProject(projectRoot);
+      projects.push({
+        name: path.basename(projectRoot.replace(/\\/g, '/')),
+        path: projectRoot,
+        isCodeful,
+        existingWorkflows: Object.keys(workflows || {}),
+      });
+    }
+  }
+  return projects;
+}

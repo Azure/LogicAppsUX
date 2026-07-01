@@ -1,6 +1,5 @@
 import './nodeUtilCompatibility';
 import { LogicAppResolver } from './LogicAppResolver';
-import { runPostWorkflowCreateStepsFromCache } from './app/commands/createWorkflow/createWorkflowSteps/workflowCreateStepBase';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -144,8 +143,6 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     activateContext.telemetry.properties.isActivationEvent = 'true';
-
-    runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
