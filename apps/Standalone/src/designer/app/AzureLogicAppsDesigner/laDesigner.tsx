@@ -999,7 +999,6 @@ const getConnectionsToUpdate = (
     originalConnectionsJson.serviceProviderConnections ?? {},
     connectionsJson.serviceProviderConnections ?? {}
   );
-  const hasNewMcpConnectionKeys = hasNewKeys(originalConnectionsJson.agentMcpConnections ?? {}, connectionsJson.agentMcpConnections ?? {});
 
   const hasNewManagedApiConnectionRuntimeUrl = hasNewConnectionRuntimeUrl(
     originalConnectionsJson.managedApiConnections ?? {},
@@ -1008,14 +1007,7 @@ const getConnectionsToUpdate = (
 
   const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
 
-  if (
-    !hasNewFunctionKeys &&
-    !hasNewApimKeys &&
-    !hasNewManagedApiKeys &&
-    !hasNewServiceProviderKeys &&
-    !hasNewAgentKeys &&
-    !hasNewMcpConnectionKeys
-  ) {
+  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
     return undefined;
   }
 
@@ -1068,15 +1060,6 @@ const getConnectionsToUpdate = (
     for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
-      }
-    }
-  }
-
-  if (hasNewMcpConnectionKeys) {
-    for (const agentMcpConnectionName of Object.keys(connectionsJson.agentMcpConnections ?? {})) {
-      if (originalConnectionsJson.agentMcpConnections?.[agentMcpConnectionName]) {
-        (connectionsToUpdate.agentMcpConnections as any)[agentMcpConnectionName] =
-          originalConnectionsJson.agentMcpConnections[agentMcpConnectionName];
       }
     }
   }
