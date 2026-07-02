@@ -1,0 +1,66 @@
+{
+  "definition": {
+    "metadata": {
+      "agentType": "autonomous"
+    },
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    },
+    "actions": {
+      "WorkflowAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "messages": [
+              {
+                "role": "system",
+                "content": "You are a helpful assistant that can use an MCP server."
+              }
+            ],
+            "agentModelType": "AzureOpenAI",
+            "agentModelSettings": {
+              "agentHistoryReductionSettings": {
+                "agentHistoryReductionType": "maximumTokenCountReduction",
+                "maximumTokenCount": 128000
+              }
+            }
+          }
+        },
+        "tools": {
+          "BuiltIn_MCP_Server": {
+            "type": "McpClientTool",
+            "kind": "BuiltIn",
+            "inputs": {
+              "Connection": {
+                "McpServerUrl": "https://mcp.time.mcpcentral.io/",
+                "Authentication": "None"
+              }
+            }
+          }
+        },
+        "runAfter": {},
+        "limit": {
+          "count": 100
+        }
+      }
+    },
+    "outputs": {},
+    "parameters": {
+      "$connections": {
+        "type": "Object",
+        "defaultValue": {}
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "type": "Object",
+      "value": {}
+    }
+  }
+}
