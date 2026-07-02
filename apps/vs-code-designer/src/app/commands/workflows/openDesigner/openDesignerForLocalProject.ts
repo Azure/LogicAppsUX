@@ -194,7 +194,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
     ext.context.subscriptions.push(this.panel);
 
-    // Show notification about designer version
     this.showDesignerVersionNotification();
   }
 

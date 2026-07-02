@@ -104,7 +104,11 @@ describe('OpenDesignerForAzureResource', () => {
         iconPath: undefined,
       };
       vi.mocked(vscode.window as any).createWebviewPanel = vi.fn().mockReturnValue(mockPanel);
-      ext.context = { extensionPath: '/test', subscriptions: [] } as any;
+      ext.context = {
+        extensionPath: '/test',
+        subscriptions: [],
+        globalState: { get: vi.fn().mockReturnValue(undefined), update: vi.fn().mockResolvedValue(undefined) },
+      } as any;
 
       const mockShowInfo = vi.mocked(vscode.window.showInformationMessage);
       const mockGetConfig = vi.mocked(vscode.workspace.getConfiguration);
@@ -117,7 +121,11 @@ describe('OpenDesignerForAzureResource', () => {
 
       expect(cacheWebviewPanel).toHaveBeenCalled();
       // showDesignerVersionNotification was called (shows v1 message)
-      expect(mockShowInfo).toHaveBeenCalledWith('A new Logic Apps experience is available for preview!', 'Enable preview');
+      expect(mockShowInfo).toHaveBeenCalledWith(
+        'A new Logic Apps experience is available for preview!',
+        'Enable preview',
+        "Don't show again"
+      );
     });
   });
 });

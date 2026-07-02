@@ -143,7 +143,11 @@ describe('OpenDesignerForLocalProject', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     ext.designTimeInstances.clear();
-    (ext as any).context = { extensionPath: '/extension', subscriptions: [] };
+    (ext as any).context = {
+      extensionPath: '/extension',
+      subscriptions: [],
+      globalState: { get: vi.fn().mockReturnValue(undefined), update: vi.fn().mockResolvedValue(undefined) },
+    };
     (ext as any).telemetryReporter = { sendTelemetryEvent: vi.fn() };
     (ext as any).extensionVersion = '1.0.0';
     (ext as any).workflowRuntimePort = 8080;
