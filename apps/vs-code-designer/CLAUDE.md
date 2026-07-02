@@ -143,6 +143,7 @@ Each test runs in its own fresh VS Code session to avoid workspace-switch conten
 | 4.5 | designerViewExtended.test.ts | Parallel branches + run-after (ADO #10109401) |
 | 4.6 | keyboardNavigation.test.ts | Ctrl+Up/Down + Ctrl+Alt+P / Ctrl+Shift+P hotkey contract |
 | 4.7 | dataMapper.test.ts, demo, smoke, standalone | Data Mapper + generic tests |
+| 4.11 | bundleCdnHealth.test.ts | CDN integrity headers probe (`Content-Length` / `Content-MD5` on the Workflows extension bundle). Pure Mocha — no VS Code session. |
 
 ### Shared Helper Modules
 
@@ -193,9 +194,10 @@ $env:E2E_MODE = "newtestsonly"            # Phases 4.3-4.6 only (requires prior 
 $env:E2E_MODE = "conversiononly"          # Phases 4.8a-e only (requires prior 4.1 manifest)
 $env:E2E_MODE = "conversioncreateonly"    # Phase 4.8b only (builds own legacy fixture)
 $env:E2E_MODE = "nonlogicappstartup"      # Phase 4.0 only
+$env:E2E_MODE = "bundleintegrityonly"     # Phase 4.11 — pure-Mocha CDN integrity probe (no VS Code)
 
 # CI matrix shard modes (each runs on its own GitHub Actions runner):
-$env:E2E_MODE = "independentonly"         # 4.0 + 4.8b — no Phase 4.1 dep
+$env:E2E_MODE = "independentonly"         # 4.0 + 4.8b + 4.11 — no Phase 4.1 dep
 $env:E2E_MODE = "createplusdesigner"      # 4.1 → 4.2, 4.7
 $env:E2E_MODE = "createplusnewtests"      # 4.1 → 4.3, 4.4, 4.5, 4.6
 $env:E2E_MODE = "createplusconversion"    # 4.1 → 4.8a, 4.8c, 4.8d, 4.8e
