@@ -194,7 +194,6 @@ describe('createWorkflow', () => {
 
       expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, 'D:\\repoA\\SharedProject');
     });
-
     it('throws when webview sends unrecognized project name', async () => {
       const folder = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
       (vscode.workspace as any).workspaceFolders = [folder];

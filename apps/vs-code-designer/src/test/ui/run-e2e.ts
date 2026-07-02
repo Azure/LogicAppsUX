@@ -13,15 +13,102 @@
  * isolated directory.
  */
 
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
-const crypto = require('crypto');
-const { exec, execSync } = require('child_process');
-const { ExTester } = require('vscode-extension-tester');
+import * as path from 'path';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as crypto from 'crypto';
+import { exec, execSync } from 'child_process';
+import { ExTester } from 'vscode-extension-tester';
+import { isExecutableFile } from './runtimeBinaryCheck';
+import { lspDirectory } from '../../constants';
+import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
 
-const projectDir = path.resolve(__dirname, '..', '..', '..');
+type BundleFileEntry = { relPath: string; fullPath: string };
+type ExtensionBundleState = { version: string; bundleDir: string; sidecarPath: string };
+type BundleSidecar = { sourceMd5: string; contentHash: string };
+type InstallResult = { dep: string; success: boolean };
+type RuntimeDependencyPaths = {
+  depsRoot: string;
+  funcToolsDir: string;
+  funcExecutableCandidates: string[];
+  dotnetSdkDir: string;
+  nodeJsDir: string;
+  funcBinary: string;
+  dotnetBinary: string;
+  nodeBinary: string;
+};
+type TestSettingsOptions = {
+  validateDependencies?: boolean;
+  autoStartDesignTime?: boolean;
+  includeRuntimeDependencyPaths?: boolean;
+  runtimeDependenciesPathOverride?: string;
+  useExperimentalBundle?: boolean;
+  experimentalBundleSourceUri?: string;
+  experimentalBundleVersion?: string;
+};
+type ScenarioSettings = Omit<TestSettingsOptions, 'validateDependencies'> & {
+  validateDependencies?: boolean | 'auto';
+};
+type WorkspaceSpec =
+  | 'plain-folder'
+  | 'self-creates'
+  | 'self-contained'
+  | 'manifest-multi'
+  | {
+      appType?: string;
+      wfType?: string;
+      use?: 'wsDir' | 'appDir';
+    };
+type ManifestEntry = {
+  label?: string;
+  appType?: string;
+  wfType?: string;
+  wsFilePath?: string;
+  wsDir?: string;
+  appDir?: string;
+  wfName?: string;
+  [key: string]: unknown;
+};
+type CodefulWorkspaceEntry = ManifestEntry & {
+  label: string;
+  appType: string;
+  wsFilePath: string;
+  appDir: string;
+  wfName: string;
+};
+type CodefulDebugWorkspaces = { modern: CodefulWorkspaceEntry; legacy: CodefulWorkspaceEntry };
+type WorkspaceSelection = { resources: string[]; legacyDir?: string };
+type Scenario = {
+  id: string;
+  testFile: string | string[];
+  workspaceSpec: WorkspaceSpec;
+  settings?: ScenarioSettings;
+  monolithic?: boolean;
+  env?: Record<string, string>;
+};
+type PhaseRunOptions = {
+  vscodeVersion: string;
+  settings: string;
+  cleanup: boolean;
+  offline: boolean;
+  resources: string[];
+};
+type ExtensionJsonEntry = {
+  identifier: { id: string };
+  version: string;
+  location: { $mid: number; path: string; scheme: 'file' };
+  relativeLocation: string;
+  metadata: { installedTimestamp: number; source: 'gallery' };
+};
+type EnvOverride = { key: string; prev: string | undefined };
+
+const getErrorMessage = (error: unknown): string => (error instanceof Error ? error.message : String(error));
+
+const projectDir = fs.existsSync(path.join(__dirname, '..', '..', 'package.json'))
+  ? path.resolve(__dirname, '..', '..')
+  : path.resolve(__dirname, '..', '..', '..');
 const distDir = path.join(projectDir, 'dist');
+const sourceUiTestDir = path.join(projectDir, 'src', 'test', 'ui');
 
 /**
  * Pinned VS Code version for test stability.
@@ -33,8 +120,7 @@ const DEFAULT_VSCODE_VERSION = '1.108.0';
 const VSCODE_VERSION_SOURCE = process.env.E2E_VSCODE_VERSION ? 'E2E_VSCODE_VERSION' : process.env.CODE_VERSION ? 'CODE_VERSION' : 'default';
 if (process.env.E2E_VSCODE_VERSION && process.env.CODE_VERSION && process.env.E2E_VSCODE_VERSION !== process.env.CODE_VERSION) {
   throw new Error(
-    `E2E_VSCODE_VERSION (${process.env.E2E_VSCODE_VERSION}) and CODE_VERSION (${process.env.CODE_VERSION}) disagree. ` +
-      'Set only one VS Code version override for run-e2e.js.'
+    `E2E_VSCODE_VERSION (${process.env.E2E_VSCODE_VERSION}) and CODE_VERSION (${process.env.CODE_VERSION}) disagree. Set only one VS Code version override for run-e2e.js.`
   );
 }
 const VSCODE_VERSION = process.env.E2E_VSCODE_VERSION || process.env.CODE_VERSION || DEFAULT_VSCODE_VERSION;
@@ -44,13 +130,30 @@ const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows
 const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
 const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
 
+/**
+ * LSP-related artifact names that must be removed when preparing an isolated
+ * dependency root for the EPERM repro test. This forces the extension to
+ * re-extract the LSP server/SDK during the test.
+ *
+ * Source of truth: languageServerProtocol.ts and constants.ts
+ */
+const LSP_STALE_ARTIFACT_NAMES = [
+  lspServerDirectoryName,
+  lspServerHashMarkerName,
+  lspDirectory,
+  lspSdkHashMarkerName,
+  '.lspserver-version',
+  '.lspserver-path',
+  '.lspsdk-version',
+];
+
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
 // would destroy cached marketplace extension installs.
 const extDir = path.join(os.tmpdir(), 'test-resources', 'test-extensions');
 const testGlob = path.resolve(projectDir, 'out', 'test', '*.js').replace(/\\/g, '/');
 
-function compareSemverDesc(a, b) {
+function compareSemverDesc(a: string, b: string): number {
   const pa = a.split('.').map((part) => Number.parseInt(part, 10));
   const pb = b.split('.').map((part) => Number.parseInt(part, 10));
   for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
@@ -62,7 +165,7 @@ function compareSemverDesc(a, b) {
   return 0;
 }
 
-function findLatestExtensionBundle() {
+function findLatestExtensionBundle(): ExtensionBundleState | undefined {
   if (!fs.existsSync(EXTENSION_BUNDLE_ROOT)) {
     return undefined;
   }
@@ -85,11 +188,14 @@ function findLatestExtensionBundle() {
   };
 }
 
-function listBundleFiles(bundleDir) {
-  const files = [];
+function listBundleFiles(bundleDir: string): BundleFileEntry[] {
+  const files: BundleFileEntry[] = [];
   const stack = [bundleDir];
   while (stack.length > 0) {
     const current = stack.pop();
+    if (!current) {
+      continue;
+    }
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
       const fullPath = path.join(current, entry.name);
       const relPath = path.relative(bundleDir, fullPath).split(path.sep).join('/');
@@ -107,7 +213,7 @@ function listBundleFiles(bundleDir) {
   return files;
 }
 
-function computeBundleContentHash(bundleDir, files) {
+function computeBundleContentHash(bundleDir: string, files: BundleFileEntry[]): string {
   const hash = crypto.createHash('sha256');
   const nul = Buffer.from([0]);
   for (const file of files) {
@@ -122,7 +228,7 @@ function computeBundleContentHash(bundleDir, files) {
   return hash.digest('base64');
 }
 
-function verifyLogicAppsExtensionBundle(label) {
+function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
   const state = findLatestExtensionBundle();
   if (!state) {
     throw new Error(`[${label}] Logic Apps extension bundle root is missing or has no version folders: ${EXTENSION_BUNDLE_ROOT}`);
@@ -131,11 +237,11 @@ function verifyLogicAppsExtensionBundle(label) {
     throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing: ${state.sidecarPath}`);
   }
 
-  let sidecar;
+  let sidecar: BundleSidecar;
   try {
     sidecar = JSON.parse(fs.readFileSync(state.sidecarPath, 'utf8'));
-  } catch (error) {
-    throw new Error(`[${label}] Logic Apps extension bundle sidecar is not valid JSON: ${error.message}`);
+  } catch (error: any) {
+    throw new Error(`[${label}] Logic Apps extension bundle sidecar is not valid JSON: ${getErrorMessage(error)}`);
   }
   if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
     throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing sourceMd5/contentHash: ${state.sidecarPath}`);
@@ -157,7 +263,7 @@ function verifyLogicAppsExtensionBundle(label) {
   return state;
 }
 
-function pruneUnhealthyLogicAppsExtensionBundles(label) {
+function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
   if (!fs.existsSync(EXTENSION_BUNDLE_ROOT)) {
     return;
   }
@@ -187,14 +293,14 @@ function pruneUnhealthyLogicAppsExtensionBundles(label) {
         console.log(`[${label}] Removing bundle ${version}: invalid sidecar/content hash`);
         fs.rmSync(bundleDir, { recursive: true, force: true });
       }
-    } catch (error) {
-      console.log(`[${label}] Removing bundle ${version}: health check failed (${error.message})`);
+    } catch (error: any) {
+      console.log(`[${label}] Removing bundle ${version}: health check failed (${getErrorMessage(error)})`);
       fs.rmSync(bundleDir, { recursive: true, force: true });
     }
   }
 }
 
-function createExTester() {
+function createExTester(): ExTester {
   return new ExTester(
     undefined, // storageFolder — use default (os.tmpdir()/test-resources)
     undefined, // releaseType — Stable
@@ -205,13 +311,15 @@ function createExTester() {
 /**
  * Recursively copy a directory, skipping test-extensions itself to avoid infinite recursion.
  */
-function copyDirSync(src, dest, skipDir) {
+function copyDirSync(src: string, dest: string, skipDir?: string): void {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
     // Skip the test-extensions directory itself to avoid infinite recursion
-    if (skipDir && path.resolve(srcPath) === path.resolve(skipDir)) continue;
+    if (skipDir && path.resolve(srcPath) === path.resolve(skipDir)) {
+      continue;
+    }
     if (entry.isDirectory()) {
       copyDirSync(srcPath, destPath);
     } else {
@@ -220,8 +328,8 @@ function copyDirSync(src, dest, skipDir) {
   }
 }
 
-async function withDownloadRetry(label, action) {
-  let lastError;
+async function withDownloadRetry(label: string, action: () => Promise<void>): Promise<void> {
+  let lastError: unknown;
   for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
     try {
       if (attempt > 1) {
@@ -229,9 +337,9 @@ async function withDownloadRetry(label, action) {
       }
       await action();
       return;
-    } catch (error) {
+    } catch (error: any) {
       lastError = error;
-      const message = error?.message || String(error);
+      const message = getErrorMessage(error);
       console.log(`  ${label} attempt ${attempt}/${DOWNLOAD_RETRY_ATTEMPTS} failed: ${message}`);
       if (attempt < DOWNLOAD_RETRY_ATTEMPTS) {
         await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
@@ -241,15 +349,15 @@ async function withDownloadRetry(label, action) {
   throw lastError;
 }
 
-function installExtensionWithCli(cliBase, dep, label = dep) {
-  return new Promise((resolve) => {
+function installExtensionWithCli(cliBase: string, dep: string, label: string = dep): Promise<InstallResult> {
+  return new Promise<InstallResult>((resolve) => {
     const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
     const startTime = Date.now();
-    exec(command, { timeout: 300000 }, (error, stdout, stderr) => {
+    exec(command, { timeout: 300000 }, (error: Error | null, stdout: string, stderr: string) => {
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
       if (error) {
         const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
-        console.warn(`  ⚠ ${label} failed (${elapsed}s): ${error.message}${output ? `\n${output}` : ''}`);
+        console.warn(`  ⚠ ${label} failed (${elapsed}s): ${getErrorMessage(error)}${output ? `\n${output}` : ''}`);
         resolve({ dep, success: false });
       } else {
         console.log(`  ✓ ${label} installed (${elapsed}s)`);
@@ -259,7 +367,7 @@ function installExtensionWithCli(cliBase, dep, label = dep) {
   });
 }
 
-function findNestedWindowsCliPath(codeFolder) {
+function findNestedWindowsCliPath(codeFolder: string): string | undefined {
   if (process.platform !== 'win32') {
     return undefined;
   }
@@ -282,7 +390,7 @@ function findNestedWindowsCliPath(codeFolder) {
   return undefined;
 }
 
-function preflightVSCodeCli(extest) {
+function preflightVSCodeCli(extest: ExTester): void {
   const codeFolder = extest.code.getCodeFolder();
   const cliPath = extest.code.getCliPath();
   const executablePath = extest.code.executablePath;
@@ -295,23 +403,21 @@ function preflightVSCodeCli(extest) {
   if (!fs.existsSync(cliPath)) {
     const nestedHint = nestedCliPath ? ` Found nested Windows CLI at ${nestedCliPath}, but ExTester resolved ${cliPath}.` : '';
     throw new Error(
-      `VS Code CLI not found at ${cliPath}.${nestedHint} ` +
-        `Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.`
+      `VS Code CLI not found at ${cliPath}.${nestedHint} Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.`
     );
   }
 
-  let output;
+  let output: string;
   try {
     output = execSync(`${extest.code.getCliInitCommand()} -v`, {
       encoding: 'utf8',
       env: extest.code.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
-  } catch (error) {
+  } catch (error: any) {
     const nestedHint = nestedCliPath ? ` Nested Windows CLI candidate: ${nestedCliPath}.` : '';
     throw new Error(
-      `VS Code CLI preflight failed for ${cliPath}.${nestedHint} ` +
-        `Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.\n${error.message}`
+      `VS Code CLI preflight failed for ${cliPath}.${nestedHint} Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.\n${getErrorMessage(error)}`
     );
   }
 
@@ -325,7 +431,7 @@ function preflightVSCodeCli(extest) {
   console.log(`  ✓ VS Code CLI preflight: ${actualVersion} (${cliPath})`);
 }
 
-async function downloadExTesterAssets() {
+async function downloadExTesterAssets(): Promise<void> {
   await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, async () => {
     const downloadTester = createExTester();
     await downloadTester.downloadCode(VSCODE_VERSION);
@@ -340,12 +446,16 @@ async function downloadExTesterAssets() {
  * This is needed after parallel marketplace installs, which may race on
  * concurrent writes to extensions.json, corrupting or losing entries.
  */
-function rebuildExtensionsJson(extensionsDir) {
-  const entries = [];
+function rebuildExtensionsJson(extensionsDir: string): void {
+  const entries: ExtensionJsonEntry[] = [];
   for (const entry of fs.readdirSync(extensionsDir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
+    if (!entry.isDirectory()) {
+      continue;
+    }
     const pkgPath = path.join(extensionsDir, entry.name, 'package.json');
-    if (!fs.existsSync(pkgPath)) continue;
+    if (!fs.existsSync(pkgPath)) {
+      continue;
+    }
     try {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
       const id = `${pkg.publisher}.${pkg.name}`;
@@ -383,8 +493,8 @@ function rebuildExtensionsJson(extensionsDir) {
  * `la-e2e.startDebug`, `la-e2e.stopDebug`, and `la-e2e.recorderPing`
  * commands used by Phase 4.10.
  */
-function installCodefulTaskRecorderExtension(extDir) {
-  const recorderSrc = path.join(__dirname, 'codefulTaskRecorderExtension');
+function installCodefulTaskRecorderExtension(extDir: string): string {
+  const recorderSrc = path.join(sourceUiTestDir, 'codefulTaskRecorderExtension');
   if (!fs.existsSync(path.join(recorderSrc, 'package.json'))) {
     throw new Error(`Recorder extension source missing at ${recorderSrc}`);
   }
@@ -429,7 +539,7 @@ function installCodefulTaskRecorderExtension(extDir) {
  * Build a synthetic "legacy" project fixture for the legacy/standard
  * non-Logic-App regression tests.
  */
-function createLegacyProjectFixture(label) {
+function createLegacyProjectFixture(label: string): string {
   const legacyRoot = fs.mkdtempSync(path.join(os.tmpdir(), `la-e2e-${label}-`));
   const legacyDir = path.join(legacyRoot, 'legacy-project');
   const legacyWfDir = path.join(legacyDir, 'testworkflow');
@@ -478,8 +588,8 @@ function createLegacyProjectFixture(label) {
  * Run async tasks with a concurrency limit.
  * Returns results in the same order as the input tasks.
  */
-async function parallelLimit(taskFns, limit) {
-  const results = new Array(taskFns.length);
+async function parallelLimit<T>(taskFns: Array<() => Promise<T>>, limit: number): Promise<T[]> {
+  const results: T[] = new Array(taskFns.length);
   let nextIndex = 0;
 
   async function runNext() {
@@ -489,7 +599,7 @@ async function parallelLimit(taskFns, limit) {
     }
   }
 
-  const workers = [];
+  const workers: Promise<void>[] = [];
   for (let w = 0; w < Math.min(limit, taskFns.length); w++) {
     workers.push(runNext());
   }
@@ -497,14 +607,14 @@ async function parallelLimit(taskFns, limit) {
   return results;
 }
 
-async function main() {
+async function main(): Promise<void> {
   // Fast path: bundleintegrityonly is a pure-Node Mocha probe that needs
   // neither the built extension (dist/package.json) nor ExTester / VS Code.
   // Short-circuit before any of those checks so the phase can run on a
   // fresh checkout (or any shard) without first running the extension build.
   const earlyMode = (process.env.E2E_MODE || 'full').toLowerCase();
   if (earlyMode === 'bundleintegrityonly') {
-    const outTestDir = path.resolve(__dirname, '..', '..', '..', 'out', 'test');
+    const outTestDir = path.join(projectDir, 'out', 'test');
     const file = path.join(outTestDir, 'bundleCdnHealth.test.js').replace(/\\/g, '/');
     if (!fs.existsSync(file)) {
       console.error(`\n✖ Compiled test not found: ${file}\n  Run: npx tsup --config tsup.e2e.test.config.ts`);
@@ -518,14 +628,12 @@ async function main() {
     const Mocha = require('mocha');
     const mocha = new Mocha({ color: true, timeout: 60_000, reporter: 'spec' });
     mocha.addFile(file);
-    const exit = await new Promise((resolve) => {
+    const exit = await new Promise<number>((resolve) => {
       mocha.run((failures) => resolve(failures > 0 ? 1 : 0));
     });
     console.log(`\n=== bundleintegrityonly exit code: ${exit} ===`);
     process.exit(exit);
   }
-
-  const { ExTester } = require('vscode-extension-tester');
 
   // ------------------------------------------------------------------
   // D-001 pre-flight: enforce that *.fixtures.test.ts files do not write
@@ -533,11 +641,13 @@ async function main() {
   // This guard is a cheap grep — it runs before any build/test work so
   // a violating PR fails fast on its very first CI run.
   // ------------------------------------------------------------------
-  const uiTestDir = path.resolve(__dirname);
+  const uiTestDir = sourceUiTestDir;
   const fixturesGuardPattern = /fs\s*\.\s*writeFile|outputJson/;
-  const fixturesGuardViolations = [];
+  const fixturesGuardViolations: string[] = [];
   for (const fname of fs.readdirSync(uiTestDir)) {
-    if (!fname.endsWith('.fixtures.test.ts')) continue;
+    if (!fname.endsWith('.fixtures.test.ts')) {
+      continue;
+    }
     const filePath = path.join(uiTestDir, fname);
     const contents = fs.readFileSync(filePath, 'utf8');
     if (fixturesGuardPattern.test(contents)) {
@@ -546,9 +656,7 @@ async function main() {
   }
   if (fixturesGuardViolations.length > 0) {
     console.error(
-      '\n✖ D-001 lint guard FAILED: *.fixtures.test.ts files must not call fs.writeFile* or outputJson*.\n' +
-        '  Fixture workspaces must be produced by the Create Workspace wizard, not synthesized on disk.\n' +
-        `  Violating files: ${fixturesGuardViolations.join(', ')}`
+      `\n✖ D-001 lint guard FAILED: *.fixtures.test.ts files must not call fs.writeFile* or outputJson*.\n  Fixture workspaces must be produced by the Create Workspace wizard, not synthesized on disk.\n  Violating files: ${fixturesGuardViolations.join(', ')}`
     );
     process.exit(2);
   }
@@ -556,12 +664,11 @@ async function main() {
 
   // Read extension metadata from dist/package.json
   const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
-  const extDeps = pkgJson.extensionDependencies || [];
+  const extDeps: string[] = pkgJson.extensionDependencies || [];
   const devContainersDependency = 'ms-vscode-remote.remote-containers';
   if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
     throw new Error(
-      `${devContainersDependency} must not be listed in extensionDependencies. ` +
-        'It causes VS Code to install/start Dev Containers for users who only installed Azure Logic Apps.'
+      `${devContainersDependency} must not be listed in extensionDependencies. It causes VS Code to install/start Dev Containers for users who only installed Azure Logic Apps.`
     );
   }
   const requiredE2ePrereqs = ['ms-dotnettools.csdevkit'];
@@ -592,7 +699,7 @@ async function main() {
   // run VS Code CLI --install-extension sequentially. Parallel CLI installs
   // race on shared extension/cache directories and can leave VS Code with
   // partially extracted dependencies even when a follow-up retry succeeds.
-  const getExtensionEntries = (extensionId) => {
+  const getExtensionEntries = (extensionId: string): string[] => {
     if (!fs.existsSync(extDir)) {
       return [];
     }
@@ -605,7 +712,7 @@ async function main() {
     });
   };
 
-  const readExtensionId = (entry) => {
+  const readExtensionId = (entry: string): string | undefined => {
     const pkgPath = path.join(extDir, entry, 'package.json');
     if (!fs.existsSync(pkgPath)) {
       return undefined;
@@ -618,12 +725,12 @@ async function main() {
     }
   };
 
-  const findValidInstalledExtension = (extensionId) => {
+  const findValidInstalledExtension = (extensionId: string): string | undefined => {
     const depLower = extensionId.toLowerCase();
     return getExtensionEntries(extensionId).find((entry) => readExtensionId(entry) === depLower);
   };
 
-  const removeInvalidExtensionEntries = (extensionId) => {
+  const removeInvalidExtensionEntries = (extensionId: string): void => {
     for (const entry of getExtensionEntries(extensionId)) {
       if (readExtensionId(entry) !== extensionId.toLowerCase()) {
         console.log(`  Removing invalid cached dependency: ${entry}`);
@@ -635,7 +742,7 @@ async function main() {
   if (extDeps.length > 0) {
     console.log(`\n=== Step 2: Install ${extDeps.length} extension dependencies ===`);
 
-    const depsToInstall = [];
+    const depsToInstall: string[] = [];
     for (const dep of extDeps) {
       removeInvalidExtensionEntries(dep);
       const alreadyInstalled = !!findValidInstalledExtension(dep);
@@ -706,7 +813,7 @@ async function main() {
 
   // Step 3: Copy our built extension into test-extensions as an "installed" extension
   // Skip the copy if dist/main.js hasn't changed (compare mtime for a fast-path).
-  console.log(`\n=== Step 3: Install our extension from dist/ ===`);
+  console.log('\n=== Step 3: Install our extension from dist/ ===');
   const pkgId = `${pkgJson.publisher}.${pkgJson.name}`.toLowerCase();
 
   const srcMainJs = path.join(distDir, 'main.js');
@@ -717,7 +824,7 @@ async function main() {
     const srcMtime = fs.statSync(srcMainJs).mtimeMs;
     const destMtime = fs.statSync(destMainJs).mtimeMs;
     if (srcMtime === destMtime) {
-      console.log(`  ✓ dist/main.js unchanged (mtime match), skipping copy`);
+      console.log('  ✓ dist/main.js unchanged (mtime match), skipping copy');
       needsCopy = false;
     } else {
       console.log(`  dist/main.js changed (src=${new Date(srcMtime).toISOString()}, dest=${new Date(destMtime).toISOString()})`);
@@ -747,7 +854,7 @@ async function main() {
       fs.utimesSync(destMainJs, srcStat.atime, srcStat.mtime);
     }
 
-    console.log(`  ✓ Extension installed in test-extensions`);
+    console.log('  ✓ Extension installed in test-extensions');
   }
 
   // Verify the copied extension has the necessary files
@@ -761,14 +868,14 @@ async function main() {
     console.error(`  ✗ ERROR: main.js not found at ${copiedMain}`);
     process.exit(1);
   }
-  console.log(`  ✓ Verified: package.json and main.js present`);
+  console.log('  ✓ Verified: package.json and main.js present');
 
   // CRITICAL: Remove .obsolete file — VS Code uses this to skip loading extensions.
   // Previous test runs or ExTester's cleanup step may have marked our extension
   // as obsolete, causing VS Code to refuse to load it even though the directory exists.
   const obsoleteFile = path.join(extDir, '.obsolete');
   if (fs.existsSync(obsoleteFile)) {
-    console.log(`  Removing .obsolete file (was blocking extension loading)`);
+    console.log('  Removing .obsolete file (was blocking extension loading)');
     fs.rmSync(obsoleteFile);
   }
 
@@ -776,11 +883,11 @@ async function main() {
   // Marketplace-installed extensions get entries automatically, but our manually
   // copied extension needs to be added explicitly.
   const extensionsJsonPath = path.join(extDir, 'extensions.json');
-  let extensionsJson = [];
+  let extensionsJson: ExtensionJsonEntry[] = [];
   if (fs.existsSync(extensionsJsonPath)) {
     try {
       extensionsJson = JSON.parse(fs.readFileSync(extensionsJsonPath, 'utf8'));
-    } catch (e) {
+    } catch {
       extensionsJson = [];
     }
   }
@@ -805,13 +912,17 @@ async function main() {
     },
   });
   fs.writeFileSync(extensionsJsonPath, JSON.stringify(extensionsJson));
-  console.log(`  ✓ Registered in extensions.json`);
+  console.log('  ✓ Registered in extensions.json');
 
   // List all extensions that will be loaded
   console.log('\n=== Extensions in test-extensions/ ===');
   for (const entry of fs.readdirSync(extDir)) {
-    if (entry === 'extensions.json') continue;
-    if (entry === '.obsolete') continue;
+    if (entry === 'extensions.json') {
+      continue;
+    }
+    if (entry === '.obsolete') {
+      continue;
+    }
     console.log(`  ${entry}`);
   }
 
@@ -819,7 +930,9 @@ async function main() {
   // auto-downloaded from the marketplace in a previous run.
   // Only keep our exact version. Also clean up duplicate dependency versions.
   for (const entry of fs.readdirSync(extDir)) {
-    if (entry === 'extensions.json' || entry === '.obsolete') continue;
+    if (entry === 'extensions.json' || entry === '.obsolete') {
+      continue;
+    }
     if (entry.toLowerCase().startsWith(pkgId) && entry !== extDirName) {
       const fullPath = path.join(extDir, entry);
       console.log(`  Removing stale auto-updated version: ${entry}`);
@@ -828,13 +941,17 @@ async function main() {
   }
 
   // Clean up duplicate versions of dependency extensions (keep newest)
-  const depVersions = {};
+  const depVersions: Record<string, string[]> = {};
   for (const entry of fs.readdirSync(extDir)) {
-    if (entry === 'extensions.json' || entry === '.obsolete') continue;
+    if (entry === 'extensions.json' || entry === '.obsolete') {
+      continue;
+    }
     const match = entry.match(/^(.+?)-(\d+\.\d+\.\d+.*)$/);
     if (match) {
       const baseName = match[1].toLowerCase();
-      if (!depVersions[baseName]) depVersions[baseName] = [];
+      if (!depVersions[baseName]) {
+        depVersions[baseName] = [];
+      }
       depVersions[baseName].push(entry);
     }
   }
@@ -902,8 +1019,10 @@ async function main() {
       for (const line of lines) {
         const match = line.match(/,(\d+)\s*$/);
         if (match) {
-          const pid = parseInt(match[1], 10);
-          if (pid === process.pid) continue;
+          const pid = Number.parseInt(match[1], 10);
+          if (pid === process.pid) {
+            continue;
+          }
           console.log(`  Killing leftover test process PID ${pid}`);
           try {
             execSync(`taskkill /F /T /PID ${pid}`, { timeout: 5000, stdio: 'pipe' });
@@ -917,8 +1036,8 @@ async function main() {
       console.log(`  Killed ${killed} processes, waiting for handles to release...`);
       await new Promise((r) => setTimeout(r, 5000));
     }
-  } catch (e) {
-    console.warn(`  Warning: Could not check for leftover processes: ${e.message}`);
+  } catch (e: any) {
+    console.warn(`  Warning: Could not check for leftover processes: ${getErrorMessage(e)}`);
   }
 
   // Clean stale settings/cache from previous test runs to avoid EPERM/EBUSY errors.
@@ -936,8 +1055,8 @@ async function main() {
         cleaned = true;
         console.log(`  ✓ Settings dir cleaned (attempt ${attempt + 1})`);
         break;
-      } catch (e) {
-        console.warn(`  Cleanup attempt ${attempt + 1}/5 failed: ${e.message}`);
+      } catch (e: any) {
+        console.warn(`  Cleanup attempt ${attempt + 1}/5 failed: ${getErrorMessage(e)}`);
         if (attempt < 4) {
           await new Promise((r) => setTimeout(r, 3000));
         }
@@ -951,33 +1070,33 @@ async function main() {
       if (fs.existsSync(userDir)) {
         try {
           fs.rmSync(userDir, { recursive: true, force: true });
-          console.log(`  ✓ Deleted settings/User — ExTester will skip cleanup of locked log files`);
+          console.log('  ✓ Deleted settings/User — ExTester will skip cleanup of locked log files');
           cleaned = true;
-        } catch (e3) {
-          console.warn(`  Could not delete settings/User: ${e3.message}`);
+        } catch (e3: any) {
+          console.warn(`  Could not delete settings/User: ${getErrorMessage(e3)}`);
         }
       } else {
-        console.log(`  settings/User does not exist — ExTester will skip cleanup (OK)`);
+        console.log('  settings/User does not exist — ExTester will skip cleanup (OK)');
         cleaned = true;
       }
     }
 
     if (!cleaned) {
       // Last resort: try renaming
-      const staleDir = settingsDir + '-stale-' + Date.now();
+      const staleDir = `${settingsDir}-stale-${Date.now()}`;
       try {
         fs.renameSync(settingsDir, staleDir);
         console.log(`  Renamed stale settings dir to: ${path.basename(staleDir)}`);
-      } catch (e2) {
-        console.warn(`  Warning: Could not rename settings dir either: ${e2.message}`);
-        console.warn(`  ExTester may fail with EBUSY — consider restarting VS Code and trying again`);
+      } catch (e2: any) {
+        console.warn(`  Warning: Could not rename settings dir either: ${getErrorMessage(e2)}`);
+        console.warn('  ExTester may fail with EBUSY — consider restarting VS Code and trying again');
       }
     }
   }
 
   // Resolve the auto-downloaded runtime dependency paths so the extension can
   // find func, dotnet, and node without relying on PATH or re-downloading.
-  const resolveNodeBinDir = (depsRoot) => {
+  const resolveNodeBinDir = (depsRoot: string): string => {
     const nodeJsRoot = path.join(depsRoot, 'NodeJs');
     if (process.platform === 'win32') {
       return nodeJsRoot;
@@ -1003,22 +1122,23 @@ async function main() {
     return nodeJsRoot;
   };
 
-  const getRuntimeDependencyPaths = () => {
-    const depsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+  const getRuntimeDependencyPaths = (depsRootOverride?: string): RuntimeDependencyPaths => {
+    const depsRoot = depsRootOverride || path.join(os.homedir(), '.azurelogicapps', 'dependencies');
     const nodeJsDir = resolveNodeBinDir(depsRoot);
     const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
     const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
-    const nodeExecutable = process.platform === 'win32' ? 'node.exe' : 'node';
     const dotnetExecutable = process.platform === 'win32' ? 'dotnet.exe' : 'dotnet';
-    const funcBinaryCandidates = [
+    const nodeExecutable = process.platform === 'win32' ? 'node.exe' : 'node';
+    const funcExecutableCandidates = [
       path.join(funcToolsDir, funcExecutable),
       path.join(funcToolsDir, 'in-proc8', funcExecutable),
       path.join(funcToolsDir, 'in-proc6', funcExecutable),
     ];
-    const funcBinary = funcBinaryCandidates.find((candidate) => fs.existsSync(candidate)) || funcBinaryCandidates[0];
+    const funcBinary = funcExecutableCandidates.find((candidate) => fs.existsSync(candidate)) || funcExecutableCandidates[0];
     return {
       depsRoot,
       funcToolsDir,
+      funcExecutableCandidates,
       dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
       nodeJsDir,
       funcBinary,
@@ -1027,13 +1147,83 @@ async function main() {
     };
   };
 
-  const runtimeDependenciesReady = () => {
-    const { funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
-    return [funcBinary, dotnetBinary, nodeBinary].every((binaryPath) => fs.existsSync(binaryPath));
+  const runtimePermissionStatus = (binaryPath: string): string => {
+    if (!fs.existsSync(binaryPath)) {
+      return 'missing';
+    }
+    const mode = process.platform === 'win32' ? 'n/a' : `0${(fs.statSync(binaryPath).mode & 0o777).toString(8)}`;
+    return `${isExecutableFile(binaryPath) ? 'executable' : 'not-executable'} mode=${mode}`;
   };
-  const shouldValidateRuntimeDependencies = () => !runtimeDependenciesReady();
 
-  const pruneInvalidRuntimeDependencyRoots = (label) => {
+  const logRuntimeDependencyPermissions = (label: string, depsRootOverride?: string): void => {
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates } = getRuntimeDependencyPaths(depsRootOverride);
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates];
+    for (const candidate of [...new Set(candidates)]) {
+      console.log(`  [${label}] runtime binary ${candidate}: ${runtimePermissionStatus(candidate)}`);
+    }
+  };
+
+  const repairRuntimeDependencyExecutablePermissions = (label: string, failOnExistingNonExecutable = false): void => {
+    if (process.platform !== 'linux' && process.platform !== 'darwin') {
+      return;
+    }
+
+    const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir, funcExecutableCandidates } = getRuntimeDependencyPaths();
+    const { execSync } = require('child_process');
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates];
+    let fixedAny = false;
+    for (const bin of [...new Set(candidates)]) {
+      if (!fs.existsSync(bin)) {
+        continue;
+      }
+      try {
+        execSync(`chmod +x "${bin}"`, { stdio: 'ignore' });
+        fixedAny = true;
+      } catch (error: any) {
+        console.log(`  [${label}] failed to chmod runtime binary ${bin}: ${getErrorMessage(error)}`);
+      }
+    }
+
+    if (fs.existsSync(funcToolsDir)) {
+      try {
+        execSync(`chmod -R +x "${funcToolsDir}"`, { stdio: 'ignore' });
+        fixedAny = true;
+      } catch (error: any) {
+        console.log(`  [${label}] failed to chmod FuncCoreTools directory ${funcToolsDir}: ${getErrorMessage(error)}`);
+      }
+    }
+
+    if (fixedAny) {
+      console.log(`  [${label}] Fixed execute permissions on runtime binaries`);
+    }
+    logRuntimeDependencyPermissions(label);
+
+    if (failOnExistingNonExecutable) {
+      const brokenCandidates = [...new Set(funcExecutableCandidates)]
+        .filter((candidate) => fs.existsSync(candidate))
+        .filter((candidate) => !isExecutableFile(candidate));
+      if (brokenCandidates.length > 0) {
+        throw new Error(`[${label}] FuncCoreTools binaries exist but are not executable: ${brokenCandidates.join(', ')}`);
+      }
+    }
+  };
+
+  const runtimeDependenciesReady = (): boolean => {
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates } = getRuntimeDependencyPaths();
+    const requiredBinariesReady = [funcBinary, dotnetBinary, nodeBinary].every(
+      (binaryPath) => fs.existsSync(binaryPath) && isExecutableFile(binaryPath)
+    );
+    const existingFuncToolsExecutable = funcExecutableCandidates
+      .filter((binaryPath) => fs.existsSync(binaryPath))
+      .every((binaryPath) => isExecutableFile(binaryPath));
+    return requiredBinariesReady && existingFuncToolsExecutable;
+  };
+  const shouldValidateRuntimeDependencies = (): boolean => {
+    repairRuntimeDependencyExecutablePermissions('runtime dependency readiness', true);
+    return !runtimeDependenciesReady();
+  };
+
+  const pruneInvalidRuntimeDependencyRoots = (label: string): void => {
     const { depsRoot, funcToolsDir, dotnetSdkDir, nodeJsDir, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
     const dependencyRoots = [
       { label: 'NodeJs', root: path.join(depsRoot, 'NodeJs'), probes: [nodeBinary] },
@@ -1067,10 +1257,11 @@ async function main() {
     validateDependencies = false,
     autoStartDesignTime = true,
     includeRuntimeDependencyPaths = true,
+    runtimeDependenciesPathOverride,
     useExperimentalBundle = false,
     experimentalBundleSourceUri = '',
     experimentalBundleVersion = '',
-  } = {}) => {
+  }: TestSettingsOptions = {}): void => {
     const settings = {
       'extensions.autoUpdate': false,
       'extensions.autoCheckUpdates': false,
@@ -1109,6 +1300,8 @@ async function main() {
       // the generated task chain has started instead of waiting the default
       // 60 s. Other phases never reach pickProcess so this is harmless.
       'azureLogicAppsStandard.pickProcessTimeout': 15,
+      // Keep dependency validation non-interactive in explicit command tests.
+      'azureLogicAppsStandard.showNodeJsWarning': false,
       // Experimental-bundle opt-ins. Off by default for every phase so the
       // standard CDN flow continues to be tested. The bundleintegrityonly
       // phase or any future phase that wants to test a private bundle can
@@ -1118,7 +1311,7 @@ async function main() {
       'azureLogicAppsStandard.experimentalExtensionBundleVersion': experimentalBundleVersion,
     };
     if (includeRuntimeDependencyPaths) {
-      const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
+      const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths(runtimeDependenciesPathOverride);
       Object.assign(settings, {
         // Point to auto-downloaded runtime binaries so the extension can start
         // the design-time API process (func host start) without relying on PATH.
@@ -1132,6 +1325,9 @@ async function main() {
     console.log(
       `  Settings: validateDependencies=${validateDependencies}, autoStartDesignTime=${autoStartDesignTime}, includeRuntimeDependencyPaths=${includeRuntimeDependencyPaths}`
     );
+    if (runtimeDependenciesPathOverride) {
+      console.log(`  Settings dependency path override: ${runtimeDependenciesPathOverride}`);
+    }
   };
 
   // Write initial settings — keep dependency validation ON for all phases.
@@ -1180,6 +1376,7 @@ async function main() {
   const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
 
   const phase0Files = [testFile('nonLogicAppStartup.test.js')];
+  const lspEpermFiles = [testFile('lspSdkExtractionEperm.test.js')];
 
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
   // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
@@ -1250,7 +1447,7 @@ async function main() {
   //   monolithic    — true when the scenario runs multiple test files
   //                   in a single VS Code session (currently 4.1, 4.7).
   // ------------------------------------------------------------------
-  const scenarios = [
+  const scenarios: Scenario[] = [
     // Independent / no-workspace scenarios
     {
       id: 'p40-nonlogicapp',
@@ -1421,7 +1618,7 @@ async function main() {
   // switchToWebviewFrame, openFolderInSession, waitForWorkbenchReady). All CI-dependent
   // runtime-gated waits use a 90s minimum deadline per the VS Code E2E reliability playbook.
 
-  const runOptions = {
+  const runOptions: PhaseRunOptions = {
     vscodeVersion: VSCODE_VERSION,
     settings: settingsFile,
     cleanup: false,
@@ -1429,7 +1626,7 @@ async function main() {
     resources: [],
   };
 
-  const prepareFreshSession = async (label) => {
+  const prepareFreshSession = async (label: string): Promise<void> => {
     const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
     const userDir = path.join(settingsDir, 'User');
 
@@ -1529,8 +1726,8 @@ async function main() {
       try {
         fs.rmSync(userDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
         console.log(`  [${label}] ✓ Deleted settings/User`);
-      } catch (e) {
-        console.warn(`  [${label}] Could not delete settings/User: ${e.message}`);
+      } catch (e: any) {
+        console.warn(`  [${label}] Could not delete settings/User: ${getErrorMessage(e)}`);
         console.warn(`  [${label}] Proceeding anyway — ExTester will create fresh settings`);
       }
     } else {
@@ -1541,32 +1738,10 @@ async function main() {
     // The extension's download/extract process doesn't set chmod +x on Linux,
     // causing "/bin/sh: 1: .../func: Permission denied" when the extension
     // tries to run `func host start` to start the design-time API.
-    if (process.platform === 'linux' || process.platform === 'darwin') {
-      const { execSync } = require('child_process');
-      const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir } = getRuntimeDependencyPaths();
-      for (const bin of [funcBinary, dotnetBinary, nodeBinary]) {
-        if (fs.existsSync(bin)) {
-          try {
-            execSync(`chmod +x "${bin}"`, { stdio: 'ignore' });
-          } catch {
-            /* ignore */
-          }
-        }
-      }
-      // Also chmod the entire FuncCoreTools directory — it contains sub-binaries
-      // (e.g., gozip, func) that all need execute permission.
-      if (fs.existsSync(funcToolsDir)) {
-        try {
-          execSync(`chmod -R +x "${funcToolsDir}"`, { stdio: 'ignore' });
-          console.log(`  [${label}] ✓ Fixed execute permissions on runtime binaries`);
-        } catch {
-          /* ignore */
-        }
-      }
-    }
+    repairRuntimeDependencyExecutablePermissions(label, true);
   };
 
-  const runPhase = async (phaseName, files, optionsOverride = {}) => {
+  const runPhase = async (phaseName: string, files: string[], optionsOverride: Partial<PhaseRunOptions> = {}): Promise<number> => {
     const phaseRunOptions = {
       ...runOptions,
       ...optionsOverride,
@@ -1609,10 +1784,46 @@ async function main() {
     return code;
   };
 
+  const prepareLspEpermDependencyRoot = (): string => {
+    if (process.platform !== 'win32') {
+      throw new Error('The LSP EPERM repro uses Windows ACLs and can only run on Windows.');
+    }
+
+    const source = getRuntimeDependencyPaths();
+    const requiredSourceDirs = [
+      ['NodeJs', source.nodeJsDir],
+      ['FuncCoreTools', source.funcToolsDir],
+      ['DotNetSDK', source.dotnetSdkDir],
+    ];
+    const missing = requiredSourceDirs.filter(([, dir]) => !fs.existsSync(dir)).map(([name, dir]) => `${name}: ${dir}`);
+    if (missing.length > 0) {
+      throw new Error(
+        `E2E_MODE=lspeperm requires existing runtime dependencies before cloning an isolated dependency root. Run a normal dependency-validation E2E phase first. Missing: ${missing.join(', ')}`
+      );
+    }
+
+    const depsRoot = path.join(os.tmpdir(), 'la-e2e-test', 'lsp-eperm-dependencies');
+    fs.rmSync(depsRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+    fs.mkdirSync(depsRoot, { recursive: true });
+
+    for (const [name, sourceDir] of requiredSourceDirs) {
+      fs.cpSync(sourceDir, path.join(depsRoot, name), { recursive: true });
+    }
+
+    for (const artifactName of LSP_STALE_ARTIFACT_NAMES) {
+      fs.rmSync(path.join(depsRoot, artifactName), { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+    }
+
+    process.env.LA_E2E_LSP_EPERM_DEPS_ROOT = depsRoot;
+    console.log(`  Prepared isolated LSP EPERM dependency root: ${depsRoot}`);
+    logRuntimeDependencyPermissions('lspeperm isolated root', depsRoot);
+    return depsRoot;
+  };
+
   // Runs Mocha against compiled test files directly, without spawning a VS Code
   // session. Used for the bundle CDN integrity probe, which is a pure Node
   // test (HTTP HEAD + small download) and does not need ExTester.
-  const runMochaPhase = async (phaseName, files) => {
+  const runMochaPhase = async (phaseName: string, files: string[]): Promise<number> => {
     console.log(`\n=== ${phaseName} (Mocha-only, no VS Code) ===`);
     console.log(`  Files: ${files.join(', ')}`);
     for (const file of files) {
@@ -1628,7 +1839,7 @@ async function main() {
     for (const file of files) {
       mocha.addFile(file);
     }
-    return await new Promise((resolve) => {
+    return await new Promise<number>((resolve) => {
       mocha.run((failures) => {
         const code = failures > 0 ? 1 : 0;
         console.log(`  ${phaseName} exit code: ${code}`);
@@ -1637,7 +1848,7 @@ async function main() {
     });
   };
 
-  const configureCodefulRecorderEnvironment = () => {
+  const configureCodefulRecorderEnvironment = (): void => {
     const eventsFile = path.join(os.tmpdir(), 'la-e2e-test', 'codeful-events.jsonl');
     const triggerDir = path.join(os.tmpdir(), 'la-e2e-test', 'triggers');
     fs.mkdirSync(path.dirname(eventsFile), { recursive: true });
@@ -1661,13 +1872,13 @@ async function main() {
     console.log(`  Trigger dir:  ${triggerDir}`);
   };
 
-  const loadCodefulDebugWorkspaces = () => {
+  const loadCodefulDebugWorkspaces = (): CodefulDebugWorkspaces => {
     const manifestPath = path.join(os.tmpdir(), 'la-e2e-test', 'created-workspaces.json');
     if (!fs.existsSync(manifestPath)) {
       throw new Error(`Codeful debug manifest not found: ${manifestPath}`);
     }
-    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    const codefulEntries = manifest.filter((entry) => entry.appType === 'codeful');
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
+    const codefulEntries = manifest.filter((entry) => entry.appType === 'codeful') as CodefulWorkspaceEntry[];
     const modern = codefulEntries.find((entry) => /modern/i.test(entry.label)) || codefulEntries[0];
     const legacy = codefulEntries.find((entry) => /legacy/i.test(entry.label)) || codefulEntries[1];
     for (const [variant, entry] of [
@@ -1686,7 +1897,7 @@ async function main() {
     return { modern, legacy };
   };
 
-  const patchLegacyCodefulCsproj = (entry) => {
+  const patchLegacyCodefulCsproj = (entry: CodefulWorkspaceEntry): void => {
     const csprojFiles = fs.readdirSync(entry.appDir).filter((name) => name.endsWith('.csproj'));
     if (csprojFiles.length !== 1) {
       throw new Error(`Expected exactly one codeful .csproj in ${entry.appDir}, found ${csprojFiles.length}: ${csprojFiles.join(', ')}`);
@@ -1709,7 +1920,7 @@ async function main() {
     console.log(`  Patched legacy codeful targets AfterTargets=Publish in ${csprojPath}`);
   };
 
-  const patchGeneratedCodefulProjectForDebugGuard = (entry, variant) => {
+  const patchGeneratedCodefulProjectForDebugGuard = (entry: CodefulWorkspaceEntry, variant: string): void => {
     const workflowFile = path.join(entry.appDir, `${entry.wfName}.cs`);
     const programFile = path.join(entry.appDir, 'Program.cs');
 
@@ -1782,14 +1993,14 @@ namespace ${namespaceName}
     console.log(`  Patched ${variant} generated codeful workflow to built-in HTTP trigger + Response: ${workflowFile}`);
   };
 
-  const removeDesignTimeEvidence = async (entry, variant) => {
+  const removeDesignTimeEvidence = async (entry: CodefulWorkspaceEntry, variant: string): Promise<void> => {
     const designTimeDir = path.join(entry.appDir, 'workflow-designtime');
     for (let attempt = 1; attempt <= 6; attempt++) {
       try {
         fs.rmSync(designTimeDir, { recursive: true, force: true });
         console.log(`  Removed stale ${variant} design-time evidence: ${designTimeDir}`);
         return;
-      } catch (err) {
+      } catch (err: any) {
         const message = err instanceof Error ? err.message : String(err);
         if (attempt === 6 && !/EBUSY|EPERM|resource busy|locked/i.test(message)) {
           throw err;
@@ -1806,7 +2017,7 @@ namespace ${namespaceName}
     }
   };
 
-  const runCodefulDebugPhases = async (labelPrefix) => {
+  const runCodefulDebugPhases = async (labelPrefix: string): Promise<number> => {
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
     process.env.LA_E2E_CODEFUL_CREATE_ONLY = '1';
     await prepareFreshSession(`${labelPrefix}-phase10a-create`);
@@ -1850,12 +2061,12 @@ namespace ${namespaceName}
   };
 
   try {
-    const getPhase2Resources = () => {
+    const getPhase2Resources = (): string[] => {
       const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
-      let phase2Resources = [];
+      let phase2Resources: string[] = [];
       if (fs.existsSync(manifestPath)) {
         try {
-          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
           // Use the same fallback order as the test files:
           // prefer standard+Stateful, then any standard, then first entry
           const preferred =
@@ -1868,8 +2079,8 @@ namespace ${namespaceName}
           } else {
             console.warn('  Could not find a valid directory in manifest for phase 2 startup resource');
           }
-        } catch (e) {
-          console.warn(`  Failed to parse manifest for phase 2 startup resource: ${e.message}`);
+        } catch (e: any) {
+          console.warn(`  Failed to parse manifest for phase 2 startup resource: ${getErrorMessage(e)}`);
         }
       } else {
         console.warn(`  Manifest not found for phase 2 startup resource: ${manifestPath}`);
@@ -1877,22 +2088,22 @@ namespace ${namespaceName}
       return phase2Resources;
     };
 
-    const getStandardStatelessResources = () => {
+    const getStandardStatelessResources = (): string[] => {
       const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
       if (!fs.existsSync(manifestPath)) {
         console.warn(`  Manifest not found for stateless startup resource: ${manifestPath}`);
         return [];
       }
       try {
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
         const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateless');
         if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
           console.log(`  Using stateless startup workspace: ${preferred.wsFilePath}`);
           return [preferred.wsFilePath];
         }
         console.warn('  Could not find Standard + Stateless workspace in manifest for stateless startup resource');
-      } catch (e) {
-        console.warn(`  Failed to parse manifest for stateless startup resource: ${e.message}`);
+      } catch (e: any) {
+        console.warn(`  Failed to parse manifest for stateless startup resource: ${getErrorMessage(e)}`);
       }
       return [];
     };
@@ -1924,7 +2135,7 @@ namespace ${namespaceName}
     //
     // Returns { resources, legacyDir? }. `legacyDir` is set only for
     // 'self-contained' so runScenarioPhases can wire up the env var.
-    const selectWorkspaceForSpec = (spec, scenarioId) => {
+    const selectWorkspaceForSpec = (spec: WorkspaceSpec, scenarioId: string): WorkspaceSelection => {
       if (spec === 'plain-folder' || spec === 'self-creates') {
         return { resources: [] };
       }
@@ -1937,8 +2148,8 @@ namespace ${namespaceName}
       if (fs.existsSync(manifestPath)) {
         try {
           manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-        } catch (e) {
-          console.warn(`  [${scenarioId}] Failed to parse manifest: ${e.message}`);
+        } catch (e: any) {
+          console.warn(`  [${scenarioId}] Failed to parse manifest: ${getErrorMessage(e)}`);
         }
       } else {
         console.warn(`  [${scenarioId}] Manifest not found: ${manifestPath}`);
@@ -1946,7 +2157,9 @@ namespace ${namespaceName}
       if (spec === 'manifest-multi') {
         // Mirrors getPhase2Resources() — returns the preferred standard
         // workspace; the test itself walks the manifest for the rest.
-        if (!manifest) return { resources: [] };
+        if (!manifest) {
+          return { resources: [] };
+        }
         const preferred =
           manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
           manifest.find((e) => e.appType === 'standard') ||
@@ -1957,11 +2170,13 @@ namespace ${namespaceName}
         return { resources: [] };
       }
       if (spec && typeof spec === 'object') {
-        if (!manifest) return { resources: [] };
+        if (!manifest) {
+          return { resources: [] };
+        }
         const { appType, wfType, use } = spec;
         const entry =
           manifest.find((e) => (!appType || e.appType === appType) && (!wfType || e.wfType === wfType)) ||
-          (!wfType ? manifest.find((e) => !appType || e.appType === appType) : undefined) ||
+          (wfType ? undefined : manifest.find((e) => !appType || e.appType === appType)) ||
           (!appType && !wfType ? manifest[0] : undefined);
         if (!entry) {
           console.warn(`  [${scenarioId}] No manifest entry matched ${JSON.stringify(spec)}`);
@@ -1992,19 +2207,19 @@ namespace ${namespaceName}
     //   6. Collect exit codes; every scenario contributes to the aggregate.
     //
     // Returns the aggregate exit code.
-    const runScenarioPhases = async (scenarioList /* , opts */) => {
-      const exits = [];
+    const runScenarioPhases = async (scenarioList: Scenario[] /* , opts */): Promise<number> => {
+      const exits: number[] = [];
       for (const scenario of scenarioList) {
         const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
-        const resolvedSettings = { ...settings };
+        const resolvedSettings: ScenarioSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
         }
-        writeTestSettings(resolvedSettings);
+        writeTestSettings(resolvedSettings as TestSettingsOptions);
 
         // Apply per-scenario env overrides (e.g. LA_E2E_SHAPE for parameterized
         // shape-specific shards). Captured here so we can restore afterward.
-        const envOverridesApplied = [];
+        const envOverridesApplied: EnvOverride[] = [];
         if (scenarioEnv && typeof scenarioEnv === 'object') {
           for (const [key, value] of Object.entries(scenarioEnv)) {
             envOverridesApplied.push({ key, prev: process.env[key] });
@@ -2132,6 +2347,24 @@ namespace ${namespaceName}
       process.exit(startupExit);
     }
 
+    if (e2eMode === 'lspeperm') {
+      if (process.platform !== 'win32') {
+        console.log('E2E_MODE=lspeperm is Windows-only because it uses icacls ACL mutation; skipping on this platform.');
+        process.exit(0);
+      }
+
+      await downloadExTesterAssets();
+      const lspEpermDepsRoot = prepareLspEpermDependencyRoot();
+      writeTestSettings({
+        validateDependencies: false,
+        autoStartDesignTime: false,
+        runtimeDependenciesPathOverride: lspEpermDepsRoot,
+      });
+      await prepareFreshSession('lspeperm-only');
+      const lspEpermExit = await runPhase('Manual: LSP SDK EPERM repro', lspEpermFiles);
+      process.exit(lspEpermExit);
+    }
+
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
       await downloadExTesterAssets();
@@ -2150,7 +2383,7 @@ namespace ${namespaceName}
       await downloadExTesterAssets();
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
-      const exits = [];
+      const exits: number[] = [];
 
       await prepareFreshSession('phase3-only');
       exits.push(await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: wsResources }));
@@ -2179,7 +2412,7 @@ namespace ${namespaceName}
       // fully activates and detects legacy projects / shows conversion dialog.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
       const wsResources = getPhase2Resources();
-      const exits = [];
+      const exits: number[] = [];
 
       // Phase 4.8a: Open workspace DIR (not .code-workspace), click No
       // Startup resource = workspace directory (the folder containing .code-workspace)
@@ -2187,9 +2420,11 @@ namespace ${namespaceName}
         const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
         if (fs.existsSync(manifestPath)) {
           try {
-            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
             const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
-            if (preferred?.wsDir && fs.existsSync(preferred.wsDir)) return [preferred.wsDir];
+            if (preferred?.wsDir && fs.existsSync(preferred.wsDir)) {
+              return [preferred.wsDir];
+            }
           } catch {
             /* ignore */
           }
@@ -2237,9 +2472,11 @@ namespace ${namespaceName}
         const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
         if (fs.existsSync(manifestPath)) {
           try {
-            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
             const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
-            if (preferred?.appDir && fs.existsSync(preferred.appDir)) return [preferred.appDir];
+            if (preferred?.appDir && fs.existsSync(preferred.appDir)) {
+              return [preferred.appDir];
+            }
           } catch {
             /* ignore */
           }
@@ -2301,7 +2538,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'independentonly') {
       await downloadExTesterAssets();
-      const exits = [];
+      const exits: number[] = [];
 
       // Phase 4.0: nonLogicAppStartup — plain folder, no Logic App context.
       writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
@@ -2328,7 +2565,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'createplusdesigner') {
       await downloadExTesterAssets();
-      const exits = [];
+      const exits: number[] = [];
 
       // Phase 4.1: createWorkspace — needed to produce the manifest consumed
       // by Phase 4.2 and Phase 4.7 (dataMapper.test.ts asserts the manifest
@@ -2369,7 +2606,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'createplusnewtests') {
       await downloadExTesterAssets();
-      const exits = [];
+      const exits: number[] = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
       await prepareFreshSession('phase1-shard');
@@ -2403,7 +2640,7 @@ namespace ${namespaceName}
 
     if (e2eMode === 'createplusconversion') {
       await downloadExTesterAssets();
-      const exits = [];
+      const exits: number[] = [];
 
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
       await prepareFreshSession('phase1-shard');
@@ -2411,14 +2648,14 @@ namespace ${namespaceName}
 
       const wsResources = getPhase2Resources();
       const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
-      const readManifest = () => {
+      const readManifest = (): ManifestEntry[] | null => {
         try {
           return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
         } catch {
           return null;
         }
       };
-      const findPreferred = (m) =>
+      const findPreferred = (m: ManifestEntry[] | null): ManifestEntry | undefined =>
         m && (m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard'));
 
       const wsDir = (() => {
@@ -2565,7 +2802,9 @@ namespace ${namespaceName}
       await new Promise((resolve) => setTimeout(resolve, 3000));
       await prepareFreshSession('phase8a');
       phase8aExit = await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir });
-      if (phase8aExit !== 0) console.log(`\n⚠ Phase 4.8a exited with code ${phase8aExit} — continuing`);
+      if (phase8aExit !== 0) {
+        console.log(`\n⚠ Phase 4.8a exited with code ${phase8aExit} — continuing`);
+      }
     }
 
     // Phase 4.8b: Open legacy project, create workspace dialog
@@ -2578,7 +2817,9 @@ namespace ${namespaceName}
     await prepareFreshSession('phase8b');
     process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
     phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
-    if (phase8bExit !== 0) console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
+    if (phase8bExit !== 0) {
+      console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
+    }
 
     // Phase 4.8c: Multiple designers + add workflow
     // Re-enable full design-time — this test needs the designer to open.
@@ -2586,7 +2827,9 @@ namespace ${namespaceName}
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await prepareFreshSession('phase8c');
     const phase8cExit = await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: phase2Resources });
-    if (phase8cExit !== 0) console.log(`\n⚠ Phase 4.8c exited with code ${phase8cExit} — continuing`);
+    if (phase8cExit !== 0) {
+      console.log(`\n⚠ Phase 4.8c exited with code ${phase8cExit} — continuing`);
+    }
 
     // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
     // Restore conversion settings — design-time not needed, but validation must stay ON.
@@ -2596,7 +2839,9 @@ namespace ${namespaceName}
       await new Promise((resolve) => setTimeout(resolve, 3000));
       await prepareFreshSession('phase8d');
       phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
-      if (phase8dExit !== 0) console.log(`\n⚠ Phase 4.8d exited with code ${phase8dExit} — continuing`);
+      if (phase8dExit !== 0) {
+        console.log(`\n⚠ Phase 4.8d exited with code ${phase8dExit} — continuing`);
+      }
     } else {
       console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
       phase8dExit = 1;
@@ -2619,7 +2864,9 @@ namespace ${namespaceName}
       await new Promise((resolve) => setTimeout(resolve, 3000));
       await prepareFreshSession('phase8e');
       phase8eExit = await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir });
-      if (phase8eExit !== 0) console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
+      if (phase8eExit !== 0) {
+        console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
+      }
     }
 
     // Phase 4.10: D-001-compliant codeful debug F5 task pattern regression guard.
@@ -2629,10 +2876,12 @@ namespace ${namespaceName}
     let phase10Exit = 0;
     try {
       phase10Exit = await runCodefulDebugPhases('phase10');
-      if (phase10Exit !== 0) console.log(`\n⚠ Phase 4.10 exited with code ${phase10Exit} — continuing`);
-    } catch (err) {
+      if (phase10Exit !== 0) {
+        console.log(`\n⚠ Phase 4.10 exited with code ${phase10Exit} — continuing`);
+      }
+    } catch (err: any) {
       phase10Exit = 1;
-      console.log(`\n⚠ Phase 4.10 setup error: ${err.message || err} — continuing`);
+      console.log(`\n⚠ Phase 4.10 setup error: ${getErrorMessage(err)} — continuing`);
     }
 
     // Exit with worst exit code from all phases.
@@ -2655,8 +2904,8 @@ namespace ${namespaceName}
       `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.10=${phase10Exit} → exit ${finalExit} ===`
     );
     process.exit(finalExit);
-  } catch (err) {
-    console.error(`\n✗ ExTester error: ${err.message || err}`);
+  } catch (err: any) {
+    console.error(`\n✗ ExTester error: ${getErrorMessage(err)}`);
     process.exit(1);
   }
 }

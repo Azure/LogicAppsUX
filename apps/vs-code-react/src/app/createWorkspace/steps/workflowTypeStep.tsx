@@ -22,8 +22,14 @@ export const WorkflowTypeStep: React.FC = () => {
   const dispatch = useDispatch();
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace);
-  const { workflowType, workflowName, logicAppType } = createWorkspaceState;
+  const { workflowType, workflowName, logicAppType, logicAppName, availableProjects } = createWorkspaceState;
   const intlText = useIntlMessages(workspaceMessages);
+
+  // Get existing workflows for the currently selected project
+  const existingWorkflows = useMemo(() => {
+    const selectedProject = (availableProjects || []).find((p) => p.name === logicAppName);
+    return selectedProject?.existingWorkflows ?? [];
+  }, [availableProjects, logicAppName]);
 
   // Validation state
   const [workflowNameError, setWorkflowNameError] = useState<string | undefined>(undefined);
@@ -52,7 +58,7 @@ export const WorkflowTypeStep: React.FC = () => {
 
   const handleWorkflowNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setWorkflowName(event.target.value));
-    setWorkflowNameError(validateWorkflowName(event.target.value, intlText));
+    setWorkflowNameError(validateWorkflowName(event.target.value, intlText, existingWorkflows));
   };
 
   const selectWorkflowTypes = useMemo(() => {

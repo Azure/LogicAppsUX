@@ -71,7 +71,7 @@
     "test:e2e-cli": "vscode-test",
     "test:e2e-cli:compile": "tsc -p ./tsconfig.e2e.json",
     "pretest:e2e-cli": "pnpm run test:e2e-cli:compile",
-    "vscode:designer:e2e:ui": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node src/test/ui/run-e2e.js",
-    "vscode:designer:e2e:headless": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node src/test/ui/run-e2e.js"
+    "vscode:designer:e2e:ui": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node out/test/run-e2e.js",
+    "vscode:designer:e2e:headless": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node out/test/run-e2e.js"
   }
 }

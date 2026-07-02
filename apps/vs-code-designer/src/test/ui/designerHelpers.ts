@@ -69,6 +69,7 @@ import {
   waitForQuickInputAndType,
 } from './helpers';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
+import { isExecutableFile } from './runtimeBinaryCheck';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -141,38 +142,57 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
   }
 }
 
-function isExecutableFile(filePath: string): boolean {
-  try {
-    fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
+// isExecutableFile is imported from ./runtimeBinaryCheck (shared with run-e2e.ts)
 
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
   const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
-  return [
+  const candidates = [
     path.join(funcToolsRoot, executableName),
     path.join(funcToolsRoot, 'in-proc8', executableName),
     path.join(funcToolsRoot, 'in-proc6', executableName),
   ];
+  const executableNames = new Set([executableName]);
+
+  const directoriesToScan = [funcToolsRoot];
+  for (const directory of directoriesToScan) {
+    if (!fs.existsSync(directory)) {
+      continue;
+    }
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const entryPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        directoriesToScan.push(entryPath);
+      } else if (executableNames.has(entry.name)) {
+        candidates.push(entryPath);
+      }
+    }
+  }
+
+  return [...new Set(candidates)];
 }
 
 function getFuncCoreToolsPath(): string {
   const candidates = getFuncCoreToolsCandidatePaths();
+  // All candidates are already func binaries (getFuncCoreToolsCandidatePaths only matches executableNames)
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
 
 function assertFuncCoreToolsExecutable(context: string): void {
-  const funcBinaryPath = getFuncCoreToolsPath();
   ensureRuntimeDependencyExecutablePermissions();
-  if (!fs.existsSync(funcBinaryPath)) {
+  const funcBinaryPath = getFuncCoreToolsPath();
+  // Multiple existing candidates are expected: FuncCoreTools installs copies under
+  // in-proc8/, in-proc6/, etc. for different .NET versions. We validate ALL of them
+  // have execute permissions since the extension picks one at runtime based on project config.
+  const existingCandidates = getFuncCoreToolsCandidatePaths().filter((candidate) => fs.existsSync(candidate));
+  if (existingCandidates.length === 0) {
     throw new Error(`[depValidation] func binary not found after ${context}: ${funcBinaryPath}`);
   }
-  if (!isExecutableFile(funcBinaryPath)) {
-    throw new Error(`[depValidation] func binary exists but is not executable after ${context}: ${funcBinaryPath}`);
+
+  for (const candidate of existingCandidates) {
+    if (!isExecutableFile(candidate)) {
+      throw new Error(`[depValidation] FuncCoreTools binary exists but is not executable after ${context}: ${candidate}`);
+    }
   }
 }
 
@@ -752,7 +772,7 @@ export async function openFileInEditor(workbench: Workbench, driver: WebDriver, 
 export async function waitForDependencyValidation(driver: WebDriver, timeoutMs = DEPENDENCY_VALIDATION_TIMEOUT): Promise<void> {
   const t0 = Date.now();
   const VALIDATION_TEXT = 'Validating Runtime Dependency';
-  const funcBinaryPath = getFuncCoreToolsPath();
+  const getCurrentFuncBinaryPath = (): string => getFuncCoreToolsPath();
 
   // The extension's download/extract can leave Linux/macOS binaries without
   // execute bits. Apply this before and after validation because validation can
@@ -851,6 +871,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       }
 
       // Check if func binary already exists (validation may have completed before we started)
+      const funcBinaryPath = getCurrentFuncBinaryPath();
       if (fs.existsSync(funcBinaryPath)) {
         if (Date.now() - t0 < 15_000) {
           await sleep(2000);
@@ -868,7 +889,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       await sleep(2000);
     }
 
-    if (!everAppeared && !fs.existsSync(funcBinaryPath)) {
+    if (!everAppeared && !fs.existsSync(getCurrentFuncBinaryPath())) {
       console.log('[depValidation] Notification never appeared and func not found — waiting for func binary on disk');
     }
   }
@@ -878,6 +899,7 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
   // it may disappear between dependency stages or get auto-dismissed.
   const funcDeadline = Date.now() + Math.max(timeoutMs - (Date.now() - t0), 60_000);
   while (Date.now() < funcDeadline) {
+    const funcBinaryPath = getCurrentFuncBinaryPath();
     if (fs.existsSync(funcBinaryPath)) {
       console.log(`[depValidation] func binary found at ${funcBinaryPath} (${Date.now() - t0}ms)`);
 
