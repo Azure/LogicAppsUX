@@ -244,7 +244,7 @@ export const workflowLoadingSlice = createSlice({
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
-      state.workflowKind = action.payload?.workflowKind ?? 'stateful';
+      state.workflowKind = action.payload?.workflowKind ?? (state.hostingPlan === 'consumption' ? undefined : 'stateful');
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
