@@ -17,7 +17,7 @@ import notesReducer from './state/notes/notesSlice';
 
 import { configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
-import { storeStateHistoryMiddleware } from './utils/middleware';
+import { monitoringDirtyGuardMiddleware, storeStateHistoryMiddleware } from './utils/middleware';
 
 declare global {
   interface Window {
@@ -48,7 +48,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(storeStateHistoryMiddleware),
+    }).concat(storeStateHistoryMiddleware, monitoringDirtyGuardMiddleware),
 });
 
 if (process.env.NODE_ENV === 'development') {
