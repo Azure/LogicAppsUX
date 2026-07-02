@@ -98,6 +98,24 @@ import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
+// Merge server data with local mutations; local wins per category so in-flight new connections
+// survive re-sync when the workflow-artifacts fetch resolves.
+const mergeConnectionsData = (fromServer: ConnectionsData, local: ConnectionsData | undefined): ConnectionsData => {
+  if (!local) {
+    return fromServer;
+  }
+  return {
+    ...fromServer,
+    ...local,
+    managedApiConnections: { ...(fromServer?.managedApiConnections ?? {}), ...(local?.managedApiConnections ?? {}) },
+    serviceProviderConnections: { ...(fromServer?.serviceProviderConnections ?? {}), ...(local?.serviceProviderConnections ?? {}) },
+    functionConnections: { ...(fromServer?.functionConnections ?? {}), ...(local?.functionConnections ?? {}) },
+    apiManagementConnections: { ...(fromServer?.apiManagementConnections ?? {}), ...(local?.apiManagementConnections ?? {}) },
+    agentConnections: { ...(fromServer?.agentConnections ?? {}), ...(local?.agentConnections ?? {}) },
+    agentMcpConnections: { ...(fromServer?.agentMcpConnections ?? {}), ...(local?.agentMcpConnections ?? {}) },
+  };
+};
+
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
     id: state.workflowLoader.resourcePath!,
@@ -185,11 +203,21 @@ const DesignerEditor = () => {
     setCurrentParameters(parameters ?? {});
   }, [parameters]);
   const queryClient = getReactQueryClient();
-  const connectionsData = useMemo(
-    () =>
-      resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {}),
-    [originalConnectionsData, currentParameters, settingsData?.properties]
+  // State + merge (not useMemo) so in-place mutations from addConnectionDataInternal survive the
+  // initial workflow-artifacts fetch. Pure useMemo would clone fresh server data on fetch complete.
+  const [connectionsData, setConnectionsData] = useState<ConnectionsData>(() =>
+    resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {})
   );
+  useEffect(() => {
+    setConnectionsData((prev) => {
+      const fromServer = resolveConnectionsReferences(
+        JSON.stringify(clone(originalConnectionsData ?? {})),
+        currentParameters,
+        settingsData?.properties ?? {}
+      );
+      return mergeConnectionsData(fromServer, prev);
+    });
+  }, [originalConnectionsData, currentParameters, settingsData?.properties]);
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const { data: runInstanceData } = useRun(runId);
 
@@ -389,7 +417,6 @@ const DesignerEditor = () => {
       };
       const newServiceProviderConnections: Record<string, any> = {};
       const newAgentConnections: Record<string, any> = {};
-      const newAgentMcpConnections: Record<string, any> = {};
 
       const referenceKeys = Object.keys(connectionReferences ?? {});
       if (referenceKeys.length) {
@@ -423,11 +450,6 @@ const DesignerEditor = () => {
               // We need to move the data out to a new object, delete the old data, then apply the new data at the end
               newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
               delete connectionsData?.agentConnections?.[connectionKey];
-            } else if (reference?.connection?.id.startsWith('/connectionProviders/mcpclient/')) {
-              // MCP Connection
-              const connectionKey = reference.connection.id.split('/').splice(-1)[0];
-              newAgentMcpConnections[referenceKey] = connectionsData?.agentMcpConnections?.[connectionKey];
-              delete connectionsData?.agentMcpConnections?.[connectionKey];
             } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
               // Service Provider Connection
               const connectionKey = reference.connection.id.split('/').splice(-1)[0];
@@ -442,10 +464,6 @@ const DesignerEditor = () => {
         (connectionsData as ConnectionsData).serviceProviderConnections = {
           ...connectionsData?.serviceProviderConnections,
           ...newServiceProviderConnections,
-        };
-        (connectionsData as ConnectionsData).agentMcpConnections = {
-          ...connectionsData?.agentMcpConnections,
-          ...newAgentMcpConnections,
         };
         (connectionsData as ConnectionsData).agentConnections = {
           ...connectionsData?.agentConnections,
@@ -504,10 +522,6 @@ const DesignerEditor = () => {
         isDraftSave
       );
 
-      // Invalidate cached workflow artifacts so the next load fetches fresh data
-      // (including any new connection references added during this session)
-      getReactQueryClient().invalidateQueries(['workflowArtifactsStandard', workflowId]);
-
       return workflowToSave;
     },
     [
@@ -521,7 +535,6 @@ const DesignerEditor = () => {
       settingsData?.properties,
       siteResourceId,
       workflow,
-      workflowId,
       workflowName,
     ]
   );

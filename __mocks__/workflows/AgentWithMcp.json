@@ -31,9 +31,8 @@
             "type": "McpClientTool",
             "kind": "BuiltIn",
             "inputs": {
-              "Connection": {
-                "Authentication": "None",
-                "McpServerUrl": "https://mcp.time.mcpcentral.io/"
+              "connectionReference": {
+                "connectionName": "mcpclient"
               }
             }
           },
@@ -65,6 +64,12 @@
       }
     }
   },
-  "connectionReferences": {},
+  "connections": {
+    "mcpclient": {
+      "connection": { "id": "/connectionProviders/mcpclient/connections/mcpclient" },
+      "connectionName": "mcpclient",
+      "api": { "id": "connectionProviders/mcpclient" }
+    }
+  },
   "parameters": {}
 }
