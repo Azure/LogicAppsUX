@@ -62,7 +62,7 @@ import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from '../publishCodefulProject';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -103,19 +103,15 @@ async function deploy(
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
 
-    // Check if this is a codeful project and build/publish if needed
-    const isCodeful = await isCodefulProject(logicAppNode.fsPath);
+    const isCodeful = await hasCodefulWorkflowSetting(logicAppNode.fsPath);
     if (isCodeful) {
       context.telemetry.properties.isCodefulProject = 'true';
       ext.outputChannel.appendLog(localize('buildingCodefulProject', 'Building and publishing codeful Logic App project...'));
-
-      // Build the codeful project
       await publishCodefulProject(actionContext, logicAppNode);
       ext.outputChannel.appendLog(localize('codefulProjectPublished', 'Codeful project built and published successfully.'));
     } else {
-      // For codeless projects, build custom code functions if they exist
-      const customFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
-      if (customFolderExists) {
+      const customCodeFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
+      if (customCodeFolderExists) {
         await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
       }
     }

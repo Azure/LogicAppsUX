@@ -1,7 +1,7 @@
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { isCodefulProject } from '../../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../../utils/codeful';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import { createLogicAppAndWorkflow } from '../../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { createLogicAppWorkflow } from '../createLogicAppWorkflow';
@@ -16,7 +16,7 @@ vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
 }));
 
 vi.mock('../../../utils/codeful', () => ({
-  isCodefulProject: vi.fn(),
+  hasCodefulWorkflowSetting: vi.fn(),
 }));
 
 vi.mock('../../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace', () => ({
@@ -32,7 +32,7 @@ describe('createLogicAppWorkflow', () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
     (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
-    (isCodefulProject as Mock).mockResolvedValue(true);
+    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(true);
   });
 
   it('creates a workflow in the open workspace and infers codeful project metadata', async () => {
@@ -45,7 +45,7 @@ describe('createLogicAppWorkflow', () => {
     await createLogicAppWorkflow(context, options, logicAppFolderPath);
 
     expect(addLocalFuncTelemetry).toHaveBeenCalledWith(context);
-    expect(isCodefulProject).toHaveBeenCalledWith(logicAppFolderPath);
+    expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(logicAppFolderPath);
     expect(options).toMatchObject({
       logicAppType: ProjectType.codeful,
       workspaceFilePath,
