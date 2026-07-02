@@ -60,7 +60,7 @@ vi.mock('../../utils/vsCodeConfig/settings', () => ({
 }));
 
 vi.mock('../../utils/codeful', () => ({
-  isCodefulProject: vi.fn(),
+  hasCodefulWorkflowSetting: vi.fn(),
 }));
 
 vi.mock('../buildCustomCodeFunctionsProject', () => ({
@@ -77,7 +77,7 @@ import { getProjFiles } from '../../utils/dotnet/dotnet';
 import { getFuncPortFromTaskOrProject, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
 import { executeIfNotActive } from '../../utils/taskUtils';
 import { delay } from '../../utils/delay';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
@@ -121,7 +121,7 @@ describe('pickFuncProcessInternal', () => {
     context.errorHandling = {};
     runningFuncTaskMap.clear();
     (preDebugValidate as any).mockResolvedValue(true);
-    (isCodefulProject as any).mockResolvedValue(true);
+    (hasCodefulWorkflowSetting as any).mockResolvedValue(true);
     (tryBuildCustomCodeFunctionsProject as any).mockResolvedValue(true);
     (publishCodefulProject as any).mockResolvedValue(undefined);
     (delay as any).mockResolvedValue(undefined);
@@ -158,14 +158,14 @@ describe('pickFuncProcessInternal', () => {
       )
     ).rejects.toThrow('Failed to find "func: host start" task.');
 
-    expect(isCodefulProject).toHaveBeenCalledWith(projectPath);
+    expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
     expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
     expect(publishCodefulProject).toHaveBeenCalledWith(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
 
   it('custom code project skips codeful publish', async () => {
-    (isCodefulProject as any).mockResolvedValue(false);
+    (hasCodefulWorkflowSetting as any).mockResolvedValue(false);
     (vscode.tasks.fetchTasks as any).mockResolvedValue([]);
 
     await expect(
@@ -177,7 +177,7 @@ describe('pickFuncProcessInternal', () => {
       )
     ).rejects.toThrow('Failed to find "func: host start" task.');
 
-    expect(isCodefulProject).toHaveBeenCalledWith(projectPath);
+    expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
     expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalledWith(context, workspaceFolder.uri);
     expect(publishCodefulProject).not.toHaveBeenCalled();
     expect(executeIfNotActive).not.toHaveBeenCalled();
@@ -210,7 +210,7 @@ describe('pickFuncProcessInternal', () => {
 
   it('waits for a previous func task to stop before custom code build', async () => {
     const events: string[] = [];
-    (isCodefulProject as any).mockResolvedValue(false);
+    (hasCodefulWorkflowSetting as any).mockResolvedValue(false);
     runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 5678 });
     (delay as any).mockImplementationOnce(async () => {
       expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();

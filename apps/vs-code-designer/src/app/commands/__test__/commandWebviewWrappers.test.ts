@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { getLogicAppWithoutCustomCode, getWorkspaceRoot } from '../../utils/workspace';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { cloudToLocal } from '../cloudToLocal/cloudToLocal';
@@ -47,7 +47,7 @@ vi.mock('../../utils/workspace', () => ({
 }));
 
 vi.mock('../../utils/codeful', () => ({
-  isCodefulProject: vi.fn(),
+  hasCodefulWorkflowSetting: vi.fn(),
 }));
 
 vi.mock('../../utils/verifyIsProject', () => ({
@@ -70,7 +70,7 @@ describe('workspace webview command wrappers', () => {
     (vscode.workspace.fs.readFile as Mock).mockReset();
     (getWorkspaceRoot as Mock).mockResolvedValue(workspaceRoot);
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(logicAppRoot);
-    (isCodefulProject as Mock).mockResolvedValue(false);
+    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(false);
     (getLogicAppWithoutCustomCode as Mock).mockResolvedValue([]);
   });
 
@@ -192,12 +192,12 @@ describe('workspace webview command wrappers', () => {
     } as vscode.WorkspaceFolder;
     (vscode.workspace as any).workspaceFolders = [folder];
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(projectRoot);
-    (isCodefulProject as Mock).mockResolvedValue(true);
+    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(true);
 
     await createWorkflow(context);
 
     expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, workspaceRoot, true);
-    expect(isCodefulProject).toHaveBeenCalledWith(projectRoot);
+    expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectRoot);
 
     const config = getLastWebviewConfig();
     expect(config).toMatchObject({
