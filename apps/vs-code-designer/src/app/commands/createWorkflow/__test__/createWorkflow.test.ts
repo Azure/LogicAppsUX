@@ -12,7 +12,7 @@ vi.mock('../../shared/workspaceWebviewCommandHandler', () => ({
 }));
 
 vi.mock('../../../utils/codeful', () => ({
-  isCodefulProject: vi.fn(),
+  hasCodefulWorkflowSetting: vi.fn(),
 }));
 
 vi.mock('../../../utils/verifyIsProject', () => ({
@@ -28,7 +28,7 @@ vi.mock('../createLogicAppWorkflow', () => ({
 }));
 
 import { createWorkspaceWebviewCommandHandler } from '../../shared/workspaceWebviewCommandHandler';
-import { isCodefulProject } from '../../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { createLogicAppWorkflow } from '../createLogicAppWorkflow';
 import { createWorkflow } from '../createWorkflow';
@@ -45,7 +45,7 @@ describe('createWorkflow', () => {
     vi.clearAllMocks();
     (vscode.workspace as any).workspaceFolders = undefined;
     (vscode.workspace.getWorkspaceFolder as any) = vi.fn();
-    vi.mocked(isCodefulProject).mockResolvedValue(false);
+    vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(false);
   });
 
   describe('project collection and selection', () => {
@@ -62,7 +62,7 @@ describe('createWorkflow', () => {
         }
         return undefined;
       });
-      vi.mocked(isCodefulProject).mockImplementation(async (projectPath) => {
+      vi.mocked(hasCodefulWorkflowSetting).mockImplementation(async (projectPath) => {
         return projectPath === 'D:\\workspace\\ProjectB';
       });
 
@@ -84,7 +84,7 @@ describe('createWorkflow', () => {
       const folder = { name: 'OnlyProject', uri: { fsPath: 'D:\\workspace\\OnlyProject' }, index: 0 } as vscode.WorkspaceFolder;
       (vscode.workspace as any).workspaceFolders = [folder];
       vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('D:\\workspace\\OnlyProject');
-      vi.mocked(isCodefulProject).mockResolvedValue(true);
+      vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(true);
 
       await createWorkflow(context);
 
@@ -142,7 +142,7 @@ describe('createWorkflow', () => {
         }
         return undefined;
       });
-      vi.mocked(isCodefulProject).mockResolvedValue(true);
+      vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(true);
 
       await createWorkflow(context, clickedUri);
 

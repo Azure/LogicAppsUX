@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { getWorkspaceRoot } from '../../utils/workspace';
 import { publishCodefulProject } from '../publishCodefulProject';
 
@@ -15,7 +15,7 @@ vi.mock('../../utils/workspace', () => ({
 }));
 
 vi.mock('../../utils/codeful', () => ({
-  isCodefulProject: vi.fn(),
+  hasCodefulWorkflowSetting: vi.fn(),
   inspectCodefulCsprojBuildHooks: vi.fn(),
   invalidateCodefulSdkCacheIfNeeded: vi.fn(),
 }));
@@ -44,7 +44,7 @@ describe('publishCodefulProject', () => {
       }),
     };
     (getWorkspaceRoot as Mock).mockResolvedValue(projectPath);
-    (isCodefulProject as Mock).mockResolvedValue(true);
+    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(true);
     (invalidateCodefulSdkCacheIfNeeded as Mock).mockResolvedValue(false);
     (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue({
       copyAfterTargets: 'Build;Publish',
@@ -63,11 +63,11 @@ describe('publishCodefulProject', () => {
       errorMessage: 'No project path found to publish custom code functions project.',
     });
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No project path found to publish custom code functions project.');
-    expect(isCodefulProject).not.toHaveBeenCalled();
+    expect(hasCodefulWorkflowSetting).not.toHaveBeenCalled();
   });
 
   it('skips publishing when the selected path is not codeful', async () => {
-    (isCodefulProject as Mock).mockResolvedValue(false);
+    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(false);
 
     await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri);
 
