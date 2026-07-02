@@ -92,7 +92,7 @@ test.describe(
       await page.goto('/');
 
       // Toggle Plan to Consumption to route through serializeConsumptionBuiltInMcpOperation.
-      await page.getByRole('radio', { name: 'Consumption' }).click();
+      await page.getByRole('radio', { name: 'Consumption' }).click({ force: true });
 
       await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
 
@@ -132,7 +132,7 @@ test.describe(
       // serializeConsumptionBuiltInMcpOperation in the v2 package is caught.
       await page.goto('/v2');
 
-      await page.getByRole('radio', { name: 'Consumption' }).click();
+      await page.getByRole('radio', { name: 'Consumption' }).click({ force: true });
 
       await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
 
