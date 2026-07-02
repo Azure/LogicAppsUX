@@ -27,7 +27,6 @@ import { commonMessages, useIntlMessages } from '../../intl';
 import { useAppStyles } from './appStyles';
 import { DesignerViewType } from './constants';
 import CodeViewEditor from './CodeViewEditor';
-import { workflowCodefulEnabledKey } from '../../../../vs-code-designer/src/constants';
 
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
@@ -62,7 +61,7 @@ export const DesignerApp = () => {
   const [initialWorkflow, setInitialWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [workflow, setWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
-  const isCodefulWorkflow = panelMetaData?.localSettings?.[workflowCodefulEnabledKey] === 'true';
+  const isCodefulWorkflow = panelMetaData?.localSettings?.WORKFLOW_CODEFUL_ENABLED === 'true';
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());

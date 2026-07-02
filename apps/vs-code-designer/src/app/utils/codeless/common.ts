@@ -233,14 +233,14 @@ export async function getAzureConnectorDetailsForLocalProject(
   const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
   const connectorsContext = context as IAzureConnectorsContext;
   const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
-  let tenantId = localSettings.Values[workflowTenantIdKey];
-  let subscriptionId = localSettings.Values[workflowSubscriptionIdKey];
-  let resourceGroupName = localSettings.Values[workflowResourceGroupNameKey];
-  let location = localSettings.Values[workflowLocationKey];
+  let tenantId = localSettings.Values![workflowTenantIdKey];
+  let subscriptionId = localSettings.Values![workflowSubscriptionIdKey];
+  let resourceGroupName = localSettings.Values![workflowResourceGroupNameKey];
+  let location = localSettings.Values![workflowLocationKey];
   let accessToken = undefined;
   let clientId = undefined;
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
-  let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
+  let workflowManagementBaseUrl = localSettings.Values![workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
 
   if (subscriptionId === undefined) {
     const wizard = createAzureWizard(connectorsContext, projectPath);
