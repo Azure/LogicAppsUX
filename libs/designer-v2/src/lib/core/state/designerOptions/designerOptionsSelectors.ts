@@ -74,6 +74,10 @@ export const useDisableNativeMcpClientTools = () => {
   return useSelector((state: RootState) => state.designerOptions.hostOptions?.disableNativeMcpClientTools ?? false);
 };
 
+export const useEditableCodeViewEnabled = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.enableEditableCodeView ?? false);
+};
+
 export const useAreDesignerOptionsInitialized = () => {
   return useSelector((state: RootState) => state.designerOptions?.designerOptionsInitialized ?? false);
 };
