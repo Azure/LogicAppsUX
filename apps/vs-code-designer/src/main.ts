@@ -218,7 +218,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export async function deactivate(): Promise<void> {
-  stopAllDesignTimeApis();
+  await stopAllDesignTimeApis();
   ext.unitTestController?.dispose();
   try {
     await ext.languageClient?.stop();

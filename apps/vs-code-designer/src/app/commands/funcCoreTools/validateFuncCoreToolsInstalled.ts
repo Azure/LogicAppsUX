@@ -6,7 +6,11 @@ import { type PackageManager, funcVersionSetting, validateFuncCoreToolsSetting }
 import { localize } from '../../../localize';
 import { useBinariesDependencies } from '../../utils/binaries';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
-import { getFunctionsCommand, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import {
+  ensureFuncCoreToolsCommandExecutablePermissions,
+  getFunctionsCommand,
+  tryParseFuncVersion,
+} from '../../utils/funcCoreTools/funcVersion';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { installFuncCoreToolsBinaries, installFuncCoreToolsSystem } from './installFuncCoreTools';
@@ -63,6 +67,10 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
  */
 async function isFuncToolsInstalled(): Promise<boolean> {
   const funcCommand = getFunctionsCommand();
+  if (!ensureFuncCoreToolsCommandExecutablePermissions(funcCommand)) {
+    return false;
+  }
+
   try {
     await executeCommand(undefined, undefined, funcCommand, '--version');
     return true;
