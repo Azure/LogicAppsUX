@@ -25,9 +25,36 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
+import * as os from 'os';
 import * as path from 'path';
 import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
+
+// Uses the default dependency path (~/.azurelogicapps/dependencies) since E2E tests
+// always configure autoRuntimeDependenciesPath to this default via run-e2e.js settings injection.
+function getFuncCoreToolsDiagnosticPaths(): string[] {
+  const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
+  const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
+  return [
+    path.join(funcToolsRoot, funcExecutable),
+    path.join(funcToolsRoot, 'in-proc8', funcExecutable),
+    path.join(funcToolsRoot, 'in-proc6', funcExecutable),
+  ];
+}
+
+function getExecutableDiagnostic(filePath: string): string {
+  if (!fs.existsSync(filePath)) {
+    return 'missing';
+  }
+
+  const mode = process.platform === 'win32' ? 'n/a' : `0${(fs.statSync(filePath).mode & 0o777).toString(8)}`;
+  try {
+    fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
+    return `executable mode=${mode}`;
+  } catch {
+    return `not-executable mode=${mode}`;
+  }
+}
 
 // ===========================================================================
 // Port management helpers
@@ -404,7 +431,7 @@ export async function startDebugging(workbench: Workbench, driver: WebDriver): P
  */
 export async function waitForRuntimeReady(
   driver: WebDriver,
-  opts: { requireHostRunning?: boolean; timeoutMs?: number } = {}
+  opts: { requireHostRunning?: boolean; timeoutMs?: number; workspacePaths?: string[] } = {}
 ): Promise<boolean> {
   const timeoutMs = opts.timeoutMs ?? 300_000;
   const requireHostRunning = opts.requireHostRunning ?? false;
@@ -664,6 +691,16 @@ export async function waitForRuntimeReady(
     console.log(`[waitForRuntimeReady][diag] Process inventory failed: ${e?.message ?? e}`);
   }
 
+  // Dump C2 — managed FuncCoreTools executable permissions. p43 failures can
+  // start the top-level wrapper but fail when it dispatches in-proc8/func.
+  try {
+    for (const funcToolsPath of getFuncCoreToolsDiagnosticPaths()) {
+      console.log(`[waitForRuntimeReady][diag] FuncCoreTools permission ${funcToolsPath}: ${getExecutableDiagnostic(funcToolsPath)}`);
+    }
+  } catch (e: any) {
+    console.log(`[waitForRuntimeReady][diag] FuncCoreTools permission dump failed: ${e?.message ?? e}`);
+  }
+
   // Dump D — Structured final gate state (single grep-friendly line)
   try {
     console.log(
@@ -676,28 +713,36 @@ export async function waitForRuntimeReady(
     /* ignore - diagnostic only */
   }
 
-  // Dump E — launch.json from the test workspace (best-effort env probe)
+  // Dump E — workspace config from the active test workspace (best-effort)
   try {
     const candidates = [
+      ...(opts.workspacePaths ?? []),
       process.env.LA_E2E_LEGACY_PROJECT_DIR,
       process.env.LA_E2E_CODEFUL_MODERN_DIR,
       process.env.LA_E2E_CODEFUL_LEGACY_DIR,
-    ].filter((p): p is string => typeof p === 'string' && p.length > 0);
+    ].filter((p, index, arr): p is string => typeof p === 'string' && p.length > 0 && arr.indexOf(p) === index);
     let logged = false;
     for (const wsDir of candidates) {
-      const launchPath = path.join(wsDir, '.vscode', 'launch.json');
-      if (fs.existsSync(launchPath)) {
-        const content = fs.readFileSync(launchPath, 'utf8').slice(0, 2000);
-        console.log(`[waitForRuntimeReady][diag] launch.json (${launchPath}): ${content}`);
+      console.log(`[waitForRuntimeReady][diag] workspace candidate: ${wsDir}`);
+      for (const relativePath of ['.vscode/launch.json', '.vscode/tasks.json', 'host.json', 'local.settings.json']) {
+        const configPath = path.join(wsDir, relativePath);
+        if (!fs.existsSync(configPath)) {
+          console.log(`[waitForRuntimeReady][diag] ${relativePath} (${configPath}): (missing)`);
+          continue;
+        }
+        let content = fs.readFileSync(configPath, 'utf8').slice(0, 4000);
+        if (relativePath === 'local.settings.json') {
+          content = content.replace(/"([^"]*(?:KEY|TOKEN|SECRET|PASSWORD|CONNECTION|STRING)[^"]*)"\s*:\s*"[^"]*"/gi, '"$1":"<redacted>"');
+        }
+        console.log(`[waitForRuntimeReady][diag] ${relativePath} (${configPath}): ${content}`);
         logged = true;
-        break;
       }
     }
     if (!logged) {
-      console.log('[waitForRuntimeReady][diag] launch.json: not found (no workspace path in scope)');
+      console.log('[waitForRuntimeReady][diag] workspace config: not found (no workspace path in scope)');
     }
   } catch (e: any) {
-    console.log(`[waitForRuntimeReady][diag] launch.json read failed: ${e?.message ?? e}`);
+    console.log(`[waitForRuntimeReady][diag] workspace config read failed: ${e?.message ?? e}`);
   }
 
   return false;

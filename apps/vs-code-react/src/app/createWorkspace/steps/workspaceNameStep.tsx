@@ -111,7 +111,7 @@ export const WorkspaceNameStep: React.FC = () => {
         const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
 
         // Check if we already have results for these paths
-        if (workspaceFolder in workspaceExistenceResults || workspaceFile in workspaceExistenceResults) {
+        if (workspaceFolder in workspaceExistenceResults && workspaceFile in workspaceExistenceResults) {
           setIsValidatingWorkspaceName(false);
           const validationError = validateWorkspaceName(name);
           setWorkspaceNameError(validationError);

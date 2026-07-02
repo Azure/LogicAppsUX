@@ -171,6 +171,16 @@ export const workspaceMessages = defineMessages({
     id: 'V3DWT4',
     description: 'Workflow name validation message text',
   },
+  WORKFLOW_NAME_EXISTS: {
+    defaultMessage: 'A workflow with this name already exists in the selected project.',
+    id: 'aIk72V',
+    description: 'Warning message when workflow name collides with an existing workflow in the project',
+  },
+  WORKFLOW_NAME_RESERVED: {
+    defaultMessage: 'This name is reserved and cannot be used as a workflow name.',
+    id: '1Ch1Od',
+    description: 'Error message when workflow name matches a reserved project folder name',
+  },
   // Package step messages
   PACKAGE_SETUP: {
     defaultMessage: 'Package setup',
