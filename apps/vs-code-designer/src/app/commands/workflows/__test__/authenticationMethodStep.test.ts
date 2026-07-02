@@ -52,10 +52,19 @@ describe('AuthenticationMethodSelectionStep', () => {
     expect(context.authenticationMethod).toBe('rawKeys');
   });
 
-  it('does not prompt when Azure connectors are disabled', () => {
-    context.enabled = false;
+  it('defaults to rawKeys without prompting when MSI is disabled', () => {
+    context.enabled = true;
 
     expect(new AuthenticationMethodSelectionStep().shouldPrompt(context)).toBe(false);
+    expect(context.authenticationMethod).toBe('rawKeys');
+  });
+
+  it('does not override an already-set authentication method', () => {
+    context.enabled = true;
+    context.authenticationMethod = 'managedServiceIdentity';
+
+    expect(new AuthenticationMethodSelectionStep().shouldPrompt(context)).toBe(false);
+    expect(context.authenticationMethod).toBe('managedServiceIdentity');
   });
 
   it('rethrows non-cancellation errors', async () => {
