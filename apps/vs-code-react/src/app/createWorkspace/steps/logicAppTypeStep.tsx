@@ -26,6 +26,7 @@ export const LogicAppTypeStep: React.FC = () => {
     workspaceProjectPath,
     workspaceFileJson,
     logicAppsWithoutCustomCode,
+    existingFolders,
     flowType,
     separator,
   } = createWorkspaceState;
@@ -63,10 +64,16 @@ export const LogicAppTypeStep: React.FC = () => {
         return undefined; // Valid - existing logic app for custom code/rules engine
       }
 
-      // Check if the logic app name already exists in workspace folders (for new names)
+      // Check if the logic app name already exists in workspace folders
       if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
         return intlText.PROJECT_NAME_EXISTS;
       }
+
+      // Check if the name collides with any existing folder on disk (case-insensitive)
+      if (existingFolders.some((folder: string) => folder.toLowerCase() === name.trim().toLowerCase())) {
+        return intlText.PROJECT_NAME_EXISTS;
+      }
+
       return undefined;
     },
     [
@@ -78,6 +85,7 @@ export const LogicAppTypeStep: React.FC = () => {
       logicAppType,
       logicAppsWithoutCustomCode,
       workspaceFileJson,
+      existingFolders,
     ]
   );
 
