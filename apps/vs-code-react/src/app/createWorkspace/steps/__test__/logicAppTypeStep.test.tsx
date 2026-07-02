@@ -95,6 +95,7 @@ function createState(overrides: Partial<CreateWorkspaceState> = {}): CreateWorks
     isValidatingWorkspace: false,
     logicAppName: 'LogicApp',
     logicAppType: ProjectType.logicApp,
+    logicAppsWithoutCustomCode: undefined,
     openBehavior: '',
     packagePath: { fsPath: '', path: '' },
     packageValidationResults: {},
@@ -107,8 +108,10 @@ function createState(overrides: Partial<CreateWorkspaceState> = {}): CreateWorks
     workflowType: 'Stateful-Codeless',
     workspaceExistenceResults: {},
     workspaceFileJson: { folders: [{ name: 'DuplicateApp' }] },
+    existingFolders: ['DuplicateApp', 'CSharpProject'],
     workspaceName: 'Workspace',
     workspaceProjectPath: { fsPath: '/tmp/projects', path: '/tmp/projects' },
+    availableProjects: [],
     ...overrides,
   };
 }
@@ -169,5 +172,29 @@ describe('LogicAppTypeStep', () => {
     fireEvent.change(screen.getByPlaceholderText('Enter logic app name'), { target: { value: 'FunctionsApp' } });
 
     expect(screen.getByRole('alert')).toHaveTextContent('Logic app name must differ from the function name');
+  });
+
+  it('shows validation for invalid logic app names', () => {
+    renderLogicAppType({ logicAppName: '' });
+
+    fireEvent.change(screen.getByPlaceholderText('Enter logic app name'), { target: { value: '1logicapp' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Logic app name is invalid');
+  });
+
+  it('shows validation when the logic app project already exists', () => {
+    renderLogicAppType({ logicAppName: '' });
+
+    fireEvent.change(screen.getByPlaceholderText('Enter logic app name'), { target: { value: 'DuplicateApp' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Project already exists');
+  });
+
+  it('shows validation when the name collides with an existing folder on disk (case-insensitive)', () => {
+    renderLogicAppType({ logicAppName: '', existingFolders: ['CSharpProject', 'MyFunctions'] });
+
+    fireEvent.change(screen.getByPlaceholderText('Enter logic app name'), { target: { value: 'csharpproject' } });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Project already exists');
   });
 });

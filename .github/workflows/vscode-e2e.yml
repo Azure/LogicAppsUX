@@ -210,7 +210,7 @@ jobs:
         run: |
           export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-            node apps/vs-code-designer/src/test/ui/run-e2e.js
+            node apps/vs-code-designer/out/test/run-e2e.js
         env:
           LA_E2E_SCENARIO: p41a-fixtures
           LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
@@ -493,7 +493,7 @@ jobs:
           export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
           echo "PATH=$PATH"
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-            node apps/vs-code-designer/src/test/ui/run-e2e.js
+            node apps/vs-code-designer/out/test/run-e2e.js
         env:
           # Per-scenario matrix: each shard runs exactly one scenarios[] entry.
           LA_E2E_SCENARIO: ${{ matrix.scenario }}
@@ -601,7 +601,7 @@ jobs:
           export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
           echo "PATH=$PATH"
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-            node apps/vs-code-designer/src/test/ui/run-e2e.js
+            node apps/vs-code-designer/out/test/run-e2e.js
         env:
           LA_E2E_SCENARIO: p40-nonlogicapp
           E2E_VSCODE_VERSION: ${{ matrix.vscode-version }}
@@ -643,3 +643,4 @@ jobs:
             exit 1
           fi
           echo "All vscode-e2e jobs passed."
+

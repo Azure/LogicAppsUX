@@ -69,6 +69,7 @@ import {
   waitForQuickInputAndType,
 } from './helpers';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
+import { isExecutableFile } from './runtimeBinaryCheck';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -141,14 +142,7 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
   }
 }
 
-function isExecutableFile(filePath: string): boolean {
-  try {
-    fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
+// isExecutableFile is imported from ./runtimeBinaryCheck (shared with run-e2e.ts)
 
 function getFuncCoreToolsCandidatePaths(): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
@@ -158,6 +152,7 @@ function getFuncCoreToolsCandidatePaths(): string[] {
     path.join(funcToolsRoot, 'in-proc8', executableName),
     path.join(funcToolsRoot, 'in-proc6', executableName),
   ];
+  const executableNames = new Set([executableName]);
 
   const directoriesToScan = [funcToolsRoot];
   for (const directory of directoriesToScan) {
@@ -168,7 +163,7 @@ function getFuncCoreToolsCandidatePaths(): string[] {
       const entryPath = path.join(directory, entry.name);
       if (entry.isDirectory()) {
         directoriesToScan.push(entryPath);
-      } else if (entry.name === executableName) {
+      } else if (executableNames.has(entry.name)) {
         candidates.push(entryPath);
       }
     }
@@ -179,17 +174,25 @@ function getFuncCoreToolsCandidatePaths(): string[] {
 
 function getFuncCoreToolsPath(): string {
   const candidates = getFuncCoreToolsCandidatePaths();
+  // All candidates are already func binaries (getFuncCoreToolsCandidatePaths only matches executableNames)
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
 
 function assertFuncCoreToolsExecutable(context: string): void {
-  const funcBinaryPath = getFuncCoreToolsPath();
   ensureRuntimeDependencyExecutablePermissions();
-  if (!fs.existsSync(funcBinaryPath)) {
+  const funcBinaryPath = getFuncCoreToolsPath();
+  // Multiple existing candidates are expected: FuncCoreTools installs copies under
+  // in-proc8/, in-proc6/, etc. for different .NET versions. We validate ALL of them
+  // have execute permissions since the extension picks one at runtime based on project config.
+  const existingCandidates = getFuncCoreToolsCandidatePaths().filter((candidate) => fs.existsSync(candidate));
+  if (existingCandidates.length === 0) {
     throw new Error(`[depValidation] func binary not found after ${context}: ${funcBinaryPath}`);
   }
-  if (!isExecutableFile(funcBinaryPath)) {
-    throw new Error(`[depValidation] func binary exists but is not executable after ${context}: ${funcBinaryPath}`);
+
+  for (const candidate of existingCandidates) {
+    if (!isExecutableFile(candidate)) {
+      throw new Error(`[depValidation] FuncCoreTools binary exists but is not executable after ${context}: ${candidate}`);
+    }
   }
 }
 

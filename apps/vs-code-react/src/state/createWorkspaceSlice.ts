@@ -8,6 +8,13 @@ import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { ITargetDirectory } from '../run-service';
 
+export interface AvailableProject {
+  name: string;
+  path: string;
+  isCodeful: boolean;
+  existingWorkflows: string[];
+}
+
 export interface CreateWorkspaceState {
   currentStep: number;
   packagePath: ITargetDirectory;
@@ -28,6 +35,7 @@ export interface CreateWorkspaceState {
   isComplete: boolean;
   workspaceFileJson: any;
   logicAppsWithoutCustomCode: any | undefined;
+  existingFolders: string[];
   flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace' | 'createWorkflow';
   pathValidationResults: Record<string, boolean>;
   packageValidationResults: Record<string, boolean>;
@@ -37,6 +45,7 @@ export interface CreateWorkspaceState {
   separator: string;
   platform: Platform | null;
   isDevContainerProject: boolean;
+  availableProjects: AvailableProject[];
 }
 
 const initialState: CreateWorkspaceState = {
@@ -64,6 +73,7 @@ const initialState: CreateWorkspaceState = {
   isComplete: false,
   workspaceFileJson: '',
   logicAppsWithoutCustomCode: undefined,
+  existingFolders: [],
   flowType: 'createWorkspace',
   pathValidationResults: {},
   packageValidationResults: {},
@@ -73,6 +83,7 @@ const initialState: CreateWorkspaceState = {
   separator: '/',
   platform: null,
   isDevContainerProject: false,
+  availableProjects: [],
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -80,16 +91,18 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
   initialState,
   reducers: {
     initializeProject: (state, action: PayloadAction<any>) => {
-      const { workspaceFileJson, logicAppsWithoutCustomCode } = action.payload;
+      const { workspaceFileJson, logicAppsWithoutCustomCode, existingFolders } = action.payload;
       state.workspaceFileJson = workspaceFileJson;
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
+      state.existingFolders = existingFolders || [];
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform, logicAppType, logicAppName } = action.payload;
+      const { separator, platform, logicAppType, logicAppName, availableProjects } = action.payload;
       state.separator = separator;
       state.platform = platform;
       state.logicAppType = logicAppType || '';
       state.logicAppName = logicAppName || '';
+      state.availableProjects = availableProjects || [];
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
@@ -198,6 +211,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       const preservedLogicAppName = preserveLogicAppData ? state.logicAppName : '';
       const preservedSeparator = preserveLogicAppData ? state.separator : '/';
       const preservedPlatform = preserveLogicAppData ? state.platform : null;
+      const preservedAvailableProjects = preserveLogicAppData ? state.availableProjects : [];
 
       Object.assign(state, initialState);
 
@@ -206,6 +220,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
         state.logicAppName = preservedLogicAppName;
         state.separator = preservedSeparator;
         state.platform = preservedPlatform;
+        state.availableProjects = preservedAvailableProjects;
       }
     },
     nextStep: (state) => {
