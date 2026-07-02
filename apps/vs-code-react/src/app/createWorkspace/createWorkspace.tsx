@@ -58,8 +58,10 @@ const CreateWorkspaceInternal = () => {
     workspaceExistenceResults,
     packageValidationResults,
     logicAppsWithoutCustomCode,
+    existingFolders,
     separator,
     isDevContainerProject,
+    availableProjects,
   } = createWorkspaceState;
 
   // Calculate total steps - always 2: Setup and Review + Create
@@ -149,9 +151,24 @@ const CreateWorkspaceInternal = () => {
     STEP_REVIEW_CREATE: intlText.REVIEW_CREATE_LABEL,
   };
 
-  // Helper function to check if a name already exists in workspace folders
+  // Helper function to check if a name already exists in workspace folders or on disk
   const isNameAlreadyInWorkspace = (name: string) => {
-    return workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name);
+    if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
+      return true;
+    }
+    // Also check actual directories on disk (case-insensitive) — catches C# project folders etc.
+    return existingFolders.some((folder: string) => folder.toLowerCase() === name.trim().toLowerCase());
+  };
+
+  const getWorkspaceExistencePaths = () => {
+    const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+    const workspaceFile = `${workspaceFolder}${separator}${workspaceName}.code-workspace`;
+    return { workspaceFolder, workspaceFile };
+  };
+
+  const isWorkspaceNameAvailable = () => {
+    const { workspaceFolder, workspaceFile } = getWorkspaceExistencePaths();
+    return workspaceExistenceResults[workspaceFolder] === false && workspaceExistenceResults[workspaceFile] === false;
   };
 
   // Helper function to validate logic app name with support for existing logic apps
@@ -170,6 +187,15 @@ const CreateWorkspaceInternal = () => {
 
     // Check for workspace folder collision (only if not using existing logic app)
     return !isNameAlreadyInWorkspace(name.trim());
+  };
+
+  // Helper to check if a workflow name already exists in the selected project
+  const isWorkflowNameTakenInProject = (name: string) => {
+    const selectedProject = (availableProjects || []).find((p) => p.name === logicAppName);
+    if (!selectedProject?.existingWorkflows) {
+      return false;
+    }
+    return selectedProject.existingWorkflows.some((w) => w.toLowerCase() === name.toLowerCase());
   };
 
   const canProceed = () => {
@@ -195,9 +221,7 @@ const CreateWorkspaceInternal = () => {
 
         // Workspace name validation (not needed for createLogicApp)
         if (requirements.needsWorkspaceName) {
-          const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
-          const workspaceNameValid =
-            workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true;
+          const workspaceNameValid = workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable();
           if (!workspaceNameValid) {
             return false;
           }
@@ -213,10 +237,16 @@ const CreateWorkspaceInternal = () => {
 
         // Logic app name validation
         if (requirements.needsLogicAppName) {
-          const logicAppNameValid =
-            flowType === FLOW_TYPES.CREATE_LOGIC_APP
-              ? validateLogicAppNameForNavigation(logicAppName)
-              : logicAppName.trim() !== '' && nameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
+          let logicAppNameValid: boolean;
+          if (flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
+            logicAppNameValid = validateLogicAppNameForNavigation(logicAppName);
+          } else if (flowType === FLOW_TYPES.CREATE_WORKFLOW) {
+            // For createWorkflow, logicAppName is a pre-existing project selected from a dropdown
+            logicAppNameValid = logicAppName.trim() !== '';
+          } else {
+            logicAppNameValid =
+              logicAppName.trim() !== '' && nameValidation.test(logicAppName.trim()) && !isNameAlreadyInWorkspace(logicAppName.trim());
+          }
           if (!logicAppNameValid) {
             return false;
           }
@@ -241,7 +271,10 @@ const CreateWorkspaceInternal = () => {
             // For other flows, always validate workflow fields
             const workflowTypeValid = workflowType !== '';
             const workflowNameValid =
-              workflowName.trim() !== '' && nameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim());
+              workflowName.trim() !== '' &&
+              nameValidation.test(workflowName.trim()) &&
+              !isNameAlreadyInWorkspace(workflowName.trim()) &&
+              !isWorkflowNameTakenInProject(workflowName.trim());
             if (!workflowTypeValid || !workflowNameValid) {
               return false;
             }
@@ -299,9 +332,7 @@ const CreateWorkspaceInternal = () => {
         // For convertToWorkspace, only validate workspace path and name
         if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
           const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
-          const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
-          const workspaceNameValid =
-            workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true;
+          const workspaceNameValid = workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable();
           return workspacePathValid && workspaceNameValid;
         }
 
@@ -309,9 +340,8 @@ const CreateWorkspaceInternal = () => {
         const workspacePathValid = requirements.needsWorkspacePath
           ? workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true
           : true;
-        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
         const workspaceNameValid = requirements.needsWorkspaceName
-          ? workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && workspaceExistenceResults[workspaceFolder] !== true
+          ? workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable()
           : true;
         const logicAppTypeValid = requirements.needsLogicAppType ? logicAppType !== '' : true;
         const logicAppNameValid = requirements.needsLogicAppName
@@ -319,7 +349,10 @@ const CreateWorkspaceInternal = () => {
           : true;
         const workflowTypeValid = requirements.needsWorkflowFields ? workflowType !== '' : true;
         const workflowNameValid = requirements.needsWorkflowFields
-          ? workflowName.trim() !== '' && nameValidation.test(workflowName.trim()) && !isNameAlreadyInWorkspace(workflowName.trim())
+          ? workflowName.trim() !== '' &&
+            nameValidation.test(workflowName.trim()) &&
+            !isNameAlreadyInWorkspace(workflowName.trim()) &&
+            !isWorkflowNameTakenInProject(workflowName.trim())
           : true;
 
         const baseFieldsValid =
@@ -727,7 +760,9 @@ export const CreateLogicApp = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetState(undefined));
+    // Only set the flow type — do NOT call resetState here.
+    // The webview is always created fresh (new panel) so state starts from initialState.
+    // Calling resetState races with initializeProject and can wipe existingFolders/workspaceFileJson.
     dispatch(setFlowType(FLOW_TYPES.CREATE_LOGIC_APP));
   }, [dispatch]);
 
@@ -738,7 +773,9 @@ export const CreateWorkflow = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetState({ preserveLogicAppData: true }));
+    // Only set the flow type — do NOT call resetState here.
+    // The webview is always created fresh (new panel) so state starts from initialState.
+    // Calling resetState races with initializeWorkspace and can wipe availableProjects.
     dispatch(setFlowType(FLOW_TYPES.CREATE_WORKFLOW));
   }, [dispatch]);
 

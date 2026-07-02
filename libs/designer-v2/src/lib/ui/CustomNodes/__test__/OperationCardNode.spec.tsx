@@ -89,11 +89,13 @@ const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
   useIsNodeInMultiSelection: vi.fn().mockReturnValue(false),
+  useIsNodePinnedToOperationPanel: vi.fn().mockReturnValue(false),
 }));
 
 vi.mock('../../../core/state/panel/panelSlice', () => ({
   changePanelNode: vi.fn((payload) => ({ type: 'panel/changePanelNode', payload })),
   setSelectedNodeId: vi.fn((payload) => ({ type: 'panel/setSelectedNodeId', payload })),
+  toggleNodeSelection: vi.fn((payload) => ({ type: 'panel/toggleNodeSelection', payload })),
 }));
 
 const mockUseAllOperations = vi.fn().mockReturnValue({});
@@ -203,7 +205,12 @@ vi.mock('../components/handles/EdgeDrawTargetHandle', () => ({
 
 vi.mock('../components/card', () => ({
   ActionCard: ({ id, title, isSelected, onClick, onContextMenu, onDeleteClick, errorMessages }: any) => (
-    <div data-testid={`action-card-${id}`} data-selected={isSelected} onClick={() => onClick?.()} onContextMenu={(e) => onContextMenu?.(e)}>
+    <div
+      data-testid={`action-card-${id}`}
+      data-selected={isSelected}
+      onClick={(e) => onClick?.(e)}
+      onContextMenu={(e) => onContextMenu?.(e)}
+    >
       <span>{title}</span>
       {errorMessages?.length > 0 && <span data-testid="error-messages">{errorMessages.join(', ')}</span>}
       {onDeleteClick && (
@@ -303,6 +310,45 @@ describe('OperationCardNode (v2)', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'panel/changePanelNode',
+        payload: 'testNode',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on ctrl-click', () => {
+    render(<DefaultNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testNode');
+    fireEvent.click(card, { ctrlKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
+        payload: 'testNode',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on meta-click', () => {
+    render(<DefaultNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testNode');
+    fireEvent.click(card, { metaKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
+        payload: 'testNode',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on shift-click of the card body', () => {
+    render(<DefaultNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testNode');
+    fireEvent.click(card, { shiftKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
         payload: 'testNode',
       })
     );

@@ -5,7 +5,7 @@ import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel, useIsNodePinnedToOperationPanel } from '../../core/state/panel/panelSelectors';
 import { addAgentToolMetadata, changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
@@ -46,6 +46,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const selected = useIsNodeSelectedInOperationPanel(subgraphId);
+  const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
@@ -270,6 +271,7 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
                 subgraphType={metadata.subgraphType}
                 title={title}
                 isSelected={selected}
+                isPinned={isPinned}
                 readOnly={readOnly}
                 onClick={subgraphClick}
                 onContextMenu={onContextMenu}

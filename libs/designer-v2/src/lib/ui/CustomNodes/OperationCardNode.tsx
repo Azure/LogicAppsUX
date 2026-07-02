@@ -20,7 +20,11 @@ import {
   useOperationVisuals,
   useIsNodeLoadingDynamicData,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
+import {
+  useIsNodeSelectedInOperationPanel,
+  useIsNodeInMultiSelection,
+  useIsNodePinnedToOperationPanel,
+} from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId, toggleNodeSelection } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
@@ -188,6 +192,7 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const isSelected = useIsNodeSelectedInOperationPanel(id);
   const isMultiSelected = useIsNodeInMultiSelection(id);
+  const isPinned = useIsNodePinnedToOperationPanel(id);
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(id);
 
@@ -346,6 +351,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           isDragging={isDragging}
           isLoading={isLoading}
           isSelected={isSelected || isMultiSelected}
+          isPinned={isPinned}
           isUnitTest={isUnitTest}
           nodeMockResults={nodeMockResults}
           isMockSupported={isMockSupported}

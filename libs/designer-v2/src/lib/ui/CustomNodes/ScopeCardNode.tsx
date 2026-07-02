@@ -9,7 +9,11 @@ import {
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
+import {
+  useIsNodeSelectedInOperationPanel,
+  useIsNodeInMultiSelection,
+  useIsNodePinnedToOperationPanel,
+} from '../../core/state/panel/panelSelectors';
 import { changePanelNode, toggleNodeSelection } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
@@ -82,6 +86,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const selfRunData = useRunData(scopeId);
   const selected = useIsNodeSelectedInOperationPanel(scopeId);
   const isMultiSelected = useIsNodeInMultiSelection(scopeId);
+  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
@@ -207,7 +212,9 @@ const ScopeCardNode = ({ id }: NodeProps) => {
 
   const nodeClick = useCallback(
     (e?: React.MouseEvent) => {
-      // Shift/Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
+      // Shift/Ctrl/Meta-click on the card body toggles the node in the multi-selection set instead of
+      // opening its panel. The collapse toggle stops propagation, so shift-clicking the chevron still
+      // expands/collapses nested scopes without triggering multi-selection here.
       if (e?.shiftKey || e?.ctrlKey || e?.metaKey) {
         e?.stopPropagation();
         dispatch(toggleNodeSelection(scopeId));
@@ -435,6 +442,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
             isDragging={isDragging}
             isLoading={isLoading}
             isSelected={selected || isMultiSelected}
+            isPinned={isPinned}
             runData={runData}
             readOnly={readOnly}
             onContextMenu={onContextMenu}

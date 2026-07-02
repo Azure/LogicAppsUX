@@ -25,8 +25,17 @@ export const DotNetFrameworkStep: React.FC = () => {
   const intlText = useIntlMessages(workspaceMessages);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { targetFramework, functionNamespace, functionName, platform, functionFolderName, logicAppType, logicAppName, workspaceFileJson } =
-    createWorkspaceState;
+  const {
+    targetFramework,
+    functionNamespace,
+    functionName,
+    platform,
+    functionFolderName,
+    logicAppType,
+    logicAppName,
+    workspaceFileJson,
+    existingFolders,
+  } = createWorkspaceState;
 
   const functionNamespaceId = useId();
   const functionNameId = useId();
@@ -83,6 +92,10 @@ export const DotNetFrameworkStep: React.FC = () => {
       if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
         return intlText.FUNCTION_FOLDER_EXISTS;
       }
+      // Check if the name collides with any existing folder on disk (case-insensitive)
+      if (existingFolders?.some((folder: string) => folder.toLowerCase() === name.trim().toLowerCase())) {
+        return intlText.FUNCTION_FOLDER_EXISTS;
+      }
       return undefined;
     },
     [
@@ -92,6 +105,7 @@ export const DotNetFrameworkStep: React.FC = () => {
       intlText.FUNCTION_FOLDER_NAME_VALIDATION,
       logicAppName,
       workspaceFileJson,
+      existingFolders,
     ]
   );
 
