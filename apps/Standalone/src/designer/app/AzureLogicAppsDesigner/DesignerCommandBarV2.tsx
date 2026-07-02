@@ -27,6 +27,7 @@ import {
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
   useAllConnectionErrors,
+  useIsWorkflowEmpty,
   validateParameter,
   updateParameterValidation,
   openPanel,
@@ -159,6 +160,7 @@ export const DesignerCommandBar = ({
   const [autosaveError, setAutosaveError] = useState<string>();
 
   const designerIsDirty = useIsDesignerDirty();
+  const isWorkflowEmpty = useIsWorkflowEmpty();
   const isInitialized = useNodesAndDynamicDataInitialized();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -309,7 +311,13 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled =
-    isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty || isMonitoringView;
+    isSaving ||
+    allInputErrors.length > 0 ||
+    haveWorkflowParameterErrors ||
+    haveSettingsErrors ||
+    !designerIsDirty ||
+    isMonitoringView ||
+    isWorkflowEmpty;
 
   const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
   const isUndoDisabled = !useCanUndo();
