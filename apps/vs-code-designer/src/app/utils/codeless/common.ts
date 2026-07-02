@@ -216,6 +216,13 @@ export async function getAzureConnectorDetailsForLocalProject(
   context: IActionContext,
   projectPath: string
 ): Promise<AzureConnectorDetails> {
+  if (!projectPath) {
+    context.telemetry.properties.azureConnectorDetailsProjectPathMissing = 'true';
+    return {
+      enabled: false,
+    };
+  }
+
   // Check cache first
   const cached = azureDetailsCache.get(projectPath);
   const now = Date.now();

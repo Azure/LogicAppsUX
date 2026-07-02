@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
-import { binariesExist } from '../../utils/binaries';
+import { binariesExistSync } from '../../utils/binaries';
 import { getFuncHostTaskEnv } from '../../utils/codeless/funcHostTaskEnv';
 import { getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
 import { InitProjectStepBase } from './initProjectStepBase';
@@ -51,7 +51,7 @@ export class InitScriptProjectStep extends InitProjectStepBase {
   }
 
   protected getTasks(): TaskDefinition[] {
-    const funcBinariesExist = binariesExist(funcDependencyName);
+    const funcBinariesExist = binariesExistSync(funcDependencyName);
     const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv() : {};
     return [
       {

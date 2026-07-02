@@ -31,7 +31,7 @@ import { tryGetLogicAppCustomCodeFunctionsProjects } from './customCodeUtils';
  */
 export const hasLogicAppProject = async (actionContext: IActionContext): Promise<boolean> => {
   for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder);
+    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
     if (projectRoot) {
       return true;
     }
@@ -242,12 +242,11 @@ async function getLogicAppWorkspaceFolder(
 ): Promise<vscode.WorkspaceFolder> {
   const logicAppProjectRoots: string[] = [];
   for (const folder of subFolders ?? vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
+    const projectRoot = await tryGetLogicAppProjectRoot(context, folder, true);
     if (projectRoot) {
       logicAppProjectRoots.push(projectRoot);
     }
   }
-
   if (logicAppProjectRoots.length === 0) {
     return undefined;
   }
@@ -313,7 +312,7 @@ async function selectLogicAppWorkspaceFolderWithoutCustomCode(
 ): Promise<vscode.WorkspaceFolder | string> {
   const logicAppsWorkspaces = [];
   for (const folder of returnsWorkspaceFolder ? vscode.workspace.workspaceFolders : subFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
+    const projectRoot = await tryGetLogicAppProjectRoot(context, folder, true);
     if (projectRoot) {
       logicAppsWorkspaces.push(projectRoot);
     }
@@ -379,7 +378,7 @@ export async function getLogicAppWorkspaceFolderWithoutCustomCode(
 ): Promise<FolderPicks[]> {
   const logicAppsWorkspaces = [];
   for (const folder of returnsWorkspaceFolder ? vscode.workspace.workspaceFolders : subFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
+    const projectRoot = await tryGetLogicAppProjectRoot(context, folder, true);
     if (projectRoot) {
       logicAppsWorkspaces.push(projectRoot);
     }
