@@ -99,12 +99,13 @@ export async function getLocalSettingsJson(
     if (/[^\s]/.test(data)) {
       try {
         const localSettings = parseJson(data) as ILocalSettingsJson;
+        localSettings.Values = localSettings.Values || {};
         const decryptedlocalSettings = await getDecryptedLocalSettings(context, localSettings, localSettingsUri, localSettingsPath);
         decryptedlocalSettings.Values ??= {};
 
         if (isDesignTime) {
-          decryptedlocalSettings.Values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
-          delete decryptedlocalSettings.Values[azureWebJobsStorageKey];
+          decryptedlocalSettings.Values![azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
+          delete decryptedlocalSettings.Values![azureWebJobsStorageKey];
         }
         return decryptedlocalSettings;
       } catch (error) {
@@ -200,7 +201,6 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     baseSettings.Values![functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
   }
 
-  // Add codeful-specific settings
   if (isCodeful) {
     baseSettings.Values![workflowCodefulEnabledKey] = 'true';
   }
