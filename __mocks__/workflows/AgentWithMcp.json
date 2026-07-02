@@ -64,7 +64,7 @@
       }
     }
   },
-  "connectionReferences": {
+  "connections": {
     "mcpclient": {
       "connection": { "id": "/connectionProviders/mcpclient/connections/mcpclient" },
       "connectionName": "mcpclient",
