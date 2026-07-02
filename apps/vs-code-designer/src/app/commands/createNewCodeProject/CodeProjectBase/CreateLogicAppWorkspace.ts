@@ -29,7 +29,7 @@ import {
   testsDirectoryName,
   vscodeFolderName,
   workerRuntimeKey,
-  workflowCodefulEnabled,
+  workflowCodefulEnabledKey,
   workflowFileName,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
@@ -109,7 +109,6 @@ export async function createLogicAppAndWorkflow(
 
   context.telemetry.properties.logicAppType = logicAppType || 'logicApp';
   context.telemetry.properties.workflowType = workflowType || 'unknown';
-  context.telemetry.properties.isCodefulWorkflow = String(logicAppType === ProjectType.codeful);
 
   await fse.ensureDir(logicAppFolderPath);
   if (logicAppType === ProjectType.codeful) {
@@ -235,7 +234,7 @@ export async function createLocalConfigurationFiles(
 
   // TODO(aeldridge): Update to point to codeful private bundle once it's published.
   if (logicAppType === ProjectType.codeful) {
-    localSettingsJson.Values[workflowCodefulEnabled] = 'true';
+    localSettingsJson.Values[workflowCodefulEnabledKey] = 'true';
     localSettingsJson.Values[codefulExtensionBundleIdSetting] = extensionBundleId;
     localSettingsJson.Values[codefulExtensionBundleVersionSetting] = codefulExtensionBundleVersion;
   }
