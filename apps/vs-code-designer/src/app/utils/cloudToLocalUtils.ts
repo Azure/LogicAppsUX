@@ -417,10 +417,8 @@ function runPostExtractSteps(cache: ICachedTextDocument): void {
   callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
-    if (getContainingWorkspace(cache.projectPath)) {
-      if (await fse.pathExists(cache.textDocumentPath)) {
-        window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
-      }
+    if (getContainingWorkspace(cache.projectPath) && await fse.pathExists(cache.textDocumentPath)) {
+      window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
     context.telemetry.properties.finishedImportingProject = 'Finished importing project';
     window.showInformationMessage(localize('finishedImporting', 'Finished importing project.'));
