@@ -8,16 +8,19 @@ import {
   localEmulatorConnectionString,
   azureWebJobsStorageKey,
   localSettingsFileName,
+  inlineCodeNodeExecutablePathKey,
 } from '../../constants';
 import { localize } from '../../localize';
 import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
+import { getNodeJsCommand } from '../utils/nodeJs/nodeJsVersion';
 import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launch';
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import { MismatchBehavior, Platform } from '@microsoft/vscode-extension-logic-apps';
 import * as azureStorage from 'azure-storage';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 /**
@@ -43,6 +46,9 @@ export async function preDebugValidate(context: IActionContext, projectPath: str
 
       context.telemetry.properties.lastValidateStep = 'workerRuntime';
       await validateWorkerRuntime(context, projectLanguage, projectPath);
+
+      context.telemetry.properties.lastValidateStep = 'inlineCodeNodePath';
+      await validateInlineCodeNodePath(context, projectPath);
 
       context.telemetry.properties.lastValidateStep = 'emulatorRunning';
       shouldContinue = await validateEmulatorIsRunning(context, projectPath);
@@ -101,6 +107,38 @@ async function validateWorkerRuntime(context: IActionContext, projectLanguage: s
   if (runtime) {
     // Not worth handling mismatched runtimes since it's so unlikely
     await setLocalAppSetting(context, projectPath, workerRuntimeKey, runtime, MismatchBehavior.DontChange);
+  }
+}
+
+/**
+ * Pins the in-proc8 InlineCodeDependencyGenerator's `node` lookup to the
+ * absolute path of the extension-managed (or system) `node` binary, written
+ * into `local.settings.json` Values as `languageWorkers__node__defaultExecutablePath`.
+ *
+ * This is belt-and-braces: the `func: host start` task already sets PATH via
+ * platform-keyed `windows`/`linux`/`osx` blocks, but the dep generator runs
+ * as a grandchild of the func host and PATH inheritance has been observed
+ * to drop on some Linux CI configurations. Setting the absolute path here
+ * makes the lookup deterministic regardless of PATH propagation.
+ *
+ * Uses `MismatchBehavior.DontChange` so users can override the value.
+ */
+async function validateInlineCodeNodePath(context: IActionContext, projectPath: string): Promise<void> {
+  try {
+    const nodeCommand = getNodeJsCommand();
+    if (!nodeCommand || nodeCommand.trim().length === 0) {
+      return;
+    }
+    // Only pin an absolute path; if `nodeCommand` is a bare command name like
+    // "node", the in-proc8 runtime will still resolve via PATH (which we've
+    // already corrected in the task definition).
+    if (!path.isAbsolute(nodeCommand)) {
+      return;
+    }
+    await setLocalAppSetting(context, projectPath, inlineCodeNodeExecutablePathKey, nodeCommand, MismatchBehavior.DontChange);
+  } catch (error) {
+    // Best-effort: never block debug if we can't resolve a node path.
+    context.telemetry.properties.inlineCodeNodePathError = parseError(error).message;
   }
 }
 
