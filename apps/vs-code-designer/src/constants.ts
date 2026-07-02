@@ -118,12 +118,6 @@ export const codefulExtensionBundleIdSetting = 'AzureFunctionsJobHost__extension
 export const codefulExtensionBundleVersionSetting = 'AzureFunctionsJobHost__extensionBundle__version';
 export const codefulExtensionBundleVersion = '1.165.50';
 
-export const workflowCodeType = {
-  codeful: 'Codeful',
-  codeless: 'Codeless',
-} as const;
-export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
-
 export const WorkflowKind = {
   stateful: 'Stateful',
   stateless: 'Stateless',
@@ -151,7 +145,6 @@ export const extensionCommand = {
   createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createWorkflow: 'azureLogicAppsStandard.createWorkflow',
-  createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
   deploy: 'azureLogicAppsStandard.deploy',
