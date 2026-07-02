@@ -9,7 +9,7 @@ import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebview
 import { localize } from '../../../localize';
 import * as vscode from 'vscode';
 import { createLogicAppWorkflow } from './createLogicAppWorkflow';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkflowsInLocalProject } from '../../utils/codeless/common';
 import * as path from 'path';
@@ -106,7 +106,7 @@ async function collectAvailableProjects(context: IActionContext): Promise<Availa
   for (const folder of vscode.workspace.workspaceFolders) {
     const projectRoot = await tryGetLogicAppProjectRoot(context, folder.uri.fsPath, true);
     if (projectRoot) {
-      const isCodeful = await isCodefulProject(projectRoot);
+      const isCodeful = await hasCodefulWorkflowSetting(projectRoot);
       const workflows = await getWorkflowsInLocalProject(projectRoot);
       projects.push({
         name: path.basename(projectRoot.replace(/\\/g, '/')),
