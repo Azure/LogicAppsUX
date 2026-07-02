@@ -64,6 +64,7 @@ Run `npx biome check --write <files>` and `npx tsup --config tsup.e2e.test.confi
 | File | Purpose |
 |------|---------|
 | `src/test/ui/nonLogicAppStartup.test.ts` | Plain-folder startup regression test. Phase 4.0 |
+| `src/test/ui/bundleCdnHealth.test.ts` | CDN integrity probe (`Content-Length` + `Content-MD5` on Microsoft.Azure.Functions.ExtensionBundle.Workflows). Pure Mocha — runs without VS Code. Phase 4.11 / `E2E_MODE=bundleintegrityonly`. |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
@@ -124,6 +125,7 @@ pnpm run test:ui        # Runs node src/test/ui/run-e2e.js
 | (unset) | Runs Phase 4.0 (non-Logic-App startup), Phase 4.1 (createWorkspace), then later designer/conversion phases |
 | `nonlogicappstartup` | Runs only Phase 4.0 with minimal settings and no runtime dependency paths |
 | `designeronly` | Skips Phase 4.1, runs Phase 4.2 using workspaces from a previous Phase 4.1 run |
+| `bundleintegrityonly` | Runs Phase 4.11 (`bundleCdnHealth.test.ts`) — pure-Mocha probe of `cdn.functions.azure.com` integrity headers. No VS Code session, no compiled extension required (only `npx tsup --config tsup.e2e.test.config.ts`). Bundled into the `independentonly` shard for CI. |
 
 **IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.
 

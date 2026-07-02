@@ -26,12 +26,13 @@ Curated patterns for PR comments, reviewer feedback, and final summaries. Add en
 - Why it matters: PR #9164 hit this on initial open — the `release-scribe`-style PR body shipped without ticking Commit Type, Risk Level, or Test Plan E2E boxes and without a `## Contributors` section, so AI PR Validation flagged 3 sections ❌ + 2 ⚠️. Rewriting the body to match `.github/pull_request_template.md` and applying `risk:medium` cleared all 8 sections to ✅. The bot re-runs on `pull_request_target.types: [edited, labeled, unlabeled]` so a single `gh pr edit --body-file ... --add-label risk:<level> --remove-label needs-pr-update` triggers a fresh validation pass.
 - Pattern (release-scribe and pr-orchestrator):
   1. Read `.github/pull_request_template.md` before authoring any PR body — do NOT improvise sections.
-  2. Tick exactly one `Commit Type` and exactly one `Risk Level` checkbox. The PR title prefix (`fix:`, `feat:`, `perf:`, `test:`, `ci:`, `docs:`, `chore:`) must match the single ticked commit type.
-  3. Apply the matching repo label (`risk:low` / `risk:medium` / `risk:high`) in the same `gh pr edit` call.
-  4. Include a literal `## Contributors` section listing `@user` mentions — a trailing `Co-authored-by:` git trailer alone does NOT satisfy this requirement.
-  5. Tick the Test Plan boxes that actually apply. If the diff adds a `*.spec.ts(x)` file under a test folder, "Unit tests added/updated" must be ticked. Cite CI run IDs and per-shard wall-times when CI evidence exists.
-  6. Remove `needs-pr-update` in the same edit operation.
-  7. Wait ~5-7 minutes for the bot to re-validate and verify all sections show ✅ before declaring the body work complete.
+  2. **Preserve every section, every comment hint, and every checkbox from the template verbatim.** Tick only the ones that apply; leave the rest as `- [ ]`. Never delete unticked checkbox rows or section comments — reviewers expect the full grid.
+  3. Tick exactly one `Commit Type` and exactly one `Risk Level` checkbox. The PR title prefix (`fix:`, `feat:`, `perf:`, `test:`, `ci:`, `docs:`, `chore:`) must match the single ticked commit type.
+  4. Apply the matching repo label (`risk:low` / `risk:medium` / `risk:high`) in the same `gh pr edit` call.
+  5. Include a literal `## Contributors` section listing `@user` mentions — a trailing `Co-authored-by:` git trailer alone does NOT satisfy this requirement.
+  6. Tick the Test Plan boxes that actually apply. If the diff adds a `*.spec.ts(x)` file under a test folder, "Unit tests added/updated" must be ticked. Cite CI run IDs and per-shard wall-times when CI evidence exists.
+  7. Remove `needs-pr-update` in the same edit operation.
+  8. Wait ~5-7 minutes for the bot to re-validate and verify all sections show ✅ before declaring the body work complete.
 - Source: PR #9164 AI PR Validation bot iterations; `.github/workflows/pr-ai-validation.yml`; `.github/pull_request_template.md`.
 - Applies to: `release-scribe`, `pr-orchestrator`, `chief-engineer`, `pr-comment-triage`.
 - Status: verified.
