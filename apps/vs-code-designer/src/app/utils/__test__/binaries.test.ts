@@ -9,6 +9,7 @@ import {
   downloadFileWithVerification,
   DownloadIntegrityError,
   binariesExist,
+  binariesExistSync,
   getLatestDotNetVersion,
   getLatestFunctionCoreToolsVersion,
   getLatestNodeJsVersion,
@@ -25,10 +26,12 @@ import {
 import { ext } from '../../../extensionVariables';
 import {
   DependencyVersion,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   dotnetDependencyName,
   funcCoreToolsBinaryPathSettingKey,
   funcDependencyName,
   nodeJsBinaryPathSettingKey,
+  dotNetBinaryPathSettingKey,
   nodeJsDependencyName,
 } from '../../../constants';
 import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
@@ -352,6 +355,224 @@ describe('binaries', () => {
       expect(result).toBe(false);
       expect(fs.existsSync).not.toHaveBeenCalled();
     });
+
+    describe('Windows .exe fallback', () => {
+      const originalPlatform = process.platform;
+
+      afterEach(() => {
+        Object.defineProperty(process, 'platform', { value: originalPlatform });
+        vi.unstubAllGlobals();
+      });
+
+      it('should return true and update setting when .exe variant exists on Windows for NodeJs', async () => {
+        vi.stubGlobal('process', { ...process, platform: 'win32' });
+        const nodeFolder = path.join('binariesLocation', nodeJsDependencyName);
+        const nodeBinaryNoExe = path.join(nodeFolder, 'node');
+        const nodeBinaryExe = path.join(nodeFolder, 'node.exe');
+
+        (fs.existsSync as Mock).mockImplementation((filePath: string) => {
+          if (filePath === nodeFolder) {
+            return true;
+          }
+          if (filePath === nodeBinaryExe) {
+            return true;
+          }
+          return false;
+        });
+        const devContainerModule = await import('../devContainerUtils');
+        vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+        (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+          settingName === nodeJsBinaryPathSettingKey ? nodeBinaryNoExe : 'binariesLocation'
+        );
+
+        const result = await binariesExist(nodeJsDependencyName);
+
+        expect(result).toBe(true);
+        expect(updateGlobalSetting).toHaveBeenCalledWith(nodeJsBinaryPathSettingKey, nodeBinaryExe);
+      });
+
+      it('should return true and update setting when .exe variant exists on Windows for FuncCoreTools', async () => {
+        vi.stubGlobal('process', { ...process, platform: 'win32' });
+        const funcFolder = path.join('binariesLocation', funcDependencyName);
+        const funcBinaryNoExe = path.join(funcFolder, 'func');
+        const funcBinaryExe = path.join(funcFolder, 'func.exe');
+
+        (fs.existsSync as Mock).mockImplementation((filePath: string) => {
+          if (filePath === funcFolder) {
+            return true;
+          }
+          if (filePath === funcBinaryExe) {
+            return true;
+          }
+          return false;
+        });
+        const devContainerModule = await import('../devContainerUtils');
+        vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+        (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+          settingName === funcCoreToolsBinaryPathSettingKey ? funcBinaryNoExe : 'binariesLocation'
+        );
+
+        const result = await binariesExist(funcDependencyName);
+
+        expect(result).toBe(true);
+        expect(updateGlobalSetting).toHaveBeenCalledWith(funcCoreToolsBinaryPathSettingKey, funcBinaryExe);
+      });
+
+      it('should return true and update setting when .exe variant exists on Windows for DotNetSDK', async () => {
+        vi.stubGlobal('process', { ...process, platform: 'win32' });
+        const dotnetFolder = path.join('binariesLocation', dotnetDependencyName);
+        const dotnetBinaryNoExe = path.join(dotnetFolder, 'dotnet');
+        const dotnetBinaryExe = path.join(dotnetFolder, 'dotnet.exe');
+
+        (fs.existsSync as Mock).mockImplementation((filePath: string) => {
+          if (filePath === dotnetFolder) {
+            return true;
+          }
+          if (filePath === dotnetBinaryExe) {
+            return true;
+          }
+          return false;
+        });
+        const devContainerModule = await import('../devContainerUtils');
+        vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+        (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+          settingName === dotNetBinaryPathSettingKey ? dotnetBinaryNoExe : 'binariesLocation'
+        );
+
+        const result = await binariesExist(dotnetDependencyName);
+
+        expect(result).toBe(true);
+        expect(updateGlobalSetting).toHaveBeenCalledWith(dotNetBinaryPathSettingKey, dotnetBinaryExe);
+      });
+
+      it('should still return false on Windows when neither base nor .exe variant exists', async () => {
+        vi.stubGlobal('process', { ...process, platform: 'win32' });
+        const funcFolder = path.join('binariesLocation', funcDependencyName);
+        const funcBinaryNoExe = path.join(funcFolder, 'func');
+
+        (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder);
+        const devContainerModule = await import('../devContainerUtils');
+        vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+        (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+          settingName === funcCoreToolsBinaryPathSettingKey ? funcBinaryNoExe : 'binariesLocation'
+        );
+
+        const result = await binariesExist(funcDependencyName);
+
+        expect(result).toBe(false);
+        expect(executeCommand).toHaveBeenCalledWith(
+          ext.outputChannel,
+          undefined,
+          'echo',
+          `FuncCoreTools binary is missing: ${funcBinaryNoExe}`
+        );
+      });
+
+      it('should not try .exe fallback when path already ends with .exe', async () => {
+        vi.stubGlobal('process', { ...process, platform: 'win32' });
+        const funcFolder = path.join('binariesLocation', funcDependencyName);
+        const funcBinaryExe = path.join(funcFolder, 'func.exe');
+
+        (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder);
+        const devContainerModule = await import('../devContainerUtils');
+        vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+        (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+          settingName === funcCoreToolsBinaryPathSettingKey ? funcBinaryExe : 'binariesLocation'
+        );
+
+        const result = await binariesExist(funcDependencyName);
+
+        expect(result).toBe(false);
+        expect(updateGlobalSetting).not.toHaveBeenCalled();
+      });
+
+      it('should not try .exe fallback on non-Windows platforms', async () => {
+        vi.stubGlobal('process', { ...process, platform: 'linux' });
+        const nodeFolder = path.join('binariesLocation', nodeJsDependencyName);
+        const nodeBinaryNoExe = path.join(nodeFolder, 'node');
+
+        (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === nodeFolder);
+        const devContainerModule = await import('../devContainerUtils');
+        vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
+        (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+          settingName === nodeJsBinaryPathSettingKey ? nodeBinaryNoExe : 'binariesLocation'
+        );
+
+        const result = await binariesExist(nodeJsDependencyName);
+
+        expect(result).toBe(false);
+        expect(updateGlobalSetting).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('binariesExistSync', () => {
+    it('should return false when automatic runtime dependencies are disabled', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
+        settingName === autoRuntimeDependenciesValidationAndInstallationSetting ? false : 'binariesLocation'
+      );
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(fs.existsSync).not.toHaveBeenCalled();
+    });
+
+    it('should return false for devContainer workspace regardless of automatic runtime dependency setting', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(true);
+      (getGlobalSetting as Mock).mockReturnValue(true);
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(fs.existsSync).not.toHaveBeenCalled();
+    });
+
+    it('should return true when the configured binary exists', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      const funcFolder = path.join('binariesLocation', funcDependencyName);
+      const funcBinary = path.join(funcFolder, 'func.exe');
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return true;
+        }
+        if (settingName === funcCoreToolsBinaryPathSettingKey) {
+          return funcBinary;
+        }
+        return 'binariesLocation';
+      });
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder || filePath === funcBinary);
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when the dependency folder exists but the configured binary is missing', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      const funcFolder = path.join('binariesLocation', funcDependencyName);
+      const funcBinary = path.join(funcFolder, 'func.exe');
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return true;
+        }
+        if (settingName === funcCoreToolsBinaryPathSettingKey) {
+          return funcBinary;
+        }
+        return 'binariesLocation';
+      });
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder);
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `FuncCoreTools binary is missing: ${funcBinary}`);
+    });
   });
 
   describe('getLatestDotNetVersion', () => {
@@ -377,15 +598,17 @@ describe('binaries', () => {
       expect(result).toBe('6.0.0');
     });
 
-    it('should throw error when api call to get dotnet version fails and return fallback version', async () => {
+    it('should return fallback .NET version without showing an error when GitHub latest-version lookup fails', async () => {
       const showErrorMessage = vi.fn();
-      (axios.get as Mock).mockResolvedValue({ data: [], status: 500 });
+      (axios.get as Mock).mockRejectedValue(new Error('Request failed with status code 403'));
 
       vscode.window.showErrorMessage = showErrorMessage;
 
       const result = await getLatestDotNetVersion(context, majorVersion);
       expect(result).toBe(DependencyVersion.dotnet8);
-      expect(showErrorMessage).toHaveBeenCalled();
+      expect(showErrorMessage).not.toHaveBeenCalled();
+      expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
+      expect(context.telemetry.properties.errorNewestDotNetVersion).toContain('Request failed with status code 403');
     });
 
     it('should return fallback dotnet version when no major version is sent', async () => {
@@ -431,18 +654,19 @@ describe('binaries', () => {
       expect(context.telemetry.properties.latestVersionSource).toBe('github');
     });
 
-    it('should return the fallback Function Core Tools version', async () => {
+    it('should return the fallback Function Core Tools version without showing an error when GitHub lookup fails', async () => {
       const showErrorMessage = vi.fn();
       (isNodeJsInstalled as Mock).mockResolvedValue(false);
-      (axios.get as Mock).mockResolvedValue({ data: [], status: 500 });
+      (axios.get as Mock).mockRejectedValue(new Error('Request failed with status code 403'));
 
       vscode.window.showErrorMessage = showErrorMessage;
 
       const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
 
       expect(result).toBe(DependencyVersion.funcCoreTools);
-      expect(showErrorMessage).toHaveBeenCalled();
+      expect(showErrorMessage).not.toHaveBeenCalled();
       expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
+      expect(context.telemetry.properties.errorLatestFunctionCoretoolsVersion).toContain('Request failed with status code 403');
     });
 
     it('should return the fallback Function Core Tools version when no major version is sent', async () => {
@@ -468,22 +692,36 @@ describe('binaries', () => {
     });
 
     it('should return the latest Node.js version', async () => {
-      const response = [{ tag_name: 'v14.0.0' }];
+      const response = [{ tag_name: 'v14.1.0' }, { tag_name: 'v14.0.0' }];
       (axios.get as any).mockResolvedValue({ data: response, status: 200 });
       const result = await getLatestNodeJsVersion(context, majorVersion);
 
-      expect(result).toBe('14.0.0');
+      expect(result).toBe('14.1.0');
+      expect(context.telemetry.properties.latestVersionSource).toBe('github');
+      expect(context.telemetry.properties.latestNodeJSVersion).toBe('14.1.0');
     });
 
-    it('should throw error when api call to get dotnet version fails', async () => {
+    it('should return the latest Node.js version when requested version includes minor and patch', async () => {
+      const response = [{ tag_name: 'v20.0.0' }, { tag_name: 'v18.20.8' }, { tag_name: 'v18.0.0' }];
+      (axios.get as any).mockResolvedValue({ data: response, status: 200 });
+
+      const result = await getLatestNodeJsVersion(context, '18.0.0');
+
+      expect(result).toBe('18.20.8');
+    });
+
+    it('should return fallback Node.js version without showing an error when latest-version lookups fail', async () => {
       const showErrorMessage = vi.fn();
-      (axios.get as Mock).mockResolvedValue({ data: [], status: 500 });
+      (axios.get as Mock).mockRejectedValue(new Error('Request failed with status code 403'));
 
       vscode.window.showErrorMessage = showErrorMessage;
 
       const result = await getLatestNodeJsVersion(context, majorVersion);
       expect(result).toBe(DependencyVersion.nodeJs);
-      expect(showErrorMessage).toHaveBeenCalled();
+      expect(showErrorMessage).not.toHaveBeenCalled();
+      expect(context.telemetry.properties.latestNodeJSVersion).toBe('fallback');
+      expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
+      expect(context.telemetry.properties.errorLatestNodeJsVersion).toContain('Request failed with status code 403');
     });
 
     it('should return fallback nodejs version when requested version is not found in the list', async () => {
@@ -494,12 +732,14 @@ describe('binaries', () => {
 
       expect(result).toBe(DependencyVersion.nodeJs);
       expect(context.telemetry.properties.latestNodeJSVersion).toBe('fallback-no-match');
+      expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
       expect(context.telemetry.properties.errorLatestNodeJsVersion).toBe('No matching Node JS version found.');
     });
 
     it('should return fallback nodejs version when no major version is sent', async () => {
       const result = await getLatestNodeJsVersion(context);
       expect(result).toBe(DependencyVersion.nodeJs);
+      expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
     });
   });
 

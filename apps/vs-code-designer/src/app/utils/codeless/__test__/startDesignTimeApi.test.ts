@@ -163,10 +163,65 @@ describe('startAllDesignTimeApis', () => {
     vi.mocked(cp.spawn).mockReturnValue({} as any);
     ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '222' });
 
-    stopDesignTimeApi('D:/workspace/app-one');
+    await stopDesignTimeApi('D:/workspace/app-one');
 
     expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '222']);
     expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '111']);
+  });
+
+  it('waits for Windows taskkill callbacks before resolving stopDesignTimeApi', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32' as any);
+    const taskkillCallbacks: Array<() => void> = [];
+    vi.spyOn(cp, 'exec').mockImplementation(((command: string, callback?: cp.ExecException | any) => {
+      taskkillCallbacks.push(() => callback?.(null, '', ''));
+      return {} as cp.ChildProcess;
+    }) as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '222' });
+
+    let resolved = false;
+    const stopPromise = stopDesignTimeApi('D:/workspace/app-one').then(() => {
+      resolved = true;
+    });
+    await Promise.resolve();
+
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 222 /t /f', expect.any(Function));
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 111 /t /f', expect.any(Function));
+    expect(resolved).toBe(false);
+
+    taskkillCallbacks[0]();
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+
+    taskkillCallbacks[1]();
+    await stopPromise;
+    expect(resolved).toBe(true);
+  });
+
+  it('passes string child func pids to taskkill on Windows', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32' as any);
+    vi.spyOn(cp, 'exec').mockImplementation(((_command: string, callback?: cp.ExecException | any) => {
+      callback?.(null, '', '');
+      return {} as cp.ChildProcess;
+    }) as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '12345' });
+
+    await stopDesignTimeApi('D:/workspace/app-one');
+
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 12345 /t /f', expect.any(Function));
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 111 /t /f', expect.any(Function));
+  });
+
+  it('skips taskkill when the tracked pid is undefined on Windows', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32' as any);
+    vi.spyOn(cp, 'exec').mockImplementation(((_command: string, callback?: cp.ExecException | any) => {
+      callback?.(null, '', '');
+      return {} as cp.ChildProcess;
+    }) as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { process: {} as any });
+
+    await expect(stopDesignTimeApi('D:/workspace/app-one')).resolves.toBeUndefined();
+
+    expect(cp.exec).not.toHaveBeenCalled();
   });
 });
 

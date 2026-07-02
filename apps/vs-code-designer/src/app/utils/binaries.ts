@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dotnetDependencyName,
@@ -24,6 +25,7 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies';
+import { isDevContainerWorkspaceSync } from './devContainerUtils';
 import { type DownloadAttemptResult, downloadFileWithVerification as downloadFileWithVerificationCore } from './integrity';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
@@ -37,7 +39,7 @@ import * as vscode from 'vscode';
 
 import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { setFunctionsCommand } from './funcCoreTools/funcVersion';
+import { repairFuncCoreToolsExecutablePermissions, setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
 
 export { useBinariesDependencies } from './runtimeDependencies';
@@ -152,6 +154,7 @@ export async function downloadAndExtractDependency(
           fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
           fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
         }
+        repairFuncCoreToolsExecutablePermissions(targetFolder);
         await setFunctionsCommand();
         await startAllDesignTimeApis();
       }
@@ -260,7 +263,8 @@ export async function downloadFileWithVerification(
 const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, majorVersion: string): Promise<string> => {
   try {
     const response: IGitHubReleaseInfo = await readJsonFromUrl(
-      'https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest'
+      'https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest',
+      { showUserError: false }
     );
     const latestVersion = semver.valid(semver.coerce(response.tag_name));
     context.telemetry.properties.latestVersionSource = 'github';
@@ -320,7 +324,7 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
   context.telemetry.properties.dotNetMajorVersion = majorVersion;
 
   if (majorVersion) {
-    return await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
+    return await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases', { showUserError: false })
       .then((response: IGitHubReleaseInfo[]) => {
         context.telemetry.properties.latestVersionSource = 'github';
         let latestVersion: string | null = null;
@@ -354,28 +358,37 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
   context.telemetry.properties.nodeMajorVersion = majorVersion;
 
   if (majorVersion) {
-    return await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
-      .then((response: IGitHubReleaseInfo[]) => {
-        context.telemetry.properties.latestVersionSource = 'github';
-        for (const releaseInfo of response) {
-          const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
-          context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
-          if (releaseVersion && checkMajorVersion(releaseVersion, majorVersion)) {
-            return releaseVersion;
-          }
-        }
-        context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
-        context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
-        return DependencyVersion.nodeJs;
-      })
-      .catch((error) => {
-        context.telemetry.properties.latestNodeJSVersion = 'fallback';
-        context.telemetry.properties.errorLatestNodeJsVersion = `Error getting latest Node JS version: ${error}`;
-        return DependencyVersion.nodeJs;
+    try {
+      const response: IGitHubReleaseInfo[] = await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases', {
+        showUserError: false,
       });
+      let latestVersion: string | undefined;
+      for (const releaseInfo of response) {
+        const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
+        context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
+        if (releaseVersion && checkMajorVersion(releaseVersion, majorVersion)) {
+          latestVersion = latestVersion && semver.gt(latestVersion, releaseVersion) ? latestVersion : releaseVersion;
+        }
+      }
+      if (latestVersion) {
+        context.telemetry.properties.latestVersionSource = 'github';
+        context.telemetry.properties.latestNodeJSVersion = latestVersion;
+        return latestVersion;
+      }
+      context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
+      context.telemetry.properties.latestVersionSource = 'fallback';
+      context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
+      return DependencyVersion.nodeJs;
+    } catch (error) {
+      context.telemetry.properties.latestNodeJSVersion = 'fallback';
+      context.telemetry.properties.latestVersionSource = 'fallback';
+      context.telemetry.properties.errorLatestNodeJsVersion = `Error getting latest Node JS version from GitHub: ${error}`;
+      return DependencyVersion.nodeJs;
+    }
   }
 
   context.telemetry.properties.latestNodeJSVersion = 'fallback';
+  context.telemetry.properties.latestVersionSource = 'fallback';
   return DependencyVersion.nodeJs;
 }
 
@@ -416,26 +429,58 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
     return false;
   }
 
+  return await binariesExistFromSettings(dependencyName, true);
+}
+
+export function binariesExistSync(dependencyName: string): boolean {
+  if (!useBinariesDependenciesFromSettings()) {
+    return false;
+  }
+
+  return binariesExistFromSettings(dependencyName, false);
+}
+
+function useBinariesDependenciesFromSettings(): boolean {
+  if (isDevContainerWorkspaceSync()) {
+    return false;
+  }
+
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
+  return !!binariesInstallation;
+}
+
+function getExpectedBinaryPath(dependencyName: string): string | undefined {
+  if (dependencyName === funcDependencyName) {
+    return getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  }
+  if (dependencyName === dotnetDependencyName) {
+    return getGlobalSetting<string>(dotNetBinaryPathSettingKey);
+  }
+  if (dependencyName === nodeJsDependencyName) {
+    return getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
+  }
+  return undefined;
+}
+
+async function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: true): Promise<boolean>;
+function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: false): boolean;
+function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: boolean): boolean | Promise<boolean> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   if (!binariesLocation) {
     return false;
   }
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
-  let expectedBinaryPath: string | undefined;
-  if (binariesExist) {
-    if (dependencyName === funcDependencyName) {
-      expectedBinaryPath = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
-    } else if (dependencyName === dotnetDependencyName) {
-      expectedBinaryPath = getGlobalSetting<string>(dotNetBinaryPathSettingKey);
-    } else if (dependencyName === nodeJsDependencyName) {
-      expectedBinaryPath = getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
-    }
-  }
+  const expectedBinaryPath = binariesExist ? getExpectedBinaryPath(dependencyName) : undefined;
 
   executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} Binaries: ${binariesPath}`);
   if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
-    if (await tryRepairWindowsNodeJsBinaryPath(dependencyName, binariesPath, expectedBinaryPath)) {
+    const repairedBinaryPath = getRepairableWindowsBinaryPath(dependencyName, binariesPath, expectedBinaryPath);
+    if (repairedBinaryPath) {
+      if (updateMissingExeSetting) {
+        return updateBinaryPathSetting(dependencyName, repairedBinaryPath).then(() => true);
+      }
+
       return true;
     }
 
@@ -446,41 +491,62 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
   return binariesExist;
 }
 
-async function tryRepairWindowsNodeJsBinaryPath(
-  dependencyName: string,
-  binariesPath: string,
-  expectedBinaryPath: string
-): Promise<boolean> {
-  if (dependencyName !== nodeJsDependencyName || process.platform !== Platform.windows) {
-    return false;
+async function updateBinaryPathSetting(dependencyName: string, binaryPath: string): Promise<void> {
+  if (dependencyName === funcDependencyName) {
+    await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, binaryPath);
+  } else if (dependencyName === dotnetDependencyName) {
+    await updateGlobalSetting<string>(dotNetBinaryPathSettingKey, binaryPath);
+  } else if (dependencyName === nodeJsDependencyName) {
+    await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, binaryPath);
+  }
+
+  executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} binary path updated: ${binaryPath}`);
+}
+
+function getRepairableWindowsBinaryPath(dependencyName: string, binariesPath: string, expectedBinaryPath: string): string | undefined {
+  if (process.platform !== Platform.windows) {
+    return undefined;
+  }
+
+  if (!expectedBinaryPath.toLowerCase().endsWith('.exe')) {
+    const exeVariant = `${expectedBinaryPath}.exe`;
+    if (fs.existsSync(exeVariant)) {
+      return exeVariant;
+    }
+  }
+
+  if (dependencyName !== nodeJsDependencyName) {
+    return undefined;
   }
 
   const nodeCommand = DependencyDefaultPath.node;
   const staleNodePath = path.join(binariesPath, nodeCommand);
   if (path.normalize(expectedBinaryPath).toLowerCase() !== path.normalize(staleNodePath).toLowerCase()) {
-    return false;
+    return undefined;
   }
 
   const nodeExePath = path.join(binariesPath, `${nodeCommand}.exe`);
-  if (!fs.existsSync(nodeExePath)) {
-    return false;
-  }
-
-  await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, nodeExePath);
-  executeCommand(ext.outputChannel, undefined, 'echo', `${nodeJsDependencyName} binary path updated: ${nodeExePath}`);
-  return true;
+  return fs.existsSync(nodeExePath) ? nodeExePath : undefined;
 }
 
-async function readJsonFromUrl(url: string): Promise<any> {
+interface ReadJsonFromUrlOptions {
+  showUserError?: boolean;
+}
+
+async function readJsonFromUrl(url: string, options: ReadJsonFromUrlOptions = {}): Promise<any> {
   try {
     const response = await axios.get(url);
     if (response.status === 200) {
       return response.data;
     }
+
     throw new Error(`Request failed with status: ${response.status}`);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${errorMessage}`);
+    if (options.showUserError ?? true) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${errorMessage}`);
+    }
+
     throw error;
   }
 }
@@ -1027,7 +1093,13 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
  * @returns A boolean indicating whether the major version matches.
  */
 function checkMajorVersion(version: string, majorVersion: string): boolean {
-  return semver.major(version) === Number(majorVersion);
+  const requestedMajorVersion = getMajorVersion(majorVersion);
+  return requestedMajorVersion !== undefined && semver.major(version) === requestedMajorVersion;
+}
+
+function getMajorVersion(version: string): number | undefined {
+  const coercedVersion = semver.coerce(version);
+  return coercedVersion ? semver.major(coercedVersion) : undefined;
 }
 
 /**
