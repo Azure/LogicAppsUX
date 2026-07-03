@@ -14,12 +14,6 @@ import { FunctionFileStep } from '../functionFileStep';
 
 describe('FunctionFileStep', () => {
   describe('csTemplateFileName mapping', () => {
-    it('should map Net10 to FunctionsFileNet10', () => {
-      const step = new FunctionFileStep();
-      const mapping = (step as any).csTemplateFileName;
-      expect(mapping[TargetFramework.Net10]).toBe('FunctionsFileNet10');
-    });
-
     it('should preserve Net8 mapping', () => {
       const step = new FunctionFileStep();
       const mapping = (step as any).csTemplateFileName;
@@ -32,10 +26,10 @@ describe('FunctionFileStep', () => {
       expect(mapping[TargetFramework.NetFx]).toBe('FunctionsFileNetFx');
     });
 
-    it('should contain exactly three framework entries', () => {
+    it('should contain exactly two framework entries', () => {
       const step = new FunctionFileStep();
       const mapping = (step as any).csTemplateFileName;
-      expect(Object.keys(mapping)).toHaveLength(3);
+      expect(Object.keys(mapping)).toHaveLength(2);
     });
   });
 
