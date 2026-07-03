@@ -8,7 +8,7 @@ import { ext } from '../../extensionVariables';
 import { getWorkspaceRoot } from '../utils/workspace';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded, isCodefulProject } from '../utils/codeful';
+import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded, hasCodefulWorkflowSetting } from '../utils/codeful';
 
 /**
  * Optional behaviors for {@link publishCodefulProject}.
@@ -52,7 +52,7 @@ export async function publishCodefulProject(
     return;
   }
 
-  const isCodeful = await isCodefulProject(nodePath);
+  const isCodeful = await hasCodefulWorkflowSetting(nodePath);
   if (!isCodeful) {
     const message = `Skipping publish: Path "${nodePath}" is not a codeful project.`;
     ext.outputChannel.appendLog(message);
