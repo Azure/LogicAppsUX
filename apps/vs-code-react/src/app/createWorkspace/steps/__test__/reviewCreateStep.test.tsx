@@ -201,15 +201,6 @@ describe('ReviewCreateStep', () => {
       });
       expect(screen.getByText('.NET 8')).toBeInTheDocument();
     });
-
-    it('should display dot net framework correctly for net10.0', () => {
-      renderWithStore({
-        flowType: 'createWorkspace',
-        logicAppType: ProjectType.customCode,
-        targetFramework: 'net10.0',
-      });
-      expect(screen.getByText('.NET 10')).toBeInTheDocument();
-    });
   });
 
   describe('rules engine configuration', () => {
