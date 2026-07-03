@@ -106,9 +106,13 @@ describe('DotNetFrameworkStep', () => {
       renderWithStore({ logicAppType: ProjectType.customCode, platform: 'win32' as any });
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
+      // Positive Windows case: the dropdown must expose exactly the three correct options.
       expect(screen.getByText('.NET Framework')).toBeInTheDocument();
       expect(screen.getByText('.NET 8')).toBeInTheDocument();
       expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options).toHaveLength(3);
+      expect(options.map((option) => option.textContent)).toEqual(['.NET Framework', '.NET 8', '.NET 10']);
     });
 
     it('should not render .NET Framework option on non-Windows', () => {
@@ -116,6 +120,28 @@ describe('DotNetFrameworkStep', () => {
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
       expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+    });
+
+    it('should not render .NET Framework option on Linux', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: 'linux' as any });
+      const combobox = screen.getByRole('combobox');
+      fireEvent.click(combobox);
+      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+      expect(screen.getByText('.NET 8')).toBeInTheDocument();
+      expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options.map((option) => option.textContent)).toEqual(['.NET 8', '.NET 10']);
+    });
+
+    it('should not render .NET Framework option when platform is not yet initialized (null)', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: null });
+      const combobox = screen.getByRole('combobox');
+      fireEvent.click(combobox);
+      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+      expect(screen.getByText('.NET 8')).toBeInTheDocument();
+      expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options.map((option) => option.textContent)).toEqual(['.NET 8', '.NET 10']);
     });
   });
 
