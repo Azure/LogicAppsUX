@@ -178,7 +178,7 @@ async function updateNodeJsFromWarning(context: IActionContext, majorVersion: st
       await setNodeJsCommand();
     }
   );
-  await window.showInformationMessage(localize('updatedNodeJsRuntime', 'Node JS runtime dependency update completed.'));
+  ext.outputChannel.appendLog(localize('updatedNodeJsRuntime', 'Node JS runtime dependency update completed.'));
 }
 
 function shouldShowOutdatedNodeJsWarning(localVersion: string, newestVersion: string, targetVersion: string | undefined): boolean {

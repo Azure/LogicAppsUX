@@ -398,13 +398,13 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
 
   if (fromPackage) {
     await logicAppPackageProcessing(mySubContext);
-    vscode.window.showInformationMessage(localize('finishedExtractingPackage', 'Finished extracting package into a logic app workspace.'));
+    ext.outputChannel.appendLog(localize('finishedExtractingPackage', 'Finished extracting package into a logic app workspace.'));
   } else {
     if (webviewProjectContext.logicAppType === ProjectType.customCode || webviewProjectContext.logicAppType === ProjectType.rulesEngine) {
       const createFunctionAppFilesStep = new CreateFunctionAppFiles();
       await createFunctionAppFilesStep.setup(mySubContext);
     }
-    vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+    ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }
 
   await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
@@ -474,5 +474,5 @@ export async function createLogicAppProject(context: IActionContext, options: an
     const createFunctionAppFilesStep = new CreateFunctionAppFiles();
     await createFunctionAppFilesStep.setup(mySubContext);
   }
-  vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+  ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
 }

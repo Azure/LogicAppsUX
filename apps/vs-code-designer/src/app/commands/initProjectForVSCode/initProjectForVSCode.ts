@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { projectLanguageSetting, funcVersionSetting, projectTemplateKeySetting } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { NoWorkspaceError } from '../../utils/errors';
 import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -59,5 +60,5 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
   await wizard.prompt();
   await wizard.execute();
 
-  window.showInformationMessage(localize('finishedInitializing', 'Finished initializing for use with VS Code.'));
+  ext.outputChannel.appendLog(localize('finishedInitializing', 'Finished initializing for use with VS Code.'));
 }

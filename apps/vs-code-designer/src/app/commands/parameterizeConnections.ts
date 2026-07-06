@@ -77,7 +77,7 @@ export async function parameterizeConnections(context: IActionContext, projectPa
 
       if (areAllConnectionsParameterized(connectionsData)) {
         if (showMessage) {
-          window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
+          ext.outputChannel.appendLog(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
         }
         return;
       }

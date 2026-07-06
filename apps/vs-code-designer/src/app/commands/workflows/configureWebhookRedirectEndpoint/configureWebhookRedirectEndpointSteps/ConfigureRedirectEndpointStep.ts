@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import type { IWebhookContext } from '../configureWebhookRedirectEndpoint';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
@@ -19,17 +20,9 @@ export class ConfigureRedirectEndpointStep extends AzureWizardPromptStep<IWebhoo
         prompt: localize('configureWebhookEndpointPrompt', 'Configure host for remote endpoint for webhook operations'),
         value: context.redirectEndpoint,
       });
-      window.showInformationMessage(
-        localize('logicapp.webhookConfigured', 'Host for webhook redirect endpoint is configured successfully for local workflows.')
-      );
-    } catch {
-      window.showInformationMessage(
-        localize(
-          'logicapp.webhookNotConfigured',
-          'Redirect endpoint for webhook is not configured. Webhook actions will not work as expected'
-        ),
-        'OK'
-      );
+      ext.outputChannel.appendLog(localize('logicapp.webhookConfigured', 'Successfully configured host for webhook redirect endpoint for local workflows.'));
+    } catch (error) {
+      window.showWarningMessage(localize('logicapp.webhookNotConfigured', 'Redirect endpoint for webhook is not configured. Webhook actions will not work as expected. Error: "{0}".', error instanceof Error ? error.message : String(error)));
     }
   }
 }
