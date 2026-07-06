@@ -85,7 +85,7 @@ class ExportEngine {
     try {
       this.setFinalStatus(this.finalStatus.InProgress);
       this.addStatus(this.intlText.DOWNLOADING_PACKAGE);
-      ext.logTelemetry(this.context, 'exportLastStep', 'downloadPackage');
+      this.context.telemetry.properties['exportLastStep'] = 'downloadPackage';
       const flatFile = await axios.get(this.packageUrl, {
         responseType: 'arraybuffer',
         responseEncoding: 'binary',
@@ -94,7 +94,7 @@ class ExportEngine {
       const buffer = Buffer.from(flatFile.data);
       this.addStatus(this.intlText.DONE);
       this.addStatus(this.intlText.UNZIP_PACKAGE);
-      ext.logTelemetry(this.context, 'exportLastStep', 'unzipPackage');
+      this.context.telemetry.properties['exportLastStep'] = 'unzipPackage';
       const zip = new AdmZip(buffer);
       zip.extractAllTo(/*target path*/ this.targetDirectory, /*overwrite*/ true);
       this.addStatus(this.intlText.DONE);
@@ -105,14 +105,14 @@ class ExportEngine {
       if (!this.resourceGroupName || !templateExists) {
         this.setFinalStatus(this.finalStatus.Succeeded);
         this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
-        ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
+        this.context.telemetry.properties['exportLastStep'] = 'workflowsExportedSuccessfully';
         const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
         vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, { forceNewWindow: true });
         return;
       }
 
       this.addStatus(this.intlText.DEPLOYING_CONNECTIONS);
-      ext.logTelemetry(this.context, 'exportLastStep', 'deployConnections');
+      this.context.telemetry.properties['exportLastStep'] = 'deployConnections';
 
       const connectionsTemplate = await fse.readJson(templatePath);
       const parametersFile = await fse.readJson(`${this.targetDirectory}/parameters.json`);
@@ -132,13 +132,13 @@ class ExportEngine {
 
       this.setFinalStatus(this.finalStatus.Succeeded);
       this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
-      ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
+      this.context.telemetry.properties['exportLastStep'] = 'workflowsExportedSuccessfully';
       const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
       vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, { forceNewWindow: true });
     } catch (error) {
       this.addStatus(localize('exportFailed', 'Export failed. {0}', error?.message ?? ''));
       this.setFinalStatus(this.finalStatus.Failed);
-      ext.logTelemetry(this.context, 'exportError', error?.message ?? '');
+      this.context.telemetry.properties['exportError'] = error?.message ?? '';
     }
   }
 
@@ -233,7 +233,7 @@ class ExportEngine {
 
   private async fetchConnectionKeys(output: ConnectionsDeploymentOutput): Promise<void> {
     this.addStatus(this.intlText.FETCH_CONNECTION);
-    ext.logTelemetry(this.context, 'exportLastStep', 'retrieveConnectionKeys');
+    this.context.telemetry.properties['exportLastStep'] = 'retrieveConnectionKeys';
     for (const connectionKey of Object.keys(output?.connections?.value || {})) {
       const connectionItem = output.connections.value[connectionKey];
       connectionItem.authKey = await this.getConnectionKey(connectionItem.connectionId);
@@ -289,7 +289,7 @@ class ExportEngine {
     localSettingsFile: any
   ): Promise<void> {
     this.addStatus(this.intlText.UPDATE_FILES);
-    ext.logTelemetry(this.context, 'exportLastStep', 'updatingParametersAndSettings');
+    this.context.telemetry.properties['exportLastStep'] = 'updatingParametersAndSettings';
 
     const { value } = output.connections;
     for (const key of Object.keys(value)) {
@@ -430,7 +430,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
       case ExtensionCommand.logTelemetry: {
         const eventName = message.key;
         ext.telemetryReporter.sendTelemetryEvent(eventName, { value: message.value });
-        ext.logTelemetry(context, eventName, message.value);
+        context.telemetry.properties[eventName] = message.value;
         break;
       }
       default:
