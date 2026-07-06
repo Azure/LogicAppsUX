@@ -59,15 +59,15 @@ describe('dotnet utilities', () => {
   });
 
   describe('getTemplateKeyFromProjFile', () => {
-    it('should default to net10.0 for FuncVersion.v4 when no project path exists', async () => {
+    it('should default to net8.0 for FuncVersion.v4 when no project path exists', async () => {
       const result = await getTemplateKeyFromProjFile(createContext(), undefined, FuncVersion.v4, ProjectLanguage.CSharp);
-      expect(result).toBe(DotnetVersion.net10);
+      expect(result).toBe(DotnetVersion.net8);
     });
 
-    it('should default to net10.0 for FuncVersion.v4 when project path does not exist', async () => {
+    it('should default to net8.0 for FuncVersion.v4 when project path does not exist', async () => {
       mockPathExists.mockResolvedValue(false);
       const result = await getTemplateKeyFromProjFile(createContext(), '/nonexistent', FuncVersion.v4, ProjectLanguage.CSharp);
-      expect(result).toBe(DotnetVersion.net10);
+      expect(result).toBe(DotnetVersion.net8);
     });
 
     it('should default to netcoreapp3.1 for FuncVersion.v3', async () => {

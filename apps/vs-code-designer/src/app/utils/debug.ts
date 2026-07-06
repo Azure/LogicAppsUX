@@ -24,7 +24,7 @@ export function getCustomCodeRuntime(targetFramework: TargetFramework): 'coreclr
 /**
  * Determines whether the given project type and target framework use the modern
  * LogicAppFolderToPublish csproj property (as opposed to the legacy LogicAppFolder).
- * Modern .NET frameworks (Net8, Net10, etc.) use LogicAppFolderToPublish for custom code projects.
+ * Modern .NET frameworks (Net8, etc.) use LogicAppFolderToPublish for custom code projects.
  */
 export function usesPublishFolderProperty(projectType: ProjectType, targetFramework: TargetFramework): boolean {
   return projectType === ProjectType.customCode && targetFramework !== TargetFramework.NetFx;

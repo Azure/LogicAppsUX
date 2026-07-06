@@ -13,7 +13,6 @@ import * as path from 'path';
 export const csTemplateFileNames: Record<string, string> = {
   [TargetFramework.NetFx]: 'FunctionsFileNetFx',
   [TargetFramework.Net8]: 'FunctionsFileNet8',
-  [TargetFramework.Net10]: 'FunctionsFileNet10',
   [ProjectType.rulesEngine]: 'RulesFunctionsFile',
 };
 
@@ -23,7 +22,6 @@ export const csTemplateFileNames: Record<string, string> = {
 export const csprojTemplateFileNames: Record<string, string> = {
   [TargetFramework.NetFx]: 'FunctionsProjNetFx',
   [TargetFramework.Net8]: 'FunctionsProjNet8',
-  [TargetFramework.Net10]: 'FunctionsProjNet10',
   [ProjectType.rulesEngine]: 'RulesFunctionsProj',
 };
 
@@ -67,32 +65,6 @@ export async function createCsFile(
   const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
   const csFileContent = templateContent.replace(/<%= methodName %>/g, methodName).replace(/<%= namespace %>/g, namespace);
   await fs.writeFile(csFilePath, csFileContent);
-}
-
-/**
- * Creates the Program.cs file for .NET 10 isolated worker model.
- * Only generates for .NET 10 custom code projects (not rules engine).
- * @param assetsPath - Base path to the assets directory.
- * @param functionFolderPath - The path to the functions folder.
- * @param namespace - The name of the namespace.
- * @param projectType - The workspace project type.
- * @param targetFramework - The target framework.
- */
-export async function createProgramFile(
-  assetsPath: string,
-  functionFolderPath: string,
-  namespace: string,
-  projectType: ProjectType,
-  targetFramework: TargetFramework
-): Promise<void> {
-  if (targetFramework !== TargetFramework.Net10 || projectType === ProjectType.rulesEngine) {
-    return;
-  }
-
-  const templatePath = path.join(assetsPath, 'FunctionProjectTemplate', 'ProgramFileNet10');
-  const templateContent = await fs.readFile(templatePath, 'utf-8');
-  const content = templateContent.replace(/<%= namespace %>/g, namespace);
-  await fs.writeFile(path.join(functionFolderPath, 'Program.cs'), content);
 }
 
 /**
