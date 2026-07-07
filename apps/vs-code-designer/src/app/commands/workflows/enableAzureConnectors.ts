@@ -10,11 +10,11 @@ import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../../utils/codeless/common';
 import { getWorkspaceFolder } from '../../utils/workspace';
-import { isNullOrEmpty, isString } from '@microsoft/logic-apps-shared';
+import { isString } from '@microsoft/logic-apps-shared';
 import { ext } from '../../../extensionVariables';
 
 /**
@@ -43,7 +43,7 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   if (connectorsContext.enabled) {
     invalidateAzureDetailsCache(projectPath);
     getAzureConnectorDetailsForLocalProject(context, projectPath).catch(() => {});
+    
+    ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
   }
-
-  ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
 }
