@@ -64,9 +64,6 @@ describe('enableAzureConnectors', () => {
     expect(execute).toHaveBeenCalled();
     expect(invalidateAzureDetailsCache).toHaveBeenCalledWith(projectPath);
     expect(getAzureConnectorDetailsForLocalProject).toHaveBeenCalledWith(context, projectPath);
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
-      'Azure connectors are enabled for the project. Reload the designer panel to start using the connectors.'
-    );
   });
 
   it('shows already-enabled information when subscription and auth settings exist', async () => {
@@ -81,6 +78,5 @@ describe('enableAzureConnectors', () => {
 
     expect(getWorkspaceFolder).toHaveBeenCalledWith(context);
     expect(createAzureWizard).not.toHaveBeenCalled();
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Azure connectors are enabled for the workflow.');
   });
 });

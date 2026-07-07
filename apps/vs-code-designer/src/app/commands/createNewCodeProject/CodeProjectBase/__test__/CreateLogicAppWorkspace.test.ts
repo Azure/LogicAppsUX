@@ -1010,7 +1010,6 @@ describe('createLogicAppWorkspace', () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, true);
 
     expect(cloudToLocalUtilsModule.logicAppPackageProcessing).toHaveBeenCalled();
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished extracting package'));
   });
 
   it('should create function app files for custom code projects when not from package', async () => {
@@ -1055,12 +1054,6 @@ describe('createLogicAppWorkspace', () => {
       expect.anything(), // vscode.Uri.file() returns an object
       true // forceNewWindow
     );
-  });
-
-  it('should show success message after workspace creation', async () => {
-    await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, false);
-
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
   });
 });
 

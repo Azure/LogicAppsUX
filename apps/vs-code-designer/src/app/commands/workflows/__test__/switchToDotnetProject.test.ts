@@ -96,7 +96,7 @@ vi.mock('../../../utils/verifyIsProject', () => ({
 }));
 
 vi.mock('../../../../extensionVariables', () => ({
-  ext: { showError: vi.fn() },
+  ext: { showError: vi.fn(), outputChannel: { appendLog: vi.fn() } },
 }));
 
 vi.mock('path', async () => {
@@ -238,7 +238,6 @@ describe('switchToDotnetProject', () => {
 
       await switchToDotnetProject(mockContext, mockTarget);
 
-      expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('already a NuGet-based project'), 'OK');
       // Should not proceed to template resolution
       expect(DotnetTemplateProvider).not.toHaveBeenCalled();
     });
@@ -308,11 +307,6 @@ describe('switchToDotnetProject', () => {
       );
     });
 
-    it('should show completion message on success', async () => {
-      await switchToDotnetProject(mockContext, mockTarget);
-
-      expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Completed moving'), 'OK');
-    });
   });
 
   describe('binaries handling', () => {

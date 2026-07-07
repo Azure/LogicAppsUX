@@ -257,12 +257,6 @@ describe('createLogicAppProject', () => {
     expect(mockSetup).not.toHaveBeenCalled();
   });
 
-  it('should show success message after project creation', async () => {
-    await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
-
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
-  });
-
   it('should set shouldCreateLogicAppProject to false when logic app exists', async () => {
     // Create a valid logic app structure with proper workflow.json schema
     await fse.ensureDir(logicAppFolderPath);

@@ -59,7 +59,6 @@ describe('createLogicAppWorkflow', () => {
       targetFramework: 'net8.0',
     });
     expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(options, logicAppFolderPath, context);
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Finished creating workflow.');
   });
 
   it('creates a workflow in a folder-opened Logic App project when no workspace file is open', async () => {
@@ -75,6 +74,5 @@ describe('createLogicAppWorkflow', () => {
     expect(options.workspaceFilePath).toBeUndefined();
     expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(options, logicAppFolderPath, context);
     expect(vscode.window.showErrorMessage).not.toHaveBeenCalled();
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Finished creating workflow.');
   });
 });

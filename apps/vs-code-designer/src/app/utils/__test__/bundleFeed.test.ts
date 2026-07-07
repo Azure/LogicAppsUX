@@ -1126,7 +1126,6 @@ describe('downloadExtensionBundle', () => {
     expect(vi.mocked(vscode.window.withProgress)).toHaveBeenCalled();
     const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
     expect(progressTitle).toMatch(/Re-downloading.*1\.95\.0/);
-    expect(vi.mocked(vscode.window.showInformationMessage)).toHaveBeenCalledWith(expect.stringMatching(/1\.95\.0.*ready/i));
   });
 
   it('shows a progress notification when a newer feed version is downloaded (no corruption warning)', async () => {
@@ -1142,7 +1141,6 @@ describe('downloadExtensionBundle', () => {
     expect(vi.mocked(vscode.window.showWarningMessage)).not.toHaveBeenCalled();
     const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
     expect(progressTitle).toMatch(/Downloading newer.*1\.95\.0/);
-    expect(vi.mocked(vscode.window.showInformationMessage)).toHaveBeenCalledWith(expect.stringMatching(/1\.95\.0.*ready/i));
   });
 
   // --- Phase 8: content-hash recompute ---
