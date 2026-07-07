@@ -196,17 +196,40 @@ describe('extractFencedCodeBlocks', () => {
     expect(blocks[0].code).toBe('first');
   });
 
-  it('handles pathological unterminated fences in linear time (ReDoS guard)', () => {
+  it('scales linearly, not polynomially, on pathological input (ReDoS guard)', () => {
     // The exact shape flagged by CodeQL js/polynomial-redos: a string starting
     // with '```\n' followed by many repetitions of '```\na' and no closing
-    // fence. A polynomial-time regex scans to the end from every fence start
-    // (O(n^2)); the linear scanner returns almost instantly.
-    const content = `\`\`\`\n${'```\na'.repeat(200000)}`;
-    const start = performance.now();
-    const blocks = extractFencedCodeBlocks(content);
-    const elapsed = performance.now() - start;
+    // fence. A polynomial-time matcher rescans to the end of the string from
+    // every fence start (O(n^2)); the linear scanner walks the input once (O(n)).
+    const build = (reps: number) => `\`\`\`\n${'```\na'.repeat(reps)}`;
+    const small = build(20000);
+    const large = build(200000); // 10x the input size
 
-    expect(blocks).toEqual([]);
-    expect(elapsed).toBeLessThan(1000);
+    // Correctness: an unterminated fence yields no blocks regardless of size.
+    expect(extractFencedCodeBlocks(small)).toEqual([]);
+    expect(extractFencedCodeBlocks(large)).toEqual([]);
+
+    const timePerCall = (content: string, iterations: number) => {
+      const start = performance.now();
+      for (let i = 0; i < iterations; i++) {
+        extractFencedCodeBlocks(content);
+      }
+      return (performance.now() - start) / iterations;
+    };
+
+    // Warm up (JIT) so neither size is unfairly penalized by first-call cost.
+    timePerCall(small, 5);
+    timePerCall(large, 5);
+
+    const smallTime = timePerCall(small, 20);
+    const largeTime = timePerCall(large, 20);
+
+    // Input grows 10x. A linear scan costs ~10x more; the O(n^2) regex would
+    // cost ~100x more. Asserting the ratio (rather than an absolute wall-clock
+    // bound) keeps the test independent of runner speed/contention while still
+    // catching polynomial blow-up. The generous 30x ceiling leaves ample
+    // headroom above the ~10x linear expectation and well below ~100x quadratic.
+    const ratio = largeTime / Math.max(smallTime, 0.01);
+    expect(ratio).toBeLessThan(30);
   });
 });
