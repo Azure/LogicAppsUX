@@ -107,12 +107,14 @@ export function useFrameBlade({
           break;
 
         case 'authToken': {
-          // Guard clause: reject malformed auth-token messages up front. The
-          // security decision for accepting a token is the trusted-origin check
-          // performed above (evt.origin vs. the allow-list-validated
-          // trustedParentOrigin) - not the message payload itself. Validating
-          // the payload here with an early return keeps the sensitive token
-          // hand-off from being gated on attacker-controllable message data.
+          // The trust decision has already been made above: messages are only
+          // processed if they come from the allow-list-validated
+          // trustedParentOrigin (evt.origin check) and carry the FxFrameBlade
+          // signature. This block adds payload validation - the token must be a
+          // non-empty string and a handler must be present - expressed as an
+          // early-return guard clause. The guard-clause shape (validate, then
+          // return early) is also what CodeQL's ConditionalBypass query treats
+          // as a safe early-abort guard rather than a user-controlled bypass.
           if (!onAuthTokenReceived || typeof msg.data !== 'string' || msg.data.length === 0) {
             return;
           }
