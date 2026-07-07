@@ -92,6 +92,61 @@ marked.use({
   },
 });
 
+interface FencedCodeBlock {
+  index: number;
+  endIndex: number;
+  language: string;
+  code: string;
+}
+
+// Extract fenced code blocks (```lang\n...\n```) using a single linear scan.
+// This intentionally avoids a lazy `([\s\S]*?)` regular expression, which runs
+// in polynomial time (ReDoS) on untrusted content containing many unterminated
+// code fences. `String.indexOf` keeps the whole pass linear in the input length.
+// Exported for unit testing of the ReDoS-safe extraction.
+export function extractFencedCodeBlocks(content: string): FencedCodeBlock[] {
+  const blocks: FencedCodeBlock[] = [];
+  const fence = '```';
+  let searchFrom = 0;
+
+  while (searchFrom < content.length) {
+    const fenceStart = content.indexOf(fence, searchFrom);
+    if (fenceStart === -1) {
+      break;
+    }
+
+    // The opening fence's info string (language) runs up to the next newline.
+    const infoEnd = content.indexOf('\n', fenceStart + fence.length);
+    if (infoEnd === -1) {
+      break;
+    }
+
+    // A valid opening fence only carries word characters as its language.
+    const language = content.slice(fenceStart + fence.length, infoEnd);
+    if (!/^\w*$/.test(language)) {
+      searchFrom = fenceStart + 1;
+      continue;
+    }
+
+    const codeStart = infoEnd + 1;
+    const closingFence = content.indexOf(`\n${fence}`, codeStart);
+    if (closingFence === -1) {
+      break;
+    }
+
+    const endIndex = closingFence + 1 + fence.length;
+    blocks.push({
+      index: fenceStart,
+      endIndex,
+      language,
+      code: content.slice(codeStart, closingFence),
+    });
+    searchFrom = endIndex;
+  }
+
+  return blocks;
+}
+
 const useStyles = makeStyles({
   '@keyframes fadeIn': {
     '0%': { opacity: 0, transform: 'translateY(10px)' },
@@ -446,9 +501,9 @@ function MessageComponent({
       let contentToDownload = message.metadata?.rawContent;
 
       if (!contentToDownload) {
-        const codeBlockMatch = message.content.match(/```[\w]*\n([\s\S]*?)\n```/);
-        if (codeBlockMatch) {
-          contentToDownload = codeBlockMatch[1];
+        const codeBlocks = extractFencedCodeBlocks(message.content);
+        if (codeBlocks.length > 0) {
+          contentToDownload = codeBlocks[0].code;
         } else {
           contentToDownload = message.content.replace(/^\*\*.*?\*\*\n\n/, '');
         }
@@ -527,15 +582,15 @@ function MessageComponent({
     // For regular markdown content, we need to parse and render code blocks with headers
     const processedContent = useMemo(() => {
       // Extract code blocks and render them separately
-      const codeBlockRegex = /```(\w*)\n([\s\S]*?)\n```/g;
+      const content = message.content;
+      const codeBlocks = extractFencedCodeBlocks(content);
       let lastIndex = 0;
       const elements: React.ReactNode[] = [];
-      let match;
 
-      while ((match = codeBlockRegex.exec(message.content)) !== null) {
+      for (const block of codeBlocks) {
         // Add content before the code block
-        if (match.index > lastIndex) {
-          const textContent = message.content.slice(lastIndex, match.index);
+        if (block.index > lastIndex) {
+          const textContent = content.slice(lastIndex, block.index);
           const html = sanitizeHtml(marked.parse(textContent, { gfm: true, breaks: true }) as string);
           elements.push(
             <div key={`text-${lastIndex}`} dangerouslySetInnerHTML={{ __html: html }} />
@@ -543,8 +598,8 @@ function MessageComponent({
         }
 
         // Add the code block with header
-        const language = match[1] || '';
-        const code = match[2];
+        const language = block.language;
+        const code = block.code;
         let highlighted = code;
 
         if (language && Prism.languages[language]) {
@@ -556,7 +611,7 @@ function MessageComponent({
         }
 
         elements.push(
-          <div key={`code-${match.index}`} className={styles.codeBlockWrapper}>
+          <div key={`code-${block.index}`} className={styles.codeBlockWrapper}>
             <CodeBlockHeader language={language} code={code} />
             <div className={styles.codeBlockContent}>
               <pre>
@@ -569,19 +624,19 @@ function MessageComponent({
           </div>
         );
 
-        lastIndex = match.index + match[0].length;
+        lastIndex = block.endIndex;
       }
 
       // Add any remaining content after the last code block
-      if (lastIndex < message.content.length) {
-        const remainingContent = message.content.slice(lastIndex);
+      if (lastIndex < content.length) {
+        const remainingContent = content.slice(lastIndex);
         const html = sanitizeHtml(marked.parse(remainingContent, { gfm: true, breaks: true }) as string);
         elements.push(<div key={`text-${lastIndex}`} dangerouslySetInnerHTML={{ __html: html }} />);
       }
 
       // If no code blocks were found, just return the parsed markdown
       if (elements.length === 0) {
-        const html = sanitizeHtml(marked.parse(message.content, { gfm: true, breaks: true }) as string);
+        const html = sanitizeHtml(marked.parse(content, { gfm: true, breaks: true }) as string);
         return <div dangerouslySetInnerHTML={{ __html: html }} />;
       }
 

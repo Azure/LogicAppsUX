@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import '@testing-library/jest-dom';
-import { Message } from '../Message';
+import { Message, extractFencedCodeBlocks } from '../Message';
 import type { Message as MessageType } from '../../../types';
 
 // Mock clipboard API
@@ -137,5 +137,76 @@ greeting = "Hello"
 
     // Check for copy button
     expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
+  });
+
+  it('should render text that follows a code block', () => {
+    const message: MessageType = {
+      id: '1',
+      content: '```javascript\nconst x = 1;\n```\n\nTrailing explanation text.',
+      sender: 'assistant',
+      timestamp: new Date(),
+      status: 'sent',
+    };
+
+    render(<Message message={message} />);
+
+    // The code block header is rendered...
+    expect(screen.getByText('javascript')).toBeInTheDocument();
+    // ...and the text after the closing fence is preserved.
+    expect(screen.getByText('Trailing explanation text.')).toBeInTheDocument();
+  });
+});
+
+describe('extractFencedCodeBlocks', () => {
+  it('extracts a single code block with language', () => {
+    const blocks = extractFencedCodeBlocks('```javascript\nconst x = 1;\n```');
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].language).toBe('javascript');
+    expect(blocks[0].code).toBe('const x = 1;');
+    expect(blocks[0].index).toBe(0);
+  });
+
+  it('extracts a code block without a language', () => {
+    const blocks = extractFencedCodeBlocks('```\nplain code\n```');
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].language).toBe('');
+    expect(blocks[0].code).toBe('plain code');
+  });
+
+  it('extracts multiple code blocks with the text between them intact', () => {
+    const content = 'intro\n```js\na();\n```\nmiddle\n```py\nb()\n```';
+    const blocks = extractFencedCodeBlocks(content);
+    expect(blocks.map((b) => b.language)).toEqual(['js', 'py']);
+    expect(blocks.map((b) => b.code)).toEqual(['a();', 'b()']);
+    // The gap between the two blocks maps back to the original 'middle' text.
+    expect(content.slice(blocks[0].endIndex, blocks[1].index)).toBe('\nmiddle\n');
+  });
+
+  it('ignores an unterminated fence', () => {
+    expect(extractFencedCodeBlocks('```js\nno closing fence here')).toEqual([]);
+  });
+
+  it('does not treat a fence with a non-word info string as an opening', () => {
+    // The original regex required the language to be word characters only.
+    expect(extractFencedCodeBlocks('```not a lang\ncode\n```')).toEqual([]);
+  });
+
+  it('stops the first code block at the first closing fence (lazy match parity)', () => {
+    const blocks = extractFencedCodeBlocks('```\nfirst\n```\nsecond\n```');
+    expect(blocks[0].code).toBe('first');
+  });
+
+  it('handles pathological unterminated fences in linear time (ReDoS guard)', () => {
+    // The exact shape flagged by CodeQL js/polynomial-redos: a string starting
+    // with '```\n' followed by many repetitions of '```\na' and no closing
+    // fence. A polynomial-time regex scans to the end from every fence start
+    // (O(n^2)); the linear scanner returns almost instantly.
+    const content = `\`\`\`\n${'```\na'.repeat(200000)}`;
+    const start = performance.now();
+    const blocks = extractFencedCodeBlocks(content);
+    const elapsed = performance.now() - start;
+
+    expect(blocks).toEqual([]);
+    expect(elapsed).toBeLessThan(1000);
   });
 });
