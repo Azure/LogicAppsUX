@@ -3,6 +3,8 @@
  * Handles token refresh, login popup, and logout scenarios when 401 errors occur
  */
 
+import { ALLOWED_LOGIC_APPS_DOMAINS } from './utils/trusted-domains';
+
 // ============================================================================
 // Types & Interfaces
 // ============================================================================
@@ -41,8 +43,8 @@ export interface AuthHandlerConfig {
 export interface LoginPopupOptions {
   /** Base URL of the App Service */
   baseUrl: string;
-  /** Path to the sign-in endpoint */
-  signInEndpoint?: string;
+  /** Path to the sign-in endpoint (e.g. `/.auth/login/aad`) */
+  signInEndpoint: string;
   /** URL to redirect to after successful login (relative to baseUrl) */
   postLoginRedirectUri?: string;
   /** Callback when login completes successfully, receives auth information including username */
@@ -203,13 +205,6 @@ export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation>
 // ============================================================================
 
 /**
- * Trusted Microsoft Logic Apps domains that the login popup is allowed to navigate to
- * in addition to the hosting page's own origin. Kept in sync with the agent card
- * allowlist in `config-parser.ts`.
- */
-const ALLOWED_LOGIN_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];
-
-/**
  * Normalizes and validates a login popup URL to prevent client-side open-redirect
  * (a.k.a. `window.open` hijacking). The URL — which is built from the potentially
  * user-influenced `baseUrl`/`signInEndpoint` values — is parsed into a `URL` object
@@ -222,6 +217,13 @@ function getValidatedLoginUrl(loginUrl: string): string | null {
   try {
     parsed = new URL(loginUrl);
   } catch {
+    return null;
+  }
+
+  // Reject URLs that embed userinfo (https://user:pass@host/...). Even when the
+  // host is trusted, this pattern is a common URL-spoofing vector and is never
+  // needed for EasyAuth login popups.
+  if (parsed.username !== '' || parsed.password !== '') {
     return null;
   }
 
@@ -245,7 +247,7 @@ function getValidatedLoginUrl(loginUrl: string): string | null {
   }
 
   // Otherwise the host must belong to a trusted Microsoft Logic Apps domain.
-  const isTrustedDomain = ALLOWED_LOGIN_DOMAINS.some((domain) => hostname === domain.slice(1) || hostname.endsWith(domain));
+  const isTrustedDomain = ALLOWED_LOGIC_APPS_DOMAINS.some((domain) => hostname === domain.slice(1) || hostname.endsWith(domain));
 
   return isTrustedDomain ? parsed.href : null;
 }

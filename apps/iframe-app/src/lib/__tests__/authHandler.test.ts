@@ -377,6 +377,20 @@ describe('authHandler', () => {
       expect(onFailed).toHaveBeenCalledWith(expect.any(Error));
     });
 
+    it('should block a login popup URL that embeds userinfo even on a trusted host', () => {
+      const onFailed = vi.fn();
+
+      // Trusted host, but the embedded userinfo is a spoofing vector and must be rejected.
+      openLoginPopup({
+        baseUrl: 'https://user:pass@contoso.logic.azure.com',
+        signInEndpoint: '/.auth/login/aad',
+        onFailed,
+      });
+
+      expect(mockWindowOpen).not.toHaveBeenCalled();
+      expect(onFailed).toHaveBeenCalledWith(expect.any(Error));
+    });
+
     it('should block a non-https login popup URL on a non-localhost host', () => {
       const onFailed = vi.fn();
 
