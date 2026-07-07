@@ -106,11 +106,19 @@ export function useFrameBlade({
           }
           break;
 
-        case 'authToken':
-          if (msg.data && onAuthTokenReceived) {
-            onAuthTokenReceived(msg.data);
+        case 'authToken': {
+          // Guard clause: reject malformed auth-token messages up front. The
+          // security decision for accepting a token is the trusted-origin check
+          // performed above (evt.origin vs. the allow-list-validated
+          // trustedParentOrigin) - not the message payload itself. Validating
+          // the payload here with an early return keeps the sensitive token
+          // hand-off from being gated on attacker-controllable message data.
+          if (!onAuthTokenReceived || typeof msg.data !== 'string' || msg.data.length === 0) {
+            return;
           }
+          onAuthTokenReceived(msg.data);
           break;
+        }
 
         case 'chatHistory':
           // Handle chat history data from parent blade
