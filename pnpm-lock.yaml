@@ -348,8 +348,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       axios:
-        specifier: 1.15.0
-        version: 1.15.0(debug@4.4.3)
+        specifier: 1.16.0
+        version: 1.16.0(debug@4.4.3)
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -618,8 +618,8 @@ importers:
         specifier: ^0.5.10
         version: 0.5.12
       axios:
-        specifier: 1.15.0
-        version: 1.15.0(debug@4.4.3)
+        specifier: 1.16.0
+        version: 1.16.0(debug@4.4.3)
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -1655,8 +1655,8 @@ importers:
         specifier: ^0.0.37
         version: 0.0.37
       axios:
-        specifier: 1.15.0
-        version: 1.15.0(debug@4.4.3)
+        specifier: 1.16.0
+        version: 1.16.0(debug@4.4.3)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -2009,6 +2009,7 @@ packages:
 
   '@azure/ms-rest-azure-env@2.0.0':
     resolution: {integrity: sha512-dG76W7ElfLi+fbTjnZVGj+M9e0BIEJmRxU6fHaUQ12bZBe8EJKYb2GV50YWNaP2uJiVQ5+7nXEVj1VN1UQtaEw==}
+    deprecated: This package has been deprecated. new Azure Management SDK package from [Azure SDK for JavaScript](https://github.com/azure/azure-sdk-for-js) now have the cloud settings built-in, [for example](https://github.com/Azure/azure-sdk-for-js/blob/dc5f9743b05ea78f938eba31cbe704150889490c/sdk/sql/arm-sql/src/static-helpers/cloudSettingHelpers.ts).
 
   '@azure/msal-browser@3.26.1':
     resolution: {integrity: sha512-y78sr9g61aCAH9fcLO1um+oHFXc1/5Ap88RIsUSuzkm0BHzFnN+PXGaQeuM1h5Qf5dTnWNOd6JqkskkMPAhh7Q==}
@@ -3148,6 +3149,9 @@ packages:
   '@babel/runtime@7.29.2':
     resolution: {integrity: sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==}
     engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@8.0.0':
+    resolution: {integrity: sha512-sL6cvO2IfkSu/iU+zs2S/w01B7A8V7suXSIKEN4hPFFdZoiPGxrj5pAG0lCaqLWiEIrjKzdznIWuaLcxPR53qw==}
 
   '@babel/template@7.27.2':
     resolution: {integrity: sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==}
@@ -7319,9 +7323,6 @@ packages:
   axios-retry@3.9.1:
     resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
 
-  axios@1.15.0:
-    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
-
   axios@1.16.0:
     resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
 
@@ -9342,15 +9343,6 @@ packages:
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
 
-  follow-redirects@1.15.11:
-    resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-
   follow-redirects@1.16.0:
     resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
     engines: {node: '>=4.0'}
@@ -9408,8 +9400,8 @@ packages:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
 
-  form-data@4.0.5:
-    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
+  form-data@4.0.6:
+    resolution: {integrity: sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==}
     engines: {node: '>= 6'}
 
   format@0.2.2:
@@ -9742,6 +9734,10 @@ packages:
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
+    engines: {node: '>= 0.4'}
+
+  hasown@2.0.4:
+    resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
 
   hast-util-from-parse5@8.0.1:
@@ -16931,6 +16927,8 @@ snapshots:
 
   '@babel/runtime@7.29.2': {}
 
+  '@babel/runtime@8.0.0': {}
+
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -22714,7 +22712,7 @@ snapshots:
       cheerio: 1.0.0-rc.12
       cockatiel: 3.2.1
       commander: 12.1.0
-      form-data: 4.0.5
+      form-data: 4.0.6
       glob: 11.0.3
       hosted-git-info: 4.1.0
       jsonc-parser: 3.2.1
@@ -23189,18 +23187,10 @@ snapshots:
       '@babel/runtime': 7.27.6
       is-retry-allowed: 2.2.0
 
-  axios@1.15.0(debug@4.4.3):
-    dependencies:
-      follow-redirects: 1.15.11(debug@4.4.3)
-      form-data: 4.0.5
-      proxy-from-env: 2.1.0
-    transitivePeerDependencies:
-      - debug
-
   axios@1.16.0(debug@4.4.3):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3)
-      form-data: 4.0.5
+      form-data: 4.0.6
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -24674,7 +24664,7 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)):
     dependencies:
       '@docusaurus/core': 3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
-      axios: 1.15.0(debug@4.4.3)
+      axios: 1.16.0(debug@4.4.3)
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5
@@ -24691,7 +24681,7 @@ snapshots:
 
   dom-helpers@5.2.1:
     dependencies:
-      '@babel/runtime': 7.29.2
+      '@babel/runtime': 8.0.0
       csstype: 3.2.3
 
   dom-serializer@1.4.1:
@@ -24869,7 +24859,7 @@ snapshots:
       has-property-descriptors: 1.0.2
       has-proto: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.2
+      hasown: 2.0.4
       internal-slot: 1.1.0
       is-array-buffer: 3.0.4
       is-callable: 1.2.7
@@ -24920,7 +24910,7 @@ snapshots:
       has-property-descriptors: 1.0.2
       has-proto: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.2
+      hasown: 2.0.4
       internal-slot: 1.1.0
       is-array-buffer: 3.0.5
       is-callable: 1.2.7
@@ -24989,15 +24979,15 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.2
+      hasown: 2.0.4
 
   es-shim-unscopables@1.0.2:
     dependencies:
-      hasown: 2.0.2
+      hasown: 2.0.4
 
   es-shim-unscopables@1.1.0:
     dependencies:
-      hasown: 2.0.2
+      hasown: 2.0.4
 
   es-to-primitive@1.2.1:
     dependencies:
@@ -25743,10 +25733,6 @@ snapshots:
 
   flatted@3.3.3: {}
 
-  follow-redirects@1.15.11(debug@4.4.3):
-    optionalDependencies:
-      debug: 4.4.3(supports-color@8.1.1)
-
   follow-redirects@1.16.0(debug@4.4.3):
     optionalDependencies:
       debug: 4.4.3(supports-color@8.1.1)
@@ -25807,12 +25793,12 @@ snapshots:
       combined-stream: 1.0.8
       mime-types: 2.1.35
 
-  form-data@4.0.5:
+  form-data@4.0.6:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
+      hasown: 2.0.4
       mime-types: 2.1.35
 
   format@0.2.2: {}
@@ -25885,7 +25871,7 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       functions-have-names: 1.2.3
-      hasown: 2.0.2
+      hasown: 2.0.4
       is-callable: 1.2.7
 
   functions-have-names@1.2.3: {}
@@ -25914,7 +25900,7 @@ snapshots:
       get-proto: 1.0.1
       gopd: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.2
+      hasown: 2.0.4
       math-intrinsics: 1.1.0
 
   get-own-enumerable-property-symbols@3.0.2: {}
@@ -26200,6 +26186,10 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
+  hasown@2.0.4:
+    dependencies:
+      function-bind: 1.1.2
+
   hast-util-from-parse5@8.0.1:
     dependencies:
       '@types/hast': 3.0.4
@@ -26311,7 +26301,7 @@ snapshots:
 
   history@5.3.0:
     dependencies:
-      '@babel/runtime': 7.29.2
+      '@babel/runtime': 8.0.0
 
   hmac-drbg@1.0.1:
     dependencies:
@@ -26458,7 +26448,7 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.11(debug@4.4.3)
+      follow-redirects: 1.16.0(debug@4.4.3)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -26584,7 +26574,7 @@ snapshots:
   internal-slot@1.1.0:
     dependencies:
       es-errors: 1.3.0
-      hasown: 2.0.2
+      hasown: 2.0.4
       side-channel: 1.1.0
 
   internmap@1.0.1: {}
@@ -26810,7 +26800,7 @@ snapshots:
       call-bound: 1.0.4
       gopd: 1.2.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.2
+      hasown: 2.0.4
 
   is-regexp@1.0.0: {}
 
@@ -29798,7 +29788,7 @@ snapshots:
 
   react-virtualized@9.22.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.29.2
+      '@babel/runtime': 8.0.0
       clsx: 1.2.1
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
@@ -31950,7 +31940,7 @@ snapshots:
 
   vite-plugin-mkcert@1.17.8(vite@6.4.2(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)):
     dependencies:
-      axios: 1.15.0(debug@4.4.3)
+      axios: 1.16.0(debug@4.4.3)
       debug: 4.4.3(supports-color@8.1.1)
       picocolors: 1.1.1
       vite: 6.4.2(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(terser@5.30.2)(yaml@2.8.3)
