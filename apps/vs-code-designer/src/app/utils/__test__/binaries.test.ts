@@ -18,6 +18,11 @@ import {
   getDotNetBinariesReleaseUrl,
   getCpuArchitecture,
   getDependencyTimeout,
+  getNodeJsSha256,
+  getFuncCoreToolsSha256,
+  computeFileSha256,
+  verifyDependencyIntegrity,
+  writeDependencyIntegrityManifest,
   installBinaries,
   useBinariesDependencies,
   removeWithLockWait,
@@ -1190,6 +1195,240 @@ describe('binaries', () => {
       const zip = new AdmZip(emptyZipPath);
 
       expect(() => verifyExtractedZip(zip, extractDir)).not.toThrow();
+    });
+  });
+
+  describe('getNodeJsSha256', () => {
+    let context: IActionContext;
+
+    beforeEach(() => {
+      context = { telemetry: { properties: {} } } as IActionContext;
+    });
+
+    it('returns the checksum for the matching artifact file name', async () => {
+      const artifactFileName = 'node-v20.19.4-win-x64.zip';
+      const expectedHash = '1bf83e5958157d13673507349238236aec4f6efc95cf426cbe126a999a3e4c0b';
+      (axios.get as Mock).mockResolvedValue({
+        data: `deadbeef${'0'.repeat(56)}  node-v20.19.4-linux-x64.tar.gz\n${expectedHash}  ${artifactFileName}\n`,
+      });
+
+      const result = await getNodeJsSha256(context, '20.19.4', artifactFileName);
+
+      expect(result).toBe(expectedHash);
+      expect(context.telemetry.properties.nodeJsChecksumResolved).toBe('true');
+      expect(axios.get).toHaveBeenCalledWith('https://nodejs.org/dist/v20.19.4/SHASUMS256.txt', expect.any(Object));
+    });
+
+    it('returns undefined when the artifact is not listed', async () => {
+      (axios.get as Mock).mockResolvedValue({ data: `${'a'.repeat(64)}  node-v20.19.4-linux-x64.tar.gz\n` });
+
+      const result = await getNodeJsSha256(context, '20.19.4', 'node-v20.19.4-win-x64.zip');
+
+      expect(result).toBeUndefined();
+      expect(context.telemetry.properties.nodeJsChecksumResolved).toBe('false');
+    });
+
+    it('returns undefined when the checksum source is unreachable', async () => {
+      (axios.get as Mock).mockRejectedValue(new Error('network down'));
+
+      const result = await getNodeJsSha256(context, '20.19.4', 'node-v20.19.4-win-x64.zip');
+
+      expect(result).toBeUndefined();
+      expect(context.telemetry.properties.nodeJsChecksumResolved).toBe('false');
+      expect(context.telemetry.properties.nodeJsChecksumError).toContain('network down');
+    });
+  });
+
+  describe('getFuncCoreToolsSha256', () => {
+    let context: IActionContext;
+
+    beforeEach(() => {
+      context = { telemetry: { properties: {} } } as IActionContext;
+    });
+
+    it('returns the checksum from the .sha2 sidecar', async () => {
+      const downloadUrl =
+        'https://github.com/Azure/azure-functions-core-tools/releases/download/4.12.1/Azure.Functions.Cli.win-x64.4.12.1.zip';
+      const expectedHash = 'dcad8149f8a7ab6020d47476d23e61e56550a3a2aef3c5ca1c37743e2fad446b';
+      (axios.get as Mock).mockResolvedValue({ data: `${expectedHash}\n` });
+
+      const result = await getFuncCoreToolsSha256(context, downloadUrl);
+
+      expect(result).toBe(expectedHash);
+      expect(context.telemetry.properties.funcChecksumResolved).toBe('true');
+      expect(axios.get).toHaveBeenCalledWith(`${downloadUrl}.sha2`, expect.any(Object));
+    });
+
+    it('returns undefined when the sidecar has no checksum', async () => {
+      (axios.get as Mock).mockResolvedValue({ data: 'not-a-hash' });
+
+      const result = await getFuncCoreToolsSha256(context, 'https://example.com/func.zip');
+
+      expect(result).toBeUndefined();
+      expect(context.telemetry.properties.funcChecksumResolved).toBe('false');
+    });
+
+    it('returns undefined when the sidecar request fails', async () => {
+      (axios.get as Mock).mockRejectedValue(new Error('404 not found'));
+
+      const result = await getFuncCoreToolsSha256(context, 'https://example.com/func.zip');
+
+      expect(result).toBeUndefined();
+      expect(context.telemetry.properties.funcChecksumResolved).toBe('false');
+      expect(context.telemetry.properties.funcChecksumError).toContain('404');
+    });
+  });
+
+  describe('computeFileSha256', () => {
+    it('computes the streamed SHA256 hex digest of a file', async () => {
+      const readable = new EventEmitter();
+      (fs.createReadStream as Mock).mockReturnValue(readable);
+
+      const promise = computeFileSha256('/tmp/file.zip');
+      readable.emit('data', Buffer.from('hello world'));
+      readable.emit('end');
+
+      // SHA256 of "hello world"
+      await expect(promise).resolves.toBe('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9');
+    });
+  });
+
+  describe('verifyDependencyIntegrity', () => {
+    let context: IActionContext;
+
+    beforeEach(() => {
+      context = { telemetry: { properties: {} } } as IActionContext;
+      (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
+    });
+
+    it('returns true when every manifest file exists with the recorded size', () => {
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: 2,
+        files: [
+          { path: 'func.exe', size: 100 },
+          { path: 'in-proc8/func.dll', size: 200 },
+        ],
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.statSync as Mock).mockImplementation((filePath: string) => ({
+        size: filePath.endsWith('func.exe') ? 100 : 200,
+      }));
+
+      const result = verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
+    });
+
+    it('returns false and schedules reinstall when the manifest is missing', () => {
+      (fs.existsSync as Mock).mockReturnValue(false);
+
+      const result = verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('manifest-missing');
+    });
+
+    it('returns false when a recorded file is missing on disk', () => {
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: 1,
+        files: [{ path: 'in-proc8/func.dll', size: 200 }],
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.statSync as Mock).mockImplementation(() => {
+        throw new Error('ENOENT');
+      });
+
+      const result = verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('file-missing');
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityMissingFile).toBe('in-proc8/func.dll');
+    });
+
+    it('returns false when a recorded file has a different size', () => {
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: 1,
+        files: [{ path: 'func.exe', size: 100 }],
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.statSync as Mock).mockReturnValue({ size: 999 });
+
+      const result = verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
+    });
+
+    it('returns false when the manifest is not valid JSON', () => {
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue('not-json');
+
+      const result = verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('error');
+    });
+  });
+
+  describe('writeDependencyIntegrityManifest', () => {
+    let context: IActionContext;
+
+    beforeEach(() => {
+      context = { telemetry: { properties: {} } } as IActionContext;
+    });
+
+    it('writes a manifest listing every extracted file and its size', () => {
+      const targetFolder = path.join('binariesLocation', funcDependencyName);
+      (fs.readdirSync as Mock).mockImplementation((dir: string) => {
+        if (dir === targetFolder) {
+          return [
+            { name: 'func.exe', isDirectory: () => false, isFile: () => true },
+            { name: 'in-proc8', isDirectory: () => true, isFile: () => false },
+          ];
+        }
+        return [{ name: 'func.dll', isDirectory: () => false, isFile: () => true }];
+      });
+      (fs.statSync as Mock).mockImplementation((filePath: string) => ({
+        size: filePath.endsWith('func.exe') ? 100 : 200,
+      }));
+
+      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        path.join(targetFolder, '.logicapps-integrity.json'),
+        expect.stringContaining('func.exe')
+      );
+      const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
+      expect(written.fileCount).toBe(2);
+      expect(written.files).toEqual(
+        expect.arrayContaining([
+          { path: 'func.exe', size: 100 },
+          { path: 'in-proc8/func.dll', size: 200 },
+        ])
+      );
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('true');
+    });
+
+    it('records telemetry but does not throw when writing the manifest fails', () => {
+      const targetFolder = path.join('binariesLocation', funcDependencyName);
+      (fs.readdirSync as Mock).mockReturnValue([]);
+      (fs.writeFileSync as Mock).mockImplementation(() => {
+        throw new Error('disk full');
+      });
+
+      expect(() => writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName)).not.toThrow();
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('false');
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestError).toContain('disk full');
     });
   });
 });

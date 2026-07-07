@@ -10,6 +10,7 @@ vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
   binariesExist: vi.fn(),
   getLatestFunctionCoreToolsVersion: vi.fn(),
+  verifyDependencyIntegrity: vi.fn(),
   installBinaries: vi.fn(),
   getCpuArchitecture: vi.fn(),
 }));

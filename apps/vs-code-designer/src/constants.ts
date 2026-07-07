@@ -277,6 +277,14 @@ export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValid
 export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
+// Max time (ms) to wait for a dependency metadata/HTTP response (e.g. latest version lookups)
+// before failing fast and falling back to a bundled default version. Prevents activation from
+// hanging on "Validating Runtime Dependency: NodeJS" when a version-lookup request stalls.
+export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
+// File name of the on-disk integrity manifest written into each installed runtime dependency
+// folder (NodeJs, FuncCoreTools). Records every extracted file + byte size so a later validation
+// pass can detect a corrupt/incomplete install (e.g. a deleted DLL) and force a wipe + reinstall.
+export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';

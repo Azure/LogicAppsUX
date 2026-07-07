@@ -5,7 +5,7 @@
 import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
-import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
+import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies, verifyDependencyIntegrity } from '../../utils/binaries';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
@@ -38,6 +38,10 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
 
     const binaries = await binariesExist(funcDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
+    // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
+    // install (e.g. a removed Function Host DLL) forces a wipe + reinstall instead of failing at startup.
+    const integrityValid = binaries ? verifyDependencyIntegrity(context, funcDependencyName) : false;
+    context.telemetry.properties.integrityValid = `${integrityValid}`;
 
     const localVersion: string | null = binaries ? await getLocalFuncCoreToolsVersion() : null;
     context.telemetry.properties.localVersion = localVersion ?? 'null';
@@ -45,7 +49,7 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     const newestVersion: string | undefined = binaries ? await getLatestFunctionCoreToolsVersion(context, majorVersion) : undefined;
     const isOutdated = binaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
 
-    const shouldInstall = !binaries || localVersion === null || isOutdated;
+    const shouldInstall = !binaries || !integrityValid || localVersion === null || isOutdated;
 
     if (shouldInstall) {
       if (isOutdated) {

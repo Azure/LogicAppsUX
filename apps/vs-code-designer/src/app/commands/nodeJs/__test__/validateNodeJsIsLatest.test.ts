@@ -38,6 +38,7 @@ vi.mock('../../../../extensionVariables', () => ({
 vi.mock('../../../utils/binaries', () => ({
   binariesExist: vi.fn(),
   getLatestNodeJsVersion: vi.fn(),
+  verifyDependencyIntegrity: vi.fn(() => true),
 }));
 
 vi.mock('../../../utils/nodeJs/nodeJsVersion', () => ({
