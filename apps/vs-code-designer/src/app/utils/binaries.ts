@@ -450,7 +450,7 @@ export async function computeFileSha256(filePath: string): Promise<string> {
     const hash = createHash('sha256');
     const stream = fs.createReadStream(filePath);
     stream.on('error', reject);
-    stream.on('data', (chunk: Buffer) => hash.update(Uint8Array.from(chunk)));
+    stream.on('data', (chunk: Buffer) => hash.update(chunk));
     stream.on('end', () => resolve(hash.digest('hex')));
   });
 }
@@ -718,6 +718,19 @@ export async function verifyDependencyIntegrity(context: IActionContext, depende
           localize(
             'integrityFileMissing',
             '{0} on-disk integrity check FAILED: missing file "{1}". Scheduling reinstall.',
+            dependencyName,
+            file.path
+          )
+        );
+        return false;
+      }
+      if (!stat.isFile()) {
+        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'not-a-file';
+        context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
+        ext.outputChannel.appendLog(
+          localize(
+            'integrityFileNotAFile',
+            '{0} on-disk integrity check FAILED: "{1}" is no longer a regular file. Scheduling reinstall.',
             dependencyName,
             file.path
           )

@@ -1326,6 +1326,7 @@ describe('binaries', () => {
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
       (fs.statSync as Mock).mockImplementation((filePath: string) => ({
         size: filePath.endsWith('func.exe') ? 100 : 200,
+        isFile: () => true,
       }));
 
       const result = await verifyDependencyIntegrity(context, funcDependencyName);
@@ -1372,12 +1373,30 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockReturnValue({ size: 999 });
+      (fs.statSync as Mock).mockReturnValue({ size: 999, isFile: () => true });
 
       const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
+    });
+
+    it('returns false when a recorded file is no longer a regular file', async () => {
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: 1,
+        files: [{ path: 'func.exe', size: 100 }],
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.statSync as Mock).mockReturnValue({ size: 100, isFile: () => false });
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('not-a-file');
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('func.exe');
     });
 
     it('returns true when a critical executable content hash matches', async () => {
@@ -1389,7 +1408,7 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockReturnValue({ size: 100 });
+      (fs.statSync as Mock).mockReturnValue({ size: 100, isFile: () => true });
       stubHashStream('hello world');
 
       const result = await verifyDependencyIntegrity(context, funcDependencyName);
@@ -1407,7 +1426,7 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockReturnValue({ size: 100 });
+      (fs.statSync as Mock).mockReturnValue({ size: 100, isFile: () => true });
       stubHashStream('corrupted contents');
 
       const result = await verifyDependencyIntegrity(context, funcDependencyName);
@@ -1462,6 +1481,7 @@ describe('binaries', () => {
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
       (fs.statSync as Mock).mockImplementation((filePath: string) => ({
         size: filePath.endsWith('node.exe') ? 300 : 50,
+        isFile: () => true,
       }));
 
       const result = await verifyDependencyIntegrity(context, nodeJsDependencyName);
