@@ -382,6 +382,38 @@ describe('validateProjectArtifacts', () => {
           },
         });
       });
+
+      it('regenerates an existing-but-invalid design-time directory for a codeful project', async () => {
+        const designTimeDir = `${projectPath}/workflow-designtime`;
+        const hostPath = `${designTimeDir}/host.json`;
+        const settingsPath = `${designTimeDir}/local.settings.json`;
+
+        // Directory exists but both files are invalid: host.json has the wrong bundle id and
+        // local.settings.json is missing the required keys, so regeneration is triggered by
+        // invalidation (not a missing directory).
+        mockFiles({
+          [designTimeDir]: '',
+          [hostPath]: '{"version":"2.0","extensionBundle":{"id":"Wrong"}}',
+          [settingsPath]: '{"Values":{}}',
+        });
+        mockedFse.readdir.mockResolvedValue([]);
+        mockedIsCodeful.mockResolvedValue(true);
+
+        await regenerateDesignTimeDirectory(context, projectPath);
+
+        // Both artifacts are rewritten to the codeful baseline.
+        expect(writtenContentFor('host.json')).toEqual(goldenHostJson);
+        expect(writtenContentFor('local.settings.json')).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Node,
+            [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+            [workflowCodefulEnabled]: 'true',
+          },
+        });
+      });
     });
   });
 });
