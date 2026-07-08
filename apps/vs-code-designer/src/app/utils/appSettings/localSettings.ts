@@ -179,33 +179,36 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
  * @returns The local settings schema.
  */
 export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, isCodeful?: boolean): ILocalSettingsJson => {
-  const baseSettings: ILocalSettingsJson = {
-    IsEncrypted: false,
-    Values: {
-      [appKindSetting]: logicAppKind,
-    },
-  };
+  const values: Record<string, string> = {};
 
-  // Add project path if provided
-  if (projectPath) {
-    baseSettings.Values![ProjectDirectoryPathKey] = projectPath;
-  }
-
-  // Add runtime-specific settings
   if (isDesignTime) {
-    baseSettings.Values![workerRuntimeKey] = WorkerRuntime.Node;
-    baseSettings.Values![azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
+    // Design-time order: APP_KIND, ProjectDirectoryPath, FUNCTIONS_WORKER_RUNTIME, AzureWebJobsSecretStorageType.
+    values[appKindSetting] = logicAppKind;
+    if (projectPath) {
+      values[ProjectDirectoryPathKey] = projectPath;
+    }
+    values[workerRuntimeKey] = WorkerRuntime.Node;
+    values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
   } else {
-    baseSettings.Values![workerRuntimeKey] = WorkerRuntime.Dotnet;
-    baseSettings.Values![azureWebJobsStorageKey] = localEmulatorConnectionString;
-    baseSettings.Values![functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+    // Root order mirrors the creation path (CreateLogicAppWorkspace.createLocalConfigurationFiles) so a
+    // regenerated local.settings.json is key-for-key identical to a freshly created project.
+    values[azureWebJobsStorageKey] = localEmulatorConnectionString;
+    values[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+    values[workerRuntimeKey] = WorkerRuntime.Dotnet;
+    values[appKindSetting] = logicAppKind;
+    if (projectPath) {
+      values[ProjectDirectoryPathKey] = projectPath;
+    }
   }
 
   if (isCodeful) {
-    baseSettings.Values![workflowCodefulEnabledKey] = 'true';
+    values[workflowCodefulEnabledKey] = 'true';
   }
 
-  return baseSettings;
+  return {
+    IsEncrypted: false,
+    Values: values,
+  };
 };
 
 export async function removeAppKindFromLocalSettings(logicAppPath: string, context: IActionContext): Promise<void> {

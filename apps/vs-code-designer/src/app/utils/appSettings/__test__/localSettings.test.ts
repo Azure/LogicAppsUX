@@ -117,5 +117,34 @@ describe('utils/appSettings', () => {
         });
       });
     });
+
+    // Key ORDER regression: toEqual ignores property order, but writeFormattedJson serializes in
+    // insertion order, so the on-disk key order matters. The regenerated root local.settings.json
+    // must be key-for-key identical to a freshly created project (CreateLogicAppWorkspace), so these
+    // pin the exact order rather than just the set of keys.
+    describe('root key order matches the creation path', () => {
+      it('orders keys like CreateLogicAppWorkspace (codeless)', () => {
+        const keys = Object.keys(getLocalSettingsSchema(false, projectPath, false).Values);
+        expect(keys).toEqual([
+          azureWebJobsStorageKey,
+          functionsInprocNet8Enabled,
+          workerRuntimeKey,
+          appKindSetting,
+          ProjectDirectoryPathKey,
+        ]);
+      });
+
+      it('appends WORKFLOW_CODEFUL_ENABLED last (codeful)', () => {
+        const keys = Object.keys(getLocalSettingsSchema(false, projectPath, true).Values);
+        expect(keys).toEqual([
+          azureWebJobsStorageKey,
+          functionsInprocNet8Enabled,
+          workerRuntimeKey,
+          appKindSetting,
+          ProjectDirectoryPathKey,
+          workflowCodefulEnabled,
+        ]);
+      });
+    });
   });
 });
