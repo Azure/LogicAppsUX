@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { window, workspace } from 'vscode';
+import { Uri, window, workspace } from 'vscode';
 import axios from 'axios';
 import * as cp from 'child_process';
 import { EventEmitter } from 'events';
@@ -13,6 +13,17 @@ import { startAllDesignTimeApis, startDesignTimeApi, startDesignTimeProcess, sto
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
   getLocalSettingsSchema: vi.fn(() => ({ Values: {} })),
+}));
+
+vi.mock('../validateProjectArtifacts', () => ({
+  regenerateLocalSettings: vi.fn(),
+  // Preserve the existing failure-injection semantics: the design-time startup tests drive
+  // success/failure through workspace.fs.createDirectory, so route the orchestrator through it.
+  validateAndRegenerateProjectArtifacts: vi.fn(async (_context: unknown, projectPath: string) => {
+    const designTimeDirectory = Uri.file(`${projectPath}/workflow-designtime`);
+    await workspace.fs.createDirectory(designTimeDirectory);
+    return designTimeDirectory;
+  }),
 }));
 
 vi.mock('../../fs', () => ({

@@ -3,20 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  ProjectDirectoryPathKey,
   autoStartDesignTimeSetting,
   defaultVersionRange,
   designTimeDirectoryName,
   designerStartApi,
   extensionBundleId,
   hostFileName,
-  localSettingsFileName,
-  logicAppKind,
   showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
   type hostFileContent,
-  workerRuntimeKey,
-  appKindSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 
@@ -26,12 +21,12 @@ import { ext } from '../../../extensionVariables';
 const processValidationCache = new Map<string, { timestamp: number; isValid: boolean }>();
 const VALIDATION_CACHE_TTL = 60000; // Cache for 60 seconds - revalidate every minute to catch process changes
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
+import { regenerateLocalSettings, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
 import { delay } from '../delay';
 import {
   DialogResponses,
@@ -41,7 +36,7 @@ import {
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
-import { Platform, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
@@ -53,7 +48,6 @@ import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
-import { hasCodefulSdkReference } from '../codeful';
 import {
   ensureExtensionBundleHealthy,
   isExtensionBundleDownloadInFlight,
@@ -254,41 +248,17 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         try {
           ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
-          const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-          const isCodeful = (await hasCodefulSdkReference(projectPath)) ?? false;
-          const settingsFileContent = getLocalSettingsSchema(true, projectPath, isCodeful);
+          // Validate and, when needed, regenerate the project artifacts required for a valid project:
+          // the project-level local.settings.json (derived from the logic app, connections.json and
+          // parameters.json) and the workflow-designtime directory baseline. This covers the case where
+          // source control is enabled and these git-ignored files are missing from a fresh clone.
+          const designTimeDirectory: Uri | undefined = await validateAndRegenerateProjectArtifacts(actionContext, projectPath);
 
-          const hostFileContent: any = {
-            version: '2.0',
-            extensionBundle: {
-              id: extensionBundleId,
-              version: defaultVersionRange,
-            },
-            extensions: {
-              workflow: {
-                settings: {
-                  'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
-                },
-              },
-            },
-          };
 
           if (!designTimeDirectory) {
             throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
           }
 
-          await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
-          await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-          await addOrUpdateLocalAppSettings(
-            actionContext,
-            designTimeDirectory.fsPath,
-            {
-              [appKindSetting]: logicAppKind,
-              [ProjectDirectoryPathKey]: projectPath,
-              [workerRuntimeKey]: WorkerRuntime.Node,
-            },
-            true
-          );
           const cwd: string = designTimeDirectory.fsPath;
           const portArgs = `--port ${designTimeInst.port}`;
           ext.outputChannel.appendLog(
@@ -766,12 +736,11 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
       }
 
       for (const projectPath of logicAppFolders) {
-        if (!fs.existsSync(path.join(projectPath, localSettingsFileName))) {
-          const isCodeful = (await hasCodefulSdkReference(projectPath)) ?? false;
-          const settingsFileContent = getLocalSettingsSchema(false, projectPath, isCodeful);
-          const projectUri: Uri = Uri.file(projectPath);
-          await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
-        }
+        // Ensure the project-level local.settings.json exists and includes every app setting the
+        // logic app references (from connections.json, parameters.json and the workflows). This keeps
+        // source-controlled projects valid when the git-ignored local.settings.json is missing.
+        await regenerateLocalSettings(context, projectPath);
+
 
         if (autoStartDesignTime) {
           scheduleStartDesignTimeApi(projectPath);
