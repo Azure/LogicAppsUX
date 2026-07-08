@@ -715,6 +715,15 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
     let autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
 
+    ext.outputChannel.appendLog(
+      localize(
+        'detectedLogicAppFolders',
+        'Detected {0} logic app project folder(s) for artifact regeneration: {1}.',
+        logicAppFolders.length,
+        logicAppFolders.join(', ') || '(none)'
+      )
+    );
+
     if (logicAppFolders && logicAppFolders.length > 0) {
       if (!autoStartDesignTime && showStartDesignTimeMessage) {
         const message = localize(
@@ -741,6 +750,9 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         // includes every app setting the logic app references (from connections.json, parameters.json
         // and the workflows). This keeps source-controlled projects valid when these git-ignored files
         // are missing.
+        ext.outputChannel.appendLog(
+          localize('ensuringProjectArtifacts', 'Ensuring host.json and local.settings.json for logic app "{0}".', projectPath)
+        );
         await regenerateRootHostFile(projectPath);
         await regenerateLocalSettings(context, projectPath);
 
@@ -749,7 +761,21 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
           scheduleStartDesignTimeApi(projectPath);
         }
       }
+    } else {
+      // A folder is only recognized as a logic app project when its host.json is present. If host.json
+      // itself is missing the folder is not detected here, so host.json and local.settings.json cannot
+      // be regenerated on this path. Log this so the situation is diagnosable from the output channel.
+      ext.outputChannel.appendLog(
+        localize(
+          'noLogicAppFoldersForRegen',
+          'No logic app project folders were detected in the open workspace, so host.json and local.settings.json were not regenerated. A folder is only recognized as a logic app when its host.json exists; if host.json is missing, restore it (it is normally committed to source control) and reload the window.'
+        )
+      );
     }
+  } else {
+    ext.outputChannel.appendLog(
+      localize('noWorkspaceFoldersForRegen', 'No workspace folders are open. Skipping host.json and local.settings.json regeneration.')
+    );
   }
 }
 

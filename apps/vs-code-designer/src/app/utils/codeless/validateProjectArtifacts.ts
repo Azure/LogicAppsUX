@@ -128,6 +128,15 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
 export async function regenerateLocalSettings(context: IActionContext, projectPath: string): Promise<boolean> {
   const localSettingsPath = path.join(projectPath, localSettingsFileName);
   const fileExisted = await fse.pathExists(localSettingsPath);
+  ext.outputChannel.appendLog(
+    localize(
+      'checkingLocalSettings',
+      'Checking local.settings.json for project "{0}" at "{1}" (exists: {2}).',
+      projectPath,
+      localSettingsPath,
+      String(fileExisted)
+    )
+  );
 
   const isCodeful = (await isCodefulProject(projectPath)) ?? false;
   const baselineValues = getLocalSettingsSchema(false, projectPath, isCodeful).Values ?? {};
@@ -155,14 +164,23 @@ export async function regenerateLocalSettings(context: IActionContext, projectPa
     ext.outputChannel.appendLog(
       localize(
         'regeneratedLocalSettings',
-        'Ensured local settings for project "{0}". Added {1} setting(s).',
+        'Ensured local.settings.json for project "{0}" (file existed: {1}). Added {2} setting(s): {3}.',
         projectPath,
-        Object.keys(settingsToAdd).length
+        String(fileExisted),
+        Object.keys(settingsToAdd).length,
+        Object.keys(settingsToAdd).join(', ') || '(none)'
       )
     );
     return true;
   }
 
+  ext.outputChannel.appendLog(
+    localize(
+      'localSettingsUpToDate',
+      'local.settings.json for project "{0}" already exists and contains all required settings. Skipping regeneration.',
+      projectPath
+    )
+  );
   return false;
 }
 
@@ -199,12 +217,28 @@ function getRootHostFileContent(): IHostJsonV2 {
  */
 export async function regenerateRootHostFile(projectPath: string): Promise<boolean> {
   const hostFilePath = path.join(projectPath, hostFileName);
+  const hostFileExisted = await fse.pathExists(hostFilePath);
+  ext.outputChannel.appendLog(
+    localize(
+      'checkingRootHost',
+      'Checking host.json for project "{0}" at "{1}" (exists: {2}).',
+      projectPath,
+      hostFilePath,
+      String(hostFileExisted)
+    )
+  );
+
   if (await isHostFileValid(hostFilePath)) {
+    ext.outputChannel.appendLog(
+      localize('rootHostValid', 'host.json for project "{0}" is present and valid. Skipping regeneration.', projectPath)
+    );
     return false;
   }
 
   await writeFormattedJson(hostFilePath, getRootHostFileContent());
-  ext.outputChannel.appendLog(localize('regeneratedRootHost', 'Regenerated host.json for project "{0}".', projectPath));
+  ext.outputChannel.appendLog(
+    localize('regeneratedRootHost', 'Regenerated missing or invalid host.json for project "{0}" at "{1}".', projectPath, hostFilePath)
+  );
   return true;
 }
 
@@ -349,6 +383,9 @@ export async function regenerateDesignTimeDirectory(context: IActionContext, pro
  * @returns {Promise<Uri>} The design-time directory Uri, ready to be used as the host working directory.
  */
 export async function validateAndRegenerateProjectArtifacts(context: IActionContext, projectPath: string): Promise<Uri> {
+  ext.outputChannel.appendLog(
+    localize('validatingProjectArtifacts', 'Validating and regenerating project artifacts for logic app "{0}".', projectPath)
+  );
   await regenerateRootHostFile(projectPath);
   await regenerateLocalSettings(context, projectPath);
   return regenerateDesignTimeDirectory(context, projectPath);
