@@ -29,6 +29,7 @@ import {
   getReferencedAppSettings,
   regenerateLocalSettings,
   regenerateRootHostFile,
+  validateAndRegenerateProjectArtifacts,
   validateDesignTimeDirectory,
   regenerateDesignTimeDirectory,
 } from '../validateProjectArtifacts';
@@ -259,6 +260,34 @@ describe('validateProjectArtifacts', () => {
       expect(result.hostFileValid).toBe(false);
       expect(result.isValid).toBe(false);
     });
+
+    it('reports invalid settings when a required key has an empty value', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: { APP_KIND: '', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when a required key is missing', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({ Values: { FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath } }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
   });
 
   describe('regenerateDesignTimeDirectory', () => {
@@ -468,6 +497,94 @@ describe('validateProjectArtifacts', () => {
 
       expect(created).toBe(false);
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
+    });
+  });
+
+  // The top-level orchestrator used by the design-time startup flow. These tests prove that a single
+  // call accounts for EVERY required artifact together: the project-root host.json, the project-root
+  // local.settings.json, and the workflow-designtime baseline (host.json + local.settings.json).
+  describe('validateAndRegenerateProjectArtifacts', () => {
+    const designTimeDir = `${projectPath}/workflow-designtime`;
+    const rootHostPath = `${projectPath}/host.json`;
+    const rootSettingsPath = `${projectPath}/local.settings.json`;
+    const validHostJson = JSON.stringify({
+      version: '2.0',
+      extensionBundle: { id: extensionBundleId, version: '[1.*, 2.0.0)' },
+    });
+    const validDesignSettings = JSON.stringify({
+      Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+    });
+
+    it('regenerates the root host.json, root local.settings.json and design-time directory when all are missing', async () => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+
+      const dir = await validateAndRegenerateProjectArtifacts(context, projectPath);
+
+      const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
+      // Project-root host.json (distinct from the design-time copy).
+      expect(writtenPaths).toContain(rootHostPath);
+      // Design-time baseline files.
+      expect(writtenPaths).toContain(`${designTimeDir}/host.json`);
+      expect(writtenPaths).toContain(`${designTimeDir}/local.settings.json`);
+      // Root local.settings.json baseline + design-time runtime settings are upserted.
+      expect(mockedAddOrUpdate).toHaveBeenCalled();
+      // Returns the design-time directory to be used as the host working directory.
+      expect(norm(dir.fsPath)).toContain('workflow-designtime');
+    });
+
+    it('preserves everything and writes nothing when all artifacts are already valid', async () => {
+      mockFiles({
+        [rootHostPath]: validHostJson,
+        [rootSettingsPath]: '{}',
+        [designTimeDir]: '',
+        [`${designTimeDir}/host.json`]: validHostJson,
+        [`${designTimeDir}/local.settings.json`]: validDesignSettings,
+      });
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: projectPath,
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        },
+      });
+
+      const dir = await validateAndRegenerateProjectArtifacts(context, projectPath);
+
+      expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
+      expect(mockedAddOrUpdate).not.toHaveBeenCalled();
+      expect(norm(dir.fsPath)).toContain('workflow-designtime');
+    });
+
+    it('regenerates only the root host.json when it alone is missing', async () => {
+      mockFiles({
+        [rootSettingsPath]: '{}',
+        [designTimeDir]: '',
+        [`${designTimeDir}/host.json`]: validHostJson,
+        [`${designTimeDir}/local.settings.json`]: validDesignSettings,
+      });
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: projectPath,
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        },
+      });
+
+      await validateAndRegenerateProjectArtifacts(context, projectPath);
+
+      const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
+      expect(writtenPaths).toEqual([rootHostPath]);
+      expect(mockedAddOrUpdate).not.toHaveBeenCalled();
     });
   });
 });
