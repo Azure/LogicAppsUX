@@ -26,7 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
-import { regenerateLocalSettings, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
+import { regenerateLocalSettings, regenerateRootHostFile, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
 import { delay } from '../delay';
 import {
   DialogResponses,
@@ -249,9 +249,10 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
           // Validate and, when needed, regenerate the project artifacts required for a valid project:
-          // the project-level local.settings.json (derived from the logic app, connections.json and
-          // parameters.json) and the workflow-designtime directory baseline. This covers the case where
-          // source control is enabled and these git-ignored files are missing from a fresh clone.
+          // the project-level host.json and local.settings.json (derived from the logic app,
+          // connections.json and parameters.json) and the workflow-designtime directory baseline. This
+          // covers the case where source control is enabled and these git-ignored files are missing from
+          // a fresh clone.
           const designTimeDirectory: Uri | undefined = await validateAndRegenerateProjectArtifacts(actionContext, projectPath);
 
 
@@ -736,9 +737,11 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
       }
 
       for (const projectPath of logicAppFolders) {
-        // Ensure the project-level local.settings.json exists and includes every app setting the
-        // logic app references (from connections.json, parameters.json and the workflows). This keeps
-        // source-controlled projects valid when the git-ignored local.settings.json is missing.
+        // Ensure the project-level host.json and local.settings.json exist and that local.settings.json
+        // includes every app setting the logic app references (from connections.json, parameters.json
+        // and the workflows). This keeps source-controlled projects valid when these git-ignored files
+        // are missing.
+        await regenerateRootHostFile(projectPath);
         await regenerateLocalSettings(context, projectPath);
 
 

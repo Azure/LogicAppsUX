@@ -28,6 +28,7 @@ import {
   extractAppSettingReferences,
   getReferencedAppSettings,
   regenerateLocalSettings,
+  regenerateRootHostFile,
   validateDesignTimeDirectory,
   regenerateDesignTimeDirectory,
 } from '../validateProjectArtifacts';
@@ -414,6 +415,59 @@ describe('validateProjectArtifacts', () => {
           },
         });
       });
+    });
+  });
+
+  describe('regenerateRootHostFile', () => {
+    const rootHostPath = `${projectPath}/host.json`;
+
+    // Mirrors the project-level host.json produced by the creation path
+    // (CreateLogicAppWorkspace.getHostContent). Regression baseline for the root host.json.
+    const goldenRootHostJson = {
+      version: '2.0',
+      logging: {
+        applicationInsights: {
+          samplingSettings: {
+            isEnabled: true,
+            excludedTypes: 'Request',
+          },
+        },
+      },
+      extensionBundle: {
+        id: extensionBundleId,
+        version: defaultVersionRange,
+      },
+    };
+
+    it('regenerates host.json when it is missing', async () => {
+      mockFiles({});
+
+      const created = await regenerateRootHostFile(projectPath);
+
+      expect(created).toBe(true);
+      expect(writtenContentFor('host.json')).toEqual(goldenRootHostJson);
+    });
+
+    it('regenerates host.json when it exists but is invalid', async () => {
+      mockFiles({ [rootHostPath]: JSON.stringify({ version: '2.0', extensionBundle: { id: 'wrong.bundle.id' } }) });
+
+      const created = await regenerateRootHostFile(projectPath);
+
+      expect(created).toBe(true);
+      expect(writtenContentFor('host.json')).toEqual(goldenRootHostJson);
+    });
+
+    it('preserves a valid existing host.json and does not rewrite it', async () => {
+      const validHost = JSON.stringify({
+        version: '2.0',
+        extensionBundle: { id: extensionBundleId, version: '[1.50.0]' },
+      });
+      mockFiles({ [rootHostPath]: validHost });
+
+      const created = await regenerateRootHostFile(projectPath);
+
+      expect(created).toBe(false);
+      expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
     });
   });
 });

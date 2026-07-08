@@ -6,6 +6,7 @@ import {
   ProjectDirectoryPathKey,
   appKindSetting,
   connectionsFileName,
+  defaultVersionRange,
   designTimeDirectoryName,
   extensionBundleId,
   hostFileContent,
@@ -23,7 +24,7 @@ import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { isCodefulProject } from '../codeful';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import type { IHostJsonV2, ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -166,11 +167,54 @@ export async function regenerateLocalSettings(context: IActionContext, projectPa
 }
 
 /**
- * Validates the host.json file content in the design-time directory.
+ * Returns the baseline project-level host.json content. This mirrors the workspace creation path
+ * (CreateLogicAppWorkspace.getHostContent) so a regenerated host.json matches a freshly created one.
+ * @returns {IHostJsonV2} The baseline host.json content.
+ */
+function getRootHostFileContent(): IHostJsonV2 {
+  return {
+    version: '2.0',
+    logging: {
+      applicationInsights: {
+        samplingSettings: {
+          isEnabled: true,
+          excludedTypes: 'Request',
+        },
+      },
+    },
+    extensionBundle: {
+      id: extensionBundleId,
+      version: defaultVersionRange,
+    },
+  };
+}
+
+/**
+ * Ensures the project-level host.json exists and is structurally valid. When source control is
+ * enabled this file can be missing from a fresh clone; without it the function host cannot start.
+ * A valid existing host.json (correct version + workflows extension bundle) is preserved so that
+ * customizations such as a pinned extension bundle version are not lost.
+ * @param {string} projectPath - The logic app project root.
+ * @returns {Promise<boolean>} True when the file was created, otherwise false.
+ */
+export async function regenerateRootHostFile(projectPath: string): Promise<boolean> {
+  const hostFilePath = path.join(projectPath, hostFileName);
+  if (await isHostFileValid(hostFilePath)) {
+    return false;
+  }
+
+  await writeFormattedJson(hostFilePath, getRootHostFileContent());
+  ext.outputChannel.appendLog(localize('regeneratedRootHost', 'Regenerated host.json for project "{0}".', projectPath));
+  return true;
+}
+
+/**
+ * Validates the host.json file content. Used for both the project-level host.json and the
+ * design-time host.json, since both require a version and the workflows extension bundle.
  * @param {string} hostFilePath - Absolute path to the host.json file.
  * @returns {Promise<boolean>} True when host.json is present and structurally valid.
  */
-async function isDesignTimeHostFileValid(hostFilePath: string): Promise<boolean> {
+async function isHostFileValid(hostFilePath: string): Promise<boolean> {
   const content = await readFileTextSafe(hostFilePath);
   if (!content) {
     return false;
@@ -228,7 +272,7 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
     return { directoryExists: false, hostFileValid: false, settingsFileValid: false, isValid: false };
   }
 
-  const hostFileValid = await isDesignTimeHostFileValid(path.join(designTimeDirectoryPath, hostFileName));
+  const hostFileValid = await isHostFileValid(path.join(designTimeDirectoryPath, hostFileName));
   const settingsFileValid = await isDesignTimeSettingsFileValid(path.join(designTimeDirectoryPath, localSettingsFileName));
 
   return {
@@ -298,13 +342,14 @@ export async function regenerateDesignTimeDirectory(context: IActionContext, pro
 
 /**
  * Validates and regenerates the artifacts required for a logic app project to be valid when source
- * control strips git-ignored files: the project-level local.settings.json (built from the logic app,
- * connections.json, and parameters.json) and the workflow-designtime directory baseline.
+ * control strips git-ignored files: the project-level host.json and local.settings.json (built from
+ * the logic app, connections.json, and parameters.json) and the workflow-designtime directory baseline.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<Uri>} The design-time directory Uri, ready to be used as the host working directory.
  */
 export async function validateAndRegenerateProjectArtifacts(context: IActionContext, projectPath: string): Promise<Uri> {
+  await regenerateRootHostFile(projectPath);
   await regenerateLocalSettings(context, projectPath);
   return regenerateDesignTimeDirectory(context, projectPath);
 }

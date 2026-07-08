@@ -17,6 +17,7 @@ vi.mock('../../appSettings/localSettings', () => ({
 
 vi.mock('../validateProjectArtifacts', () => ({
   regenerateLocalSettings: vi.fn(),
+  regenerateRootHostFile: vi.fn(),
   // Preserve the existing failure-injection semantics: the design-time startup tests drive
   // success/failure through workspace.fs.createDirectory, so route the orchestrator through it.
   validateAndRegenerateProjectArtifacts: vi.fn(async (_context: unknown, projectPath: string) => {
