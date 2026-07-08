@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { getLocalSettingsSchema } from '../localSettings';
 import {
   ProjectDirectoryPathKey,
@@ -6,8 +7,12 @@ import {
   azureStorageTypeSetting,
   azureWebJobsSecretStorageTypeKey,
   azureWebJobsStorageKey,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
   localEmulatorConnectionString,
+  logicAppKind,
   workerRuntimeKey,
+  workflowCodefulEnabled,
 } from '../../../../constants';
 
 describe('utils/appSettings', () => {
@@ -37,6 +42,80 @@ describe('utils/appSettings', () => {
       const settings = getLocalSettingsSchema(false, projectPath);
       expect(settings['Values']).toHaveProperty(azureWebJobsStorageKey, localEmulatorConnectionString);
       expect(settings['Values']).toHaveProperty(ProjectDirectoryPathKey, projectPath);
+    });
+
+    // Golden / characterization tests: lock the exact content of every local.settings.json this
+    // extension generates, for every logic-app content axis. The content only varies by
+    // (isDesignTime x isCodeful).
+    //
+    // Expected values are expressed via the shared constants (the same named keys/values the rest of
+    // the codebase uses) rather than magic strings. The assertions still reconstruct the full
+    // expected object explicitly and deep-equal it, so a structural regression (a setting added,
+    // dropped, or moved to the wrong branch) is caught.
+    describe('golden content by logic app type', () => {
+      it('root local.settings.json (codeless / Standard Node)', () => {
+        expect(getLocalSettingsSchema(false, projectPath, false)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [azureWebJobsStorageKey]: localEmulatorConnectionString,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+          },
+        });
+      });
+
+      it('root local.settings.json (codeful / .NET8) adds WORKFLOW_CODEFUL_ENABLED', () => {
+        expect(getLocalSettingsSchema(false, projectPath, true)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [azureWebJobsStorageKey]: localEmulatorConnectionString,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+            [workflowCodefulEnabled]: 'true',
+          },
+        });
+      });
+
+      it('design-time local.settings.json (codeless / Standard Node)', () => {
+        expect(getLocalSettingsSchema(true, projectPath, false)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Node,
+            [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+          },
+        });
+      });
+
+      it('design-time local.settings.json (codeful / .NET8) adds WORKFLOW_CODEFUL_ENABLED', () => {
+        expect(getLocalSettingsSchema(true, projectPath, true)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Node,
+            [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+            [workflowCodefulEnabled]: 'true',
+          },
+        });
+      });
+
+      it('omits ProjectDirectoryPath when no project path is supplied (root, codeless)', () => {
+        expect(getLocalSettingsSchema(false)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [azureWebJobsStorageKey]: localEmulatorConnectionString,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+          },
+        });
+      });
     });
   });
 });
