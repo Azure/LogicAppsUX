@@ -180,7 +180,7 @@ export async function downloadAndExtractDependency(
       // Record an on-disk integrity manifest so a later validation pass can detect missing/corrupt
       // files (e.g. a deleted DLL under the Function Host) and force a wipe + reinstall.
       if (dependencyName === funcDependencyName || dependencyName === nodeJsDependencyName) {
-        writeDependencyIntegrityManifest(context, targetFolder, dependencyName);
+        await writeDependencyIntegrityManifest(context, targetFolder, dependencyName);
       }
       if (dependencyName === funcDependencyName) {
         // Add execute permissions for func and gozip binaries
@@ -540,6 +540,7 @@ export async function resolveExpectedDependencySha256(
 interface IntegrityManifestEntry {
   path: string;
   size: number;
+  sha256?: string;
 }
 
 interface IntegrityManifest {
@@ -547,6 +548,32 @@ interface IntegrityManifest {
   createdAt: string;
   fileCount: number;
   files: IntegrityManifestEntry[];
+}
+
+/**
+ * The primary executables per dependency whose content (not just presence/size) is SHA256-verified.
+ * These are the binaries that must launch at runtime (a corrupt node/func here breaks startup), so
+ * they get a bounded content check while the rest of the tree relies on the faster size/existence
+ * check. Matched by file basename (case-insensitive) so both Windows (.exe) and *nix layouts work.
+ */
+const criticalIntegrityFileNames: Record<string, string[]> = {
+  [nodeJsDependencyName]: ['node.exe', 'node'],
+  [funcDependencyName]: ['func.exe', 'func', 'func.dll'],
+};
+
+/**
+ * Whether a manifest entry is a primary executable that should be SHA256 content-verified.
+ * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
+ * @param {string} relativePath - The entry's relative path (posix separators).
+ * @returns {boolean} true when the file is in the dependency's critical-executable set.
+ */
+function isCriticalIntegrityFile(dependencyName: string, relativePath: string): boolean {
+  const criticalNames = criticalIntegrityFileNames[dependencyName];
+  if (!criticalNames) {
+    return false;
+  }
+  const baseName = relativePath.split('/').pop()?.toLowerCase() ?? '';
+  return criticalNames.some((name) => name.toLowerCase() === baseName);
 }
 
 /**
@@ -576,15 +603,42 @@ function listFilesWithSizes(rootFolder: string): IntegrityManifestEntry[] {
 }
 
 /**
- * Writes an on-disk integrity manifest into a freshly installed dependency folder. Best-effort: a
- * failure to write the manifest is logged but never fails the install.
+ * Writes an on-disk integrity manifest into a freshly installed dependency folder, recording every
+ * file's size plus a SHA256 content hash for the primary executables. Best-effort: a failure to write
+ * the manifest (or to hash an individual file) is logged but never fails the install.
  * @param {IActionContext} context - Command context, used for telemetry.
  * @param {string} targetFolder - The dependency folder that was just extracted.
  * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
+ * @returns {Promise<void>} Resolves once the manifest has been written (or the failure logged).
  */
-export function writeDependencyIntegrityManifest(context: IActionContext, targetFolder: string, dependencyName: string): void {
+export async function writeDependencyIntegrityManifest(
+  context: IActionContext,
+  targetFolder: string,
+  dependencyName: string
+): Promise<void> {
   try {
     const files = listFilesWithSizes(targetFolder);
+    // Content-hash only the primary executables (bounded, so startup stays fast). Best-effort per
+    // file: a hashing failure leaves sha256 undefined so the file falls back to the size check.
+    let hashedCount = 0;
+    for (const file of files) {
+      if (isCriticalIntegrityFile(dependencyName, file.path)) {
+        try {
+          file.sha256 = await computeFileSha256(path.join(targetFolder, file.path));
+          hashedCount += 1;
+        } catch (hashError) {
+          ext.outputChannel.appendLog(
+            localize(
+              'integrityHashSkip',
+              'Could not hash {0} file "{1}" for the integrity manifest: {2}',
+              dependencyName,
+              file.path,
+              hashError instanceof Error ? hashError.message : String(hashError)
+            )
+          );
+        }
+      }
+    }
     const manifest: IntegrityManifest = {
       dependencyName,
       createdAt: new Date().toISOString(),
@@ -594,6 +648,7 @@ export function writeDependencyIntegrityManifest(context: IActionContext, target
     const manifestPath = path.join(targetFolder, dependencyIntegrityManifestFileName);
     fs.writeFileSync(manifestPath, JSON.stringify(manifest));
     context.telemetry.properties[`${dependencyName}IntegrityManifestWritten`] = 'true';
+    context.telemetry.properties[`${dependencyName}IntegrityHashedFiles`] = `${hashedCount}`;
     ext.outputChannel.appendLog(
       localize('recordedIntegrityManifest', 'Recorded {0} on-disk integrity manifest ({1} files).', dependencyName, files.length)
     );
@@ -613,14 +668,15 @@ export function writeDependencyIntegrityManifest(context: IActionContext, target
 
 /**
  * Verifies an installed dependency against its on-disk integrity manifest. Returns false (which should
- * trigger a wipe + reinstall) when the manifest is missing/unreadable or any recorded file is missing
- * or its size no longer matches. A missing manifest is treated as a failure so that installs predating
- * this check are re-established from a trusted, freshly-downloaded baseline.
+ * trigger a wipe + reinstall) when the manifest is missing/unreadable, any recorded file is missing or
+ * its size no longer matches, or a primary executable's SHA256 content hash no longer matches. A
+ * missing manifest is treated as a failure so that installs predating this check are re-established
+ * from a trusted, freshly-downloaded baseline.
  * @param {IActionContext} context - Command context, used for telemetry.
  * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
- * @returns {boolean} true when the install matches its manifest; false when it should be reinstalled.
+ * @returns {Promise<boolean>} true when the install matches its manifest; false when it should be reinstalled.
  */
-export function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): boolean {
+export async function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): Promise<boolean> {
   ext.outputChannel.appendLog(localize('validatingIntegrity', 'Validating {0} on-disk integrity...', dependencyName));
   try {
     const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
@@ -682,6 +738,22 @@ export function verifyDependencyIntegrity(context: IActionContext, dependencyNam
           )
         );
         return false;
+      }
+      if (file.sha256) {
+        const actualSha256 = await computeFileSha256(absolutePath);
+        if (actualSha256 !== file.sha256) {
+          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'sha256-mismatch';
+          context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
+          ext.outputChannel.appendLog(
+            localize(
+              'integrityFileSha256Mismatch',
+              '{0} on-disk integrity check FAILED: "{1}" content hash changed. Scheduling reinstall.',
+              dependencyName,
+              file.path
+            )
+          );
+          return false;
+        }
       }
     }
 

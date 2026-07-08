@@ -1296,12 +1296,23 @@ describe('binaries', () => {
   describe('verifyDependencyIntegrity', () => {
     let context: IActionContext;
 
+    const stubHashStream = (content: string) => {
+      (fs.createReadStream as Mock).mockImplementation(() => {
+        const stream = new EventEmitter();
+        process.nextTick(() => {
+          stream.emit('data', Buffer.from(content));
+          stream.emit('end');
+        });
+        return stream;
+      });
+    };
+
     beforeEach(() => {
       context = { telemetry: { properties: {} } } as IActionContext;
       (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
     });
 
-    it('returns true when every manifest file exists with the recorded size', () => {
+    it('returns true when every manifest file exists with the recorded size', async () => {
       const manifest = {
         dependencyName: funcDependencyName,
         createdAt: '2024-01-01T00:00:00.000Z',
@@ -1317,22 +1328,22 @@ describe('binaries', () => {
         size: filePath.endsWith('func.exe') ? 100 : 200,
       }));
 
-      const result = verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(true);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
     });
 
-    it('returns false and schedules reinstall when the manifest is missing', () => {
+    it('returns false and schedules reinstall when the manifest is missing', async () => {
       (fs.existsSync as Mock).mockReturnValue(false);
 
-      const result = verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('manifest-missing');
     });
 
-    it('returns false when a recorded file is missing on disk', () => {
+    it('returns false when a recorded file is missing on disk', async () => {
       const manifest = {
         dependencyName: funcDependencyName,
         createdAt: '2024-01-01T00:00:00.000Z',
@@ -1345,14 +1356,14 @@ describe('binaries', () => {
         throw new Error('ENOENT');
       });
 
-      const result = verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('file-missing');
       expect(context.telemetry.properties.FuncCoreToolsIntegrityMissingFile).toBe('in-proc8/func.dll');
     });
 
-    it('returns false when a recorded file has a different size', () => {
+    it('returns false when a recorded file has a different size', async () => {
       const manifest = {
         dependencyName: funcDependencyName,
         createdAt: '2024-01-01T00:00:00.000Z',
@@ -1363,44 +1374,81 @@ describe('binaries', () => {
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
       (fs.statSync as Mock).mockReturnValue({ size: 999 });
 
-      const result = verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
     });
 
-    it('returns false when the manifest is not valid JSON', () => {
+    it('returns true when a critical executable content hash matches', async () => {
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: 1,
+        files: [{ path: 'func.exe', size: 100, sha256: 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9' }],
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.statSync as Mock).mockReturnValue({ size: 100 });
+      stubHashStream('hello world');
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
+    });
+
+    it('returns false when a critical executable content hash no longer matches', async () => {
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: 1,
+        files: [{ path: 'func.exe', size: 100, sha256: 'a'.repeat(64) }],
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.statSync as Mock).mockReturnValue({ size: 100 });
+      stubHashStream('corrupted contents');
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('sha256-mismatch');
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('func.exe');
+    });
+
+    it('returns false when the manifest is not valid JSON', async () => {
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue('not-json');
 
-      const result = verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('error');
     });
 
-    it('returns false when the manifest files property is not an array', () => {
+    it('returns false when the manifest files property is not an array', async () => {
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(
         JSON.stringify({ dependencyName: funcDependencyName, createdAt: '2024-01-01T00:00:00.000Z', fileCount: 0, files: 'nope' })
       );
 
-      const result = verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('manifest-invalid');
     });
 
-    it('returns false when the binaries location setting is not configured', () => {
+    it('returns false when the binaries location setting is not configured', async () => {
       (getGlobalSetting as Mock).mockReturnValue(undefined);
 
-      const result = verifyDependencyIntegrity(context, funcDependencyName);
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
       expect(result).toBe(false);
       expect(fs.existsSync).not.toHaveBeenCalled();
     });
 
-    it('verifies a NodeJs install against its manifest', () => {
+    it('verifies a NodeJs install against its manifest', async () => {
       const manifest = {
         dependencyName: nodeJsDependencyName,
         createdAt: '2024-01-01T00:00:00.000Z',
@@ -1416,7 +1464,7 @@ describe('binaries', () => {
         size: filePath.endsWith('node.exe') ? 300 : 50,
       }));
 
-      const result = verifyDependencyIntegrity(context, nodeJsDependencyName);
+      const result = await verifyDependencyIntegrity(context, nodeJsDependencyName);
 
       expect(result).toBe(true);
       expect(context.telemetry.properties.NodeJsIntegrityResult).toBe('passed');
@@ -1426,16 +1474,28 @@ describe('binaries', () => {
   describe('writeDependencyIntegrityManifest', () => {
     let context: IActionContext;
 
+    const stubHashStream = () => {
+      (fs.createReadStream as Mock).mockImplementation((filePath: string) => {
+        const stream = new EventEmitter();
+        process.nextTick(() => {
+          stream.emit('data', Buffer.from(String(filePath)));
+          stream.emit('end');
+        });
+        return stream;
+      });
+    };
+
     beforeEach(() => {
       context = { telemetry: { properties: {} } } as IActionContext;
     });
 
-    it('writes a manifest listing every extracted file and its size', () => {
+    it('writes a manifest with sizes for all files and sha256 for critical executables', async () => {
       const targetFolder = path.join('binariesLocation', funcDependencyName);
       (fs.readdirSync as Mock).mockImplementation((dir: string) => {
         if (dir === targetFolder) {
           return [
             { name: 'func.exe', isDirectory: () => false, isFile: () => true },
+            { name: 'README.md', isDirectory: () => false, isFile: () => true },
             { name: 'in-proc8', isDirectory: () => true, isFile: () => false },
           ];
         }
@@ -1444,37 +1504,66 @@ describe('binaries', () => {
       (fs.statSync as Mock).mockImplementation((filePath: string) => ({
         size: filePath.endsWith('func.exe') ? 100 : 200,
       }));
+      stubHashStream();
 
-      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+      await writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         path.join(targetFolder, '.logicapps-integrity.json'),
         expect.stringContaining('func.exe')
       );
       const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
-      expect(written.fileCount).toBe(2);
-      expect(written.files).toEqual(
-        expect.arrayContaining([
-          { path: 'func.exe', size: 100 },
-          { path: 'in-proc8/func.dll', size: 200 },
-        ])
-      );
+      expect(written.fileCount).toBe(3);
+      // func.exe and in-proc8/func.dll are critical => hashed; README.md is size-only.
+      const funcExe = written.files.find((f: { path: string }) => f.path === 'func.exe');
+      const funcDll = written.files.find((f: { path: string }) => f.path === 'in-proc8/func.dll');
+      const readme = written.files.find((f: { path: string }) => f.path === 'README.md');
+      expect(funcExe).toMatchObject({ size: 100 });
+      expect(funcExe.sha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(funcDll).toMatchObject({ size: 200 });
+      expect(funcDll.sha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(readme).toEqual({ path: 'README.md', size: 200 });
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('true');
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityHashedFiles).toBe('2');
     });
 
-    it('records telemetry but does not throw when writing the manifest fails', () => {
+    it('hashes only the critical NodeJs executable, not data files', async () => {
+      const targetFolder = path.join('binariesLocation', nodeJsDependencyName);
+      (fs.readdirSync as Mock).mockImplementation((dir: string) => {
+        if (dir === targetFolder) {
+          return [
+            { name: 'node.exe', isDirectory: () => false, isFile: () => true },
+            { name: 'npm.cmd', isDirectory: () => false, isFile: () => true },
+          ];
+        }
+        return [];
+      });
+      (fs.statSync as Mock).mockReturnValue({ size: 42 });
+      stubHashStream();
+
+      await writeDependencyIntegrityManifest(context, targetFolder, nodeJsDependencyName);
+
+      const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
+      const nodeExe = written.files.find((f: { path: string }) => f.path === 'node.exe');
+      const npmCmd = written.files.find((f: { path: string }) => f.path === 'npm.cmd');
+      expect(nodeExe.sha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(npmCmd).toEqual({ path: 'npm.cmd', size: 42 });
+      expect(context.telemetry.properties.NodeJsIntegrityHashedFiles).toBe('1');
+    });
+
+    it('records telemetry but does not throw when writing the manifest fails', async () => {
       const targetFolder = path.join('binariesLocation', funcDependencyName);
       (fs.readdirSync as Mock).mockReturnValue([]);
       (fs.writeFileSync as Mock).mockImplementation(() => {
         throw new Error('disk full');
       });
 
-      expect(() => writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName)).not.toThrow();
+      await expect(writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName)).resolves.toBeUndefined();
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('false');
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestError).toContain('disk full');
     });
 
-    it('excludes the integrity manifest itself from the recorded file list', () => {
+    it('excludes the integrity manifest itself from the recorded file list', async () => {
       const targetFolder = path.join('binariesLocation', funcDependencyName);
       (fs.readdirSync as Mock).mockImplementation((dir: string) => {
         if (dir === targetFolder) {
@@ -1486,12 +1575,13 @@ describe('binaries', () => {
         return [];
       });
       (fs.statSync as Mock).mockReturnValue({ size: 100 });
+      stubHashStream();
 
-      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+      await writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
 
       const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
       expect(written.fileCount).toBe(1);
-      expect(written.files).toEqual([{ path: 'func.exe', size: 100 }]);
+      expect(written.files.map((f: { path: string }) => f.path)).toEqual(['func.exe']);
       expect(written.files).not.toContainEqual(expect.objectContaining({ path: '.logicapps-integrity.json' }));
     });
   });
