@@ -1378,6 +1378,49 @@ describe('binaries', () => {
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('error');
     });
+
+    it('returns false when the manifest files property is not an array', () => {
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(
+        JSON.stringify({ dependencyName: funcDependencyName, createdAt: '2024-01-01T00:00:00.000Z', fileCount: 0, files: 'nope' })
+      );
+
+      const result = verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('manifest-invalid');
+    });
+
+    it('returns false when the binaries location setting is not configured', () => {
+      (getGlobalSetting as Mock).mockReturnValue(undefined);
+
+      const result = verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(fs.existsSync).not.toHaveBeenCalled();
+    });
+
+    it('verifies a NodeJs install against its manifest', () => {
+      const manifest = {
+        dependencyName: nodeJsDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: 2,
+        files: [
+          { path: 'node.exe', size: 300 },
+          { path: 'node_modules/npm/bin/npm', size: 50 },
+        ],
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.statSync as Mock).mockImplementation((filePath: string) => ({
+        size: filePath.endsWith('node.exe') ? 300 : 50,
+      }));
+
+      const result = verifyDependencyIntegrity(context, nodeJsDependencyName);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.NodeJsIntegrityResult).toBe('passed');
+    });
   });
 
   describe('writeDependencyIntegrityManifest', () => {
@@ -1429,6 +1472,27 @@ describe('binaries', () => {
       expect(() => writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName)).not.toThrow();
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('false');
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestError).toContain('disk full');
+    });
+
+    it('excludes the integrity manifest itself from the recorded file list', () => {
+      const targetFolder = path.join('binariesLocation', funcDependencyName);
+      (fs.readdirSync as Mock).mockImplementation((dir: string) => {
+        if (dir === targetFolder) {
+          return [
+            { name: 'func.exe', isDirectory: () => false, isFile: () => true },
+            { name: '.logicapps-integrity.json', isDirectory: () => false, isFile: () => true },
+          ];
+        }
+        return [];
+      });
+      (fs.statSync as Mock).mockReturnValue({ size: 100 });
+
+      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+
+      const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
+      expect(written.fileCount).toBe(1);
+      expect(written.files).toEqual([{ path: 'func.exe', size: 100 }]);
+      expect(written.files).not.toContainEqual(expect.objectContaining({ path: '.logicapps-integrity.json' }));
     });
   });
 });
