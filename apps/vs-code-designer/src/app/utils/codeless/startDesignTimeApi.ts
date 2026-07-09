@@ -252,7 +252,6 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           // workflow-designtime) that a source-controlled clone may be missing before starting the host.
           const designTimeDirectory: Uri | undefined = await validateAndRegenerateProjectArtifacts(actionContext, projectPath);
 
-
           if (!designTimeDirectory) {
             throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
           }
@@ -750,7 +749,6 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         );
         await regenerateRootHostFile(projectPath);
         await regenerateLocalSettings(context, projectPath);
-
 
         if (autoStartDesignTime) {
           scheduleStartDesignTimeApi(projectPath);

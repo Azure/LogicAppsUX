@@ -22,12 +22,12 @@ import {
   logicAppKind,
   multiLanguageWorkerSetting,
   workerRuntimeKey,
-  workflowCodefulEnabled,
+  workflowCodefulEnabledKey,
   workflowOperationDiscoveryHostModeKey,
 } from '../../../../constants';
 import * as localSettings from '../../appSettings/localSettings';
 import { writeFormattedJson } from '../../fs';
-import { isCodefulProject } from '../../codeful';
+import { hasCodefulSdkReference } from '../../codeful';
 import { isCustomCodeFunctionsProjectInRoot } from '../../customCodeUtils';
 import {
   detectLogicAppProjectType,
@@ -60,7 +60,7 @@ vi.mock('../../fs', () => ({
 }));
 
 vi.mock('../../codeful', () => ({
-  isCodefulProject: vi.fn(() => Promise.resolve(false)),
+  hasCodefulSdkReference: vi.fn(() => Promise.resolve(false)),
 }));
 
 vi.mock('../../customCodeUtils', () => ({
@@ -80,7 +80,7 @@ const mockedFse = fse as unknown as {
 const mockedAddOrUpdate = localSettings.addOrUpdateLocalAppSettings as unknown as ReturnType<typeof vi.fn>;
 const mockedGetLocalSettingsJson = localSettings.getLocalSettingsJson as unknown as ReturnType<typeof vi.fn>;
 const mockedWriteFormattedJson = writeFormattedJson as unknown as ReturnType<typeof vi.fn>;
-const mockedIsCodeful = isCodefulProject as unknown as ReturnType<typeof vi.fn>;
+const mockedIsCodeful = hasCodefulSdkReference as unknown as ReturnType<typeof vi.fn>;
 const mockedIsCustomCodeInRoot = isCustomCodeFunctionsProjectInRoot as unknown as ReturnType<typeof vi.fn>;
 
 /** Returns the object written via writeFormattedJson for the file whose path ends with fileName. */
@@ -183,7 +183,7 @@ describe('validateProjectArtifacts', () => {
         [azureWebJobsStorageKey]: localEmulatorConnectionString,
         [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
         [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
-        [workflowCodefulEnabled]: 'true',
+        [workflowCodefulEnabledKey]: 'true',
       });
     });
 
@@ -236,7 +236,7 @@ describe('validateProjectArtifacts', () => {
 
   // Behavior by logic app type: regeneration builds the root local.settings.json from the same shared
   // source of truth as fresh project creation (getRootLocalSettings). The project type is inferred from
-  // the project files (detectLogicAppProjectType): codeful via isCodefulProject, and customCode /
+  // the project files (detectLogicAppProjectType): codeful via hasCodefulSdkReference, and customCode /
   // rulesEngine via a sibling custom-code functions (.csproj) project in the workspace root. As a
   // result every type regenerates the same content a freshly created project of that type would.
   describe('regenerateLocalSettings — behavior by logic app type', () => {
@@ -264,7 +264,7 @@ describe('validateProjectArtifacts', () => {
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
       expect(settingsAdded).toEqual(codelessBaseline);
       expect(settingsAdded).not.toHaveProperty(azureWebJobsFeatureFlagsKey);
-      expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabled);
+      expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabledKey);
     });
 
     it('customCode: regenerates the codeless baseline plus AzureWebJobsFeatureFlags (sibling custom-code project detected)', async () => {
@@ -281,7 +281,7 @@ describe('validateProjectArtifacts', () => {
         ...codelessBaseline,
         [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
       });
-      expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabled);
+      expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabledKey);
     });
 
     it('rulesEngine: regenerates the codeless baseline plus AzureWebJobsFeatureFlags (indistinguishable from customCode, same content)', async () => {
@@ -298,7 +298,7 @@ describe('validateProjectArtifacts', () => {
         ...codelessBaseline,
         [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
       });
-      expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabled);
+      expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabledKey);
     });
 
     it('codeful: regenerates the codeless baseline plus WORKFLOW_CODEFUL_ENABLED and AzureWebJobsFeatureFlags (matches fresh creation)', async () => {
@@ -311,7 +311,7 @@ describe('validateProjectArtifacts', () => {
       expect(settingsAdded).toEqual({
         ...codelessBaseline,
         [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
-        [workflowCodefulEnabled]: 'true',
+        [workflowCodefulEnabledKey]: 'true',
       });
     });
   });
@@ -590,7 +590,7 @@ describe('validateProjectArtifacts', () => {
             [ProjectDirectoryPathKey]: projectPath,
             [workerRuntimeKey]: WorkerRuntime.Node,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
-            [workflowCodefulEnabled]: 'true',
+            [workflowCodefulEnabledKey]: 'true',
           },
         });
       });
@@ -622,7 +622,7 @@ describe('validateProjectArtifacts', () => {
             [ProjectDirectoryPathKey]: projectPath,
             [workerRuntimeKey]: WorkerRuntime.Node,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
-            [workflowCodefulEnabled]: 'true',
+            [workflowCodefulEnabledKey]: 'true',
           },
         });
       });

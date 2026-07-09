@@ -28,7 +28,7 @@ import {
 } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
-import { isCodefulProject } from '../codeful';
+import { hasCodefulSdkReference } from '../codeful';
 import { isCustomCodeFunctionsProjectInRoot } from '../customCodeUtils';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { IHostJsonV2, ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
@@ -125,7 +125,7 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
  *
  * Unlike fresh project creation (which knows the type from the creation wizard context), a
  * source-controlled clone carries no explicit type marker, so it is inferred from the project's files:
- *  - codeful: the logic app folder itself is a .NET8 codeful project ({@link isCodefulProject}).
+ *  - codeful: the logic app folder itself is a .NET8 codeful project ({@link hasCodefulSdkReference}).
  *  - customCode / rulesEngine: a sibling custom-code functions (.csproj) project exists in the
  *    workspace root ({@link isCustomCodeFunctionsProjectInRoot}). These two types are indistinguishable
  *    here but produce the same root local.settings.json (both add the multi-language worker flag), so
@@ -135,7 +135,7 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
  * @returns {Promise<ProjectType>} The inferred project type.
  */
 export async function detectLogicAppProjectType(projectPath: string): Promise<ProjectType> {
-  if ((await isCodefulProject(projectPath)) ?? false) {
+  if ((await hasCodefulSdkReference(projectPath)) ?? false) {
     return ProjectType.codeful;
   }
 
@@ -409,7 +409,7 @@ export async function regenerateDesignTimeDirectory(context: IActionContext, pro
   }
 
   if (!validation.settingsFileValid) {
-    const isCodeful = (await isCodefulProject(projectPath)) ?? false;
+    const isCodeful = (await hasCodefulSdkReference(projectPath)) ?? false;
     const settingsFileContent = getLocalSettingsSchema(true, projectPath, isCodeful);
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, localSettingsFileName), settingsFileContent);
     await addOrUpdateLocalAppSettings(

@@ -238,7 +238,7 @@ export const getRootLocalSettings = (logicAppFolderPath: string, logicAppType: P
   }
 
   if (logicAppType === ProjectType.codeful) {
-    values[workflowCodefulEnabled] = 'true';
+    values[workflowCodefulEnabledKey] = 'true';
   }
 
   return {

@@ -14,7 +14,7 @@ import {
   logicAppKind,
   multiLanguageWorkerSetting,
   workerRuntimeKey,
-  workflowCodefulEnabled,
+  workflowCodefulEnabledKey,
 } from '../../../../constants';
 
 describe('utils/appSettings', () => {
@@ -77,7 +77,7 @@ describe('utils/appSettings', () => {
             [workerRuntimeKey]: WorkerRuntime.Dotnet,
             [azureWebJobsStorageKey]: localEmulatorConnectionString,
             [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
-            [workflowCodefulEnabled]: 'true',
+            [workflowCodefulEnabledKey]: 'true',
           },
         });
       });
@@ -102,7 +102,7 @@ describe('utils/appSettings', () => {
             [ProjectDirectoryPathKey]: projectPath,
             [workerRuntimeKey]: WorkerRuntime.Node,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
-            [workflowCodefulEnabled]: 'true',
+            [workflowCodefulEnabledKey]: 'true',
           },
         });
       });
@@ -144,7 +144,7 @@ describe('utils/appSettings', () => {
           workerRuntimeKey,
           appKindSetting,
           ProjectDirectoryPathKey,
-          workflowCodefulEnabled,
+          workflowCodefulEnabledKey,
         ]);
       });
     });
@@ -199,7 +199,7 @@ describe('utils/appSettings', () => {
         Values: {
           ...baseValues,
           [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
-          [workflowCodefulEnabled]: 'true',
+          [workflowCodefulEnabledKey]: 'true',
         },
       });
       expect(settings.Values).not.toHaveProperty('AzureFunctionsJobHost__extensionBundle__id');
@@ -214,7 +214,7 @@ describe('utils/appSettings', () => {
         appKindSetting,
         ProjectDirectoryPathKey,
         azureWebJobsFeatureFlagsKey,
-        workflowCodefulEnabled,
+        workflowCodefulEnabledKey,
       ]);
     });
   });
