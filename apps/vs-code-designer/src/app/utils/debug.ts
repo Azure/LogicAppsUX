@@ -72,7 +72,7 @@ export const logicAppDebugConfigProvider: DebugConfigurationProvider = {
     }
     return undefined;
   },
-}
+};
 
 export async function getDebugSymbolDll(): Promise<string> {
   const bundleFolderRoot = await getExtensionBundleFolder();

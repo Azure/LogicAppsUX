@@ -9,9 +9,9 @@ import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionReferences } from '../codeless/connection';
 
 /**
- * Refreshes the connection keys for the specified Logic App project, or all workspace projects by default.
+ * Refreshes the connection keys for the specified Logic App project.
  * @param {IActionContext} context - The action context.
- * @param {string} projectPath - The path to the Logic App project. If not provided, all Logic App projects in the workspace will be verified.
+ * @param {string} projectPath - The path to the Logic App project.
  * @returns {Promise<void>} A promise that resolves when the refresh is complete.
  */
 export async function refreshConnectionKeys(context: IActionContext, projectPath: string): Promise<void> {
