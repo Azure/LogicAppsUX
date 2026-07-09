@@ -22,7 +22,7 @@ vi.mock('../../debug/validatePreDebug', () => ({
 }));
 
 vi.mock('../../utils/appSettings/connectionKeys', () => ({
-  verifyLocalConnectionKeys: vi.fn(),
+  refreshConnectionKeys: vi.fn(),
 }));
 
 vi.mock('../../utils/azurite/activateAzurite', () => ({
@@ -83,6 +83,7 @@ import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import * as pickFuncProcessModule from '../pickFuncProcess';
 import { publishCodefulProject } from '../publishCodefulProject';
+import { refreshConnectionKeys } from '../../utils/appSettings/connectionKeys';
 
 let originalPlatform: NodeJS.Platform;
 let originalKill: typeof process.kill;
