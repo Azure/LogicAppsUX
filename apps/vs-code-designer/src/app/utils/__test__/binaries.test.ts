@@ -296,7 +296,7 @@ describe('binaries', () => {
       const result = await binariesExist(funcDependencyName);
 
       expect(result).toBe(false);
-      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `FuncCoreTools binary is missing: ${funcBinary}`);
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`FuncCoreTools binary is missing: ${funcBinary}`);
     });
 
     it('should repair a stale Windows NodeJs binary path when node.exe exists', async () => {
@@ -315,13 +315,8 @@ describe('binaries', () => {
 
       expect(result).toBe(true);
       expect(updateGlobalSetting).toHaveBeenCalledWith(nodeJsBinaryPathSettingKey, nodeExeBinary);
-      expect(executeCommand).toHaveBeenCalledWith(
-        ext.outputChannel,
-        undefined,
-        'echo',
-        `${nodeJsDependencyName} binary path updated: ${nodeExeBinary}`
-      );
-      expect(executeCommand).not.toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `NodeJs binary is missing: ${staleNodeBinary}`);
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`${nodeJsDependencyName} binary path updated: ${nodeExeBinary}`);
+      expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(`NodeJs binary is missing: ${staleNodeBinary}`);
     });
 
     it('should return false for a stale Windows NodeJs binary path when node.exe is also missing', async () => {
@@ -339,7 +334,7 @@ describe('binaries', () => {
 
       expect(result).toBe(false);
       expect(updateGlobalSetting).not.toHaveBeenCalledWith(nodeJsBinaryPathSettingKey, expect.any(String));
-      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `NodeJs binary is missing: ${staleNodeBinary}`);
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`NodeJs binary is missing: ${staleNodeBinary}`);
     });
 
     it('should return false if useBinariesDependencies returns false', async () => {
@@ -469,12 +464,7 @@ describe('binaries', () => {
         const result = await binariesExist(funcDependencyName);
 
         expect(result).toBe(false);
-        expect(executeCommand).toHaveBeenCalledWith(
-          ext.outputChannel,
-          undefined,
-          'echo',
-          `FuncCoreTools binary is missing: ${funcBinaryNoExe}`
-        );
+        expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`FuncCoreTools binary is missing: ${funcBinaryNoExe}`);
       });
 
       it('should not try .exe fallback when path already ends with .exe', async () => {
@@ -580,7 +570,7 @@ describe('binaries', () => {
       const result = binariesExistSync(funcDependencyName);
 
       expect(result).toBe(false);
-      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `FuncCoreTools binary is missing: ${funcBinary}`);
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`FuncCoreTools binary is missing: ${funcBinary}`);
     });
   });
 

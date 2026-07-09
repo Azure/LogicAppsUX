@@ -77,7 +77,7 @@ export async function downloadAndExtractDependency(
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
-  executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+  ext.outputChannel.appendLog(`Downloading dependency from: ${downloadUrl}`);
   fs.mkdirSync(tempFolderPath, { recursive: true });
   fs.chmodSync(tempFolderPath, 0o777);
 
@@ -102,7 +102,7 @@ export async function downloadAndExtractDependency(
     throw error;
   }
 
-  executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
+  ext.outputChannel.appendLog(`Successfully downloaded ${dependencyName} dependency.`);
   fs.chmodSync(dependencyFilePath, 0o777);
 
   // Verify the downloaded archive against the publisher's published SHA256 checksum before extracting.
@@ -238,7 +238,7 @@ export async function downloadAndExtractDependency(
     // remove the temp folder.
     if (fs.existsSync(tempFolderPath)) {
       fs.rmSync(tempFolderPath, { recursive: true, force: true });
-      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
+      ext.outputChannel.appendLog(`Removed ${tempFolderPath}`);
     }
   }
 
@@ -787,7 +787,7 @@ function binariesExistFromSettings(dependencyName: string, updateMissingExeSetti
   const binariesExist = fs.existsSync(binariesPath);
   const expectedBinaryPath = binariesExist ? getExpectedBinaryPath(dependencyName) : undefined;
 
-  executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} Binaries: ${binariesPath}`);
+  ext.outputChannel.appendLog(`${dependencyName} Binaries: ${binariesPath}`);
   if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
     const repairedBinaryPath = getRepairableWindowsBinaryPath(dependencyName, binariesPath, expectedBinaryPath);
     if (repairedBinaryPath) {
@@ -798,7 +798,7 @@ function binariesExistFromSettings(dependencyName: string, updateMissingExeSetti
       return true;
     }
 
-    executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} binary is missing: ${expectedBinaryPath}`);
+    ext.outputChannel.appendLog(`${dependencyName} binary is missing: ${expectedBinaryPath}`);
     return false;
   }
 
@@ -814,7 +814,7 @@ async function updateBinaryPathSetting(dependencyName: string, binaryPath: strin
     await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, binaryPath);
   }
 
-  executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} binary path updated: ${binaryPath}`);
+  ext.outputChannel.appendLog(`${dependencyName} binary path updated: ${binaryPath}`);
 }
 
 function getRepairableWindowsBinaryPath(dependencyName: string, binariesPath: string, expectedBinaryPath: string): string | undefined {
@@ -1378,7 +1378,7 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
         await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
       }
       extractContainerFolder(targetFolder);
-      await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
+      ext.outputChannel.appendLog(`Extraction ${dependencyName} successfully completed.`);
       return;
     } catch (error) {
       lastError = error;

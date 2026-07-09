@@ -43,11 +43,12 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     const integrityValid = binaries ? verifyDependencyIntegrity(context, funcDependencyName) : false;
     context.telemetry.properties.integrityValid = `${integrityValid}`;
 
-    const localVersion: string | null = binaries ? await getLocalFuncCoreToolsVersion() : null;
+    const hasValidBinaries = binaries && integrityValid;
+    const localVersion: string | null = hasValidBinaries ? await getLocalFuncCoreToolsVersion() : null;
     context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-    const newestVersion: string | undefined = binaries ? await getLatestFunctionCoreToolsVersion(context, majorVersion) : undefined;
-    const isOutdated = binaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
+    const newestVersion: string | undefined = hasValidBinaries ? await getLatestFunctionCoreToolsVersion(context, majorVersion) : undefined;
+    const isOutdated = hasValidBinaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
 
     const shouldInstall = !binaries || !integrityValid || localVersion === null || isOutdated;
 

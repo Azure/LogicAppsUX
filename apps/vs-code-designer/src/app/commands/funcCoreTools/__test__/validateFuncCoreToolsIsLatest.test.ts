@@ -121,12 +121,12 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(binariesExist).mockResolvedValue(true);
       vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
-      vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
-      vi.mocked(getLatestFunctionCoreToolsVersion).mockResolvedValue('4.0.0');
 
       await validateFuncCoreToolsIsLatest('4');
 
       expect(verifyDependencyIntegrity).toHaveBeenCalledWith(expect.anything(), 'FuncCoreTools');
+      expect(getLocalFuncCoreToolsVersion).not.toHaveBeenCalled();
+      expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
       expect(installFuncCoreToolsBinaries).toHaveBeenCalled();
     });
 
