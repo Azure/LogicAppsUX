@@ -248,11 +248,8 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         try {
           ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
-          // Validate and, when needed, regenerate the project artifacts required for a valid project:
-          // the project-level host.json and local.settings.json (derived from the logic app,
-          // connections.json and parameters.json) and the workflow-designtime directory baseline. This
-          // covers the case where source control is enabled and these git-ignored files are missing from
-          // a fresh clone.
+          // Regenerate any git-ignored project artifacts (host.json, local.settings.json,
+          // workflow-designtime) that a source-controlled clone may be missing before starting the host.
           const designTimeDirectory: Uri | undefined = await validateAndRegenerateProjectArtifacts(actionContext, projectPath);
 
 
@@ -746,10 +743,8 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
       }
 
       for (const projectPath of logicAppFolders) {
-        // Ensure the project-level host.json and local.settings.json exist and that local.settings.json
-        // includes every app setting the logic app references (from connections.json, parameters.json
-        // and the workflows). This keeps source-controlled projects valid when these git-ignored files
-        // are missing.
+        // Keep source-controlled projects valid by regenerating the git-ignored host.json /
+        // local.settings.json (incl. every app setting the logic app references).
         ext.outputChannel.appendLog(
           localize('ensuringProjectArtifacts', 'Ensuring host.json and local.settings.json for logic app "{0}".', projectPath)
         );

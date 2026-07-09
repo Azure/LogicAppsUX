@@ -508,7 +508,6 @@ describe('validateProjectArtifacts', () => {
       expect(writtenPaths.some((p) => p.includes('workflow-designtime-backup/workflow-designtime/host.json'))).toBe(true);
     });
 
-    // Golden / characterization tests: lock the EXACT content written for each design-time file,
     // Golden / characterization tests: lock the exact content written for each design-time file, per
     // logic app type. The expected objects are reconstructed explicitly from the shared constants
     // (rather than referencing hostFileContent / getLocalSettingsSchema directly), so a structural
