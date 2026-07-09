@@ -1523,7 +1523,7 @@ describe('createLocalConfigurationFiles', () => {
     const localSettingsData = localSettingsCall![1] as any;
 
     // Codeful is not a plain logic app (so it gets the multi-language worker flag) and additionally
-    // gets the codeful-enabled flag plus the job-host extension bundle id.
+    // gets the codeful-enabled flag.
     expect(localSettingsData.Values).toEqual({
       AzureWebJobsStorage: 'UseDevelopmentStorage=true',
       FUNCTIONS_INPROC_NET8_ENABLED: '1',
@@ -1532,11 +1532,10 @@ describe('createLocalConfigurationFiles', () => {
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
       WORKFLOW_CODEFUL_ENABLED: 'true',
-      AzureFunctionsJobHost__extensionBundle__id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
     });
 
-    // Verify exactly 8 properties exist (5 standard + feature flag + 2 codeful).
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(8);
+    // Verify exactly 7 properties exist (5 standard + feature flag + codeful-enabled).
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
   });
 
   it('should include extension bundle configuration in host.json', async () => {

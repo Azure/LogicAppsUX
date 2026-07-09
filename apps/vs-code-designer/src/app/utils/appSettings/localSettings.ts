@@ -8,8 +8,10 @@ import {
   ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
+  azureWebJobsFeatureFlagsKey,
   localEmulatorConnectionString,
   logicAppKind,
+  multiLanguageWorkerSetting,
   workerRuntimeKey,
   azureStorageTypeSetting,
   functionsInprocNet8Enabled,
@@ -24,7 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -203,6 +205,40 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
 
   if (isCodeful) {
     values[workflowCodefulEnabledKey] = 'true';
+  }
+
+  return {
+    IsEncrypted: false,
+    Values: values,
+  };
+};
+
+/**
+ * Builds the project-root (runtime) local.settings.json content for a logic app of the given type.
+ *
+ * This is the single source of truth shared by the workspace-creation path
+ * (CreateLogicAppWorkspace.createLocalConfigurationFiles) and the regeneration path
+ * (validateProjectArtifacts.regenerateLocalSettings) so a regenerated file is key-for-key identical to
+ * what a freshly created project of the same type would produce and the two paths cannot drift apart.
+ * @param {string} logicAppFolderPath - Absolute path to the logic app project folder (ProjectDirectoryPath value).
+ * @param {ProjectType} logicAppType - The logic app project type.
+ * @returns {ILocalSettingsJson} The root local.settings.json content.
+ */
+export const getRootLocalSettings = (logicAppFolderPath: string, logicAppType: ProjectType): ILocalSettingsJson => {
+  const values: Record<string, string> = {
+    [azureWebJobsStorageKey]: localEmulatorConnectionString,
+    [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+    [workerRuntimeKey]: WorkerRuntime.Dotnet,
+    [appKindSetting]: logicAppKind,
+    [ProjectDirectoryPathKey]: logicAppFolderPath,
+  };
+
+  if (logicAppType !== ProjectType.logicApp) {
+    values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
+  }
+
+  if (logicAppType === ProjectType.codeful) {
+    values[workflowCodefulEnabled] = 'true';
   }
 
   return {

@@ -19,11 +19,16 @@ import {
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
+import {
+  addOrUpdateLocalAppSettings,
+  getLocalSettingsJson,
+  getLocalSettingsSchema,
+  getRootLocalSettings,
+} from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { isCodefulProject } from '../codeful';
-import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { IHostJsonV2, ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
@@ -139,7 +144,10 @@ export async function regenerateLocalSettings(context: IActionContext, projectPa
   );
 
   const isCodeful = (await isCodefulProject(projectPath)) ?? false;
-  const baselineValues = getLocalSettingsSchema(false, projectPath, isCodeful).Values ?? {};
+  // Build the baseline from the same source of truth as fresh project creation so a regenerated
+  // local.settings.json matches what a newly created project of this type would produce.
+  const logicAppType = isCodeful ? ProjectType.codeful : ProjectType.logicApp;
+  const baselineValues = getRootLocalSettings(projectPath, logicAppType).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);

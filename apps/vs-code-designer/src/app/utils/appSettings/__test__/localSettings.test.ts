@@ -1,16 +1,18 @@
 import { describe, it, expect, vi } from 'vitest';
-import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import { getLocalSettingsSchema } from '../localSettings';
+import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { getLocalSettingsSchema, getRootLocalSettings } from '../localSettings';
 import {
   ProjectDirectoryPathKey,
   appKindSetting,
   azureStorageTypeSetting,
+  azureWebJobsFeatureFlagsKey,
   azureWebJobsSecretStorageTypeKey,
   azureWebJobsStorageKey,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
   localEmulatorConnectionString,
   logicAppKind,
+  multiLanguageWorkerSetting,
   workerRuntimeKey,
   workflowCodefulEnabled,
 } from '../../../../constants';
@@ -145,6 +147,75 @@ describe('utils/appSettings', () => {
           workflowCodefulEnabled,
         ]);
       });
+    });
+  });
+
+  // getRootLocalSettings is the single source of truth for the project-root local.settings.json shared
+  // by fresh project creation (CreateLogicAppWorkspace.createLocalConfigurationFiles) and regeneration
+  // (validateProjectArtifacts.regenerateLocalSettings). These golden tests lock the exact content and
+  // key order per ProjectType so the two paths cannot drift apart.
+  describe('getRootLocalSettings', () => {
+    const projectPath = 'path/to/project';
+
+    const baseValues = {
+      [azureWebJobsStorageKey]: localEmulatorConnectionString,
+      [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+      [workerRuntimeKey]: WorkerRuntime.Dotnet,
+      [appKindSetting]: logicAppKind,
+      [ProjectDirectoryPathKey]: projectPath,
+    };
+
+    it('logicApp: 5 base keys, no feature or codeful flags', () => {
+      expect(getRootLocalSettings(projectPath, ProjectType.logicApp)).toEqual({
+        IsEncrypted: false,
+        Values: { ...baseValues },
+      });
+    });
+
+    it('customCode: adds the multi-language worker feature flag', () => {
+      expect(getRootLocalSettings(projectPath, ProjectType.customCode)).toEqual({
+        IsEncrypted: false,
+        Values: {
+          ...baseValues,
+          [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
+        },
+      });
+    });
+
+    it('rulesEngine: adds the multi-language worker feature flag', () => {
+      expect(getRootLocalSettings(projectPath, ProjectType.rulesEngine)).toEqual({
+        IsEncrypted: false,
+        Values: {
+          ...baseValues,
+          [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
+        },
+      });
+    });
+
+    it('codeful: adds the feature flag and WORKFLOW_CODEFUL_ENABLED (and no extension bundle id)', () => {
+      const settings = getRootLocalSettings(projectPath, ProjectType.codeful);
+      expect(settings).toEqual({
+        IsEncrypted: false,
+        Values: {
+          ...baseValues,
+          [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
+          [workflowCodefulEnabled]: 'true',
+        },
+      });
+      expect(settings.Values).not.toHaveProperty('AzureFunctionsJobHost__extensionBundle__id');
+    });
+
+    it('orders keys deterministically for codeful (base keys, then feature flag, then codeful flag)', () => {
+      const keys = Object.keys(getRootLocalSettings(projectPath, ProjectType.codeful).Values);
+      expect(keys).toEqual([
+        azureWebJobsStorageKey,
+        functionsInprocNet8Enabled,
+        workerRuntimeKey,
+        appKindSetting,
+        ProjectDirectoryPathKey,
+        azureWebJobsFeatureFlagsKey,
+        workflowCodefulEnabled,
+      ]);
     });
   });
 });
