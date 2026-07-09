@@ -83,7 +83,7 @@ export async function downloadAndExtractDependency(
 
   let integrityResult: DownloadAttemptResult | undefined;
   try {
-    integrityResult = await downloadFileWithVerification(context, downloadUrl, dependencyFilePath, dependencyName);
+    integrityResult = await downloadFileWithTransportVerification(context, downloadUrl, dependencyFilePath, dependencyName);
   } catch (error) {
     const errorMessage = `Error downloading the ${dependencyName} file: ${error instanceof Error ? error.message : String(error)}`;
     vscode.window.showErrorMessage(errorMessage);
@@ -107,7 +107,7 @@ export async function downloadAndExtractDependency(
 
   // Verify the downloaded archive against the publisher's published SHA256 checksum before extracting.
   // NodeJs (nodejs.org) and Functions Core Tools (GitHub releases) are not served from the Azure CDN
-  // that sets Content-MD5, so the transport-level check in downloadFileWithVerification only validates
+  // that sets Content-MD5, so the transport-level check in downloadFileWithTransportVerification only validates
   // size for them; the SHA256 check closes that gap. Unavailable checksums are non-blocking (skip).
   const expectedSha256 = await resolveExpectedDependencySha256(context, downloadUrl, dependencyName);
   if (expectedSha256) {
@@ -130,7 +130,7 @@ export async function downloadAndExtractDependency(
       }
       throw new Error(errorMessage);
     }
-    executeCommand(ext.outputChannel, undefined, 'echo', `Verified ${dependencyName} download checksum.`);
+    ext.outputChannel.appendLog(localize('verifiedDownloadChecksum', 'Verified {0} download checksum.', dependencyName));
   }
 
   try {
@@ -180,7 +180,7 @@ export async function downloadAndExtractDependency(
       // Record an on-disk integrity manifest so a later validation pass can detect missing/corrupt
       // files (e.g. a deleted DLL under the Function Host) and force a wipe + reinstall.
       if (dependencyName === funcDependencyName || dependencyName === nodeJsDependencyName) {
-        await writeDependencyIntegrityManifest(context, targetFolder, dependencyName);
+        writeDependencyIntegrityManifest(context, targetFolder, dependencyName);
       }
       if (dependencyName === funcDependencyName) {
         // Add execute permissions for func and gozip binaries
@@ -252,7 +252,7 @@ export async function downloadAndExtractDependency(
  * Thin wrapper that adds extension-host telemetry + log lines on top of the
  * vscode-free implementation in `./integrity`.
  */
-export async function downloadFileWithVerification(
+export async function downloadFileWithTransportVerification(
   context: IActionContext,
   url: string,
   destPath: string,
@@ -276,13 +276,15 @@ export async function downloadFileWithVerification(
         },
         onAttempt: (attempt, error, willRetry) => {
           attemptsUsed = attempt;
-          executeCommand(
-            ext.outputChannel,
-            undefined,
-            'echo',
-            `Download attempt ${attempt} for ${dependencyName} failed: ${
-              error instanceof Error ? error.message : String(error)
-            }${willRetry ? ' — retrying.' : ''}`
+          ext.outputChannel.appendLog(
+            localize(
+              'downloadAttemptFailed',
+              'Download attempt {0} for {1} failed: {2}{3}',
+              attempt,
+              dependencyName,
+              error instanceof Error ? error.message : String(error),
+              willRetry ? ' — retrying.' : ''
+            )
           );
         },
       },
@@ -450,7 +452,7 @@ export async function computeFileSha256(filePath: string): Promise<string> {
     const hash = createHash('sha256');
     const stream = fs.createReadStream(filePath);
     stream.on('error', reject);
-    stream.on('data', (chunk: Buffer) => hash.update(chunk));
+    stream.on('data', (chunk: Buffer) => hash.update(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength)));
     stream.on('end', () => resolve(hash.digest('hex')));
   });
 }
@@ -459,13 +461,13 @@ export async function computeFileSha256(filePath: string): Promise<string> {
  * Resolves the published SHA256 checksum for a Node.js artifact from the official SHASUMS256.txt file.
  * Returns undefined (non-blocking) when the checksum source is unreachable or the artifact is not listed.
  * @param {IActionContext} context - Command context, used for telemetry.
- * @param {string} version - The Node.js version being downloaded (e.g. "20.19.4").
- * @param {string} artifactFileName - The artifact file name (e.g. "node-v20.19.4-win-x64.zip").
+ * @param {string} downloadUrl - The Node.js archive download URL; SHASUMS256.txt lives in the same directory.
  * @returns {Promise<string | undefined>} The expected SHA256 hex digest, or undefined to skip verification.
  */
-export async function getNodeJsSha256(context: IActionContext, version: string, artifactFileName: string): Promise<string | undefined> {
+export async function getNodeJsSha256(context: IActionContext, downloadUrl: string): Promise<string | undefined> {
   try {
-    const shasumsUrl = `https://nodejs.org/dist/v${version}/SHASUMS256.txt`;
+    const artifactFileName = path.basename(downloadUrl);
+    const shasumsUrl = `${downloadUrl.slice(0, downloadUrl.length - artifactFileName.length)}SHASUMS256.txt`;
     const response = await axios.get(shasumsUrl, { responseType: 'text', timeout: dependencyMetadataRequestTimeoutMs });
     const shasums: string = typeof response.data === 'string' ? response.data : String(response.data);
     for (const line of shasums.split('\n')) {
@@ -525,11 +527,7 @@ export async function resolveExpectedDependencySha256(
   dependencyName: string
 ): Promise<string | undefined> {
   if (dependencyName === nodeJsDependencyName) {
-    const match = downloadUrl.match(/nodejs\.org\/dist\/v([^/]+)\/(.+)$/);
-    if (match) {
-      return getNodeJsSha256(context, match[1], match[2]);
-    }
-    return undefined;
+    return getNodeJsSha256(context, downloadUrl);
   }
   if (dependencyName === funcDependencyName) {
     return getFuncCoreToolsSha256(context, downloadUrl);
@@ -540,7 +538,6 @@ export async function resolveExpectedDependencySha256(
 interface IntegrityManifestEntry {
   path: string;
   size: number;
-  sha256?: string;
 }
 
 interface IntegrityManifest {
@@ -548,32 +545,6 @@ interface IntegrityManifest {
   createdAt: string;
   fileCount: number;
   files: IntegrityManifestEntry[];
-}
-
-/**
- * The primary executables per dependency whose content (not just presence/size) is SHA256-verified.
- * These are the binaries that must launch at runtime (a corrupt node/func here breaks startup), so
- * they get a bounded content check while the rest of the tree relies on the faster size/existence
- * check. Matched by file basename (case-insensitive) so both Windows (.exe) and *nix layouts work.
- */
-const criticalIntegrityFileNames: Record<string, string[]> = {
-  [nodeJsDependencyName]: ['node.exe', 'node'],
-  [funcDependencyName]: ['func.exe', 'func', 'func.dll'],
-};
-
-/**
- * Whether a manifest entry is a primary executable that should be SHA256 content-verified.
- * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
- * @param {string} relativePath - The entry's relative path (posix separators).
- * @returns {boolean} true when the file is in the dependency's critical-executable set.
- */
-function isCriticalIntegrityFile(dependencyName: string, relativePath: string): boolean {
-  const criticalNames = criticalIntegrityFileNames[dependencyName];
-  if (!criticalNames) {
-    return false;
-  }
-  const baseName = relativePath.split('/').pop()?.toLowerCase() ?? '';
-  return criticalNames.some((name) => name.toLowerCase() === baseName);
 }
 
 /**
@@ -604,41 +575,16 @@ function listFilesWithSizes(rootFolder: string): IntegrityManifestEntry[] {
 
 /**
  * Writes an on-disk integrity manifest into a freshly installed dependency folder, recording every
- * file's size plus a SHA256 content hash for the primary executables. Best-effort: a failure to write
- * the manifest (or to hash an individual file) is logged but never fails the install.
+ * file's relative path and byte size. Best-effort: a failure to write the manifest is logged but
+ * never fails the install.
  * @param {IActionContext} context - Command context, used for telemetry.
  * @param {string} targetFolder - The dependency folder that was just extracted.
  * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
- * @returns {Promise<void>} Resolves once the manifest has been written (or the failure logged).
+ * @returns {void}
  */
-export async function writeDependencyIntegrityManifest(
-  context: IActionContext,
-  targetFolder: string,
-  dependencyName: string
-): Promise<void> {
+export function writeDependencyIntegrityManifest(context: IActionContext, targetFolder: string, dependencyName: string): void {
   try {
     const files = listFilesWithSizes(targetFolder);
-    // Content-hash only the primary executables (bounded, so startup stays fast). Best-effort per
-    // file: a hashing failure leaves sha256 undefined so the file falls back to the size check.
-    let hashedCount = 0;
-    for (const file of files) {
-      if (isCriticalIntegrityFile(dependencyName, file.path)) {
-        try {
-          file.sha256 = await computeFileSha256(path.join(targetFolder, file.path));
-          hashedCount += 1;
-        } catch (hashError) {
-          ext.outputChannel.appendLog(
-            localize(
-              'integrityHashSkip',
-              'Could not hash {0} file "{1}" for the integrity manifest: {2}',
-              dependencyName,
-              file.path,
-              hashError instanceof Error ? hashError.message : String(hashError)
-            )
-          );
-        }
-      }
-    }
     const manifest: IntegrityManifest = {
       dependencyName,
       createdAt: new Date().toISOString(),
@@ -648,7 +594,6 @@ export async function writeDependencyIntegrityManifest(
     const manifestPath = path.join(targetFolder, dependencyIntegrityManifestFileName);
     fs.writeFileSync(manifestPath, JSON.stringify(manifest));
     context.telemetry.properties[`${dependencyName}IntegrityManifestWritten`] = 'true';
-    context.telemetry.properties[`${dependencyName}IntegrityHashedFiles`] = `${hashedCount}`;
     ext.outputChannel.appendLog(
       localize('recordedIntegrityManifest', 'Recorded {0} on-disk integrity manifest ({1} files).', dependencyName, files.length)
     );
@@ -668,15 +613,14 @@ export async function writeDependencyIntegrityManifest(
 
 /**
  * Verifies an installed dependency against its on-disk integrity manifest. Returns false (which should
- * trigger a wipe + reinstall) when the manifest is missing/unreadable, any recorded file is missing or
- * its size no longer matches, or a primary executable's SHA256 content hash no longer matches. A
- * missing manifest is treated as a failure so that installs predating this check are re-established
- * from a trusted, freshly-downloaded baseline.
+ * trigger a wipe + reinstall) when the manifest is missing/unreadable, or any recorded file is missing,
+ * no longer a regular file, or its size no longer matches. A missing manifest is treated as a failure so
+ * that installs predating this check are re-established from a trusted, freshly-downloaded baseline.
  * @param {IActionContext} context - Command context, used for telemetry.
  * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
- * @returns {Promise<boolean>} true when the install matches its manifest; false when it should be reinstalled.
+ * @returns {boolean} true when the install matches its manifest; false when it should be reinstalled.
  */
-export async function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): Promise<boolean> {
+export function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): boolean {
   ext.outputChannel.appendLog(localize('validatingIntegrity', 'Validating {0} on-disk integrity...', dependencyName));
   try {
     const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
@@ -751,22 +695,6 @@ export async function verifyDependencyIntegrity(context: IActionContext, depende
           )
         );
         return false;
-      }
-      if (file.sha256) {
-        const actualSha256 = await computeFileSha256(absolutePath);
-        if (actualSha256 !== file.sha256) {
-          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'sha256-mismatch';
-          context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
-          ext.outputChannel.appendLog(
-            localize(
-              'integrityFileSha256Mismatch',
-              '{0} on-disk integrity check FAILED: "{1}" content hash changed. Scheduling reinstall.',
-              dependencyName,
-              file.path
-            )
-          );
-          return false;
-        }
       }
     }
 

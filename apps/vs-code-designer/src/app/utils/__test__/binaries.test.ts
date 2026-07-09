@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
 import {
   downloadAndExtractDependency,
-  downloadFileWithVerification,
+  downloadFileWithTransportVerification,
   DownloadIntegrityError,
   binariesExist,
   binariesExistSync,
@@ -86,7 +86,7 @@ describe('binaries', () => {
     });
   });
 
-  describe('downloadFileWithVerification', () => {
+  describe('downloadFileWithTransportVerification', () => {
     let context: IActionContext;
     const url = 'https://cdn.example.com/Microsoft.Azure.Functions.ExtensionBundle.Workflows.1.2.3_any-any.zip';
     const destPath = '/tmp/dep.zip';
@@ -132,7 +132,7 @@ describe('binaries', () => {
         'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==',
       });
 
-      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+      const result = await downloadFileWithTransportVerification(context, url, destPath, dependencyName);
 
       expect(result.actualSize).toBe(11);
       expect(result.expectedSize).toBe(11);
@@ -146,7 +146,7 @@ describe('binaries', () => {
       mockWriter();
       mockAxiosStream(['abc'], {});
 
-      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+      const result = await downloadFileWithTransportVerification(context, url, destPath, dependencyName);
 
       expect(result.expectedSize).toBeUndefined();
       expect(result.expectedMd5).toBeUndefined();
@@ -163,7 +163,9 @@ describe('binaries', () => {
       mockWriter();
       mockAxiosStream(['short'], { 'content-length': '999', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
 
-      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(DownloadIntegrityError);
+      await expect(downloadFileWithTransportVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(
+        DownloadIntegrityError
+      );
       expect(axios.get).toHaveBeenCalledTimes(3);
       expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('3');
     });
@@ -176,7 +178,7 @@ describe('binaries', () => {
       mockWriter();
       mockAxiosStream(['hello world'], { 'content-length': '11', 'content-md5': 'XrY7u+Ae7tCTyyK7j1rNww==' });
 
-      const result = await downloadFileWithVerification(context, url, destPath, dependencyName, 3);
+      const result = await downloadFileWithTransportVerification(context, url, destPath, dependencyName, 3);
 
       expect(result.actualSize).toBe(11);
       expect(axios.get).toHaveBeenCalledTimes(2);
@@ -187,7 +189,7 @@ describe('binaries', () => {
       const err = Object.assign(new Error('Not Found'), { response: { status: 404 } });
       (axios.get as Mock).mockRejectedValueOnce(err);
 
-      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBe(err);
+      await expect(downloadFileWithTransportVerification(context, url, destPath, dependencyName, 3)).rejects.toBe(err);
       expect(axios.get).toHaveBeenCalledTimes(1);
     });
 
@@ -197,7 +199,7 @@ describe('binaries', () => {
       mockWriter();
       mockAxiosStream(['ok'], { 'content-length': '2' });
 
-      const result = await downloadFileWithVerification(context, url, destPath, dependencyName, 3);
+      const result = await downloadFileWithTransportVerification(context, url, destPath, dependencyName, 3);
       expect(result.actualSize).toBe(2);
       expect(axios.get).toHaveBeenCalledTimes(2);
     }, 10000);
@@ -206,7 +208,7 @@ describe('binaries', () => {
       mockWriter();
       mockAxiosStream(['hello world'], { 'content-length': '11' });
 
-      await downloadFileWithVerification(context, url, destPath, dependencyName);
+      await downloadFileWithTransportVerification(context, url, destPath, dependencyName);
 
       expect(axios.get).toHaveBeenCalledWith(
         url,
@@ -229,7 +231,7 @@ describe('binaries', () => {
         'content-length': '24942',
       });
 
-      const result = await downloadFileWithVerification(context, url, destPath, dependencyName);
+      const result = await downloadFileWithTransportVerification(context, url, destPath, dependencyName);
 
       expect(result.actualSize).toBe(76680);
       expect(context.telemetry.properties[`${dependencyName}DownloadAttempts`]).toBe('1');
@@ -243,7 +245,9 @@ describe('binaries', () => {
       mockWriter();
       mockAxiosStream(['short'], { 'content-length': '999' });
 
-      await expect(downloadFileWithVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(DownloadIntegrityError);
+      await expect(downloadFileWithTransportVerification(context, url, destPath, dependencyName, 3)).rejects.toBeInstanceOf(
+        DownloadIntegrityError
+      );
       expect(axios.get).toHaveBeenCalledTimes(3);
     }, 10000);
   });
@@ -1207,12 +1211,13 @@ describe('binaries', () => {
 
     it('returns the checksum for the matching artifact file name', async () => {
       const artifactFileName = 'node-v20.19.4-win-x64.zip';
+      const downloadUrl = `https://nodejs.org/dist/v20.19.4/${artifactFileName}`;
       const expectedHash = '1bf83e5958157d13673507349238236aec4f6efc95cf426cbe126a999a3e4c0b';
       (axios.get as Mock).mockResolvedValue({
         data: `deadbeef${'0'.repeat(56)}  node-v20.19.4-linux-x64.tar.gz\n${expectedHash}  ${artifactFileName}\n`,
       });
 
-      const result = await getNodeJsSha256(context, '20.19.4', artifactFileName);
+      const result = await getNodeJsSha256(context, downloadUrl);
 
       expect(result).toBe(expectedHash);
       expect(context.telemetry.properties.nodeJsChecksumResolved).toBe('true');
@@ -1222,7 +1227,7 @@ describe('binaries', () => {
     it('returns undefined when the artifact is not listed', async () => {
       (axios.get as Mock).mockResolvedValue({ data: `${'a'.repeat(64)}  node-v20.19.4-linux-x64.tar.gz\n` });
 
-      const result = await getNodeJsSha256(context, '20.19.4', 'node-v20.19.4-win-x64.zip');
+      const result = await getNodeJsSha256(context, 'https://nodejs.org/dist/v20.19.4/node-v20.19.4-win-x64.zip');
 
       expect(result).toBeUndefined();
       expect(context.telemetry.properties.nodeJsChecksumResolved).toBe('false');
@@ -1231,7 +1236,7 @@ describe('binaries', () => {
     it('returns undefined when the checksum source is unreachable', async () => {
       (axios.get as Mock).mockRejectedValue(new Error('network down'));
 
-      const result = await getNodeJsSha256(context, '20.19.4', 'node-v20.19.4-win-x64.zip');
+      const result = await getNodeJsSha256(context, 'https://nodejs.org/dist/v20.19.4/node-v20.19.4-win-x64.zip');
 
       expect(result).toBeUndefined();
       expect(context.telemetry.properties.nodeJsChecksumResolved).toBe('false');
@@ -1295,17 +1300,6 @@ describe('binaries', () => {
 
   describe('verifyDependencyIntegrity', () => {
     let context: IActionContext;
-
-    const stubHashStream = (content: string) => {
-      (fs.createReadStream as Mock).mockImplementation(() => {
-        const stream = new EventEmitter();
-        process.nextTick(() => {
-          stream.emit('data', Buffer.from(content));
-          stream.emit('end');
-        });
-        return stream;
-      });
-    };
 
     beforeEach(() => {
       context = { telemetry: { properties: {} } } as IActionContext;
@@ -1399,43 +1393,6 @@ describe('binaries', () => {
       expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('func.exe');
     });
 
-    it('returns true when a critical executable content hash matches', async () => {
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: 1,
-        files: [{ path: 'func.exe', size: 100, sha256: 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9' }],
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockReturnValue({ size: 100, isFile: () => true });
-      stubHashStream('hello world');
-
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
-
-      expect(result).toBe(true);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
-    });
-
-    it('returns false when a critical executable content hash no longer matches', async () => {
-      const manifest = {
-        dependencyName: funcDependencyName,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        fileCount: 1,
-        files: [{ path: 'func.exe', size: 100, sha256: 'a'.repeat(64) }],
-      };
-      (fs.existsSync as Mock).mockReturnValue(true);
-      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockReturnValue({ size: 100, isFile: () => true });
-      stubHashStream('corrupted contents');
-
-      const result = await verifyDependencyIntegrity(context, funcDependencyName);
-
-      expect(result).toBe(false);
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('sha256-mismatch');
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('func.exe');
-    });
-
     it('returns false when the manifest is not valid JSON', async () => {
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue('not-json');
@@ -1494,22 +1451,11 @@ describe('binaries', () => {
   describe('writeDependencyIntegrityManifest', () => {
     let context: IActionContext;
 
-    const stubHashStream = () => {
-      (fs.createReadStream as Mock).mockImplementation((filePath: string) => {
-        const stream = new EventEmitter();
-        process.nextTick(() => {
-          stream.emit('data', Buffer.from(String(filePath)));
-          stream.emit('end');
-        });
-        return stream;
-      });
-    };
-
     beforeEach(() => {
       context = { telemetry: { properties: {} } } as IActionContext;
     });
 
-    it('writes a manifest with sizes for all files and sha256 for critical executables', async () => {
+    it('writes a manifest with path + size for every file', () => {
       const targetFolder = path.join('binariesLocation', funcDependencyName);
       (fs.readdirSync as Mock).mockImplementation((dir: string) => {
         if (dir === targetFolder) {
@@ -1524,9 +1470,8 @@ describe('binaries', () => {
       (fs.statSync as Mock).mockImplementation((filePath: string) => ({
         size: filePath.endsWith('func.exe') ? 100 : 200,
       }));
-      stubHashStream();
 
-      await writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         path.join(targetFolder, '.logicapps-integrity.json'),
@@ -1534,20 +1479,17 @@ describe('binaries', () => {
       );
       const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
       expect(written.fileCount).toBe(3);
-      // func.exe and in-proc8/func.dll are critical => hashed; README.md is size-only.
       const funcExe = written.files.find((f: { path: string }) => f.path === 'func.exe');
       const funcDll = written.files.find((f: { path: string }) => f.path === 'in-proc8/func.dll');
       const readme = written.files.find((f: { path: string }) => f.path === 'README.md');
-      expect(funcExe).toMatchObject({ size: 100 });
-      expect(funcExe.sha256).toMatch(/^[a-f0-9]{64}$/);
-      expect(funcDll).toMatchObject({ size: 200 });
-      expect(funcDll.sha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(funcExe).toEqual({ path: 'func.exe', size: 100 });
+      expect(funcDll).toEqual({ path: 'in-proc8/func.dll', size: 200 });
       expect(readme).toEqual({ path: 'README.md', size: 200 });
+      expect(written.files.some((f: { sha256?: string }) => f.sha256 !== undefined)).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('true');
-      expect(context.telemetry.properties.FuncCoreToolsIntegrityHashedFiles).toBe('2');
     });
 
-    it('hashes only the critical NodeJs executable, not data files', async () => {
+    it('records size-only entries for NodeJs files', () => {
       const targetFolder = path.join('binariesLocation', nodeJsDependencyName);
       (fs.readdirSync as Mock).mockImplementation((dir: string) => {
         if (dir === targetFolder) {
@@ -1559,31 +1501,29 @@ describe('binaries', () => {
         return [];
       });
       (fs.statSync as Mock).mockReturnValue({ size: 42 });
-      stubHashStream();
 
-      await writeDependencyIntegrityManifest(context, targetFolder, nodeJsDependencyName);
+      writeDependencyIntegrityManifest(context, targetFolder, nodeJsDependencyName);
 
       const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
       const nodeExe = written.files.find((f: { path: string }) => f.path === 'node.exe');
       const npmCmd = written.files.find((f: { path: string }) => f.path === 'npm.cmd');
-      expect(nodeExe.sha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(nodeExe).toEqual({ path: 'node.exe', size: 42 });
       expect(npmCmd).toEqual({ path: 'npm.cmd', size: 42 });
-      expect(context.telemetry.properties.NodeJsIntegrityHashedFiles).toBe('1');
     });
 
-    it('records telemetry but does not throw when writing the manifest fails', async () => {
+    it('records telemetry but does not throw when writing the manifest fails', () => {
       const targetFolder = path.join('binariesLocation', funcDependencyName);
       (fs.readdirSync as Mock).mockReturnValue([]);
       (fs.writeFileSync as Mock).mockImplementation(() => {
         throw new Error('disk full');
       });
 
-      await expect(writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName)).resolves.toBeUndefined();
+      expect(() => writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName)).not.toThrow();
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestWritten).toBe('false');
       expect(context.telemetry.properties.FuncCoreToolsIntegrityManifestError).toContain('disk full');
     });
 
-    it('excludes the integrity manifest itself from the recorded file list', async () => {
+    it('excludes the integrity manifest itself from the recorded file list', () => {
       const targetFolder = path.join('binariesLocation', funcDependencyName);
       (fs.readdirSync as Mock).mockImplementation((dir: string) => {
         if (dir === targetFolder) {
@@ -1595,9 +1535,8 @@ describe('binaries', () => {
         return [];
       });
       (fs.statSync as Mock).mockReturnValue({ size: 100 });
-      stubHashStream();
 
-      await writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
+      writeDependencyIntegrityManifest(context, targetFolder, funcDependencyName);
 
       const written = JSON.parse((fs.writeFileSync as Mock).mock.calls[0][1]);
       expect(written.fileCount).toBe(1);

@@ -40,7 +40,7 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     context.telemetry.properties.binariesExist = `${binaries}`;
     // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
     // install (e.g. a removed Function Host DLL) forces a wipe + reinstall instead of failing at startup.
-    const integrityValid = binaries ? await verifyDependencyIntegrity(context, funcDependencyName) : false;
+    const integrityValid = binaries ? verifyDependencyIntegrity(context, funcDependencyName) : false;
     context.telemetry.properties.integrityValid = `${integrityValid}`;
 
     const localVersion: string | null = binaries ? await getLocalFuncCoreToolsVersion() : null;
