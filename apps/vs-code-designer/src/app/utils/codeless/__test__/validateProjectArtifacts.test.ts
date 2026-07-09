@@ -221,6 +221,80 @@ describe('validateProjectArtifacts', () => {
     });
   });
 
+  // Characterization (pre-change baseline): locks the CURRENT regenerateLocalSettings output for each
+  // logic app type so upcoming changes are visible as intentional test diffs rather than silent
+  // regressions. Today regeneration only inspects isCodefulProject; it has NO detection for customCode
+  // or rulesEngine, so those types currently regenerate the plain codeless baseline WITHOUT the
+  // multi-language worker flag. Codeful adds WORKFLOW_CODEFUL_ENABLED but ALSO currently omits the
+  // AzureWebJobsFeatureFlags flag that the creation path adds. These gaps are what later stages fix.
+  describe('regenerateLocalSettings — characterization by logic app type (pre-change baseline)', () => {
+    const codelessBaseline = {
+      [appKindSetting]: logicAppKind,
+      [ProjectDirectoryPathKey]: projectPath,
+      [workerRuntimeKey]: WorkerRuntime.Dotnet,
+      [azureWebJobsStorageKey]: localEmulatorConnectionString,
+      [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+    };
+
+    beforeEach(() => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+    });
+
+    it('logicApp (codeless): regenerates the 5-key codeless baseline, no AzureWebJobsFeatureFlags', async () => {
+      mockedIsCodeful.mockResolvedValue(false);
+
+      const changed = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual(codelessBaseline);
+      expect(settingsAdded).not.toHaveProperty('AzureWebJobsFeatureFlags');
+      expect(settingsAdded).not.toHaveProperty(workflowCodefulEnabled);
+    });
+
+    it('customCode: CURRENTLY regenerates the codeless baseline WITHOUT AzureWebJobsFeatureFlags (undetected type; fixed in a later stage)', async () => {
+      // customCode is not codeful, and regeneration has no way to detect it today, so it is treated
+      // identically to a plain codeless logic app (no EnableMultiLanguageWorker flag).
+      mockedIsCodeful.mockResolvedValue(false);
+
+      const changed = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual(codelessBaseline);
+      expect(settingsAdded).not.toHaveProperty('AzureWebJobsFeatureFlags');
+    });
+
+    it('rulesEngine: CURRENTLY regenerates the codeless baseline WITHOUT AzureWebJobsFeatureFlags (undetected type; fixed in a later stage)', async () => {
+      // rulesEngine, like customCode, is undetectable at regeneration time today and falls back to the
+      // codeless baseline.
+      mockedIsCodeful.mockResolvedValue(false);
+
+      const changed = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual(codelessBaseline);
+      expect(settingsAdded).not.toHaveProperty('AzureWebJobsFeatureFlags');
+    });
+
+    it('codeful: regenerates WORKFLOW_CODEFUL_ENABLED but CURRENTLY omits AzureWebJobsFeatureFlags (fixed in a later stage)', async () => {
+      mockedIsCodeful.mockResolvedValue(true);
+
+      const changed = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual({
+        ...codelessBaseline,
+        [workflowCodefulEnabled]: 'true',
+      });
+      expect(settingsAdded).not.toHaveProperty('AzureWebJobsFeatureFlags');
+    });
+  });
+
   describe('validateDesignTimeDirectory', () => {
     const designTimeDir = `${projectPath}/workflow-designtime`;
     const hostPath = `${designTimeDir}/host.json`;
