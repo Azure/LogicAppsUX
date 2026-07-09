@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { validateFuncCoreToolsIsLatest } from '../validateFuncCoreToolsIsLatest';
-import { useBinariesDependencies, binariesExist } from '../../../utils/binaries';
+import {
+  useBinariesDependencies,
+  binariesExist,
+  verifyDependencyIntegrity,
+  getLatestFunctionCoreToolsVersion,
+} from '../../../utils/binaries';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
+import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
+import { installFuncCoreToolsBinaries } from '../installFuncCoreTools';
 
 // Factory mocks required to break problematic import chains:
 // - binaries: circular dep with onboarding.ts
@@ -10,6 +17,7 @@ vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
   binariesExist: vi.fn(),
   getLatestFunctionCoreToolsVersion: vi.fn(),
+  verifyDependencyIntegrity: vi.fn(),
   installBinaries: vi.fn(),
   getCpuArchitecture: vi.fn(),
 }));
@@ -104,6 +112,35 @@ describe('validateFuncCoreToolsIsLatest', () => {
       await validateFuncCoreToolsIsLatest();
 
       expect(binariesExist).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('on-disk integrity behavior', () => {
+    it('reinstalls when binaries exist but the on-disk integrity check fails', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(binariesExist).mockResolvedValue(true);
+      vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
+
+      await validateFuncCoreToolsIsLatest('4');
+
+      expect(verifyDependencyIntegrity).toHaveBeenCalledWith(expect.anything(), 'FuncCoreTools');
+      expect(getLocalFuncCoreToolsVersion).not.toHaveBeenCalled();
+      expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalled();
+    });
+
+    it('does not reinstall when binaries exist, integrity passes, and the version is current', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(binariesExist).mockResolvedValue(true);
+      vi.mocked(verifyDependencyIntegrity).mockReturnValue(true);
+      vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
+      vi.mocked(getLatestFunctionCoreToolsVersion).mockResolvedValue('4.0.0');
+
+      await validateFuncCoreToolsIsLatest('4');
+
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
     });
   });
 });
