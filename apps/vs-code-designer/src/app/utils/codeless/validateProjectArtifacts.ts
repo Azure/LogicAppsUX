@@ -28,6 +28,7 @@ import {
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { isCodefulProject } from '../codeful';
+import { isCustomCodeFunctionsProjectInRoot } from '../customCodeUtils';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { IHostJsonV2, ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -119,6 +120,33 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
 }
 
 /**
+ * Best-effort detection of a logic app project's {@link ProjectType} at regeneration time.
+ *
+ * Unlike fresh project creation (which knows the type from the creation wizard context), a
+ * source-controlled clone carries no explicit type marker, so it is inferred from the project's files:
+ *  - codeful: the logic app folder itself is a .NET8 codeful project ({@link isCodefulProject}).
+ *  - customCode / rulesEngine: a sibling custom-code functions (.csproj) project exists in the
+ *    workspace root ({@link isCustomCodeFunctionsProjectInRoot}). These two types are indistinguishable
+ *    here but produce the same root local.settings.json (both add the multi-language worker flag), so
+ *    both are reported as {@link ProjectType.customCode}.
+ *  - logicApp: none of the above (a plain codeless logic app).
+ * @param {string} projectPath - The logic app project root.
+ * @returns {Promise<ProjectType>} The inferred project type.
+ */
+export async function detectLogicAppProjectType(projectPath: string): Promise<ProjectType> {
+  if ((await isCodefulProject(projectPath)) ?? false) {
+    return ProjectType.codeful;
+  }
+
+  const hasCustomCodeSibling = (await isCustomCodeFunctionsProjectInRoot(path.dirname(projectPath))) ?? false;
+  if (hasCustomCodeSibling) {
+    return ProjectType.customCode;
+  }
+
+  return ProjectType.logicApp;
+}
+
+/**
  * Ensures the project-level local.settings.json exists and contains every app setting the project
  * requires. This is needed when source control is enabled: local.settings.json is git-ignored, so a
  * fresh clone is missing it and any `@appsetting('name')` references in connections.json /
@@ -143,10 +171,10 @@ export async function regenerateLocalSettings(context: IActionContext, projectPa
     )
   );
 
-  const isCodeful = (await isCodefulProject(projectPath)) ?? false;
   // Build the baseline from the same source of truth as fresh project creation so a regenerated
-  // local.settings.json matches what a newly created project of this type would produce.
-  const logicAppType = isCodeful ? ProjectType.codeful : ProjectType.logicApp;
+  // local.settings.json matches what a newly created project of this type would produce. The project
+  // type is inferred from the project files because a source-controlled clone has no explicit marker.
+  const logicAppType = await detectLogicAppProjectType(projectPath);
   const baselineValues = getRootLocalSettings(projectPath, logicAppType).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
