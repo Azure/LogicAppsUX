@@ -23,6 +23,7 @@ import {
   multiLanguageWorkerSetting,
   workerRuntimeKey,
   workflowCodefulEnabled,
+  workflowOperationDiscoveryHostModeKey,
 } from '../../../../constants';
 import * as localSettings from '../../appSettings/localSettings';
 import { writeFormattedJson } from '../../fs';
@@ -363,6 +364,7 @@ describe('validateProjectArtifacts', () => {
     const validHost = JSON.stringify({
       version: '2.0',
       extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' },
+      extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
     });
     const validSettings = JSON.stringify({
       Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
@@ -387,6 +389,37 @@ describe('validateProjectArtifacts', () => {
       mockFiles({
         [designTimeDir]: '',
         [hostPath]: '{"version":"2.0","extensionBundle":{"id":"Wrong"}}',
+        [settingsPath]: validSettings,
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid host when the extension bundle version is missing', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: JSON.stringify({
+          version: '2.0',
+          extensionBundle: { id: extensionBundleId },
+          extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
+        }),
+        [settingsPath]: validSettings,
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid host when the design-time discovery host mode setting is missing', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: JSON.stringify({
+          version: '2.0',
+          extensionBundle: { id: extensionBundleId, version: defaultVersionRange },
+        }),
         [settingsPath]: validSettings,
       });
 
@@ -446,6 +479,7 @@ describe('validateProjectArtifacts', () => {
       const validHost = JSON.stringify({
         version: '2.0',
         extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' },
+        extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
       });
       const validSettings = JSON.stringify({
         Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
@@ -645,6 +679,11 @@ describe('validateProjectArtifacts', () => {
       version: '2.0',
       extensionBundle: { id: extensionBundleId, version: '[1.*, 2.0.0)' },
     });
+    const validDesignHostJson = JSON.stringify({
+      version: '2.0',
+      extensionBundle: { id: extensionBundleId, version: '[1.*, 2.0.0)' },
+      extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
+    });
     const validDesignSettings = JSON.stringify({
       Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
     });
@@ -673,7 +712,7 @@ describe('validateProjectArtifacts', () => {
         [rootHostPath]: validHostJson,
         [rootSettingsPath]: '{}',
         [designTimeDir]: '',
-        [`${designTimeDir}/host.json`]: validHostJson,
+        [`${designTimeDir}/host.json`]: validDesignHostJson,
         [`${designTimeDir}/local.settings.json`]: validDesignSettings,
       });
       mockedFse.readdir.mockResolvedValue([]);
@@ -699,7 +738,7 @@ describe('validateProjectArtifacts', () => {
       mockFiles({
         [rootSettingsPath]: '{}',
         [designTimeDir]: '',
-        [`${designTimeDir}/host.json`]: validHostJson,
+        [`${designTimeDir}/host.json`]: validDesignHostJson,
         [`${designTimeDir}/local.settings.json`]: validDesignSettings,
       });
       mockedFse.readdir.mockResolvedValue([]);

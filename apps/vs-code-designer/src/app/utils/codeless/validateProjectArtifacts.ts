@@ -16,6 +16,7 @@ import {
   parametersFileName,
   workerRuntimeKey,
   workflowFileName,
+  workflowOperationDiscoveryHostModeKey,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
@@ -264,7 +265,7 @@ export async function regenerateRootHostFile(projectPath: string): Promise<boole
     )
   );
 
-  if (await isHostFileValid(hostFilePath)) {
+  if (await isHostFileValid(hostFilePath, false)) {
     ext.outputChannel.appendLog(
       localize('rootHostValid', 'host.json for project "{0}" is present and valid. Skipping regeneration.', projectPath)
     );
@@ -279,20 +280,37 @@ export async function regenerateRootHostFile(projectPath: string): Promise<boole
 }
 
 /**
- * Validates the host.json file content. Used for both the project-level host.json and the
- * design-time host.json, since both require a version and the workflows extension bundle.
+ * Validates the host.json file content. Used for both the project-level host.json and the design-time
+ * host.json: both require a version and the workflows extension bundle (id + version). The design-time
+ * host.json additionally must enable workflow operation discovery host mode so the design-time API can
+ * enumerate operations.
  * @param {string} hostFilePath - Absolute path to the host.json file.
+ * @param {boolean} isDesignTime - Whether the file is the design-time host.json (stricter validation).
  * @returns {Promise<boolean>} True when host.json is present and structurally valid.
  */
-async function isHostFileValid(hostFilePath: string): Promise<boolean> {
+async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Promise<boolean> {
   const content = await readFileTextSafe(hostFilePath);
   if (!content) {
     return false;
   }
 
   try {
-    const parsed = parseJson(content) as { version?: string; extensionBundle?: { id?: string } };
-    return !!parsed?.version && parsed?.extensionBundle?.id === extensionBundleId;
+    const parsed = parseJson(content) as {
+      version?: string;
+      extensionBundle?: { id?: string; version?: string };
+      extensions?: { workflow?: { settings?: Record<string, string> } };
+    };
+
+    const hasValidBundle = !!parsed?.version && parsed?.extensionBundle?.id === extensionBundleId && !!parsed?.extensionBundle?.version;
+    if (!hasValidBundle) {
+      return false;
+    }
+
+    if (isDesignTime) {
+      return !!parsed?.extensions?.workflow?.settings?.[workflowOperationDiscoveryHostModeKey];
+    }
+
+    return true;
   } catch {
     return false;
   }
@@ -342,7 +360,7 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
     return { directoryExists: false, hostFileValid: false, settingsFileValid: false, isValid: false };
   }
 
-  const hostFileValid = await isHostFileValid(path.join(designTimeDirectoryPath, hostFileName));
+  const hostFileValid = await isHostFileValid(path.join(designTimeDirectoryPath, hostFileName), true);
   const settingsFileValid = await isDesignTimeSettingsFileValid(path.join(designTimeDirectoryPath, localSettingsFileName));
 
   return {
