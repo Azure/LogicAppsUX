@@ -173,7 +173,7 @@ describe('OpenDesignerForLocalProject', () => {
     });
 
     it('should handle run ID parameter', () => {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri, undefined, undefined, 'workflows/wf/runs/run123');
+      const instance = new OpenDesignerForLocalProject(mockContext, mockUri, undefined);
       expect(instance).toBeDefined();
     });
   });
