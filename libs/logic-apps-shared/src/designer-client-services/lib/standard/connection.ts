@@ -157,6 +157,8 @@ const mcpLocation = 'agentMcpConnections';
 export const foundryServiceConnectionRegex = /\/Microsoft\.CognitiveServices\/accounts\/[^/]+\/projects\/[^/]+/;
 export const apimanagementRegex = /\/Microsoft\.ApiManagement\/service\/[^/]+\/apis\/[^/]+/;
 export const microsoftFoundryModelsRegex = /\/models$/;
+export const normalizeAgentConnectionResourceIdForRoleAssignment = (resourceId?: string): string =>
+  resourceId?.replace(microsoftFoundryModelsRegex, '') ?? '';
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -923,6 +925,8 @@ function convertToAgentConnectionsData(
   const isAPIMManagementConnection = apimanagementRegex.test(cognitiveServiceAccountId);
   const isClientCertificateAuth = equals(connectionParametersSetValues?.name ?? '', 'ClientCertificate', true);
   const isBringYourOwnKeyAuth = equals(connectionParametersSetValues?.name ?? '', 'BringYourOwnKey', true);
+  const isMicrosoftFoundry = equals(connectionInfo.operationParameterValues?.['agentModelType'] ?? '', 'MicrosoftFoundry', true);
+  const normalizedCognitiveServiceAccountId = normalizeAgentConnectionResourceIdForRoleAssignment(cognitiveServiceAccountId);
 
   // Map BringYourOwnKey parameter set to Key authentication type
   const authType = isBringYourOwnKeyAuth ? 'Key' : connectionParametersSetValues?.name;
@@ -947,10 +951,14 @@ function convertToAgentConnectionsData(
       },
       endpoint: isBringYourOwnKeyAuth || isClientCertificateAuth ? parameterValues?.['endpoint'] : parameterValues?.['openAIEndpoint'],
       // Only include resourceId if it has a value
-      // Append /models for standard Cognitive Services connections (MicrosoftFoundry) to distinguish from legacy AzureOpenAI
+      // Append /models only for MicrosoftFoundry model connections; AzureOpenAI must save the account-level resource ID.
       ...(cognitiveServiceAccountId && {
         resourceId:
-          isFoundryAgentServiceConnection || isAPIMManagementConnection ? cognitiveServiceAccountId : `${cognitiveServiceAccountId}/models`,
+          isFoundryAgentServiceConnection || isAPIMManagementConnection
+            ? cognitiveServiceAccountId
+            : isMicrosoftFoundry
+              ? `${normalizedCognitiveServiceAccountId}/models`
+              : normalizedCognitiveServiceAccountId,
       }),
       type: isAPIMManagementConnection ? 'APIMGenAIGateway' : 'model',
     },

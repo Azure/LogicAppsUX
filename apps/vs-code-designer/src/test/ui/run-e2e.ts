@@ -1,0 +1,2918 @@
+/**
+ * Launcher script for ExTester UI E2E tests.
+ *
+ * Copies the built extension (dist/) into the isolated test-extensions
+ * directory so VS Code loads it like any installed extension via
+ * --extensions-dir. This avoids all EXTENSION_DEV_PATH / --extensionDevelopmentPath
+ * issues with ExTester.
+ *
+ * Uses an isolated extensions directory so no other user extensions
+ * (Claude Code, etc.) interfere.
+ *
+ * Installs extensionDependencies from the marketplace into the same
+ * isolated directory.
+ */
+
+import * as path from 'path';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as crypto from 'crypto';
+import { exec, execSync } from 'child_process';
+import { ExTester } from 'vscode-extension-tester';
+import { isExecutableFile } from './runtimeBinaryCheck';
+import { lspDirectory } from '../../constants';
+import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
+
+type BundleFileEntry = { relPath: string; fullPath: string };
+type ExtensionBundleState = { version: string; bundleDir: string; sidecarPath: string };
+type BundleSidecar = { sourceMd5: string; contentHash: string };
+type InstallResult = { dep: string; success: boolean };
+type RuntimeDependencyPaths = {
+  depsRoot: string;
+  funcToolsDir: string;
+  funcExecutableCandidates: string[];
+  dotnetSdkDir: string;
+  nodeJsDir: string;
+  funcBinary: string;
+  dotnetBinary: string;
+  nodeBinary: string;
+};
+type TestSettingsOptions = {
+  validateDependencies?: boolean;
+  autoStartDesignTime?: boolean;
+  includeRuntimeDependencyPaths?: boolean;
+  runtimeDependenciesPathOverride?: string;
+  useExperimentalBundle?: boolean;
+  experimentalBundleSourceUri?: string;
+  experimentalBundleVersion?: string;
+};
+type ScenarioSettings = Omit<TestSettingsOptions, 'validateDependencies'> & {
+  validateDependencies?: boolean | 'auto';
+};
+type WorkspaceSpec =
+  | 'plain-folder'
+  | 'self-creates'
+  | 'self-contained'
+  | 'manifest-multi'
+  | {
+      appType?: string;
+      wfType?: string;
+      use?: 'wsDir' | 'appDir';
+    };
+type ManifestEntry = {
+  label?: string;
+  appType?: string;
+  wfType?: string;
+  wsFilePath?: string;
+  wsDir?: string;
+  appDir?: string;
+  wfName?: string;
+  [key: string]: unknown;
+};
+type CodefulWorkspaceEntry = ManifestEntry & {
+  label: string;
+  appType: string;
+  wsFilePath: string;
+  appDir: string;
+  wfName: string;
+};
+type CodefulDebugWorkspaces = { modern: CodefulWorkspaceEntry; legacy: CodefulWorkspaceEntry };
+type WorkspaceSelection = { resources: string[]; legacyDir?: string };
+type Scenario = {
+  id: string;
+  testFile: string | string[];
+  workspaceSpec: WorkspaceSpec;
+  settings?: ScenarioSettings;
+  monolithic?: boolean;
+  env?: Record<string, string>;
+};
+type PhaseRunOptions = {
+  vscodeVersion: string;
+  settings: string;
+  cleanup: boolean;
+  offline: boolean;
+  resources: string[];
+};
+type ExtensionJsonEntry = {
+  identifier: { id: string };
+  version: string;
+  location: { $mid: number; path: string; scheme: 'file' };
+  relativeLocation: string;
+  metadata: { installedTimestamp: number; source: 'gallery' };
+};
+type EnvOverride = { key: string; prev: string | undefined };
+
+const getErrorMessage = (error: unknown): string => (error instanceof Error ? error.message : String(error));
+
+const projectDir = fs.existsSync(path.join(__dirname, '..', '..', 'package.json'))
+  ? path.resolve(__dirname, '..', '..')
+  : path.resolve(__dirname, '..', '..', '..');
+const distDir = path.join(projectDir, 'dist');
+const sourceUiTestDir = path.join(projectDir, 'src', 'test', 'ui');
+
+/**
+ * Pinned VS Code version for test stability.
+ * ExTester's page-objects use CSS selectors (e.g., '.editor-instance') that
+ * change between VS Code versions. Pinning ensures the same version is used
+ * locally and in CI. Update this when ExTester releases support for newer versions.
+ */
+const DEFAULT_VSCODE_VERSION = '1.108.0';
+const VSCODE_VERSION_SOURCE = process.env.E2E_VSCODE_VERSION ? 'E2E_VSCODE_VERSION' : process.env.CODE_VERSION ? 'CODE_VERSION' : 'default';
+if (process.env.E2E_VSCODE_VERSION && process.env.CODE_VERSION && process.env.E2E_VSCODE_VERSION !== process.env.CODE_VERSION) {
+  throw new Error(
+    `E2E_VSCODE_VERSION (${process.env.E2E_VSCODE_VERSION}) and CODE_VERSION (${process.env.CODE_VERSION}) disagree. Set only one VS Code version override for run-e2e.js.`
+  );
+}
+const VSCODE_VERSION = process.env.E2E_VSCODE_VERSION || process.env.CODE_VERSION || DEFAULT_VSCODE_VERSION;
+process.env.CODE_VERSION = VSCODE_VERSION;
+const DOWNLOAD_RETRY_ATTEMPTS = 3;
+const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
+const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+
+/**
+ * LSP-related artifact names that must be removed when preparing an isolated
+ * dependency root for the EPERM repro test. This forces the extension to
+ * re-extract the LSP server/SDK during the test.
+ *
+ * Source of truth: languageServerProtocol.ts and constants.ts
+ */
+const LSP_STALE_ARTIFACT_NAMES = [
+  lspServerDirectoryName,
+  lspServerHashMarkerName,
+  lspDirectory,
+  lspSdkHashMarkerName,
+  '.lspserver-version',
+  '.lspserver-path',
+  '.lspsdk-version',
+];
+
+// Store test-extensions in test-resources/ (alongside VS Code download) rather
+// than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
+// would destroy cached marketplace extension installs.
+const extDir = path.join(os.tmpdir(), 'test-resources', 'test-extensions');
+const testGlob = path.resolve(projectDir, 'out', 'test', '*.js').replace(/\\/g, '/');
+
+function compareSemverDesc(a: string, b: string): number {
+  const pa = a.split('.').map((part) => Number.parseInt(part, 10));
+  const pb = b.split('.').map((part) => Number.parseInt(part, 10));
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const diff = (pb[i] || 0) - (pa[i] || 0);
+    if (diff !== 0) {
+      return diff;
+    }
+  }
+  return 0;
+}
+
+function findLatestExtensionBundle(): ExtensionBundleState | undefined {
+  if (!fs.existsSync(EXTENSION_BUNDLE_ROOT)) {
+    return undefined;
+  }
+  const versions = fs
+    .readdirSync(EXTENSION_BUNDLE_ROOT)
+    .filter((name) => {
+      const fullPath = path.join(EXTENSION_BUNDLE_ROOT, name);
+      return /^\d+\.\d+\.\d+/.test(name) && fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
+    })
+    .sort(compareSemverDesc);
+  const version = versions[0];
+  if (!version) {
+    return undefined;
+  }
+  const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+  return {
+    version,
+    bundleDir,
+    sidecarPath: path.join(bundleDir, BUNDLE_SIDECAR_FILE),
+  };
+}
+
+function listBundleFiles(bundleDir: string): BundleFileEntry[] {
+  const files: BundleFileEntry[] = [];
+  const stack = [bundleDir];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) {
+      continue;
+    }
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const fullPath = path.join(current, entry.name);
+      const relPath = path.relative(bundleDir, fullPath).split(path.sep).join('/');
+      if (relPath === BUNDLE_SIDECAR_FILE) {
+        continue;
+      }
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+      } else if (entry.isFile()) {
+        files.push({ relPath, fullPath });
+      }
+    }
+  }
+  files.sort((a, b) => (a.relPath < b.relPath ? -1 : a.relPath > b.relPath ? 1 : 0));
+  return files;
+}
+
+function computeBundleContentHash(bundleDir: string, files: BundleFileEntry[]): string {
+  const hash = crypto.createHash('sha256');
+  const nul = Buffer.from([0]);
+  for (const file of files) {
+    const stat = fs.statSync(file.fullPath);
+    hash.update(Buffer.from(file.relPath, 'utf8'));
+    hash.update(nul);
+    hash.update(Buffer.from(String(stat.size), 'utf8'));
+    hash.update(nul);
+    hash.update(fs.readFileSync(file.fullPath));
+    hash.update(nul);
+  }
+  return hash.digest('base64');
+}
+
+function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
+  const state = findLatestExtensionBundle();
+  if (!state) {
+    throw new Error(`[${label}] Logic Apps extension bundle root is missing or has no version folders: ${EXTENSION_BUNDLE_ROOT}`);
+  }
+  if (!fs.existsSync(state.sidecarPath)) {
+    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing: ${state.sidecarPath}`);
+  }
+
+  let sidecar: BundleSidecar;
+  try {
+    sidecar = JSON.parse(fs.readFileSync(state.sidecarPath, 'utf8'));
+  } catch (error: any) {
+    throw new Error(`[${label}] Logic Apps extension bundle sidecar is not valid JSON: ${getErrorMessage(error)}`);
+  }
+  if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
+    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing sourceMd5/contentHash: ${state.sidecarPath}`);
+  }
+
+  const files = listBundleFiles(state.bundleDir);
+  if (files.length === 0) {
+    throw new Error(`[${label}] Logic Apps extension bundle directory is empty: ${state.bundleDir}`);
+  }
+  const contentHash = computeBundleContentHash(state.bundleDir, files);
+  if (contentHash !== sidecar.contentHash) {
+    throw new Error(
+      `[${label}] Logic Apps extension bundle content hash mismatch for ${state.bundleDir}: expected ${sidecar.contentHash}, got ${contentHash}`
+    );
+  }
+  console.log(
+    `[${label}] Logic Apps extension bundle healthy: version=${state.version}, files=${files.length}, sidecar=${state.sidecarPath}`
+  );
+  return state;
+}
+
+function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
+  if (!fs.existsSync(EXTENSION_BUNDLE_ROOT)) {
+    return;
+  }
+
+  const versions = fs
+    .readdirSync(EXTENSION_BUNDLE_ROOT)
+    .filter((name) => {
+      const fullPath = path.join(EXTENSION_BUNDLE_ROOT, name);
+      return /^\d+\.\d+\.\d+/.test(name) && fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
+    })
+    .sort(compareSemverDesc);
+
+  for (const version of versions) {
+    const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+    try {
+      const sidecarPath = path.join(bundleDir, BUNDLE_SIDECAR_FILE);
+      if (!fs.existsSync(sidecarPath)) {
+        console.log(`[${label}] Removing bundle ${version}: missing sidecar ${sidecarPath}`);
+        fs.rmSync(bundleDir, { recursive: true, force: true });
+        continue;
+      }
+
+      const sidecar = JSON.parse(fs.readFileSync(sidecarPath, 'utf8'));
+      const files = listBundleFiles(bundleDir);
+      const contentHash = files.length > 0 ? computeBundleContentHash(bundleDir, files) : undefined;
+      if (!sidecar || typeof sidecar.contentHash !== 'string' || files.length === 0 || contentHash !== sidecar.contentHash) {
+        console.log(`[${label}] Removing bundle ${version}: invalid sidecar/content hash`);
+        fs.rmSync(bundleDir, { recursive: true, force: true });
+      }
+    } catch (error: any) {
+      console.log(`[${label}] Removing bundle ${version}: health check failed (${getErrorMessage(error)})`);
+      fs.rmSync(bundleDir, { recursive: true, force: true });
+    }
+  }
+}
+
+function createExTester(): ExTester {
+  return new ExTester(
+    undefined, // storageFolder — use default (os.tmpdir()/test-resources)
+    undefined, // releaseType — Stable
+    extDir // extensionsDir — isolated dir, passed as --extensions-dir
+  );
+}
+
+/**
+ * Recursively copy a directory, skipping test-extensions itself to avoid infinite recursion.
+ */
+function copyDirSync(src: string, dest: string, skipDir?: string): void {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    // Skip the test-extensions directory itself to avoid infinite recursion
+    if (skipDir && path.resolve(srcPath) === path.resolve(skipDir)) {
+      continue;
+    }
+    if (entry.isDirectory()) {
+      copyDirSync(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+async function withDownloadRetry(label: string, action: () => Promise<void>): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
+    try {
+      if (attempt > 1) {
+        console.log(`  retry(${attempt - 1}): ${label}`);
+      }
+      await action();
+      return;
+    } catch (error: any) {
+      lastError = error;
+      const message = getErrorMessage(error);
+      console.log(`  ${label} attempt ${attempt}/${DOWNLOAD_RETRY_ATTEMPTS} failed: ${message}`);
+      if (attempt < DOWNLOAD_RETRY_ATTEMPTS) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
+      }
+    }
+  }
+  throw lastError;
+}
+
+function installExtensionWithCli(cliBase: string, dep: string, label: string = dep): Promise<InstallResult> {
+  return new Promise<InstallResult>((resolve) => {
+    const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
+    const startTime = Date.now();
+    exec(command, { timeout: 300000 }, (error: Error | null, stdout: string, stderr: string) => {
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      if (error) {
+        const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
+        console.warn(`  ⚠ ${label} failed (${elapsed}s): ${getErrorMessage(error)}${output ? `\n${output}` : ''}`);
+        resolve({ dep, success: false });
+      } else {
+        console.log(`  ✓ ${label} installed (${elapsed}s)`);
+        resolve({ dep, success: true });
+      }
+    });
+  });
+}
+
+function findNestedWindowsCliPath(codeFolder: string): string | undefined {
+  if (process.platform !== 'win32') {
+    return undefined;
+  }
+
+  try {
+    for (const entry of fs.readdirSync(codeFolder, { withFileTypes: true })) {
+      if (!entry.isDirectory()) {
+        continue;
+      }
+
+      const candidate = path.join(codeFolder, entry.name, 'resources', 'app', 'out', 'cli.js');
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    }
+  } catch {
+    /* diagnostic only */
+  }
+
+  return undefined;
+}
+
+function preflightVSCodeCli(extest: ExTester): void {
+  const codeFolder = extest.code.getCodeFolder();
+  const cliPath = extest.code.getCliPath();
+  const executablePath = extest.code.executablePath;
+  const nestedCliPath = findNestedWindowsCliPath(codeFolder);
+
+  if (!fs.existsSync(executablePath)) {
+    throw new Error(`VS Code executable not found at ${executablePath}. Clear ${codeFolder} and rerun the E2E launcher.`);
+  }
+
+  if (!fs.existsSync(cliPath)) {
+    const nestedHint = nestedCliPath ? ` Found nested Windows CLI at ${nestedCliPath}, but ExTester resolved ${cliPath}.` : '';
+    throw new Error(
+      `VS Code CLI not found at ${cliPath}.${nestedHint} Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.`
+    );
+  }
+
+  let output: string;
+  try {
+    output = execSync(`${extest.code.getCliInitCommand()} -v`, {
+      encoding: 'utf8',
+      env: extest.code.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+  } catch (error: any) {
+    const nestedHint = nestedCliPath ? ` Nested Windows CLI candidate: ${nestedCliPath}.` : '';
+    throw new Error(
+      `VS Code CLI preflight failed for ${cliPath}.${nestedHint} Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.\n${getErrorMessage(error)}`
+    );
+  }
+
+  const actualVersion = output.split(/\r?\n/)[0]?.trim();
+  if (/^\d+\.\d+\.\d+/.test(VSCODE_VERSION) && actualVersion !== VSCODE_VERSION) {
+    throw new Error(
+      `VS Code CLI preflight resolved version ${actualVersion || '<empty>'}, expected ${VSCODE_VERSION}. Clear ${codeFolder} and rerun.`
+    );
+  }
+
+  console.log(`  ✓ VS Code CLI preflight: ${actualVersion} (${cliPath})`);
+}
+
+async function downloadExTesterAssets(): Promise<void> {
+  await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, async () => {
+    const downloadTester = createExTester();
+    await downloadTester.downloadCode(VSCODE_VERSION);
+    preflightVSCodeCli(createExTester());
+  });
+
+  await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => createExTester().downloadChromeDriver(VSCODE_VERSION));
+}
+
+/**
+ * Rebuild extensions.json by scanning all extension directories.
+ * This is needed after parallel marketplace installs, which may race on
+ * concurrent writes to extensions.json, corrupting or losing entries.
+ */
+function rebuildExtensionsJson(extensionsDir: string): void {
+  const entries: ExtensionJsonEntry[] = [];
+  for (const entry of fs.readdirSync(extensionsDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    const pkgPath = path.join(extensionsDir, entry.name, 'package.json');
+    if (!fs.existsSync(pkgPath)) {
+      continue;
+    }
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      const id = `${pkg.publisher}.${pkg.name}`;
+      const extPath = path.join(extensionsDir, entry.name).replace(/\\/g, '/');
+      entries.push({
+        identifier: { id },
+        version: pkg.version,
+        location: {
+          $mid: 1,
+          path: `/${extPath}`.replace(/^\/([A-Za-z]):/, (_, d) => `/${d.toLowerCase()}:`),
+          scheme: 'file',
+        },
+        relativeLocation: entry.name,
+        metadata: {
+          installedTimestamp: Date.now(),
+          source: 'gallery',
+        },
+      });
+    } catch {
+      // Skip directories without valid package.json
+    }
+  }
+  fs.writeFileSync(path.join(extensionsDir, 'extensions.json'), JSON.stringify(entries));
+  console.log(`  ✓ Rebuilt extensions.json with ${entries.length} entries`);
+}
+
+/**
+ * Install the bundled codeful task recorder extension into the test
+ * extensions directory. Returns the install location.
+ *
+ * The recorder is a plain-JS extension at
+ * `src/test/ui/codefulTaskRecorderExtension/`. It subscribes to
+ * `vscode.tasks.*` events and appends them to a JSONL file pointed to by
+ * `process.env.LA_E2E_TASK_EVENTS_JSONL`. It also contributes the
+ * `la-e2e.startDebug`, `la-e2e.stopDebug`, and `la-e2e.recorderPing`
+ * commands used by Phase 4.10.
+ */
+function installCodefulTaskRecorderExtension(extDir: string): string {
+  const recorderSrc = path.join(sourceUiTestDir, 'codefulTaskRecorderExtension');
+  if (!fs.existsSync(path.join(recorderSrc, 'package.json'))) {
+    throw new Error(`Recorder extension source missing at ${recorderSrc}`);
+  }
+  const recorderPkg = JSON.parse(fs.readFileSync(path.join(recorderSrc, 'package.json'), 'utf8'));
+  const target = path.join(extDir, `${recorderPkg.publisher}.${recorderPkg.name}-${recorderPkg.version}`);
+
+  // Remove stale copies of the recorder before reinstalling.
+  if (fs.existsSync(extDir)) {
+    for (const entry of fs.readdirSync(extDir)) {
+      if (entry.toLowerCase().startsWith(`${recorderPkg.publisher}.${recorderPkg.name}`.toLowerCase())) {
+        fs.rmSync(path.join(extDir, entry), { recursive: true, force: true });
+      }
+    }
+  }
+
+  fs.mkdirSync(target, { recursive: true });
+  // Plain JS extension — just copy the source as-is.
+  for (const entry of fs.readdirSync(recorderSrc, { withFileTypes: true })) {
+    const src = path.join(recorderSrc, entry.name);
+    const dst = path.join(target, entry.name);
+    if (entry.isDirectory()) {
+      copyDirSync(src, dst);
+    } else {
+      fs.copyFileSync(src, dst);
+    }
+  }
+
+  console.log(`  ✓ Installed codeful task recorder at ${target}`);
+  return target;
+}
+
+/**
+ * DEPRECATED-AS-PRECEDENT. Do not copy this pattern for new VS Code E2E tests.
+ *
+ * Synthetic fixtures violate `.squad/decisions.md` D-001 ("No synthetic Logic
+ * App fixtures for VS Code E2E tests"). This helper exists only because it
+ * predates the rule. New tests must create workspaces through the real Create
+ * Workspace webview and reopen the generated `.code-workspace` in a fresh
+ * `run-e2e.js` phase. See also `.squad/knowledge/vscode-e2e-testing.md` and
+ * `apps/vs-code-designer/src/test/ui/SKILL.md` § 1.5 Rule 1.
+ *
+ * Build a synthetic "legacy" project fixture for the legacy/standard
+ * non-Logic-App regression tests.
+ */
+function createLegacyProjectFixture(label: string): string {
+  const legacyRoot = fs.mkdtempSync(path.join(os.tmpdir(), `la-e2e-${label}-`));
+  const legacyDir = path.join(legacyRoot, 'legacy-project');
+  const legacyWfDir = path.join(legacyDir, 'testworkflow');
+  fs.mkdirSync(legacyWfDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(legacyDir, 'host.json'),
+    JSON.stringify(
+      { version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' } },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(legacyDir, 'local.settings.json'),
+    JSON.stringify(
+      {
+        IsEncrypted: false,
+        Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true', FUNCTIONS_WORKER_RUNTIME: 'dotnet', APP_KIND: 'workflowApp' },
+      },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(legacyWfDir, 'workflow.json'),
+    JSON.stringify(
+      {
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          actions: {},
+          triggers: {},
+          outputs: {},
+        },
+        kind: 'Stateful',
+      },
+      null,
+      2
+    )
+  );
+  console.log(`  Created legacy project at: ${legacyDir}`);
+  return legacyDir;
+}
+
+/**
+ * Run async tasks with a concurrency limit.
+ * Returns results in the same order as the input tasks.
+ */
+async function parallelLimit<T>(taskFns: Array<() => Promise<T>>, limit: number): Promise<T[]> {
+  const results: T[] = new Array(taskFns.length);
+  let nextIndex = 0;
+
+  async function runNext() {
+    while (nextIndex < taskFns.length) {
+      const i = nextIndex++;
+      results[i] = await taskFns[i]();
+    }
+  }
+
+  const workers: Promise<void>[] = [];
+  for (let w = 0; w < Math.min(limit, taskFns.length); w++) {
+    workers.push(runNext());
+  }
+  await Promise.all(workers);
+  return results;
+}
+
+async function main(): Promise<void> {
+  // Fast path: bundleintegrityonly is a pure-Node Mocha probe that needs
+  // neither the built extension (dist/package.json) nor ExTester / VS Code.
+  // Short-circuit before any of those checks so the phase can run on a
+  // fresh checkout (or any shard) without first running the extension build.
+  const earlyMode = (process.env.E2E_MODE || 'full').toLowerCase();
+  if (earlyMode === 'bundleintegrityonly') {
+    const outTestDir = path.join(projectDir, 'out', 'test');
+    const file = path.join(outTestDir, 'bundleCdnHealth.test.js').replace(/\\/g, '/');
+    if (!fs.existsSync(file)) {
+      console.error(`\n✖ Compiled test not found: ${file}\n  Run: npx tsup --config tsup.e2e.test.config.ts`);
+      process.exit(2);
+    }
+    try {
+      delete require.cache[require.resolve(file)];
+    } catch {
+      /* ignore */
+    }
+    const Mocha = require('mocha');
+    const mocha = new Mocha({ color: true, timeout: 60_000, reporter: 'spec' });
+    mocha.addFile(file);
+    const exit = await new Promise<number>((resolve) => {
+      mocha.run((failures) => resolve(failures > 0 ? 1 : 0));
+    });
+    console.log(`\n=== bundleintegrityonly exit code: ${exit} ===`);
+    process.exit(exit);
+  }
+
+  // ------------------------------------------------------------------
+  // D-001 pre-flight: enforce that *.fixtures.test.ts files do not write
+  // workspace files directly. Fixture data must come from the wizard.
+  // This guard is a cheap grep — it runs before any build/test work so
+  // a violating PR fails fast on its very first CI run.
+  // ------------------------------------------------------------------
+  const uiTestDir = sourceUiTestDir;
+  const fixturesGuardPattern = /fs\s*\.\s*writeFile|outputJson/;
+  const fixturesGuardViolations: string[] = [];
+  for (const fname of fs.readdirSync(uiTestDir)) {
+    if (!fname.endsWith('.fixtures.test.ts')) {
+      continue;
+    }
+    const filePath = path.join(uiTestDir, fname);
+    const contents = fs.readFileSync(filePath, 'utf8');
+    if (fixturesGuardPattern.test(contents)) {
+      fixturesGuardViolations.push(fname);
+    }
+  }
+  if (fixturesGuardViolations.length > 0) {
+    console.error(
+      `\n✖ D-001 lint guard FAILED: *.fixtures.test.ts files must not call fs.writeFile* or outputJson*.\n  Fixture workspaces must be produced by the Create Workspace wizard, not synthesized on disk.\n  Violating files: ${fixturesGuardViolations.join(', ')}`
+    );
+    process.exit(2);
+  }
+  console.log('✓ D-001 lint guard passed (no fs.writeFile/outputJson in *.fixtures.test.ts).');
+
+  // Read extension metadata from dist/package.json
+  const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
+  const extDeps: string[] = pkgJson.extensionDependencies || [];
+  const devContainersDependency = 'ms-vscode-remote.remote-containers';
+  if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
+    throw new Error(
+      `${devContainersDependency} must not be listed in extensionDependencies. It causes VS Code to install/start Dev Containers for users who only installed Azure Logic Apps.`
+    );
+  }
+  const requiredE2ePrereqs = ['ms-dotnettools.csdevkit'];
+  for (const prereq of requiredE2ePrereqs) {
+    if (!extDeps.some((dep) => dep.toLowerCase() === prereq)) {
+      throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
+    }
+  }
+  const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
+  const ourExtTarget = path.join(extDir, extDirName);
+
+  console.log(`\nExtension identity: ${extDirName}`);
+  console.log(`dist/ source: ${distDir}`);
+  console.log(`Extensions dir: ${extDir}`);
+
+  // Step 1: Download VS Code + ChromeDriver (skips if already cached)
+  console.log('\n=== Step 1: Download VS Code + ChromeDriver ===');
+  await downloadExTesterAssets();
+
+  // Create ExTester WITHOUT coverage — we don't need --extensionDevelopmentPath
+  // because we're copying our extension directly into --extensions-dir.
+  // This must happen after download/preflight so it cannot retain stale CLI
+  // state from a VS Code archive layout that changed during download.
+  const extest = createExTester();
+
+  // Step 2: Install extension dependencies from the marketplace.
+  // Skip deps already present in test-extensions/. For uncached deps,
+  // run VS Code CLI --install-extension sequentially. Parallel CLI installs
+  // race on shared extension/cache directories and can leave VS Code with
+  // partially extracted dependencies even when a follow-up retry succeeds.
+  const getExtensionEntries = (extensionId: string): string[] => {
+    if (!fs.existsSync(extDir)) {
+      return [];
+    }
+    const depLower = extensionId.toLowerCase();
+    return fs.readdirSync(extDir).filter((entry) => {
+      if (entry === 'extensions.json' || entry === '.obsolete') {
+        return false;
+      }
+      return entry.toLowerCase().startsWith(`${depLower}-`) || entry.toLowerCase() === depLower;
+    });
+  };
+
+  const readExtensionId = (entry: string): string | undefined => {
+    const pkgPath = path.join(extDir, entry, 'package.json');
+    if (!fs.existsSync(pkgPath)) {
+      return undefined;
+    }
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      return `${pkg.publisher}.${pkg.name}`.toLowerCase();
+    } catch {
+      return undefined;
+    }
+  };
+
+  const findValidInstalledExtension = (extensionId: string): string | undefined => {
+    const depLower = extensionId.toLowerCase();
+    return getExtensionEntries(extensionId).find((entry) => readExtensionId(entry) === depLower);
+  };
+
+  const removeInvalidExtensionEntries = (extensionId: string): void => {
+    for (const entry of getExtensionEntries(extensionId)) {
+      if (readExtensionId(entry) !== extensionId.toLowerCase()) {
+        console.log(`  Removing invalid cached dependency: ${entry}`);
+        fs.rmSync(path.join(extDir, entry), { recursive: true, force: true });
+      }
+    }
+  };
+
+  if (extDeps.length > 0) {
+    console.log(`\n=== Step 2: Install ${extDeps.length} extension dependencies ===`);
+
+    const depsToInstall: string[] = [];
+    for (const dep of extDeps) {
+      removeInvalidExtensionEntries(dep);
+      const alreadyInstalled = !!findValidInstalledExtension(dep);
+
+      if (alreadyInstalled) {
+        console.log(`  ✓ ${dep} already installed, skipping`);
+      } else {
+        depsToInstall.push(dep);
+      }
+    }
+
+    if (depsToInstall.length > 0) {
+      // Get the VS Code CLI base command from ExTester's internal CodeUtil.
+      // This gives us the same command that installFromMarketplace() uses,
+      // but we can run it with async exec instead of execSync.
+      const cliBase = extest.code.getCliInitCommand();
+
+      const CONCURRENCY = 1;
+      console.log(`  Installing ${depsToInstall.length} deps (concurrency=${CONCURRENCY})...`);
+
+      const taskFns = depsToInstall.map((dep) => () => {
+        console.log(`  ⏳ ${dep}`);
+        return installExtensionWithCli(cliBase, dep);
+      });
+
+      const results = await parallelLimit(taskFns, CONCURRENCY);
+      const succeeded = results.filter((r) => r.success).length;
+      const failed = results.filter((r) => !r.success);
+      console.log(`  ${succeeded}/${depsToInstall.length} installed successfully`);
+
+      // Retry failed direct deps sequentially. Parallel installs may report
+      // EPERM/ENOENT or leave a partial directory while transitive dependencies
+      // are still being extracted. A package.json on disk is not enough: VS Code
+      // can still fail to activate dependent extensions if the CLI install did
+      // not complete cleanly.
+      if (failed.length > 0) {
+        for (const { dep } of failed) {
+          let retrySucceeded = false;
+          for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
+            removeInvalidExtensionEntries(dep);
+            console.log(`  ↻ Retrying ${dep} sequentially (${attempt}/${DOWNLOAD_RETRY_ATTEMPTS})...`);
+            const retry = await installExtensionWithCli(cliBase, dep, `${dep} retry ${attempt}`);
+            if (retry.success) {
+              retrySucceeded = true;
+              break;
+            }
+            await new Promise((resolve) => setTimeout(resolve, attempt * 10_000));
+          }
+          if (!retrySucceeded) {
+            throw new Error(`${dep} failed to install after ${DOWNLOAD_RETRY_ATTEMPTS} sequential retries`);
+          }
+        }
+      }
+
+      // Rebuild extensions.json after parallel installs.
+      // Concurrent CLI processes may race on writing this file, so we
+      // reconstruct it from the actual directories on disk.
+      rebuildExtensionsJson(extDir);
+    }
+
+    const missingDeps = extDeps.filter((dep) => !findValidInstalledExtension(dep));
+    if (missingDeps.length > 0) {
+      throw new Error(`Missing E2E extension prerequisite(s): ${missingDeps.join(', ')}. Install/retry before running UI E2E tests.`);
+    }
+  } else {
+    console.log('\n=== Step 2: No extension dependencies to install ===');
+  }
+
+  // Step 3: Copy our built extension into test-extensions as an "installed" extension
+  // Skip the copy if dist/main.js hasn't changed (compare mtime for a fast-path).
+  console.log('\n=== Step 3: Install our extension from dist/ ===');
+  const pkgId = `${pkgJson.publisher}.${pkgJson.name}`.toLowerCase();
+
+  const srcMainJs = path.join(distDir, 'main.js');
+  const destMainJs = path.join(ourExtTarget, 'main.js');
+  let needsCopy = true;
+
+  if (fs.existsSync(destMainJs) && fs.existsSync(srcMainJs)) {
+    const srcMtime = fs.statSync(srcMainJs).mtimeMs;
+    const destMtime = fs.statSync(destMainJs).mtimeMs;
+    if (srcMtime === destMtime) {
+      console.log('  ✓ dist/main.js unchanged (mtime match), skipping copy');
+      needsCopy = false;
+    } else {
+      console.log(`  dist/main.js changed (src=${new Date(srcMtime).toISOString()}, dest=${new Date(destMtime).toISOString()})`);
+    }
+  }
+
+  if (needsCopy) {
+    // Remove old copies of our extension
+    if (fs.existsSync(extDir)) {
+      for (const entry of fs.readdirSync(extDir)) {
+        if (entry.toLowerCase().startsWith(pkgId)) {
+          const fullPath = path.join(extDir, entry);
+          console.log(`  Removing old copy: ${entry}`);
+          fs.rmSync(fullPath, { recursive: true, force: true });
+        }
+      }
+    }
+
+    // Copy dist/ → test-extensions/<publisher>.<name>-<version>/
+    // Skip the test-extensions dir itself to avoid infinite recursion
+    console.log(`  Copying dist/ → ${extDirName}/`);
+    copyDirSync(distDir, ourExtTarget, extDir);
+
+    // Preserve source mtime on main.js so subsequent runs can detect changes
+    if (fs.existsSync(srcMainJs) && fs.existsSync(destMainJs)) {
+      const srcStat = fs.statSync(srcMainJs);
+      fs.utimesSync(destMainJs, srcStat.atime, srcStat.mtime);
+    }
+
+    console.log('  ✓ Extension installed in test-extensions');
+  }
+
+  // Verify the copied extension has the necessary files
+  const copiedPkg = path.join(ourExtTarget, 'package.json');
+  const copiedMain = path.join(ourExtTarget, 'main.js');
+  if (!fs.existsSync(copiedPkg)) {
+    console.error(`  ✗ ERROR: package.json not found at ${copiedPkg}`);
+    process.exit(1);
+  }
+  if (!fs.existsSync(copiedMain)) {
+    console.error(`  ✗ ERROR: main.js not found at ${copiedMain}`);
+    process.exit(1);
+  }
+  console.log('  ✓ Verified: package.json and main.js present');
+
+  // CRITICAL: Remove .obsolete file — VS Code uses this to skip loading extensions.
+  // Previous test runs or ExTester's cleanup step may have marked our extension
+  // as obsolete, causing VS Code to refuse to load it even though the directory exists.
+  const obsoleteFile = path.join(extDir, '.obsolete');
+  if (fs.existsSync(obsoleteFile)) {
+    console.log('  Removing .obsolete file (was blocking extension loading)');
+    fs.rmSync(obsoleteFile);
+  }
+
+  // CRITICAL: Register our extension in extensions.json so VS Code recognizes it.
+  // Marketplace-installed extensions get entries automatically, but our manually
+  // copied extension needs to be added explicitly.
+  const extensionsJsonPath = path.join(extDir, 'extensions.json');
+  let extensionsJson: ExtensionJsonEntry[] = [];
+  if (fs.existsSync(extensionsJsonPath)) {
+    try {
+      extensionsJson = JSON.parse(fs.readFileSync(extensionsJsonPath, 'utf8'));
+    } catch {
+      extensionsJson = [];
+    }
+  }
+  // Remove any existing entry for our extension
+  extensionsJson = extensionsJson.filter(
+    (entry) => entry.identifier?.id?.toLowerCase() !== `${pkgJson.publisher}.${pkgJson.name}`.toLowerCase()
+  );
+  // Add our extension entry
+  const ourExtPath = ourExtTarget.replace(/\\/g, '/');
+  extensionsJson.push({
+    identifier: { id: `${pkgJson.publisher}.${pkgJson.name}` },
+    version: pkgJson.version,
+    location: {
+      $mid: 1,
+      path: `/${ourExtPath}`.replace(/^\/([A-Za-z]):/, (_, d) => `/${d.toLowerCase()}:`),
+      scheme: 'file',
+    },
+    relativeLocation: extDirName,
+    metadata: {
+      installedTimestamp: Date.now(),
+      source: 'gallery',
+    },
+  });
+  fs.writeFileSync(extensionsJsonPath, JSON.stringify(extensionsJson));
+  console.log('  ✓ Registered in extensions.json');
+
+  // List all extensions that will be loaded
+  console.log('\n=== Extensions in test-extensions/ ===');
+  for (const entry of fs.readdirSync(extDir)) {
+    if (entry === 'extensions.json') {
+      continue;
+    }
+    if (entry === '.obsolete') {
+      continue;
+    }
+    console.log(`  ${entry}`);
+  }
+
+  // Remove any OTHER versions of our extension that VS Code may have
+  // auto-downloaded from the marketplace in a previous run.
+  // Only keep our exact version. Also clean up duplicate dependency versions.
+  for (const entry of fs.readdirSync(extDir)) {
+    if (entry === 'extensions.json' || entry === '.obsolete') {
+      continue;
+    }
+    if (entry.toLowerCase().startsWith(pkgId) && entry !== extDirName) {
+      const fullPath = path.join(extDir, entry);
+      console.log(`  Removing stale auto-updated version: ${entry}`);
+      fs.rmSync(fullPath, { recursive: true, force: true });
+    }
+  }
+
+  // Clean up duplicate versions of dependency extensions (keep newest)
+  const depVersions: Record<string, string[]> = {};
+  for (const entry of fs.readdirSync(extDir)) {
+    if (entry === 'extensions.json' || entry === '.obsolete') {
+      continue;
+    }
+    const match = entry.match(/^(.+?)-(\d+\.\d+\.\d+.*)$/);
+    if (match) {
+      const baseName = match[1].toLowerCase();
+      if (!depVersions[baseName]) {
+        depVersions[baseName] = [];
+      }
+      depVersions[baseName].push(entry);
+    }
+  }
+  for (const [baseName, versions] of Object.entries(depVersions)) {
+    if (versions.length > 1) {
+      // Sort by version descending, keep the newest
+      versions.sort().reverse();
+      for (let i = 1; i < versions.length; i++) {
+        const fullPath = path.join(extDir, versions[i]);
+        console.log(`  Removing duplicate dependency: ${versions[i]} (keeping ${versions[0]})`);
+        fs.rmSync(fullPath, { recursive: true, force: true });
+      }
+    }
+  }
+
+  if (fs.existsSync(extDir)) {
+    for (const entry of fs.readdirSync(extDir)) {
+      if (entry !== 'extensions.json' && entry !== '.obsolete' && entry.toLowerCase().startsWith(devContainersDependency)) {
+        console.log(`  Removing stale Dev Containers extension: ${entry}`);
+        fs.rmSync(path.join(extDir, entry), { recursive: true, force: true });
+      }
+    }
+  }
+
+  // Final extensions.json rebuild right before running tests.
+  // Parallel CLI --install-extension calls may race on writing extensions.json,
+  // leaving only a subset of entries. Rebuild from actual directories on disk.
+  rebuildExtensionsJson(extDir);
+
+  // Step 4: Run the tests
+  console.log('\n=== Step 4: Run tests ===');
+  console.log(`Test glob: ${testGlob}`);
+
+  // Kill leftover VS Code test processes from previous runs.
+  // These hold locks on files in test-resources/settings/ and cause EBUSY errors.
+  // We kill ALL language server processes since we can't distinguish test ones
+  // from user ones. VS Code will auto-restart the user's language servers.
+  try {
+    const { execSync } = require('child_process');
+
+    // Kill processes that commonly hold locks on test-resources/settings log files
+    const processesToKill = [
+      'Microsoft.CodeAnalysis.LanguageServer.exe',
+      'Microsoft.Azure.Deployment.Express.LanguageServer.exe',
+      'Microsoft.VisualStudio.Code.Server.exe',
+      'Microsoft.VisualStudio.Code.ServiceHost.exe',
+      'Microsoft.VisualStudio.Code.ServiceController.exe',
+      'escape-node-job.exe',
+    ];
+
+    let killed = 0;
+    for (const procName of processesToKill) {
+      try {
+        execSync(`taskkill /F /IM "${procName}"`, { timeout: 5000, stdio: 'pipe' });
+        killed++;
+      } catch {
+        // Process not running, that's fine
+      }
+    }
+
+    // Also try WMIC to find ANY process with test-resources in command line
+    try {
+      const wmicOut = execSync('wmic process get ProcessId,Name,CommandLine /format:csv', { encoding: 'utf8', timeout: 15000 }).trim();
+      const lines = wmicOut.split('\n').filter((l) => l.includes('test-resources'));
+      for (const line of lines) {
+        const match = line.match(/,(\d+)\s*$/);
+        if (match) {
+          const pid = Number.parseInt(match[1], 10);
+          if (pid === process.pid) {
+            continue;
+          }
+          console.log(`  Killing leftover test process PID ${pid}`);
+          try {
+            execSync(`taskkill /F /T /PID ${pid}`, { timeout: 5000, stdio: 'pipe' });
+            killed++;
+          } catch {}
+        }
+      }
+    } catch {}
+
+    if (killed > 0) {
+      console.log(`  Killed ${killed} processes, waiting for handles to release...`);
+      await new Promise((r) => setTimeout(r, 5000));
+    }
+  } catch (e: any) {
+    console.warn(`  Warning: Could not check for leftover processes: ${getErrorMessage(e)}`);
+  }
+
+  // Clean stale settings/cache from previous test runs to avoid EPERM/EBUSY errors.
+  // ExTester's browser.start() calls fs.removeSync on the settings dir, which
+  // fails on Windows if VS Code cache files are still locked from a prior run.
+  const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
+  if (fs.existsSync(settingsDir)) {
+    console.log(`  Cleaning stale settings dir: ${settingsDir}`);
+
+    // Retry loop: sometimes handles take a moment to release after killing processes
+    let cleaned = false;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      try {
+        fs.rmSync(settingsDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+        cleaned = true;
+        console.log(`  ✓ Settings dir cleaned (attempt ${attempt + 1})`);
+        break;
+      } catch (e: any) {
+        console.warn(`  Cleanup attempt ${attempt + 1}/5 failed: ${getErrorMessage(e)}`);
+        if (attempt < 4) {
+          await new Promise((r) => setTimeout(r, 3000));
+        }
+      }
+    }
+
+    if (!cleaned) {
+      // ExTester only calls removeSync when settings/User exists.
+      // If we can delete settings/User, ExTester will skip its cleanup.
+      const userDir = path.join(settingsDir, 'User');
+      if (fs.existsSync(userDir)) {
+        try {
+          fs.rmSync(userDir, { recursive: true, force: true });
+          console.log('  ✓ Deleted settings/User — ExTester will skip cleanup of locked log files');
+          cleaned = true;
+        } catch (e3: any) {
+          console.warn(`  Could not delete settings/User: ${getErrorMessage(e3)}`);
+        }
+      } else {
+        console.log('  settings/User does not exist — ExTester will skip cleanup (OK)');
+        cleaned = true;
+      }
+    }
+
+    if (!cleaned) {
+      // Last resort: try renaming
+      const staleDir = `${settingsDir}-stale-${Date.now()}`;
+      try {
+        fs.renameSync(settingsDir, staleDir);
+        console.log(`  Renamed stale settings dir to: ${path.basename(staleDir)}`);
+      } catch (e2: any) {
+        console.warn(`  Warning: Could not rename settings dir either: ${getErrorMessage(e2)}`);
+        console.warn('  ExTester may fail with EBUSY — consider restarting VS Code and trying again');
+      }
+    }
+  }
+
+  // Resolve the auto-downloaded runtime dependency paths so the extension can
+  // find func, dotnet, and node without relying on PATH or re-downloading.
+  const resolveNodeBinDir = (depsRoot: string): string => {
+    const nodeJsRoot = path.join(depsRoot, 'NodeJs');
+    if (process.platform === 'win32') {
+      return nodeJsRoot;
+    }
+
+    try {
+      const rootBinDir = path.join(nodeJsRoot, 'bin');
+      if (fs.existsSync(path.join(rootBinDir, 'node'))) {
+        return rootBinDir;
+      }
+
+      const nodeSubfolder = fs
+        .readdirSync(nodeJsRoot, { withFileTypes: true })
+        .find((entry) => entry.isDirectory() && entry.name.includes('node'))?.name;
+      if (nodeSubfolder) {
+        return path.join(nodeJsRoot, nodeSubfolder, 'bin');
+      }
+    } catch {
+      // Dependencies may not be downloaded yet. Fall back to the root-level path
+      // so dependency validation still runs when binaries are missing.
+    }
+
+    return nodeJsRoot;
+  };
+
+  const getRuntimeDependencyPaths = (depsRootOverride?: string): RuntimeDependencyPaths => {
+    const depsRoot = depsRootOverride || path.join(os.homedir(), '.azurelogicapps', 'dependencies');
+    const nodeJsDir = resolveNodeBinDir(depsRoot);
+    const funcToolsDir = path.join(depsRoot, 'FuncCoreTools');
+    const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
+    const dotnetExecutable = process.platform === 'win32' ? 'dotnet.exe' : 'dotnet';
+    const nodeExecutable = process.platform === 'win32' ? 'node.exe' : 'node';
+    const funcExecutableCandidates = [
+      path.join(funcToolsDir, funcExecutable),
+      path.join(funcToolsDir, 'in-proc8', funcExecutable),
+      path.join(funcToolsDir, 'in-proc6', funcExecutable),
+    ];
+    const funcBinary = funcExecutableCandidates.find((candidate) => fs.existsSync(candidate)) || funcExecutableCandidates[0];
+    return {
+      depsRoot,
+      funcToolsDir,
+      funcExecutableCandidates,
+      dotnetSdkDir: path.join(depsRoot, 'DotNetSDK'),
+      nodeJsDir,
+      funcBinary,
+      dotnetBinary: path.join(depsRoot, 'DotNetSDK', dotnetExecutable),
+      nodeBinary: path.join(nodeJsDir, nodeExecutable),
+    };
+  };
+
+  const runtimePermissionStatus = (binaryPath: string): string => {
+    if (!fs.existsSync(binaryPath)) {
+      return 'missing';
+    }
+    const mode = process.platform === 'win32' ? 'n/a' : `0${(fs.statSync(binaryPath).mode & 0o777).toString(8)}`;
+    return `${isExecutableFile(binaryPath) ? 'executable' : 'not-executable'} mode=${mode}`;
+  };
+
+  const logRuntimeDependencyPermissions = (label: string, depsRootOverride?: string): void => {
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates } = getRuntimeDependencyPaths(depsRootOverride);
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates];
+    for (const candidate of [...new Set(candidates)]) {
+      console.log(`  [${label}] runtime binary ${candidate}: ${runtimePermissionStatus(candidate)}`);
+    }
+  };
+
+  const repairRuntimeDependencyExecutablePermissions = (label: string, failOnExistingNonExecutable = false): void => {
+    if (process.platform !== 'linux' && process.platform !== 'darwin') {
+      return;
+    }
+
+    const { funcBinary, dotnetBinary, nodeBinary, funcToolsDir, funcExecutableCandidates } = getRuntimeDependencyPaths();
+    const { execSync } = require('child_process');
+    const candidates = [funcBinary, dotnetBinary, nodeBinary, ...funcExecutableCandidates];
+    let fixedAny = false;
+    for (const bin of [...new Set(candidates)]) {
+      if (!fs.existsSync(bin)) {
+        continue;
+      }
+      try {
+        execSync(`chmod +x "${bin}"`, { stdio: 'ignore' });
+        fixedAny = true;
+      } catch (error: any) {
+        console.log(`  [${label}] failed to chmod runtime binary ${bin}: ${getErrorMessage(error)}`);
+      }
+    }
+
+    if (fs.existsSync(funcToolsDir)) {
+      try {
+        execSync(`chmod -R +x "${funcToolsDir}"`, { stdio: 'ignore' });
+        fixedAny = true;
+      } catch (error: any) {
+        console.log(`  [${label}] failed to chmod FuncCoreTools directory ${funcToolsDir}: ${getErrorMessage(error)}`);
+      }
+    }
+
+    if (fixedAny) {
+      console.log(`  [${label}] Fixed execute permissions on runtime binaries`);
+    }
+    logRuntimeDependencyPermissions(label);
+
+    if (failOnExistingNonExecutable) {
+      const brokenCandidates = [...new Set(funcExecutableCandidates)]
+        .filter((candidate) => fs.existsSync(candidate))
+        .filter((candidate) => !isExecutableFile(candidate));
+      if (brokenCandidates.length > 0) {
+        throw new Error(`[${label}] FuncCoreTools binaries exist but are not executable: ${brokenCandidates.join(', ')}`);
+      }
+    }
+  };
+
+  const runtimeDependenciesReady = (): boolean => {
+    const { funcBinary, dotnetBinary, nodeBinary, funcExecutableCandidates } = getRuntimeDependencyPaths();
+    const requiredBinariesReady = [funcBinary, dotnetBinary, nodeBinary].every(
+      (binaryPath) => fs.existsSync(binaryPath) && isExecutableFile(binaryPath)
+    );
+    const existingFuncToolsExecutable = funcExecutableCandidates
+      .filter((binaryPath) => fs.existsSync(binaryPath))
+      .every((binaryPath) => isExecutableFile(binaryPath));
+    return requiredBinariesReady && existingFuncToolsExecutable;
+  };
+  const shouldValidateRuntimeDependencies = (): boolean => {
+    repairRuntimeDependencyExecutablePermissions('runtime dependency readiness', true);
+    return !runtimeDependenciesReady();
+  };
+
+  const pruneInvalidRuntimeDependencyRoots = (label: string): void => {
+    const { depsRoot, funcToolsDir, dotnetSdkDir, nodeJsDir, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths();
+    const dependencyRoots = [
+      { label: 'NodeJs', root: path.join(depsRoot, 'NodeJs'), probes: [nodeBinary] },
+      { label: 'FuncCoreTools', root: funcToolsDir, probes: [funcBinary] },
+      { label: 'DotNetSDK', root: dotnetSdkDir, probes: [dotnetBinary] },
+    ];
+
+    for (const dependency of dependencyRoots) {
+      if (!fs.existsSync(dependency.root)) {
+        continue;
+      }
+
+      const hasProbe = dependency.probes.some((probe) => fs.existsSync(probe));
+      if (!hasProbe) {
+        const children = fs.readdirSync(dependency.root).slice(0, 10);
+        console.log(
+          `[${label}] Removing incomplete ${dependency.label} dependency root: ${dependency.root} children=[${children.join(', ')}] probes=[${dependency.probes.join(', ')}]`
+        );
+        fs.rmSync(dependency.root, { recursive: true, force: true });
+      }
+    }
+  };
+
+  // Create a VS Code settings file. Called before each phase group so we can
+  // enable dependency validation for Phase 4.1 (first run) and disable it
+  // for all subsequent phases (saves 30-60s per session startup).
+  const settingsFile = path.join(projectDir, 'out', 'test', 'vscode-settings.json');
+  fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
+
+  const writeTestSettings = ({
+    validateDependencies = false,
+    autoStartDesignTime = true,
+    includeRuntimeDependencyPaths = true,
+    runtimeDependenciesPathOverride,
+    useExperimentalBundle = false,
+    experimentalBundleSourceUri = '',
+    experimentalBundleVersion = '',
+  }: TestSettingsOptions = {}): void => {
+    const settings = {
+      'extensions.autoUpdate': false,
+      'extensions.autoCheckUpdates': false,
+      'update.mode': 'none',
+      'update.showReleaseNotes': false,
+      'telemetry.telemetryLevel': 'off',
+      // Disable workspace trust to prevent the modal trust dialog from blocking
+      // keyboard shortcuts (F1 / Ctrl+Shift+P) when opening new workspace folders.
+      'security.workspace.trust.enabled': false,
+      // Disable the startup editor (Welcome tab / Getting Started) to avoid
+      // an extra tab that may steal focus from our workflow.json file.
+      'workbench.startupEditor': 'none',
+      // Disable authentication modal dialogs — the extension tries to sign in
+      // to Azure when it detects WORKFLOWS_SUBSCRIPTION_ID in local.settings.json.
+      'microsoft-sovereign-cloud.environment': '',
+      // Suppress "wants to sign in" authentication popups
+      'azure.authenticationLibrary': 'MSAL',
+      'azure.cloud': 'AzureCloud',
+      // Disable Git auto-repository detection to reduce dialogs
+      'git.openRepositoryInParentFolders': 'never',
+      'git.enabled': false,
+      // Dependency validation: Phase 4.1 needs this ON (first run downloads/validates
+      // binaries). All subsequent phases set it OFF since paths are already resolved.
+      'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': validateDependencies,
+      'azureLogicAppsStandard.e2eStrictDependencyValidation': process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1',
+      // Design-time auto-start: ON for tests that need the runtime (designer, run),
+      // OFF for tests that only check UI/conversion to save startup time.
+      'azureLogicAppsStandard.autoStartDesignTime': autoStartDesignTime,
+      // Suppress the "Start design time?" prompt dialog on project load.
+      'azureLogicAppsStandard.showStartDesignTimeMessage': false,
+      // Suppress "wants to sign in" auth dialog — uses silent auth that
+      // returns undefined instead of prompting when no cached token exists.
+      'azureLogicAppsStandard.silentAuth': true,
+      // Short pick-process timeout for Phase 4.10. The codeful-debug
+      // recorder test asserts task dispatch, so bound process picking after
+      // the generated task chain has started instead of waiting the default
+      // 60 s. Other phases never reach pickProcess so this is harmless.
+      'azureLogicAppsStandard.pickProcessTimeout': 15,
+      // Keep dependency validation non-interactive in explicit command tests.
+      'azureLogicAppsStandard.showNodeJsWarning': false,
+      // Experimental-bundle opt-ins. Off by default for every phase so the
+      // standard CDN flow continues to be tested. The bundleintegrityonly
+      // phase or any future phase that wants to test a private bundle can
+      // flip these via writeTestSettings options.
+      'azureLogicAppsStandard.useExperimentalExtensionBundle': useExperimentalBundle,
+      'azureLogicAppsStandard.experimentalExtensionBundleSourceUri': experimentalBundleSourceUri,
+      'azureLogicAppsStandard.experimentalExtensionBundleVersion': experimentalBundleVersion,
+    };
+    if (includeRuntimeDependencyPaths) {
+      const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths(runtimeDependenciesPathOverride);
+      Object.assign(settings, {
+        // Point to auto-downloaded runtime binaries so the extension can start
+        // the design-time API process (func host start) without relying on PATH.
+        'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
+        'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
+        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinary,
+        'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
+      });
+    }
+    fs.writeFileSync(settingsFile, JSON.stringify(settings, null, 2));
+    console.log(
+      `  Settings: validateDependencies=${validateDependencies}, autoStartDesignTime=${autoStartDesignTime}, includeRuntimeDependencyPaths=${includeRuntimeDependencyPaths}`
+    );
+    if (runtimeDependenciesPathOverride) {
+      console.log(`  Settings dependency path override: ${runtimeDependenciesPathOverride}`);
+    }
+  };
+
+  // Write initial settings — keep dependency validation ON for all phases.
+  // It adds ~30-60s per session but prevents the Azure connector wizard
+  // from blocking designer operations (the validation flow handles the
+  // timing so the wizard completes before the user opens the designer).
+  writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+  const { depsRoot, funcBinary, dotnetBinary, nodeBinary, dotnetSdkDir, nodeJsDir, funcToolsDir } = getRuntimeDependencyPaths();
+  console.log(`  Created test settings file: ${settingsFile}`);
+  console.log(`  funcCoreToolsBinaryPath: ${funcBinary}`);
+  console.log(`  autoRuntimeDependenciesPath: ${depsRoot}`);
+
+  // Ensure DOTNET_ROOT and PATH include the extension's downloaded DotNetSDK
+  // and NodeJs directories. Without this, `func host start` (both the debug
+  // task and the design-time API process) cannot find dotnet on CI runners
+  // where only the extension-managed copy exists.
+  // Also include the system dotnet if actions/setup-dotnet installed one.
+  const pathSep = process.platform === 'win32' ? ';' : ':';
+  const extraPaths = [funcToolsDir, dotnetSdkDir, nodeJsDir].filter((d) => fs.existsSync(d));
+  if (extraPaths.length > 0) {
+    process.env.PATH = extraPaths.join(pathSep) + pathSep + (process.env.PATH || '');
+    console.log(`  Prepended to PATH: ${extraPaths.join(', ')}`);
+  }
+  if (fs.existsSync(dotnetSdkDir)) {
+    process.env.DOTNET_ROOT = dotnetSdkDir;
+    console.log(`  DOTNET_ROOT: ${dotnetSdkDir}`);
+  }
+
+  // R4 (workspaceConversionYes hardening): lock VS Code's host locale to
+  // en-US so localized button labels (DialogResponses.yes.title === 'Yes',
+  // 'No', 'Cancel', etc.) stay stable across CI runners. Without this,
+  // Linux runners can default to C.UTF-8 / German / Japanese and the
+  // ExTester ModalDialog.pushButton('Yes') call mis-matches.
+  if (!process.env.LANG) {
+    process.env.LANG = 'en_US.UTF-8';
+  }
+  if (!process.env.LC_ALL) {
+    process.env.LC_ALL = 'en_US.UTF-8';
+  }
+  if (!process.env.VSCODE_NLS_CONFIG) {
+    process.env.VSCODE_NLS_CONFIG = JSON.stringify({ locale: 'en-us', availableLanguages: {} });
+  }
+  console.log(`  Locale lock: LANG=${process.env.LANG} LC_ALL=${process.env.LC_ALL}`);
+
+  const outTestDir = path.resolve(projectDir, 'out', 'test');
+  const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
+
+  const phase0Files = [testFile('nonLogicAppStartup.test.js')];
+  const lspEpermFiles = [testFile('lspSdkExtractionEperm.test.js')];
+
+  const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
+  // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
+  // consumed by downstream shape-specific scenarios. Drives the wizard only for
+  // Standard/Stateful, Standard/Stateless, CustomCode/Stateful, and RulesEngine/Stateful.
+  const phase1aFiles = [testFile('createWorkspace.fixtures.test.js')];
+
+  const phase2Files = [testFile('designerActions.test.js')];
+  const connectionPromptFallbackFiles = [testFile('connectionPromptFallback.test.js')];
+
+  // Each new test gets its own phase (fresh VS Code session) to avoid
+  // workspace-switch contention with the previous test's debug processes.
+  const phase3Files = [testFile('inlineJavascript.test.js')];
+  const phase4Files = [testFile('statelessVariables.test.js')];
+  const phase5Files = [testFile('designerViewExtended.test.js')];
+  const phase6Files = [testFile('keyboardNavigation.test.js')];
+
+  const phase7Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js'), testFile('dataMapper.test.js')];
+
+  // Conversion tests (ADO #31054994, Steps 5-15)
+  // Each gets its own session because they need different startup folders.
+  const phase8aFiles = [testFile('workspaceConversionNo.test.js')];
+  const phase8bFiles = [testFile('workspaceConversionCreate.test.js')];
+  // Phase 4.8c combines: add workflow via right-click + open multiple designers
+  const phase8cFiles = [testFile('multipleDesigners.test.js')];
+  // Wave 2: Tests that involve window reload or different folder open scenarios
+  const phase8dFiles = [testFile('workspaceConversionYes.test.js')];
+  const phase8eFiles = [testFile('workspaceConversionSubfolder.test.js')];
+
+  const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
+  const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
+
+  // Phase 4.11 — Bundle CDN integrity probe. Pure Mocha (no ExTester / VS Code).
+  // Verifies that cdn.functions.azure.com still emits Content-Length +
+  // Content-MD5 headers we depend on for download integrity verification, and
+  // does a small live download through the verifier helper.
+  const phaseBundleIntegrityFiles = [testFile('bundleCdnHealth.test.js')];
+
+  // Phase 4.12 — Bundle on-disk repair E2E. Real ExTester / VS Code session.
+  // Reproduces the user-reported regression (deleting files from inside an
+  // installed bundle is detected on next validate-and-install, repaired
+  // synchronously, and the sidecar is rewritten so the cached hash matches
+  // disk). See bundleRepair.test.ts for the full scenario.
+  const phaseBundleRepairFiles = [testFile('bundleRepair.test.js')];
+
+  // ------------------------------------------------------------------
+  // Per-scenario inventory (Phase A scaffold).
+  //
+  // Declarative table mapping each E2E test file to its workspace spec
+  // and per-session settings. Consumed by runScenarioPhases() via
+  // E2E_MODE=scenarios. Existing E2E_MODE handlers (full, designeronly,
+  // createplusdesigner, etc.) do NOT use this table — they remain
+  // unchanged. Phase B will start migrating individual phases through
+  // this bootstrapper one at a time.
+  //
+  // Field reference:
+  //   id            — scenario label passed to prepareFreshSession()
+  //                   and used in logs; also the manifest-listing key.
+  //   testFile      — absolute path to the compiled test JS, or an
+  //                   array of paths when monolithic === true.
+  //   workspaceSpec — see selectWorkspaceForSpec() below for the
+  //                   supported shapes ('plain-folder', 'self-creates',
+  //                   'self-contained', 'manifest-multi', or an object
+  //                   with { appType, wfType, use? }).
+  //   settings      — passed to writeTestSettings(); 'auto' for
+  //                   validateDependencies resolves to
+  //                   shouldValidateRuntimeDependencies() at runtime.
+  //   monolithic    — true when the scenario runs multiple test files
+  //                   in a single VS Code session (currently 4.1, 4.7).
+  // ------------------------------------------------------------------
+  const scenarios: Scenario[] = [
+    // Independent / no-workspace scenarios
+    {
+      id: 'p40-nonlogicapp',
+      testFile: phase0Files[0],
+      workspaceSpec: 'plain-folder',
+      settings: { validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false },
+    },
+    {
+      id: 'p48b-conversioncreate',
+      testFile: phase8bFiles[0],
+      workspaceSpec: 'self-contained',
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+
+    // Phase 4.1a (NEW Step 2) — fast fixtures-only wizard run. Writes the manifest
+    // consumed by Phase 4.2 / 4.3 shape-specific scenarios. This is the critical
+    // path; the full 12-shape behavior validation runs independently as p41b.
+    {
+      id: 'p41a-fixtures',
+      testFile: phase1aFiles[0],
+      workspaceSpec: 'self-creates',
+      settings: { validateDependencies: true, autoStartDesignTime: true },
+    },
+    // Phase 4.1b (NEW Step 2) — full 12-shape wizard validation + 75 form/validation
+    // assertions. Runs on its own parallel shard OFF the critical path. No downstream
+    // scenarios depend on the manifest this writes.
+    {
+      id: 'p41b-createworkspace-behavior',
+      testFile: phase1Files,
+      workspaceSpec: 'self-creates',
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      monolithic: true,
+    },
+
+    // Phase 4.2 — designer lifecycle (Standard / CustomCode / RulesEngine sharded).
+    {
+      id: 'p42-standard',
+      testFile: phase2Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p42-customcode',
+      testFile: phase2Files[0],
+      workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'customCode' },
+    },
+    {
+      id: 'p42-rulesengine',
+      testFile: phase2Files[0],
+      workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p42-connectionprompt',
+      testFile: connectionPromptFallbackFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+
+    // Phases 4.3-4.6 — runtime-touching consumer tests
+    {
+      id: 'p43-inlinejavascript',
+      testFile: phase3Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'standard', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p43-customcode',
+      testFile: phase3Files[0],
+      workspaceSpec: { appType: 'customCode', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      env: { LA_E2E_SHAPE: 'customCode', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p43-rulesengine',
+      testFile: phase3Files[0],
+      workspaceSpec: { appType: 'rulesEngine', wfType: 'Stateful' },
+      // RulesEngine workspace-load auto-start can block designer open behind
+      // design-time timeout dialogs. The test still starts debug explicitly and
+      // verifies callback/run success, so runtime coverage remains strict.
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SHAPE: 'rulesEngine', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p44-statelessvariables',
+      testFile: phase4Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateless' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p45-designerviewextended',
+      testFile: phase5Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p46-keyboardnav',
+      testFile: phase6Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: true },
+    },
+
+    // Phase 4.7 — designer-shell smoke + dataMapper. dataMapper.test.ts
+    // reads the manifest in its own `before` hook, so the bootstrapper
+    // passes the preferred standard workspace as a startup resource.
+    {
+      id: 'p47-suite',
+      testFile: phase7Files,
+      workspaceSpec: 'manifest-multi',
+      settings: { validateDependencies: 'auto', autoStartDesignTime: true },
+      monolithic: true,
+    },
+
+    // Phases 4.8a/c/d/e — conversion tests
+    {
+      id: 'p48a-conversionno',
+      testFile: phase8aFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'wsDir' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+    {
+      id: 'p48c-multipledesigners',
+      testFile: phase8cFiles[0],
+      workspaceSpec: 'manifest-multi',
+      settings: { validateDependencies: false, autoStartDesignTime: true },
+    },
+    {
+      id: 'p48d-conversionyes',
+      testFile: phase8dFiles[0],
+      workspaceSpec: 'plain-folder',
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+    {
+      id: 'p48e-conversionsubfolder',
+      testFile: phase8eFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'appDir' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+
+    // Phase 4.12 — On-disk bundle repair / integrity gate (Phase 14 code path).
+    // Reuses a Standard/Stateful workspace from the fixtures manifest, lets the
+    // initial bundle install, deletes a couple .dll files from inside the
+    // installed bundle, invokes the validate-and-install-binaries command, and
+    // asserts the bundle is repaired on disk (sidecar back, .dlls back,
+    // recomputed content hash matches sidecar). autoStartDesignTime is OFF so
+    // func.exe does not lock the .dlls we tamper with.
+    {
+      id: 'p412-bundlerepair',
+      testFile: phaseBundleRepairFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+  ];
+
+  const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
+  console.log(`\nE2E mode: ${e2eMode}`);
+  console.log(`VS Code version: ${VSCODE_VERSION} (${VSCODE_VERSION_SOURCE})`);
+  // Note: shard reliability is gated by helpers in runHelpers.ts (waitForRuntimeReady,
+  // clickRunTrigger, assertRunTriggerable) and helpers.ts (selectCreateWorkspaceCommand,
+  // switchToWebviewFrame, openFolderInSession, waitForWorkbenchReady). All CI-dependent
+  // runtime-gated waits use a 90s minimum deadline per the VS Code E2E reliability playbook.
+
+  const runOptions: PhaseRunOptions = {
+    vscodeVersion: VSCODE_VERSION,
+    settings: settingsFile,
+    cleanup: false,
+    offline: false,
+    resources: [],
+  };
+
+  const prepareFreshSession = async (label: string): Promise<void> => {
+    const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
+    const userDir = path.join(settingsDir, 'User');
+
+    // Kill any lingering VS Code processes from previous phases.
+    // Without this, the old VS Code window stays open and `code -r` from
+    // ExTester's openResources sends the workspace-open command to the OLD
+    // window instead of the new one. The new window stays bare (no folder),
+    // which is why screenshots show empty VS Code on CI.
+    try {
+      const { execSync } = require('child_process');
+      const isLinux = process.platform === 'linux';
+      const isMac = process.platform === 'darwin';
+
+      if (isLinux || isMac) {
+        // Kill all VS Code processes from test-resources directory
+        // Use pkill with full process matching, or fall back to killall
+        try {
+          execSync('pkill -f "test-resources.*[Cc]ode"', { stdio: 'ignore', timeout: 10000 });
+        } catch {
+          // pkill returns exit code 1 if no processes matched — that's OK
+        }
+        // Also kill any chromedriver processes from previous sessions
+        try {
+          execSync('pkill -f chromedriver', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* no chromedriver running — fine */
+        }
+        // Kill orphan Functions runtime / dotnet / vsdbg processes left behind
+        // by failed debug sessions (Phase 4.3 retries can leave these alive,
+        // which then bind :7071 in a zombie state and break Phase 4.4's host
+        // detection — toolbarSeen=702ms but hostRunningSeen=never).
+        try {
+          execSync('pkill -f "func.*host.*start"', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* pkill returns 1 if no processes matched — OK */
+        }
+        try {
+          execSync('pkill -f "[Ff]unc.*Microsoft.Azure.WebJobs.Script"', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* OK */
+        }
+        try {
+          execSync('pkill -f vsdbg-ui', { stdio: 'ignore', timeout: 5000 });
+        } catch {
+          /* OK */
+        }
+        // Don't pkill dotnet broadly — it may kill the runner's other dotnet
+        // processes. Only kill dotnet processes that are children of func (covered
+        // by the "func.*host.*start" pkill above which terminates the process group).
+      } else {
+        // Windows: use PowerShell
+        execSync(
+          'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
+          { stdio: 'ignore', timeout: 10000 }
+        );
+        // Kill orphan Functions runtime / vsdbg processes on Windows
+        try {
+          execSync(
+            'powershell -NoProfile -Command "Get-Process -Name func,vsdbg-ui -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"',
+            { stdio: 'ignore', timeout: 10000 }
+          );
+        } catch {
+          /* OK */
+        }
+      }
+      console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver/func/vsdbg processes`);
+      // Wait for processes to fully exit and release IPC sockets.
+      // On Linux, VS Code writes an IPC socket to the user-data-dir for
+      // the CLI `code -r` command to connect. If the old socket persists,
+      // the new VS Code can't bind, and `code -r` either connects to a
+      // dead socket (silent failure) or opens in the wrong window.
+      await new Promise((r) => setTimeout(r, 5000));
+
+      // Clean up stale IPC socket files so new VS Code gets a fresh socket
+      if (isLinux || isMac) {
+        try {
+          const sockFiles = fs.readdirSync(settingsDir).filter((f) => f.endsWith('.sock'));
+          for (const sock of sockFiles) {
+            fs.unlinkSync(path.join(settingsDir, sock));
+            console.log(`  [${label}] ✓ Removed stale socket: ${sock}`);
+          }
+        } catch {
+          /* settingsDir may not exist yet */
+        }
+      }
+    } catch {
+      console.log(`  [${label}] No lingering processes to kill (or kill failed — continuing)`);
+    }
+
+    // Only delete settings/User/ — NOT the entire settings/ dir.
+    // Locked log/cache files live in settings/logs/ and settings/Cache/
+    // which we don't need to touch. ExTester's VSBrowser.start() calls
+    // fs.removeSync(settings) ONLY if settings/User exists, so by
+    // deleting User/ ourselves, we prevent ExTester from hitting the
+    // locked files at all. ExTester then creates a fresh User/ dir.
+    if (fs.existsSync(userDir)) {
+      try {
+        fs.rmSync(userDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+        console.log(`  [${label}] ✓ Deleted settings/User`);
+      } catch (e: any) {
+        console.warn(`  [${label}] Could not delete settings/User: ${getErrorMessage(e)}`);
+        console.warn(`  [${label}] Proceeding anyway — ExTester will create fresh settings`);
+      }
+    } else {
+      console.log(`  [${label}] settings/User does not exist, nothing to clean`);
+    }
+
+    // Fix execute permissions on downloaded runtime binaries.
+    // The extension's download/extract process doesn't set chmod +x on Linux,
+    // causing "/bin/sh: 1: .../func: Permission denied" when the extension
+    // tries to run `func host start` to start the design-time API.
+    repairRuntimeDependencyExecutablePermissions(label, true);
+  };
+
+  const runPhase = async (phaseName: string, files: string[], optionsOverride: Partial<PhaseRunOptions> = {}): Promise<number> => {
+    const phaseRunOptions = {
+      ...runOptions,
+      ...optionsOverride,
+    };
+    console.log(`\n=== ${phaseName} ===`);
+    console.log(`  Files: ${files.join(', ')}`);
+    if (phaseRunOptions.resources?.length) {
+      console.log(`  Startup resources: ${phaseRunOptions.resources.join(', ')}`);
+      // Diagnostic: verify startup resource files exist
+      for (const r of phaseRunOptions.resources) {
+        const exists = fs.existsSync(r);
+        const isDir = exists && fs.statSync(r).isDirectory();
+        console.log(`  Resource "${path.basename(r)}": exists=${exists}, isDir=${isDir}`);
+      }
+    }
+    // Diagnostic: list files in settings dir to check for IPC sockets
+    try {
+      const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
+      if (fs.existsSync(settingsDir)) {
+        const contents = fs.readdirSync(settingsDir);
+        console.log(`  Settings dir (${contents.length} items): ${contents.slice(0, 15).join(', ')}`);
+      }
+    } catch {
+      /* ignore */
+    }
+    // ExTester runs Mocha in this Node process. Some phases intentionally reuse
+    // the same compiled test file with different env gates (for example
+    // createWorkspace.behavior.test.js in Phase 4.1b and Phase 4.10A), so clear cached
+    // test modules before adding them to a new Mocha instance.
+    for (const file of files) {
+      try {
+        delete require.cache[require.resolve(file)];
+      } catch {
+        /* ignore */
+      }
+    }
+    const phaseTester = createExTester();
+    const code = await phaseTester.runTests(files, phaseRunOptions);
+    console.log(`  ${phaseName} exit code: ${code}`);
+    return code;
+  };
+
+  const prepareLspEpermDependencyRoot = (): string => {
+    if (process.platform !== 'win32') {
+      throw new Error('The LSP EPERM repro uses Windows ACLs and can only run on Windows.');
+    }
+
+    const source = getRuntimeDependencyPaths();
+    const requiredSourceDirs = [
+      ['NodeJs', source.nodeJsDir],
+      ['FuncCoreTools', source.funcToolsDir],
+      ['DotNetSDK', source.dotnetSdkDir],
+    ];
+    const missing = requiredSourceDirs.filter(([, dir]) => !fs.existsSync(dir)).map(([name, dir]) => `${name}: ${dir}`);
+    if (missing.length > 0) {
+      throw new Error(
+        `E2E_MODE=lspeperm requires existing runtime dependencies before cloning an isolated dependency root. Run a normal dependency-validation E2E phase first. Missing: ${missing.join(', ')}`
+      );
+    }
+
+    const depsRoot = path.join(os.tmpdir(), 'la-e2e-test', 'lsp-eperm-dependencies');
+    fs.rmSync(depsRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+    fs.mkdirSync(depsRoot, { recursive: true });
+
+    for (const [name, sourceDir] of requiredSourceDirs) {
+      fs.cpSync(sourceDir, path.join(depsRoot, name), { recursive: true });
+    }
+
+    for (const artifactName of LSP_STALE_ARTIFACT_NAMES) {
+      fs.rmSync(path.join(depsRoot, artifactName), { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
+    }
+
+    process.env.LA_E2E_LSP_EPERM_DEPS_ROOT = depsRoot;
+    console.log(`  Prepared isolated LSP EPERM dependency root: ${depsRoot}`);
+    logRuntimeDependencyPermissions('lspeperm isolated root', depsRoot);
+    return depsRoot;
+  };
+
+  // Runs Mocha against compiled test files directly, without spawning a VS Code
+  // session. Used for the bundle CDN integrity probe, which is a pure Node
+  // test (HTTP HEAD + small download) and does not need ExTester.
+  const runMochaPhase = async (phaseName: string, files: string[]): Promise<number> => {
+    console.log(`\n=== ${phaseName} (Mocha-only, no VS Code) ===`);
+    console.log(`  Files: ${files.join(', ')}`);
+    for (const file of files) {
+      try {
+        delete require.cache[require.resolve(file)];
+      } catch {
+        /* ignore */
+      }
+    }
+    // Lazy-require Mocha so other phases don't pay the cost.
+    const Mocha = require('mocha');
+    const mocha = new Mocha({ color: true, timeout: 60_000, reporter: 'spec' });
+    for (const file of files) {
+      mocha.addFile(file);
+    }
+    return await new Promise<number>((resolve) => {
+      mocha.run((failures) => {
+        const code = failures > 0 ? 1 : 0;
+        console.log(`  ${phaseName} exit code: ${code}`);
+        resolve(code);
+      });
+    });
+  };
+
+  const configureCodefulRecorderEnvironment = (): void => {
+    const eventsFile = path.join(os.tmpdir(), 'la-e2e-test', 'codeful-events.jsonl');
+    const triggerDir = path.join(os.tmpdir(), 'la-e2e-test', 'triggers');
+    fs.mkdirSync(path.dirname(eventsFile), { recursive: true });
+    fs.mkdirSync(triggerDir, { recursive: true });
+    try {
+      for (const entry of fs.readdirSync(triggerDir)) {
+        fs.unlinkSync(path.join(triggerDir, entry));
+      }
+    } catch {
+      /* ignore */
+    }
+    try {
+      fs.writeFileSync(eventsFile, '');
+    } catch {
+      /* ignore */
+    }
+    process.env.LA_E2E_TASK_EVENTS_JSONL = eventsFile;
+    process.env.CODEFUL_TASK_EVENTS_JSONL = eventsFile;
+    process.env.LA_E2E_TRIGGER_DIR = triggerDir;
+    console.log(`  Events file: ${eventsFile}`);
+    console.log(`  Trigger dir:  ${triggerDir}`);
+  };
+
+  const loadCodefulDebugWorkspaces = (): CodefulDebugWorkspaces => {
+    const manifestPath = path.join(os.tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+    if (!fs.existsSync(manifestPath)) {
+      throw new Error(`Codeful debug manifest not found: ${manifestPath}`);
+    }
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
+    const codefulEntries = manifest.filter((entry) => entry.appType === 'codeful') as CodefulWorkspaceEntry[];
+    const modern = codefulEntries.find((entry) => /modern/i.test(entry.label)) || codefulEntries[0];
+    const legacy = codefulEntries.find((entry) => /legacy/i.test(entry.label)) || codefulEntries[1];
+    for (const [variant, entry] of [
+      ['modern', modern],
+      ['legacy', legacy],
+    ]) {
+      if (!entry) {
+        throw new Error(`Missing ${variant} codeful workspace entry in ${manifestPath}`);
+      }
+      for (const requiredPath of [entry.wsFilePath, entry.appDir]) {
+        if (!requiredPath || !fs.existsSync(requiredPath)) {
+          throw new Error(`Missing ${variant} codeful generated path: ${requiredPath}`);
+        }
+      }
+    }
+    return { modern, legacy };
+  };
+
+  const patchLegacyCodefulCsproj = (entry: CodefulWorkspaceEntry): void => {
+    const csprojFiles = fs.readdirSync(entry.appDir).filter((name) => name.endsWith('.csproj'));
+    if (csprojFiles.length !== 1) {
+      throw new Error(`Expected exactly one codeful .csproj in ${entry.appDir}, found ${csprojFiles.length}: ${csprojFiles.join(', ')}`);
+    }
+    const csprojPath = path.join(entry.appDir, csprojFiles[0]);
+    let updated = fs.readFileSync(csprojPath, 'utf8');
+    for (const targetName of ['CopyToCodefulFolder', 'ReplaceLanguageNetCore']) {
+      const targetMatch = updated.match(new RegExp(`<Target\\b[^>]*Name=["']${targetName}["'][^>]*>`));
+      if (!targetMatch) {
+        throw new Error(`Could not find ${targetName} target in ${csprojPath}`);
+      }
+      const targetTag = targetMatch[0];
+      const updatedTag = targetTag.replace(/(AfterTargets=["'])Build;Publish(["'])/, '$1Publish$2');
+      if (updatedTag === targetTag) {
+        throw new Error(`Could not patch ${targetName} AfterTargets from Build;Publish to Publish in ${csprojPath}`);
+      }
+      updated = updated.replace(targetTag, updatedTag);
+    }
+    fs.writeFileSync(csprojPath, updated, 'utf8');
+    console.log(`  Patched legacy codeful targets AfterTargets=Publish in ${csprojPath}`);
+  };
+
+  const patchGeneratedCodefulProjectForDebugGuard = (entry: CodefulWorkspaceEntry, variant: string): void => {
+    const workflowFile = path.join(entry.appDir, `${entry.wfName}.cs`);
+    const programFile = path.join(entry.appDir, 'Program.cs');
+
+    for (const requiredPath of [workflowFile, programFile]) {
+      if (!fs.existsSync(requiredPath)) {
+        throw new Error(`Missing generated ${variant} codeful file required for debug-guard patch: ${requiredPath}`);
+      }
+    }
+
+    const originalWorkflow = fs.readFileSync(workflowFile, 'utf8');
+    const namespaceName = originalWorkflow.match(/namespace\s+([A-Za-z_][A-Za-z0-9_.]*)/)?.[1];
+    const className = originalWorkflow.match(/public\s+class\s+([A-Za-z_][A-Za-z0-9_]*)/)?.[1];
+    if (!namespaceName || !className) {
+      throw new Error(`Could not read namespace/class from generated codeful workflow: ${workflowFile}`);
+    }
+
+    // Phase 4.10 validates the VS Code debug task chain, not connector
+    // execution. The current generated template uses an MSN Weather managed
+    // connector and the preview SDK package no longer exposes the generated
+    // IWorkflowProvider/AddWorkflowProviders surface. Keep the project
+    // D-001-compliant by patching only the generated files after the real
+    // Create Workspace webview completes: use built-in HTTP trigger/Response
+    // APIs that compile with the package currently referenced by the template,
+    // and remove the stale provider-registration call.
+    const patchedWorkflow = `// -----------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------
+
+namespace ${namespaceName}
+{
+    using Microsoft.Azure.Workflows.Sdk;
+
+    /// <summary>
+    /// "${entry.wfName}" connector-free Stateful workflow for the Phase 4.10 debug task guard.
+    /// </summary>
+    public class ${className}
+    {
+        /// <summary>
+        /// Gets a built-in HTTP request/response workflow definition.
+        /// </summary>
+        public IWorkflowTrigger GetWorkflow()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+            var response = WorkflowActions.BuiltIn.Response(responseBody: () => "ok");
+            var workflow = trigger.Then(response);
+
+            return WorkflowFactory.CreateStatefulWorkflow("${entry.wfName}", workflow);
+        }
+    }
+}
+`;
+
+    fs.writeFileSync(workflowFile, patchedWorkflow, 'utf8');
+
+    const originalProgram = fs.readFileSync(programFile, 'utf8');
+    const patchedProgram = originalProgram.replace(/^\s*services\.AddWorkflowProviders\(typeof\(Program\)\.Assembly\);\r?\n/m, '');
+    if (patchedProgram === originalProgram && originalProgram.includes('AddWorkflowProviders')) {
+      throw new Error(`Could not remove stale AddWorkflowProviders call from ${programFile}`);
+    }
+    fs.writeFileSync(programFile, patchedProgram, 'utf8');
+
+    for (const connectionArtifact of ['connections.json', 'parameters.json']) {
+      const artifactPath = path.join(entry.appDir, connectionArtifact);
+      if (fs.existsSync(artifactPath)) {
+        fs.rmSync(artifactPath, { force: true });
+        console.log(`  Removed ${variant} connector artifact: ${artifactPath}`);
+      }
+    }
+
+    console.log(`  Patched ${variant} generated codeful workflow to built-in HTTP trigger + Response: ${workflowFile}`);
+  };
+
+  const removeDesignTimeEvidence = async (entry: CodefulWorkspaceEntry, variant: string): Promise<void> => {
+    const designTimeDir = path.join(entry.appDir, 'workflow-designtime');
+    for (let attempt = 1; attempt <= 6; attempt++) {
+      try {
+        fs.rmSync(designTimeDir, { recursive: true, force: true });
+        console.log(`  Removed stale ${variant} design-time evidence: ${designTimeDir}`);
+        return;
+      } catch (err: any) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (attempt === 6 && !/EBUSY|EPERM|resource busy|locked/i.test(message)) {
+          throw err;
+        }
+        if (attempt === 6) {
+          console.log(
+            `  Could not remove stale ${variant} design-time evidence because it is locked; continuing so the fresh phase must update it: ${message}`
+          );
+          return;
+        }
+        console.log(`  Waiting to remove stale ${variant} design-time evidence (attempt ${attempt}): ${message}`);
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    }
+  };
+
+  const runCodefulDebugPhases = async (labelPrefix: string): Promise<number> => {
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+    process.env.LA_E2E_CODEFUL_CREATE_ONLY = '1';
+    await prepareFreshSession(`${labelPrefix}-phase10a-create`);
+    const createExit = await runPhase('Phase 4.10A: create codeful workspaces', [testFile('createWorkspace.behavior.test.js')]);
+    delete process.env.LA_E2E_CODEFUL_CREATE_ONLY;
+    if (createExit !== 0) {
+      console.log(`\n⚠ Phase 4.10A exited with code ${createExit}; skipping Phase 4.10B`);
+      return createExit;
+    }
+
+    const { modern, legacy } = loadCodefulDebugWorkspaces();
+    patchGeneratedCodefulProjectForDebugGuard(modern, 'modern');
+    patchGeneratedCodefulProjectForDebugGuard(legacy, 'legacy');
+    patchLegacyCodefulCsproj(legacy);
+
+    installCodefulTaskRecorderExtension(extDir);
+    rebuildExtensionsJson(extDir);
+    configureCodefulRecorderEnvironment();
+
+    process.env.LA_E2E_CODEFUL_MODERN_DIR = modern.appDir;
+    process.env.LA_E2E_CODEFUL_LEGACY_DIR = legacy.appDir;
+    process.env.LA_E2E_CODEFUL_MODERN_WORKSPACE = modern.wsFilePath;
+    process.env.LA_E2E_CODEFUL_LEGACY_WORKSPACE = legacy.wsFilePath;
+    console.log(`  Modern codeful workspace: ${modern.wsFilePath}`);
+    console.log(`  Legacy codeful workspace: ${legacy.wsFilePath}`);
+
+    writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+
+    process.env.LA_E2E_CODEFUL_VARIANT = 'modern';
+    await prepareFreshSession(`${labelPrefix}-phase10b-modern`);
+    await removeDesignTimeEvidence(modern, 'modern');
+    const modernExit = await runPhase('Phase 4.10B-modern: codefulDebugTasks', phase10ModernFiles, { resources: [modern.wsFilePath] });
+
+    process.env.LA_E2E_CODEFUL_VARIANT = 'legacy';
+    await prepareFreshSession(`${labelPrefix}-phase10b-legacy`);
+    await removeDesignTimeEvidence(legacy, 'legacy');
+    const legacyExit = await runPhase('Phase 4.10B-legacy: codefulDebugTasks', phase10LegacyFiles, { resources: [legacy.wsFilePath] });
+    delete process.env.LA_E2E_CODEFUL_VARIANT;
+
+    return Math.max(modernExit, legacyExit);
+  };
+
+  try {
+    const getPhase2Resources = (): string[] => {
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      let phase2Resources: string[] = [];
+      if (fs.existsSync(manifestPath)) {
+        try {
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
+          // Use the same fallback order as the test files:
+          // prefer standard+Stateful, then any standard, then first entry
+          const preferred =
+            manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+            manifest.find((e) => e.appType === 'standard') ||
+            manifest[0];
+          if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+            phase2Resources = [preferred.wsFilePath];
+            console.log(`  Using startup workspace: ${preferred.wsFilePath}`);
+          } else {
+            console.warn('  Could not find a valid directory in manifest for phase 2 startup resource');
+          }
+        } catch (e: any) {
+          console.warn(`  Failed to parse manifest for phase 2 startup resource: ${getErrorMessage(e)}`);
+        }
+      } else {
+        console.warn(`  Manifest not found for phase 2 startup resource: ${manifestPath}`);
+      }
+      return phase2Resources;
+    };
+
+    const getStandardStatelessResources = (): string[] => {
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      if (!fs.existsSync(manifestPath)) {
+        console.warn(`  Manifest not found for stateless startup resource: ${manifestPath}`);
+        return [];
+      }
+      try {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
+        const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateless');
+        if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+          console.log(`  Using stateless startup workspace: ${preferred.wsFilePath}`);
+          return [preferred.wsFilePath];
+        }
+        console.warn('  Could not find Standard + Stateless workspace in manifest for stateless startup resource');
+      } catch (e: any) {
+        console.warn(`  Failed to parse manifest for stateless startup resource: ${getErrorMessage(e)}`);
+      }
+      return [];
+    };
+
+    // ------------------------------------------------------------------
+    // Phase A — per-scenario workspace resolver.
+    //
+    // Pure function that maps a scenario's `workspaceSpec` to the array
+    // of startup resources passed to ExTester's `runTests({ resources })`.
+    // Supported shapes:
+    //   'plain-folder'   — no resources; extension activates without a
+    //                      Logic App context. Currently only Phase 4.0.
+    //   'self-creates'   — no resources; the test creates its own
+    //                      workspace from inside VS Code (Phase 4.1).
+    //   'self-contained' — builds a legacy project fixture via
+    //                      createLegacyProjectFixture() and also sets
+    //                      LA_E2E_LEGACY_PROJECT_DIR so the test can
+    //                      locate it. Returns [legacyDir].
+    //   'manifest-multi' — reads created-workspaces.json and returns
+    //                      the preferred standard+Stateful entry's
+    //                      .code-workspace path (same as
+    //                      getPhase2Resources()). Used by phases whose
+    //                      tests further consume the manifest at runtime
+    //                      (4.7 dataMapper, 4.8c multipleDesigners).
+    //   { appType, wfType, use? } — reads the manifest, picks the
+    //                      matching entry, and returns its wsFilePath
+    //                      (default), wsDir (`use: 'wsDir'`), or appDir
+    //                      (`use: 'appDir'`) as a single-element array.
+    //
+    // Returns { resources, legacyDir? }. `legacyDir` is set only for
+    // 'self-contained' so runScenarioPhases can wire up the env var.
+    const selectWorkspaceForSpec = (spec: WorkspaceSpec, scenarioId: string): WorkspaceSelection => {
+      if (spec === 'plain-folder' || spec === 'self-creates') {
+        return { resources: [] };
+      }
+      if (spec === 'self-contained') {
+        const legacyDir = createLegacyProjectFixture(scenarioId);
+        return { resources: [legacyDir], legacyDir };
+      }
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      let manifest = null;
+      if (fs.existsSync(manifestPath)) {
+        try {
+          manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        } catch (e: any) {
+          console.warn(`  [${scenarioId}] Failed to parse manifest: ${getErrorMessage(e)}`);
+        }
+      } else {
+        console.warn(`  [${scenarioId}] Manifest not found: ${manifestPath}`);
+      }
+      if (spec === 'manifest-multi') {
+        // Mirrors getPhase2Resources() — returns the preferred standard
+        // workspace; the test itself walks the manifest for the rest.
+        if (!manifest) {
+          return { resources: [] };
+        }
+        const preferred =
+          manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+          manifest.find((e) => e.appType === 'standard') ||
+          manifest[0];
+        if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+          return { resources: [preferred.wsFilePath] };
+        }
+        return { resources: [] };
+      }
+      if (spec && typeof spec === 'object') {
+        if (!manifest) {
+          return { resources: [] };
+        }
+        const { appType, wfType, use } = spec;
+        const entry =
+          manifest.find((e) => (!appType || e.appType === appType) && (!wfType || e.wfType === wfType)) ||
+          (wfType ? undefined : manifest.find((e) => !appType || e.appType === appType)) ||
+          (!appType && !wfType ? manifest[0] : undefined);
+        if (!entry) {
+          console.warn(`  [${scenarioId}] No manifest entry matched ${JSON.stringify(spec)}`);
+          return { resources: [] };
+        }
+        const key = use === 'wsDir' ? 'wsDir' : use === 'appDir' ? 'appDir' : 'wsFilePath';
+        const value = entry[key];
+        if (value && fs.existsSync(value)) {
+          return { resources: [value] };
+        }
+        console.warn(`  [${scenarioId}] Manifest entry missing ${key}: ${value}`);
+        return { resources: [] };
+      }
+      console.warn(`  [${scenarioId}] Unknown workspaceSpec; returning no resources: ${JSON.stringify(spec)}`);
+      return { resources: [] };
+    };
+
+    // ------------------------------------------------------------------
+    // Phase A — per-scenario bootstrapper.
+    //
+    // Modeled on runCodefulDebugPhases() (above). For each scenario:
+    //   1. Resolve writeTestSettings (with 'auto' → live runtime check).
+    //   2. prepareFreshSession() to kill stale VS Code / chromedriver /
+    //      func / vsdbg processes and clear settings/User.
+    //   3. Resolve startup resources via selectWorkspaceForSpec().
+    //   4. Export LA_E2E_LEGACY_PROJECT_DIR for self-contained specs.
+    //   5. Hand off to runPhase() (one ExTester instance per scenario).
+    //   6. Collect exit codes; every scenario contributes to the aggregate.
+    //
+    // Returns the aggregate exit code.
+    const runScenarioPhases = async (scenarioList: Scenario[] /* , opts */): Promise<number> => {
+      const exits: number[] = [];
+      for (const scenario of scenarioList) {
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
+        const resolvedSettings: ScenarioSettings = { ...settings };
+        if (resolvedSettings.validateDependencies === 'auto') {
+          resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
+        }
+        writeTestSettings(resolvedSettings as TestSettingsOptions);
+
+        // Apply per-scenario env overrides (e.g. LA_E2E_SHAPE for parameterized
+        // shape-specific shards). Captured here so we can restore afterward.
+        const envOverridesApplied: EnvOverride[] = [];
+        if (scenarioEnv && typeof scenarioEnv === 'object') {
+          for (const [key, value] of Object.entries(scenarioEnv)) {
+            envOverridesApplied.push({ key, prev: process.env[key] });
+            process.env[key] = String(value);
+            console.log(`  [${id}] env override: ${key}=${value}`);
+          }
+        }
+
+        await prepareFreshSession(id);
+        if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+          pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
+          pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
+        }
+
+        const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
+        if (legacyDir) {
+          process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+        }
+        const fileList = Array.isArray(files) ? files : [files];
+        if (!monolithic && fileList.length !== 1) {
+          console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
+        }
+        if (process.env.LA_E2E_BUNDLE_PREFLIGHT === '1') {
+          verifyLogicAppsExtensionBundle(`preflight:${id}`);
+        }
+        const exit = await runPhase(`Scenario ${id}`, fileList, { resources });
+        if (exit === 0 && id === 'p41a-fixtures') {
+          verifyLogicAppsExtensionBundle('p41a-fixtures');
+        }
+        // Restore env overrides so subsequent scenarios aren't contaminated.
+        for (const { key, prev } of envOverridesApplied) {
+          if (prev === undefined) {
+            delete process.env[key];
+          } else {
+            process.env[key] = prev;
+          }
+        }
+        exits.push(exit);
+        // Brief pause between sessions to let VS Code/chromedriver release
+        // ports and sockets before the next prepareFreshSession() runs.
+        await new Promise((r) => setTimeout(r, 3000));
+      }
+      const aggregate = exits.length === 0 ? 0 : Math.max(...exits);
+      console.log(`\n=== Scenarios results: ${exits.length} blocking → exit ${aggregate} ===`);
+      return aggregate;
+    };
+
+    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects a single
+    // scenarios[] entry by id. Takes precedence over E2E_MODE so a matrix
+    // shard that sets both env vars (e.g. for transitional debugging)
+    // still runs exactly one scenario. E2E_MODE remains supported as a
+    // fallback for legacy grouped-shard invocations.
+    const singleScenarioId = process.env.LA_E2E_SCENARIO;
+    if (singleScenarioId) {
+      const scenarioEntry = scenarios.find((s) => s.id === singleScenarioId);
+      if (!scenarioEntry) {
+        console.error(`Unknown LA_E2E_SCENARIO: ${singleScenarioId}`);
+        console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
+        process.exit(2);
+      }
+      console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
+      await downloadExTesterAssets();
+      const singleExit = await runScenarioPhases([scenarioEntry]);
+      process.exit(singleExit);
+    }
+
+    if (e2eMode === 'scenarios') {
+      await downloadExTesterAssets();
+      const scenariosExit = await runScenarioPhases(scenarios);
+      process.exit(scenariosExit);
+    }
+
+    if (e2eMode === 'scenarios-pilot') {
+      await downloadExTesterAssets();
+      // Pilot exactly one scenario: inlineJavascript. Decision gate per the
+      // per-scenario re-architecture plan — if this passes where the current
+      // createplusnewtests shard fails Phase 4.3, the new pattern is validated.
+      const pilotScenarios = scenarios.filter((s) => s.id === 'p43-inlinejavascript');
+      if (pilotScenarios.length === 0) {
+        throw new Error('scenarios-pilot: p43-inlinejavascript scenario not found in scenarios[] table');
+      }
+      // Phase 4.1 must run first to populate the manifest the bootstrapper consumes
+      // for { appType: 'standard', wfType: 'Stateful' }. Mirror createplusnewtests's
+      // Phase 4.1 invocation.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-pilot');
+      const phase1Exit = await runPhase('Phase 4.1: createWorkspace (pilot prerequisite)', phase1Files);
+      if (phase1Exit !== 0) {
+        console.log(`\n⚠ Phase 4.1 exited with code ${phase1Exit} — pilot cannot proceed without manifest`);
+        process.exit(phase1Exit);
+      }
+      // Now run the pilot scenario through the bootstrapper.
+      const pilotExit = await runScenarioPhases(pilotScenarios);
+      console.log(`\n=== Pilot result: 4.1=${phase1Exit}, p43-inlinejavascript=${pilotExit} → exit ${Math.max(phase1Exit, pilotExit)} ===`);
+      process.exit(Math.max(phase1Exit, pilotExit));
+    }
+
+    if (e2eMode === 'codefuldebugonly') {
+      await downloadExTesterAssets();
+      const phase10Exit = await runCodefulDebugPhases('phase10-only');
+      process.exit(phase10Exit);
+    }
+
+    // bundleintegrityonly is handled by the early short-circuit at the top
+    // of main() (search for `earlyMode === 'bundleintegrityonly'`).
+
+    if (e2eMode === 'bundlerepaironly') {
+      const bundleRepairScenario = scenarios.find((s) => s.id === 'p412-bundlerepair');
+      if (!bundleRepairScenario) {
+        throw new Error('bundlerepaironly: p412-bundlerepair scenario not found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
+      process.exit(phase12Exit);
+    }
+
+    if (e2eMode === 'nonlogicappstartup') {
+      // Startup regression test: intentionally omit runtime dependency paths to
+      // exercise extension activation in a plain, non-Logic-App folder.
+      await downloadExTesterAssets();
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
+
+      await prepareFreshSession('nonlogicappstartup-only');
+      const startupExit = await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files);
+      process.exit(startupExit);
+    }
+
+    if (e2eMode === 'lspeperm') {
+      if (process.platform !== 'win32') {
+        console.log('E2E_MODE=lspeperm is Windows-only because it uses icacls ACL mutation; skipping on this platform.');
+        process.exit(0);
+      }
+
+      await downloadExTesterAssets();
+      const lspEpermDepsRoot = prepareLspEpermDependencyRoot();
+      writeTestSettings({
+        validateDependencies: false,
+        autoStartDesignTime: false,
+        runtimeDependenciesPathOverride: lspEpermDepsRoot,
+      });
+      await prepareFreshSession('lspeperm-only');
+      const lspEpermExit = await runPhase('Manual: LSP SDK EPERM repro', lspEpermFiles);
+      process.exit(lspEpermExit);
+    }
+
+    if (e2eMode === 'designeronly') {
+      // Ensure VS Code and ChromeDriver are downloaded
+      await downloadExTesterAssets();
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+
+      await prepareFreshSession('phase2-only');
+      const phase2Resources = getPhase2Resources();
+      const phase2Exit = await runPhase('Phase 4.2: designerActions', phase2Files, {
+        resources: phase2Resources,
+      });
+      process.exit(phase2Exit);
+    }
+
+    if (e2eMode === 'newtestsonly') {
+      // Run only the new tests (phases 4.3–4.6) each in their own session
+      await downloadExTesterAssets();
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      const wsResources = getPhase2Resources();
+      const exits: number[] = [];
+
+      await prepareFreshSession('phase3-only');
+      exits.push(await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase4-only');
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase5-only');
+      exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase6-only');
+      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
+
+      const finalExit = Math.max(...exits);
+      console.log(`\n=== New tests results: ${exits.map((c, i) => `4.${i + 3}=${c}`).join(', ')} → exit ${finalExit} ===`);
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'conversiononly') {
+      // Run only the workspace conversion tests (phases 4.8a–4.8d)
+      await downloadExTesterAssets();
+      // ALL conversion tests need validateDependencies ON so the extension
+      // fully activates and detects legacy projects / shows conversion dialog.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      const wsResources = getPhase2Resources();
+      const exits: number[] = [];
+
+      // Phase 4.8a: Open workspace DIR (not .code-workspace), click No
+      // Startup resource = workspace directory (the folder containing .code-workspace)
+      const wsDir = (() => {
+        const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+        if (fs.existsSync(manifestPath)) {
+          try {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
+            const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
+            if (preferred?.wsDir && fs.existsSync(preferred.wsDir)) {
+              return [preferred.wsDir];
+            }
+          } catch {
+            /* ignore */
+          }
+        }
+        return [];
+      })();
+      if (wsDir.length > 0) {
+        await prepareFreshSession('phase8a-only');
+        exits.push(await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir }));
+        await new Promise((r) => setTimeout(r, 3000));
+      } else {
+        console.warn('  No workspace directory found for phase 4.8a — skipping');
+        exits.push(0);
+      }
+
+      // Phase 4.8b: Open legacy project folder (no .code-workspace), click Yes
+      const legacyDir = createLegacyProjectFixture('conversiononly');
+      // Phase 4.8b: Enable dependency validation so extension fully activates
+      // and shows the conversion dialog for legacy projects.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+      exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
+      await new Promise((r) => setTimeout(r, 3000));
+
+      // Phase 4.8c: Multiple designers + add workflow — needs full design-time
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase8c-only');
+      exits.push(await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: wsResources }));
+      await new Promise((r) => setTimeout(r, 3000));
+
+      // Phase 4.8d: Keep validateDependencies ON for conversion dialog
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      if (wsDir.length > 0) {
+        await prepareFreshSession('phase8d-only');
+        exits.push(await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir }));
+        await new Promise((r) => setTimeout(r, 3000));
+      } else {
+        console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+        exits.push(1);
+      }
+
+      // Phase 4.8e: Open logic app subfolder, click No
+      const appDir = (() => {
+        const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+        if (fs.existsSync(manifestPath)) {
+          try {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ManifestEntry[];
+            const preferred = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
+            if (preferred?.appDir && fs.existsSync(preferred.appDir)) {
+              return [preferred.appDir];
+            }
+          } catch {
+            /* ignore */
+          }
+        }
+        return [];
+      })();
+      if (appDir.length > 0) {
+        await prepareFreshSession('phase8e-only');
+        exits.push(await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir }));
+      } else {
+        console.warn('  No app directory found for phase 4.8e — skipping');
+        exits.push(0);
+      }
+
+      const finalExit = Math.max(...exits);
+      console.log(
+        `\n=== Conversion tests results: 4.8a=${exits[0]}, 4.8b=${exits[1]}, 4.8c=${exits[2]}, 4.8d=${exits[3]}, 4.8e=${exits[4]} → exit ${finalExit} ===`
+      );
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'conversioncreateonly') {
+      // Run only Phase 4.8b: Open legacy project folder (no .code-workspace),
+      // click Yes, then verify one Create click starts and completes workspace creation.
+      await downloadExTesterAssets();
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+
+      const legacyDir = createLegacyProjectFixture('conversioncreateonly');
+
+      await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+      const phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
+      process.exit(phase8bExit);
+    }
+
+    if (e2eMode === 'createonly') {
+      await downloadExTesterAssets();
+      await prepareFreshSession('phase1-only');
+      const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
+      process.exit(phase1Exit);
+    }
+
+    // ----------------------------------------------------------------------
+    // CI matrix shard modes — each is intended to run on a separate runner.
+    // The full suite is divided into four shards so total CI wall-time drops
+    // from ~30+ min on a single runner to ~12-15 min critical path.
+    //
+    //   - independentonly: phases that don't depend on Phase 4.1 workspaces.
+    //   - createplusdesigner: Phase 4.1 → Phase 4.2 (designer lifecycle).
+    //   - createplusnewtests: Phase 4.1 → Phases 4.3-4.5 (single-test phases).
+    //   - createplusconversion: Phase 4.1 → Phases 4.8a/c/d/e (workspace
+    //     conversion; 4.8b is in `independentonly` because it builds its own
+    //     legacy fixture and does not need Phase 4.1).
+    //
+    // Phase 4.1 is intentionally re-run in three shards (Stage 1 of the
+    // parallelization plan). Stage 2 will replace this with an artifact-shared
+    // workspace setup job.
+    // ----------------------------------------------------------------------
+
+    if (e2eMode === 'independentonly') {
+      await downloadExTesterAssets();
+      const exits: number[] = [];
+
+      // Phase 4.0: nonLogicAppStartup — plain folder, no Logic App context.
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
+      await prepareFreshSession('phase0-only');
+      exits.push(await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files));
+
+      // Phase 4.8b: conversionCreate — builds its own legacy fixture, so it
+      // does not need Phase 4.1's created-workspaces.json manifest.
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      const legacyDir = createLegacyProjectFixture('independentonly');
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase8b-only');
+      process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+      exits.push(await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] }));
+
+      // Phase 4.11: bundleCdnHealth — pure Mocha, no VS Code. Confirms the
+      // CDN still emits Content-Length + Content-MD5 headers we rely on.
+      exits.push(await runMochaPhase('Phase 4.11: bundleCdnHealth', phaseBundleIntegrityFiles));
+
+      const finalExit = Math.max(...exits);
+      console.log(`\n=== Independent shard results: 4.0=${exits[0]}, 4.8b=${exits[1]}, 4.11=${exits[2]} → exit ${finalExit} ===`);
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'createplusdesigner') {
+      await downloadExTesterAssets();
+      const exits: number[] = [];
+
+      // Phase 4.1: createWorkspace — needed to produce the manifest consumed
+      // by Phase 4.2 and Phase 4.7 (dataMapper.test.ts asserts the manifest
+      // exists in its `before` hook).
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-shard');
+      exits.push(await runPhase('Phase 4.1: createWorkspace session', phase1Files));
+
+      // Phase 4.2: designerActions — reuse workspaces from Phase 4.1.
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      await new Promise((r) => setTimeout(r, 5000));
+      await prepareFreshSession('phase2-shard');
+      const phase2Resources = getPhase2Resources();
+      exits.push(await runPhase('Phase 4.2: designerActions', phase2Files, { resources: phase2Resources }));
+
+      // Phase 4.2b: connector prompt cancellation fallback — deliberately
+      // removes Azure connector sentinel settings and verifies designer load.
+      writeTestSettings({ validateDependencies: false, autoStartDesignTime: false });
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase2b-shard');
+      exits.push(await runPhase('Phase 4.2b: connectionPromptFallback', connectionPromptFallbackFiles, { resources: phase2Resources }));
+
+      // Phase 4.7: demo/smoke/standalone/dataMapper. dataMapper depends on
+      // Phase 4.1's manifest; the others are quick (~14s total for the three).
+      // Co-locating with `designer` keeps them all on a Phase-4.1-aware runner
+      // and balances shard wall-time.
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase7-shard');
+      exits.push(await runPhase('Phase 4.7: remaining suites', phase7Files));
+
+      const finalExit = Math.max(...exits);
+      console.log(
+        `\n=== Designer shard results: 4.1=${exits[0]}, 4.2=${exits[1]}, 4.2b=${exits[2]}, 4.7=${exits[3]} → exit ${finalExit} ===`
+      );
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'createplusnewtests') {
+      await downloadExTesterAssets();
+      const exits: number[] = [];
+
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-shard');
+      exits.push(await runPhase('Phase 4.1: createWorkspace session', phase1Files));
+
+      writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+      const wsResources = getPhase2Resources();
+
+      await new Promise((r) => setTimeout(r, 5000));
+      await prepareFreshSession('phase3-shard');
+      exits.push(await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase4-shard');
+      exits.push(await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase5-shard');
+      exits.push(await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase6-shard');
+      exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
+
+      const finalExit = Math.max(...exits);
+      console.log(
+        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]} → exit ${finalExit} ===`
+      );
+      process.exit(finalExit);
+    }
+
+    if (e2eMode === 'createplusconversion') {
+      await downloadExTesterAssets();
+      const exits: number[] = [];
+
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession('phase1-shard');
+      exits.push(await runPhase('Phase 4.1: createWorkspace session', phase1Files));
+
+      const wsResources = getPhase2Resources();
+      const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+      const readManifest = (): ManifestEntry[] | null => {
+        try {
+          return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        } catch {
+          return null;
+        }
+      };
+      const findPreferred = (m: ManifestEntry[] | null): ManifestEntry | undefined =>
+        m && (m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard'));
+
+      const wsDir = (() => {
+        const preferred = findPreferred(readManifest());
+        return preferred?.wsDir && fs.existsSync(preferred.wsDir) ? [preferred.wsDir] : [];
+      })();
+      const appDir = (() => {
+        const preferred = findPreferred(readManifest());
+        return preferred?.appDir && fs.existsSync(preferred.appDir) ? [preferred.appDir] : [];
+      })();
+
+      // Phase 4.8a: Open workspace dir, click No on conversion dialog
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      if (wsDir.length > 0) {
+        await new Promise((r) => setTimeout(r, 3000));
+        await prepareFreshSession('phase8a-shard');
+        exits.push(await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir }));
+      } else {
+        console.warn('  No workspace directory found for phase 4.8a — skipping');
+        exits.push(0);
+      }
+
+      // Phase 4.8c: Multiple designers + add workflow — needs full design-time
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase8c-shard');
+      exits.push(await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: wsResources }));
+
+      // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+      let phase8dExit = 0;
+      if (wsDir.length > 0) {
+        await new Promise((r) => setTimeout(r, 3000));
+        await prepareFreshSession('phase8d-shard');
+        phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
+      } else {
+        console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+        phase8dExit = 1;
+      }
+
+      // Phase 4.8e: Open logic app subfolder, click No
+      if (appDir.length > 0) {
+        await new Promise((r) => setTimeout(r, 3000));
+        await prepareFreshSession('phase8e-shard');
+        exits.push(await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir }));
+      } else {
+        console.warn('  No app directory found for phase 4.8e — skipping');
+        exits.push(0);
+      }
+
+      const finalExit = Math.max(...exits, phase8dExit);
+      console.log(
+        `\n=== Conversion shard results: 4.1=${exits[0]}, 4.8a=${exits[1]}, 4.8c=${exits[2]}, 4.8d=${phase8dExit}, 4.8e=${exits[3]} → exit ${finalExit} ===`
+      );
+      process.exit(finalExit);
+    }
+
+    writeTestSettings({ validateDependencies: false, autoStartDesignTime: false, includeRuntimeDependencyPaths: false });
+    await prepareFreshSession('phase0');
+    const phase0Exit = await runPhase('Phase 4.0: nonLogicAppStartup', phase0Files);
+    if (phase0Exit !== 0) {
+      console.log(`\n⚠ Phase 4.0 exited with code ${phase0Exit} — continuing to Phase 4.1`);
+    }
+
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase1');
+    const phase1Exit = await runPhase('Phase 4.1: createWorkspace session', phase1Files);
+    if (phase1Exit !== 0) {
+      console.log(`\n⚠ Phase 4.1 exited with code ${phase1Exit} — continuing to Phase 4.2 anyway (workspaces may still have been created)`);
+    }
+
+    // Phase 4.1 performs the dependency download/validation. Later designer
+    // phases use the explicit binary paths above and skip revalidation when all
+    // binaries are present, avoiding CI flakes where validation overwrites func
+    // without executable bits while the test is opening the designer.
+    writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+
+    console.log('\n=== Session boundary: closing createWorkspace session completely ===');
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await prepareFreshSession('phase2');
+    const phase2Resources = getPhase2Resources();
+
+    const phase2Exit = await runPhase('Phase 4.2: designerActions', phase2Files, {
+      resources: phase2Resources,
+    });
+    if (phase2Exit !== 0) {
+      console.log(`\n⚠ Phase 4.2 exited with code ${phase2Exit} — continuing to Phase 4.3`);
+    }
+
+    // Phases 4.3–4.5: Each new test in its own fresh VS Code session
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase3');
+    const phase3Exit = await runPhase('Phase 4.3: inlineJavascript', phase3Files, { resources: phase2Resources });
+    if (phase3Exit !== 0) {
+      console.log(`\n⚠ Phase 4.3 exited with code ${phase3Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase4');
+    const phase4Exit = await runPhase('Phase 4.4: statelessVariables', phase4Files, { resources: getStandardStatelessResources() });
+    if (phase4Exit !== 0) {
+      console.log(`\n⚠ Phase 4.4 exited with code ${phase4Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase5');
+    const phase5Exit = await runPhase('Phase 4.5: designerViewExtended', phase5Files, { resources: phase2Resources });
+    if (phase5Exit !== 0) {
+      console.log(`\n⚠ Phase 4.5 exited with code ${phase5Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase6');
+    const phase6Exit = await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: phase2Resources });
+    if (phase6Exit !== 0) {
+      console.log(`\n⚠ Phase 4.6 exited with code ${phase6Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase7');
+    const phase7Exit = await runPhase('Phase 4.7: remaining suites', phase7Files);
+
+    // Phases 4.8a–4.8e: Workspace conversion tests (ADO #31054994, Steps 5-15)
+    // ALL conversion tests need validateDependencies ON so the extension fully
+    // activates and can detect legacy projects / show the conversion dialog.
+    // Design-time is not needed (no designer opens in conversion tests).
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+
+    // Phase 4.8a: Open workspace dir, click No on conversion dialog
+    let phase8aExit = 0;
+    const wsDir = (() => {
+      const preferred = (() => {
+        try {
+          const m = JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8'));
+          return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
+        } catch {
+          return null;
+        }
+      })();
+      return preferred?.wsDir && fs.existsSync(preferred.wsDir) ? [preferred.wsDir] : [];
+    })();
+    if (wsDir.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await prepareFreshSession('phase8a');
+      phase8aExit = await runPhase('Phase 4.8a: conversionNo', phase8aFiles, { resources: wsDir });
+      if (phase8aExit !== 0) {
+        console.log(`\n⚠ Phase 4.8a exited with code ${phase8aExit} — continuing`);
+      }
+    }
+
+    // Phase 4.8b: Open legacy project, create workspace dialog
+    // Re-enable dependency validation — the extension needs to fully activate
+    // to detect the legacy project and show the conversion dialog.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+    let phase8bExit = 0;
+    const legacyDir = createLegacyProjectFixture('phase8b');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase8b');
+    process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+    phase8bExit = await runPhase('Phase 4.8b: conversionCreate', phase8bFiles, { resources: [legacyDir] });
+    if (phase8bExit !== 0) {
+      console.log(`\n⚠ Phase 4.8b exited with code ${phase8bExit} — continuing`);
+    }
+
+    // Phase 4.8c: Multiple designers + add workflow
+    // Re-enable full design-time — this test needs the designer to open.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase8c');
+    const phase8cExit = await runPhase('Phase 4.8c: multipleDesigners', phase8cFiles, { resources: phase2Resources });
+    if (phase8cExit !== 0) {
+      console.log(`\n⚠ Phase 4.8c exited with code ${phase8cExit} — continuing`);
+    }
+
+    // Phase 4.8d: Open workspace dir, click Yes (may reload VS Code)
+    // Restore conversion settings — design-time not needed, but validation must stay ON.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });
+    let phase8dExit = 0;
+    if (wsDir.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await prepareFreshSession('phase8d');
+      phase8dExit = await runPhase('Phase 4.8d: conversionYes', phase8dFiles, { resources: wsDir });
+      if (phase8dExit !== 0) {
+        console.log(`\n⚠ Phase 4.8d exited with code ${phase8dExit} — continuing`);
+      }
+    } else {
+      console.error('  No workspace directory found for phase 4.8d — failing strict conversionYes gate');
+      phase8dExit = 1;
+    }
+
+    // Phase 4.8e: Open logic app subfolder, click No
+    let phase8eExit = 0;
+    const appDir = (() => {
+      const preferred = (() => {
+        try {
+          const m = JSON.parse(fs.readFileSync(path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json'), 'utf8'));
+          return m.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || m.find((e) => e.appType === 'standard');
+        } catch {
+          return null;
+        }
+      })();
+      return preferred?.appDir && fs.existsSync(preferred.appDir) ? [preferred.appDir] : [];
+    })();
+    if (appDir.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await prepareFreshSession('phase8e');
+      phase8eExit = await runPhase('Phase 4.8e: conversionSubfolder', phase8eFiles, { resources: appDir });
+      if (phase8eExit !== 0) {
+        console.log(`\n⚠ Phase 4.8e exited with code ${phase8eExit} — continuing`);
+      }
+    }
+
+    // Phase 4.10: D-001-compliant codeful debug F5 task pattern regression guard.
+    // Phase A creates real codeful workspaces through the Create Workspace webview.
+    // Phase B reopens each generated .code-workspace in a fresh VS Code session
+    // with the task-recorder extension installed and asserts F5 task events.
+    let phase10Exit = 0;
+    try {
+      phase10Exit = await runCodefulDebugPhases('phase10');
+      if (phase10Exit !== 0) {
+        console.log(`\n⚠ Phase 4.10 exited with code ${phase10Exit} — continuing`);
+      }
+    } catch (err: any) {
+      phase10Exit = 1;
+      console.log(`\n⚠ Phase 4.10 setup error: ${getErrorMessage(err)} — continuing`);
+    }
+
+    // Exit with worst exit code from all phases.
+    const finalExit = Math.max(
+      phase0Exit,
+      phase1Exit,
+      phase2Exit,
+      phase3Exit,
+      phase4Exit,
+      phase5Exit,
+      phase7Exit,
+      phase8aExit,
+      phase8bExit,
+      phase8cExit,
+      phase8dExit,
+      phase8eExit,
+      phase10Exit
+    );
+    console.log(
+      `\n=== Final results: 4.0=${phase0Exit}, 4.1=${phase1Exit}, 4.2=${phase2Exit}, 4.3=${phase3Exit}, 4.4=${phase4Exit}, 4.5=${phase5Exit}, 4.7=${phase7Exit}, 4.8a=${phase8aExit}, 4.8b=${phase8bExit}, 4.8c=${phase8cExit}, 4.8d=${phase8dExit}, 4.8e=${phase8eExit}, 4.10=${phase10Exit} → exit ${finalExit} ===`
+    );
+    process.exit(finalExit);
+  } catch (err: any) {
+    console.error(`\n✗ ExTester error: ${getErrorMessage(err)}`);
+    process.exit(1);
+  }
+}
+
+main().catch((err) => {
+  console.error('Fatal error in E2E launcher:', err);
+  process.exit(1);
+});
+
+// CI trigger nudge

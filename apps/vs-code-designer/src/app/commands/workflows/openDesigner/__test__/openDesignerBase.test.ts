@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { designerVersionSetting, defaultDesignerVersion } from '../../../../../constants';
+import { designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotification } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 
 // Mock dependencies before importing the class
@@ -74,11 +74,17 @@ describe('OpenDesignerBase', () => {
     get: vi.fn(),
     update: vi.fn().mockResolvedValue(undefined),
   };
+  const mockGlobalState = {
+    get: vi.fn().mockReturnValue(undefined),
+    update: vi.fn().mockResolvedValue(undefined),
+  };
   let designer: TestDesigner;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetConfiguration.mockReturnValue(mockConfig as any);
+    mockGlobalState.get.mockReturnValue(undefined);
+    ext.context = { globalState: mockGlobalState } as any;
     designer = new TestDesigner();
   });
 
@@ -120,7 +126,11 @@ describe('OpenDesignerBase', () => {
 
       await designer.testShowDesignerVersionNotification();
 
-      expect(mockShowInformationMessage).toHaveBeenCalledWith('A new Logic Apps experience is available for preview!', 'Enable preview');
+      expect(mockShowInformationMessage).toHaveBeenCalledWith(
+        'A new Logic Apps experience is available for preview!',
+        'Enable preview',
+        "Don't show again"
+      );
     });
 
     it('should show previewing message when version is 2', async () => {
@@ -132,7 +142,8 @@ describe('OpenDesignerBase', () => {
 
       expect(mockShowInformationMessage).toHaveBeenCalledWith(
         'You are previewing the new Logic Apps experience.',
-        'Go back to previous version'
+        'Go back to previous version',
+        "Don't show again"
       );
     });
 
@@ -175,6 +186,36 @@ describe('OpenDesignerBase', () => {
       await designer.testShowDesignerVersionNotification();
 
       expect(mockDispose).toHaveBeenCalled();
+    });
+
+    it("should suppress notification and update setting when Don't show again is clicked on v1", async () => {
+      mockConfig.get.mockReturnValue(1);
+      mockShowInformationMessage.mockResolvedValueOnce("Don't show again" as any);
+      designer.setTestPanel({ dispose: vi.fn() });
+
+      await designer.testShowDesignerVersionNotification();
+
+      expect(mockGlobalState.update).toHaveBeenCalledWith(suppressDesignerVersionNotification, true);
+    });
+
+    it("should suppress notification and update setting when Don't show again is clicked on v2", async () => {
+      mockConfig.get.mockReturnValue(2);
+      mockShowInformationMessage.mockResolvedValueOnce("Don't show again" as any);
+      designer.setTestPanel({ dispose: vi.fn() });
+
+      await designer.testShowDesignerVersionNotification();
+
+      expect(mockGlobalState.update).toHaveBeenCalledWith(suppressDesignerVersionNotification, true);
+    });
+
+    it('should not show notification when suppressed', async () => {
+      mockConfig.get.mockReturnValue(2);
+      mockGlobalState.get.mockReturnValue(true);
+      designer.setTestPanel({ dispose: vi.fn() });
+
+      await designer.testShowDesignerVersionNotification();
+
+      expect(mockShowInformationMessage).not.toHaveBeenCalled();
     });
   });
 

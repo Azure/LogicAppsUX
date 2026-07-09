@@ -1,7 +1,7 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
+import { codefulProjectsExist, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
@@ -11,7 +11,16 @@ const mocks = vi.hoisted(() => ({
   readFile: vi.fn(),
   remove: vi.fn(),
   statSync: vi.fn(),
+  workspaceFolders: undefined as { uri: { fsPath: string } }[] | undefined,
   writeFile: vi.fn(),
+}));
+
+vi.mock('vscode', () => ({
+  workspace: {
+    get workspaceFolders() {
+      return mocks.workspaceFolders;
+    },
+  },
 }));
 
 vi.mock('fs-extra', () => ({
@@ -40,23 +49,15 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
   const projectPath = 'D:\\workspace\\CodefulLogicApp';
   const runtimeDependenciesPath = 'D:\\runtime-dependencies';
   const lspDirectoryPath = path.join(runtimeDependenciesPath, lspDirectory);
-  const csprojPath = path.join(projectPath, 'CodefulLogicApp.csproj');
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
   const installedSdkHashMarkerPath = path.join(runtimeDependenciesPath, '.lspsdk-hash');
   const projectSdkHashMarkerPath = path.join(projectPath, '.nuget', '.logicapps-lspsdk-hash');
   const projectSdkPackagePath = path.join(projectPath, '.nuget', 'packages', 'microsoft.azure.workflows.sdk', '1.0.0-preview.1');
   const projectAssetsPath = path.join(projectPath, 'obj', 'project.assets.json');
   const projectNugetCachePath = path.join(projectPath, 'obj', 'project.nuget.cache');
+  const localSettingsPath = path.join(projectPath, 'local.settings.json');
+  const codefulLocalSettings = JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'true' } });
   const currentSdkHash = 'current-sdk-hash';
-  const csprojContent = `
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8</TargetFramework>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview.1" />
-  </ItemGroup>
-</Project>`;
   const codefulNugetConfig = `
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
@@ -78,7 +79,7 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
     mocks.readdir.mockResolvedValue(['CodefulLogicApp.csproj']);
     mocks.statSync.mockReturnValue({ isDirectory: () => true });
     setExistingPaths([
-      csprojPath,
+      localSettingsPath,
       nugetConfigPath,
       installedSdkHashMarkerPath,
       projectSdkPackagePath,
@@ -86,8 +87,8 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
       projectNugetCachePath,
     ]);
     mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === csprojPath) {
-        return csprojContent;
+      if (filePath === localSettingsPath) {
+        return codefulLocalSettings;
       }
       if (filePath === nugetConfigPath) {
         return codefulNugetConfig;
@@ -116,10 +117,10 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
   });
 
   it('keeps the project cache when its marker already matches the installed SDK hash', async () => {
-    setExistingPaths([csprojPath, nugetConfigPath, installedSdkHashMarkerPath, projectSdkHashMarkerPath, projectSdkPackagePath]);
+    setExistingPaths([localSettingsPath, nugetConfigPath, installedSdkHashMarkerPath, projectSdkHashMarkerPath, projectSdkPackagePath]);
     mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === csprojPath) {
-        return csprojContent;
+      if (filePath === localSettingsPath) {
+        return codefulLocalSettings;
       }
       if (filePath === nugetConfigPath) {
         return codefulNugetConfig;
@@ -139,8 +140,8 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
 
   it('does not touch caches for projects that do not use the extension local SDK source and project-local packages folder', async () => {
     mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === csprojPath) {
-        return csprojContent;
+      if (filePath === localSettingsPath) {
+        return codefulLocalSettings;
       }
       if (filePath === nugetConfigPath) {
         return codefulNugetConfig.replace(lspDirectoryPath, 'https://api.nuget.org/v3/index.json');
@@ -201,5 +202,107 @@ describe('parseCsprojCopyToCodefulInfo', () => {
       replaceLangAfterTargets: 'Build;Publish',
       runsOnBuild: false,
     });
+  });
+});
+
+describe('codefulProjectsExist', () => {
+  const codefulSettingsJson = JSON.stringify({
+    IsEncrypted: false,
+    Values: { WORKFLOW_CODEFUL_ENABLED: 'true' },
+  });
+  const nonCodefulSettingsJson = JSON.stringify({
+    IsEncrypted: false,
+    Values: { AzureWebJobsStorage: 'UseDevelopmentStorage=true' },
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.workspaceFolders = undefined;
+  });
+
+  it('returns false when there are no workspace folders', async () => {
+    mocks.workspaceFolders = undefined;
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns false when workspace folders array is empty', async () => {
+    mocks.workspaceFolders = [];
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns true when a workspace folder has WORKFLOW_CODEFUL_ENABLED', async () => {
+    const folderPath = 'D:\\workspace\\codeful-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue(codefulSettingsJson);
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(true);
+    expect(mocks.pathExists).toHaveBeenCalledWith(path.join(folderPath, 'local.settings.json'));
+  });
+
+  it('returns false when workspace folder does not have WORKFLOW_CODEFUL_ENABLED', async () => {
+    const folderPath = 'D:\\workspace\\standard-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue(nonCodefulSettingsJson);
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns false when WORKFLOW_CODEFUL_ENABLED is set to "false"', async () => {
+    const folderPath = 'D:\\workspace\\disabled-codeful-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue(JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'false' } }));
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns true when at least one of multiple folders is codeful', async () => {
+    const standardPath = 'D:\\workspace\\standard-project';
+    const codefulPath = 'D:\\workspace\\codeful-project';
+    mocks.workspaceFolders = [{ uri: { fsPath: standardPath } }, { uri: { fsPath: codefulPath } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockImplementation(async (filePath: string) => {
+      if (filePath === path.join(codefulPath, 'local.settings.json')) {
+        return codefulSettingsJson;
+      }
+      return nonCodefulSettingsJson;
+    });
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(true);
+  });
+
+  it('returns false when local.settings.json does not exist', async () => {
+    mocks.workspaceFolders = [{ uri: { fsPath: 'D:\\workspace\\empty-project' } }];
+    mocks.pathExists.mockResolvedValue(false);
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
+  });
+
+  it('returns false when local.settings.json contains invalid JSON', async () => {
+    mocks.workspaceFolders = [{ uri: { fsPath: 'D:\\workspace\\broken-project' } }];
+    mocks.pathExists.mockResolvedValue(true);
+    mocks.readFile.mockResolvedValue('not valid json');
+
+    const result = await codefulProjectsExist();
+
+    expect(result).toBe(false);
   });
 });

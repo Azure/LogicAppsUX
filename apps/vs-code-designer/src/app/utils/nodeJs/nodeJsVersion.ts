@@ -72,7 +72,7 @@ export async function setNodeJsCommand(): Promise<void> {
     if (binariesExist) {
       // windows the executable is at root folder, linux & macos its in <node-v*>/bin
       if (process.platform === Platform.windows) {
-        command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
+        command = resolveNodeJsCommand(nodeJsBinariesPath);
       } else {
         const nodeSubFolder = getNodeSubFolder(nodeJsBinariesPath);
         if (nodeSubFolder) {
@@ -83,6 +83,14 @@ export async function setNodeJsCommand(): Promise<void> {
     }
   }
   await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, command);
+}
+
+/**
+ * Resolves the preferred Node.js command on Windows while normalizing the .exe suffix.
+ */
+export function resolveNodeJsCommand(nodeJsBinariesPath: string): string {
+  const executableName = ext.nodeJsCliPath.toLowerCase().endsWith('.exe') ? ext.nodeJsCliPath : `${ext.nodeJsCliPath}.exe`;
+  return path.join(nodeJsBinariesPath, executableName);
 }
 
 function getNodeSubFolder(directoryPath: string): string | undefined {

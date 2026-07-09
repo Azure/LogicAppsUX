@@ -77,10 +77,13 @@ const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
+  useIsNodeInMultiSelection: vi.fn().mockReturnValue(false),
+  useIsNodePinnedToOperationPanel: vi.fn().mockReturnValue(false),
 }));
 
 vi.mock('../../../core/state/panel/panelSlice', () => ({
   changePanelNode: vi.fn((payload) => ({ type: 'panel/changePanelNode', payload })),
+  toggleNodeSelection: vi.fn((payload) => ({ type: 'panel/toggleNodeSelection', payload })),
 }));
 
 const mockUseAllOperations = vi.fn().mockReturnValue({});
@@ -185,7 +188,12 @@ vi.mock('../components/handles/EdgeDrawTargetHandle', () => ({
 
 vi.mock('../components/card', () => ({
   ActionCard: ({ id, title, isSelected, onClick, onContextMenu, onDeleteClick, errorMessages, collapsed, handleCollapse }: any) => (
-    <div data-testid={`action-card-${id}`} data-selected={isSelected} onClick={() => onClick?.()} onContextMenu={(e) => onContextMenu?.(e)}>
+    <div
+      data-testid={`action-card-${id}`}
+      data-selected={isSelected}
+      onClick={(e) => onClick?.(e)}
+      onContextMenu={(e) => onContextMenu?.(e)}
+    >
       <span>{title}</span>
       {errorMessages?.length > 0 && <span data-testid="error-messages">{errorMessages.join(', ')}</span>}
       {collapsed && <span data-testid="collapsed-indicator">collapsed</span>}
@@ -197,6 +205,11 @@ vi.mock('../components/card', () => ({
       {handleCollapse && (
         <button data-testid="collapse-btn" onClick={() => handleCollapse()}>
           Collapse
+        </button>
+      )}
+      {handleCollapse && (
+        <button data-testid="collapse-nested-btn" onClick={() => handleCollapse(true)}>
+          Collapse nested
         </button>
       )}
     </div>
@@ -306,6 +319,45 @@ describe('ScopeCardNode (v2)', () => {
     );
   });
 
+  it('should dispatch toggleNodeSelection on ctrl-click', () => {
+    render(<ScopeCardNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testScope');
+    fireEvent.click(card, { ctrlKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
+        payload: 'testScope',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on meta-click', () => {
+    render(<ScopeCardNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testScope');
+    fireEvent.click(card, { metaKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
+        payload: 'testScope',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on shift-click of the card body', () => {
+    render(<ScopeCardNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testScope');
+    fireEvent.click(card, { shiftKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
+        payload: 'testScope',
+      })
+    );
+  });
+
   it('should dispatch context menu data on right-click', () => {
     render(<ScopeCardNode {...defaultProps} />);
     const card = screen.getByTestId('action-card-testScope');
@@ -342,6 +394,19 @@ describe('ScopeCardNode (v2)', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'workflow/toggleCollapsedGraphId',
+      })
+    );
+  });
+
+  it('should include nested scopes when collapse is triggered with shift (includeNested)', () => {
+    render(<ScopeCardNode {...defaultProps} />);
+    const collapseNestedBtn = screen.getByTestId('collapse-nested-btn');
+    fireEvent.click(collapseNestedBtn);
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'workflow/toggleCollapsedGraphId',
+        payload: expect.objectContaining({ id: 'testScope', includeNested: true }),
       })
     );
   });

@@ -1,4 +1,5 @@
 import { equals } from '@microsoft/logic-apps-shared';
+import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import { isA2AWorkflow } from '../workflow/helper';
@@ -13,6 +14,10 @@ export const useClampPan = () => {
 
 export const useShowDeleteModalNodeId = () => {
   return useSelector((state: RootState) => state.designerView.showDeleteModalNodeId);
+};
+
+export const useShowMultiSelectDeleteModal = () => {
+  return useSelector((state: RootState) => state.designerView.showMultiSelectDeleteModal ?? false);
 };
 
 export const useNodeContextMenuData = () => {
@@ -34,12 +39,20 @@ export const useIsAgenticWorkflowOnly = () => {
   return equals(workflowKind, 'agentic', true);
 };
 
+const selectIsA2AWorkflow = createSelector(
+  (state: RootState) => state.workflow,
+  (workflow) => isA2AWorkflow(workflow)
+);
+
 export const useIsA2AWorkflow = () => {
-  return useSelector((state: RootState) => isA2AWorkflow(state.workflow));
+  return useSelector(selectIsA2AWorkflow);
 };
 
+const selectWorkflowHasAgentLoop = createSelector(
+  (state: RootState) => state.workflow.operations,
+  (operations) => Object.values(operations).some((operation) => equals(operation.type, 'agent'))
+);
+
 export const useWorkflowHasAgentLoop = () => {
-  return useSelector((state: RootState) => {
-    return Object.values(state.workflow.operations).some((operation) => equals(operation.type, 'agent'));
-  });
+  return useSelector(selectWorkflowHasAgentLoop);
 };

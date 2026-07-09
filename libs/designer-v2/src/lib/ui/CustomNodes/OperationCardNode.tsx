@@ -20,8 +20,12 @@ import {
   useOperationVisuals,
   useIsNodeLoadingDynamicData,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import {
+  useIsNodeSelectedInOperationPanel,
+  useIsNodeInMultiSelection,
+  useIsNodePinnedToOperationPanel,
+} from '../../core/state/panel/panelSelectors';
+import { changePanelNode, setSelectedNodeId, toggleNodeSelection } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
@@ -187,6 +191,8 @@ const DefaultNode = ({ id }: NodeProps) => {
   );
 
   const isSelected = useIsNodeSelectedInOperationPanel(id);
+  const isMultiSelected = useIsNodeInMultiSelection(id);
+  const isPinned = useIsNodePinnedToOperationPanel(id);
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(id);
 
@@ -205,9 +211,20 @@ const DefaultNode = ({ id }: NodeProps) => {
     }
   }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
-  const nodeClick = useCallback(() => {
-    handleNodeSelection();
-  }, [handleNodeSelection]);
+  const nodeClick = useCallback(
+    (e?: React.MouseEvent) => {
+      // Shift/Ctrl/Meta-click toggles the node in the multi-selection set instead of opening its panel.
+      if (e?.shiftKey || e?.ctrlKey || e?.metaKey) {
+        // Stop React Flow's own click-selection from racing with our toggle and re-asserting the
+        // node as selected after we just removed it from the set.
+        e?.stopPropagation();
+        dispatch(toggleNodeSelection(id));
+        return;
+      }
+      handleNodeSelection();
+    },
+    [dispatch, id, handleNodeSelection]
+  );
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
@@ -333,7 +350,8 @@ const DefaultNode = ({ id }: NodeProps) => {
           errorMessages={errorMessages}
           isDragging={isDragging}
           isLoading={isLoading}
-          isSelected={isSelected}
+          isSelected={isSelected || isMultiSelected}
+          isPinned={isPinned}
           isUnitTest={isUnitTest}
           nodeMockResults={nodeMockResults}
           isMockSupported={isMockSupported}
@@ -351,7 +369,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           copilotModified={copilotModified}
         />
         {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
-        {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected} />}
+        {!isMcpClient && <EdgeDrawSourceHandle highlighted={isSelected || isMultiSelected} />}
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>

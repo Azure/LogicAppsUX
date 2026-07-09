@@ -11,7 +11,7 @@ import { SelectConnectionWrapper } from './selectConnection/selectConnection';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { autoCreateConnectionIfPossible, closeConnectionsFlow } from '../../../core/actions/bjsworkflow/connections';
@@ -30,8 +30,22 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
 
   const isCreatingConnection = useIsCreatingConnection();
 
+  // NOTE: Re-entry guard for autoCreateConnectionIfPossible. Without this guard, the effect can fire in a
+  // loop because autoCreateConnectionIfPossible -> getUniqueConnectionName -> getConnectionsForConnector
+  // writes to the same React Query cache key as useConnectionsForConnector (which uses cacheTime/staleTime 0).
+  // The cache write produces a new connections array reference, re-running this effect. See issue #9131.
+  const isAutoCreatingRef = useRef(false);
+
   useEffect(() => {
-    if (selectedNodeId && connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+    if (
+      selectedNodeId &&
+      connector &&
+      !connectionQuery.isLoading &&
+      !connectionQuery.isError &&
+      connections.length === 0 &&
+      !isAutoCreatingRef.current
+    ) {
+      isAutoCreatingRef.current = true;
       autoCreateConnectionIfPossible({
         connector: connector as Connector,
         referenceKeys: Object.keys(references),
@@ -39,8 +53,16 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
         skipOAuth: true,
         applyNewConnection: (connection: Connection) =>
           dispatch(updateNodeConnection({ nodeId: selectedNodeId, connection, connector: connector as Connector })),
-        onSuccess: () => dispatch(closeConnectionsFlow({ nodeId: selectedNodeId })),
-        onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
+        onSuccess: () => {
+          isAutoCreatingRef.current = false;
+          dispatch(closeConnectionsFlow({ nodeId: selectedNodeId }));
+        },
+        onManualConnectionCreation: () => {
+          isAutoCreatingRef.current = false;
+          dispatch(setIsCreatingConnection(true));
+        },
+      }).catch(() => {
+        isAutoCreatingRef.current = false;
       });
     }
   }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, operationInfo, references, selectedNodeId]);

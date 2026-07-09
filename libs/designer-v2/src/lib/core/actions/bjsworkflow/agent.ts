@@ -2,7 +2,7 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import Constants from '../../../common/constants';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { ErrorLevel, initializeNodes, initializeOperationInfo, updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { changePanelNode, setIsPanelLoading } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -15,7 +15,14 @@ import {
   updateAllUpstreamNodes,
 } from './initialize';
 import { getOperationSettings } from './settings';
-import { SearchService, SettingScope, StaticResultService } from '@microsoft/logic-apps-shared';
+import {
+  LogEntryLevel,
+  LoggerService,
+  parseErrorMessage,
+  SearchService,
+  SettingScope,
+  StaticResultService,
+} from '@microsoft/logic-apps-shared';
 import type { Connector, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -176,29 +183,45 @@ export const initializeConnectorOperationDetails = async (
   workflowKind: WorkflowKind,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
-  const { inputs } = _operation;
-  const { connector: connectorId } = inputs ?? {};
+  try {
+    const { inputs } = _operation;
+    const { connector: connectorId } = inputs ?? {};
 
-  const connector = (await SearchService().getAllConnectors()).find((c) => c.id === connectorId);
-  if (connector) {
-    const { id, name } = connector;
-    const operationInfo = {
-      connectorId: id,
-      operationId: name,
-      type: Constants.NODE.TYPE.CONNECTOR,
-    };
+    const connector = (await SearchService().getAllConnectors()).find((c) => c.id === connectorId);
+    if (connector) {
+      const { id, name } = connector;
+      const operationInfo = {
+        connectorId: id,
+        operationId: name,
+        type: Constants.NODE.TYPE.CONNECTOR,
+      };
 
-    const actionData =
-      (await SearchService().getAgentConnectorOperation?.(connectorId))?.map((a) => ({ id: a.id, title: a.properties.summary })) ?? [];
-    const manifest = populateManifestWithActionData(connector, actionData);
-    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
-    const nodeData = await createNodeData(nodeId, connector, actionData, operationInfo, workflowKind, dispatch, _operation);
+      const actionData =
+        (await SearchService().getAgentConnectorOperation?.(connectorId))?.map((a) => ({ id: a.id, title: a.properties.summary })) ?? [];
+      const manifest = populateManifestWithActionData(connector, actionData);
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+      const nodeData = await createNodeData(nodeId, connector, actionData, operationInfo, workflowKind, dispatch, _operation);
 
-    const promise = { ...nodeData, manifest, operationInfo };
-    return [promise];
+      const promise = { ...nodeData, manifest, operationInfo };
+      return [promise];
+    }
+
+    return [];
+  } catch (error: any) {
+    const message = `Unable to initialize connector operation details for '${nodeId}'. Error details - ${parseErrorMessage(
+      error,
+      `Unknown error initializing connector operation '${nodeId}'.`
+    )}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'operation deserializer',
+      message,
+      error,
+    });
+
+    dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
+    return undefined;
   }
-
-  return [];
 };
 
 function populateManifestWithActionData(connector: any, actionData: { title: string; id: string }[]): any {

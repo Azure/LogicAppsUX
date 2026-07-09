@@ -9,8 +9,12 @@ import {
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import {
+  useIsNodeSelectedInOperationPanel,
+  useIsNodeInMultiSelection,
+  useIsNodePinnedToOperationPanel,
+} from '../../core/state/panel/panelSelectors';
+import { changePanelNode, toggleNodeSelection } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -81,6 +85,8 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const parentRunData = useRunData(parentNodeId ?? '');
   const selfRunData = useRunData(scopeId);
   const selected = useIsNodeSelectedInOperationPanel(scopeId);
+  const isMultiSelected = useIsNodeInMultiSelection(scopeId);
+  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
@@ -204,9 +210,20 @@ const ScopeCardNode = ({ id }: NodeProps) => {
     [readOnly, metadata]
   );
 
-  const nodeClick = useCallback(() => {
-    dispatch(changePanelNode(scopeId));
-  }, [dispatch, scopeId]);
+  const nodeClick = useCallback(
+    (e?: React.MouseEvent) => {
+      // Shift/Ctrl/Meta-click on the card body toggles the node in the multi-selection set instead of
+      // opening its panel. The collapse toggle stops propagation, so shift-clicking the chevron still
+      // expands/collapses nested scopes without triggering multi-selection here.
+      if (e?.shiftKey || e?.ctrlKey || e?.metaKey) {
+        e?.stopPropagation();
+        dispatch(toggleNodeSelection(scopeId));
+        return;
+      }
+      dispatch(changePanelNode(scopeId));
+    },
+    [dispatch, scopeId]
+  );
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
   const handleGraphCollapse = useCallback(
@@ -424,7 +441,8 @@ const ScopeCardNode = ({ id }: NodeProps) => {
             errorMessages={errorMessages}
             isDragging={isDragging}
             isLoading={isLoading}
-            isSelected={selected}
+            isSelected={selected || isMultiSelected}
+            isPinned={isPinned}
             runData={runData}
             readOnly={readOnly}
             onContextMenu={onContextMenu}
@@ -438,7 +456,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {shouldShowPager ? renderLoopsPager : null}
-          {isFooter ? <EdgeDrawSourceHandle highlighted={selected} /> : <DefaultHandle type="source" />}
+          {isFooter ? <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} /> : <DefaultHandle type="source" />}
         </div>
       </div>
       {graphCollapsed && !isFooter ? (

@@ -1,6 +1,5 @@
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { localize } from '../../../localize';
-import { getWorkspaceFolder } from '../workspace';
 import { getAzureConnectorDetailsForLocalProject } from '../codeless/common';
 import { getParametersJson } from '../codeless/parameter';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -8,43 +7,40 @@ import { workspace } from 'vscode';
 import { ext } from '../../../extensionVariables';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionReferences } from '../codeless/connection';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 
 /**
- * Verifies the local connection keys for the specified Logic App project, or all Logic App projects in the workspace by default.
- * @param {IActionContext} context - The command context.
- * @param {string} projectPath - The path to the Logic App project. If not provided, all Logic App projects in the workspace will be verified.
- * @returns {Promise<void>} A promise that resolves when the verification is complete.
+ * Refreshes the connection keys for the specified Logic App project.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The path to the Logic App project.
+ * @returns {Promise<void>} A promise that resolves when the refresh is complete.
  */
-export async function verifyLocalConnectionKeys(context: IActionContext, projectPath?: string): Promise<void> {
-  const verifyConnectionKeysStartTime = Date.now();
+export async function refreshConnectionKeys(context: IActionContext, projectPath: string): Promise<void> {
+  const refreshConnectionKeysStartTime = Date.now();
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    if (!projectPath) {
-      const workspaceFolder = await getWorkspaceFolder(context);
-      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-      if (!projectPath) {
-        return;
-      }
+    const azureConnectorDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+    if (!azureConnectorDetails.enabled) {
+      ext.outputChannel.appendLog(
+        localize('azureConnectorsDisabled', 'Azure connectors are disabled. Skipping connection key refresh.')
+      );
+      return;
     }
 
-    const azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
     try {
       const connectionsJson = await getConnectionsJson(projectPath);
       if (isEmptyString(connectionsJson)) {
-        ext.outputChannel.appendLog(localize('noConnectionKeysFound', 'No connection keys found to verify'));
+        ext.outputChannel.appendLog(localize('noConnectionKeysFound', 'No connection keys found.'));
         return;
       }
-      const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+      const connections: ConnectionsData = JSON.parse(connectionsJson);
       const parametersData = await getParametersJson(projectPath);
-      const managedApiConnectionReferences = connectionsData.managedApiConnections;
 
-      if (connectionsData.managedApiConnections && !(Object.keys(managedApiConnectionReferences).length === 0)) {
+      if (connections.managedApiConnections && (Object.keys(connections.managedApiConnections!).length !== 0)) {
         const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
           context,
           projectPath,
-          managedApiConnectionReferences,
-          azureDetails.tenantId,
-          azureDetails.workflowManagementBaseUrl,
+          connections.managedApiConnections,
+          azureConnectorDetails.tenantId!,
+          azureConnectorDetails.workflowManagementBaseUrl!,
           parametersData
         );
 
@@ -52,14 +48,14 @@ export async function verifyLocalConnectionKeys(context: IActionContext, project
       }
     } catch (error) {
       const errorMessage = localize(
-        'errorVerifyingConnectionKeys',
-        'Error while verifying existing managed api connections: {0}',
-        error.message ?? error
+        'errorRefreshingConnectionKeys',
+        'Error while refreshing existing managed api connections: {0}',
+        (error as Error).message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
       context.telemetry.properties.error = errorMessage;
       throw new Error(errorMessage);
     }
   }
-  context.telemetry.measurements.verifyConnectionKeysDuration = (Date.now() - verifyConnectionKeysStartTime) / 1000;
+  context.telemetry.measurements.refreshConnectionKeysDuration = (Date.now() - refreshConnectionKeysStartTime) / 1000;
 }

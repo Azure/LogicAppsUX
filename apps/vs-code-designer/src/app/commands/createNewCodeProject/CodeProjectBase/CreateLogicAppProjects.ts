@@ -70,7 +70,7 @@ export async function createLogicAppProject(context: IActionContext, options: an
   mySubContext.workspacePath = workspaceFolder;
 
   if (!doesLogicAppExist) {
-    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath);
+    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath, context);
 
     // .vscode folder
     await createLogicAppVsCodeContents(webviewProjectContext, logicAppFolderPath);

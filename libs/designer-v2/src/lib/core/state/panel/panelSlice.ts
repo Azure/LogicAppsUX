@@ -59,11 +59,35 @@ const getInitialOperationContentState = (): OperationPanelContentState => ({
     nodeId: undefined,
     activeTabId: undefined,
   },
+  selectedNodeIds: [],
 });
 
 const getInitialWorkflowParametersContentState = (): WorkflowParametersPanelContentState => ({
   panelMode: 'WorkflowParameters',
 });
+
+// Derives the single (`selectedNodeId`) and side-by-side (`alternateSelectedNode`) panel
+// state from the canonical multi-selection array so existing panels keep working:
+//   0 selected -> nothing selected
+//   1 selected -> single node panel
+//   2 selected -> side-by-side node panels (selected + alternate)
+//  >2 selected -> multi-select panel (driven directly by `selectedNodeIds`)
+const reconcileNodeSelection = (state: PanelState): void => {
+  const ids = state.operationContent.selectedNodeIds ?? [];
+  state.operationContent.selectedNodeId = ids[0];
+  state.operationContent.selectedNodeActiveTabId = undefined;
+  if (ids.length === 2) {
+    state.operationContent.alternateSelectedNode = {
+      nodeId: ids[1],
+      activeTabId: undefined,
+      persistence: 'selected',
+    };
+  } else {
+    state.operationContent.alternateSelectedNode = {};
+  }
+  state.connectionContent.selectedNodeIds = ids;
+  state.discoveryContent.selectedNodeIds = ids;
+};
 
 export const initialState: PanelState = {
   connectionContent: getInitialConnectionContentState(),
@@ -169,6 +193,7 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
+      state.operationContent.selectedNodeIds = selectedNodes;
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
@@ -180,6 +205,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = 'Operation';
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
+      state.operationContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeActiveTabId = undefined;
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
@@ -190,6 +216,38 @@ export const panelSlice = createSlice({
         area,
         message: action.type,
         args: [action.payload],
+      });
+    },
+    // Sets the full multi-selection set (used by box-selection from the canvas).
+    setNodeSelection: (state, action: PayloadAction<string[]>) => {
+      const uniqueIds = Array.from(new Set(action.payload));
+      state.operationContent.selectedNodeIds = uniqueIds;
+      state.currentPanelMode = 'Operation';
+      state.isCollapsed = uniqueIds.length === 0;
+      reconcileNodeSelection(state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area,
+        message: action.type,
+        args: [uniqueIds.join(',')],
+      });
+    },
+    // Toggles a single node in the multi-selection set (used by shift/ctrl/cmd-click on the card body).
+    toggleNodeSelection: (state, action: PayloadAction<string>) => {
+      const nodeId = action.payload;
+      const current = state.operationContent.selectedNodeIds ?? [];
+      const next = current.includes(nodeId) ? current.filter((id) => id !== nodeId) : [...current, nodeId];
+      state.operationContent.selectedNodeIds = next;
+      state.currentPanelMode = 'Operation';
+      state.isCollapsed = next.length === 0;
+      reconcileNodeSelection(state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area,
+        message: action.type,
+        args: [nodeId],
       });
     },
     expandDiscoveryPanel: (
@@ -286,6 +344,7 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
+      state.operationContent.selectedNodeIds = selectedNodes;
 
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
@@ -429,6 +488,8 @@ export const {
   setIsPanelLoading,
   setAlternateSelectedNode,
   setSelectedNodeId,
+  setNodeSelection,
+  toggleNodeSelection,
   updatePanelLocation,
   initRunInPanel,
   addAgentToolMetadata,

@@ -37,9 +37,11 @@ vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useFocusReturnElementId: vi.fn(() => undefined),
   useIsPanelCollapsed: vi.fn(() => false),
   useIsPanelLoading: vi.fn(() => false),
+  useOperationPanelSelectedNodeIds: vi.fn(() => []),
 }));
 
 vi.mock('../../../core/state/panel/panelSlice', () => ({
+  default: vi.fn(() => ({})),
   clearPanel: vi.fn(() => ({ type: 'panel/clearPanel' })),
 }));
 
@@ -73,6 +75,14 @@ vi.mock('../workflowParametersPanel/workflowParametersPanelFooter', () => ({
 
 vi.mock('../nodeSearchPanel/nodeSearchDialog', () => ({
   NodeSearchDialog: () => React.createElement('div', { 'data-testid': 'node-search-dialog' }, 'Node Search Dialog'),
+}));
+
+vi.mock('../multiSelectPanel/multiSelectPanel', () => ({
+  MultiSelectPanel: () => React.createElement('div', { 'data-testid': 'multi-select-panel' }, 'Multi Select Panel'),
+}));
+
+vi.mock('../../../core/state/designerView/designerViewSelectors', () => ({
+  useShowMultiSelectDeleteModal: vi.fn(() => false),
 }));
 
 vi.mock('@microsoft/designer-ui', async (importOriginal) => {

@@ -5,7 +5,7 @@
 import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { runWithDurationTelemetry } from './telemetry';
 import { activateAzurite } from './azurite/activateAzurite';
-import { verifyLocalConnectionKeys } from './appSettings/connectionKeys';
+import { refreshConnectionKeys } from './appSettings/connectionKeys';
 import { autoStartAzuriteSetting, designerApiLoadTimeout, designerStartApi, verifyConnectionKeysSetting } from '../../constants';
 import { getContainingWorkspace } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
@@ -34,7 +34,7 @@ export async function startRuntimeApi(projectPath: string): Promise<void> {
 
     await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
       await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
-        await verifyLocalConnectionKeys(context, projectPath);
+        await refreshConnectionKeys(context, projectPath);
       });
     });
 

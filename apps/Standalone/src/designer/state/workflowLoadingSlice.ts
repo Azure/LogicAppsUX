@@ -38,6 +38,7 @@ export interface WorkflowLoadingState {
     enableMultiVariable?: boolean; // supports creating multiple variables in one action
   };
   showPerformanceDebug?: boolean;
+  isFirstDesignerV2Load?: boolean;
   runFiles: any[];
   queryCachePersist?: boolean;
 }
@@ -67,6 +68,7 @@ const initialState: WorkflowLoadingState = {
     enableMultiVariable: true,
   },
   showPerformanceDebug: false,
+  isFirstDesignerV2Load: false,
   runFiles: [],
   queryCachePersist: false,
 };
@@ -220,6 +222,9 @@ export const workflowLoadingSlice = createSlice({
     setShowPerformanceDebug: (state, action: PayloadAction<boolean>) => {
       state.showPerformanceDebug = action.payload;
     },
+    setIsFirstDesignerV2Load: (state, action: PayloadAction<boolean>) => {
+      state.isFirstDesignerV2Load = action.payload;
+    },
     setStringOverrides: (state, action: PayloadAction<Record<string, string> | undefined>) => {
       state.hostOptions.stringOverrides = action.payload;
     },
@@ -239,7 +244,7 @@ export const workflowLoadingSlice = createSlice({
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
-      state.workflowKind = action.payload?.workflowKind ?? 'stateful';
+      state.workflowKind = action.payload?.workflowKind ?? (state.hostingPlan === 'consumption' ? undefined : 'stateful');
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
@@ -278,6 +283,7 @@ export const {
   setSuppressDefaultNodeSelect,
   setHostOptions,
   setShowPerformanceDebug,
+  setIsFirstDesignerV2Load,
   setStringOverrides,
   setQueryCachePersist,
   setEnableMultiVariable,

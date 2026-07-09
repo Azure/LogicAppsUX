@@ -34,12 +34,12 @@
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.1.1",
     "adm-zip": "^0.5.10",
-    "axios": "1.15.0",
+    "axios": "1.16.0",
     "azure-storage": "^2.10.3",
     "chai": "^4.3.7",
     "fs-extra": "^11.2.0",
     "globby": "^11.0.2",
-    "js-yaml": "4.1.1",
+    "js-yaml": "4.2.0",
     "jsonc-parser": "2.3.1",
     "mocha": "^11.7.1",
     "portfinder": "1.0.32",
@@ -49,7 +49,7 @@
     "recursive-copy": "^2.0.14",
     "semver": "^6.3.1",
     "tslib": "2.4.0",
-    "uuid": "^10.0.0",
+    "uuid": "^14.0.0",
     "vscode-extension-tester": "^8.21.0",
     "vscode-nls": "^5.2.0",
     "xml2js": "0.6.2",
@@ -71,7 +71,7 @@
     "test:e2e-cli": "vscode-test",
     "test:e2e-cli:compile": "tsc -p ./tsconfig.e2e.json",
     "pretest:e2e-cli": "pnpm run test:e2e-cli:compile",
-    "vscode:designer:e2e:ui": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node src/test/ui/run-e2e.js",
-    "vscode:designer:e2e:headless": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node src/test/ui/run-e2e.js"
+    "vscode:designer:e2e:ui": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node out/test/run-e2e.js",
+    "vscode:designer:e2e:headless": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node out/test/run-e2e.js"
   }
 }

@@ -4,8 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
+  dependencyMetadataRequestTimeoutMs,
+  dependencyIntegrityManifestFileName,
   dotnetDependencyName,
   funcPackageName,
   defaultLogicAppsFolder,
@@ -15,6 +18,7 @@ import {
   funcCoreToolsBinaryPathSettingKey,
   funcDependencyName,
   extensionBundleId,
+  nodeJsDependencyName,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -23,21 +27,27 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies';
+import { isDevContainerWorkspaceSync } from './devContainerUtils';
+import { type DownloadAttemptResult, downloadFileWithVerification as downloadFileWithVerificationCore } from './integrity';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import * as cp from 'child_process';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
 
 import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { setFunctionsCommand } from './funcCoreTools/funcVersion';
+import { repairFuncCoreToolsExecutablePermissions, setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
 
 export { useBinariesDependencies } from './runtimeDependencies';
+export { DownloadIntegrityError } from './integrity';
+export type { DownloadAttemptResult } from './integrity';
 
 /**
  * Download and Extracts dependency zip.
@@ -55,7 +65,7 @@ export async function downloadAndExtractDependency(
   dependencyName: string,
   folderName?: string,
   dotNetVersion?: string
-): Promise<void> {
+): Promise<DownloadAttemptResult | undefined> {
   folderName = folderName || dependencyName;
   const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, folderName);
   targetFolder = path.join(targetFolder, folderName);
@@ -67,78 +77,232 @@ export async function downloadAndExtractDependency(
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
-  executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+  ext.outputChannel.appendLog(`Downloading dependency from: ${downloadUrl}`);
+  fs.mkdirSync(tempFolderPath, { recursive: true });
+  fs.chmodSync(tempFolderPath, 0o777);
 
-  axios.get(downloadUrl, { responseType: 'stream' }).then((response) => {
-    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
-    fs.mkdirSync(tempFolderPath, { recursive: true });
-    fs.chmodSync(tempFolderPath, 0o777);
-
-    const writer = fs.createWriteStream(dependencyFilePath);
-    response.data.pipe(writer);
-
-    writer.on('finish', async () => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
-      fs.chmodSync(dependencyFilePath, 0o777);
-
-      // Extract to targetFolder
-      if (dependencyName === dotnetDependencyName) {
-        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
-        if (process.platform === Platform.windows) {
-          await executeCommand(
-            ext.outputChannel,
-            undefined,
-            'powershell -ExecutionPolicy Bypass -File',
-            dependencyFilePath,
-            '-InstallDir',
-            targetFolder,
-            '-Channel',
-            `${version}.0`
-          );
-        } else {
-          await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
-        }
-      } else {
-        if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
-          stopAllDesignTimeApis();
-        }
-        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-        vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-        if (dependencyName === funcDependencyName) {
-          // Add execute permissions for func and gozip binaries
-          if (process.platform !== Platform.windows) {
-            fs.chmodSync(`${targetFolder}/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/gozip`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
-            fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
-          }
-          await setFunctionsCommand();
-          await startAllDesignTimeApis();
-        } else if (dependencyName === extensionBundleId) {
-          await startAllDesignTimeApis();
-        }
+  let integrityResult: DownloadAttemptResult | undefined;
+  try {
+    integrityResult = await downloadFileWithTransportVerification(context, downloadUrl, dependencyFilePath, dependencyName);
+  } catch (error) {
+    const errorMessage = `Error downloading the ${dependencyName} file: ${error instanceof Error ? error.message : String(error)}`;
+    vscode.window.showErrorMessage(errorMessage);
+    context.telemetry.properties.error = errorMessage;
+    // Clean up partials before bailing.
+    try {
+      if (fs.existsSync(tempFolderPath)) {
+        fs.rmSync(tempFolderPath, { recursive: true, force: true });
       }
-      // remove the temp folder.
-      fs.rmSync(tempFolderPath, { recursive: true });
-      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
-    });
-    writer.on('error', async (error) => {
-      // log the error message the VSCode window and to telemetry.
-      const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
+      if (fs.existsSync(targetFolder)) {
+        fs.rmSync(targetFolder, { recursive: true, force: true });
+      }
+    } catch {
+      // Best-effort cleanup; ignore secondary errors.
+    }
+    throw error;
+  }
+
+  ext.outputChannel.appendLog(`Successfully downloaded ${dependencyName} dependency.`);
+  fs.chmodSync(dependencyFilePath, 0o777);
+
+  // Verify the downloaded archive against the publisher's published SHA256 checksum before extracting.
+  // NodeJs (nodejs.org) and Functions Core Tools (GitHub releases) are not served from the Azure CDN
+  // that sets Content-MD5, so the transport-level check in downloadFileWithTransportVerification only validates
+  // size for them; the SHA256 check closes that gap. Unavailable checksums are non-blocking (skip).
+  const expectedSha256 = await resolveExpectedDependencySha256(context, downloadUrl, dependencyName);
+  if (expectedSha256) {
+    const actualSha256 = await computeFileSha256(dependencyFilePath);
+    context.telemetry.properties.expectedSha256 = expectedSha256;
+    context.telemetry.properties.actualSha256 = actualSha256;
+    if (actualSha256.toLowerCase() !== expectedSha256.toLowerCase()) {
+      const errorMessage = `Checksum verification failed for ${dependencyName}: expected SHA256 ${expectedSha256} but got ${actualSha256}.`;
       vscode.window.showErrorMessage(errorMessage);
       context.telemetry.properties.error = errorMessage;
+      try {
+        if (fs.existsSync(tempFolderPath)) {
+          fs.rmSync(tempFolderPath, { recursive: true, force: true });
+        }
+        if (fs.existsSync(targetFolder)) {
+          fs.rmSync(targetFolder, { recursive: true, force: true });
+        }
+      } catch {
+        // Best-effort cleanup; ignore secondary errors.
+      }
+      throw new Error(errorMessage);
+    }
+    ext.outputChannel.appendLog(localize('verifiedDownloadChecksum', 'Verified {0} download checksum.', dependencyName));
+  }
 
-      // remove the target folder.
-      fs.rmSync(targetFolder, { recursive: true });
-      await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
+  try {
+    // Extract to targetFolder
+    if (dependencyName === dotnetDependencyName) {
+      const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
+      if (process.platform === Platform.windows) {
+        await executeCommand(
+          ext.outputChannel,
+          undefined,
+          'powershell -ExecutionPolicy Bypass -File',
+          dependencyFilePath,
+          '-InstallDir',
+          targetFolder,
+          '-Channel',
+          `${version}.0`
+        );
+      } else {
+        await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+      }
+    } else {
+      if (dependencyName === funcDependencyName || dependencyName === extensionBundleId) {
+        // Await actual process exit (not just SIGTERM) so our own func.exe
+        // releases its handles on the bundle dir before we try to delete it.
+        // Without this, the immediately-following rmSync can leave the dir
+        // in a Windows pending-deletion state and mkdir then EPERMs.
+        await stopAllDesignTimeApisAndWait();
+      }
+      try {
+        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+      } catch (firstError) {
+        const lockLike = isTransientLockError(firstError) || firstError instanceof BundleExtractionError;
+        if (!lockLike) {
+          throw firstError;
+        }
+        // Likely an orphan func.exe holding the bundle directory open. Offer
+        // to terminate orphan processes and retry once. If the user declines
+        // or no orphans are found, propagate the original error.
+        const terminated = await offerToTerminateOrphanFuncProcesses(dependencyName);
+        if (!terminated) {
+          throw firstError;
+        }
+        ext.outputChannel.appendLog(`Retrying ${dependencyName} install after terminating orphan func.exe processes.`);
+        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+      }
+      ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
+      // Record an on-disk integrity manifest so a later validation pass can detect missing/corrupt
+      // files (e.g. a deleted DLL under the Function Host) and force a wipe + reinstall.
+      if (dependencyName === funcDependencyName || dependencyName === nodeJsDependencyName) {
+        writeDependencyIntegrityManifest(context, targetFolder, dependencyName);
+      }
+      if (dependencyName === funcDependencyName) {
+        // Add execute permissions for func and gozip binaries
+        if (process.platform !== Platform.windows) {
+          fs.chmodSync(`${targetFolder}/func`, 0o755);
+          fs.chmodSync(`${targetFolder}/gozip`, 0o755);
+          fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
+          fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
+        }
+        repairFuncCoreToolsExecutablePermissions(targetFolder);
+        await setFunctionsCommand();
+        await startAllDesignTimeApis();
+      }
+      // NB: when dependencyName === extensionBundleId we intentionally do NOT
+      // restart design-time here. The bundle download flow defers the restart
+      // until after the full install is verified (sidecar written + install
+      // marked 'ok' + in-flight promise cleared) so the design-time host
+      // doesn't spawn against a bundle that's still mid-install. See the
+      // restart hook in `downloadExtensionBundle`'s finally block in
+      // `bundleFeed.ts`.
+    }
+  } catch (error) {
+    // Extraction (or verification) failed. Do NOT delete targetFolder: on
+    // Windows the most common cause is EPERM/EBUSY from another process
+    // (typically an orphan func.exe from a previous session) holding bundle
+    // DLLs open. Deleting the folder is impossible while it's locked, and
+    // leaving the user with NO bundle is strictly worse than leaving them
+    // with the partial one they already had. The Phase 8 sidecar/content-hash
+    // check will detect the bad state on the next activation and trigger
+    // another re-download, which can succeed once the lock holder exits.
+    const lockHint =
+      isTransientLockError(error) || error instanceof BundleExtractionError
+        ? ` Another process (often an orphan func.exe from a prior session) may be holding files in ${targetFolder}. Close all VS Code windows running Logic Apps, kill any leftover func.exe processes, and reload to retry.`
+        : '';
+    const baseMessage =
+      error instanceof BundleExtractionError
+        ? `Extension bundle ${dependencyName} extraction was incomplete (${error.kind}${
+            error.entryName ? `: ${error.entryName}` : ''
+          }) at ${targetFolder}.${lockHint}`
+        : `Failed to install ${dependencyName} after download at ${targetFolder}: ${
+            error instanceof Error ? error.message : String(error)
+          }.${lockHint}`;
+    ext.outputChannel.appendLog(baseMessage);
+    vscode.window.showErrorMessage(
+      localize(
+        'bundleInstallFailed',
+        'Logic Apps extension bundle {0} could not be installed at {1}. Another process may be holding the folder. Close other VS Code windows and any running func.exe processes, then reload this window to retry.',
+        dependencyName,
+        targetFolder
+      )
+    );
+    context.telemetry.properties.extractError = error instanceof Error ? error.message : String(error);
+    throw error;
+  } finally {
+    // remove the temp folder.
+    if (fs.existsSync(tempFolderPath)) {
+      fs.rmSync(tempFolderPath, { recursive: true, force: true });
+      ext.outputChannel.appendLog(`Removed ${tempFolderPath}`);
+    }
+  }
+
+  return integrityResult;
+}
+
+/**
+ * Streams a file from `url` to `destPath`, verifying integrity against
+ * `Content-Length` and `Content-MD5` response headers when present.
+ *
+ * Thin wrapper that adds extension-host telemetry + log lines on top of the
+ * vscode-free implementation in `./integrity`.
+ */
+export async function downloadFileWithTransportVerification(
+  context: IActionContext,
+  url: string,
+  destPath: string,
+  dependencyName: string,
+  maxAttempts?: number
+): Promise<DownloadAttemptResult> {
+  let attemptsUsed = 0;
+  try {
+    const result = await downloadFileWithVerificationCore(url, destPath, {
+      maxAttempts,
+      hooks: {
+        onSuccess: (attempt, attemptResult, durationMs) => {
+          attemptsUsed = attempt;
+          context.telemetry.properties[`${dependencyName}DownloadAttempts`] = String(attempt);
+          context.telemetry.properties[`${dependencyName}ExpectedSize`] =
+            attemptResult.expectedSize === undefined ? 'unknown' : String(attemptResult.expectedSize);
+          context.telemetry.properties[`${dependencyName}ActualSize`] = String(attemptResult.actualSize);
+          context.telemetry.properties[`${dependencyName}Md5Match`] = attemptResult.expectedMd5 ? 'true' : 'skipped';
+          context.telemetry.measurements ??= {};
+          context.telemetry.measurements[`${dependencyName}DownloadDurationMs`] = durationMs;
+        },
+        onAttempt: (attempt, error, willRetry) => {
+          attemptsUsed = attempt;
+          ext.outputChannel.appendLog(
+            localize(
+              'downloadAttemptFailed',
+              'Download attempt {0} for {1} failed: {2}{3}',
+              attempt,
+              dependencyName,
+              error instanceof Error ? error.message : String(error),
+              willRetry ? ' — retrying.' : ''
+            )
+          );
+        },
+      },
     });
-  });
+    return result;
+  } catch (error) {
+    if (attemptsUsed > 0) {
+      context.telemetry.properties[`${dependencyName}DownloadAttempts`] = String(attemptsUsed);
+    }
+    throw error;
+  }
 }
 
 const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, majorVersion: string): Promise<string> => {
   try {
     const response: IGitHubReleaseInfo = await readJsonFromUrl(
-      'https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest'
+      'https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest',
+      { showUserError: false }
     );
     const latestVersion = semver.valid(semver.coerce(response.tag_name));
     context.telemetry.properties.latestVersionSource = 'github';
@@ -198,7 +362,7 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
   context.telemetry.properties.dotNetMajorVersion = majorVersion;
 
   if (majorVersion) {
-    return await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
+    return await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases', { showUserError: false })
       .then((response: IGitHubReleaseInfo[]) => {
         context.telemetry.properties.latestVersionSource = 'github';
         let latestVersion: string | null = null;
@@ -232,28 +396,37 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
   context.telemetry.properties.nodeMajorVersion = majorVersion;
 
   if (majorVersion) {
-    return await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
-      .then((response: IGitHubReleaseInfo[]) => {
-        context.telemetry.properties.latestVersionSource = 'github';
-        for (const releaseInfo of response) {
-          const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
-          context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
-          if (releaseVersion && checkMajorVersion(releaseVersion, majorVersion)) {
-            return releaseVersion;
-          }
-        }
-        context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
-        context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
-        return DependencyVersion.nodeJs;
-      })
-      .catch((error) => {
-        context.telemetry.properties.latestNodeJSVersion = 'fallback';
-        context.telemetry.properties.errorLatestNodeJsVersion = `Error getting latest Node JS version: ${error}`;
-        return DependencyVersion.nodeJs;
+    try {
+      const response: IGitHubReleaseInfo[] = await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases', {
+        showUserError: false,
       });
+      let latestVersion: string | undefined;
+      for (const releaseInfo of response) {
+        const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
+        context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
+        if (releaseVersion && checkMajorVersion(releaseVersion, majorVersion)) {
+          latestVersion = latestVersion && semver.gt(latestVersion, releaseVersion) ? latestVersion : releaseVersion;
+        }
+      }
+      if (latestVersion) {
+        context.telemetry.properties.latestVersionSource = 'github';
+        context.telemetry.properties.latestNodeJSVersion = latestVersion;
+        return latestVersion;
+      }
+      context.telemetry.properties.latestNodeJSVersion = 'fallback-no-match';
+      context.telemetry.properties.latestVersionSource = 'fallback';
+      context.telemetry.properties.errorLatestNodeJsVersion = 'No matching Node JS version found.';
+      return DependencyVersion.nodeJs;
+    } catch (error) {
+      context.telemetry.properties.latestNodeJSVersion = 'fallback';
+      context.telemetry.properties.latestVersionSource = 'fallback';
+      context.telemetry.properties.errorLatestNodeJsVersion = `Error getting latest Node JS version from GitHub: ${error}`;
+      return DependencyVersion.nodeJs;
+    }
   }
 
   context.telemetry.properties.latestNodeJSVersion = 'fallback';
+  context.telemetry.properties.latestVersionSource = 'fallback';
   return DependencyVersion.nodeJs;
 }
 
@@ -267,6 +440,282 @@ export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string,
 
 export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
   return `https://github.com/Azure/azure-functions-core-tools/releases/download/${version}/Azure.Functions.Cli.${osPlatform}-${arch}.${version}.zip`;
+}
+
+/**
+ * Computes the SHA256 hex digest of a file using a stream so large archives are not buffered in memory.
+ * @param {string} filePath - Absolute path to the file to hash.
+ * @returns {Promise<string>} The lowercase hex SHA256 digest.
+ */
+export async function computeFileSha256(filePath: string): Promise<string> {
+  return await new Promise<string>((resolve, reject) => {
+    const hash = createHash('sha256');
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', reject);
+    stream.on('data', (chunk: Buffer) => hash.update(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength)));
+    stream.on('end', () => resolve(hash.digest('hex')));
+  });
+}
+
+/**
+ * Resolves the published SHA256 checksum for a Node.js artifact from the official SHASUMS256.txt file.
+ * Returns undefined (non-blocking) when the checksum source is unreachable or the artifact is not listed.
+ * @param {IActionContext} context - Command context, used for telemetry.
+ * @param {string} downloadUrl - The Node.js archive download URL; SHASUMS256.txt lives in the same directory.
+ * @returns {Promise<string | undefined>} The expected SHA256 hex digest, or undefined to skip verification.
+ */
+export async function getNodeJsSha256(context: IActionContext, downloadUrl: string): Promise<string | undefined> {
+  try {
+    const artifactFileName = path.basename(downloadUrl);
+    const shasumsUrl = `${downloadUrl.slice(0, downloadUrl.length - artifactFileName.length)}SHASUMS256.txt`;
+    const response = await axios.get(shasumsUrl, { responseType: 'text', timeout: dependencyMetadataRequestTimeoutMs });
+    const shasums: string = typeof response.data === 'string' ? response.data : String(response.data);
+    for (const line of shasums.split('\n')) {
+      const [hash, name] = line.trim().split(/\s+/);
+      if (name === artifactFileName && /^[a-f0-9]{64}$/i.test(hash)) {
+        context.telemetry.properties.nodeJsChecksumResolved = 'true';
+        return hash;
+      }
+    }
+    context.telemetry.properties.nodeJsChecksumResolved = 'false';
+    context.telemetry.properties.nodeJsChecksumError = `No checksum entry for ${artifactFileName}`;
+  } catch (error) {
+    context.telemetry.properties.nodeJsChecksumResolved = 'false';
+    context.telemetry.properties.nodeJsChecksumError = error instanceof Error ? error.message : String(error);
+  }
+  return undefined;
+}
+
+/**
+ * Resolves the published SHA256 checksum for an Azure Functions Core Tools archive from its `.sha2` sidecar.
+ * Returns undefined (non-blocking) when the checksum source is unreachable or malformed.
+ * @param {IActionContext} context - Command context, used for telemetry.
+ * @param {string} downloadUrl - The archive download URL; its `.sha2` sidecar holds the checksum.
+ * @returns {Promise<string | undefined>} The expected SHA256 hex digest, or undefined to skip verification.
+ */
+export async function getFuncCoreToolsSha256(context: IActionContext, downloadUrl: string): Promise<string | undefined> {
+  try {
+    const response = await axios.get(`${downloadUrl}.sha2`, { responseType: 'text', timeout: dependencyMetadataRequestTimeoutMs });
+    const body: string = typeof response.data === 'string' ? response.data : String(response.data);
+    const match = body.match(/[a-f0-9]{64}/i);
+    if (match) {
+      context.telemetry.properties.funcChecksumResolved = 'true';
+      return match[0];
+    }
+    context.telemetry.properties.funcChecksumResolved = 'false';
+    context.telemetry.properties.funcChecksumError = 'No checksum found in .sha2 sidecar';
+  } catch (error) {
+    context.telemetry.properties.funcChecksumResolved = 'false';
+    context.telemetry.properties.funcChecksumError = error instanceof Error ? error.message : String(error);
+  }
+  return undefined;
+}
+
+/**
+ * Resolves the publisher-published SHA256 checksum for a downloaded dependency archive, deriving the
+ * checksum source from the download URL. NodeJs archives are verified against the official
+ * SHASUMS256.txt; Functions Core Tools archives against their `.sha2` sidecar. Returns undefined
+ * (skip verification) for any other dependency or when the checksum source is unavailable.
+ * @param {IActionContext} context - Command context, used for telemetry.
+ * @param {string} downloadUrl - The archive download URL.
+ * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
+ * @returns {Promise<string | undefined>} The expected SHA256 hex digest, or undefined to skip verification.
+ */
+export async function resolveExpectedDependencySha256(
+  context: IActionContext,
+  downloadUrl: string,
+  dependencyName: string
+): Promise<string | undefined> {
+  if (dependencyName === nodeJsDependencyName) {
+    return getNodeJsSha256(context, downloadUrl);
+  }
+  if (dependencyName === funcDependencyName) {
+    return getFuncCoreToolsSha256(context, downloadUrl);
+  }
+  return undefined;
+}
+
+interface IntegrityManifestEntry {
+  path: string;
+  size: number;
+}
+
+interface IntegrityManifest {
+  dependencyName: string;
+  createdAt: string;
+  fileCount: number;
+  files: IntegrityManifestEntry[];
+}
+
+/**
+ * Recursively lists every file under rootFolder (relative path + byte size), excluding the integrity
+ * manifest itself. Used to snapshot an install and later verify it is intact.
+ * @param {string} rootFolder - The dependency folder to walk.
+ * @returns {IntegrityManifestEntry[]} Relative file paths (posix separators) and their sizes.
+ */
+function listFilesWithSizes(rootFolder: string): IntegrityManifestEntry[] {
+  const entries: IntegrityManifestEntry[] = [];
+  const walk = (currentFolder: string): void => {
+    for (const entry of fs.readdirSync(currentFolder, { withFileTypes: true })) {
+      const absolutePath = path.join(currentFolder, entry.name);
+      if (entry.isDirectory()) {
+        walk(absolutePath);
+      } else if (entry.isFile()) {
+        if (path.relative(rootFolder, absolutePath) === dependencyIntegrityManifestFileName) {
+          continue;
+        }
+        const relativePath = path.relative(rootFolder, absolutePath).split(path.sep).join('/');
+        entries.push({ path: relativePath, size: fs.statSync(absolutePath).size });
+      }
+    }
+  };
+  walk(rootFolder);
+  return entries;
+}
+
+/**
+ * Writes an on-disk integrity manifest into a freshly installed dependency folder, recording every
+ * file's relative path and byte size. Best-effort: a failure to write the manifest is logged but
+ * never fails the install.
+ * @param {IActionContext} context - Command context, used for telemetry.
+ * @param {string} targetFolder - The dependency folder that was just extracted.
+ * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
+ * @returns {void}
+ */
+export function writeDependencyIntegrityManifest(context: IActionContext, targetFolder: string, dependencyName: string): void {
+  try {
+    const files = listFilesWithSizes(targetFolder);
+    const manifest: IntegrityManifest = {
+      dependencyName,
+      createdAt: new Date().toISOString(),
+      fileCount: files.length,
+      files,
+    };
+    const manifestPath = path.join(targetFolder, dependencyIntegrityManifestFileName);
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+    context.telemetry.properties[`${dependencyName}IntegrityManifestWritten`] = 'true';
+    ext.outputChannel.appendLog(
+      localize('recordedIntegrityManifest', 'Recorded {0} on-disk integrity manifest ({1} files).', dependencyName, files.length)
+    );
+  } catch (error) {
+    context.telemetry.properties[`${dependencyName}IntegrityManifestWritten`] = 'false';
+    context.telemetry.properties[`${dependencyName}IntegrityManifestError`] = error instanceof Error ? error.message : String(error);
+    ext.outputChannel.appendLog(
+      localize(
+        'recordedIntegrityManifestError',
+        'Failed to record {0} on-disk integrity manifest: {1}',
+        dependencyName,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
+  }
+}
+
+/**
+ * Verifies an installed dependency against its on-disk integrity manifest. Returns false (which should
+ * trigger a wipe + reinstall) when the manifest is missing/unreadable, or any recorded file is missing,
+ * no longer a regular file, or its size no longer matches. A missing manifest is treated as a failure so
+ * that installs predating this check are re-established from a trusted, freshly-downloaded baseline.
+ * @param {IActionContext} context - Command context, used for telemetry.
+ * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
+ * @returns {boolean} true when the install matches its manifest; false when it should be reinstalled.
+ */
+export function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): boolean {
+  ext.outputChannel.appendLog(localize('validatingIntegrity', 'Validating {0} on-disk integrity...', dependencyName));
+  try {
+    const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+    if (!binariesLocation) {
+      return false;
+    }
+    const targetFolder = path.join(binariesLocation, dependencyName);
+    const manifestPath = path.join(targetFolder, dependencyIntegrityManifestFileName);
+    if (!fs.existsSync(manifestPath)) {
+      context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'manifest-missing';
+      ext.outputChannel.appendLog(
+        localize(
+          'integrityManifestMissing',
+          '{0} on-disk integrity manifest not found; scheduling reinstall to establish a trusted baseline.',
+          dependencyName
+        )
+      );
+      return false;
+    }
+
+    const manifest: IntegrityManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (!manifest || !Array.isArray(manifest.files)) {
+      context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'manifest-invalid';
+      ext.outputChannel.appendLog(
+        localize('integrityManifestInvalid', '{0} on-disk integrity manifest is invalid; scheduling reinstall.', dependencyName)
+      );
+      return false;
+    }
+
+    for (const file of manifest.files) {
+      const absolutePath = path.join(targetFolder, file.path);
+      let stat: fs.Stats;
+      try {
+        stat = fs.statSync(absolutePath);
+      } catch {
+        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'file-missing';
+        context.telemetry.properties[`${dependencyName}IntegrityMissingFile`] = file.path;
+        ext.outputChannel.appendLog(
+          localize(
+            'integrityFileMissing',
+            '{0} on-disk integrity check FAILED: missing file "{1}". Scheduling reinstall.',
+            dependencyName,
+            file.path
+          )
+        );
+        return false;
+      }
+      if (!stat.isFile()) {
+        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'not-a-file';
+        context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
+        ext.outputChannel.appendLog(
+          localize(
+            'integrityFileNotAFile',
+            '{0} on-disk integrity check FAILED: "{1}" is no longer a regular file. Scheduling reinstall.',
+            dependencyName,
+            file.path
+          )
+        );
+        return false;
+      }
+      if (stat.size !== file.size) {
+        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'size-mismatch';
+        context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
+        ext.outputChannel.appendLog(
+          localize(
+            'integrityFileSizeMismatch',
+            '{0} on-disk integrity check FAILED: "{1}" changed size (expected {2}, found {3}). Scheduling reinstall.',
+            dependencyName,
+            file.path,
+            file.size,
+            stat.size
+          )
+        );
+        return false;
+      }
+    }
+
+    context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'passed';
+    ext.outputChannel.appendLog(
+      localize('integrityPassed', '{0} on-disk integrity check passed ({1} files verified).', dependencyName, manifest.files.length)
+    );
+    return true;
+  } catch (error) {
+    context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'error';
+    context.telemetry.properties[`${dependencyName}IntegrityError`] = error instanceof Error ? error.message : String(error);
+    ext.outputChannel.appendLog(
+      localize(
+        'integrityErrored',
+        '{0} on-disk integrity check errored ({1}); scheduling reinstall.',
+        dependencyName,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
+    return false;
+  }
 }
 
 export function getDotNetBinariesReleaseUrl(): string {
@@ -294,27 +743,127 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
     return false;
   }
 
+  return await binariesExistFromSettings(dependencyName, true);
+}
+
+export function binariesExistSync(dependencyName: string): boolean {
+  if (!useBinariesDependenciesFromSettings()) {
+    return false;
+  }
+
+  return binariesExistFromSettings(dependencyName, false);
+}
+
+function useBinariesDependenciesFromSettings(): boolean {
+  if (isDevContainerWorkspaceSync()) {
+    return false;
+  }
+
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
+  return !!binariesInstallation;
+}
+
+function getExpectedBinaryPath(dependencyName: string): string | undefined {
+  if (dependencyName === funcDependencyName) {
+    return getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  }
+  if (dependencyName === dotnetDependencyName) {
+    return getGlobalSetting<string>(dotNetBinaryPathSettingKey);
+  }
+  if (dependencyName === nodeJsDependencyName) {
+    return getGlobalSetting<string>(nodeJsBinaryPathSettingKey);
+  }
+  return undefined;
+}
+
+async function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: true): Promise<boolean>;
+function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: false): boolean;
+function binariesExistFromSettings(dependencyName: string, updateMissingExeSetting: boolean): boolean | Promise<boolean> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   if (!binariesLocation) {
     return false;
   }
   const binariesPath = path.join(binariesLocation, dependencyName);
   const binariesExist = fs.existsSync(binariesPath);
+  const expectedBinaryPath = binariesExist ? getExpectedBinaryPath(dependencyName) : undefined;
 
-  executeCommand(ext.outputChannel, undefined, 'echo', `${dependencyName} Binaries: ${binariesPath}`);
+  ext.outputChannel.appendLog(`${dependencyName} Binaries: ${binariesPath}`);
+  if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
+    const repairedBinaryPath = getRepairableWindowsBinaryPath(dependencyName, binariesPath, expectedBinaryPath);
+    if (repairedBinaryPath) {
+      if (updateMissingExeSetting) {
+        return updateBinaryPathSetting(dependencyName, repairedBinaryPath).then(() => true);
+      }
+
+      return true;
+    }
+
+    ext.outputChannel.appendLog(`${dependencyName} binary is missing: ${expectedBinaryPath}`);
+    return false;
+  }
+
   return binariesExist;
 }
 
-async function readJsonFromUrl(url: string): Promise<any> {
+async function updateBinaryPathSetting(dependencyName: string, binaryPath: string): Promise<void> {
+  if (dependencyName === funcDependencyName) {
+    await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, binaryPath);
+  } else if (dependencyName === dotnetDependencyName) {
+    await updateGlobalSetting<string>(dotNetBinaryPathSettingKey, binaryPath);
+  } else if (dependencyName === nodeJsDependencyName) {
+    await updateGlobalSetting<string>(nodeJsBinaryPathSettingKey, binaryPath);
+  }
+
+  ext.outputChannel.appendLog(`${dependencyName} binary path updated: ${binaryPath}`);
+}
+
+function getRepairableWindowsBinaryPath(dependencyName: string, binariesPath: string, expectedBinaryPath: string): string | undefined {
+  if (process.platform !== Platform.windows) {
+    return undefined;
+  }
+
+  if (!expectedBinaryPath.toLowerCase().endsWith('.exe')) {
+    const exeVariant = `${expectedBinaryPath}.exe`;
+    if (fs.existsSync(exeVariant)) {
+      return exeVariant;
+    }
+  }
+
+  if (dependencyName !== nodeJsDependencyName) {
+    return undefined;
+  }
+
+  const nodeCommand = DependencyDefaultPath.node;
+  const staleNodePath = path.join(binariesPath, nodeCommand);
+  if (path.normalize(expectedBinaryPath).toLowerCase() !== path.normalize(staleNodePath).toLowerCase()) {
+    return undefined;
+  }
+
+  const nodeExePath = path.join(binariesPath, `${nodeCommand}.exe`);
+  return fs.existsSync(nodeExePath) ? nodeExePath : undefined;
+}
+
+interface ReadJsonFromUrlOptions {
+  showUserError?: boolean;
+}
+
+async function readJsonFromUrl(url: string, options: ReadJsonFromUrlOptions = {}): Promise<any> {
   try {
-    const response = await axios.get(url);
+    // Bound the request so activation cannot hang indefinitely on a stalled
+    // version-lookup (the "Validating Runtime Dependency: NodeJS" hang); callers
+    // fall back to a bundled default version when the lookup fails.
+    const response = await axios.get(url, { timeout: dependencyMetadataRequestTimeoutMs });
     if (response.status === 200) {
       return response.data;
     }
+
     throw new Error(`Request failed with status: ${response.status}`);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${errorMessage}`);
+    if (options.showUserError ?? true) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${errorMessage}`);
+    }
+
     throw error;
   }
 }
@@ -353,23 +902,505 @@ function cleanDirectory(targetFolder: string): void {
   }
 }
 
-async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
-  // Clear targetFolder's contents without deleting the folder itself
-  // TODO(aeldridge): It is possible there is a lock on a file in targetFolder, should be handled.
-  cleanDirectory(targetFolder);
-  await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${dependencyFilePath}`);
-  try {
-    if (dependencyFilePath.endsWith('.zip')) {
-      const zip = new AdmZip(dependencyFilePath);
-      zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
-    } else {
-      await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
+/**
+ * Maximum number of times to attempt extracting a dependency archive before
+ * giving up and propagating the error to the caller. The retry is in place to
+ * absorb transient Windows file-system errors (EBUSY/EPERM from antivirus or
+ * Windows search indexer) and partial-extract verification failures.
+ */
+const MAX_EXTRACT_ATTEMPTS = 2;
+
+/**
+ * Delay between extract attempts.
+ */
+const EXTRACT_RETRY_DELAY_MS = 750;
+
+/**
+ * Discriminator for the kinds of post-extract verification failures we surface
+ * to callers. Use this to distinguish "the zip extracted, but the resulting
+ * tree is wrong" from a download integrity error or a generic I/O error.
+ */
+export type BundleExtractionFailureKind = 'missing' | 'sizeMismatch' | 'empty';
+
+/**
+ * Thrown when the on-disk extracted bundle does not match the archive's
+ * central directory. Triggers a retry inside `extractDependency` and, on the
+ * final attempt, propagates so the caller can drop the partial tree and
+ * re-download.
+ */
+export class BundleExtractionError extends Error {
+  public readonly kind: BundleExtractionFailureKind;
+  public readonly entryName?: string;
+  public readonly expectedSize?: number;
+  public readonly actualSize?: number;
+
+  constructor(kind: BundleExtractionFailureKind, entryName?: string, expectedSize?: number, actualSize?: number) {
+    let message: string;
+    switch (kind) {
+      case 'missing':
+        message = `Extracted bundle is missing expected file: ${entryName}`;
+        break;
+      case 'sizeMismatch':
+        message = `Extracted bundle file ${entryName} is ${actualSize ?? '?'} bytes, expected ${expectedSize ?? '?'}`;
+        break;
+      default:
+        message = 'Extracted bundle is empty (zip listed entries but none reached disk)';
+        break;
     }
-    extractContainerFolder(targetFolder);
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
-  } catch (error) {
-    throw new Error(`Error extracting ${dependencyName}: ${error}`);
+    super(message);
+    this.name = 'BundleExtractionError';
+    this.kind = kind;
+    this.entryName = entryName;
+    this.expectedSize = expectedSize;
+    this.actualSize = actualSize;
   }
+}
+
+function isTransientLockError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+  const code = (error as { code?: string }).code;
+  return code === 'EBUSY' || code === 'EPERM' || code === 'EACCES';
+}
+
+/**
+ * Wall-clock budget we'll wait for a Windows file lock to release before
+ * giving up and failing the install. 30s is generous but reflects what we
+ * actually see: a dying `func.exe` plus a Defender scan plus a pending
+ * `rmSync` flush can easily eat 5–15s on a slow profile, and failing fast
+ * leaves the user with a broken bundle until they reload.
+ */
+const LOCK_WAIT_BUDGET_MS = 30_000;
+
+/**
+ * How often to retry the locked filesystem operation. Tight at first (most
+ * locks clear in <1s) — the wall-clock budget caps total wait time.
+ */
+const LOCK_WAIT_POLL_MS = 250;
+
+/**
+ * How often to surface "still waiting" progress to the user during a long
+ * lock wait so it's clear we're not hung.
+ */
+const LOCK_WAIT_LOG_INTERVAL_MS = 5_000;
+
+/**
+ * After this much persistent locking, offer the orphan-`func.exe` prompt
+ * once. We don't offer it immediately because most locks clear within the
+ * first second on their own and surfacing a modal-ish prompt every install
+ * would be noisy.
+ */
+const LOCK_WAIT_ORPHAN_PROMPT_AFTER_MS = 5_000;
+
+/**
+ * Max time to wait for our own design-time `func.exe` processes to fully
+ * exit after `stopAllDesignTimeApis()`. Short by design — these are our
+ * processes and SIGTERM/SIGKILL should land within a couple of seconds.
+ */
+const DESIGN_TIME_EXIT_TIMEOUT_MS = 5_000;
+
+/**
+ * Returns true when a process with the given PID is still running. Uses
+ * `process.kill(pid, 0)`, a no-op signal that throws ESRCH when the process
+ * is gone. Works on Windows and POSIX.
+ */
+function isProcessAlive(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    const code = (err as { code?: string }).code;
+    // ESRCH = no such process. EPERM means we don't have permission to
+    // signal, but the process exists → treat as alive.
+    if (code === 'EPERM') {
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Polls until every PID in `pids` has exited, or `timeoutMs` elapses.
+ * Best-effort: never throws, just returns when done. Designed for the
+ * window after `stopAllDesignTimeApis()` where our own `func.exe` is
+ * draining file handles.
+ */
+async function waitForFuncProcessExit(pids: readonly number[], timeoutMs: number): Promise<void> {
+  if (pids.length === 0) {
+    return;
+  }
+  const deadline = Date.now() + timeoutMs;
+  let remaining = pids.filter((pid) => isProcessAlive(pid));
+  while (remaining.length > 0 && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, LOCK_WAIT_POLL_MS));
+    remaining = remaining.filter((pid) => isProcessAlive(pid));
+  }
+  if (remaining.length > 0 && ext.outputChannel) {
+    ext.outputChannel.appendLog(
+      `Some design-time func.exe process(es) still alive after ${timeoutMs}ms wait: PID(s) ${remaining.join(', ')}. Proceeding anyway.`
+    );
+  }
+}
+
+/**
+ * Stops all tracked design-time hosts and waits for the underlying
+ * `func.exe` processes to actually exit before returning. The plain
+ * `stopAllDesignTimeApis()` is fire-and-forget — control returns while
+ * Windows is still flushing the file handles those processes held, which
+ * leaves the bundle directory in a locked / pending-deletion state when we
+ * try to extract immediately after.
+ */
+async function stopAllDesignTimeApisAndWait(timeoutMs: number = DESIGN_TIME_EXIT_TIMEOUT_MS): Promise<void> {
+  const trackedBefore = Array.from(getTrackedFuncPids());
+  stopAllDesignTimeApis();
+  if (trackedBefore.length === 0) {
+    return;
+  }
+  await waitForFuncProcessExit(trackedBefore, timeoutMs);
+}
+
+/**
+ * Result classification for the inner attempt of a lock-wait helper.
+ */
+type LockWaitAttempt = { ok: true } | { ok: false; error: unknown; retry: boolean };
+
+/**
+ * Generic retry loop used by `removeWithLockWait` and `mkdirWithLockWait`.
+ * Polls `attempt` until success or `budgetMs` elapses. Logs progress every
+ * ~5s and offers the orphan-`func.exe` prompt once after ~5s of persistent
+ * locking. On budget exhaustion, throws the last seen error.
+ */
+async function withLockWait(
+  opLabel: string,
+  targetPath: string,
+  dependencyName: string,
+  budgetMs: number,
+  attempt: () => LockWaitAttempt
+): Promise<void> {
+  const start = Date.now();
+  const deadline = start + budgetMs;
+  let lastProgressLog = start;
+  let orphanPromptOffered = false;
+  let lastError: unknown;
+
+  while (true) {
+    const result = attempt();
+    if (result.ok) {
+      const waited = Date.now() - start;
+      if (waited >= LOCK_WAIT_LOG_INTERVAL_MS && ext.outputChannel) {
+        ext.outputChannel.appendLog(
+          `${opLabel} ${targetPath} succeeded after waiting ${(waited / 1000).toFixed(1)}s for the lock to release.`
+        );
+      }
+      return;
+    }
+    const failure = result as { ok: false; error: unknown; retry: boolean };
+    lastError = failure.error;
+    if (!failure.retry) {
+      throw lastError;
+    }
+    const now = Date.now();
+    if (now >= deadline) {
+      throw lastError;
+    }
+    if (now - lastProgressLog >= LOCK_WAIT_LOG_INTERVAL_MS && ext.outputChannel) {
+      const waited = ((now - start) / 1000).toFixed(1);
+      const remaining = ((deadline - now) / 1000).toFixed(1);
+      const code = (lastError as { code?: string })?.code ?? 'lock';
+      ext.outputChannel.appendLog(
+        `Still waiting on ${dependencyName} (${code}) to ${opLabel.toLowerCase()} ${targetPath}: ${waited}s elapsed, up to ${remaining}s remaining.`
+      );
+      lastProgressLog = now;
+    }
+    if (!orphanPromptOffered && now - start >= LOCK_WAIT_ORPHAN_PROMPT_AFTER_MS) {
+      orphanPromptOffered = true;
+      // Best-effort — even if the user cancels we keep waiting for the
+      // budget to elapse, since some lock holders (Defender, indexer) clear
+      // on their own and there's no point bailing early.
+      try {
+        await offerToTerminateOrphanFuncProcesses(dependencyName);
+      } catch (promptErr) {
+        if (ext.outputChannel) {
+          ext.outputChannel.appendLog(
+            `Orphan func.exe prompt failed during ${opLabel.toLowerCase()} wait: ${promptErr instanceof Error ? promptErr.message : String(promptErr)}`
+          );
+        }
+      }
+    }
+    await new Promise((resolve) => setTimeout(resolve, LOCK_WAIT_POLL_MS));
+  }
+}
+
+/**
+ * Removes `targetPath` recursively, retrying for up to `budgetMs` on
+ * transient Windows lock errors (EPERM/EBUSY/EACCES). Returns silently
+ * when the path doesn't exist.
+ *
+ * Why: on Windows, `fs.rmSync(force: true)` may "succeed" while silently
+ * skipping locked files — leaving the directory in a pending-deletion state
+ * that makes the immediately-following `mkdirSync` throw EPERM. This helper
+ * keeps retrying until the path is genuinely gone (or budget exhausted).
+ */
+export async function removeWithLockWait(
+  targetPath: string,
+  dependencyName: string,
+  budgetMs: number = LOCK_WAIT_BUDGET_MS
+): Promise<void> {
+  await withLockWait('Remove', targetPath, dependencyName, budgetMs, () => {
+    if (!fs.existsSync(targetPath)) {
+      return { ok: true };
+    }
+    try {
+      fs.rmSync(targetPath, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    } catch (error) {
+      return { ok: false, error, retry: isTransientLockError(error) };
+    }
+    // Even after rmSync returns success, Windows may have left the dir in
+    // place because some files are still locked. Treat lingering existence
+    // as a transient lock and keep waiting.
+    if (fs.existsSync(targetPath)) {
+      return {
+        ok: false,
+        error: Object.assign(new Error(`Path ${targetPath} still exists after rmSync (locked files held by another process).`), {
+          code: 'EBUSY',
+        }),
+        retry: true,
+      };
+    }
+    return { ok: true };
+  });
+}
+
+/**
+ * Creates `targetPath` (recursive), retrying for up to `budgetMs` on
+ * transient Windows lock errors. The common case this exists for: we just
+ * `rmSync`'d the same path and Windows hasn't finished flushing the
+ * deletion, so `mkdirSync` returns EPERM until the FS catches up.
+ */
+export async function mkdirWithLockWait(targetPath: string, dependencyName: string, budgetMs: number = LOCK_WAIT_BUDGET_MS): Promise<void> {
+  await withLockWait('Mkdir', targetPath, dependencyName, budgetMs, () => {
+    try {
+      fs.mkdirSync(targetPath, { recursive: true });
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error, retry: isTransientLockError(error) };
+    }
+  });
+}
+
+/**
+ * Enumerates all running `func.exe` processes on Windows via `tasklist`.
+ * Returns an empty array on non-Windows or if `tasklist` fails.
+ */
+async function listFuncExePidsWindows(): Promise<number[]> {
+  if (process.platform !== Platform.windows) {
+    return [];
+  }
+  return new Promise<number[]>((resolve) => {
+    cp.exec('tasklist /FI "IMAGENAME eq func.exe" /FO CSV /NH', (error, stdout) => {
+      if (error) {
+        resolve([]);
+        return;
+      }
+      const pids: number[] = [];
+      for (const line of stdout.split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          continue;
+        }
+        // CSV: "func.exe","12345","Console","1","12,345 K"
+        const fields = trimmed.split(',').map((s) => s.replace(/^"|"$/g, '').trim());
+        if (fields[0]?.toLowerCase() === 'func.exe') {
+          const pid = Number.parseInt(fields[1], 10);
+          if (!Number.isNaN(pid)) {
+            pids.push(pid);
+          }
+        }
+      }
+      resolve(pids);
+    });
+  });
+}
+
+/**
+ * Returns the set of `func.exe` PIDs the extension knows about — i.e. the
+ * design-time hosts it spawned and tracks in `ext.designTimeInstances`.
+ * Anything not in this set is an orphan from a prior session.
+ */
+function getTrackedFuncPids(): Set<number> {
+  const known = new Set<number>();
+  for (const inst of ext.designTimeInstances.values()) {
+    if (!inst) {
+      continue;
+    }
+    if (inst.childFuncPid !== undefined && inst.childFuncPid !== null) {
+      const pid = Number(inst.childFuncPid);
+      if (!Number.isNaN(pid)) {
+        known.add(pid);
+      }
+    }
+    const directPid = inst.process?.pid;
+    if (typeof directPid === 'number') {
+      known.add(directPid);
+    }
+  }
+  return known;
+}
+
+/**
+ * Detects orphan `func.exe` processes (not tracked by this extension session)
+ * that are likely holding files in the bundle install directory. If any are
+ * found, prompts the user to terminate them. Returns true if at least one
+ * orphan was killed (caller should retry the operation).
+ *
+ * No-op on non-Windows since the EPERM/EBUSY scenarios reported by users are
+ * Windows-specific.
+ */
+async function offerToTerminateOrphanFuncProcesses(dependencyName: string): Promise<boolean> {
+  if (process.platform !== Platform.windows) {
+    return false;
+  }
+  const allFuncPids = await listFuncExePidsWindows();
+  if (allFuncPids.length === 0) {
+    return false;
+  }
+  const tracked = getTrackedFuncPids();
+  const orphans = allFuncPids.filter((pid) => !tracked.has(pid));
+  if (orphans.length === 0) {
+    return false;
+  }
+  ext.outputChannel.appendLog(
+    `Detected ${orphans.length} orphan func.exe process(es) not managed by this VS Code session (PID${
+      orphans.length > 1 ? 's' : ''
+    } ${orphans.join(', ')}). These may be locking the ${dependencyName} install directory.`
+  );
+  const terminateLabel = localize('terminateOrphanFuncBtn', 'Terminate {0} process(es)', orphans.length);
+  const choice = await vscode.window.showWarningMessage(
+    localize(
+      'orphanFuncDetected',
+      'Logic Apps detected {0} leftover func.exe process(es) from a previous session that may be blocking the {1} update. Terminate them now to unblock the install?',
+      orphans.length,
+      dependencyName
+    ),
+    { modal: false },
+    terminateLabel
+  );
+  if (choice !== terminateLabel) {
+    ext.outputChannel.appendLog('User declined to terminate orphan func.exe processes.');
+    return false;
+  }
+  let killed = 0;
+  for (const pid of orphans) {
+    try {
+      process.kill(pid);
+      killed++;
+    } catch (killErr) {
+      ext.outputChannel.appendLog(
+        `Could not terminate func.exe PID ${pid}: ${killErr instanceof Error ? killErr.message : String(killErr)}`
+      );
+    }
+  }
+  ext.outputChannel.appendLog(`Terminated ${killed}/${orphans.length} orphan func.exe process(es).`);
+  if (killed > 0) {
+    // Give Windows a beat to release file handles before any retry.
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+  return killed > 0;
+}
+
+/**
+ * Verifies every file entry in the zip's central directory exists on disk at
+ * `targetFolder` with the size the archive claims it should have. Must be
+ * called before `extractContainerFolder` (which may rename a single root
+ * directory away, breaking the entry-name → on-disk-path mapping).
+ *
+ * Throws `BundleExtractionError` on the first mismatch.
+ */
+export function verifyExtractedZip(zip: AdmZip, targetFolder: string): void {
+  const fileEntries = zip.getEntries().filter((entry) => !entry.isDirectory);
+  if (fileEntries.length === 0) {
+    return;
+  }
+  let verified = 0;
+  for (const entry of fileEntries) {
+    const onDisk = path.join(targetFolder, entry.entryName);
+    if (!fs.existsSync(onDisk)) {
+      throw new BundleExtractionError('missing', entry.entryName);
+    }
+    const stat = fs.statSync(onDisk);
+    if (stat.size !== entry.header.size) {
+      throw new BundleExtractionError('sizeMismatch', entry.entryName, entry.header.size, stat.size);
+    }
+    verified++;
+  }
+  if (verified === 0) {
+    throw new BundleExtractionError('empty');
+  }
+}
+
+async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
+  // Delete the existing target folder before extraction so we start from a
+  // truly empty state. This is critical when replacing a corrupt bundle: the
+  // old files (which may be stale, partial, or from a different version) must
+  // be gone before AdmZip writes the new ones, because AdmZip's overwrite
+  // mode does NOT delete files that are absent from the new zip.
+  //
+  // On Windows the delete + recreate pair is racy when something else (a
+  // recently-stopped func.exe, Defender, the search indexer) is still
+  // draining handles. Both helpers wait up to 30s for the lock to clear and
+  // log progress every ~5s so the user sees we're working, not stuck.
+  if (fs.existsSync(targetFolder)) {
+    ext.outputChannel.appendLog(`Removing existing ${dependencyName} install at ${targetFolder} before re-extracting.`);
+    await removeWithLockWait(targetFolder, dependencyName);
+  }
+  await mkdirWithLockWait(targetFolder, dependencyName);
+  try {
+    fs.chmodSync(targetFolder, 0o777);
+  } catch {
+    // Permission tweak is best-effort.
+  }
+
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= MAX_EXTRACT_ATTEMPTS; attempt++) {
+    try {
+      if (attempt > 1) {
+        // Clear the failed partial extract before retrying.
+        cleanDirectory(targetFolder);
+      }
+      ext.outputChannel.appendLog(`Extracting ${dependencyFilePath} (attempt ${attempt}/${MAX_EXTRACT_ATTEMPTS})`);
+      if (dependencyFilePath.endsWith('.zip')) {
+        const zip = new AdmZip(dependencyFilePath);
+        zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
+        // Verify before extractContainerFolder rewrites paths.
+        verifyExtractedZip(zip, targetFolder);
+      } else {
+        await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
+      }
+      extractContainerFolder(targetFolder);
+      ext.outputChannel.appendLog(`Extraction ${dependencyName} successfully completed.`);
+      return;
+    } catch (error) {
+      lastError = error;
+      const isLastAttempt = attempt === MAX_EXTRACT_ATTEMPTS;
+      const isRetryable = error instanceof BundleExtractionError || isTransientLockError(error);
+      if (isLastAttempt || !isRetryable) {
+        break;
+      }
+      const reason =
+        error instanceof BundleExtractionError
+          ? `verification failed (${error.kind}${error.entryName ? `: ${error.entryName}` : ''})`
+          : `transient lock (${(error as { code?: string }).code ?? 'unknown'})`;
+      ext.outputChannel.appendLog(
+        `Extraction attempt ${attempt} for ${dependencyName} failed (${reason}); retrying in ${EXTRACT_RETRY_DELAY_MS}ms.`
+      );
+      await new Promise((resolve) => setTimeout(resolve, EXTRACT_RETRY_DELAY_MS));
+    }
+  }
+  if (lastError instanceof BundleExtractionError) {
+    throw lastError;
+  }
+  throw new Error(`Error extracting ${dependencyName}: ${lastError}`);
 }
 
 /**
@@ -379,7 +1410,13 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
  * @returns A boolean indicating whether the major version matches.
  */
 function checkMajorVersion(version: string, majorVersion: string): boolean {
-  return semver.major(version) === Number(majorVersion);
+  const requestedMajorVersion = getMajorVersion(majorVersion);
+  return requestedMajorVersion !== undefined && semver.major(version) === requestedMajorVersion;
+}
+
+function getMajorVersion(version: string): number | undefined {
+  const coercedVersion = semver.coerce(version);
+  return coercedVersion ? semver.major(coercedVersion) : undefined;
 }
 
 /**

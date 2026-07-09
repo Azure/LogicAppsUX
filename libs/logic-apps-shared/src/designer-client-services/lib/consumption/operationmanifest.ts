@@ -2,6 +2,8 @@ import type { Connector, OperationInfo, OperationManifest } from '../../../utils
 import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
+import { LoggerService } from '../logger';
+import { LogEntryLevel } from '../logging/logEntry';
 import {
   agentType,
   getBuiltInOperationInfo,
@@ -199,6 +201,34 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
 
   override getBuiltInConnector(connectorId: string): Connector {
     return this.allBuiltInConnectors[connectorId.toLowerCase()];
+  }
+
+  async getSettingDefaults(
+    connectorId: string,
+    operationId: string,
+    supportedSettings: string[],
+    workflowKind?: string
+  ): Promise<Record<string, any> | undefined> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const operationName = operationId.split('/').slice(-1)[0];
+
+    try {
+      return await httpClient.post<Record<string, any>, { settings: string[]; workflowKind?: string }>({
+        uri: `${baseUrl}${connectorId}/apiOperations/${operationName}/settingDefaults`,
+        queryParameters: { 'api-version': apiVersion },
+        content: { settings: supportedSettings, workflowKind },
+      });
+    } catch (error) {
+      // Setting defaults are a best-effort enhancement; a failure here must not block operation
+      // initialization, so we swallow the error and log it for observability instead of throwing.
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'ConsumptionOperationManifestService.getSettingDefaults',
+        message: `Failed to fetch setting defaults for ${connectorId}/${operationId}.`,
+        error: error instanceof Error ? error : undefined,
+      });
+      return undefined;
+    }
   }
 }
 

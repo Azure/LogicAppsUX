@@ -59,6 +59,7 @@ import {
   optional,
   BaseCognitiveServiceService,
   RoleService,
+  normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
@@ -97,6 +98,24 @@ import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
+// Merge server data with local mutations; local wins per category so in-flight new connections
+// survive re-sync when the workflow-artifacts fetch resolves.
+const mergeConnectionsData = (fromServer: ConnectionsData, local: ConnectionsData | undefined): ConnectionsData => {
+  if (!local) {
+    return fromServer;
+  }
+  return {
+    ...fromServer,
+    ...local,
+    managedApiConnections: { ...(fromServer?.managedApiConnections ?? {}), ...(local?.managedApiConnections ?? {}) },
+    serviceProviderConnections: { ...(fromServer?.serviceProviderConnections ?? {}), ...(local?.serviceProviderConnections ?? {}) },
+    functionConnections: { ...(fromServer?.functionConnections ?? {}), ...(local?.functionConnections ?? {}) },
+    apiManagementConnections: { ...(fromServer?.apiManagementConnections ?? {}), ...(local?.apiManagementConnections ?? {}) },
+    agentConnections: { ...(fromServer?.agentConnections ?? {}), ...(local?.agentConnections ?? {}) },
+    agentMcpConnections: { ...(fromServer?.agentMcpConnections ?? {}), ...(local?.agentMcpConnections ?? {}) },
+  };
+};
+
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
     id: state.workflowLoader.resourcePath!,
@@ -117,6 +136,7 @@ const DesignerEditor = () => {
     showPerformanceDebug,
     suppressDefaultNodeSelect,
     areCustomEditorsEnabled,
+    isFirstDesignerV2Load,
   } = useSelector((state: RootState) => state.workflowLoader);
   const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -183,11 +203,21 @@ const DesignerEditor = () => {
     setCurrentParameters(parameters ?? {});
   }, [parameters]);
   const queryClient = getReactQueryClient();
-  const connectionsData = useMemo(
-    () =>
-      resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {}),
-    [originalConnectionsData, currentParameters, settingsData?.properties]
+  // State + merge (not useMemo) so in-place mutations from addConnectionDataInternal survive the
+  // initial workflow-artifacts fetch. Pure useMemo would clone fresh server data on fetch complete.
+  const [connectionsData, setConnectionsData] = useState<ConnectionsData>(() =>
+    resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {})
   );
+  useEffect(() => {
+    setConnectionsData((prev) => {
+      const fromServer = resolveConnectionsReferences(
+        JSON.stringify(clone(originalConnectionsData ?? {})),
+        currentParameters,
+        settingsData?.properties ?? {}
+      );
+      return mergeConnectionsData(fromServer, prev);
+    });
+  }, [originalConnectionsData, currentParameters, settingsData?.properties]);
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const { data: runInstanceData } = useRun(runId);
 
@@ -295,13 +325,36 @@ const DesignerEditor = () => {
     }
   }, [isMonitoringView, toggleMonitoringView]);
 
-  const hideMonitoringView = useCallback(() => {
+  const hideMonitoringView = useCallback(async () => {
     if (isMonitoringView) {
-      toggleMonitoringView();
+      // Restore the workflow *before* leaving monitoring view. toggleMonitoringView() clears
+      // read-only, so if it ran first there would be a transient window — widened by the await
+      // below on slow networks — where the designer is editable while the canvas still shows the
+      // selected run's definition. Editing in that window reintroduces the data-loss scenario.
+      // Setting the workflow first guarantees the first render outside monitoring view already
+      // has the correct draft/published definition.
+      if (isDraftMode) {
+        // Restore the draft, not workflow.json (the published version) — the monitoring view
+        // replaced the canvas with the run's definition. The draft autosaves before every run,
+        // so the server copy is current, but the cached query data may be stale; refetch first.
+        let freshCustomCodeData: typeof customCodeData;
+        try {
+          freshCustomCodeData = (await customCodeRefetch()).data;
+        } catch {
+          freshCustomCodeData = undefined;
+        }
+        const draft = (freshCustomCodeData ?? customCodeData)?.[Artifact.DraftFile];
+        if (draft) {
+          setWorkflow(draft as any);
+          toggleMonitoringView();
+          return;
+        }
+      }
       const wf = artifactData?.properties.files[Artifact.WorkflowFile];
       setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
+      toggleMonitoringView();
     }
-  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView]);
+  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView, isDraftMode, customCodeRefetch, customCodeData]);
 
   const onRun = useCallback(
     (runId: string | undefined) => {
@@ -412,12 +465,12 @@ const DesignerEditor = () => {
           ...connectionsData?.serviceProviderConnections,
           ...newServiceProviderConnections,
         };
-        if (isAgentWorkflow(workflow?.kind ?? '') || Object.keys(newAgentConnections).length > 0) {
-          (connectionsData as ConnectionsData).agentConnections = {
-            ...connectionsData?.agentConnections,
-            ...newAgentConnections,
-          };
+        (connectionsData as ConnectionsData).agentConnections = {
+          ...connectionsData?.agentConnections,
+          ...newAgentConnections,
+        };
 
+        if (isAgentWorkflow(workflow?.kind ?? '')) {
           // Assign MSI roles if needed
           /**
            *  This is currently only for Agentic workflows,
@@ -430,16 +483,17 @@ const DesignerEditor = () => {
            */
           for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
             if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+              const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
               const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-              const missingRoleAssignments = await getMissingRoleDefinitions(agentConnection?.resourceId, definitionNames);
+              const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
               const assignmentPromises = [];
               for (const roleDefinition of missingRoleAssignments) {
-                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(agentConnection?.resourceId, roleDefinition.id));
+                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
               }
               await Promise.all(assignmentPromises);
 
               // Invalidate the cache for the role assignments
-              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, agentConnection?.resourceId];
+              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
               const queryClient = getReactQueryClient();
               queryClient.invalidateQueries(cacheKey);
             }
@@ -468,10 +522,6 @@ const DesignerEditor = () => {
         isDraftSave
       );
 
-      // Invalidate cached workflow artifacts so the next load fetches fresh data
-      // (including any new connection references added during this session)
-      getReactQueryClient().invalidateQueries(['workflowArtifactsStandard', workflowId]);
-
       return workflowToSave;
     },
     [
@@ -485,7 +535,6 @@ const DesignerEditor = () => {
       settingsData?.properties,
       siteResourceId,
       workflow,
-      workflowId,
       workflowName,
     ]
   );
@@ -656,6 +705,7 @@ const DesignerEditor = () => {
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showPerformanceDebug,
+          isFirstDesignerV2Load,
         }}
       >
         {workflow?.definition ? (
@@ -1218,9 +1268,18 @@ const getConnectionsToUpdate = (
     connectionsJson.managedApiConnections ?? {}
   );
 
+  const hasNewMcpConnectionKeys = hasNewKeys(originalConnectionsJson.agentMcpConnections ?? {}, connectionsJson.agentMcpConnections ?? {});
+
   const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
 
-  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
+  if (
+    !hasNewFunctionKeys &&
+    !hasNewApimKeys &&
+    !hasNewManagedApiKeys &&
+    !hasNewServiceProviderKeys &&
+    !hasNewAgentKeys &&
+    !hasNewMcpConnectionKeys
+  ) {
     return undefined;
   }
 
@@ -1273,6 +1332,15 @@ const getConnectionsToUpdate = (
     for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
+      }
+    }
+  }
+
+  if (hasNewMcpConnectionKeys) {
+    for (const agentMcpConnectionName of Object.keys(connectionsJson.agentMcpConnections ?? {})) {
+      if (originalConnectionsJson.agentMcpConnections?.[agentMcpConnectionName]) {
+        (connectionsToUpdate.agentMcpConnections as any)[agentMcpConnectionName] =
+          originalConnectionsJson.agentMcpConnections[agentMcpConnectionName];
       }
     }
   }

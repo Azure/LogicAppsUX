@@ -102,7 +102,8 @@ export class StandardConnectorService extends BaseConnectorService {
     parameters: Record<string, any>,
     dynamicState: any,
     connectionId: string | undefined,
-    operationPath?: string
+    operationPath?: string,
+    identity?: string
   ): Promise<ListDynamicValue[]> {
     const { baseUrl, apiVersion, httpClient, getConfiguration } = this.options;
     const { operationId: dynamicOperation, apiType } = dynamicState;
@@ -145,22 +146,26 @@ export class StandardConnectorService extends BaseConnectorService {
           // Generate connection reference for managed connections when it's not found.
           const connectionFromService = await ConnectionService().getConnection(connectionId);
           if (connectionFromService) {
-            const identity = WorkflowService().getAppIdentity?.();
-            const userIdentity =
-              equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
-                ? Object.keys(identity.userAssignedIdentities)[0]
-                : undefined;
+            // Use explicitly passed identity, otherwise fall back to WorkflowService
+            const resolvedIdentity =
+              identity ??
+              (() => {
+                const appIdentity = WorkflowService().getAppIdentity?.();
+                return equals(appIdentity?.type, ResourceIdentityType.USER_ASSIGNED) && appIdentity?.userAssignedIdentities
+                  ? Object.keys(appIdentity.userAssignedIdentities)[0]
+                  : undefined;
+              })();
             const properties = connectionFromService.properties as any;
 
             let connectionProperties: any;
             try {
               const connector = await ConnectionService().getConnector(properties.api.id);
-              connectionProperties = getConnectionProperties(connector, userIdentity);
+              connectionProperties = getConnectionProperties(connector, resolvedIdentity);
             } catch {
               connectionProperties = {
                 authentication: {
                   type: 'ManagedServiceIdentity',
-                  ...optional('identity', userIdentity),
+                  ...optional('identity', resolvedIdentity),
                 },
               };
             }
@@ -169,7 +174,7 @@ export class StandardConnectorService extends BaseConnectorService {
               connection: { id: connectionId },
               authentication: {
                 type: 'ManagedServiceIdentity',
-                ...optional('identity', userIdentity),
+                ...optional('identity', resolvedIdentity),
               },
               connectionRuntimeUrl: properties.connectionRuntimeUrl ?? '',
               connectionProperties,

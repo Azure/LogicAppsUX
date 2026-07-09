@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
@@ -59,6 +58,7 @@ import {
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
+import { applySettingDefaults } from '../../queries/settingDefaults';
 import {
   LogEntryLevel,
   LoggerService,
@@ -126,6 +126,7 @@ export const initializeOperationMetadata = async (
   initializeConnectorsForReferences(references);
 
   const promises: Promise<NodeDataWithOperationMetadata[] | undefined>[] = [];
+  const promiseNodeIds: string[] = [];
   const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
 
@@ -141,18 +142,46 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
 
+    let operationPromise: Promise<NodeDataWithOperationMetadata[] | undefined>;
     if (isManagedMcpOperation(operation)) {
-      promises.push(initializeOperationDetailsForManagedMcpServer(operationId, operation, references, workflowKind, dispatch));
+      operationPromise = initializeOperationDetailsForManagedMcpServer(operationId, operation, references, workflowKind, dispatch);
     } else if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
-      promises.push(initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch));
+      operationPromise = initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch);
     } else if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch));
+      operationPromise = initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch);
     } else {
-      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch));
+      operationPromise = initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch);
     }
+
+    promiseNodeIds.push(operationId);
+    promises.push(operationPromise);
   }
 
-  const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
+  // Initialize each operation independently: a single operation's failure must not block the entire
+  // workflow load. Settle all promises and mark only the failing nodes with an error (issue #9223).
+  const settledResults = await Promise.allSettled(promises);
+  const resolvedNodeData = settledResults.map((result, index) => {
+    if (result.status === 'fulfilled') {
+      return result.value;
+    }
+
+    const failedNodeId = promiseNodeIds[index];
+    const error = result.reason;
+    const message = `Unable to initialize operation details for '${failedNodeId}'. Error details - ${parseErrorMessage(
+      error,
+      `Unknown error initializing operation '${failedNodeId}'.`
+    )}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'operation deserializer',
+      message,
+      error,
+    });
+    dispatch(updateErrorDetails({ id: failedNodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
+    return undefined;
+  });
+
+  const allNodeData = aggregate(resolvedNodeData.filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
   const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
   updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos, pasteParams);
 
@@ -408,7 +437,14 @@ export const initializeOperationDetailsForManifest = async (
 
     const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
 
-    const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
+    let settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
+    settings = await applySettingDefaults(
+      settings,
+      nodeOperationInfo.connectorId,
+      nodeOperationInfo.operationId,
+      workflowKind,
+      nodeOperationInfo.type
+    );
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 

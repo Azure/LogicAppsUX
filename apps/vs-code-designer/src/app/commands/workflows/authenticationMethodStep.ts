@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
 
@@ -19,7 +19,7 @@ export type AuthenticationMethodType = 'managedServiceIdentity' | 'rawKeys';
  * and sets the `authenticationMethod` in the context.
  */
 export class AuthenticationMethodSelectionStep<
-  T extends IActionContext & { authenticationMethod?: AuthenticationMethodType },
+  T extends IActionContext & { authenticationMethod?: AuthenticationMethodType; enabled?: boolean },
 > extends AzureWizardPromptStep<T> {
   /**
    * Prompts the user to select an authentication method.
@@ -49,11 +49,20 @@ export class AuthenticationMethodSelectionStep<
       },
     ];
 
-    const selectedMethod = await context.ui.showQuickPick(picks, {
-      placeHolder,
-      suppressPersistence: true,
-      ignoreFocusOut: true,
-    });
+    const selectedMethod = await context.ui
+      .showQuickPick(picks, {
+        placeHolder,
+        suppressPersistence: true,
+        ignoreFocusOut: true,
+      })
+      .catch((error) => {
+        if (parseError(error).isUserCancelledError) {
+          context.telemetry.properties.authenticationMethodDefaulted = 'rawKeys';
+          return { data: 'rawKeys' as AuthenticationMethodType };
+        }
+
+        throw error;
+      });
 
     // Save the selected authentication method
     context.authenticationMethod = selectedMethod.data;
@@ -61,8 +70,13 @@ export class AuthenticationMethodSelectionStep<
 
   /**
    * Determines if this step should prompt again (only if no method is selected yet).
+   *
+   * TODO: MSI option is temporarily disabled until functions extension fix deployed — always default to rawKeys.
    */
-  public shouldPrompt(): boolean {
-    return true;
+  public shouldPrompt(context: T): boolean {
+    if (context.enabled === true && context.authenticationMethod === undefined) {
+      context.authenticationMethod = 'rawKeys';
+    }
+    return false;
   }
 }

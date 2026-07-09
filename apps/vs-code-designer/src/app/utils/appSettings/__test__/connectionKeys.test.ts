@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { verifyLocalConnectionKeys } from '../connectionKeys';
+import { refreshConnectionKeys } from '../connectionKeys';
 import * as vscode from 'vscode';
 import * as workspace from '../../workspace';
 import * as verifyIsProject from '../../verifyIsProject';
@@ -33,7 +33,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   isEmptyString: (value: string) => value === '',
 }));
 
-describe('verifyLocalConnectionKeys', () => {
+describe('refreshConnectionKeys', () => {
   let testContext: any;
   const testLogicAppName1 = 'LogicApp1';
   const testLogicAppName2 = 'LogicApp2';
@@ -53,6 +53,11 @@ describe('verifyLocalConnectionKeys', () => {
     };
     (vscode.workspace as any).workspaceFolders = testWorkspaceFolders;
     ext.outputChannel.appendLog = vi.fn();
+    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({
+      enabled: true,
+      tenantId: '4bb01b15-004c-4b95-9568-5165b5f89c41',
+      workflowManagementBaseUrl: 'https://management.azure.com/',
+    });
   });
 
   afterEach(() => {
@@ -62,14 +67,14 @@ describe('verifyLocalConnectionKeys', () => {
   it('should do nothing when no workspace folders exist', async () => {
     const getConnectionsJsonSpy = vi.spyOn(connection, 'getConnectionsJson');
     (vscode.workspace as any).workspaceFolders = undefined;
-    await verifyLocalConnectionKeys(testContext, testLogicAppProjectPath1);
+    await refreshConnectionKeys(testContext, testLogicAppProjectPath1);
     expect(getConnectionsJsonSpy).not.toHaveBeenCalled();
   });
 
   it('should log message when connectionsJson is empty', async () => {
     vi.spyOn(connection, 'getConnectionsJson').mockResolvedValue('');
-    await verifyLocalConnectionKeys(testContext, testLogicAppProjectPath1);
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(localize('noConnectionKeysFound', 'No connection keys found to verify'));
+    await refreshConnectionKeys(testContext, testLogicAppProjectPath1);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(localize('noConnectionKeysFound', 'No connection keys found.'));
   });
 
   it('should save connection references when connections exist', async () => {
@@ -90,7 +95,7 @@ describe('verifyLocalConnectionKeys', () => {
     vi.spyOn(connection, 'getConnectionsAndSettingsToUpdate').mockResolvedValue(connectionsAndSettingsToUpdate);
     vi.spyOn(connection, 'saveConnectionReferences').mockResolvedValue(undefined);
 
-    await verifyLocalConnectionKeys(testContext, testLogicAppProjectPath1);
+    await refreshConnectionKeys(testContext, testLogicAppProjectPath1);
 
     expect(connection.getConnectionsAndSettingsToUpdate).toHaveBeenCalledWith(
       testContext,
@@ -103,52 +108,24 @@ describe('verifyLocalConnectionKeys', () => {
     expect(connection.saveConnectionReferences).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, connectionsAndSettingsToUpdate);
   });
 
-  it('should save connection references for the user-selected project', async () => {
-    vi.spyOn(workspace, 'getWorkspaceFolder').mockResolvedValue(testWorkspaceFolders[0].uri.fsPath);
-    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testWorkspaceFolders[0].uri.fsPath);
+  it('should skip connection key verification when Azure connectors are disabled', async () => {
+    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({ enabled: false } as AzureConnectorDetails);
+    const getConnectionsJsonSpy = vi
+      .spyOn(connection, 'getConnectionsJson')
+      .mockResolvedValue(JSON.stringify({ managedApiConnections: { conn1: {} } }));
 
-    const sampleConnections = { managedApiConnections: { conn1: {} } };
-    vi.spyOn(connection, 'getConnectionsJson').mockResolvedValue(JSON.stringify(sampleConnections));
+    await refreshConnectionKeys(testContext, testLogicAppProjectPath1);
 
-    const azureDetails = {
-      enabled: true,
-      tenantId: '4bb01b15-004c-4b95-9568-5165b5f89c41',
-      workflowManagementBaseUrl: 'https://management.azure.com/',
-    };
-    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue(azureDetails);
-
-    const parametersData = { param: { type: 'string', value: 'test' } };
-    vi.spyOn(parameter, 'getParametersJson').mockResolvedValue(parametersData);
-
-    const connectionsAndSettingsToUpdate = { connections: {}, settings: {} };
-    vi.spyOn(connection, 'getConnectionsAndSettingsToUpdate').mockResolvedValue(connectionsAndSettingsToUpdate);
-    vi.spyOn(connection, 'saveConnectionReferences').mockResolvedValue(undefined);
-
-    await verifyLocalConnectionKeys(testContext);
-
-    expect(connection.getConnectionsJson).toHaveBeenCalledTimes(1);
-    expect(connection.getConnectionsAndSettingsToUpdate).toHaveBeenCalledTimes(1);
-    expect(connection.saveConnectionReferences).toHaveBeenCalledTimes(1);
-  });
-
-  it('should return without saving connection references when project path is undefined after user selection', async () => {
-    vi.spyOn(workspace, 'getWorkspaceFolder').mockResolvedValue(undefined);
-    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(undefined);
-    const getAzureConnectorDetailsSpy = vi
-      .spyOn(common, 'getAzureConnectorDetailsForLocalProject')
-      .mockResolvedValue({} as AzureConnectorDetails);
-
-    await verifyLocalConnectionKeys(testContext);
-
-    expect(common.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
+    expect(getConnectionsJsonSpy).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure connectors are disabled. Skipping connection key refresh.');
   });
 
   it('should throw error when an error occurs during verification', async () => {
     const error = new Error('Test error');
     vi.spyOn(connection, 'getConnectionsJson').mockRejectedValue(error);
 
-    await expect(verifyLocalConnectionKeys(testContext, testLogicAppProjectPath1)).rejects.toThrow(
-      'Error while verifying existing managed api connections: Test error'
+    await expect(refreshConnectionKeys(testContext, testLogicAppProjectPath1)).rejects.toThrow(
+      'Error while refreshing existing managed api connections: Test error'
     );
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalled();

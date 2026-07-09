@@ -98,6 +98,7 @@ export const customConnectorResourceGroupNameKey = 'CUSTOM_CONNECTOR_RESOURCE_GR
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
+export const workflowCodefulEnabledKey = 'WORKFLOW_CODEFUL_ENABLED';
 export const workflowAppApiVersion = '2018-11-01';
 export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
@@ -112,14 +113,6 @@ export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
-// Codeful settings
-export const workflowCodefulEnabled = 'WORKFLOW_CODEFUL_ENABLED';
-
-export const workflowCodeType = {
-  codeful: 'Codeful',
-  codeless: 'Codeless',
-} as const;
-export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
 
 export const WorkflowKind = {
   stateful: 'Stateful',
@@ -148,7 +141,6 @@ export const extensionCommand = {
   createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createWorkflow: 'azureLogicAppsStandard.createWorkflow',
-  createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
   deploy: 'azureLogicAppsStandard.deploy',
@@ -223,19 +215,21 @@ export const extensionCommand = {
   openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
   sdkLspApplyEdits: 'sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
+  logSubscriptions: 'azureLogicAppsStandard.logSubscriptions',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
 // Extension context
 export const customExtensionContext = {
   isCodeful: 'azureLogicAppsStandard.isCodeful',
-  isCodefulWorkflowFile: 'azureLogicAppsStandard.isCodefulWorkflowFile',
-  codefulWorkflowFiles: 'azureLogicAppsStandard.codefulWorkflowFiles',
 } as const;
 export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
+
+// Global state
+export const suppressDesignerVersionNotification = 'suppressDesignerVersionNotification';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -279,14 +273,23 @@ export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
+export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValidation';
+export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
+export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
+export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
+// Timeout (ms) for dependency version/metadata HTTP lookups so activation can't hang on a stalled request.
+export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
+// On-disk integrity manifest written into each installed runtime dependency folder to detect corrupt/incomplete installs.
+export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
-export const onStartLanguageServerProtocol = 'onStartLanguageServerProtocol';
+export const onStartLanguageServer = 'onStartLanguageServer';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
@@ -428,6 +431,9 @@ export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const deployedLogicAppNameValidation = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])?$/;
 export const deployedStorageAccountNameValidation = /^[a-z0-9]{3,24}$/;
 export const deployedAppServicePlanNameValidation = /^[a-zA-Z0-9-]{1,60}$/;
+// Connected environment names follow the same rules as Container Apps resource names.
+export const connectedEnvironmentNameValidation = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,60}[a-zA-Z0-9])?$/;
+export const resourceGroupNameValidation = /^[-\w._()]{1,90}$/;
 export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
 
 // Codeful SDK versions

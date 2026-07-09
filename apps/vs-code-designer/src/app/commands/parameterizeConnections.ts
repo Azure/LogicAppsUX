@@ -18,37 +18,40 @@ import { window, workspace } from 'vscode';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
 /**
- * Prompts the user to parameterize connections at project load.
+ * Parameterizes the connections in each workspace project if needed.
  * @param {IActionContext} context - The action context.
  * @param {boolean} [showMessage] - A flag indicating whether to show information message to the user.
  * @returns A promise that resolves when the operation is complete.
  */
-export async function promptParameterizeConnections(context: IActionContext, showMessage?: boolean): Promise<void> {
+export async function parameterizeConnectionsIfNeeded(context: IActionContext, showMessage?: boolean): Promise<void> {
   const parameterizeConnectionsStartTime = Date.now();
-  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads?');
-    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
-    let shouldParameterizeConnections = false;
-    if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting === undefined) {
-      const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
-      if (result === DialogResponses.yes) {
-        await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
-        shouldParameterizeConnections = true;
-        context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
-      } else if (result === DialogResponses.dontWarnAgain) {
-        await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, false);
-        context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'false';
-      }
-    } else if (parameterizeConnectionsSetting) {
-      shouldParameterizeConnections = true;
-    }
-
-    if (shouldParameterizeConnections) {
-      const projectPaths = await getWorkspaceLogicAppFolders();
-      await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath, showMessage)));
-    }
+  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0 && (await shouldParameterizeConnections(context))) {
+    const projectPaths = await getWorkspaceLogicAppFolders();
+    await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath, showMessage)));
   }
   context.telemetry.measurements.parameterizeConnectionsDuration = (Date.now() - parameterizeConnectionsStartTime) / 1000;
+}
+
+async function shouldParameterizeConnections(context: IActionContext): Promise<boolean> {
+  const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads?');
+  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
+  if (parameterizeConnectionsSetting) {
+    return true;
+  }
+  
+  const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
+  if (result === DialogResponses.yes) {
+    await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
+    context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
+    return true;
+  }
+
+  if (result === DialogResponses.dontWarnAgain) {
+    await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, false);
+    context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'false';
+  }
+
+  return false;
 }
 
 /**
@@ -97,7 +100,7 @@ export async function parameterizeConnections(context: IActionContext, projectPa
       });
       await saveWorkflowParameter(context, projectPath, parametersJson);
       await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
-      window.showInformationMessage(localize('connectionsParameterized', 'Successfully parameterized connections.'));
+      ext.outputChannel.appendLog(localize('connectionsParameterized', 'Successfully parameterized connections.'));
     } catch (error) {
       const errorMessage = localize(
         'errorParameterizeConnections',

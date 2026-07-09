@@ -65,6 +65,10 @@ export const useShowPerformanceDebug = () => {
   return useSelector((state: RootState) => state.workflowLoader.showPerformanceDebug);
 };
 
+export const useIsFirstDesignerV2Load = () => {
+  return useSelector((state: RootState) => state.workflowLoader.isFirstDesignerV2Load);
+};
+
 export const useStringOverrides = () => {
   return useSelector((state: RootState) => !!state.workflowLoader.hostOptions.stringOverrides);
 };

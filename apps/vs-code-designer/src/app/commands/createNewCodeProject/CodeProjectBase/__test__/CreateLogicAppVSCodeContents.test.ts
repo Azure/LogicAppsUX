@@ -19,6 +19,7 @@ vi.mock('../../../../utils/fs', () => ({
 }));
 vi.mock('../../../../utils/binaries', () => ({
   binariesExist: vi.fn().mockReturnValue(false),
+  binariesExistSync: vi.fn().mockReturnValue(false),
 }));
 
 describe('CreateLogicAppVSCodeContents', () => {

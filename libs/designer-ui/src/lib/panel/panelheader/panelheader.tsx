@@ -61,6 +61,8 @@ export interface PanelHeaderProps {
   showTriggerInfo?: boolean;
   isTrigger?: boolean;
   hideComment?: boolean;
+  // When provided, replaces the default node icon (e.g. count badge for multi-select panel).
+  customIcon?: JSX.Element;
 }
 
 const DismissIcon = bundleIcon(DismissFilled, DismissRegular);
@@ -157,6 +159,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     showTriggerInfo,
     isTrigger,
     hideComment,
+    customIcon,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
@@ -221,7 +224,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     <>
       <div className="msla-panel-header" id={title}>
         <div className={'msla-panel-card-header'}>
-          {iconComponent}
+          {customIcon ?? iconComponent}
           <div className={'msla-panel-card-title-container'}>
             <PanelHeaderTitle
               key={nodeId}
@@ -238,7 +241,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
               <Button appearance="subtle" icon={<PinOffRegular />} onClick={onUnpinAction} />
             </Tooltip>
           ) : null}
-          <OverflowButton {...props} />
+          {props.headerItems.length > 0 ? <OverflowButton {...props} /> : null}
           {shouldHideCloseButton ? undefined : <CloseButton {...props} nodeId={nodeId} />}
         </div>
         {onRenderWarningMessage ? onRenderWarningMessage() : null}

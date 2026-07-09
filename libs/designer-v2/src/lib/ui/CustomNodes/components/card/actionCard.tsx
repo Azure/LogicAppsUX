@@ -26,12 +26,13 @@ export interface ActionCardProps {
   isUnitTest?: boolean;
   isLoading?: boolean;
   isSelected?: boolean;
+  isPinned?: boolean;
   nodeIndex?: number;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
   staticResultsEnabled?: boolean;
   title: string;
-  onClick?(): void;
+  onClick?(e?: React.MouseEvent): void;
   onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
   onCopyClick?(): void;
@@ -44,7 +45,7 @@ export interface ActionCardProps {
   copilotModified?: boolean;
   isScope?: boolean;
   collapsed?: boolean;
-  handleCollapse?(): void;
+  handleCollapse?(includeNested?: boolean): void;
 }
 
 export const ActionCard: React.FC<ActionCardProps> = ({
@@ -60,6 +61,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   // isMockSupported,
   isLoading,
   isSelected,
+  isPinned,
   nodeIndex,
   onClick,
   onDeleteClick,
@@ -78,7 +80,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    onClick?.();
+    onClick?.(e);
   };
   const focusRef = useRef<HTMLElement | null>(null);
   const keyboardInteraction = useKeyboardInteraction(onClick, onDeleteClick, onCopyClick);
@@ -152,6 +154,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         !active && styles.inactive,
         runData?.status === 'Succeeded' && styles.statusSuccess,
         runData?.status === 'Failed' && styles.statusError,
+        isPinned && styles.pinned,
         isSelected && styles.selected,
         isScope && styles.scope,
         copilotModified && styles.copilotModified

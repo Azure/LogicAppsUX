@@ -304,12 +304,14 @@ export const serializeOperation = async (
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   const isManagedMcpClient = isManagedMcpOperation(operation);
-  const isBuiltInMcpClient = isBuiltInMcpOperation(operation);
+  // Consumption-only: inline `inputs.Connection` (PR #8953). Standard has workflowKind set and
+  // falls through to the manifest branch, which emits `inputs.connectionReference.connectionName`.
+  const isConsumptionBuiltInMcpClient = isBuiltInMcpOperation(operation) && !rootState.workflow.workflowKind;
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
-  } else if (isBuiltInMcpClient) {
-    serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
+  } else if (isConsumptionBuiltInMcpClient) {
+    serializedOperation = await serializeConsumptionBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
@@ -532,7 +534,9 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   };
 };
 
-const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+// Consumption has no `agentMcpConnections` category, so the tool must inline
+// `inputs.Connection.{McpServerUrl,Authentication}`. Standard is routed via the manifest path.
+const serializeConsumptionBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
   if (!operationInfo) {
     throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
@@ -986,6 +990,13 @@ interface McpConnectionInfo {
   };
 }
 
+// Resolve the authoritative `agentMcpConnections` key from a Redux reference. Prefers connection.id's
+// last segment (which by construction matches the connections.json key) and falls back to the raw
+// referenceKey when the id is missing or produces an empty segment (e.g. trailing slash). Exported
+// for unit tests.
+export const resolveMcpConnectionName = (referenceKey: string, connectionId: string | undefined): string =>
+  connectionId?.split('/').pop() || referenceKey;
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -1065,12 +1076,14 @@ const serializeHost = (
           },
         },
       };
-    case ConnectionReferenceKeyFormat.McpConnection:
+    case ConnectionReferenceKeyFormat.McpConnection: {
+      const reference = getRecordEntry(rootState.connections.connectionReferences, referenceKey);
       return {
         connectionReference: {
-          connectionName: referenceKey,
+          connectionName: resolveMcpConnectionName(referenceKey, reference?.connection?.id),
         },
       };
+    }
     default:
       throw new AssertionException(
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
@@ -1442,6 +1455,11 @@ const updateOperationOptions = (
 export const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined => {
   const retryPolicy = settings.retryPolicy?.value;
   if (!retryPolicy) {
+    return undefined;
+  }
+
+  // If the value came from API defaults (defaultHint is set), treat as unset — omit from definition
+  if (settings.retryPolicy?.defaultHint) {
     return undefined;
   }
 

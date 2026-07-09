@@ -60,6 +60,7 @@ export interface DesignerOptionsState {
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
   showPerformanceDebug?: boolean;
+  isFirstDesignerV2Load?: boolean;
 }
 
 export interface ServiceOptions {

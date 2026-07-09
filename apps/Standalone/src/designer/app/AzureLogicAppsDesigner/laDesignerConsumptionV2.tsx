@@ -84,6 +84,7 @@ const DesignerEditorConsumption = () => {
     hostOptions,
     suppressDefaultNodeSelect,
     showPerformanceDebug,
+    isFirstDesignerV2Load,
     language,
   } = useSelector((state: RootState) => state.workflowLoader);
 
@@ -460,6 +461,7 @@ const DesignerEditorConsumption = () => {
             integrationAccount: (workflowAndArtifactsData?.properties as any)?.integrationAccount,
           },
           showPerformanceDebug,
+          isFirstDesignerV2Load,
         }}
       >
         {definition ? (

@@ -15,7 +15,7 @@ import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
 import { AzureWizard, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import type { IProjectWizardContext, DeploymentTargetType } from '@microsoft/vscode-extension-logic-apps';
 import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
 import { convertToWorkspace } from '../convertToWorkspace';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
@@ -39,6 +39,10 @@ export interface IAzureDeploymentScriptsContext extends IProjectWizardContext, I
   isValidWorkspace: boolean;
   logicAppNode?: SlotTreeItem;
   msiClientId?: string;
+  // Hybrid deployment support — determines which pipeline templates and ARM templates are generated.
+  deploymentTarget?: DeploymentTargetType;
+  connectedEnvironmentName?: string;
+  connectedEnvironmentResourceGroup?: string;
 }
 
 /**

@@ -91,6 +91,10 @@ export interface OperationPanelContentState {
     activeTabId?: string;
     persistence?: 'selected' | 'pinned';
   };
+  // Multi-selection of nodes on the canvas. The canonical source of truth for which
+  // nodes are selected. `selectedNodeId` + `alternateSelectedNode` are derived from this
+  // for the single (1) and side-by-side (2) cases.
+  selectedNodeIds?: string[];
 }
 
 export interface NodeSearchPanelContentState {

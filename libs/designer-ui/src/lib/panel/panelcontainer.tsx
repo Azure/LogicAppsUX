@@ -40,6 +40,10 @@ export type PanelContainerProps = {
   showTriggerInfo?: boolean;
   isTrigger?: boolean;
   hideComment?: boolean;
+  // When provided, the panel renders this content instead of the node-based body. Used for
+  // surfaces (e.g. multi-select) that share the same Drawer chrome but don't operate on a single node.
+  customContent?: JSX.Element;
+  customAriaLabel?: string;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -69,6 +73,8 @@ export const PanelContainer = ({
   showTriggerInfo,
   isTrigger,
   hideComment,
+  customContent,
+  customAriaLabel,
   ...rest
 }: PanelContainerProps) => {
   const intl = useIntl();
@@ -78,6 +84,10 @@ export const PanelContainer = ({
     () => (rest.alternateSelectedNode && rest.alternateSelectedNode.nodeId !== node?.nodeId ? rest.alternateSelectedNode : undefined),
     [node, rest.alternateSelectedNode]
   );
+
+  // Dual view = a selected node AND a distinct pinned/alternate node are both shown side-by-side.
+  // A pinned node can also render on its own (no selected node), which is a single-pane view.
+  const isDualView = !!node && !!alternateSelectedNode;
 
   const alternateSelectedNodeContainerId = useMemo(
     () =>
@@ -107,38 +117,32 @@ export const PanelContainer = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Calculate responsive panel width
-  const getResponsiveWidth = () => {
+  // Calculate panel width: use manual resize if set, otherwise pick a default based on panel type.
+  const drawerWidth = useMemo(() => {
     if (isCollapsed) {
       return PanelSize.Auto;
     }
 
-    // If manually resized, use that width but constrain to viewport
+    // If the user has manually resized, honour that width (capped to viewport).
     if (canResize && overrideWidth) {
       const numericWidth = Number.parseInt(overrideWidth, 10);
-      const maxWidth = viewportWidth * 0.9; // 90% of viewport width
+      const maxWidth = viewportWidth * 0.9;
       return `${Math.min(numericWidth, maxWidth)}px`;
     }
 
-    // Default widths based on panel type
-    const defaultWidth = alternateSelectedNode ? Number.parseInt(PanelSize.DualView, 10) : Number.parseInt(PanelSize.Medium, 10);
-
-    // Responsive breakpoints
-    if (viewportWidth < 768) {
-      return '100%'; // Full width on mobile
+    // Dual-view (pinned / alternate selected node) → 680px
+    if (isDualView) {
+      return PanelSize.DualView;
     }
-    if (viewportWidth < 1024) {
-      return `${Math.min(defaultWidth, viewportWidth * 0.8)}px`; // 80% max on tablet
-    }
-    return `${Math.min(defaultWidth, viewportWidth * 0.6)}px`; // 60% max on desktop
-  };
 
-  const drawerWidth = getResponsiveWidth();
+    // Single-node or multi-select → 480px
+    return '480px';
+  }, [isCollapsed, canResize, overrideWidth, isDualView, viewportWidth]);
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
-      const isAlternateNode = rest.alternateSelectedNode?.nodeId === nodeId;
+      const isAlternateNode = !!alternateSelectedNode && alternateSelectedNode.nodeId === nodeId;
       const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
@@ -155,7 +159,10 @@ export const PanelContainer = ({
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
-          onClose={onClose}
+          // Closing the pinned pane should only unpin it (keep the selected node); closing the
+          // selected pane uses onClose (which keeps a pinned node open). This prevents one pane's
+          // close button from dismissing the other pane.
+          onClose={canUnpin ? onUnpinAction : onClose}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
           showTriggerInfo={showTriggerInfo}
@@ -165,7 +172,7 @@ export const PanelContainer = ({
       );
     },
     [
-      rest.alternateSelectedNode?.nodeId,
+      alternateSelectedNode,
       onUnpinAction,
       alternateSelectedNodePersistence,
       alternateSelectedNodeHeaderItems,
@@ -249,20 +256,25 @@ export const PanelContainer = ({
     [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle, alternateSelectedNodeContainerId]
   );
 
-  const minWidth = alternateSelectedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
+  const minWidth = isDualView ? Number.parseInt(PanelSize.DualView, 10) : undefined;
 
   if (suppressDefaultNodeSelectFunctionality) {
     // Used in cases like BPT where we do not want to show the panel during node selection
     return null;
   }
 
-  if (isCollapsed || !node) {
+  if (isCollapsed) {
+    return null;
+  }
+
+  // Render when there is custom content, a selected node, or a pinned/alternate node on its own.
+  if (!customContent && !node && !alternateSelectedNode) {
     return null;
   }
 
   return (
     <Drawer
-      aria-label={panelLabel}
+      aria-label={customContent ? (customAriaLabel ?? panelLabel) : panelLabel}
       className="msla-panel-container"
       type="inline"
       modalType="non-modal"
@@ -280,33 +292,37 @@ export const PanelContainer = ({
         height: '100%',
       }}
     >
-      <div
-        className={mergeClasses(
-          'msla-panel-container-nested',
-          `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-          alternateSelectedNode && 'msla-panel-container-nested-dual'
-        )}
-      >
-        {node ? renderPanelContents(node, 'selected', false) : null}
-        {alternateSelectedNode ? (
-          <>
-            <Divider vertical={true} />
-            {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
-            {shouldDisplayPopup && targetElement ? (
-              <TeachingPopup
-                targetElement={targetElement}
-                title={toolBranchTitle}
-                message={toolBranchMessage}
-                withArrow={true}
-                handlePopupPrimaryOnClick={() => {
-                  localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
-                  setShouldDisplayPopup(false);
-                }}
-              />
-            ) : null}
-          </>
-        ) : null}
-      </div>
+      {customContent ? (
+        customContent
+      ) : (
+        <div
+          className={mergeClasses(
+            'msla-panel-container-nested',
+            `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
+            isDualView && 'msla-panel-container-nested-dual'
+          )}
+        >
+          {node ? renderPanelContents(node, 'selected', false) : null}
+          {alternateSelectedNode ? (
+            <>
+              {node ? <Divider vertical={true} /> : null}
+              {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
+              {shouldDisplayPopup && targetElement ? (
+                <TeachingPopup
+                  targetElement={targetElement}
+                  title={toolBranchTitle}
+                  message={toolBranchMessage}
+                  withArrow={true}
+                  handlePopupPrimaryOnClick={() => {
+                    localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
+                    setShouldDisplayPopup(false);
+                  }}
+                />
+              ) : null}
+            </>
+          ) : null}
+        </div>
+      )}
       {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
     </Drawer>
   );

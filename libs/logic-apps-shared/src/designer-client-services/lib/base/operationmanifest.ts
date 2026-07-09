@@ -132,6 +132,8 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
+const hl7decode = 'hl7decode';
+const hl7encode = 'hl7encode';
 export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 export const chunktextwithmetadata = 'chunktextwithmetadata';
 
@@ -155,6 +157,7 @@ const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 const x12ConnectorId = 'connectionProviders/x12Operations';
 const xmlOperationsConnectionId = 'connectionProviders/xmlOperations';
 const edifactConnectorId = 'connectionProviders/edifactOperations';
+const hl7ConnectorId = 'connectionProviders/hl7Operations';
 export const inlineCodeConnectorId = 'connectionProviders/inlineCode';
 
 const azurefunction = 'azurefunction';
@@ -235,6 +238,8 @@ export const supportedBaseManifestTypes = [
   parsedocument,
   parsedocumentwithmetadata,
   chunktextwithmetadata,
+  hl7decode,
+  hl7encode,
 ];
 
 export const builtInConnectorIds = {
@@ -374,6 +379,8 @@ export function isBuiltInOperation(definition: any): boolean {
     case chunktext:
     case chunktextwithmetadata:
     case parsedocumentwithmetadata:
+    case hl7decode:
+    case hl7encode:
       return true;
 
     case mcpclienttool:
@@ -785,6 +792,14 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [chunktextwithmetadata]: {
     connectorId: dataOperationConnectorId,
     operationId: chunktextwithmetadata,
+  },
+  [hl7decode]: {
+    connectorId: hl7ConnectorId,
+    operationId: hl7decode,
+  },
+  [hl7encode]: {
+    connectorId: hl7ConnectorId,
+    operationId: hl7encode,
   },
 };
 
