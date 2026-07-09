@@ -377,8 +377,10 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
  * @returns {Promise<Uri>} The design-time directory Uri.
  */
 async function ensureDesignTimeDirectory(projectPath: string): Promise<Uri> {
-  // When the project path already points inside the design-time directory, use it directly.
-  if (projectPath.includes(designTimeDirectoryName)) {
+  // When the project path already points at (or inside) the design-time directory, use it directly.
+  // Match on a full path segment so siblings like "workflow-designtime-backup" don't false-positive.
+  const pathSegments = projectPath.split(/[\\/]/);
+  if (pathSegments.includes(designTimeDirectoryName)) {
     return Uri.file(projectPath);
   }
 

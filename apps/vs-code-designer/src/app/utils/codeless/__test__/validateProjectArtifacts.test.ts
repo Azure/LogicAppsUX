@@ -493,6 +493,21 @@ describe('validateProjectArtifacts', () => {
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
     });
 
+    it('creates a nested workflow-designtime directory for a "workflow-designtime-backup" sibling (path-segment boundary)', async () => {
+      // A project path whose last segment merely CONTAINS the design-time name as a substring
+      // (e.g. workflow-designtime-backup) must not be treated as the design-time directory itself.
+      const backupPath = `${projectPath}/workflow-designtime-backup`;
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+
+      const dir = await regenerateDesignTimeDirectory(context, backupPath);
+
+      // The design-time directory is nested UNDER the backup folder, not the backup folder itself.
+      expect(norm(dir.fsPath)).toContain('workflow-designtime-backup/workflow-designtime');
+      const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
+      expect(writtenPaths.some((p) => p.includes('workflow-designtime-backup/workflow-designtime/host.json'))).toBe(true);
+    });
+
     // Golden / characterization tests: lock the EXACT content written for each design-time file,
     // Golden / characterization tests: lock the exact content written for each design-time file, per
     // logic app type. The expected objects are reconstructed explicitly from the shared constants
