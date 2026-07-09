@@ -18,7 +18,7 @@ import { OperationDefinition } from '../../../../../../logic-apps-shared/src/uti
 import type { UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
 beforeAll(() => {
-  InitLoggerService([{ log: () => {} }]);
+  InitLoggerService([]);
 });
 
 describe('workflow slice reducers', () => {

@@ -45,7 +45,7 @@ let spy: any;
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 beforeAll(() => {
-  InitLoggerService([{ log: () => {} }]);
+  InitLoggerService([]);
 });
 
 describe('connection workflow mappings', () => {
