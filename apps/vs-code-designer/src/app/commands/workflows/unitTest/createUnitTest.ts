@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../../../../localize';
+import { localize } from '../../../../localize';
 import {
   createTestCsFile,
   createTestSettingsConfigFile,
@@ -16,17 +16,17 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   selectWorkflowNode,
-} from '../../../../utils/unitTest/codefulUnitTest';
-import { tryGetLogicAppProjectRoot } from '../../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../../utils/workspace';
+} from '../../../utils/unitTest/unitTest';
+import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
-import { ext } from '../../../../../extensionVariables';
-import { convertToWorkspace } from '../../../convertToWorkspace';
-import { syncCloudSettings } from '../../../syncCloudSettings';
-import { extensionCommand } from '../../../../../constants';
+import { ext } from '../../../../extensionVariables';
+import { convertToWorkspace } from '../../convertToWorkspace';
+import { syncCloudSettings } from '../../syncCloudSettings';
+import { extensionCommand } from '../../../../constants';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.

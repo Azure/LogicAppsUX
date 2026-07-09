@@ -180,7 +180,7 @@ function usesLogicAppFolderToPublish(targetFramework: TargetFramework): boolean 
   return targetFramework !== TargetFramework.NetFx;
 }
 
-function isCustomCodeNetCoreCsproj(csprojContent: string, targetFramework: TargetFramework.Net8 | TargetFramework.Net10): boolean {
+function isCustomCodeNetCoreCsproj(csprojContent: string, targetFramework: TargetFramework): boolean {
   return (
     csprojContent.includes(`<TargetFramework>${targetFramework}</TargetFramework>`) &&
     csprojContent.includes('Microsoft.Azure.Workflows.Webjobs.Sdk') &&

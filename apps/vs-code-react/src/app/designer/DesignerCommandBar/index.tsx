@@ -2,13 +2,11 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
-  serializeUnitTestDefinition,
   getNodeOutputOperations,
   useIsDesignerDirty,
   validateParameter,
   updateParameterValidation,
   openPanel,
-  useAssertionsValidationErrors,
   useWorkflowParameterValidationErrors,
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
@@ -27,7 +25,6 @@ import {
   DismissCircleRegular,
   DismissCircleFilled,
   BeakerRegular,
-  CheckmarkRegular,
   bundleIcon,
   BugFilled,
   BugRegular,
@@ -37,7 +34,6 @@ import {
   LinkFilled,
   LinkRegular,
   ArrowClockwiseFilled,
-  CheckmarkFilled,
   ReplayFilled,
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
@@ -57,21 +53,16 @@ const BugIcon = bundleIcon(BugFilled, BugRegular);
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 const ResubmitIcon = bundleIcon(ReplayFilled, ReplayRegular);
 
-// Unit test icons
-const AssertionsIcon = bundleIcon(CheckmarkFilled, CheckmarkRegular);
-
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
   isDisabled: boolean;
   isWorkflowRuntimeRunning: boolean;
   onRefresh(): void;
   isDarkMode: boolean;
-  isUnitTest: boolean;
   isLocal: boolean;
   runId: string;
   kind?: string;
   getAgentUrl?: () => Promise<AgentURL>;
-  supportsUnitTest?: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -80,10 +71,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isWorkflowRuntimeRunning,
   onRefresh,
   isDarkMode,
-  isUnitTest,
+  isLocal,
   runId,
   getAgentUrl,
-  supportsUnitTest,
 }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch = DesignerStore.dispatch;
@@ -94,8 +84,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
 
   const shouldRenderChatButton = useMemo(() => {
     const isA2AWorkflow = equals(designerState.workflow.workflowKind, 'agent', false);
-    return isA2AWorkflow && !isUnitTest && !isMonitoringView;
-  }, [designerState.workflow.workflowKind, isMonitoringView, isUnitTest]);
+    return isA2AWorkflow && !isMonitoringView;
+  }, [designerState.workflow.workflowKind, isMonitoringView]);
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
@@ -132,16 +122,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         customCodeData,
       });
     }
-  });
-
-  const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const definition = await serializeUnitTestDefinition(designerState);
-
-    await vscode.postMessage({
-      command: ExtensionCommand.saveUnitTest,
-      definition,
-    });
   });
 
   const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
@@ -194,13 +174,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
 
-  const allAssertionsErrors = useAssertionsValidationErrors();
-  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
-
-  const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
   const isCreateUnitTestDisabled = useMemo(
-    () => isCreatingUnitTest || haveAssertionErrors || designerIsDirty,
-    [isCreatingUnitTest, haveAssertionErrors, designerIsDirty]
+    () => isCreatingUnitTest || designerIsDirty,
+    [isCreatingUnitTest, designerIsDirty]
   );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -310,7 +286,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         onResubmit();
       },
     },
-    ...(supportsUnitTest
+    ...(isLocal
       ? [
           {
             key: 'CreateUnitTestFromRun',
@@ -328,45 +304,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     ...baseItems,
   ];
 
-  const unitTestItems = [
-    {
-      key: 'Save',
-      disabled: isSaveUnitTestDisabled,
-      text: intlText.SAVE_UNIT_TEST,
-      ariaLabel: intlText.SAVE_UNIT_TEST,
-      icon: isSavingUnitTest ? <Spinner size="extra-small" /> : <SaveIcon />,
-      renderTextIcon: null,
-      onClick: () => {
-        saveUnitTestMutate();
-      },
-    },
-    {
-      key: 'CreateUnitTest',
-      disabled: isCreateUnitTestDisabled,
-      text: intlText.CREATE_UNIT_TEST,
-      ariaLabel: intlText.CREATE_UNIT_TEST,
-      icon: isCreatingUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
-      renderTextIcon: null,
-      onClick: () => {
-        createUnitTestMutate();
-      },
-    },
-    {
-      key: 'Assertions',
-      disabled: false,
-      text: intlText.UNIT_TEST_ASSERTIONS,
-      ariaLabel: intlText.UNIT_TEST_ASSERTIONS,
-      icon: <AssertionsIcon />,
-      renderTextIcon: haveWorkflowParameterErrors ? (
-        <div style={{ display: 'inline-block', marginLeft: 8 }}>
-          <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
-        </div>
-      ) : null,
-      onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
-    },
-    ...baseItems,
-  ];
-
   return (
     <Toolbar
       style={{
@@ -375,7 +312,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       }}
       aria-label={intlText.COMMAND_BAR_ARIA}
     >
-      {(isUnitTest ? unitTestItems : isMonitoringView ? monitoringViewItems : designerItems).map((buttonProps) => (
+      {(isMonitoringView ? monitoringViewItems : designerItems).map((buttonProps) => (
         <ToolbarButton
           disabled={buttonProps.disabled}
           key={buttonProps.key}

@@ -32,8 +32,6 @@ import {
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
-  serializeUnitTestDefinition,
-  useAssertionsValidationErrors,
   getNodeOutputOperations,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
@@ -122,7 +120,6 @@ export const DesignerCommandBar = ({
   isMonitoringView,
   isCodeView,
   isDarkMode,
-  isUnitTest,
   isDraftMode,
   enableCopilot,
   showMonitoringView,
@@ -145,7 +142,6 @@ export const DesignerCommandBar = ({
   isMonitoringView?: boolean;
   isCodeView?: boolean;
   isDarkMode: boolean;
-  isUnitTest: boolean;
   isDraftMode?: boolean;
   prodWorkflow?: Workflow;
   enableCopilot?: () => void;
@@ -255,14 +251,6 @@ export const DesignerCommandBar = ({
     5000
   );
 
-  const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const definition = await serializeUnitTestDefinition(designerState);
-
-    console.log(definition);
-    alert('Check console for unit test serialization');
-  });
-
   const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const operationContents = await getNodeOutputOperations(designerState);
@@ -297,13 +285,10 @@ export const DesignerCommandBar = ({
   });
   const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
   const haveWorkflowParameterErrors = Object.keys(allWorkflowParameterErrors ?? {}).length > 0;
-  const allAssertionsErrors = useAssertionsValidationErrors();
-  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
   const allSettingsErrors = useAllSettingsValidationErrors();
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
-  const isCreateUnitTestDisabled = !isUnitTest || isCreatingUnitTest || haveAssertionErrors;
 
   const haveErrors = useMemo(
     () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -319,7 +304,6 @@ export const DesignerCommandBar = ({
     isMonitoringView ||
     isWorkflowEmpty;
 
-  const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
   const isUndoDisabled = !useCanUndo();
   const isRedoDisabled = !useCanRedo();
 
@@ -453,14 +437,7 @@ export const DesignerCommandBar = ({
           )}
           <MenuDivider />
           <MenuItem
-            disabled={saveUnitTestIsDisabled}
-            onClick={() => saveUnitTestMutate()}
-            icon={isSavingUnitTest ? <Spinner size={'extra-tiny'} /> : undefined}
-          >
-            Save unit test
-          </MenuItem>
-          <MenuItem
-            disabled={isCreateUnitTestDisabled}
+            disabled={isCreatingUnitTest}
             onClick={() => createUnitTestMutate()}
             icon={isCreatingUnitTest ? <Spinner size={'extra-tiny'} /> : undefined}
           >
@@ -483,10 +460,6 @@ export const DesignerCommandBar = ({
             icon={<ErrorsIcon />}
           >
             Errors
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem disabled={!isUnitTest} onClick={() => dispatch(openPanel({ panelMode: 'Assertions' }))}>
-            Assertions
           </MenuItem>
           <MenuDivider />
           <MenuItem

@@ -19,10 +19,6 @@ export const useIsDraft = () => {
   return useSelector((state: RootState) => state.designerOptions.isDraft);
 };
 
-export const useUnitTest = () => {
-  return useSelector((state: RootState) => state.designerOptions.isUnitTest);
-};
-
 export const useLegacyWorkflowParameters = () => {
   return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };

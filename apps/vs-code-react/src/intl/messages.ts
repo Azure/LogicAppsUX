@@ -52,19 +52,6 @@ export const commonMessages = defineMessages({
   },
 });
 
-export const unitTestMessages = defineMessages({
-  VIEW_WORKFLOW: {
-    defaultMessage: 'View workflow',
-    id: '69+CIW',
-    description: 'View workflow button text',
-  },
-  TEST_ICON: {
-    defaultMessage: 'Test icon',
-    id: 'BfGFkk',
-    description: 'Test icon aria label',
-  },
-});
-
 export const workspaceMessages = defineMessages({
   WORKFLOW_CONFIGURATION: {
     defaultMessage: 'Workflow configuration',
@@ -1083,16 +1070,6 @@ export const designerMessages = defineMessages({
     defaultMessage: 'Create unit test from run',
     id: 'AmlQmq',
     description: 'Create unit test from run button',
-  },
-  SAVE_UNIT_TEST: {
-    defaultMessage: 'Save unit test definition',
-    id: 'VfUtlo',
-    description: 'Save unit test button',
-  },
-  UNIT_TEST_ASSERTIONS: {
-    defaultMessage: 'Assertions',
-    id: 'LG7hSo',
-    description: 'Unit test assertions button',
   },
   COMMAND_BAR_ARIA: {
     defaultMessage: 'Use left and right arrow keys to navigate between commands',

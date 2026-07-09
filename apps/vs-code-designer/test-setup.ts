@@ -197,7 +197,6 @@ vi.mock('./src/extensionVariables', () => ({
       monitoring: 'monitoring',
       export: 'export',
       overview: 'overview',
-      unitTest: 'unitTest',
       createWorkspace: 'createWorkspace',
       createWorkspaceFromPackage: 'createWorkspaceFromPackage',
       createLogicApp: 'createLogicApp',

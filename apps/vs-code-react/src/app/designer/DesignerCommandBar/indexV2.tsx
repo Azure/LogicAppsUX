@@ -2,13 +2,11 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
-  serializeUnitTestDefinition,
   getNodeOutputOperations,
   useIsDesignerDirty,
   validateParameter,
   updateParameterValidation,
   openPanel,
-  useAssertionsValidationErrors,
   useWorkflowParameterValidationErrors,
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
@@ -42,23 +40,19 @@ import {
   ToolbarButton,
 } from '@fluentui/react-components';
 import {
-  SaveRegular,
   ErrorCircleFilled,
   ErrorCircleRegular,
   MoreHorizontalFilled,
   MoreHorizontalRegular,
   MentionBracketsRegular,
   BeakerRegular,
-  CheckmarkRegular,
   bundleIcon,
   BugFilled,
   BugRegular,
-  SaveFilled,
   BeakerFilled,
   MentionBracketsFilled,
   LinkFilled,
   LinkRegular,
-  CheckmarkFilled,
   ArrowUndoFilled,
   ArrowUndoRegular,
   ArrowRedoFilled,
@@ -69,7 +63,6 @@ import { useSelector } from 'react-redux';
 import { useIntlMessages, designerMessages } from '../../../intl';
 
 // Designer icons
-const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
 const DiscardIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
 const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
 const RedoIcon = bundleIcon(ArrowRedoFilled, ArrowRedoRegular);
@@ -82,12 +75,8 @@ const CreateUnitTestIcon = bundleIcon(BeakerFilled, BeakerRegular);
 const BugIcon = bundleIcon(BugFilled, BugRegular);
 const MoreHorizontalIcon = bundleIcon(MoreHorizontalFilled, MoreHorizontalRegular);
 
-// Unit test icons
-const AssertionsIcon = bundleIcon(CheckmarkFilled, CheckmarkRegular);
-
 export interface DesignerCommandBarProps {
   isDarkMode: boolean;
-  isUnitTest: boolean;
   isLocal: boolean;
   runId: string;
   saveWorkflow: (workflow: Workflow, customCodeData: Record<string, string> | undefined, clearDirtyState: () => void) => Promise<any>;
@@ -99,13 +88,12 @@ export interface DesignerCommandBarProps {
   switchToDesignerView: () => void;
   switchToCodeView: () => void;
   switchToMonitoringView: () => void;
-  supportsUnitTest?: boolean;
   showRunHistory?: boolean;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isDarkMode,
-  isUnitTest,
+  isLocal,
   runId,
   saveWorkflow: _saveWorkflow,
   saveWorkflowFromCode: _saveWorkflowFromCode,
@@ -116,7 +104,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   switchToDesignerView,
   switchToCodeView,
   switchToMonitoringView,
-  supportsUnitTest,
   showRunHistory = true,
 }) => {
   const vscode = useContext(VSCodeContext);
@@ -170,30 +157,21 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   /////////////////////////////////////////////////////////////////////////////
   // Unit test
 
-  const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const definition = await serializeUnitTestDefinition(designerState);
+  // TODO(aeldridge): Enable unit test creation in V2 designer
+  // const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
+  //   const designerState = DesignerStore.getState();
+  //   const definition = await getNodeOutputOperations(designerState);
 
-    await vscode.postMessage({
-      command: ExtensionCommand.saveUnitTest,
-      definition,
-    });
-  });
+  //   vscode.postMessage({
+  //     command: ExtensionCommand.logTelemetry,
+  //     data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
+  //   });
 
-  const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const definition = await getNodeOutputOperations(designerState);
-
-    vscode.postMessage({
-      command: ExtensionCommand.logTelemetry,
-      data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
-    });
-
-    await vscode.postMessage({
-      command: ExtensionCommand.createUnitTest,
-      definition,
-    });
-  });
+  //   await vscode.postMessage({
+  //     command: ExtensionCommand.createUnitTest,
+  //     definition,
+  //   });
+  // });
 
   const onCreateUnitTestFromRun = async () => {
     const designerState = DesignerStore.getState();
@@ -230,14 +208,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
 
-  const allAssertionsErrors = useAssertionsValidationErrors();
-  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
-
-  const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
-  const isCreateUnitTestDisabled = useMemo(
-    () => isCreatingUnitTest || haveAssertionErrors || designerIsDirty,
-    [isCreatingUnitTest, haveAssertionErrors, designerIsDirty]
-  );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
     [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
@@ -320,36 +290,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     />
   );
 
-  const UnitTestItems = () => (
-    <>
-      <MenuItem
-        key="save-unit-test"
-        disabled={isSaveUnitTestDisabled}
-        onClick={() => saveUnitTestMutate()}
-        aria-label={intlText.SAVE_UNIT_TEST}
-        icon={isSavingUnitTest ? <Spinner size={'extra-tiny'} /> : <SaveIcon />}
-      >
-        {intlText.SAVE_UNIT_TEST}
-      </MenuItem>
-      <MenuItem
-        disabled={isCreateUnitTestDisabled}
-        onClick={() => createUnitTestMutate()}
-        aria-label={intlText.CREATE_UNIT_TEST}
-        icon={isCreatingUnitTest ? <Spinner size={'extra-tiny'} /> : <SaveRegular />}
-      >
-        {intlText.CREATE_UNIT_TEST}
-      </MenuItem>
-      <MenuItem
-        onClick={() => dispatch(openPanel({ panelMode: 'Assertions' }))}
-        aria-label={intlText.UNIT_TEST_ASSERTIONS}
-        icon={<AssertionsIcon />}
-      >
-        {intlText.UNIT_TEST_ASSERTIONS}
-      </MenuItem>
-      <MenuDivider />
-    </>
-  );
-
   const PanelItems = () => (
     <>
       <MenuItem
@@ -376,12 +316,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
-          {supportsUnitTest && (
+          {isLocal && (
             <MenuItem key={'create-unit-test'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
               {intlText.CREATE_UNIT_TEST_FROM_RUN}
             </MenuItem>
           )}
-          {isUnitTest && <UnitTestItems />}
           <PanelItems />
           <MenuDivider />
           <MenuItem disabled={!isDesignerView || isUndoDisabled} onClick={() => dispatch(onUndoClick())} icon={<UndoIcon />}>

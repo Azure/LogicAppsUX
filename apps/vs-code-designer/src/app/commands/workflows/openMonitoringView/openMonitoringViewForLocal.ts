@@ -19,7 +19,7 @@ import {
   getParametersFromFile,
 } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
-import { createUnitTestFromRun } from '../unitTest/codefulUnitTest/createUnitTestFromRun';
+import { createUnitTestFromRun } from '../unitTest/createUnitTestFromRun';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getRunTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
@@ -127,7 +127,6 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             isMonitoringView: this.isMonitoringView,
             runId: this.runId,
             hostVersion: ext.extensionVersion,
-            supportsUnitTest: this.isLocal && this.localSettings?.[workflowCodefulEnabledKey] !== 'true',
           },
         });
         break;

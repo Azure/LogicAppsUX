@@ -19,7 +19,6 @@ const mocks = {
   useIsA2AWorkflow: vi.fn(),
   useIsAgenticWorkflowOnly: vi.fn(),
   usePanelTabHideKeys: vi.fn(),
-  useUnitTest: vi.fn(),
   useMonitoringView: vi.fn(),
   useParameterValidationErrors: vi.fn(),
   useIsNodePinnedToOperationPanel: vi.fn(),
@@ -39,7 +38,6 @@ vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
 }));
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   usePanelTabHideKeys: () => mocks.usePanelTabHideKeys(),
-  useUnitTest: () => mocks.useUnitTest(),
   useMonitoringView: () => mocks.useMonitoringView(),
 }));
 vi.mock('../../../../core/state/operation/operationSelector', () => ({
@@ -70,9 +68,6 @@ vi.mock('../tabs/aboutTab', () => ({
 }));
 vi.mock('../tabs/codeViewTab', () => ({
   codeViewTab: vi.fn(() => ({ id: 'CODE_VIEW', title: 'Code View', visible: true, content: null, order: 6 })),
-}));
-vi.mock('../tabs/mockResultsTab/mockResultsTab', () => ({
-  mockResultsTab: vi.fn(() => ({ id: 'MOCK_RESULTS', title: 'Mock Results', visible: true, content: null, order: 0 })),
 }));
 vi.mock('../tabs/monitoringTab/monitoringTab', () => ({
   monitoringTab: vi.fn(() => ({ id: 'MONITORING', title: 'Monitoring', visible: true, content: null, order: 0 })),
@@ -126,7 +121,6 @@ describe('usePanelTabs', () => {
     mocks.useIsA2AWorkflow.mockReturnValue(false);
     mocks.useIsAgenticWorkflowOnly.mockReturnValue(false);
     mocks.usePanelTabHideKeys.mockReturnValue([]);
-    mocks.useUnitTest.mockReturnValue(false);
     mocks.useMonitoringView.mockReturnValue(false);
     mocks.useParameterValidationErrors.mockReturnValue([]);
     mocks.useIsNodePinnedToOperationPanel.mockReturnValue(false);
@@ -138,13 +132,6 @@ describe('usePanelTabs', () => {
   });
 
   afterEach(() => vi.clearAllMocks());
-
-  it('returns only mockResultsTab in unit test view', () => {
-    mocks.useUnitTest.mockReturnValue(true);
-    const { result } = renderTabs();
-    expect(result.current).toHaveLength(1);
-    expect(result.current[0].id).toBe(constants.PANEL_TAB_NAMES.MOCK_RESULTS);
-  });
 
   it.each([SUBGRAPH_TYPES.SWITCH_CASE, SUBGRAPH_TYPES.AGENT_CONDITION])('returns only parametersTab for %s nodes', (subgraphType) => {
     mocks.useNodeMetadata.mockReturnValue({ subgraphType });

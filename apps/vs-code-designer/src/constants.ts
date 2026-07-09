@@ -21,7 +21,6 @@ export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
-export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
 export const sdkLspServer = 'SdkLspServer';
 
@@ -42,7 +41,6 @@ export const lspDirectory = 'LanguageServerLogicApps';
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
 export const testMockOutputsDirectory = 'MockOutputs';
-export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 export const devContainerFolderName = '.devcontainer';
 export const assetsFolderName = 'assets';
@@ -277,7 +275,6 @@ export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValid
 export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
-export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 export const onStartLanguageServer = 'onStartLanguageServer';
@@ -388,9 +385,6 @@ export const logicAppFilter = {
   kind: 'functionapp,workflowapp',
 };
 
-// Telemetry Events
-export const saveUnitTestEvent = 'saveUnitTestDefinition';
-export const runUnitTestEvent = 'runUnitTest';
 // Container Apps
 export const containerAppsId = 'containerApps';
 export const managedEnvironmentsId = 'managedEnvironments';
