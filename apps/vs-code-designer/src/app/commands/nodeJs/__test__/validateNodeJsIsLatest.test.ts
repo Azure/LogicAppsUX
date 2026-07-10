@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { nodeJsDependencyName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
-import { binariesExist, getLatestNodeJsVersion } from '../../../utils/binaries';
+import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../../utils/binaries';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { installNodeJs } from '../installNodeJs';
@@ -38,6 +38,7 @@ vi.mock('../../../../extensionVariables', () => ({
 vi.mock('../../../utils/binaries', () => ({
   binariesExist: vi.fn(),
   getLatestNodeJsVersion: vi.fn(),
+  verifyDependencyIntegrity: vi.fn(() => true),
 }));
 
 vi.mock('../../../utils/nodeJs/nodeJsVersion', () => ({
@@ -79,6 +80,31 @@ describe('validateNodeJsIsLatest', () => {
     vi.mocked(vscode.window.withProgress).mockImplementation(async (_options, task) => task({} as any, {} as any));
     vi.mocked(vscode.window.showInformationMessage).mockResolvedValue(undefined);
     vi.mocked(vscode.window.showErrorMessage).mockResolvedValue(undefined);
+  });
+
+  it('reinstalls when binaries exist but the on-disk integrity check fails', async () => {
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
+
+    await validateNodeJsIsLatest('20');
+
+    expect(verifyDependencyIntegrity).toHaveBeenCalledWith(contextRef.current, nodeJsDependencyName);
+    expect(installNodeJs).toHaveBeenCalledWith(contextRef.current, '20');
+    expect(contextRef.current.telemetry.properties.integrityValid).toBe('false');
+    expect(getLocalNodeJsVersion).not.toHaveBeenCalled();
+  });
+
+  it('does not reinstall when binaries exist and the on-disk integrity check passes', async () => {
+    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(verifyDependencyIntegrity).mockReturnValue(true);
+    vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
+    vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.0.0');
+
+    await validateNodeJsIsLatest('18');
+
+    expect(installNodeJs).not.toHaveBeenCalled();
+    expect(contextRef.current.telemetry.properties.integrityValid).toBe('true');
   });
 
   it('installs without checking GitHub latest version when binaries are missing', async () => {

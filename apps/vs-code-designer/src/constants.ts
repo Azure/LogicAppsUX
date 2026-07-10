@@ -277,6 +277,10 @@ export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValid
 export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
+// Timeout (ms) for dependency version/metadata HTTP lookups so activation can't hang on a stalled request.
+export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
+// On-disk integrity manifest written into each installed runtime dependency folder to detect corrupt/incomplete installs.
+export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
