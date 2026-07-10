@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { WorkspaceFolder } from 'vscode';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as verifyIsProject from '../verifyIsProject';
-import { codefulWorkflowFileName, hostFileName, localSettingsFileName, workflowFileName } from '../../../constants';
+import { hostFileName, localSettingsFileName, workflowFileName } from '../../../constants';
 
 describe('tryGetAllLogicAppProjectRoots', () => {
   const testWorkspaceFolderPath = path.join('test', 'workspace', 'LogicApp1');
@@ -29,7 +29,7 @@ describe('tryGetAllLogicAppProjectRoots', () => {
   });
 
   it('should return the folderPath if it is a logic app project', async () => {
-    vi.spyOn(fse, 'pathExists').mockImplementation(async (filePath: fse.PathLike) => !String(filePath).endsWith(codefulWorkflowFileName));
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
     vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
       if (filePath === testWorkspaceFolderPath) return [hostFileName, 'workflow1'];
       if (filePath === path.join(testWorkspaceFolderPath, 'workflow1')) return [workflowFileName];
@@ -57,7 +57,7 @@ describe('tryGetAllLogicAppProjectRoots', () => {
     const testLogicAppProjectPath1 = path.join(testWorkspaceFolderPath, 'LogicApp1');
     const testLogicAppProjectPath2 = path.join(testWorkspaceFolderPath, 'LogicApp2');
 
-    vi.spyOn(fse, 'pathExists').mockImplementation(async (filePath: fse.PathLike) => !String(filePath).endsWith(codefulWorkflowFileName));
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
     vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
       if (filePath === testWorkspaceFolderPath) return ['LogicApp1', 'LogicApp2'];
       if (filePath === testLogicAppProjectPath1) return [hostFileName, 'workflow1'];
@@ -95,7 +95,7 @@ describe('tryGetAllLogicAppProjectRoots', () => {
   });
 
   it('should return an empty array if no logic app project is found in root or subfolders', async () => {
-    vi.spyOn(fse, 'pathExists').mockImplementation(async (filePath: fse.PathLike) => !String(filePath).endsWith(codefulWorkflowFileName));
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
     vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
       if (filePath === testWorkspaceFolderPath) return ['sub1', 'sub2'];
       if (filePath === path.join(testWorkspaceFolderPath, 'sub1')) return [workflowFileName];
@@ -128,7 +128,7 @@ describe('isLogicAppProject', () => {
 
   it('detects a codeless project via workflow.json even when host.json is missing', async () => {
     const workflowJsonPath = path.join(projectPath, 'stateful1', workflowFileName);
-    // No host.json, no local.settings.json, no workflow.cs on disk — only the workflow folder exists.
+    // No host.json, no local.settings.json, no .csproj on disk — only the workflow folder exists.
     vi.spyOn(fse, 'pathExists').mockImplementation(async (p: fse.PathLike) => {
       const s = String(p);
       return s === projectPath || s === workflowJsonPath;
@@ -172,16 +172,27 @@ describe('isLogicAppProject', () => {
     expect(await verifyIsProject.isLogicAppProject(projectPath)).toBe(true);
   });
 
-  it('detects a codeful project via workflow.cs at the project root', async () => {
-    const workflowCsPath = path.join(projectPath, codefulWorkflowFileName);
-    vi.spyOn(fse, 'pathExists').mockImplementation(async (p: fse.PathLike) => {
-      const s = String(p);
-      return s === projectPath || s === workflowCsPath;
-    });
+  it('detects a codeful project via its .csproj SDK reference regardless of the workflow .cs file name', async () => {
+    const csprojPath = path.join(projectPath, 'MyLogicApp.csproj');
+    // A codeful project is a .NET 8 project referencing the Logic Apps SDK; the workflow C# file
+    // can be named anything (here, MyCustomWorkflow.cs — not workflow.cs). Detection is structural
+    // (via the .csproj), so a literal workflow.cs is never required.
+    vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as unknown as fse.Stats);
+    vi.spyOn(fse, 'pathExists').mockImplementation(async (p: fse.PathLike) => String(p) === projectPath);
     vi.spyOn(fse, 'readdir').mockImplementation(async (p: fse.PathLike) =>
-      String(p) === projectPath ? [codefulWorkflowFileName, 'Program.cs'] : []
+      String(p) === projectPath ? ['MyLogicApp.csproj', 'MyCustomWorkflow.cs', 'Program.cs'] : []
     );
-    vi.spyOn(fse, 'readFile').mockResolvedValue('');
+    vi.spyOn(fse, 'readFile').mockImplementation(async (p: fse.PathLike) => {
+      if (String(p) === csprojPath) {
+        return [
+          '<Project Sdk="Microsoft.NET.Sdk">',
+          '  <PropertyGroup><TargetFramework>net8</TargetFramework></PropertyGroup>',
+          '  <ItemGroup><PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview.1" /></ItemGroup>',
+          '</Project>',
+        ].join('\n');
+      }
+      return '';
+    });
 
     expect(await verifyIsProject.isLogicAppProject(projectPath)).toBe(true);
   });
