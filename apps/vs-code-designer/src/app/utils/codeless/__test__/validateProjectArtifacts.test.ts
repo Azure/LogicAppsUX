@@ -508,15 +508,15 @@ describe('validateProjectArtifacts', () => {
       expect(writtenPaths.some((p) => p.includes('workflow-designtime-backup/workflow-designtime/host.json'))).toBe(true);
     });
 
-    // Golden / characterization tests: lock the exact content written for each design-time file, per
+    // Characterization tests: lock the exact content written for each design-time file, per
     // logic app type. The expected objects are reconstructed explicitly from the shared constants
     // (rather than referencing hostFileContent / getLocalSettingsSchema directly), so a structural
     // change to the generated files is caught while the key/value strings stay in sync with the
     // named constants the codebase uses.
-    describe('golden content by logic app type', () => {
+    describe('expected content by logic app type', () => {
       // Mirrors the host.json that startDesignTimeApi generated inline before the regeneration
       // refactor. It is the regression baseline for the design-time host.
-      const goldenHostJson = {
+      const expectedHostJson = {
         version: '2.0',
         extensionBundle: {
           id: extensionBundleId,
@@ -538,7 +538,7 @@ describe('validateProjectArtifacts', () => {
 
         await regenerateDesignTimeDirectory(context, projectPath);
 
-        expect(writtenContentFor('host.json')).toEqual(goldenHostJson);
+        expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
       });
 
       it('writes host.json equal to the design-time host baseline (codeful)', async () => {
@@ -549,7 +549,7 @@ describe('validateProjectArtifacts', () => {
         await regenerateDesignTimeDirectory(context, projectPath);
 
         // host.json is type-independent: the codeful project produces the same host.json.
-        expect(writtenContentFor('host.json')).toEqual(goldenHostJson);
+        expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
       });
 
       it('writes design-time local.settings.json with the exact baseline and upserts Node runtime (codeless)', async () => {
@@ -614,7 +614,7 @@ describe('validateProjectArtifacts', () => {
         await regenerateDesignTimeDirectory(context, projectPath);
 
         // Both artifacts are rewritten to the codeful baseline.
-        expect(writtenContentFor('host.json')).toEqual(goldenHostJson);
+        expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
         expect(writtenContentFor('local.settings.json')).toEqual({
           IsEncrypted: false,
           Values: {
@@ -634,7 +634,7 @@ describe('validateProjectArtifacts', () => {
 
     // Mirrors the project-level host.json produced by the creation path
     // (CreateLogicAppWorkspace.getHostContent). Regression baseline for the root host.json.
-    const goldenRootHostJson = {
+    const expectedRootHostJson = {
       version: '2.0',
       logging: {
         applicationInsights: {
@@ -656,7 +656,7 @@ describe('validateProjectArtifacts', () => {
       const created = await regenerateRootHostFile(projectPath);
 
       expect(created).toBe(true);
-      expect(writtenContentFor('host.json')).toEqual(goldenRootHostJson);
+      expect(writtenContentFor('host.json')).toEqual(expectedRootHostJson);
     });
 
     it('regenerates host.json when it exists but is invalid', async () => {
@@ -665,7 +665,7 @@ describe('validateProjectArtifacts', () => {
       const created = await regenerateRootHostFile(projectPath);
 
       expect(created).toBe(true);
-      expect(writtenContentFor('host.json')).toEqual(goldenRootHostJson);
+      expect(writtenContentFor('host.json')).toEqual(expectedRootHostJson);
     });
 
     it('preserves a valid existing host.json and does not rewrite it', async () => {

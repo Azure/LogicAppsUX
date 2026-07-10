@@ -22,8 +22,9 @@ describe('utils/appSettings', () => {
   // extension generates: the project-root (runtime) file (isDesignTime=false) and the
   // workflow-designtime/ folder file (isDesignTime=true). It is shared by fresh project creation
   // (CreateLogicAppWorkspace.createLocalConfigurationFiles), the design-time API startup, and
-  // regeneration of source-controlled clones (validateProjectArtifacts), so these golden tests lock
-  // the exact content and key order per (isDesignTime x ProjectType) so those paths cannot drift apart.
+  // regeneration of source-controlled clones (validateProjectArtifacts), so these characterization
+  // tests lock the exact content and key order per (isDesignTime x ProjectType) so those paths
+  // cannot drift apart.
   describe('getLocalSettingsSchema', () => {
     const projectPath = 'path/to/project';
 
@@ -52,7 +53,7 @@ describe('utils/appSettings', () => {
       expect(settings['Values']).toHaveProperty(ProjectDirectoryPathKey, projectPath);
     });
 
-    // Golden / characterization tests: lock the exact content of every local.settings.json this
+    // Characterization tests: lock the exact content of every local.settings.json this
     // extension generates, for every logic-app content axis. The content varies by
     // (isDesignTime x ProjectType).
     //
@@ -60,7 +61,7 @@ describe('utils/appSettings', () => {
     // the codebase uses) rather than magic strings. The assertions still reconstruct the full
     // expected object explicitly and deep-equal it, so a structural regression (a setting added,
     // dropped, or moved to the wrong branch) is caught.
-    describe('golden root content by logic app type', () => {
+    describe('expected root content by logic app type', () => {
       const baseRootValues = {
         [azureWebJobsStorageKey]: localEmulatorConnectionString,
         [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
@@ -122,7 +123,7 @@ describe('utils/appSettings', () => {
       });
     });
 
-    describe('golden design-time content by logic app type', () => {
+    describe('expected design-time content by logic app type', () => {
       it('design-time local.settings.json (codeless / Standard Node)', () => {
         expect(getLocalSettingsSchema(true, projectPath, ProjectType.logicApp)).toEqual({
           IsEncrypted: false,
