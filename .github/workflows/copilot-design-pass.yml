@@ -1,0 +1,179 @@
+name: "Copilot: Design Pass"
+
+# Generates a structured design document when an issue is labeled "needs-design".
+# The design doc is posted as an issue comment for engineer review and iteration.
+#
+# Trigger: Issue labeled "needs-design" (manually or via issue template)
+# Output: Structured comment with user flows, component architecture, states,
+#         token usage, accessibility plan, and open questions.
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+  issues: write
+  copilot-requests: write
+
+concurrency:
+  group: copilot-design-pass-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  design-pass:
+    if: github.event.label.name == 'needs-design'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check invoker permissions
+        id: check-perms
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PERMISSION=$(gh api \
+            "repos/${{ github.repository }}/collaborators/${{ github.event.sender.login }}/permission" \
+            --jq '.permission' 2>/dev/null) || PERMISSION="none"
+
+          if [ "$PERMISSION" != "admin" ] && [ "$PERMISSION" != "write" ] && [ "$PERMISSION" != "maintain" ]; then
+            echo "::notice::Label applied by user without write access. Skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post acknowledgment
+        if: steps.check-perms.outputs.should_run == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          cat > "$RUNNER_TEMP/ack-body.txt" << 'ENDACK'
+          **Design pass started** — generating a structured design document for this feature. This typically takes 3-5 minutes.
+
+          The design doc will cover: user flows, component architecture, states and transitions, Fluent UI v9 token usage, accessibility (WCAG 2.2), responsive behavior, and edge cases.
+
+          You can iterate by commenting on the design doc once it is posted.
+          ENDACK
+
+          gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/ack-body.txt"
+
+      - name: Install Copilot CLI
+        if: steps.check-perms.outputs.should_run == 'true'
+        run: npm install -g @github/copilot@latest
+
+      - name: Build design context
+        if: steps.check-perms.outputs.should_run == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          ISSUE_TITLE=$(gh issue view "$ISSUE_NUMBER" --json title --jq '.title')
+          ISSUE_BODY=$(gh issue view "$ISSUE_NUMBER" --json body --jq '.body')
+          ISSUE_LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels --jq '[.labels[].name] | join(", ")')
+          ISSUE_COMMENTS=$(gh issue view "$ISSUE_NUMBER" --json comments \
+            --jq '[.comments[] | "**" + .author.login + ":** " + .body] | join("\n\n---\n\n")' \
+            2>/dev/null) || ISSUE_COMMENTS=""
+
+          cat > "$RUNNER_TEMP/design-context.md" << ENDCONTEXT
+          # Design Request: ${ISSUE_TITLE}
+
+          **Labels:** ${ISSUE_LABELS}
+
+          ## Issue Description
+
+          ${ISSUE_BODY}
+
+          ENDCONTEXT
+
+          if [ -n "$ISSUE_COMMENTS" ]; then
+            cat >> "$RUNNER_TEMP/design-context.md" << ENDCOMMENTS
+          ## Discussion
+
+          ${ISSUE_COMMENTS}
+
+          ENDCOMMENTS
+          fi
+
+          cat >> "$RUNNER_TEMP/design-context.md" << 'ENDTASK'
+          ---
+
+          Generate a complete design document following the template in the system prompt.
+          Post the result as a single well-structured comment.
+          ENDTASK
+
+      - name: Run design agent
+        if: steps.check-perms.outputs.should_run == 'true'
+        id: design
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          SYSTEM_PROMPT=$(cat prompts/copilot-design-pass.md)
+          DESIGN_CONTEXT=$(cat "$RUNNER_TEMP/design-context.md")
+
+          FULL_PROMPT="${SYSTEM_PROMPT}
+
+          ---
+
+          ${DESIGN_CONTEXT}"
+
+          printf '%s' "$FULL_PROMPT" > "$RUNNER_TEMP/full-prompt.txt"
+
+          set +e
+          RESULT=$(COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" timeout 840 copilot \
+            -f "$RUNNER_TEMP/full-prompt.txt" \
+            -s \
+            --no-ask-user \
+            --model claude-opus-4.8 \
+            --allow-all 2>/dev/null)
+          EXIT_CODE=$?
+          set -e
+
+          if [ $EXIT_CODE -ne 0 ] || [ -z "$RESULT" ]; then
+            echo "::warning::Copilot CLI returned empty or failed (exit $EXIT_CODE)"
+
+            cat > "$RUNNER_TEMP/error-body.txt" << 'ENDERROR'
+          **Design pass could not complete.** The AI agent timed out or encountered an error.
+
+          You can retry by removing and re-adding the `needs-design` label, or write the design document manually using the template in `prompts/copilot-design-pass.md`.
+          ENDERROR
+
+            gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/error-body.txt"
+            exit 1
+          fi
+
+          # Post the design document as a comment
+          MARKER="<!-- copilot-design-pass -->"
+
+          cat > "$RUNNER_TEMP/design-body.txt" << ENDDESIGN
+          ${MARKER}
+          ${RESULT}
+
+          ---
+          *Generated by Copilot Design Pass. Review, iterate, and refine before implementation.*
+          ENDDESIGN
+
+          # Check for existing design comment to update
+          EXISTING=$(gh api "repos/${REPO}/issues/${ISSUE_NUMBER}/comments" \
+            --jq '[.[] | select(.body | contains("copilot-design-pass")) | .id][0] // empty' \
+            2>/dev/null) || EXISTING=""
+
+          if [ -n "$EXISTING" ]; then
+            gh api "repos/${REPO}/issues/comments/${EXISTING}" \
+              --method PATCH --input "$RUNNER_TEMP/design-body.txt" >/dev/null 2>&1
+          else
+            gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/design-body.txt"
+          fi
+
+      - name: Label as design-ready
+        if: steps.check-perms.outputs.should_run == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --add-label "design-ready"
