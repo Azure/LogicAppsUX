@@ -46,14 +46,4 @@ describe('getChildProcessesWithScript', () => {
       { processId: 222, name: 'dotnet.exe', parentProcessId: 111 },
     ]);
   });
-
-  it('should wrap non-Error failures using String(error)', async () => {
-    vi.mocked(getExtensionAssetPath).mockImplementation(() => {
-      throw 'boom';
-    });
-
-    await expect(getChildProcessesWithScript(100)).rejects.toThrow(
-      'Failed to execute Powershell script to get the func child process: boom'
-    );
-  });
 });

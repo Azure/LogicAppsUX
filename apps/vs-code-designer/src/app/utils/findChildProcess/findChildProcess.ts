@@ -1,6 +1,7 @@
 import * as cp from 'child_process';
 import { ext } from '../../../extensionVariables';
 import { getExtensionAssetPath } from '../extensionAssets';
+import { localize } from '../../../localize';
 
 interface ProcessInfo {
   processId: number;
@@ -66,7 +67,11 @@ export async function getChildProcessesWithScript(parentProcessId: number): Prom
     }));
   } catch (error) {
     throw new Error(
-      `Failed to execute Powershell script to get the func child process: ${error instanceof Error ? error.message : String(error)}`
+      localize(
+        'getChildProcessesWithScriptError',
+        'Failed to execute Powershell script to get the func child process. Error: "{0}".',
+        error instanceof Error ? error.message : String(error)
+      )
     );
   }
 }

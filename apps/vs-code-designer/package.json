@@ -44,7 +44,6 @@
     "mocha": "^11.7.1",
     "portfinder": "1.0.32",
     "process": "^0.11.10",
-    "process-tree": "^1.0.3",
     "ps-tree": "^1.2.0",
     "recursive-copy": "^2.0.14",
     "semver": "^6.3.1",

@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import { ext } from '../../../extensionVariables';
 import type { IRunningFuncTask } from '../../utils/funcCoreTools/funcHostTask';
 import * as findChildProcessModule from '../../utils/findChildProcess/findChildProcess';
-import * as windowsProcessModule from '../../utils/windowsProcess';
 
 // Mock ps-tree to prevent spawning `ps` on Windows hosts.
 vi.mock('ps-tree', () => ({
@@ -316,7 +315,6 @@ describe('pickWorkflowDebugProcess', () => {
     vi.unstubAllGlobals();
     (vscode.window as any).activeTerminal = undefined;
     vi.mocked(ext.outputChannel.appendLog).mockClear();
-    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -563,12 +561,11 @@ describe('getWindowsChildren', () => {
     vi.restoreAllMocks();
   });
 
-  it('should prefer the PowerShell child-process script on Windows', async () => {
+  it('should resolve child processes using the PowerShell script', async () => {
     vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
       { processId: 111, name: 'func.exe', parentProcessId: 100 },
-      { processId: 222, name: 'dotnet.exe', parentProcessId: 111 },
+      { processId: 222, name: 'dotnet.exe', parentProcessId: 100 },
     ]);
-    const getWindowsProcessSpy = vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
 
     const result = await pickFuncProcessModule.getWindowsChildren(100);
 
@@ -576,27 +573,25 @@ describe('getWindowsChildren', () => {
       { command: 'func.exe', pid: 111 },
       { command: 'dotnet.exe', pid: 222 },
     ]);
-    expect(getWindowsProcessSpy).not.toHaveBeenCalled();
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      expect.stringContaining('Resolved Windows child processes for PID "100" using the PowerShell child-process script.')
-    );
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Resolved Windows child processes'));
   });
 
-  it('should fall back to process-tree when the PowerShell child-process script fails', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockRejectedValue(new Error('script failed'));
-    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([
-      { name: 'func.exe', pid: 111 } as any,
-      { name: 'dotnet.exe', pid: 222 } as any,
-    ]);
+  it('should return empty array when no child processes are found', async () => {
+    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([]);
 
     const result = await pickFuncProcessModule.getWindowsChildren(100);
 
-    expect(result).toEqual([
-      { command: 'func.exe', pid: 111 },
-      { command: 'dotnet.exe', pid: 222 },
-    ]);
+    expect(result).toEqual([]);
+  });
+
+  it('should return empty array and log when the script throws', async () => {
+    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockRejectedValue(new Error('script failed'));
+
+    const result = await pickFuncProcessModule.getWindowsChildren(100);
+
+    expect(result).toEqual([]);
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      expect.stringContaining('Falling back to process-tree for Windows child process resolution on PID "100". Error: script failed')
+      expect.stringContaining('Failed to resolve Windows child processes for PID "100"')
     );
   });
 });
@@ -633,7 +628,6 @@ describe('custom code dual-attach regression', () => {
     vi.unstubAllGlobals();
     (vscode.window as any).activeTerminal = undefined;
     vi.mocked(ext.outputChannel.appendLog).mockClear();
-    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
     setProcessPlatform('win32');
 
     // Script returns only DIRECT children of the queried PID
@@ -729,7 +723,6 @@ describe('multi-dotnet descendant trees', () => {
     vi.unstubAllGlobals();
     (vscode.window as any).activeTerminal = undefined;
     vi.mocked(ext.outputChannel.appendLog).mockClear();
-    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
     setProcessPlatform('win32');
 
     // Script returns only DIRECT children of the queried PID

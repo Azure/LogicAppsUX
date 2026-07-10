@@ -22,13 +22,12 @@ import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getChildProcessesWithScript } from '../utils/findChildProcess/findChildProcess';
-import { getWindowsProcess } from '../utils/windowsProcess';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { Platform, ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
@@ -48,7 +47,10 @@ const workflowProcessRegex = /(dotnet|func)(\.exe|)$/i;
  * @param debugConfig The debug configuration.
  * @returns A promise that resolves to the child process ID or undefined if not found.
  */
-export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration | undefined): Promise<string | undefined> {
+export async function pickFuncProcess(
+  context: IActionContext,
+  debugConfig: vscode.DebugConfiguration | undefined
+): Promise<string | undefined> {
   if (!debugConfig) {
     throw new Error(localize('noDebugConfig', 'Debug configuration is undefined.'));
   }
@@ -474,7 +476,8 @@ export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess
       ext.outputChannel.appendLog(
         localize(
           'workflowDebugProcessScript',
-          'Resolved Windows child processes for PID "{0}" using the PowerShell child-process script.',
+          'Resolved Windows child processes "{0}" for parent PID "{1}".',
+          processes.map((c) => c.name).join(', '),
           pid
         )
       );
@@ -485,18 +488,15 @@ export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess
   } catch (error) {
     ext.outputChannel.appendLog(
       localize(
-        'workflowDebugProcessScriptFallback',
-        'Falling back to process-tree for Windows child process resolution on PID "{0}". Error: {1}',
+        'workflowDebugProcessScriptError',
+        'Failed to resolve Windows child processes for PID "{0}". Error: "{1}".',
         pid,
         error instanceof Error ? error.message : String(error)
       )
     );
   }
 
-  const processes: IProcessInfo[] = await getWindowsProcess(pid);
-  return (processes || []).map((c) => {
-    return { command: c.name, pid: c.pid };
-  });
+  return [];
 }
 
 async function pickFuncHostChildProcess(taskInfo: IRunningFuncTask): Promise<string | undefined> {
