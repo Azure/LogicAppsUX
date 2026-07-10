@@ -235,7 +235,7 @@ describe('validateProjectArtifacts', () => {
   });
 
   // Behavior by logic app type: regeneration builds the root local.settings.json from the same shared
-  // source of truth as fresh project creation (getRootLocalSettings). The project type is inferred from
+  // source of truth as fresh project creation (getLocalSettingsSchema). The project type is inferred from
   // the project files (detectLogicAppProjectType): codeful via hasCodefulSdkReference, and customCode /
   // rulesEngine via a sibling custom-code functions (.csproj) project in the workspace root. As a
   // result every type regenerates the same content a freshly created project of that type would.

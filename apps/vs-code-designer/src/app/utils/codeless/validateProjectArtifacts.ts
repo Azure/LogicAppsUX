@@ -20,12 +20,7 @@ import {
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import {
-  addOrUpdateLocalAppSettings,
-  getLocalSettingsJson,
-  getLocalSettingsSchema,
-  getRootLocalSettings,
-} from '../appSettings/localSettings';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { hasCodefulSdkReference } from '../codeful';
@@ -176,7 +171,7 @@ export async function regenerateLocalSettings(context: IActionContext, projectPa
   // local.settings.json matches what a newly created project of this type would produce. The project
   // type is inferred from the project files because a source-controlled clone has no explicit marker.
   const logicAppType = await detectLogicAppProjectType(projectPath);
-  const baselineValues = getRootLocalSettings(projectPath, logicAppType).Values ?? {};
+  const baselineValues = getLocalSettingsSchema(false, projectPath, logicAppType).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
@@ -409,8 +404,8 @@ export async function regenerateDesignTimeDirectory(context: IActionContext, pro
   }
 
   if (!validation.settingsFileValid) {
-    const isCodeful = (await hasCodefulSdkReference(projectPath)) ?? false;
-    const settingsFileContent = getLocalSettingsSchema(true, projectPath, isCodeful);
+    const logicAppType = await detectLogicAppProjectType(projectPath);
+    const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType);
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, localSettingsFileName), settingsFileContent);
     await addOrUpdateLocalAppSettings(
       context,

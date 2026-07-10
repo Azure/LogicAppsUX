@@ -175,12 +175,24 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
 }
 
 /**
- * Retrieves the local settings schema based on the project path and design time flag.
- * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
- * @param {string} projectPath - The path of the project.
- * @returns The local settings schema.
+ * Builds the content for one of the two local.settings.json files this extension generates, from a
+ * single source of truth so every path (fresh project creation, design-time API startup, and
+ * regeneration of a source-controlled clone) produces byte-for-byte identical files that cannot drift
+ * apart.
+ *
+ * The `isDesignTime` flag selects which file is produced:
+ * - `true`  -> the `workflow-designtime/` folder file (Node worker runtime + secret storage type).
+ * - `false` -> the project-root (runtime) file. Its key order mirrors the creation path
+ *              (CreateLogicAppWorkspace.createLocalConfigurationFiles), and it is `ProjectType`-aware:
+ *              non-plain types add the multi-language worker feature flag.
+ *
+ * `WORKFLOW_CODEFUL_ENABLED` is appended (last) for codeful projects in both files.
+ * @param {boolean} isDesignTime - Whether to build the design-time folder file (true) or the project-root file (false).
+ * @param {string} [projectPath] - Absolute path to the logic app project folder (ProjectDirectoryPath value). Omitted -> the key is not written.
+ * @param {ProjectType} [logicAppType] - The logic app project type; drives the multi-language worker and codeful flags.
+ * @returns {ILocalSettingsJson} The local.settings.json content.
  */
-export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, isCodeful?: boolean): ILocalSettingsJson => {
+export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, logicAppType?: ProjectType): ILocalSettingsJson => {
   const values: Record<string, string> = {};
 
   if (isDesignTime) {
@@ -201,40 +213,9 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     if (projectPath) {
       values[ProjectDirectoryPathKey] = projectPath;
     }
-  }
-
-  if (isCodeful) {
-    values[workflowCodefulEnabledKey] = 'true';
-  }
-
-  return {
-    IsEncrypted: false,
-    Values: values,
-  };
-};
-
-/**
- * Builds the project-root (runtime) local.settings.json content for a logic app of the given type.
- *
- * This is the single source of truth shared by the workspace-creation path
- * (CreateLogicAppWorkspace.createLocalConfigurationFiles) and the regeneration path
- * (validateProjectArtifacts.regenerateLocalSettings) so a regenerated file is key-for-key identical to
- * what a freshly created project of the same type would produce and the two paths cannot drift apart.
- * @param {string} logicAppFolderPath - Absolute path to the logic app project folder (ProjectDirectoryPath value).
- * @param {ProjectType} logicAppType - The logic app project type.
- * @returns {ILocalSettingsJson} The root local.settings.json content.
- */
-export const getRootLocalSettings = (logicAppFolderPath: string, logicAppType: ProjectType): ILocalSettingsJson => {
-  const values: Record<string, string> = {
-    [azureWebJobsStorageKey]: localEmulatorConnectionString,
-    [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
-    [workerRuntimeKey]: WorkerRuntime.Dotnet,
-    [appKindSetting]: logicAppKind,
-    [ProjectDirectoryPathKey]: logicAppFolderPath,
-  };
-
-  if (logicAppType !== ProjectType.logicApp) {
-    values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
+    if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
+      values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
+    }
   }
 
   if (logicAppType === ProjectType.codeful) {
