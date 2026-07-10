@@ -74,7 +74,7 @@ describe('parameterizeConnections', () => {
   it('should notify if all connections are already parameterized', async () => {
     vi.spyOn(parameterizerUtil, 'areAllConnectionsParameterized').mockReturnValue(true);
     await parameterizeConnections(testContext, testLogicAppProjectPath1);
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       localizeUtil.localize('connectionsAlreadyParameterized', 'Connections are already parameterized.')
     );
     expect(parameterUtil.saveWorkflowParameter).not.toHaveBeenCalled();

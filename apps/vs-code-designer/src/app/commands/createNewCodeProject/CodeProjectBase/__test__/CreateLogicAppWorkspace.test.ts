@@ -15,6 +15,7 @@ import * as cloudToLocalUtilsModule from '../../../../utils/cloudToLocalUtils';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+import { ext } from '../../../../../extensionVariables';
 
 vi.mock('vscode', () => ({
   window: {
@@ -1010,7 +1011,7 @@ describe('createLogicAppWorkspace', () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, true);
 
     expect(cloudToLocalUtilsModule.logicAppPackageProcessing).toHaveBeenCalled();
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished extracting package'));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Finished extracting package'));
   });
 
   it('should create function app files for custom code projects when not from package', async () => {
@@ -1057,10 +1058,10 @@ describe('createLogicAppWorkspace', () => {
     );
   });
 
-  it('should show success message after workspace creation', async () => {
+  it('should log success message after workspace creation', async () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, false);
 
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
   });
 });
 

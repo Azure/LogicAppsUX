@@ -96,7 +96,7 @@ export async function addConnectionData(
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
   await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
 
-  vscode.window.showInformationMessage(localize('azureFunctions.addConnection', 'Connection added.'));
+  ext.outputChannel.appendLog(localize('azureFunctions.addConnection', 'Connection added.'));
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {

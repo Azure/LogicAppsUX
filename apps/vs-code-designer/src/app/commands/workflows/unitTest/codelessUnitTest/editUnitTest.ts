@@ -11,6 +11,7 @@ import { readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { getUnitTestName, pickUnitTestNode } from '../../../../utils/unitTest/codelessUnitTest';
+import { ext } from '../../../../../extensionVariables';
 
 /**
  * Edits a unit test for a Logic App workflow.
@@ -42,6 +43,6 @@ export async function editUnitTest(context: IActionContext, node: vscode.Uri | v
     const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, unitTestDefinition);
     await openDesignerObj?.createPanel();
   } else {
-    vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
+    ext.outputChannel.appendLog(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
   }
 }
