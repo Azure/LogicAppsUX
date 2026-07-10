@@ -2,14 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  extensionBundleId,
-  hostFileName,
-  extensionCommand,
-  workflowFileName,
-  codefulWorkflowFileName,
-  customExtensionContext,
-} from '../../constants';
+import { extensionCommand, workflowFileName, codefulWorkflowFileName, customExtensionContext } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -23,94 +16,64 @@ import { hasCodefulWorkflowSetting } from './codeful';
 
 const projectSubpathKey = 'projectSubpath';
 
-// Use 'host.json' and 'local.settings.json' as an indicator that this is a functions project
+/**
+ * Determines whether the given folder is a Logic Apps project.
+ *
+ * A Logic Apps project is identified by a workflow-folder signal — any one of:
+ *   - a codeless `workflow.json` one level down whose `definition.$schema` is a
+ *     `Microsoft.Logic` workflow-definition schema,
+ *   - a codeful `workflow.cs` at the project root, or
+ *   - the codeful workspace setting (`hasCodefulWorkflowSetting`).
+ *
+ * host.json is intentionally NOT required. Source-controlled projects commonly
+ * gitignore `host.json` and `local.settings.json`, so a freshly cloned project can
+ * be missing (or have a corrupted) host.json yet still be a valid Logic Apps project.
+ * Keying off the workflow signal lets the extension recognize such a project and
+ * heal/regenerate the missing artifacts (host.json, local.settings.json,
+ * workflow-designtime) before starting. host.json is also a generic Azure Functions
+ * artifact, so its mere presence is not a reliable Logic Apps indicator.
+ */
 export async function isLogicAppProject(folderPath: string): Promise<boolean> {
-  const hostFilePath = path.join(folderPath, hostFileName);
-  if (!(await fse.pathExists(hostFilePath))) {
+  if (!(await fse.pathExists(folderPath))) {
     return false;
   }
 
-  const subpaths: string[] = await fse.readdir(folderPath);
-
-  // Helper function to validate a workflow JSON file
-  async function isValidCodefulWorkflowFolder(workflowCsPath: string): Promise<boolean> {
-    if (!(await fse.pathExists(workflowCsPath))) {
-      return false;
-    }
-    const filesInSubpath = await fse.readdir(path.dirname(workflowCsPath));
-    if (filesInSubpath.includes(codefulWorkflowFileName)) {
-      return true;
-    }
+  let subpaths: string[];
+  try {
+    subpaths = await fse.readdir(folderPath);
+  } catch {
     return false;
   }
 
-  // Helper function to validate a workflow JSON file
-  async function isValidCodelessWorkflowFolder(workflowJsonPath: string): Promise<boolean> {
-    if (!(await fse.pathExists(workflowJsonPath))) {
-      return false;
-    }
-    try {
-      const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
-      let isJsonWorkflow = false;
-      if (filesInSubpath.includes(workflowFileName)) {
-        const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
-        const workflowJson = JSON.parse(workflowJsonData);
-        const schema = workflowJson?.definition?.$schema;
-        isJsonWorkflow = schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
-      }
-      const workflowCsPaths = subpaths.map((subpath) => path.join(folderPath, subpath, codefulWorkflowFileName));
-      const validWorkflowCsPaths = await Promise.all(
-        workflowCsPaths.map(async (workflowCsPath) => {
-          if (await fse.pathExists(workflowCsPath)) {
-            return true;
-          }
-          return false;
-        })
-      );
+  // Codeful projects place workflow.cs at the root of the logic app project.
+  const hasValidCodefulWorkflow = await fse.pathExists(path.join(folderPath, codefulWorkflowFileName));
 
-      if (validWorkflowCsPaths.some(Boolean) || isJsonWorkflow) {
-        return true;
-      }
-    } catch {
-      return false;
-    }
-
-    return false;
-  }
-
-  const validWorkflowChecks = await Promise.all(
-    subpaths.map(async (subpath) => {
-      const workflowJsonPath = path.join(folderPath, subpath, workflowFileName);
-
-      return isValidCodelessWorkflowFolder(workflowJsonPath);
-    })
+  // Codeless projects place workflow.json one level down, inside a per-workflow subfolder.
+  const validCodelessWorkflowChecks = await Promise.all(
+    subpaths.map((subpath) => isValidCodelessWorkflowFolder(path.join(folderPath, subpath, workflowFileName)))
   );
+  const hasValidCodelessWorkflow = validCodelessWorkflowChecks.some(Boolean);
 
-  const validCodefulWorkflowChecks = await Promise.all(
-    subpaths.map(async (subpath) => {
-      const workflowCsPath = path.join(folderPath, subpath, codefulWorkflowFileName);
-
-      return isValidCodefulWorkflowFolder(workflowCsPath);
-    })
-  );
-
-  const hasValidCodefulWorkflow = validCodefulWorkflowChecks.some((valid) => valid);
-  const hasValidCodelessWorkflow = validWorkflowChecks.some((valid) => valid);
   const isCodeful = await hasCodefulWorkflowSetting(folderPath);
-
   if (isCodeful) {
     vscode.commands.executeCommand('setContext', customExtensionContext.isCodeful, true);
   }
 
-  // Only return false if none of the possible validation mechanisms are present
-  if (!(hasValidCodelessWorkflow || hasValidCodefulWorkflow || isCodeful)) {
+  return hasValidCodelessWorkflow || hasValidCodefulWorkflow || isCodeful;
+}
+
+/**
+ * Validates that a `workflow.json` file exists and declares a `Microsoft.Logic`
+ * workflow-definition `$schema` — the codeless Logic Apps workflow signal.
+ */
+async function isValidCodelessWorkflowFolder(workflowJsonPath: string): Promise<boolean> {
+  if (!(await fse.pathExists(workflowJsonPath))) {
     return false;
   }
-
   try {
-    const hostJsonData = await fse.readFile(hostFilePath, 'utf-8');
-    const hostJson = JSON.parse(hostJsonData);
-    return hostJson?.extensionBundle?.id === extensionBundleId || hasValidCodefulWorkflow || isCodeful;
+    const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
+    const schema = JSON.parse(workflowJsonData)?.definition?.$schema;
+    return typeof schema === 'string' && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
   } catch {
     return false;
   }

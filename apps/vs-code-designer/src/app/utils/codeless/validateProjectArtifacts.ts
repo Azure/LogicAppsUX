@@ -240,12 +240,14 @@ function getRootHostFileContent(): IHostJsonV2 {
 }
 
 /**
- * Ensures the project-level host.json exists and is structurally valid. When source control is
- * enabled this file can be missing from a fresh clone; without it the function host cannot start.
- * A valid existing host.json (correct version + workflows extension bundle) is preserved so that
- * customizations such as a pinned extension bundle version are not lost.
+ * Ensures the project-level host.json exists and is structurally valid, healing it when needed.
+ * Because {@link isLogicAppProject} identifies a project by its workflow-folder signal (not host.json),
+ * a source-controlled clone can reach this point with host.json missing or corrupted; without a valid
+ * host.json the function host cannot start. This regenerates the file in either case. A valid existing
+ * host.json (correct version + workflows extension bundle) is preserved so that customizations such as a
+ * pinned extension bundle version are not lost.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<boolean>} True when the file was created, otherwise false.
+ * @returns {Promise<boolean>} True when the file was written (created or repaired), otherwise false.
  */
 export async function regenerateRootHostFile(projectPath: string): Promise<boolean> {
   const hostFilePath = path.join(projectPath, hostFileName);
