@@ -21,7 +21,7 @@ import { executeIfNotActive } from '../utils/taskUtils';
 import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
-import { getChildProcessesWithScript } from '../utils/findChildProcess/findChildProcess';
+import { getChildProcesses } from '../utils/findChildProcess/findChildProcess';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
@@ -470,30 +470,19 @@ export async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]>
 }
 
 export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
-  try {
-    const processes = await getChildProcessesWithScript(pid);
-    if (processes.length > 0) {
-      ext.outputChannel.appendLog(
-        localize(
-          'workflowDebugProcessScript',
-          'Resolved Windows child processes "{0}" for parent PID "{1}".',
-          processes.map((c) => c.name).join(', '),
-          pid
-        )
-      );
-      return processes.map((c) => {
-        return { command: c.name, pid: c.processId };
-      });
-    }
-  } catch (error) {
+  const processes = await getChildProcesses(pid);
+  if (processes.length > 0) {
     ext.outputChannel.appendLog(
       localize(
-        'workflowDebugProcessScriptError',
-        'Failed to resolve Windows child processes for PID "{0}". Error: "{1}".',
-        pid,
-        error instanceof Error ? error.message : String(error)
+        'workflowDebugProcess',
+        'Resolved Windows child processes "{0}" for parent PID "{1}".',
+        processes.map((c) => c.name).join(', '),
+        pid
       )
     );
+    return processes.map((c) => {
+      return { command: c.name, pid: c.processId };
+    });
   }
 
   return [];

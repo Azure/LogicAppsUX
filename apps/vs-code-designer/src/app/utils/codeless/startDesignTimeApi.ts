@@ -52,7 +52,7 @@ import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
-import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
+import { getChildProcesses } from '../findChildProcess/findChildProcess';
 import { hasCodefulSdkReference } from '../codeful';
 import {
   ensureExtensionBundleHealthy,
@@ -461,7 +461,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     }
 
     if (!childFuncPid) {
-      const children = await getChildProcessesWithScript(processId);
+      const children = await getChildProcesses(processId);
       const funcChildProcess = [...children].reverse().find((p) => /func(\.exe)?$/i.test(p.name || ''));
       if (funcChildProcess) {
         designTimeInst.childFuncPid = funcChildProcess.processId.toString();
@@ -470,7 +470,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
       return false;
     }
 
-    const children = await getChildProcessesWithScript(processId);
+    const children = await getChildProcesses(processId);
     return children.some((p) => p.processId.toString() === childFuncPid && /func(\.exe)?$/i.test(p.name || ''));
   }
 

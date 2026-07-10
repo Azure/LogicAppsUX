@@ -331,7 +331,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [{ processId: 111, name: 'func.exe', parentProcessId: 100 }];
       }
@@ -356,7 +356,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [{ processId: 111, name: 'func.exe', parentProcessId: 100 }];
       }
@@ -380,7 +380,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [{ processId: 111, name: 'func.exe', parentProcessId: 100 }];
       }
@@ -404,7 +404,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
       { processId: 444, name: 'node.exe', parentProcessId: 100 },
     ]);
 
@@ -425,7 +425,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [];
       }
@@ -485,7 +485,7 @@ describe('pickWorkflowDebugProcess', () => {
       childProcessId: ['111', '222'],
     };
 
-    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript');
+    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcesses');
 
     const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, true);
 
@@ -503,7 +503,7 @@ describe('pickWorkflowDebugProcess', () => {
       childProcessId: ['100', undefined],
     };
 
-    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript');
+    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcesses');
 
     const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo);
 
@@ -520,7 +520,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([]);
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([]);
 
     const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo);
 
@@ -541,7 +541,7 @@ describe('findChildProcess', () => {
   });
 
   it('returns the innermost workflow child process', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
       { processId: 111, name: 'func.exe', parentProcessId: 100 },
     ]);
 
@@ -562,7 +562,7 @@ describe('getWindowsChildren', () => {
   });
 
   it('should resolve child processes using the PowerShell script', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
       { processId: 111, name: 'func.exe', parentProcessId: 100 },
       { processId: 222, name: 'dotnet.exe', parentProcessId: 100 },
     ]);
@@ -577,48 +577,25 @@ describe('getWindowsChildren', () => {
   });
 
   it('should return empty array when no child processes are found', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([]);
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([]);
 
     const result = await pickFuncProcessModule.getWindowsChildren(100);
 
     expect(result).toEqual([]);
   });
 
-  it('should return empty array and log when the script throws', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockRejectedValue(new Error('script failed'));
+  it('should propagate errors from the script so callers can retry', async () => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockRejectedValue(new Error('script failed'));
 
-    const result = await pickFuncProcessModule.getWindowsChildren(100);
-
-    expect(result).toEqual([]);
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      expect.stringContaining('Failed to resolve Windows child processes for PID "100"')
-    );
+    await expect(pickFuncProcessModule.getWindowsChildren(100)).rejects.toThrow('script failed');
   });
 });
 
-/**
- * Regression tests for the custom-code dual-attach bug.
- *
- * Before the fix, the PowerShell child-process script returned ALL descendants
- * in depth-first order. The .reverse().find() pattern in pickChildProcess then
- * selected the deepest match (dotnet.exe) instead of the direct child (func.exe).
- * This caused debugLogicApp to attach the workflow debugger to the .NET host
- * process, and the custom-code picker couldn't find a dotnet child beneath it.
- *
- * After the fix, the script returns only DIRECT children (like process-tree),
- * so pickChildProcess correctly finds func.exe at the first level, and the
- * custom-code picker finds dotnet.exe by querying func.exe's children separately.
- */
-describe('custom code dual-attach regression', () => {
+describe('custom code dual-attach', () => {
   // Realistic custom-code process tree:
   //   PowerShell (100)
   //     └── func.exe (111)
   //          └── dotnet.exe (222)   ← custom code .NET host
-  //
-  // After fix: getChildProcessesWithScript(100) returns only direct children:
-  //   [func.exe/111]
-  // And getChildProcessesWithScript(111) returns:
-  //   [dotnet.exe/222]
   const rootPid = 100;
   const funcPid = 111;
   const dotnetPid = 222;
@@ -631,7 +608,7 @@ describe('custom code dual-attach regression', () => {
     setProcessPlatform('win32');
 
     // Script returns only DIRECT children of the queried PID
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === rootPid) {
         return [{ processId: funcPid, name: 'func.exe', parentProcessId: rootPid }];
       }
@@ -656,9 +633,7 @@ describe('custom code dual-attach regression', () => {
 
     const result = await pickFuncProcessModule.pickChildProcess(taskInfo);
 
-    // The workflow debugger must attach to func.exe (111), not dotnet.exe (222).
-    // dotnet.exe is the custom-code .NET host — it should only be picked by
-    // pickCustomCodeWorkerChildProcess for the second debugger.
+    // The workflow debugger must attach to func.exe (111), not dotnet.exe custom code .NET host (222).
     expect(result).toBe(String(funcPid));
   });
 
@@ -726,7 +701,7 @@ describe('multi-dotnet descendant trees', () => {
     setProcessPlatform('win32');
 
     // Script returns only DIRECT children of the queried PID
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === rootPid) {
         return [{ processId: funcPid, name: 'func.exe', parentProcessId: rootPid }];
       }
