@@ -22,6 +22,7 @@ import { hostFileName } from '../../../../../constants';
 // Unmock fs-extra to use real file system operations
 vi.unmock('fs-extra');
 import * as fse from 'fs-extra';
+import { ext } from '../../../../../extensionVariables';
 
 // Only mock external dependencies that have side effects or external services
 // We want to use REAL file system operations (fs-extra) to test actual logic
@@ -255,6 +256,12 @@ describe('createLogicAppProject', () => {
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
     expect(mockSetup).not.toHaveBeenCalled();
+  });
+
+  it('should log success message after project creation', async () => {
+    await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
+
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
   });
 
   it('should set shouldCreateLogicAppProject to false when logic app exists', async () => {

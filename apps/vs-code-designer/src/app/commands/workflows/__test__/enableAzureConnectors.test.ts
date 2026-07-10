@@ -7,6 +7,7 @@ import { getLogicAppProjectRoot } from '../../../utils/codeless/connection';
 import { getWorkspaceFolder } from '../../../utils/workspace';
 import { createAzureWizard } from '../azureConnectorWizard';
 import { enableAzureConnectors } from '../enableAzureConnectors';
+import { ext } from '../../../../extensionVariables';
 import path from 'path';
 
 vi.mock('../../../../localize', () => ({
@@ -64,6 +65,7 @@ describe('enableAzureConnectors', () => {
     expect(execute).toHaveBeenCalled();
     expect(invalidateAzureDetailsCache).toHaveBeenCalledWith(projectPath);
     expect(getAzureConnectorDetailsForLocalProject).toHaveBeenCalledWith(context, projectPath);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure connectors are enabled for the workflow.');
   });
 
   it('shows already-enabled information when subscription and auth settings exist', async () => {
@@ -78,5 +80,6 @@ describe('enableAzureConnectors', () => {
 
     expect(getWorkspaceFolder).toHaveBeenCalledWith(context);
     expect(createAzureWizard).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure connectors are enabled for the workflow.');
   });
 });

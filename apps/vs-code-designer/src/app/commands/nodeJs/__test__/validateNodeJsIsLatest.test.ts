@@ -282,6 +282,8 @@ describe('validateNodeJsIsLatest', () => {
       },
       expect.any(Function)
     );
+
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Node JS runtime dependency update completed.');
   });
 
   it('opens learn more from the nonblocking outdated Node.js prompt callback', async () => {

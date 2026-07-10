@@ -108,6 +108,7 @@ vi.mock('path', async () => {
   };
 });
 
+import { ext } from '../../../../extensionVariables';
 import { switchToDotnetProject, switchToDotnetProjectCommand } from '../switchToDotnetProject';
 import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -238,6 +239,7 @@ describe('switchToDotnetProject', () => {
 
       await switchToDotnetProject(mockContext, mockTarget);
 
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('already a NuGet-based project'));
       // Should not proceed to template resolution
       expect(DotnetTemplateProvider).not.toHaveBeenCalled();
     });
@@ -307,6 +309,11 @@ describe('switchToDotnetProject', () => {
       );
     });
 
+    it('should log completion message on success', async () => {
+      await switchToDotnetProject(mockContext, mockTarget);
+
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Successfully converted to NuGet-based'));
+    });
   });
 
   describe('binaries handling', () => {
