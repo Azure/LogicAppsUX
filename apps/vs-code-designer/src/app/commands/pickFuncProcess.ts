@@ -48,7 +48,11 @@ const workflowProcessRegex = /(dotnet|func)(\.exe|)$/i;
  * @param debugConfig The debug configuration.
  * @returns A promise that resolves to the child process ID or undefined if not found.
  */
-export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<string | undefined> {
+export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration | undefined): Promise<string | undefined> {
+  if (!debugConfig) {
+    throw new Error(localize('noDebugConfig', 'Debug configuration is undefined.'));
+  }
+
   const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
   if (!projectPath) {

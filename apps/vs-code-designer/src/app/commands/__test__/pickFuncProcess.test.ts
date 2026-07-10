@@ -545,12 +545,11 @@ describe('findChildProcess', () => {
   it('returns the innermost workflow child process', async () => {
     vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
       { processId: 111, name: 'func.exe', parentProcessId: 100 },
-      { processId: 222, name: 'dotnet.exe', parentProcessId: 111 },
     ]);
 
     const result = await pickFuncProcessModule.findChildProcess(100);
 
-    expect(result).toBe('222');
+    expect(result).toBe('111');
   });
 });
 
@@ -599,5 +598,181 @@ describe('getWindowsChildren', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       expect.stringContaining('Falling back to process-tree for Windows child process resolution on PID "100". Error: script failed')
     );
+  });
+});
+
+/**
+ * Regression tests for the custom-code dual-attach bug.
+ *
+ * Before the fix, the PowerShell child-process script returned ALL descendants
+ * in depth-first order. The .reverse().find() pattern in pickChildProcess then
+ * selected the deepest match (dotnet.exe) instead of the direct child (func.exe).
+ * This caused debugLogicApp to attach the workflow debugger to the .NET host
+ * process, and the custom-code picker couldn't find a dotnet child beneath it.
+ *
+ * After the fix, the script returns only DIRECT children (like process-tree),
+ * so pickChildProcess correctly finds func.exe at the first level, and the
+ * custom-code picker finds dotnet.exe by querying func.exe's children separately.
+ */
+describe('custom code dual-attach regression', () => {
+  // Realistic custom-code process tree:
+  //   PowerShell (100)
+  //     └── func.exe (111)
+  //          └── dotnet.exe (222)   ← custom code .NET host
+  //
+  // After fix: getChildProcessesWithScript(100) returns only direct children:
+  //   [func.exe/111]
+  // And getChildProcessesWithScript(111) returns:
+  //   [dotnet.exe/222]
+  const rootPid = 100;
+  const funcPid = 111;
+  const dotnetPid = 222;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    (vscode.window as any).activeTerminal = undefined;
+    vi.mocked(ext.outputChannel.appendLog).mockClear();
+    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
+    setProcessPlatform('win32');
+
+    // Script returns only DIRECT children of the queried PID
+    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+      if (pid === rootPid) {
+        return [{ processId: funcPid, name: 'func.exe', parentProcessId: rootPid }];
+      }
+      if (pid === funcPid) {
+        return [{ processId: dotnetPid, name: 'dotnet.exe', parentProcessId: funcPid }];
+      }
+      return [];
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    restoreProcessPlatform();
+  });
+
+  it('pickChildProcess should return the func.exe PID, not the deeper dotnet.exe', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    const result = await pickFuncProcessModule.pickChildProcess(taskInfo);
+
+    // The workflow debugger must attach to func.exe (111), not dotnet.exe (222).
+    // dotnet.exe is the custom-code .NET host — it should only be picked by
+    // pickCustomCodeWorkerChildProcess for the second debugger.
+    expect(result).toBe(String(funcPid));
+  });
+
+  it('pickWorkflowDebugProcess for custom code (preferHostChildProcess=false) should return func.exe', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    // Custom code debug configs set preferHostChildProcess=false because
+    // customCodeRuntime is set (see pickFuncProcessInternal).
+    const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, false);
+
+    expect(result).toBe(String(funcPid));
+  });
+
+  it('workflow and custom-code pickers should select DIFFERENT processes from the same tree', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    // Step 1: workflow debug process selection (what debugLogicApp does first)
+    const workflowPid = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, false);
+
+    // Step 2: custom-code net host selection (what debugLogicApp does second)
+    const { pickCustomCodeWorkerChildProcess } = await import('../pickCustomCodeWorkerProcess');
+    const customCodePid = await pickCustomCodeWorkerChildProcess(taskInfo, false /* isNetFxWorker */, true /* isCodeless */);
+
+    // The workflow debugger should attach to func.exe
+    expect(workflowPid).toBe(String(funcPid));
+
+    // The custom-code debugger should attach to dotnet.exe
+    expect(customCodePid).toBe(String(dotnetPid));
+
+    // They must be different PIDs — attaching both to the same process means
+    // one debugger is missing
+    expect(workflowPid).not.toBe(customCodePid);
+  });
+});
+
+/**
+ * Tests for process trees with multiple dotnet.exe descendants.
+ *
+ * Some workflow configurations spawn multiple dotnet.exe processes under
+ * func.exe (e.g. the workflow host worker + the custom-code language worker).
+ * The process pickers must handle this without confusing the two.
+ */
+describe('multi-dotnet descendant trees', () => {
+  // Process tree with two dotnet children:
+  //   PowerShell (100)
+  //     └── func.exe (111)
+  //          ├── dotnet.exe (222)   ← workflow host worker
+  //          └── dotnet.exe (333)   ← custom code .NET host
+  const rootPid = 100;
+  const funcPid = 111;
+  const workflowDotnetPid = 222;
+  const customCodeDotnetPid = 333;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    (vscode.window as any).activeTerminal = undefined;
+    vi.mocked(ext.outputChannel.appendLog).mockClear();
+    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
+    setProcessPlatform('win32');
+
+    // Script returns only DIRECT children of the queried PID
+    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+      if (pid === rootPid) {
+        return [{ processId: funcPid, name: 'func.exe', parentProcessId: rootPid }];
+      }
+      if (pid === funcPid) {
+        return [
+          { processId: workflowDotnetPid, name: 'dotnet.exe', parentProcessId: funcPid },
+          { processId: customCodeDotnetPid, name: 'dotnet.exe', parentProcessId: funcPid },
+        ];
+      }
+      return [];
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    restoreProcessPlatform();
+  });
+
+  it('pickWorkflowDebugProcess should return func.exe even when multiple dotnet descendants exist', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, false);
+
+    // Must pick func.exe, not either dotnet.exe
+    expect(result).toBe(String(funcPid));
+  });
+
+  it('pickChildProcess should return func.exe, not any of the dotnet.exe grandchildren', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    const result = await pickFuncProcessModule.pickChildProcess(taskInfo);
+
+    expect(result).toBe(String(funcPid));
   });
 });
