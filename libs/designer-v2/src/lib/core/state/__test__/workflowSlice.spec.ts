@@ -1,5 +1,5 @@
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
-import { describe, expect, it } from 'vitest';
+import { InitLoggerService, SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { getMockedUndoRedoPartialRootState } from '../../../__test__/mock-root-state';
 import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
@@ -17,7 +17,18 @@ import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../a
 import { OperationDefinition } from '../../../../../../logic-apps-shared/src/utils/src/lib/models/logicApps';
 import type { UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
+beforeAll(() => {
+  InitLoggerService([]);
+});
+
 describe('workflow slice reducers', () => {
+  it('should not mark the workflow dirty when a connection update thunk fulfills', () => {
+    const state = reducer(initialWorkflowState, { type: 'updateNodeConnection/fulfilled' });
+
+    expect(state.isDirty).toBe(false);
+    expect(state.changeCount).toBe(0);
+  });
+
   it('should add initial node to the workflow', () => {
     const mockAddNode: AddNodePayload = {
       nodeId: '123',

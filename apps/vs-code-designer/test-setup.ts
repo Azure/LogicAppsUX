@@ -76,7 +76,10 @@ vi.mock('fs', () => ({
   mkdirSync: vi.fn(),
   chmodSync: vi.fn(),
   createWriteStream: vi.fn(),
+  createReadStream: vi.fn(),
   readdirSync: vi.fn(() => []),
+  readFileSync: vi.fn(),
+  writeFileSync: vi.fn(),
   renameSync: vi.fn(),
   rmSync: vi.fn(),
   statSync: vi.fn(() => ({

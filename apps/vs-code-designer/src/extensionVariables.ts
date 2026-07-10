@@ -40,7 +40,6 @@ type FuncInstance = {
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
-  export let codefulEnabled: boolean;
   export const designTimeInstances: Map<string, FuncInstance> = new Map();
   export const runtimeInstances: Map<string, FuncInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;

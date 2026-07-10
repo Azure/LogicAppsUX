@@ -1,5 +1,4 @@
 import constants from '../../../common/constants';
-import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import {
@@ -888,7 +887,6 @@ export const workflowSlice = createSlice({
         removeRunAfter,
         addRunAfter,
         replaceId,
-        updateNodeConnection.fulfilled,
         updateStaticResults,
         updateParameterConditionalVisibility
       ),
