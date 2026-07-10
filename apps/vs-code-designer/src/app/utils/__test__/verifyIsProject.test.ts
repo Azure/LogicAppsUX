@@ -216,6 +216,27 @@ describe('isLogicAppProject', () => {
     expect(await verifyIsProject.isLogicAppProject(projectPath)).toBe(false);
   });
 
+  it('does not tag a folder that only has the codeful workspace setting but no .csproj', async () => {
+    // WORKFLOW_CODEFUL_ENABLED lives in the gitignored local.settings.json and is no longer a
+    // detection signal — without the authoritative .csproj SDK reference the folder is not a project.
+    const localSettingsPath = path.join(projectPath, localSettingsFileName);
+    vi.spyOn(fse, 'pathExists').mockImplementation(async (p: fse.PathLike) => {
+      const s = String(p);
+      return s === projectPath || s === localSettingsPath;
+    });
+    vi.spyOn(fse, 'readdir').mockImplementation(async (p: fse.PathLike) =>
+      String(p) === projectPath ? [localSettingsFileName, 'Program.cs'] : []
+    );
+    vi.spyOn(fse, 'readFile').mockImplementation(async (p: fse.PathLike) => {
+      if (String(p) === localSettingsPath) {
+        return JSON.stringify({ Values: { WORKFLOW_CODEFUL_ENABLED: 'true' } });
+      }
+      return '';
+    });
+
+    expect(await verifyIsProject.isLogicAppProject(projectPath)).toBe(false);
+  });
+
   it('does not tag a folder whose workflow.json is not a Microsoft.Logic workflow', async () => {
     const workflowJsonPath = path.join(projectPath, 'wf', workflowFileName);
     vi.spyOn(fse, 'pathExists').mockImplementation(async (p: fse.PathLike) => {

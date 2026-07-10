@@ -12,21 +12,24 @@ import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';
 import { NoWorkspaceError } from './errors';
 import * as vscode from 'vscode';
-import { hasCodefulSdkReference, hasCodefulWorkflowSetting } from './codeful';
+import { hasCodefulSdkReference } from './codeful';
 
 const projectSubpathKey = 'projectSubpath';
 
 /**
  * Determines whether the given folder is a Logic Apps project.
  *
- * A Logic Apps project is identified by a workflow signal — any one of:
+ * A Logic Apps project is identified by a workflow signal — either of:
  *   - a codeless `workflow.json` one level down whose `definition.$schema` is a
- *     `Microsoft.Logic` workflow-definition schema,
+ *     `Microsoft.Logic` workflow-definition schema, or
  *   - a codeful project: a .NET 8 `.csproj` at the project root that references the Logic Apps
  *     SDK (`Microsoft.Azure.Workflows.Sdk`), detected structurally via {@link hasCodefulSdkReference}.
  *     Detection is based on the project structure, not a fixed file name — the workflow C# file can be
- *     named anything, so a literal `workflow.cs` is not a reliable marker, or
- *   - the codeful workspace setting (`hasCodefulWorkflowSetting`).
+ *     named anything, so a literal `workflow.cs` is not a reliable marker.
+ *
+ * The codeful `WORKFLOW_CODEFUL_ENABLED` workspace setting is intentionally NOT consulted: it lives in
+ * `local.settings.json`, which is commonly gitignored under source control, and every codeful project
+ * already carries the authoritative `.csproj` SDK reference — so the setting adds no detection value.
  *
  * host.json is intentionally NOT required. Source-controlled projects commonly
  * gitignore `host.json` and `local.settings.json`, so a freshly cloned project can
@@ -57,15 +60,11 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   // Codeful projects are .NET 8 projects that reference the Logic Apps SDK. Detect them
   // structurally from the .csproj so the workflow C# file can be named anything.
   const hasCodefulProject = await hasCodefulSdkReference(folderPath);
-
-  // The isCodeful workspace setting is an additional signal, but it lives in local.settings.json,
-  // which is commonly gitignored under source control — so it cannot be relied on alone.
-  const hasCodefulSetting = await hasCodefulWorkflowSetting(folderPath);
-  if (hasCodefulSetting) {
+  if (hasCodefulProject) {
     vscode.commands.executeCommand('setContext', customExtensionContext.isCodeful, true);
   }
 
-  return hasValidCodelessWorkflow || hasCodefulProject || hasCodefulSetting;
+  return hasValidCodelessWorkflow || hasCodefulProject;
 }
 
 /**
