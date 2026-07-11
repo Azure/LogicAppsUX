@@ -5,7 +5,7 @@ on:
     - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
-      test-runs:
+      testRuns:
         description: 'Number of test replays'
         type: number
         default: 3
@@ -13,7 +13,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  issues: write
   copilot-requests: write
 
 concurrency:
@@ -21,11 +20,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  detect-flakes:
+  detect_flakes:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
-      has-flakes: ${{ steps.analyze.outputs.has_flakes }}
+      has_flakes: ${{ steps.analyze.outputs.has_flakes }}
     steps:
       - uses: actions/checkout@v4
 
@@ -44,7 +43,7 @@ jobs:
       - name: Run tests multiple times
         id: replay
         env:
-          RUNS: ${{ inputs.test-runs || 3 }}
+          RUNS: ${{ inputs.testRuns || 3 }}
         run: |
           mkdir -p /tmp/flake-results
 
@@ -100,9 +99,9 @@ jobs:
           path: /tmp/flake-results/flakes.json
           retention-days: 7
 
-  fix-flakes:
-    needs: detect-flakes
-    if: needs.detect-flakes.outputs.has-flakes == 'true'
+  fix_flakes:
+    needs: detect_flakes
+    if: needs.detect_flakes.outputs.has_flakes == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

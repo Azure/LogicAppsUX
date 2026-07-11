@@ -51,7 +51,7 @@ jobs:
 
           COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" copilot \
             -p "$TASK" \
-            -s --no-ask-user --model claude-opus-4.8 --allow-all || true
+            -s --no-ask-user --model claude-opus-4.8 --allow-all
 
       - name: Add investigated label
         env:

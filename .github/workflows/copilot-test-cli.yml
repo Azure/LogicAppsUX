@@ -29,6 +29,7 @@ jobs:
           if echo "$RESULT" | grep -q "COPILOT_CLI_WORKING"; then
             echo "Copilot CLI is working"
           else
-            echo "::warning::Copilot CLI did not return expected response"
+            echo "::error::Copilot CLI did not return expected response"
             echo "Full output: $RESULT"
+            exit 1
           fi
