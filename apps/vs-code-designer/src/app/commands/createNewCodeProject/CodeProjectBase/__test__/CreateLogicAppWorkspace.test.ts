@@ -1309,6 +1309,13 @@ describe('createLocalConfigurationFiles', () => {
     workflowName: 'TestWorkflow',
   } as any;
 
+  const mockContextCodeful: IWebviewProjectContext = {
+    workspaceName: 'TestWorkspace',
+    logicAppName: 'TestLogicApp',
+    logicAppType: ProjectType.codeful,
+    workflowName: 'TestWorkflow',
+  } as any;
+
   const logicAppFolderPath = actualPath.join('test', 'workspace', 'TestLogicApp');
 
   beforeEach(() => {
@@ -1505,6 +1512,31 @@ describe('createLocalConfigurationFiles', () => {
 
     // Verify exactly 6 properties exist (5 standard + 1 feature flag)
     expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+  });
+
+  it('should create local.settings.json with exact required values for codeful projects', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContextCodeful, logicAppFolderPath);
+
+    const localSettingsCall = vi
+      .mocked(fsUtils.writeFormattedJson)
+      .mock.calls.find((call) => call[0].toString().includes('local.settings.json'));
+    expect(localSettingsCall).toBeDefined();
+    const localSettingsData = localSettingsCall![1] as any;
+
+    // Codeful is not a plain logic app (so it gets the multi-language worker flag) and additionally
+    // gets the codeful-enabled flag.
+    expect(localSettingsData.Values).toEqual({
+      AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+      FUNCTIONS_INPROC_NET8_ENABLED: '1',
+      FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+      APP_KIND: 'workflowapp',
+      ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
+      WORKFLOW_CODEFUL_ENABLED: 'true',
+    });
+
+    // Verify exactly 7 properties exist (5 standard + feature flag + codeful-enabled).
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
   });
 
   it('should include extension bundle configuration in host.json', async () => {

@@ -8,8 +8,10 @@ import {
   ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
+  azureWebJobsFeatureFlagsKey,
   localEmulatorConnectionString,
   logicAppKind,
+  multiLanguageWorkerSetting,
   workerRuntimeKey,
   azureStorageTypeSetting,
   functionsInprocNet8Enabled,
@@ -24,7 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -173,39 +175,57 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
 }
 
 /**
- * Retrieves the local settings schema based on the project path and design time flag.
- * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
- * @param {string} projectPath - The path of the project.
- * @returns The local settings schema.
+ * Builds the content for one of the two local.settings.json files this extension generates, from a
+ * single source of truth so every path (fresh project creation, design-time API startup, and
+ * regeneration of a source-controlled clone) produces byte-for-byte identical files that cannot drift
+ * apart.
+ *
+ * The `isDesignTime` flag selects which file is produced:
+ * - `true`  -> the `workflow-designtime/` folder file (Node worker runtime + secret storage type).
+ * - `false` -> the project-root (runtime) file. Its key order mirrors the creation path
+ *              (CreateLogicAppWorkspace.createLocalConfigurationFiles), and it is `ProjectType`-aware:
+ *              non-plain types add the multi-language worker feature flag.
+ *
+ * `WORKFLOW_CODEFUL_ENABLED` is appended (last) for codeful projects in both files.
+ * @param {boolean} isDesignTime - Whether to build the design-time folder file (true) or the project-root file (false).
+ * @param {string} [projectPath] - Absolute path to the logic app project folder (ProjectDirectoryPath value). Omitted -> the key is not written.
+ * @param {ProjectType} [logicAppType] - The logic app project type; drives the multi-language worker and codeful flags.
+ * @returns {ILocalSettingsJson} The local.settings.json content.
  */
-export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, isCodeful?: boolean): ILocalSettingsJson => {
-  const baseSettings: ILocalSettingsJson = {
-    IsEncrypted: false,
-    Values: {
-      [appKindSetting]: logicAppKind,
-    },
-  };
+export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, logicAppType?: ProjectType): ILocalSettingsJson => {
+  const values: Record<string, string> = {};
 
-  // Add project path if provided
-  if (projectPath) {
-    baseSettings.Values![ProjectDirectoryPathKey] = projectPath;
-  }
-
-  // Add runtime-specific settings
   if (isDesignTime) {
-    baseSettings.Values![workerRuntimeKey] = WorkerRuntime.Node;
-    baseSettings.Values![azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
+    // Design-time order: APP_KIND, ProjectDirectoryPath, FUNCTIONS_WORKER_RUNTIME, AzureWebJobsSecretStorageType.
+    values[appKindSetting] = logicAppKind;
+    if (projectPath) {
+      values[ProjectDirectoryPathKey] = projectPath;
+    }
+    values[workerRuntimeKey] = WorkerRuntime.Node;
+    values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
   } else {
-    baseSettings.Values![workerRuntimeKey] = WorkerRuntime.Dotnet;
-    baseSettings.Values![azureWebJobsStorageKey] = localEmulatorConnectionString;
-    baseSettings.Values![functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+    // Root order mirrors the creation path (CreateLogicAppWorkspace.createLocalConfigurationFiles) so a
+    // regenerated local.settings.json is key-for-key identical to a freshly created project.
+    values[azureWebJobsStorageKey] = localEmulatorConnectionString;
+    values[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+    values[workerRuntimeKey] = WorkerRuntime.Dotnet;
+    values[appKindSetting] = logicAppKind;
+    if (projectPath) {
+      values[ProjectDirectoryPathKey] = projectPath;
+    }
+    if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
+      values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
+    }
   }
 
-  if (isCodeful) {
-    baseSettings.Values![workflowCodefulEnabledKey] = 'true';
+  if (logicAppType === ProjectType.codeful) {
+    values[workflowCodefulEnabledKey] = 'true';
   }
 
-  return baseSettings;
+  return {
+    IsEncrypted: false,
+    Values: values,
+  };
 };
 
 export async function removeAppKindFromLocalSettings(logicAppPath: string, context: IActionContext): Promise<void> {
