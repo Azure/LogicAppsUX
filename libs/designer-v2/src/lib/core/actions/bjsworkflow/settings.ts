@@ -17,6 +17,7 @@ import type {
 } from '@microsoft/logic-apps-shared';
 import {
   convertToStringLiteral,
+  clone,
   getSplitOnArrayAliasMetadata,
   equals,
   getObjectPropertyValue,
@@ -859,7 +860,8 @@ const getDownloadChunkSize = (definition?: LogicAppsV2.OperationDefinition): num
 
 const getTrackedProperties = (isTrigger: boolean, manifest?: OperationManifest, definition?: LogicAppsV2.ActionDefinition): any => {
   const supported = areTrackedPropertiesSupported(isTrigger, manifest);
-  return supported && definition ? getPropertyValue(definition as any, 'trackedProperties') : undefined;
+  const trackedProperties = supported && definition ? getPropertyValue(definition as any, 'trackedProperties') : undefined;
+  return trackedProperties ? clone(trackedProperties) : trackedProperties;
 };
 
 const areTrackedPropertiesSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {

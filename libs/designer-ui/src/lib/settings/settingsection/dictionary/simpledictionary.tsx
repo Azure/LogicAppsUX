@@ -24,16 +24,24 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   onChange,
   ariaLabel,
 }): JSX.Element => {
-  const [values, setValues] = useState([
-    ...Object.entries(value ?? {}).map(([key, value], index) => ({
+  const createValues = (dictionaryValue?: Record<string, string>) => [
+    ...Object.entries(dictionaryValue ?? {}).map(([key, value], index) => ({
       key,
       value,
       index,
     })),
-    { key: '', value: '', index: Object.keys(value ?? {}).length },
-  ]);
+    { key: '', value: '', index: Object.keys(dictionaryValue ?? {}).length },
+  ];
+
+  const [values, setValues] = useState(createValues(value));
 
   const intl = useIntl();
+
+  // Keep the editor in sync if the tracked-properties value is refreshed from the parent.
+  useEffect(() => {
+    setValues(createValues(value));
+  }, [value]);
+
   useEffect(() => {
     onChange?.(
       values
