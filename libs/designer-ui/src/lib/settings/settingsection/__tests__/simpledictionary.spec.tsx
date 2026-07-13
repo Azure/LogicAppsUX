@@ -1,5 +1,6 @@
 import { SimpleDictionary } from '../dictionary/simpledictionary';
 import { IntlProvider } from 'react-intl';
+import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -24,5 +25,18 @@ describe('ui/settings/simpledictionary', () => {
     await waitFor(() => expect(screen.getByDisplayValue('second-value')).toBeInTheDocument());
     expect(screen.queryByDisplayValue('first-value')).not.toBeInTheDocument();
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('ignores unsafe dictionary keys when emitting changes', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+
+    renderWithIntl(<SimpleDictionary onChange={onChange} />);
+
+    const [keyInput] = screen.getAllByRole('textbox');
+    await user.type(keyInput, '__proto__');
+
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    expect(onChange).toHaveBeenLastCalledWith(undefined);
   });
 });

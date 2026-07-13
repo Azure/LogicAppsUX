@@ -26,9 +26,11 @@ const createValues = (dictionaryValue?: Record<string, string>): SimpleDictionar
   { key: '', value: '', index: Object.keys(dictionaryValue ?? {}).length },
 ];
 
+const isSafeDictionaryKey = (key: string): boolean => key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
+
 const valuesToDictionary = (dictionaryRows: SimpleDictionaryRowModel[]): Record<string, string> | undefined => {
   const nextDictionary = dictionaryRows.reduce((acc, row) => {
-    if (row.key) {
+    if (row.key && isSafeDictionaryKey(row.key)) {
       acc[row.key] = row.value;
     }
     return acc;
