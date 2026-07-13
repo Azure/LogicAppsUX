@@ -108,6 +108,66 @@ describe('getEditorAndOptions', () => {
     expect(getEditorAndOptions(operationInfo, parameter, upstreamNodeIds, variables)).toEqual(expectedEditorAndOptions);
   });
 
+  describe('"variablename" editor fallback when scoped list is empty', () => {
+    const variables: Record<string, VariableDeclaration[]> = {
+      initInt: [{ name: 'intVar', type: 'integer' }],
+      initFloat: [{ name: 'floatVar', type: 'float' }],
+      initStr: [{ name: 'strVar', type: 'string' }],
+      initArr: [{ name: 'arrVar', type: 'array' }],
+      initBool: [{ name: 'boolVar', type: 'boolean' }],
+    };
+
+    // These supportedTypes values mirror the 5 built-in operations that use the
+    // 'variablename' editor (see libs/logic-apps-shared/.../manifests/variables.ts):
+    // setVariable (any), incrementVariable/decrementVariable (float,integer),
+    // appendToStringVariable (string), appendToArrayVariable (array).
+    it.each`
+      operation                   | supportedTypes          | expectedNames
+      ${'setVariable'}            | ${[]}                   | ${['intVar', 'floatVar', 'strVar', 'arrVar', 'boolVar']}
+      ${'incrementVariable'}      | ${['float', 'integer']} | ${['intVar', 'floatVar']}
+      ${'decrementVariable'}      | ${['float', 'integer']} | ${['intVar', 'floatVar']}
+      ${'appendToStringVariable'} | ${['string']}           | ${['strVar']}
+      ${'appendToArrayVariable'}  | ${['array']}            | ${['arrVar']}
+    `(
+      'falls back to all declared variables (respecting supportedTypes) for $operation when upstreamNodeIds is empty',
+      ({ supportedTypes, expectedNames }) => {
+        const parameter = getParameterInfo();
+        parameter.editor = 'variablename';
+        parameter.editorOptions = { supportedTypes };
+
+        const result = getEditorAndOptions(operationInfo, parameter, /* upstreamNodeIds */ [], variables);
+
+        expect(result.editor).toBe('dropdown');
+        expect((result.editorOptions?.options ?? []).map((o: any) => o.value)).toEqual(expectedNames);
+      }
+    );
+
+    it('returns an empty options list when no variables are declared at all', () => {
+      const parameter = getParameterInfo();
+      parameter.editor = 'variablename';
+      parameter.editorOptions = { supportedTypes: ['string'] };
+
+      const result = getEditorAndOptions(operationInfo, parameter, /* upstreamNodeIds */ [], /* variables */ {});
+
+      expect(result).toEqual({ editor: 'dropdown', editorOptions: { options: [] } });
+    });
+
+    it('does not fall back when the scoped list already has matches (no regression)', () => {
+      const parameter = getParameterInfo();
+      parameter.editor = 'variablename';
+      parameter.editorOptions = { supportedTypes: ['string'] };
+
+      // upstream includes initStr (matches) but excludes initArr — the fallback must NOT
+      // add arrVar because scopedOptions is non-empty.
+      const result = getEditorAndOptions(operationInfo, parameter, ['initStr'], variables);
+
+      expect(result).toEqual({
+        editor: 'dropdown',
+        editorOptions: { options: [{ value: 'strVar', displayName: 'strVar' }] },
+      });
+    });
+  });
+
   it('should support EditorService override', () => {
     const customEditorOptions = { EditorComponent: vi.fn() };
     const editorService = {
