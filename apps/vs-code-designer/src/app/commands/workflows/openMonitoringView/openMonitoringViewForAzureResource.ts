@@ -37,7 +37,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
     this.workflow = node.workflowFileContent;
   }
 
-  public async createPanel(): Promise<void> {
+  public async create(): Promise<void> {
     const existingPanel: WebviewPanel | undefined = this.getExistingPanel();
 
     if (existingPanel) {
@@ -104,7 +104,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
   private async _handleWebviewMsg(message: any) {
     switch (message.command) {
       case ExtensionCommand.initialize: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.designer,
@@ -142,7 +142,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         break;
       }
       case ExtensionCommand.getDesignerVersion: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.getDesignerVersion,
           data: this.getDesignerVersion(),
         });

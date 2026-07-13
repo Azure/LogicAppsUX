@@ -31,7 +31,7 @@ import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
-import { OpenDesignerBase } from './openDesignerBase';
+import { DesignerPanel } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
@@ -52,7 +52,7 @@ import { createUnitTest } from '../unitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
 
-export default class OpenDesignerForLocalProject extends OpenDesignerBase {
+export default class OpenDesignerForLocalProject extends DesignerPanel {
   private readonly workflowFilePath: string;
   private migrationOptions: Record<string, any>;
   private projectPath: string | undefined;
@@ -93,7 +93,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     });
   };
 
-  public async createPanel(): Promise<void> {
+  public async create(): Promise<void> {
     const existingPanel: WebviewPanel | undefined = this.getExistingPanel();
 
     if (existingPanel) {
@@ -148,8 +148,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
     };
 
-    this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
-    this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+    this.migrationOptions = await this.getMigrationOptions(this.baseUrl);
+    this.panelMetadata = await this.getDesignerPanelMetadata(this.migrationOptions);
     const callbackUri: Uri = await (env as any).asExternalUri(Uri.parse(`${env.uriScheme}://${logicAppsStandardExtensionId}/authcomplete`));
     this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.oauthRedirectUrl = callbackUri.toString(true);
@@ -165,7 +165,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
 
-    this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(async (message) => await this.handleWebviewMsg(message), ext.context.subscriptions);
 
     this.panel.onDidChangeViewState(
       async (event) => {
@@ -193,7 +193,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.showDesignerVersionNotification();
   }
 
-  private async _handleWebviewMsg(msg: any) {
+  private async handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
@@ -210,7 +210,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           }
         }, 3000);
 
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.designer,
@@ -287,7 +287,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             connection,
             error: errorMessage,
           };
-          this.sendMsgToWebview({
+          this.panel.webview.postMessage({
             command: ExtensionCommand.completeFileSystemConnection,
             data: completeData,
           });
@@ -313,7 +313,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       }
 
       case ExtensionCommand.getDesignerVersion: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.getDesignerVersion,
           data: this.getDesignerVersion(),
         });
@@ -386,7 +386,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
 
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.resetDesignerDirtyState,
         });
       } catch (error) {
@@ -443,19 +443,19 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
   }
 
-  private _migrate(workflow: any, migrationOptions: Record<string, any>): void {
-    this._traverseActions(workflow.definition?.actions, migrationOptions);
+  private migrate(workflow: any, migrationOptions: Record<string, any>): void {
+    this.traverseActions(workflow.definition?.actions, migrationOptions);
   }
 
-  private _traverseActions(actions: any, migrationOptions: Record<string, any>): void {
+  private traverseActions(actions: any, migrationOptions: Record<string, any>): void {
     if (actions) {
       for (const actionName of Object.keys(actions)) {
-        this._traverseAction(actions[actionName], migrationOptions);
+        this.traverseAction(actions[actionName], migrationOptions);
       }
     }
   }
 
-  private _traverseAction(action: any, migrationOptions: Record<string, any>): void {
+  private traverseAction(action: any, migrationOptions: Record<string, any>): void {
     const type = action?.type;
     switch ((type || '').toLowerCase()) {
       case 'liquid': {
@@ -496,28 +496,28 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
       case 'if': {
-        this._traverseActions(action.else?.actions, migrationOptions);
+        this.traverseActions(action.else?.actions, migrationOptions);
         break;
       }
       case 'scope':
       case 'foreach':
       case 'changeset':
       case 'until': {
-        this._traverseActions(action.actions, migrationOptions);
+        this.traverseActions(action.actions, migrationOptions);
         break;
       }
       case 'switch': {
         for (const caseKey of Object.keys(action.cases || {})) {
-          this._traverseActions(action.cases[caseKey]?.actions, migrationOptions);
+          this.traverseActions(action.cases[caseKey]?.actions, migrationOptions);
         }
-        this._traverseActions(action.default?.actions, migrationOptions);
+        this.traverseActions(action.default?.actions, migrationOptions);
 
         break;
       }
     }
   }
 
-  private _getMigrationOptions(baseUrl: string): Promise<Record<string, any>> {
+  private getMigrationOptions(baseUrl: string): Promise<Record<string, any>> {
     const flatFileEncodingPromise = axios.get(
       `${baseUrl}/operationGroups/flatFileOperations/operations/flatFileEncoding?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
     );
@@ -543,9 +543,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     );
   }
 
-  private async _getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<IDesignerPanelMetadata> {
+  private async getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<IDesignerPanelMetadata> {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
-    this._migrate(workflowContent, migrationOptions);
+    this.migrate(workflowContent, migrationOptions);
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
@@ -610,7 +610,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param webviewPanel The web view panel to update.
    */
   private async reloadWebviewPanel(webviewPanel: WebviewPanel): Promise<void> {
-    this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+    this.panelMetadata = await this.getDesignerPanelMetadata(this.migrationOptions);
     webviewPanel.webview.html = await this.getWebviewContent({
       connectionsData: this.panelMetadata.connectionsData,
       parametersData: this.panelMetadata.parametersData || {},
@@ -619,7 +619,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       azureDetails: this.panelMetadata.azureDetails,
       workflowDetails: this.panelMetadata.workflowDetails,
     });
-    this.sendMsgToWebview({
+    this.panel.webview.postMessage({
       command: ExtensionCommand.update_panel_metadata,
       data: {
         panelMetadata: this.panelMetadata,

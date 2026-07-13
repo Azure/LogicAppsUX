@@ -178,14 +178,14 @@ describe('OpenDesignerForLocalProject', () => {
     });
   });
 
-  describe('createPanel', () => {
+  describe('create', () => {
     it('should return early if existing panel is found', async () => {
       const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
       const mockPanel = { active: false, reveal: vi.fn() };
       vi.mocked(tryGetWebviewPanel).mockReturnValue(mockPanel as any);
 
       const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
-      await instance.createPanel();
+      await instance.create();
 
       expect(mockPanel.reveal).toHaveBeenCalled();
     });
@@ -204,7 +204,7 @@ describe('OpenDesignerForLocalProject', () => {
 
       const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
 
-      await expect(instance.createPanel()).rejects.toThrow(
+      await expect(instance.create()).rejects.toThrow(
         'Design time failed to start for project /test/project. func host failed to start'
       );
     });
@@ -218,14 +218,14 @@ describe('OpenDesignerForLocalProject', () => {
 
       const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
 
-      await expect(instance.createPanel()).rejects.toThrow('Design time is not running for project /test/project.');
+      await expect(instance.create()).rejects.toThrow('Design time is not running for project /test/project.');
     });
 
     it('creates a designer panel and caches it when design-time is available', async () => {
       ext.designTimeInstances.set('/test/project', { port: 7071, isStarting: false });
       const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
 
-      await instance.createPanel();
+      await instance.create();
 
       expect(startDesignTimeApi).toHaveBeenCalledWith('/test/project');
       expect(mockContext.telemetry.properties.extensionBundleVersion).toBe('1.0.0');
@@ -237,7 +237,7 @@ describe('OpenDesignerForLocalProject', () => {
   describe('metadata', () => {
     it('builds designer panel metadata using the project path for bundle resolution', async () => {
       const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
-      const metadata = await (instance as any)._getDesignerPanelMetadata({
+      const metadata = await (instance as any).getDesignerPanelMetadata({
         flatFileEncoding: { inputs: { properties: { schema: { properties: { source: true } } } } },
         liquidJsonToJson: { inputs: { properties: { map: { properties: { source: true } } } } },
         xmlValidation: { inputs: { properties: { schema: { properties: { source: true } } } } },
@@ -277,7 +277,6 @@ describe('OpenDesignerForLocalProject', () => {
       (instance as any).oauthRedirectUrl = 'vscode://auth';
       (instance as any).projectPath = '/test/project';
       (instance as any).getWorkflowRuntimeBaseUrl = () => 'http://localhost:8080/admin';
-      (instance as any).sendMsgToWebview = vi.fn();
       (instance as any).saveWorkflow = vi.fn();
       (instance as any).createFileSystemConnection = vi.fn().mockResolvedValue({ connection: { id: 'connection' } });
       return instance;
@@ -286,30 +285,30 @@ describe('OpenDesignerForLocalProject', () => {
     it('handles initialize, save, and designer utility messages', async () => {
       const instance = createMessageHarness();
 
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.initialize });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.save, definition: {} });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.createUnitTest, definition: {} });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.addConnection, connectionAndSetting: { name: 'conn' } });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.openOauthLoginPopup, url: 'https://login.example.com' });
-      await (instance as any)._handleWebviewMsg({
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.initialize });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.save, definition: {} });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.createUnitTest, definition: {} });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.addConnection, connectionAndSetting: { name: 'conn' } });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.openOauthLoginPopup, url: 'https://login.example.com' });
+      await (instance as any).handleWebviewMsg({
         command: ExtensionCommand.createFileSystemConnection,
         connectionName: 'filesystem',
         connectionInfo: { connectionParameters: {} },
       });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.openRelativeLink, content: '/dataMapper' });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.logTelemetry, data: { area: 'designerArea' } });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.fileABug });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.getDesignerVersion });
-      await (instance as any)._handleWebviewMsg({ command: 'unknown' });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.openRelativeLink, content: '/dataMapper' });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.logTelemetry, data: { area: 'designerArea' } });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.fileABug });
+      await (instance as any).handleWebviewMsg({ command: ExtensionCommand.getDesignerVersion });
+      await (instance as any).handleWebviewMsg({ command: 'unknown' });
 
-      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
+      expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ command: ExtensionCommand.initialize_frame })
       );
       expect((instance as any).saveWorkflow).toHaveBeenCalled();
       expect(createUnitTest).toHaveBeenCalled();
       expect(addConnectionData).toHaveBeenCalledWith(expect.anything(), mockUri.fsPath, { name: 'conn' });
       expect(env.openExternal).toHaveBeenCalledWith('https://login.example.com');
-      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
+      expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           command: ExtensionCommand.completeFileSystemConnection,
           data: expect.objectContaining({ connectionName: 'filesystem' }),
@@ -318,7 +317,7 @@ describe('OpenDesignerForLocalProject', () => {
       expect(createNewDataMapCmd).toHaveBeenCalledWith(mockContext);
       expect(ext.telemetryReporter.sendTelemetryEvent).toHaveBeenCalledWith('designerArea', { area: 'designerArea' });
       expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
-      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
+      expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ command: ExtensionCommand.getDesignerVersion })
       );
 
@@ -332,7 +331,7 @@ describe('OpenDesignerForLocalProject', () => {
       vi.mocked(getCustomCodeToUpdate).mockResolvedValue({ codeFile: 'content' } as any);
       vi.mocked(getParametersFromFile).mockResolvedValueOnce({ preservedParameter: { value: 'existing' } } as any);
       const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
-      (instance as any).sendMsgToWebview = vi.fn();
+      (instance as any).panel = { webview: { postMessage: vi.fn() } };
       const workflow = { definition: { actions: {} } };
       const workflowToSave = {
         definition: { actions: { Response: { type: 'Response' } } },
@@ -367,7 +366,7 @@ describe('OpenDesignerForLocalProject', () => {
         })
       );
       expect(writeFileSync).toHaveBeenCalledWith(mockUri.fsPath, expect.stringContaining('Response'));
-      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith({ command: ExtensionCommand.resetDesignerDirtyState });
+      expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.resetDesignerDirtyState });
     });
 
     it('reports and rethrows save failures', async () => {

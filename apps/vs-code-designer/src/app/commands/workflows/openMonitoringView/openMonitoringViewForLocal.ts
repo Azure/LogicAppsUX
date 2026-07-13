@@ -43,7 +43,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     super(context, runId, workflowFilePath, true, apiVersion);
   }
 
-  public async createPanel(): Promise<void> {
+  public async create(): Promise<void> {
     const existingPanel: WebviewPanel | undefined = this.getExistingPanel();
 
     if (existingPanel) {
@@ -111,7 +111,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private async _handleWebviewMsg(message: any) {
     switch (message.command) {
       case ExtensionCommand.initialize: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.designer,
@@ -153,7 +153,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         break;
       }
       case ExtensionCommand.getDesignerVersion: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.getDesignerVersion,
           data: this.getDesignerVersion(),
         });

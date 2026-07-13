@@ -23,10 +23,10 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 }));
 
 // Import the actual class after mocks
-import { OpenDesignerBase } from '../openDesignerBase';
+import { DesignerPanel } from '../openDesignerBase';
 
 // Concrete subclass to test the abstract class
-class TestDesigner extends OpenDesignerBase {
+class TestDesigner extends DesignerPanel {
   constructor(context?: any) {
     super(
       context ?? { telemetry: { properties: {}, measurements: {} } },
@@ -41,7 +41,7 @@ class TestDesigner extends OpenDesignerBase {
     );
   }
 
-  async createPanel(): Promise<void> {}
+  async create(): Promise<void> {}
 
   // Expose protected methods for testing
   public testGetDesignerVersion() {

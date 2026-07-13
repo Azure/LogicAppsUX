@@ -24,7 +24,7 @@ export interface IDesignerOptions {
   workflowDetails?: Record<string, any>;
 }
 
-export abstract class OpenDesignerBase {
+export abstract class DesignerPanel {
   protected workflowName: string;
   protected panelName: string;
   protected apiVersion: string;
@@ -67,7 +67,7 @@ export abstract class OpenDesignerBase {
     this.runId = runId;
   }
 
-  protected abstract createPanel(): Promise<void>;
+  protected abstract create(): Promise<void>;
 
   protected getExistingPanel(): WebviewPanel | undefined {
     return tryGetWebviewPanel(this.panelGroupKey, this.panelName);
@@ -78,10 +78,6 @@ export abstract class OpenDesignerBase {
       enableScripts: true,
       retainContextWhenHidden: true,
     };
-  }
-
-  protected sendMsgToWebview(msg: any) {
-    this.panel.webview.postMessage(msg);
   }
 
   protected async getWebviewContent(options: IDesignerOptions): Promise<string> {
@@ -180,11 +176,6 @@ export abstract class OpenDesignerBase {
     return location.toLowerCase().replace(/ /g, '');
   }
 
-  protected getDesignerVersion(): number {
-    const config = workspace.getConfiguration(ext.prefix);
-    return config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
-  }
-
   protected async showDesignerVersionNotification(): Promise<void> {
     const isSuppressed = ext.context.globalState.get<boolean>(suppressDesignerVersionNotification) === true;
     if (isSuppressed) {
@@ -197,6 +188,11 @@ export abstract class OpenDesignerBase {
     } else {
       await this.showDowngradeDesignerNotification();
     }
+  }
+
+  protected getDesignerVersion(): number {
+    const config = workspace.getConfiguration(ext.prefix);
+    return config.get<number>(designerVersionSetting) ?? defaultDesignerVersion;
   }
 
   private async showUpgradeDesignerNotification(): Promise<void> {

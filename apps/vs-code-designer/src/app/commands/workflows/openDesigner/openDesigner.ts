@@ -29,5 +29,5 @@ export async function openDesigner(context: IAzureConnectorsContext, node: Uri |
     openDesignerObj = new OpenDesignerForAzureResource(context, workflowNode);
   }
 
-  await openDesignerObj?.createPanel();
+  await openDesignerObj?.create();
 }

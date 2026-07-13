@@ -5,13 +5,13 @@
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
+import { DesignerPanel } from '../openDesigner/openDesignerBase';
 import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { WebviewPanel } from 'vscode';
 import * as vscode from 'vscode';
 
-export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
+export abstract class OpenMonitoringViewBase extends DesignerPanel {
   protected runName: string;
   protected workflowFilePath: string;
   protected localSettings: Record<string, string>;

@@ -120,14 +120,14 @@ describe('OpenMonitoringViewForLocal', () => {
     });
   });
 
-  describe('createPanel', () => {
+  describe('create', () => {
     it('should reveal existing panel if one exists', async () => {
       const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
       const mockReveal = vi.fn();
       vi.mocked(tryGetWebviewPanel).mockReturnValue({ active: false, reveal: mockReveal } as any);
 
       const instance = new OpenMonitoringViewForLocal(mockContext, mockRunId, mockWorkflowFilePath);
-      await instance.createPanel();
+      await instance.create();
 
       expect(mockReveal).toHaveBeenCalled();
     });
@@ -135,7 +135,7 @@ describe('OpenMonitoringViewForLocal', () => {
     it('creates a monitoring panel and caches it', async () => {
       const instance = new OpenMonitoringViewForLocal(mockContext, mockRunId, mockWorkflowFilePath);
 
-      await instance.createPanel();
+      await instance.create();
 
       expect(mockContext.telemetry.properties.extensionBundleVersion).toBe('1.0.0');
       expect((instance as any).panel.webview.html).toBe('<html></html>');
@@ -158,13 +158,13 @@ describe('OpenMonitoringViewForLocal', () => {
   describe('webview messages', () => {
     function createMessageHarness() {
       const instance = new OpenMonitoringViewForLocal(mockContext, mockRunId, mockWorkflowFilePath);
+      (instance as any).panel = { webview: { postMessage: vi.fn() } };
       (instance as any).panelMetadata = {};
       (instance as any).connectionData = {};
       (instance as any).workflowDetails = {};
       (instance as any).apiHubServiceDetails = {};
       (instance as any).baseUrl = 'http://localhost:7071/admin';
       (instance as any).oauthRedirectUrl = 'vscode://auth';
-      (instance as any).sendMsgToWebview = vi.fn();
       (instance as any).openContent = vi.fn();
       return instance;
     }
@@ -191,7 +191,7 @@ describe('OpenMonitoringViewForLocal', () => {
       await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.getDesignerVersion });
       await (instance as any)._handleWebviewMsg({ command: 'unknown' });
 
-      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
+      expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ command: ExtensionCommand.initialize_frame })
       );
       expect((instance as any).openContent).toHaveBeenCalledWith('Header', 'content-id', 'Title', 'Content');
@@ -205,7 +205,7 @@ describe('OpenMonitoringViewForLocal', () => {
       expect(ext.telemetryReporter.sendTelemetryEvent).toHaveBeenCalledWith('monitoringArea', { area: 'monitoringArea' });
       expect(createUnitTestFromRun).toHaveBeenCalledWith(expect.objectContaining({ fsPath: mockWorkflowFilePath }), 'run-123', {});
       expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
-      expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
+      expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ command: ExtensionCommand.getDesignerVersion })
       );
     });

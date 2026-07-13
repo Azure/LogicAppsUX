@@ -28,6 +28,6 @@ export async function openMonitoringView(
   }
 
   await callWithTelemetryAndErrorHandling(`logicAppsExtension.openMonitoringView${monitoringViewTelemetry}`, async () => {
-    await monitoringView?.createPanel();
+    await monitoringView?.create();
   });
 }

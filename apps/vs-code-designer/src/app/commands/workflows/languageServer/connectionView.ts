@@ -8,7 +8,7 @@ import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebvi
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
-import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
+import { DesignerPanel } from '../openDesigner/openDesignerBase';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import {
   addConnectionData,
@@ -41,7 +41,7 @@ type Range = {
   };
 };
 
-export default class OpenConnectionView extends OpenDesignerBase {
+export default class OpenConnectionView extends DesignerPanel {
   private readonly workflowFilePath: string;
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
@@ -71,7 +71,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
     this.currentConnectionId = currentConnectionId;
   }
 
-  public async createPanel(): Promise<void> {
+  public async create(): Promise<void> {
     const existingPanel: WebviewPanel | undefined = this.getExistingPanel();
 
     if (existingPanel) {
@@ -209,7 +209,7 @@ export default class OpenConnectionView extends OpenDesignerBase {
       case ExtensionCommand.initialize: {
         const resolvedCurrentConnectionId = resolveCurrentConnectionId(this.panelMetadata?.connectionsData, this.currentConnectionId);
 
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.languageServer,
@@ -635,5 +635,5 @@ export async function openLanguageServerConnectionView(
     range,
     currentConnectionId
   );
-  await connectionViewObj.createPanel();
+  await connectionViewObj.create();
 }

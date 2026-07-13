@@ -82,7 +82,7 @@ describe('openMonitoringViewForAzureResource', () => {
     });
   });
 
-  describe('createPanel', () => {
+  describe('create', () => {
     it('should reveal existing panel if one exists', async () => {
       const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
       const mockReveal = vi.fn();
@@ -90,7 +90,7 @@ describe('openMonitoringViewForAzureResource', () => {
 
       const mockNode = createMockNode();
       const instance = new openMonitoringViewForAzureResource(mockContext, mockRunId, mockWorkflowFilePath, mockNode as any);
-      await instance.createPanel();
+      await instance.create();
 
       expect(mockReveal).toHaveBeenCalled();
     });
@@ -110,7 +110,7 @@ describe('openMonitoringViewForAzureResource', () => {
 
       const mockNode = createMockNode();
       const instance = new openMonitoringViewForAzureResource(mockContext, mockRunId, mockWorkflowFilePath, mockNode as any);
-      await instance.createPanel();
+      await instance.create();
 
       expect(cacheWebviewPanel).toHaveBeenCalled();
     });

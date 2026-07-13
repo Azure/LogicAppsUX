@@ -80,7 +80,7 @@ describe('OpenDesignerForAzureResource', () => {
     });
   });
 
-  describe('createPanel', () => {
+  describe('create', () => {
     it('should reveal existing panel if one exists', async () => {
       const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
       const mockReveal = vi.fn();
@@ -88,7 +88,7 @@ describe('OpenDesignerForAzureResource', () => {
 
       const mockNode = createMockNode();
       const instance = new OpenDesignerForAzureResource(mockContext, mockNode as any);
-      await instance.createPanel();
+      await instance.create();
 
       expect(mockReveal).toHaveBeenCalled();
     });
@@ -117,7 +117,7 @@ describe('OpenDesignerForAzureResource', () => {
 
       const mockNode = createMockNode();
       const instance = new OpenDesignerForAzureResource(mockContext, mockNode as any);
-      await instance.createPanel();
+      await instance.create();
 
       expect(cacheWebviewPanel).toHaveBeenCalled();
       // showDesignerVersionNotification was called (shows v1 message)

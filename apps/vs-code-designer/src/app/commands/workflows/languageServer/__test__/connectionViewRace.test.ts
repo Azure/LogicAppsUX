@@ -46,12 +46,11 @@ vi.mock('../../../../utils/bundleFeed', () => ({
 
 vi.mock('../../openDesigner/openDesignerBase', () => {
   return {
-    OpenDesignerBase: class {
+    DesignerPanel: class {
       panelGroupKey = 'ls';
       panelName = 'test';
       context = { telemetry: { properties: {} } };
-      panel = { dispose: vi.fn() };
-      sendMsgToWebview = vi.fn();
+      panel = { dispose: vi.fn(), webview: { postMessage: vi.fn() } };
     },
   };
 });
@@ -79,7 +78,7 @@ function createInstance(): InstanceType<typeof OpenConnectionView> {
   instance.connectorType = 'builtin';
   instance.currentConnectionId = '';
   instance.context = { telemetry: { properties: {} } };
-  instance.panel = { dispose: vi.fn() };
+  instance.panel = { dispose: vi.fn(), webview: { postMessage: vi.fn() } };
   instance.panelMetadata = { azureDetails: {} };
   // Override the private saveConnection so tests focus on handler orchestration
   instance.saveConnection = mockSaveConnection;

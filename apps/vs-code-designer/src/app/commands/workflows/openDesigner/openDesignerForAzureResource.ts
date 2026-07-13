@@ -9,7 +9,7 @@ import {
   getWorkflowManagementBaseURI,
 } from '../../../utils/codeless/common';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { OpenDesignerBase } from './openDesignerBase';
+import { DesignerPanel } from './openDesignerBase';
 import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
@@ -17,7 +17,7 @@ import * as vscode from 'vscode';
 import { Uri } from 'vscode';
 import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthorizationToken';
 
-export class OpenDesignerForAzureResource extends OpenDesignerBase {
+export class OpenDesignerForAzureResource extends DesignerPanel {
   private readonly node: RemoteWorkflowTreeItem;
   private readonly workflow: IWorkflowFileContent;
   private panelMetadata: IDesignerPanelMetadata;
@@ -34,7 +34,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     this.baseUrl = getWorkflowManagementBaseURI(node);
   }
 
-  public async createPanel(): Promise<void> {
+  public async create(): Promise<void> {
     const existingPanel: vscode.WebviewPanel | undefined = this.getExistingPanel();
 
     if (existingPanel) {
@@ -81,7 +81,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
   private async _handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.designer,
@@ -109,7 +109,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.getDesignerVersion: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.getDesignerVersion,
           data: this.getDesignerVersion(),
         });
