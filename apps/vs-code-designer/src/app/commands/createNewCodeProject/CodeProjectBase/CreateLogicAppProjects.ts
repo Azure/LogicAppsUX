@@ -19,6 +19,7 @@ import {
   updateWorkspaceFile,
 } from './CreateLogicAppWorkspace';
 import { devContainerFolderName, devContainerFileName } from '../../../../constants';
+import { ext } from '../../../../extensionVariables';
 
 export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
   addLocalFuncTelemetry(context);
@@ -90,7 +91,7 @@ export async function createLogicAppProject(context: IActionContext, options: an
     const createFunctionAppFilesStep = new CreateFunctionAppFiles();
     await createFunctionAppFilesStep.setup(mySubContext);
   }
-  vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+  ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
 }
 
 /**

@@ -277,6 +277,10 @@ export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValid
 export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
+// Timeout (ms) for dependency version/metadata HTTP lookups so activation can't hang on a stalled request.
+export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
+// On-disk integrity manifest written into each installed runtime dependency folder to detect corrupt/incomplete installs.
+export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
@@ -328,6 +332,10 @@ export const defaultExtensionBundlePathValue = path.join(
 export const defaultDataMapperVersion = 2;
 export const defaultDesignerVersion = 1;
 
+// The design-time host.json enables workflow operation discovery host mode so the design-time API can
+// enumerate operations. Shared between the generated host.json content and its validation.
+export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationDiscoveryHostMode';
+
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet8: '8.0.318',
@@ -345,7 +353,7 @@ export const hostFileContent = {
   extensions: {
     workflow: {
       settings: {
-        'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+        [workflowOperationDiscoveryHostModeKey]: 'true',
       },
     },
   },

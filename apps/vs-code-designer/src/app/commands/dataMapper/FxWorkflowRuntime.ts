@@ -53,7 +53,7 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
 
     if (await isDesignTimeUp(url)) {
-      ext.log(localize('RuntimeAlreadyRunning', 'Backend runtime is already running'));
+      ext.outputChannel.appendLine(localize('RuntimeAlreadyRunning', 'Backend runtime is already running'));
       return;
     }
 
@@ -82,10 +82,8 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
         throw new Error("Workflow folder doesn't exist");
       }
     } catch (error) {
-      window.showErrorMessage('Backend runtime could not be started');
-
       const errMsg = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
-      ext.log(localize('RuntimeFailedToStart', `Backend runtime failed to start: "{0}"`, errMsg));
+      ext.outputChannel.appendLine(localize('RuntimeFailedToStart', 'Backend runtime failed to start. Error: "{0}".', errMsg));
     }
   });
 }

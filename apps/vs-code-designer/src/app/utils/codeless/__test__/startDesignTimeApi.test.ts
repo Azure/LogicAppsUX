@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { window, workspace } from 'vscode';
+import { Uri, window, workspace } from 'vscode';
 import axios from 'axios';
 import * as cp from 'child_process';
 import { EventEmitter } from 'events';
@@ -8,11 +8,31 @@ import * as os from 'os';
 import * as portfinder from 'portfinder';
 import { ext } from '../../../../extensionVariables';
 import * as workspaceUtils from '../../workspace';
-import { startAllDesignTimeApis, startDesignTimeApi, startDesignTimeProcess, stopDesignTimeApi } from '../startDesignTimeApi';
+import {
+  startAllDesignTimeApis,
+  startDesignTimeApi,
+  startDesignTimeProcess,
+  stopDesignTimeApi,
+  promptStartDesignTimeOption,
+} from '../startDesignTimeApi';
+import { regenerateLocalSettings, regenerateRootHostFile } from '../validateProjectArtifacts';
+import { getWorkspaceSetting } from '../../vsCodeConfig/settings';
 
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
   getLocalSettingsSchema: vi.fn(() => ({ Values: {} })),
+}));
+
+vi.mock('../validateProjectArtifacts', () => ({
+  regenerateLocalSettings: vi.fn(),
+  regenerateRootHostFile: vi.fn(),
+  // Preserve the existing failure-injection semantics: the design-time startup tests drive
+  // success/failure through workspace.fs.createDirectory, so route the orchestrator through it.
+  validateAndRegenerateProjectArtifacts: vi.fn(async (_context: unknown, projectPath: string) => {
+    const designTimeDirectory = Uri.file(`${projectPath}/workflow-designtime`);
+    await workspace.fs.createDirectory(designTimeDirectory);
+    return designTimeDirectory;
+  }),
 }));
 
 vi.mock('../../fs', () => ({
@@ -346,5 +366,56 @@ describe('startDesignTimeProcess', () => {
       'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
     );
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Conflicting port found when launching func. Restarting design-time process.');
+  });
+});
+
+describe('promptStartDesignTimeOption', () => {
+  const context = { ui: { showWarningMessage: vi.fn() }, telemetry: { properties: {}, measurements: {} } } as any;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    ext.designTimeInstances.clear();
+    (workspace as any).workspaceFolders = [];
+    // Default: auto-start disabled and the prompt suppressed (getWorkspaceSetting -> undefined), so
+    // only the artifact-regeneration loop runs — no scheduled design-time startup, no warning dialog.
+    vi.mocked(getWorkspaceSetting).mockReturnValue(undefined as any);
+  });
+
+  it('regenerates host.json and local.settings.json for each detected logic app folder', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
+
+    await promptStartDesignTimeOption(context);
+
+    expect(regenerateRootHostFile).toHaveBeenCalledWith('D:/workspace/app-one');
+    expect(regenerateRootHostFile).toHaveBeenCalledWith('D:/workspace/app-two');
+    expect(regenerateLocalSettings).toHaveBeenCalledWith(context, 'D:/workspace/app-one');
+    expect(regenerateLocalSettings).toHaveBeenCalledWith(context, 'D:/workspace/app-two');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Detected 2 logic app project folder(s) for artifact regeneration: D:/workspace/app-one, D:/workspace/app-two.'
+    );
+  });
+
+  it('logs and skips regeneration when no logic app folders are detected', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue([]);
+
+    await promptStartDesignTimeOption(context);
+
+    expect(regenerateRootHostFile).not.toHaveBeenCalled();
+    expect(regenerateLocalSettings).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('No logic app project folders were detected'));
+  });
+
+  it('logs and skips regeneration when no workspace folders are open', async () => {
+    (workspace as any).workspaceFolders = undefined;
+
+    await promptStartDesignTimeOption(context);
+
+    expect(workspaceUtils.getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+    expect(regenerateRootHostFile).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'No workspace folders are open. Skipping host.json and local.settings.json regeneration.'
+    );
   });
 });

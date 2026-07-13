@@ -640,7 +640,7 @@ async function downloadBundleWithProgress(
   await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title, cancellable: false }, async () => {
     await downloadBundleAndWriteSidecar(context, baseUrl, version);
   });
-  vscode.window.showInformationMessage(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
+  ext.outputChannel.appendLog(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
 }
 
 /**
@@ -663,7 +663,7 @@ async function tryDownloadBundleWithProgress(
     outcome = await tryDownloadBundleAndWriteSidecar(context, baseUrl, version);
   });
   if (outcome.ok) {
-    vscode.window.showInformationMessage(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
+    ext.outputChannel.appendLog(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
   }
   return outcome;
 }

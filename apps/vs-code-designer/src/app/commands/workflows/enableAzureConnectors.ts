@@ -10,11 +10,12 @@ import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../../utils/codeless/common';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { isString } from '@microsoft/logic-apps-shared';
+import { ext } from '../../../extensionVariables';
 
 /**
  * Enables Azure connectors for the project containing workflow node.
@@ -27,30 +28,22 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   const localSettingsFilePath: string = path.join(projectPath, localSettingsFileName);
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsFilePath);
 
-  // Add null check for Values object and safely access properties
   const subscriptionId: string | undefined = localSettings.Values?.[workflowSubscriptionIdKey];
   const authenticationMethod: string | undefined = localSettings.Values?.[workflowAuthenticationMethodKey];
+  if (!!subscriptionId && !!authenticationMethod) {
+    ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
+    return;
+  }
 
-  if (!subscriptionId || subscriptionId === '' || !authenticationMethod) {
-    const connectorsContext: IAzureConnectorsContext = context as IAzureConnectorsContext;
-    const wizard: AzureWizard<IAzureConnectorsContext> = createAzureWizard(connectorsContext, projectPath);
-    await wizard.prompt();
-    await wizard.execute();
-    if (connectorsContext.enabled) {
-      // Invalidate stale cache and refetch Azure details with fresh auth token
-      invalidateAzureDetailsCache(projectPath);
-      getAzureConnectorDetailsForLocalProject(context, projectPath).catch(() => {});
+  const connectorsContext: IAzureConnectorsContext = context as IAzureConnectorsContext;
+  const wizard: AzureWizard<IAzureConnectorsContext> = createAzureWizard(connectorsContext, projectPath);
+  await wizard.prompt();
+  await wizard.execute();
 
-      vscode.window.showInformationMessage(
-        localize(
-          'logicapp.azureConnectorsEnabledForProject',
-          'Azure connectors are enabled for the project. Reload the designer panel to start using the connectors.'
-        )
-      );
-    }
-  } else {
-    await vscode.window.showInformationMessage(
-      localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.')
-    );
+  if (connectorsContext.enabled) {
+    invalidateAzureDetailsCache(projectPath);
+    getAzureConnectorDetailsForLocalProject(context, projectPath).catch(() => {});
+    
+    ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
   }
 }

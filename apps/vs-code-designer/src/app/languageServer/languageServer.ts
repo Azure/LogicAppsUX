@@ -21,6 +21,7 @@ import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/commo
 import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
+import { localize } from '../../localize';
 
 export default class LogicAppsLanguageServer {
   protected lspServerPath: string | undefined;
@@ -79,7 +80,7 @@ export default class LogicAppsLanguageServer {
     // Support for debugger wait mode in development
     if (process.env.LSP_WAIT_FOR_DEBUGGER === 'true') {
       serverArgs.push('--wait-for-debugger');
-      window.showInformationMessage('LSP Server starting in debug mode - attach debugger and press any key in the server console');
+      ext.outputChannel.appendLog(localize('lspWaitForDebugger', 'LSP Server starting in debug mode - attach debugger and press any key in the server console'));
     }
 
     const fileSystemWatcher = workspace.createFileSystemWatcher('**/*.cs');

@@ -55,6 +55,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
 import { isBuiltInMcpOperation, isManagedMcpOperation } from '../../state/workflow/helper';
+import { setIsWorkflowDirty } from '../../state/workflow/workflowSlice';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
 export interface ConnectionPayload {
   nodeId: string;
@@ -290,13 +291,14 @@ export const reloadParametersTab = createAsyncThunk<void, void>('reloadParameter
   dispatch(setIsPanelLoading(false));
 });
 
-const updateNodeConnectionAndProperties = async (
+export const updateNodeConnectionAndProperties = async (
   payload: UpdateConnectionPayload,
   dispatch: Dispatch,
   getState: () => RootState
 ): Promise<void> => {
   const { nodeId } = payload;
   dispatch(changeConnectionMapping(payload));
+  dispatch(setIsWorkflowDirty(true));
 
   const newState = getState() as RootState;
   const operationInfo = getRecordEntry(newState.operations.operationInfo, nodeId);
@@ -309,19 +311,23 @@ const updateNodeConnectionAndProperties = async (
     return;
   }
 
-  return updateDynamicDataInNode(
-    nodeId,
-    isTriggerNode(nodeId, newState.workflow.nodesMetadata),
-    operationInfo,
-    getConnectionReference(newState.connections, nodeId),
-    dependencies,
-    dispatch,
-    getState,
-    newState.tokens?.variables ?? {},
-    newState.workflowParameters?.definitions ?? {},
-    !!newState.tokens /* updateTokenMetadata */,
-    newlyAddedOperations ? undefined : operation
-  );
+  try {
+    await updateDynamicDataInNode(
+      nodeId,
+      isTriggerNode(nodeId, newState.workflow.nodesMetadata),
+      operationInfo,
+      getConnectionReference(newState.connections, nodeId),
+      dependencies,
+      dispatch,
+      getState,
+      newState.tokens?.variables ?? {},
+      newState.workflowParameters?.definitions ?? {},
+      !!newState.tokens /* updateTokenMetadata */,
+      newlyAddedOperations ? undefined : operation
+    );
+  } finally {
+    dispatch(setIsWorkflowDirty(true));
+  }
 };
 
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {

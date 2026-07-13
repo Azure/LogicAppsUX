@@ -7,7 +7,6 @@ import { localize } from '../../../localize';
 import { getDependencyTimeout } from '../../utils/binaries';
 import { getDependenciesVersion, ensureExtensionBundleHealthy } from '../../utils/bundleFeed';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
-import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
@@ -35,7 +34,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
     async (progress, token) => {
       token.onCancellationRequested(() => {
         // Handle cancellation logic
-        executeCommand(ext.outputChannel, undefined, 'echo', 'validateAndInstallBinaries was canceled');
+        ext.outputChannel.appendLog('validateAndInstallBinaries was canceled');
       });
 
       context.telemetry.properties.lastStep = 'getGlobalSetting';

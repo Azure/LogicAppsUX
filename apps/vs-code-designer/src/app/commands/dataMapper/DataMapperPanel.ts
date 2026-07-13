@@ -329,15 +329,15 @@ export default class DataMapperPanel {
         break;
       }
       case LogEntryLevel.Warning: {
-        ext.showWarning(msg);
+        window.showWarningMessage(msg);
         break;
       }
       case LogEntryLevel.Verbose: {
-        ext.showInformation(msg);
+        window.showInformationMessage(msg);
         break;
       }
       default: {
-        ext.log(msg);
+        ext.outputChannel.appendLine(msg);
         break;
       }
     }
@@ -528,7 +528,7 @@ export default class DataMapperPanel {
           return undefined;
         }
       } else {
-        ext.showWarning(
+        window.showWarningMessage(
           localize(
             'MetadataNotFound',
             `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
@@ -569,7 +569,7 @@ export default class DataMapperPanel {
         });
       });
     } else {
-      ext.showWarning(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
+      window.showWarningMessage(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
     }
   }
 

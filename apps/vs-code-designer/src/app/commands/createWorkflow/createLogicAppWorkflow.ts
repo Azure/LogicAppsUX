@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { createLogicAppAndWorkflow } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { localize } from '../../../localize';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
+import { ext } from '../../../extensionVariables';
 
 export async function createLogicAppWorkflow(context: IActionContext, options: any, logicAppFolderPath: string) {
   addLocalFuncTelemetry(context);
@@ -32,5 +33,5 @@ export async function createLogicAppWorkflow(context: IActionContext, options: a
   mySubContext.targetFramework = options.targetFramework;
 
   await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath, context);
-  vscode.window.showInformationMessage(localize('finishedCreatingWorkflow', 'Finished creating workflow.'));
+  ext.outputChannel.appendLog(localize('finishedCreatingWorkflow', 'Finished creating workflow.'));
 }

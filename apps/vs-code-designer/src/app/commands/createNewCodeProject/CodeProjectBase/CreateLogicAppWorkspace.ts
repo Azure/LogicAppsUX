@@ -1,32 +1,21 @@
 import {
-  appKindSetting,
   artifactsDirectory,
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
-  azureWebJobsFeatureFlagsKey,
-  azureWebJobsStorageKey,
   defaultVersionRange,
   devContainerFolderName,
   extensionBundleId,
   extensionCommand,
   funcIgnoreFileName,
-  functionsInprocNet8Enabled,
-  functionsInprocNet8EnabledTrue,
   gitignoreFileName,
   hostFileName,
   libDirectory,
-  localEmulatorConnectionString,
   localSettingsFileName,
-  logicAppKind,
   lspDirectory,
-  multiLanguageWorkerSetting,
-  ProjectDirectoryPathKey,
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
   vscodeFolderName,
-  workerRuntimeKey,
-  workflowCodefulEnabledKey,
   workflowFileName,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
@@ -43,14 +32,9 @@ import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { writeFormattedJson } from '../../../utils/fs';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
-import type {
-  IFunctionWizardContext,
-  IHostJsonV2,
-  ILocalSettingsJson,
-  IWebviewProjectContext,
-  StandardApp,
-} from '@microsoft/vscode-extension-logic-apps';
-import { WorkerRuntime, ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IHostJsonV2, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
+import { getLocalSettingsSchema } from '../../../utils/appSettings/localSettings';
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
@@ -213,24 +197,10 @@ export async function createLocalConfigurationFiles(
     '.debug',
     'workflow-designtime/',
   ];
-  const localSettingsJson: ILocalSettingsJson = {
-    IsEncrypted: false,
-    Values: {
-      [azureWebJobsStorageKey]: localEmulatorConnectionString,
-      [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
-      [workerRuntimeKey]: WorkerRuntime.Dotnet,
-      [appKindSetting]: logicAppKind,
-      [ProjectDirectoryPathKey]: logicAppFolderPath,
-    },
-  };
+  const localSettingsJson = getLocalSettingsSchema(false, logicAppFolderPath, logicAppType);
 
   if (logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');
-    localSettingsJson.Values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
-  }
-
-  if (logicAppType === ProjectType.codeful) {
-    localSettingsJson.Values[workflowCodefulEnabledKey] = 'true';
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
@@ -398,13 +368,13 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
 
   if (fromPackage) {
     await logicAppPackageProcessing(mySubContext);
-    vscode.window.showInformationMessage(localize('finishedExtractingPackage', 'Finished extracting package into a logic app workspace.'));
+    ext.outputChannel.appendLog(localize('finishedExtractingPackage', 'Finished extracting package into a logic app workspace.'));
   } else {
     if (webviewProjectContext.logicAppType === ProjectType.customCode || webviewProjectContext.logicAppType === ProjectType.rulesEngine) {
       const createFunctionAppFilesStep = new CreateFunctionAppFiles();
       await createFunctionAppFilesStep.setup(mySubContext);
     }
-    vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+    ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }
 
   await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
@@ -474,5 +444,5 @@ export async function createLogicAppProject(context: IActionContext, options: an
     const createFunctionAppFilesStep = new CreateFunctionAppFiles();
     await createFunctionAppFilesStep.setup(mySubContext);
   }
-  vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+  ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
 }

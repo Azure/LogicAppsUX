@@ -17,7 +17,7 @@ const mocks = {
   useOperationInfo: vi.fn(),
   useOperationManifest: vi.fn(),
   useIsA2AWorkflow: vi.fn(),
-  useIsAgenticWorkflowOnly: vi.fn(),
+  useIsAgenticWorkflow: vi.fn(),
   usePanelTabHideKeys: vi.fn(),
   useUnitTest: vi.fn(),
   useMonitoringView: vi.fn(),
@@ -35,7 +35,7 @@ vi.mock('../../../../core', () => ({
 }));
 vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: () => mocks.useIsA2AWorkflow(),
-  useIsAgenticWorkflowOnly: () => mocks.useIsAgenticWorkflowOnly(),
+  useIsAgenticWorkflow: () => mocks.useIsAgenticWorkflow(),
 }));
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   usePanelTabHideKeys: () => mocks.usePanelTabHideKeys(),
@@ -124,7 +124,7 @@ describe('usePanelTabs', () => {
     mocks.useNodeMetadata.mockReturnValue(null);
     mocks.useOperationInfo.mockReturnValue({ type: 'http', kind: 'http', connectorId: 'test', operationId: 'test' });
     mocks.useIsA2AWorkflow.mockReturnValue(false);
-    mocks.useIsAgenticWorkflowOnly.mockReturnValue(false);
+    mocks.useIsAgenticWorkflow.mockReturnValue(false);
     mocks.usePanelTabHideKeys.mockReturnValue([]);
     mocks.useUnitTest.mockReturnValue(false);
     mocks.useMonitoringView.mockReturnValue(false);
@@ -227,7 +227,7 @@ describe('usePanelTabs', () => {
 
     it('shows channels tab for agent nodes in agentic workflow', () => {
       setAgentNode();
-      mocks.useIsAgenticWorkflowOnly.mockReturnValue(true);
+      mocks.useIsAgenticWorkflow.mockReturnValue(true);
       expect(getTabIds(renderTabs().result)).toContain(constants.PANEL_TAB_NAMES.CHANNELS);
     });
 

@@ -5,7 +5,7 @@
 import { nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { binariesExist, getLatestNodeJsVersion } from '../../utils/binaries';
+import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../utils/binaries';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installNodeJs } from './installNodeJs';
@@ -23,8 +23,12 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
     await setNodeJsCommand();
     const binaries = await binariesExist(nodeJsDependencyName);
     context.telemetry.properties.binariesExist = `${binaries}`;
+    // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
+    // install (e.g. a removed file) forces a wipe + reinstall instead of silently failing at runtime.
+    const integrityValid = binaries ? verifyDependencyIntegrity(context, nodeJsDependencyName) : false;
+    context.telemetry.properties.integrityValid = `${integrityValid}`;
 
-    if (!binaries) {
+    if (!binaries || !integrityValid) {
       await installNodeJs(context, majorVersion);
       context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
     } else if (showNodeJsWarning) {
@@ -178,7 +182,7 @@ async function updateNodeJsFromWarning(context: IActionContext, majorVersion: st
       await setNodeJsCommand();
     }
   );
-  await window.showInformationMessage(localize('updatedNodeJsRuntime', 'Node JS runtime dependency update completed.'));
+  ext.outputChannel.appendLog(localize('updatedNodeJsRuntime', 'Node JS runtime dependency update completed.'));
 }
 
 function shouldShowOutdatedNodeJsWarning(localVersion: string, newestVersion: string, targetVersion: string | undefined): boolean {

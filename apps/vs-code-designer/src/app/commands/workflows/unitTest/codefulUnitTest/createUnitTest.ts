@@ -284,15 +284,15 @@ async function generateUnitTest(
       throw workspaceError;
     }
 
-    const successMessage = localize(
-      'generateCodefulUnitTest',
-      'Successfully created unit test "{0}" at "{1}"',
-      unitTestName,
-      unitTestFolderPath
-    );
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
-    ext.outputChannel.appendLog(successMessage);
-    vscode.window.showInformationMessage(successMessage);
+    ext.outputChannel.appendLog(
+      localize(
+        'generateCodefulUnitTest',
+        'Successfully created unit test "{0}" at "{1}".',
+        unitTestName,
+        unitTestFolderPath
+      )
+    );
   } catch (error) {
     context.telemetry.properties.result = 'Failed';
     context.telemetry.properties.errorMessage = error.message ?? error;
