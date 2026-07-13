@@ -60,7 +60,7 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   useEffect(() => {
     const nextValues = createValues(value);
     const currentDictionary = normalizeDictionary(valuesToDictionary(valuesRef.current));
-    const nextDictionary = normalizeDictionary(value);
+    const nextDictionary = normalizeDictionary(valuesToDictionary(nextValues));
 
     if (!deepCompareObjects(currentDictionary, nextDictionary)) {
       isSyncingFromParentRef.current = true;
