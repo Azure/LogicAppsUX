@@ -22,6 +22,7 @@ import {
   equals,
   getObjectPropertyValue,
   getPropertyValue,
+  isObject,
   OperationOptions,
   SettingScope,
   ValidationErrorCode,
@@ -861,7 +862,7 @@ const getDownloadChunkSize = (definition?: LogicAppsV2.OperationDefinition): num
 const getTrackedProperties = (isTrigger: boolean, manifest?: OperationManifest, definition?: LogicAppsV2.ActionDefinition): any => {
   const supported = areTrackedPropertiesSupported(isTrigger, manifest);
   const trackedProperties = supported && definition ? getPropertyValue(definition as any, 'trackedProperties') : undefined;
-  return trackedProperties ? clone(trackedProperties) : trackedProperties;
+  return isObject(trackedProperties) ? clone(trackedProperties) : trackedProperties;
 };
 
 const areTrackedPropertiesSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {

@@ -13,6 +13,7 @@ describe('ui/settings/simpledictionary', () => {
     const { rerender } = renderWithIntl(<SimpleDictionary value={{ ClientId: 'first-value' }} onChange={onChange} />);
 
     await waitFor(() => expect(screen.getByDisplayValue('first-value')).toBeInTheDocument());
+    expect(onChange).not.toHaveBeenCalled();
 
     rerender(
       <IntlProvider locale="en">
@@ -22,5 +23,6 @@ describe('ui/settings/simpledictionary', () => {
 
     await waitFor(() => expect(screen.getByDisplayValue('second-value')).toBeInTheDocument());
     expect(screen.queryByDisplayValue('first-value')).not.toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

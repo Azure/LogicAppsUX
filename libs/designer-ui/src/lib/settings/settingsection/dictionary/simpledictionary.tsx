@@ -3,9 +3,10 @@ import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './simpledictionary.styles';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
@@ -33,26 +34,40 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
     { key: '', value: '', index: Object.keys(dictionaryValue ?? {}).length },
   ];
 
+  const valuesToDictionary = (dictionaryRows: SimpleDictionaryRowModel[]): Record<string, string> | undefined => {
+    const nextDictionary = dictionaryRows.reduce((acc, row) => {
+      if (row.key) {
+        acc[row.key] = row.value;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    return Object.keys(nextDictionary).length > 0 ? nextDictionary : undefined;
+  };
+
   const [values, setValues] = useState(createValues(value));
+  const valuesRef = useRef(values);
 
   const intl = useIntl();
 
   // Keep the editor in sync if the tracked-properties value is refreshed from the parent.
   useEffect(() => {
-    setValues(createValues(value));
+    const nextValues = createValues(value);
+    if (!equals(nextValues, valuesRef.current)) {
+      setValues(nextValues);
+    }
   }, [value]);
 
   useEffect(() => {
-    onChange?.(
-      values
-        .filter((x) => x.key && x.key !== '')
-        .reduce((acc: any, val) => {
-          acc[val.key] = val.value;
-          return acc;
-        }, {})
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    valuesRef.current = values;
   }, [values]);
+
+  useEffect(() => {
+    const nextDictionary = valuesToDictionary(values);
+    if (!equals(nextDictionary, value)) {
+      onChange?.(nextDictionary);
+    }
+  }, [onChange, value, values]);
 
   const handleItemDelete = (e: SimpleDictionaryRowModel): void => {
     setValues((oldValues) => oldValues.filter((x) => x.index !== e.index).map((x, i) => ({ ...x, index: i })));
