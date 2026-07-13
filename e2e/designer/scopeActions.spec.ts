@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { test, expect } from './fixtures/sharedDesignerPage';
 
 test.describe(
   'Scope actions tests',
@@ -7,10 +6,9 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    test('Should collapse condition actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+    test.use({ mockWorkflow: 'All Scope Nodes' });
 
+    test('Should collapse condition actions', async ({ page }) => {
       // Check items inside conditions exist in true side are visible
       await expect(page.getByTestId('card-terminate').getByRole('button', { name: 'Terminate' })).toBeVisible();
       await expect(page.getByTestId('card-increment_variable_4').getByRole('button', { name: 'Increment variable' })).toBeVisible();
@@ -48,9 +46,6 @@ test.describe(
     });
 
     test('Should collapse for each actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
-
       // Collapse empty foreach
       await page.getByTestId('ForEach_empty-collapse-toggle').click();
 
@@ -85,9 +80,6 @@ test.describe(
     });
 
     test('Should collapse do until actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
-
       // Check items inside do until actions are visible
       await expect(page.getByTestId('card-until_action_1').getByRole('button', { name: 'Until Action' })).toBeVisible();
       await expect(page.getByTestId('card-until_action_2').getByRole('button', { name: 'Until Action' })).toBeVisible();
@@ -114,9 +106,6 @@ test.describe(
     });
 
     test('Should collapse switch actions', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
-
       // Check items inside conditions exist in true side are visible
       await expect(page.getByTestId('card-terminate').getByRole('button', { name: 'Terminate' })).toBeVisible();
       await expect(page.getByTestId('card-increment_variable_4').getByRole('button', { name: 'Increment variable' })).toBeVisible();

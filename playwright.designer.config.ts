@@ -2,6 +2,7 @@ process.env.NODE_ENV = 'development'; // Set before importing Playwright
 
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
+import { designerStorageState } from './e2e/designer/designerStorageState';
 
 export default defineConfig({
   testDir: './e2e',
@@ -26,20 +27,7 @@ export default defineConfig({
     baseURL: 'http://localhost:4200',
     video: 'on-first-retry',
     trace: 'on-first-retry',
-    storageState: {
-      cookies: [],
-      origins: [
-        {
-          origin: 'http://localhost:4200',
-          localStorage: [
-            {
-              name: 'control-expand-collapse-button',
-              value: 'true',
-            },
-          ],
-        },
-      ],
-    },
+    storageState: designerStorageState,
   },
 
   /* Configure projects for major browsers */

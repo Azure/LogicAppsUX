@@ -1,5 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import type { Page } from '@playwright/test';
+import { test, expect } from './fixtures/sharedDesignerPage';
 
 test.describe(
   'OperationPanel Tests',
@@ -7,10 +7,9 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    const openSelectedAndPinnedPanels = async (page: Page) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+    test.use({ mockWorkflow: 'Panel' });
 
+    const openSelectedAndPinnedPanels = async (page: Page) => {
       // Left-click on 'Parse JSON' node.
       await page.getByTestId('card-parse_json').click();
 
@@ -41,9 +40,6 @@ test.describe(
         await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
       };
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
-
       // Left-click on 'Initialize ArrayVariable' node.
       await page.getByTestId('card-initialize_arrayvariable').click();
 
@@ -56,9 +52,6 @@ test.describe(
     });
 
     test('Can pin a node, and close the panel', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
-
       // Left-click on 'Initialize ArrayVariable' node.
       await page.getByTestId('card-initialize_arrayvariable').click({ button: 'right' });
       await page.getByTestId('msla-pin-menu-option').click();
@@ -127,9 +120,6 @@ test.describe(
     });
 
     test('Should only show the panel info message when trigger type is request', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
-
       // Left-click on 'manual' trigger.
       await page.getByTestId('card-manual').click();
 
@@ -145,8 +135,6 @@ test.describe(
     });
 
     test('Should show proper operation panel tabs', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
       // Left-click on 'manual' trigger.
       await page.getByTestId('card-manual').click();
       await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();

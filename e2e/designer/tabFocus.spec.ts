@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/sharedDesignerPage';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
 
 test.describe(
@@ -11,7 +11,6 @@ test.describe(
       test.skip(browserName === 'firefox', 'Still working on it');
       const tab = async () => page.locator('*:focus').press('Tab');
 
-      await page.goto('/');
       await GoToMockWorkflow(page, 'All Scope Nodes');
 
       // Find element with text 'Recurrence'
@@ -52,7 +51,6 @@ test.describe(
       const tab = async () => page.locator('*:focus').press('Tab');
       const backTab = async () => page.locator('*:focus').press('Shift+Tab');
 
-      await page.goto('/');
       await GoToMockWorkflow(page, 'Panel');
 
       // Find element with text 'manual'
@@ -79,7 +77,6 @@ test.describe(
     test('Should focus toolbar controls after workflow elements', async ({ page, browserName }) => {
       test.skip(browserName === 'firefox', 'Still working on it');
 
-      await page.goto('/');
       await GoToMockWorkflow(page, 'All Scope Nodes');
 
       // Wait for workflow to load
@@ -139,7 +136,6 @@ test.describe(
     test('Should focus toolbar controls after closing panel', async ({ page, browserName }) => {
       test.skip(browserName === 'firefox', 'Still working on it');
 
-      await page.goto('/');
       await GoToMockWorkflow(page, 'All Scope Nodes');
 
       // Wait for workflow to load
@@ -169,7 +165,6 @@ test.describe(
       test.skip(browserName === 'firefox', 'Still working on it');
       const tab = async () => page.locator('*:focus').press('Tab');
 
-      await page.goto('/');
       await GoToMockWorkflow(page, 'Panel');
 
       // Focus directly on the first toolbar control
@@ -209,7 +204,6 @@ test.describe(
     test('Should activate toolbar controls with keyboard', async ({ page, browserName }) => {
       test.skip(browserName === 'firefox', 'Still working on it');
 
-      await page.goto('/');
       await GoToMockWorkflow(page, 'Panel');
 
       // Focus on zoom in button and press Enter

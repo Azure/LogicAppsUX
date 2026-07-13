@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { test, expect } from './fixtures/sharedDesignerPage';
 
 test.describe(
   'WorkflowParametersPanel Tests',
@@ -7,10 +6,9 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    test('Should open workflow parameters panel and add / edit / delete parameter', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Standard Workflow Parameters');
+    test.use({ mockWorkflow: 'Standard Workflow Parameters' });
 
+    test('Should open workflow parameters panel and add / edit / delete parameter', async ({ page }) => {
       // Open workflow parameters panel
       await page.getByText('Workflow Parameters', { exact: true }).click();
 
