@@ -15,6 +15,5 @@ export * from './tasks';
 export * from './launch';
 export * from './process';
 export * from './dataMapper';
-export * from './unitTest';
 export * from './hybridLogicApp';
 export * from './operatingSystem';

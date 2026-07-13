@@ -5,15 +5,15 @@ import * as path from 'path';
 import * as util from 'util';
 import * as childProcess from 'child_process';
 import { createUnitTest } from '../createUnitTest';
-import * as workspaceUtils from '../../../../../utils/workspace';
-import * as projectRootUtils from '../../../../../utils/verifyIsProject';
-import * as unitTestUtils from '../../../../../utils/unitTest/codefulUnitTest';
+import * as workspaceUtils from '../../../../utils/workspace';
+import * as projectRootUtils from '../../../../utils/verifyIsProject';
+import * as unitTestUtils from '../../../../utils/unitTest/unitTest';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
-import { ext } from '../../../../../../extensionVariables';
-import * as ConvertWorkspace from '../../../../convertToWorkspace';
-import * as syncCloudSettings from '../../../../syncCloudSettings';
+import { ext } from '../../../../../extensionVariables';
+import * as ConvertWorkspace from '../../../convertToWorkspace';
+import * as syncCloudSettings from '../../../syncCloudSettings';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
-import { testMockOutputsDirectory, testsDirectoryName } from '../../../../../../constants';
+import { testMockOutputsDirectory, testsDirectoryName } from '../../../../../constants';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {

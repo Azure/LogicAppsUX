@@ -1,7 +1,6 @@
 import { mergeClasses, Text, Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isUndefinedOrEmptyString, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import type { OutputMock } from '../../../../core/state/unitTest/unitTestInterfaces';
 import { useKeyboardInteraction } from './keyboardInteraction';
 import type { MouseEventHandler } from 'react';
 import { useEffect, useMemo, useRef } from 'react';
@@ -23,7 +22,6 @@ export interface ActionCardProps {
   icon?: string;
   id: string;
   isDragging?: boolean;
-  isUnitTest?: boolean;
   isLoading?: boolean;
   isSelected?: boolean;
   isPinned?: boolean;
@@ -38,8 +36,6 @@ export interface ActionCardProps {
   onCopyClick?(): void;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
-  nodeMockResults?: OutputMock;
-  isMockSupported?: boolean;
   isLoadingDynamicData?: boolean;
   subtleBackground?: boolean;
   copilotModified?: boolean;
@@ -56,9 +52,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   drag,
   errorMessages = [],
   icon,
-  // isUnitTest,
-  // nodeMockResults,
-  // isMockSupported,
   isLoading,
   isSelected,
   isPinned,
@@ -177,9 +170,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       ) : errorMessages?.length > 0 ? (
         <CardErrorBadge messages={errorMessages} />
       ) : null}
-      {/* {isUnitTest && isMockSupported ? (
-				<MockStatusIcon id={`${title}-status`} nodeMockResults={nodeMockResults} />
-			) : null} */}
       <div className={styles.icon}>{cardIcon}</div>
       <Text className={mergeClasses(styles.title, isScope && styles.scopeTitle)}>{title}</Text>
       {isLoadingDynamicData ? <Spinner size={'extra-tiny'} /> : null}

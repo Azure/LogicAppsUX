@@ -5,7 +5,6 @@
 import type { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import type { TestData } from './app/tree/unitTestTree';
 import { dotnet, func, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
@@ -16,11 +15,6 @@ import {
   window,
   type ExtensionContext,
   type WebviewPanel,
-  type TestItem,
-  type TestRunProfile,
-  EventEmitter,
-  type Uri,
-  type TestController,
   type MessageOptions,
 } from 'vscode';
 import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
@@ -95,7 +89,6 @@ export namespace ext {
     monitoring: 'monitoring',
     export: 'export',
     overview: 'overview',
-    unitTest: 'unitTest',
     languageServer: 'languageServer',
     createWorkspace: 'createWorkspace',
     createWorkspaceFromPackage: 'createWorkspaceFromPackage',
@@ -127,12 +120,6 @@ export namespace ext {
     window.showErrorMessage(errMsg, options);
   };
 
-  // Unit Test
-  export const watchingTests = new Map<TestItem | 'ALL', TestRunProfile | undefined>();
-  export const testFileChangedEmitter = new EventEmitter<Uri>();
-  export const testData = new WeakMap<TestItem, TestData>();
-  export let unitTestController: TestController;
-  export const testRuns = new Map<string, any>();
   // Telemetry
   export let telemetryReporter: TelemetryReporter;
   export const telemetryString = 'setInGitHubBuild';

@@ -297,7 +297,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             azureDetails: azureDetails,
             kind: workflowProps.kind ?? kind,
             isCodeful: isCodefulOverview,
-            supportsUnitTest: isLocal && localSettings[workflowCodefulEnabledKey] !== 'true',
             connectionData: connectionData,
           },
         });

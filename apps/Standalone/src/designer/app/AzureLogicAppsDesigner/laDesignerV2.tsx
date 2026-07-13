@@ -125,7 +125,6 @@ const DesignerEditor = () => {
   const {
     isReadOnly,
     isDarkMode,
-    isUnitTest,
     isMonitoringView,
     runId,
     appId,
@@ -698,7 +697,6 @@ const DesignerEditor = () => {
           readOnly: derivedIsReadOnly,
           isMonitoringView,
           isDraft: isDraftMode,
-          isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
@@ -729,7 +727,6 @@ const DesignerEditor = () => {
               discard={discardAllChanges}
               location={canonicalLocation}
               isReadOnly={derivedIsReadOnly}
-              isUnitTest={isUnitTest}
               isDarkMode={isDarkMode}
               isMonitoringView={isMonitoringView}
               isDesignerView={isDesignerView}

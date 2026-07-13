@@ -8,7 +8,6 @@ import {
   useIsPanelLoading,
 } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
-import { AssertionsPanel } from './assertionsPanel/assertionsPanel';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
@@ -112,7 +111,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     [currentPanelMode]
   );
 
-  const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions'], []);
+  const nonBlockingPanels = useMemo(() => ['Connection'], []);
 
   const isLoadingPanel = useIsPanelLoading();
 
@@ -166,8 +165,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
           <ConnectionPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Error' ? (
           <ErrorsPanel {...commonPanelProps} />
-        ) : currentPanelMode === 'Assertions' ? (
-          <AssertionsPanel {...commonPanelProps} />
         ) : null // Caught above
       }
     </Panel>

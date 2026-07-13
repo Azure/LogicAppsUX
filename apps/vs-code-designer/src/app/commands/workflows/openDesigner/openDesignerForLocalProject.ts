@@ -48,10 +48,9 @@ import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
-import { createUnitTest } from '../unitTest/codefulUnitTest/createUnitTest';
+import { createUnitTest } from '../unitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
-import { saveUnitTestDefinition } from '../../../utils/unitTest/codelessUnitTest';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -61,18 +60,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private workflowRuntimeBaseUrlInterval: NodeJS.Timeout;
   private getWorkflowRuntimeBaseUrl: () => string | undefined;
 
-  constructor(context: IActionContext, node: Uri, unitTestName?: string, unitTestDefinition?: any, runId?: string) {
+  constructor(context: IActionContext, node: Uri, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
     const logicAppName = path.basename(path.dirname(path.dirname(node.fsPath)));
-    const panelName = `${workspace.name}-${logicAppName}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
+    const panelName = `${workspace.name}-${logicAppName}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
     const runName = runId ? runId.split('/').slice(-1)[0] : '';
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, !!unitTestName, true, false, runName);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, false, true, false, runName);
 
-    this.unitTestName = unitTestName;
-    this.isUnitTest = !!unitTestName;
-    this.unitTestDefinition = unitTestDefinition ?? null;
     this.workflowFilePath = node.fsPath;
   }
 
@@ -230,17 +226,13 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
             hostVersion: ext.extensionVersion,
-            isUnitTest: this.isUnitTest,
-            unitTestDefinition: this.unitTestDefinition,
             runId: this.runId,
           },
         });
 
         // TODO(aeldridge): Temporarily removed validation due to 500 responses from validatePartial endpoint. Re-add once fixed.
         // await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
-        //   if (!this.isUnitTest) {
         //     await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
-        //   }
         // });
         break;
       }
@@ -273,12 +265,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       }
       case ExtensionCommand.createUnitTest: {
         await createUnitTest(Uri.file(this.workflowFilePath), msg.definition);
-        break;
-      }
-      case ExtensionCommand.saveUnitTest: {
-        await callWithTelemetryAndErrorHandling('SaveUnitTestFromDesigner', async (activateContext: IActionContext) => {
-          await saveUnitTestDefinition(activateContext, this.projectPath, this.workflowName, this.unitTestName, msg.definition);
-        });
         break;
       }
       case ExtensionCommand.addConnection: {
