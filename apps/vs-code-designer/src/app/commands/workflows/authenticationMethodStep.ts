@@ -70,13 +70,8 @@ export class AuthenticationMethodSelectionStep<
 
   /**
    * Determines if this step should prompt again (only if no method is selected yet).
-   *
-   * TODO: MSI option is temporarily disabled until functions extension fix deployed — always default to rawKeys.
    */
   public shouldPrompt(context: T): boolean {
-    if (context.enabled === true && context.authenticationMethod === undefined) {
-      context.authenticationMethod = 'rawKeys';
-    }
-    return false;
+    return context.enabled === true && context.authenticationMethod === undefined;
   }
 }
