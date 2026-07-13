@@ -20,7 +20,7 @@ import { localize } from '../../localize';
 import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
-import { getChildProcessesWithScript } from './findChildProcess/findChildProcess';
+import { getChildProcesses } from './findChildProcess/findChildProcess';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
@@ -163,7 +163,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   }
 
   if (os.platform() === Platform.windows) {
-    const children = await getChildProcessesWithScript(process.pid);
+    const children = await getChildProcesses(process.pid);
     const runtimeInst = ext.runtimeInstances.get(projectPath);
     const resolvedChildFuncPid =
       childFuncPid ??
