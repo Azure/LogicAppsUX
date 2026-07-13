@@ -874,7 +874,7 @@ const cloneTrackedProperties = (trackedProperties: Record<string, any>): Record<
 
     const value = trackedProperties[key];
     if (Array.isArray(value)) {
-      safeClone[key] = value.map((item) => (isObject(item) ? cloneTrackedProperties(item) : item));
+      safeClone[key] = cloneTrackedPropertiesArray(value);
     } else if (isObject(value)) {
       safeClone[key] = cloneTrackedProperties(value);
     } else {
@@ -883,6 +883,20 @@ const cloneTrackedProperties = (trackedProperties: Record<string, any>): Record<
   }
 
   return safeClone;
+};
+
+const cloneTrackedPropertiesArray = (trackedProperties: any[]): any[] => {
+  return trackedProperties.map((item) => {
+    if (Array.isArray(item)) {
+      return cloneTrackedPropertiesArray(item);
+    }
+
+    if (isObject(item)) {
+      return cloneTrackedProperties(item);
+    }
+
+    return item;
+  });
 };
 
 const areTrackedPropertiesSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {
