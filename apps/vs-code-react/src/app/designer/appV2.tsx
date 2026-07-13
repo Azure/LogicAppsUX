@@ -1,9 +1,8 @@
-import { createFileSystemConnection, updateUnitTestDefinition } from '../../state/DesignerSlice';
+import { createFileSystemConnection } from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar/indexV2';
 import { getDesignerServices } from './servicesHelper';
-import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import type { ConnectionCreationInfo, Workflow } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer-v2';
@@ -16,7 +15,7 @@ import {
   FloatingRunButton,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
-import { BundleVersionRequirements, guid, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
+import { BundleVersionRequirements, guid, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
@@ -32,7 +31,6 @@ export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { supportsUnitTest } = vscodeState;
   const styles = useAppStyles();
   const {
     panelMetaData,
@@ -46,8 +44,6 @@ export const DesignerApp = () => {
     isMonitoringView: _isMonitoringView,
     runId: _runId,
     hostVersion,
-    isUnitTest,
-    unitTestDefinition,
     workflowRuntimeBaseUrl,
   } = vscodeState;
 
@@ -150,26 +146,6 @@ export const DesignerApp = () => {
   );
 
   const { data: runInstance, isError: isErrorRunInstance } = useRun(runId);
-
-  useEffect(() => {
-    if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
-      const updateTestDefinition = async () => {
-        if (!isNullOrUndefined(runInstance)) {
-          const { triggerMocks, actionMocks } = await getRunInstanceMocks(runInstance as any, services, false);
-          dispatch(
-            updateUnitTestDefinition({
-              unitTestDefinition: {
-                triggerMocks: triggerMocks,
-                actionMocks: actionMocks,
-                assertions: [],
-              },
-            })
-          );
-        }
-      };
-      updateTestDefinition();
-    }
-  }, [runInstance, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
 
   useEffect(() => {
     setWorkflow(panelMetaData?.standardApp);
@@ -318,7 +294,6 @@ export const DesignerApp = () => {
         options={{
           isDarkMode: theme === Theme.Dark,
           isVSCode: true,
-          isUnitTest,
           readOnly: readOnly || isMonitoringView,
           isMonitoringView,
           services: services,
@@ -340,12 +315,10 @@ export const DesignerApp = () => {
             workflowId={workflowDefinitionId}
             customCode={customCode}
             runInstance={runInstance as any}
-            unitTestDefinition={unitTestDefinition}
             appSettings={panelMetaData?.localSettings}
           >
             <DesignerCommandBar
               isDarkMode={theme === Theme.Dark}
-              isUnitTest={isUnitTest}
               isLocal={isLocal}
               runId={runId}
               saveWorkflow={saveWorkflowFromDesigner}
@@ -357,7 +330,6 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
-              supportsUnitTest={supportsUnitTest}
               showRunHistory={!isCodefulWorkflow}
             />
 

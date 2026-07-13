@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
@@ -43,14 +42,12 @@ const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
 const mockUseSuppressDefault = vi.fn().mockReturnValue(false);
 const mockUseNodeSelectCallback = vi.fn().mockReturnValue(undefined);
-const mockUseUnitTest = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
   useSuppressDefaultNodeSelectFunctionality: () => mockUseSuppressDefault(),
   useNodeSelectAdditionalCallback: () => mockUseNodeSelectCallback(),
-  useUnitTest: () => mockUseUnitTest(),
 }));
 
 vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
@@ -118,11 +115,6 @@ vi.mock('../../../core/state/setting/settingSelector', () => ({
 
 const mockUseIsMockSupported = vi.fn().mockReturnValue(false);
 const mockUseMocksByOperation = vi.fn().mockReturnValue(undefined);
-
-vi.mock('../../../core/state/unitTest/unitTestSelectors', () => ({
-  useIsMockSupported: (...args: any[]) => mockUseIsMockSupported(...args),
-  useMocksByOperation: (...args: any[]) => mockUseMocksByOperation(...args),
-}));
 
 const mockUseNodeDisplayName = vi.fn().mockReturnValue('Test Action');
 const mockUseNodeMetadata = vi.fn().mockReturnValue({ graphId: 'root', isTrigger: false });
@@ -238,7 +230,6 @@ describe('OperationCardNode (v2)', () => {
     mockUseMonitoringView.mockReturnValue(false);
     mockUseSuppressDefault.mockReturnValue(false);
     mockUseNodeSelectCallback.mockReturnValue(undefined);
-    mockUseUnitTest.mockReturnValue(false);
     mockUseIsA2AWorkflow.mockReturnValue(false);
     mockUseIsNodeSelectedInOperationPanel.mockReturnValue(false);
     mockUseNodeMetadata.mockReturnValue({ graphId: 'root', isTrigger: false });

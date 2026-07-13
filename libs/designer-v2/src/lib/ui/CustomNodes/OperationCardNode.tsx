@@ -8,7 +8,6 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
-  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
@@ -28,7 +27,6 @@ import {
 import { changePanelNode, setSelectedNodeId, toggleNodeSelection } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
-import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
   useNodeDisplayName,
   useNodeMetadata,
@@ -67,7 +65,6 @@ import { ActionCard } from './components/card';
 const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
-  const isUnitTest = useUnitTest();
 
   const intl = useIntl();
 
@@ -82,8 +79,6 @@ const DefaultNode = ({ id }: NodeProps) => {
   const runInstance = useRunInstance();
   const parentNodeId = useParentNodeId(id);
   const parentRunData = useRunData(parentNodeId ?? '');
-  const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
-  const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const repetitionName = useRepetitionName(parentRunIndex, id, operationsInfo);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
   const copilotModified = useIsCopilotModifiedNode(id);
@@ -352,9 +347,6 @@ const DefaultNode = ({ id }: NodeProps) => {
           isLoading={isLoading}
           isSelected={isSelected || isMultiSelected}
           isPinned={isPinned}
-          isUnitTest={isUnitTest}
-          nodeMockResults={nodeMockResults}
-          isMockSupported={isMockSupported}
           runData={selfRunData}
           readOnly={readOnly}
           onClick={nodeClick}

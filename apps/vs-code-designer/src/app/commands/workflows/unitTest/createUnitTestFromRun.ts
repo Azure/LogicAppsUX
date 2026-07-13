@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { localize } from '../../../../../localize';
-import { convertToWorkspace } from '../../../convertToWorkspace';
+import { localize } from '../../../../localize';
+import { convertToWorkspace } from '../../convertToWorkspace';
 import {
   createTestCsFile,
   createTestExecutorFile,
@@ -20,18 +20,18 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   selectWorkflowNode,
-} from '../../../../utils/unitTest/codefulUnitTest';
-import { tryGetLogicAppProjectRoot } from '../../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../../utils/workspace';
+} from '../../../utils/unitTest/unitTest';
+import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import axios from 'axios';
-import { ext } from '../../../../../extensionVariables';
-import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
-import { syncCloudSettings } from '../../../syncCloudSettings';
-import { extensionCommand } from '../../../../../constants';
+import { ext } from '../../../../extensionVariables';
+import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
+import { syncCloudSettings } from '../../syncCloudSettings';
+import { extensionCommand } from '../../../../constants';
 
 /**
  * Handles the creation of a unit test for a Logic App workflow.
@@ -160,7 +160,7 @@ async function generateUnitTestFromRun(
   try {
     if (!runId) {
       context.telemetry.properties.runIdMissing = 'true';
-      throw new Error(localize('runIdMissing', 'Run ID is required to generate a codeful unit test.'));
+      throw new Error(localize('runIdMissing', 'Run ID is required to generate a unit test from run.'));
     }
 
     if (!ext.workflowRuntimePort) {

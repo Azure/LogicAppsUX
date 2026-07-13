@@ -13,7 +13,6 @@ export * from './subscription';
 export * from './theme';
 export * from './dataMap';
 export * from './dataMapSchema';
-export * from './unitTest';
 export * from './helpers';
 export * from './uiInteractionData';
 export * from './topLevelDropdownMenuItem';

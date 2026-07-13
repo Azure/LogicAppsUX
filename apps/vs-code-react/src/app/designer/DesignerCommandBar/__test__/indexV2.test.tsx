@@ -32,13 +32,11 @@ let mockDesignerIsDirty = false;
 vi.mock('@microsoft/logic-apps-designer-v2', () => ({
   serializeWorkflow: vi.fn(),
   store: { dispatch: mockDispatch, getState: mockGetState },
-  serializeUnitTestDefinition: vi.fn(),
   getNodeOutputOperations: vi.fn(),
   useIsDesignerDirty: () => mockDesignerIsDirty,
   validateParameter: vi.fn(() => []),
   updateParameterValidation: vi.fn(),
   openPanel: vi.fn((arg: unknown) => ({ type: 'openPanel', payload: arg })),
-  useAssertionsValidationErrors: () => ({}),
   useWorkflowParameterValidationErrors: () => ({}),
   useAllSettingsValidationErrors: () => ({}),
   useAllConnectionErrors: () => ({}),
@@ -58,7 +56,6 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 
 vi.mock('@microsoft/vscode-extension-logic-apps', () => ({
   ExtensionCommand: {
-    saveUnitTest: 'saveUnitTest',
     createUnitTest: 'createUnitTest',
     createUnitTestFromRun: 'createUnitTestFromRun',
     logTelemetry: 'logTelemetry',
@@ -153,10 +150,8 @@ vi.mock('../../../../intl', () => ({
     UNDO: 'Undo',
     REDO: 'Redo',
     FILE_BUG: 'File a bug',
-    SAVE_UNIT_TEST: 'Save unit test definition',
     CREATE_UNIT_TEST: 'Create unit test',
     CREATE_UNIT_TEST_FROM_RUN: 'Create unit test from run',
-    UNIT_TEST_ASSERTIONS: 'Assertions',
   }),
   designerMessages: {},
 }));
@@ -166,7 +161,6 @@ import { onUndoClick, onRedoClick } from '@microsoft/logic-apps-designer-v2';
 
 const defaultProps = {
   isDarkMode: false,
-  isUnitTest: false,
   isLocal: false,
   runId: '',
   saveWorkflow: vi.fn(),

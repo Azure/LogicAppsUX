@@ -47,7 +47,6 @@ describe('StateWrapper', () => {
     [ProjectName.overview, undefined, `/${ProjectName.overview}`],
     [ProjectName.designer, undefined, `/${ProjectName.designer}`],
     [ProjectName.dataMapper, undefined, `/${ProjectName.dataMapper}`],
-    [ProjectName.unitTest, undefined, `/${ProjectName.unitTest}`],
     [ProjectName.createWorkspace, undefined, `/${ProjectName.createWorkspace}`],
     [ProjectName.createWorkspaceFromPackage, undefined, `/${ProjectName.createWorkspaceFromPackage}`],
     [ProjectName.createLogicApp, undefined, `/${ProjectName.createLogicApp}`],
