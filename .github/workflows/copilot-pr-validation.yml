@@ -1,0 +1,324 @@
+name: "Copilot: PR Validation"
+
+# Validates PR title, body, labels, and risk assessment using Copilot CLI.
+# This runs ALONGSIDE pr-ai-validation.yml during migration. Once proven reliable,
+# the old Logic App-based workflow will be removed in a follow-up PR.
+#
+# Uses a different comment marker (copilot-pr-validation-v2) so both comments coexist.
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  copilot-requests: write
+
+concurrency:
+  group: copilot-pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check if contributor is trusted
+        id: trust-check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (!context.payload.pull_request) {
+              core.info('No pull request context. Skipping.');
+              core.setOutput('should_run', 'false');
+              return;
+            }
+
+            const authorAssociation = context.payload.pull_request.author_association;
+            const trustedAssociations = ['COLLABORATOR', 'MEMBER', 'OWNER', 'CONTRIBUTOR'];
+
+            if (trustedAssociations.includes(authorAssociation)) {
+              core.info('Trusted contributor (' + authorAssociation + '), proceeding.');
+              core.setOutput('should_run', 'true');
+              return;
+            }
+
+            const labels = context.payload.pull_request.labels.map(l => l.name);
+            if (labels.includes('external-approved')) {
+              core.info('External PR approved by maintainer via label, proceeding.');
+              core.setOutput('should_run', 'true');
+              return;
+            }
+
+            core.info('External contributor (' + authorAssociation + ') - skipping validation.');
+            core.setOutput('should_run', 'false');
+
+      - name: Checkout base branch
+        if: steps.trust-check.outputs.should_run == 'true'
+        uses: actions/checkout@v4
+
+      - name: Install Copilot CLI
+        if: steps.trust-check.outputs.should_run == 'true'
+        run: npm install -g @github/copilot@latest
+
+      - name: Gather PR data
+        if: steps.trust-check.outputs.should_run == 'true'
+        id: gather
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr view "$PR_NUMBER" --json title,body,labels,headRefName,author \
+            > "$RUNNER_TEMP/pr.json"
+
+          gh pr diff "$PR_NUMBER" --name-only \
+            > "$RUNNER_TEMP/files.txt" 2>/dev/null || true
+
+          gh pr diff "$PR_NUMBER" 2>/dev/null \
+            | head -4000 > "$RUNNER_TEMP/diff.txt" || true
+
+      - name: Build agent input
+        if: steps.trust-check.outputs.should_run == 'true'
+        run: |
+          cat > "$RUNNER_TEMP/pr-input.md" << 'ENDINPUT'
+          # PR Data for Validation
+
+          ## PR Metadata
+          ENDINPUT
+
+          printf '```json\n' >> "$RUNNER_TEMP/pr-input.md"
+          cat "$RUNNER_TEMP/pr.json" >> "$RUNNER_TEMP/pr-input.md"
+          printf '\n```\n\n## Changed Files\n```\n' >> "$RUNNER_TEMP/pr-input.md"
+          cat "$RUNNER_TEMP/files.txt" >> "$RUNNER_TEMP/pr-input.md"
+          printf '\n```\n\n## Code Diff (first 4000 lines)\n```diff\n' >> "$RUNNER_TEMP/pr-input.md"
+          cat "$RUNNER_TEMP/diff.txt" >> "$RUNNER_TEMP/pr-input.md"
+          printf '\n```\n\nValidate this PR against the rules in your system prompt. Return JSON only.\n' >> "$RUNNER_TEMP/pr-input.md"
+
+      - name: Run Copilot validation
+        if: steps.trust-check.outputs.should_run == 'true'
+        id: validate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SYSTEM_PROMPT=$(cat prompts/copilot-pr-desc-check.md)
+
+          PR_INPUT=$(cat "$RUNNER_TEMP/pr-input.md")
+
+          FULL_PROMPT="${SYSTEM_PROMPT}
+
+          ---
+
+          ${PR_INPUT}"
+
+          # Write prompt to temp file to avoid shell quoting issues
+          printf '%s' "$FULL_PROMPT" > "$RUNNER_TEMP/full-prompt.txt"
+
+          set +e
+          RESULT=$(COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" timeout 240 copilot \
+            -f "$RUNNER_TEMP/full-prompt.txt" \
+            -s \
+            --no-ask-user \
+            --model claude-opus-4.8 \
+            --allow-all 2>/dev/null)
+          EXIT_CODE=$?
+          set -e
+
+          if [ $EXIT_CODE -ne 0 ] || [ -z "$RESULT" ]; then
+            echo "agent_success=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Copilot CLI returned empty or failed (exit $EXIT_CODE)"
+            exit 0
+          fi
+
+          # Extract JSON from response (strip markdown wrapping if present)
+          echo "$RESULT" | sed -n '/{/,/}$/p' > "$RUNNER_TEMP/result.json"
+
+          if python3 -c "import json; json.load(open('$RUNNER_TEMP/result.json'))" 2>/dev/null; then
+            echo "agent_success=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "$RESULT" > "$RUNNER_TEMP/result.json"
+            if python3 -c "import json; json.load(open('$RUNNER_TEMP/result.json'))" 2>/dev/null; then
+              echo "agent_success=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "agent_success=false" >> "$GITHUB_OUTPUT"
+              echo "::warning::Agent returned invalid JSON"
+            fi
+          fi
+
+      - name: Post comment and manage labels
+        if: steps.trust-check.outputs.should_run == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          HEAD_REF: ${{ github.head_ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          REPO: ${{ github.repository }}
+          AGENT_SUCCESS: ${{ steps.validate.outputs.agent_success }}
+        run: |
+          MARKER="<!-- copilot-pr-validation-v2 -->"
+
+          # Find existing v2 comment
+          EXISTING=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            --jq '[.[] | select(.body | contains("copilot-pr-validation-v2")) | .id][0] // empty' \
+            2>/dev/null) || EXISTING=""
+
+          post_comment() {
+            local body_file="$1"
+            if [ -n "$EXISTING" ]; then
+              gh api "repos/${REPO}/issues/comments/${EXISTING}" \
+                --method PATCH --input "$body_file" >/dev/null 2>&1
+            else
+              gh pr comment "$PR_NUMBER" --body-file "$body_file" >/dev/null 2>&1
+            fi
+          }
+
+          add_label() {
+            gh api "repos/${REPO}/issues/${PR_NUMBER}/labels" \
+              --method POST -f "labels[]=$1" >/dev/null 2>&1 || true
+          }
+
+          remove_label() {
+            gh api "repos/${REPO}/issues/${PR_NUMBER}/labels/$1" \
+              --method DELETE >/dev/null 2>&1 || true
+          }
+
+          TIMESTAMP=$(date -u '+%a, %d %b %Y %H:%M:%S GMT')
+
+          if [ "$AGENT_SUCCESS" = "true" ]; then
+            PASSES=$(python3 -c "
+          import json
+          r = json.load(open('$RUNNER_TEMP/result.json'))
+          print('true' if r.get('passes', False) else 'false')
+          ")
+            ADVISED=$(python3 -c "
+          import json
+          r = json.load(open('$RUNNER_TEMP/result.json'))
+          print(r.get('advisedRiskLevel', 'unknown'))
+          ")
+            MESSAGE=$(python3 -c "
+          import json, sys
+          r = json.load(open('$RUNNER_TEMP/result.json'))
+          sys.stdout.write(r.get('message', 'No details available.'))
+          ")
+
+            cat > "$RUNNER_TEMP/comment-body.txt" << ENDCOMMENT
+          ${MARKER}
+          ## AI PR Validation Report
+
+          ${MESSAGE}
+
+          ---
+          **Advised Risk Level:** ${ADVISED}
+
+          *Last updated: ${TIMESTAMP} | Powered by Copilot CLI*
+          ENDCOMMENT
+
+            post_comment "$RUNNER_TEMP/comment-body.txt"
+
+            if [ "$PASSES" = "true" ]; then
+              add_label "pr-validated"
+              remove_label "needs-pr-update"
+            else
+              add_label "needs-pr-update"
+              remove_label "pr-validated"
+              echo "::error::PR validation failed. Update your PR per the comment feedback."
+              exit 1
+            fi
+          else
+            # Copilot unavailable — run deterministic fallback
+
+            # Auto-pass reverts, bots, and loc branches
+            IS_AUTOPASS="false"
+            if echo "$PR_TITLE" | grep -qiE '^revert'; then IS_AUTOPASS="true"; fi
+            if echo "$HEAD_REF" | grep -qE '^(locfiles|loc)/'; then IS_AUTOPASS="true"; fi
+            if echo "$PR_AUTHOR" | grep -qE '\[bot\]$'; then IS_AUTOPASS="true"; fi
+
+            if [ "$IS_AUTOPASS" = "true" ]; then
+              cat > "$RUNNER_TEMP/comment-body.txt" << ENDCOMMENT
+          ${MARKER}
+          ## AI PR Validation Report
+
+          Auto-pass (${PR_AUTHOR})
+
+          *Last updated: ${TIMESTAMP} | Copilot unavailable, using deterministic checks*
+          ENDCOMMENT
+              post_comment "$RUNNER_TEMP/comment-body.txt"
+              exit 0
+            fi
+
+            # Deterministic validation
+            BODY=$(gh pr view "$PR_NUMBER" --json body --jq '.body // ""' 2>/dev/null) || BODY=""
+            LABELS=$(gh pr view "$PR_NUMBER" --json labels \
+              --jq '[.labels[].name] | join(",")' 2>/dev/null) || LABELS=""
+            FAILS=""
+
+            # Title prefix check
+            if ! echo "$PR_TITLE" | grep -qE '^(feat|fix|chore|meta|refactor|perf|docs|test)(\(.+\))?:'; then
+              FAILS="${FAILS}- **PR Title** must start with feat:, fix:, chore:, etc.
+          "
+            fi
+
+            # Risk label check
+            if ! echo "$LABELS" | grep -q "risk:"; then
+              FAILS="${FAILS}- **Risk Label** missing (risk:low, risk:medium, or risk:high)
+          "
+            fi
+
+            # Commit Type check
+            COMMIT_CHECKED=$(echo "$BODY" \
+              | sed -n '/^## Commit Type/,/^## /{/^## /d;p}' \
+              | grep -c '\[x\]' 2>/dev/null) || COMMIT_CHECKED=0
+            if [ "$COMMIT_CHECKED" -eq 0 ]; then
+              FAILS="${FAILS}- **Commit Type** not selected
+          "
+            fi
+
+            # Risk Level section check
+            RISK_CHECKED=$(echo "$BODY" \
+              | sed -n '/^## Risk Level/,/^## /{/^## /d;p}' \
+              | grep -c '\[x\]' 2>/dev/null) || RISK_CHECKED=0
+            if [ "$RISK_CHECKED" -eq 0 ]; then
+              FAILS="${FAILS}- **Risk Level** not selected in PR body
+          "
+            fi
+
+            # What & Why check
+            WHAT_WHY=$(echo "$BODY" \
+              | sed -n '/^## What & Why/,/^## /{/^## /d;p}' \
+              | sed '/^<!--/,/-->/d' | tr -d '[:space:]')
+            if [ "${#WHAT_WHY}" -lt 20 ]; then
+              FAILS="${FAILS}- **What & Why** section is empty or too short
+          "
+            fi
+
+            if [ -n "$FAILS" ]; then
+              cat > "$RUNNER_TEMP/comment-body.txt" << ENDCOMMENT
+          ${MARKER}
+          ## AI PR Validation Report
+
+          ### Issues Found
+
+          ${FAILS}
+
+          Please update your PR to match the template. The check re-runs automatically on edit.
+
+          *Last updated: ${TIMESTAMP} | Copilot unavailable, using deterministic checks*
+          ENDCOMMENT
+              post_comment "$RUNNER_TEMP/comment-body.txt"
+              echo "::error::PR validation failed (deterministic). See PR comment."
+              exit 1
+            else
+              cat > "$RUNNER_TEMP/comment-body.txt" << ENDCOMMENT
+          ${MARKER}
+          ## AI PR Validation Report
+
+          All checks pass.
+
+          *Last updated: ${TIMESTAMP} | Copilot unavailable, using deterministic checks*
+          ENDCOMMENT
+              post_comment "$RUNNER_TEMP/comment-body.txt"
+            fi
+          fi

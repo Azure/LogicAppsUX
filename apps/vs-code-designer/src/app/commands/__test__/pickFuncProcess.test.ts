@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import { ext } from '../../../extensionVariables';
 import type { IRunningFuncTask } from '../../utils/funcCoreTools/funcHostTask';
 import * as findChildProcessModule from '../../utils/findChildProcess/findChildProcess';
-import * as windowsProcessModule from '../../utils/windowsProcess';
 
 // Mock ps-tree to prevent spawning `ps` on Windows hosts.
 vi.mock('ps-tree', () => ({
@@ -316,7 +315,6 @@ describe('pickWorkflowDebugProcess', () => {
     vi.unstubAllGlobals();
     (vscode.window as any).activeTerminal = undefined;
     vi.mocked(ext.outputChannel.appendLog).mockClear();
-    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -333,7 +331,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [{ processId: 111, name: 'func.exe', parentProcessId: 100 }];
       }
@@ -358,7 +356,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [{ processId: 111, name: 'func.exe', parentProcessId: 100 }];
       }
@@ -382,7 +380,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [{ processId: 111, name: 'func.exe', parentProcessId: 100 }];
       }
@@ -406,7 +404,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
       { processId: 444, name: 'node.exe', parentProcessId: 100 },
     ]);
 
@@ -427,7 +425,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockImplementation(async (pid: number) => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
       if (pid === 100) {
         return [];
       }
@@ -487,7 +485,7 @@ describe('pickWorkflowDebugProcess', () => {
       childProcessId: ['111', '222'],
     };
 
-    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript');
+    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcesses');
 
     const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, true);
 
@@ -505,7 +503,7 @@ describe('pickWorkflowDebugProcess', () => {
       childProcessId: ['100', undefined],
     };
 
-    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript');
+    const childProcessSpy = vi.spyOn(findChildProcessModule, 'getChildProcesses');
 
     const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo);
 
@@ -522,7 +520,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([]);
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([]);
 
     const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo);
 
@@ -543,14 +541,13 @@ describe('findChildProcess', () => {
   });
 
   it('returns the innermost workflow child process', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
       { processId: 111, name: 'func.exe', parentProcessId: 100 },
-      { processId: 222, name: 'dotnet.exe', parentProcessId: 111 },
     ]);
 
     const result = await pickFuncProcessModule.findChildProcess(100);
 
-    expect(result).toBe('222');
+    expect(result).toBe('111');
   });
 });
 
@@ -564,12 +561,11 @@ describe('getWindowsChildren', () => {
     vi.restoreAllMocks();
   });
 
-  it('should prefer the PowerShell child-process script on Windows', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockResolvedValue([
+  it('should resolve child processes using the PowerShell script', async () => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
       { processId: 111, name: 'func.exe', parentProcessId: 100 },
-      { processId: 222, name: 'dotnet.exe', parentProcessId: 111 },
+      { processId: 222, name: 'dotnet.exe', parentProcessId: 100 },
     ]);
-    const getWindowsProcessSpy = vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([]);
 
     const result = await pickFuncProcessModule.getWindowsChildren(100);
 
@@ -577,27 +573,174 @@ describe('getWindowsChildren', () => {
       { command: 'func.exe', pid: 111 },
       { command: 'dotnet.exe', pid: 222 },
     ]);
-    expect(getWindowsProcessSpy).not.toHaveBeenCalled();
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      expect.stringContaining('Resolved Windows child processes for PID "100" using the PowerShell child-process script.')
-    );
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Resolved Windows child processes'));
   });
 
-  it('should fall back to process-tree when the PowerShell child-process script fails', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcessesWithScript').mockRejectedValue(new Error('script failed'));
-    vi.spyOn(windowsProcessModule, 'getWindowsProcess').mockResolvedValue([
-      { name: 'func.exe', pid: 111 } as any,
-      { name: 'dotnet.exe', pid: 222 } as any,
-    ]);
+  it('should return empty array when no child processes are found', async () => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([]);
 
     const result = await pickFuncProcessModule.getWindowsChildren(100);
 
-    expect(result).toEqual([
-      { command: 'func.exe', pid: 111 },
-      { command: 'dotnet.exe', pid: 222 },
-    ]);
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      expect.stringContaining('Falling back to process-tree for Windows child process resolution on PID "100". Error: script failed')
-    );
+    expect(result).toEqual([]);
+  });
+
+  it('should propagate errors from the script so callers can retry', async () => {
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockRejectedValue(new Error('script failed'));
+
+    await expect(pickFuncProcessModule.getWindowsChildren(100)).rejects.toThrow('script failed');
+  });
+});
+
+describe('custom code dual-attach', () => {
+  // Realistic custom-code process tree:
+  //   PowerShell (100)
+  //     └── func.exe (111)
+  //          └── dotnet.exe (222)   ← custom code .NET host
+  const rootPid = 100;
+  const funcPid = 111;
+  const dotnetPid = 222;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    (vscode.window as any).activeTerminal = undefined;
+    vi.mocked(ext.outputChannel.appendLog).mockClear();
+    setProcessPlatform('win32');
+
+    // Script returns only DIRECT children of the queried PID
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
+      if (pid === rootPid) {
+        return [{ processId: funcPid, name: 'func.exe', parentProcessId: rootPid }];
+      }
+      if (pid === funcPid) {
+        return [{ processId: dotnetPid, name: 'dotnet.exe', parentProcessId: funcPid }];
+      }
+      return [];
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    restoreProcessPlatform();
+  });
+
+  it('pickChildProcess should return the func.exe PID, not the deeper dotnet.exe', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    const result = await pickFuncProcessModule.pickChildProcess(taskInfo);
+
+    // The workflow debugger must attach to func.exe (111), not dotnet.exe custom code .NET host (222).
+    expect(result).toBe(String(funcPid));
+  });
+
+  it('pickWorkflowDebugProcess for custom code (preferHostChildProcess=false) should return func.exe', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    // Custom code debug configs set preferHostChildProcess=false because
+    // customCodeRuntime is set (see pickFuncProcessInternal).
+    const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, false);
+
+    expect(result).toBe(String(funcPid));
+  });
+
+  it('workflow and custom-code pickers should select DIFFERENT processes from the same tree', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    // Step 1: workflow debug process selection (what debugLogicApp does first)
+    const workflowPid = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, false);
+
+    // Step 2: custom-code net host selection (what debugLogicApp does second)
+    const { pickCustomCodeWorkerChildProcess } = await import('../pickCustomCodeWorkerProcess');
+    const customCodePid = await pickCustomCodeWorkerChildProcess(taskInfo, false /* isNetFxWorker */, true /* isCodeless */);
+
+    // The workflow debugger should attach to func.exe
+    expect(workflowPid).toBe(String(funcPid));
+
+    // The custom-code debugger should attach to dotnet.exe
+    expect(customCodePid).toBe(String(dotnetPid));
+
+    // They must be different PIDs — attaching both to the same process means
+    // one debugger is missing
+    expect(workflowPid).not.toBe(customCodePid);
+  });
+});
+
+/**
+ * Tests for process trees with multiple dotnet.exe descendants.
+ *
+ * Some workflow configurations spawn multiple dotnet.exe processes under
+ * func.exe (e.g. the workflow host worker + the custom-code language worker).
+ * The process pickers must handle this without confusing the two.
+ */
+describe('multi-dotnet descendant trees', () => {
+  // Process tree with two dotnet children:
+  //   PowerShell (100)
+  //     └── func.exe (111)
+  //          ├── dotnet.exe (222)   ← workflow host worker
+  //          └── dotnet.exe (333)   ← custom code .NET host
+  const rootPid = 100;
+  const funcPid = 111;
+  const workflowDotnetPid = 222;
+  const customCodeDotnetPid = 333;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    (vscode.window as any).activeTerminal = undefined;
+    vi.mocked(ext.outputChannel.appendLog).mockClear();
+    setProcessPlatform('win32');
+
+    // Script returns only DIRECT children of the queried PID
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
+      if (pid === rootPid) {
+        return [{ processId: funcPid, name: 'func.exe', parentProcessId: rootPid }];
+      }
+      if (pid === funcPid) {
+        return [
+          { processId: workflowDotnetPid, name: 'dotnet.exe', parentProcessId: funcPid },
+          { processId: customCodeDotnetPid, name: 'dotnet.exe', parentProcessId: funcPid },
+        ];
+      }
+      return [];
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    restoreProcessPlatform();
+  });
+
+  it('pickWorkflowDebugProcess should return func.exe even when multiple dotnet descendants exist', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, false);
+
+    // Must pick func.exe, not either dotnet.exe
+    expect(result).toBe(String(funcPid));
+  });
+
+  it('pickChildProcess should return func.exe, not any of the dotnet.exe grandchildren', async () => {
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    const result = await pickFuncProcessModule.pickChildProcess(taskInfo);
+
+    expect(result).toBe(String(funcPid));
   });
 });

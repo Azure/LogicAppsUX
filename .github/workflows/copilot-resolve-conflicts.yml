@@ -1,0 +1,151 @@
+name: "Copilot: Resolve Conflicts"
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: copilot-resolve-conflicts
+  cancel-in-progress: true
+
+jobs:
+  find-conflicting-prs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      conflicting-prs: ${{ steps.check.outputs.prs }}
+      has-conflicts: ${{ steps.check.outputs.has_conflicts }}
+    steps:
+      - name: Find PRs with merge conflicts
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CONFLICTING=$(gh pr list --repo ${{ github.repository }} \
+            --state open --json number,title,headRefName,mergeable \
+            --jq '[.[] | select(.mergeable == "CONFLICTING")] | .[0:5]')
+
+          COUNT=$(echo "$CONFLICTING" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))")
+          echo "Found $COUNT PRs with conflicts"
+
+          if [ "$COUNT" -gt 0 ]; then
+            echo "has_conflicts=true" >> "$GITHUB_OUTPUT"
+            echo "prs=$(echo "$CONFLICTING" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin)))')" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_conflicts=false" >> "$GITHUB_OUTPUT"
+            echo "prs=[]" >> "$GITHUB_OUTPUT"
+          fi
+
+  notify:
+    needs: find-conflicting-prs
+    if: needs.find-conflicting-prs.outputs.has-conflicts == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      max-parallel: 2
+      matrix:
+        pr: ${{ fromJSON(needs.find-conflicting-prs.outputs.conflicting-prs) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze conflicts and comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ matrix.pr.number }}
+          PR_BRANCH: ${{ matrix.pr.headRefName }}
+        run: |
+          # Anti-spam: skip if already commented in 24h
+          EXISTING=$(gh pr view "$PR_NUMBER" --json comments \
+            --jq '[.comments[] | select(.body | contains("Merge conflict detected")) | select(.createdAt > (now - 86400 | todate))] | length' 2>/dev/null) || EXISTING=0
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Already commented on PR #$PR_NUMBER in the last 24h - skipping"
+            exit 0
+          fi
+
+          # Fetch PR branch and identify conflicting files
+          gh pr checkout "$PR_NUMBER" --force 2>/dev/null || true
+          git merge origin/main --no-commit --no-ff 2>/dev/null || true
+          CONFLICTED=$(git diff --name-only --diff-filter=U 2>/dev/null) || CONFLICTED=""
+          git merge --abort 2>/dev/null || true
+
+          if [ -z "$CONFLICTED" ]; then
+            echo "No actual conflicts detected (state may be stale)"
+            exit 0
+          fi
+
+          # Classify files
+          SAFE_PATTERNS="pnpm-lock.yaml|package-lock.json|\.generated\.|\.snap$"
+          SAFE_FILES=$(echo "$CONFLICTED" | grep -E "$SAFE_PATTERNS" || true)
+          LOGIC_FILES=$(echo "$CONFLICTED" | grep -vE "$SAFE_PATTERNS" || true)
+
+          # Build comment using temp file to avoid YAML issues
+          if [ -z "$LOGIC_FILES" ]; then
+            {
+              echo "### Merge conflict detected"
+              echo ""
+              echo "This PR has conflicts with main in **auto-resolvable files only** (lockfiles/generated):"
+              echo ""
+              echo '```'
+              echo "$SAFE_FILES"
+              echo '```'
+              echo ""
+              echo "**To resolve:**"
+              echo '```bash'
+              echo "git checkout ${PR_BRANCH}"
+              echo "git fetch origin main"
+              echo "git merge origin/main"
+              echo "git checkout --theirs pnpm-lock.yaml 2>/dev/null || true"
+              echo "pnpm install --lockfile-only"
+              echo "git add ."
+              echo "git commit --no-edit"
+              echo "git push"
+              echo '```'
+            } > /tmp/conflict-comment.md
+          else
+            {
+              echo "### Merge conflict detected"
+              echo ""
+              echo "This PR has conflicts with main that need manual resolution:"
+              echo ""
+              echo "**Logic files (require human judgment):**"
+              echo '```'
+              echo "$LOGIC_FILES"
+              echo '```'
+            } > /tmp/conflict-comment.md
+
+            if [ -n "$SAFE_FILES" ]; then
+              {
+                echo ""
+                echo "**Lockfiles/generated (auto-resolvable):**"
+                echo '```'
+                echo "$SAFE_FILES"
+                echo '```'
+              } >> /tmp/conflict-comment.md
+            fi
+
+            {
+              echo ""
+              echo "**To resolve:**"
+              echo '```bash'
+              echo "git checkout ${PR_BRANCH}"
+              echo "git fetch origin main"
+              echo "git merge origin/main"
+              echo "# Resolve conflicts in your editor, then:"
+              echo "git add ."
+              echo "git commit --no-edit"
+              echo "git push"
+              echo '```'
+              echo ""
+              echo "For lockfile conflicts, accept main then regenerate: pnpm install --lockfile-only"
+            } >> /tmp/conflict-comment.md
+          fi
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/conflict-comment.md
+          echo "Posted conflict resolution guidance on PR #$PR_NUMBER"
