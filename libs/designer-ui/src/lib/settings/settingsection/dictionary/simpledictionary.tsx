@@ -17,6 +17,26 @@ export interface SimpleDictionaryProps {
   onChange?: EventHandler<Record<string, string> | undefined>;
 }
 
+const createValues = (dictionaryValue?: Record<string, string>): SimpleDictionaryRowModel[] => [
+  ...Object.entries(dictionaryValue ?? {}).map(([key, value], index) => ({
+    key,
+    value,
+    index,
+  })),
+  { key: '', value: '', index: Object.keys(dictionaryValue ?? {}).length },
+];
+
+const valuesToDictionary = (dictionaryRows: SimpleDictionaryRowModel[]): Record<string, string> | undefined => {
+  const nextDictionary = dictionaryRows.reduce((acc, row) => {
+    if (row.key) {
+      acc[row.key] = row.value;
+    }
+    return acc;
+  }, {} as Record<string, string>);
+
+  return Object.keys(nextDictionary).length > 0 ? nextDictionary : undefined;
+};
+
 export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   disabled,
   customLabel,
@@ -25,26 +45,6 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   onChange,
   ariaLabel,
 }): JSX.Element => {
-  const createValues = (dictionaryValue?: Record<string, string>) => [
-    ...Object.entries(dictionaryValue ?? {}).map(([key, value], index) => ({
-      key,
-      value,
-      index,
-    })),
-    { key: '', value: '', index: Object.keys(dictionaryValue ?? {}).length },
-  ];
-
-  const valuesToDictionary = (dictionaryRows: SimpleDictionaryRowModel[]): Record<string, string> | undefined => {
-    const nextDictionary = dictionaryRows.reduce((acc, row) => {
-      if (row.key) {
-        acc[row.key] = row.value;
-      }
-      return acc;
-    }, {} as Record<string, string>);
-
-    return Object.keys(nextDictionary).length > 0 ? nextDictionary : undefined;
-  };
-
   const [values, setValues] = useState(createValues(value));
 
   const intl = useIntl();
