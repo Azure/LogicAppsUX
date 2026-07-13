@@ -22,7 +22,7 @@ const mockUseRetryHistory = vi.fn();
 const mockUseNodeMetadata = vi.fn();
 const mockUseOperationInfo = vi.fn();
 const mockUseIsA2AWorkflow = vi.fn();
-const mockUseIsAgenticWorkflowOnly = vi.fn();
+const mockUseIsAgenticWorkflow = vi.fn();
 const mockUseOperationManifest = vi.fn();
 
 vi.mock('../../../../core', () => ({
@@ -37,7 +37,7 @@ vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () =>
 
 vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: () => mockUseIsA2AWorkflow(),
-  useIsAgenticWorkflowOnly: () => mockUseIsAgenticWorkflowOnly(),
+  useIsAgenticWorkflow: () => mockUseIsAgenticWorkflow(),
 }));
 
 vi.mock('../../../../core/state/selectors/actionMetadataSelector', () => ({
@@ -137,7 +137,7 @@ describe('usePanelTabs', () => {
     mockUseNodeMetadata.mockReturnValue(null);
     mockUseOperationInfo.mockReturnValue({ type: 'Action', connectorId: 'test', operationId: 'test' });
     mockUseIsA2AWorkflow.mockReturnValue(false);
-    mockUseIsAgenticWorkflowOnly.mockReturnValue(false);
+    mockUseIsAgenticWorkflow.mockReturnValue(false);
     mockUseOperationManifest.mockReturnValue({ data: undefined, isLoading: false, isFetched: true });
   });
 
@@ -223,7 +223,7 @@ describe('usePanelTabs', () => {
 
   it('should show channels tab for agent nodes in agentic workflow', () => {
     mockUseOperationInfo.mockReturnValue({ type: constants.NODE.TYPE.AGENT, connectorId: 'test', operationId: 'test' });
-    mockUseIsAgenticWorkflowOnly.mockReturnValue(true);
+    mockUseIsAgenticWorkflow.mockReturnValue(true);
 
     const { result } = renderHook(() => usePanelTabs({ nodeId: 'testNode' }), { wrapper: createWrapper() });
 

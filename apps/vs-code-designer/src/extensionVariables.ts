@@ -7,7 +7,7 @@ import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { dotnet, func, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
-import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type TelemetryReporter from '@vscode/extension-telemetry';
 import type * as cp from 'child_process';
@@ -112,30 +112,12 @@ export namespace ext {
     [webViewKey.languageServer]: {},
   };
 
-  export const log = (text: string) => {
-    ext.outputChannel.appendLine(text);
-    ext.outputChannel.show();
-  };
-
-  export const showWarning = (errMsg: string) => {
-    ext.log(errMsg);
-    window.showWarningMessage(errMsg);
-  };
-
-  export const showInformation = (msg: string) => {
-    window.showInformationMessage(msg);
-  };
-
   export const showError = (errMsg: string, options?: MessageOptions) => {
-    ext.log(errMsg);
+    ext.outputChannel.appendLine(errMsg);
     if (options && options.detail) {
-      ext.log(options.detail);
+      ext.outputChannel.appendLine(options.detail);
     }
     window.showErrorMessage(errMsg, options);
-  };
-
-  export const logTelemetry = (context: IActionContext, key: string, value: string) => {
-    context.telemetry.properties[key] = value;
   };
 
   // Telemetry

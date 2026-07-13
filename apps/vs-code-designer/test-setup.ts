@@ -100,6 +100,9 @@ vi.mock('fs-extra', () => ({
   existsSync: vi.fn(() => {}),
   readdir: vi.fn(),
   stat: vi.fn(),
+  statSync: vi.fn(() => ({
+    isDirectory: () => false,
+  })),
 }));
 
 vi.mock('child_process');

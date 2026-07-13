@@ -28,19 +28,38 @@ const invokeFunctionManifest = {
 
     inputs: {
       type: 'object',
-      required: ['functionName'],
+      required: ['functionName', 'parameters'],
       properties: {
         functionName: {
-          title: 'Function Name',
           type: 'string',
-          description: 'The name of the local function to invoke',
-          'x-ms-visibility': 'important',
+          title: 'Function name',
+          description: 'The name for the function.',
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getFunctions',
+              parameters: {},
+            },
+            parameters: {},
+          },
         },
         parameters: {
-          title: 'Parameters',
           type: 'object',
-          description: 'Parameters to pass to the local function',
-          'x-ms-visibility': 'important',
+          title: 'Function parameters',
+          description: 'The function parameters.',
+          'x-ms-dynamic-properties': {
+            dynamicState: {
+              extension: {
+                operationId: 'getParameters',
+              },
+              isInput: true,
+            },
+            parameters: {
+              functionName: {
+                parameterReference: 'functionName',
+                required: true,
+              },
+            },
+          },
         },
       },
     },
@@ -51,25 +70,40 @@ const invokeFunctionManifest = {
       type: 'object',
       properties: {
         body: {
-          title: 'Body',
-          description: 'The return value from the local function',
+          type: 'object',
+          title: 'Function output',
+          description: "The function's output.",
+          'x-ms-dynamic-properties': {
+            dynamicState: {
+              extension: {
+                operationId: 'getOutputSchema',
+              },
+            },
+            parameters: {
+              functionName: {
+                parameterReference: 'functionName',
+                required: true,
+              },
+            },
+          },
         },
       },
     },
     isOutputsOptional: false,
-    includeRootOutputs: true,
+    includeRootOutputs: false,
 
     connector,
 
+    dynamicContent: {
+      payloadConfiguration: ['WorkflowAppLocation'],
+    },
+
     settings: {
-      retryPolicy: {
-        scopes: [SettingScope.Action],
-      },
       secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
-      timeout: {
+      retryPolicy: {
         scopes: [SettingScope.Action],
       },
     },

@@ -11,6 +11,7 @@ import {
   extensionCommand,
   showAutoStartAzuriteWarning,
 } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
 import { validateEmulatorIsRunning } from '../../debug/validatePreDebug';
@@ -78,9 +79,7 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         }
       } else if (autoStartAzurite && !azuriteLocationExtSetting) {
         await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
-        vscode.window.showInformationMessage(
-          localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`)
-        );
+        ext.outputChannel.appendLog(localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`));
       }
 
       const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, false);

@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useIsA2AWorkflow, useIsAgenticWorkflowOnly } from '../../../core/state/designerView/designerViewSelectors';
+import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
@@ -41,7 +41,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
   const isAgentNode = useMemo(() => equals(operationInfo?.type ?? '', constants.NODE.TYPE.AGENT, true), [operationInfo?.type]);
   const isA2AWorkflow = useIsA2AWorkflow();
-  const isAgenticWorkflowOnly = useIsAgenticWorkflowOnly();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const operationManifestQuery = useOperationManifest(operationInfo);
   const enableAgentHarness = operationManifestQuery.data?.properties?.enableAgentHarness ?? false;
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
@@ -90,10 +90,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const channelsTabItem = useMemo(
     () => ({
       ...channelsTab(intl, tabProps),
-      // Note: Channels tab is disabled until we have the teams integration ready
-      visible: isAgentNode && isAgenticWorkflowOnly,
+      visible: isAgentNode && isAgenticWorkflow,
     }),
-    [intl, tabProps, isAgentNode, isAgenticWorkflowOnly]
+    [intl, tabProps, isAgentNode, isAgenticWorkflow]
   );
 
   const handoffTabItem = useMemo(

@@ -236,7 +236,7 @@ export async function parameterizeConnectionsDuringImport(
       const parametersJson = await getParametersJson(logicAppPath);
 
       if (areAllConnectionsParameterized(connectionsData)) {
-        window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
+        ext.outputChannel.appendLog(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
         return;
       }
 
@@ -420,7 +420,7 @@ function runPostExtractSteps(cache: ICachedTextDocument): void {
     if (getContainingWorkspace(cache.projectPath) && await fse.pathExists(cache.textDocumentPath)) {
       window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
-    context.telemetry.properties.finishedImportingProject = 'Finished importing project';
-    window.showInformationMessage(localize('finishedImporting', 'Finished importing project.'));
+    context.telemetry.properties.result = 'Succeeded';
+    ext.outputChannel.appendLog(localize('finishedImporting', 'Successfully imported project.'));
   });
 }

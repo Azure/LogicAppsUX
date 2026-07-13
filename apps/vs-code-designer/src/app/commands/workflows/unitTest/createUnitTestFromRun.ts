@@ -320,9 +320,7 @@ async function generateUnitTestFromRun(
       throw workspaceError;
     }
 
-    vscode.window.showInformationMessage(
-      localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}"', unitTestName, paths.unitTestFolderPath)
-    );
+    ext.outputChannel.appendLog(localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}".', unitTestName, paths.unitTestFolderPath));
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
     context.telemetry.measurements.generateCodefulUnitTestMs = Date.now() - startTime;
     try {
