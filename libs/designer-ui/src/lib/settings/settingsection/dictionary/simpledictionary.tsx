@@ -37,6 +37,9 @@ const valuesToDictionary = (dictionaryRows: SimpleDictionaryRowModel[]): Record<
   return Object.keys(nextDictionary).length > 0 ? nextDictionary : undefined;
 };
 
+const normalizeDictionary = (dictionary?: Record<string, string>): Record<string, string> | undefined =>
+  Object.keys(dictionary ?? {}).length > 0 ? dictionary : undefined;
+
 export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   disabled,
   customLabel,
@@ -54,7 +57,10 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
 
   useEffect(() => {
     const nextValues = createValues(value);
-    if (!deepCompareObjects(valuesToDictionary(valuesRef.current), value)) {
+    const currentDictionary = normalizeDictionary(valuesToDictionary(valuesRef.current));
+    const nextDictionary = normalizeDictionary(value);
+
+    if (!deepCompareObjects(currentDictionary, nextDictionary)) {
       isSyncingFromParentRef.current = true;
       setValues(nextValues);
     }
