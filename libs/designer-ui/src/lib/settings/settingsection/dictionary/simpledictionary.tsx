@@ -3,7 +3,7 @@ import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './simpledictionary.styles';
 import { deepCompareObjects } from '@microsoft/logic-apps-shared';
@@ -46,23 +46,37 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   ariaLabel,
 }): JSX.Element => {
   const [values, setValues] = useState(createValues(value));
+  const valuesRef = useRef(values);
+  const isInitialRenderRef = useRef(true);
+  const isSyncingFromParentRef = useRef(false);
 
   const intl = useIntl();
 
-  // Keep the editor in sync if the tracked-properties value is refreshed from the parent.
   useEffect(() => {
     const nextValues = createValues(value);
-    if (!deepCompareObjects(valuesToDictionary(nextValues), value)) {
+    if (!deepCompareObjects(valuesToDictionary(valuesRef.current), value)) {
+      isSyncingFromParentRef.current = true;
       setValues(nextValues);
     }
   }, [value]);
 
   useEffect(() => {
-    const nextDictionary = valuesToDictionary(values);
-    if (!deepCompareObjects(nextDictionary, value)) {
-      onChange?.(nextDictionary);
+    valuesRef.current = values;
+  }, [values]);
+
+  useEffect(() => {
+    if (isInitialRenderRef.current) {
+      isInitialRenderRef.current = false;
+      return;
     }
-  }, [onChange, value, values]);
+
+    if (isSyncingFromParentRef.current) {
+      isSyncingFromParentRef.current = false;
+      return;
+    }
+
+    onChange?.(valuesToDictionary(values));
+  }, [onChange, values]);
 
   const handleItemDelete = (e: SimpleDictionaryRowModel): void => {
     setValues((oldValues) => oldValues.filter((x) => x.index !== e.index).map((x, i) => ({ ...x, index: i })));
