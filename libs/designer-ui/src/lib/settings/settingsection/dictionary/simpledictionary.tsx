@@ -3,10 +3,10 @@ import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
 import type React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './simpledictionary.styles';
-import { equals } from '@microsoft/logic-apps-shared';
+import { deepCompareObjects } from '@microsoft/logic-apps-shared';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
@@ -46,25 +46,20 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   };
 
   const [values, setValues] = useState(createValues(value));
-  const valuesRef = useRef(values);
 
   const intl = useIntl();
 
   // Keep the editor in sync if the tracked-properties value is refreshed from the parent.
   useEffect(() => {
     const nextValues = createValues(value);
-    if (!equals(nextValues, valuesRef.current)) {
+    if (!deepCompareObjects(valuesToDictionary(nextValues), value)) {
       setValues(nextValues);
     }
   }, [value]);
 
   useEffect(() => {
-    valuesRef.current = values;
-  }, [values]);
-
-  useEffect(() => {
     const nextDictionary = valuesToDictionary(values);
-    if (!equals(nextDictionary, value)) {
+    if (!deepCompareObjects(nextDictionary, value)) {
       onChange?.(nextDictionary);
     }
   }, [onChange, value, values]);
