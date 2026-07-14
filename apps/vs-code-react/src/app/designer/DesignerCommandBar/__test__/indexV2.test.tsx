@@ -286,6 +286,24 @@ describe('DesignerCommandBar (V2)', () => {
       expect(button?.disabled).toBe(true);
     });
 
+    it('should post createUnitTest message and telemetry when clicked', async () => {
+      mockDesignerIsDirty = false;
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={true} />);
+      const button = screen.getByText('Create unit test').closest('button') as HTMLButtonElement;
+      await userEvent.click(button);
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: 'logTelemetry',
+          data: expect.objectContaining({ name: 'CreateUnitTest' }),
+        })
+      );
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: 'createUnitTest',
+        })
+      );
+    });
+
     it('should show "Create unit test from run" in monitoring view when isLocal and runId is set', () => {
       render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={false} isMonitoringView={true} runId="run-123" />);
       expect(screen.getByText('Create unit test from run')).toBeDefined();
