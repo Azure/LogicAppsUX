@@ -7,4 +7,4 @@ export interface CodeSelection {
     Line: number;
     Character: number;
   };
-};
+}

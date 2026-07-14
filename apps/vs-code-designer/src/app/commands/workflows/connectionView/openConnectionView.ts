@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { IActionContext } from "@microsoft/vscode-azext-utils";
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { CodeSelection } from '@microsoft/vscode-extension-logic-apps';
-import ConnectionPanel from "./panels/connectionPanel";
+import ConnectionPanel from './panels/connectionPanel';
 
 export async function openConnectionView(
   context: IActionContext,

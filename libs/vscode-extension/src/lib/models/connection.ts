@@ -1,6 +1,6 @@
-import type { Artifacts, FileDetails } from "./artifact";
-import type { Parameter } from "./parameter";
-import type { AzureConnectorDetails } from "./workflow";
+import type { Artifacts, FileDetails } from './artifact';
+import type { Parameter } from './parameter';
+import type { AzureConnectorDetails } from './workflow';
 
 export interface ConnectionReferenceModel {
   connection: {
