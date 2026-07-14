@@ -2,14 +2,13 @@ name: "Test Copilot CLI"
 
 on:
   workflow_dispatch:
-  pull_request:
 
 permissions:
   contents: read
   copilot-requests: write
 
 jobs:
-  test:
+  copilot-cli-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -18,16 +17,16 @@ jobs:
       - name: Install Copilot CLI
         run: npm install -g @github/copilot@latest
 
-      - name: Test CLI invocation
+      - name: Test CLI invocation (GITHUB_TOKEN installation auth, org-billed)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RESULT=$(COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" timeout 60 copilot \
+          RESULT=$(timeout 60 copilot --yolo \
             -p "Respond with exactly: COPILOT_CLI_WORKING" \
-            -s --no-ask-user --model claude-opus-4.8 --allow-all 2>&1) || true
+            --model claude-opus-4.8 2>&1) || true
           echo "Result: $RESULT"
           if echo "$RESULT" | grep -q "COPILOT_CLI_WORKING"; then
-            echo "Copilot CLI is working"
+            echo "Copilot CLI is working (installation auth)"
           else
             echo "::error::Copilot CLI did not return expected response"
             echo "Full output: $RESULT"
