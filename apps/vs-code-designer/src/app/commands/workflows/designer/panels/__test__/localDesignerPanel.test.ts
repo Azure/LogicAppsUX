@@ -6,7 +6,6 @@ import { env, workspace } from 'vscode';
 import axios from 'axios';
 import { writeFileSync } from 'fs';
 
-// Mock dependencies before importing the class
 vi.mock('../../../../../../localize', () => ({
   localize: (_key: string, defaultMsg: string, ...args: string[]) =>
     defaultMsg.replace(/{(\d+)}/g, (_match, index) => args[Number(index)] ?? ''),
@@ -108,7 +107,6 @@ vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
   getAuthorizationTokenFromNode: vi.fn().mockResolvedValue('mock-token'),
 }));
 
-// Import after mocks
 import LocalDesignerPanel from '../localDesignerPanel';
 import { createNewDataMapCmd } from '../../../../dataMapper/dataMapper';
 import { createUnitTest } from '../../../unitTest/createUnitTest';

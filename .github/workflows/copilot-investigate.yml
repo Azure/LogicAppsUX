@@ -1,0 +1,105 @@
+name: "Copilot: Deep Investigation"
+
+on:
+  issues:
+    types: [labeled]
+  schedule:
+    - cron: '0 */2 * * *'
+
+permissions:
+  contents: read
+  issues: write
+  copilot-requests: write
+
+concurrency:
+  group: copilot-investigate-${{ github.event.issue.number || 'scheduled' }}
+  cancel-in-progress: true
+
+jobs:
+  investigate-labeled:
+    if: >
+      github.event_name == 'issues' &&
+      github.event.label.name == 'needs-investigation' &&
+      github.event.sender.login != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot@latest
+
+      - name: Post acknowledgment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "Investigation started - analyzing the issue, searching the codebase, and checking recent changes. Notes will be posted in 3-5 minutes."
+
+      - name: Run investigation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          SYSTEM_PROMPT=$(cat prompts/copilot-investigate.md)
+          ISSUE_BODY=$(gh issue view "$ISSUE_NUMBER" --json body --jq '.body')
+
+          TASK="Investigate issue #${ISSUE_NUMBER} in repo ${{ github.repository }}. Title: ${ISSUE_TITLE}. Body: ${ISSUE_BODY}. Search the codebase to find relevant files. Check git log for recent changes. Post your investigation notes as a comment on the issue using: gh issue comment ${ISSUE_NUMBER} --body-file /tmp/investigation.md"
+
+          COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" copilot \
+            -p "$TASK" \
+            -s --no-ask-user --model claude-opus-4.8 --allow-all
+
+      - name: Add investigated label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "investigated" --color "0e8a16" --description "Issue has been investigated" 2>/dev/null || true
+          gh issue edit ${{ github.event.issue.number }} --add-label "investigated"
+
+  investigate-stale:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+
+      - name: Find uninvestigated issues
+        id: find
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          STALE=$(gh issue list \
+            --label "bug" \
+            --state open \
+            --json number,labels,createdAt \
+            --jq '[.[] | select(
+              (.labels | map(.name) | any(. == "investigated" or . == "needs-investigation" or startswith("P"))) | not
+            ) | select(
+              (.createdAt | fromdateiso8601) < (now - 3600)
+            )] | .[0:2] | .[].number' 2>/dev/null || true)
+
+          if [ -n "$STALE" ]; then
+            STALE_ONELINE=$(echo "$STALE" | tr '\n' ' ' | xargs)
+            echo "issues=$STALE_ONELINE" >> "$GITHUB_OUTPUT"
+            echo "has_stale=true" >> "$GITHUB_OUTPUT"
+            echo "Found stale issues: $STALE_ONELINE"
+          else
+            echo "has_stale=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Auto-label for investigation
+        if: steps.find.outputs.has_stale == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "needs-investigation" --color "d93f0b" --description "Bug needs initial investigation" 2>/dev/null || true
+          for issue_num in ${{ steps.find.outputs.issues }}; do
+            echo "Labeling issue #$issue_num for investigation"
+            gh issue edit "$issue_num" --add-label "needs-investigation" 2>/dev/null || true
+          done

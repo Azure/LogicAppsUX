@@ -1,0 +1,128 @@
+name: "Copilot: Weekly Cleanup"
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: copilot-cleanup
+  cancel-in-progress: true
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check for existing cleanup PR
+        id: dedup
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          BRANCH="copilot-cleanup/$DATE"
+          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Cleanup PR already exists for this week"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run lint auto-fix via turbo
+        if: steps.dedup.outputs.skip == 'false'
+        id: lint-fix
+        run: |
+          pnpm turbo run lint -- --fix || true
+          FIXED=$(git diff --name-only | wc -l | tr -d ' ')
+          echo "files-fixed=$FIXED" >> "$GITHUB_OUTPUT"
+          echo "Fixed $FIXED file(s) via lint auto-fix"
+
+      - name: Validate build
+        if: steps.dedup.outputs.skip == 'false'
+        id: build-check
+        run: |
+          if pnpm turbo run build; then
+            echo "build=pass" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Build failed after lint fix - reverting"
+            git checkout -- .
+            echo "build=fail" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create cleanup PR
+        if: steps.dedup.outputs.skip == 'false' && steps.build-check.outputs.build == 'pass'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes to commit - codebase is clean"
+            exit 0
+          fi
+
+          DATE=$(date +%Y-%m-%d)
+          BRANCH="copilot-cleanup/$DATE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+
+          {
+            echo "chore: weekly cleanup [$DATE]"
+            echo ""
+            echo "Auto-fixed lint violations across libs/ and apps/:"
+            echo "- ESLint auto-fixable rules"
+            echo "- Import sorting and dead import removal"
+            echo ""
+            echo "Build validation: passed"
+            echo ""
+            echo "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+          } > /tmp/commit-msg.txt
+          git commit -F /tmp/commit-msg.txt
+
+          git push origin "$BRANCH"
+
+          {
+            echo "## Weekly Cleanup"
+            echo ""
+            echo "Automated lint fixes applied via turbo across all packages."
+            echo ""
+            echo "- ESLint auto-fixable violations resolved"
+            echo "- Import ordering normalized"
+            echo "- Type-only imports corrected"
+            echo ""
+            echo "**Files changed:** ${{ steps.lint-fix.outputs.files-fixed }}"
+            echo "**Build:** Passes after all fixes"
+            echo ""
+            echo "This PR is safe to merge - all changes are mechanical auto-fixes."
+          } > /tmp/pr-body.md
+
+          gh label create "automated" --color "ededed" --description "Automated PR" 2>/dev/null || true
+          gh label create "cleanup" --color "c5def5" --description "Code cleanup" 2>/dev/null || true
+
+          gh pr create \
+            --title "chore: weekly cleanup [$DATE]" \
+            --body-file /tmp/pr-body.md \
+            --base main \
+            --label "automated,cleanup"

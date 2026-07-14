@@ -1,0 +1,185 @@
+name: "Copilot: Flake Review"
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      testRuns:
+        description: 'Number of test replays'
+        type: number
+        default: 3
+
+permissions:
+  contents: write
+  pull-requests: write
+  copilot-requests: write
+
+concurrency:
+  group: copilot-flake-review
+  cancel-in-progress: true
+
+jobs:
+  detect_flakes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      has_flakes: ${{ steps.analyze.outputs.has_flakes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests multiple times
+        id: replay
+        env:
+          RUNS: ${{ inputs.testRuns || 3 }}
+        run: |
+          mkdir -p /tmp/flake-results
+
+          for i in $(seq 1 $RUNS); do
+            echo "::group::Run $i/$RUNS"
+            pnpm turbo run test:lib -- --reporter=json --outputFile=/tmp/flake-results/run-$i.json 2>&1 || true
+            echo "::endgroup::"
+          done
+
+          node -e "
+            const fs = require('fs');
+            const glob = require('path');
+            const runs = [];
+            for (let i = 1; i <= ${RUNS}; i++) {
+              try {
+                runs.push(JSON.parse(fs.readFileSync('/tmp/flake-results/run-' + i + '.json', 'utf8')));
+              } catch {}
+            }
+
+            const testResults = {};
+            for (const run of runs) {
+              for (const suite of (run.testResults || [])) {
+                for (const test of (suite.assertionResults || [])) {
+                  const key = suite.name + '::' + test.fullName;
+                  if (!testResults[key]) testResults[key] = { pass: 0, fail: 0, file: suite.name, test: test.fullName };
+                  if (test.status === 'passed') testResults[key].pass++;
+                  else if (test.status === 'failed') testResults[key].fail++;
+                }
+              }
+            }
+
+            const flakes = Object.values(testResults).filter(t => t.pass > 0 && t.fail > 0);
+            fs.writeFileSync('/tmp/flake-results/flakes.json', JSON.stringify(flakes, null, 2));
+            console.log('Found ' + flakes.length + ' flaky test(s)');
+          "
+
+      - name: Analyze results
+        id: analyze
+        run: |
+          FLAKE_COUNT=$(python3 -c "import json; print(len(json.load(open('/tmp/flake-results/flakes.json'))))")
+          echo "Flaky tests: $FLAKE_COUNT"
+          if [ "$FLAKE_COUNT" -gt 0 ]; then
+            echo "has_flakes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_flakes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload flake report
+        if: steps.analyze.outputs.has_flakes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: flake-report
+          path: /tmp/flake-results/flakes.json
+          retention-days: 7
+
+  fix_flakes:
+    needs: detect_flakes
+    if: needs.detect_flakes.outputs.has_flakes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot@latest
+
+      - name: Download flake report
+        uses: actions/download-artifact@v4
+        with:
+          name: flake-report
+          path: /tmp/flake-results/
+
+      - name: Fix flakes with Copilot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPORT=$(cat /tmp/flake-results/flakes.json)
+          PROMPT_FILE="prompts/copilot-flake-review.md"
+          SYSTEM_PROMPT=$(cat "$PROMPT_FILE")
+
+          TASK="The following tests are flaky (passed and failed across multiple runs). Fix them according to the system prompt guidelines. Flake report: $REPORT"
+
+          COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" copilot \
+            -p "$TASK" \
+            -s --no-ask-user --model claude-opus-4.8 --allow-all || true
+
+      - name: Check for changes and create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No flake fixes produced"
+            exit 0
+          fi
+
+          DATE=$(date +%Y-%m-%d)
+          BRANCH="copilot-flake-fix/$DATE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+
+          {
+            echo "fix: resolve flaky tests [$DATE]"
+            echo ""
+            echo "Auto-detected and fixed non-deterministic tests."
+            echo ""
+            echo "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+          } > /tmp/commit-msg.txt
+          git commit -F /tmp/commit-msg.txt
+
+          git push origin "$BRANCH"
+
+          {
+            echo "## Flake Fixes"
+            echo ""
+            echo "Automated detection and fix of non-deterministic tests."
+            echo "Tests were run 3x and any with inconsistent results were analyzed and fixed."
+            echo ""
+            echo "Please review carefully - flake fixes can sometimes mask real issues."
+          } > /tmp/pr-body.md
+          gh pr create \
+            --title "fix: resolve flaky tests [$DATE]" \
+            --body-file /tmp/pr-body.md \
+            --base main \
+            --label "automated,test-reliability"

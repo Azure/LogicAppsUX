@@ -4,7 +4,6 @@ import { openUrl } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { workspace } from 'vscode';
 
-// Mock dependencies before importing the class
 vi.mock('../../../../../../localize', () => ({
   localize: (_key: string, defaultMsg: string) => defaultMsg,
 }));
