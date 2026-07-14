@@ -61,7 +61,7 @@ vi.mock('../../../../utils/bundleFeed', () => ({
   getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
-vi.mock('../../unitTest/codefulUnitTest/createUnitTestFromRun', () => ({
+vi.mock('../../unitTest/createUnitTestFromRun', () => ({
   createUnitTestFromRun: vi.fn(),
 }));
 
@@ -82,7 +82,7 @@ import {
   getLogicAppProjectRoot,
   getParametersFromFile,
 } from '../../../../utils/codeless/connection';
-import { createUnitTestFromRun } from '../../unitTest/codefulUnitTest/createUnitTestFromRun';
+import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { sendRequest } from '../../../../utils/requestUtils';
 
 describe('OpenMonitoringViewForLocal', () => {
@@ -185,7 +185,7 @@ describe('OpenMonitoringViewForLocal', () => {
       await (instance as any)._handleWebviewMsg({
         command: ExtensionCommand.createUnitTestFromRun,
         runId: 'run-123',
-        definition: { assertions: [] },
+        definition: {},
       });
       await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.fileABug });
       await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.getDesignerVersion });
@@ -203,9 +203,7 @@ describe('OpenMonitoringViewForLocal', () => {
         })
       );
       expect(ext.telemetryReporter.sendTelemetryEvent).toHaveBeenCalledWith('monitoringArea', { area: 'monitoringArea' });
-      expect(createUnitTestFromRun).toHaveBeenCalledWith(expect.objectContaining({ fsPath: mockWorkflowFilePath }), 'run-123', {
-        assertions: [],
-      });
+      expect(createUnitTestFromRun).toHaveBeenCalledWith(expect.objectContaining({ fsPath: mockWorkflowFilePath }), 'run-123', {});
       expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
       expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(
         expect.objectContaining({ command: ExtensionCommand.getDesignerVersion })

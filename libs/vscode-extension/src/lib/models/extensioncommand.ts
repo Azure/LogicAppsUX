@@ -45,7 +45,6 @@ export const ExtensionCommand = {
   completeOauthLogin: 'CompleteOauthLogin',
   webviewLoaded: 'webviewLoaded',
   webviewRscLoadError: 'webviewRscLoadError',
-  saveUnitTest: 'saveUnitTest',
   createUnitTest: 'createUnitTest',
   createUnitTestFromRun: 'createUnitTestFromRun',
   viewWorkflow: 'viewWorkflow',

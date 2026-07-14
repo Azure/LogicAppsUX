@@ -13,7 +13,6 @@ import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 
 // Mock all selector hooks
 const mockUseMonitoringView = vi.fn();
-const mockUseUnitTest = vi.fn();
 const mockUsePanelTabHideKeys = vi.fn();
 const mockUseIsNodePinnedToOperationPanel = vi.fn();
 const mockUseParameterValidationErrors = vi.fn();
@@ -33,7 +32,6 @@ vi.mock('../../../../core', () => ({
 
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
-  useUnitTest: () => mockUseUnitTest(),
   usePanelTabHideKeys: () => mockUsePanelTabHideKeys(),
 }));
 
@@ -99,10 +97,6 @@ vi.mock('../tabs/retryTab', () => ({
   monitorRetryTab: () => ({ id: 'retry', title: 'Retry', order: 5, visible: true, content: null }),
 }));
 
-vi.mock('../tabs/mockResultsTab/mockResultsTab', () => ({
-  mockResultsTab: () => ({ id: 'mockResults', title: 'Mock Results', order: 0, visible: true, content: null }),
-}));
-
 vi.mock('../tabs/scratchTab', () => ({
   scratchTab: { id: 'scratch', title: 'Scratch', order: 100, visible: true, content: null },
 }));
@@ -134,7 +128,6 @@ describe('usePanelTabs', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseMonitoringView.mockReturnValue(false);
-    mockUseUnitTest.mockReturnValue(false);
     mockUsePanelTabHideKeys.mockReturnValue([]);
     mockUseIsNodePinnedToOperationPanel.mockReturnValue(false);
     mockUseParameterValidationErrors.mockReturnValue([]);
@@ -146,15 +139,6 @@ describe('usePanelTabs', () => {
     mockUseIsA2AWorkflow.mockReturnValue(false);
     mockUseIsAgenticWorkflow.mockReturnValue(false);
     mockUseOperationManifest.mockReturnValue({ data: undefined, isLoading: false, isFetched: true });
-  });
-
-  it('should return only mockResultsTab when isUnitTestView is true', () => {
-    mockUseUnitTest.mockReturnValue(true);
-
-    const { result } = renderHook(() => usePanelTabs({ nodeId: 'testNode' }), { wrapper: createWrapper() });
-
-    expect(result.current).toHaveLength(1);
-    expect(result.current[0].id).toBe('mockResults');
   });
 
   it('should return only parametersTab for SWITCH_CASE subgraphType', () => {

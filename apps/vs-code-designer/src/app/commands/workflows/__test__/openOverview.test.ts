@@ -290,7 +290,6 @@ describe('openOverview', () => {
 
     expect(initializePayload.project).toBe('overview');
     expect(initializePayload.isCodeful).toBe(true);
-    expect(initializePayload.supportsUnitTest).toBe(false);
     expect(initializePayload.workflowPropertiesList).toHaveLength(2);
     expect(initializePayload.workflowPropertiesList.map((workflow: any) => workflow.name)).toEqual(['workflow-a', 'workflow-b']);
     expect(initializePayload.workflowPropertiesList[0].triggerName).toBe('lspManual');
@@ -571,7 +570,6 @@ describe('openOverview', () => {
     const initializePayload = await sendInitializeMessage();
 
     expect(initializePayload.isLocal).toBe(false);
-    expect(initializePayload.supportsUnitTest).toBe(false);
     expect(initializePayload.corsNotice).toBe('To view runs, set "*" to allowed origins in the CORS setting.');
     expect(initializePayload.workflowProperties.callbackInfo).toEqual({
       value: 'https://callback.remote/manual',

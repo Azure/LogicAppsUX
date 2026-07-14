@@ -35,7 +35,6 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   isDraft: false,
-  isUnitTest: false,
   isDarkMode: false,
   isVSCode: false,
   servicesInitialized: false,
@@ -167,7 +166,6 @@ export const designerOptionsSlice = createSlice({
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDraft = action.payload.isDraft;
-      state.isUnitTest = action.payload.isUnitTest;
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;

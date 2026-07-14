@@ -100,12 +100,8 @@ vi.mock('@azure/core-rest-pipeline', () => ({
   createHttpHeaders: vi.fn(),
 }));
 
-vi.mock('../../unitTest/codefulUnitTest/createUnitTest', () => ({
+vi.mock('../../unitTest/createUnitTest', () => ({
   createUnitTest: vi.fn(),
-}));
-
-vi.mock('../../../../utils/unitTest/codelessUnitTest', () => ({
-  saveUnitTestDefinition: vi.fn(),
 }));
 
 vi.mock('../../../../utils/codeless/getAuthorizationToken', () => ({
@@ -115,7 +111,7 @@ vi.mock('../../../../utils/codeless/getAuthorizationToken', () => ({
 // Import after mocks
 import OpenDesignerForLocalProject from '../openDesignerForLocalProject';
 import { createNewDataMapCmd } from '../../../dataMapper/dataMapper';
-import { createUnitTest } from '../../unitTest/codefulUnitTest/createUnitTest';
+import { createUnitTest } from '../../unitTest/createUnitTest';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
@@ -133,7 +129,6 @@ import {
 } from '../../../../utils/codeless/connection';
 import { getAzureConnectorDetailsForLocalProject, getManualWorkflowsInLocalProject } from '../../../../utils/codeless/common';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
-import { saveUnitTestDefinition } from '../../../../utils/unitTest/codelessUnitTest';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 
 describe('OpenDesignerForLocalProject', () => {
@@ -177,13 +172,8 @@ describe('OpenDesignerForLocalProject', () => {
       expect(instance).toBeDefined();
     });
 
-    it('should handle unit test mode', () => {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri, 'test-unit-test', { assertions: [] });
-      expect(instance).toBeDefined();
-    });
-
     it('should handle run ID parameter', () => {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri, undefined, undefined, 'workflows/wf/runs/run123');
+      const instance = new OpenDesignerForLocalProject(mockContext, mockUri, undefined);
       expect(instance).toBeDefined();
     });
   });
@@ -298,8 +288,7 @@ describe('OpenDesignerForLocalProject', () => {
 
       await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.initialize });
       await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.save, definition: {} });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.createUnitTest, definition: { assertions: [] } });
-      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.saveUnitTest, definition: { assertions: [] } });
+      await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.createUnitTest, definition: {} });
       await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.addConnection, connectionAndSetting: { name: 'conn' } });
       await (instance as any)._handleWebviewMsg({ command: ExtensionCommand.openOauthLoginPopup, url: 'https://login.example.com' });
       await (instance as any)._handleWebviewMsg({
@@ -318,7 +307,6 @@ describe('OpenDesignerForLocalProject', () => {
       );
       expect((instance as any).saveWorkflow).toHaveBeenCalled();
       expect(createUnitTest).toHaveBeenCalled();
-      expect(saveUnitTestDefinition).toHaveBeenCalledWith(expect.anything(), '/test/project', 'myWorkflow', undefined, { assertions: [] });
       expect(addConnectionData).toHaveBeenCalledWith(expect.anything(), mockUri.fsPath, { name: 'conn' });
       expect(env.openExternal).toHaveBeenCalledWith('https://login.example.com');
       expect((instance as any).sendMsgToWebview).toHaveBeenCalledWith(

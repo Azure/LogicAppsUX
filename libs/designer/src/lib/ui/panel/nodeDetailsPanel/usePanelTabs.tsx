@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
@@ -12,7 +12,6 @@ import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors'
 import { isTriggerNode } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
-import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
@@ -32,7 +31,6 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
-  const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
   const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
   const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
@@ -64,14 +62,6 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       visible: !isScopeNode && isMonitoringView,
     }),
     [intl, isMonitoringView, isScopeNode, tabProps]
-  );
-
-  const mockResultsTabItem = useMemo(
-    () => ({
-      ...mockResultsTab(intl, tabProps),
-      visible: isUnitTestView,
-    }),
-    [intl, isUnitTestView, tabProps]
   );
 
   const parametersTabItem = useMemo(
@@ -150,9 +140,6 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   );
 
   const tabs = useMemo(() => {
-    if (isUnitTestView) {
-      return [mockResultsTabItem];
-    }
     // Switch cases should only show parameters tab
     // Built-in agent tools (e.g. code_interpreter) are excluded — they need the monitoring tab
     if (
@@ -186,8 +173,6 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       .sort((a, b) => a.order - b.order);
   }, [
     nodeId,
-    mockResultsTabItem,
-    isUnitTestView,
     aboutTabItem,
     agentHarnessTabItem,
     channelsTabItem,

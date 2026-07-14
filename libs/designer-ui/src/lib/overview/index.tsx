@@ -24,7 +24,6 @@ export interface OverviewProps {
   isWorkflowRuntimeRunning?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
-  supportsUnitTest?: boolean;
   runItems: RunDisplayItem[];
   workflowProperties: OverviewPropertiesProps;
   onLoadMoreRuns(): void;
@@ -53,7 +52,6 @@ export const Overview: React.FC<OverviewProps> = ({
   agentUrlData,
   isWorkflowRuntimeRunning,
   hasMoreRuns = false,
-  supportsUnitTest = false,
   runItems,
   workflowProperties,
   isRefreshing,
@@ -186,7 +184,6 @@ export const Overview: React.FC<OverviewProps> = ({
               loading={loading}
               onOpenRun={onOpenRun}
               onCreateUnitTestFromRun={onCreateUnitTestFromRun}
-              supportsUnitTest={supportsUnitTest}
             />
           </InfiniteScroll>
           {errorMessage ? (

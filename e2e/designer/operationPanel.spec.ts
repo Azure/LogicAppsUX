@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
 
 test.describe(
@@ -7,6 +7,28 @@ test.describe(
     tag: '@mock',
   },
   () => {
+    const openSelectedAndPinnedPanels = async (page: Page) => {
+      await page.goto('/');
+      await GoToMockWorkflow(page, 'Panel');
+
+      // Left-click on 'Parse JSON' node.
+      await page.getByTestId('card-parse_json').click();
+
+      // Right-click on 'Initialize ArrayVariable' node, and select 'Pin' from the menu.
+      await page.getByTestId('card-initialize_arrayvariable').click({ button: 'right' });
+      await page.getByTestId('msla-pin-menu-option').click();
+
+      const selectedPanel = page.locator('.msla-panel-border-selected');
+      const pinnedPanel = page.locator('.msla-panel-layout-pinned');
+
+      await expect(selectedPanel.locator('.msla-panel-card-header input#Parse_JSON-title')).toBeVisible();
+      await expect(selectedPanel.locator('.msla-panel-card-header button[aria-label="Unpin action"]')).not.toBeVisible();
+      await expect(pinnedPanel.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
+      await expect(pinnedPanel.locator('.msla-panel-card-header button[aria-label="Unpin action"]')).toBeVisible();
+      await expect(page.locator('.msla-panel-container-nested')).toHaveClass(/msla-panel-container-nested-dual/);
+      await expect(page.locator('.msla-panel-container')).toHaveCSS('width', '680px');
+    };
+
     test('Can select a node, and close the panel', async ({ page }) => {
       const validatePanel = async (state: 'open' | 'closed') => {
         if (state === 'open') {
@@ -34,17 +56,6 @@ test.describe(
     });
 
     test('Can pin a node, and close the panel', async ({ page }) => {
-      const validatePanel = async (state: 'open' | 'closed') => {
-        if (state === 'open') {
-          await expect(page.locator('.msla-panel-container-nested .msla-panel-border-selected')).toBeVisible();
-          await expect(page.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
-          await expect(page.locator('.msla-panel-card-header button[aria-label="Unpin action"]')).toBeVisible();
-          return;
-        }
-
-        await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
-      };
-
       await page.goto('/');
       await GoToMockWorkflow(page, 'Panel');
 
@@ -53,62 +64,58 @@ test.describe(
       await page.getByTestId('msla-pin-menu-option').click();
 
       // Panel should be open, with 'Initialize Variable' action.
-      await validatePanel('open');
+      const selectedPanel = page.locator('.msla-panel-border-selected');
+      await expect(selectedPanel).toBeVisible();
+      await expect(selectedPanel.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
+      await expect(selectedPanel.locator('.msla-panel-card-header button[aria-label="Unpin action"]')).not.toBeVisible();
 
-      // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').first().click();
-      await validatePanel('closed');
+      // Closing the single selected+pinned panel should collapse the drawer and unpin the action.
+      await selectedPanel.getByTestId('msla-panel-header-close-nav').click();
+      await expect(page.locator('.msla-panel-container')).not.toBeVisible();
+
+      await page.getByTestId('card-initialize_arrayvariable').click({ button: 'right' });
+      await expect(page.getByTestId('msla-pin-menu-option')).toHaveText('Pin action');
     });
 
     test('Can have both selected and pinned operations open, and close the panel', async ({ page }) => {
-      const validatePanel = async (state: 'open' | 'closed') => {
-        if (state === 'open') {
-          // Node panel tab should be open with 'Parse JSON' node.
-          await expect(page.locator('.msla-panel-border-selected .msla-panel-card-header input#Parse_JSON-title')).toBeVisible();
-          await expect(
-            page.locator('.msla-panel-border-selected .msla-panel-card-header button[aria-label="Unpin action"]')
-          ).not.toBeVisible();
+      await openSelectedAndPinnedPanels(page);
 
-          // Node panel tab should also be open with 'Initialize Variable' action pinned.
-          await expect(
-            page.locator('.msla-panel-layout-pinned .msla-panel-card-header input#Initialize_ArrayVariable-title')
-          ).toBeVisible();
-          await expect(page.locator('.msla-panel-layout-pinned .msla-panel-card-header button[aria-label="Unpin action"]')).toBeVisible();
+      const drawer = page.locator('.msla-panel-container');
+      const nestedPanel = page.locator('.msla-panel-container-nested');
+      const selectedPanel = page.locator('.msla-panel-border-selected');
+      const pinnedPanel = page.locator('.msla-panel-layout-pinned');
 
-          return;
-        }
+      // Closing the selected pane should leave the pinned action open in a single-width drawer.
+      await selectedPanel.getByTestId('msla-panel-header-close-nav').click();
+      await expect(selectedPanel.locator('.msla-panel-card-header input#Parse_JSON-title')).not.toBeVisible();
+      await expect(pinnedPanel.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
+      await expect(drawer).toBeVisible();
+      await expect(nestedPanel).not.toHaveClass(/msla-panel-container-nested-dual/);
+      await expect(drawer).toHaveCSS('width', '480px');
 
-        await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
-      };
+      // Closing the remaining pinned pane should collapse the drawer.
+      await pinnedPanel.getByTestId('msla-panel-header-close-nav').click();
+      await expect(drawer).not.toBeVisible();
+    });
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+    test('Closing the pinned operation keeps the selected operation open', async ({ page }) => {
+      await openSelectedAndPinnedPanels(page);
 
-      // Left-click on 'Parse JSON' node.
-      await page.getByTestId('card-parse_json').click();
+      const drawer = page.locator('.msla-panel-container');
+      const nestedPanel = page.locator('.msla-panel-container-nested');
+      const selectedPanel = page.locator('.msla-panel-border-selected');
+      const pinnedPanel = page.locator('.msla-panel-layout-pinned');
 
-      // Right-click on 'Initialize ArrayVariable' node, and select 'Pin' from the menu.
-      await page.getByTestId('card-initialize_arrayvariable').click({ button: 'right' });
-      await page.getByTestId('msla-pin-menu-option').click();
-
-      // Panel should be open, with 'Initialize Variable' and 'Parse JSON' actions.
-      await validatePanel('open');
-
-      // Collapse the panel and verify.
-      await page.getByTestId('msla-panel-header-close-nav').first().click();
-      await validatePanel('closed');
+      await pinnedPanel.getByTestId('msla-panel-header-close-nav').click();
+      await expect(pinnedPanel.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).not.toBeVisible();
+      await expect(selectedPanel.locator('.msla-panel-card-header input#Parse_JSON-title')).toBeVisible();
+      await expect(drawer).toBeVisible();
+      await expect(nestedPanel).not.toHaveClass(/msla-panel-container-nested-dual/);
+      await expect(drawer).toHaveCSS('width', '480px');
     });
 
     test('Can switch between different tabs independently in selected/pinned panels', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
-
-      // Left-click on 'Parse JSON' node.
-      await page.getByTestId('card-parse_json').click();
-
-      // Right-click on 'Initialize ArrayVariable' node, and select 'Pin' from the menu.
-      await page.getByTestId('card-initialize_arrayvariable').click({ button: 'right' });
-      await page.getByTestId('msla-pin-menu-option').click();
+      await openSelectedAndPinnedPanels(page);
 
       // Click on 'Settings' tab for 'Parse JSON' and on 'Code view' tab for 'Initialize ArrayVariable'.
       await page.locator('.msla-panel-border-selected #msla-node-details-panel-Parse_JSON button[value=SETTINGS]').click();

@@ -41,7 +41,6 @@ Token introspection for authentication flows.
 - Connection models: Function connections, service provider connections,
   API Management connections, agent connections, manual auth connections
 - Data mapper models: Map definition, schema, function metadata
-- Unit test models: Test definitions, mock data, assertion types
 - Parameter gathering types for multi-step wizard flows
 
 ### Webview Communication Protocol
