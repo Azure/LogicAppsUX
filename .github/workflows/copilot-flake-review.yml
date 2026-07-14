@@ -138,9 +138,15 @@ jobs:
 
           TASK="The following tests are flaky (passed and failed across multiple runs). Fix them according to the system prompt guidelines. Flake report: $REPORT"
 
-          COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" copilot \
-            -p "$TASK" \
-            -s --no-ask-user --model claude-opus-4.8 --allow-all || true
+          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          for MODEL in $MODELS; do
+            set +e
+            timeout 600 copilot --yolo -p "$TASK" --model "$MODEL"
+            CODE=$?
+            set -e
+            [ $CODE -eq 0 ] && break
+            echo "::warning::Copilot model $MODEL failed (exit $CODE) — trying next"
+          done || true
 
       - name: Check for changes and create PR
         env:
