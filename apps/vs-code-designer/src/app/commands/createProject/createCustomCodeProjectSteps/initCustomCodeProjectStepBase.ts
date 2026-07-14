@@ -16,6 +16,8 @@ import {
   logicAppsStandardExtensionId,
   vscodeFolderName,
   gitignoreFileName,
+  funcWatchProblemMatcher,
+  extensionCommand,
 } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
@@ -134,7 +136,7 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
           command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
           args: ['host', 'start'],
           ...getFuncHostTaskEnv(),
-          problemMatcher: '$func-watch',
+          problemMatcher: funcWatchProblemMatcher,
           isBackground: true,
           label: 'func: host start',
           group: {
@@ -147,7 +149,7 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
         {
           id: 'getDebugSymbolDll',
           type: 'command',
-          command: 'azureLogicAppsStandard.getDebugSymbolDll',
+          command: extensionCommand.getDebugSymbolDll,
         },
       ],
     };

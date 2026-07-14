@@ -5,11 +5,15 @@
 import { binariesExistSync } from '../../../utils/binaries';
 import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
 import { extensionCommand, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
-import { InitCustomCodeScriptProjectStep } from './initCustomCodeScriptProjectStep';
-import type { ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
+import { InitCustomCodeProjectStepBase } from './initCustomCodeProjectStepBase';
+import type { IProjectWizardContext, ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
 import type { TaskDefinition } from 'vscode';
 
-export class InitCustomCodeProjectStep extends InitCustomCodeScriptProjectStep {
+export class InitCustomCodeProjectStep extends InitCustomCodeProjectStepBase {
+  protected async executeCore(_context: IProjectWizardContext): Promise<void> {
+    // No additional setup needed for custom code projects
+  }
+
   protected getTasks(): TaskDefinition[] {
     const funcBinariesExist = binariesExistSync(funcDependencyName);
     const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv() : {};

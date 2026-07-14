@@ -14,7 +14,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';
 import type { MessageItem, TaskDefinition, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
-import { tasksFileName, vscodeFolderName } from '../../../constants';
+import { extensionCommand, funcWatchProblemMatcher, tasksFileName, vscodeFolderName } from '../../../constants';
 
 const tasksKey = 'tasks';
 const inputsKey = 'inputs';
@@ -211,7 +211,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
           {
             label: 'clean release',
             command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            args: [...releaseArgs, ...commonArgs],
+            args: ['clean', ...releaseArgs, ...commonArgs],
             type: 'process',
             problemMatcher: '$msCompile',
           },
@@ -230,7 +230,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
             command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
             args: ['host', 'start'],
             ...getFuncHostTaskEnv({ cwd: debugSubpath }),
-            problemMatcher: '$func-watch',
+            problemMatcher: funcWatchProblemMatcher,
             isBackground: true,
           },
         ],
@@ -238,7 +238,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
           {
             id: 'getDebugSymbolDll',
             type: 'command',
-            command: 'azureLogicAppsStandard.getDebugSymbolDll',
+            command: extensionCommand.getDebugSymbolDll,
           },
         ],
       };
@@ -259,7 +259,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
             command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
             args: ['host', 'start'],
             ...getFuncHostTaskEnv(),
-            problemMatcher: '$func-watch',
+            problemMatcher: funcWatchProblemMatcher,
             isBackground: true,
             label: 'func: host start',
             group: {
@@ -272,7 +272,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
           {
             id: 'getDebugSymbolDll',
             type: 'command',
-            command: 'azureLogicAppsStandard.getDebugSymbolDll',
+            command: extensionCommand.getDebugSymbolDll,
           },
         ],
       };
