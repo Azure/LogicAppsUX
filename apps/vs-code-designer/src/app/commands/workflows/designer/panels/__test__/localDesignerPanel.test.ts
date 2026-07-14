@@ -256,6 +256,28 @@ describe('LocalDesignerPanel', () => {
         'LogicApp'
       );
     });
+
+    it('reads localSettings after getAzureConnectorDetailsForLocalProject to avoid stale data from wizard writes', async () => {
+      let azureDetailsResolved = false;
+
+      vi.mocked(getAzureConnectorDetailsForLocalProject).mockImplementation(() => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            azureDetailsResolved = true;
+            resolve({ accessToken: 'token', enabled: true, subscriptionId: 'sub-1', tenantId: 'tenant-1' } as any);
+          }, 50);
+        });
+      });
+      vi.mocked(getLocalSettingsJson).mockImplementation(async () => {
+        expect(azureDetailsResolved).toBe(true);
+        return { Values: { WORKFLOWS_TENANT_ID: 'tenant-1', WORKFLOWS_SUBSCRIPTION_ID: 'sub-1' } } as any;
+      });
+
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
+      await (instance as any).getDesignerPanelMetadata({});
+
+      expect(getLocalSettingsJson).toHaveBeenCalled();
+    });
   });
 
   describe('webview messages', () => {

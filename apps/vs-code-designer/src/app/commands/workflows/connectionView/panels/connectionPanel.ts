@@ -327,18 +327,18 @@ export default class ConnectionPanel extends DesignerPanel {
     const [
       connectionsData,
       parametersData,
-      localSettings,
       artifacts,
       bundleVersionNumber,
       azureDetails
     ] = await Promise.all([
       getConnectionsFromFile(this.context, this.workflowFilePath),
       getParametersFromFile(this.context, this.workflowFilePath),
-      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)).then((result) => result.Values!),
       getArtifactsInLocalProject(projectPath),
       getBundleVersionNumber(),
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
     ]);
+
+    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
 
     return {
       panelId: this.panelName,

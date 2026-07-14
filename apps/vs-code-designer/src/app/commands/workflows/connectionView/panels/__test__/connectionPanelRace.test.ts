@@ -208,3 +208,44 @@ describe('ConnectionView – insert_connection handles local and managed connect
     });
   });
 });
+
+describe('ConnectionPanel – getConnectionPanelMetadata reads localSettings after azureConnectorDetails', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetLogicAppProjectRoot.mockResolvedValue('/test/project');
+    mockGetConnectionsFromFile.mockResolvedValue('{}');
+    mockGetParametersFromFile.mockResolvedValue({});
+  });
+
+  it('reads localSettings after getAzureConnectorDetailsForLocalProject to avoid stale data from wizard writes', async () => {
+    const { getAzureConnectorDetailsForLocalProject } = await import('../../../../../utils/codeless/common');
+    const { getLocalSettingsJson } = await import('../../../../../utils/appSettings/localSettings');
+
+    let azureDetailsResolved = false;
+
+    vi.mocked(getAzureConnectorDetailsForLocalProject).mockImplementation(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          azureDetailsResolved = true;
+          resolve({ accessToken: 'token', enabled: true, subscriptionId: 'sub-1', tenantId: 'tenant-1' } as any);
+        }, 50);
+      });
+    });
+    vi.mocked(getLocalSettingsJson).mockImplementation(async () => {
+      expect(azureDetailsResolved).toBe(true);
+      return { Values: { WORKFLOWS_TENANT_ID: 'tenant-1', WORKFLOWS_SUBSCRIPTION_ID: 'sub-1' } } as any;
+    });
+
+    const instance = Object.create(OpenConnectionView.prototype) as any;
+    instance.workflowFilePath = '/test/workflow.cs';
+    instance.panelName = 'test-panel';
+    instance.workflowName = '';
+    instance.context = { telemetry: { properties: {} } };
+    instance.schemaArtifacts = [];
+    instance.mapArtifacts = {};
+
+    await instance.getConnectionPanelMetadata();
+
+    expect(getLocalSettingsJson).toHaveBeenCalled();
+  });
+});

@@ -558,7 +558,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
     );
   }
 
-  // TODO(aeldridge): optimize
   private async getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<DesignerPanelMetadata> {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     if (!projectPath) {
@@ -567,14 +566,18 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this.migrate(workflowContent, migrationOptions);
-    const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
-    const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
-    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
-    const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
-    const artifacts = await getArtifactsInLocalProject(projectPath);
-    const bundleVersionNumber = await getBundleVersionNumber(projectPath);
 
-    const azureDetails = await getAzureConnectorDetailsForLocalProject(this.context, projectPath);
+    const [connectionsData, parametersData, customCodeData, workflowDetails, artifacts, bundleVersionNumber, azureDetails] =
+      await Promise.all([
+        getConnectionsFromFile(this.context, this.workflowFilePath),
+        getParametersFromFile(this.context, this.workflowFilePath),
+        getCustomCodeFromFiles(this.workflowFilePath),
+        getManualWorkflowsInLocalProject(projectPath, this.workflowName),
+        getArtifactsInLocalProject(projectPath),
+        getBundleVersionNumber(projectPath),
+        getAzureConnectorDetailsForLocalProject(this.context, projectPath),
+      ]);
+
     const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
 
     return {

@@ -198,7 +198,6 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
       customCodeData,
       bundleVersionNumber,
       azureDetails,
-      localSettings,
       artifacts,
       workflowContent,
     ] = await Promise.all([
@@ -207,10 +206,11 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
       getCustomCodeFromFiles(this.workflowFilePath),
       getBundleVersionNumber(projectPath),
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
-      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)).then((result) => result.Values!),
       getArtifactsInLocalProject(projectPath),
       this.getWorkflowContent(),
     ]);
+
+    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
 
     return {
       panelId: this.panelName,
