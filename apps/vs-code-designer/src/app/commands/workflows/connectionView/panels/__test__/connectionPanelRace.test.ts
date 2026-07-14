@@ -9,7 +9,7 @@ const mockGetLogicAppProjectRoot = vi.fn();
 const mockGetParametersFromFile = vi.fn();
 const mockSaveWorkflowParameter = vi.fn();
 
-vi.mock('../../../../utils/codeless/connection', () => ({
+vi.mock('../../../../../utils/codeless/connection', () => ({
   addConnectionData: mockAddConnectionData,
   getConnectionsAndSettingsToUpdate: mockGetConnectionsAndSettingsToUpdate,
   saveConnectionReferences: mockSaveConnectionReferences,
@@ -18,33 +18,33 @@ vi.mock('../../../../utils/codeless/connection', () => ({
   getParametersFromFile: mockGetParametersFromFile,
 }));
 
-vi.mock('../../../../utils/codeless/parameter', () => ({
+vi.mock('../../../../../utils/codeless/parameter', () => ({
   saveWorkflowParameter: mockSaveWorkflowParameter,
 }));
 
-vi.mock('../../../../utils/codeless/common', () => ({
+vi.mock('../../../../../utils/codeless/common', () => ({
   cacheWebviewPanel: vi.fn(),
   getAzureConnectorDetailsForLocalProject: vi.fn(),
   removeWebviewPanelFromCache: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/startDesignTimeApi', () => ({
+vi.mock('../../../../../utils/codeless/startDesignTimeApi', () => ({
   startDesignTimeApi: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/artifacts', () => ({
+vi.mock('../../../../../utils/codeless/artifacts', () => ({
   getArtifactsInLocalProject: vi.fn(),
 }));
 
-vi.mock('../../../../utils/appSettings/localSettings', () => ({
+vi.mock('../../../../../utils/appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn().mockResolvedValue({ Values: {} }),
 }));
 
-vi.mock('../../../../utils/bundleFeed', () => ({
+vi.mock('../../../../../utils/bundleFeed', () => ({
   getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
-vi.mock('../../openDesigner/openDesignerBase', () => {
+vi.mock('../../../designer/panels/designerPanel', () => {
   return {
     DesignerPanel: class {
       panelGroupKey = 'ls';
@@ -56,7 +56,7 @@ vi.mock('../../openDesigner/openDesignerBase', () => {
 });
 
 // ── Import the module under test (after all mocks are configured) ──────────
-const mod = await import('../connectionView');
+const mod = await import('../connectionPanel');
 const OpenConnectionView = mod.default;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -85,9 +85,9 @@ function createInstance(): InstanceType<typeof OpenConnectionView> {
   return instance;
 }
 
-/** Helper to invoke the private _handleWebviewMsg via the prototype */
+/** Helper to invoke the private handleWebviewMsg via the prototype */
 function handleMsg(instance: any, message: any): Promise<void> {
-  return (OpenConnectionView.prototype as any)._handleWebviewMsg.call(instance, message);
+  return (OpenConnectionView.prototype as any).handleWebviewMsg.call(instance, message);
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────

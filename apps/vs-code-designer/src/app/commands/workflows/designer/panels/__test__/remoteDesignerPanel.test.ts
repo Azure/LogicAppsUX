@@ -3,11 +3,11 @@ import * as vscode from 'vscode';
 import { ext } from '../../../../../../extensionVariables';
 
 // Mock dependencies before importing the class
-vi.mock('../../../../../localize', () => ({
+vi.mock('../../../../../../localize', () => ({
   localize: (_key: string, defaultMsg: string) => defaultMsg,
 }));
 
-vi.mock('../../../../utils/codeless/common', () => ({
+vi.mock('../../../../../utils/codeless/common', () => ({
   tryGetWebviewPanel: vi.fn(),
   cacheWebviewPanel: vi.fn(),
   removeWebviewPanelFromCache: vi.fn(),
@@ -15,7 +15,7 @@ vi.mock('../../../../utils/codeless/common', () => ({
   getWorkflowManagementBaseURI: vi.fn(() => 'https://management.azure.com/test'),
 }));
 
-vi.mock('../../../../utils/codeless/getWebViewHTML', () => ({
+vi.mock('../../../../../utils/codeless/getWebViewHTML', () => ({
   getWebViewHTML: vi.fn().mockResolvedValue('<html></html>'),
 }));
 
@@ -25,7 +25,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   resolveConnectionsReferences: vi.fn(() => ({})),
 }));
 
-vi.mock('../../../../utils/codeless/getAuthorizationToken', () => ({
+vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
   getAuthorizationTokenFromNode: vi.fn().mockResolvedValue('mock-token'),
 }));
 

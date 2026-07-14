@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ext } from '../../../../../extensionVariables';
+import { ext } from '../../../../../../extensionVariables';
 import { openUrl } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { env, workspace } from 'vscode';
@@ -7,7 +7,7 @@ import axios from 'axios';
 import { writeFileSync } from 'fs';
 
 // Mock dependencies before importing the class
-vi.mock('../../../../../localize', () => ({
+vi.mock('../../../../../../localize', () => ({
   localize: (_key: string, defaultMsg: string, ...args: string[]) =>
     defaultMsg.replace(/{(\d+)}/g, (_match, index) => args[Number(index)] ?? ''),
 }));
@@ -35,7 +35,7 @@ vi.mock('fs', () => ({
   writeFileSync: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/common', () => ({
+vi.mock('../../../../../utils/codeless/common', () => ({
   tryGetWebviewPanel: vi.fn(),
   cacheWebviewPanel: vi.fn(),
   removeWebviewPanelFromCache: vi.fn(),
@@ -45,7 +45,7 @@ vi.mock('../../../../utils/codeless/common', () => ({
   getAzureConnectorDetailsForLocalProject: vi.fn().mockResolvedValue({ enabled: false }),
 }));
 
-vi.mock('../../../../utils/codeless/getWebViewHTML', () => ({
+vi.mock('../../../../../utils/codeless/getWebViewHTML', () => ({
   getWebViewHTML: vi.fn().mockResolvedValue('<html></html>'),
 }));
 
@@ -56,7 +56,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   HTTP_METHODS: { POST: 'POST', GET: 'GET' },
 }));
 
-vi.mock('../../../../utils/codeless/connection', () => ({
+vi.mock('../../../../../utils/codeless/connection', () => ({
   getConnectionsFromFile: vi.fn().mockResolvedValue('{}'),
   getCustomCodeFromFiles: vi.fn().mockResolvedValue({}),
   getLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
@@ -68,31 +68,31 @@ vi.mock('../../../../utils/codeless/connection', () => ({
   saveCustomCodeStandard: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/startDesignTimeApi', () => ({
+vi.mock('../../../../../utils/codeless/startDesignTimeApi', () => ({
   startDesignTimeApi: vi.fn(),
 }));
 
-vi.mock('../../../../utils/requestUtils', () => ({
+vi.mock('../../../../../utils/requestUtils', () => ({
   sendRequest: vi.fn(),
 }));
 
-vi.mock('../../../dataMapper/dataMapper', () => ({
+vi.mock('../../../../dataMapper/dataMapper', () => ({
   createNewDataMapCmd: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/parameter', () => ({
+vi.mock('../../../../../utils/codeless/parameter', () => ({
   saveWorkflowParameter: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/artifacts', () => ({
+vi.mock('../../../../../utils/codeless/artifacts', () => ({
   getArtifactsInLocalProject: vi.fn().mockResolvedValue({ maps: {}, schemas: [] }),
 }));
 
-vi.mock('../../../../utils/bundleFeed', () => ({
+vi.mock('../../../../../utils/bundleFeed', () => ({
   getBundleVersionNumber: vi.fn().mockResolvedValue('1.0.0'),
 }));
 
-vi.mock('../../../../utils/appSettings/localSettings', () => ({
+vi.mock('../../../../../utils/appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn().mockResolvedValue({ Values: {} }),
 }));
 
@@ -100,22 +100,22 @@ vi.mock('@azure/core-rest-pipeline', () => ({
   createHttpHeaders: vi.fn(),
 }));
 
-vi.mock('../../unitTest/createUnitTest', () => ({
+vi.mock('../../../unitTest/createUnitTest', () => ({
   createUnitTest: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/getAuthorizationToken', () => ({
+vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
   getAuthorizationTokenFromNode: vi.fn().mockResolvedValue('mock-token'),
 }));
 
 // Import after mocks
-import OpenDesignerForLocalProject from '../openDesignerForLocalProject';
-import { createNewDataMapCmd } from '../../../dataMapper/dataMapper';
-import { createUnitTest } from '../../unitTest/createUnitTest';
-import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
-import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
-import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
-import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
+import LocalDesignerPanel from '../localDesignerPanel';
+import { createNewDataMapCmd } from '../../../../dataMapper/dataMapper';
+import { createUnitTest } from '../../../unitTest/createUnitTest';
+import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
+import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
+import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
+import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
 import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
@@ -126,12 +126,12 @@ import {
   getParametersFromFile,
   saveConnectionReferences,
   saveCustomCodeStandard,
-} from '../../../../utils/codeless/connection';
-import { getAzureConnectorDetailsForLocalProject, getManualWorkflowsInLocalProject } from '../../../../utils/codeless/common';
-import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
-import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
+} from '../../../../../utils/codeless/connection';
+import { getAzureConnectorDetailsForLocalProject, getManualWorkflowsInLocalProject } from '../../../../../utils/codeless/common';
+import { startDesignTimeApi } from '../../../../../utils/codeless/startDesignTimeApi';
+import { saveWorkflowParameter } from '../../../../../utils/codeless/parameter';
 
-describe('OpenDesignerForLocalProject', () => {
+describe('LocalDesignerPanel', () => {
   const mockContext = { telemetry: { properties: {}, measurements: {} } } as any;
   const mockUri = { fsPath: '/test/project/myWorkflow/workflow.json' } as any;
 
@@ -163,36 +163,36 @@ describe('OpenDesignerForLocalProject', () => {
 
   describe('constructor', () => {
     it('should construct with correct workflow name from file path', () => {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
       expect(instance).toBeDefined();
     });
 
     it('should set isLocal to true', () => {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
       expect(instance).toBeDefined();
     });
 
     it('should handle run ID parameter', () => {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri, undefined);
+      const instance = new LocalDesignerPanel(mockContext, mockUri, undefined);
       expect(instance).toBeDefined();
     });
   });
 
   describe('create', () => {
     it('should return early if existing panel is found', async () => {
-      const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
+      const { tryGetWebviewPanel } = await import('../../../../../utils/codeless/common');
       const mockPanel = { active: false, reveal: vi.fn() };
       vi.mocked(tryGetWebviewPanel).mockReturnValue(mockPanel as any);
 
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
       await instance.create();
 
       expect(mockPanel.reveal).toHaveBeenCalled();
     });
 
     it('should fail before creating a panel when design-time startup failed', async () => {
-      const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
-      const { getLogicAppProjectRoot } = await import('../../../../utils/codeless/connection');
+      const { tryGetWebviewPanel } = await import('../../../../../utils/codeless/common');
+      const { getLogicAppProjectRoot } = await import('../../../../../utils/codeless/connection');
 
       vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
       vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
@@ -202,7 +202,7 @@ describe('OpenDesignerForLocalProject', () => {
         startupError: 'func host failed to start',
       });
 
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
 
       await expect(instance.create()).rejects.toThrow(
         'Design time failed to start for project /test/project. func host failed to start'
@@ -210,20 +210,20 @@ describe('OpenDesignerForLocalProject', () => {
     });
 
     it('should fail when no design-time instance is available for the project', async () => {
-      const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
-      const { getLogicAppProjectRoot } = await import('../../../../utils/codeless/connection');
+      const { tryGetWebviewPanel } = await import('../../../../../utils/codeless/common');
+      const { getLogicAppProjectRoot } = await import('../../../../../utils/codeless/connection');
 
       vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
       vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
 
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
 
       await expect(instance.create()).rejects.toThrow('Design time is not running for project /test/project.');
     });
 
     it('creates a designer panel and caches it when design-time is available', async () => {
       ext.designTimeInstances.set('/test/project', { port: 7071, isStarting: false });
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
 
       await instance.create();
 
@@ -236,7 +236,7 @@ describe('OpenDesignerForLocalProject', () => {
 
   describe('metadata', () => {
     it('builds designer panel metadata using the project path for bundle resolution', async () => {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
       const metadata = await (instance as any).getDesignerPanelMetadata({
         flatFileEncoding: { inputs: { properties: { schema: { properties: { source: true } } } } },
         liquidJsonToJson: { inputs: { properties: { map: { properties: { source: true } } } } },
@@ -262,7 +262,7 @@ describe('OpenDesignerForLocalProject', () => {
 
   describe('webview messages', () => {
     function createMessageHarness() {
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
       (instance as any).panel = { webview: { postMessage: vi.fn() } };
       (instance as any).panelMetadata = {
         workflowContent: { definition: {} },
@@ -330,7 +330,7 @@ describe('OpenDesignerForLocalProject', () => {
       vi.mocked(getConnectionsAndSettingsToUpdate).mockResolvedValue({ managedApiConnections: {} } as any);
       vi.mocked(getCustomCodeToUpdate).mockResolvedValue({ codeFile: 'content' } as any);
       vi.mocked(getParametersFromFile).mockResolvedValueOnce({ preservedParameter: { value: 'existing' } } as any);
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
       (instance as any).panel = { webview: { postMessage: vi.fn() } };
       const workflow = { definition: { actions: {} } };
       const workflowToSave = {
@@ -371,7 +371,7 @@ describe('OpenDesignerForLocalProject', () => {
 
     it('reports and rethrows save failures', async () => {
       vi.mocked(getLogicAppProjectRoot).mockRejectedValueOnce(new Error('project lookup failed'));
-      const instance = new OpenDesignerForLocalProject(mockContext, mockUri);
+      const instance = new LocalDesignerPanel(mockContext, mockUri);
 
       await expect((instance as any).saveWorkflow(mockContext, mockUri.fsPath, {}, { definition: {} }, {})).rejects.toThrow(
         'project lookup failed'

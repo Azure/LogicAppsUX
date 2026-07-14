@@ -159,7 +159,7 @@ vi.mock('../../../utils/workspace', () => ({
   getWorkflowNode: mocks.getWorkflowNode,
 }));
 
-vi.mock('../openMonitoringView/openMonitoringView', () => ({
+vi.mock('../monitoringView/openMonitoringView', () => ({
   openMonitoringView: mocks.openMonitoringView,
 }));
 

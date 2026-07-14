@@ -9,7 +9,7 @@ vi.mock('../../../../utils/codeless/connection', () => ({
 }));
 
 // Import the module after mocks are set up
-const mockModule = await import('../connectionView');
+const mockModule = await import('../connectionPanel');
 
 describe('ConnectionView - getConnectionKeyFromConnectionsJson', () => {
   const testProjectPath = '/test/project';

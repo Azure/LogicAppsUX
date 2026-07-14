@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotification } from '../../../../../constants';
-import { ext } from '../../../../../extensionVariables';
+import { designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotification } from '../../../../../../constants';
+import { ext } from '../../../../../../extensionVariables';
 
 // Mock dependencies before importing the class
-vi.mock('../../../../../localize', () => ({
+vi.mock('../../../../../../localize', () => ({
   localize: (_key: string, defaultMsg: string) => defaultMsg,
 }));
 
-vi.mock('../../../../utils/codeless/common', () => ({
+vi.mock('../../../../../utils/codeless/common', () => ({
   tryGetWebviewPanel: vi.fn(),
 }));
 
-vi.mock('../../../../utils/codeless/getWebViewHTML', () => ({
+vi.mock('../../../../../utils/codeless/getWebViewHTML', () => ({
   getWebViewHTML: vi.fn().mockResolvedValue('<html></html>'),
 }));
 
@@ -23,7 +23,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 }));
 
 // Import the actual class after mocks
-import { DesignerPanel } from '../openDesignerBase';
+import { DesignerPanel } from '../designerPanel';
 
 // Concrete subclass to test the abstract class
 class TestDesigner extends DesignerPanel {
