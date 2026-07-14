@@ -6,7 +6,7 @@ on:
       models:
         description: "Space-separated model fallback chain to test"
         required: false
-        default: "claude-opus-4.8 claude-opus-4.6 gpt-5.6"
+        default: "claude-opus-4.8 claude-opus-4.6 gpt-5-mini"
 
 permissions:
   contents: read
@@ -27,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COPILOT_MODELS: ${{ github.event.inputs.models }}
         run: |
-          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5.6}"
+          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
           RESULT=""; USED=""
           for MODEL in $MODELS; do
             echo "::group::Trying model $MODEL"

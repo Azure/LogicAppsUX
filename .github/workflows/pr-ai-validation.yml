@@ -113,10 +113,17 @@ jobs:
           } > /tmp/full-prompt.txt
 
           set +e
-          RESULT=$(COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" timeout 90 copilot \
-            -p "$(cat /tmp/full-prompt.txt)" \
-            -s --no-ask-user --model claude-opus-4.8 --allow-all 2>&1)
-          CLI_EXIT=$?
+          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          RESULT=""; CLI_EXIT=1
+          for MODEL in $MODELS; do
+            RESULT=$(timeout 90 copilot --yolo \
+              -p "$(cat /tmp/full-prompt.txt)" \
+              --model "$MODEL" 2>&1)
+            CLI_EXIT=$?
+            [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ] && break
+            echo "::warning::Copilot model $MODEL failed (exit $CLI_EXIT) — trying next"
+            RESULT=""; CLI_EXIT=1
+          done
           set -e
 
           if [ $CLI_EXIT -ne 0 ] || [ -z "$RESULT" ]; then

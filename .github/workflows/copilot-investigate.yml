@@ -49,9 +49,16 @@ jobs:
 
           TASK="Investigate issue #${ISSUE_NUMBER} in repo ${{ github.repository }}. Title: ${ISSUE_TITLE}. Body: ${ISSUE_BODY}. Search the codebase to find relevant files. Check git log for recent changes. Post your investigation notes as a comment on the issue using: gh issue comment ${ISSUE_NUMBER} --body-file /tmp/investigation.md"
 
-          COPILOT_GITHUB_TOKEN="$GITHUB_TOKEN" copilot \
-            -p "$TASK" \
-            -s --no-ask-user --model claude-opus-4.8 --allow-all
+          # GITHUB_TOKEN installation auth (org-billed) + ordered model fallback.
+          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          for MODEL in $MODELS; do
+            set +e
+            timeout 600 copilot --yolo -p "$TASK" --model "$MODEL"
+            CODE=$?
+            set -e
+            [ $CODE -eq 0 ] && break
+            echo "::warning::Copilot model $MODEL failed (exit $CODE) — trying next"
+          done
 
       - name: Add investigated label
         env:
