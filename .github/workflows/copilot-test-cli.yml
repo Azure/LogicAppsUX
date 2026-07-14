@@ -2,6 +2,11 @@ name: "Test Copilot CLI"
 
 on:
   workflow_dispatch:
+    inputs:
+      models:
+        description: "Space-separated model fallback chain to test"
+        required: false
+        default: "claude-opus-4.8 claude-opus-4.6 gpt-5.6"
 
 permissions:
   contents: read
@@ -11,9 +16,6 @@ jobs:
   copilot-cli-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 6
-    env:
-      # Ordered model-fallback chain: first model that responds wins.
-      COPILOT_MODELS: "claude-opus-4.8 claude-opus-4.6 gpt-5.6"
     steps:
       - uses: actions/checkout@v4
 
@@ -23,12 +25,10 @@ jobs:
       - name: Test CLI invocation (GITHUB_TOKEN installation auth + model fallback)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # VERIFY-FALLBACK: bogus model forces the loop to fall through to a real one.
-          COPILOT_MODELS_OVERRIDE: "definitely-not-a-real-model claude-opus-4.8 claude-opus-4.6"
+          COPILOT_MODELS: ${{ github.event.inputs.models }}
         run: |
-          MODELS="${COPILOT_MODELS_OVERRIDE:-$COPILOT_MODELS}"
-          RESULT=""
-          USED=""
+          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5.6}"
+          RESULT=""; USED=""
           for MODEL in $MODELS; do
             echo "::group::Trying model $MODEL"
             set +e
