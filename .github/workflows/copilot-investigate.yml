@@ -51,14 +51,18 @@ jobs:
 
           # GITHUB_TOKEN installation auth (org-billed) + ordered model fallback.
           MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          SUCCESS=0
           for MODEL in $MODELS; do
             set +e
             timeout 600 copilot --yolo -p "$TASK" --model "$MODEL"
             CODE=$?
             set -e
-            [ $CODE -eq 0 ] && break
+            if [ $CODE -eq 0 ]; then SUCCESS=1; break; fi
             echo "::warning::Copilot model $MODEL failed (exit $CODE) — trying next"
           done
+          # Fail the step if every model failed, so the "investigated" label is not
+          # applied to an issue that never received an investigation comment.
+          [ $SUCCESS -eq 1 ] || { echo "::error::All Copilot models failed — no investigation posted"; exit 1; }
 
       - name: Add investigated label
         env:
