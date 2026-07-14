@@ -10,25 +10,43 @@ permissions:
 jobs:
   copilot-cli-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
+    env:
+      # Ordered model-fallback chain: first model that responds wins.
+      COPILOT_MODELS: "claude-opus-4.8 claude-opus-4.6 gpt-5.6"
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Copilot CLI
         run: npm install -g @github/copilot@latest
 
-      - name: Test CLI invocation (GITHUB_TOKEN installation auth, org-billed)
+      - name: Test CLI invocation (GITHUB_TOKEN installation auth + model fallback)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # VERIFY-FALLBACK: bogus model forces the loop to fall through to a real one.
+          COPILOT_MODELS_OVERRIDE: "definitely-not-a-real-model claude-opus-4.8 claude-opus-4.6"
         run: |
-          RESULT=$(timeout 60 copilot --yolo \
-            -p "Respond with exactly: COPILOT_CLI_WORKING" \
-            --model claude-opus-4.8 2>&1) || true
-          echo "Result: $RESULT"
-          if echo "$RESULT" | grep -q "COPILOT_CLI_WORKING"; then
-            echo "Copilot CLI is working (installation auth)"
+          MODELS="${COPILOT_MODELS_OVERRIDE:-$COPILOT_MODELS}"
+          RESULT=""
+          USED=""
+          for MODEL in $MODELS; do
+            echo "::group::Trying model $MODEL"
+            set +e
+            OUT=$(timeout 90 copilot --yolo \
+              -p "Respond with exactly: COPILOT_CLI_WORKING" \
+              --model "$MODEL" 2>&1)
+            CODE=$?
+            set -e
+            echo "$OUT"
+            echo "::endgroup::"
+            if [ $CODE -eq 0 ] && echo "$OUT" | grep -q "COPILOT_CLI_WORKING"; then
+              RESULT="$OUT"; USED="$MODEL"; break
+            fi
+            echo "::warning::Model $MODEL failed (exit $CODE) — trying next"
+          done
+          if [ -n "$RESULT" ]; then
+            echo "Copilot CLI is working (installation auth) via model: $USED"
           else
-            echo "::error::Copilot CLI did not return expected response"
-            echo "Full output: $RESULT"
+            echo "::error::Copilot CLI failed for all models: $MODELS"
             exit 1
           fi
