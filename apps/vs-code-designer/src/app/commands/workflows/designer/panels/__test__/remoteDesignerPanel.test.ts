@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { ext } from '../../../../../extensionVariables';
+import { ext } from '../../../../../../extensionVariables';
 
 // Mock dependencies before importing the class
 vi.mock('../../../../../localize', () => ({
@@ -23,24 +23,17 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   getRecordEntry: vi.fn((obj: any, key: string) => obj?.[key]),
   isEmptyString: vi.fn((s: any) => !s || (typeof s === 'string' && s.trim().length === 0)),
   resolveConnectionsReferences: vi.fn(() => ({})),
-  getTriggerName: vi.fn(() => 'manual'),
-  HTTP_METHODS: { POST: 'POST', GET: 'GET' },
 }));
 
 vi.mock('../../../../utils/codeless/getAuthorizationToken', () => ({
   getAuthorizationTokenFromNode: vi.fn().mockResolvedValue('mock-token'),
 }));
 
-vi.mock('../../../../utils/requestUtils', () => ({
-  sendAzureRequest: vi.fn(),
-  sendRequest: vi.fn(),
-}));
+import { RemoteDesignerPanel } from '../remoteDesignerPanel';
 
-import openMonitoringViewForAzureResource from '../openMonitoringViewForAzureResource';
-
-const createMockNode = () => ({
+const createMockNode = (overrides: Record<string, any> = {}) => ({
   name: 'test-workflow',
-  workflowFileContent: { definition: { triggers: { manual: { type: 'Request' } } } },
+  workflowFileContent: { definition: {} },
   subscription: {
     subscriptionId: 'sub-123',
     credentials: { getToken: vi.fn().mockResolvedValue('token') },
@@ -51,6 +44,7 @@ const createMockNode = () => ({
         location: 'West US',
         resourceGroup: 'test-rg',
         defaultHostName: 'myapp.azurewebsites.net',
+        ...overrides,
       },
     },
     subscription: {
@@ -65,38 +59,42 @@ const createMockNode = () => ({
   getChildWorkflows: vi.fn().mockResolvedValue({}),
 });
 
-describe('openMonitoringViewForAzureResource', () => {
+describe('OpenDesignerForAzureResource', () => {
   const mockContext = { telemetry: { properties: {}, measurements: {} } } as any;
-  const mockRunId = 'workflows/test-workflow/runs/run-123';
-  const mockWorkflowFilePath = '/test/workflow.json';
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('constructor', () => {
-    it('should construct with correct parameters', () => {
+    it('should construct with correct workflow name from node', () => {
       const mockNode = createMockNode();
-      const instance = new openMonitoringViewForAzureResource(mockContext, mockRunId, mockWorkflowFilePath, mockNode as any);
+      const instance = new RemoteDesignerPanel(mockContext, mockNode as any);
+      expect(instance).toBeDefined();
+    });
+
+    it('should set base URL from node', () => {
+      const mockNode = createMockNode();
+      const instance = new RemoteDesignerPanel(mockContext, mockNode as any);
       expect(instance).toBeDefined();
     });
   });
 
   describe('create', () => {
     it('should reveal existing panel if one exists', async () => {
-      const { tryGetWebviewPanel } = await import('../../../../utils/codeless/common');
+      const { tryGetWebviewPanel } = await import('../../../../../utils/codeless/common');
       const mockReveal = vi.fn();
       vi.mocked(tryGetWebviewPanel).mockReturnValue({ active: false, reveal: mockReveal } as any);
 
       const mockNode = createMockNode();
-      const instance = new openMonitoringViewForAzureResource(mockContext, mockRunId, mockWorkflowFilePath, mockNode as any);
+      const instance = new RemoteDesignerPanel(mockContext, mockNode as any);
       await instance.create();
 
       expect(mockReveal).toHaveBeenCalled();
     });
 
-    it('should create new panel with azureDetails including defaultHostName', async () => {
-      const { tryGetWebviewPanel, cacheWebviewPanel } = await import('../../../../utils/codeless/common');
+    it('should create new panel and call showDesignerVersionNotification', async () => {
+      const { tryGetWebviewPanel, cacheWebviewPanel } = await import('../../../../../utils/codeless/common');
       vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
 
       const mockPostMessage = vi.fn();
@@ -106,13 +104,28 @@ describe('openMonitoringViewForAzureResource', () => {
         iconPath: undefined,
       };
       vi.mocked(vscode.window as any).createWebviewPanel = vi.fn().mockReturnValue(mockPanel);
-      ext.context = { extensionPath: '/test', subscriptions: [] } as any;
+      ext.context = {
+        extensionPath: '/test',
+        subscriptions: [],
+        globalState: { get: vi.fn().mockReturnValue(undefined), update: vi.fn().mockResolvedValue(undefined) },
+      } as any;
+
+      const mockShowInfo = vi.mocked(vscode.window.showInformationMessage);
+      const mockGetConfig = vi.mocked(vscode.workspace.getConfiguration);
+      mockGetConfig.mockReturnValue({ get: vi.fn().mockReturnValue(1), update: vi.fn() } as any);
+      mockShowInfo.mockResolvedValue(undefined);
 
       const mockNode = createMockNode();
-      const instance = new openMonitoringViewForAzureResource(mockContext, mockRunId, mockWorkflowFilePath, mockNode as any);
+      const instance = new RemoteDesignerPanel(mockContext, mockNode as any);
       await instance.create();
 
       expect(cacheWebviewPanel).toHaveBeenCalled();
+      // showDesignerVersionNotification was called (shows v1 message)
+      expect(mockShowInfo).toHaveBeenCalledWith(
+        'A new Logic Apps experience is available for preview!',
+        'Enable preview',
+        "Don't show again"
+      );
     });
   });
 });

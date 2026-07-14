@@ -2,15 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { tryGetWebviewPanel } from '../../../utils/codeless/common';
-import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
+import { tryGetWebviewPanel } from '../../../../utils/codeless/common';
+import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
 import { getRecordEntry, isEmptyString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
-import { azurePublicBaseUrl, workflowManagementBaseURIKey, designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotification } from '../../../../constants';
-import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
+import { azurePublicBaseUrl, workflowManagementBaseURIKey, designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotification } from '../../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import { localize } from '../../../../../localize';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 import { workspace, window, ConfigurationTarget } from 'vscode';
 
@@ -25,28 +24,26 @@ export interface IDesignerOptions {
 }
 
 export abstract class DesignerPanel {
+  protected readonly context: IActionContext;
   protected workflowName: string;
   protected panelName: string;
   protected apiVersion: string;
   protected panelGroupKey: string;
-  protected baseUrl: string;
-  protected workflowRuntimeBaseUrl: string;
-  protected connectionData: ConnectionsData;
-  protected panel: WebviewPanel;
-  protected apiHubServiceDetails: Record<string, any>;
-  protected readonly context: IActionContext | IAzureConnectorsContext;
+  protected baseUrl?: string;
+  protected workflowRuntimeBaseUrl?: string;
+  protected connectionData?: ConnectionsData;
+  protected panel?: WebviewPanel;
+  protected apiHubServiceDetails?: Record<string, any>;
   protected readOnly: boolean;
   protected isLocal: boolean;
   protected isMonitoringView: boolean;
-  protected appSettings: Record<string, string>;
-  protected workflowDetails: Record<string, any>;
   protected oauthRedirectUrl?: string;
-  protected schemaArtifacts?: FileDetails[] | undefined;
-  protected mapArtifacts?: Record<string, FileDetails[]> | undefined;
+  protected schemaArtifacts?: FileDetails[];
+  protected mapArtifacts?: Record<string, FileDetails[]>;
   protected runId?: string;
 
   protected constructor(
-    context: IActionContext | IAzureConnectorsContext,
+    context: IActionContext,
     workflowName: string,
     panelName: string,
     apiVersion: string,
@@ -67,7 +64,7 @@ export abstract class DesignerPanel {
     this.runId = runId;
   }
 
-  protected abstract create(): Promise<void>;
+  public abstract create(): Promise<void>;
 
   protected getExistingPanel(): WebviewPanel | undefined {
     return tryGetWebviewPanel(this.panelGroupKey, this.panelName);
@@ -81,10 +78,14 @@ export abstract class DesignerPanel {
   }
 
   protected async getWebviewContent(options: IDesignerOptions): Promise<string> {
+    if (!this.panel) {
+      throw new Error('Webview panel is not initialized.');
+    }
+
     const { parametersData, localSettings, artifacts, azureDetails } = options;
     let { connectionsData } = options;
 
-    const mapArtifacts = {};
+    const mapArtifacts: Record<string, FileDetails[]> = {};
     connectionsData = this.getInterpolateConnectionData(connectionsData);
 
     for (const extension of Object.keys(artifacts.maps)) {
@@ -99,9 +100,34 @@ export abstract class DesignerPanel {
     this.connectionData = resolvedConnections;
     this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails, localSettings);
     this.mapArtifacts = mapArtifacts;
-    this.schemaArtifacts = artifacts.schemas;
+    this.schemaArtifacts = artifacts.schemas ?? [];
 
     return await getWebViewHTML('vs-code-react', this.panel);
+  }
+
+  protected getInterpolateConnectionData(connectionsJson: string): string {
+    if (!connectionsJson) {
+      return connectionsJson;
+    }
+
+    const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+    const managedApiConnections = Object.keys(connectionsData?.managedApiConnections ?? {});
+
+    managedApiConnections.forEach((apiConnection: any) => {
+      const connectionValue = connectionsData?.managedApiConnections?.[apiConnection];
+      if (!connectionValue) {
+        return;
+      }
+
+      if (connectionValue.api && connectionValue.api.id) {
+        connectionValue.api.id = this.addCurlyBraces(connectionValue.api.id);
+      }
+      if (connectionValue.connection && connectionValue.connection.id) {
+        connectionValue.connection.id = this.addCurlyBraces(connectionValue.connection.id);
+      }
+    });
+
+    return JSON.stringify(connectionsData);
   }
 
   private addCurlyBraces(root: string) {
@@ -112,7 +138,7 @@ export abstract class DesignerPanel {
     for (let i = 0; i < stringLength; i++) {
       const canHavekeyWord = i + 12 <= stringLength;
 
-      if (interpolationString[i] === '@' && canHavekeyWord && this.haveKeyWord(interpolationString.substring(i, i + 12))) {
+      if (interpolationString[i] === '@' && canHavekeyWord && this.isTemplateKeyword(interpolationString.substring(i, i + 12))) {
         resolvedString += `${interpolationString[i]}{`;
         const closeTagIndex = interpolationString.indexOf(')', i);
         interpolationString = `${interpolationString.substring(0, closeTagIndex + 1)}}${interpolationString.substring(
@@ -127,28 +153,8 @@ export abstract class DesignerPanel {
     return resolvedString;
   }
 
-  private haveKeyWord(keyword: string): boolean {
-    return keyword === '@parameters(' || keyword === '@appsetting(';
-  }
-
-  protected getInterpolateConnectionData(connectionsData: string) {
-    if (!connectionsData) {
-      return connectionsData;
-    }
-    const parseConnectionsData: ConnectionsData = JSON.parse(connectionsData);
-    const managedApiConnections = Object.keys(parseConnectionsData?.managedApiConnections ?? {});
-
-    managedApiConnections?.forEach((apiConnection: any) => {
-      const connectionValue = parseConnectionsData?.managedApiConnections[apiConnection] as any;
-      if (connectionValue.api && connectionValue.api.id) {
-        connectionValue.api.id = this.addCurlyBraces(connectionValue.api.id);
-      }
-      if (connectionValue.connection && connectionValue.connection.id) {
-        connectionValue.connection.id = this.addCurlyBraces(connectionValue.connection.id);
-      }
-    });
-
-    return JSON.stringify(parseConnectionsData);
+  private isTemplateKeyword(str: string): boolean {
+    return str === '@parameters(' || str === '@appsetting(';
   }
 
   protected getApiHubServiceDetails(azureDetails: AzureConnectorDetails, localSettings: Record<string, any>) {

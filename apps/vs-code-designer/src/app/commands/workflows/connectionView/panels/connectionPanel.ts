@@ -2,14 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
-import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../utils/codeless/common';
+import { ext } from '../../../../../extensionVariables';
+import { localize } from '../../../../../localize';
+import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../../utils/codeless/common';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import type { CodeSelection, ConnectionPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
-import { DesignerPanel } from '../openDesigner/openDesignerBase';
-import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
+import { DesignerPanel } from '../../designer/panels/designerPanel';
+import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
@@ -17,37 +17,25 @@ import {
   getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
-} from '../../../utils/codeless/connection';
-import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
+} from '../../../../utils/codeless/connection';
+import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import path from 'path';
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
+import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
 import type { WebviewPanel } from 'vscode';
 import { env, Uri, ViewColumn, window } from 'vscode';
-import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
-import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
+import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
+import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
 import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { getBundleVersionNumber } from '../../../utils/bundleFeed';
-import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
+import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 
-type Range = {
-  Start: {
-    Line: number;
-    Character: number;
-  };
-  End: {
-    Line: number;
-    Character: number;
-  };
-};
-
-export default class OpenConnectionView extends DesignerPanel {
+export default class ConnectionPanel extends DesignerPanel {
   private readonly workflowFilePath: string;
   private projectPath: string | undefined;
-  private panelMetadata: IDesignerPanelMetadata;
-  private readonly methodName: string;
+  private panelMetadata?: ConnectionPanelMetadata;
   private readonly connectorName: string;
-  private readonly range: Range;
+  private readonly range: CodeSelection;
   private readonly connectorType: string;
   private readonly currentConnectionId: string;
 
@@ -57,14 +45,13 @@ export default class OpenConnectionView extends DesignerPanel {
     methodName: string,
     connectorName: string,
     connectorType: string,
-    range: Range,
+    range: CodeSelection,
     currentConnectionId: string
   ) {
     const panelName: string = `Connection view - ${connectorName} - ${methodName}`;
     const panelGroupKey = ext.webViewKey.languageServer;
     super(context, '', panelName, workflowAppApiVersion, panelGroupKey, false, true, false, '');
     this.workflowFilePath = filePath;
-    this.methodName = methodName;
     this.range = range;
     this.connectorName = connectorName;
     this.connectorType = connectorType;
@@ -105,12 +92,13 @@ export default class OpenConnectionView extends DesignerPanel {
     this.panel.webview.html = this.getLoadingHtml();
 
     // Start design time API and load metadata in parallel
-    const [_, panelMetadata] = await Promise.all([startDesignTimeApi(this.projectPath), this._getDesignerPanelMetadata()]);
+    const [_, panelMetadata] = await Promise.all([startDesignTimeApi(this.projectPath), this.getConnectionPanelMetadata()]);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
     }
-    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
+
+    const designTimePort = ext.designTimeInstances.get(this.projectPath)?.port;
     if (!designTimePort) {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
@@ -139,7 +127,7 @@ export default class OpenConnectionView extends DesignerPanel {
     // The React app sends "initialize" immediately on boot — if the handler
     // isn't registered yet, the message is silently dropped and the UI stays
     // stuck on "Loading connection data..." forever.
-    this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(async (message) => await this.handleWebviewMsg(message), ext.context.subscriptions);
 
     this.panel.onDidDispose(
       () => {
@@ -204,12 +192,12 @@ export default class OpenConnectionView extends DesignerPanel {
     </html>`;
   }
 
-  private async _handleWebviewMsg(message: any) {
+  private async handleWebviewMsg(message: any) {
     switch (message.command) {
       case ExtensionCommand.initialize: {
         const resolvedCurrentConnectionId = resolveCurrentConnectionId(this.panelMetadata?.connectionsData, this.currentConnectionId);
 
-        this.panel.webview.postMessage({
+        this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.languageServer,
@@ -232,7 +220,7 @@ export default class OpenConnectionView extends DesignerPanel {
         break;
       }
       case ExtensionCommand.close_panel: {
-        this.panel.dispose();
+        this.panel?.dispose();
         break;
       }
       case ExtensionCommand.insert_connection: {
@@ -254,7 +242,7 @@ export default class OpenConnectionView extends DesignerPanel {
             this.panelMetadata.azureDetails?.tenantId,
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
-          this.panel.dispose();
+          this.panel?.dispose();
         });
         break;
       }
@@ -274,7 +262,7 @@ export default class OpenConnectionView extends DesignerPanel {
 
   private async saveConnection(
     connection: Connection,
-    insertionContext: { documentUri: string; range: Range },
+    insertionContext: { documentUri: string; range: CodeSelection },
     connectionReferences: any,
     azureTenantId?: string,
     workflowBaseManagementUri?: string
@@ -329,34 +317,30 @@ export default class OpenConnectionView extends DesignerPanel {
     });
   }
 
-  private async _getDesignerPanelMetadata(): Promise<any> {
+  private async getConnectionPanelMetadata(): Promise<ConnectionPanelMetadata> {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    // Critical data needed immediately for UI rendering
-    const criticalDataPromises = [
+    const [
+      connectionsData,
+      parametersData,
+      localSettings,
+      artifacts,
+      bundleVersionNumber,
+      azureDetails
+    ] = await Promise.all([
       getConnectionsFromFile(this.context, this.workflowFilePath),
       getParametersFromFile(this.context, this.workflowFilePath),
-      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)).then((result) => result.Values),
-    ];
-
-    // Less critical data that can load slightly later
-    const deferredDataPromises = [
+      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)).then((result) => result.Values!),
       getArtifactsInLocalProject(projectPath),
       getBundleVersionNumber(),
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
-    ];
+    ]);
 
-    // Load critical data first
-    const [connectionsData, parametersData, localSettings] = await Promise.all(criticalDataPromises);
-
-    // Continue loading deferred data in background
-    const [artifacts, bundleVersionNumber, azureDetails] = await Promise.all(deferredDataPromises);
-
-    const metadata = {
+    return {
       panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
       connectionsData,
@@ -371,8 +355,6 @@ export default class OpenConnectionView extends DesignerPanel {
       extensionBundleVersion: bundleVersionNumber,
       workflowDetails: {},
     };
-
-    return metadata;
   }
 
   /**
@@ -413,9 +395,9 @@ export default class OpenConnectionView extends DesignerPanel {
 /**
  * Updates the connection ID in the source file at the specified range with the new connection ID.
  * @param {string} connectionId - The new connection ID to insert into the source file.
- * @param {{ documentUri: string; range: Range }} insertionContext - The context containing the document URI and the range where the connection ID should be inserted.
+ * @param {{ documentUri: string; range: CodeSelection }} insertionContext - The context containing the document URI and the range where the connection ID should be inserted.
  */
-function updateConnectionIdInSource(connectionId: string, insertionContext: { documentUri: string; range: Range }) {
+function updateConnectionIdInSource(connectionId: string, insertionContext: { documentUri: string; range: CodeSelection }) {
   const targetDocument = vscode.workspace.textDocuments.find((doc) => doc.uri.fsPath.toString() === insertionContext.documentUri);
 
   if (!targetDocument) {
@@ -451,7 +433,7 @@ function updateConnectionIdInSource(connectionId: string, insertionContext: { do
 const performTextReplacement = (
   editor: vscode.TextEditor,
   connectionId: string,
-  insertionContext: { documentUri: string; range: Range }
+  insertionContext: { documentUri: string; range: CodeSelection }
 ) => {
   if (!insertionContext.range) {
     vscode.window.showErrorMessage('No range provided for connection ID insertion');
@@ -615,25 +597,4 @@ export function resolveCurrentConnectionId(connectionsData: string | undefined, 
   }
 
   return currentConnectionId;
-}
-
-export async function openLanguageServerConnectionView(
-  context: IActionContext,
-  filePath: string,
-  methodName: string,
-  connectorName: string,
-  connectorType: string,
-  range: Range,
-  currentConnectionId: string
-): Promise<void> {
-  const connectionViewObj: OpenConnectionView = new OpenConnectionView(
-    context,
-    filePath,
-    methodName,
-    connectorName,
-    connectorType,
-    range,
-    currentConnectionId
-  );
-  await connectionViewObj.create();
 }

@@ -9,7 +9,6 @@ import {
   localSettingsFileName,
   managementApiPrefix,
   workflowAppApiVersion,
-  workflowCodefulEnabledKey,
   workflowTenantIdKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -29,8 +28,7 @@ import { getAuthorizationToken, getAuthorizationTokenFromNode } from '../../util
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
-import type { IAzureConnectorsContext } from './azureConnectorWizard';
-import { openMonitoringView } from './openMonitoringView/openMonitoringView';
+import { openMonitoringView } from './monitoringView/openMonitoringView';
 import { shouldUpdateOverviewCallbackInfo } from './overviewCallbackInfo';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
@@ -81,7 +79,7 @@ interface OverviewWorkflowProperties {
 }
 
 // TODO(aeldridge): We should split into remote and local open overview
-export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
+export async function openOverview(context: IActionContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let workflowFilePath: string;
   let workflowName = '';
   let workflowContent: any;

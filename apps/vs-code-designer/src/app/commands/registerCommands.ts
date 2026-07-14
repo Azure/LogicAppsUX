@@ -50,7 +50,7 @@ import { viewProperties } from './viewProperties';
 import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
 import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
-import { openDesigner } from './workflows/openDesigner/openDesigner';
+import { openDesigner } from './workflows/designer/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
@@ -78,7 +78,7 @@ import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
-import { openLanguageServerConnectionView } from './workflows/languageServer/connectionView';
+import { openConnectionView } from './workflows/connectionView/openConnectionView';
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
 
 export function registerCommands(): void {
@@ -160,18 +160,20 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
-  // Data Mapper Commands
+
+  // Data Mapper
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: vscode.Uri) => loadDataMapFileCmd(context, uri));
-  // Custom code commands
+
+  // Custom code
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
   registerCommand(extensionCommand.enableDevContainer, enableDevContainer);
 
-  // Language server protocol
-  registerCommand(extensionCommand.openLanguageServerConnectionView, openLanguageServerConnectionView);
+  // Connections
+  registerCommand(extensionCommand.openLanguageServerConnectionView, openConnectionView);
 
   // Error handler
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {

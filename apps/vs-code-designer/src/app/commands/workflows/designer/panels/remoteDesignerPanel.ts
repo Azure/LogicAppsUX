@@ -1,28 +1,27 @@
-import { openUrl } from '@microsoft/vscode-azext-utils';
-import { assetsFolderName, workflowAppApiVersion } from '../../../../constants';
-import { ext } from '../../../../extensionVariables';
-import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
+import { type IActionContext, openUrl } from '@microsoft/vscode-azext-utils';
+import { assetsFolderName, workflowAppApiVersion } from '../../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import type { RemoteWorkflowTreeItem } from '../../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import {
   removeWebviewPanelFromCache,
   cacheWebviewPanel,
   getStandardAppData,
   getWorkflowManagementBaseURI,
-} from '../../../utils/codeless/common';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { DesignerPanel } from './openDesignerBase';
-import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+} from '../../../../utils/codeless/common';
+import { DesignerPanel } from './designerPanel';
+import type { IWorkflowFileContent, DesignerPanelMetadata, FileDetails } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
-import { getAuthorizationTokenFromNode } from '../../../utils/codeless/getAuthorizationToken';
+import { getAuthorizationTokenFromNode } from '../../../../utils/codeless/getAuthorizationToken';
 
-export class OpenDesignerForAzureResource extends DesignerPanel {
+export class RemoteDesignerPanel extends DesignerPanel {
   private readonly node: RemoteWorkflowTreeItem;
   private readonly workflow: IWorkflowFileContent;
-  private panelMetadata: IDesignerPanelMetadata;
+  private panelMetadata?: DesignerPanelMetadata;
 
-  constructor(context: IAzureConnectorsContext, node: RemoteWorkflowTreeItem) {
+  constructor(context: IActionContext, node: RemoteWorkflowTreeItem) {
     const workflowName: string = node.name;
     const panelName = `${vscode.workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerAzure;
@@ -38,10 +37,11 @@ export class OpenDesignerForAzureResource extends DesignerPanel {
     const existingPanel: vscode.WebviewPanel | undefined = this.getExistingPanel();
 
     if (existingPanel) {
+      this.panel = existingPanel;
       if (!existingPanel.active) {
         existingPanel.reveal(vscode.ViewColumn.Active);
-        return;
       }
+      return;
     }
 
     this.panel = vscode.window.createWebviewPanel(this.panelGroupKey, this.workflowName, vscode.ViewColumn.Active, this.getPanelOptions());
@@ -59,10 +59,11 @@ export class OpenDesignerForAzureResource extends DesignerPanel {
       azureDetails: this.panelMetadata.azureDetails,
       workflowDetails: this.panelMetadata.workflowDetails,
     });
-    this.panelMetadata.mapArtifacts = this.mapArtifacts;
-    this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
+    
+    this.panelMetadata.mapArtifacts = this.mapArtifacts as Record<string, FileDetails[]>;
+    this.panelMetadata.schemaArtifacts = this.schemaArtifacts as FileDetails[];
 
-    this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(async (message) => await this.handleWebviewMsg(message), ext.context.subscriptions);
 
     this.panel.onDidDispose(
       () => {
@@ -78,10 +79,10 @@ export class OpenDesignerForAzureResource extends DesignerPanel {
     this.showDesignerVersionNotification();
   }
 
-  private async _handleWebviewMsg(msg: any) {
+  private async handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
-        this.panel.webview.postMessage({
+        this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.designer,
@@ -93,7 +94,6 @@ export class OpenDesignerForAzureResource extends DesignerPanel {
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
-            workflowDetails: this.workflowDetails,
             hostVersion: ext.extensionVersion,
           },
         });
@@ -109,7 +109,7 @@ export class OpenDesignerForAzureResource extends DesignerPanel {
         break;
       }
       case ExtensionCommand.getDesignerVersion: {
-        this.panel.webview.postMessage({
+        this.panel?.webview.postMessage({
           command: ExtensionCommand.getDesignerVersion,
           data: this.getDesignerVersion(),
         });
@@ -120,7 +120,7 @@ export class OpenDesignerForAzureResource extends DesignerPanel {
     }
   }
 
-  private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
+  private async getDesignerPanelMetadata(): Promise<DesignerPanelMetadata> {
     const accessToken = await getAuthorizationTokenFromNode(this.node);
 
     return {
@@ -143,8 +143,8 @@ export class OpenDesignerForAzureResource extends DesignerPanel {
       },
       workflowName: this.workflowName,
       standardApp: getStandardAppData(this.workflowName, this.workflow),
-      schemaArtifacts: this.schemaArtifacts,
-      mapArtifacts: this.mapArtifacts,
+      schemaArtifacts: this.schemaArtifacts as FileDetails[],
+      mapArtifacts: this.mapArtifacts as Record<string, FileDetails[]>,
     };
   }
 }

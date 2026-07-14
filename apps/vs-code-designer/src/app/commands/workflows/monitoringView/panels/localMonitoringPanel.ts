@@ -2,40 +2,40 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { assetsFolderName, localSettingsFileName, managementApiPrefix, workflowCodefulEnabledKey } from '../../../../constants';
-import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
-import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
+import { assetsFolderName, localSettingsFileName, managementApiPrefix } from '../../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import { localize } from '../../../../../localize';
+import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
 import {
   removeWebviewPanelFromCache,
   cacheWebviewPanel,
   getAzureConnectorDetailsForLocalProject,
   getStandardAppData,
-} from '../../../utils/codeless/common';
+} from '../../../../utils/codeless/common';
 import {
   getConnectionsFromFile,
   getCustomCodeFromFiles,
   getLogicAppProjectRoot,
   getParametersFromFile,
-} from '../../../utils/codeless/connection';
-import { sendRequest } from '../../../utils/requestUtils';
-import { createUnitTestFromRun } from '../unitTest/createUnitTestFromRun';
-import { OpenMonitoringViewBase } from './openMonitoringViewBase';
+} from '../../../../utils/codeless/connection';
+import { sendRequest } from '../../../../utils/requestUtils';
+import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
+import { MonitoringPanel } from './monitoringPanel';
 import { getRunTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import type { FileDetails, DesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
-import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
-import { getBundleVersionNumber } from '../../../utils/bundleFeed';
+import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
+import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 
-export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
+export default class LocalMonitoringPanel extends MonitoringPanel {
   private projectPath: string | undefined;
-  private panelMetadata: IDesignerPanelMetadata;
+  private panelMetadata?: DesignerPanelMetadata;
 
   constructor(context: IActionContext, runId: string, workflowFilePath: string) {
     const apiVersion = '2019-10-01-edge-preview';
@@ -51,7 +51,6 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       if (!existingPanel.active) {
         existingPanel.reveal(vscode.ViewColumn.Active);
       }
-
       return;
     }
 
@@ -75,10 +74,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     // Fetch panel metadata which does all operations in parallel internally
-    this.panelMetadata = await this._getDesignerPanelMetadata();
-
-    // Reuse data from panelMetadata instead of fetching again
-    this.localSettings = this.panelMetadata.localSettings;
+    this.panelMetadata = await this.getDesignerPanelMetadata();
 
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: this.panelMetadata.connectionsData,
@@ -87,11 +83,13 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       artifacts: this.panelMetadata.artifacts,
       azureDetails: this.panelMetadata.azureDetails,
     });
-    this.panelMetadata.mapArtifacts = this.mapArtifacts;
-    this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
+
+    this.panelMetadata.mapArtifacts = this.mapArtifacts as Record<string, FileDetails[]>;
+    this.panelMetadata.schemaArtifacts = this.schemaArtifacts as FileDetails[];
     this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
+
     this.panel.webview.onDidReceiveMessage(
-      async (message) => await this._handleWebviewMsg(message),
+      async (message) => await this.handleWebviewMsg(message),
       /* thisArgs */ undefined,
       ext.context.subscriptions
     );
@@ -108,16 +106,15 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     ext.context.subscriptions.push(this.panel);
   }
 
-  private async _handleWebviewMsg(message: any) {
+  private async handleWebviewMsg(message: any) {
     switch (message.command) {
       case ExtensionCommand.initialize: {
-        this.panel.webview.postMessage({
+        this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.designer,
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
-            workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
@@ -153,7 +150,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         break;
       }
       case ExtensionCommand.getDesignerVersion: {
-        this.panel.webview.postMessage({
+        this.panel?.webview.postMessage({
           command: ExtensionCommand.getDesignerVersion,
           data: this.getDesignerVersion(),
         });
@@ -188,21 +185,20 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     });
   }
 
-  private async _getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
+  private async getDesignerPanelMetadata(): Promise<DesignerPanelMetadata> {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    // Parallelize all file reads and API calls for better performance
     const [
       connectionsData,
       parametersData,
       customCodeData,
       bundleVersionNumber,
       azureDetails,
-      localSettingsResult,
+      localSettings,
       artifacts,
       workflowContent,
     ] = await Promise.all([
@@ -211,12 +207,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       getCustomCodeFromFiles(this.workflowFilePath),
       getBundleVersionNumber(projectPath),
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
-      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)),
+      getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName)).then((result) => result.Values!),
       getArtifactsInLocalProject(projectPath),
-      this._getWorkflowContent(),
+      this.getWorkflowContent(),
     ]);
-
-    const localSettings = localSettingsResult.Values;
 
     return {
       panelId: this.panelName,
@@ -231,13 +225,13 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       workflowDetails: {},
       artifacts,
       standardApp: getStandardAppData(this.workflowName, { ...workflowContent, definition: {} }),
-      schemaArtifacts: this.schemaArtifacts,
-      mapArtifacts: this.mapArtifacts,
+      schemaArtifacts: this.schemaArtifacts as FileDetails[],
+      mapArtifacts: this.mapArtifacts as Record<string, FileDetails[]>,
       extensionBundleVersion: bundleVersionNumber,
     };
   }
 
-  private async _getWorkflowContent(): Promise<any> {
+  private async getWorkflowContent(): Promise<any> {
     if (!this.workflowFilePath.endsWith('.cs')) {
       return JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     }
