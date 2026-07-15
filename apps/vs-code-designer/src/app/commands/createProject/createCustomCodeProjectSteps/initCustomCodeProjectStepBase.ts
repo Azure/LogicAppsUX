@@ -6,6 +6,7 @@ import {
   func,
   projectLanguageSetting,
   funcVersionSetting,
+  funcDependencyName,
   tasksVersion,
   tasksFileName,
   launchVersion,
@@ -16,8 +17,6 @@ import {
   logicAppsStandardExtensionId,
   vscodeFolderName,
   gitignoreFileName,
-  funcWatchProblemMatcher,
-  extensionCommand,
 } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
@@ -27,7 +26,8 @@ import {
   tryGetLogicAppCustomCodeFunctionsProjects,
 } from '../../../utils/customCodeUtils';
 import { getDebugConfiguration } from '../../../utils/debug';
-import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
+import { binariesExistSync } from '../../../utils/binaries';
+import { generateTasksJson } from '../../../utils/vsCodeConfig/generators';
 import { isSubpath, confirmEditJsonFile, confirmOverwriteFile } from '../../../utils/fs';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import {
@@ -54,7 +54,7 @@ import type {
   FuncVersion,
   TargetFramework,
 } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
@@ -121,38 +121,11 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
    **/
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
     const tasksJsonPath: string = path.join(context.projectPath, vscodeFolderName, tasksFileName);
-    const tasksJsonContent = {
-      version: '2.0.0',
-      tasks: [
-        {
-          label: 'generateDebugSymbols',
-          command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-          args: ['${input:getDebugSymbolDll}'],
-          type: 'process',
-          problemMatcher: '$msCompile',
-        },
-        {
-          type: 'shell',
-          command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
-          args: ['host', 'start'],
-          ...getFuncHostTaskEnv(),
-          problemMatcher: funcWatchProblemMatcher,
-          isBackground: true,
-          label: 'func: host start',
-          group: {
-            kind: 'build',
-            isDefault: true,
-          },
-        },
-      ],
-      inputs: [
-        {
-          id: 'getDebugSymbolDll',
-          type: 'command',
-          command: extensionCommand.getDebugSymbolDll,
-        },
-      ],
-    };
+    const tasksJsonContent = generateTasksJson({
+      projectType: ProjectType.customCode,
+      projectPackageType: ProjectPackageType.Bundle,
+      hasFuncBinaries: binariesExistSync(funcDependencyName),
+    });
 
     if (await confirmOverwriteFile(context, tasksJsonPath)) {
       await fse.writeFile(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
@@ -232,7 +205,7 @@ export abstract class InitCustomCodeProjectStepBase extends AzureWizardExecuteSt
   }
 
   private insertNewTaskInputs(context: IProjectWizardContext, existingInputs: ITaskInputs[] = [], newInputs: ITaskInputs[]): ITaskInputs[] {
-    if (context.workflowProjectType === WorkflowProjectType.Bundle) {
+    if (context.projectPackageType === ProjectPackageType.Bundle) {
       // Remove inputs that match the ones we're about to add
       existingInputs = existingInputs.filter(
         (t1) =>

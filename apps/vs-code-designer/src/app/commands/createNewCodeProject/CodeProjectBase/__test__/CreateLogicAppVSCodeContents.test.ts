@@ -372,20 +372,27 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(extensionsData.recommendations).not.toContain('ms-vscode-remote.remote-containers');
     });
 
-    it('should copy tasks.json from template', async () => {
+    it('should write tasks.json via generator', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
       const tasksJsonPath = path.join(logicAppFolderPath, '.vscode', 'tasks.json');
-      expect(fse.copyFile).toHaveBeenCalledWith(expect.stringContaining('TasksJsonFile'), tasksJsonPath);
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === tasksJsonPath);
+      expect(writeCall).toBeDefined();
+      expect(writeCall[1]).toHaveProperty('version', '2.0.0');
+      expect(writeCall[1]).toHaveProperty('tasks');
     });
 
-    it('should copy DevContainerTasksJsonFile when isDevContainerProject is true', async () => {
+    it('should write tasks.json without platform env when isDevContainerProject is true', async () => {
       const devContainerContext = { ...mockContext, isDevContainerProject: true };
 
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(devContainerContext, logicAppFolderPath);
 
       const tasksJsonPath = path.join(logicAppFolderPath, '.vscode', 'tasks.json');
-      expect(fse.copyFile).toHaveBeenCalledWith(expect.stringContaining('DevContainerTasksJsonFile'), tasksJsonPath);
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === tasksJsonPath);
+      expect(writeCall).toBeDefined();
+      const funcTask = (writeCall[1] as any).tasks.find((t: any) => t.label === 'func: host start');
+      expect(funcTask).toBeDefined();
+      expect(funcTask.windows).toBeUndefined();
     });
   });
 

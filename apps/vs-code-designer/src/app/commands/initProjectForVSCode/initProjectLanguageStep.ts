@@ -10,7 +10,7 @@ import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class InitProjectLanguageStep extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -42,12 +42,12 @@ export async function addInitVSCodeSteps(
 ): Promise<void> {
   switch (context.language) {
     case ProjectLanguage.JavaScript: {
-      context.workflowProjectType = WorkflowProjectType.Bundle;
+      context.projectPackageType = ProjectPackageType.Bundle;
       executeSteps.push(isCustomCode ? new InitCustomCodeProjectStep() : new InitProjectStep());
       break;
     }
     case ProjectLanguage.CSharp: {
-      context.workflowProjectType = WorkflowProjectType.Nuget;
+      context.projectPackageType = ProjectPackageType.Nuget;
       executeSteps.push(new InitDotnetProjectStep());
       break;
     }

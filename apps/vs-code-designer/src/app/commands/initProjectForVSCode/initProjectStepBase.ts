@@ -45,7 +45,7 @@ import type {
   IExtensionsJson,
   FuncVersion,
 } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -190,7 +190,7 @@ export abstract class InitProjectStepBase extends AzureWizardExecuteStep<IProjec
   }
 
   private insertNewTaskInputs(context: IProjectWizardContext, existingInputs: ITaskInputs[] = [], newInputs: ITaskInputs[]): ITaskInputs[] {
-    if (context.workflowProjectType === WorkflowProjectType.Bundle) {
+    if (context.projectPackageType === ProjectPackageType.Bundle) {
       // Remove inputs that match the ones we're about to add
       existingInputs = existingInputs.filter(
         (t1) =>

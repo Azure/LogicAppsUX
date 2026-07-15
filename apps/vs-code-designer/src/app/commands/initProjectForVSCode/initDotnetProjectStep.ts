@@ -2,32 +2,24 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  dotnetPublishTaskLabel,
-  funcDependencyName,
-  dotnetExtensionId,
-  func,
-  funcWatchProblemMatcher,
-  hostStartCommand,
-  show64BitWarningSetting,
-} from '../../../constants';
+import { dotnetPublishTaskLabel, funcDependencyName, dotnetExtensionId, show64BitWarningSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { binariesExistSync } from '../../utils/binaries';
-import { getFuncHostTaskEnv } from '../../utils/codeless/funcHostTaskEnv';
-import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
+import { getProjFiles, getTargetFramework, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { generateTasksJson } from '../../utils/vsCodeConfig/generators';
 import { InitProjectStepBase } from './initProjectStepBase';
 import { DialogResponses, nonNullProp, openUrl, parseError } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage, ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { MessageItem, TaskDefinition } from 'vscode';
 
 export class InitDotnetProjectStep extends InitProjectStepBase {
   protected preDeployTask: string = dotnetPublishTaskLabel;
-  private debugSubpath: string;
+  private targetFramework?: string;
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
     const recs: string[] = [dotnetExtensionId];
@@ -103,59 +95,16 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
 
     const targetFramework: string = await getTargetFramework(projFile);
     await this.setDeploySubpath(context, path.posix.join('bin', 'Release', targetFramework, 'publish'));
-    this.debugSubpath = getDotnetDebugSubpath(targetFramework);
+    this.targetFramework = targetFramework;
   }
 
   protected getTasks(): TaskDefinition[] {
-    const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
-    const releaseArgs: string[] = ['--configuration', 'Release'];
-    const funcBinariesExist = binariesExistSync(funcDependencyName);
-    const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv({ cwd: this.debugSubpath }) : {};
-    return [
-      {
-        label: 'clean',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-        args: ['clean', ...commonArgs],
-        type: 'process',
-        problemMatcher: '$msCompile',
-      },
-      {
-        label: 'build',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-        args: ['build', ...commonArgs],
-        type: 'process',
-        dependsOn: 'clean',
-        group: {
-          kind: 'build',
-          isDefault: true,
-        },
-        problemMatcher: '$msCompile',
-      },
-      {
-        label: 'clean release',
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-        args: ['clean', ...releaseArgs, ...commonArgs],
-        type: 'process',
-        problemMatcher: '$msCompile',
-      },
-      {
-        label: dotnetPublishTaskLabel,
-        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-        args: ['publish', ...releaseArgs, ...commonArgs],
-        type: 'process',
-        dependsOn: 'clean release',
-        problemMatcher: '$msCompile',
-      },
-      {
-        label: 'func: host start',
-        type: funcBinariesExist ? 'shell' : func,
-        dependsOn: 'build',
-        ...binariesOptions,
-        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
-        args: funcBinariesExist ? ['host', 'start'] : undefined,
-        isBackground: true,
-        problemMatcher: funcWatchProblemMatcher,
-      },
-    ];
+    const { tasks } = generateTasksJson({
+      projectType: ProjectType.logicApp,
+      projectPackageType: ProjectPackageType.Nuget,
+      hasFuncBinaries: binariesExistSync(funcDependencyName),
+      targetFramework: this.targetFramework,
+    });
+    return tasks as TaskDefinition[];
   }
 }

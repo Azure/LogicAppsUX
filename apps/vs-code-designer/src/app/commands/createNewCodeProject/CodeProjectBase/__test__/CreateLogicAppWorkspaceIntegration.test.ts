@@ -13,6 +13,12 @@ import { devContainerFolderName, devContainerFileName } from '../../../../../con
 // Unmock fs-extra to use real file operations for integration tests
 vi.unmock('fs-extra');
 
+// Mock binariesExistSync to avoid VS Code workspace API calls in test
+vi.mock('../../../../utils/binaries', () => ({
+  binariesExistSync: vi.fn().mockReturnValue(true),
+  binariesExist: vi.fn().mockReturnValue(true),
+}));
+
 // Import fs-extra after unmocking
 import * as fse from 'fs-extra';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
