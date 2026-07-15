@@ -60,6 +60,7 @@ import {
   Field,
   Input,
   Link,
+  makeStyles,
   MessageBar,
   MessageBarBody,
   Option,
@@ -155,8 +156,16 @@ export interface ParametersTabProps extends PanelTabProps {
   isTabReadOnly?: boolean;
 }
 
+const useParametersTabStyles = makeStyles({
+  errorMessageBody: {
+    minWidth: 0,
+    overflowWrap: 'anywhere',
+  },
+});
+
 export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const { nodeId: selectedNodeId, isTabReadOnly } = props;
+  const styles = useParametersTabStyles();
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const { tokenState, workflowParametersState, workflowState } = useSelector((state: RootState) => ({
@@ -243,7 +252,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
           }
           layout="multiline"
         >
-          <MessageBarBody>
+          <MessageBarBody className={styles.errorMessageBody} data-automation-id="msla-operation-error-message">
             <Text>{errorInfo.message}</Text>
           </MessageBarBody>
         </MessageBar>
