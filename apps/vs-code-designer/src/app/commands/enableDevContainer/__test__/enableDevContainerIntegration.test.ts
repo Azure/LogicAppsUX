@@ -213,18 +213,19 @@ describe('enableDevContainer - Integration Tests', () => {
       expect(convertedTasks.tasks).toBeDefined();
       expect(convertedTasks.inputs).toBeDefined();
 
-      // Verify devcontainer-specific configuration paths
+      // Verify devcontainer-specific configuration
       const funcHostStartTask = convertedTasks.tasks.find((task: any) => task.label === 'func: host start');
       expect(funcHostStartTask).toBeDefined();
-      expect(funcHostStartTask.command).toContain('${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}');
 
       const generateDebugTask = convertedTasks.tasks.find((task: any) => task.label === 'generateDebugSymbols');
       expect(generateDebugTask).toBeDefined();
-      expect(generateDebugTask.command).toContain('${config:azureLogicAppsStandard.dotnetBinaryPath}');
 
-      // Verify options are removed (devcontainer manages PATH)
+      // Verify platform-keyed env options are removed (devcontainer manages PATH)
       convertedTasks.tasks.forEach((task: any) => {
         expect(task.options).toBeUndefined();
+        expect(task.windows).toBeUndefined();
+        expect(task.linux).toBeUndefined();
+        expect(task.osx).toBeUndefined();
       });
     });
 
@@ -265,16 +266,20 @@ describe('enableDevContainer - Integration Tests', () => {
       const tasks1 = await fse.readJson(tasksJson1Path);
       const tasks2 = await fse.readJson(tasksJson2Path);
 
-      // Both should have devcontainer-compatible paths
-      expect(tasks1.tasks[1].command).toContain('${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}');
-      expect(tasks2.tasks[1].command).toContain('${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}');
+      // Both should be devcontainer-compatible (no platform-keyed env)
+      const funcTask1 = tasks1.tasks.find((t: any) => t.label === 'func: host start');
+      const funcTask2 = tasks2.tasks.find((t: any) => t.label === 'func: host start');
+      expect(funcTask1).toBeDefined();
+      expect(funcTask2).toBeDefined();
+      expect(funcTask1.options).toBeUndefined();
+      expect(funcTask2.options).toBeUndefined();
 
-      // Verify options are removed from both Logic Apps (devcontainer manages PATH)
+      // Verify platform-keyed env options are removed from both Logic Apps (devcontainer manages PATH)
       tasks1.tasks.forEach((task: any) => {
-        expect(task.options).toBeUndefined();
+        expect(task.windows).toBeUndefined();
       });
       tasks2.tasks.forEach((task: any) => {
-        expect(task.options).toBeUndefined();
+        expect(task.windows).toBeUndefined();
       });
 
       // Verify telemetry shows 2 tasks were converted

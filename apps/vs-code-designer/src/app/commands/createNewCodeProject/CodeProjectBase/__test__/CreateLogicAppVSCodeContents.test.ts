@@ -67,16 +67,12 @@ describe('CreateLogicAppVSCodeContents', () => {
   const logicAppFolderPath = path.join('test', 'workspace', 'TestLogicApp');
 
   let extensionsJsonFileContent: string;
-  let tasksJsonFileContent: string;
-  let devContainerTasksJsonFileContent: string;
 
   beforeAll(async () => {
     const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
     const templatesFolderPath = path.join(__dirname, '..', '..', '..', '..', '..', assetsFolderName, workspaceTemplatesFolderName);
 
     extensionsJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'ExtensionsJsonFile'), 'utf8');
-    tasksJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'TasksJsonFile'), 'utf8');
-    devContainerTasksJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'DevContainerTasksJsonFile'), 'utf8');
   });
 
   beforeEach(() => {
@@ -90,12 +86,6 @@ describe('CreateLogicAppVSCodeContents', () => {
       const filePathStr = String(filePath);
       if (filePathStr.endsWith('ExtensionsJsonFile')) {
         return extensionsJsonFileContent;
-      }
-      if (filePathStr.endsWith('DevContainerTasksJsonFile')) {
-        return devContainerTasksJsonFileContent;
-      }
-      if (filePathStr.endsWith('TasksJsonFile')) {
-        return tasksJsonFileContent;
       }
       return '{}';
     });
