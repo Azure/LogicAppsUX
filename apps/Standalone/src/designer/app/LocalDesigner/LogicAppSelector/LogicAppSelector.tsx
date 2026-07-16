@@ -11,6 +11,7 @@ const fileOptions = [
   { key: 'GeneralHeader', text: 'General Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'Empty.json', text: 'Empty/New' },
   { key: 'Panel.json', text: 'Panel' },
+  { key: 'DynamicOutputsOverflow.json', text: 'Dynamic Outputs Overflow' },
   { key: 'Recurrence.json', text: 'Recurrence' },
   { key: 'MultiVariable.json', text: 'Multi Variable' },
   // { key: 'straightLine.json', text: 'Straight Line' },
