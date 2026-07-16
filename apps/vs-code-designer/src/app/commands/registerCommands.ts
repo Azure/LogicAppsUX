@@ -51,7 +51,7 @@ import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRe
 import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { openDesigner } from './workflows/designer/openDesigner';
-import { openOverview } from './workflows/openOverview';
+import { openOverview } from './workflows/overview/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject';
