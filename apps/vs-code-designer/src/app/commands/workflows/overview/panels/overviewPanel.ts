@@ -136,12 +136,35 @@ export abstract class OverviewPanel {
   }
 
   private startPollingInterval(): void {
+    let consecutiveCallbackErrors = 0;
+    const MAX_CALLBACK_ERRORS = 3;
+
     this.pollingInterval = setInterval(async () => {
       await this.pollAccessToken();
+
       const hasBaseUrlChanged = await this.pollBaseUrl();
+      if (hasBaseUrlChanged) {
+        consecutiveCallbackErrors = 0;
+      }
+
       await this.onIntervalTick();
-      if (this.baseUrl && hasBaseUrlChanged) {
-        await this.handleCallbackInfoUpdate(this.baseUrl);
+
+      const shouldFetchCallback =
+        this.baseUrl &&
+        (hasBaseUrlChanged || (this.callbackInfo === undefined && consecutiveCallbackErrors < MAX_CALLBACK_ERRORS));
+
+      if (shouldFetchCallback) {
+        try {
+          await this.handleCallbackInfoUpdate(this.baseUrl!);
+          consecutiveCallbackErrors = 0;
+        } catch {
+          consecutiveCallbackErrors++;
+          if (consecutiveCallbackErrors >= MAX_CALLBACK_ERRORS) {
+            ext.outputChannel.appendLog(
+              `Stopped fetching callback URL after ${MAX_CALLBACK_ERRORS} consecutive errors. Trigger may not exist for workflow '${this.workflowName}'.`
+            );
+          }
+        }
       }
     }, 5000);
   }
