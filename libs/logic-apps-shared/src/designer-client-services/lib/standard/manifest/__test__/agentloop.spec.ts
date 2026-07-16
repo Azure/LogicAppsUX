@@ -30,9 +30,9 @@ describe('agentloop – Foundry V2 regression', () => {
       expect(dropdownValues).toContain('AzureOpenAI');
     });
 
-    it('should label the V2 option as "Foundry project (Preview)"', () => {
+    it('should label the V2 option as "Foundry project"', () => {
       const v2Option = agentModelTypeOptions.find((o) => o.value === 'FoundryAgentServiceV2');
-      expect(v2Option?.displayName).toBe('Foundry project (Preview)');
+      expect(v2Option?.displayName).toBe('Foundry project');
     });
   });
 
