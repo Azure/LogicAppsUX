@@ -34,14 +34,14 @@ export function generateTasksJson(config: VSCodeProjectConfig): TasksJsonContent
 function generateCodefulTasksJson(config: VSCodeProjectConfig): TasksJsonContent {
   return {
     version: TASKS_VERSION,
-    tasks: [...getDotnetBuildTasks(), generateFuncHostStartTask(config, { dependsOn: 'build' })],
+    tasks: [...getDotnetBuildTasks(), getFuncHostStartTask(config, { dependsOn: 'build' })],
   };
 }
 
 function generateNugetTasksJson(config: VSCodeProjectConfig): TasksJsonContent {
   return {
     version: TASKS_VERSION,
-    tasks: [generateDebugSymbolsTask(), ...getDotnetBuildTasks(), generateFuncHostStartTask(config, { dependsOn: 'build' })],
+    tasks: [getDebugSymbolsTask(), ...getDotnetBuildTasks(), getFuncHostStartTask(config, { dependsOn: 'build' })],
     inputs: [getDebugSymbolDllInput()],
   };
 }
@@ -49,7 +49,7 @@ function generateNugetTasksJson(config: VSCodeProjectConfig): TasksJsonContent {
 function generateCodelessTasksJson(config: VSCodeProjectConfig): TasksJsonContent {
   return {
     version: TASKS_VERSION,
-    tasks: [generateDebugSymbolsTask(), generateFuncHostStartTask(config)],
+    tasks: [getDebugSymbolsTask(), getFuncHostStartTask(config)],
     inputs: [getDebugSymbolDllInput()],
   };
 }
@@ -93,7 +93,7 @@ function getDotnetBuildTasks() {
   ];
 }
 
-function generateDebugSymbolsTask() {
+function getDebugSymbolsTask() {
   return {
     label: 'generateDebugSymbols',
     command: DOTNET_BINARY_PATH,
@@ -103,7 +103,7 @@ function generateDebugSymbolsTask() {
   };
 }
 
-function generateFuncHostStartTask(config: VSCodeProjectConfig, options?: { dependsOn?: string }) {
+function getFuncHostStartTask(config: VSCodeProjectConfig, options?: { dependsOn?: string }) {
   const { hasFuncBinaries, isDevContainer, targetFramework, projectType, projectPackageType } = config;
   const isDotnet = projectType === ProjectType.codeful || projectPackageType === ProjectPackageType.Nuget;
   const debugSubpath = isDotnet && targetFramework ? path.posix.join('bin', 'Debug', targetFramework) : undefined;

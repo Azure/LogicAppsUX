@@ -2,24 +2,21 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetPublishTaskLabel, funcDependencyName, dotnetExtensionId, show64BitWarningSetting } from '../../../constants';
+import { dotnetPublishTaskLabel, dotnetExtensionId, show64BitWarningSetting } from '../../../constants';
 import { localize } from '../../../localize';
-import { binariesExistSync } from '../../utils/binaries';
 import { getProjFiles, getTargetFramework, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { generateTasksJson } from '../../utils/vsCodeConfig/generators';
 import { InitProjectStepBase } from './initProjectStepBase';
 import { DialogResponses, nonNullProp, openUrl, parseError } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, ProjectLanguage, ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
-import type { MessageItem, TaskDefinition } from 'vscode';
+import type { MessageItem } from 'vscode';
 
 export class InitDotnetProjectStep extends InitProjectStepBase {
   protected preDeployTask: string = dotnetPublishTaskLabel;
-  private targetFramework?: string;
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
     const recs: string[] = [dotnetExtensionId];
@@ -93,18 +90,6 @@ export class InitDotnetProjectStep extends InitProjectStepBase {
       }
     }
 
-    const targetFramework: string = await getTargetFramework(projFile);
-    await this.setDeploySubpath(context, path.posix.join('bin', 'Release', targetFramework, 'publish'));
-    this.targetFramework = targetFramework;
-  }
-
-  protected getTasks(): TaskDefinition[] {
-    const { tasks } = generateTasksJson({
-      projectType: ProjectType.logicApp,
-      projectPackageType: ProjectPackageType.Nuget,
-      hasFuncBinaries: binariesExistSync(funcDependencyName),
-      targetFramework: this.targetFramework,
-    });
-    return tasks as TaskDefinition[];
+    context.targetFramework = await getTargetFramework(projFile);
   }
 }

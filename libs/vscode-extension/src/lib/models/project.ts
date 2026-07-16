@@ -67,7 +67,6 @@ export interface IProjectWizardContext extends IActionContext {
   functionAppName?: string;
   customCodeFunctionName?: string;
   functionFolderPath?: string;
-  logicAppFolderPath?: string;
   projectPath: string;
   version: FuncVersion;
   workspacePath: string;

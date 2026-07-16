@@ -2,14 +2,24 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  FuncVersion,
+  ProjectLanguage,
+  ProjectPackageType,
+  ProjectType,
+  TargetFramework,
+} from '@microsoft/vscode-extension-logic-apps';
 
 export interface VSCodeProjectConfig {
   projectType: ProjectType;
   projectPackageType: ProjectPackageType;
   hasFuncBinaries: boolean;
-  targetFramework?: string;
+  targetFramework?: TargetFramework;
   isDevContainer?: boolean;
+  logicAppName?: string;
+  funcVersion?: FuncVersion;
+  language?: ProjectLanguage;
+  customCodeTargetFramework?: TargetFramework;
 }
 
 export interface TasksJsonContent {

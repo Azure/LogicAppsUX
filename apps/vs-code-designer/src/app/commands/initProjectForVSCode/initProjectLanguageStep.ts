@@ -3,10 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
-import { InitCustomCodeProjectStep } from '../createProject/createCustomCodeProjectSteps/initCustomCodeProjectStep';
 import { InitDotnetProjectStep } from './initDotnetProjectStep';
 import { InitProjectStep } from './initProjectStep';
-import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
@@ -24,26 +22,25 @@ export class InitProjectLanguageStep extends AzureWizardPromptStep<IProjectWizar
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
-    return isEmptyString(context.language);
+    return !context.language;
   }
 
   public async getSubWizard(context: IProjectWizardContext): Promise<IWizardOptions<IProjectWizardContext>> {
     const executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[] = [];
     const promptSteps: AzureWizardPromptStep<IProjectWizardContext>[] = [];
-    await addInitVSCodeSteps(context, executeSteps, false);
+    await addInitVSCodeSteps(context, executeSteps);
     return { promptSteps, executeSteps };
   }
 }
 
 export async function addInitVSCodeSteps(
   context: IProjectWizardContext,
-  executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
-  isCustomCode: boolean
+  executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[]
 ): Promise<void> {
   switch (context.language) {
     case ProjectLanguage.JavaScript: {
       context.projectPackageType = ProjectPackageType.Bundle;
-      executeSteps.push(isCustomCode ? new InitCustomCodeProjectStep() : new InitProjectStep());
+      executeSteps.push(new InitProjectStep());
       break;
     }
     case ProjectLanguage.CSharp: {

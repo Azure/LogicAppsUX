@@ -5,7 +5,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { generateTasksJson } from '../tasksGenerator';
 import type { VSCodeProjectConfig } from '../types';
-import { ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, ProjectPackageType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../../../codeless/funcHostTaskEnv', () => ({
   getFuncHostTaskEnv: (extras?: { cwd?: string }) => ({
@@ -127,7 +127,7 @@ describe('generateTasksJson', () => {
       projectType: ProjectType.logicApp,
       projectPackageType: ProjectPackageType.Nuget,
       hasFuncBinaries: true,
-      targetFramework: 'net8.0',
+      targetFramework: TargetFramework.Net8,
     };
 
     it('should generate dotnet tasks with generateDebugSymbols', () => {
@@ -183,7 +183,7 @@ describe('generateTasksJson', () => {
       const result = generateTasksJson(baseConfig);
       const funcTask = result.tasks.find((t) => t.label === 'func: host start');
 
-      expect((funcTask.options as any).cwd).toBe('bin/Debug/net8.0');
+      expect((funcTask.options as any).cwd).toBe('bin/Debug/net8');
     });
 
     it('should include inputs with getDebugSymbolDll', () => {
@@ -200,7 +200,7 @@ describe('generateTasksJson', () => {
         projectType: ProjectType.codeful,
         projectPackageType: ProjectPackageType.Nuget,
         hasFuncBinaries: true,
-        targetFramework: 'net8.0',
+        targetFramework: TargetFramework.Net8,
       });
 
       expect(result.tasks).toHaveLength(5);
@@ -213,7 +213,7 @@ describe('generateTasksJson', () => {
         projectType: ProjectType.codeful,
         projectPackageType: ProjectPackageType.Nuget,
         hasFuncBinaries: true,
-        targetFramework: 'net8.0',
+        targetFramework: TargetFramework.Net8,
       });
 
       expect(result.inputs).toBeUndefined();

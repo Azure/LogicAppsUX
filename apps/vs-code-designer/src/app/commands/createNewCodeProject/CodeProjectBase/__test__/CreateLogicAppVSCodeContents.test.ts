@@ -1,17 +1,15 @@
-import { describe, it, expect, vi, beforeAll, beforeEach, afterEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as CreateLogicAppVSCodeContentsModule from '../CreateLogicAppVSCodeContents';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as fsUtils from '../../../../utils/fs';
 import { ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
-import { assetsFolderName, workspaceTemplatesFolderName } from '../../../../../constants';
 
 vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(),
   copyFile: vi.fn(),
   pathExists: vi.fn(),
-  readFile: vi.fn(),
   writeJson: vi.fn(),
 }));
 vi.mock('../../../../utils/fs', () => ({
@@ -66,15 +64,6 @@ describe('CreateLogicAppVSCodeContents', () => {
 
   const logicAppFolderPath = path.join('test', 'workspace', 'TestLogicApp');
 
-  let extensionsJsonFileContent: string;
-
-  beforeAll(async () => {
-    const realFs = await vi.importActual<typeof import('fs-extra')>('fs-extra');
-    const templatesFolderPath = path.join(__dirname, '..', '..', '..', '..', '..', assetsFolderName, workspaceTemplatesFolderName);
-
-    extensionsJsonFileContent = await realFs.readFile(path.join(templatesFolderPath, 'ExtensionsJsonFile'), 'utf8');
-  });
-
   beforeEach(() => {
     vi.resetAllMocks();
 
@@ -82,13 +71,6 @@ describe('CreateLogicAppVSCodeContents', () => {
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
     vi.mocked(fse.copyFile).mockResolvedValue(undefined);
     vi.mocked(fse.pathExists).mockResolvedValue(false); // File doesn't exist
-    vi.mocked(fse.readFile).mockImplementation(async (filePath: any) => {
-      const filePathStr = String(filePath);
-      if (filePathStr.endsWith('ExtensionsJsonFile')) {
-        return extensionsJsonFileContent;
-      }
-      return '{}';
-    });
     vi.mocked(fse.writeJson).mockResolvedValue(undefined);
 
     // Mock confirmEditJsonFile to capture what would be written
@@ -114,14 +96,10 @@ describe('CreateLogicAppVSCodeContents', () => {
     it('should create settings.json with correct settings for standard logic app', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
-      // Verify confirmEditJsonFile was called for settings.json
       const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
-      expect(fsUtils.confirmEditJsonFile).toHaveBeenCalledWith(mockContext, settingsJsonPath, expect.any(Function));
-
-      // Get the callback function and test what it would write
-      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
-      const settingsCallback = settingsCall[2];
-      const settingsData = settingsCallback({});
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === settingsJsonPath);
+      expect(writeCall).toBeDefined();
+      const settingsData = writeCall![1] as Record<string, any>;
 
       // Verify settings content
       expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'JavaScript');
@@ -137,9 +115,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCode, logicAppFolderPath);
 
       const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
-      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
-      const settingsCallback = settingsCall[2];
-      const settingsData = settingsCallback({});
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === settingsJsonPath);
+      expect(writeCall).toBeDefined();
+      const settingsData = writeCall![1] as Record<string, any>;
 
       // Should have standard settings but NOT deploySubpath
       expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
@@ -156,9 +134,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCodeNet10, logicAppFolderPath);
 
       const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
-      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
-      const settingsCallback = settingsCall[2];
-      const settingsData = settingsCallback({});
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === settingsJsonPath);
+      expect(writeCall).toBeDefined();
+      const settingsData = writeCall![1] as Record<string, any>;
 
       expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
       expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'JavaScript');
@@ -172,9 +150,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCodeNetFx, logicAppFolderPath);
 
       const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
-      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
-      const settingsCallback = settingsCall[2];
-      const settingsData = settingsCallback({});
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === settingsJsonPath);
+      expect(writeCall).toBeDefined();
+      const settingsData = writeCall![1] as Record<string, any>;
 
       // Should have standard settings but NOT deploySubpath
       expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
@@ -191,9 +169,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextRulesEngine, logicAppFolderPath);
 
       const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
-      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
-      const settingsCallback = settingsCall[2];
-      const settingsData = settingsCallback({});
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === settingsJsonPath);
+      expect(writeCall).toBeDefined();
+      const settingsData = writeCall![1] as Record<string, any>;
 
       // Should have standard settings but NOT deploySubpath
       expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
@@ -210,12 +188,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
       const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
-      expect(fsUtils.confirmEditJsonFile).toHaveBeenCalledWith(mockContext, launchJsonPath, expect.any(Function));
-
-      // Get the callback and test the configuration
-      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
-      const launchCallback = launchCall[2];
-      const launchData = launchCallback({ configurations: [] });
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === launchJsonPath);
+      expect(writeCall).toBeDefined();
+      const launchData = writeCall![1] as { version: string; configurations: any[] };
 
       // Verify launch.json structure
       expect(launchData).toHaveProperty('version', '0.2.0');
@@ -234,9 +209,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCode, logicAppFolderPath);
 
       const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
-      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
-      const launchCallback = launchCall[2];
-      const launchData = launchCallback({ configurations: [] });
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === launchJsonPath);
+      expect(writeCall).toBeDefined();
+      const launchData = writeCall![1] as { version: string; configurations: any[] };
 
       const config = launchData.configurations[0];
       expect(config).toMatchObject({
@@ -253,9 +228,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCodeNet10, logicAppFolderPath);
 
       const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
-      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
-      const launchCallback = launchCall[2];
-      const launchData = launchCallback({ configurations: [] });
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === launchJsonPath);
+      expect(writeCall).toBeDefined();
+      const launchData = writeCall![1] as { version: string; configurations: any[] };
 
       const config = launchData.configurations[0];
       expect(config).toMatchObject({
@@ -272,9 +247,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextRulesEngine, logicAppFolderPath);
 
       const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
-      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
-      const launchCallback = launchCall[2];
-      const launchData = launchCallback({ configurations: [] });
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === launchJsonPath);
+      expect(writeCall).toBeDefined();
+      const launchData = writeCall![1] as { version: string; configurations: any[] };
 
       const config = launchData.configurations[0];
       expect(config).toMatchObject({
@@ -291,9 +266,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCustomCodeNetFx, logicAppFolderPath);
 
       const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
-      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
-      const launchCallback = launchCall[2];
-      const launchData = launchCallback({ configurations: [] });
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === launchJsonPath);
+      expect(writeCall).toBeDefined();
+      const launchData = writeCall![1] as { version: string; configurations: any[] };
 
       const config = launchData.configurations[0];
       expect(config).toMatchObject({
@@ -310,9 +285,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
 
       const settingsJsonPath = path.join(logicAppFolderPath, '.vscode', 'settings.json');
-      const settingsCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === settingsJsonPath);
-      const settingsCallback = settingsCall[2];
-      const settingsData = settingsCallback({});
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === settingsJsonPath);
+      expect(writeCall).toBeDefined();
+      const settingsData = writeCall![1] as Record<string, any>;
 
       expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'C#');
       expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectRuntime', '~4');
@@ -330,9 +305,9 @@ describe('CreateLogicAppVSCodeContents', () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContextCodeful, logicAppFolderPath);
 
       const launchJsonPath = path.join(logicAppFolderPath, '.vscode', 'launch.json');
-      const launchCall = vi.mocked(fsUtils.confirmEditJsonFile).mock.calls.find((call) => call[1] === launchJsonPath);
-      const launchCallback = launchCall[2];
-      const launchData = launchCallback({ configurations: [] });
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === launchJsonPath);
+      expect(writeCall).toBeDefined();
+      const launchData = writeCall![1] as { version: string; configurations: any[] };
 
       const config = launchData.configurations[0];
       expect(config).toMatchObject({
@@ -345,11 +320,14 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(config).not.toHaveProperty('customCodeRuntime');
     });
 
-    it('should copy extensions.json from template', async () => {
+    it('should write extensions.json with Logic Apps extension recommendation', async () => {
       await CreateLogicAppVSCodeContentsModule.createLogicAppVsCodeContents(mockContext, logicAppFolderPath);
 
       const extensionsJsonPath = path.join(logicAppFolderPath, '.vscode', 'extensions.json');
-      expect(fse.writeJson).toHaveBeenCalledWith(extensionsJsonPath, JSON.parse(extensionsJsonFileContent), { spaces: 2 });
+      const writeCall = vi.mocked(fse.writeJson).mock.calls.find((call) => call[0] === extensionsJsonPath);
+      expect(writeCall).toBeDefined();
+      expect(writeCall[1]).toHaveProperty('recommendations');
+      expect((writeCall[1] as any).recommendations).toContain('ms-azuretools.vscode-azurelogicapps');
     });
 
     it('should use an extensions.json template that does not recommend Dev Containers', async () => {
@@ -412,68 +390,6 @@ describe('CreateLogicAppVSCodeContents', () => {
 
       expect(fse.ensureDir).not.toHaveBeenCalled();
       expect(fse.copyFile).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('getDebugConfiguration', () => {
-    it('should return attach configuration for standard logic app', () => {
-      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp');
-
-      expect(config).toMatchObject({
-        name: expect.stringContaining('TestLogicApp'),
-        type: 'coreclr',
-        request: 'attach',
-        processId: expect.any(String),
-      });
-    });
-
-    it('should return logicapp configuration with coreclr for Net8 custom code', () => {
-      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', TargetFramework.Net8);
-
-      expect(config).toMatchObject({
-        type: 'logicapp',
-        request: 'launch',
-        funcRuntime: 'coreclr',
-        customCodeRuntime: 'coreclr',
-        isCodeless: true,
-      });
-    });
-
-    it('should return logicapp configuration with coreclr for Net10 custom code', () => {
-      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', TargetFramework.Net10);
-
-      expect(config).toMatchObject({
-        type: 'logicapp',
-        request: 'launch',
-        funcRuntime: 'coreclr',
-        customCodeRuntime: 'coreclr',
-        isCodeless: true,
-      });
-    });
-
-    it('should return logicapp configuration with clr for NetFx custom code', () => {
-      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', TargetFramework.NetFx);
-
-      expect(config).toMatchObject({
-        type: 'logicapp',
-        request: 'launch',
-        funcRuntime: 'coreclr',
-        customCodeRuntime: 'clr',
-        isCodeless: true,
-      });
-    });
-
-    it('should return logicapp configuration with isCodeless false for codeful project', () => {
-      const config = CreateLogicAppVSCodeContentsModule.getDebugConfiguration('TestLogicApp', undefined, true);
-
-      expect(config).toMatchObject({
-        name: expect.stringContaining('Run/Debug logic app TestLogicApp'),
-        type: 'logicapp',
-        request: 'launch',
-        funcRuntime: 'coreclr',
-        isCodeless: false,
-      });
-      expect(config).not.toHaveProperty('customCodeRuntime');
     });
   });
 });

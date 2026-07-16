@@ -10,7 +10,7 @@ import { detectProjectType, detectProjectPackageType } from '../project';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { generateTasksJson } from './generators';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectPackageType, ProjectType, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType, ProjectType, type TargetFramework, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';
@@ -165,7 +165,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
  * Attempts to read the target framework from the first .csproj/.fsproj in the folder.
  * Returns undefined if no project file is found.
  */
-async function tryGetTargetFramework(projectPath: string): Promise<string | undefined> {
+async function tryGetTargetFramework(projectPath: string): Promise<TargetFramework | undefined> {
   try {
     const files = await fse.readdir(projectPath);
     const projFileName = files.find((f) => (f.endsWith('.csproj') || f.endsWith('.fsproj')) && f.toLowerCase() !== 'extensions.csproj');

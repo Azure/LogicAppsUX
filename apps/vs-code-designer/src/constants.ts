@@ -59,8 +59,11 @@ export const testMockClassTemplateName = 'TestMockClass';
 export const testCsprojFileTemplateName = 'TestCsprojFile';
 export const testSettingsConfigFileTemplateName = 'TestSettingsConfigFile';
 
-// Extension Id
+// VS Code Extensions
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
+export const dotnetExtensionId = 'ms-dotnettools.csharp';
+export const csDevKitExtensionId = 'ms-dotnettools.csdevkit';
 
 // Azurite
 export const azuriteExtensionId = 'Azurite.azurite';
@@ -69,7 +72,6 @@ export const azuriteLocationSetting = 'location';
 
 // Functions
 export const func = 'func';
-export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
@@ -370,8 +372,6 @@ export const DotnetVersion = {
   net48: 'net48',
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
-
-export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
 // Packages Manager
 export const PackageManager = {
