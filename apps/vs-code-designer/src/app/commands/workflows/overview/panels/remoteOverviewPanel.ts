@@ -37,7 +37,7 @@ export default class RemoteOverviewPanel extends OverviewPanel {
     this.triggerName = getTriggerName(this.workflowContent.definition);
     this.baseUrl = this.getBaseUrl();
     this.accessToken = await this.getAccessToken();
-    this.callbackInfo = this.baseUrl ? await this.getCallbackInfo(this.baseUrl) : undefined;
+    this.callbackInfo = await this.getCallbackInfo(this.baseUrl!);
     this.azureDetails = {
       enabled: true,
       accessToken: this.accessToken,

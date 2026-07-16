@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getTriggerName, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { localSettingsFileName, managementApiPrefix, workflowTenantIdKey } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
@@ -12,13 +12,14 @@ import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/co
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../../../utils/startRuntimeApi';
-import { getWorkflowProperties, getLocalWorkflowCallbackInfo } from '../utils/overviewHelpers';
+import { getWorkflowProperties } from '../utils/overviewHelpers';
 import { OverviewPanel } from './overviewPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as vscode from 'vscode';
+import { sendRequest } from '../../../../utils/requestUtils';
 
 export default class LocalOverviewPanel extends OverviewPanel {
   protected readonly workflowFilePath: string;
@@ -86,14 +87,35 @@ export default class LocalOverviewPanel extends OverviewPanel {
   }
 
   protected async getCallbackInfo(baseUrl: string): Promise<ICallbackUrlResponse | undefined> {
-    return await getLocalWorkflowCallbackInfo(
-      this.context,
-      this.workflowContent.definition,
-      baseUrl,
-      this.workflowName,
-      this.triggerName ?? '',
-      this.apiVersion
-    );
+    const requestTriggerName = getRequestTriggerName(this.workflowContent.definition);
+    if (requestTriggerName) {
+      if (baseUrl) {
+        try {
+          const url = `${baseUrl}/workflows/${this.workflowName}/triggers/${requestTriggerName}/listCallbackUrl?api-version=${this.apiVersion}`;
+          const response: string = await sendRequest(this.context, {
+            url,
+            method: HTTP_METHODS.POST,
+          });
+          return JSON.parse(response);
+        } catch (error) {
+          ext.outputChannel.appendLog(
+            localize(
+              'callbackUrlApiFailed',
+              'Failed to get callback URL for workflow "{0}": {1}',
+              this.workflowName,
+              error instanceof Error ? error.message : String(error)
+            )
+          );
+          return undefined;
+        }
+      }
+    } else {
+      const fallbackBaseUrl = baseUrl || `http://localhost:7071${managementApiPrefix}`;
+      return {
+        value: `${fallbackBaseUrl}/workflows/${this.workflowName}/triggers/${this.triggerName}/run?api-version=${this.apiVersion}`,
+        method: HTTP_METHODS.POST,
+      };
+    }
   }
 
   protected async getAccessToken(): Promise<string> {
