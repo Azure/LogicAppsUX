@@ -4,18 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { ProjectFile, getTargetFramework } from '../dotnet/dotnet';
 import { binariesExistSync } from '../binaries';
 import { detectProjectType, detectProjectPackageType } from '../project';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { generateTasksJson } from './generators';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectPackageType, ProjectType, type TargetFramework, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType, ProjectType, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';
 import type { MessageItem, TaskDefinition, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 import { funcDependencyName, tasksFileName, vscodeFolderName } from '../../../constants';
+import { tryGetTargetFramework } from '../dotnet/dotnet';
 
 const tasksKey = 'tasks';
 const inputsKey = 'inputs';
@@ -159,23 +159,6 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
       await fse.writeFile(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
     }
   }
-}
-
-/**
- * Attempts to read the target framework from the first .csproj/.fsproj in the folder.
- * Returns undefined if no project file is found.
- */
-async function tryGetTargetFramework(projectPath: string): Promise<TargetFramework | undefined> {
-  try {
-    const files = await fse.readdir(projectPath);
-    const projFileName = files.find((f) => (f.endsWith('.csproj') || f.endsWith('.fsproj')) && f.toLowerCase() !== 'extensions.csproj');
-    if (projFileName) {
-      return await getTargetFramework(new ProjectFile(projFileName, projectPath));
-    }
-  } catch {
-    // Fall through
-  }
-  return undefined;
 }
 
 /**

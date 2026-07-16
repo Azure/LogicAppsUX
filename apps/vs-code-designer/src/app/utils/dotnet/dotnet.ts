@@ -18,7 +18,7 @@ import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '.
 import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
-import { IWorkerRuntime, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { type IWorkerRuntime, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -101,6 +101,20 @@ async function tryGetPropertyInProjFile(projFile: ProjectFile, property: string)
     return undefined;
   }
   return matches[1];
+}
+
+/**
+ * Attempts to read the target framework from the first .csproj/.fsproj in the folder.
+ * @param {string} projectPath - The logic app project path.
+ * @returns {Promise<TargetFramework | undefined>} The target framework or undefined if not found.
+ */
+export async function tryGetTargetFramework(projectPath: string): Promise<TargetFramework | undefined> {
+  const files = fs.readdirSync(projectPath);
+  const projFileName = files.find((f) => (f.endsWith('.csproj') || f.endsWith('.fsproj')) && f.toLowerCase() !== 'extensions.csproj');
+  if (projFileName) {
+    return await getTargetFramework(new ProjectFile(projFileName, projectPath));
+  }
+  return undefined;
 }
 
 /**
