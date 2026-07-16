@@ -38,8 +38,7 @@ export abstract class OverviewPanel {
   protected connectionData: Record<string, any> = {};
   protected workflowFilePath?: string;
 
-  private accessTokenInterval?: NodeJS.Timeout;
-  private baseUrlInterval?: NodeJS.Timeout;
+  private pollingInterval?: NodeJS.Timeout;
 
   protected constructor(
     context: IActionContext,
@@ -106,8 +105,7 @@ export abstract class OverviewPanel {
       }
       case ExtensionCommand.initialize: {
         this.sendInitializeFrame();
-        this.startAccessTokenInterval();
-        this.startBaseUrlInterval();
+        this.startPollingInterval();
         break;
       }
       default:
@@ -137,30 +135,32 @@ export abstract class OverviewPanel {
     });
   }
 
-  private startAccessTokenInterval(): void {
-    this.accessTokenInterval = setInterval(async () => {
-      const updatedAccessToken = await this.getAccessToken();
-      if (updatedAccessToken !== this.accessToken) {
-        this.accessToken = updatedAccessToken;
-        this.panel?.webview.postMessage({
-          command: ExtensionCommand.update_access_token,
-          data: {
-            accessToken: this.accessToken,
-          },
-        });
+  private startPollingInterval(): void {
+    this.pollingInterval = setInterval(async () => {
+      await this.pollAccessToken();
+      await this.pollBaseUrl();
+      await this.onIntervalTick();
+      if (this.baseUrl) {
+        await this.handleCallbackInfoUpdate(this.baseUrl);
       }
     }, 5000);
   }
 
-  private startBaseUrlInterval(): void {
-    this.baseUrlInterval = setInterval(async () => {
-      await this.handleBaseUrlIntervalTick();
-    }, 5000);
+  private async pollAccessToken(): Promise<void> {
+    const updatedAccessToken = await this.getAccessToken();
+    if (updatedAccessToken !== this.accessToken) {
+      this.accessToken = updatedAccessToken;
+      this.panel?.webview.postMessage({
+        command: ExtensionCommand.update_access_token,
+        data: {
+          accessToken: this.accessToken,
+        },
+      });
+    }
   }
 
-  protected async handleBaseUrlIntervalTick(): Promise<void> {
+  private async pollBaseUrl(): Promise<void> {
     const updatedBaseUrl = this.getBaseUrl();
-
     if (updatedBaseUrl !== this.baseUrl) {
       this.baseUrl = updatedBaseUrl;
       this.panel?.webview.postMessage({
@@ -170,11 +170,9 @@ export abstract class OverviewPanel {
         },
       });
     }
-
-    if (this.baseUrl) {
-      await this.handleCallbackInfoUpdate(this.baseUrl);
-    }
   }
+
+  protected async onIntervalTick(): Promise<void> {}
 
   protected async handleCallbackInfoUpdate(baseUrl: string): Promise<void> {
     const updatedCallbackInfo = await this.getCallbackInfo(baseUrl);
@@ -190,8 +188,7 @@ export abstract class OverviewPanel {
   }
 
   private dispose(): void {
-    clearInterval(this.accessTokenInterval);
-    clearInterval(this.baseUrlInterval);
+    clearInterval(this.pollingInterval);
     removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
   }
 }

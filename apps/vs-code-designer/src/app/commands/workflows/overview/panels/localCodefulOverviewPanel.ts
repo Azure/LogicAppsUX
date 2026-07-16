@@ -113,6 +113,12 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
     this.accessToken = await this.getAccessToken();
   }
 
+  protected async onIntervalTick(): Promise<void> {
+    if (this.baseUrl && !this.isCodefulRuntimeMetadataConfirmed) {
+      await this.refreshCodefulRuntimeMetadata(this.baseUrl);
+    }
+  }
+
   protected async handleCallbackInfoUpdate(baseUrl: string): Promise<void> {
     const callbackInfoUpdates = await Promise.all(
       (this.workflowPropertiesList ?? []).map(async (workflow) => ({
@@ -149,28 +155,6 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
       }
     }
     this.callbackInfo = this.workflowPropertiesList?.[0]?.callbackInfo;
-  }
-
-  protected async handleBaseUrlIntervalTick(): Promise<void> {
-    const updatedBaseUrl = this.getBaseUrl();
-
-    if (updatedBaseUrl !== this.baseUrl) {
-      this.baseUrl = updatedBaseUrl;
-      this.panel?.webview.postMessage({
-        command: ExtensionCommand.update_runtime_base_url,
-        data: {
-          baseUrl: this.baseUrl,
-        },
-      });
-    }
-
-    if (this.baseUrl && !this.isCodefulRuntimeMetadataConfirmed) {
-      await this.refreshCodefulRuntimeMetadata(this.baseUrl);
-    }
-
-    if (this.baseUrl) {
-      await this.handleCallbackInfoUpdate(this.baseUrl);
-    }
   }
 
   private async refreshCodefulRuntimeMetadata(baseUrl: string): Promise<void> {
