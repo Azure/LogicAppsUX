@@ -52,7 +52,7 @@ export async function getLocalWorkflowCallbackInfo(
   }
 }
 
-export function createWorkflowProperties(
+export function getWorkflowProperties(
   workflowName: string,
   workflowContent: any,
   localSettings: Record<string, string>,

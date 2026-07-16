@@ -15,7 +15,7 @@ import {
   hasHttpRequestTrigger,
 } from '../../../../utils/codeful';
 import { getCodefulWorkflowMetadata } from '../../../../languageServer/languageServer';
-import { createWorkflowProperties } from './overviewHelpers';
+import { getWorkflowProperties } from './overviewHelpers';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import type { CodefulTriggerData, CodefulWorkflowData, CodefulWorkflowDataResult, OverviewWorkflowProperties } from './types';
@@ -78,7 +78,7 @@ export function getCodefulHttpTriggerCallbackUrl(baseUrl: string, workflowName: 
   };
 }
 
-export async function createCodefulWorkflowPropertiesList(
+export async function getCodefulWorkflowPropertiesList(
   context: IActionContext,
   codefulWorkflows: CodefulWorkflowData[],
   workflowFilePath: string,
@@ -106,7 +106,7 @@ export async function createCodefulWorkflowPropertiesList(
           .then((metadata) => metadata?.triggerName)
           .catch(() => undefined)) ??
         getFallbackCodefulTriggerName(workflowContent, hasHttpTrigger);
-      const codefulWorkflowContent = createCodefulWorkflowContent(resolvedWorkflowData, workflowTriggerName, hasHttpTrigger);
+      const codefulWorkflowContent = getCodefulWorkflowContent(resolvedWorkflowData, workflowTriggerName, hasHttpTrigger);
       const codefulCallbackInfo =
         baseUrl && workflowTriggerName
           ? await getCodefulWorkflowCallbackInfo(
@@ -119,7 +119,7 @@ export async function createCodefulWorkflowPropertiesList(
             )
           : undefined;
 
-      return createWorkflowProperties(
+      return getWorkflowProperties(
         resolvedWorkflowData.workflowName,
         codefulWorkflowContent,
         localSettings,
@@ -302,7 +302,7 @@ export function getCodefulWorkflowHasHttpTrigger(workflowProperties: OverviewWor
   return trigger?.type?.toLowerCase() === 'request' && trigger?.kind?.toLowerCase() === 'http';
 }
 
-export function createCodefulWorkflowContent(
+export function getCodefulWorkflowContent(
   workflowData: CodefulWorkflowData,
   triggerName: string | undefined,
   hasHttpTrigger: boolean

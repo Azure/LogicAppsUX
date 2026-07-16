@@ -12,8 +12,8 @@ import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/co
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../../../utils/startRuntimeApi';
 import {
-  createCodefulWorkflowContent,
-  createCodefulWorkflowPropertiesList,
+  getCodefulWorkflowContent,
+  getCodefulWorkflowPropertiesList,
   getCodefulWorkflowCallbackInfo,
   getCodefulWorkflowDataList,
   getCodefulWorkflowHasHttpTrigger,
@@ -24,7 +24,7 @@ import LocalOverviewPanel from './localOverviewPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
-import { basename, join } from 'path';
+import { basename, dirname, join } from 'path';
 import * as vscode from 'vscode';
 
 export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
@@ -36,7 +36,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
     super(context, node);
     this.isCodefulOverview = true;
 
-    const projectName = basename(this.workflowFilePath.replace(/[/\\][^/\\]+$/, ''));
+    const projectName = basename(dirname(this.workflowFilePath));
     this.panelName = `${vscode.workspace.name}-${projectName}-codeful-overview`;
     this.panelTitle = `${projectName}-overview`;
   }
@@ -79,7 +79,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
       throw new Error(localize('noCodefulWorkflowsFound', 'No codeful workflows were found in this project.'));
     }
 
-    this.workflowPropertiesList = await createCodefulWorkflowPropertiesList(
+    this.workflowPropertiesList = await getCodefulWorkflowPropertiesList(
       this.context,
       codefulWorkflows,
       this.workflowFilePath,
@@ -94,7 +94,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
     this.workflowName = this.workflowProps.name;
     this.triggerName = this.workflowProps.triggerName;
     this.callbackInfo = this.workflowProps.callbackInfo;
-    this.workflowContent = createCodefulWorkflowContent(
+    this.workflowContent = getCodefulWorkflowContent(
       {
         workflowName: this.workflowProps.name,
         workflowKind: this.workflowProps.kind ?? 'Stateful',
@@ -160,7 +160,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
   private async refreshCodefulRuntimeMetadata(baseUrl: string): Promise<void> {
     const runtimeWorkflows = await getRuntimeCodefulWorkflows(this.context, baseUrl, this.apiVersion);
     if (runtimeWorkflows.length > 0) {
-      const refreshedWorkflowPropertiesList = await createCodefulWorkflowPropertiesList(
+      const refreshedWorkflowPropertiesList = await getCodefulWorkflowPropertiesList(
         this.context,
         runtimeWorkflows,
         this.workflowFilePath,
@@ -178,7 +178,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
         this.workflowName = this.workflowProps.name;
         this.triggerName = this.workflowProps.triggerName;
         this.callbackInfo = this.workflowProps.callbackInfo;
-        this.workflowContent = createCodefulWorkflowContent(
+        this.workflowContent = getCodefulWorkflowContent(
           {
             workflowName: this.workflowProps.name,
             workflowKind: this.workflowProps.kind ?? 'Stateful',

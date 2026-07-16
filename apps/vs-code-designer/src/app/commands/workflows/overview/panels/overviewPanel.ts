@@ -21,11 +21,11 @@ export abstract class OverviewPanel {
   protected workflowName: string;
   protected panelName: string;
   protected panelTitle: string;
-  protected panelGroupKey: string;
   protected apiVersion: string;
+  protected isLocal: boolean;
+  protected panelGroupKey: string;
   protected baseUrl?: string;
   protected accessToken?: string;
-  protected isLocal: boolean;
   protected isCodefulOverview = false;
   protected callbackInfo?: ICallbackUrlResponse;
   protected panel?: vscode.WebviewPanel;
@@ -138,9 +138,9 @@ export abstract class OverviewPanel {
   private startPollingInterval(): void {
     this.pollingInterval = setInterval(async () => {
       await this.pollAccessToken();
-      await this.pollBaseUrl();
+      const hasBaseUrlChanged = await this.pollBaseUrl();
       await this.onIntervalTick();
-      if (this.baseUrl) {
+      if (this.baseUrl && hasBaseUrlChanged) {
         await this.handleCallbackInfoUpdate(this.baseUrl);
       }
     }, 5000);
@@ -159,7 +159,11 @@ export abstract class OverviewPanel {
     }
   }
 
-  private async pollBaseUrl(): Promise<void> {
+  /**
+   * Polls the baseUrl and updates the webview if it has changed.
+   * @returns {Promise<boolean>} - Returns true if the baseUrl has changed, false otherwise.
+   */
+  private async pollBaseUrl(): Promise<boolean> {
     const updatedBaseUrl = this.getBaseUrl();
     if (updatedBaseUrl !== this.baseUrl) {
       this.baseUrl = updatedBaseUrl;
@@ -169,7 +173,9 @@ export abstract class OverviewPanel {
           baseUrl: this.baseUrl,
         },
       });
+      return true;
     }
+    return false;
   }
 
   protected async onIntervalTick(): Promise<void> {}

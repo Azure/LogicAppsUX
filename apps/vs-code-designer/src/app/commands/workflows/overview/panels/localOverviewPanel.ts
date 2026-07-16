@@ -12,7 +12,7 @@ import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/co
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../../../utils/startRuntimeApi';
-import { createWorkflowProperties, getLocalWorkflowCallbackInfo } from '../utils/overviewHelpers';
+import { getWorkflowProperties, getLocalWorkflowCallbackInfo } from '../utils/overviewHelpers';
 import { OverviewPanel } from './overviewPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
@@ -68,7 +68,7 @@ export default class LocalOverviewPanel extends OverviewPanel {
     }
 
     this.accessToken = await this.getAccessToken();
-    this.workflowProps = createWorkflowProperties(
+    this.workflowProps = getWorkflowProperties(
       this.workflowName,
       this.workflowContent,
       this.localSettings,

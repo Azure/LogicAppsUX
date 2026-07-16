@@ -8,7 +8,7 @@ import { localize } from '../../../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getWorkflowManagementBaseURI } from '../../../../utils/codeless/common';
 import { getAuthorizationTokenFromNode } from '../../../../utils/codeless/getAuthorizationToken';
-import { createWorkflowProperties, normalizeLocation } from '../utils/overviewHelpers';
+import { getWorkflowProperties, normalizeLocation } from '../utils/overviewHelpers';
 import { OverviewPanel } from './overviewPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
@@ -43,7 +43,7 @@ export default class RemoteOverviewPanel extends OverviewPanel {
       tenantId: this.node?.parent?.subscription?.tenantId,
       resourceGroupName: this.node?.parent?.parent?.site.resourceGroup,
     };
-    this.workflowProps = createWorkflowProperties(this.workflowName, this.workflowContent, {}, this.callbackInfo, this.triggerName);
+    this.workflowProps = getWorkflowProperties(this.workflowName, this.workflowContent, {}, this.callbackInfo, this.triggerName);
   }
 
   protected getBaseUrl(): string | undefined {

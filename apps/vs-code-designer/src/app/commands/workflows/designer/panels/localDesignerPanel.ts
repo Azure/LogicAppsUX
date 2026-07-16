@@ -58,7 +58,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
   private projectPath?: string;
   private panelMetadata?: DesignerPanelMetadata;
   private workflowRuntimeBaseUrlInterval?: NodeJS.Timeout;
-  private getWorkflowRuntimeBaseUrl: () => string | undefined;
 
   constructor(context: IActionContext, node: Uri, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
@@ -70,8 +69,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
     super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, false, true, false, runName);
 
     this.workflowFilePath = node.fsPath;
-    this.getWorkflowRuntimeBaseUrl = () =>
-      ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
   }
 
   private createFileSystemConnection = (connectionInfo: FileSystemConnectionInfo): Promise<any> => {
@@ -332,6 +329,10 @@ export default class LocalDesignerPanel extends DesignerPanel {
       default:
         break;
     }
+  }
+
+  private getWorkflowRuntimeBaseUrl(): string | undefined {
+    return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
   }
 
   /**
