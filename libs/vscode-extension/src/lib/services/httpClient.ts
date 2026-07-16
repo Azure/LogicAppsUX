@@ -22,6 +22,14 @@ export class HttpClient implements IHttpClient {
     this._extraHeaders = getExtraHeaders(options.hostVersion ?? '');
   }
 
+  /**
+   * Updates the access token used for authenticated requests.
+   * Call this when the token is refreshed to avoid stale-token failures on save.
+   */
+  updateAccessToken(token: string | undefined): void {
+    this._accessToken = token;
+  }
+
   dispose(): void {}
 
   async get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {

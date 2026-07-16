@@ -27,6 +27,7 @@ import {
   saveConnectionReferences,
   saveCustomCodeStandard,
 } from '../../../utils/codeless/connection';
+import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
@@ -58,6 +59,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
   private workflowRuntimeBaseUrlInterval: NodeJS.Timeout;
+  private accessTokenInterval: NodeJS.Timeout;
   private getWorkflowRuntimeBaseUrl: () => string | undefined;
 
   constructor(context: IActionContext, node: Uri, runId?: string) {
@@ -181,6 +183,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panel.onDidDispose(
       () => {
         clearInterval(this.workflowRuntimeBaseUrlInterval);
+        clearInterval(this.accessTokenInterval);
         removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
       },
       null,
@@ -209,6 +212,25 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             });
           }
         }, 3000);
+
+        // Refresh access token periodically to prevent stale-token failures on save
+        this.accessTokenInterval = setInterval(async () => {
+          try {
+            const tenantId = this.panelMetadata.azureDetails?.tenantId;
+            const updatedAccessToken = await getAuthorizationToken(tenantId);
+            if (updatedAccessToken !== this.panelMetadata.accessToken) {
+              this.panelMetadata.accessToken = updatedAccessToken;
+              this.panel.webview.postMessage({
+                command: ExtensionCommand.update_access_token,
+                data: {
+                  accessToken: updatedAccessToken,
+                },
+              });
+            }
+          } catch {
+            // Silently ignore token refresh failures — the existing token may still be valid
+          }
+        }, 5000);
 
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
@@ -586,6 +608,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
   /**
    * Merges parameters from JSON.
+   * For parameters that exist only in the file (not in the designer output or panel),
+   * they are preserved as-is. For parameters that exist in both the file and designer,
+   * file-only properties (e.g., metadata, description) are preserved while designer
+   * properties take precedence.
    * @param filePath The file path of the parameters JSON file.
    * @param definitionParameters The parameters from the designer.
    * @param panelParameterRecord The parameters from the panel
@@ -600,7 +626,17 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     Object.entries(jsonParameters).forEach(([key, parameter]) => {
       if (!definitionParameters[key] && !panelParameterRecord[key]) {
+        // Parameter exists only in the file — preserve it entirely
         definitionParameters[key] = parameter;
+      } else if (definitionParameters[key]) {
+        // Parameter exists in both — preserve file-only properties that the designer doesn't emit
+        const fileParam = parameter as Record<string, any>;
+        const defParam = definitionParameters[key] as Record<string, any>;
+        for (const prop of Object.keys(fileParam)) {
+          if (!(prop in defParam)) {
+            defParam[prop] = fileParam[prop];
+          }
+        }
       }
     });
   }

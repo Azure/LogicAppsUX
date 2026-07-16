@@ -57,6 +57,7 @@ import {
 import {
   initializeDesigner,
   updateCallbackUrl,
+  updateDesignerAccessToken,
   updateFileSystemConnection,
   updatePanelMetadata,
   updateRuntimeBaseUrl,
@@ -374,6 +375,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.update_access_token: {
             dispatch(updateAccessToken(message.data.accessToken));
+            dispatch(updateDesignerAccessToken(message.data.accessToken));
             break;
           }
           case ExtensionCommand.update_export_path: {
