@@ -361,4 +361,41 @@ describe('LocalCodefulOverviewPanel', () => {
 
     vi.useRealTimers();
   });
+
+  it('uses trigger details to resolve callback URLs when runtime workflow metadata omits trigger type', async () => {
+    const codefulContent = 'WorkflowFactory.CreateStatefulWorkflow("workflow-a", workflow);';
+    mocks.readFileSync.mockReturnValue(codefulContent);
+    mocks.sendRequest.mockImplementation(async (_context: any, request: { url: string; method: string }) => {
+      if (request.url.endsWith('/workflows?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({
+          value: [{ name: 'workflow-a', kind: 'Stateful' }],
+        });
+      }
+      if (request.url.endsWith('/workflows/workflow-a/triggers?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({
+          value: [{ name: 'manual', properties: { type: 'Request', kind: 'Http' } }],
+        });
+      }
+      if (request.url.includes('/listCallbackUrl?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: `callback:${request.url}`, method: 'POST' });
+      }
+      throw new Error(`Unexpected request ${request.url}`);
+    });
+
+    const codefulPanel = new LocalCodefulOverviewPanel(context, vscode.Uri.file(codefulFilePath) as any);
+    await codefulPanel.create();
+
+    const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+    await messageHandler({ command: ExtensionCommand.initialize });
+
+    const initCall = panel.webview.postMessage.mock.calls.find(([msg]: any) => msg.command === ExtensionCommand.initialize_frame);
+    const initializePayload = initCall?.[0].data;
+
+    expect(initializePayload.workflowPropertiesList).toHaveLength(1);
+    expect(initializePayload.workflowPropertiesList[0].triggerName).toBe('manual');
+    expect(initializePayload.workflowPropertiesList[0].callbackInfo.value).toContain(
+      '/workflows/workflow-a/triggers/manual/listCallbackUrl'
+    );
+    expect(initializePayload.workflowPropertiesList[0].callbackInfo.value).not.toContain('/triggers/manual/run');
+  });
 });

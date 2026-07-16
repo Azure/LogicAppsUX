@@ -288,5 +288,41 @@ describe('OverviewPanel', () => {
 
       vi.useRealTimers();
     });
+
+    it('should post callback info update when callback changes', async () => {
+      vi.useFakeTimers();
+      await overviewPanel.create();
+
+      const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+      await messageHandler({ command: ExtensionCommand.initialize });
+
+      overviewPanel.mockCallbackInfo = { value: 'https://new-callback.url', method: 'POST' };
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(panel.webview.postMessage).toHaveBeenCalledWith({
+        command: ExtensionCommand.update_callback_info,
+        data: { callbackInfo: { value: 'https://new-callback.url', method: 'POST' } },
+      });
+
+      vi.useRealTimers();
+    });
+
+    it('should not post callback info when baseUrl is undefined', async () => {
+      vi.useFakeTimers();
+      overviewPanel.mockBaseUrl = undefined;
+      await overviewPanel.create();
+
+      const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+      await messageHandler({ command: ExtensionCommand.initialize });
+
+      overviewPanel.mockCallbackInfo = { value: 'https://should-not-appear.url', method: 'POST' };
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(panel.webview.postMessage).not.toHaveBeenCalledWith(
+        expect.objectContaining({ command: ExtensionCommand.update_callback_info })
+      );
+
+      vi.useRealTimers();
+    });
   });
 });
