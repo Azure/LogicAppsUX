@@ -59,7 +59,7 @@ export default {
               },
               {
                 value: 'FoundryAgentServiceV2',
-                displayName: 'Foundry project (Preview)',
+                displayName: 'Foundry project',
                 unSupportedWorkflowKind: ['agent'],
               },
               {
