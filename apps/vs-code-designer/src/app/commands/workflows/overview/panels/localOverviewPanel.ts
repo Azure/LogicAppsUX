@@ -36,6 +36,10 @@ export default class LocalOverviewPanel extends OverviewPanel {
     this.workflowFilePath = workflowFilePath;
   }
 
+  protected async isEnvironmentReady(): Promise<boolean> {
+    return await isRuntimeUp(ext.workflowRuntimePort);
+  }
+
   protected async initializeOverviewData(): Promise<void> {
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 

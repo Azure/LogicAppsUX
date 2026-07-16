@@ -28,6 +28,10 @@ export default class RemoteOverviewPanel extends OverviewPanel {
     this.corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
   }
 
+  protected async isEnvironmentReady(): Promise<boolean> {
+    return true;
+  }
+
   protected async initializeOverviewData(): Promise<void> {
     this.workflowContent = this.node.workflowFileContent;
     this.triggerName = getTriggerName(this.workflowContent.definition);

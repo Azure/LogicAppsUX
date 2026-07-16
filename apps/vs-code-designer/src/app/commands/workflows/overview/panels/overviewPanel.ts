@@ -57,6 +57,7 @@ export abstract class OverviewPanel {
     this.panelGroupKey = ext.webViewKey.overview;
   }
 
+  protected abstract isEnvironmentReady(): Promise<boolean>;
   protected abstract initializeOverviewData(): Promise<void>;
   protected abstract getBaseUrl(): string | undefined;
   protected abstract getCallbackInfo(baseUrl: string): Promise<ICallbackUrlResponse | undefined>;
@@ -66,10 +67,13 @@ export abstract class OverviewPanel {
   public async create(): Promise<void> {
     const existingPanel = tryGetWebviewPanel(this.panelGroupKey, this.panelName);
     if (existingPanel) {
-      if (!existingPanel.active) {
-        existingPanel.reveal(vscode.ViewColumn.Active);
+      if (await this.isEnvironmentReady()) {
+        if (!existingPanel.active) {
+          existingPanel.reveal(vscode.ViewColumn.Active);
+        }
+        return;
       }
-      return;
+      existingPanel.dispose();
     }
 
     await this.initializeOverviewData();
@@ -150,8 +154,7 @@ export abstract class OverviewPanel {
       await this.onIntervalTick();
 
       const shouldFetchCallback =
-        this.baseUrl &&
-        (hasBaseUrlChanged || (this.callbackInfo === undefined && consecutiveCallbackErrors < MAX_CALLBACK_ERRORS));
+        this.baseUrl && (hasBaseUrlChanged || (this.callbackInfo === undefined && consecutiveCallbackErrors < MAX_CALLBACK_ERRORS));
 
       if (shouldFetchCallback) {
         try {

@@ -82,6 +82,7 @@ class TestOverviewPanel extends OverviewPanel {
   public mockAccessToken = 'test-token';
   public mockBaseUrl: string | undefined = 'http://localhost:7071/api';
   public mockCallbackInfo: ICallbackUrlResponse | undefined;
+  public mockEnvironmentReady = true;
 
   constructor() {
     super(
@@ -104,6 +105,10 @@ class TestOverviewPanel extends OverviewPanel {
       definition: { triggers: {}, actions: {} } as any,
       kind: 'Stateful',
     };
+  }
+
+  protected async isEnvironmentReady(): Promise<boolean> {
+    return this.mockEnvironmentReady;
   }
 
   protected getBaseUrl(): string | undefined {
@@ -194,6 +199,35 @@ describe('OverviewPanel', () => {
       await overviewPanel.create();
 
       expect(existingPanel.reveal).not.toHaveBeenCalled();
+      expect(mocks.createWebviewPanel).not.toHaveBeenCalled();
+    });
+
+    it('should dispose cached panel and recreate when environment is not ready', async () => {
+      const existingPanel = createMockPanel();
+      const disposeFn = vi.fn();
+      (existingPanel as any).dispose = disposeFn;
+      mocks.tryGetWebviewPanel.mockReturnValue(existingPanel);
+      overviewPanel.mockEnvironmentReady = false;
+
+      await overviewPanel.create();
+
+      expect(disposeFn).toHaveBeenCalled();
+      expect(mocks.createWebviewPanel).toHaveBeenCalled();
+      expect(mocks.cacheWebviewPanel).toHaveBeenCalledWith('overview', 'test-panel', panel);
+    });
+
+    it('should not dispose cached panel when environment is ready', async () => {
+      const existingPanel = createMockPanel();
+      const disposeFn = vi.fn();
+      (existingPanel as any).dispose = disposeFn;
+      existingPanel.active = false;
+      mocks.tryGetWebviewPanel.mockReturnValue(existingPanel);
+      overviewPanel.mockEnvironmentReady = true;
+
+      await overviewPanel.create();
+
+      expect(disposeFn).not.toHaveBeenCalled();
+      expect(existingPanel.reveal).toHaveBeenCalledWith(-1);
       expect(mocks.createWebviewPanel).not.toHaveBeenCalled();
     });
   });
