@@ -1,71 +1,66 @@
 import type { RootState } from '../../store';
 import { canWrapSelectedNodes } from '../../utils/multiselect';
-import { createSelector } from '@reduxjs/toolkit';
+import type { OperationPanelContentState } from './panelTypes';
 import { useSelector } from 'react-redux';
 
-const getPanelState = (state: RootState) => state.panel;
+// Stable empty references shared by selectors that fall back to an empty value.
+// Returning a freshly-allocated `[]` / `{}` from a selector makes react-redux's
+// default `===` comparison fail on every dispatch, forcing consumers to re-render
+// even when nothing they read has actually changed. Reusing a module-level singleton
+// keeps the reference stable so those consumers only re-render when their data changes.
+const emptySelectedNodeIds: string[] = [];
+const emptyAlternateSelectedNode: NonNullable<OperationPanelContentState['alternateSelectedNode']> = {};
 
-export const useConnectionPanelSelectedNodeIds = () =>
-  useSelector(createSelector(getPanelState, (state) => state.connectionContent.selectedNodeIds));
+export const useConnectionPanelSelectedNodeIds = () => useSelector((state: RootState) => state.panel.connectionContent.selectedNodeIds);
 
-export const useCurrentPanelMode = () => useSelector(createSelector(getPanelState, (state) => state.currentPanelMode));
+export const useCurrentPanelMode = () => useSelector((state: RootState) => state.panel.currentPanelMode);
 
 export const useDiscoveryPanelSelectedOperationGroupId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedOperationGroupId));
+  useSelector((state: RootState) => state.panel.discoveryContent.selectedOperationGroupId);
 
 export const useDiscoveryPanelSelectedOperationId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedOperationId));
+  useSelector((state: RootState) => state.panel.discoveryContent.selectedOperationId);
 
-export const useDiscoveryPanelSelectedNodeIds = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedNodeIds));
+export const useDiscoveryPanelSelectedNodeIds = () => useSelector((state: RootState) => state.panel.discoveryContent.selectedNodeIds);
 
-export const useDiscoveryPanelIsAddingTrigger = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingTrigger));
+export const useDiscoveryPanelIsAddingTrigger = () => useSelector((state: RootState) => state.panel.discoveryContent.isAddingTrigger);
 
-export const useDiscoveryPanelIsParallelBranch = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isParallelBranch));
+export const useDiscoveryPanelIsParallelBranch = () => useSelector((state: RootState) => state.panel.discoveryContent.isParallelBranch);
 
-export const useDiscoveryPanelRelationshipIds = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.relationshipIds));
+export const useDiscoveryPanelRelationshipIds = () => useSelector((state: RootState) => state.panel.discoveryContent.relationshipIds);
 
-export const useDiscoveryPanelFavoriteOperations = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.favoriteOperations));
+export const useDiscoveryPanelFavoriteOperations = () => useSelector((state: RootState) => state.panel.discoveryContent.favoriteOperations);
 
 export const useDiscoveryPanelSelectedBrowseCategory = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectedBrowseCategory));
+  useSelector((state: RootState) => state.panel.discoveryContent.selectedBrowseCategory);
 
-export const useDiscoveryPanelSelectionState = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.selectionState));
+export const useDiscoveryPanelSelectionState = () => useSelector((state: RootState) => state.panel.discoveryContent.selectionState);
 
 export const useDiscoveryPanelIsOperationFavorited = (connectorId: string, operationId?: string) =>
   useDiscoveryPanelFavoriteOperations().some((favorite) => favorite.connectorId === connectorId && favorite.operationId === operationId);
 
-export const useErrorsPanelSelectedTabId = () => useSelector(createSelector(getPanelState, (state) => state.errorContent.selectedTabId));
+export const useErrorsPanelSelectedTabId = () => useSelector((state: RootState) => state.panel.errorContent.selectedTabId);
 
-export const useFocusReturnElementId = () => useSelector(createSelector(getPanelState, (state) => state.focusReturnElementId));
+export const useFocusReturnElementId = () => useSelector((state: RootState) => state.panel.focusReturnElementId);
 
-export const useIsCreatingConnection = () =>
-  useSelector(createSelector(getPanelState, (state) => state.connectionContent.isCreatingConnection));
+export const useIsCreatingConnection = () => useSelector((state: RootState) => state.panel.connectionContent.isCreatingConnection);
 
-export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.isCollapsed));
+export const useIsPanelCollapsed = () => useSelector((state: RootState) => state.panel.isCollapsed);
 
-export const useIsPanelLoading = () => useSelector(createSelector(getPanelState, (state) => state.isLoading));
+export const useIsPanelLoading = () => useSelector((state: RootState) => state.panel.isLoading);
 
 export const useIsNodePinnedToOperationPanel = (nodeId: string) =>
   useSelector(
-    createSelector(getPanelState, (state) => {
-      return (
-        (state.operationContent.alternateSelectedNode?.nodeId ?? '') === nodeId &&
-        (state.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'
-      );
-    })
+    (state: RootState) =>
+      (state.panel.operationContent.alternateSelectedNode?.nodeId ?? '') === nodeId &&
+      (state.panel.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'
   );
 
 export const useIsAlternateNodePinned = () =>
-  useSelector(createSelector(getPanelState, (state) => (state.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'));
+  useSelector((state: RootState) => (state.panel.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned');
 
 export const useIsNodeSelectedInOperationPanel = (nodeId: string) =>
-  useSelector(createSelector(getPanelState, (state) => (state.operationContent.selectedNodeId ?? '') === nodeId));
+  useSelector((state: RootState) => (state.panel.operationContent.selectedNodeId ?? '') === nodeId);
 
 export const useIsPanelInPinnedViewMode = (): boolean => {
   const selectedNodeId = useOperationPanelSelectedNodeId();
@@ -74,52 +69,48 @@ export const useIsPanelInPinnedViewMode = (): boolean => {
 };
 
 export const useOperationAlternateSelectedNodeId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.nodeId ?? ''));
+  useSelector((state: RootState) => state.panel.operationContent.alternateSelectedNode?.nodeId ?? '');
 
 export const useOperationAlternateSelectedNode = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode ?? {}));
+  useSelector((state: RootState) => state.panel.operationContent.alternateSelectedNode ?? emptyAlternateSelectedNode);
 
 export const useOperationPanelAlternateNodeActiveTabId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.activeTabId));
+  useSelector((state: RootState) => state.panel.operationContent.alternateSelectedNode?.activeTabId);
 
-export const useOperationPanelSelectedNodeId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent?.selectedNodeId ?? ''));
+export const useOperationPanelSelectedNodeId = () => useSelector((state: RootState) => state.panel.operationContent?.selectedNodeId ?? '');
 
 export const useOperationPanelSelectedNodeIds = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent?.selectedNodeIds ?? []));
+  useSelector((state: RootState) => state.panel.operationContent?.selectedNodeIds ?? emptySelectedNodeIds);
 
 export const useCanWrapSelectedNodes = () =>
-  useSelector((state: RootState) => canWrapSelectedNodes(state.workflow, state.panel.operationContent?.selectedNodeIds ?? []));
+  useSelector((state: RootState) =>
+    canWrapSelectedNodes(state.workflow, state.panel.operationContent?.selectedNodeIds ?? emptySelectedNodeIds)
+  );
 
 export const useIsNodeInMultiSelection = (nodeId: string) =>
-  useSelector(createSelector(getPanelState, (state) => (state.operationContent?.selectedNodeIds ?? []).includes(nodeId)));
+  useSelector((state: RootState) => (state.panel.operationContent?.selectedNodeIds ?? emptySelectedNodeIds).includes(nodeId));
 
 export const useOperationPanelSelectedNodeActiveTabId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));
+  useSelector((state: RootState) => state.panel.operationContent.selectedNodeActiveTabId);
 
-export const usePanelLocation = () => useSelector(createSelector(getPanelState, (state) => state.location));
+export const usePanelLocation = () => useSelector((state: RootState) => state.panel.location);
 
-export const usePreviousPanelMode = () => useSelector(createSelector(getPanelState, (state) => state.previousPanelMode));
+export const usePreviousPanelMode = () => useSelector((state: RootState) => state.panel.previousPanelMode);
 
-export const useIsAddingAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAddingAgentTool));
+export const useIsAddingAgentTool = () => useSelector((state: RootState) => state.panel.discoveryContent.isAddingAgentTool);
 
-export const useDiscoveryPanelSearchTerm = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.searchTerm));
+export const useDiscoveryPanelSearchTerm = () => useSelector((state: RootState) => state.panel.discoveryContent.searchTerm);
 
-export const useIsRunHistoryCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.runHistoryCollapsed));
+export const useIsRunHistoryCollapsed = () => useSelector((state: RootState) => state.panel.runHistoryCollapsed);
 
-export const useMcpToolWizard = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard));
+export const useMcpToolWizard = () => useSelector((state: RootState) => state.panel.discoveryContent.mcpToolWizard);
 
-export const useMcpWizardStep = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.currentStep));
+export const useMcpWizardStep = () => useSelector((state: RootState) => state.panel.discoveryContent.mcpToolWizard?.currentStep);
 
-export const useMcpWizardOperation = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.operation));
+export const useMcpWizardOperation = () => useSelector((state: RootState) => state.panel.discoveryContent.mcpToolWizard?.operation);
 
-export const useMcpWizardConnectionId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.connectionId));
+export const useMcpWizardConnectionId = () => useSelector((state: RootState) => state.panel.discoveryContent.mcpToolWizard?.connectionId);
 
-export const useMcpWizardAllowedTools = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.allowedTools));
+export const useMcpWizardAllowedTools = () => useSelector((state: RootState) => state.panel.discoveryContent.mcpToolWizard?.allowedTools);
 
-export const useMcpWizardHeaders = () =>
-  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.mcpToolWizard?.headers));
+export const useMcpWizardHeaders = () => useSelector((state: RootState) => state.panel.discoveryContent.mcpToolWizard?.headers);
