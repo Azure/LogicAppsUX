@@ -245,11 +245,36 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `vscode`, `chief-engineer`.
 - Status: verified.
 
-### Strict per-scenario matrix is the preferred final VS Code E2E CI shape
+### Grouped named shards are the current VS Code E2E CI shape
 
-- Learning: VS Code E2E now fans out by scenario id and gates on strict `vscode-e2e (p*)` jobs plus the single `vscode-e2e-summary` rollup. Do not reintroduce workflow-level `continue-on-error` or internal `allowFailure` masking for strict scenarios; strict shards must fail loudly. Keep `workflow_dispatch:` as a manual fallback because path-filtered PR workflows can be coalesced after rapid pushes.
-- Why it matters: PR #9181 proved the scenario fan-out can pass under strict gating, and #9164 validated the collapsed branch with every scenario shard plus `vscode-e2e-summary` green. This preserves fast, attributable failures without hiding regressions.
-- Source: Azure/LogicAppsUX#9181 run `26081963896`; Azure/LogicAppsUX#9164 collapsed-head run `26108941288`.
+- Learning: VS Code E2E runs a small set of grouped, human-readable shards
+  (`vscode-e2e (<shard>)`, e.g. `designer-lifecycle`, `runtime-actions`,
+  `project-conversion`) plus the single `vscode-e2e-summary` rollup. Each shard
+  passes a comma-separated `LA_E2E_SCENARIO` list; `run-e2e.js` runs every
+  scenario in its OWN fresh VS Code session (`prepareFreshSession` kills
+  lingering processes between scenarios), so grouping preserves per-scenario
+  isolation and is NOT the flaky "multiple tests in one window" pattern. A
+  failing scenario still runs its siblings and fails the shard (`run-e2e.js`
+  aggregates exit = max). Do not reintroduce workflow-level `continue-on-error`
+  or internal `allowFailure` masking; strict shards must fail loudly. Keep
+  `workflow_dispatch:` as a manual fallback because path-filtered PR workflows
+  can be coalesced after rapid pushes.
+- Why it matters: the earlier strict per-scenario fan-out (one shard per
+  `p*` id) minimized wall-clock but paid the fixed setup cost (pnpm install,
+  node symlink, xvfb apt-get, artifact download/extract, bundle + fixtures
+  hydration) on ~18 runners. Grouping amortizes that setup onto ~7 runners —
+  cutting redundant setup and runner/queue pressure — while keeping failures
+  attributable to a shard (open its log or `vscode-e2e-screenshots-<shard>`
+  artifact to see which scenario failed). Group members share the same
+  `use_workspace_fixtures` / `use_bundle_artifact` needs so no scenario is
+  denied an artifact.
+- Branch protection note: required status checks match on check NAME. Renaming
+  or regrouping shards changes `vscode-e2e (<shard>)` names, so branch
+  protection must require only the stable `vscode-e2e-summary` rollup — never
+  the individual shard names — or merges will hang on never-reported checks.
+- Source: supersedes the prior "Strict per-scenario matrix" learning; see
+  Azure/LogicAppsUX#9181 run `26081963896` and #9164 run `26108941288` for the
+  strict-fan-out precedent this consolidates.
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `chief-engineer`.
 - Status: verified.
 

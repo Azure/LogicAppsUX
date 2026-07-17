@@ -2267,23 +2267,51 @@ namespace ${namespaceName}
       return aggregate;
     };
 
-    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects a single
-    // scenarios[] entry by id. Takes precedence over E2E_MODE so a matrix
-    // shard that sets both env vars (e.g. for transitional debugging)
-    // still runs exactly one scenario. E2E_MODE remains supported as a
-    // fallback for legacy grouped-shard invocations.
-    const singleScenarioId = process.env.LA_E2E_SCENARIO;
-    if (singleScenarioId) {
-      const scenarioEntry = scenarios.find((s) => s.id === singleScenarioId);
-      if (!scenarioEntry) {
-        console.error(`Unknown LA_E2E_SCENARIO: ${singleScenarioId}`);
+    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects one or more
+    // scenarios[] entries by id. Accepts a single id or a comma-separated
+    // list so a matrix shard can run several scenarios sequentially on one
+    // runner — each scenario still gets its own fresh VS Code session via
+    // prepareFreshSession(), so grouping amortizes CI setup cost without
+    // sacrificing per-scenario isolation. Takes precedence over E2E_MODE so a
+    // matrix shard that sets both env vars (e.g. for transitional debugging)
+    // still runs exactly the selected scenarios. E2E_MODE remains supported
+    // as a fallback for legacy grouped-shard invocations.
+    const scenarioSelector = process.env.LA_E2E_SCENARIO;
+    if (scenarioSelector) {
+      const requestedIds = scenarioSelector
+        .split(',')
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0);
+      const selectedScenarios: Scenario[] = [];
+      const unknownIds: string[] = [];
+      const seenIds = new Set<string>();
+      for (const requestedId of requestedIds) {
+        // Dedup so a repeated id in the list doesn't run the same scenario twice.
+        if (seenIds.has(requestedId)) {
+          continue;
+        }
+        seenIds.add(requestedId);
+        const scenarioEntry = scenarios.find((s) => s.id === requestedId);
+        if (scenarioEntry) {
+          selectedScenarios.push(scenarioEntry);
+        } else {
+          unknownIds.push(requestedId);
+        }
+      }
+      if (unknownIds.length > 0) {
+        console.error(`Unknown LA_E2E_SCENARIO id(s): ${unknownIds.join(', ')}`);
         console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
         process.exit(2);
       }
-      console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
+      if (selectedScenarios.length === 0) {
+        console.error(`LA_E2E_SCENARIO resolved to no scenarios: ${scenarioSelector}`);
+        console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
+        process.exit(2);
+      }
+      console.log(`\nRunning ${selectedScenarios.length} scenario(s) (LA_E2E_SCENARIO): ${selectedScenarios.map((s) => s.id).join(', ')}`);
       await downloadExTesterAssets();
-      const singleExit = await runScenarioPhases([scenarioEntry]);
-      process.exit(singleExit);
+      const selectedExit = await runScenarioPhases(selectedScenarios);
+      process.exit(selectedExit);
     }
 
     if (e2eMode === 'scenarios') {
