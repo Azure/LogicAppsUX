@@ -13,6 +13,7 @@ import {
   localEmulatorConnectionString,
   logicAppKind,
   multiLanguageWorkerSetting,
+  workflowAuthenticationMethodKey,
   workerRuntimeKey,
   workflowCodefulEnabledKey,
 } from '../../../../constants';
@@ -68,6 +69,7 @@ describe('utils/appSettings', () => {
         [workerRuntimeKey]: WorkerRuntime.Dotnet,
         [appKindSetting]: logicAppKind,
         [ProjectDirectoryPathKey]: projectPath,
+        [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
       };
 
       it('logicApp: 5 base keys, no feature or codeful flags', () => {
@@ -114,10 +116,11 @@ describe('utils/appSettings', () => {
         expect(getLocalSettingsSchema(false)).toEqual({
           IsEncrypted: false,
           Values: {
-            [appKindSetting]: logicAppKind,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
             [azureWebJobsStorageKey]: localEmulatorConnectionString,
             [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [appKindSetting]: logicAppKind,
+            [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
       });
@@ -163,6 +166,7 @@ describe('utils/appSettings', () => {
           workerRuntimeKey,
           appKindSetting,
           ProjectDirectoryPathKey,
+          workflowAuthenticationMethodKey,
         ]);
       });
 
@@ -174,6 +178,7 @@ describe('utils/appSettings', () => {
           workerRuntimeKey,
           appKindSetting,
           ProjectDirectoryPathKey,
+          workflowAuthenticationMethodKey,
           azureWebJobsFeatureFlagsKey,
           workflowCodefulEnabledKey,
         ]);

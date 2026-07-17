@@ -327,13 +327,12 @@ await input.setText('logic app workspace');    // ❌ switches to file search
 
 ### Issue: Azure connector wizard blocks designer loading (FIXED)
 **Symptom**: Designer never loads for CustomCode and RulesEngine workspaces. VS Code shows QuickPick prompts that require manual intervention.
-**Cause**: When `WORKFLOWS_SUBSCRIPTION_ID` is undefined in `local.settings.json`, the extension shows two blocking QuickPick prompts:
+**Cause**: When `WORKFLOWS_SUBSCRIPTION_ID` is undefined in `local.settings.json`, the extension shows a blocking QuickPick prompt:
   1. "Enable connectors in Azure for Logic App" → "Use connectors from Azure" / "Skip for now"
-  2. "Select authentication method for Azure connectors" → "Managed Service Identity" / "Connection Keys"
-**Code path**: `getAzureConnectorDetailsForLocalProject()` in `apps/vs-code-designer/src/app/utils/codeless/common.ts` triggers `azureConnectorWizard.ts` which calls `authenticationMethodStep.ts`.
+**Code path**: `getAzureConnectorDetailsForLocalProject()` in `apps/vs-code-designer/src/app/utils/codeless/common.ts` triggers `azureConnectorWizard.ts`.
 **Fix applied (2026-02-24)**: Two-layer fix in both `designerOpen.test.ts` and `designerActions.test.ts`:
   1. `ensureLocalSettingsForDesigner(appDir)` — patches `local.settings.json` with `WORKFLOWS_SUBSCRIPTION_ID: ""` before opening the designer. Setting it to empty string (not undefined) prevents the wizard from launching.
-  2. `handleDesignerPrompts(workbench, driver)` — fallback safety net that polls for QuickPick dialogs and auto-selects "Skip for now" / "Connection Keys" if they still appear.
+  2. `handleDesignerPrompts(workbench, driver)` — fallback safety net that polls for QuickPick dialogs and auto-selects "Skip for now" if they still appear.
 **Standard workspaces** already had `WORKFLOWS_SUBSCRIPTION_ID: ""` in their `local.settings.json` (set by the creation wizard), so they were unaffected.
 
 ### Issue: Command palette fails to open in designer tests (FIXED)

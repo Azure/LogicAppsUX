@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { workflowAuthenticationMethodKey, workflowSubscriptionIdKey } from '../../../../constants';
+import { workflowSubscriptionIdKey } from '../../../../constants';
 
 vi.mock('../../../../localize', () => ({
   localize: (_key: string, defaultMessage: string, ...args: unknown[]) =>
@@ -58,7 +58,7 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     };
   });
 
-  it('defaults cancelled Azure connector discovery to disabled raw-key settings', async () => {
+  it('defaults cancelled Azure connector discovery to disabled settings', async () => {
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     vi.mocked(createAzureWizard).mockReturnValue({
       prompt: vi.fn().mockRejectedValue({ isUserCancelledError: true }),
@@ -70,10 +70,9 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     expect(details).toEqual({ enabled: false });
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, projectPath, {
       [workflowSubscriptionIdKey]: '',
-      [workflowAuthenticationMethodKey]: 'rawKeys',
     });
     expect(getAuthData).not.toHaveBeenCalled();
-    expect(context.telemetry.properties.azureConnectorsDefaulted).toBe('rawKeys');
+    expect(context.telemetry.properties.azureConnectorsDefaulted).toBe('true');
   });
 
   it('handles undefined projectPath', async () => {
@@ -106,17 +105,15 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     expect(addOrUpdateLocalAppSettings).not.toHaveBeenCalled();
   });
 
-  it('persists raw keys when the Azure wizard explicitly skips connectors', async () => {
+  it('persists disabled state when the Azure wizard explicitly skips connectors', async () => {
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     vi.mocked(createAzureWizard).mockImplementation((wizardContext: any) => ({
       prompt: vi.fn(async () => {
         wizardContext.enabled = false;
-        wizardContext.authenticationMethod = 'rawKeys';
       }),
       execute: vi.fn(async () => {
         await addOrUpdateLocalAppSettings(wizardContext, projectPath, {
           [workflowSubscriptionIdKey]: '',
-          [workflowAuthenticationMethodKey]: 'rawKeys',
         });
       }),
     })) as any;
@@ -126,7 +123,6 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     expect(details.enabled).toBe(false);
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, projectPath, {
       [workflowSubscriptionIdKey]: '',
-      [workflowAuthenticationMethodKey]: 'rawKeys',
     });
   });
 

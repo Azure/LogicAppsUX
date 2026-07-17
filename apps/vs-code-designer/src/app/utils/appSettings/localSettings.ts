@@ -16,6 +16,7 @@ import {
   azureStorageTypeSetting,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
+  workflowAuthenticationMethodKey,
   workflowCodefulEnabledKey,
 } from '../../../constants';
 import { localize } from '../../../localize';
@@ -213,6 +214,7 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     if (projectPath) {
       values[ProjectDirectoryPathKey] = projectPath;
     }
+    values[workflowAuthenticationMethodKey] = 'managedServiceIdentity';
     if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
       values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
     }

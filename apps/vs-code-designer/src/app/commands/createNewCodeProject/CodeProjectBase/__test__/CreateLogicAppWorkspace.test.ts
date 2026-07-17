@@ -1416,10 +1416,11 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
     });
 
     // Verify no other properties exist
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(5);
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
   });
 
   it('should include global.json in .funcignore for custom code projects', async () => {
@@ -1461,11 +1462,12 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
     });
 
-    // Verify exactly 6 properties exist (5 standard + 1 feature flag)
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+    // Verify exactly 7 properties exist (5 standard + auth method + 1 feature flag)
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
   });
 
   it('should include global.json in .funcignore for rules engine projects', async () => {
@@ -1507,11 +1509,12 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
     });
 
-    // Verify exactly 6 properties exist (5 standard + 1 feature flag)
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+    // Verify exactly 7 properties exist (5 standard + auth method + 1 feature flag)
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
   });
 
   it('should create local.settings.json with exact required values for codeful projects', async () => {
@@ -1531,12 +1534,13 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
       WORKFLOW_CODEFUL_ENABLED: 'true',
     });
 
-    // Verify exactly 7 properties exist (5 standard + feature flag + codeful-enabled).
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
+    // Verify exactly 8 properties exist (5 standard + auth method + feature flag + codeful-enabled).
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(8);
   });
 
   it('should include extension bundle configuration in host.json', async () => {
