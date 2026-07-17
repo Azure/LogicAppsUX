@@ -156,5 +156,37 @@ test.describe(
       await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();
       await expect(page.getByRole('tab', { name: 'Testing' })).toBeVisible();
     });
+
+    for (const { designer, route } of [
+      { designer: 'designer v1', route: '/' },
+      { designer: 'designer v2', route: '/v2' },
+    ]) {
+      test(`Should keep dynamic output failure details inside the panel in ${designer}`, async ({ page }) => {
+        await page.goto(route);
+        await GoToMockWorkflow(page, 'Dynamic Outputs Overflow');
+
+        await page.getByTestId('card-manual').click();
+
+        const errorMessage = page.getByTestId('msla-operation-error-message');
+        await expect(errorMessage).toContainText('DYNAMIC-OUTPUTS-SENTINEL');
+
+        const dimensions = await errorMessage.evaluate((element) => {
+          const panelContent = element.closest('.msla-panel-content-container');
+          if (!panelContent) {
+            throw new Error('Operation error message is not inside the panel content container.');
+          }
+
+          return {
+            clientWidth: element.clientWidth,
+            scrollWidth: element.scrollWidth,
+            errorRight: element.getBoundingClientRect().right,
+            panelRight: panelContent.getBoundingClientRect().right,
+          };
+        });
+
+        expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+        expect(dimensions.errorRight).toBeLessThanOrEqual(dimensions.panelRight + 1);
+      });
+    }
   }
 );

@@ -177,6 +177,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.toggleDesignTimeNodeWorker",
+        "title": "Toggle Node.js Design-Time Worker (Data Mapper Fallback)",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.redeploy",
         "title": "Redeploy",
         "category": "Azure Logic Apps"
@@ -988,6 +993,12 @@
             "type": "boolean",
             "description": "Start background design-time process at project load time.",
             "default": true
+          },
+          "azureLogicAppsStandard.useNodeDesignTimeWorker": {
+            "type": "boolean",
+            "default": false,
+            "scope": "resource",
+            "description": "Fallback: run the design-time host on the Node.js worker instead of in-process .NET 8. Leave disabled for normal use. Enabling this disables the Data Mapper Test map, which requires the in-process .NET 8 (NetFx) worker."
           },
           "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
             "type": "boolean",

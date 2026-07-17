@@ -80,6 +80,7 @@ import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
 import { openLanguageServerConnectionView } from './workflows/languageServer/connectionView';
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
+import { toggleDesignTimeNodeWorker } from './toggleDesignTimeNodeWorker';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -111,6 +112,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.reviewValidation, reviewValidation);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProjectCommand);
+  registerCommand(extensionCommand.toggleDesignTimeNodeWorker, toggleDesignTimeNodeWorker);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openInPortal, openInPortal);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.browseWebsite, browseWebsite);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewProperties, viewProperties);
