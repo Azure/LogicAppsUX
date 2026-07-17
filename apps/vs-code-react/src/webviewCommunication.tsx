@@ -57,6 +57,7 @@ import {
 import {
   initializeDesigner,
   updateCallbackUrl,
+  updateDesignerAccessToken,
   updateFileSystemConnection,
   updatePanelMetadata,
   updateRuntimeBaseUrl,
@@ -373,7 +374,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             break;
           }
           case ExtensionCommand.update_access_token: {
+            // workflowSlice tracks accessToken for workflow services;
+            // designerSlice tracks it in panelMetaData so the HttpClient useMemo recreates with the fresh token.
             dispatch(updateAccessToken(message.data.accessToken));
+            dispatch(updateDesignerAccessToken(message.data.accessToken));
             break;
           }
           case ExtensionCommand.update_export_path: {
