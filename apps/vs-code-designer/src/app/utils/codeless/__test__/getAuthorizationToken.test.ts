@@ -41,7 +41,7 @@ describe('getAuthorizationToken', () => {
       scopes: [],
     } as any);
 
-    await expect(getAuthorizationToken()).rejects.toThrow();
+    await expect(getAuthorizationToken()).rejects.toThrow('No access token available. Please sign in to Azure.');
   });
 
   it('should propagate errors when session acquisition fails', async () => {
