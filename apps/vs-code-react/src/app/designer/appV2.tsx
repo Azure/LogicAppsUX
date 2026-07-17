@@ -168,7 +168,7 @@ export const DesignerApp = () => {
   // Saving
 
   const saveWorkflowFromDesigner = useCallback(
-    async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, clearDirtyState?: () => void) => {
+    async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, _clearDirtyState?: () => void) => {
       const { definition, parameters, connectionReferences } = workflowToSave;
       vscode.postMessage({
         command: ExtensionCommand.save,
@@ -183,7 +183,9 @@ export const DesignerApp = () => {
       } as StandardApp;
       setWorkflow(newWorkflow);
       setInitialWorkflow(newWorkflow);
-      clearDirtyState?.();
+      // clearDirtyState is intentionally NOT called here — the extension host
+      // sends resetDesignerDirtyState after a successful file write, which
+      // properly resets dirty state only on confirmed persistence.
       return {
         definition,
         parameters,

@@ -2,13 +2,13 @@ import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue } from '@m
 import type {
   CompleteFileSystemConnectionData,
   ICallbackUrlResponse,
-  DesignerPanelMetadata,
+  IDesignerPanelMetadata,
 } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DesignerState {
-  panelMetaData: DesignerPanelMetadata | null;
+  panelMetaData: IDesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
   workflowRuntimeBaseUrl: string;
@@ -97,7 +97,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
     updatePanelMetadata: (
       state,
       action: PayloadAction<{
-        panelMetadata: DesignerPanelMetadata;
+        panelMetadata: IDesignerPanelMetadata;
         connectionData: ConnectionsData;
         apiHubServiceDetails: ApiHubServiceDetails;
       }>
@@ -106,6 +106,11 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       state.panelMetaData = panelMetadata;
       state.connectionData = connectionData;
       state.apiHubServiceDetails = apiHubServiceDetails;
+    },
+    updateDesignerAccessToken: (state, action: PayloadAction<string>) => {
+      if (state.panelMetaData) {
+        state.panelMetaData = { ...state.panelMetaData, accessToken: action.payload };
+      }
     },
     createFileSystemConnection: (state, action: PayloadAction<any>) => {
       const { connectionName, resolve, reject } = action.payload;
@@ -131,4 +136,5 @@ export const {
   createFileSystemConnection,
   updateFileSystemConnection,
   updatePanelMetadata,
+  updateDesignerAccessToken,
 } = designerSlice.actions;
