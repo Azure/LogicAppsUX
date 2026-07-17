@@ -6,6 +6,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getDependencyTimeout } from '../../utils/binaries';
 import { getDependenciesVersion, ensureExtensionBundleHealthy } from '../../utils/bundleFeed';
+import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../utils/dependencyUpdateCheck';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../utils/languageServerProtocol';
@@ -45,6 +46,12 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
       context.telemetry.properties.dependencyPath = await ensureRuntimeDependenciesPath();
 
+      // Decide once, up front, whether this pass should perform the network "is there a newer
+      // version?" checks. Individual validators read the same throttle flag, so they stay in sync
+      // for the duration of this run (the timestamp is only advanced after a successful pass).
+      const performedUpdateCheck = shouldCheckForDependencyUpdates();
+      context.telemetry.properties.performedDependencyUpdateCheck = `${performedUpdateCheck}`;
+
       context.telemetry.properties.lastStep = 'getDependenciesVersion';
       progress.report({ increment: 10, message: 'Get dependency version from CDN' });
       let dependenciesVersions: IBundleDependencyFeed;
@@ -56,54 +63,58 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         console.log(error);
       }
 
-      context.telemetry.properties.lastStep = 'validateNodeJsIsLatest';
+      context.telemetry.properties.lastStep = 'validateDependencies';
 
       try {
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
-          progress.report({ increment: 20, message: 'NodeJS' });
-          await timeout(
-            validateNodeJsIsLatest,
-            'NodeJs',
-            dependencyTimeout,
-            'https://github.com/nodesource/distributions',
-            dependenciesVersions?.nodejs
-          );
-          await setNodeJsCommand();
-        });
+        // The four dependency validations are independent of one another, so run them
+        // concurrently instead of sequentially to reduce startup time.
+        const validationTasks: Promise<void>[] = [
+          runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
+            progress.report({ increment: 20, message: 'NodeJS' });
+            await timeout(
+              validateNodeJsIsLatest,
+              'NodeJs',
+              dependencyTimeout,
+              'https://github.com/nodesource/distributions',
+              dependenciesVersions?.nodejs
+            );
+            await setNodeJsCommand();
+          }),
+          runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
+            progress.report({ increment: 20, message: 'Functions Runtime' });
+            await timeout(
+              validateFuncCoreToolsIsLatest,
+              'Functions Runtime',
+              dependencyTimeout,
+              'https://github.com/Azure/azure-functions-core-tools/releases',
+              dependenciesVersions?.funcCoreTools
+            );
+            await setFunctionsCommand();
+          }),
+          runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
+            progress.report({ increment: 10, message: '.NET SDK' });
+            const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
+            await timeout(
+              validateDotNetIsLatest,
+              '.NET SDK',
+              dependencyTimeout,
+              'https://dotnet.microsoft.com/en-us/download/dotnet',
+              dotnetDependencies
+            );
+            await setDotNetCommand();
+          }),
+          runWithDurationTelemetry(context, 'azureLogicAppsStandard.installLSPSDK', async () => {
+            progress.report({ increment: 10, message: 'LSP SDK' });
+            await timeout(installLSPSDK, 'LSP SDK', dependencyTimeout);
+            await setDotNetCommand();
+          }),
+        ];
 
-        context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
-          progress.report({ increment: 20, message: 'Functions Runtime' });
-          await timeout(
-            validateFuncCoreToolsIsLatest,
-            'Functions Runtime',
-            dependencyTimeout,
-            'https://github.com/Azure/azure-functions-core-tools/releases',
-            dependenciesVersions?.funcCoreTools
-          );
-          await setFunctionsCommand();
-        });
-
-        context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
-          progress.report({ increment: 10, message: '.NET SDK' });
-          const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
-          await timeout(
-            validateDotNetIsLatest,
-            '.NET SDK',
-            dependencyTimeout,
-            'https://dotnet.microsoft.com/en-us/download/dotnet',
-            dotnetDependencies
-          );
-          await setDotNetCommand();
-        });
-
-        context.telemetry.properties.lastStep = 'installLSPSDK';
-        await runWithDurationTelemetry(context, 'azureLogicAppsStandard.installLSPSDK', async () => {
-          progress.report({ increment: 10, message: 'LSP SDK' });
-          await timeout(installLSPSDK, 'LSP SDK', dependencyTimeout);
-          await setDotNetCommand();
-        });
+        const results = await Promise.allSettled(validationTasks);
+        const failure = results.find((result): result is PromiseRejectedResult => result.status === 'rejected');
+        if (failure) {
+          throw failure.reason;
+        }
 
         // Block validation success on a healthy extension bundle. The bundle
         // download is fired-and-forgotten from activation so the UI stays
@@ -114,6 +125,12 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
         progress.report({ increment: 5, message: 'Extension Bundle' });
         await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation });
+
+        // Only advance the throttle window when we actually performed the update checks and the
+        // whole pass succeeded, so a failed or skipped run still retries on the next activation.
+        if (performedUpdateCheck) {
+          await recordDependencyUpdateCheck();
+        }
 
         ext.outputChannel.appendLog(
           localize(
