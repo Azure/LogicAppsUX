@@ -11,7 +11,6 @@ import { getContainingWorkspace } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
 import * as vscode from 'vscode';
-import * as portfinder from 'portfinder';
 import * as os from 'os';
 import * as cp from 'child_process';
 import find_process from 'find-process';
@@ -21,6 +20,7 @@ import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import { getChildProcesses } from './findChildProcess/findChildProcess';
+import { releaseReservedPort, reserveFreePort } from './portReservation';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
@@ -51,7 +51,7 @@ export async function startRuntimeApi(projectPath: string): Promise<void> {
     let isNewRuntimeProcess = false;
     if (!ext.runtimeInstances.has(projectPath)) {
       ext.runtimeInstances.set(projectPath, {
-        port: await portfinder.getPortPromise(),
+        port: await reserveFreePort(),
         isStarting: true,
       });
       isNewRuntimeProcess = true;
@@ -214,8 +214,9 @@ async function resolveChildFuncPid(processId: number, retries = 5, delayMs = 500
 
 export function stopRuntimeApi(projectPath: string): void {
   ext.outputChannel.appendLog(`Stopping Runtime API for project: ${projectPath}`);
-  const { process, childFuncPid } = ext.runtimeInstances.get(projectPath);
+  const { process, childFuncPid, port } = ext.runtimeInstances.get(projectPath);
   ext.runtimeInstances.delete(projectPath);
+  releaseReservedPort(port);
   if (process === null || process === undefined) {
     return;
   }

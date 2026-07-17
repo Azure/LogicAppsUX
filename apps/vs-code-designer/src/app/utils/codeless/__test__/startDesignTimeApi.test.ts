@@ -5,9 +5,9 @@ import * as cp from 'child_process';
 import { EventEmitter } from 'events';
 import findProcess from 'find-process';
 import * as os from 'os';
-import * as portfinder from 'portfinder';
 import { ext } from '../../../../extensionVariables';
 import * as workspaceUtils from '../../workspace';
+import { releaseReservedPort, reserveFreePort } from '../../portReservation';
 import {
   startAllDesignTimeApis,
   startDesignTimeApi,
@@ -75,8 +75,10 @@ vi.mock('../../workspace', () => ({
   getWorkspaceLogicAppFolders: vi.fn(),
 }));
 
-vi.mock('portfinder', () => ({
-  getPortPromise: vi.fn(),
+vi.mock('../../portReservation', () => ({
+  reserveFreePort: vi.fn(),
+  releaseReservedPort: vi.fn(),
+  resetReservedPorts: vi.fn(),
 }));
 
 describe('startAllDesignTimeApis', () => {
@@ -87,7 +89,8 @@ describe('startAllDesignTimeApis', () => {
     workspace.fs.createDirectory = vi.fn().mockRejectedValue(new Error('skip startup after logging')) as any;
     vi.mocked(window.showErrorMessage).mockResolvedValue(undefined as any);
     vi.mocked(axios.get).mockRejectedValue(new Error('API not ready'));
-    vi.mocked(portfinder.getPortPromise).mockResolvedValue(7071 as never);
+    let nextPort = 7071;
+    vi.mocked(reserveFreePort).mockImplementation(async () => nextPort++);
   });
 
   it('logs and exits when no workspace folders are available', async () => {
@@ -106,7 +109,7 @@ describe('startAllDesignTimeApis', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Starting design-time APIs for 0 Logic App project(s) in the current workspace.'
     );
-    expect(portfinder.getPortPromise).not.toHaveBeenCalled();
+    expect(reserveFreePort).not.toHaveBeenCalled();
   });
 
   it('starts each Logic App project discovered in the workspace', async () => {
@@ -120,7 +123,15 @@ describe('startAllDesignTimeApis', () => {
     );
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-one');
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-two');
-    expect(portfinder.getPortPromise).toHaveBeenCalledTimes(2);
+    expect(reserveFreePort).toHaveBeenCalledTimes(2);
+
+    // Each concurrently started project must receive its own reserved port so
+    // sibling design-time hosts never collide on the same "free" port.
+    const portOne = ext.designTimeInstances.get('D:/workspace/app-one')?.port;
+    const portTwo = ext.designTimeInstances.get('D:/workspace/app-two')?.port;
+    expect(portOne).toBeDefined();
+    expect(portTwo).toBeDefined();
+    expect(portOne).not.toBe(portTwo);
   });
 
   it('rejects when Logic App folder discovery fails', async () => {
@@ -154,7 +165,7 @@ describe('startAllDesignTimeApis', () => {
     const firstStart = startDesignTimeApi('D:/workspace/app-one');
     const secondStart = startDesignTimeApi('D:/workspace/app-one');
 
-    expect(portfinder.getPortPromise).toHaveBeenCalledTimes(1);
+    expect(reserveFreePort).toHaveBeenCalledTimes(1);
 
     rejectCreateDirectory?.(new Error('startup still failed'));
     await Promise.all([firstStart, secondStart]);
@@ -172,7 +183,7 @@ describe('startAllDesignTimeApis', () => {
 
     await startDesignTimeApi('D:/workspace/app-one');
 
-    expect(portfinder.getPortPromise).not.toHaveBeenCalled();
+    expect(reserveFreePort).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(
       'Invalid func child process PID set for project at "D:/workspace/app-one". Restarting workflow design-time API.'
     );
@@ -187,6 +198,16 @@ describe('startAllDesignTimeApis', () => {
 
     expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '222']);
     expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '111']);
+  });
+
+  it('releases the reserved port when stopping a design-time host so it can be reused', async () => {
+    vi.mocked(os.platform).mockReturnValue('linux' as any);
+    vi.mocked(cp.spawn).mockReturnValue({} as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { port: 7071, process: { pid: 111 } as any, childFuncPid: '222' });
+
+    await stopDesignTimeApi('D:/workspace/app-one');
+
+    expect(releaseReservedPort).toHaveBeenCalledWith(7071);
   });
 
   it('waits for Windows taskkill callbacks before resolving stopDesignTimeApi', async () => {

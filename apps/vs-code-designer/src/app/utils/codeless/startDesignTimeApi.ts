@@ -42,7 +42,6 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
@@ -54,6 +53,7 @@ import {
   isInsideBundleDownloadScope,
   waitForExtensionBundleReady,
 } from '../bundleFeed';
+import { releaseReservedPort, reserveFreePort } from '../portReservation';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -234,7 +234,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         designTimeInst.isStarting = true;
 
         if (!designTimeInst.port) {
-          designTimeInst.port = await portfinder.getPortPromise();
+          designTimeInst.port = await reserveFreePort();
         }
 
         const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
@@ -637,6 +637,7 @@ export async function stopDesignTimeApi(projectPath: string): Promise<void> {
 
   const { process: proc, childFuncPid } = designTimeInst;
   ext.designTimeInstances.delete(projectPath);
+  releaseReservedPort(designTimeInst.port);
   if (proc === null || proc === undefined) {
     return;
   }
