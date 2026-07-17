@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { writeFileSync } from 'fs';
 
+vi.mock('fs', () => ({
+  writeFileSync: vi.fn(),
+}));
 /**
  * Tests for workflow save logic as used by OpenDesignerForLocalProject.saveWorkflow().
  * These focus on the serialization, error handling, and concurrency aspects
