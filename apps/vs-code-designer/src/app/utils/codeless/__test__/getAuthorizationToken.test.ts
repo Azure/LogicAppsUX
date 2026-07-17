@@ -35,6 +35,9 @@ describe('getAuthorizationToken', () => {
   });
 
   it('should return "Bearer undefined" when session returns no accessToken', async () => {
+    // Note: getAuthorizationToken does not guard against undefined accessToken.
+    // The token refresh interval in openDesignerForLocalProject guards against this
+    // by checking for "undefined" in the returned string before propagating it.
     vi.spyOn(azureAuth, 'getSessionFromVSCode').mockResolvedValue({
       id: 'session-1',
       account: { id: 'account-1', label: 'Test' },

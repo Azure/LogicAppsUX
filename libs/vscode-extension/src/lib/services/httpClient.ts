@@ -40,7 +40,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        Authorization: isArmId ? (this._accessToken ?? '') : '',
       },
     };
     const response = await axios({
@@ -66,7 +66,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        Authorization: isArmId ? (this._accessToken ?? '') : '',
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -85,7 +85,7 @@ export class HttpClient implements IHttpClient {
   }
 
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
-    const authHeader: Record<string, string> = options.includeAuth || !options.noAuth ? { Authorization: `${this._accessToken}` } : {};
+    const authHeader: Record<string, string> = options.includeAuth || !options.noAuth ? { Authorization: this._accessToken ?? '' } : {};
     const request = {
       ...options,
       url: this.getRequestUrl(options),
@@ -123,7 +123,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        Authorization: isArmId ? (this._accessToken ?? '') : '',
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -152,7 +152,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${this._accessToken}`,
+        Authorization: this._accessToken ?? '',
       },
     };
     const response = await axios({

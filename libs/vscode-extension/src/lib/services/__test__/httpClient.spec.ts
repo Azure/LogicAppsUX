@@ -346,7 +346,7 @@ describe('HttpClient', () => {
       expect(clientNoToken).toBeDefined();
     });
 
-    it('should send undefined Authorization for ARM requests when token is undefined', async () => {
+    it('should send empty Authorization for ARM requests when token is undefined', async () => {
       const clientNoToken = new HttpClient({
         baseUrl,
         accessToken: undefined,
@@ -360,7 +360,7 @@ describe('HttpClient', () => {
       expect(axios).toHaveBeenCalledWith(
         expect.objectContaining({
           headers: expect.objectContaining({
-            Authorization: 'undefined',
+            Authorization: '',
           }),
         })
       );

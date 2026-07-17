@@ -218,7 +218,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           try {
             const tenantId = this.panelMetadata.azureDetails?.tenantId;
             const updatedAccessToken = await getAuthorizationToken(tenantId);
-            if (updatedAccessToken !== this.panelMetadata.accessToken) {
+            // Guard against "Bearer undefined" — only update if we got a real token
+            if (updatedAccessToken && !updatedAccessToken.endsWith('undefined') && updatedAccessToken !== this.panelMetadata.accessToken) {
               this.panelMetadata.accessToken = updatedAccessToken;
               this.panel.webview.postMessage({
                 command: ExtensionCommand.update_access_token,
@@ -230,7 +231,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           } catch {
             // Silently ignore token refresh failures — the existing token may still be valid
           }
-        }, 5000);
+        }, 30000);
 
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
@@ -629,16 +630,32 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         // Parameter exists only in the file — preserve it entirely
         definitionParameters[key] = parameter;
       } else if (definitionParameters[key]) {
-        // Parameter exists in both — preserve file-only properties that the designer doesn't emit
-        const fileParam = parameter as Record<string, any>;
-        const defParam = definitionParameters[key] as Record<string, any>;
-        for (const prop of Object.keys(fileParam)) {
-          if (!(prop in defParam)) {
-            defParam[prop] = fileParam[prop];
-          }
-        }
+        // Parameter exists in both — deep-merge file properties that the designer doesn't emit
+        this.deepMergePreserveExisting(definitionParameters[key], parameter as Record<string, any>);
       }
     });
+  }
+
+  /**
+   * Recursively merges properties from source into target, only adding
+   * properties that don't already exist in target. For nested objects,
+   * merges recursively so nested file-only fields are preserved.
+   */
+  private deepMergePreserveExisting(target: Record<string, any>, source: Record<string, any>): void {
+    for (const prop of Object.keys(source)) {
+      if (!(prop in target)) {
+        target[prop] = source[prop];
+      } else if (
+        typeof target[prop] === 'object' &&
+        target[prop] !== null &&
+        !Array.isArray(target[prop]) &&
+        typeof source[prop] === 'object' &&
+        source[prop] !== null &&
+        !Array.isArray(source[prop])
+      ) {
+        this.deepMergePreserveExisting(target[prop], source[prop]);
+      }
+    }
   }
 
   /**
