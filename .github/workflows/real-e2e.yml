@@ -24,7 +24,7 @@ jobs:
     - uses: actions/checkout@v5
 
     - name: Azure login
-      uses: azure/login@v2
+      uses: azure/login@v3
       with:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
@@ -49,7 +49,7 @@ jobs:
       run: pnpm run e2e:setup
 
     - name: Azure login
-      uses: azure/login@v2
+      uses: azure/login@v3
       with:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
@@ -74,7 +74,7 @@ jobs:
       run: pnpm run scrub-secrets:e2e
    
     - name: Azure login
-      uses: azure/login@v2
+      uses: azure/login@v3
       if: always()
       with:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
@@ -120,7 +120,7 @@ jobs:
         run: npx playwright merge-reports --reporter html ./all-blob-reports 
       
       - name: Azure login
-        uses: azure/login@v2
+        uses: azure/login@v3
         if: always()
         with:
           client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
