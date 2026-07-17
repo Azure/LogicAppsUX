@@ -53,6 +53,29 @@ import { createUnitTest } from '../unitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../utils/bundleFeed';
 
+/**
+ * Recursively merges properties from `source` into `target`, preserving file-only
+ * fields at every nesting level. Designer-emitted properties in `target` always
+ * take precedence; only properties absent from `target` (or whose values are both
+ * plain objects) are touched.
+ */
+function deepMergeFileProperties(source: Record<string, unknown>, target: Record<string, unknown>): void {
+  for (const prop of Object.keys(source)) {
+    if (!(prop in target)) {
+      target[prop] = source[prop];
+    } else if (
+      isPlainObject(source[prop]) &&
+      isPlainObject(target[prop])
+    ) {
+      deepMergeFileProperties(source[prop] as Record<string, unknown>, target[prop] as Record<string, unknown>);
+    }
+  }
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
   private migrationOptions: Record<string, any>;
@@ -629,14 +652,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         // Parameter exists only in the file — preserve it entirely
         definitionParameters[key] = parameter;
       } else if (definitionParameters[key]) {
-        // Parameter exists in both — preserve file-only properties that the designer doesn't emit
-        const fileParam = parameter as Record<string, any>;
-        const defParam = definitionParameters[key] as Record<string, any>;
-        for (const prop of Object.keys(fileParam)) {
-          if (!(prop in defParam)) {
-            defParam[prop] = fileParam[prop];
-          }
-        }
+        // Parameter exists in both — deep-merge file-only properties that the designer doesn't emit
+        deepMergeFileProperties(parameter as Record<string, unknown>, definitionParameters[key] as Record<string, unknown>);
       }
     });
   }
