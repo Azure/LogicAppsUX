@@ -34,7 +34,7 @@ describe('getAuthorizationToken', () => {
     expect(token).toBe('Bearer test-token-123');
   });
 
-  it('should return "Bearer undefined" when session returns no accessToken', async () => {
+  it('should return empty string when session returns no accessToken', async () => {
     vi.spyOn(azureAuth, 'getSessionFromVSCode').mockResolvedValue({
       id: 'session-1',
       account: { id: 'account-1', label: 'Test' },

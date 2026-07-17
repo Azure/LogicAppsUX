@@ -276,15 +276,15 @@ describe('HttpClient', () => {
   });
 
   describe('auth token handling', () => {
-    it('should send empty Authorization header for non-ARM GET requests', async () => {
+    it('should omit the Authorization header for non-ARM GET requests', async () => {
       (axios as any).mockResolvedValue({ data: {}, status: 200 });
 
       await httpClient.get({ uri: '/local-endpoint', headers: {} });
 
       expect(axios).toHaveBeenCalledWith(
         expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: '',
+          headers: expect.not.objectContaining({
+            Authorization: expect.anything(),
           }),
         })
       );
