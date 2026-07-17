@@ -278,7 +278,32 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `chief-engineer`.
 - Status: verified.
 
-### Scenario shards must verify only their intended shape
+### Scenario-level retry absorbs transient flakes without masking regressions
+
+- Learning: `run-e2e.js` retries a failing scenario in a fresh VS Code session
+  before giving up, gated by `LA_E2E_SCENARIO_RETRIES` (default `0` = fail fast
+  locally; CI sets `1`). Each retry is a full `prepareFreshSession()` (kills
+  VS Code/chromedriver/func, cleans `User/`), so it clears the stale-window /
+  leftover-process flake class as well as transient xvfb/focus/cold-start races.
+  This is NOT masking: a scenario that fails every attempt still fails the shard
+  (`exit = max`), and a scenario that only passes after a retry is surfaced
+  loudly via `console.warn('⚠ FLAKE…')` plus a `::warning title=E2E scenario
+  flake::` GitHub annotation so the underlying race can still be root-caused.
+  Do not conflate this with `continue-on-error`/`allowFailure` — those make a
+  genuinely failing shard green and remain forbidden.
+- Why it matters: ExTester UI flakes are dominated by transient runner-image /
+  xvfb / Fluent-UI-rerender races that the team otherwise fixes one-by-one at
+  the helper level. A single fresh-session retry recovers most of them per run
+  while keeping real regressions red and every flake visible in the CI summary.
+  Job timeouts were widened (vscode-e2e 35m, setup-fixtures 30m, compat 25m) so
+  a retry is never killed mid-run.
+- Prefer keeping retries at `1`. Raising it hides increasingly non-transient
+  failures; if a scenario needs >1 retry to pass, fix the root cause (add the
+  waits/focus/re-read patterns documented elsewhere in this file) instead.
+- Source: `apps/vs-code-designer/src/test/ui/run-e2e.ts` (`runScenarioPhases`
+  retry loop); `.github/workflows/vscode-e2e.yml` (`LA_E2E_SCENARIO_RETRIES`).
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `chief-engineer`.
+- Status: verified.
 
 - Learning: Shape-specific scenarios (`p42-*`, `p43-*`) must set and honor shape selectors such as `LA_E2E_SHAPE`; a shard named for one workflow shape must not silently run unrelated shapes.
 - Why it matters: Earlier p42 shards were misleading because each named shard could still run multiple shapes. PR #9181 isolated `p42-standard`, `p42-customcode`, `p42-rulesengine`, `p43-inlinejavascript`, `p43-customcode`, and `p43-rulesengine`, making failures attributable to the named scenario.

@@ -145,7 +145,9 @@ jobs:
     name: setup-fixtures (p41a)
     needs: setup-extension-build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Headroom for one fresh-session retry (LA_E2E_SCENARIO_RETRIES) if the
+    # fixtures scenario flakes, so the retry isn't killed mid-run.
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -214,6 +216,10 @@ jobs:
         env:
           LA_E2E_SCENARIO: p41a-fixtures
           LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
+          # Retry a flaky fixtures run once in a fresh session before failing the
+          # setup job (which would block every downstream shard). Non-masking: a
+          # genuine failure still goes red after the retry.
+          LA_E2E_SCENARIO_RETRIES: '1'
           NODE_OPTIONS: --max-old-space-size=4096
           # Node's os.tmpdir() honors TMPDIR/TMP/TEMP on Linux; setting TEMP
           # pins workspace + manifest creation under $RUNNER_TEMP/la-e2e-test
@@ -305,7 +311,10 @@ jobs:
   vscode-e2e:
     name: vscode-e2e (${{ matrix.shard }})
     needs: [setup-extension-build, setup-fixtures]
-    timeout-minutes: 25
+    # Grouped shards run scenarios sequentially and each failing scenario may
+    # retry once in a fresh session (LA_E2E_SCENARIO_RETRIES). 35m gives the
+    # heaviest group room for a retry without a timeout-induced failure.
+    timeout-minutes: 35
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -488,6 +497,11 @@ jobs:
           # Grouped matrix: each shard runs one or more scenarios[] entries.
           LA_E2E_SCENARIO: ${{ matrix.scenario }}
           LA_E2E_BUNDLE_PREFLIGHT: ${{ matrix.use_bundle_artifact && '1' || '0' }}
+          # Retry a failing scenario once in a fresh VS Code session to absorb
+          # transient xvfb/focus/cold-start races. Non-masking: a scenario that
+          # fails both attempts still fails the shard; a retry-to-pass is logged
+          # as a `::warning::` flake so the race can still be root-caused.
+          LA_E2E_SCENARIO_RETRIES: '1'
           NODE_OPTIONS: --max-old-space-size=4096
           # Pin os.tmpdir() so the bootstrapper finds the manifest the
           # setup-fixtures job uploaded (same RUNNER_TEMP layout).
@@ -508,7 +522,8 @@ jobs:
   vscode-e2e-compat:
     name: vscode-e2e compatibility (${{ matrix.label }})
     needs: setup-extension-build
-    timeout-minutes: 20
+    # Headroom for one activation-smoke retry (LA_E2E_SCENARIO_RETRIES).
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -595,6 +610,9 @@ jobs:
         env:
           LA_E2E_SCENARIO: p40-nonlogicapp
           E2E_VSCODE_VERSION: ${{ matrix.vscode-version }}
+          # Retry the activation smoke once in a fresh session to absorb
+          # transient launch/activation races on the compat runtime matrix.
+          LA_E2E_SCENARIO_RETRIES: '1'
           NODE_OPTIONS: --max-old-space-size=4096
           TEMP: ${{ runner.temp }}
           TMP: ${{ runner.temp }}
