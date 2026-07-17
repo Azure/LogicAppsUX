@@ -3849,6 +3849,18 @@ export function getInterpolatedExpression(expression: string, parameterType: str
   return `@${expression}`;
 }
 
+/**
+ * Serializes the current parameter editor state for persistence or display.
+ *
+ * Node references are remapped before preserved values are considered so the
+ * serialized result cannot retain identifiers from the source workflow.
+ *
+ * @param parameterInfo - Parameter metadata, editor model, and value segments.
+ * @param isDefinitionValue - Whether the result is being written to the workflow definition.
+ * @param idReplacements - Mapping from source node identifiers to their new identifiers.
+ * @param shouldEncodeBasedOnMetadata - Whether explicit encoding metadata should be honored; path parameters are always encoded.
+ * @returns The serialized value, an empty string when an empty value must be represented, or `undefined` for other empty optional parameters.
+ */
 export function parameterValueToString(
   parameterInfo: ParameterInfo,
   isDefinitionValue: boolean,
@@ -3879,6 +3891,7 @@ export function parameterValueToString(
     : parameterInfo;
 
   if (didRemap) {
+    // A preserved raw value can contain source node IDs, so rebuild it from the remapped segments.
     delete remappedParameterInfo.preservedValue;
   }
 
@@ -3935,7 +3948,7 @@ export function parameterValueToString(
     ? value
     : castTokenSegmentsInValue(value, parameterType, parameterFormat);
 
-  // Note: Path parameter values or parameters which requires url encoding are always enclosed inside encodeComponent function if specified.
+  // Definition values must retain the workflow encode-component wrapper rather than only encoding the current literal.
   if (requiresUrlEncoding && isDefinitionValue) {
     const segmentValues = segmentsAfterCasting.map((segment) => {
       if (!isTokenValueSegment(segment)) {
