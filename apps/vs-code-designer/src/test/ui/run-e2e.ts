@@ -2234,6 +2234,11 @@ namespace ${namespaceName}
         // Apply per-scenario env overrides (e.g. LA_E2E_SHAPE for parameterized
         // shape-specific shards). Captured here so we can restore afterward.
         const envOverridesApplied: EnvOverride[] = [];
+        // Re-point LA_E2E_SCENARIO at the current scenario id so tests/helpers
+        // that read it as the active scenario keep their per-scenario semantics
+        // during grouped runs.
+        envOverridesApplied.push({ key: 'LA_E2E_SCENARIO', prev: process.env.LA_E2E_SCENARIO });
+        process.env.LA_E2E_SCENARIO = id;
         if (scenarioEnv && typeof scenarioEnv === 'object') {
           for (const [key, value] of Object.entries(scenarioEnv)) {
             envOverridesApplied.push({ key, prev: process.env[key] });
