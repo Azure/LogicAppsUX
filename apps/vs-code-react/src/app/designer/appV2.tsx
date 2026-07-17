@@ -168,7 +168,7 @@ export const DesignerApp = () => {
   // Saving
 
   const saveWorkflowFromDesigner = useCallback(
-    async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, _clearDirtyState?: () => void) => {
+    async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined) => {
       const { definition, parameters, connectionReferences } = workflowToSave;
       vscode.postMessage({
         command: ExtensionCommand.save,

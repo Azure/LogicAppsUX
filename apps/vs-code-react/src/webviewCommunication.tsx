@@ -374,6 +374,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             break;
           }
           case ExtensionCommand.update_access_token: {
+            // Two dispatches are intentional:
+            // 1. updateAccessToken (WorkflowSlice) — keeps state.accessToken current for export workflows.
+            // 2. updateDesignerAccessToken (DesignerSlice) — refreshes panelMetaData.accessToken so the
+            //    useMemo in appV2 recreates the HttpClient with the new bearer token.
             dispatch(updateAccessToken(message.data.accessToken));
             dispatch(updateDesignerAccessToken(message.data.accessToken));
             break;

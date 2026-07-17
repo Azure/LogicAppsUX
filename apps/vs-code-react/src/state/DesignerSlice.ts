@@ -107,7 +107,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       state.connectionData = connectionData;
       state.apiHubServiceDetails = apiHubServiceDetails;
     },
-    updateDesignerAccessToken: (state, action: PayloadAction<string>) => {
+    updateDesignerAccessToken: (state, action: PayloadAction<string | undefined>) => {
       if (state.panelMetaData) {
         state.panelMetaData = { ...state.panelMetaData, accessToken: action.payload };
       }

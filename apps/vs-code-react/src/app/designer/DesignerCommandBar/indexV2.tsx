@@ -79,7 +79,7 @@ export interface DesignerCommandBarProps {
   isDarkMode: boolean;
   isLocal: boolean;
   runId: string;
-  saveWorkflow: (workflow: Workflow, customCodeData: Record<string, string> | undefined, clearDirtyState: () => void) => Promise<any>;
+  saveWorkflow: (workflow: Workflow, customCodeData: Record<string, string> | undefined) => Promise<any>;
   saveWorkflowFromCode: (clearDirtyState: () => void) => Promise<any>;
   discard: () => void;
   isDesignerView: boolean;
@@ -143,7 +143,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
       if (!hasParametersErrors) {
-        _saveWorkflow(serializedWorkflow, customCodeData as any, () => dispatch(resetDesignerDirtyState(undefined)));
+        _saveWorkflow(serializedWorkflow, customCodeData as any);
       }
     } catch (error: any) {
       console.error('Error saving workflow:', error);
