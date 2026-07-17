@@ -46,17 +46,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Github Action'
-        uses: actions/checkout@master
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
           fetch-depth: 0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v5
         with:
           version: 9.1.3
           run_install: |
@@ -79,16 +79,16 @@ jobs:
     steps:
       # checkout the repo
       - name: 'Checkout Github Action'
-        uses: actions/checkout@master
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up Node.js version 24
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v5
         with:
           node-version: 24
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v5
         with:
           version: 9.1.3
           run_install: |
@@ -114,7 +114,7 @@ jobs:
           fallback: 0.0.0
 
       - name: Archive VSIX
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: |
             apps/vs-code-designer/dist/*.vsix
@@ -134,7 +134,7 @@ jobs:
         id-token: write
     steps:
       - name: 'Checkout Github Action'
-        uses: actions/checkout@master
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
 
@@ -146,11 +146,11 @@ jobs:
           subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v5
         with:
           version: 9.1.3
           run_install: |

@@ -21,7 +21,7 @@ jobs:
     env:
       RGName : rg${{ github.run_id }}${{ github.run_attempt }}${{ matrix.shardIndex }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Azure login
       uses: azure/login@v2
@@ -38,7 +38,7 @@ jobs:
           --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
           --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
   
-    - uses: pnpm/action-setup@v3
+    - uses: pnpm/action-setup@v5
       with:
         version: 9.1.3
         run_install: |
@@ -89,7 +89,7 @@ jobs:
 
     - name: Upload blob report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: blob-report-${{ matrix.shardIndex }}
         path: blob-report
@@ -104,13 +104,13 @@ jobs:
     permissions:
         id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
 
       - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: all-blob-reports
           pattern: blob-report-*
@@ -136,7 +136,7 @@ jobs:
           echo "::notice title=HTML report url::https://lauxtestreport.z13.web.core.windows.net/$REPORT_DIR/index.html"
 
       - name: Upload HTML report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: html-report--attempt-${{ github.run_attempt }}
           path: playwright-report
