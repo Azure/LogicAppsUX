@@ -5,6 +5,7 @@
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { dotnetDependencyName } from '../../../constants';
 import { binariesExist, getLatestDotNetVersion } from '../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../utils/dependencyUpdateCheck';
 import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../../utils/dotnet/dotnet';
 import { installDotNet } from './installDotNet';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
@@ -27,11 +28,16 @@ export async function validateDotNetIsLatest(majorVersion?: string): Promise<voi
           await installDotNet(context, version);
         } else {
           context.telemetry.properties.localVersion = localVersion;
-          const newestVersion: string | undefined = await getLatestDotNetVersion(context, version);
+          // Throttle the network "is there a newer .NET SDK?" lookup: an already-installed,
+          // runnable SDK is only compared against the latest published version at most once per
+          // throttle window. A missing/unrunnable SDK is still reinstalled above on every launch.
+          if (shouldCheckForDependencyUpdates()) {
+            const newestVersion: string | undefined = await getLatestDotNetVersion(context, version);
 
-          if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
-            context.telemetry.properties.outOfDateDotNet = 'true';
-            await installDotNet(context, version);
+            if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
+              context.telemetry.properties.outOfDateDotNet = 'true';
+              await installDotNet(context, version);
+            }
           }
         }
       }

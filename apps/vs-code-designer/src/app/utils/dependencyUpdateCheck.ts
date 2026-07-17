@@ -1,0 +1,46 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../extensionVariables';
+
+/**
+ * Key used to persist the timestamp (epoch ms) of the last time we checked whether the
+ * runtime dependencies (Node.js, Functions Core Tools, .NET SDK) had newer versions available.
+ */
+const lastDependencyUpdateCheckKey = 'azureLogicAppsStandard.lastDependencyUpdateCheck';
+
+/**
+ * Minimum interval between "is there a newer version?" checks. Missing binaries are always
+ * installed regardless of this interval; only the network lookups that compare an already
+ * installed binary against the latest published version are throttled.
+ */
+export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+
+/**
+ * Determines whether the runtime dependency "latest version" network lookups should run.
+ *
+ * This throttle gates **only** the network calls that compare an already-installed binary
+ * against the newest published version (npm/GitHub). Local presence and integrity checks
+ * (existence, the on-disk integrity manifest, and the local `--version` spawn) always run
+ * regardless of this throttle, so a missing or corrupted binary is still reinstalled on every
+ * activation. Performing the network lookups on every activation is the main contributor to
+ * slow startup, so we only do it at most once per {@link dependencyUpdateCheckIntervalMs}.
+ * @param {number} now - Current time in epoch ms. Defaults to Date.now(). Injectable for tests.
+ * @returns {boolean} True if the network update checks should run.
+ */
+export function shouldCheckForDependencyUpdates(now: number = Date.now()): boolean {
+  const lastCheck = ext.context?.globalState.get<number>(lastDependencyUpdateCheckKey);
+  if (typeof lastCheck !== 'number' || Number.isNaN(lastCheck)) {
+    return true;
+  }
+  return now - lastCheck >= dependencyUpdateCheckIntervalMs;
+}
+
+/**
+ * Records that a full dependency update check just completed, resetting the throttle window.
+ * @param {number} now - Current time in epoch ms. Defaults to Date.now(). Injectable for tests.
+ */
+export async function recordDependencyUpdateCheck(now: number = Date.now()): Promise<void> {
+  await ext.context?.globalState.update(lastDependencyUpdateCheckKey, now);
+}

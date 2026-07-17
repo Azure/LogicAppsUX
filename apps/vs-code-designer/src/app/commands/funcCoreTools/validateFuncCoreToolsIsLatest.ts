@@ -6,6 +6,7 @@ import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies, verifyDependencyIntegrity } from '../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../utils/dependencyUpdateCheck';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
@@ -47,7 +48,13 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     const localVersion: string | null = hasValidBinaries ? await getLocalFuncCoreToolsVersion() : null;
     context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-    const newestVersion: string | undefined = hasValidBinaries ? await getLatestFunctionCoreToolsVersion(context, majorVersion) : undefined;
+    // Throttle the network "is there a newer Functions Core Tools?" lookup: an already-installed,
+    // runnable func is only compared against the latest published version at most once per throttle
+    // window. Missing/corrupt/unrunnable binaries are still reinstalled below on every launch.
+    const shouldCheckForUpdate = hasValidBinaries && shouldCheckForDependencyUpdates();
+    const newestVersion: string | undefined = shouldCheckForUpdate
+      ? await getLatestFunctionCoreToolsVersion(context, majorVersion)
+      : undefined;
     const isOutdated = hasValidBinaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
 
     const shouldInstall = !binaries || !integrityValid || localVersion === null || isOutdated;
