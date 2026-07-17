@@ -105,7 +105,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
     },
     updateDesignerAccessToken: (state, action: PayloadAction<string | undefined>) => {
       if (state.panelMetaData) {
-        state.panelMetaData = { ...state.panelMetaData, accessToken: action.payload };
+        state.panelMetaData.accessToken = action.payload;
       }
     },
     createFileSystemConnection: (state, action: PayloadAction<any>) => {

@@ -25,6 +25,10 @@ export class HttpClient implements IHttpClient {
   /**
    * Updates the access token used for authenticated requests.
    * Call this when the token is refreshed to avoid stale-token failures on save.
+   *
+   * Note: This is not thread-safe — if a request is already in flight when this is called,
+   * that in-flight request will continue with the old token. The updated token takes effect
+   * only on subsequent requests.
    */
   updateAccessToken(token: string | undefined): void {
     this._accessToken = token;

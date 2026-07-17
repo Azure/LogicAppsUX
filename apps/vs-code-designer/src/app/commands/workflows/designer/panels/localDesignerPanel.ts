@@ -211,24 +211,33 @@ export default class LocalDesignerPanel extends DesignerPanel {
         }, 3000);
 
         // Refresh access token every 5 minutes to prevent stale-token failures on save.
+        // Uses recursive setTimeout instead of setInterval to prevent overlapping async calls.
         // Only post an update when the token actually changes and is non-empty.
-        this.accessTokenInterval = setInterval(async () => {
-          try {
-            const tenantId = this.panelMetadata?.azureDetails?.tenantId;
-            const updatedAccessToken = await getAuthorizationToken(tenantId);
-            if (updatedAccessToken && updatedAccessToken !== this.panelMetadata?.accessToken) {
-              this.panelMetadata.accessToken = updatedAccessToken;
-              this.panel?.webview.postMessage({
-                command: ExtensionCommand.update_access_token,
-                data: {
-                  accessToken: updatedAccessToken,
-                },
-              });
+        const scheduleTokenRefresh = () => {
+          this.accessTokenInterval = setTimeout(async () => {
+            try {
+              const tenantId = this.panelMetadata?.azureDetails?.tenantId;
+              const updatedAccessToken = await getAuthorizationToken(tenantId);
+              if (updatedAccessToken && updatedAccessToken !== this.panelMetadata?.accessToken) {
+                this.panelMetadata.accessToken = updatedAccessToken;
+                this.panel?.webview.postMessage({
+                  command: ExtensionCommand.update_access_token,
+                  data: {
+                    accessToken: updatedAccessToken,
+                  },
+                });
+              }
+            } catch {
+              // Silently ignore token refresh failures — the existing token may still be valid
+            } finally {
+              // Schedule the next refresh only after this one completes
+              if (this.panel) {
+                scheduleTokenRefresh();
+              }
             }
-          } catch {
-            // Silently ignore token refresh failures — the existing token may still be valid
-          }
-        }, 300000);
+          }, 300000);
+        };
+        scheduleTokenRefresh();
 
         this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
