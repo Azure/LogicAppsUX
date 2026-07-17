@@ -108,6 +108,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+          package-manager-cache: false
 
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v7
