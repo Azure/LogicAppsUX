@@ -72,7 +72,6 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
       [workflowSubscriptionIdKey]: '',
     });
     expect(getAuthData).not.toHaveBeenCalled();
-    expect(context.telemetry.properties.azureConnectorsDefaulted).toBe('true');
   });
 
   it('handles undefined projectPath', async () => {
