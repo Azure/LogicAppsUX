@@ -1,3 +1,7 @@
+import type { Artifacts, FileDetails } from './artifact';
+import type { Parameter } from './parameter';
+import type { AzureConnectorDetails } from './workflow';
+
 export interface ConnectionReferenceModel {
   connection: {
     id: string;
@@ -143,4 +147,20 @@ export interface FileSystemConnectionInfo {
   externalAlternativeParameterValues?: Record<string, any>;
   displayName?: string;
   parameterName?: string;
+}
+
+export interface ConnectionPanelMetadata {
+  panelId: string;
+  appSettingNames?: string[];
+  connectionsData: string;
+  parametersData: Record<string, Parameter>;
+  localSettings: Record<string, string>;
+  azureDetails: AzureConnectorDetails;
+  workflowDetails: Record<string, any>;
+  workflowName: string;
+  artifacts: Artifacts;
+  accessToken?: string;
+  schemaArtifacts: FileDetails[];
+  mapArtifacts: Record<string, FileDetails[]>;
+  extensionBundleVersion?: string;
 }

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { useNodeDesignTimeWorkerSetting } from '../../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
@@ -92,6 +93,18 @@ export async function updateWorkspaceSetting<T = string>(
 export function getWorkspaceSetting<T>(key: string, fsPath?: string | WorkspaceFolder, prefix: string = ext.prefix): T | undefined {
   const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, getScope(fsPath));
   return projectConfiguration.get<T>(key);
+}
+
+/**
+ * Resolves whether the shared design-time host should fall back to the Node worker instead of running
+ * in-process .NET 8. Defaults to false (dotnet + FUNCTIONS_INPROC_NET8_ENABLED), which is required for the
+ * Data Mapper Test map's NetFxWorker. Users can opt into the Node worker via the
+ * `azureLogicAppsStandard.useNodeDesignTimeWorker` setting if the .NET 8 host is problematic for them.
+ * @param {string | WorkspaceFolder} [fsPath] - Optional project path/folder to scope the setting lookup.
+ * @returns {boolean} True when the Node-worker fallback is enabled.
+ */
+export function useNodeDesignTimeWorker(fsPath?: string | WorkspaceFolder): boolean {
+  return getWorkspaceSetting<boolean>(useNodeDesignTimeWorkerSetting, fsPath) === true;
 }
 
 function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | WorkspaceFolder | undefined {
