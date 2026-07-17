@@ -14,12 +14,15 @@ import {
   localSettingsFileName,
   logicAppKind,
   parametersFileName,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
   workerRuntimeKey,
   workflowFileName,
   workflowOperationDiscoveryHostModeKey,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
+import { useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
@@ -38,9 +41,12 @@ import { detectProjectType } from '../project';
 const appSettingReferenceRegex = /appsetting\(\s*['"]([^'"]+)['"]\s*\)/g;
 
 /**
- * App setting keys that are required for the design-time local.settings.json to be considered valid.
+ * App setting keys that must always be present (non-empty) for the design-time local.settings.json to be
+ * considered valid, regardless of which worker runtime is selected. The worker-runtime value itself (and the
+ * in-process .NET 8 flag when applicable) is validated separately in isDesignTimeSettingsFileValid so the
+ * check can adapt to the Node-worker fallback.
  */
-const requiredDesignTimeSettingKeys = [appKindSetting, workerRuntimeKey, ProjectDirectoryPathKey];
+const baseRequiredDesignTimeSettingKeys = [appKindSetting, workerRuntimeKey, ProjectDirectoryPathKey];
 
 /**
  * Reads the text content of a file, returning an empty string when the file does not exist or cannot be read.
@@ -290,7 +296,7 @@ async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Pro
  * @param {string} settingsFilePath - Absolute path to the design-time local.settings.json file.
  * @returns {Promise<boolean>} True when the file is present and contains the required keys.
  */
-async function isDesignTimeSettingsFileValid(settingsFilePath: string): Promise<boolean> {
+async function isDesignTimeSettingsFileValid(settingsFilePath: string, useNodeWorker: boolean): Promise<boolean> {
   const content = await readFileTextSafe(settingsFilePath);
   if (!content) {
     return false;
@@ -299,7 +305,22 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string): Promise<
   try {
     const parsed = parseJson(content) as ILocalSettingsJson;
     const values = parsed?.Values ?? {};
-    return requiredDesignTimeSettingKeys.every((key) => values[key] !== undefined && values[key] !== '');
+    const allRequiredKeysPresent = baseRequiredDesignTimeSettingKeys.every((key) => values[key] !== undefined && values[key] !== '');
+    if (!allRequiredKeysPresent) {
+      return false;
+    }
+
+    // Presence alone is not enough: the file must also point at the expected worker runtime. When the
+    // Node-worker fallback is enabled, a Node file is valid. Otherwise the design-time host must run
+    // in-process .NET 8 so the Functions runtime spawns the NetFxWorker that the Data Mapper Test map
+    // relies on, so require dotnet + FUNCTIONS_INPROC_NET8_ENABLED. A file left on the wrong runtime is
+    // treated as invalid and regenerated.
+    const workerRuntime = (values[workerRuntimeKey] ?? '').toLowerCase();
+    if (useNodeWorker) {
+      return workerRuntime === WorkerRuntime.Node;
+    }
+    const inprocNet8Enabled = values[functionsInprocNet8Enabled] === functionsInprocNet8EnabledTrue;
+    return workerRuntime === WorkerRuntime.Dotnet && inprocNet8Enabled;
   } catch {
     return false;
   }
@@ -330,7 +351,10 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
   }
 
   const hostFileValid = await isHostFileValid(path.join(designTimeDirectoryPath, hostFileName), true);
-  const settingsFileValid = await isDesignTimeSettingsFileValid(path.join(designTimeDirectoryPath, localSettingsFileName));
+  const settingsFileValid = await isDesignTimeSettingsFileValid(
+    path.join(designTimeDirectoryPath, localSettingsFileName),
+    useNodeDesignTimeWorker(projectPath)
+  );
 
   return {
     directoryExists: true,
@@ -379,18 +403,18 @@ export async function regenerateDesignTimeDirectory(context: IActionContext, pro
 
   if (!validation.settingsFileValid) {
     const logicAppType = await detectProjectType(projectPath);
-    const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType);
+    const useNodeWorker = useNodeDesignTimeWorker(projectPath);
+    const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType, useNodeWorker);
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, localSettingsFileName), settingsFileContent);
-    await addOrUpdateLocalAppSettings(
-      context,
-      designTimeDirectory.fsPath,
-      {
-        [appKindSetting]: logicAppKind,
-        [ProjectDirectoryPathKey]: projectPath,
-        [workerRuntimeKey]: WorkerRuntime.Node,
-      },
-      true
-    );
+    const runtimeSettings: Record<string, string> = {
+      [appKindSetting]: logicAppKind,
+      [ProjectDirectoryPathKey]: projectPath,
+      [workerRuntimeKey]: useNodeWorker ? WorkerRuntime.Node : WorkerRuntime.Dotnet,
+    };
+    if (!useNodeWorker) {
+      runtimeSettings[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+    }
+    await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, runtimeSettings, true);
     ext.outputChannel.appendLog(
       localize('regeneratedDesignTimeSettings', 'Regenerated design-time local.settings.json for project "{0}".', projectPath)
     );

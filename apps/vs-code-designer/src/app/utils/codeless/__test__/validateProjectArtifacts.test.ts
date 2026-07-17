@@ -5,7 +5,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { workspace } from 'vscode';
-import * as path from 'path';
 import * as fse from 'fs-extra';
 import {
   ProjectDirectoryPathKey,
@@ -29,6 +28,7 @@ import * as localSettings from '../../appSettings/localSettings';
 import { writeFormattedJson } from '../../fs';
 import { hasCodefulSdkReference, hasCodefulWorkflowSetting } from '../../codeful';
 import { isCustomCodeFunctionsProjectInRoot, tryGetLogicAppCustomCodeFunctionsProjects } from '../../customCodeUtils';
+import { useNodeDesignTimeWorker } from '../../vsCodeConfig/settings';
 import {
   extractAppSettingReferences,
   getReferencedAppSettings,
@@ -68,6 +68,14 @@ vi.mock('../../customCodeUtils', () => ({
   isCustomCodeFunctionsProjectInRoot: vi.fn(() => Promise.resolve(false)),
   tryGetLogicAppCustomCodeFunctionsProjects: vi.fn(() => Promise.resolve(undefined)),
 }));
+
+vi.mock('../../vsCodeConfig/settings', async (importActual) => {
+  const actual = await importActual<typeof import('../../vsCodeConfig/settings')>();
+  return {
+    ...actual,
+    useNodeDesignTimeWorker: vi.fn(() => false),
+  };
+});
 
 const projectPath = '/workspace/LogicApp';
 
@@ -112,6 +120,7 @@ describe('validateProjectArtifacts', () => {
     mockedIsCodeful.mockResolvedValue(false);
     mockedIsCustomCodeInRoot.mockResolvedValue(false);
     mockedFse.readdir.mockResolvedValue([]);
+    vi.mocked(useNodeDesignTimeWorker).mockReturnValue(false);
     (workspace as any).fs = { createDirectory: vi.fn(() => Promise.resolve()) };
   });
 
@@ -374,7 +383,12 @@ describe('validateProjectArtifacts', () => {
       extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
     });
     const validSettings = JSON.stringify({
-      Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+      Values: {
+        APP_KIND: 'workflowapp',
+        FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        ProjectDirectoryPath: projectPath,
+      },
     });
 
     it('reports invalid when the directory does not exist', async () => {
@@ -462,6 +476,98 @@ describe('validateProjectArtifacts', () => {
       expect(result.settingsFileValid).toBe(false);
       expect(result.isValid).toBe(false);
     });
+
+    it('reports invalid settings for a stale Node design-time file lacking the in-process .NET 8 flag', async () => {
+      // An older extension generated a design-time file on the Node worker without
+      // FUNCTIONS_INPROC_NET8_ENABLED. It must be treated as invalid so it is regenerated to the
+      // in-process .NET 8 host that spawns the NetFxWorker required by the Data Mapper Test map.
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when all required keys are present but the worker runtime is still Node', async () => {
+      // Presence of every required key is not enough: a file that carries the in-process .NET 8 flag but
+      // still points FUNCTIONS_WORKER_RUNTIME at "node" would launch the host on the wrong worker. It must
+      // be treated as invalid so it is regenerated to dotnet + in-process .NET 8.
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'node',
+            FUNCTIONS_INPROC_NET8_ENABLED: '1',
+            ProjectDirectoryPath: projectPath,
+          },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when the worker runtime is dotnet but the in-process .NET 8 flag is disabled', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+            FUNCTIONS_INPROC_NET8_ENABLED: '0',
+            ProjectDirectoryPath: projectPath,
+          },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports valid settings for a Node design-time file when the Node-worker fallback is enabled', async () => {
+      vi.mocked(useNodeDesignTimeWorker).mockReturnValue(true);
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(true);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('reports invalid settings for a dotnet + in-process .NET 8 file when the Node-worker fallback is enabled', async () => {
+      // Toggling into the fallback must invalidate the dotnet file so it is regenerated to Node.
+      vi.mocked(useNodeDesignTimeWorker).mockReturnValue(true);
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: validSettings,
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
   });
 
   describe('regenerateDesignTimeDirectory', () => {
@@ -480,6 +586,18 @@ describe('validateProjectArtifacts', () => {
       expect(mockedAddOrUpdate).toHaveBeenCalled();
     });
 
+    it('regenerates the design-time settings on the Node worker when the fallback is enabled', async () => {
+      vi.mocked(useNodeDesignTimeWorker).mockReturnValue(true);
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+
+      await regenerateDesignTimeDirectory(context, projectPath);
+
+      const runtimeSettings = mockedAddOrUpdate.mock.calls[0]?.[2] as Record<string, string>;
+      expect(runtimeSettings[workerRuntimeKey]).toBe(WorkerRuntime.Node);
+      expect(runtimeSettings[functionsInprocNet8Enabled]).toBeUndefined();
+    });
+
     it('preserves valid existing files and does not rewrite them', async () => {
       const hostPath = `${designTimeDir}/host.json`;
       const settingsPath = `${designTimeDir}/local.settings.json`;
@@ -489,7 +607,12 @@ describe('validateProjectArtifacts', () => {
         extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
       });
       const validSettings = JSON.stringify({
-        Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          ProjectDirectoryPath: projectPath,
+        },
       });
 
       mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: validSettings });
@@ -559,7 +682,7 @@ describe('validateProjectArtifacts', () => {
         expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
       });
 
-      it('writes design-time local.settings.json with the exact baseline and upserts Node runtime (codeless)', async () => {
+      it('writes design-time local.settings.json with the exact baseline and upserts dotnet in-process .NET 8 runtime (codeless)', async () => {
         mockFiles({});
         mockedFse.readdir.mockResolvedValue([]);
         mockedIsCodeful.mockResolvedValue(false);
@@ -571,14 +694,20 @@ describe('validateProjectArtifacts', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
           },
         });
         expect(mockedAddOrUpdate).toHaveBeenCalledWith(
           context,
           expect.stringContaining('workflow-designtime'),
-          { [appKindSetting]: logicAppKind, [ProjectDirectoryPathKey]: projectPath, [workerRuntimeKey]: WorkerRuntime.Node },
+          {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+          },
           true
         );
       });
@@ -595,7 +724,8 @@ describe('validateProjectArtifacts', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
           },
@@ -627,7 +757,8 @@ describe('validateProjectArtifacts', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
           },
@@ -706,7 +837,12 @@ describe('validateProjectArtifacts', () => {
       extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
     });
     const validDesignSettings = JSON.stringify({
-      Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+      Values: {
+        APP_KIND: 'workflowapp',
+        FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        ProjectDirectoryPath: projectPath,
+      },
     });
 
     it('regenerates the root host.json, root local.settings.json and design-time directory when all are missing', async () => {

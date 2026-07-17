@@ -156,6 +156,7 @@ export const extensionCommand = {
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
+  toggleDesignTimeNodeWorker: 'azureLogicAppsStandard.toggleDesignTimeNodeWorker',
   openInPortal: 'azureLogicAppsStandard.openInPortal',
   azureFunctionsOpenFile: 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
@@ -262,6 +263,7 @@ export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
+export const useNodeDesignTimeWorkerSetting = 'useNodeDesignTimeWorker';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';

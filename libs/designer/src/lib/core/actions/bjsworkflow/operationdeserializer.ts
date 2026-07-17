@@ -195,7 +195,13 @@ export const initializeOperationMetadata = async (
 
   const variables = initializeVariables(operations, allNodeData);
   const agentParameters = initializeAgentParameters(nodesMetadata, allNodeData);
-  const outputTokens = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
+  const outputTokens = initializeOutputTokensForOperations(
+    allNodeData,
+    operations,
+    graph,
+    nodesMetadata,
+    pasteParams ? Object.keys(pasteParams.existingOutputTokens) : []
+  );
   dispatch(
     initializeTokensAndVariables({
       outputTokens,
@@ -583,7 +589,7 @@ const updateTokenMetadataInParameters = (
   }
 };
 
-const initializeOutputTokensForOperations = (
+export const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
