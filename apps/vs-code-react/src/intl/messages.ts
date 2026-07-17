@@ -15,6 +15,11 @@ export const commonMessages = defineMessages({
     id: 'XtVOMn',
     description: 'Something went wrong text',
   },
+  RUNTIME_NOT_AVAILABLE: {
+    defaultMessage: 'Start debugging to run the workflow',
+    id: 'g0M0Ey',
+    description: 'Tooltip text shown when the workflow runtime is not available',
+  },
   LOADING: {
     defaultMessage: 'Loading',
     id: 'WgJsL1',
