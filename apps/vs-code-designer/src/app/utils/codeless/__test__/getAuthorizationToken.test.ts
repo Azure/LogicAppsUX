@@ -18,7 +18,7 @@ describe('getAuthorizationToken', () => {
     } as any);
   });
 
-  it('should return a ****** string when session has a valid accessToken', async () => {
+  it('should return a Bearer-prefixed token string when session has a valid accessToken', async () => {
     vi.spyOn(azureAuth, 'getSessionFromVSCode').mockResolvedValue({
       accessToken: 'test-token-123',
       id: 'session-1',
@@ -83,7 +83,7 @@ describe('getAuthorizationTokenFromNode', () => {
     await expect(getAuthorizationTokenFromNode(node)).rejects.toThrow();
   });
 
-  it('should return a ****** string from node subscription credentials', async () => {
+  it('should return a Bearer-prefixed token string from node subscription credentials', async () => {
     const node = {
       subscription: {
         tenantId: 'tenant-1',

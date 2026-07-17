@@ -271,8 +271,9 @@ export const parseWorkflowParameterValue = (parameterType: any, parameterValue: 
         : typeof parameterValue !== 'string'
           ? parameterValue
           : JSON.parse(parameterValue);
-  } catch {
+  } catch (e) {
     // Return the raw value rather than undefined to avoid silently dropping parameter data
+    console.error('Failed to parse workflow parameter value, returning raw value:', e);
     return parameterValue;
   }
 };

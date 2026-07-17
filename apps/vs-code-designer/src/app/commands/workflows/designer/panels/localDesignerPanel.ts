@@ -217,9 +217,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
             const tenantId = this.panelMetadata?.azureDetails?.tenantId;
             const updatedAccessToken = await getAuthorizationToken(tenantId);
             if (updatedAccessToken && updatedAccessToken !== this.panelMetadata?.accessToken) {
-              if (this.panelMetadata) {
-                this.panelMetadata.accessToken = updatedAccessToken;
-              }
+              this.panelMetadata.accessToken = updatedAccessToken;
               this.panel?.webview.postMessage({
                 command: ExtensionCommand.update_access_token,
                 data: {

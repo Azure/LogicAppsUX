@@ -381,6 +381,34 @@ describe('HttpClient', () => {
         })
       );
     });
+
+    it('should succeed after updateAccessToken replaces a stale token', async () => {
+      const staleClient = new HttpClient({ ...httpClientOptions, accessToken: 'stale-token' });
+      // First request fails with 401 (stale token)
+      (axios as any).mockRejectedValueOnce({
+        response: { status: 401, data: { error: { message: 'Token expired' } } },
+      });
+      const options: HttpRequestOptions<unknown> = {
+        uri: '/subscriptions/sub-1/resource',
+        headers: {},
+        content: {},
+      };
+      await expect(staleClient.post(options)).rejects.toBeTruthy();
+
+      // Refresh the token, then retry — should succeed
+      staleClient.updateAccessToken('fresh-token');
+      (axios as any).mockResolvedValue({ data: { id: 'result' }, status: 200 });
+
+      const result = await staleClient.post(options);
+      expect(result).toEqual({ id: 'result' });
+      expect(axios).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: 'fresh-token',
+          }),
+        })
+      );
+    });
   });
 
   describe('request URL construction', () => {
