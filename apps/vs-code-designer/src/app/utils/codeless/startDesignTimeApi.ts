@@ -26,7 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
-import { regenerateLocalSettings, regenerateRootHostFile, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
+import { ensureProjectRootArtifacts, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
 import { delay } from '../delay';
 import {
   DialogResponses,
@@ -743,16 +743,15 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
       }
 
       for (const projectPath of logicAppFolders) {
-        // Keep source-controlled projects valid by regenerating the git-ignored host.json /
-        // local.settings.json (incl. every app setting the logic app references).
-        ext.outputChannel.appendLog(
-          localize('ensuringProjectArtifacts', 'Ensuring host.json and local.settings.json for logic app "{0}".', projectPath)
-        );
-        await regenerateRootHostFile(projectPath);
-        await regenerateLocalSettings(context, projectPath);
-
         if (autoStartDesignTime) {
+          // The scheduled startDesignTimeApi() runs validateAndRegenerateProjectArtifacts() once and
+          // logs a single per-project artifact summary, so don't regenerate up-front here — doing so
+          // would repeat both the work and the log lines for every project.
           scheduleStartDesignTimeApi(projectPath);
+        } else {
+          // Auto-start is off: keep source-controlled clones valid by regenerating the git-ignored
+          // host.json / local.settings.json now. Emits one concise per-project summary line.
+          await ensureProjectRootArtifacts(context, projectPath);
         }
       }
     } else {

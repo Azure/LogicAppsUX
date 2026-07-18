@@ -15,8 +15,9 @@ import {
   stopDesignTimeApi,
   promptStartDesignTimeOption,
 } from '../startDesignTimeApi';
-import { regenerateLocalSettings, regenerateRootHostFile } from '../validateProjectArtifacts';
+import { ensureProjectRootArtifacts, regenerateLocalSettings, regenerateRootHostFile } from '../validateProjectArtifacts';
 import { getWorkspaceSetting } from '../../vsCodeConfig/settings';
+import { autoStartDesignTimeSetting } from '../../../../constants';
 
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
@@ -26,6 +27,7 @@ vi.mock('../../appSettings/localSettings', () => ({
 vi.mock('../validateProjectArtifacts', () => ({
   regenerateLocalSettings: vi.fn(),
   regenerateRootHostFile: vi.fn(),
+  ensureProjectRootArtifacts: vi.fn(),
   // Preserve the existing failure-injection semantics: the design-time startup tests drive
   // success/failure through workspace.fs.createDirectory, so route the orchestrator through it.
   validateAndRegenerateProjectArtifacts: vi.fn(async (_context: unknown, projectPath: string) => {
@@ -402,19 +404,40 @@ describe('promptStartDesignTimeOption', () => {
     vi.mocked(getWorkspaceSetting).mockReturnValue(undefined as any);
   });
 
-  it('regenerates host.json and local.settings.json for each detected logic app folder', async () => {
+  it('ensures root artifacts once per detected logic app folder when auto-start is off', async () => {
     (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
     vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
 
     await promptStartDesignTimeOption(context);
 
-    expect(regenerateRootHostFile).toHaveBeenCalledWith('D:/workspace/app-one');
-    expect(regenerateRootHostFile).toHaveBeenCalledWith('D:/workspace/app-two');
-    expect(regenerateLocalSettings).toHaveBeenCalledWith(context, 'D:/workspace/app-one');
-    expect(regenerateLocalSettings).toHaveBeenCalledWith(context, 'D:/workspace/app-two');
+    // The consolidated helper is the single validation entry point; the low-level regenerate helpers
+    // are no longer called directly from the prompt loop.
+    expect(ensureProjectRootArtifacts).toHaveBeenCalledWith(context, 'D:/workspace/app-one');
+    expect(ensureProjectRootArtifacts).toHaveBeenCalledWith(context, 'D:/workspace/app-two');
+    expect(ensureProjectRootArtifacts).toHaveBeenCalledTimes(2);
+    expect(regenerateRootHostFile).not.toHaveBeenCalled();
+    expect(regenerateLocalSettings).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Detected 2 logic app project folder(s) for artifact regeneration: D:/workspace/app-one, D:/workspace/app-two.'
     );
+  });
+
+  it('does not run the up-front artifact pass when auto-start is on (validation happens via the start path)', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
+    // Auto-start enabled.
+    vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => (key === autoStartDesignTimeSetting ? true : undefined) as any);
+    // Pre-seed each project's design-time instance with a resolved startup promise so the fire-and-forget
+    // scheduleStartDesignTimeApi() -> startDesignTimeApi() short-circuits without doing real work.
+    ext.designTimeInstances.set('D:/workspace/app-one', { startupPromise: Promise.resolve() } as any);
+    ext.designTimeInstances.set('D:/workspace/app-two', { startupPromise: Promise.resolve() } as any);
+
+    await promptStartDesignTimeOption(context);
+
+    // No duplicate up-front pass: the prompt loop must not ensure root artifacts when auto-starting.
+    expect(ensureProjectRootArtifacts).not.toHaveBeenCalled();
+    expect(regenerateRootHostFile).not.toHaveBeenCalled();
+    expect(regenerateLocalSettings).not.toHaveBeenCalled();
   });
 
   it('logs and skips regeneration when no logic app folders are detected', async () => {
@@ -423,6 +446,7 @@ describe('promptStartDesignTimeOption', () => {
 
     await promptStartDesignTimeOption(context);
 
+    expect(ensureProjectRootArtifacts).not.toHaveBeenCalled();
     expect(regenerateRootHostFile).not.toHaveBeenCalled();
     expect(regenerateLocalSettings).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('No logic app project folders were detected'));
@@ -434,6 +458,7 @@ describe('promptStartDesignTimeOption', () => {
     await promptStartDesignTimeOption(context);
 
     expect(workspaceUtils.getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+    expect(ensureProjectRootArtifacts).not.toHaveBeenCalled();
     expect(regenerateRootHostFile).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'No workspace folders are open. Skipping host.json and local.settings.json regeneration.'
