@@ -28,6 +28,7 @@ vi.mock('../../vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
   updateGlobalSetting: vi.fn(),
   updateWorkspaceSetting: vi.fn(),
+  removeSharedSetting: vi.fn(),
 }));
 
 vi.mock('../../workspace', () => ({
@@ -61,7 +62,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import { setDotNetCommand, getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../dotnet';
-import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../../vsCodeConfig/settings';
+import { getGlobalSetting, updateGlobalSetting, removeSharedSetting } from '../../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../../workspace';
 
 const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
@@ -117,13 +118,14 @@ describe('dotnet command resolution', () => {
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', path.join(DOTNET_DIR, 'dotnet.exe'));
       expect(fs.chmodSync).toHaveBeenCalledWith(DOTNET_DIR, 0o777);
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith(
+      expect(updateGlobalSetting).toHaveBeenCalledWith(
         'integrated.env.windows',
         expect.objectContaining({ PATH: expect.stringContaining(DOTNET_DIR) }),
-        'C:/projects/logic-app',
         'terminal'
       );
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'C:/projects/logic-app', 'omnisharp');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'omnisharp');
+      expect(removeSharedSetting).toHaveBeenCalledWith('integrated.env.windows', 'terminal');
+      expect(removeSharedSetting).toHaveBeenCalledWith('dotNetCliPaths', 'omnisharp');
     });
 
     it('writes <dotNetBinariesPath>/dotnet on Linux and updates terminal.integrated.env.linux', async () => {
@@ -135,13 +137,14 @@ describe('dotnet command resolution', () => {
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', path.join(DOTNET_DIR, 'dotnet'));
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith(
+      expect(updateGlobalSetting).toHaveBeenCalledWith(
         'integrated.env.linux',
         expect.objectContaining({ PATH: expect.stringContaining(DOTNET_DIR) }),
-        '/home/me/logic-app',
         'terminal'
       );
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], '/home/me/logic-app', 'omnisharp');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'omnisharp');
+      expect(removeSharedSetting).toHaveBeenCalledWith('integrated.env.linux', 'terminal');
+      expect(removeSharedSetting).toHaveBeenCalledWith('dotNetCliPaths', 'omnisharp');
     });
 
     it('writes <dotNetBinariesPath>/dotnet on macOS and updates terminal.integrated.env.osx', async () => {
@@ -153,13 +156,14 @@ describe('dotnet command resolution', () => {
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', path.join(DOTNET_DIR, 'dotnet'));
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith(
+      expect(updateGlobalSetting).toHaveBeenCalledWith(
         'integrated.env.osx',
         expect.objectContaining({ PATH: expect.stringContaining(DOTNET_DIR) }),
-        '/Users/me/logic-app',
         'terminal'
       );
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], '/Users/me/logic-app', 'omnisharp');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'omnisharp');
+      expect(removeSharedSetting).toHaveBeenCalledWith('integrated.env.osx', 'terminal');
+      expect(removeSharedSetting).toHaveBeenCalledWith('dotNetCliPaths', 'omnisharp');
     });
 
     it('still writes the global setting when getWorkspaceLogicAppFolders throws', async () => {

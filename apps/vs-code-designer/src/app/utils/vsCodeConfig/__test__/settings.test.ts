@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { createSettingsDetails } from '../settings';
+import { createSettingsDetails, removeSharedSetting } from '../settings';
 import { ext } from '../../../../extensionVariables';
 
 describe('utils/vsCodeConfig/settings', () => {
@@ -97,6 +97,51 @@ describe('utils/vsCodeConfig/settings', () => {
         zeroSetting: 0,
         emptySetting: '',
       });
+    });
+  });
+
+  describe('removeSharedSetting', () => {
+    const mockGetConfiguration = vi.mocked(vscode.workspace.getConfiguration);
+    let update: ReturnType<typeof vi.fn>;
+    let mockConfig: { update: ReturnType<typeof vi.fn>; inspect: ReturnType<typeof vi.fn> };
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      update = vi.fn().mockResolvedValue(undefined);
+      mockConfig = {
+        update,
+        inspect: vi.fn().mockReturnValue({ globalValue: ['/global/path'] }),
+      };
+      mockGetConfiguration.mockReturnValue(mockConfig as any);
+      (vscode.workspace as any).workspaceFolders = [];
+    });
+
+    it('removes the value from the workspace (.code-workspace) scope', async () => {
+      await removeSharedSetting('dotNetCliPaths', 'omnisharp');
+
+      expect(mockGetConfiguration).toHaveBeenCalledWith('omnisharp');
+      expect(update).toHaveBeenCalledWith('dotNetCliPaths', undefined, vscode.ConfigurationTarget.Workspace);
+    });
+
+    it('removes the value from each workspace folder scope', async () => {
+      const folderA = { uri: vscode.Uri.file('/ws/logicapp') };
+      const folderB = { uri: vscode.Uri.file('/ws/functions') };
+      (vscode.workspace as any).workspaceFolders = [folderA, folderB];
+
+      await removeSharedSetting('azurite.location', 'azurite');
+
+      expect(mockGetConfiguration).toHaveBeenCalledWith('azurite', folderA.uri);
+      expect(mockGetConfiguration).toHaveBeenCalledWith('azurite', folderB.uri);
+      expect(update).toHaveBeenCalledWith('azurite.location', undefined, vscode.ConfigurationTarget.WorkspaceFolder);
+      // workspace scope (1) + two folder scopes (2) = 3 update calls
+      expect(update).toHaveBeenCalledTimes(3);
+    });
+
+    it('does not throw when an update fails and logs the skip', async () => {
+      update.mockRejectedValueOnce(new Error('window scoped setting'));
+
+      await expect(removeSharedSetting('integrated.env.windows', 'terminal')).resolves.toBeUndefined();
+      expect(ext.outputChannel?.appendLog).toHaveBeenCalled();
     });
   });
 });

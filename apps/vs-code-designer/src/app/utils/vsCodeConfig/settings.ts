@@ -37,6 +37,46 @@ export async function updateGlobalSetting<T = string>(section: string, value: T,
 }
 
 /**
+ * Removes a setting from the shared workspace scopes so it only lives in the user's global
+ * settings. This strips the key from the multi-root `.code-workspace` file
+ * (`ConfigurationTarget.Workspace`) and from every folder's `.vscode/settings.json`
+ * (`ConfigurationTarget.WorkspaceFolder`).
+ *
+ * Used to migrate machine-local settings (absolute binary paths, terminal env, etc.) out of
+ * files that get committed/shared in a repository. Each removal is best-effort: removing a
+ * value that is absent, or one whose registered scope forbids that target, can throw and must
+ * not break extension setup.
+ * @param {string} section - The setting key (without prefix).
+ * @param {string} prefix - The configuration prefix/section (default: ext.prefix).
+ */
+export async function removeSharedSetting(section: string, prefix: string = ext.prefix): Promise<void> {
+  // Remove the workspace-level value (the .code-workspace file in a multi-root workspace).
+  try {
+    await workspace.getConfiguration(prefix).update(section, undefined, ConfigurationTarget.Workspace);
+  } catch (error) {
+    ext.outputChannel?.appendLog(`[removeSharedSetting] Skipped workspace removal for ${prefix}.${section}: ${error}`);
+  }
+
+  // Remove any folder-level values (each folder's .vscode/settings.json).
+  for (const folder of workspace.workspaceFolders ?? []) {
+    try {
+      await workspace.getConfiguration(prefix, folder.uri).update(section, undefined, ConfigurationTarget.WorkspaceFolder);
+    } catch (error) {
+      ext.outputChannel?.appendLog(
+        `[removeSharedSetting] Skipped folder removal for ${prefix}.${section} in ${folder.uri.fsPath}: ${error}`
+      );
+    }
+  }
+
+  // Log where the value now resolves so the landing scope can be verified at runtime.
+  const inspection = workspace.getConfiguration(prefix).inspect(section);
+  ext.outputChannel?.appendLog(
+    `[removeSharedSetting] ${prefix}.${section} -> global=${JSON.stringify(inspection?.globalValue)}, ` +
+      `workspace=${JSON.stringify(inspection?.workspaceValue)}, folder=${JSON.stringify(inspection?.workspaceFolderValue)}`
+  );
+}
+
+/**
  * Searches through all open folders and gets the current workspace setting (as long as there are no conflicts)
  * Uses ext.prefix 'azureLogicAppsStandard' unless otherwise specified
  */
