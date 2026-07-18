@@ -119,14 +119,10 @@ export default class DataMapperPanel {
     this.panel.webview.html = await getWebViewHTML('vs-code-react', this.panel);
   }
 
-  public sendMsgToWebview(msg: MessageToWebview) {
-    this.panel.webview.postMessage(msg);
-  }
-
   private _handleWebviewMsg(msg: MessageToVsix) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.dataMapper,
@@ -136,7 +132,7 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.webviewLoaded: {
         // Send runtime port to webview
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.setRuntimePort,
           data: `${ext.designTimeInstances.get(ext.defaultLogicAppPath)?.port}`,
         });
@@ -214,7 +210,7 @@ export default class DataMapperPanel {
   }
 
   public isTestDisabledForOS() {
-    this.sendMsgToWebview({
+    this.panel.webview.postMessage({
       command: ExtensionCommand.isTestDisabledForOS,
       data: process.platform === Platform.mac,
     });
@@ -237,7 +233,7 @@ export default class DataMapperPanel {
   public handleLoadMapDefinitionIfAny() {
     if (this.mapDefinitionData) {
       const mapMetadata = this.readMapMetadataFile();
-      this.sendMsgToWebview({
+      this.panel.webview.postMessage({
         command: ExtensionCommand.loadDataMap,
         data: {
           ...this.mapDefinitionData,
@@ -353,7 +349,7 @@ export default class DataMapperPanel {
       result.forEach((file) => {
         this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
       });
-      this.sendMsgToWebview({
+      this.panel.webview.postMessage({
         command,
         data: filesToDisplay,
       });
@@ -370,7 +366,7 @@ export default class DataMapperPanel {
       result.forEach((file) => {
         this.getNestedFileTreePaths(file, '', folderPath, filesToDisplay, fileTypes);
       });
-      this.sendMsgToWebview({
+      this.panel.webview.postMessage({
         command: command,
         data: filesToDisplay,
       });
@@ -418,7 +414,7 @@ export default class DataMapperPanel {
             copyFileSync(primarySchemaFullPath, newPath);
           }
 
-          this.sendMsgToWebview({
+          this.panel.webview.postMessage({
             command: ExtensionCommand.fetchSchema,
             data: {
               fileName: primarySchemaFileName,
@@ -560,7 +556,7 @@ export default class DataMapperPanel {
 
     if (fileExistsSync(expectedXsltPath)) {
       fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.setXsltData,
           data: {
             filename: this.dataMapName,
@@ -576,14 +572,14 @@ export default class DataMapperPanel {
   public getConfigurationSetting(configSetting: string) {
     const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
-    this.sendMsgToWebview({
+    this.panel.webview.postMessage({
       command: ExtensionCommand.getConfigurationSetting,
       data: configValue,
     });
   }
 
   public handleGetDataMapperVersion() {
-    this.sendMsgToWebview({
+    this.panel.webview.postMessage({
       command: ExtensionCommand.getDataMapperVersion,
       data: this.dataMapVersion,
     });
