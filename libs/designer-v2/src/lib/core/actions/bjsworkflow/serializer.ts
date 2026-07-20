@@ -60,13 +60,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import type {
-  Segment,
-  LocationSwapMap,
-  LogicAppsV2,
-  OperationManifest,
-  SubGraphDetail,
-} from '@microsoft/logic-apps-shared';
+import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 import { ConnectorManifest } from './agent';
 import { isA2AWorkflow, isBuiltInMcpOperation, isManagedMcpOperation } from '../../../core/state/workflow/helper';
@@ -277,9 +271,11 @@ export const parseWorkflowParameterValue = (parameterType: any, parameterValue: 
         : typeof parameterValue !== 'string'
           ? parameterValue
           : JSON.parse(parameterValue);
-  } catch (error) {
-    console.log(error);
-    return undefined;
+  } catch (e) {
+    // Return the raw value rather than undefined to avoid silently dropping parameter data
+    const preview = typeof parameterValue === 'string' ? parameterValue.slice(0, 80) : String(parameterValue);
+    console.error(`Failed to parse workflow parameter value (type=${parameterType}, value="${preview}"):`, e);
+    return parameterValue;
   }
 };
 
