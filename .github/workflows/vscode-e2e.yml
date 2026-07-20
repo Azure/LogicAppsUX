@@ -145,7 +145,9 @@ jobs:
     name: setup-fixtures (p41a)
     needs: setup-extension-build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Headroom for one fresh-session retry (LA_E2E_SCENARIO_RETRIES) if the
+    # fixtures scenario flakes, so the retry isn't killed mid-run.
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -214,6 +216,10 @@ jobs:
         env:
           LA_E2E_SCENARIO: p41a-fixtures
           LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
+          # Retry a flaky fixtures run once in a fresh session before failing the
+          # setup job (which would block every downstream shard). Non-masking: a
+          # genuine failure still goes red after the retry.
+          LA_E2E_SCENARIO_RETRIES: '1'
           NODE_OPTIONS: --max-old-space-size=4096
           # Node's os.tmpdir() honors TMPDIR/TMP/TEMP on Linux; setting TEMP
           # pins workspace + manifest creation under $RUNNER_TEMP/la-e2e-test
@@ -303,76 +309,67 @@ jobs:
           retention-days: 30
 
   vscode-e2e:
-    name: vscode-e2e (${{ matrix.scenario }})
+    name: vscode-e2e (${{ matrix.shard }})
     needs: [setup-extension-build, setup-fixtures]
-    timeout-minutes: 25
+    # Grouped shards run scenarios sequentially and each failing scenario may
+    # retry once in a fresh session (LA_E2E_SCENARIO_RETRIES). 35m gives the
+    # heaviest group room for a retry without a timeout-induced failure.
+    timeout-minutes: 35
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          # Independent / no-workspace (don't need fixtures or bundle artifacts)
-          - scenario: p40-nonlogicapp
+          # Scenarios are grouped onto fewer runners to amortize the fixed CI
+          # setup cost (pnpm install, node symlink, xvfb apt-get, artifact
+          # download/extract, bundle + fixtures hydration) that each shard pays
+          # once. `scenario` is a comma-separated list consumed by
+          # LA_E2E_SCENARIO; run-e2e.js runs each entry in its OWN fresh VS Code
+          # session (prepareFreshSession kills lingering processes between
+          # scenarios), so grouping preserves per-scenario isolation — it is NOT
+          # the flaky "multiple tests in one window" pattern. A failing scenario
+          # still runs its siblings and fails the shard (aggregate = max exit).
+          # use_* flags are the union of the group's needs.
+          #
+          # Extension activation smoke (p40) + create-a-project-for-conversion
+          # (p48b). Grouped because both are fixture-independent and self-create
+          # any workspace they need.
+          - shard: activation-and-create
+            scenario: p40-nonlogicapp,p48b-conversioncreate
             use_workspace_fixtures: false
             use_bundle_artifact: false
-          - scenario: p48b-conversioncreate
+          # Full 12-shape workspace-creation wizard validation — self-creates its
+          # own workspaces, so it doesn't consume the fixtures artifact, but it
+          # still consumes the setup-fixtures bundle artifact and runs bundle
+          # preflight. Kept on its own shard because it is the heaviest scenario.
+          - shard: workspace-creation
+            scenario: p41b-createworkspace-behavior
             use_workspace_fixtures: false
-            use_bundle_artifact: false
-          # Full 12-shape behavior validation — self-creates its own workspaces,
-          # so it doesn't consume the fixtures artifact, but it still consumes
-          # the setup-fixtures bundle artifact and runs bundle preflight.
-          - scenario: p41b-createworkspace-behavior
-            use_workspace_fixtures: false
             use_bundle_artifact: true
-          # Designer lifecycle (consume fixtures from setup-fixtures)
-          - scenario: p42-standard
+          # Designer open → edit → save → debug → run lifecycle across app types.
+          - shard: designer-lifecycle
+            scenario: p42-standard,p42-customcode,p42-rulesengine
             use_workspace_fixtures: true
             use_bundle_artifact: true
-          - scenario: p42-customcode
+          # Runtime-touching action tests (execute code / rules engine).
+          - shard: runtime-actions
+            scenario: p43-inlinejavascript,p43-customcode,p43-rulesengine
             use_workspace_fixtures: true
             use_bundle_artifact: true
-          - scenario: p42-rulesengine
+          # Designer editing interactions: variables, extended view (parallel
+          # branches / run-after), keyboard navigation.
+          - shard: designer-interactions
+            scenario: p44-statelessvariables,p45-designerviewextended,p46-keyboardnav
             use_workspace_fixtures: true
             use_bundle_artifact: true
-          # Runtime-touching consumer tests (consume fixtures)
-          - scenario: p43-inlinejavascript
+          # Multi-designer + dataMapper suite (manifest-multi) + bundle repair.
+          - shard: suite-and-bundle
+            scenario: p47-suite,p412-bundlerepair
             use_workspace_fixtures: true
             use_bundle_artifact: true
-          - scenario: p43-customcode
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          - scenario: p43-rulesengine
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          - scenario: p44-statelessvariables
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          - scenario: p45-designerviewextended
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          - scenario: p46-keyboardnav
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          # Multi-designer + dataMapper suite (manifest-multi)
-          - scenario: p47-suite
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          # Conversion suite
-          - scenario: p48a-conversionno
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          - scenario: p48c-multipledesigners
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          - scenario: p48d-conversionyes
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          - scenario: p48e-conversionsubfolder
-            use_workspace_fixtures: true
-            use_bundle_artifact: true
-          # Bundle on-disk repair / integrity gate (Phase 14 code path).
-          # Consumes the standard/Stateful fixture from setup-fixtures.
-          - scenario: p412-bundlerepair
+          # Legacy project → workspace conversion variants.
+          - shard: project-conversion
+            scenario: p48a-conversionno,p48c-multipledesigners,p48d-conversionyes,p48e-conversionsubfolder
             use_workspace_fixtures: true
             use_bundle_artifact: true
 
@@ -476,18 +473,20 @@ jobs:
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
 
-      - name: Run scenario (${{ matrix.scenario }})
-        # Phase 4.1 (commits 2672168f7 + d866b3368) targeted the 5 historically-
-        # flaky shards (p42-standard, p42-customcode, p42-rulesengine,
+      - name: Run scenario group (${{ matrix.shard }})
+        # Each shard runs one or more scenarios (comma-separated in
+        # matrix.scenario) sequentially, each in its own fresh VS Code session.
+        # Phase 4.1 (commits 2672168f7 + d866b3368) targeted the historically-
+        # flaky scenarios (p42-standard, p42-customcode, p42-rulesengine,
         # p46-keyboardnav, p47-suite) at the root cause, and added a focus-reset
-        # for the pre-existing p48d-conversionyes xvfb race. Run 25970697053
-        # had all 17 shards green at the step level with masks active.
+        # for the pre-existing p48d-conversionyes xvfb race.
         #
-        # Dropping continue-on-error so any future regression in those shards
-        # is surfaced as a job-level failure (no longer masked). Flake closure
-        # gating is now structural: a red shard fails the workflow. If the
-        # fixes don't hold under runner-image churn, the failure mode and CI
-        # diff will be visible immediately instead of hidden behind allowFailure.
+        # continue-on-error stays off so any future regression is surfaced as a
+        # job-level failure (no longer masked). Flake closure gating is
+        # structural: a red shard fails the workflow. run-e2e.js aggregates
+        # exit = max across the group, so a failing scenario still runs its
+        # siblings and fails the shard, and the failure mode + CI diff are
+        # visible immediately instead of hidden behind allowFailure.
         run: |
           # Belt-and-suspenders PATH export (see grouped-shard rationale in git history).
           export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
@@ -495,9 +494,14 @@ jobs:
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
             node apps/vs-code-designer/out/test/run-e2e.js
         env:
-          # Per-scenario matrix: each shard runs exactly one scenarios[] entry.
+          # Grouped matrix: each shard runs one or more scenarios[] entries.
           LA_E2E_SCENARIO: ${{ matrix.scenario }}
           LA_E2E_BUNDLE_PREFLIGHT: ${{ matrix.use_bundle_artifact && '1' || '0' }}
+          # Retry a failing scenario once in a fresh VS Code session to absorb
+          # transient xvfb/focus/cold-start races. Non-masking: a scenario that
+          # fails both attempts still fails the shard; a retry-to-pass is logged
+          # as a `::warning::` flake so the race can still be root-caused.
+          LA_E2E_SCENARIO_RETRIES: '1'
           NODE_OPTIONS: --max-old-space-size=4096
           # Pin os.tmpdir() so the bootstrapper finds the manifest the
           # setup-fixtures job uploaded (same RUNNER_TEMP layout).
@@ -508,7 +512,7 @@ jobs:
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: vscode-e2e-screenshots-${{ matrix.scenario }}
+          name: vscode-e2e-screenshots-${{ matrix.shard }}
           path: |
             ${{ runner.temp }}/test-resources/screenshots/
             test-resources/screenshots/
@@ -518,7 +522,8 @@ jobs:
   vscode-e2e-compat:
     name: vscode-e2e compatibility (${{ matrix.label }})
     needs: setup-extension-build
-    timeout-minutes: 20
+    # Headroom for one activation-smoke retry (LA_E2E_SCENARIO_RETRIES).
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -605,6 +610,9 @@ jobs:
         env:
           LA_E2E_SCENARIO: p40-nonlogicapp
           E2E_VSCODE_VERSION: ${{ matrix.vscode-version }}
+          # Retry the activation smoke once in a fresh session to absorb
+          # transient launch/activation races on the compat runtime matrix.
+          LA_E2E_SCENARIO_RETRIES: '1'
           NODE_OPTIONS: --max-old-space-size=4096
           TEMP: ${{ runner.temp }}
           TMP: ${{ runner.temp }}
