@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { getEditorAndOptions } from '..';
 import type { VariableDeclaration } from '../../../../../../core/state/tokens/tokensSlice';
 import { InitEditorService } from '@microsoft/logic-apps-shared';
@@ -108,7 +109,7 @@ describe('getEditorAndOptions', () => {
     expect(getEditorAndOptions(operationInfo, parameter, upstreamNodeIds, variables)).toEqual(expectedEditorAndOptions);
   });
 
-  describe('"variablename" editor fallback when scoped list is empty', () => {
+  describe('"variablename" editor strictly scopes to upstream variables', () => {
     const variables: Record<string, VariableDeclaration[]> = {
       initInt: [{ name: 'intVar', type: 'integer' }],
       initFloat: [{ name: 'floatVar', type: 'float' }],
@@ -117,30 +118,18 @@ describe('getEditorAndOptions', () => {
       initBool: [{ name: 'boolVar', type: 'boolean' }],
     };
 
-    // These supportedTypes values mirror the 5 built-in operations that use the
-    // 'variablename' editor (see libs/logic-apps-shared/.../manifests/variables.ts):
-    // setVariable (any), incrementVariable/decrementVariable (float,integer),
-    // appendToStringVariable (string), appendToArrayVariable (array).
-    it.each`
-      operation                   | supportedTypes          | expectedNames
-      ${'setVariable'}            | ${[]}                   | ${['intVar', 'floatVar', 'strVar', 'arrVar', 'boolVar']}
-      ${'incrementVariable'}      | ${['float', 'integer']} | ${['intVar', 'floatVar']}
-      ${'decrementVariable'}      | ${['float', 'integer']} | ${['intVar', 'floatVar']}
-      ${'appendToStringVariable'} | ${['string']}           | ${['strVar']}
-      ${'appendToArrayVariable'}  | ${['array']}            | ${['arrVar']}
-    `(
-      'falls back to all declared variables (respecting supportedTypes) for $operation when upstreamNodeIds is empty',
-      ({ supportedTypes, expectedNames }) => {
-        const parameter = getParameterInfo();
-        parameter.editor = 'variablename';
-        parameter.editorOptions = { supportedTypes };
+    it('returns an empty options list when no variables are upstream (no all-variables leak)', () => {
+      const parameter = getParameterInfo();
+      parameter.editor = 'variablename';
+      parameter.editorOptions = { supportedTypes: [] };
 
-        const result = getEditorAndOptions(operationInfo, parameter, /* upstreamNodeIds */ [], variables);
+      // upstreamNodeIds is empty even though variables are declared elsewhere in the workflow.
+      // Showing all of them would let a Set Variable reference an out-of-scope variable, so the
+      // dropdown must be empty.
+      const result = getEditorAndOptions(operationInfo, parameter, /* upstreamNodeIds */ [], variables);
 
-        expect(result.editor).toBe('dropdown');
-        expect((result.editorOptions?.options ?? []).map((o: any) => o.value)).toEqual(expectedNames);
-      }
-    );
+      expect(result).toEqual({ editor: 'dropdown', editorOptions: { options: [] } });
+    });
 
     it('returns an empty options list when no variables are declared at all', () => {
       const parameter = getParameterInfo();
@@ -152,13 +141,12 @@ describe('getEditorAndOptions', () => {
       expect(result).toEqual({ editor: 'dropdown', editorOptions: { options: [] } });
     });
 
-    it('does not fall back when the scoped list already has matches (no regression)', () => {
+    it('only includes variables whose declaring node is upstream, excluding parallel-branch variables', () => {
       const parameter = getParameterInfo();
       parameter.editor = 'variablename';
       parameter.editorOptions = { supportedTypes: ['string'] };
 
-      // upstream includes initStr (matches) but excludes initArr — the fallback must NOT
-      // add arrVar because scopedOptions is non-empty.
+      // upstream includes initStr (in scope) but excludes initArr/others (parallel branch).
       const result = getEditorAndOptions(operationInfo, parameter, ['initStr'], variables);
 
       expect(result).toEqual({
