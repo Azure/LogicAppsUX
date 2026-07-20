@@ -89,43 +89,35 @@ function getTasksConfig(folder: WorkspaceFolder): WorkspaceConfiguration {
  */
 export async function validateTasksJson(context: IActionContext, folders: readonly WorkspaceFolder[] | undefined): Promise<void> {
   context.telemetry.properties.lastStep = 'validateTasksJson';
-  let overwrite = false;
+  if (!folders || folders.length === 0) {
+    return;
+  }
 
-  try {
-    if (folders) {
-      for (const folder of folders) {
-        const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder, true);
-        context.telemetry.properties.projectPath = projectPath;
-        if (projectPath) {
-          const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);
-
-          if (!fse.existsSync(tasksJsonPath)) {
-            throw new Error(localize('noTaskJson', `Failed to find: ${tasksJsonPath}`));
-          }
-
-          const taskJsonData = fse.readFileSync(tasksJsonPath, 'utf-8');
-          const taskJson = JSON.parse(taskJsonData);
-          const tasks: TaskDefinition[] = taskJson.tasks;
-
-          if (tasks && Array.isArray(tasks)) {
-            tasks.forEach((task) => {
-              const command: string = task.command;
-              if (!command.startsWith('${config:azureLogicAppsStandard')) {
-                context.telemetry.properties.overwrite = 'true';
-                overwrite = true;
-              }
-            });
-          }
-        }
-
-        if (overwrite) {
-          await overwriteTasksJson(context, projectPath);
-        }
-      }
+  for (const folder of folders) {
+    const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder, true);
+    if (!projectPath) {
+      continue;
     }
-  } catch (error) {
-    ext.outputChannel.appendLine(error.message);
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.projectPath = projectPath;
+
+    const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);
+
+    if (!fse.existsSync(tasksJsonPath)) {
+      await overwriteTasksJson(context, projectPath);
+      continue;
+    }
+
+    const taskJsonData = fse.readFileSync(tasksJsonPath, 'utf-8');
+    const taskJson = JSON.parse(taskJsonData);
+    const tasks: TaskDefinition[] = taskJson.tasks;
+
+    const shouldOverwriteTasks = tasks
+      && Array.isArray(tasks)
+      && tasks.some((task) => !task.command || !task.command.startsWith('${config:azureLogicAppsStandard'));
+    
+    if (shouldOverwriteTasks) {
+      await overwriteTasksJson(context, projectPath);
+    }
   }
 }
 
@@ -136,11 +128,12 @@ export async function validateTasksJson(context: IActionContext, folders: readon
 async function overwriteTasksJson(context: IActionContext, projectPath: string): Promise<void> {
   if (projectPath) {
     const message =
-      'The Azure Logic Apps extension must update the tasks.json file to use the required and installed binary dependencies for Node JS, .NET Framework, and Azure Functions Core Tools. This update overwrites any custom-defined tasks you might have.' +
+      'The Azure Logic Apps extension must update the tasks.json file for project at "{0}" to use the required and installed binary dependencies for Node JS, .NET Framework, and Azure Functions Core Tools. This update overwrites any custom-defined tasks you might have.' +
       '\n\nSelecting "Cancel" leaves the file unchanged, but shows this message when you open this project again.' +
       '\n\nContinue with the update?';
 
-    const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);
+    const vscodeFolderPath: string = path.join(projectPath, vscodeFolderName);
+    const tasksJsonPath: string = path.join(vscodeFolderPath, tasksFileName);
     const projectType = await detectProjectType(projectPath);
     const projectPackageType = await detectProjectPackageType(projectPath);
 
@@ -155,7 +148,8 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
       targetFramework,
     });
 
-    if (await confirmOverwriteFile(context, tasksJsonPath, message)) {
+    if (await confirmOverwriteFile(context, tasksJsonPath, localize('overwriteTasksJson', message, projectPath))) {
+      await fse.ensureDir(vscodeFolderPath);
       await fse.writeFile(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
     }
   }
@@ -168,23 +162,27 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
  * @param {string} message - Message.
  * @returns {Promise<boolean>} True if user wants to overwrite file.
  */
-async function confirmOverwriteFile(context: IActionContext, fsPath: string, message?: string): Promise<boolean> {
-  if (await fse.pathExists(fsPath)) {
-    let result: MessageItem;
-    do {
-      result = await context.ui.showWarningMessage(
-        localize('fileAlreadyExists', message),
-        { modal: true },
-        DialogResponses.yes,
-        DialogResponses.learnMore
-      );
-      if (result === DialogResponses.learnMore) {
-        await openUrl('https://learn.microsoft.com/en-us/azure/logic-apps/create-single-tenant-workflows-visual-studio-code');
-      } else if (result === DialogResponses.yes) {
-        return true;
-      } else {
-        return false;
-      }
-    } while (result === DialogResponses.learnMore);
+async function confirmOverwriteFile(context: IActionContext, fsPath: string, message: string): Promise<boolean> {
+  if (!(await fse.pathExists(fsPath))) {
+    return true;
   }
+
+  let result: MessageItem;
+  do {
+    result = await context.ui.showWarningMessage(
+      message,
+      { modal: true },
+      DialogResponses.yes,
+      DialogResponses.learnMore
+    );
+    if (result === DialogResponses.learnMore) {
+      await openUrl('https://learn.microsoft.com/en-us/azure/logic-apps/create-single-tenant-workflows-visual-studio-code');
+    } else if (result === DialogResponses.yes) {
+      return true;
+    } else {
+      return false;
+    }
+  } while (result === DialogResponses.learnMore);
+
+  return false;
 }
