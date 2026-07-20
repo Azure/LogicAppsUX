@@ -110,7 +110,12 @@ describe('utils/vsCodeConfig/settings', () => {
       update = vi.fn().mockResolvedValue(undefined);
       mockConfig = {
         update,
-        inspect: vi.fn().mockReturnValue({ globalValue: ['/global/path'] }),
+        // Default: a value exists in every scope, so every scope is a removal candidate.
+        inspect: vi.fn().mockReturnValue({
+          globalValue: ['/global/path'],
+          workspaceValue: ['/workspace/path'],
+          workspaceFolderValue: ['/folder/path'],
+        }),
       };
       mockGetConfiguration.mockReturnValue(mockConfig as any);
       (vscode.workspace as any).workspaceFolders = [];
@@ -121,6 +126,11 @@ describe('utils/vsCodeConfig/settings', () => {
 
       expect(mockGetConfiguration).toHaveBeenCalledWith('omnisharp');
       expect(update).toHaveBeenCalledWith('dotNetCliPaths', undefined, vscode.ConfigurationTarget.Workspace);
+      // A shared value existed and was removed, so the summary line is logged.
+      const summaryLogs = vi
+        .mocked(ext.outputChannel?.appendLog as any)
+        .mock.calls.filter((call: any[]) => String(call[0]).includes('-> global='));
+      expect(summaryLogs).toHaveLength(1);
     });
 
     it('removes the value from each workspace folder scope', async () => {
@@ -135,6 +145,19 @@ describe('utils/vsCodeConfig/settings', () => {
       expect(update).toHaveBeenCalledWith('azurite.location', undefined, vscode.ConfigurationTarget.WorkspaceFolder);
       // workspace scope (1) + two folder scopes (2) = 3 update calls
       expect(update).toHaveBeenCalledTimes(3);
+    });
+
+    it('skips scopes that have no value (application/window-scoped settings) without logging', async () => {
+      // Value only exists globally — no workspace or folder value to remove.
+      mockConfig.inspect.mockReturnValue({ globalValue: { PATH: '/global/path' } });
+      (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('/ws/logicapp') }];
+
+      await removeSharedSetting('integrated.env.windows', 'terminal');
+
+      // No removal attempted because there is nothing to remove in those scopes.
+      expect(update).not.toHaveBeenCalled();
+      // And nothing is logged at all — no "Skipped" errors and no summary line for a no-op.
+      expect(ext.outputChannel?.appendLog).not.toHaveBeenCalled();
     });
 
     it('does not throw when an update fails and logs the skip', async () => {

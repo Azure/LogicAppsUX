@@ -43,24 +43,39 @@ export async function updateGlobalSetting<T = string>(section: string, value: T,
  * (`ConfigurationTarget.WorkspaceFolder`).
  *
  * Used to migrate machine-local settings (absolute binary paths, terminal env, etc.) out of
- * files that get committed/shared in a repository. Each removal is best-effort: removing a
- * value that is absent, or one whose registered scope forbids that target, can throw and must
- * not break extension setup.
+ * files that get committed/shared in a repository. Each scope is only touched when a value is
+ * actually present there (checked via `inspect`), so application/window-scoped settings that
+ * cannot be written at workspace/folder scope are skipped instead of throwing. Any remaining
+ * failure is swallowed and logged so it never breaks extension setup.
  * @param {string} section - The setting key (without prefix).
  * @param {string} prefix - The configuration prefix/section (default: ext.prefix).
  */
 export async function removeSharedSetting(section: string, prefix: string = ext.prefix): Promise<void> {
-  // Remove the workspace-level value (the .code-workspace file in a multi-root workspace).
-  try {
-    await workspace.getConfiguration(prefix).update(section, undefined, ConfigurationTarget.Workspace);
-  } catch (error) {
-    ext.outputChannel?.appendLog(`[removeSharedSetting] Skipped workspace removal for ${prefix}.${section}: ${error}`);
+  const config: WorkspaceConfiguration = workspace.getConfiguration(prefix);
+  let removedAny = false;
+
+  // Only remove the workspace-level value (the .code-workspace file) when one actually exists.
+  // Application/window-scoped settings (e.g. terminal.integrated.env.*, omnisharp.dotNetCliPaths)
+  // never have a workspace/folder value and cannot be written at those scopes, so attempting the
+  // removal would throw needlessly.
+  if (config.inspect(section)?.workspaceValue !== undefined) {
+    removedAny = true;
+    try {
+      await config.update(section, undefined, ConfigurationTarget.Workspace);
+    } catch (error) {
+      ext.outputChannel?.appendLog(`[removeSharedSetting] Skipped workspace removal for ${prefix}.${section}: ${error}`);
+    }
   }
 
-  // Remove any folder-level values (each folder's .vscode/settings.json).
+  // Remove any folder-level values (each folder's .vscode/settings.json), again only where present.
   for (const folder of workspace.workspaceFolders ?? []) {
+    const folderConfig: WorkspaceConfiguration = workspace.getConfiguration(prefix, folder.uri);
+    if (folderConfig.inspect(section)?.workspaceFolderValue === undefined) {
+      continue;
+    }
+    removedAny = true;
     try {
-      await workspace.getConfiguration(prefix, folder.uri).update(section, undefined, ConfigurationTarget.WorkspaceFolder);
+      await folderConfig.update(section, undefined, ConfigurationTarget.WorkspaceFolder);
     } catch (error) {
       ext.outputChannel?.appendLog(
         `[removeSharedSetting] Skipped folder removal for ${prefix}.${section} in ${folder.uri.fsPath}: ${error}`
@@ -68,8 +83,13 @@ export async function removeSharedSetting(section: string, prefix: string = ext.
     }
   }
 
+  // Nothing lived in a shared scope, so there's nothing to report — stay quiet.
+  if (!removedAny) {
+    return;
+  }
+
   // Log where the value now resolves so the landing scope can be verified at runtime.
-  const inspection = workspace.getConfiguration(prefix).inspect(section);
+  const inspection = config.inspect(section);
   ext.outputChannel?.appendLog(
     `[removeSharedSetting] ${prefix}.${section} -> global=${JSON.stringify(inspection?.globalValue)}, ` +
       `workspace=${JSON.stringify(inspection?.workspaceValue)}, folder=${JSON.stringify(inspection?.workspaceFolderValue)}`
