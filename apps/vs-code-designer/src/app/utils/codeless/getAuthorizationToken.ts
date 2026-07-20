@@ -18,7 +18,8 @@ export async function getAuthData(tenantId?: string): Promise<AuthenticationSess
 
 export async function getAuthorizationToken(tenantId?: string): Promise<string> {
   const authData = await getAuthData(tenantId);
-  return `Bearer ${authData?.accessToken}`;
+  const token = authData?.accessToken;
+  return token ? `****** : '';
 }
 
 /**

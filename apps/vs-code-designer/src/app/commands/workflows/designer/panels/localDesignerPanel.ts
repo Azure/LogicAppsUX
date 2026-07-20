@@ -27,6 +27,7 @@ import {
   saveConnectionReferences,
   saveCustomCodeStandard,
 } from '../../../../utils/codeless/connection';
+import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../../utils/requestUtils';
@@ -58,6 +59,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
   private projectPath?: string;
   private panelMetadata?: DesignerPanelMetadata;
   private workflowRuntimeBaseUrlInterval?: NodeJS.Timeout;
+  private accessTokenInterval?: NodeJS.Timeout;
 
   constructor(context: IActionContext, node: Uri, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
@@ -178,6 +180,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     this.panel.onDidDispose(
       () => {
         clearInterval(this.workflowRuntimeBaseUrlInterval);
+        clearInterval(this.accessTokenInterval);
         removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
       },
       null,
@@ -206,6 +209,31 @@ export default class LocalDesignerPanel extends DesignerPanel {
             });
           }
         }, 3000);
+
+        // Refresh access token every 30 minutes to prevent stale-token failures on save.
+        // Using a long interval because Azure tokens are valid for ~1 hour and this
+        // prevents flooding the auth service with unnecessary requests.
+        this.accessTokenInterval = setInterval(async () => {
+          try {
+            const tenantId = this.panelMetadata?.azureDetails?.tenantId;
+            const updatedAccessToken = await getAuthorizationToken(tenantId);
+            // Guard: skip if the token is empty/invalid to avoid overwriting a valid token
+            if (!updatedAccessToken || updatedAccessToken === this.panelMetadata?.accessToken) {
+              return;
+            }
+            if (this.panelMetadata) {
+              this.panelMetadata.accessToken = updatedAccessToken;
+            }
+            this.panel?.webview.postMessage({
+              command: ExtensionCommand.update_access_token,
+              data: {
+                accessToken: updatedAccessToken,
+              },
+            });
+          } catch {
+            // Silently ignore token refresh failures — the existing token may still be valid
+          }
+        }, 30 * 60 * 1000); // 30 minutes
 
         this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
@@ -603,6 +631,10 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
   /**
    * Merges parameters from JSON.
+   * For parameters that exist only in the file (not in the designer output or panel),
+   * they are preserved as-is. For parameters that exist in both the file and designer,
+   * file-only properties (e.g., metadata, description) are preserved while designer
+   * properties take precedence.
    * @param filePath The file path of the parameters JSON file.
    * @param definitionParameters The parameters from the designer.
    * @param panelParameterRecord The parameters from the panel
@@ -617,7 +649,17 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
     Object.entries(jsonParameters).forEach(([key, parameter]) => {
       if (!definitionParameters[key] && !panelParameterRecord[key]) {
+        // Parameter exists only in the file — preserve it entirely
         definitionParameters[key] = parameter;
+      } else if (definitionParameters[key]) {
+        // Parameter exists in both — preserve file-only properties that the designer doesn't emit
+        const fileParam = parameter as Record<string, any>;
+        const defParam = definitionParameters[key] as Record<string, any>;
+        for (const prop of Object.keys(fileParam)) {
+          if (!(prop in defParam)) {
+            defParam[prop] = fileParam[prop];
+          }
+        }
       }
     });
   }
