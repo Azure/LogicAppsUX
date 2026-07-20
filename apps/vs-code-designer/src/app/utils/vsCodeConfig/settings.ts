@@ -89,10 +89,13 @@ export async function removeSharedSetting(section: string, prefix: string = ext.
   }
 
   // Log where the value now resolves so the landing scope can be verified at runtime.
+  // Only global and workspace values are meaningful from a non-resource-scoped inspection;
+  // workspaceFolderValue is per-folder and would be ambiguous here, so it is intentionally
+  // omitted (per-folder removals are already handled/logged in the loop above).
   const inspection = config.inspect(section);
   ext.outputChannel?.appendLog(
     `[removeSharedSetting] ${prefix}.${section} -> global=${JSON.stringify(inspection?.globalValue)}, ` +
-      `workspace=${JSON.stringify(inspection?.workspaceValue)}, folder=${JSON.stringify(inspection?.workspaceFolderValue)}`
+      `workspace=${JSON.stringify(inspection?.workspaceValue)}`
   );
 }
 

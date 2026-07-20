@@ -138,11 +138,11 @@ describe('utils/vsCodeConfig/settings', () => {
       const folderB = { uri: vscode.Uri.file('/ws/functions') };
       (vscode.workspace as any).workspaceFolders = [folderA, folderB];
 
-      await removeSharedSetting('azurite.location', 'azurite');
+      await removeSharedSetting('location', 'azurite');
 
       expect(mockGetConfiguration).toHaveBeenCalledWith('azurite', folderA.uri);
       expect(mockGetConfiguration).toHaveBeenCalledWith('azurite', folderB.uri);
-      expect(update).toHaveBeenCalledWith('azurite.location', undefined, vscode.ConfigurationTarget.WorkspaceFolder);
+      expect(update).toHaveBeenCalledWith('location', undefined, vscode.ConfigurationTarget.WorkspaceFolder);
       // workspace scope (1) + two folder scopes (2) = 3 update calls
       expect(update).toHaveBeenCalledTimes(3);
     });
