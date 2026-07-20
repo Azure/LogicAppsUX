@@ -54,6 +54,13 @@ export const pasteScopeInWorkflow = (
   if (getRecordEntry(nodesMetadata, nodeId)?.isRoot === false) {
     delete nodesMetadata[nodeId].isRoot;
   }
+  // The loop above copied the pasted node's metadata into state by reference before this
+  // correction ran, so the recomputed graphId/parentNodeId must be written back to state.
+  // Otherwise state keeps the placeholder parentNodeId seeded during paste (an edge-placement
+  // card id such as `<scope>-#subgraph`), which is not a nodesMetadata key. That breaks the
+  // parent-chain walk in getUpstreamNodeIds and leaves scoped dropdowns (e.g. Set Variable)
+  // unable to see variables initialized in an ancestor scope.
+  state.nodesMetadata[nodeId] = nodesMetadata[nodeId];
 
   const parentMetadata = getRecordEntry(state.nodesMetadata, parentId);
   const isAfterTrigger = (parentMetadata?.isRoot && newGraphId === 'root') ?? false;
