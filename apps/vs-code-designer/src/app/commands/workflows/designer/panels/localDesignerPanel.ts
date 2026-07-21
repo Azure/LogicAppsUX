@@ -250,13 +250,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
         await createUnitTest(Uri.file(this.workflowFilePath), msg.definition);
         break;
       }
-
-      // NOTE(aeldridge): Needed for V2 designer which doesn't use separate monitoring view class.
-      // Remove once V2 designer is moved to its own panel classes.
-      case ExtensionCommand.createUnitTestFromRun: {
-        await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
-        break;
-      }
       
       case ExtensionCommand.addConnection: {
         await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
