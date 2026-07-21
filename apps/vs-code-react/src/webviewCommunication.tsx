@@ -27,6 +27,8 @@ import type {
   UpdateRuntimeBaseUrlMessage,
   UpdateCallbackInfoMessage,
   UpdateWorkflowPropertiesMessage,
+  SelectRunMessage,
+  GetDesignerVersionMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -56,6 +58,7 @@ import {
 } from './state/DataMapSliceV2';
 import {
   initializeDesigner,
+  selectRun,
   updateCallbackUrl,
   updateFileSystemConnection,
   updatePanelMetadata,
@@ -100,7 +103,9 @@ type DesignerMessageType =
   | ReceiveCallbackMessage
   | ResetDesignerDirtyStateMessage
   | CompleteFileSystemConnectionMessage
-  | UpdatePanelMetadataMessage;
+  | UpdatePanelMetadataMessage
+  | GetDesignerVersionMessage
+  | SelectRunMessage;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -192,6 +197,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.getDesignerVersion: {
             dispatch(changeDesignerVersion(message.data));
+            break;
+          }
+          case ExtensionCommand.selectRun: {
+            dispatch(selectRun((message as SelectRunMessage).runId));
             break;
           }
           default:

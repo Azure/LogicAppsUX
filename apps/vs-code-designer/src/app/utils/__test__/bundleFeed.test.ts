@@ -11,6 +11,7 @@ import {
   getLastBundleInstallResult,
   assertExtensionBundleOnDiskHealthy,
   ensureExtensionBundleHealthy,
+  invalidateBundleHealthCache,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -1976,6 +1977,127 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
 
     await expect(ensureExtensionBundleHealthy(ctx() as any, { requireInstalled: true })).rejects.toThrow(
       /on-disk integrity still failed: sidecarMissing/
+    );
+  });
+});
+
+describe('ensureExtensionBundleHealthy session cache', () => {
+  const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
+  const sidecarJson = (sourceMd5: string, contentHash: string) => JSON.stringify({ version: 1, sourceMd5, contentHash });
+
+  const ctx = () => ({
+    telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
+  });
+
+  const setupHealthyBundle = () => {
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', EMPTY_TREE_HASH) as any);
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCachedBundleVersion();
+    vi.mocked(fse.readFile).mockReset();
+    vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
+  });
+
+  it('verifies the bundle once and reuses the cached result on later calls', async () => {
+    setupHealthyBundle();
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+
+    // The sidecar is read exactly once — the second call short-circuits on the
+    // session cache instead of recomputing the full-tree hash.
+    expect(vi.mocked(fse.readFile)).toHaveBeenCalledTimes(1);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Logic Apps extension bundle 1.50.0 already verified this session; skipping on-disk integrity re-check.'
+    );
+  });
+
+  it('logs the "already verified" skip on every cached launch (once per project)', async () => {
+    setupHealthyBundle();
+
+    // Simulates a multi-project workspace launching several design-time hosts in one session.
+    // The first launch computes and caches the health result; each subsequent launch short-circuits
+    // on the cache and logs the skip line, consistent with the other per-startup log lines.
+    await ensureExtensionBundleHealthy(ctx() as any);
+    await ensureExtensionBundleHealthy(ctx() as any);
+    await ensureExtensionBundleHealthy(ctx() as any);
+
+    const skipLogs = vi
+      .mocked(ext.outputChannel.appendLog)
+      .mock.calls.map(([value]) => String(value))
+      .filter((line) => line.includes('already verified this session'));
+    expect(skipLogs).toHaveLength(2);
+  });
+
+  it('logs the "already verified" skip again after the health cache is invalidated', async () => {
+    setupHealthyBundle();
+
+    await ensureExtensionBundleHealthy(ctx() as any);
+    await ensureExtensionBundleHealthy(ctx() as any);
+    invalidateBundleHealthCache();
+    await ensureExtensionBundleHealthy(ctx() as any);
+    await ensureExtensionBundleHealthy(ctx() as any);
+
+    const skipLogs = vi
+      .mocked(ext.outputChannel.appendLog)
+      .mock.calls.map(([value]) => String(value))
+      .filter((line) => line.includes('already verified this session'));
+    expect(skipLogs).toHaveLength(2);
+  });
+
+  it('recomputes after invalidateBundleHealthCache', async () => {
+    setupHealthyBundle();
+
+    await ensureExtensionBundleHealthy(ctx() as any);
+    invalidateBundleHealthCache();
+    await ensureExtensionBundleHealthy(ctx() as any);
+
+    expect(vi.mocked(fse.readFile)).toHaveBeenCalledTimes(2);
+  });
+
+  it('recomputes after resetCachedBundleVersion', async () => {
+    setupHealthyBundle();
+
+    await ensureExtensionBundleHealthy(ctx() as any);
+    resetCachedBundleVersion();
+    await ensureExtensionBundleHealthy(ctx() as any);
+
+    expect(vi.mocked(fse.readFile)).toHaveBeenCalledTimes(2);
+  });
+
+  it('caches only after a successful repair and reuses it afterward', async () => {
+    let callIdx = 0;
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    // 1st/2nd sidecar reads report a mismatch (drives the repair); post-repair
+    // reads report the correct hash so the repair verification passes.
+    vi.mocked(fse.readFile).mockImplementation((async () => {
+      callIdx++;
+      return callIdx <= 2 ? sidecarJson('md5', 'WRONG') : sidecarJson('md5', EMPTY_TREE_HASH);
+    }) as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    // First call: the failing initial check does NOT short-circuit; it repairs.
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalledTimes(1);
+
+    // Second call: reuses the cache populated by the successful repair — no
+    // second repair, no re-hash.
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalledTimes(1);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Logic Apps extension bundle 1.50.0 already verified this session; skipping on-disk integrity re-check.'
     );
   });
 });

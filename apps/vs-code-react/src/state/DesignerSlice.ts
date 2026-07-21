@@ -1,9 +1,5 @@
 import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue } from '@microsoft/logic-apps-shared';
-import type {
-  CompleteFileSystemConnectionData,
-  ICallbackUrlResponse,
-  DesignerPanelMetadata,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { CompleteFileSystemConnectionData, ICallbackUrlResponse, DesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -121,6 +117,10 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       }
       delete state.fileSystemConnections[connectionName];
     },
+    selectRun: (state, action: PayloadAction<string>) => {
+      state.runId = action.payload;
+      state.isMonitoringView = true;
+    },
   },
 });
 
@@ -131,4 +131,5 @@ export const {
   createFileSystemConnection,
   updateFileSystemConnection,
   updatePanelMetadata,
+  selectRun,
 } = designerSlice.actions;

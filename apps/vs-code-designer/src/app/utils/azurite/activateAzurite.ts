@@ -16,7 +16,7 @@ import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
 import { validateEmulatorIsRunning } from '../../debug/validatePreDebug';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { getWorkspaceSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -87,7 +87,10 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
       if (autoStartAzurite && !isAzuriteRunning) {
         // Use the configured location, or default to the global default path
         const azuriteLocation = azuriteLocationExtSetting || defaultAzuritePathValue;
-        await updateWorkspaceSetting(azuriteLocationSetting, azuriteLocation, projectPath, azuriteExtensionPrefix);
+        // azurite.location is a machine-local absolute path, so write it to the user's global
+        // settings instead of the shared .code-workspace file (which is committed to the repo).
+        await updateGlobalSetting(azuriteLocationSetting, azuriteLocation, azuriteExtensionPrefix);
+        await removeSharedSetting(azuriteLocationSetting, azuriteExtensionPrefix);
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
         context.telemetry.properties.azuriteStart = 'true';
         context.telemetry.properties.azuriteLocation = azuriteLocation;

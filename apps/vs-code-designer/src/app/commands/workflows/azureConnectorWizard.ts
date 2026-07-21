@@ -9,7 +9,6 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 import * as path from 'path';
 import {
   defaultMsiAudience,
-  workflowAuthenticationMethodKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
   workflowResourceGroupNameKey,
@@ -20,7 +19,6 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { AuthenticationMethodSelectionStep, type AuthenticationMethodType } from './authenticationMethodStep';
 
 export interface IAzureConnectorsContext extends IActionContext, IProjectWizardContext {
   credentials: any;
@@ -29,14 +27,13 @@ export interface IAzureConnectorsContext extends IActionContext, IProjectWizardC
   enabled: boolean;
   tenantId: any;
   environment: any;
-  authenticationMethod?: AuthenticationMethodType;
   MSIenabled?: boolean;
 }
 
 //TODO: Update to be in webview after ignite redesign is done
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep(projectPath), new AuthenticationMethodSelectionStep<IAzureConnectorsContext>()],
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath)],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
@@ -59,7 +56,6 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
     ];
     const selectedAction = await context.ui.showQuickPick(picks, { placeHolder }).catch((error) => {
       if (parseError(error).isUserCancelledError) {
-        context.telemetry.properties.azureConnectorsDefaulted = 'rawKeys';
         return { data: 'no' };
       }
 
@@ -67,9 +63,6 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
     });
 
     context.enabled = selectedAction.data === 'yes';
-    if (!context.enabled) {
-      context.authenticationMethod = 'rawKeys';
-    }
   }
 
   public shouldPrompt(context: IAzureConnectorsContext): boolean {
@@ -106,7 +99,6 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
     const valuesToUpdateInSettings: Record<string, string> = {};
     if (context.enabled === false) {
       valuesToUpdateInSettings[workflowSubscriptionIdKey] = '';
-      valuesToUpdateInSettings[workflowAuthenticationMethodKey] = 'rawKeys';
     } else {
       const { resourceGroup, subscriptionId, tenantId, environment } = context;
       valuesToUpdateInSettings[workflowTenantIdKey] = tenantId;
@@ -114,11 +106,7 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
       valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
       valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
       valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
-      // Save the authentication method to local settings
-      if (context.authenticationMethod) {
-        valuesToUpdateInSettings[workflowAuthenticationMethodKey] = context.authenticationMethod;
-        valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
-      }
+      valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
 
       // Then send notifications for runtime updates
       ext?.languageClient?.sendNotification('custom/updateApiConfig', {

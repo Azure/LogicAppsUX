@@ -1,7 +1,7 @@
 // We don't load HTML editor in any of our built in operations, so must be done in real API e2e tests
 import { test } from '../../fixtures/real-api';
 import { expect } from '@playwright/test';
-import workflow from './workflow.json' assert { type: 'json' };
+import workflow from './workflow.json' with { type: 'json' };
 
 test.describe(
   'HTML Editor',

@@ -11,12 +11,7 @@ import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type TelemetryReporter from '@vscode/extension-telemetry';
 import type * as cp from 'child_process';
-import {
-  window,
-  type ExtensionContext,
-  type WebviewPanel,
-  type MessageOptions,
-} from 'vscode';
+import { window, type ExtensionContext, type WebviewPanel, type MessageOptions } from 'vscode';
 import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import type { LanguageClient } from 'vscode-languageclient/node';
 
@@ -85,7 +80,9 @@ export namespace ext {
   // WebViews
   export const webViewKey = {
     designerLocal: 'designerLocal',
+    designerLocalV2: 'designerLocalV2',
     designerAzure: 'designerAzure',
+    designerAzureV2: 'designerAzureV2',
     monitoring: 'monitoring',
     export: 'export',
     overview: 'overview',
@@ -100,7 +97,9 @@ export namespace ext {
 
   export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
     [webViewKey.designerLocal]: {},
+    [webViewKey.designerLocalV2]: {},
     [webViewKey.designerAzure]: {},
+    [webViewKey.designerAzureV2]: {},
     [webViewKey.monitoring]: {},
     [webViewKey.export]: {},
     [webViewKey.createWorkspace]: {},
@@ -132,6 +131,7 @@ export const ExtensionCommand = {
   select_folder: 'select-folder',
   initialize: 'initialize',
   loadRun: 'LoadRun',
+  selectRun: 'SelectRun',
   dispose: 'dispose',
   initialize_frame: 'initialize-frame',
   update_access_token: 'update-access-token',

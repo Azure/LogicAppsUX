@@ -9,9 +9,10 @@ import { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
 interface CodeViewProps {
   workflowKind?: string;
   workflowFile?: any;
+  readOnly?: boolean;
 }
 
-const CodeViewEditor = forwardRef(({ workflowKind, workflowFile }: CodeViewProps, ref) => {
+const CodeViewEditor = forwardRef(({ workflowKind, workflowFile, readOnly }: CodeViewProps, ref) => {
   const dispatch = useDispatch<AppDispatch>();
   const isWorkflowIsDirty = useIsWorkflowDirty();
   const [code, setCode] = useState<string | undefined>();
@@ -68,11 +69,12 @@ const CodeViewEditor = forwardRef(({ workflowKind, workflowFile }: CodeViewProps
         height="100%"
         language={EditorLanguage.json}
         value={code}
+        readOnly={readOnly}
         overviewRulerBorder={true}
         scrollBeyondLastLine={false}
         noBorder={true}
         fontSize={13}
-        onContentChanged={handleContentChanged}
+        onContentChanged={readOnly ? undefined : handleContentChanged}
       />
     </div>
   );

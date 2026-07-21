@@ -7,9 +7,11 @@ import RemoteMonitoringPanel from './panels/remoteMonitoringPanel';
 import LocalMonitoringPanel from './panels/localMonitoringPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
+import { openDesignerV2 } from '../designer-v2/openDesignerV2';
+import { defaultDesignerVersion, designerVersionSetting } from '../../../../constants';
 
 export async function openMonitoringView(
   context: IActionContext,
@@ -20,6 +22,11 @@ export async function openMonitoringView(
   if (!node) {
     ext.outputChannel.appendLog(localize('workflowNodeNotFound', 'Failed to open monitoring view. Unable to find the workflow node.'));
     return;
+  }
+
+  const designerVersion = workspace.getConfiguration(ext.prefix).get<number>(designerVersionSetting) ?? defaultDesignerVersion;
+  if (designerVersion === 2) {
+    return openDesignerV2(context, node, runId);
   }
 
   const monitoringPanel = node instanceof Uri

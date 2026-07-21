@@ -53,12 +53,12 @@ jobs:
       build-artifact: extension-build-${{ github.sha }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Cache turbo build setup
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .turbo
           # Content-based key: hits across pushes that don't change source.
@@ -68,9 +68,10 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 24.x
+          package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
         run: |
@@ -88,7 +89,7 @@ jobs:
           done
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.0.x'
 
@@ -98,7 +99,7 @@ jobs:
       # and pnpm reuses store entries while falling back to the network for
       # anything missing (no --offline strictness).
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.local/share/pnpm/store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -106,9 +107,8 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v5
         with:
-          version: 9.1.3
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
@@ -130,7 +130,7 @@ jobs:
             $(find apps/vs-code-designer/node_modules/.cache -maxdepth 0 -type d 2>/dev/null)
 
       - name: Upload extension build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: extension-build-${{ github.sha }}
           path: extension-build.tar.gz
@@ -150,14 +150,15 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20.x
+          package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
         run: |
@@ -171,7 +172,7 @@ jobs:
           done
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.local/share/pnpm/store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -179,15 +180,14 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v5
         with:
-          version: 9.1.3
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - name: Download extension build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: extension-build-${{ github.sha }}
           path: .
@@ -201,7 +201,7 @@ jobs:
           sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
 
       - name: Cache Logic Apps runtime dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.azurelogicapps/dependencies
           key: la-runtime-deps-${{ runner.os }}-v1
@@ -282,7 +282,7 @@ jobs:
             Microsoft.Azure.Functions.ExtensionBundle.Workflows
 
       - name: Upload workspace fixtures artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: workspace-fixtures-${{ github.sha }}
           path: workspace-fixtures.tar.gz
@@ -290,7 +290,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Logic Apps extension bundle artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: logic-apps-extension-bundle-${{ github.sha }}
           path: logic-apps-extension-bundle.tar.gz
@@ -298,7 +298,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload fixture screenshots on failure
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: vscode-e2e-screenshots-setup-fixtures
@@ -375,14 +375,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20.x
+          package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
         run: |
@@ -402,7 +403,7 @@ jobs:
           env -i /usr/bin/node --version
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.local/share/pnpm/store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -410,15 +411,14 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v5
         with:
-          version: 9.1.3
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - name: Download extension build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: extension-build-${{ github.sha }}
           path: .
@@ -429,7 +429,7 @@ jobs:
       # Scenarios that self-create their workspaces set use_workspace_fixtures=false.
       - name: Download workspace fixtures artifact
         if: matrix.use_workspace_fixtures == true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: workspace-fixtures-${{ github.sha }}
           path: .
@@ -448,7 +448,7 @@ jobs:
 
       - name: Download Logic Apps extension bundle artifact
         if: matrix.use_bundle_artifact == true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: logic-apps-extension-bundle-${{ github.sha }}
           path: .
@@ -466,7 +466,7 @@ jobs:
           sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
 
       - name: Cache Logic Apps runtime dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.azurelogicapps/dependencies
           key: la-runtime-deps-${{ runner.os }}-v1
@@ -509,7 +509,7 @@ jobs:
           TMPDIR: ${{ runner.temp }}
 
       - name: Upload test screenshots (always)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: vscode-e2e-screenshots-${{ matrix.shard }}
@@ -549,14 +549,15 @@ jobs:
             vscode-version: 1.123.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
+          package-manager-cache: false
 
       - name: Symlink node to system path
         run: |
@@ -572,7 +573,7 @@ jobs:
           env -i /usr/bin/node --version
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.local/share/pnpm/store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -580,15 +581,14 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v5
         with:
-          version: 9.1.3
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
 
       - name: Download extension build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: extension-build-${{ github.sha }}
           path: .
@@ -619,7 +619,7 @@ jobs:
           TMPDIR: ${{ runner.temp }}
 
       - name: Upload test screenshots (always)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: vscode-e2e-screenshots-compat-${{ matrix.label }}

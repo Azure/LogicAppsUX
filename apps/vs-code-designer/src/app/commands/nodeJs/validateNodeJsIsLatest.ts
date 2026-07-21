@@ -6,6 +6,7 @@ import { nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../utils/dependencyUpdateCheck';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installNodeJs } from './installNodeJs';
@@ -41,7 +42,9 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
         context.telemetry.properties.nodeJsWarningDecision = 'localMissing';
         await installNodeJs(context, majorVersion);
         logNodeJsWarningDecision(context);
-      } else {
+      } else if (shouldCheckForDependencyUpdates()) {
+        // Throttle: only re-check the newest published version once per window (see
+        // shouldCheckForDependencyUpdates). A missing/unrunnable Node is still reinstalled above.
         const newestVersion = await getNewestNodeJsWarningVersion(context, localVersion, majorVersion);
         context.telemetry.properties.newestVersion = newestVersion;
 
@@ -50,6 +53,9 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
           context.telemetry.properties.outOfDateNodeJs = 'true';
           showOutdatedNodeJsWarning(context, localVersion, newestVersion, majorVersion, showNodeJsWarningKey);
         }
+        logNodeJsWarningDecision(context);
+      } else {
+        context.telemetry.properties.nodeJsWarningDecision = 'updateCheckThrottled';
         logNodeJsWarningDecision(context);
       }
     } else {
