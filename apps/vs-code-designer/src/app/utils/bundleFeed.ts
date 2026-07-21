@@ -11,6 +11,8 @@ import {
   useExperimentalExtensionBundleSettingKey,
   experimentalExtensionBundleSourceUriSettingKey,
   experimentalExtensionBundleVersionSettingKey,
+  lastBundleDeepVerificationKey,
+  bundleDeepVerificationIntervalMs,
 } from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
@@ -191,6 +193,12 @@ interface BundleSidecar {
   version: number;
   sourceMd5: string;
   contentHash: string;
+  /**
+   * Fast lstat-only tree fingerprint (see {@link computeBundleTreeFingerprint}).
+   * Optional: legacy sidecars written before Phase 15 omit it and auto-upgrade on
+   * the first launch (a full byte hash runs, then the fingerprint is backfilled).
+   */
+  treeFingerprint?: string;
 }
 
 const SIDECAR_FORMAT_VERSION = 1;
@@ -226,10 +234,15 @@ async function readBundleSidecar(version: string): Promise<BundleSidecar | undef
       typeof (parsed as Record<string, unknown>).version === 'number'
     ) {
       const obj = parsed as Record<string, unknown>;
+      // treeFingerprint is parsed leniently: a missing/non-string value leaves it
+      // undefined (legacy sidecar) which is still valid — it just forces a deep
+      // byte-hash verification + backfill on the next health check.
+      const treeFingerprint = typeof obj.treeFingerprint === 'string' ? (obj.treeFingerprint as string) : undefined;
       return {
         version: obj.version as number,
         sourceMd5: obj.sourceMd5 as string,
         contentHash: obj.contentHash as string,
+        treeFingerprint,
       };
     }
     return undefined;
@@ -238,10 +251,10 @@ async function readBundleSidecar(version: string): Promise<BundleSidecar | undef
   }
 }
 
-async function writeBundleSidecar(version: string, sourceMd5: string, contentHash: string): Promise<void> {
+async function writeBundleSidecar(version: string, sourceMd5: string, contentHash: string, treeFingerprint?: string): Promise<void> {
   const sidecarPath = getBundleSidecarPath(version);
   const tempSidecarPath = `${sidecarPath}.${process.pid}.${Date.now()}.tmp`;
-  const payload: BundleSidecar = { version: SIDECAR_FORMAT_VERSION, sourceMd5, contentHash };
+  const payload: BundleSidecar = { version: SIDECAR_FORMAT_VERSION, sourceMd5, contentHash, treeFingerprint };
   try {
     await fse.outputFile(tempSidecarPath, JSON.stringify(payload), 'utf8');
     await fse.move(tempSidecarPath, sidecarPath, { overwrite: true });
@@ -385,6 +398,86 @@ export async function computeBundleContentHash(bundleDir: string): Promise<strin
 }
 
 /**
+ * Fast, stat-only fingerprint of the extracted bundle tree — the cheap
+ * front-line check that replaces the ~40s full-byte {@link computeBundleContentHash}
+ * on the hot startup path.
+ *
+ * - Walks the tree with `lstat` only (NO byte reads), so it runs in milliseconds
+ *   even for the hundreds-of-MB PowerShell runtime + .NET assemblies + workflow
+ *   bundle.
+ * - Sorts entries by POSIX-normalized relative path so the digest is stable
+ *   across filesystems / OSes.
+ * - Skips the sidecar file itself (same as `computeBundleContentHash`).
+ * - Feeds `<relPath>\0<size>\0<mtimeMs>\0` per entry, so a deleted subfile drops
+ *   an entry, and any resize or re-write shifts the digest. Only an in-place edit
+ *   that preserves BOTH size and mtime evades this — that residual gap is closed
+ *   by the throttled daily deep byte-hash.
+ *
+ * Returns the base64 digest, or `undefined` if `bundleDir` doesn't exist.
+ */
+export async function computeBundleTreeFingerprint(bundleDir: string): Promise<string | undefined> {
+  if (!(await fse.pathExists(bundleDir))) {
+    return undefined;
+  }
+  const entries: Array<{ rel: string; size: number; mtimeMs: number }> = [];
+  const walk = async (dir: string): Promise<void> => {
+    const items = await fse.readdir(dir);
+    for (const item of items) {
+      const abs = path.join(dir, item);
+      const stat = await fse.lstat(abs);
+      if (stat.isDirectory()) {
+        await walk(abs);
+      } else if (stat.isFile()) {
+        const rel = path.relative(bundleDir, abs).split(path.sep).join('/');
+        if (rel === bundleSourceMd5SidecarFile) {
+          continue;
+        }
+        entries.push({ rel, size: stat.size, mtimeMs: stat.mtimeMs });
+      }
+    }
+  };
+  await walk(bundleDir);
+  entries.sort((a, b) => (a.rel < b.rel ? -1 : a.rel > b.rel ? 1 : 0));
+
+  const hash = createHash('sha256');
+  for (const entry of entries) {
+    hash.update(entry.rel);
+    hash.update('\0');
+    hash.update(String(entry.size));
+    hash.update('\0');
+    hash.update(String(entry.mtimeMs));
+    hash.update('\0');
+  }
+  return hash.digest('base64');
+}
+
+/**
+ * True when the throttled deep (full-byte) bundle verification is due — i.e. no
+ * successful deep verification has been recorded within
+ * {@link bundleDeepVerificationIntervalMs}. Best-effort: if the global state is
+ * unavailable (e.g. very early activation) we treat it as NOT due so the fast
+ * fingerprint path is preserved. The residual in-place-edit gap is only exposed
+ * for at most one interval.
+ */
+function isDeepBundleVerificationDue(): boolean {
+  const last = ext.context?.globalState?.get<number>(lastBundleDeepVerificationKey);
+  if (typeof last !== 'number' || !Number.isFinite(last)) {
+    return true;
+  }
+  return Date.now() - last >= bundleDeepVerificationIntervalMs;
+}
+
+/** Records "now" as the last successful deep bundle verification. Best-effort. */
+async function recordDeepBundleVerification(): Promise<void> {
+  try {
+    await ext.context?.globalState?.update(lastBundleDeepVerificationKey, Date.now());
+  } catch {
+    // Non-fatal: failing to persist the timestamp only means the next launch may
+    // re-run the deep hash, which is safe (just slower).
+  }
+}
+
+/**
  * Gets the Extension Bundle Versions iterating through the default extension bundle path directory.
  * @param {string} directoryPath - extension bundle path directory.
  * @returns {string[]} Returns the list of versions.
@@ -433,7 +526,11 @@ async function downloadBundleAndWriteSidecar(context: IActionContext, baseUrl: s
     // the partial install as "good" and never re-download.
     throw new Error(`Bundle ${version} was downloaded but the extracted directory at ${bundleDir} is empty. Refusing to write sidecar.`);
   }
-  await writeBundleSidecar(version, result.actualMd5, contentHash);
+  const treeFingerprint = await computeBundleTreeFingerprint(bundleDir);
+  await writeBundleSidecar(version, result.actualMd5, contentHash, treeFingerprint);
+  // Fresh download already computed the full byte hash, so reset the deep-verify
+  // throttle — the next 24h can safely rely on the fast fingerprint path.
+  await recordDeepBundleVerification();
 }
 
 /**
@@ -780,10 +877,13 @@ async function tryBackfillBundleSidecar(context: IActionContext, publicBaseUrl: 
   }
 
   try {
-    await writeBundleSidecar(localVersion, publishedMd5 ?? '', actualContentHash);
+    const treeFingerprint = await computeBundleTreeFingerprint(bundleDir);
+    await writeBundleSidecar(localVersion, publishedMd5 ?? '', actualContentHash, treeFingerprint);
   } catch {
     return false;
   }
+  // The backfill just computed the full byte hash, so reset the deep-verify throttle.
+  await recordDeepBundleVerification();
   ext.outputChannel?.appendLog(`Logic Apps extension bundle ${localVersion} sidecar metadata backfilled from existing install.`);
   return true;
 }
@@ -952,6 +1052,40 @@ export async function assertExtensionBundleOnDiskHealthy(version?: string): Prom
   if (!sidecar.contentHash) {
     return { ok: false, reason: 'sidecarUnreadable', version: targetVersion, detail: 'sidecar missing contentHash field' };
   }
+
+  // Fast path: when the sidecar carries a cheap lstat tree fingerprint, compare
+  // that first. A match lets us skip the ~40s full-byte content hash entirely —
+  // unless the daily deep-verify throttle says a full check is due.
+  if (sidecar.treeFingerprint) {
+    const actualFingerprint = await computeBundleTreeFingerprint(bundleDir);
+    if (!actualFingerprint) {
+      return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
+    }
+    if (actualFingerprint === sidecar.treeFingerprint) {
+      if (!isDeepBundleVerificationDue()) {
+        return { ok: true, version: targetVersion };
+      }
+      // Throttle due: run the full byte hash even though the fingerprint matched,
+      // to catch an in-place edit that preserved size + mtime.
+      const deepHash = await computeBundleContentHash(bundleDir);
+      if (!deepHash) {
+        return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
+      }
+      if (deepHash !== sidecar.contentHash) {
+        return {
+          ok: false,
+          reason: 'contentMismatch',
+          version: targetVersion,
+          detail: `expected ${sidecar.contentHash}, got ${deepHash}`,
+        };
+      }
+      await recordDeepBundleVerification();
+      return { ok: true, version: targetVersion };
+    }
+    // Fingerprint mismatch → fall through to the full byte hash to decide
+    // healthy-vs-repair (keeps the existing contentMismatch/repair flow).
+  }
+
   const actualHash = await computeBundleContentHash(bundleDir);
   if (!actualHash) {
     return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
@@ -963,6 +1097,19 @@ export async function assertExtensionBundleOnDiskHealthy(version?: string): Prom
       version: targetVersion,
       detail: `expected ${sidecar.contentHash}, got ${actualHash}`,
     };
+  }
+  // Full byte hash passed. Record the deep verification and, when the sidecar
+  // lacked a fingerprint (legacy) or it drifted (e.g. a touch that changed mtime
+  // but not bytes), backfill the current fingerprint so future launches take the
+  // fast path. Best-effort: a backfill write failure must not fail the health check.
+  await recordDeepBundleVerification();
+  const currentFingerprint = await computeBundleTreeFingerprint(bundleDir);
+  if (currentFingerprint && currentFingerprint !== sidecar.treeFingerprint) {
+    try {
+      await writeBundleSidecar(targetVersion, sidecar.sourceMd5, sidecar.contentHash, currentFingerprint);
+    } catch {
+      // Non-fatal: the bundle is healthy; we just didn't upgrade the sidecar.
+    }
   }
   return { ok: true, version: targetVersion };
 }

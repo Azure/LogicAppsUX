@@ -18,7 +18,8 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as cp from 'child_process';
 import { Readable } from 'stream';
-import { extensionBundleId, defaultVersionRange, defaultExtensionBundlePathValue } from '../../../constants';
+import { createHash } from 'crypto';
+import { extensionBundleId, defaultVersionRange, defaultExtensionBundlePathValue, lastBundleDeepVerificationKey } from '../../../constants';
 import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as cpUtils from '../funcCoreTools/cpUtils';
 import * as feedModule from '../feed';
@@ -82,6 +83,12 @@ vi.mock('../../../extensionVariables', () => ({
     },
     telemetryReporter: {
       sendTelemetryEvent: vi.fn(),
+    },
+    context: {
+      globalState: {
+        get: vi.fn().mockReturnValue(undefined),
+        update: vi.fn().mockResolvedValue(undefined),
+      },
     },
   },
 }));
@@ -909,6 +916,25 @@ describe('downloadExtensionBundle', () => {
       extensionBundleId,
       '1.95.0'
     );
+  });
+
+  it('persists a treeFingerprint in the sidecar when a newer version is downloaded', async () => {
+    setupLocalDisk(['1.75.0']);
+    mockedGetJsonFeed.mockResolvedValue(['1.95.0'] as any);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    let writtenPayload = '';
+    mockedFse.outputFile.mockImplementation((async (_p: string, payload: string) => {
+      writtenPayload = payload;
+    }) as any);
+
+    const context = createMockContext();
+    await downloadExtensionBundle(context as any);
+
+    expect(writtenPayload).not.toBe('');
+    const parsed = JSON.parse(writtenPayload);
+    // Empty extracted tree → fingerprint equals the empty-input sha256 digest.
+    expect(parsed.treeFingerprint).toBe(EMPTY_TREE_HASH);
   });
 
   it('should not download when local version is higher than feed versions and the on-disk sidecar matches the published MD5', async () => {
@@ -1809,6 +1835,126 @@ describe('assertExtensionBundleOnDiskHealthy', () => {
     if (!result.ok) {
       expect(result.reason).toBe('noBundle');
     }
+  });
+});
+
+describe('assertExtensionBundleOnDiskHealthy tree-fingerprint fast path', () => {
+  const VERSION = '1.50.0';
+  const bundleDir = path.join(defaultExtensionBundlePathValue, VERSION);
+  const binDir = path.join(bundleDir, 'bin');
+  const filePath = path.join(binDir, 'bundle.dll');
+  const CONTENT = 'bundle-content';
+  const SIZE = Buffer.byteLength(CONTENT);
+  const MTIME_MS = 1000;
+
+  // Mirror the production digest layout: `<relPath>\0<field>\0…`.
+  const digest = (parts: string[]): string => {
+    const hash = createHash('sha256');
+    for (const part of parts) {
+      hash.update(part);
+      hash.update('\0');
+    }
+    return hash.digest('base64');
+  };
+  const CONTENT_HASH = digest(['bin/bundle.dll', String(SIZE), CONTENT]);
+  const TREE_FINGERPRINT = digest(['bin/bundle.dll', String(SIZE), String(MTIME_MS)]);
+
+  // Sets up a one-file bundle tree on the mocked filesystem and returns the last
+  // sidecar payload written (for backfill assertions).
+  const setupOneFileTree = (sidecar: string) => {
+    const state = { written: '' };
+    vi.mocked(fse.readdirSync).mockReturnValue([VERSION] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockImplementation(((p: string) => {
+      if (p === bundleDir) {
+        return Promise.resolve(['bin'] as any);
+      }
+      if (p === binDir) {
+        return Promise.resolve(['bundle.dll'] as any);
+      }
+      return Promise.resolve([] as any);
+    }) as any);
+    vi.mocked(fse.lstat).mockImplementation(((p: string) =>
+      Promise.resolve({
+        isDirectory: () => p === binDir,
+        isFile: () => p === filePath,
+        size: SIZE,
+        mtimeMs: MTIME_MS,
+      } as any)) as any);
+    vi.mocked(fse.stat).mockImplementation(((p: string) =>
+      Promise.resolve({
+        size: SIZE,
+        mtimeMs: MTIME_MS,
+        isDirectory: () => p === bundleDir || p === binDir,
+        isFile: () => p === filePath,
+      } as any)) as any);
+    vi
+      .mocked(fse.createReadStream)
+      .mockImplementation((p: string) => (p === filePath ? Readable.from([Buffer.from(CONTENT)]) : Readable.from([])) as any) as any;
+    vi.mocked(fse.readFile).mockResolvedValue(sidecar as any);
+    vi.mocked(fse.outputFile).mockImplementation((async (_p: string, payload: string) => {
+      state.written = payload;
+    }) as any);
+    vi.mocked(fse.move).mockResolvedValue(undefined as any);
+    return state;
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(fse.readFile).mockReset();
+    vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
+    // Default: a recent deep verification so the throttle is NOT due.
+    vi.mocked(ext.context.globalState.get).mockReturnValue(Date.now());
+    vi.mocked(ext.context.globalState.update).mockResolvedValue(undefined as any);
+  });
+
+  it('takes the fast path (no byte hash) when the tree fingerprint matches', async () => {
+    setupOneFileTree(JSON.stringify({ version: 1, sourceMd5: 'md5', contentHash: CONTENT_HASH, treeFingerprint: TREE_FINGERPRINT }));
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+
+    expect(result.ok).toBe(true);
+    // The whole point: the expensive per-byte read never happens.
+    expect(vi.mocked(fse.createReadStream)).not.toHaveBeenCalled();
+  });
+
+  it('falls back to the byte hash and reports contentMismatch when the fingerprint drifts', async () => {
+    setupOneFileTree(JSON.stringify({ version: 1, sourceMd5: 'md5', contentHash: 'WRONG', treeFingerprint: 'STALE-FINGERPRINT' }));
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBe('contentMismatch');
+    }
+    expect(vi.mocked(fse.createReadStream)).toHaveBeenCalled();
+  });
+
+  it('runs the byte hash and backfills the fingerprint for a legacy sidecar', async () => {
+    const state = setupOneFileTree(JSON.stringify({ version: 1, sourceMd5: 'md5', contentHash: CONTENT_HASH }));
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+
+    expect(result.ok).toBe(true);
+    // Legacy sidecar has no fingerprint → must byte-hash to verify.
+    expect(vi.mocked(fse.createReadStream)).toHaveBeenCalled();
+    // …then upgrade the sidecar so the next launch is fast.
+    expect(vi.mocked(fse.outputFile)).toHaveBeenCalled();
+    expect(JSON.parse(state.written).treeFingerprint).toBe(TREE_FINGERPRINT);
+  });
+
+  it('runs the byte hash and records a timestamp when the deep-verify throttle is due', async () => {
+    // Fingerprint matches, but the last deep verification was long ago → due.
+    vi.mocked(ext.context.globalState.get).mockReturnValue(0);
+    setupOneFileTree(JSON.stringify({ version: 1, sourceMd5: 'md5', contentHash: CONTENT_HASH, treeFingerprint: TREE_FINGERPRINT }));
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+
+    expect(result.ok).toBe(true);
+    // Throttle due → byte hash runs even though the fingerprint matched.
+    expect(vi.mocked(fse.createReadStream)).toHaveBeenCalled();
+    expect(vi.mocked(ext.context.globalState.update)).toHaveBeenCalledWith(lastBundleDeepVerificationKey, expect.any(Number));
   });
 });
 
