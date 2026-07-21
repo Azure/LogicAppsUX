@@ -45,7 +45,8 @@ async function getDesignerV2Panel(
   }
 
   const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
-  if (shouldAlwaysBuildCustomCode() || !(await customCodeArtifactsExist(logicAppNode.fsPath))) {
+  const isMonitoringView = !!runId;
+  if (!isMonitoringView && (shouldAlwaysBuildCustomCode() || !(await customCodeArtifactsExist(logicAppNode.fsPath)))) {
     await tryBuildCustomCodeFunctionsProject(context, logicAppNode);
   }
 
