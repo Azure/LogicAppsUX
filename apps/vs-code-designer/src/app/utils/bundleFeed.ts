@@ -841,20 +841,12 @@ let lastBundleInstallError: Error | undefined;
 let healthyBundleVersion: string | null = null;
 
 /**
- * Whether the "already verified this session" skip message has been logged. Gated so the message
- * appears at most once per session instead of once per design-time / runtime host launch (which is
- * once per project in a multi-project workspace). Reset whenever the health cache is invalidated.
- */
-let loggedBundleAlreadyVerified = false;
-
-/**
  * Clears the session bundle-health cache so the next
  * `ensureExtensionBundleHealthy` re-runs the on-disk integrity check. Invoked
  * whenever the bundle on disk may have changed (download/repair) or on reset.
  */
 export function invalidateBundleHealthCache(): void {
   healthyBundleVersion = null;
-  loggedBundleAlreadyVerified = false;
 }
 
 export function getLastBundleInstallResult(): BundleInstallResult {
@@ -1016,12 +1008,9 @@ export async function ensureExtensionBundleHealthy(
   }
 
   if (healthyBundleVersion) {
-    if (!loggedBundleAlreadyVerified) {
-      loggedBundleAlreadyVerified = true;
-      ext.outputChannel?.appendLog(
-        `Logic Apps extension bundle ${healthyBundleVersion} already verified this session; skipping on-disk integrity re-check.`
-      );
-    }
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${healthyBundleVersion} already verified this session; skipping on-disk integrity re-check.`
+    );
     return;
   }
 
@@ -1088,7 +1077,6 @@ export async function downloadExtensionBundle(context: IActionContext, options: 
   // health cache is no longer authoritative — force the next
   // `ensureExtensionBundleHealthy` to re-verify.
   healthyBundleVersion = null;
-  loggedBundleAlreadyVerified = false;
   // Dedupe concurrent calls: if a download is already in flight, await it
   // instead of kicking off a parallel attempt that would race for the same
   // extraction directory.
@@ -1519,7 +1507,6 @@ export function resetCachedBundleVersion(): void {
   lastBundleInstallError = undefined;
   inFlightBundleWork = undefined;
   healthyBundleVersion = null;
-  loggedBundleAlreadyVerified = false;
 }
 
 /**

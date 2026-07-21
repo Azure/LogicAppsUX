@@ -2018,10 +2018,12 @@ describe('ensureExtensionBundleHealthy session cache', () => {
     );
   });
 
-  it('logs the "already verified" skip at most once per session across many launches', async () => {
+  it('logs the "already verified" skip on every cached launch (once per project)', async () => {
     setupHealthyBundle();
 
     // Simulates a multi-project workspace launching several design-time hosts in one session.
+    // The first launch computes and caches the health result; each subsequent launch short-circuits
+    // on the cache and logs the skip line, consistent with the other per-startup log lines.
     await ensureExtensionBundleHealthy(ctx() as any);
     await ensureExtensionBundleHealthy(ctx() as any);
     await ensureExtensionBundleHealthy(ctx() as any);
@@ -2030,7 +2032,7 @@ describe('ensureExtensionBundleHealthy session cache', () => {
       .mocked(ext.outputChannel.appendLog)
       .mock.calls.map(([value]) => String(value))
       .filter((line) => line.includes('already verified this session'));
-    expect(skipLogs).toHaveLength(1);
+    expect(skipLogs).toHaveLength(2);
   });
 
   it('logs the "already verified" skip again after the health cache is invalidated', async () => {
