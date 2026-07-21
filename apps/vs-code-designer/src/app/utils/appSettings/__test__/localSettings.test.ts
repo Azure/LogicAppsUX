@@ -48,6 +48,12 @@ describe('utils/appSettings', () => {
       expect(settings['Values']).toHaveProperty(ProjectDirectoryPathKey, projectPath);
     });
 
+    it('Should run the design time host in-process .NET 8 (dotnet worker runtime + inproc flag)', () => {
+      const settings = getLocalSettingsSchema(true, projectPath);
+      expect(settings['Values']).toHaveProperty(workerRuntimeKey, WorkerRuntime.Dotnet);
+      expect(settings['Values']).toHaveProperty(functionsInprocNet8Enabled, functionsInprocNet8EnabledTrue);
+    });
+
     it('Should have the AzureWebJobsStorage when is not design time localsettings and have ProjectDirectoryPath property when sent', () => {
       const settings = getLocalSettingsSchema(false, projectPath);
       expect(settings['Values']).toHaveProperty(azureWebJobsStorageKey, localEmulatorConnectionString);
@@ -127,13 +133,14 @@ describe('utils/appSettings', () => {
     });
 
     describe('expected design-time content by logic app type', () => {
-      it('design-time local.settings.json (codeless / Standard Node)', () => {
+      it('design-time local.settings.json (codeless / Standard in-process .NET 8)', () => {
         expect(getLocalSettingsSchema(true, projectPath, ProjectType.logicApp)).toEqual({
           IsEncrypted: false,
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
           },
         });
@@ -145,9 +152,22 @@ describe('utils/appSettings', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
+          },
+        });
+      });
+
+      it('design-time local.settings.json (Node-worker fallback) uses the Node runtime without the in-process .NET 8 flag', () => {
+        expect(getLocalSettingsSchema(true, projectPath, ProjectType.logicApp, true)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Node,
+            [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
           },
         });
       });

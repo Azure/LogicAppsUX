@@ -21,7 +21,6 @@ export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
-export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
 export const sdkLspServer = 'SdkLspServer';
 
@@ -42,7 +41,6 @@ export const lspDirectory = 'LanguageServerLogicApps';
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
 export const testMockOutputsDirectory = 'MockOutputs';
-export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 export const devContainerFolderName = '.devcontainer';
 export const assetsFolderName = 'assets';
@@ -156,6 +154,7 @@ export const extensionCommand = {
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
+  toggleDesignTimeNodeWorker: 'azureLogicAppsStandard.toggleDesignTimeNodeWorker',
   openInPortal: 'azureLogicAppsStandard.openInPortal',
   azureFunctionsOpenFile: 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
@@ -262,6 +261,7 @@ export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
+export const useNodeDesignTimeWorkerSetting = 'useNodeDesignTimeWorker';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
@@ -277,11 +277,8 @@ export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValid
 export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
-// Timeout (ms) for dependency version/metadata HTTP lookups so activation can't hang on a stalled request.
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
-// On-disk integrity manifest written into each installed runtime dependency folder to detect corrupt/incomplete installs.
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
-export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 export const onStartLanguageServer = 'onStartLanguageServer';
@@ -396,9 +393,6 @@ export const logicAppFilter = {
   kind: 'functionapp,workflowapp',
 };
 
-// Telemetry Events
-export const saveUnitTestEvent = 'saveUnitTestDefinition';
-export const runUnitTestEvent = 'runUnitTest';
 // Container Apps
 export const containerAppsId = 'containerApps';
 export const managedEnvironmentsId = 'managedEnvironments';

@@ -57,7 +57,7 @@ vi.mock('../../../commands/pickFuncProcess', () => ({
 }));
 
 vi.mock('../../findChildProcess/findChildProcess', () => ({
-  getChildProcessesWithScript: vi.fn(),
+  getChildProcesses: vi.fn(),
 }));
 
 vi.mock('axios', () => ({

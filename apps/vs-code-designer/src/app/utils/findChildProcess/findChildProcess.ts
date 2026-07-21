@@ -1,6 +1,7 @@
 import * as cp from 'child_process';
 import { ext } from '../../../extensionVariables';
 import { getExtensionAssetPath } from '../extensionAssets';
+import { localize } from '../../../localize';
 
 interface ProcessInfo {
   processId: number;
@@ -47,7 +48,7 @@ async function runPowerShellScript(scriptPath: string, ...args: string[]): Promi
   });
 }
 
-export async function getChildProcessesWithScript(parentProcessId: number): Promise<ProcessInfo[]> {
+export async function getChildProcesses(parentProcessId: number): Promise<ProcessInfo[]> {
   try {
     const scriptPath = getExtensionAssetPath('scripts', 'get-child-processes.ps1');
     const output = await runPowerShellScript(scriptPath, parentProcessId.toString());
@@ -66,7 +67,11 @@ export async function getChildProcessesWithScript(parentProcessId: number): Prom
     }));
   } catch (error) {
     throw new Error(
-      `Failed to execute Powershell script to get the func child process: ${error instanceof Error ? error.message : String(error)}`
+      localize(
+        'getChildProcessesError',
+        'Failed to execute Powershell script to get the func child process. Error: "{0}".',
+        error instanceof Error ? error.message : String(error)
+      )
     );
   }
 }

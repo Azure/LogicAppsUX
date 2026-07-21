@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { getEditorAndOptions } from '..';
 import type { VariableDeclaration } from '../../../../../../core/state/tokens/tokensSlice';
 import { InitEditorService } from '@microsoft/logic-apps-shared';
@@ -106,6 +107,53 @@ describe('getEditorAndOptions', () => {
       },
     };
     expect(getEditorAndOptions(operationInfo, parameter, upstreamNodeIds, variables)).toEqual(expectedEditorAndOptions);
+  });
+
+  describe('"variablename" editor strictly scopes to upstream variables', () => {
+    const variables: Record<string, VariableDeclaration[]> = {
+      initInt: [{ name: 'intVar', type: 'integer' }],
+      initFloat: [{ name: 'floatVar', type: 'float' }],
+      initStr: [{ name: 'strVar', type: 'string' }],
+      initArr: [{ name: 'arrVar', type: 'array' }],
+      initBool: [{ name: 'boolVar', type: 'boolean' }],
+    };
+
+    it('returns an empty options list when no variables are upstream (no all-variables leak)', () => {
+      const parameter = getParameterInfo();
+      parameter.editor = 'variablename';
+      parameter.editorOptions = { supportedTypes: [] };
+
+      // upstreamNodeIds is empty even though variables are declared elsewhere in the workflow.
+      // Showing all of them would let a Set Variable reference an out-of-scope variable, so the
+      // dropdown must be empty.
+      const result = getEditorAndOptions(operationInfo, parameter, /* upstreamNodeIds */ [], variables);
+
+      expect(result).toEqual({ editor: 'dropdown', editorOptions: { options: [] } });
+    });
+
+    it('returns an empty options list when no variables are declared at all', () => {
+      const parameter = getParameterInfo();
+      parameter.editor = 'variablename';
+      parameter.editorOptions = { supportedTypes: ['string'] };
+
+      const result = getEditorAndOptions(operationInfo, parameter, /* upstreamNodeIds */ [], /* variables */ {});
+
+      expect(result).toEqual({ editor: 'dropdown', editorOptions: { options: [] } });
+    });
+
+    it('only includes variables whose declaring node is upstream, excluding parallel-branch variables', () => {
+      const parameter = getParameterInfo();
+      parameter.editor = 'variablename';
+      parameter.editorOptions = { supportedTypes: ['string'] };
+
+      // upstream includes initStr (in scope) but excludes initArr/others (parallel branch).
+      const result = getEditorAndOptions(operationInfo, parameter, ['initStr'], variables);
+
+      expect(result).toEqual({
+        editor: 'dropdown',
+        editorOptions: { options: [{ value: 'strVar', displayName: 'strVar' }] },
+      });
+    });
   });
 
   it('should support EditorService override', () => {

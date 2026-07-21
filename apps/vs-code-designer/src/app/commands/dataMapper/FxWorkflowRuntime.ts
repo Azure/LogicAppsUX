@@ -8,6 +8,8 @@ import {
   appKindSetting,
   designTimeDirectoryName,
   designerStartApi,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
   hostFileContent,
   hostFileName,
   localSettingsFileName,
@@ -17,6 +19,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../../utils/appSettings/localSettings';
+import { useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
 import {
   createJsonFile,
   getOrCreateDesignTimeDirectory,
@@ -57,22 +60,22 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
       return;
     }
 
-    const settingsFileContent = getLocalSettingsSchema(true, projectPath);
+    const useNodeWorker = useNodeDesignTimeWorker(projectPath);
+    const settingsFileContent = getLocalSettingsSchema(true, projectPath, undefined, useNodeWorker);
 
     try {
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-        await addOrUpdateLocalAppSettings(
-          context,
-          designTimeDirectory.fsPath,
-          {
-            [appKindSetting]: logicAppKind,
-            [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
-          },
-          true
-        );
+        const runtimeSettings: Record<string, string> = {
+          [appKindSetting]: logicAppKind,
+          [ProjectDirectoryPathKey]: projectPath,
+          [workerRuntimeKey]: useNodeWorker ? WorkerRuntime.Node : WorkerRuntime.Dotnet,
+        };
+        if (!useNodeWorker) {
+          runtimeSettings[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+        }
+        await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, runtimeSettings, true);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);

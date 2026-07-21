@@ -97,11 +97,6 @@ parseExpression('@{concat("a", "b")}') // { function: 'concat', args: [...] }
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared'
 ```
 
-### Error Handling
-```typescript
-import { AssertionException, ValidationException } from '@microsoft/logic-apps-shared'
-```
-
 ## Internationalization
 
 i18n utilities using `react-intl`:

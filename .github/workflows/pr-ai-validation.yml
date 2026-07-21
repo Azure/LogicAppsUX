@@ -8,201 +8,234 @@ on:
 permissions:
   pull-requests: write
   issues: write
+  contents: read
+  copilot-requests: write
 
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Check if contributor is trusted
         uses: actions/github-script@v7
         with:
           script: |
-            // Skip validation for workflow_dispatch since there is no PR context
             if (!context.payload.pull_request) {
-              console.log('No pull request context (likely workflow_dispatch). Skipping validation.');
+              console.log('No pull request context (likely workflow_dispatch). Skipping.');
               return;
             }
-            
+
             const authorAssociation = context.payload.pull_request.author_association;
             const trustedAssociations = ['COLLABORATOR', 'MEMBER', 'OWNER', 'CONTRIBUTOR'];
-            
+
             if (trustedAssociations.includes(authorAssociation)) {
-              console.log(`Trusted contributor (${authorAssociation}), proceeding with validation...`);
+              console.log(`Trusted contributor (${authorAssociation}), proceeding...`);
               return;
             }
-            
-            // Check if a maintainer has approved this external PR via label
+
             const labels = context.payload.pull_request.labels.map(l => l.name);
             if (labels.includes('external-approved')) {
-              console.log('External PR approved by maintainer via label, proceeding with validation...');
+              console.log('External PR approved by maintainer, proceeding...');
               return;
             }
-            
-            console.log(`External contributor (${authorAssociation}) - validation requires manual approval`);
-            
-            // Create or update a comment to inform about the restriction (avoid spam)
+
+            console.log(`External contributor (${authorAssociation}) - requires approval`);
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const issue_number = context.payload.pull_request.number;
             const marker = '<!-- AI_VALIDATION_PENDING -->';
-            const pendingBody = `${marker}\n## 🔒 AI Validation Pending\n\nThis PR is from an external contributor. AI validation will be performed after manual review by a maintainer.\n\nMaintainers: Add the \`external-approved\` label to this PR after reviewing the changes to enable AI validation.`;
-            
-            const { data: comments } = await github.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number,
-              per_page: 100,
-            });
-            
-            const existingComment = comments.find(c => c.body && c.body.includes(marker));
-            if (existingComment) {
-              console.log('Existing "AI Validation Pending" comment found, skipping creation.');
-            } else {
+            const pendingBody = `${marker}\n## 🔒 AI Validation Pending\n\nThis PR is from an external contributor. AI validation will be performed after manual review.\n\nMaintainers: Add the \`external-approved\` label to enable AI validation.`;
+
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number, per_page: 100 });
+            if (!comments.find(c => c.body && c.body.includes(marker))) {
               await github.rest.issues.createComment({ owner, repo, issue_number, body: pendingBody });
             }
-            
-            core.setFailed('External contributor - requires manual approval before AI validation');
-      - name: Validate PR with AI Agent
+            core.setFailed('External contributor - requires manual approval');
+
+      - name: Checkout for prompt access
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: prompts/copilot-pr-desc-check.md
+
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot@latest
+
+      - name: Gather PR data
+        id: gather
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const fs = require('fs');
+            const prData = {
+              number: pr.number,
+              title: pr.title,
+              body: pr.body || '',
+              labels: pr.labels.map(l => l.name),
+              head_ref: pr.head.ref,
+              author: pr.user.login,
+            };
+            fs.writeFileSync('/tmp/pr-meta.json', JSON.stringify(prData, null, 2));
+
+            const { data: diff } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              mediaType: { format: 'diff' }
+            });
+            const diffLines = (typeof diff === 'string' ? diff : '').split('\n').slice(0, 4000).join('\n');
+            fs.writeFileSync('/tmp/pr-diff.txt', diffLines);
+            console.log(`PR #${pr.number}: ${pr.title} (${prData.labels.join(', ')})`);
+
+      - name: Run Copilot CLI validation
+        id: validate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          SYSTEM_PROMPT=$(cat prompts/copilot-pr-desc-check.md 2>/dev/null || echo "Validate this PR description.")
+          PR_META=$(cat /tmp/pr-meta.json)
+          PR_DIFF=$(head -2000 /tmp/pr-diff.txt)
+
+          # Write combined prompt to file (avoids shell escaping issues)
+          {
+            echo "$SYSTEM_PROMPT"
+            echo ""
+            echo "---"
+            echo ""
+            echo "## PR Metadata"
+            echo "$PR_META"
+            echo ""
+            echo "## Diff (sample)"
+            echo "$PR_DIFF"
+            echo ""
+            echo "Validate this PR against the rules. Return JSON only."
+          } > /tmp/full-prompt.txt
+
+          set +e
+          MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
+          RESULT=""; CLI_EXIT=1
+          for MODEL in $MODELS; do
+            RESULT=$(timeout 90 copilot --yolo \
+              -p "$(cat /tmp/full-prompt.txt)" \
+              --model "$MODEL" 2>&1)
+            CLI_EXIT=$?
+            [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ] && break
+            echo "::warning::Copilot model $MODEL failed (exit $CLI_EXIT) — trying next"
+            RESULT=""; CLI_EXIT=1
+          done
+          set -e
+
+          if [ $CLI_EXIT -ne 0 ] || [ -z "$RESULT" ]; then
+            echo "cli_success=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Copilot CLI exit $CLI_EXIT — using fallback"
+          else
+            echo "$RESULT" | python3 -c "
+          import sys, json
+          text = sys.stdin.read()
+          # Find JSON in output
+          start = text.find('{')
+          end = text.rfind('}') + 1
+          if start >= 0 and end > start:
+              try:
+                  data = json.loads(text[start:end])
+                  json.dump(data, open('/tmp/validation-result.json', 'w'))
+                  print('cli_success=true')
+              except:
+                  print('cli_success=false')
+          else:
+              print('cli_success=false')
+          " >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fallback to Logic App
+        if: steps.validate.outputs.cli_success != 'true'
+        id: fallback
         uses: actions/github-script@v7
         env:
           LOGIC_APP_URL: ${{ vars.PR_VALIDATION_LOGIC_APP_URL }}
         with:
           script: |
             const pr_number = context.payload.pull_request.number;
-            const botCommentIdentifier = '## 🤖 AI PR Validation Report';
-            
-            // Check if the Logic App URL is configured
             if (!process.env.LOGIC_APP_URL) {
-              console.log('PR_VALIDATION_LOGIC_APP_URL secret not configured. Skipping AI validation.');
+              console.log('No Logic App URL configured either. Skipping validation.');
               return;
             }
-            
             try {
-              // Call the AI validation endpoint
               const response = await fetch(process.env.LOGIC_APP_URL, {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  pr_id: pr_number
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pr_id: pr_number })
               });
-              
               if (!response.ok) {
-                if(response.status === 502) {
-                  console.log('PR_VALIDATION Bad Gateway - The AI service is currently unavailable. Skipping AI validation.');
-                  return;
-                }
+                if (response.status === 502) { console.log('Logic App Bad Gateway. Skipping.'); return; }
                 throw new Error(`API request failed with status ${response.status}`);
               }
-              
               const result = await response.json();
-              
-              // Check if we got a valid response with the expected properties
-              if (!result.hasOwnProperty('passes') || !result.hasOwnProperty('message')) {
-                throw new Error('Invalid API response format');
-              }
-              
-              // Find existing bot comment
-              const comments = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: pr_number
-              });
-              
-              const botComment = comments.data.find(comment => 
-                comment.user.type === 'Bot' && 
-                comment.body.includes(botCommentIdentifier)
-              );
-              
-              const commentBody = `${botCommentIdentifier}\n\n${result.message}\n\n---\n*Last updated: ${new Date().toUTCString()}*`;
-              
-              if (botComment) {
-                // Update existing comment
-                await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: botComment.id,
-                  body: commentBody
-                });
-              } else {
-                // Create new comment
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: pr_number,
-                  body: commentBody
-                });
-              }
-              
-              // Manage labels based on the passes property
-              if (result.passes === true) {
-                // Add success label
-                try {
-                  await github.rest.issues.addLabels({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: pr_number,
-                    labels: ['pr-validated']
-                  });
-                } catch (e) {
-                  console.log('Error adding pr-validated label:', e.message);
-                }
-                
-                // Remove failure labels if they exist
-                const labelsToRemove = ['needs-pr-update', 'needs-title-update', 'needs-description-update'];
-                for (const label of labelsToRemove) {
-                  try {
-                    await github.rest.issues.removeLabel({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      issue_number: pr_number,
-                      name: label
-                    });
-                  } catch (e) {
-                    // Label might not exist, that's okay
-                  }
-                }
-              } else {
-                // Add failure label
-                try {
-                  await github.rest.issues.addLabels({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: pr_number,
-                    labels: ['needs-pr-update']
-                  });
-                } catch (e) {
-                  console.log('Error adding needs-pr-update label:', e.message);
-                }
-                
-                // Remove success label if it exists
-                try {
-                  await github.rest.issues.removeLabel({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: pr_number,
-                    name: 'pr-validated'
-                  });
-                } catch (e) {
-                  // Label might not exist, that's okay
-                }
-                
-                // Fail the workflow
-                core.setFailed('PR validation failed. Please address the issues mentioned in the validation report.');
-              }
-              
+              const fs = require('fs');
+              fs.writeFileSync('/tmp/validation-result.json', JSON.stringify(result));
             } catch (error) {
-              console.error('Error during PR validation:', error);
-              
-              // Post an error comment
+              console.error('Fallback failed:', error.message);
               await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                owner: context.repo.owner, repo: context.repo.repo,
                 issue_number: pr_number,
-                body: `## ❌ PR Validation Error\n\nAn error occurred while validating your PR. Please try again later or contact the maintainers.\n\nError: ${error.message}`
+                body: `## ❌ PR Validation Error\n\nBoth Copilot CLI and Logic App fallback failed.\n\nError: ${error.message}`
               });
-              
-              core.setFailed(`PR validation error: ${error.message}`);
+              core.setFailed(`Validation error: ${error.message}`);
+            }
+
+      - name: Post result and manage labels
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          CLI_SUCCESS: ${{ steps.validate.outputs.cli_success }}
+        with:
+          script: |
+            const fs = require('fs');
+            const pr_number = context.payload.pull_request?.number;
+            if (!pr_number) return;
+
+            const botCommentIdentifier = '## 🤖 AI PR Validation Report';
+            let result;
+            try {
+              result = JSON.parse(fs.readFileSync('/tmp/validation-result.json', 'utf8'));
+            } catch (e) {
+              console.log('No validation result. Skipping.');
+              return;
+            }
+
+            if (!result.hasOwnProperty('passes') || !result.hasOwnProperty('message')) {
+              console.log('Invalid result format.');
+              return;
+            }
+
+            const source = process.env.CLI_SUCCESS === 'true' ? 'Copilot CLI (claude-opus-4.8)' : 'Logic App (fallback)';
+            const commentBody = `${botCommentIdentifier}\n\n${result.message}\n\n---\n*Powered by: ${source} | Last updated: ${new Date().toUTCString()}*`;
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: pr_number
+            });
+            const botComment = comments.data.find(c => c.user.type === 'Bot' && c.body.includes(botCommentIdentifier));
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                comment_id: botComment.id, body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: pr_number, body: commentBody
+              });
+            }
+
+            if (result.passes === true) {
+              try { await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr_number, labels: ['pr-validated'] }); } catch (e) {}
+              for (const label of ['needs-pr-update', 'needs-title-update', 'needs-description-update']) {
+                try { await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr_number, name: label }); } catch (e) {}
+              }
+            } else {
+              try { await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr_number, labels: ['needs-pr-update'] }); } catch (e) {}
+              try { await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr_number, name: 'pr-validated' }); } catch (e) {}
+              core.setFailed('PR validation failed. See the validation report comment.');
             }

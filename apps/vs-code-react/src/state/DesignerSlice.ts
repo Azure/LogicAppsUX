@@ -1,14 +1,14 @@
-import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
+import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue } from '@microsoft/logic-apps-shared';
 import type {
   CompleteFileSystemConnectionData,
   ICallbackUrlResponse,
-  IDesignerPanelMetadata,
+  DesignerPanelMetadata,
 } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DesignerState {
-  panelMetaData: IDesignerPanelMetadata | null;
+  panelMetaData: DesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
   workflowRuntimeBaseUrl: string;
@@ -23,9 +23,6 @@ export interface DesignerState {
   iaMapArtifacts: ListDynamicValue[];
   oauthRedirectUrl: string;
   hostVersion: string;
-  isUnitTest: boolean;
-  unitTestDefinition: UnitTestDefinition | null;
-  supportsUnitTest: boolean;
 }
 
 const initialState: DesignerState = {
@@ -55,9 +52,6 @@ const initialState: DesignerState = {
   iaMapArtifacts: [],
   oauthRedirectUrl: '',
   hostVersion: '',
-  isUnitTest: false,
-  unitTestDefinition: null,
-  supportsUnitTest: false,
 };
 
 export const designerSlice: Slice<DesignerState> = createSlice({
@@ -77,10 +71,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
         isMonitoringView,
         runId,
         hostVersion,
-        isUnitTest,
-        unitTestDefinition,
         workflowRuntimeBaseUrl,
-        supportsUnitTest,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -95,9 +86,6 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       state.runId = runId;
       state.oauthRedirectUrl = oauthRedirectUrl;
       state.hostVersion = hostVersion;
-      state.isUnitTest = isUnitTest;
-      state.unitTestDefinition = unitTestDefinition;
-      state.supportsUnitTest = supportsUnitTest ?? (isLocal && !isMonitoringView);
     },
     updateRuntimeBaseUrl: (state, action: PayloadAction<string | undefined>) => {
       state.workflowRuntimeBaseUrl = action.payload ?? '';
@@ -109,7 +97,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
     updatePanelMetadata: (
       state,
       action: PayloadAction<{
-        panelMetadata: IDesignerPanelMetadata;
+        panelMetadata: DesignerPanelMetadata;
         connectionData: ConnectionsData;
         apiHubServiceDetails: ApiHubServiceDetails;
       }>
@@ -133,10 +121,6 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       }
       delete state.fileSystemConnections[connectionName];
     },
-    updateUnitTestDefinition: (state, action: PayloadAction<{ unitTestDefinition: UnitTestDefinition }>) => {
-      const { unitTestDefinition } = action.payload;
-      state.unitTestDefinition = unitTestDefinition;
-    },
   },
 });
 
@@ -147,5 +131,4 @@ export const {
   createFileSystemConnection,
   updateFileSystemConnection,
   updatePanelMetadata,
-  updateUnitTestDefinition,
 } = designerSlice.actions;

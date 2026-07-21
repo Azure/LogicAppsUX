@@ -519,7 +519,6 @@ const DesignerEditorConsumption = () => {
                   location={canonicalLocation}
                   isReadOnly={derivedIsReadOnly}
                   isDarkMode={isDarkMode}
-                  isUnitTest={false}
                   isMonitoringView={isMonitoringView}
                   isDesignerView={isDesignerView}
                   isCodeView={isCodeView}
