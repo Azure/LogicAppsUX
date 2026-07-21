@@ -12,6 +12,7 @@ import {
   assertExtensionBundleOnDiskHealthy,
   ensureExtensionBundleHealthy,
   invalidateBundleHealthCache,
+  awaitBackgroundBundleDeepVerification,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -935,6 +936,10 @@ describe('downloadExtensionBundle', () => {
     const parsed = JSON.parse(writtenPayload);
     // Empty extracted tree → fingerprint equals the empty-input sha256 digest.
     expect(parsed.treeFingerprint).toBe(EMPTY_TREE_HASH);
+    // A fresh download also persists the structural fingerprint and stamps the
+    // deep-verify time so the fast gate trusts it without an immediate re-hash.
+    expect(parsed.structuralFingerprint).toBe(EMPTY_TREE_HASH);
+    expect(typeof parsed.lastDeepVerifiedMs).toBe('number');
   });
 
   it('should not download when local version is higher than feed versions and the on-disk sidecar matches the published MD5', async () => {
@@ -1961,12 +1966,29 @@ describe('assertExtensionBundleOnDiskHealthy tree-fingerprint fast path', () => 
 describe('ensureExtensionBundleHealthy repair gate', () => {
   const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
   const sidecarJson = (sourceMd5: string, contentHash: string) => JSON.stringify({ version: 1, sourceMd5, contentHash });
+  // A modern sidecar for an EMPTY on-disk tree: the lstat tree + structural
+  // fingerprints of an empty walk both equal the empty-input sha256, which is the
+  // same as EMPTY_TREE_HASH. A recent `lastDeepVerifiedMs` keeps the 24h throttle
+  // from firing so the fast gate takes the exact-match path with NO background
+  // verification — the real steady-state relaunch.
+  const modernHealthySidecar = () =>
+    JSON.stringify({
+      version: 1,
+      sourceMd5: 'md5',
+      contentHash: EMPTY_TREE_HASH,
+      treeFingerprint: EMPTY_TREE_HASH,
+      structuralFingerprint: EMPTY_TREE_HASH,
+      lastDeepVerifiedMs: Date.now(),
+    });
 
   const ctx = () => ({
     telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // Drain any background deep verification left in flight by a prior test so it
+    // can't mutate shared module state (install result / health cache) mid-test.
+    await awaitBackgroundBundleDeepVerification();
     vi.clearAllMocks();
     resetCachedBundleVersion();
     vi.mocked(fse.readFile).mockReset();
@@ -1978,32 +2000,38 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
     vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
     vi.mocked(fse.pathExists).mockResolvedValue(true as any);
     vi.mocked(fse.readdir).mockResolvedValue([] as any);
-    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', EMPTY_TREE_HASH) as any);
+    vi.mocked(fse.readFile).mockResolvedValue(modernHealthySidecar() as any);
 
     await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Logic Apps extension bundle 1.50.0 on-disk integrity check passed.');
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
+    // Exact fingerprint match + not due ⇒ the ~40s byte hash never runs.
+    expect(vi.mocked(fse.createReadStream)).not.toHaveBeenCalled();
   });
 
-  it('triggers a repair download when on-disk health check fails', async () => {
-    let callIdx = 0;
+  it('repairs in the background when the fast gate passes but a genuine content mismatch is found', async () => {
+    let downloaded = false;
     vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
     vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
     vi.mocked(fse.pathExists).mockResolvedValue(true as any);
     vi.mocked(fse.readdir).mockResolvedValue([] as any);
-    // 1st read (initial assertExtensionBundleOnDiskHealthy): WRONG → mismatch.
-    // 2nd read (downloadExtensionBundle default-flow verifyLocalBundle): WRONG → triggers download.
-    // 3rd+ reads (post-repair re-check): CORRECT.
-    vi.mocked(fse.readFile).mockImplementation((async () => {
-      callIdx++;
-      return callIdx <= 2 ? sidecarJson('md5', 'WRONG') : sidecarJson('md5', EMPTY_TREE_HASH);
-    }) as any);
+    // Legacy sidecar (no fingerprints) whose stored content hash is WRONG. The
+    // fast gate passes provisionally; the background deep verify byte-hashes,
+    // finds the mismatch, and repairs. After the repair the sidecar reads clean.
+    vi.mocked(fse.readFile).mockImplementation((async () =>
+      downloaded ? sidecarJson('md5', EMPTY_TREE_HASH) : sidecarJson('md5', 'WRONG')) as any);
     vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
-    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockImplementation((async () => {
+      downloaded = true;
+      return { actualMd5: 'md5' } as any;
+    }) as any);
 
+    // Activation is NOT blocked on the byte hash — it resolves immediately.
     await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    // The repair runs off the activation path.
+    await awaitBackgroundBundleDeepVerification();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
@@ -2073,18 +2101,29 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
-  it('throws when repair download fails and on-disk health still bad', async () => {
+  it('does not block activation and logs when a background repair download fails', async () => {
     vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
     vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
     vi.mocked(fse.pathExists).mockResolvedValue(true as any);
     vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    // Legacy sidecar with a WRONG content hash: the fast gate passes provisionally,
+    // the background deep verify byte-hashes, finds the mismatch, and tries to
+    // repair — but the CDN is down.
     vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', 'WRONG') as any);
     vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
     vi.mocked(binariesModule.downloadAndExtractDependency).mockRejectedValue(new Error('CDN down'));
 
-    await expect(ensureExtensionBundleHealthy(ctx() as any)).rejects.toThrow(/Logic Apps extension bundle is not installed correctly/);
+    // Non-blocking: activation must NOT throw even though the background repair fails.
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    await awaitBackgroundBundleDeepVerification();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
+    const failureLogged = vi
+      .mocked(ext.outputChannel.appendLog)
+      .mock.calls.map(([value]) => String(value))
+      .some((line) => line.includes('background deep verification'));
+    expect(failureLogged).toBe(true);
   });
 
   it('downloads and verifies the bundle when required mode starts with no local bundle', async () => {
@@ -2130,6 +2169,18 @@ describe('ensureExtensionBundleHealthy repair gate', () => {
 describe('ensureExtensionBundleHealthy session cache', () => {
   const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
   const sidecarJson = (sourceMd5: string, contentHash: string) => JSON.stringify({ version: 1, sourceMd5, contentHash });
+  // Modern steady-state sidecar for an empty on-disk tree (see the repair-gate
+  // describe): fingerprints match the empty walk and the deep-verify throttle is
+  // fresh, so the fast gate takes the exact-match path with NO background hash.
+  const modernHealthySidecar = () =>
+    JSON.stringify({
+      version: 1,
+      sourceMd5: 'md5',
+      contentHash: EMPTY_TREE_HASH,
+      treeFingerprint: EMPTY_TREE_HASH,
+      structuralFingerprint: EMPTY_TREE_HASH,
+      lastDeepVerifiedMs: Date.now(),
+    });
 
   const ctx = () => ({
     telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
@@ -2140,10 +2191,11 @@ describe('ensureExtensionBundleHealthy session cache', () => {
     vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
     vi.mocked(fse.pathExists).mockResolvedValue(true as any);
     vi.mocked(fse.readdir).mockResolvedValue([] as any);
-    vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', EMPTY_TREE_HASH) as any);
+    vi.mocked(fse.readFile).mockResolvedValue(modernHealthySidecar() as any);
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await awaitBackgroundBundleDeepVerification();
     vi.clearAllMocks();
     resetCachedBundleVersion();
     vi.mocked(fse.readFile).mockReset();
@@ -2218,23 +2270,30 @@ describe('ensureExtensionBundleHealthy session cache', () => {
   });
 
   it('caches only after a successful repair and reuses it afterward', async () => {
-    let callIdx = 0;
+    // Drive a SYNCHRONOUS repair via a missing sidecar (a fast-gate failure), so
+    // the repair completes before the first call resolves and the session cache is
+    // populated deterministically — a genuine byte-level corruption would instead
+    // repair off the activation path (covered by the repair-gate describe).
+    let sidecarExists = false;
     vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
     vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
-    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.pathExists).mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(sidecarExists);
+      }
+      return Promise.resolve(true);
+    }) as any);
     vi.mocked(fse.readdir).mockResolvedValue([] as any);
-    // 1st/2nd sidecar reads report a mismatch (drives the repair); post-repair
-    // reads report the correct hash so the repair verification passes.
-    vi.mocked(fse.readFile).mockImplementation((async () => {
-      callIdx++;
-      return callIdx <= 2 ? sidecarJson('md5', 'WRONG') : sidecarJson('md5', EMPTY_TREE_HASH);
+    vi.mocked(fse.readFile).mockResolvedValue(modernHealthySidecar() as any);
+    vi.mocked(fse.move).mockImplementation((async () => {
+      sidecarExists = true;
     }) as any);
     vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
     vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
 
-    // First call: the failing initial check does NOT short-circuit; it repairs.
+    // First call: the missing sidecar does NOT short-circuit; it repairs synchronously.
     await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalledTimes(1);
 
@@ -2245,6 +2304,159 @@ describe('ensureExtensionBundleHealthy session cache', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Logic Apps extension bundle 1.50.0 already verified this session; skipping on-disk integrity re-check.'
     );
+  });
+});
+
+describe('ensureExtensionBundleHealthy fast gate (non-blocking)', () => {
+  const VERSION = '1.60.0';
+  const bundleDir = path.join(defaultExtensionBundlePathValue, VERSION);
+  const binDir = path.join(bundleDir, 'bin');
+  const filePath = path.join(binDir, 'bundle.dll');
+  const CONTENT = 'bundle-content';
+  const SIZE = Buffer.byteLength(CONTENT);
+  const OLD_MTIME = 1000;
+  const NEW_MTIME = 2000;
+
+  const digest = (parts: string[]): string => {
+    const hash = createHash('sha256');
+    for (const part of parts) {
+      hash.update(part);
+      hash.update('\0');
+    }
+    return hash.digest('base64');
+  };
+  const CONTENT_HASH = digest(['bin/bundle.dll', String(SIZE), CONTENT]);
+  const STRUCTURAL_FP = digest(['bin/bundle.dll', String(SIZE)]);
+  const TREE_FP = (mtime: number) => digest(['bin/bundle.dll', String(SIZE), String(mtime)]);
+
+  const ctx = () => ({
+    telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
+  });
+
+  // Sets up a one-file bundle tree on the mocked filesystem with the given on-disk
+  // mtime and sidecar payload; returns a handle capturing the last sidecar written.
+  const setup = (sidecar: string, mtimeMs: number) => {
+    const state = { written: '' };
+    vi.mocked(fse.readdirSync).mockReturnValue([VERSION] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockImplementation(((p: string) => {
+      if (p === bundleDir) {
+        return Promise.resolve(['bin'] as any);
+      }
+      if (p === binDir) {
+        return Promise.resolve(['bundle.dll'] as any);
+      }
+      return Promise.resolve([] as any);
+    }) as any);
+    vi.mocked(fse.lstat).mockImplementation(((p: string) =>
+      Promise.resolve({
+        isDirectory: () => p === binDir,
+        isFile: () => p === filePath,
+        size: SIZE,
+        mtimeMs,
+      } as any)) as any);
+    vi.mocked(fse.stat).mockImplementation(((p: string) =>
+      Promise.resolve({
+        size: SIZE,
+        mtimeMs,
+        isDirectory: () => p === bundleDir || p === binDir,
+        isFile: () => p === filePath,
+      } as any)) as any);
+    vi
+      .mocked(fse.createReadStream)
+      .mockImplementation((p: string) => (p === filePath ? Readable.from([Buffer.from(CONTENT)]) : Readable.from([])) as any) as any;
+    vi.mocked(fse.readFile).mockResolvedValue(sidecar as any);
+    vi.mocked(fse.outputFile).mockImplementation((async (_p: string, payload: string) => {
+      state.written = payload;
+    }) as any);
+    vi.mocked(fse.move).mockResolvedValue(undefined as any);
+    return state;
+  };
+
+  beforeEach(async () => {
+    await awaitBackgroundBundleDeepVerification();
+    vi.clearAllMocks();
+    resetCachedBundleVersion();
+    vi.mocked(fse.readFile).mockReset();
+    vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
+    vi.mocked(ext.context.globalState.get).mockReturnValue(Date.now());
+    vi.mocked(ext.context.globalState.update).mockResolvedValue(undefined as any);
+  });
+
+  it('refreshes the fingerprint without a byte hash on benign metadata-only drift', async () => {
+    // Structural fingerprint (path + size) matches; only mtime moved. The gate must
+    // trust it and refresh the tree fingerprint WITHOUT the ~40s byte hash.
+    const state = setup(
+      JSON.stringify({
+        version: 1,
+        sourceMd5: 'md5',
+        contentHash: CONTENT_HASH,
+        treeFingerprint: TREE_FP(OLD_MTIME),
+        structuralFingerprint: STRUCTURAL_FP,
+        lastDeepVerifiedMs: Date.now(),
+      }),
+      NEW_MTIME
+    );
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    await awaitBackgroundBundleDeepVerification();
+
+    // No byte hash, no repair download.
+    expect(vi.mocked(fse.createReadStream)).not.toHaveBeenCalled();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
+    // The tree fingerprint was refreshed to the current mtime so the next launch
+    // takes the exact-match path.
+    expect(JSON.parse(state.written).treeFingerprint).toBe(TREE_FP(NEW_MTIME));
+  });
+
+  it('honors a fresh sidecar-persisted deep-verify timestamp even when globalState is stale (H1)', async () => {
+    // globalState says a deep verify is overdue, but the sidecar carries a fresh
+    // lastDeepVerifiedMs. The sidecar must win, so NO background byte hash runs.
+    vi.mocked(ext.context.globalState.get).mockReturnValue(0);
+    setup(
+      JSON.stringify({
+        version: 1,
+        sourceMd5: 'md5',
+        contentHash: CONTENT_HASH,
+        treeFingerprint: TREE_FP(OLD_MTIME),
+        structuralFingerprint: STRUCTURAL_FP,
+        lastDeepVerifiedMs: Date.now(),
+      }),
+      OLD_MTIME
+    );
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    await awaitBackgroundBundleDeepVerification();
+
+    expect(vi.mocked(fse.createReadStream)).not.toHaveBeenCalled();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
+  });
+
+  it('schedules a background deep verify when the sidecar timestamp is stale (throttle due)', async () => {
+    // Exact fingerprint match, but the deep-verify throttle is due per the sidecar
+    // timestamp → the byte hash runs OFF the activation path (activation resolves first).
+    setup(
+      JSON.stringify({
+        version: 1,
+        sourceMd5: 'md5',
+        contentHash: CONTENT_HASH,
+        treeFingerprint: TREE_FP(OLD_MTIME),
+        structuralFingerprint: STRUCTURAL_FP,
+        lastDeepVerifiedMs: 0,
+      }),
+      OLD_MTIME
+    );
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any)).resolves.toBeUndefined();
+    // The byte hash has NOT necessarily run yet (it's backgrounded) — drain it.
+    await awaitBackgroundBundleDeepVerification();
+
+    // The background deep verify byte-hashed the tree…
+    expect(vi.mocked(fse.createReadStream)).toHaveBeenCalled();
+    // …matched, so no repair, and it recorded a fresh deep-verify timestamp.
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
+    expect(vi.mocked(ext.context.globalState.update)).toHaveBeenCalledWith(lastBundleDeepVerificationKey, expect.any(Number));
   });
 });
 
