@@ -14,7 +14,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getGlobalSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
 import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
@@ -274,30 +274,36 @@ export async function setDotNetCommand(): Promise<void> {
 
     try {
       const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
-      for (const projectPath of workspaceLogicAppFolders) {
+      if (workspaceLogicAppFolders.length > 0) {
         const pathEnv = {
           PATH: newPath,
         };
 
+        // These point at machine-local binary paths, so they belong in the user's global
+        // settings rather than the shared .code-workspace file (which is committed to the repo).
         // Required for dotnet cli in VSCode Terminal
         switch (process.platform) {
           case Platform.windows: {
-            await updateWorkspaceSetting('integrated.env.windows', pathEnv, projectPath, 'terminal');
+            await updateGlobalSetting('integrated.env.windows', pathEnv, 'terminal');
+            await removeSharedSetting('integrated.env.windows', 'terminal');
             break;
           }
 
           case Platform.linux: {
-            await updateWorkspaceSetting('integrated.env.linux', pathEnv, projectPath, 'terminal');
+            await updateGlobalSetting('integrated.env.linux', pathEnv, 'terminal');
+            await removeSharedSetting('integrated.env.linux', 'terminal');
             break;
           }
 
           case Platform.mac: {
-            await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
+            await updateGlobalSetting('integrated.env.osx', pathEnv, 'terminal');
+            await removeSharedSetting('integrated.env.osx', 'terminal');
             break;
           }
         }
         // Required for CoreClr
-        await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], projectPath, 'omnisharp');
+        await updateGlobalSetting('dotNetCliPaths', [dotNetBinariesPath], 'omnisharp');
+        await removeSharedSetting('dotNetCliPaths', 'omnisharp');
       }
     } catch (error) {
       console.log(error);
