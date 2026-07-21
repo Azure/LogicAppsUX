@@ -13,13 +13,7 @@ import * as vscode from 'vscode';
 export abstract class MonitoringPanel extends DesignerPanel {
   protected workflowFilePath: string;
 
-  protected constructor(
-    context: IActionContext,
-    runId: string,
-    workflowFilePath: string,
-    isLocal: boolean,
-    apiVersion: string
-  ) {
+  protected constructor(context: IActionContext, runId: string, workflowFilePath: string, isLocal: boolean, apiVersion: string) {
     const runName = runId ? runId.split('/').slice(-1)[0] : '';
     const workflowName = runId.split('/').slice(-3)[0];
     const panelNamePrefix = isLocal ? `${vscode.workspace.name}-` : '';

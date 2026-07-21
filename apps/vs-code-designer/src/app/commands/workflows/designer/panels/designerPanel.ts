@@ -7,7 +7,13 @@ import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
 import { getRecordEntry, isEmptyString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
-import { azurePublicBaseUrl, workflowManagementBaseURIKey, designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotification } from '../../../../../constants';
+import {
+  azurePublicBaseUrl,
+  workflowManagementBaseURIKey,
+  designerVersionSetting,
+  defaultDesignerVersion,
+  suppressDesignerVersionNotification,
+} from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
@@ -213,10 +219,7 @@ export abstract class DesignerPanel {
     } else if (selection === enablePreview) {
       await config.update(designerVersionSetting, 2, ConfigurationTarget.Global);
       const closeButton = localize('close', 'Close');
-      const reopenMessage = localize(
-        'closeToApply',
-        'Setting updated. Please close and reopen the workflow to apply the new experience.'
-      );
+      const reopenMessage = localize('closeToApply', 'Setting updated. Please close and reopen the workflow to apply the new experience.');
       const reopenSelection = await window.showInformationMessage(reopenMessage, closeButton);
       if (reopenSelection === closeButton) {
         this.panel?.dispose();
