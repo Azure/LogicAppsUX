@@ -3,7 +3,6 @@ import { ext } from '../../../../../../extensionVariables';
 import { openUrl } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { env, workspace } from 'vscode';
-import axios from 'axios';
 import { writeFileSync } from 'fs';
 
 vi.mock('../../../../../../localize', () => ({
@@ -103,6 +102,19 @@ vi.mock('../../../unitTest/createUnitTest', () => ({
   createUnitTest: vi.fn(),
 }));
 
+vi.mock('../../utils/fileSystemConnection', () => ({
+  createFileSystemConnection: vi.fn().mockResolvedValue({ connection: { id: 'connection' }, errorMessage: undefined }),
+}));
+
+vi.mock('../../utils/migration', () => ({
+  getMigrationOptions: vi.fn().mockResolvedValue({}),
+  migrateWorkflow: vi.fn(),
+}));
+
+vi.mock('../../utils/parameterMerge', () => ({
+  mergeJsonParameters: vi.fn(),
+}));
+
 vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
   getAuthorizationTokenFromNode: vi.fn().mockResolvedValue('mock-token'),
 }));
@@ -110,6 +122,7 @@ vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
 import LocalDesignerPanel from '../localDesignerPanel';
 import { createNewDataMapCmd } from '../../../../dataMapper/dataMapper';
 import { createUnitTest } from '../../../unitTest/createUnitTest';
+import { getMigrationOptions } from '../../utils/migration';
 import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
@@ -155,7 +168,6 @@ describe('LocalDesignerPanel', () => {
     vi.mocked(getBundleVersionNumber).mockResolvedValue('1.0.0');
     vi.mocked(getWebViewHTML).mockResolvedValue('<html></html>');
     vi.mocked(startDesignTimeApi).mockResolvedValue(undefined);
-    vi.mocked(axios.get).mockResolvedValue({ data: { properties: { manifest: {} } } });
     vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 1) } as any);
   });
 
@@ -225,34 +237,27 @@ describe('LocalDesignerPanel', () => {
 
       expect(startDesignTimeApi).toHaveBeenCalledWith('/test/project');
       expect(mockContext.telemetry.properties.extensionBundleVersion).toBe('1.0.0');
-      expect(axios.get).toHaveBeenCalledTimes(4);
+      expect(getMigrationOptions).toHaveBeenCalled();
       expect((instance as any).panel.webview.html).toBe('<html></html>');
     });
   });
 
   describe('metadata', () => {
     it('builds designer panel metadata using the project path for bundle resolution', async () => {
+      const { migrateWorkflow } = await import('../../utils/migration');
       const instance = new LocalDesignerPanel(mockContext, mockUri);
-      const metadata = await (instance as any).getDesignerPanelMetadata({
+      const migrationOptions = {
         flatFileEncoding: { inputs: { properties: { schema: { properties: { source: true } } } } },
         liquidJsonToJson: { inputs: { properties: { map: { properties: { source: true } } } } },
         xmlValidation: { inputs: { properties: { schema: { properties: { source: true } } } } },
         xslt: { inputs: { properties: { map: { properties: { source: true } } } } },
-      });
+      };
+      const metadata = await (instance as any).getDesignerPanelMetadata(migrationOptions);
 
       expect(getBundleVersionNumber).toHaveBeenCalledWith('/test/project');
       expect(metadata.workflowName).toBe('myWorkflow');
       expect(metadata.extensionBundleVersion).toBe('1.0.0');
-      expect(metadata.workflowContent.definition.actions.Liquid_Action.inputs.map.source).toBe('LogicApp');
-      expect(metadata.workflowContent.definition.actions.Xml_Action.inputs.schema.source).toBe('LogicApp');
-      expect(metadata.workflowContent.definition.actions.Xslt_Action.inputs.map.source).toBe('LogicApp');
-      expect(metadata.workflowContent.definition.actions.FlatFile_Action.inputs.schema.source).toBe('LogicApp');
-      expect(metadata.workflowContent.definition.actions.If_Action.else.actions.Nested_Liquid.inputs.map.source).toBe('LogicApp');
-      expect(metadata.workflowContent.definition.actions.Scope_Action.actions.Nested_Xml.inputs.schema.source).toBe('LogicApp');
-      expect(metadata.workflowContent.definition.actions.Switch_Action.cases.Case1.actions.Nested_Xslt.inputs.map.source).toBe('LogicApp');
-      expect(metadata.workflowContent.definition.actions.Switch_Action.default.actions.Nested_FlatFile.inputs.schema.source).toBe(
-        'LogicApp'
-      );
+      expect(migrateWorkflow).toHaveBeenCalledWith(expect.any(Object), migrationOptions);
     });
 
     it('reads localSettings after getAzureConnectorDetailsForLocalProject to avoid stale data from wizard writes', async () => {
@@ -296,7 +301,6 @@ describe('LocalDesignerPanel', () => {
       (instance as any).projectPath = '/test/project';
       (instance as any).getWorkflowRuntimeBaseUrl = () => 'http://localhost:8080/admin';
       (instance as any).saveWorkflow = vi.fn();
-      (instance as any).createFileSystemConnection = vi.fn().mockResolvedValue({ connection: { id: 'connection' } });
       return instance;
     }
 
@@ -308,11 +312,6 @@ describe('LocalDesignerPanel', () => {
       await (instance as any).handleWebviewMsg({ command: ExtensionCommand.createUnitTest, definition: {} });
       await (instance as any).handleWebviewMsg({ command: ExtensionCommand.addConnection, connectionAndSetting: { name: 'conn' } });
       await (instance as any).handleWebviewMsg({ command: ExtensionCommand.openOauthLoginPopup, url: 'https://login.example.com' });
-      await (instance as any).handleWebviewMsg({
-        command: ExtensionCommand.createFileSystemConnection,
-        connectionName: 'filesystem',
-        connectionInfo: { connectionParameters: {} },
-      });
       await (instance as any).handleWebviewMsg({ command: ExtensionCommand.openRelativeLink, content: '/dataMapper' });
       await (instance as any).handleWebviewMsg({ command: ExtensionCommand.logTelemetry, data: { area: 'designerArea' } });
       await (instance as any).handleWebviewMsg({ command: ExtensionCommand.fileABug });
@@ -326,12 +325,6 @@ describe('LocalDesignerPanel', () => {
       expect(createUnitTest).toHaveBeenCalled();
       expect(addConnectionData).toHaveBeenCalledWith(expect.anything(), mockUri.fsPath, { name: 'conn' });
       expect(env.openExternal).toHaveBeenCalledWith('https://login.example.com');
-      expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          command: ExtensionCommand.completeFileSystemConnection,
-          data: expect.objectContaining({ connectionName: 'filesystem' }),
-        })
-      );
       expect(createNewDataMapCmd).toHaveBeenCalledWith(mockContext);
       expect(ext.telemetryReporter.sendTelemetryEvent).toHaveBeenCalledWith('designerArea', { area: 'designerArea' });
       expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
@@ -345,9 +338,9 @@ describe('LocalDesignerPanel', () => {
 
   describe('saveWorkflow', () => {
     it('writes workflow, connection, custom code, and parameter updates', async () => {
+      const { mergeJsonParameters } = await import('../../utils/parameterMerge');
       vi.mocked(getConnectionsAndSettingsToUpdate).mockResolvedValue({ managedApiConnections: {} } as any);
       vi.mocked(getCustomCodeToUpdate).mockResolvedValue({ codeFile: 'content' } as any);
-      vi.mocked(getParametersFromFile).mockResolvedValueOnce({ preservedParameter: { value: 'existing' } } as any);
       const instance = new LocalDesignerPanel(mockContext, mockUri);
       (instance as any).panel = { webview: { postMessage: vi.fn() } };
       const workflow = { definition: { actions: {} } };
@@ -375,14 +368,8 @@ describe('LocalDesignerPanel', () => {
       expect(saveConnectionReferences).toHaveBeenCalledWith(mockContext, '/test/project', { managedApiConnections: {} });
       expect(getCustomCodeToUpdate).toHaveBeenCalledWith(mockContext, mockUri.fsPath, { codeFile: 'content' });
       expect(saveCustomCodeStandard).toHaveBeenCalledWith(mockUri.fsPath, { codeFile: 'content' });
-      expect(saveWorkflowParameter).toHaveBeenCalledWith(
-        mockContext,
-        mockUri.fsPath,
-        expect.objectContaining({
-          myParameter: { value: 'default' },
-          preservedParameter: { value: 'existing' },
-        })
-      );
+      expect(mergeJsonParameters).toHaveBeenCalledWith(mockContext, mockUri.fsPath, expect.any(Object), {});
+      expect(saveWorkflowParameter).toHaveBeenCalled();
       expect(writeFileSync).toHaveBeenCalledWith(mockUri.fsPath, expect.stringContaining('Response'));
       expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.resetDesignerDirtyState });
     });

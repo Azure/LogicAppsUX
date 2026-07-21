@@ -7,7 +7,6 @@ import {
   workflowManagementBaseURIKey,
   managementApiPrefix,
   workflowFileName,
-  workflowAuthenticationMethodKey,
   artifactsDirectory,
   mapsDirectory,
   schemasDirectory,
@@ -193,10 +192,9 @@ export async function getArtifactsPathInLocalProject(projectPath: string): Promi
 const azureDetailsCache = new Map<string, { timestamp: number; details: AzureConnectorDetails }>();
 const AZURE_DETAILS_CACHE_TTL = 300000; // 5 minutes
 
-async function defaultAzureConnectorDetailsToRawKeys(context: IActionContext, projectPath: string): Promise<AzureConnectorDetails> {
+async function defaultAzureConnectorDetails(context: IActionContext, projectPath: string): Promise<AzureConnectorDetails> {
   await addOrUpdateLocalAppSettings(context, projectPath, {
     [workflowSubscriptionIdKey]: '',
-    [workflowAuthenticationMethodKey]: 'rawKeys',
   });
 
   return {
@@ -252,8 +250,8 @@ export async function getAzureConnectorDetailsForLocalProject(
         throw error;
       }
 
-      context.telemetry.properties.azureConnectorsDefaulted = 'rawKeys';
-      const defaultDetails = await defaultAzureConnectorDetailsToRawKeys(context, projectPath);
+      context.telemetry.properties.useDefaultAzureConnectorDetails = 'true';
+      const defaultDetails = await defaultAzureConnectorDetails(context, projectPath);
       azureDetailsCache.set(projectPath, { timestamp: now, details: defaultDetails });
       return defaultDetails;
     }

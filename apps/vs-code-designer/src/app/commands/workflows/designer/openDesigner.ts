@@ -5,7 +5,7 @@
 import * as path from 'path';
 import { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getWorkflowNode } from '../../../utils/workspace';
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { tryBuildCustomCodeFunctionsProject } from '../../buildCustomCodeFunctionsProject';
 import { customCodeArtifactsExist } from '../../../utils/customCodeUtils';
 import type { DesignerPanel } from './panels/designerPanel';
@@ -14,8 +14,15 @@ import LocalDesignerPanel from './panels/localDesignerPanel';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { openDesignerV2 } from '../designer-v2/openDesignerV2';
+import { defaultDesignerVersion, designerVersionSetting } from '../../../../constants';
 
 export async function openDesigner(context: IActionContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
+  const designerVersion = workspace.getConfiguration(ext.prefix).get<number>(designerVersionSetting) ?? defaultDesignerVersion;
+  if (designerVersion === 2) {
+    return openDesignerV2(context, node);
+  }
+
   const workflowNode = getWorkflowNode(node);
   if (!workflowNode) {
     ext.outputChannel.appendLog(localize('workflowNodeNotFound', 'Failed to open designer. Unable to find the workflow node.'));

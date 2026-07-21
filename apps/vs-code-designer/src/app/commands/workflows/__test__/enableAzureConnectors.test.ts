@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { localSettingsFileName, workflowAuthenticationMethodKey, workflowSubscriptionIdKey } from '../../../../constants';
+import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../../../utils/codeless/common';
 import { getLogicAppProjectRoot } from '../../../utils/codeless/connection';
@@ -68,11 +68,10 @@ describe('enableAzureConnectors', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure connectors are enabled for the workflow.');
   });
 
-  it('shows already-enabled information when subscription and auth settings exist', async () => {
+  it('shows already-enabled information when subscription setting exists', async () => {
     (getLocalSettingsJson as Mock).mockResolvedValue({
       Values: {
         [workflowSubscriptionIdKey]: 'subscription-id',
-        [workflowAuthenticationMethodKey]: 'ActiveDirectoryOAuth',
       },
     });
 

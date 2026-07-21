@@ -122,6 +122,10 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       }
       delete state.fileSystemConnections[connectionName];
     },
+    selectRun: (state, action: PayloadAction<string>) => {
+      state.runId = action.payload;
+      state.isMonitoringView = true;
+    },
   },
 });
 
@@ -133,4 +137,5 @@ export const {
   updateFileSystemConnection,
   updatePanelMetadata,
   updateDesignerAccessToken,
+  selectRun,
 } = designerSlice.actions;

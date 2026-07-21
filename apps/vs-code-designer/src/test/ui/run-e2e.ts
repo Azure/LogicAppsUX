@@ -2208,6 +2208,20 @@ namespace ${namespaceName}
     //
     // Returns the aggregate exit code.
     const runScenarioPhases = async (scenarioList: Scenario[] /* , opts */): Promise<number> => {
+      // Retry a failing scenario in a fresh VS Code session before giving up.
+      // This absorbs transient xvfb/focus/timing/cold-start races (the dominant
+      // flake class for ExTester UI tests) WITHOUT masking real regressions: a
+      // scenario that fails every attempt still fails the shard, and a scenario
+      // that only passes after a retry is surfaced loudly as a `::warning::`
+      // flake annotation so the underlying race can still be root-caused.
+      // Opt-in via LA_E2E_SCENARIO_RETRIES (default 0 = fail fast locally; CI
+      // sets it). Each retry is a full prepareFreshSession(), so it also clears
+      // the stale-window / leftover-process flakes.
+      const scenarioRetries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
+      const maxAttempts = scenarioRetries + 1;
+      if (scenarioRetries > 0) {
+        console.log(`Scenario retry enabled: up to ${scenarioRetries} retry(ies) per failing scenario (LA_E2E_SCENARIO_RETRIES).`);
+      }
       const exits: number[] = [];
       for (const scenario of scenarioList) {
         const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
@@ -2220,6 +2234,11 @@ namespace ${namespaceName}
         // Apply per-scenario env overrides (e.g. LA_E2E_SHAPE for parameterized
         // shape-specific shards). Captured here so we can restore afterward.
         const envOverridesApplied: EnvOverride[] = [];
+        // Re-point LA_E2E_SCENARIO at the current scenario id so tests/helpers
+        // that read it as the active scenario keep their per-scenario semantics
+        // during grouped runs.
+        envOverridesApplied.push({ key: 'LA_E2E_SCENARIO', prev: process.env.LA_E2E_SCENARIO });
+        process.env.LA_E2E_SCENARIO = id;
         if (scenarioEnv && typeof scenarioEnv === 'object') {
           for (const [key, value] of Object.entries(scenarioEnv)) {
             envOverridesApplied.push({ key, prev: process.env[key] });
@@ -2228,27 +2247,65 @@ namespace ${namespaceName}
           }
         }
 
-        await prepareFreshSession(id);
-        if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
-          pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
-          pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
-        }
-
-        const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
-        if (legacyDir) {
-          process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
-        }
         const fileList = Array.isArray(files) ? files : [files];
         if (!monolithic && fileList.length !== 1) {
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
         }
-        if (process.env.LA_E2E_BUNDLE_PREFLIGHT === '1') {
-          verifyLogicAppsExtensionBundle(`preflight:${id}`);
+
+        let exit = 1;
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          if (attempt > 1) {
+            console.log(`\n  ↻ [${id}] retry ${attempt - 1}/${scenarioRetries} in a fresh session after a failed attempt...`);
+            // Give VS Code/chromedriver/func extra time to release ports and
+            // sockets before relaunching, on top of prepareFreshSession()'s kill.
+            await new Promise((r) => setTimeout(r, 8000));
+          }
+
+          try {
+            await prepareFreshSession(id);
+            if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+              pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
+              pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
+            }
+
+            const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
+            if (legacyDir) {
+              process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+            }
+            if (process.env.LA_E2E_BUNDLE_PREFLIGHT === '1') {
+              verifyLogicAppsExtensionBundle(`preflight:${id}`);
+            }
+
+            const attemptLabel = maxAttempts > 1 ? `Scenario ${id} (attempt ${attempt}/${maxAttempts})` : `Scenario ${id}`;
+            exit = await runPhase(attemptLabel, fileList, { resources });
+
+            // p41a-fixtures must also pass its post-run bundle verification to
+            // count as a successful attempt; a failure here is retryable and
+            // must not emit a "passed" flake annotation below.
+            if (exit === 0 && id === 'p41a-fixtures') {
+              verifyLogicAppsExtensionBundle('p41a-fixtures');
+            }
+          } catch (e) {
+            // Any throw in session prep / preflight / run / verify is treated as
+            // a failed (retryable) attempt rather than aborting the whole run.
+            // A deterministic failure (e.g. a genuinely corrupt bundle) simply
+            // throws again on every attempt and still fails the shard.
+            exit = 1;
+            console.warn(`  [${id}] attempt ${attempt}/${maxAttempts} threw: ${getErrorMessage(e)}`);
+          }
+
+          if (exit === 0) {
+            if (attempt > 1) {
+              // Surface the flake loudly (but non-fatally). A scenario that
+              // needed a retry to pass is a signal to fix the underlying race.
+              const flakeMsg = `${id} passed on attempt ${attempt}/${maxAttempts} (failed ${attempt - 1}x)`;
+              console.warn(`  ⚠ FLAKE: ${flakeMsg}`);
+              console.log(`::warning title=E2E scenario flake::${flakeMsg}`);
+            }
+            break;
+          }
         }
-        const exit = await runPhase(`Scenario ${id}`, fileList, { resources });
-        if (exit === 0 && id === 'p41a-fixtures') {
-          verifyLogicAppsExtensionBundle('p41a-fixtures');
-        }
+
         // Restore env overrides so subsequent scenarios aren't contaminated.
         for (const { key, prev } of envOverridesApplied) {
           if (prev === undefined) {
@@ -2267,23 +2324,51 @@ namespace ${namespaceName}
       return aggregate;
     };
 
-    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects a single
-    // scenarios[] entry by id. Takes precedence over E2E_MODE so a matrix
-    // shard that sets both env vars (e.g. for transitional debugging)
-    // still runs exactly one scenario. E2E_MODE remains supported as a
-    // fallback for legacy grouped-shard invocations.
-    const singleScenarioId = process.env.LA_E2E_SCENARIO;
-    if (singleScenarioId) {
-      const scenarioEntry = scenarios.find((s) => s.id === singleScenarioId);
-      if (!scenarioEntry) {
-        console.error(`Unknown LA_E2E_SCENARIO: ${singleScenarioId}`);
+    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects one or more
+    // scenarios[] entries by id. Accepts a single id or a comma-separated
+    // list so a matrix shard can run several scenarios sequentially on one
+    // runner — each scenario still gets its own fresh VS Code session via
+    // prepareFreshSession(), so grouping amortizes CI setup cost without
+    // sacrificing per-scenario isolation. Takes precedence over E2E_MODE so a
+    // matrix shard that sets both env vars (e.g. for transitional debugging)
+    // still runs exactly the selected scenarios. E2E_MODE remains supported
+    // as a fallback for legacy grouped-shard invocations.
+    const scenarioSelector = process.env.LA_E2E_SCENARIO;
+    if (scenarioSelector) {
+      const requestedIds = scenarioSelector
+        .split(',')
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0);
+      const selectedScenarios: Scenario[] = [];
+      const unknownIds: string[] = [];
+      const seenIds = new Set<string>();
+      for (const requestedId of requestedIds) {
+        // Dedup so a repeated id in the list doesn't run the same scenario twice.
+        if (seenIds.has(requestedId)) {
+          continue;
+        }
+        seenIds.add(requestedId);
+        const scenarioEntry = scenarios.find((s) => s.id === requestedId);
+        if (scenarioEntry) {
+          selectedScenarios.push(scenarioEntry);
+        } else {
+          unknownIds.push(requestedId);
+        }
+      }
+      if (unknownIds.length > 0) {
+        console.error(`Unknown LA_E2E_SCENARIO id(s): ${unknownIds.join(', ')}`);
         console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
         process.exit(2);
       }
-      console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
+      if (selectedScenarios.length === 0) {
+        console.error(`LA_E2E_SCENARIO resolved to no scenarios: ${scenarioSelector}`);
+        console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
+        process.exit(2);
+      }
+      console.log(`\nRunning ${selectedScenarios.length} scenario(s) (LA_E2E_SCENARIO): ${selectedScenarios.map((s) => s.id).join(', ')}`);
       await downloadExTesterAssets();
-      const singleExit = await runScenarioPhases([scenarioEntry]);
-      process.exit(singleExit);
+      const selectedExit = await runScenarioPhases(selectedScenarios);
+      process.exit(selectedExit);
     }
 
     if (e2eMode === 'scenarios') {

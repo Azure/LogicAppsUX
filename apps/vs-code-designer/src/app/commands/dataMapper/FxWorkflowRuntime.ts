@@ -28,9 +28,9 @@ import {
   waitForDesignTimeStartUp,
 } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
+import { reserveFreePort } from '../../utils/portReservation';
 import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import * as portfinder from 'portfinder';
 import { ProgressLocation, type Uri, window } from 'vscode';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
@@ -40,13 +40,13 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
   const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
   if (!ext.designTimeInstances.has(projectPath)) {
     ext.designTimeInstances.set(projectPath, {
-      port: await portfinder.getPortPromise(),
+      port: await reserveFreePort(),
     });
   }
   const designTimeInst = ext.designTimeInstances.get(projectPath);
 
   if (!designTimeInst.port) {
-    designTimeInst.port = await portfinder.getPortPromise();
+    designTimeInst.port = await reserveFreePort();
   }
 
   // Note: Must append operationGroups as it's a valid endpoint to ping
