@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect, vi, afterEach } from 'vitest';
 import axios from 'axios';
-import { HttpClient, HttpOptions } from '../httpClient';
+import { HttpClient, HttpOptions, isSuccessResponse } from '../httpClient';
 import type { HttpRequestOptions } from '@microsoft/logic-apps-shared';
 
 vi.mock('axios');
@@ -364,6 +364,122 @@ describe('HttpClient', () => {
           }),
         })
       );
+    });
+  });
+
+  describe('updateAccessToken', () => {
+    it('should update the token used in subsequent requests', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      httpClient.updateAccessToken('new-token');
+
+      await httpClient.get({ uri: '/subscriptions/sub-1/resource', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: 'new-token',
+          }),
+        })
+      );
+    });
+
+    it('should handle undefined token after update', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      httpClient.updateAccessToken(undefined);
+
+      await httpClient.get({ uri: '/subscriptions/sub-1/resource', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: '',
+          }),
+        })
+      );
+    });
+  });
+
+  describe('patch', () => {
+    it('should make a PATCH request with correct headers', async () => {
+      const responseData = { data: { result: 'patched' } };
+      (axios as any).mockResolvedValue({ data: responseData, status: 200 });
+
+      const options: HttpRequestOptions<unknown> = {
+        uri: '/subscriptions/sub-1/resource',
+        headers: {},
+        content: { key: 'updated-value' },
+      };
+
+      const result = await httpClient.patch(options);
+
+      expect(result).toEqual(responseData);
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PATCH',
+          headers: expect.objectContaining({
+            Authorization: accessToken,
+            'Content-Type': 'application/json',
+          }),
+        })
+      );
+    });
+
+    it('should reject when PATCH response is not successful', async () => {
+      (axios as any).mockResolvedValue({ data: { error: 'bad request' }, status: 400 });
+
+      const options: HttpRequestOptions<unknown> = {
+        uri: '/subscriptions/sub-1/resource',
+        headers: {},
+        content: {},
+      };
+
+      await expect(httpClient.patch(options)).rejects.toBeDefined();
+    });
+  });
+
+  describe('returnHeaders', () => {
+    it('should include response headers in GET result when returnHeaders is true', async () => {
+      const mockHeaders = { 'x-ms-request-id': '12345' };
+      (axios as any).mockResolvedValue({ data: { value: 'test' }, status: 200, headers: mockHeaders });
+
+      const result = await httpClient.get({ uri: '/local-endpoint', headers: {}, returnHeaders: true });
+
+      expect(result).toEqual({
+        responseHeaders: mockHeaders,
+        value: 'test',
+      });
+    });
+
+    it('should include response headers in DELETE result when returnHeaders is true', async () => {
+      const mockHeaders = { 'x-ms-request-id': 'abc' };
+      (axios as any).mockResolvedValue({ data: { id: '1' }, status: 200, headers: mockHeaders });
+
+      const result = await httpClient.delete({ uri: '/local-endpoint', headers: {}, returnHeaders: true });
+
+      expect(result).toEqual({
+        responseHeaders: mockHeaders,
+        id: '1',
+      });
+    });
+  });
+
+  describe('isSuccessResponse', () => {
+    it('returns true for 200', () => {
+      expect(isSuccessResponse(200)).toBe(true);
+    });
+
+    it('returns true for 299', () => {
+      expect(isSuccessResponse(299)).toBe(true);
+    });
+
+    it('returns false for 300', () => {
+      expect(isSuccessResponse(300)).toBe(false);
+    });
+
+    it('returns false for 199', () => {
+      expect(isSuccessResponse(199)).toBe(false);
     });
   });
 
