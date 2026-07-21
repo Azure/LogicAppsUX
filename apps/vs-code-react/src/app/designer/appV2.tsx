@@ -338,7 +338,7 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
-              showRunHistory={!isCodefulWorkflow}
+              showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
 
             {!isCodeView && (

@@ -41,7 +41,10 @@ export namespace ext {
   export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let defaultLogicAppPath: string;
   export let outputChannel: IAzExtOutputChannel;
-  export let workflowRuntimePort: number;
+  // TODO(aeldridge): Multiple runtime processes are supported with runningFuncTaskMap, but only a single runtime port is tracked.
+  // This will cause issues if multiple runtime processes are started on different ports. Currently we use the default port (7071)
+  // unless user modifies the 'func: host start' task to use a different port so this issue isn't surfaced by default.
+  export let workflowRuntimePort: number | undefined;
   export let extensionVersion: string;
   export let bundleFolderRoot: string | undefined;
   export const prefix = 'azureLogicAppsStandard';
