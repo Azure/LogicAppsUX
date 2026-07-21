@@ -10,6 +10,7 @@ import { tryBuildCustomCodeFunctionsProject } from '../../buildCustomCodeFunctio
 import { customCodeArtifactsExist } from '../../../utils/customCodeUtils';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
+import { shouldAlwaysBuildCustomCode } from '../../../utils/vsCodeConfig/settings';
 import type { DesignerV2Panel } from './panels/designerV2Panel';
 import LocalDesignerV2Panel from './panels/localDesignerV2Panel';
 import { RemoteDesignerV2Panel } from './panels/remoteDesignerV2Panel';
@@ -44,7 +45,7 @@ async function getDesignerV2Panel(
   }
 
   const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
-  if (!(await customCodeArtifactsExist(logicAppNode.fsPath))) {
+  if (shouldAlwaysBuildCustomCode() || !(await customCodeArtifactsExist(logicAppNode.fsPath))) {
     await tryBuildCustomCodeFunctionsProject(context, logicAppNode);
   }
 
