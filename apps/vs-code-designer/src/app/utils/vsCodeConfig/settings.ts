@@ -37,6 +37,69 @@ export async function updateGlobalSetting<T = string>(section: string, value: T,
 }
 
 /**
+ * Removes a setting from the shared workspace scopes so it only lives in the user's global
+ * settings. This strips the key from the multi-root `.code-workspace` file
+ * (`ConfigurationTarget.Workspace`) and from every folder's `.vscode/settings.json`
+ * (`ConfigurationTarget.WorkspaceFolder`).
+ *
+ * Used to migrate machine-local settings (absolute binary paths, terminal env, etc.) out of
+ * files that get committed/shared in a repository. Each scope is only touched when a value is
+ * actually present there (checked via `inspect`), so application/window-scoped settings that
+ * cannot be written at workspace/folder scope are skipped instead of throwing. Any remaining
+ * failure is swallowed and logged so it never breaks extension setup.
+ * @param {string} section - The setting key (without prefix).
+ * @param {string} prefix - The configuration prefix/section (default: ext.prefix).
+ */
+export async function removeSharedSetting(section: string, prefix: string = ext.prefix): Promise<void> {
+  const config: WorkspaceConfiguration = workspace.getConfiguration(prefix);
+  let removedAny = false;
+
+  // Only remove the workspace-level value (the .code-workspace file) when one actually exists.
+  // Application/window-scoped settings (e.g. terminal.integrated.env.*, omnisharp.dotNetCliPaths)
+  // never have a workspace/folder value and cannot be written at those scopes, so attempting the
+  // removal would throw needlessly.
+  if (config.inspect(section)?.workspaceValue !== undefined) {
+    removedAny = true;
+    try {
+      await config.update(section, undefined, ConfigurationTarget.Workspace);
+    } catch (error) {
+      ext.outputChannel?.appendLog(`[removeSharedSetting] Skipped workspace removal for ${prefix}.${section}: ${error}`);
+    }
+  }
+
+  // Remove any folder-level values (each folder's .vscode/settings.json), again only where present.
+  for (const folder of workspace.workspaceFolders ?? []) {
+    const folderConfig: WorkspaceConfiguration = workspace.getConfiguration(prefix, folder.uri);
+    if (folderConfig.inspect(section)?.workspaceFolderValue === undefined) {
+      continue;
+    }
+    removedAny = true;
+    try {
+      await folderConfig.update(section, undefined, ConfigurationTarget.WorkspaceFolder);
+    } catch (error) {
+      ext.outputChannel?.appendLog(
+        `[removeSharedSetting] Skipped folder removal for ${prefix}.${section} in ${folder.uri.fsPath}: ${error}`
+      );
+    }
+  }
+
+  // Nothing lived in a shared scope, so there's nothing to report — stay quiet.
+  if (!removedAny) {
+    return;
+  }
+
+  // Log where the value now resolves so the landing scope can be verified at runtime.
+  // Only global and workspace values are meaningful from a non-resource-scoped inspection;
+  // workspaceFolderValue is per-folder and would be ambiguous here, so it is intentionally
+  // omitted (per-folder removals are already handled/logged in the loop above).
+  const inspection = config.inspect(section);
+  ext.outputChannel?.appendLog(
+    `[removeSharedSetting] ${prefix}.${section} -> global=${JSON.stringify(inspection?.globalValue)}, ` +
+      `workspace=${JSON.stringify(inspection?.workspaceValue)}`
+  );
+}
+
+/**
  * Searches through all open folders and gets the current workspace setting (as long as there are no conflicts)
  * Uses ext.prefix 'azureLogicAppsStandard' unless otherwise specified
  */
