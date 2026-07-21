@@ -50,6 +50,14 @@ const appSettingReferenceRegex = /appsetting\(\s*['"]([^'"]+)['"]\s*\)/g;
 const baseRequiredDesignTimeSettingKeys = [appKindSetting, workerRuntimeKey, ProjectDirectoryPathKey];
 
 /**
+ * Prefix applied to the design-time copies of host.json / local.settings.json so the consolidated
+ * per-project log distinguishes them from the project-root artifacts. The base names come from the
+ * same {@link hostFileName} / {@link localSettingsFileName} constants used at the write sites, so the
+ * logged names can never drift from what is actually written.
+ */
+const designTimeArtifactPrefix = 'design-time ';
+
+/**
  * Reads the text content of a file, returning an empty string when the file does not exist or cannot be read.
  * @param {string} filePath - Absolute path to the file.
  * @returns {Promise<string>} The file content, or an empty string.
@@ -158,13 +166,14 @@ export async function detectLogicAppProjectType(projectPath: string): Promise<Pr
  * empty placeholder value when missing. Existing values are never overwritten.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<{ changed: boolean; addedSettings: string[] }>} Whether the file was created or
- * updated, and which setting keys were added.
+ * @returns {Promise<{ changed: boolean; addedSettings: string[]; changedArtifacts: string[] }>} Whether
+ * the file was created or updated, which setting keys were added, and the human-readable label(s) for
+ * the artifact(s) that changed (empty when nothing changed).
  */
 export async function regenerateLocalSettings(
   context: IActionContext,
   projectPath: string
-): Promise<{ changed: boolean; addedSettings: string[] }> {
+): Promise<{ changed: boolean; addedSettings: string[]; changedArtifacts: string[] }> {
   const localSettingsPath = path.join(projectPath, localSettingsFileName);
   const fileExisted = await fse.pathExists(localSettingsPath);
 
@@ -194,10 +203,12 @@ export async function regenerateLocalSettings(
 
   if (!fileExisted || Object.keys(settingsToAdd).length > 0) {
     await addOrUpdateLocalAppSettings(context, projectPath, settingsToAdd);
-    return { changed: true, addedSettings: Object.keys(settingsToAdd) };
+    const addedSettings = Object.keys(settingsToAdd);
+    const addedSuffix = addedSettings.length > 0 ? ` (added ${addedSettings.length} setting(s): ${addedSettings.join(', ')})` : '';
+    return { changed: true, addedSettings, changedArtifacts: [`${localSettingsFileName}${addedSuffix}`] };
   }
 
-  return { changed: false, addedSettings: [] };
+  return { changed: false, addedSettings: [], changedArtifacts: [] };
 }
 
 /**
@@ -231,17 +242,18 @@ function getRootHostFileContent(): IHostJsonV2 {
  * host.json (correct version + workflows extension bundle) is preserved so that customizations such as a
  * pinned extension bundle version are not lost.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<boolean>} True when the file was written (created or repaired), otherwise false.
+ * @returns {Promise<{ changed: boolean; changedArtifacts: string[] }>} Whether the file was written
+ * (created or repaired), and the human-readable label for the artifact when it changed.
  */
-export async function regenerateRootHostFile(projectPath: string): Promise<boolean> {
+export async function regenerateRootHostFile(projectPath: string): Promise<{ changed: boolean; changedArtifacts: string[] }> {
   const hostFilePath = path.join(projectPath, hostFileName);
 
   if (await isHostFileValid(hostFilePath, false)) {
-    return false;
+    return { changed: false, changedArtifacts: [] };
   }
 
   await writeFormattedJson(hostFilePath, getRootHostFileContent());
-  return true;
+  return { changed: true, changedArtifacts: [hostFileName] };
 }
 
 /**
@@ -380,21 +392,24 @@ async function ensureDesignTimeDirectory(projectPath: string): Promise<Uri> {
  * such as a pinned extension bundle version are not lost.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean }>} The
- * design-time directory Uri and which baseline files were regenerated.
+ * @returns {Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }>}
+ * The design-time directory Uri, which baseline files were regenerated, and the human-readable label(s)
+ * for the artifact(s) that changed.
  */
 export async function regenerateDesignTimeDirectory(
   context: IActionContext,
   projectPath: string
-): Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean }> {
+): Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }> {
   const designTimeDirectory = await ensureDesignTimeDirectory(projectPath);
   const validation = await validateDesignTimeDirectory(projectPath);
 
   const hostRegenerated = !validation.hostFileValid;
   const settingsRegenerated = !validation.settingsFileValid;
+  const changedArtifacts: string[] = [];
 
   if (hostRegenerated) {
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, hostFileName), hostFileContent);
+    changedArtifacts.push(`${designTimeArtifactPrefix}${hostFileName}`);
   }
 
   if (settingsRegenerated) {
@@ -411,38 +426,10 @@ export async function regenerateDesignTimeDirectory(
       runtimeSettings[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
     }
     await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, runtimeSettings, true);
+    changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
-  return { uri: designTimeDirectory, hostRegenerated, settingsRegenerated };
-}
-
-/**
- * Builds the list of artifacts that were regenerated, in a human-readable form suitable for a
- * single consolidated per-project log line. Returns an empty array when nothing changed.
- */
-function collectChangedArtifacts(summary: {
-  hostChanged: boolean;
-  localSettingsChanged: boolean;
-  addedSettings: string[];
-  designTimeHostChanged?: boolean;
-  designTimeSettingsChanged?: boolean;
-}): string[] {
-  const changed: string[] = [];
-  if (summary.hostChanged) {
-    changed.push('host.json');
-  }
-  if (summary.localSettingsChanged) {
-    const added =
-      summary.addedSettings.length > 0 ? ` (added ${summary.addedSettings.length} setting(s): ${summary.addedSettings.join(', ')})` : '';
-    changed.push(`local.settings.json${added}`);
-  }
-  if (summary.designTimeHostChanged) {
-    changed.push('design-time host.json');
-  }
-  if (summary.designTimeSettingsChanged) {
-    changed.push('design-time local.settings.json');
-  }
-  return changed;
+  return { uri: designTimeDirectory, hostRegenerated, settingsRegenerated, changedArtifacts };
 }
 
 /**
@@ -457,14 +444,10 @@ function collectChangedArtifacts(summary: {
 export async function ensureProjectRootArtifacts(context: IActionContext, projectPath: string): Promise<void> {
   const projectName = path.basename(projectPath);
   try {
-    const hostChanged = await regenerateRootHostFile(projectPath);
+    const hostResult = await regenerateRootHostFile(projectPath);
     const localSettings = await regenerateLocalSettings(context, projectPath);
 
-    const changed = collectChangedArtifacts({
-      hostChanged,
-      localSettingsChanged: localSettings.changed,
-      addedSettings: localSettings.addedSettings,
-    });
+    const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts];
 
     if (changed.length === 0) {
       ext.outputChannel.appendLog(
@@ -508,17 +491,11 @@ export async function ensureProjectRootArtifacts(context: IActionContext, projec
 export async function validateAndRegenerateProjectArtifacts(context: IActionContext, projectPath: string): Promise<Uri> {
   const projectName = path.basename(projectPath);
   try {
-    const hostChanged = await regenerateRootHostFile(projectPath);
+    const hostResult = await regenerateRootHostFile(projectPath);
     const localSettings = await regenerateLocalSettings(context, projectPath);
     const designTime = await regenerateDesignTimeDirectory(context, projectPath);
 
-    const changed = collectChangedArtifacts({
-      hostChanged,
-      localSettingsChanged: localSettings.changed,
-      addedSettings: localSettings.addedSettings,
-      designTimeHostChanged: designTime.hostRegenerated,
-      designTimeSettingsChanged: designTime.settingsRegenerated,
-    });
+    const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts, ...designTime.changedArtifacts];
 
     if (changed.length === 0) {
       ext.outputChannel.appendLog(

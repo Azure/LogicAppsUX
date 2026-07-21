@@ -795,7 +795,8 @@ describe('validateProjectArtifacts', () => {
 
       const created = await regenerateRootHostFile(projectPath);
 
-      expect(created).toBe(true);
+      expect(created.changed).toBe(true);
+      expect(created.changedArtifacts).toEqual(['host.json']);
       expect(writtenContentFor('host.json')).toEqual(expectedRootHostJson);
     });
 
@@ -804,7 +805,8 @@ describe('validateProjectArtifacts', () => {
 
       const created = await regenerateRootHostFile(projectPath);
 
-      expect(created).toBe(true);
+      expect(created.changed).toBe(true);
+      expect(created.changedArtifacts).toEqual(['host.json']);
       expect(writtenContentFor('host.json')).toEqual(expectedRootHostJson);
     });
 
@@ -817,7 +819,8 @@ describe('validateProjectArtifacts', () => {
 
       const created = await regenerateRootHostFile(projectPath);
 
-      expect(created).toBe(false);
+      expect(created.changed).toBe(false);
+      expect(created.changedArtifacts).toEqual([]);
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
     });
   });
