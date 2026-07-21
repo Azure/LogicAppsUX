@@ -7,14 +7,17 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { NoWorkspaceError } from '../../utils/errors';
 import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { detectProjectPackageType } from '../../utils/project';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspace } from '../../utils/workspace';
-import { InitProjectLanguageStep } from './initProjectLanguageStep';
+import { InitDotnetProjectStep } from './initDotnetProjectStep';
+import { InitProjectStep } from './initProjectStep';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import {
   latestGAVersion,
-  type ProjectLanguage,
+  ProjectLanguage,
+  ProjectPackageType,
   type FuncVersion,
   type IProjectWizardContext,
 } from '@microsoft/vscode-extension-logic-apps';
@@ -44,7 +47,11 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     return;
   }
 
-  language = language || getGlobalSetting(projectLanguageSetting);
+  const projectPackageType = await detectProjectPackageType(projectPath);
+  language =
+    language ||
+    getGlobalSetting(projectLanguageSetting) ||
+    (projectPackageType === ProjectPackageType.Nuget ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript);
   const version: FuncVersion = getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
 
@@ -55,9 +62,14 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     version,
     workspaceFolder,
     projectTemplateKey,
+    projectPackageType,
   });
-  const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, { promptSteps: [new InitProjectLanguageStep()] });
-  await wizard.prompt();
+
+  const executeSteps = projectPackageType === ProjectPackageType.Nuget
+    ? [new InitDotnetProjectStep()]
+    : [new InitProjectStep()];
+
+  const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, { executeSteps });
   await wizard.execute();
 
   ext.outputChannel.appendLog(localize('finishedInitializing', 'Finished initializing for use with VS Code.'));
