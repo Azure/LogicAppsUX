@@ -48,9 +48,8 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     const localVersion: string | null = hasValidBinaries ? await getLocalFuncCoreToolsVersion() : null;
     context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-    // Throttle the network "is there a newer Functions Core Tools?" lookup: an already-installed,
-    // runnable func is only compared against the latest published version at most once per throttle
-    // window. Missing/corrupt/unrunnable binaries are still reinstalled below on every launch.
+    // Throttle: only re-check the newest published version once per window (see
+    // shouldCheckForDependencyUpdates). Missing/corrupt binaries are still reinstalled below.
     const shouldCheckForUpdate = hasValidBinaries && shouldCheckForDependencyUpdates();
     const newestVersion: string | undefined = shouldCheckForUpdate
       ? await getLatestFunctionCoreToolsVersion(context, majorVersion)

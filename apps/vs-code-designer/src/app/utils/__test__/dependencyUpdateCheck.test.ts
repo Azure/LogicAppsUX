@@ -4,9 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
-import { dependencyUpdateCheckIntervalMs, recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../dependencyUpdateCheck';
-
-const lastDependencyUpdateCheckKey = 'azureLogicAppsStandard.lastDependencyUpdateCheck';
+import { dependencyUpdateCheckIntervalMs, lastDependencyUpdateCheckKey } from '../../../constants';
+import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../dependencyUpdateCheck';
 
 describe('dependencyUpdateCheck', () => {
   let globalStateGet: Mock;

@@ -43,9 +43,8 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
         await installNodeJs(context, majorVersion);
         logNodeJsWarningDecision(context);
       } else if (shouldCheckForDependencyUpdates()) {
-        // Throttle the network "is there a newer Node.js?" lookup and its update warning: an
-        // already-installed, runnable Node is only compared against the latest published version at
-        // most once per throttle window. A missing/unrunnable Node is reinstalled above every launch.
+        // Throttle: only re-check the newest published version once per window (see
+        // shouldCheckForDependencyUpdates). A missing/unrunnable Node is still reinstalled above.
         const newestVersion = await getNewestNodeJsWarningVersion(context, localVersion, majorVersion);
         context.telemetry.properties.newestVersion = newestVersion;
 

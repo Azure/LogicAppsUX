@@ -3,19 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../extensionVariables';
-
-/**
- * Key used to persist the timestamp (epoch ms) of the last time we checked whether the
- * runtime dependencies (Node.js, Functions Core Tools, .NET SDK) had newer versions available.
- */
-const lastDependencyUpdateCheckKey = 'azureLogicAppsStandard.lastDependencyUpdateCheck';
-
-/**
- * Minimum interval between "is there a newer version?" checks. Missing binaries are always
- * installed regardless of this interval; only the network lookups that compare an already
- * installed binary against the latest published version are throttled.
- */
-export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+import { dependencyUpdateCheckIntervalMs, lastDependencyUpdateCheckKey } from '../../constants';
 
 /**
  * Determines whether the runtime dependency "latest version" network lookups should run.

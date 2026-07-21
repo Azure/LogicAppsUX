@@ -28,9 +28,8 @@ export async function validateDotNetIsLatest(majorVersion?: string): Promise<voi
           await installDotNet(context, version);
         } else {
           context.telemetry.properties.localVersion = localVersion;
-          // Throttle the network "is there a newer .NET SDK?" lookup: an already-installed,
-          // runnable SDK is only compared against the latest published version at most once per
-          // throttle window. A missing/unrunnable SDK is still reinstalled above on every launch.
+          // Throttle: only re-check the newest published version once per window (see
+          // shouldCheckForDependencyUpdates). Missing/unrunnable SDKs are still reinstalled above.
           if (shouldCheckForDependencyUpdates()) {
             const newestVersion: string | undefined = await getLatestDotNetVersion(context, version);
 

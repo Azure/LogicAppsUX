@@ -214,7 +214,12 @@ async function resolveChildFuncPid(processId: number, retries = 5, delayMs = 500
 
 export function stopRuntimeApi(projectPath: string): void {
   ext.outputChannel.appendLog(`Stopping Runtime API for project: ${projectPath}`);
-  const { process, childFuncPid, port } = ext.runtimeInstances.get(projectPath);
+  const runtimeInstance = ext.runtimeInstances.get(projectPath);
+  if (!runtimeInstance) {
+    return;
+  }
+
+  const { process, childFuncPid, port } = runtimeInstance;
   ext.runtimeInstances.delete(projectPath);
   releaseReservedPort(port);
   if (process === null || process === undefined) {
