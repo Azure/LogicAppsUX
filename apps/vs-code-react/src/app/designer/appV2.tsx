@@ -352,6 +352,7 @@ export const DesignerApp = () => {
                     setRunId(newRunId ?? '');
                   }}
                   isDarkMode={theme === Theme.Dark}
+                  isDraftMode={true}
                   isDisabled={!isRuntimeAvailable}
                   tooltipOverride={isRuntimeAvailable ? undefined : commonText.RUNTIME_NOT_AVAILABLE}
                 />
