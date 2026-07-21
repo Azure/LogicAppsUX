@@ -5,7 +5,7 @@
 import type { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { dotnet, func, node, npm } from './constants';
+import { dotnet, func, managementApiPrefix, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
@@ -121,6 +121,10 @@ export namespace ext {
     }
     window.showErrorMessage(errMsg, options);
   };
+
+  export function getWorkflowRuntimeBaseUrl(): string | undefined {
+    return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
+  }
 
   // Telemetry
   export let telemetryReporter: TelemetryReporter;

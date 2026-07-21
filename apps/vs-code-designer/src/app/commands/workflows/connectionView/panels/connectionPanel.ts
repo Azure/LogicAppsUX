@@ -103,7 +103,7 @@ export default class ConnectionPanel extends DesignerPanel {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
     this.panelMetadata = panelMetadata;
 
@@ -324,13 +324,7 @@ export default class ConnectionPanel extends DesignerPanel {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    const [
-      connectionsData,
-      parametersData,
-      artifacts,
-      bundleVersionNumber,
-      azureDetails
-    ] = await Promise.all([
+    const [connectionsData, parametersData, artifacts, bundleVersionNumber, azureDetails] = await Promise.all([
       getConnectionsFromFile(this.context, this.workflowFilePath),
       getParametersFromFile(this.context, this.workflowFilePath),
       getArtifactsInLocalProject(projectPath),

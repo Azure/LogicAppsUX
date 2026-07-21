@@ -198,9 +198,12 @@ vi.mock('./src/extensionVariables', () => ({
     extensionVersion: '1.0.0',
     latestBundleVersion: '1.2.3',
     prefix: 'azureLogicAppsStandard',
+    getWorkflowRuntimeBaseUrl: vi.fn(() => 'http://localhost:7071/runtime/webhooks/workflow/api/management'),
     webViewKey: {
       designerLocal: 'designerLocal',
+      designerLocalV2: 'designerLocalV2',
       designerAzure: 'designerAzure',
+      designerAzureV2: 'designerAzureV2',
       monitoring: 'monitoring',
       export: 'export',
       overview: 'overview',
