@@ -348,8 +348,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       axios:
-        specifier: 1.16.0
-        version: 1.16.0(debug@4.4.3)
+        specifier: 1.18.0
+        version: 1.18.0(debug@4.4.3)
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -618,8 +618,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0
       axios:
-        specifier: 1.16.0
-        version: 1.16.0(debug@4.4.3)
+        specifier: 1.18.0
+        version: 1.18.0(debug@4.4.3)
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -1655,8 +1655,8 @@ importers:
         specifier: ^0.0.37
         version: 0.0.37
       axios:
-        specifier: 1.16.0
-        version: 1.16.0(debug@4.4.3)
+        specifier: 1.18.0
+        version: 1.18.0(debug@4.4.3)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -1707,8 +1707,8 @@ importers:
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 1.16.0
-        version: 1.16.0(debug@4.4.3)
+        specifier: 1.18.0
+        version: 1.18.0(debug@4.4.3)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -7203,6 +7203,10 @@ packages:
     resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
     engines: {node: '>=14.0'}
 
+  agent-base@6.0.2:
+    resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
+    engines: {node: '>= 6.0.0'}
+
   agent-base@7.1.0:
     resolution: {integrity: sha512-o/zjMZRhJxny7OyEF+Op8X+efiELC7k7yOjMzgfzVqOzXqkBkWI79YoTdOtsuWd5BWhAGAuOY/Xa6xpiaWXiNg==}
     engines: {node: '>= 14'}
@@ -7460,8 +7464,8 @@ packages:
   axios-retry@3.9.1:
     resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
 
-  axios@1.16.0:
-    resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
+  axios@1.18.0:
+    resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
 
   azure-devops-node-api@12.5.0:
     resolution: {integrity: sha512-R5eFskGvOm3U/GzeAuxRkUsAl0hrAwGgWn6zAd2KrZmrEhWZVqLew4OOupbQlXUuojUzpGtq62SmdhJ06N88og==}
@@ -10044,6 +10048,10 @@ packages:
 
   https-browserify@1.0.0:
     resolution: {integrity: sha512-J+FkSdyD+0mA0N+81tMotaRMfSL9SGi+xpD3T6YApKsc3bGSXJlfXri3VyFOeYkfLRQisDk1W+jIFFKBeUBbBg==}
+
+  https-proxy-agent@5.0.1:
+    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
+    engines: {node: '>= 6'}
 
   https-proxy-agent@7.0.4:
     resolution: {integrity: sha512-wlwpilI7YdjSkWaQ/7omYBMTliDcmCN8OLihO6I9B86g06lMyAoqgoDpV0XqoaPOKj+0DIdAvnsWfyAAhmimcg==}
@@ -23187,6 +23195,12 @@ snapshots:
 
   adm-zip@0.6.0: {}
 
+  agent-base@6.0.2:
+    dependencies:
+      debug: 4.4.3(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
+
   agent-base@7.1.0:
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
@@ -23489,13 +23503,15 @@ snapshots:
       '@babel/runtime': 7.27.6
       is-retry-allowed: 2.2.0
 
-  axios@1.16.0(debug@4.4.3):
+  axios@1.18.0(debug@4.4.3):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.6
+      https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   azure-devops-node-api@12.5.0:
     dependencies:
@@ -24970,12 +24986,13 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)):
     dependencies:
       '@docusaurus/core': 3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
-      axios: 1.16.0(debug@4.4.3)
+      axios: 1.18.0(debug@4.4.3)
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   dom-accessibility-api@0.5.16: {}
 
@@ -26771,6 +26788,13 @@ snapshots:
       resolve-alpn: 1.2.1
 
   https-browserify@1.0.0: {}
+
+  https-proxy-agent@5.0.1:
+    dependencies:
+      agent-base: 6.0.2
+      debug: 4.4.3(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
 
   https-proxy-agent@7.0.4:
     dependencies:
@@ -32317,7 +32341,7 @@ snapshots:
 
   vite-plugin-mkcert@1.17.8(vite@6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)):
     dependencies:
-      axios: 1.16.0(debug@4.4.3)
+      axios: 1.18.0(debug@4.4.3)
       debug: 4.4.3(supports-color@8.1.1)
       picocolors: 1.1.1
       vite: 6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
