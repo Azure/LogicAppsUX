@@ -30,6 +30,7 @@ import * as localSettings from '../../appSettings/localSettings';
 import { writeFormattedJson } from '../../fs';
 import { hasCodefulSdkReference } from '../../codeful';
 import { isCustomCodeFunctionsProjectInRoot } from '../../customCodeUtils';
+import { hasJdbcDriverJars } from '../../java/jdbcConnector';
 import { useNodeDesignTimeWorker } from '../../vsCodeConfig/settings';
 import {
   detectLogicAppProjectType,
@@ -71,6 +72,16 @@ vi.mock('../../customCodeUtils', () => ({
   isCustomCodeFunctionsProjectInRoot: vi.fn(() => Promise.resolve(false)),
 }));
 
+// Keep the real (pure) mergeMultiLanguageWorkerFlag but stub JAR detection so tests control whether the
+// project has JDBC driver JARs without depending on the shared fse.readdir mock's path behavior.
+vi.mock('../../java/jdbcConnector', async (importActual) => {
+  const actual = await importActual<typeof import('../../java/jdbcConnector')>();
+  return {
+    ...actual,
+    hasJdbcDriverJars: vi.fn(() => Promise.resolve(false)),
+  };
+});
+
 vi.mock('../../vsCodeConfig/settings', async (importActual) => {
   const actual = await importActual<typeof import('../../vsCodeConfig/settings')>();
   return {
@@ -95,6 +106,7 @@ const mockedGetLocalSettingsJson = localSettings.getLocalSettingsJson as unknown
 const mockedWriteFormattedJson = writeFormattedJson as unknown as ReturnType<typeof vi.fn>;
 const mockedIsCodeful = hasCodefulSdkReference as unknown as ReturnType<typeof vi.fn>;
 const mockedIsCustomCodeInRoot = isCustomCodeFunctionsProjectInRoot as unknown as ReturnType<typeof vi.fn>;
+const mockedHasJdbcJars = hasJdbcDriverJars as unknown as ReturnType<typeof vi.fn>;
 const mockedAppendLog = ext.outputChannel.appendLog as unknown as ReturnType<typeof vi.fn>;
 
 /** Returns every line written to the output channel via appendLog. */
@@ -126,6 +138,7 @@ describe('validateProjectArtifacts', () => {
     vi.clearAllMocks();
     mockedIsCodeful.mockResolvedValue(false);
     mockedIsCustomCodeInRoot.mockResolvedValue(false);
+    mockedHasJdbcJars.mockResolvedValue(false);
     mockedFse.readdir.mockResolvedValue([]);
     vi.mocked(useNodeDesignTimeWorker).mockReturnValue(false);
     (workspace as any).fs = { createDirectory: vi.fn(() => Promise.resolve()) };
@@ -238,6 +251,101 @@ describe('validateProjectArtifacts', () => {
     it('does not update when the file exists and already contains everything required', async () => {
       mockFiles({ [`${projectPath}/local.settings.json`]: '{}' });
       mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: projectPath,
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+        },
+      });
+
+      const { changed } = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(false);
+      expect(mockedAddOrUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  // Self-heal for issue #8597: the JDBC built-in connector needs the Functions multi-language (Java)
+  // worker, which is only enabled by AzureWebJobsFeatureFlags=EnableMultiLanguageWorker. A plain codeless
+  // logic app does not get that flag, so when the user drops driver JAR(s) into lib/builtinOperationSdks/JAR
+  // regeneration adds/merges the flag automatically.
+  describe('regenerateLocalSettings — JDBC multi-language worker self-heal', () => {
+    beforeEach(() => {
+      mockFiles({ [`${projectPath}/local.settings.json`]: '{}' });
+      mockedFse.readdir.mockResolvedValue([]);
+    });
+
+    it('adds AzureWebJobsFeatureFlags=EnableMultiLanguageWorker for a codeless logic app when JDBC JARs are present', async () => {
+      mockedHasJdbcJars.mockResolvedValue(true);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: projectPath,
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+        },
+      });
+
+      const { changed } = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual({ [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting });
+    });
+
+    it('merges the flag with existing AzureWebJobsFeatureFlags without clobbering other flags', async () => {
+      mockedHasJdbcJars.mockResolvedValue(true);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: projectPath,
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+          [azureWebJobsFeatureFlagsKey]: 'SomeOtherFlag',
+        },
+      });
+
+      const { changed } = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual({ [azureWebJobsFeatureFlagsKey]: `SomeOtherFlag,${multiLanguageWorkerSetting}` });
+    });
+
+    it('does not change anything when the flag is already present and nothing else is missing', async () => {
+      mockedHasJdbcJars.mockResolvedValue(true);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: projectPath,
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+          [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
+        },
+      });
+
+      const { changed } = await regenerateLocalSettings(context, projectPath);
+
+      expect(changed).toBe(false);
+      expect(mockedAddOrUpdate).not.toHaveBeenCalled();
+    });
+
+    it('does not add the flag for a codeless logic app when no JDBC JARs are present', async () => {
+      mockedHasJdbcJars.mockResolvedValue(false);
       mockedGetLocalSettingsJson.mockResolvedValue({
         IsEncrypted: false,
         Values: {
