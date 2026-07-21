@@ -49,7 +49,6 @@ import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
-import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 
@@ -248,13 +247,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
       case ExtensionCommand.createUnitTest: {
         await createUnitTest(Uri.file(this.workflowFilePath), msg.definition);
-        break;
-      }
-
-      // NOTE(aeldridge): Needed for V2 designer which doesn't use separate monitoring view class.
-      // Remove once V2 designer is moved to its own panel classes.
-      case ExtensionCommand.createUnitTestFromRun: {
-        await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
         break;
       }
       
