@@ -962,7 +962,9 @@ describe('validateProjectArtifacts', () => {
         ProjectDirectoryPath: projectPath,
         AzureWebJobsStorage: 'UseDevelopmentStorage=true',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
-        WORKFLOWS_AUTHENTICATION_METHOD: 'rawKeys',
+        // MI auth is mocked on (isManagedIdentityAuthEnabled -> true), so a fully-valid project must
+        // already carry the managed-identity auth method or regenerateLocalSettings would add it.
+        [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
       },
     };
 
