@@ -9,6 +9,7 @@ export * from './connection';
 export * from './project';
 export * from './host';
 export * from './cliFeed';
+export * from './codeful';
 export * from './templates';
 export * from './bundleFeed';
 export * from './tasks';

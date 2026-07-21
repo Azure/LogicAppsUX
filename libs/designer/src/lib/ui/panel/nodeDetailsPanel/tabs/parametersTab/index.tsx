@@ -46,7 +46,7 @@ import {
 } from '../../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../../core/utils/tokens';
-import { getAllVariables, getAvailableVariables } from '../../../../../core/utils/variables';
+import { getAvailableVariables } from '../../../../../core/utils/variables';
 import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
@@ -1868,17 +1868,12 @@ export const getEditorAndOptions = (
 
   // Handle variable dropdown editor
   if (equals(editor, constants.EDITOR.VARIABLE_NAME)) {
-    const toOption = (variable: VariableDeclaration) => ({ value: variable.name, displayName: variable.name });
-    const typeMatches = (variable: VariableDeclaration) => supportedTypes.length === 0 || supportedTypes.includes(variable.type);
-
-    const scopedOptions = getAvailableVariables(variables, upstreamNodeIds).filter(typeMatches).map(toOption);
-
-    // Fallback: when the scoped list is empty but variables are declared elsewhere in the workflow,
-    // show all declared variables. The runtime does not scope variables by graph position, so any
-    // declared variable is legally assignable (see: pasteScopeOperation bug where a pasted node's
-    // upstreamNodeIds does not include the root InitializeVariable). Preserves the ideal UX when
-    // the scoped list is non-empty; only kicks in to prevent an empty-dropdown dead-end.
-    const options = scopedOptions.length === 0 ? getAllVariables(variables).filter(typeMatches).map(toOption) : scopedOptions;
+    const options = getAvailableVariables(variables, upstreamNodeIds)
+      .filter((variable) => supportedTypes.length === 0 || supportedTypes.includes(variable.type))
+      .map((variable) => ({
+        value: variable.name,
+        displayName: variable.name,
+      }));
 
     return {
       editor: 'dropdown',

@@ -31,7 +31,7 @@ import type {
   LocalConnectionModel,
   OperationManifest,
 } from '@microsoft/logic-apps-shared';
-import type { IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import type { DesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
@@ -70,7 +70,7 @@ export const getDesignerServices = (
   apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
   connectionData: ConnectionsData,
-  panelMetadata: IDesignerPanelMetadata | null,
+  panelMetadata: DesignerPanelMetadata | null,
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
   vscode: WebviewApi<unknown>,
   oauthRedirectUrl: string,
