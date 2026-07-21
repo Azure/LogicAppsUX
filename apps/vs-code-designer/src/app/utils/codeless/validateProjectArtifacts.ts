@@ -19,10 +19,12 @@ import {
   workerRuntimeKey,
   workflowFileName,
   workflowOperationDiscoveryHostModeKey,
+  workflowAuthenticationMethodKey,
+  workflowAuthenticationMethodMIValue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import { useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
+import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
@@ -199,6 +201,10 @@ export async function regenerateLocalSettings(
     if (currentValues[key] === undefined && settingsToAdd[key] === undefined) {
       settingsToAdd[key] = '';
     }
+  }
+
+  if (isManagedIdentityAuthEnabled() && currentValues[workflowAuthenticationMethodKey] !== workflowAuthenticationMethodMIValue) {
+    settingsToAdd[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
 
   if (!fileExisted || Object.keys(settingsToAdd).length > 0) {

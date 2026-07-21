@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import {
   assetsFolderName,
   localSettingsFileName,
@@ -31,11 +35,11 @@ import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../../utils/requestUtils';
 import { createNewDataMapCmd } from '../../../dataMapper/dataMapper';
-import { DesignerPanel } from './designerPanel';
-import { getMigrationOptions, migrateWorkflow } from '../utils/migration';
-import { createFileSystemConnection } from '../utils/fileSystemConnection';
-import { mergeJsonParameters } from '../utils/parameterMerge';
-import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
+import { DesignerV2Panel } from './designerV2Panel';
+import { getMigrationOptions, migrateWorkflow } from '../../designer/utils/migration';
+import { createFileSystemConnection } from '../../designer/utils/fileSystemConnection';
+import { mergeJsonParameters } from '../../designer/utils/parameterMerge';
+import { getRunTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   CompleteFileSystemConnectionData,
@@ -45,15 +49,15 @@ import type {
 } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { writeFileSync, readFileSync } from 'fs';
+import { promises as fsPromises } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
 import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
-import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 
-export default class LocalDesignerPanel extends DesignerPanel {
+export default class LocalDesignerV2Panel extends DesignerV2Panel {
   private readonly workflowFilePath: string;
   private migrationOptions?: Record<string, any>;
   private projectPath?: string;
@@ -61,15 +65,15 @@ export default class LocalDesignerPanel extends DesignerPanel {
   private workflowRuntimeBaseUrlInterval?: NodeJS.Timeout;
 
   constructor(context: IActionContext, node: Uri, runId?: string) {
-    const workflowName = path.basename(path.dirname(node.fsPath));
-    const logicAppName = path.basename(path.dirname(path.dirname(node.fsPath)));
+    const workflowFilePath = node.fsPath;
+    const workflowName = path.basename(path.dirname(workflowFilePath));
+    const logicAppName = path.basename(path.dirname(path.dirname(workflowFilePath)));
     const panelName = `${workspace.name}-${logicAppName}-${workflowName}`;
-    const panelGroupKey = ext.webViewKey.designerLocal;
-    const runName = runId ? runId.split('/').slice(-1)[0] : '';
+    const panelGroupKey = ext.webViewKey.designerLocalV2;
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, false, true, false, runName);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, runId);
 
-    this.workflowFilePath = node.fsPath;
+    this.workflowFilePath = workflowFilePath;
   }
 
   public async create(): Promise<void> {
@@ -79,6 +83,9 @@ export default class LocalDesignerPanel extends DesignerPanel {
       this.panel = existingPanel;
       if (!existingPanel.active) {
         existingPanel.reveal(ViewColumn.Active);
+      }
+      if (this.runId) {
+        this.selectRun(this.runId);
       }
       return;
     }
@@ -113,12 +120,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
     this.workflowRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
 
-    this.panel = window.createWebviewPanel(
-      this.panelGroupKey, // Key used to reference the panel
-      this.panelName, // Title display in the tab
-      ViewColumn.Active, // Editor column to show the new webview panel in.
-      this.getPanelOptions()
-    );
+    this.panel = window.createWebviewPanel(this.panelGroupKey, this.panelName, ViewColumn.Active, this.getPanelOptions());
     this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
@@ -170,9 +172,12 @@ export default class LocalDesignerPanel extends DesignerPanel {
     this.showDesignerVersionNotification();
   }
 
+  // region Message Handling
+
   private async handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
+        clearInterval(this.workflowRuntimeBaseUrlInterval);
         this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
           const updatedRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
 
@@ -205,24 +210,16 @@ export default class LocalDesignerPanel extends DesignerPanel {
             runId: this.runId,
           },
         });
-
-        // TODO(aeldridge): Temporarily removed validation due to 500 responses from validatePartial endpoint. Re-add once fixed.
-        // await callWithTelemetryAndErrorHandling('InitializeWorkflowFromDesigner', async (activateContext: IActionContext) => {
-        //     await this.validateWorkflow(activateContext, this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
-        // });
         break;
       }
 
+      // Designer commands
       case ExtensionCommand.save: {
         await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
           if (!this.panelMetadata) {
             window.showErrorMessage('Failed to save workflow. Panel metadata is not available.');
             return;
           }
-
-          // TODO(aeldridge): Temporarily removed validation due to 500 responses from validatePartial endpoint. Re-add once fixed.
-          // const projectPath = await getLogicAppProjectRoot(activateContext, this.workflowFilePath);
-          // const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
           await this.saveWorkflow(
             activateContext,
             this.workflowFilePath,
@@ -232,16 +229,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
             this.panelMetadata.azureDetails?.tenantId,
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
-          // const savedLocalSettingsValues = (await getLocalSettingsJson(activateContext, localSettingsPath, true)).Values || {};
-          // let savedWorkflow: any;
-
-          // try {
-          //   savedWorkflow = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
-          // } catch (error) {
-          //   window.showErrorMessage(`Failed to parse workflow file as JSON: ${(error as Error).message}`);
-          // }
-
-          // await this.validateWorkflow(activateContext, savedWorkflow, savedLocalSettingsValues);
         });
         break;
       }
@@ -251,13 +238,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
         break;
       }
 
-      // NOTE(aeldridge): Needed for V2 designer which doesn't use separate monitoring view class.
-      // Remove once V2 designer is moved to its own panel classes.
-      case ExtensionCommand.createUnitTestFromRun: {
-        await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
-        break;
-      }
-      
       case ExtensionCommand.addConnection: {
         await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
           await addConnectionData(activateContext, this.workflowFilePath, msg.connectionAndSetting);
@@ -271,19 +251,17 @@ export default class LocalDesignerPanel extends DesignerPanel {
       }
 
       case ExtensionCommand.createFileSystemConnection: {
-        {
-          const connectionName = msg.connectionName;
-          const { connection, errorMessage } = await createFileSystemConnection(msg.connectionInfo);
-          const completeData: CompleteFileSystemConnectionData = {
-            connectionName,
-            connection,
-            error: errorMessage,
-          };
-          this.panel?.webview.postMessage({
-            command: ExtensionCommand.completeFileSystemConnection,
-            data: completeData,
-          });
-        }
+        const connectionName = msg.connectionName;
+        const { connection, errorMessage } = await createFileSystemConnection(msg.connectionInfo);
+        const completeData: CompleteFileSystemConnectionData = {
+          connectionName,
+          connection,
+          error: errorMessage,
+        };
+        this.panel?.webview.postMessage({
+          command: ExtensionCommand.completeFileSystemConnection,
+          data: completeData,
+        });
         break;
       }
 
@@ -294,6 +272,23 @@ export default class LocalDesignerPanel extends DesignerPanel {
         break;
       }
 
+      // Monitoring commands
+      case ExtensionCommand.showContent: {
+        await this.openContent(msg.header, msg.id, msg.title, msg.content);
+        break;
+      }
+
+      case ExtensionCommand.resubmitRun: {
+        await this.resubmitRun(msg.runId);
+        break;
+      }
+
+      case ExtensionCommand.createUnitTestFromRun: {
+        await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
+        break;
+      }
+
+      // Shared commands
       case ExtensionCommand.logTelemetry: {
         const eventName = msg.data.name ?? msg.data.area;
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
@@ -308,7 +303,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
       case ExtensionCommand.getDesignerVersion: {
         this.panel?.webview.postMessage({
           command: ExtensionCommand.getDesignerVersion,
-          data: this.getDesignerVersion(),
+          data: 2,
         });
         break;
       }
@@ -318,18 +313,49 @@ export default class LocalDesignerPanel extends DesignerPanel {
     }
   }
 
+  // endregion
+
+  // region Monitoring
+
+  private async resubmitRun(runId?: string): Promise<void> {
+    const currentRunId = runId ?? this.runId;
+    if (!currentRunId) {
+      window.showErrorMessage(localize('noRunId', 'No run ID available for resubmit.'));
+      return;
+    }
+
+    const options: ProgressOptions = {
+      location: ProgressLocation.Notification,
+      title: localize('runResubmit', 'Resubmitting workflow run...'),
+    };
+
+    await window.withProgress(options, async () => {
+      const runtimeBaseUrl = this.workflowRuntimeBaseUrl ?? this.baseUrl;
+      try {
+        const fileContent = await fsPromises.readFile(this.workflowFilePath, 'utf8');
+        const workflowContent: any = JSON.parse(fileContent);
+        const triggerName = getRunTriggerName(workflowContent.definition);
+        if (!triggerName) {
+          throw new Error(localize('workflowTriggerNotFound', 'Unable to determine a trigger to resubmit this workflow run.'));
+        }
+        const url = `${runtimeBaseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${currentRunId}/resubmit?api-version=${this.apiVersion}`;
+
+        await sendRequest(this.context, { url, method: HTTP_METHODS.POST });
+      } catch (error) {
+        const errorMessage = localize('runResubmitFailed', 'Workflow run resubmit failed: ') + error.message;
+        await window.showErrorMessage(errorMessage, localize('OK', 'OK'));
+      }
+    });
+  }
+
+  // endregion
+
+  // region Workflow utilities
+
   private getWorkflowRuntimeBaseUrl(): string | undefined {
     return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
   }
 
-  /**
-   * Saves workflow locally in the workflow.json.
-   * @param {string} filePath - File path of file to save the workflow.
-   * @param {any} workflow - Local workflow schema before changes .
-   * @param {any} workflowToSave - Workflow schema to save.
-   * @param {string} azureTenantId - Tenant id from azure.
-   * @param {string} workflowBaseManagementUri - Workflow base url.
-   */
   private async saveWorkflow(
     context: IActionContext,
     filePath: string,
@@ -396,56 +422,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
     });
   }
 
-  /**
-   * Validates a workflow using the design time API.
-   *
-   * @param context - The action context for the operation
-   * @param workflow - The workflow object containing definition and kind properties
-   * @throws {Error} If design time is not running for the project
-   * @throws {Error} If design time port is not found
-   * @remarks
-   * This method sends a POST request to the local design time API to validate the workflow definition.
-   * If validation fails with a non-404 status code, an error message is displayed to the user.
-   * The validation includes the workflow definition, kind, and local app settings.
-   */
-  private async validateWorkflow(context: IActionContext, workflow: any, localSettings: any): Promise<void> {
-    if (!this.projectPath) {
-      throw new Error(localize('projectPathUndefined', 'Unable to determine project root folder.'));
-    }
-
-    if (!ext.designTimeInstances.has(this.projectPath)) {
-      throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
-    }
-
-    const designTimePort = ext.designTimeInstances.get(this.projectPath)?.port;
-    if (!designTimePort) {
-      throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
-    }
-
-    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
-    try {
-      const headers = createHttpHeaders({
-        'Content-Type': 'application/json',
-      });
-      await sendRequest(this.context, {
-        url,
-        method: HTTP_METHODS.POST,
-        headers,
-        body: JSON.stringify({
-          properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: localSettings } },
-        }),
-      });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
-      const invalidRouteMessage = 'flow extension request route'; // remove when validatePartial is reimplemented in backend
-      context.telemetry.properties.validateWorkflowError = errorMessage;
-      if (!errorMessage.includes(invalidRouteMessage) && error.statusCode !== 404) {
-        const errorLocalized = localize('workflowValidationFailed', 'Workflow validation failed: ') + errorMessage;
-        window.showErrorMessage(errorLocalized, localize('OK', 'OK'));
-      }
-    }
-  }
-
   private async getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<DesignerPanelMetadata> {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     if (!projectPath) {
@@ -488,10 +464,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
     };
   }
 
-  /**
-   * Reloads the webview panel and updates the view state.
-   * @param webviewPanel The web view panel to update.
-   */
   private async reloadWebviewPanel(webviewPanel: WebviewPanel): Promise<void> {
     this.panelMetadata = await this.getDesignerPanelMetadata(this.migrationOptions);
     webviewPanel.webview.html = await this.getWebviewContent({
@@ -511,4 +483,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
       },
     });
   }
+
+  // endregion
 }

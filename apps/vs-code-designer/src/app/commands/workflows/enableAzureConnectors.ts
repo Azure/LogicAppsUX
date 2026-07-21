@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, workflowAuthenticationMethodKey, workflowSubscriptionIdKey } from '../../../../src/constants';
+import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../../src/constants';
 import { localize } from '../../../localize';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
@@ -29,8 +29,7 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsFilePath);
 
   const subscriptionId: string | undefined = localSettings.Values?.[workflowSubscriptionIdKey];
-  const authenticationMethod: string | undefined = localSettings.Values?.[workflowAuthenticationMethodKey];
-  if (!!subscriptionId && !!authenticationMethod) {
+  if (subscriptionId) {
     ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
     return;
   }
@@ -43,7 +42,7 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   if (connectorsContext.enabled) {
     invalidateAzureDetailsCache(projectPath);
     getAzureConnectorDetailsForLocalProject(context, projectPath).catch(() => {});
-    
+
     ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
   }
 }

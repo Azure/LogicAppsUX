@@ -5,37 +5,42 @@
 import * as path from 'path';
 import { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getWorkflowNode } from '../../../utils/workspace';
-import { Uri, workspace } from 'vscode';
+import { Uri } from 'vscode';
 import { tryBuildCustomCodeFunctionsProject } from '../../buildCustomCodeFunctionsProject';
 import { customCodeArtifactsExist } from '../../../utils/customCodeUtils';
-import type { DesignerPanel } from './panels/designerPanel';
-import { RemoteDesignerPanel } from './panels/remoteDesignerPanel';
-import LocalDesignerPanel from './panels/localDesignerPanel';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
+import type { DesignerV2Panel } from './panels/designerV2Panel';
+import LocalDesignerV2Panel from './panels/localDesignerV2Panel';
+import { RemoteDesignerV2Panel } from './panels/remoteDesignerV2Panel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { openDesignerV2 } from '../designer-v2/openDesignerV2';
-import { defaultDesignerVersion, designerVersionSetting } from '../../../../constants';
 
-export async function openDesigner(context: IActionContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
-  const designerVersion = workspace.getConfiguration(ext.prefix).get<number>(designerVersionSetting) ?? defaultDesignerVersion;
-  if (designerVersion === 2) {
-    return openDesignerV2(context, node);
-  }
-
+/**
+ * Opens the V2 designer for a workflow. If `runId` is provided, the designer
+ * opens in monitoring mode for that run (or switches an existing panel to it).
+ */
+export async function openDesignerV2(
+  context: IActionContext,
+  node: Uri | RemoteWorkflowTreeItem | undefined,
+  runId?: string
+): Promise<void> {
   const workflowNode = getWorkflowNode(node);
   if (!workflowNode) {
     ext.outputChannel.appendLog(localize('workflowNodeNotFound', 'Failed to open designer. Unable to find the workflow node.'));
     return;
   }
 
-  const designerPanel = await getDesignerPanel(context, workflowNode);
+  const designerPanel = await getDesignerV2Panel(context, workflowNode, runId);
   await designerPanel.create();
 }
 
-async function getDesignerPanel(context: IActionContext, workflowNode: Uri | RemoteWorkflowTreeItem): Promise<DesignerPanel> {
+async function getDesignerV2Panel(
+  context: IActionContext,
+  workflowNode: Uri | RemoteWorkflowTreeItem,
+  runId?: string
+): Promise<DesignerV2Panel> {
   if (workflowNode instanceof RemoteWorkflowTreeItem) {
-    return new RemoteDesignerPanel(context, workflowNode);
+    return new RemoteDesignerV2Panel(context, workflowNode, runId);
   }
 
   const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
@@ -43,5 +48,5 @@ async function getDesignerPanel(context: IActionContext, workflowNode: Uri | Rem
     await tryBuildCustomCodeFunctionsProject(context, logicAppNode);
   }
 
-  return new LocalDesignerPanel(context, workflowNode);
+  return new LocalDesignerV2Panel(context, workflowNode, runId);
 }

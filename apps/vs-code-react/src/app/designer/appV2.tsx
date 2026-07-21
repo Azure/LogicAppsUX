@@ -15,7 +15,7 @@ import {
   FloatingRunButton,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
-import { BundleVersionRequirements, guid, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
+import { BundleVersionRequirements, guid, isEmptyString, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
@@ -54,6 +54,13 @@ export const DesignerApp = () => {
 
   const [runId, setRunId] = useState(_runId);
 
+  useEffect(() => {
+    if (_isMonitoringView && _runId && _runId !== runId) {
+      setRunId(_runId);
+      setCurrentView(DesignerViewType.Monitoring);
+    }
+  }, [_isMonitoringView, _runId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [initialWorkflow, setInitialWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [workflow, setWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
@@ -68,6 +75,7 @@ export const DesignerApp = () => {
   const queryClient = useQueryClient();
 
   const commonText = useIntlMessages(commonMessages);
+  const isRuntimeAvailable = !isEmptyString(workflowRuntimeBaseUrl);
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -344,10 +352,14 @@ export const DesignerApp = () => {
                     setRunId(newRunId ?? '');
                   }}
                   isDarkMode={theme === Theme.Dark}
+                  isDisabled={!isRuntimeAvailable}
+                  tooltipOverride={isRuntimeAvailable ? undefined : commonText.RUNTIME_NOT_AVAILABLE}
                 />
               </div>
             )}
-            {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} workflowFile={initialWorkflow} />}
+            {isCodeView && (
+              <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} workflowFile={initialWorkflow} readOnly={readOnly} />
+            )}
           </BJSWorkflowProvider>
         ) : null}
       </DesignerProvider>

@@ -16,7 +16,9 @@ import {
   azureStorageTypeSetting,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
+  workflowAuthenticationMethodKey,
   workflowCodefulEnabledKey,
+  workflowAuthenticationMethodMIValue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -24,6 +26,7 @@ import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSet
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
+import { isManagedIdentityAuthEnabled } from '../vsCodeConfig/settings';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { MismatchBehavior, ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
@@ -226,6 +229,9 @@ export const getLocalSettingsSchema = (
     values[appKindSetting] = logicAppKind;
     if (projectPath) {
       values[ProjectDirectoryPathKey] = projectPath;
+    }
+    if (isManagedIdentityAuthEnabled()) {
+      values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
     }
     if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
       values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;

@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   defaultMsiAudience,
-  workflowAuthenticationMethodKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
   workflowResourceGroupNameKey,
@@ -65,15 +64,13 @@ describe('createAzureWizard', () => {
     } as any;
   });
 
-  it('defaults cancelled connector selection to disabled raw keys', async () => {
+  it('defaults cancelled connector selection to disabled', async () => {
     vi.mocked(context.ui.showQuickPick).mockRejectedValue({ isUserCancelledError: true });
     const wizard = createAzureWizard(context, projectPath) as any;
 
     await wizard.options.promptSteps[0].prompt(context);
 
     expect(context.enabled).toBe(false);
-    expect(context.authenticationMethod).toBe('rawKeys');
-    expect(context.telemetry.properties.azureConnectorsDefaulted).toBe('rawKeys');
   });
 
   it('surfaces non-cancel connector selection failures', async () => {
@@ -105,23 +102,20 @@ describe('createAzureWizard', () => {
     expect(azureConnectorStep.shouldPrompt({ ...context, enabled: false })).toBe(false);
   });
 
-  it('persists disabled raw-key settings when Azure connectors are skipped', async () => {
+  it('persists empty subscription when Azure connectors are skipped', async () => {
     context.enabled = false;
-    context.authenticationMethod = 'rawKeys';
     const wizard = createAzureWizard(context, projectPath) as any;
 
     await wizard.options.executeSteps[0].execute(context);
 
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, projectPath, {
       [workflowSubscriptionIdKey]: '',
-      [workflowAuthenticationMethodKey]: 'rawKeys',
     });
   });
 
   it('persists Azure connector settings and notifies the language client when enabled', async () => {
     Object.assign(context, {
       enabled: true,
-      authenticationMethod: 'managedServiceIdentity',
       tenantId: 'tenant-id',
       subscriptionId: 'subscription-id',
       resourceGroup: { name: 'rg', location: 'westus' },
@@ -137,7 +131,6 @@ describe('createAzureWizard', () => {
       [workflowResourceGroupNameKey]: 'rg',
       [workflowLocationKey]: 'westus',
       [workflowManagementBaseURIKey]: 'https://management.azure.com/',
-      [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
       [workflowsDynamicConnectionDefaultAuthAudienceKey]: defaultMsiAudience,
     });
     expect(ext.languageClient.sendNotification).toHaveBeenCalledWith('custom/updateApiConfig', {
