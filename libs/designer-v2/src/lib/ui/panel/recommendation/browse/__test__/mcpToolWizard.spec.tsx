@@ -1,11 +1,17 @@
 import { describe, test, expect, vi, beforeEach, beforeAll, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, cleanup, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { McpToolWizard } from '../mcpToolWizard';
 import { MCP_WIZARD_STEP } from '../../../../../core/state/panel/panelTypes';
+
+// Hoisted holders so the (hoisted) vi.mock factories can share controllable references with tests.
+const { mockGetListDynamicValues, dropdownProps } = vi.hoisted(() => ({
+  mockGetListDynamicValues: vi.fn(() => Promise.resolve([] as any[])),
+  dropdownProps: { current: null as any },
+}));
 
 beforeAll(() => {
   global.ResizeObserver = class ResizeObserver {
@@ -97,7 +103,7 @@ vi.mock('../../../../../core/actions/bjsworkflow/add', () => ({
 vi.mock('@microsoft/logic-apps-shared', () => ({
   ConnectionType: { SharedAccessKey: 'sharedaccesskey' },
   ConnectorService: vi.fn(() => ({
-    getListDynamicValues: vi.fn(() => Promise.resolve([])),
+    getListDynamicValues: mockGetListDynamicValues,
   })),
   removeConnectionPrefix: vi.fn((path) => path),
   LoggerService: vi.fn(() => ({ log: vi.fn() })),
@@ -127,7 +133,16 @@ vi.mock('@microsoft/designer-ui', () => ({
     )
   ),
   SimpleDictionary: vi.fn(() => <div data-testid="mock-dictionary" />),
-  SearchableDropdown: vi.fn(() => <div data-testid="mock-searchable-dropdown" />),
+  SearchableDropdown: vi.fn((props: any) => {
+    dropdownProps.current = props;
+    return (
+      <div
+        data-testid="mock-searchable-dropdown"
+        data-selected-keys={JSON.stringify(props.selectedKeys ?? [])}
+        data-option-keys={JSON.stringify((props.options ?? []).map((option: any) => option.key))}
+      />
+    );
+  }),
 }));
 
 vi.mock('../../../../panel/connectionsPanel/selectConnection/connectionTable', () => ({
@@ -159,8 +174,14 @@ import {
   useMcpWizardAllowedTools,
   useMcpWizardHeaders,
 } from '../../../../../core/state/panel/panelSelectors';
-import { closeMcpToolWizard, setMcpWizardStep, setMcpWizardConnection } from '../../../../../core/state/panel/panelSlice';
+import {
+  closeMcpToolWizard,
+  setMcpWizardStep,
+  setMcpWizardConnection,
+  setMcpWizardTools,
+} from '../../../../../core/state/panel/panelSlice';
 import { useConnectionsForConnector, useConnectionResource } from '../../../../../core/queries/connections';
+import { getManagedIdentityFromConnection } from '../../../../../core/utils/connectors/connections';
 
 const mockUseMcpToolWizard = vi.mocked(useMcpToolWizard);
 const mockUseMcpWizardStep = vi.mocked(useMcpWizardStep);
@@ -169,8 +190,10 @@ const mockUseMcpWizardAllowedTools = vi.mocked(useMcpWizardAllowedTools);
 const mockUseMcpWizardHeaders = vi.mocked(useMcpWizardHeaders);
 const mockSetMcpWizardStep = vi.mocked(setMcpWizardStep);
 const mockSetMcpWizardConnection = vi.mocked(setMcpWizardConnection);
+const mockSetMcpWizardTools = vi.mocked(setMcpWizardTools);
 const mockUseConnectionsForConnector = vi.mocked(useConnectionsForConnector);
 const mockUseConnectionResource = vi.mocked(useConnectionResource);
+const mockGetManagedIdentityFromConnection = vi.mocked(getManagedIdentityFromConnection);
 
 const createTestStore = () =>
   configureStore({
@@ -222,6 +245,13 @@ describe('McpToolWizard', () => {
       refetch: vi.fn(),
     } as any);
     mockUseConnectionResource.mockReturnValue({ data: undefined, isLoading: false } as any);
+
+    // Regression-suite controllable defaults.
+    mockGetListDynamicValues.mockReset();
+    mockGetListDynamicValues.mockResolvedValue([]);
+    mockGetManagedIdentityFromConnection.mockReset();
+    mockGetManagedIdentityFromConnection.mockReturnValue(undefined as any);
+    dropdownProps.current = null;
   });
 
   describe('Connection Step', () => {
@@ -578,6 +608,120 @@ describe('McpToolWizard', () => {
 
       // The component should use the managed api.id for fetching connections
       expect(mockUseConnectionsForConnector).toHaveBeenCalledWith('subscriptions/xxx/managedApis/mcpserver', true);
+    });
+  });
+
+  // Regression: creating an MCP connection cleared every "allowed tools" checkbox because the
+  // tools query re-keys on the connection identity (which resolves a beat after the wizard
+  // advances). These tests exercise the real useQuery flow (only getListDynamicValues is mocked)
+  // to lock in that the selection survives the identity-triggered refetch.
+  describe('Allowed tools selection persistence (regression)', () => {
+    const toolsV1 = [
+      { value: 'toolA', displayName: 'Tool A', description: '' },
+      { value: 'toolB', displayName: 'Tool B', description: '' },
+      { value: 'toolC', displayName: 'Tool C', description: '' },
+    ];
+
+    const getDropdown = () => screen.getByTestId('mock-searchable-dropdown');
+    const getSelectedKeys = () => JSON.parse(getDropdown().getAttribute('data-selected-keys') ?? '[]');
+
+    // Simulate the connection identity resolving after the wizard advanced: hand the component a
+    // fresh connection-resource object (so the selectedIdentity useMemo dependency actually changes)
+    // and surface the UAMI. This changes the tools query key and triggers the refetch that used to
+    // wipe the checkboxes.
+    const resolveIdentity = (identity: string) => {
+      mockUseConnectionResource.mockReturnValue({
+        data: { id: 'conn-1', properties: { resolved: true } },
+        isLoading: false,
+      } as any);
+      mockGetManagedIdentityFromConnection.mockReturnValue(identity as any);
+    };
+
+    const renderManagedParametersStep = () => {
+      mockUseMcpToolWizard.mockReturnValue({
+        ...mockWizardState,
+        step: MCP_WIZARD_STEP.PARAMETERS,
+        connectionId: 'conn-1',
+        operation: {
+          ...mockWizardState.operation,
+          properties: {
+            ...mockWizardState.operation.properties,
+            operationKind: 'Managed',
+            api: { ...mockWizardState.operation.properties.api, id: 'subscriptions/xxx/managedApis/mcpserver' },
+          },
+        },
+      } as any);
+      mockUseMcpWizardStep.mockReturnValue(MCP_WIZARD_STEP.PARAMETERS);
+      mockUseMcpWizardConnectionId.mockReturnValue('conn-1');
+      mockUseConnectionsForConnector.mockReturnValue({
+        data: [{ id: 'conn-1', name: 'connection-1', properties: { displayName: 'Connection 1' } }],
+        isLoading: false,
+        refetch: vi.fn(),
+      } as any);
+      mockUseConnectionResource.mockReturnValue({ data: { id: 'conn-1', properties: {} }, isLoading: false } as any);
+      return render(<McpToolWizard />, { wrapper: createWrapper() });
+    };
+
+    test('auto-selects all tools when the tool list first loads', async () => {
+      mockGetListDynamicValues.mockResolvedValue(toolsV1);
+
+      renderManagedParametersStep();
+
+      await waitFor(() => expect(getSelectedKeys()).toEqual(['toolA', 'toolB', 'toolC']));
+      expect(mockSetMcpWizardTools).toHaveBeenCalledWith(['toolA', 'toolB', 'toolC']);
+    });
+
+    test('preserves the tool selection when the connection identity resolves (does not clear checkboxes)', async () => {
+      mockGetListDynamicValues.mockResolvedValue(toolsV1);
+
+      const { rerender } = renderManagedParametersStep();
+      await waitFor(() => expect(getSelectedKeys()).toEqual(['toolA', 'toolB', 'toolC']));
+
+      // Identity resolves after connection creation -> tools query key changes -> refetch (same tools).
+      resolveIdentity('uami-1');
+      rerender(<McpToolWizard />);
+
+      await waitFor(() => expect(mockGetListDynamicValues.mock.calls.length).toBeGreaterThanOrEqual(2));
+      await waitFor(() => expect(getSelectedKeys()).toEqual(['toolA', 'toolB', 'toolC']));
+      // The selection must never have been reset to empty during the refetch.
+      expect(mockSetMcpWizardTools).not.toHaveBeenCalledWith([]);
+    });
+
+    test('keeps only still-valid tools when the refetched tool set changes', async () => {
+      mockGetListDynamicValues.mockResolvedValue(toolsV1);
+
+      const { rerender } = renderManagedParametersStep();
+      await waitFor(() => expect(getSelectedKeys()).toEqual(['toolA', 'toolB', 'toolC']));
+
+      // On identity resolution the server returns a changed tool set (toolC replaced by toolD).
+      mockGetListDynamicValues.mockResolvedValue([
+        { value: 'toolA', displayName: 'Tool A', description: '' },
+        { value: 'toolB', displayName: 'Tool B', description: '' },
+        { value: 'toolD', displayName: 'Tool D', description: '' },
+      ]);
+      resolveIdentity('uami-1');
+      rerender(<McpToolWizard />);
+
+      await waitFor(() => expect(getSelectedKeys()).toEqual(['toolA', 'toolB']));
+    });
+
+    test('does not re-select tools after the user intentionally clears the selection', async () => {
+      mockGetListDynamicValues.mockResolvedValue(toolsV1);
+
+      renderManagedParametersStep();
+      await waitFor(() => expect(getSelectedKeys()).toEqual(['toolA', 'toolB', 'toolC']));
+
+      // User clears every tool within the same tool set.
+      await act(async () => {
+        dropdownProps.current.onSelectedKeysChange([]);
+      });
+
+      await waitFor(() => expect(getSelectedKeys()).toEqual([]));
+      // Flush any pending effects; the reconcile must not snap the selection back to "all".
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(getSelectedKeys()).toEqual([]);
     });
   });
 });

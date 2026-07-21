@@ -238,6 +238,7 @@ export const McpToolWizard = () => {
   const {
     data: toolsData,
     isLoading: isToolsLoading,
+    isPreviousData: isPreviousToolsData,
     error: toolsError,
     refetch: refetchTools,
   } = useQuery({
@@ -286,6 +287,10 @@ export const McpToolWizard = () => {
     enabled: currentStep === MCP_WIZARD_STEP.PARAMETERS && !!localConnectionId,
     retry: false, // Don't retry on failure - show error immediately
     staleTime: 0, // Always refetch when connection changes
+    // Keep the previously loaded tools visible while a refetch is in flight. The query key
+    // includes the connection identity, which resolves a beat after a connection is created.
+    // Without this the grid would flash empty (toolsData -> undefined) and clear the checkboxes.
+    keepPreviousData: true,
   });
 
   // Extract error message from various error formats
@@ -330,18 +335,40 @@ export const McpToolWizard = () => {
   // Track local tool selection
   const [localAllowedTools, setLocalAllowedTools] = useState<string[]>(allowedTools ?? []);
 
-  // Track if initial auto-select has been done (to prevent re-selecting when user deselects all)
-  const [hasInitializedTools, setHasInitializedTools] = useState(false);
+  // Track the signature (ordered value list) of the tool set the current selection was
+  // initialized against. Re-initializing only when this signature changes lets a newly loaded
+  // or changed tool set default to "all selected", while still allowing the user to deselect
+  // tools within the same set without the selection snapping back.
+  const [initializedToolsSignature, setInitializedToolsSignature] = useState<string | null>(null);
 
-  // Auto-select all tools when tools are first loaded (regardless of mode)
+  // Reconcile the local tool selection whenever the available tools change.
+  //
+  // Regression guard: when a connection is created its identity resolves slightly after the
+  // wizard advances, which changes the tools query key and refetches. Combined with
+  // keepPreviousData this must NOT clear the user's selection. We therefore:
+  //   - skip stale (previous-key) data surfaced by keepPreviousData,
+  //   - keep any still-valid prior selections when the tool set changes,
+  //   - default to selecting all tools only when nothing valid remains (first load / changed set),
+  //   - never re-select after the user intentionally clears tools within the same set.
   useEffect(() => {
-    if (!hasInitializedTools && toolsData && toolsData.length > 0 && localAllowedTools.length === 0) {
-      const allToolValues = toolsData.map((tool) => tool.value);
-      setLocalAllowedTools(allToolValues);
-      dispatch(setMcpWizardTools(allToolValues));
-      setHasInitializedTools(true);
+    if (isPreviousToolsData || !toolsData || toolsData.length === 0) {
+      return;
     }
-  }, [toolsData, localAllowedTools.length, dispatch, hasInitializedTools]);
+
+    const availableValues = toolsData.map((tool) => tool.value);
+    const signature = availableValues.join('|');
+    if (signature === initializedToolsSignature) {
+      return;
+    }
+
+    const availableSet = new Set(availableValues);
+    const stillValid = localAllowedTools.filter((value) => availableSet.has(value));
+    const nextSelection = stillValid.length > 0 ? stillValid : availableValues;
+
+    setLocalAllowedTools(nextSelection);
+    dispatch(setMcpWizardTools(nextSelection));
+    setInitializedToolsSignature(signature);
+  }, [isPreviousToolsData, toolsData, localAllowedTools, initializedToolsSignature, dispatch]);
 
   // Track headers as key-value pairs (initialized from Redux)
   const [localHeaders, setLocalHeaders] = useState<Record<string, string>>(headers ?? {});
@@ -496,8 +523,10 @@ export const McpToolWizard = () => {
       setLocalConnectionId(id);
       setCreatedIdentity(undefined);
       dispatch(setMcpWizardConnection(id));
-      // Reset tool selection when connection changes
+      // Reset tool selection when connection changes so the newly selected connection
+      // re-initializes to "all tools" once its own tool set loads.
       setLocalAllowedTools([]);
+      setInitializedToolsSignature(null);
       dispatch(setMcpWizardTools([]));
       dispatch(setMcpWizardHeaders({}));
       // Automatically advance to parameters step
