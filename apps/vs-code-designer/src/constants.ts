@@ -125,6 +125,19 @@ export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
 export const designerApiLoadTimeout = 300000;
 
+// Dependency update-check throttle
+/**
+ * Key used to persist the timestamp (epoch ms) of the last time we checked whether the
+ * runtime dependencies (Node.js, Functions Core Tools, .NET SDK) had newer versions available.
+ */
+export const lastDependencyUpdateCheckKey = 'azureLogicAppsStandard.lastDependencyUpdateCheck';
+/**
+ * Minimum interval between "is there a newer version?" checks. Missing binaries are always
+ * installed regardless of this interval; only the network lookups that compare an already
+ * installed binary against the latest published version are throttled.
+ */
+export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+
 // Commands
 export const extensionCommand = {
   openDesigner: 'azureLogicAppsStandard.openDesigner',

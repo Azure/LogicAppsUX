@@ -192,6 +192,7 @@ vi.mock('./src/extensionVariables', () => ({
       appendLine: vi.fn(),
     },
     designTimeInstances: new Map(),
+    runtimeInstances: new Map(),
     pinnedBundleVersion: new Map(),
     currentBundleVersion: new Map(),
     extensionVersion: '1.0.0',

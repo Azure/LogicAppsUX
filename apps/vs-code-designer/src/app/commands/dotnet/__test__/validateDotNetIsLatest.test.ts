@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { dotnetDependencyName } from '../../../../constants';
 import { binariesExist, getLatestDotNetVersion } from '../../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../../utils/dependencyUpdateCheck';
 import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../../../utils/dotnet/dotnet';
 import { installDotNet } from '../installDotNet';
 import { validateDotNetIsLatest } from '../validateDotNetIsLatest';
@@ -22,6 +23,10 @@ vi.mock('../../../utils/binaries', () => ({
   getLatestDotNetVersion: vi.fn(),
 }));
 
+vi.mock('../../../utils/dependencyUpdateCheck', () => ({
+  shouldCheckForDependencyUpdates: vi.fn(),
+}));
+
 vi.mock('../../../utils/dotnet/dotnet', () => ({
   getDotNetCommand: vi.fn(),
   getLocalDotNetVersionFromBinaries: vi.fn(),
@@ -35,6 +40,8 @@ describe('validateDotNetIsLatest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(getDotNetCommand).mockReturnValue('dotnet');
+    // Default to performing update checks; throttled behavior is covered explicitly below.
+    vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(true);
   });
 
   it('installs without checking GitHub latest version when binaries are missing', async () => {
@@ -60,5 +67,30 @@ describe('validateDotNetIsLatest', () => {
     expect(getLatestDotNetVersion).toHaveBeenCalledWith(contextRef.current, '8');
     expect(installDotNet).not.toHaveBeenCalled();
     expect(contextRef.current.telemetry.properties.binariesExist).toBe('true');
+  });
+
+  it('skips the GitHub latest-version lookup when the update check is throttled', async () => {
+    vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue('8.0.318');
+
+    await validateDotNetIsLatest('8');
+
+    // The local presence check still runs, but the network "is there a newer version?" lookup is skipped.
+    expect(getLocalDotNetVersionFromBinaries).toHaveBeenCalledWith('8');
+    expect(getLatestDotNetVersion).not.toHaveBeenCalled();
+    expect(installDotNet).not.toHaveBeenCalled();
+  });
+
+  it('reinstalls a missing local version even when the update check is throttled', async () => {
+    vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue(null);
+
+    await validateDotNetIsLatest('8');
+
+    // A present-but-unrunnable SDK must still be reinstalled regardless of the throttle.
+    expect(installDotNet).toHaveBeenCalledWith(contextRef.current, '8');
+    expect(getLatestDotNetVersion).not.toHaveBeenCalled();
   });
 });
