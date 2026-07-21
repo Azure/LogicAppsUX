@@ -277,6 +277,11 @@ export interface UpdatePanelMetadataMessage {
   };
 }
 
+export interface SelectRunMessage {
+  command: typeof ExtensionCommand.selectRun;
+  runId: string;
+}
+
 // Rest of Message Interfaces
 export interface InjectValuesMessage {
   command: typeof ExtensionCommand.initialize_frame;
