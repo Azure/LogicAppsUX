@@ -49,7 +49,6 @@ import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
-import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 
