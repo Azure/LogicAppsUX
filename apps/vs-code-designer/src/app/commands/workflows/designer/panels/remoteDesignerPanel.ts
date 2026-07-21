@@ -59,7 +59,7 @@ export class RemoteDesignerPanel extends DesignerPanel {
       azureDetails: this.panelMetadata.azureDetails,
       workflowDetails: this.panelMetadata.workflowDetails,
     });
-    
+
     this.panelMetadata.mapArtifacts = this.mapArtifacts as Record<string, FileDetails[]>;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts as FileDetails[];
 

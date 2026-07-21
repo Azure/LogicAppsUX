@@ -192,23 +192,16 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    const [
-      connectionsData,
-      parametersData,
-      customCodeData,
-      bundleVersionNumber,
-      azureDetails,
-      artifacts,
-      workflowContent,
-    ] = await Promise.all([
-      getConnectionsFromFile(this.context, this.workflowFilePath),
-      getParametersFromFile(this.context, this.workflowFilePath),
-      getCustomCodeFromFiles(this.workflowFilePath),
-      getBundleVersionNumber(projectPath),
-      getAzureConnectorDetailsForLocalProject(this.context, projectPath),
-      getArtifactsInLocalProject(projectPath),
-      this.getWorkflowContent(),
-    ]);
+    const [connectionsData, parametersData, customCodeData, bundleVersionNumber, azureDetails, artifacts, workflowContent] =
+      await Promise.all([
+        getConnectionsFromFile(this.context, this.workflowFilePath),
+        getParametersFromFile(this.context, this.workflowFilePath),
+        getCustomCodeFromFiles(this.workflowFilePath),
+        getBundleVersionNumber(projectPath),
+        getAzureConnectorDetailsForLocalProject(this.context, projectPath),
+        getArtifactsInLocalProject(projectPath),
+        this.getWorkflowContent(),
+      ]);
 
     const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
 
