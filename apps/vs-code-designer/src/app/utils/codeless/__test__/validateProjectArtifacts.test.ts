@@ -954,6 +954,7 @@ describe('validateProjectArtifacts', () => {
         ProjectDirectoryPath: projectPath,
         AzureWebJobsStorage: 'UseDevelopmentStorage=true',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        WORKFLOWS_AUTHENTICATION_METHOD: 'rawKeys',
       },
     };
 
