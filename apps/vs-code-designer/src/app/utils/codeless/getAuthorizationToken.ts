@@ -18,6 +18,9 @@ export async function getAuthData(tenantId?: string): Promise<AuthenticationSess
 
 export async function getAuthorizationToken(tenantId?: string): Promise<string> {
   const authData = await getAuthData(tenantId);
+  if (!authData?.accessToken) {
+    throw new Error(localize('noAccessToken', 'No access token available. Please sign in to Azure.'));
+  }
   return `Bearer ${authData?.accessToken}`;
 }
 
