@@ -356,7 +356,9 @@ export const McpToolWizard = () => {
     }
 
     const availableValues = toolsData.map((tool) => tool.value);
-    const signature = availableValues.join('|');
+    // Serialize with JSON.stringify rather than join() so tool values containing the delimiter
+    // cannot collide into the same signature and incorrectly skip reconciliation.
+    const signature = JSON.stringify(availableValues);
     if (signature === initializedToolsSignature) {
       return;
     }
