@@ -21,6 +21,7 @@ import {
   localEmulatorConnectionString,
   logicAppKind,
   multiLanguageWorkerSetting,
+  workflowAuthenticationMethodKey,
   workerRuntimeKey,
   workflowCodefulEnabledKey,
   workflowOperationDiscoveryHostModeKey,
@@ -73,6 +74,7 @@ vi.mock('../../vsCodeConfig/settings', async (importActual) => {
   return {
     ...actual,
     useNodeDesignTimeWorker: vi.fn(() => false),
+    isManagedIdentityAuthEnabled: vi.fn(() => true),
   };
 });
 
@@ -192,6 +194,7 @@ describe('validateProjectArtifacts', () => {
         [workerRuntimeKey]: WorkerRuntime.Dotnet,
         [azureWebJobsStorageKey]: localEmulatorConnectionString,
         [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+        [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
         [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
         [workflowCodefulEnabledKey]: 'true',
       });
@@ -211,6 +214,7 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
           EXISTING_SECRET: 'super-secret',
         },
       });
@@ -234,6 +238,7 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
 
@@ -256,6 +261,7 @@ describe('validateProjectArtifacts', () => {
       [workerRuntimeKey]: WorkerRuntime.Dotnet,
       [azureWebJobsStorageKey]: localEmulatorConnectionString,
       [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+      [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
     };
 
     beforeEach(() => {
@@ -875,6 +881,7 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
 
@@ -901,6 +908,7 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
 
