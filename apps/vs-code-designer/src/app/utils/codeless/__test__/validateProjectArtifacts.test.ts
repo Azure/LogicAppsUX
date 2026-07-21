@@ -74,6 +74,7 @@ vi.mock('../../vsCodeConfig/settings', async (importActual) => {
   return {
     ...actual,
     useNodeDesignTimeWorker: vi.fn(() => false),
+    isManagedIdentityAuthEnabled: vi.fn(() => true),
   };
 });
 

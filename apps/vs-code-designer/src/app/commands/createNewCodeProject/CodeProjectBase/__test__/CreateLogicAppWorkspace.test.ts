@@ -65,6 +65,7 @@ vi.mock('path', () => ({
 
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
+  isManagedIdentityAuthEnabled: vi.fn(() => true),
 }));
 
 // Import actual path for test setup (not affected by mock)

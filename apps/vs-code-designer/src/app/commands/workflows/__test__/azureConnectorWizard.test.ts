@@ -71,7 +71,6 @@ describe('createAzureWizard', () => {
     await wizard.options.promptSteps[0].prompt(context);
 
     expect(context.enabled).toBe(false);
-    expect(context.telemetry.properties.azureConnectorsDefaulted).toBe('rawKeys');
   });
 
   it('surfaces non-cancel connector selection failures', async () => {

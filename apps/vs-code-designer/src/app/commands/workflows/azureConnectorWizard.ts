@@ -56,7 +56,6 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
     ];
     const selectedAction = await context.ui.showQuickPick(picks, { placeHolder }).catch((error) => {
       if (parseError(error).isUserCancelledError) {
-        context.telemetry.properties.azureConnectorsDefaulted = 'rawKeys';
         return { data: 'no' };
       }
 
