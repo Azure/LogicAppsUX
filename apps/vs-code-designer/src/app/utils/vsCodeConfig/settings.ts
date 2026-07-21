@@ -188,8 +188,8 @@ export function isManagedIdentityAuthEnabled(): boolean {
  * regardless of whether build artifacts already exist. Controlled by the
  * `azureLogicAppsStandard.alwaysBuildCustomCode` setting. Defaults to `false`.
  */
-export function shouldAlwaysBuildCustomCode(fsPath?: string | WorkspaceFolder): boolean {
-  return getWorkspaceSetting<boolean>(alwaysBuildCustomCodeSetting, fsPath) === true;
+export function shouldAlwaysBuildCustomCode(): boolean {
+  return getGlobalSetting<boolean>(alwaysBuildCustomCodeSetting) === true;
 }
 
 function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | WorkspaceFolder | undefined {
