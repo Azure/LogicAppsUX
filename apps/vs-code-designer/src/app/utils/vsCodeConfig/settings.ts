@@ -173,13 +173,13 @@ export function useNodeDesignTimeWorker(fsPath?: string | WorkspaceFolder): bool
 /**
  * Indicates whether the extension should enforce `WORKFLOWS_AUTHENTICATION_METHOD = managedServiceIdentity`
  * in local.settings.json. Controlled by the `azureLogicAppsStandard.enableManagedIdentityAuth` setting.
- * Defaults to `true` when the setting is absent or unset, or when the VS Code API is unavailable (e.g. in tests).
+ * Defaults to `false` when the setting is absent or unset, or when the VS Code API is unavailable (e.g. in tests).
  */
 export function isManagedIdentityAuthEnabled(): boolean {
   try {
-    return getGlobalSetting<boolean>(enableManagedIdentityAuthSetting) !== false;
+    return getGlobalSetting<boolean>(enableManagedIdentityAuthSetting) === true;
   } catch {
-    return true;
+    return false;
   }
 }
 

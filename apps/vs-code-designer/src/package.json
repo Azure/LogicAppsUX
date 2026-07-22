@@ -1071,7 +1071,7 @@
           },
           "azureLogicAppsStandard.enableManagedIdentityAuth": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "description": "When enabled, automatically sets WORKFLOWS_AUTHENTICATION_METHOD to managedServiceIdentity in local.settings.json for all projects. Disable to manage this setting manually."
           }
         }
