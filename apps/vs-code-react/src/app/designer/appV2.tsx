@@ -70,6 +70,8 @@ export const DesignerApp = () => {
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
+  const runtimeBaseUrlRef = useRef(workflowRuntimeBaseUrl);
+  runtimeBaseUrlRef.current = workflowRuntimeBaseUrl;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const queryClient = useQueryClient();
@@ -121,7 +123,8 @@ export const DesignerApp = () => {
       hostVersion,
       queryClient,
       sendMsgToVsix,
-      setRunId
+      setRunId,
+      () => runtimeBaseUrlRef.current
     );
   }, [
     baseUrl,
@@ -205,6 +208,9 @@ export const DesignerApp = () => {
   const validateAndSaveCodeView = useCallback(
     async (clearDirtyState?: () => void) => {
       try {
+        if (!codeEditorRef.current?.hasChanges()) {
+          return workflow;
+        }
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
         // code view editor cannot add/remove connections, parameters, settings, or customcode
@@ -352,7 +358,6 @@ export const DesignerApp = () => {
                     setRunId(newRunId ?? '');
                   }}
                   isDarkMode={theme === Theme.Dark}
-                  isDraftMode={true}
                   isDisabled={!isRuntimeAvailable}
                   tooltipOverride={isRuntimeAvailable ? undefined : commonText.RUNTIME_NOT_AVAILABLE}
                 />

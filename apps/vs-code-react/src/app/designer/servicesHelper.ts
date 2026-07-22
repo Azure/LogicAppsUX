@@ -77,7 +77,8 @@ export const getDesignerServices = (
   hostVersion: string,
   queryClient: QueryClient,
   sendMsgToVsix: (msg: MessageToVsix) => void,
-  setRunId?: (runId: string) => void
+  setRunId?: (runId: string) => void,
+  getCurrentRuntimeBaseUrl?: () => string
 ): IDesignerServices => {
   let authToken = '';
   let panelId = '';
@@ -325,7 +326,9 @@ export const getDesignerServices = (
     getCallbackUrl: async (triggerId: string) => {
       if (isLocal) {
         try {
-          const url = `${workflowRuntimeBaseUrl}/workflows/${workflowName}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
+          const currentRuntimeBaseUrl = getCurrentRuntimeBaseUrl?.() || workflowRuntimeBaseUrl;
+          const localApiVersion = '2019-10-01-edge-preview';
+          const url = `${currentRuntimeBaseUrl}/workflows/${workflowName}/triggers/${triggerId}/listCallbackUrl?api-version=${localApiVersion}`;
           return (await httpClient.post({ uri: url })) as any;
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
