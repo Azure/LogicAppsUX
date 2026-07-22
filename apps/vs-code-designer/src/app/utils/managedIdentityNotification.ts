@@ -11,7 +11,7 @@ import {
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
-import { updateGlobalSetting } from './vsCodeConfig/settings';
+import { isManagedIdentityAuthEnabled, updateGlobalSetting } from './vsCodeConfig/settings';
 import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { addOrUpdateLocalAppSettings } from './appSettings/localSettings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -26,12 +26,7 @@ import * as vscode from 'vscode';
  */
 export async function promptManagedIdentityAuth(context: IActionContext): Promise<void> {
   const isSuppressed = ext.context.globalState.get<boolean>(suppressManagedIdentityAuthNotification) === true;
-  if (isSuppressed) {
-    return;
-  }
-
-  const currentValue = vscode.workspace.getConfiguration(ext.prefix).get<boolean>(enableManagedIdentityAuthSetting);
-  if (currentValue === true) {
+  if (isSuppressed || isManagedIdentityAuthEnabled()) {
     return;
   }
 

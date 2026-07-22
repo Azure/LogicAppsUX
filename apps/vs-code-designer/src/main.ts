@@ -35,6 +35,7 @@ import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import { codefulProjectsExist } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
 import { promptManagedIdentityAuth } from './app/utils/managedIdentityNotification';
+import { localize } from './localize';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -93,7 +94,7 @@ export async function activate(context: vscode.ExtensionContext) {
       // leave the design-time host pointing at a half-extracted bundle.
       downloadExtensionBundle(activateContext).catch((error) => {
         ext.outputChannel?.appendLog(
-          `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
+          localize('bundleDownloadFailed', `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`)
         );
       });
     }
@@ -105,7 +106,11 @@ export async function activate(context: vscode.ExtensionContext) {
       startLanguageServer();
     }
 
-    promptManagedIdentityAuth(activateContext);
+    promptManagedIdentityAuth(activateContext).catch((error) => {
+      ext.outputChannel?.appendLog(
+        localize('managedIdentityAuthPromptFailed', `Managed identity auth startup prompt failed: ${error instanceof Error ? error.message : String(error)}`)
+      );
+    });
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
