@@ -618,9 +618,9 @@ export function writeDependencyIntegrityManifest(context: IActionContext, target
  * that installs predating this check are re-established from a trusted, freshly-downloaded baseline.
  * @param {IActionContext} context - Command context, used for telemetry.
  * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
- * @returns {boolean} true when the install matches its manifest; false when it should be reinstalled.
+ * @returns {Promise<boolean>} true when the install matches its manifest; false when it should be reinstalled.
  */
-export function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): boolean {
+export async function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): Promise<boolean> {
   ext.outputChannel.appendLog(localize('validatingIntegrity', 'Validating {0} on-disk integrity...', dependencyName));
   try {
     const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
@@ -650,51 +650,67 @@ export function verifyDependencyIntegrity(context: IActionContext, dependencyNam
       return false;
     }
 
-    for (const file of manifest.files) {
-      const absolutePath = path.join(targetFolder, file.path);
-      let stat: fs.Stats;
-      try {
-        stat = fs.statSync(absolutePath);
-      } catch {
-        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'file-missing';
-        context.telemetry.properties[`${dependencyName}IntegrityMissingFile`] = file.path;
-        ext.outputChannel.appendLog(
-          localize(
-            'integrityFileMissing',
-            '{0} on-disk integrity check FAILED: missing file "{1}". Scheduling reinstall.',
-            dependencyName,
-            file.path
-          )
-        );
-        return false;
-      }
-      if (!stat.isFile()) {
-        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'not-a-file';
-        context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
-        ext.outputChannel.appendLog(
-          localize(
-            'integrityFileNotAFile',
-            '{0} on-disk integrity check FAILED: "{1}" is no longer a regular file. Scheduling reinstall.',
-            dependencyName,
-            file.path
-          )
-        );
-        return false;
-      }
-      if (stat.size !== file.size) {
-        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'size-mismatch';
-        context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
-        ext.outputChannel.appendLog(
-          localize(
-            'integrityFileSizeMismatch',
-            '{0} on-disk integrity check FAILED: "{1}" changed size (expected {2}, found {3}). Scheduling reinstall.',
-            dependencyName,
-            file.path,
-            file.size,
-            stat.size
-          )
-        );
-        return false;
+    // Deep-verify each recorded file with async, bounded-concurrency stat batches. A dependency
+    // manifest can list many thousands of files (Func Core Tools alone is ~8.8k), and a synchronous
+    // fs.statSync loop would block the extension-host event loop long enough for VS Code to flag the
+    // extension as "Unresponsive". Batching fs.promises.stat and awaiting between chunks keeps the
+    // main thread responsive while overlapping the per-file I/O (faster than serial statSync).
+    const integrityBatchSize = 64;
+    for (let batchStart = 0; batchStart < manifest.files.length; batchStart += integrityBatchSize) {
+      const batch = manifest.files.slice(batchStart, batchStart + integrityBatchSize);
+      const stats = await Promise.all(
+        batch.map(async (file) => {
+          try {
+            return { file, stat: await fs.promises.stat(path.join(targetFolder, file.path)) };
+          } catch {
+            return { file, stat: undefined };
+          }
+        })
+      );
+
+      // Evaluate results in manifest order so the first reported failure stays deterministic.
+      for (const { file, stat } of stats) {
+        if (!stat) {
+          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'file-missing';
+          context.telemetry.properties[`${dependencyName}IntegrityMissingFile`] = file.path;
+          ext.outputChannel.appendLog(
+            localize(
+              'integrityFileMissing',
+              '{0} on-disk integrity check FAILED: missing file "{1}". Scheduling reinstall.',
+              dependencyName,
+              file.path
+            )
+          );
+          return false;
+        }
+        if (!stat.isFile()) {
+          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'not-a-file';
+          context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
+          ext.outputChannel.appendLog(
+            localize(
+              'integrityFileNotAFile',
+              '{0} on-disk integrity check FAILED: "{1}" is no longer a regular file. Scheduling reinstall.',
+              dependencyName,
+              file.path
+            )
+          );
+          return false;
+        }
+        if (stat.size !== file.size) {
+          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'size-mismatch';
+          context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
+          ext.outputChannel.appendLog(
+            localize(
+              'integrityFileSizeMismatch',
+              '{0} on-disk integrity check FAILED: "{1}" changed size (expected {2}, found {3}). Scheduling reinstall.',
+              dependencyName,
+              file.path,
+              file.size,
+              stat.size
+            )
+          );
+          return false;
+        }
       }
     }
 
