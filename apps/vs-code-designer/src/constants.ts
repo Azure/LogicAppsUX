@@ -291,6 +291,7 @@ export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensio
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
+export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';

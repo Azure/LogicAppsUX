@@ -34,6 +34,7 @@ import { startLanguageServer } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import { codefulProjectsExist } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
+import { promptManagedIdentityAuth } from './app/utils/managedIdentityNotification';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -103,6 +104,8 @@ export async function activate(context: vscode.ExtensionContext) {
     if (hasCodefulProjects) {
       startLanguageServer();
     }
+
+    promptManagedIdentityAuth(activateContext);
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
