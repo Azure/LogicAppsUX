@@ -37,6 +37,7 @@
  *   - selectDropdownInPanel: Select a dropdown option in the settings panel
  *   - addParallelBranch: Add a parallel branch on the canvas
  *   - openNodeSettingsPanel: Click a node to open its settings
+ *   - setNodeDescription: Set a node's description/comment in the panel header
  *   - openRunAfterSettings: Navigate to the Run After section
  *   - configureRunAfter: Toggle run-after status checkboxes
  *   - focusCanvasNode: Click to focus a specific node
@@ -3049,6 +3050,106 @@ export async function openNodeSettingsPanel(driver: WebDriver, nodeText: string)
     return false;
   } catch (e: any) {
     console.log(`[openNodeSettingsPanel] Error: ${e.message}`);
+    return false;
+  }
+}
+
+/**
+ * Set a node's description (the "comment" in the panel header).
+ *
+ * The description editor is a Fluent `TextField multiline` → a real
+ * `<textarea aria-label="Description">` (placeholder "Add a description") inside
+ * `.msla-panel-comment-container`. For triggers the box is always visible when
+ * the node panel opens. For actions it is hidden until revealed via the panel
+ * header overflow menu ("More commands" → "Add a description").
+ *
+ * Typing fires the Fluent `onChange` → `commentChange` → `setNodeDescription`
+ * Redux action, so the value lands on `workflow.operations[nodeId].description`
+ * and serializes to `definition.{triggers|actions}.<name>.description`.
+ */
+export async function setNodeDescription(
+  driver: WebDriver,
+  nodeText: string,
+  description: string,
+  opts: { isTrigger?: boolean } = {}
+): Promise<boolean> {
+  try {
+    const opened = await openNodeSettingsPanel(driver, nodeText);
+    if (!opened) {
+      console.log(`[setNodeDescription] Could not open panel for "${nodeText}"`);
+      return false;
+    }
+
+    const findDescriptionTextarea = async (): Promise<WebElement | null> => {
+      const selectors = [
+        'textarea[aria-label="Description"]',
+        '.msla-panel-comment-container textarea',
+        'textarea[placeholder="Add a description"]',
+      ];
+      for (const selector of selectors) {
+        const els = await driver.findElements(By.css(selector));
+        for (const el of els) {
+          if (await el.isDisplayed().catch(() => false)) {
+            return el;
+          }
+        }
+      }
+      return null;
+    };
+
+    let textarea = await findDescriptionTextarea();
+
+    // For actions the description box is hidden until revealed via the
+    // panel-header overflow menu. Triggers always show it, so only reveal
+    // when the textarea isn't already present.
+    if (!textarea && !opts.isTrigger) {
+      const moreButtons = await driver.findElements(
+        By.css('[data-automation-id="msla-panel-header-more-options"], button[aria-label="More commands"]')
+      );
+      if (moreButtons.length > 0) {
+        await driver.actions().move({ origin: moreButtons[0] }).click().perform();
+        await sleep(800);
+        const menuItems = await driver.findElements(By.css('[role="menuitem"]'));
+        for (const item of menuItems) {
+          const itemText = `${await item.getText().catch(() => '')} ${await item.getAttribute('title').catch(() => '')}`;
+          if (itemText.toLowerCase().includes('description') || itemText.toLowerCase().includes('comment')) {
+            await driver.actions().move({ origin: item }).click().perform();
+            await sleep(800);
+            break;
+          }
+        }
+      }
+      // Poll for the textarea to appear after revealing it.
+      const revealDeadline = Date.now() + 5000;
+      while (!textarea && Date.now() < revealDeadline) {
+        textarea = await findDescriptionTextarea();
+        if (!textarea) {
+          await sleep(300);
+        }
+      }
+    }
+
+    if (!textarea) {
+      console.log(`[setNodeDescription] Description textarea not found for "${nodeText}"`);
+      return false;
+    }
+
+    // Focus via the Selenium Actions API so React registers the interaction,
+    // clear any existing value, then type. The description box is a plain
+    // <textarea>, so sendKeys works directly (no Lexical contenteditable path).
+    await driver.actions().move({ origin: textarea }).click().perform();
+    await sleep(300);
+    await textarea.sendKeys(Key.chord(Key.CONTROL, 'a'));
+    await textarea.sendKeys(Key.DELETE);
+    await textarea.sendKeys(description);
+    await sleep(500);
+
+    const finalValue = await textarea.getAttribute('value').catch(() => '');
+    const ok = finalValue === description;
+    console.log(`[setNodeDescription] Set "${nodeText}" description → "${finalValue}" (match=${ok})`);
+    return ok;
+  } catch (e: any) {
+    console.log(`[setNodeDescription] Error: ${e.message}`);
     return false;
   }
 }
