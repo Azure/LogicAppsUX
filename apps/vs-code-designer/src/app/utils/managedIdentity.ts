@@ -22,6 +22,7 @@ import * as vscode from 'vscode';
  * authentication for local workflows. The notification is suppressed if:
  * - The user has already enabled the setting.
  * - The user previously selected "Don't show again".
+ * 
  * @param {IActionContext} context - The action context for telemetry and error handling.
  */
 export async function promptManagedIdentityAuth(context: IActionContext): Promise<void> {

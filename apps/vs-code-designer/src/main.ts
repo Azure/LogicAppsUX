@@ -34,7 +34,7 @@ import { startLanguageServer } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import { codefulProjectsExist } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
-import { promptManagedIdentityAuth } from './app/utils/managedIdentityNotification';
+import { promptManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
 
 const perfStats = {
