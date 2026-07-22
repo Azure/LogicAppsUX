@@ -1347,28 +1347,52 @@ export function awaitBackgroundBundleDeepVerification(): Promise<void> {
 }
 
 /**
+ * Options for {@link scheduleBackgroundBundleDeepVerification}.
+ */
+interface BackgroundDeepVerifyOptions {
+  /**
+   * When set, the background job also confirms the CDN hasn't republished this
+   * same version with different bytes (compares the sidecar `sourceMd5` against
+   * the CDN `Content-MD5`). This republish check used to run synchronously on
+   * the activation hot path inside `verifyLocalBundle`; it now runs here, off
+   * the hot path and with a short HEAD timeout.
+   */
+  republishBaseUrl?: string;
+}
+
+/**
  * Runs the authoritative full-byte bundle verification OFF the activation path.
  * The fast gate has already returned ok, so activation proceeds immediately while
  * this confirms the bytes and — on genuine corruption — kicks off an async repair
  * download. Deduped to at most one in-flight run.
  */
-function scheduleBackgroundBundleDeepVerification(context: IActionContext, version: string): void {
+function scheduleBackgroundBundleDeepVerification(
+  context: IActionContext,
+  version: string,
+  options: BackgroundDeepVerifyOptions = {}
+): void {
   if (backgroundBundleDeepVerifyPromise) {
     return;
   }
   backgroundBundleDeepVerifyPromise = (async () => {
     try {
       const health = await assertExtensionBundleOnDiskHealthy(version);
-      if (health.ok) {
+      if (!health.ok) {
+        const failure = health as BundleOnDiskHealthFailure;
+        if (failure.reason === 'contentMismatch' || failure.reason === 'emptyBundleDir') {
+          ext.outputChannel?.appendLog(
+            `Logic Apps extension bundle ${version} failed background deep verification (${formatBundleHealthFailure(failure)}). Repairing in the background.`
+          );
+          healthyBundleVersion = null;
+          await downloadExtensionBundle(context, { allowSidecarBackfill: false, forceVerify: true });
+        }
         return;
       }
-      const failure = health as BundleOnDiskHealthFailure;
-      if (failure.reason === 'contentMismatch' || failure.reason === 'emptyBundleDir') {
-        ext.outputChannel?.appendLog(
-          `Logic Apps extension bundle ${version} failed background deep verification (${formatBundleHealthFailure(failure)}). Repairing in the background.`
-        );
-        healthyBundleVersion = null;
-        await downloadExtensionBundle(context, { allowSidecarBackfill: false });
+      // Bytes confirmed. Optionally detect a CDN republish of the same version
+      // (rare) off the hot path — the byte hash can't catch it because the local
+      // bytes still match the local sidecar's recorded content hash.
+      if (options.republishBaseUrl) {
+        await verifyBundleRepublishOffHotPath(context, options.republishBaseUrl, version);
       }
     } catch (error) {
       ext.outputChannel?.appendLog(
@@ -1378,6 +1402,40 @@ function scheduleBackgroundBundleDeepVerification(context: IActionContext, versi
       backgroundBundleDeepVerifyPromise = undefined;
     }
   })();
+}
+
+/**
+ * Confirms the CDN hasn't republished `version` with different bytes than the
+ * local copy. Compares the sidecar `sourceMd5` against the CDN `Content-MD5`
+ * (a cheap HEAD). On a genuine republish, forces a background re-download so the
+ * next launch picks up the fresh bytes. Best-effort: a HEAD failure (offline /
+ * flaky CDN) is logged and ignored — the cached bundle stays trusted. This
+ * check used to run synchronously on the activation hot path inside
+ * `verifyLocalBundle`; it now runs here, off the hot path and with a short
+ * HEAD timeout.
+ */
+async function verifyBundleRepublishOffHotPath(context: IActionContext, baseUrl: string, version: string): Promise<void> {
+  const sidecar = await readBundleSidecar(version);
+  if (!sidecar?.sourceMd5) {
+    return;
+  }
+  const headUrl = buildExtensionBundleZipUrl(baseUrl, version);
+  let publishedMd5: string | undefined;
+  try {
+    publishedMd5 = await fetchExpectedMd5(headUrl);
+  } catch (error) {
+    ext.outputChannel?.appendLog(
+      `Background extension-bundle republish check skipped for ${version}: ${error instanceof Error ? error.message : String(error)}`
+    );
+    return;
+  }
+  if (publishedMd5 && publishedMd5 !== sidecar.sourceMd5) {
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${version} was republished on the CDN (source MD5 drift); repairing in the background.`
+    );
+    healthyBundleVersion = null;
+    await downloadBundleWithProgress(context, baseUrl, version, 'sidecarMismatch');
+  }
 }
 
 /**
@@ -1402,6 +1460,14 @@ interface EnsureExtensionBundleHealthyOptions {
 
 interface DownloadExtensionBundleOptions {
   allowSidecarBackfill?: boolean;
+  /**
+   * When true, skip the cheap lstat fast gate and always run the authoritative
+   * `verifyLocalBundle` (full byte hash + CDN HEAD) → repair. Used by the
+   * background deep-verify repair path, which has already detected a genuine
+   * byte mismatch the fast gate can't see (an in-place edit preserving size +
+   * mtime) and must force a real re-download rather than short-circuit.
+   */
+  forceVerify?: boolean;
 }
 
 export async function ensureExtensionBundleHealthy(
@@ -1807,9 +1873,31 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
       return true;
     }
 
-    // Local is at least as new as the feed — verify the on-disk bundle's source MD5
-    // and re-download if it's missing or has drifted (e.g. CDN republished the same version).
+    // Local is at least as new as the feed — verify the on-disk bundle before
+    // trusting it. This runs on the activation hot path: `ensureExtensionBundle-
+    // Healthy` awaits this download via `waitForExtensionBundleReady()`, so any
+    // heavy verification here freezes activation. Gate with the cheap lstat fast
+    // path first; only fall back to the ~40s full-byte hash + CDN HEAD when the
+    // bundle is genuinely missing/broken. A healthy bundle confirms its bytes
+    // (and CDN republish) off the activation path via a throttled background
+    // deep verification.
     if (latestLocalBundleVersion !== '0.0.0') {
+      const fastGate = options.forceVerify ? undefined : await evaluateBundleFastGate(latestLocalBundleVersion);
+      if (fastGate?.ok) {
+        context.telemetry.properties.localBundleHashCheck = 'fastPath';
+        if (fastGate.deepVerify) {
+          scheduleBackgroundBundleDeepVerification(context, latestLocalBundleVersion, {
+            republishBaseUrl: effectiveBaseUrl,
+          });
+        }
+        ext.defaultBundleVersion = latestLocalBundleVersion;
+        ext.latestBundleVersion = latestLocalBundleVersion;
+        context.telemetry.properties.extensionBundleVersionSource = 'localLatest';
+        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+        context.telemetry.properties.didUpdateExtensionBundle = 'false';
+        return false;
+      }
+
       const hashCheck = await verifyLocalBundle(context, effectiveBaseUrl, latestLocalBundleVersion, options);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
       if (requiresBundleRepair(hashCheck)) {

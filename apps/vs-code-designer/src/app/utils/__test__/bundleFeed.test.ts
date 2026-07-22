@@ -874,6 +874,10 @@ describe('downloadExtensionBundle', () => {
   };
 
   beforeEach(async () => {
+    // Drain any background deep-verify promise a prior test left in flight and
+    // clear the module dedupe flag so this test's fast gate can schedule its own.
+    await awaitBackgroundBundleDeepVerification();
+    resetCachedBundleVersion();
     vi.clearAllMocks();
     // Reset environment variables
     delete process.env.AzureFunctionsJobHost_extensionBundle_version;
@@ -943,7 +947,7 @@ describe('downloadExtensionBundle', () => {
     expect(typeof parsed.lastDeepVerifiedMs).toBe('number');
   });
 
-  it('should not download when local version is higher than feed versions and the on-disk sidecar matches the published MD5', async () => {
+  it('takes the fast path (no synchronous byte hash / HEAD) when the local sidecar matches the published MD5', async () => {
     const feedVersions = ['1.0.0', '1.1.0', '1.2.0'];
     // Local version is already 1.75.0 with a valid sidecar.
     const matchingMd5 = 'matching-md5-base64';
@@ -957,10 +961,15 @@ describe('downloadExtensionBundle', () => {
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
 
+    // Hot path: the cheap lstat fast gate trusts the bundle immediately.
     expect(result).toBe(false);
     expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('false');
-    expect(context.telemetry.properties.localBundleHashCheck).toBe('passed');
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
     expect(context.telemetry.properties.extensionBundleVersionSource).toBe('localLatest');
+
+    // Background deep verification confirms the bytes + CDN republish off the hot
+    // path. The published MD5 matches the sidecar, so nothing is re-downloaded.
+    await awaitBackgroundBundleDeepVerification();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
@@ -1017,7 +1026,11 @@ describe('downloadExtensionBundle', () => {
     const result = await downloadExtensionBundle(context as any);
 
     expect(result).toBe(false);
-    expect(context.telemetry.properties.localBundleHashCheck).toBe('passed');
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+
+    // Background republish check is skipped because the sidecar has no source MD5
+    // to compare against, so no re-download happens.
+    await awaitBackgroundBundleDeepVerification();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
@@ -1104,7 +1117,7 @@ describe('downloadExtensionBundle', () => {
     );
   });
 
-  it('should re-download when local version equals feed but the sidecar drifted from the published MD5', async () => {
+  it('re-downloads in the background when the CDN republished the same version (sidecar source MD5 drift)', async () => {
     const feedVersions = ['1.0.0', '1.95.0'];
     setupLocalDisk(['1.95.0'], { '1.95.0': 'old-md5' });
 
@@ -1117,12 +1130,16 @@ describe('downloadExtensionBundle', () => {
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
 
-    expect(result).toBe(true);
-    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMismatch');
+    // Hot path returns immediately via the fast gate — no synchronous re-download.
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+
+    // The republish drift is detected off the hot path and repaired in the background.
+    await awaitBackgroundBundleDeepVerification();
     expect(mockedDownloadAndExtract).toHaveBeenCalled();
   });
 
-  it('should keep using local when the HEAD request fails', async () => {
+  it('keeps using the local bundle when the background republish HEAD request fails', async () => {
     const feedVersions = ['1.0.0', '1.95.0'];
     setupLocalDisk(['1.95.0'], { '1.95.0': 'some-md5' });
 
@@ -1135,14 +1152,19 @@ describe('downloadExtensionBundle', () => {
     const result = await downloadExtensionBundle(context as any);
 
     expect(result).toBe(false);
-    expect(context.telemetry.properties.localBundleHashCheck).toBe('headRequestFailed');
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+
+    // A flaky/offline HEAD in the background is swallowed — the cached bundle
+    // stays trusted and nothing is re-downloaded.
+    await awaitBackgroundBundleDeepVerification();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
-  it('shows a warning toast + progress notification when a corrupt local bundle is re-downloaded', async () => {
+  it('shows a progress notification (no alarming corruption toast) when a republished bundle is re-downloaded in the background', async () => {
     const vscode = await import('vscode');
     const feedVersions = ['1.0.0', '1.95.0'];
-    // Local 1.95.0 with a sidecar that mismatches the CDN's published MD5.
+    // Local 1.95.0 whose bytes still match its sidecar contentHash, but whose
+    // recorded source MD5 drifted from the CDN's published MD5 (a republish).
     setupLocalDisk(['1.95.0'], { '1.95.0': 'stale-on-disk-md5' });
     mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
     const integrityModule = await import('../integrity');
@@ -1152,10 +1174,14 @@ describe('downloadExtensionBundle', () => {
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
 
-    expect(result).toBe(true);
-    expect(context.telemetry.properties.localBundleHashCheck).toBe('sidecarMismatch');
-    expect(vi.mocked(vscode.window.showWarningMessage)).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(vscode.window.showWarningMessage).mock.calls[0]?.[0]).toMatch(/incomplete|checksum/i);
+    // Hot path is untouched by the republish; the repair happens in the background.
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+
+    await awaitBackgroundBundleDeepVerification();
+    // A republish is benign (bytes matched the local sidecar) — no scary
+    // "incomplete/checksum" corruption toast, just a background progress notice.
+    expect(vi.mocked(vscode.window.showWarningMessage)).not.toHaveBeenCalled();
     expect(vi.mocked(vscode.window.withProgress)).toHaveBeenCalled();
     const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
     expect(progressTitle).toMatch(/Re-downloading.*1\.95\.0/);
@@ -1196,7 +1222,7 @@ describe('downloadExtensionBundle', () => {
     expect(mockedDownloadAndExtract).toHaveBeenCalled();
   });
 
-  it('JSON sidecar with wrong contentHash → contentMismatch + warning toast + redownload', async () => {
+  it('repairs genuine byte corruption (wrong contentHash) in the background with a corruption warning toast', async () => {
     const vscode = await import('vscode');
     setupLocalDisk(['1.95.0'], { '1.95.0': 'sourceMd5-ok' }, { sidecarContentHashOverride: { '1.95.0': 'wrong-content-hash' } });
     mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
@@ -1205,7 +1231,13 @@ describe('downloadExtensionBundle', () => {
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
 
-    expect(result).toBe(true);
+    // Hot path is non-blocking: the fast gate trusts the tree and defers the
+    // authoritative byte hash to the background deep verification.
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+
+    // Background byte hash detects the mismatch and forces a verified repair.
+    await awaitBackgroundBundleDeepVerification();
     expect(context.telemetry.properties.localBundleHashCheck).toBe('contentMismatch');
     expect(vi.mocked(vscode.window.showWarningMessage)).toHaveBeenCalledTimes(1);
     const progressTitle = (vi.mocked(vscode.window.withProgress).mock.calls[0]?.[0] as any)?.title ?? '';
@@ -1213,7 +1245,7 @@ describe('downloadExtensionBundle', () => {
     expect(mockedDownloadAndExtract).toHaveBeenCalled();
   });
 
-  it('JSON sidecar with correct contentHash + matching CDN MD5 → passed (no download)', async () => {
+  it('JSON sidecar with correct contentHash + matching CDN MD5 → fast path (no download)', async () => {
     const matchingMd5 = 'matching-md5';
     setupLocalDisk(['1.95.0'], { '1.95.0': matchingMd5 });
     mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
@@ -1224,8 +1256,44 @@ describe('downloadExtensionBundle', () => {
     const result = await downloadExtensionBundle(context as any);
 
     expect(result).toBe(false);
-    expect(context.telemetry.properties.localBundleHashCheck).toBe('passed');
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+
+    await awaitBackgroundBundleDeepVerification();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('modern healthy sidecar (fresh deep-verify stamp) → fast path with NO byte hash, NO CDN HEAD, NO background work', async () => {
+    // A steady-state relaunch: the sidecar already carries matching lstat
+    // fingerprints and a recent deep-verify timestamp, so the fast gate trusts
+    // the bundle immediately and does not even schedule a background verify.
+    const modernSidecar = JSON.stringify({
+      version: 1,
+      sourceMd5: 'md5',
+      contentHash: EMPTY_TREE_HASH,
+      treeFingerprint: EMPTY_TREE_HASH,
+      structuralFingerprint: EMPTY_TREE_HASH,
+      lastDeepVerifiedMs: Date.now(),
+    });
+    mockedFse.readdirSync.mockReturnValue(['1.95.0'] as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    mockedFse.pathExists.mockResolvedValue(true as any);
+    mockedFse.readdir.mockResolvedValue([] as any);
+    mockedFse.lstat.mockResolvedValue({ isDirectory: () => false, isFile: () => false } as any);
+    mockedFse.readFile.mockResolvedValue(modernSidecar as any);
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+    const integrityModule = await import('../integrity');
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+    // No background deep verification is scheduled (throttle not due), so there is
+    // no CDN HEAD, no re-download, and the sidecar is not rewritten.
+    await awaitBackgroundBundleDeepVerification();
+    expect(vi.mocked(integrityModule.fetchExpectedMd5)).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(mockedFse.outputFile).not.toHaveBeenCalled();
   });
 
   it('dedupes concurrent downloadExtensionBundle calls + waitForExtensionBundleReady blocks until done', async () => {

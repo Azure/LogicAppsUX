@@ -184,13 +184,15 @@ function delay(ms: number): Promise<void> {
 }
 
 /**
- * Timeout (ms) for the HEAD request issued by `fetchExpectedMd5`. Activation
- * waits on this synchronously when verifying an installed bundle, so a stalled
- * connection (flaky network, captive portal, mis-configured proxy) must not
- * be allowed to hang VS Code indefinitely — the caller falls back to the
- * cached bundle when the CDN cannot be reached promptly.
+ * Timeout (ms) for the HEAD request issued by `fetchExpectedMd5`. The CDN
+ * republish (Content-MD5) check now runs only on the throttled background
+ * deep-verify path — never on the activation hot path — but a stalled
+ * connection (flaky network, captive portal, mis-configured proxy) must still
+ * never hang for long. A short budget keeps the background check snappy; the
+ * caller falls back to the cached bundle when the CDN cannot be reached
+ * promptly.
  */
-const FETCH_EXPECTED_MD5_TIMEOUT_MS = 30_000;
+const FETCH_EXPECTED_MD5_TIMEOUT_MS = 4_000;
 
 /**
  * Issues a HEAD request against `url` and returns the published `Content-MD5`
