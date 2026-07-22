@@ -464,21 +464,33 @@ export async function computeBundleFingerprints(
     return undefined;
   }
   const entries: Array<{ rel: string; size: number; mtimeMs: number }> = [];
+  // Fan the traversal out per directory with Promise.all instead of awaiting each
+  // lstat serially. The serial version issues ~2 sequential awaits per file
+  // (readdir + lstat); on the hot activation path — where the extension-host event
+  // loop is saturated by other extensions, the Functions host, and the design-time
+  // API starting up — those thousands of sequential continuations get starved and
+  // the ~1.5k-file walk balloons from ~300ms to ~25s (the observed freeze). Fanning
+  // out collapses the critical path to O(tree depth) round-trips, keeping the walk
+  // sub-second even under a starved event loop / constrained threadpool. Entries are
+  // sorted below before hashing, so the parallel push order is irrelevant and the
+  // resulting digests are byte-identical to the serial walk.
   const walk = async (dir: string): Promise<void> => {
     const items = await fse.readdir(dir);
-    for (const item of items) {
-      const abs = path.join(dir, item);
-      const stat = await fse.lstat(abs);
-      if (stat.isDirectory()) {
-        await walk(abs);
-      } else if (stat.isFile()) {
-        const rel = path.relative(bundleDir, abs).split(path.sep).join('/');
-        if (rel === bundleSourceMd5SidecarFile) {
-          continue;
+    await Promise.all(
+      items.map(async (item) => {
+        const abs = path.join(dir, item);
+        const stat = await fse.lstat(abs);
+        if (stat.isDirectory()) {
+          await walk(abs);
+        } else if (stat.isFile()) {
+          const rel = path.relative(bundleDir, abs).split(path.sep).join('/');
+          if (rel === bundleSourceMd5SidecarFile) {
+            return;
+          }
+          entries.push({ rel, size: stat.size, mtimeMs: stat.mtimeMs });
         }
-        entries.push({ rel, size: stat.size, mtimeMs: stat.mtimeMs });
-      }
-    }
+      })
+    );
   };
   await walk(bundleDir);
   entries.sort((a, b) => (a.rel < b.rel ? -1 : a.rel > b.rel ? 1 : 0));

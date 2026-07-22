@@ -13,6 +13,7 @@ import {
   ensureExtensionBundleHealthy,
   invalidateBundleHealthCache,
   awaitBackgroundBundleDeepVerification,
+  computeBundleFingerprints,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
@@ -1960,6 +1961,82 @@ describe('assertExtensionBundleOnDiskHealthy tree-fingerprint fast path', () => 
     // Throttle due → byte hash runs even though the fingerprint matched.
     expect(vi.mocked(fse.createReadStream)).toHaveBeenCalled();
     expect(vi.mocked(ext.context.globalState.update)).toHaveBeenCalledWith(lastBundleDeepVerificationKey, expect.any(Number));
+  });
+});
+
+describe('computeBundleFingerprints traversal', () => {
+  const VERSION = '9.9.9';
+  const bundleDir = path.join(defaultExtensionBundlePathValue, VERSION);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  // Regression guard for the activation freeze: the tree walk MUST fan its lstat
+  // calls out concurrently. A serial (await-per-file) walk gets starved by the
+  // busy extension-host event loop during activation and balloons from ~300ms to
+  // 25-40s (the observed "extension host unresponsive"). Here we hold every lstat
+  // pending and assert that more than one is in-flight at the same time — which is
+  // impossible for a serial walk (it would peak at exactly 1).
+  it('issues lstat calls concurrently rather than serially', async () => {
+    const files = ['a.dll', 'b.dll', 'c.dll', 'd.dll', 'e.dll'];
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockImplementation(((p: string) => Promise.resolve((p === bundleDir ? files : []) as any)) as any);
+
+    let inFlight = 0;
+    let maxInFlight = 0;
+    const releases: Array<() => void> = [];
+    vi.mocked(fse.lstat).mockImplementation(((_p: string) => {
+      inFlight++;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      return new Promise((resolve) => {
+        releases.push(() => {
+          inFlight--;
+          resolve({ isDirectory: () => false, isFile: () => true, size: 1, mtimeMs: 1 } as any);
+        });
+      });
+    }) as any);
+
+    const pending = computeBundleFingerprints(bundleDir);
+    // Flush pathExists -> readdir -> the synchronous map fan-out.
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(maxInFlight).toBeGreaterThan(1);
+
+    for (const release of releases) {
+      release();
+    }
+    const result = await pending;
+    expect(result?.treeFingerprint).toBeDefined();
+    expect(result?.structuralFingerprint).toBeDefined();
+  });
+
+  // The parallel push order is nondeterministic, so the digest must be produced
+  // from a sorted entry list — otherwise fingerprints would be unstable and every
+  // launch would look like drift. Two runs of the same tree must match.
+  it('produces a stable digest regardless of directory read order', async () => {
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    const treeReads = [
+      ['z.dll', 'a.dll', 'm.dll'],
+      ['a.dll', 'm.dll', 'z.dll'],
+    ];
+    const lstatFor = ((p: string) =>
+      Promise.resolve({
+        isDirectory: () => false,
+        isFile: () => true,
+        size: p.endsWith('a.dll') ? 1 : p.endsWith('m.dll') ? 2 : 3,
+        mtimeMs: 10,
+      } as any)) as any;
+
+    vi.mocked(fse.readdir).mockImplementationOnce(((_p: string) => Promise.resolve(treeReads[0] as any)) as any);
+    vi.mocked(fse.lstat).mockImplementation(lstatFor);
+    const first = await computeBundleFingerprints(bundleDir);
+
+    vi.mocked(fse.readdir).mockImplementationOnce(((_p: string) => Promise.resolve(treeReads[1] as any)) as any);
+    const second = await computeBundleFingerprints(bundleDir);
+
+    expect(first?.treeFingerprint).toBe(second?.treeFingerprint);
+    expect(first?.structuralFingerprint).toBe(second?.structuralFingerprint);
   });
 });
 
