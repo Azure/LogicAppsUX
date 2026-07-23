@@ -27,28 +27,30 @@ import {
   saveConnectionReferences,
   saveCustomCodeStandard,
 } from '../../../../utils/codeless/connection';
+import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../../utils/requestUtils';
 import { createNewDataMapCmd } from '../../../dataMapper/dataMapper';
 import { DesignerPanel } from './designerPanel';
+import { getMigrationOptions, migrateWorkflow } from '../utils/migration';
+import { createFileSystemConnection } from '../utils/fileSystemConnection';
+import { mergeJsonParameters } from '../utils/parameterMerge';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   CompleteFileSystemConnectionData,
   FileDetails,
-  FileSystemConnectionInfo,
   DesignerPanelMetadata,
   Parameter,
 } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import axios from 'axios';
-import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
+import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 
@@ -58,6 +60,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
   private projectPath?: string;
   private panelMetadata?: DesignerPanelMetadata;
   private workflowRuntimeBaseUrlInterval?: NodeJS.Timeout;
+  private accessTokenInterval?: NodeJS.Timeout;
 
   constructor(context: IActionContext, node: Uri, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
@@ -70,27 +73,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
     this.workflowFilePath = node.fsPath;
   }
-
-  private createFileSystemConnection = (connectionInfo: FileSystemConnectionInfo): Promise<any> => {
-    const rootFolder = connectionInfo.connectionParameters?.['rootFolder'];
-    const username = connectionInfo.connectionParameters?.['username'];
-    const password = connectionInfo.connectionParameters?.['password'];
-
-    return new Promise((resolve) => {
-      exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
-        if (error) {
-          resolve({ errorMessage: JSON.stringify(error.message) });
-        } else {
-          resolve({
-            connection: {
-              ...connectionInfo,
-              connectionParameters: { mountPath: rootFolder },
-            },
-          });
-        }
-      });
-    });
-  };
 
   public async create(): Promise<void> {
     const existingPanel: WebviewPanel | undefined = this.getExistingPanel();
@@ -144,7 +126,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
     };
 
-    this.migrationOptions = await this.getMigrationOptions(this.baseUrl);
+    this.migrationOptions = await getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this.getDesignerPanelMetadata(this.migrationOptions);
     const callbackUri: Uri = await (env as any).asExternalUri(Uri.parse(`${env.uriScheme}://${logicAppsStandardExtensionId}/authcomplete`));
     this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
@@ -178,6 +160,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     this.panel.onDidDispose(
       () => {
         clearInterval(this.workflowRuntimeBaseUrlInterval);
+        clearInterval(this.accessTokenInterval);
         removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
       },
       null,
@@ -206,6 +189,28 @@ export default class LocalDesignerPanel extends DesignerPanel {
             });
           }
         }, 3000);
+
+        // Refresh access token periodically to prevent stale-token failures on save
+        this.accessTokenInterval = setInterval(async () => {
+          try {
+            const tenantId = this.panelMetadata?.azureDetails?.tenantId;
+            const updatedAccessToken = await getAuthorizationToken(tenantId);
+            // Guard against "Bearer undefined" — only update if we got a real token
+            if (updatedAccessToken && !updatedAccessToken.endsWith('undefined') && updatedAccessToken !== this.panelMetadata?.accessToken) {
+              if (this.panelMetadata) {
+                this.panelMetadata.accessToken = updatedAccessToken;
+              }
+              this.panel?.webview.postMessage({
+                command: ExtensionCommand.update_access_token,
+                data: {
+                  accessToken: updatedAccessToken,
+                },
+              });
+            }
+          } catch {
+            // Silently ignore token refresh failures — the existing token may still be valid
+          }
+        }, 30000);
 
         this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
@@ -271,6 +276,13 @@ export default class LocalDesignerPanel extends DesignerPanel {
         break;
       }
 
+      // NOTE(aeldridge): Needed for V2 designer which doesn't use separate monitoring view class.
+      // Remove once V2 designer is moved to its own panel classes.
+      case ExtensionCommand.createUnitTestFromRun: {
+        await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
+        break;
+      }
+
       case ExtensionCommand.addConnection: {
         await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
           await addConnectionData(activateContext, this.workflowFilePath, msg.connectionAndSetting);
@@ -286,7 +298,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
       case ExtensionCommand.createFileSystemConnection: {
         {
           const connectionName = msg.connectionName;
-          const { connection, errorMessage } = await this.createFileSystemConnection(msg.connectionInfo);
+          const { connection, errorMessage } = await createFileSystemConnection(msg.connectionInfo);
           const completeData: CompleteFileSystemConnectionData = {
             connectionName,
             connection,
@@ -391,7 +403,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
             parameter.value = parameter.value ?? parameter.defaultValue;
             delete parameter.defaultValue;
           }
-          await this.mergeJsonParameters(filePath, parametersFromDefinition, panelParameterRecord);
+          await mergeJsonParameters(this.context, filePath, parametersFromDefinition, panelParameterRecord);
           await saveWorkflowParameter(this.context, filePath, parametersFromDefinition);
         }
 
@@ -459,106 +471,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
     }
   }
 
-  private migrate(workflow: any, migrationOptions: Record<string, any>): void {
-    this.traverseActions(workflow.definition?.actions, migrationOptions);
-  }
-
-  private traverseActions(actions: any, migrationOptions: Record<string, any>): void {
-    if (actions) {
-      for (const actionName of Object.keys(actions)) {
-        this.traverseAction(actions[actionName], migrationOptions);
-      }
-    }
-  }
-
-  private traverseAction(action: any, migrationOptions: Record<string, any>): void {
-    const type = action?.type;
-    switch ((type || '').toLowerCase()) {
-      case 'liquid': {
-        if (migrationOptions['liquidJsonToJson']?.inputs?.properties?.map?.properties?.source) {
-          const map = action?.inputs?.map;
-          if (map && map.source === undefined) {
-            map.source = 'LogicApp';
-          }
-        }
-        break;
-      }
-      case 'xmlvalidation': {
-        if (migrationOptions['xmlValidation']?.inputs?.properties?.schema?.properties?.source) {
-          const schema = action?.inputs?.schema;
-          if (schema && schema.source === undefined) {
-            schema.source = 'LogicApp';
-          }
-        }
-        break;
-      }
-      case 'xslt': {
-        if (migrationOptions['xslt']?.inputs?.properties?.map?.properties?.source) {
-          const map = action?.inputs?.map;
-          if (map && map.source === undefined) {
-            map.source = 'LogicApp';
-          }
-        }
-        break;
-      }
-      case 'flatfileencoding':
-      case 'flatfiledecoding': {
-        if (migrationOptions['flatFileEncoding']?.inputs?.properties?.schema?.properties?.source) {
-          const schema = action?.inputs?.schema;
-          if (schema && schema.source === undefined) {
-            schema.source = 'LogicApp';
-          }
-        }
-        break;
-      }
-      case 'if': {
-        this.traverseActions(action.else?.actions, migrationOptions);
-        break;
-      }
-      case 'scope':
-      case 'foreach':
-      case 'changeset':
-      case 'until': {
-        this.traverseActions(action.actions, migrationOptions);
-        break;
-      }
-      case 'switch': {
-        for (const caseKey of Object.keys(action.cases || {})) {
-          this.traverseActions(action.cases[caseKey]?.actions, migrationOptions);
-        }
-        this.traverseActions(action.default?.actions, migrationOptions);
-
-        break;
-      }
-    }
-  }
-
-  private getMigrationOptions(baseUrl: string): Promise<Record<string, any>> {
-    const flatFileEncodingPromise = axios.get(
-      `${baseUrl}/operationGroups/flatFileOperations/operations/flatFileEncoding?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
-    );
-    const liquidJsonToJsonPromise = axios.get(
-      `${baseUrl}/operationGroups/liquidOperations/operations/liquidJsonToJson?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
-    );
-    const xmlValidationPromise = axios.get(
-      `${baseUrl}/operationGroups/xmlOperations/operations/xmlValidation?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
-    );
-    const xsltPromise = axios.get(
-      `${baseUrl}/operationGroups/xmlOperations/operations/xmlTransform?api-version=2019-10-01-edge-preview&$expand=properties/manifest`
-    );
-
-    return Promise.all([flatFileEncodingPromise, liquidJsonToJsonPromise, xmlValidationPromise, xsltPromise]).then(
-      ([ff, liquid, xmlvalidation, xslt]) => {
-        return {
-          flatFileEncoding: ff.data.properties.manifest,
-          liquidJsonToJson: liquid.data.properties.manifest,
-          xmlValidation: xmlvalidation.data.properties.manifest,
-          xslt: xslt.data.properties.manifest,
-        };
-      }
-    );
-  }
-
   private async getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<DesignerPanelMetadata> {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     if (!projectPath) {
@@ -566,7 +478,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     }
 
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
-    this.migrate(workflowContent, migrationOptions);
+    migrateWorkflow(workflowContent, migrationOptions);
 
     const [connectionsData, parametersData, customCodeData, workflowDetails, artifacts, bundleVersionNumber, azureDetails] =
       await Promise.all([
@@ -602,26 +514,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
   }
 
   /**
-   * Merges parameters from JSON.
-   * @param filePath The file path of the parameters JSON file.
-   * @param definitionParameters The parameters from the designer.
-   * @param panelParameterRecord The parameters from the panel
-   * @returns parameters from JSON file and designer.
-   */
-  private async mergeJsonParameters(
-    filePath: string,
-    definitionParameters: any,
-    panelParameterRecord: Record<string, Parameter>
-  ): Promise<void> {
-    const jsonParameters = await getParametersFromFile(this.context, filePath);
-
-    Object.entries(jsonParameters).forEach(([key, parameter]) => {
-      if (!definitionParameters[key] && !panelParameterRecord[key]) {
-        definitionParameters[key] = parameter;
-      }
-    });
-  }
-
   /**
    * Reloads the webview panel and updates the view state.
    * @param webviewPanel The web view panel to update.

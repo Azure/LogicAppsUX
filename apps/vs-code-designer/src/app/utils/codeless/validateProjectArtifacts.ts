@@ -19,10 +19,12 @@ import {
   workerRuntimeKey,
   workflowFileName,
   workflowOperationDiscoveryHostModeKey,
+  workflowAuthenticationMethodKey,
+  workflowAuthenticationMethodMIValue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import { useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
+import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
@@ -47,6 +49,14 @@ const appSettingReferenceRegex = /appsetting\(\s*['"]([^'"]+)['"]\s*\)/g;
  * check can adapt to the Node-worker fallback.
  */
 const baseRequiredDesignTimeSettingKeys = [appKindSetting, workerRuntimeKey, ProjectDirectoryPathKey];
+
+/**
+ * Prefix applied to the design-time copies of host.json / local.settings.json so the consolidated
+ * per-project log distinguishes them from the project-root artifacts. The base names come from the
+ * same {@link hostFileName} / {@link localSettingsFileName} constants used at the write sites, so the
+ * logged names can never drift from what is actually written.
+ */
+const designTimeArtifactPrefix = 'design-time ';
 
 /**
  * Reads the text content of a file, returning an empty string when the file does not exist or cannot be read.
@@ -130,20 +140,16 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
  * empty placeholder value when missing. Existing values are never overwritten.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<boolean>} True when the file was created or updated, otherwise false.
+ * @returns {Promise<{ changed: boolean; addedSettings: string[]; changedArtifacts: string[] }>} Whether
+ * the file was created or updated, which setting keys were added, and the human-readable label(s) for
+ * the artifact(s) that changed (empty when nothing changed).
  */
-export async function regenerateLocalSettings(context: IActionContext, projectPath: string): Promise<boolean> {
+export async function regenerateLocalSettings(
+  context: IActionContext,
+  projectPath: string
+): Promise<{ changed: boolean; addedSettings: string[]; changedArtifacts: string[] }> {
   const localSettingsPath = path.join(projectPath, localSettingsFileName);
   const fileExisted = await fse.pathExists(localSettingsPath);
-  ext.outputChannel.appendLog(
-    localize(
-      'checkingLocalSettings',
-      'Checking local.settings.json for project "{0}" at "{1}" (exists: {2}).',
-      projectPath,
-      localSettingsPath,
-      String(fileExisted)
-    )
-  );
 
   // Build the baseline from the same source of truth as fresh project creation so a regenerated
   // local.settings.json matches what a newly created project of this type would produce. The project
@@ -169,29 +175,18 @@ export async function regenerateLocalSettings(context: IActionContext, projectPa
     }
   }
 
-  if (!fileExisted || Object.keys(settingsToAdd).length > 0) {
-    await addOrUpdateLocalAppSettings(context, projectPath, settingsToAdd);
-    ext.outputChannel.appendLog(
-      localize(
-        'regeneratedLocalSettings',
-        'Ensured local.settings.json for project "{0}" (file existed: {1}). Added {2} setting(s): {3}.',
-        projectPath,
-        String(fileExisted),
-        Object.keys(settingsToAdd).length,
-        Object.keys(settingsToAdd).join(', ') || '(none)'
-      )
-    );
-    return true;
+  if (isManagedIdentityAuthEnabled() && currentValues[workflowAuthenticationMethodKey] !== workflowAuthenticationMethodMIValue) {
+    settingsToAdd[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
 
-  ext.outputChannel.appendLog(
-    localize(
-      'localSettingsUpToDate',
-      'local.settings.json for project "{0}" already exists and contains all required settings. Skipping regeneration.',
-      projectPath
-    )
-  );
-  return false;
+  if (!fileExisted || Object.keys(settingsToAdd).length > 0) {
+    await addOrUpdateLocalAppSettings(context, projectPath, settingsToAdd);
+    const addedSettings = Object.keys(settingsToAdd);
+    const addedSuffix = addedSettings.length > 0 ? ` (added ${addedSettings.length} setting(s): ${addedSettings.join(', ')})` : '';
+    return { changed: true, addedSettings, changedArtifacts: [`${localSettingsFileName}${addedSuffix}`] };
+  }
+
+  return { changed: false, addedSettings: [], changedArtifacts: [] };
 }
 
 /**
@@ -225,33 +220,18 @@ function getRootHostFileContent(): IHostJsonV2 {
  * host.json (correct version + workflows extension bundle) is preserved so that customizations such as a
  * pinned extension bundle version are not lost.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<boolean>} True when the file was written (created or repaired), otherwise false.
+ * @returns {Promise<{ changed: boolean; changedArtifacts: string[] }>} Whether the file was written
+ * (created or repaired), and the human-readable label for the artifact when it changed.
  */
-export async function regenerateRootHostFile(projectPath: string): Promise<boolean> {
+export async function regenerateRootHostFile(projectPath: string): Promise<{ changed: boolean; changedArtifacts: string[] }> {
   const hostFilePath = path.join(projectPath, hostFileName);
-  const hostFileExisted = await fse.pathExists(hostFilePath);
-  ext.outputChannel.appendLog(
-    localize(
-      'checkingRootHost',
-      'Checking host.json for project "{0}" at "{1}" (exists: {2}).',
-      projectPath,
-      hostFilePath,
-      String(hostFileExisted)
-    )
-  );
 
   if (await isHostFileValid(hostFilePath, false)) {
-    ext.outputChannel.appendLog(
-      localize('rootHostValid', 'host.json for project "{0}" is present and valid. Skipping regeneration.', projectPath)
-    );
-    return false;
+    return { changed: false, changedArtifacts: [] };
   }
 
   await writeFormattedJson(hostFilePath, getRootHostFileContent());
-  ext.outputChannel.appendLog(
-    localize('regeneratedRootHost', 'Regenerated missing or invalid host.json for project "{0}" at "{1}".', projectPath, hostFilePath)
-  );
-  return true;
+  return { changed: true, changedArtifacts: [hostFileName] };
 }
 
 /**
@@ -390,18 +370,27 @@ async function ensureDesignTimeDirectory(projectPath: string): Promise<Uri> {
  * such as a pinned extension bundle version are not lost.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<Uri>} The design-time directory Uri.
+ * @returns {Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }>}
+ * The design-time directory Uri, which baseline files were regenerated, and the human-readable label(s)
+ * for the artifact(s) that changed.
  */
-export async function regenerateDesignTimeDirectory(context: IActionContext, projectPath: string): Promise<Uri> {
+export async function regenerateDesignTimeDirectory(
+  context: IActionContext,
+  projectPath: string
+): Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }> {
   const designTimeDirectory = await ensureDesignTimeDirectory(projectPath);
   const validation = await validateDesignTimeDirectory(projectPath);
 
-  if (!validation.hostFileValid) {
+  const hostRegenerated = !validation.hostFileValid;
+  const settingsRegenerated = !validation.settingsFileValid;
+  const changedArtifacts: string[] = [];
+
+  if (hostRegenerated) {
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, hostFileName), hostFileContent);
-    ext.outputChannel.appendLog(localize('regeneratedDesignTimeHost', 'Regenerated design-time host.json for project "{0}".', projectPath));
+    changedArtifacts.push(`${designTimeArtifactPrefix}${hostFileName}`);
   }
 
-  if (!validation.settingsFileValid) {
+  if (settingsRegenerated) {
     const logicAppType = await detectProjectType(projectPath);
     const useNodeWorker = useNodeDesignTimeWorker(projectPath);
     const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType, useNodeWorker);
@@ -415,27 +404,101 @@ export async function regenerateDesignTimeDirectory(context: IActionContext, pro
       runtimeSettings[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
     }
     await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, runtimeSettings, true);
-    ext.outputChannel.appendLog(
-      localize('regeneratedDesignTimeSettings', 'Regenerated design-time local.settings.json for project "{0}".', projectPath)
-    );
+    changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
-  return designTimeDirectory;
+  return { uri: designTimeDirectory, hostRegenerated, settingsRegenerated, changedArtifacts };
+}
+
+/**
+ * Ensures the project-level host.json and local.settings.json are valid (regenerating the
+ * git-ignored files a source-controlled clone may be missing) without touching the design-time
+ * directory. Emits a single consolidated status line for the project: valid, regenerated (listing
+ * exactly what changed), or failed.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The logic app project root.
+ * @returns {Promise<void>} Resolves when the root artifacts have been ensured.
+ */
+export async function ensureProjectRootArtifacts(context: IActionContext, projectPath: string): Promise<void> {
+  const projectName = path.basename(projectPath);
+  try {
+    const hostResult = await regenerateRootHostFile(projectPath);
+    const localSettings = await regenerateLocalSettings(context, projectPath);
+
+    const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts];
+
+    if (changed.length === 0) {
+      ext.outputChannel.appendLog(
+        localize(
+          'projectRootArtifactsValid',
+          'Project "{0}": host.json and local.settings.json are valid — no regeneration needed.',
+          projectName
+        )
+      );
+      return;
+    }
+
+    ext.outputChannel.appendLog(
+      localize('projectRootArtifactsRegenerated', 'Project "{0}": regenerated {1}.', projectName, changed.join(', '))
+    );
+  } catch (error) {
+    ext.outputChannel.appendLog(
+      localize(
+        'projectRootArtifactsFailed',
+        'Project "{0}": failed to validate/regenerate artifacts — {1}.',
+        projectName,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
+    throw error;
+  }
 }
 
 /**
  * Validates and regenerates the artifacts required for a logic app project to be valid when source
  * control strips git-ignored files: the project-level host.json and local.settings.json (built from
  * the logic app, connections.json, and parameters.json) and the workflow-designtime directory baseline.
+ *
+ * Emits exactly one consolidated status line for the project: valid, regenerated (listing exactly
+ * what changed), or failed. The low-level regenerate helpers are silent so multi-project startup
+ * output stays readable.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<Uri>} The design-time directory Uri, ready to be used as the host working directory.
  */
 export async function validateAndRegenerateProjectArtifacts(context: IActionContext, projectPath: string): Promise<Uri> {
-  ext.outputChannel.appendLog(
-    localize('validatingProjectArtifacts', 'Validating and regenerating project artifacts for logic app "{0}".', projectPath)
-  );
-  await regenerateRootHostFile(projectPath);
-  await regenerateLocalSettings(context, projectPath);
-  return regenerateDesignTimeDirectory(context, projectPath);
+  const projectName = path.basename(projectPath);
+  try {
+    const hostResult = await regenerateRootHostFile(projectPath);
+    const localSettings = await regenerateLocalSettings(context, projectPath);
+    const designTime = await regenerateDesignTimeDirectory(context, projectPath);
+
+    const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts, ...designTime.changedArtifacts];
+
+    if (changed.length === 0) {
+      ext.outputChannel.appendLog(
+        localize(
+          'projectArtifactsValid',
+          'Project "{0}": host.json, local.settings.json, and design-time configuration are valid — no regeneration needed.',
+          projectName
+        )
+      );
+    } else {
+      ext.outputChannel.appendLog(
+        localize('projectArtifactsRegenerated', 'Project "{0}": regenerated {1}.', projectName, changed.join(', '))
+      );
+    }
+
+    return designTime.uri;
+  } catch (error) {
+    ext.outputChannel.appendLog(
+      localize(
+        'projectArtifactsFailed',
+        'Project "{0}": failed to validate/regenerate artifacts — {1}.',
+        projectName,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
+    throw error;
+  }
 }

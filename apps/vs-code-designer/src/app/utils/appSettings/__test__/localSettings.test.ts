@@ -120,10 +120,10 @@ describe('utils/appSettings', () => {
         expect(getLocalSettingsSchema(false)).toEqual({
           IsEncrypted: false,
           Values: {
-            [appKindSetting]: logicAppKind,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
             [azureWebJobsStorageKey]: localEmulatorConnectionString,
             [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [appKindSetting]: logicAppKind,
           },
         });
       });

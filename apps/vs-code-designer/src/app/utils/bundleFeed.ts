@@ -829,6 +829,26 @@ export type BundleInstallResult = 'unknown' | 'ok' | 'failed';
 let lastBundleInstallResult: BundleInstallResult = 'unknown';
 let lastBundleInstallError: Error | undefined;
 
+/**
+ * Version of the extension bundle whose on-disk integrity has already been
+ * verified this session. `ensureExtensionBundleHealthy` short-circuits the
+ * expensive full-tree SHA-256 recompute while this is set. Startup dependency
+ * validation verifies the bundle once; the design-time / runtime hosts launched
+ * immediately after reuse that result instead of rehashing the whole bundle on
+ * every launch. Invalidated on any (re)download/repair and via
+ * `resetCachedBundleVersion`.
+ */
+let healthyBundleVersion: string | null = null;
+
+/**
+ * Clears the session bundle-health cache so the next
+ * `ensureExtensionBundleHealthy` re-runs the on-disk integrity check. Invoked
+ * whenever the bundle on disk may have changed (download/repair) or on reset.
+ */
+export function invalidateBundleHealthCache(): void {
+  healthyBundleVersion = null;
+}
+
 export function getLastBundleInstallResult(): BundleInstallResult {
   return lastBundleInstallResult;
 }
@@ -987,8 +1007,16 @@ export async function ensureExtensionBundleHealthy(
     return;
   }
 
+  if (healthyBundleVersion) {
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${healthyBundleVersion} already verified this session; skipping on-disk integrity re-check.`
+    );
+    return;
+  }
+
   const initialHealth = await assertExtensionBundleOnDiskHealthy();
   if (initialHealth.ok) {
+    healthyBundleVersion = initialHealth.version;
     ext.outputChannel?.appendLog(`Logic Apps extension bundle ${initialHealth.version} on-disk integrity check passed.`);
     return;
   }
@@ -1005,6 +1033,7 @@ export async function ensureExtensionBundleHealthy(
     await downloadExtensionBundle(context, { allowSidecarBackfill: false });
     const postInstallHealth = await assertExtensionBundleOnDiskHealthy();
     if (postInstallHealth.ok) {
+      healthyBundleVersion = postInstallHealth.version;
       return;
     }
     throwBundleHealthError('Install completed but on-disk integrity still failed', postInstallHealth as BundleOnDiskHealthFailure);
@@ -1031,6 +1060,7 @@ export async function ensureExtensionBundleHealthy(
 
   const postRepairHealth = await assertExtensionBundleOnDiskHealthy();
   if (postRepairHealth.ok) {
+    healthyBundleVersion = postRepairHealth.version;
     return;
   }
   throwBundleHealthError('Repair completed but on-disk integrity still failed', postRepairHealth as BundleOnDiskHealthFailure);
@@ -1043,6 +1073,10 @@ export async function ensureExtensionBundleHealthy(
  * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
 export async function downloadExtensionBundle(context: IActionContext, options: DownloadExtensionBundleOptions = {}): Promise<boolean> {
+  // Any (re)download or repair changes the bundle on disk, so the session
+  // health cache is no longer authoritative — force the next
+  // `ensureExtensionBundleHealthy` to re-verify.
+  healthyBundleVersion = null;
   // Dedupe concurrent calls: if a download is already in flight, await it
   // instead of kicking off a parallel attempt that would race for the same
   // extraction directory.
@@ -1472,6 +1506,7 @@ export function resetCachedBundleVersion(): void {
   lastBundleInstallResult = 'unknown';
   lastBundleInstallError = undefined;
   inFlightBundleWork = undefined;
+  healthyBundleVersion = null;
 }
 
 /**

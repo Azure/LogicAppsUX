@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { nodeJsDependencyName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../../utils/dependencyUpdateCheck';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { installNodeJs } from '../installNodeJs';
@@ -39,6 +40,10 @@ vi.mock('../../../utils/binaries', () => ({
   binariesExist: vi.fn(),
   getLatestNodeJsVersion: vi.fn(),
   verifyDependencyIntegrity: vi.fn(() => true),
+}));
+
+vi.mock('../../../utils/dependencyUpdateCheck', () => ({
+  shouldCheckForDependencyUpdates: vi.fn(),
 }));
 
 vi.mock('../../../utils/nodeJs/nodeJsVersion', () => ({
@@ -80,6 +85,8 @@ describe('validateNodeJsIsLatest', () => {
     vi.mocked(vscode.window.withProgress).mockImplementation(async (_options, task) => task({} as any, {} as any));
     vi.mocked(vscode.window.showInformationMessage).mockResolvedValue(undefined);
     vi.mocked(vscode.window.showErrorMessage).mockResolvedValue(undefined);
+    // Default to performing update checks; throttled behavior is covered explicitly below.
+    vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(true);
   });
 
   it('reinstalls when binaries exist but the on-disk integrity check fails', async () => {
@@ -321,5 +328,33 @@ describe('validateNodeJsIsLatest', () => {
 
     expect(vscode.window.showErrorMessage).toHaveBeenCalledWith('Failed to update Node JS runtime dependency: "download failed".');
     expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
+  });
+
+  it('skips the newest-version lookup and warning when the update check is throttled', async () => {
+    vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
+    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
+
+    await validateNodeJsIsLatest('18');
+
+    // The local version is still read, but the network lookup + outdated warning are skipped.
+    expect(getLocalNodeJsVersion).toHaveBeenCalledWith(contextRef.current);
+    expect(getLatestNodeJsVersion).not.toHaveBeenCalled();
+    expect(vscode.window.showWarningMessage).not.toHaveBeenCalled();
+    expect(contextRef.current.telemetry.properties.nodeJsWarningDecision).toBe('updateCheckThrottled');
+  });
+
+  it('still reinstalls a missing local Node.js version when the update check is throttled', async () => {
+    vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
+    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(getLocalNodeJsVersion).mockResolvedValue(null);
+
+    await validateNodeJsIsLatest('18');
+
+    // A present-but-unrunnable Node must still be reinstalled regardless of the throttle.
+    expect(installNodeJs).toHaveBeenCalledWith(contextRef.current, '18');
+    expect(getLatestNodeJsVersion).not.toHaveBeenCalled();
   });
 });
