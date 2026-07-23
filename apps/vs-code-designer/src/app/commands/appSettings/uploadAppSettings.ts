@@ -67,9 +67,16 @@ export async function uploadAppSettings(
 
     Object.keys(localSettings.Values).forEach((settingName) => {
       const isExcludedByName =
-        exclude?.some((exclusion) =>
-          isString(exclusion) ? settingName.toLowerCase() === exclusion.toLowerCase() : settingName.match(new RegExp(exclusion, 'i'))
-        ) ?? false;
+        exclude?.some((exclusion) => {
+          if (isString(exclusion)) {
+            return settingName.toLowerCase() === exclusion.toLowerCase();
+          }
+          // `exclusion` is already a RegExp. Passing a RegExp into `new RegExp(pattern, flags)`
+          // throws a TypeError, so reuse it directly and only re-create it to add the
+          // case-insensitive flag when it is missing.
+          const caseInsensitiveExclusion = exclusion.ignoreCase ? exclusion : new RegExp(exclusion.source, `${exclusion.flags}i`);
+          return caseInsensitiveExclusion.test(settingName);
+        }) ?? false;
       const isEmptyConnectorSetting =
         skipWhenEmptySettings.some((key) => key.toLowerCase() === settingName.toLowerCase()) &&
         (localSettings.Values?.[settingName] ?? '').trim() === '';

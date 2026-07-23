@@ -112,4 +112,35 @@ describe('uploadAppSettings', () => {
     expect(uploaded[workflowSubscriptionIdKey]).toBe('local-subscription-id');
     expect(uploaded[workflowTenantIdKey]).toBe('local-tenant-id');
   });
+
+  it('excludes settings matched by a RegExp exclusion without throwing', async () => {
+    (getLocalSettingsJson as Mock).mockResolvedValue({
+      Values: {
+        'SomeReference-connectionKey': 'secret',
+        FUNCTIONS_WORKER_RUNTIME: 'node',
+      },
+    });
+
+    // A RegExp exclusion must be handled directly; passing it into `new RegExp(regexp, 'i')` throws.
+    await expect(uploadAppSettings(context, node, undefined, [/-connectionKey$/])).resolves.not.toThrow();
+
+    const uploaded = getUploadedProperties();
+    expect(uploaded['SomeReference-connectionKey']).toBeUndefined();
+    expect(uploaded.FUNCTIONS_WORKER_RUNTIME).toBe('node');
+  });
+
+  it('matches RegExp exclusions case-insensitively', async () => {
+    (getLocalSettingsJson as Mock).mockResolvedValue({
+      Values: {
+        REMOTEDEBUGGINGVERSION: 'VS2022',
+        FUNCTIONS_WORKER_RUNTIME: 'node',
+      },
+    });
+
+    await uploadAppSettings(context, node, undefined, [/remotedebuggingversion/]);
+
+    const uploaded = getUploadedProperties();
+    expect(uploaded.REMOTEDEBUGGINGVERSION).toBeUndefined();
+    expect(uploaded.FUNCTIONS_WORKER_RUNTIME).toBe('node');
+  });
 });
