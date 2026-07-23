@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { enableManagedIdentityAuthSetting, useNodeDesignTimeWorkerSetting } from '../../../constants';
+import { alwaysBuildCustomCodeSetting, enableManagedIdentityAuthSetting, useNodeDesignTimeWorkerSetting } from '../../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
@@ -181,6 +181,15 @@ export function isManagedIdentityAuthEnabled(): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Indicates whether custom code projects should always be rebuilt when opening the designer,
+ * regardless of whether build artifacts already exist. Controlled by the
+ * `azureLogicAppsStandard.alwaysBuildCustomCode` setting. Defaults to `false`.
+ */
+export function shouldAlwaysBuildCustomCode(): boolean {
+  return getGlobalSetting<boolean>(alwaysBuildCustomCodeSetting) === true;
 }
 
 function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | WorkspaceFolder | undefined {

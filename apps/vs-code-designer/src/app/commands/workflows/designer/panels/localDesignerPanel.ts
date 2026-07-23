@@ -113,7 +113,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -177,7 +177,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
-          const updatedRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+          const updatedRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
           if (updatedRuntimeBaseUrl !== this.workflowRuntimeBaseUrl) {
             this.workflowRuntimeBaseUrl = updatedRuntimeBaseUrl;
@@ -341,10 +341,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
       default:
         break;
     }
-  }
-
-  private getWorkflowRuntimeBaseUrl(): string | undefined {
-    return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
   }
 
   /**

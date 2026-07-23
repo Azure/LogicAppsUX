@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { createSettingsDetails, removeSharedSetting } from '../settings';
+import { createSettingsDetails, removeSharedSetting, shouldAlwaysBuildCustomCode } from '../settings';
 import { ext } from '../../../../extensionVariables';
 
 describe('utils/vsCodeConfig/settings', () => {
@@ -165,6 +165,35 @@ describe('utils/vsCodeConfig/settings', () => {
 
       await expect(removeSharedSetting('integrated.env.windows', 'terminal')).resolves.toBeUndefined();
       expect(ext.outputChannel?.appendLog).toHaveBeenCalled();
+    });
+  });
+
+  describe('shouldAlwaysBuildCustomCode', () => {
+    const mockGetConfiguration = vi.mocked(vscode.workspace.getConfiguration);
+    let inspect: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+      inspect = vi.fn();
+      mockGetConfiguration.mockReturnValue({ inspect } as any);
+    });
+
+    it('returns false by default when the setting is not configured', () => {
+      inspect.mockReturnValue(undefined);
+
+      expect(shouldAlwaysBuildCustomCode()).toBe(false);
+    });
+
+    it('returns true when the setting is explicitly enabled', () => {
+      inspect.mockReturnValue({ globalValue: true });
+
+      expect(shouldAlwaysBuildCustomCode()).toBe(true);
+    });
+
+    it('returns false when the setting is explicitly disabled', () => {
+      inspect.mockReturnValue({ globalValue: false });
+
+      expect(shouldAlwaysBuildCustomCode()).toBe(false);
     });
   });
 });

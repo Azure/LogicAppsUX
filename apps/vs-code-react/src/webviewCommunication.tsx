@@ -121,6 +121,7 @@ type DataMapperMessageType =
   | GetTestFeatureEnablementStatus;
 type WorkflowMessageType =
   | UpdateCallbackInfoMessage
+  | UpdateWorkflowPropertiesMessage
   | UpdateRuntimeBaseUrlMessage
   | UpdateAccessTokenMessage
   | UpdateExportPathMessage
