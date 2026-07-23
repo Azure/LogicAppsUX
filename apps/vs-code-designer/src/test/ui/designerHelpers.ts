@@ -3017,7 +3017,21 @@ export async function openNodeSettingsPanel(driver: WebDriver, nodeText: string)
     if (exactNode.length > 0) {
       await driver.actions().move({ origin: exactNode[0] }).click().perform();
       await sleep(1500);
-      console.log(`[openNodeSettingsPanel] Clicked exact node "${nodeText}"`);
+      // A canvas "+" add-action context menu sometimes opens on/near the click;
+      // dismiss any stray floating popover so it can't cover the details panel.
+      const panelNode = await driver.executeScript<string>(
+        `
+        const menus = Array.from(document.querySelectorAll('[role="menu"], .fui-MenuPopover'));
+        for (const m of menus) {
+          if (!m.closest('.msla-panel-container') && !m.closest('[id^="msla-node-details-panel"]')) {
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+          }
+        }
+        const header = document.querySelector('.msla-panel-card-header, [class*="msla-panel"] [class*="title"]');
+        return header ? (header.textContent || '').trim().slice(0, 60) : '(no panel header)';
+        `
+      );
+      console.log(`[openNodeSettingsPanel] Clicked exact node "${nodeText}" (panel header: ${panelNode})`);
       return true;
     }
 
@@ -3160,55 +3174,90 @@ export async function setNodeDescription(
  */
 export async function openRunAfterSettings(driver: WebDriver): Promise<boolean> {
   try {
-    const clickRunAfterHeader = async (): Promise<boolean> => {
-      const headers = await driver.findElements(
-        By.css(
-          '.msla-setting-section-header, [data-automation-id*="runAfter"], [data-automation-id*="run-after"], [aria-label*="Run after"], [aria-label*="Run After"]'
-        )
+    // 0. Dismiss any stray overlay (e.g. a canvas "+" add-action context menu)
+    //    that could be covering the node details panel and swallowing clicks.
+    await driver.executeScript(
+      `
+      const menus = Array.from(document.querySelectorAll('[role="menu"], .fui-MenuPopover'));
+      for (const m of menus) {
+        // Only dismiss floating popovers, never the panel itself.
+        if (!m.closest('.msla-panel-container') && !m.closest('[id^="msla-node-details-panel"]')) {
+          const evt = new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true });
+          document.dispatchEvent(evt);
+        }
+      }
+      `
+    );
+    await sleep(300);
+
+    // 1. Activate the "Settings" tab. Run-after config lives under it. Panel tabs
+    //    render as Fluent <Tab role="tab"> inside #msla-node-details-panel-<id>,
+    //    with the localized title as text ("Settings"). Poll because the panel
+    //    can take a moment to mount its TabList after the node click.
+    let settingsTabClicked = false;
+    for (let attempt = 0; attempt < 10 && !settingsTabClicked; attempt++) {
+      const result = await driver.executeScript<{ clicked: boolean; panels: number; tabTitles: string[] }>(
+        `
+        const panels = document.querySelectorAll('[id^="msla-node-details-panel"]').length;
+        const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+        const tabTitles = tabs.map((t) => (t.textContent || '').trim()).filter(Boolean);
+        const tab = tabs.find((t) => (t.textContent || '').trim().toLowerCase().startsWith('settings'));
+        if (tab) {
+          tab.scrollIntoView({ block: 'center' });
+          tab.click();
+          return { clicked: true, panels, tabTitles };
+        }
+        return { clicked: false, panels, tabTitles };
+        `
       );
-      for (const header of headers) {
-        const text = await header.getText().catch(() => '');
-        const ariaLabel = await header.getAttribute('aria-label').catch(() => '');
-        if (`${text} ${ariaLabel}`.toLowerCase().includes('run after')) {
-          await driver.executeScript('arguments[0].scrollIntoView({ block: "center" });', header).catch(() => undefined);
-          await driver.actions().move({ origin: header }).click().perform();
-          await sleep(1000);
-          console.log('[openRunAfterSettings] Opened Run after section');
-          return true;
-        }
+      if (result.clicked) {
+        settingsTabClicked = true;
+        break;
       }
+      if (attempt === 0 || attempt === 9) {
+        console.log(`[openRunAfterSettings] attempt ${attempt + 1}: panels=${result.panels} tabs=[${result.tabTitles.join('|')}]`);
+      }
+      await sleep(600);
+    }
+    if (!settingsTabClicked) {
+      console.log('[openRunAfterSettings] Settings tab not found');
       return false;
-    };
-
-    if (await clickRunAfterHeader()) {
-      return true;
     }
+    await sleep(800);
 
-    // Try finding by text content
-    const runAfterButtons = await driver.findElements(By.xpath('//button[contains(., "Run after") or contains(., "Run After")]'));
-    if (runAfterButtons.length > 0) {
-      await runAfterButtons[0].click();
-      await sleep(1000);
-      console.log('[openRunAfterSettings] Opened Run after via text match');
-      return true;
-    }
-
-    // Try the tab/pivot pattern used in the designer, then expand the Run after section within Settings.
-    const tabs = await driver.findElements(By.css('[role="tab"]'));
-    for (const tab of tabs) {
-      const text = await tab.getText().catch(() => '');
-      if (text.toLowerCase().includes('settings')) {
-        await tab.click();
-        await sleep(1000);
-        console.log('[openRunAfterSettings] Opened Settings tab');
-        if (await clickRunAfterHeader()) {
-          return true;
+    // 2. Expand the "Run after" section header if its body is not yet mounted.
+    //    The section body (and therefore the predecessor `.msla-run-after-edge-header`
+    //    rows) only render while the section is expanded, so click the header
+    //    `button.msla-setting-section-header` (text = "Run after") when collapsed.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      const state = await driver.executeScript<{ hasBody: boolean; clickedHeader: boolean; headers: string[] }>(
+        `
+        const hasBody = !!document.querySelector('.msla-run-after-edge-header');
+        const headerEls = Array.from(document.querySelectorAll('button.msla-setting-section-header'));
+        const headers = headerEls.map((h) => (h.textContent || '').trim()).filter(Boolean);
+        if (hasBody) { return { hasBody: true, clickedHeader: false, headers }; }
+        const header = headerEls.find((h) => (h.textContent || '').toLowerCase().includes('run after'));
+        if (header) {
+          header.scrollIntoView({ block: 'center' });
+          header.click();
+          return { hasBody: false, clickedHeader: true, headers };
         }
+        return { hasBody: false, clickedHeader: false, headers };
+        `
+      );
+      if (state.hasBody) {
+        console.log('[openRunAfterSettings] Run after section is open');
+        return true;
       }
+      if (!state.clickedHeader) {
+        console.log(`[openRunAfterSettings] Run after header not found; section headers=[${state.headers.join('|')}]`);
+      }
+      await sleep(800);
     }
 
-    console.log('[openRunAfterSettings] Run After section not found');
-    return false;
+    const opened = await driver.executeScript<boolean>('return !!document.querySelector(".msla-run-after-edge-header");');
+    console.log(`[openRunAfterSettings] Run after section open=${opened} after retries`);
+    return opened;
   } catch (e: any) {
     console.log(`[openRunAfterSettings] Error: ${e.message}`);
     return false;
@@ -3216,214 +3265,145 @@ export async function openRunAfterSettings(driver: WebDriver): Promise<boolean> 
 }
 
 /**
- * Toggle run-after status checkboxes for a given list of statuses.
+ * Toggle run-after status checkboxes for a given list of statuses on the node
+ * settings panel that is currently open.
+ *
+ * DOM contract (libs/designer run-after components):
+ *  - Each predecessor renders a `.msla-run-after-edge-header` containing a
+ *    `<button>` whose aria-label starts with "Expand" when collapsed / "Collapse"
+ *    when expanded. The status checkboxes only mount while the predecessor is
+ *    expanded, so every collapsed predecessor must be expanded first.
+ *  - Status checkboxes are Fluent v9 Checkboxes inside `.msla-run-after-statuses`,
+ *    labelled "Is successful" (Succeeded), "Has timed out" (TimedOut),
+ *    "Is skipped" (Skipped) and "Has failed" (Failed). A status is `disabled`
+ *    when the action runs after the trigger, or when it is the only checked
+ *    status (you cannot remove the last run-after status).
+ *
  * Statuses can be: 'Succeeded', 'Failed', 'Skipped', 'TimedOut'.
  */
 export async function configureRunAfter(driver: WebDriver, statuses: string[]): Promise<boolean> {
+  const statusLabels: Record<string, string> = {
+    Succeeded: 'Is successful',
+    TimedOut: 'Has timed out',
+    Skipped: 'Is skipped',
+    Failed: 'Has failed',
+  };
+  const desired = statuses.map((status) => status.toLowerCase());
   try {
-    const desired = new Set(statuses.map((status) => status.toLowerCase()));
-    const statusLabels: Record<string, string> = {
-      Succeeded: 'Is successful',
-      Failed: 'Has failed',
-      Skipped: 'Is skipped',
-      TimedOut: 'Has timed out',
-    };
-    const allStatuses = Object.keys(statusLabels);
-    const getStates = async () =>
+    // Ensure the Run after section is open (idempotent — safe if already open).
+    await openRunAfterSettings(driver);
+
+    // Expand every collapsed predecessor so its status checkboxes mount. Only
+    // `.msla-run-after-edge-header` buttons whose aria-label starts with "expand"
+    // are clicked, so we never touch canvas "+" add buttons or other controls.
+    const expandInfo = await driver.executeScript<{ headers: number; expanded: number }>(
+      `
+      const headers = Array.from(document.querySelectorAll('.msla-run-after-edge-header'));
+      let expanded = 0;
+      for (const h of headers) {
+        const btn = h.querySelector('button');
+        if (!btn) { continue; }
+        const aria = (btn.getAttribute('aria-label') || '').trim().toLowerCase();
+        if (aria.indexOf('expand') === 0) {
+          btn.scrollIntoView({ block: 'center' });
+          btn.click();
+          expanded++;
+        }
+      }
+      return { headers: headers.length, expanded };
+      `
+    );
+    console.log(`[configureRunAfter] predecessors=${expandInfo.headers} expanded=${expandInfo.expanded}`);
+    await sleep(600);
+
+    // Toggle checkboxes to match the desired set. Re-run because Fluent
+    // re-renders the checkbox inputs on each change (stale element references).
+    const toggleOnce = async () =>
       driver.executeScript<{
         found: string[];
         checked: Record<string, boolean>;
         disabled: Record<string, boolean>;
+        clicked: string[];
         diagnostics: string[];
       }>(
         `
-        const labels = arguments[0];
+        const desired = arguments[0];
+        const labelById = arguments[1];
         const found = [];
         const checked = {};
         const disabled = {};
+        const clicked = [];
         const diagnostics = [];
-        const usedControls = [];
-        function getRoot() {
-          const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel'));
-          const root = roots.find((root) => {
-            const text = (root.textContent || '').toLowerCase();
-            return text.includes('run after') && (text.includes('has failed') || text.includes('is successful') || text.includes('has timed out'));
-          });
-          if (!root) {
-            diagnostics.push('run-after status root not found');
-          }
-          return root;
+        const groups = Array.from(document.querySelectorAll('.msla-run-after-statuses'));
+        if (groups.length === 0) {
+          diagnostics.push('no .msla-run-after-statuses mounted');
+          return { found, checked, disabled, clicked, diagnostics };
         }
-        function findControl(label) {
-          const lowerLabel = String(label).toLowerCase();
-          const root = getRoot();
-          if (!root) {
-            diagnostics.push(String(label) + ': no run-after root');
-            return null;
-          }
-          const candidates = Array.from(
-            root.querySelectorAll(
-              'input[type="checkbox"], [role="checkbox"], label, .fui-Checkbox, [class*="fui-Checkbox"], [class*="Checkbox__label"]'
-            )
-          );
-          for (const el of candidates) {
-            const checkboxContainer = el.closest('.fui-Checkbox, [class*="fui-Checkbox"], label');
-            const text = [
-              el.getAttribute('aria-label') || '',
-              el.getAttribute('title') || '',
-              checkboxContainer?.textContent || '',
-              el.textContent || '',
-              el.parentElement?.textContent || '',
-            ].join(' ').toLowerCase();
-            if (!text.includes(lowerLabel)) {
-              continue;
-            }
-            let node = el;
-            for (let depth = 0; node && depth < 6; depth++) {
-              const input = node instanceof HTMLInputElement ? node : node.querySelector?.('input[type="checkbox"]');
-              const roleCheckbox = node.getAttribute?.('role') === 'checkbox' ? node : node.querySelector?.('[role="checkbox"]');
-              const control = input || roleCheckbox;
-              if (control) {
-                if (usedControls.includes(control)) {
-                  diagnostics.push(String(label) + ': duplicate control');
-                  return null;
-                }
-                usedControls.push(control);
-                return { control, input: input instanceof HTMLInputElement ? input : null };
+        function findInput(labelText) {
+          const lower = String(labelText).toLowerCase();
+          for (const group of groups) {
+            const boxes = Array.from(group.querySelectorAll('.fui-Checkbox, [class*="fui-Checkbox"]'));
+            for (const box of boxes) {
+              if ((box.textContent || '').toLowerCase().includes(lower)) {
+                const input = box.querySelector('input[type="checkbox"]');
+                if (input) { return input; }
               }
-              node = node.parentElement;
+            }
+            const labels = Array.from(group.querySelectorAll('label'));
+            for (const lbl of labels) {
+              if ((lbl.textContent || '').toLowerCase().includes(lower)) {
+                const forId = lbl.getAttribute('for');
+                if (forId) {
+                  const byId = document.getElementById(forId);
+                  if (byId) { return byId; }
+                }
+                const near = lbl.querySelector('input[type="checkbox"]') || (lbl.parentElement && lbl.parentElement.querySelector('input[type="checkbox"]'));
+                if (near) { return near; }
+              }
             }
           }
-          diagnostics.push(String(label) + ': not found');
           return null;
         }
-        for (const [status, label] of Object.entries(labels)) {
-          const match = findControl(label);
-          if (!match) {
+        for (const id of Object.keys(labelById)) {
+          const input = findInput(labelById[id]);
+          if (!input) {
+            diagnostics.push(id + ': checkbox not found');
             continue;
           }
-          found.push(status);
-          checked[status] = match.input ? match.input.checked : match.control.getAttribute('aria-checked') === 'true';
-          disabled[status] = match.input ? match.input.disabled : match.control.getAttribute('aria-disabled') === 'true';
+          found.push(id);
+          checked[id] = !!input.checked;
+          disabled[id] = !!input.disabled;
+          const want = desired.indexOf(id.toLowerCase()) !== -1;
+          if (want !== input.checked) {
+            if (input.disabled) {
+              diagnostics.push(id + ': disabled, cannot toggle');
+              continue;
+            }
+            input.scrollIntoView({ block: 'center' });
+            input.click();
+            clicked.push(id);
+          }
         }
-        if (found.length === 0) {
-          diagnostics.push('body=' + (document.body.textContent || '').slice(0, 1000));
-        }
-        return { found, checked, disabled, diagnostics };
-      `,
+        return { found, checked, disabled, clicked, diagnostics };
+        `,
+        desired,
         statusLabels
       );
-    const expandCollapsedRunAfterRows = async () =>
-      driver.executeScript<number>(
-        `
-        let clicked = 0;
-        const candidates = Array.from(document.querySelectorAll('button, [role="button"], [aria-expanded="false"]'));
-        for (const el of candidates) {
-          const text = [
-            el.getAttribute('aria-label') || '',
-            el.textContent || '',
-            el.parentElement?.textContent || '',
-            el.parentElement?.parentElement?.textContent || '',
-          ].join(' ').toLowerCase();
-          const looksExpandable =
-            text.includes('expand') || text.includes('run after') || text.includes('manual') || text.includes('response');
-          if (!looksExpandable) {
-            continue;
-          }
-          try {
-            el.scrollIntoView({ block: 'center', inline: 'center' });
-            el.click();
-            clicked++;
-          } catch {
-            // Keep trying other candidate expanders.
-          }
-        }
-        return clicked;
-      `
-      );
-    const clickStatus = async (status: string) =>
-      driver.executeScript<boolean>(
-        `
-      const label = arguments[1];
-      function getRoot() {
-        const roots = Array.from(document.querySelectorAll('[role="tabpanel"], [data-automation-id*="runAfter"], [data-automation-id*="run-after"], .msla-setting-section, .msla-panel'));
-        return roots.find((root) => {
-          const text = (root.textContent || '').toLowerCase();
-          return text.includes('run after') && (text.includes('has failed') || text.includes('is successful') || text.includes('has timed out'));
-        });
-      }
-      const lowerLabel = String(label).toLowerCase();
-      const root = getRoot();
-      if (!root) {
-        return false;
-      }
-      const candidates = Array.from(root.querySelectorAll('input[type="checkbox"], [role="checkbox"], label, .fui-Checkbox, [class*="fui-Checkbox"], [class*="Checkbox__label"]'));
-      for (const el of candidates) {
-        const checkboxContainer = el.closest('.fui-Checkbox, [class*="fui-Checkbox"], label');
-        const text = [
-          el.getAttribute('aria-label') || '',
-          el.getAttribute('title') || '',
-          checkboxContainer?.textContent || '',
-          el.textContent || '',
-          el.parentElement?.textContent || '',
-        ].join(' ').toLowerCase();
-        if (!text.includes(lowerLabel)) {
-          continue;
-        }
-        let node = el;
-        for (let depth = 0; node && depth < 6; depth++) {
-          const input = node instanceof HTMLInputElement ? node : node.querySelector?.('input[type="checkbox"]');
-          const roleCheckbox = node.getAttribute?.('role') === 'checkbox' ? node : node.querySelector?.('[role="checkbox"]');
-          const control = input || roleCheckbox;
-          if (!control) {
-            node = node.parentElement;
-            continue;
-          }
-          const disabled = input instanceof HTMLInputElement ? input.disabled : control.getAttribute('aria-disabled') === 'true';
-          if (disabled) {
-            return false;
-          }
-          control.scrollIntoView({ block: 'center', inline: 'center' });
-          control.click();
-          return true;
-        }
-      }
-        return false;
-    `,
-        status,
-        statusLabels[status as keyof typeof statusLabels]
-      );
 
-    let states = await getStates();
-    if (states.found.length === 0) {
-      const expanded = await expandCollapsedRunAfterRows();
-      console.log(`[configureRunAfter] Expanded ${expanded} collapsed run-after candidate(s) before checkbox query`);
-      await sleep(800);
-      states = await getStates();
-    }
-    for (const status of allStatuses) {
-      if (desired.has(status.toLowerCase()) && !states.checked[status]) {
-        await clickStatus(status);
-        await sleep(400);
-      }
+    let state = await toggleOnce();
+    for (let pass = 0; pass < 3 && state.clicked.length > 0; pass++) {
+      await sleep(400);
+      state = await toggleOnce();
     }
 
-    states = await getStates();
-    for (const status of allStatuses) {
-      if (!desired.has(status.toLowerCase()) && states.checked[status]) {
-        await clickStatus(status);
-        await sleep(400);
-      }
-    }
-
-    states = await getStates();
-    const matchesDesired = allStatuses.every((status) => !!states.checked[status] === desired.has(status.toLowerCase()));
+    const allIds = Object.keys(statusLabels);
+    const matches = allIds.every((id) => state.found.includes(id) && state.checked[id] === (desired.indexOf(id.toLowerCase()) !== -1));
     console.log(
-      `[configureRunAfter] Found=${states.found.join(',')} checked=${JSON.stringify(states.checked)} diagnostics=${JSON.stringify(
-        states.diagnostics
-      )}`
+      `[configureRunAfter] found=${state.found.join(',')} checked=${JSON.stringify(state.checked)} disabled=${JSON.stringify(
+        state.disabled
+      )} diagnostics=${JSON.stringify(state.diagnostics)}`
     );
-    return allStatuses.every((status) => states.found.includes(status)) && matchesDesired;
+    return matches;
   } catch (e: any) {
     console.log(`[configureRunAfter] Error: ${e.message}`);
     return false;

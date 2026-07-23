@@ -677,6 +677,20 @@ async function main(): Promise<void> {
       throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
     }
   }
+  // Transitive dependencies that the VS Code CLI's --install-extension does NOT
+  // reliably auto-resolve. Installing ms-dotnettools.csdevkit pulls in
+  // ms-dotnettools.csharp, but csharp's own dependency
+  // ms-dotnettools.vscode-dotnet-runtime is not always installed (observed on
+  // Windows). Without it, the C#/C# Dev Kit extensions fail to activate
+  // ("depends on an unknown 'ms-dotnettools.vscode-dotnet-runtime' extension"),
+  // which cascades into the Azure Logic Apps extension never finishing
+  // activation — so azureLogicAppsStandard.createWorkspace / Open Designer are
+  // never registered. Install these explicitly to guarantee activation.
+  const transitiveE2eDependencies = ['ms-dotnettools.vscode-dotnet-runtime'];
+  const allE2eDependencies = [
+    ...extDeps,
+    ...transitiveE2eDependencies.filter((dep) => !extDeps.some((d) => d.toLowerCase() === dep.toLowerCase())),
+  ];
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
   const ourExtTarget = path.join(extDir, extDirName);
 
@@ -739,11 +753,11 @@ async function main(): Promise<void> {
     }
   };
 
-  if (extDeps.length > 0) {
-    console.log(`\n=== Step 2: Install ${extDeps.length} extension dependencies ===`);
+  if (allE2eDependencies.length > 0) {
+    console.log(`\n=== Step 2: Install ${allE2eDependencies.length} extension dependencies ===`);
 
     const depsToInstall: string[] = [];
-    for (const dep of extDeps) {
+    for (const dep of allE2eDependencies) {
       removeInvalidExtensionEntries(dep);
       const alreadyInstalled = !!findValidInstalledExtension(dep);
 
@@ -803,7 +817,7 @@ async function main(): Promise<void> {
       rebuildExtensionsJson(extDir);
     }
 
-    const missingDeps = extDeps.filter((dep) => !findValidInstalledExtension(dep));
+    const missingDeps = allE2eDependencies.filter((dep) => !findValidInstalledExtension(dep));
     if (missingDeps.length > 0) {
       throw new Error(`Missing E2E extension prerequisite(s): ${missingDeps.join(', ')}. Install/retry before running UI E2E tests.`);
     }

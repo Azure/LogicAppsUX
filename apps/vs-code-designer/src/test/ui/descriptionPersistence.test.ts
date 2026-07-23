@@ -251,12 +251,14 @@ describe('Description / Save-Persistence Tests', function () {
 
       const wf = await readWorkflowJsonUntil(entry, (w) => {
         const statuses: string[] = w?.definition?.actions?.Compose2?.runAfter?.Compose ?? [];
-        return statuses.includes('Failed');
+        return statuses.some((s) => s.toUpperCase() === 'FAILED');
       });
 
-      const compose2RunAfter: string[] = wf?.definition?.actions?.Compose2?.runAfter?.Compose ?? [];
+      // Run-after statuses serialize as the canonical uppercase enum
+      // (e.g. FAILED); compare case-insensitively.
+      const compose2RunAfter: string[] = (wf?.definition?.actions?.Compose2?.runAfter?.Compose ?? []).map((s: string) => s.toUpperCase());
       assert.ok(
-        compose2RunAfter.includes('Succeeded') && compose2RunAfter.includes('Failed'),
+        compose2RunAfter.includes('SUCCEEDED') && compose2RunAfter.includes('FAILED'),
         `Compose2 run-after (edited while dirty) must persist Succeeded + Failed: ${JSON.stringify(
           wf?.definition?.actions?.Compose2?.runAfter
         )}`
@@ -321,7 +323,7 @@ describe('Description / Save-Persistence Tests', function () {
       const wf = await readWorkflowJsonUntil(entry, (w) => {
         const ra = w?.definition?.actions?.Compose_Join?.runAfter ?? {};
         const statuses = [...(ra.Compose_A ?? []), ...(ra.Compose_B ?? [])];
-        return statuses.includes('Failed');
+        return statuses.some((s: string) => s.toUpperCase() === 'FAILED');
       });
 
       const joinRunAfter = wf?.definition?.actions?.Compose_Join?.runAfter ?? {};
@@ -331,9 +333,10 @@ describe('Description / Save-Persistence Tests', function () {
         `Parallel-branch join must keep both predecessors in run-after: ${JSON.stringify(joinRunAfter)}`
       );
       // The while-dirty run-after change (Failed) must persist on the join.
-      const joinStatuses = [...(joinRunAfter.Compose_A ?? []), ...(joinRunAfter.Compose_B ?? [])];
+      // Statuses serialize as the canonical uppercase enum; compare accordingly.
+      const joinStatuses = [...(joinRunAfter.Compose_A ?? []), ...(joinRunAfter.Compose_B ?? [])].map((s: string) => s.toUpperCase());
       assert.ok(
-        joinStatuses.includes('Failed'),
+        joinStatuses.includes('FAILED'),
         `Parallel-branch run-after change (Failed) must persist on the join: ${JSON.stringify(joinRunAfter)}`
       );
       // The earlier edit must also survive the same save.
