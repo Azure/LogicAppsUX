@@ -359,7 +359,7 @@ jobs:
           # Designer editing interactions: variables, extended view (parallel
           # branches / run-after), keyboard navigation.
           - shard: designer-interactions
-            scenario: p44-statelessvariables,p45-designerviewextended,p46-keyboardnav
+            scenario: p44-statelessvariables,p45-designerviewextended,p46-keyboardnav,p49-descriptionpersistence
             use_workspace_fixtures: true
             use_bundle_artifact: true
           # Multi-designer + dataMapper suite (manifest-multi) + bundle repair.
