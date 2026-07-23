@@ -14,7 +14,6 @@ import {
   useThemeObserver,
   FloatingRunButton,
   useRun,
-  resetServiceInitialization,
 } from '@microsoft/logic-apps-designer-v2';
 import { BundleVersionRequirements, guid, isEmptyString, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
@@ -71,24 +70,11 @@ export const DesignerApp = () => {
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
-  const runtimeBaseUrlRef = useRef(workflowRuntimeBaseUrl);
-  runtimeBaseUrlRef.current = workflowRuntimeBaseUrl;
-
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const queryClient = useQueryClient();
 
   const commonText = useIntlMessages(commonMessages);
   const isRuntimeAvailable = !isEmptyString(workflowRuntimeBaseUrl);
-
-  // When the runtime base URL changes (e.g., debugger starts/stops), reset service initialization
-  // so that BJSWorkflowProvider re-registers services with the updated URL.
-  const prevRuntimeBaseUrl = useRef(workflowRuntimeBaseUrl);
-  useEffect(() => {
-    if (prevRuntimeBaseUrl.current !== workflowRuntimeBaseUrl) {
-      prevRuntimeBaseUrl.current = workflowRuntimeBaseUrl;
-      dispatch(resetServiceInitialization());
-    }
-  }, [workflowRuntimeBaseUrl, dispatch]);
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -134,8 +120,7 @@ export const DesignerApp = () => {
       hostVersion,
       queryClient,
       sendMsgToVsix,
-      setRunId,
-      () => runtimeBaseUrlRef.current
+      setRunId
     );
   }, [
     baseUrl,
