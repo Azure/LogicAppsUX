@@ -24,29 +24,22 @@ export async function customCodeArtifactsExist(projectPath: string): Promise<boo
   }
 
   const customCodeArtifactsPath = path.join(projectPath, libDirectory, customDirectory);
-  const customFolderExists = await fse.pathExists(customCodeArtifactsPath);
-  if (!customFolderExists) {
+  if (!(await fse.pathExists(customCodeArtifactsPath))) {
     return false;
   }
 
-  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
-  if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
-    return false;
-  }
-  const customCodeProjects = customCodeProjectPaths.map((p) => path.basename(p));
-
-  const customCodeArtifactFiles = await fse.readdir(customCodeArtifactsPath);
-  for (const projectName of customCodeProjects) {
-    if (!customCodeArtifactFiles.includes(projectName)) {
-      return false;
-    }
-
-    if (!fse.pathExistsSync(path.join(customCodeArtifactsPath, projectName, 'function.json'))) {
-      return false;
+  const entries = await fse.readdir(customCodeArtifactsPath);
+  for (const entry of entries) {
+    const entryPath = path.join(customCodeArtifactsPath, entry);
+    if ((await fse.stat(entryPath)).isDirectory()) {
+      const files = await fse.readdir(entryPath);
+      if (files.some((f) => f.endsWith('.dll'))) {
+        return true;
+      }
     }
   }
 
-  return true;
+  return false;
 }
 
 export async function getAllCustomCodeFunctionsProjects(context: IActionContext): Promise<string[]> {

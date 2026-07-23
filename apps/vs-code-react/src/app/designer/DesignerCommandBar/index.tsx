@@ -88,6 +88,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   }, [designerState.workflow.workflowKind, isMonitoringView]);
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
+    // Read the latest store state at save time. This component only re-renders when a small set of
+    // subscribed values change (e.g. the dirty flag), so a render-time snapshot can be stale and drop
+    // edits made after the workflow was already dirty (e.g. run-after status changes). See issue #9412.
+    const designerState = DesignerStore.getState();
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
       skipValidation: false,
       ignoreNonCriticalErrors: true,
@@ -174,10 +178,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
 
-  const isCreateUnitTestDisabled = useMemo(
-    () => isCreatingUnitTest || designerIsDirty,
-    [isCreatingUnitTest, designerIsDirty]
-  );
+  const isCreateUnitTestDisabled = useMemo(() => isCreatingUnitTest || designerIsDirty, [isCreatingUnitTest, designerIsDirty]);
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
     [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]

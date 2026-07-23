@@ -80,10 +80,8 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
   }
 
   useEffect(() => {
-    if (!servicesInitialized) {
-      dispatch(initializeServices(wrapped));
-    }
-  }, [dispatch, servicesInitialized, wrapped]);
+    dispatch(initializeServices(wrapped));
+  }, [dispatch, wrapped]);
 
   useEffect(() => {
     initializeDiscoveryPanelFavoriteOperations(dispatch);
