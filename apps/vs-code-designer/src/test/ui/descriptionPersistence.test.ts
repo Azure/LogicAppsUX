@@ -235,13 +235,15 @@ describe('Description / Save-Persistence Tests', function () {
       assert.ok(marked, 'Should set the Compose description (edit #1, dirties the workflow)');
       await captureScreenshot(driver, 'linear-dirtied', EXPLICIT_SCREENSHOT_DIR);
 
-      // Edit #2 — change Compose2's run-after WHILE already dirty.
+      // Edit #2 — change Compose2's run-after WHILE already dirty. Flip it to
+      // "Has failed" ONLY (uncheck the default "Is successful"), so the test
+      // proves a non-default single status round-trips — not just an added one.
       const panelOpen = await openNodeSettingsPanel(driver, 'Compose2');
       assert.ok(panelOpen, 'Compose2 settings panel should open');
       const runAfterOpen = await openRunAfterSettings(driver);
       assert.ok(runAfterOpen, 'Run after section should open for Compose2');
-      const configured = await configureRunAfter(driver, ['Succeeded', 'Failed']);
-      assert.ok(configured, 'Should toggle Compose2 run-after to Succeeded + Failed while dirty');
+      const configured = await configureRunAfter(driver, ['Failed']);
+      assert.ok(configured, 'Should toggle Compose2 run-after to Failed only (Succeeded unchecked) while dirty');
       await captureScreenshot(driver, 'linear-runafter-configured', EXPLICIT_SCREENSHOT_DIR);
 
       const saved = await clickSaveButton(driver);
@@ -251,15 +253,19 @@ describe('Description / Save-Persistence Tests', function () {
 
       const wf = await readWorkflowJsonUntil(entry, (w) => {
         const statuses: string[] = w?.definition?.actions?.Compose2?.runAfter?.Compose ?? [];
-        return statuses.some((s) => s.toUpperCase() === 'FAILED');
+        const upper = statuses.map((s) => s.toUpperCase());
+        return upper.includes('FAILED') && !upper.includes('SUCCEEDED');
       });
 
       // Run-after statuses serialize as the canonical uppercase enum
-      // (e.g. FAILED); compare case-insensitively.
+      // (e.g. FAILED); compare case-insensitively. The edit flipped Compose2 to
+      // "Has failed" only, so the persisted set must be exactly {FAILED} — proving
+      // the default "Is successful" was removed and a non-default state persisted.
       const compose2RunAfter: string[] = (wf?.definition?.actions?.Compose2?.runAfter?.Compose ?? []).map((s: string) => s.toUpperCase());
-      assert.ok(
-        compose2RunAfter.includes('SUCCEEDED') && compose2RunAfter.includes('FAILED'),
-        `Compose2 run-after (edited while dirty) must persist Succeeded + Failed: ${JSON.stringify(
+      assert.deepStrictEqual(
+        [...compose2RunAfter].sort(),
+        ['FAILED'],
+        `Compose2 run-after (edited while dirty) must persist exactly Failed only: ${JSON.stringify(
           wf?.definition?.actions?.Compose2?.runAfter
         )}`
       );
@@ -307,12 +313,17 @@ describe('Description / Save-Persistence Tests', function () {
       await captureScreenshot(driver, 'parallel-dirtied', EXPLICIT_SCREENSHOT_DIR);
 
       // Edit #2 — change the parallel-branch join's run-after WHILE already dirty.
+      // Flip the Compose_A predecessor to "Has failed" ONLY (uncheck the default
+      // "Is successful"). The join then has one branch that is "Has failed"
+      // (Compose_A) and one that is "Is successful" (Compose_B) — proving a
+      // non-default single status persists per predecessor.
       const panelOpen = await openNodeSettingsPanel(driver, 'Compose_Join');
       assert.ok(panelOpen, 'Compose_Join settings panel should open');
       const runAfterOpen = await openRunAfterSettings(driver);
       assert.ok(runAfterOpen, 'Run after section should open for the parallel-branch join');
-      const configured = await configureRunAfter(driver, ['Succeeded', 'Failed']);
+      const configured = await configureRunAfter(driver, ['Failed']);
       console.log(`[descriptionPersistence] parallel configureRunAfter returned: ${configured}`);
+      assert.ok(configured, 'Should toggle Compose_A run-after to Failed only (Succeeded unchecked) while dirty');
       await captureScreenshot(driver, 'parallel-runafter-configured', EXPLICIT_SCREENSHOT_DIR);
 
       const saved = await clickSaveButton(driver);
@@ -322,8 +333,8 @@ describe('Description / Save-Persistence Tests', function () {
 
       const wf = await readWorkflowJsonUntil(entry, (w) => {
         const ra = w?.definition?.actions?.Compose_Join?.runAfter ?? {};
-        const statuses = [...(ra.Compose_A ?? []), ...(ra.Compose_B ?? [])];
-        return statuses.some((s: string) => s.toUpperCase() === 'FAILED');
+        const a = (ra.Compose_A ?? []).map((s: string) => s.toUpperCase());
+        return a.includes('FAILED') && !a.includes('SUCCEEDED');
       });
 
       const joinRunAfter = wf?.definition?.actions?.Compose_Join?.runAfter ?? {};
@@ -332,12 +343,21 @@ describe('Description / Save-Persistence Tests', function () {
         Object.prototype.hasOwnProperty.call(joinRunAfter, 'Compose_A') && Object.prototype.hasOwnProperty.call(joinRunAfter, 'Compose_B'),
         `Parallel-branch join must keep both predecessors in run-after: ${JSON.stringify(joinRunAfter)}`
       );
-      // The while-dirty run-after change (Failed) must persist on the join.
-      // Statuses serialize as the canonical uppercase enum; compare accordingly.
-      const joinStatuses = [...(joinRunAfter.Compose_A ?? []), ...(joinRunAfter.Compose_B ?? [])].map((s: string) => s.toUpperCase());
-      assert.ok(
-        joinStatuses.includes('FAILED'),
-        `Parallel-branch run-after change (Failed) must persist on the join: ${JSON.stringify(joinRunAfter)}`
+      // The while-dirty edit flipped the Compose_A predecessor to "Has failed"
+      // ONLY (default "Is successful" unchecked) — so it must persist as exactly
+      // {FAILED}. Statuses serialize as the canonical uppercase enum.
+      const composeAStatuses = (joinRunAfter.Compose_A ?? []).map((s: string) => s.toUpperCase());
+      assert.deepStrictEqual(
+        [...composeAStatuses].sort(),
+        ['FAILED'],
+        `Compose_A run-after must persist as Failed only (Succeeded unchecked): ${JSON.stringify(joinRunAfter)}`
+      );
+      // The other branch (Compose_B) must be left untouched — still just SUCCEEDED.
+      const composeBStatuses = (joinRunAfter.Compose_B ?? []).map((s: string) => s.toUpperCase());
+      assert.deepStrictEqual(
+        [...composeBStatuses].sort(),
+        ['SUCCEEDED'],
+        `Compose_B run-after must remain unchanged (Succeeded only): ${JSON.stringify(joinRunAfter)}`
       );
       // The earlier edit must also survive the same save.
       assert.strictEqual(
