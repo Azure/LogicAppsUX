@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, logicAppFilter } from '../../../constants';
+import {
+  localSettingsFileName,
+  logicAppFilter,
+  workflowLocationKey,
+  workflowResourceGroupNameKey,
+  workflowSubscriptionIdKey,
+  workflowTenantIdKey,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
@@ -52,18 +59,26 @@ export async function uploadAppSettings(
       remoteSettings.properties = {};
     }
 
-    if (exclude) {
-      Object.keys(localSettings.Values).forEach((settingName) => {
-        if (
-          exclude.some((exclusion) =>
-            isString(exclusion) ? settingName.toLowerCase() === exclusion.toLowerCase() : settingName.match(new RegExp(exclusion, 'i'))
-          )
-        ) {
-          delete localSettings.Values?.[settingName];
-          excludedAppSettings.push(settingName);
-        }
-      });
-    }
+    // Azure connector settings hold an empty-string sentinel locally when Azure connectors are
+    // disabled (or the user cancels the sign-in wizard). Uploading the empty value would overwrite
+    // the correct platform-provided value in the portal and break managed-connection resolution,
+    // so skip these keys whenever their local value is empty.
+    const skipWhenEmptySettings = [workflowSubscriptionIdKey, workflowTenantIdKey, workflowResourceGroupNameKey, workflowLocationKey];
+
+    Object.keys(localSettings.Values).forEach((settingName) => {
+      const isExcludedByName =
+        exclude?.some((exclusion) =>
+          isString(exclusion) ? settingName.toLowerCase() === exclusion.toLowerCase() : settingName.match(new RegExp(exclusion, 'i'))
+        ) ?? false;
+      const isEmptyConnectorSetting =
+        skipWhenEmptySettings.some((key) => key.toLowerCase() === settingName.toLowerCase()) &&
+        (localSettings.Values?.[settingName] ?? '').trim() === '';
+
+      if (isExcludedByName || isEmptyConnectorSetting) {
+        delete localSettings.Values?.[settingName];
+        excludedAppSettings.push(settingName);
+      }
+    });
 
     ext.outputChannel.appendLog(localize('uploadingSettings', 'Uploading settings...'), { resourceName: client.fullName });
     await confirmOverwriteSettings(context, localSettings.Values, remoteSettings.properties, client.fullName);
