@@ -181,6 +181,9 @@ export const designerOptionsSlice = createSlice({
       state.designerOptionsInitialized = true;
       state.isVSCode = action.payload.isVSCode ?? false;
     },
+    resetServiceInitialization: (state) => {
+      state.servicesInitialized = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(initializeServices.fulfilled, (state, action) => {
@@ -190,6 +193,6 @@ export const designerOptionsSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initDesignerOptions } = designerOptionsSlice.actions;
+export const { initDesignerOptions, resetServiceInitialization } = designerOptionsSlice.actions;
 
 export default designerOptionsSlice.reducer;

@@ -14,6 +14,7 @@ import {
   useThemeObserver,
   FloatingRunButton,
   useRun,
+  resetServiceInitialization,
 } from '@microsoft/logic-apps-designer-v2';
 import { BundleVersionRequirements, guid, isEmptyString, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
@@ -78,6 +79,16 @@ export const DesignerApp = () => {
 
   const commonText = useIntlMessages(commonMessages);
   const isRuntimeAvailable = !isEmptyString(workflowRuntimeBaseUrl);
+
+  // When the runtime base URL changes (e.g., debugger starts/stops), reset service initialization
+  // so that BJSWorkflowProvider re-registers services with the updated URL.
+  const prevRuntimeBaseUrl = useRef(workflowRuntimeBaseUrl);
+  useEffect(() => {
+    if (prevRuntimeBaseUrl.current !== workflowRuntimeBaseUrl) {
+      prevRuntimeBaseUrl.current = workflowRuntimeBaseUrl;
+      dispatch(resetServiceInitialization());
+    }
+  }, [workflowRuntimeBaseUrl, dispatch]);
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -351,11 +362,10 @@ export const DesignerApp = () => {
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                 <Designer />
                 <FloatingRunButton
-                  id={workflowDefinitionId}
                   saveDraftWorkflow={saveWorkflowFromDesigner}
-                  onRun={(newRunId: string | undefined) => {
+                  onRun={(newRunId: string) => {
                     switchToMonitoringView();
-                    setRunId(newRunId ?? '');
+                    setRunId(newRunId);
                   }}
                   isDarkMode={theme === Theme.Dark}
                   isDisabled={!isRuntimeAvailable}

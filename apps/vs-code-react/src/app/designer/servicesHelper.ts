@@ -92,9 +92,7 @@ export const getDesignerServices = (
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
-
   const emptyArmId = '00000000-0000-0000-0000-000000000000';
-
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;
@@ -327,8 +325,7 @@ export const getDesignerServices = (
       if (isLocal) {
         try {
           const currentRuntimeBaseUrl = getCurrentRuntimeBaseUrl?.() || workflowRuntimeBaseUrl;
-          const localApiVersion = '2019-10-01-edge-preview';
-          const url = `${currentRuntimeBaseUrl}/workflows/${workflowName}/triggers/${triggerId}/listCallbackUrl?api-version=${localApiVersion}`;
+          const url = `${currentRuntimeBaseUrl}/workflows/${workflowName}/triggers/${triggerId}/listCallbackUrl?api-version=${apiVersion}`;
           return (await httpClient.post({ uri: url })) as any;
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {

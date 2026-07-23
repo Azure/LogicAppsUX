@@ -68,7 +68,7 @@ export {
   useOperationAlternateSelectedNodeId,
   useOperationPanelSelectedNodeId,
 } from './state/panel/panelSelectors';
-export { initializeServices } from './state/designerOptions/designerOptionsSlice';
+export { initializeServices, resetServiceInitialization } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
 export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
