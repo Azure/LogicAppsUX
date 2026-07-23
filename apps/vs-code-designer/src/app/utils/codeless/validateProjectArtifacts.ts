@@ -6,10 +6,8 @@ import {
   ProjectDirectoryPathKey,
   appKindSetting,
   connectionsFileName,
-  defaultVersionRange,
   designTimeDirectoryName,
   extensionBundleId,
-  hostFileContent,
   hostFileName,
   localSettingsFileName,
   logicAppKind,
@@ -25,11 +23,12 @@ import {
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
+import { generateHostJson, generateDesignTimeHostJson } from '../vsCodeConfig/generators';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { IHostJsonV2, ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -190,29 +189,6 @@ export async function regenerateLocalSettings(
 }
 
 /**
- * Returns the baseline project-level host.json content. This mirrors the workspace creation path
- * (CreateLogicAppWorkspace.getHostContent) so a regenerated host.json matches a freshly created one.
- * @returns {IHostJsonV2} The baseline host.json content.
- */
-function getRootHostFileContent(): IHostJsonV2 {
-  return {
-    version: '2.0',
-    logging: {
-      applicationInsights: {
-        samplingSettings: {
-          isEnabled: true,
-          excludedTypes: 'Request',
-        },
-      },
-    },
-    extensionBundle: {
-      id: extensionBundleId,
-      version: defaultVersionRange,
-    },
-  };
-}
-
-/**
  * Ensures the project-level host.json exists and is structurally valid, healing it when needed.
  * Because {@link isLogicAppProject} identifies a project by its workflow-folder signal (not host.json),
  * a source-controlled clone can reach this point with host.json missing or corrupted; without a valid
@@ -230,7 +206,7 @@ export async function regenerateRootHostFile(projectPath: string): Promise<{ cha
     return { changed: false, changedArtifacts: [] };
   }
 
-  await writeFormattedJson(hostFilePath, getRootHostFileContent());
+  await writeFormattedJson(hostFilePath, generateHostJson());
   return { changed: true, changedArtifacts: [hostFileName] };
 }
 
@@ -370,27 +346,27 @@ async function ensureDesignTimeDirectory(projectPath: string): Promise<Uri> {
  * such as a pinned extension bundle version are not lost.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }>}
+ * @returns {Promise<{ uri: Uri; hostRegenerated: boolean; localSettingsRegenerated: boolean; changedArtifacts: string[] }>}
  * The design-time directory Uri, which baseline files were regenerated, and the human-readable label(s)
  * for the artifact(s) that changed.
  */
 export async function regenerateDesignTimeDirectory(
   context: IActionContext,
   projectPath: string
-): Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }> {
+): Promise<{ uri: Uri; hostRegenerated: boolean; localSettingsRegenerated: boolean; changedArtifacts: string[] }> {
   const designTimeDirectory = await ensureDesignTimeDirectory(projectPath);
   const validation = await validateDesignTimeDirectory(projectPath);
 
-  const hostRegenerated = !validation.hostFileValid;
-  const settingsRegenerated = !validation.settingsFileValid;
+  const shouldRegenerateHostJson = !validation.hostFileValid;
+  const shouldRegenerateLocalSettingsJson = !validation.settingsFileValid;
   const changedArtifacts: string[] = [];
 
-  if (hostRegenerated) {
-    await writeFormattedJson(path.join(designTimeDirectory.fsPath, hostFileName), hostFileContent);
+  if (shouldRegenerateHostJson) {
+    await writeFormattedJson(path.join(designTimeDirectory.fsPath, hostFileName), generateDesignTimeHostJson());
     changedArtifacts.push(`${designTimeArtifactPrefix}${hostFileName}`);
   }
 
-  if (settingsRegenerated) {
+  if (shouldRegenerateLocalSettingsJson) {
     const logicAppType = await detectProjectType(projectPath);
     const useNodeWorker = useNodeDesignTimeWorker(projectPath);
     const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType, useNodeWorker);
@@ -407,7 +383,7 @@ export async function regenerateDesignTimeDirectory(
     changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
-  return { uri: designTimeDirectory, hostRegenerated, settingsRegenerated, changedArtifacts };
+  return { uri: designTimeDirectory, hostRegenerated: shouldRegenerateHostJson, localSettingsRegenerated: shouldRegenerateLocalSettingsJson, changedArtifacts };
 }
 
 /**

@@ -2,9 +2,7 @@ import {
   artifactsDirectory,
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
-  defaultVersionRange,
   devContainerFolderName,
-  extensionBundleId,
   extensionCommand,
   funcIgnoreFileName,
   gitignoreFileName,
@@ -30,9 +28,10 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { writeFormattedJson } from '../../../utils/fs';
+import { generateHostJson } from '../../../utils/vsCodeConfig/generators';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
-import type { IFunctionWizardContext, IHostJsonV2, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { getLocalSettingsSchema } from '../../../utils/appSettings/localSettings';
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
@@ -60,25 +59,6 @@ export async function createRulesFiles(context: IFunctionWizardContext): Promise
 export async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'JAR'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'net472'), { recursive: true });
-}
-
-export async function getHostContent(): Promise<IHostJsonV2> {
-  const hostJson: IHostJsonV2 = {
-    version: '2.0',
-    logging: {
-      applicationInsights: {
-        samplingSettings: {
-          isEnabled: true,
-          excludedTypes: 'Request',
-        },
-      },
-    },
-    extensionBundle: {
-      id: extensionBundleId,
-      version: defaultVersionRange,
-    },
-  };
-  return hostJson;
 }
 
 export async function createLogicAppAndWorkflow(
@@ -204,8 +184,7 @@ export async function createLocalConfigurationFiles(
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
-  const hostJson: IHostJsonV2 = await getHostContent();
-  await writeFormattedJson(hostJsonPath, hostJson);
+  await writeFormattedJson(hostJsonPath, generateHostJson());
 
   const localSettingsJsonPath: string = path.join(logicAppFolderPath, localSettingsFileName);
   await writeFormattedJson(localSettingsJsonPath, localSettingsJson);

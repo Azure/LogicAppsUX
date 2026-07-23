@@ -6,4 +6,5 @@ export * from './tasksGenerator';
 export * from './launchGenerator';
 export * from './settingsGenerator';
 export * from './extensionsGenerator';
+export * from './hostGenerator';
 export * from './types';
