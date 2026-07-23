@@ -272,7 +272,8 @@ export const FloatingRunButton = ({
         await new Promise((resolve) => setTimeout(resolve, 500));
         const runResponse = await RunService().runTrigger(callbackInfo, payload);
         const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
-        onRun?.(runId);
+        onRun?.(runId ?? '');
+        setRunStatusMessage(null);
         return;
       }
 

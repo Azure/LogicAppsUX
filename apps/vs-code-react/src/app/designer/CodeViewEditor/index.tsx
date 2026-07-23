@@ -61,6 +61,7 @@ const CodeViewEditor = forwardRef(({ workflowKind, workflowFile, readOnly }: Cod
   useImperativeHandle(ref, () => ({
     getValue: () => code,
     hasChanges: () => changesMade,
+    resetChanges: () => setChangesMade(false),
   }));
 
   return isNullOrUndefined(code) ? null : (

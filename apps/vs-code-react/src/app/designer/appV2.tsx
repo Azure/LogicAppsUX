@@ -69,7 +69,7 @@ export const DesignerApp = () => {
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
 
-  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
+  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const queryClient = useQueryClient();
 
@@ -224,6 +224,7 @@ export const DesignerApp = () => {
         setInitialWorkflow(newWorkflow);
 
         clearDirtyState?.();
+        codeEditorRef.current?.resetChanges();
         return newWorkflow;
       } catch (error: any) {
         if (error.status !== 404) {

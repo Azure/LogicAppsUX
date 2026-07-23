@@ -54,17 +54,6 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
       return;
     }
 
-    this.panel = vscode.window.createWebviewPanel(
-      this.panelGroupKey, // Key used to reference the panel
-      this.panelName, // Title display in the tab
-      ViewColumn.Active, // Editor column to show the new webview panel in.
-      this.getPanelOptions()
-    );
-    this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
-    };
-
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!this.projectPath) {
@@ -75,6 +64,18 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
     if (!this.baseUrl) {
       throw new Error(localize('FunctionRuntimeNotStarted', 'Unable to determine function runtime base url. Please ensure the local runtime is started.'));
     }
+
+    this.panel = vscode.window.createWebviewPanel(
+      this.panelGroupKey, // Key used to reference the panel
+      this.panelName, // Title display in the tab
+      ViewColumn.Active, // Editor column to show the new webview panel in.
+      this.getPanelOptions()
+    );
+    
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
+    };
 
     // Fetch panel metadata which does all operations in parallel internally
     this.panelMetadata = await this.getDesignerPanelMetadata();
