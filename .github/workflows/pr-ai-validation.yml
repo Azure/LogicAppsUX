@@ -4,6 +4,11 @@ on:
   pull_request_target:
     types: [opened, edited, synchronize, labeled, unlabeled]
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to validate (manual runs only)'
+        required: false
+        type: string
 
 permissions:
   pull-requests: write
@@ -15,6 +20,8 @@ jobs:
   validate-pr:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
     steps:
       - name: Check if contributor is trusted
         uses: actions/github-script@v8
@@ -58,15 +65,38 @@ jobs:
           sparse-checkout: prompts/copilot-pr-desc-check.md
 
       - name: Install Copilot CLI
-        run: npm install -g @github/copilot@latest
+        shell: bash
+        run: |
+          # The npm package is a thin loader that fetches a platform-native binary on first run.
+          # A flaky fetch can leave that binary missing/non-executable, which surfaces later as an
+          # intermittent exit 126 ("cannot execute") at invocation time. Retry the install and verify
+          # the binary actually runs (copilot --version) before proceeding.
+          install_ok=0
+          for attempt in 1 2 3; do
+            if npm install -g @github/copilot@latest && copilot --version >/dev/null 2>&1; then
+              install_ok=1; break
+            fi
+            echo "::warning::Copilot CLI install/verify attempt ${attempt} failed; retrying..."
+            sleep $((attempt * 5))
+          done
+          if [ "$install_ok" != "1" ]; then
+            echo "::warning::Copilot CLI could not be verified after 3 attempts; validation will fall back."
+          fi
 
       - name: Gather PR data
         id: gather
         uses: actions/github-script@v8
         with:
           script: |
-            const pr = context.payload.pull_request;
             const fs = require('fs');
+            let pr = context.payload.pull_request;
+            if (!pr) {
+              const num = Number(process.env.PR_NUMBER);
+              if (!num) { core.setFailed('No pull_request context and no pr_number input provided.'); return; }
+              pr = (await github.rest.pulls.get({
+                owner: context.repo.owner, repo: context.repo.repo, pull_number: num
+              })).data;
+            }
             const prData = {
               number: pr.number,
               title: pr.title,
@@ -116,19 +146,26 @@ jobs:
           MODELS="${COPILOT_MODELS:-claude-opus-4.8 claude-opus-4.6 gpt-5-mini}"
           RESULT=""; CLI_EXIT=1
           for MODEL in $MODELS; do
-            RESULT=$(timeout 90 copilot --yolo \
-              -p "$(cat /tmp/full-prompt.txt)" \
-              --model "$MODEL" 2>&1)
-            CLI_EXIT=$?
-            [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ] && break
-            echo "::warning::Copilot model $MODEL failed (exit $CLI_EXIT) — trying next"
-            RESULT=""; CLI_EXIT=1
+            for try in 1 2; do
+              RESULT=$(timeout 90 copilot --yolo \
+                -p "$(cat /tmp/full-prompt.txt)" \
+                --model "$MODEL" 2>&1)
+              CLI_EXIT=$?
+              if [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ]; then break 2; fi
+              echo "::warning::Copilot model $MODEL attempt $try failed (exit $CLI_EXIT)"
+              # 126/127 = binary could not be executed (transient install/exec flake) — brief backoff and retry.
+              # Any other non-zero exit is deterministic for this model, so move on to the next one.
+              if [ $CLI_EXIT -eq 126 ] || [ $CLI_EXIT -eq 127 ]; then sleep 5; else break; fi
+            done
           done
           set -e
 
           if [ $CLI_EXIT -ne 0 ] || [ -z "$RESULT" ]; then
             echo "cli_success=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Copilot CLI exit $CLI_EXIT — using fallback"
+            echo "::warning::Copilot CLI unavailable (last exit $CLI_EXIT) — using fallback"
+            echo "----- Copilot CLI output (tail, for debugging) -----"
+            printf '%s\n' "$RESULT" | tail -n 25
+            echo "----------------------------------------------------"
           else
             echo "$RESULT" | python3 -c "
           import sys, json
@@ -156,7 +193,7 @@ jobs:
           LOGIC_APP_URL: ${{ vars.PR_VALIDATION_LOGIC_APP_URL }}
         with:
           script: |
-            const pr_number = context.payload.pull_request.number;
+            const pr_number = Number(process.env.PR_NUMBER);
             if (!process.env.LOGIC_APP_URL) {
               console.log('No Logic App URL configured either. Skipping validation.');
               return;
@@ -168,20 +205,19 @@ jobs:
                 body: JSON.stringify({ pr_id: pr_number })
               });
               if (!response.ok) {
-                if (response.status === 502) { console.log('Logic App Bad Gateway. Skipping.'); return; }
-                throw new Error(`API request failed with status ${response.status}`);
+                // Validator infrastructure is unavailable (e.g. 502/503/504). Validation could not run,
+                // which is not a defect in the PR — do not block it and do not post a false failure.
+                // The check fails only on an actual negative verdict (see "Post result and manage labels").
+                console.log(`Logic App unavailable (status ${response.status}). Skipping validation (non-blocking).`);
+                return;
               }
               const result = await response.json();
               const fs = require('fs');
               fs.writeFileSync('/tmp/validation-result.json', JSON.stringify(result));
             } catch (error) {
-              console.error('Fallback failed:', error.message);
-              await github.rest.issues.createComment({
-                owner: context.repo.owner, repo: context.repo.repo,
-                issue_number: pr_number,
-                body: `## ❌ PR Validation Error\n\nBoth Copilot CLI and Logic App fallback failed.\n\nError: ${error.message}`
-              });
-              core.setFailed(`Validation error: ${error.message}`);
+              // Network error reaching the fallback — infrastructure unavailable, not a PR problem. Skip, don't block.
+              console.log(`Logic App fallback unreachable: ${error.message}. Skipping validation (non-blocking).`);
+              return;
             }
 
       - name: Post result and manage labels
@@ -192,7 +228,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const pr_number = context.payload.pull_request?.number;
+            const pr_number = Number(process.env.PR_NUMBER);
             if (!pr_number) return;
 
             const botCommentIdentifier = '## 🤖 AI PR Validation Report';
