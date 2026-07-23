@@ -162,11 +162,13 @@ describe('DesignerCommandBar (V1) save path', () => {
     expect(mockSerializeWorkflow.mock.calls[0][0]).toHaveProperty('marker', 'fresh');
   });
 
-  it('serializes a node description edited after the workflow was already dirty (issue #2 – description not persisting)', async () => {
+  it('serializes a node description edited after the workflow was already dirty (description persistence regression, #9447)', async () => {
     // Serialize using the description from the live store state so we can assert the edit
     // survives all the way into the posted save message, mirroring the real serializer which
-    // reads rootState.workflow.operations[id].description.
-    mockSerializeWorkflow.mockImplementation(async (state: any) => ({
+    // reads rootState.workflow.operations[id].description. Scoped to this test via
+    // mockImplementationOnce so it does not leak into later tests (clearAllMocks does not
+    // reset implementations).
+    mockSerializeWorkflow.mockImplementationOnce(async (state: any) => ({
       definition: {
         triggers: {
           manualTrigger: { type: 'Request', description: state.workflow.operations?.manualTrigger?.description },
