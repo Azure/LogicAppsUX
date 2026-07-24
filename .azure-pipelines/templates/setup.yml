@@ -5,12 +5,14 @@ steps:
       versionSpec: '24.x'
     condition: succeeded()
 
-  # Route package restores through the CFS feed for pipeline builds only.
-  # The root .npmrc stays on the public registry so local dev and GitHub Actions are unaffected.
-  - script: |
-      echo.>> .npmrc
-      type .azure-pipelines\.npmrc >> .npmrc
-      type .npmrc
+  # Route package restores through the CFS feed for pipeline builds only (SFI Network
+  # Isolation, MountainPass SR21). The checked-in root .npmrc stays on the public registry
+  # so local dev and GitHub Actions are unaffected. The config is inlined here (not read
+  # from a checked-in file) because the release job checks out a version tag before this
+  # template runs — older tags must still get the CFS registry.
+  - powershell: |
+      Add-Content .npmrc "`nregistry=https://pkgs.dev.azure.com/msazure/one/_packaging/one_PublicPackages/npm/registry/`nalways-auth=true`nignore-scripts=true"
+      Get-Content .npmrc
     displayName: "Apply CFS registry config (pipeline only)"
     condition: succeeded()
 
