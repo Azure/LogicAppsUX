@@ -974,9 +974,9 @@
             "description": "Show a warning when the \"deploySubpath\" setting does not match the selected folder for deploying.",
             "default": true
           },
-          "azureLogicAppsStandard.showProjectWarning": {
+          "azureLogicAppsStandard.enableProjectConsistencyChecks": {
             "type": "boolean",
-            "description": "Show a warning when an Azure Logic App project was detected that has not been initialized for use in VS Code.",
+            "description": "Run consistency check on project files and .vscode configuration on startup and prompt to regenerate when files missing or out of date.",
             "default": true
           },
           "azureLogicAppsStandard.showTargetFrameworkWarning": {

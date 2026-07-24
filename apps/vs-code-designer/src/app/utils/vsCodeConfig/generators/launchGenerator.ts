@@ -2,16 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { VSCodeProjectConfig } from './types';
+import type { LaunchJsonContent, VSCodeProjectConfig } from './types';
 import { extensionCommand, launchVersion } from '../../../../constants';
 import { FuncVersion, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { getDotnetRuntimeFromFramework, getDotnetRuntimeFromFunc } from '../../dotnet/dotnet';
 import type { DebugConfiguration } from 'vscode';
-
-export interface LaunchJsonContent {
-  version: string;
-  configurations: DebugConfiguration[];
-}
 
 /**
  * Generates the canonical launch.json content for a Logic App project.

@@ -9,6 +9,7 @@ import type {
   ProjectType,
   TargetFramework,
 } from '@microsoft/vscode-extension-logic-apps';
+import type { DebugConfiguration } from 'vscode';
 
 export interface VSCodeProjectConfig {
   projectType: ProjectType;
@@ -22,10 +23,26 @@ export interface VSCodeProjectConfig {
   customCodeTargetFramework?: TargetFramework;
 }
 
+export interface VSCodeConfigJson {
+  tasksJson: TasksJsonContent;
+  launchJson: LaunchJsonContent;
+  settingsJson: Record<string, unknown>;
+  extensionsJson: ExtensionsJsonContent;
+}
+
 export interface TasksJsonContent {
   version: string;
   tasks: Record<string, unknown>[];
   inputs?: TaskInputJson[];
+}
+
+export interface LaunchJsonContent {
+  version: string;
+  configurations: DebugConfiguration[];
+}
+
+export interface ExtensionsJsonContent {
+  recommendations: string[];
 }
 
 export interface TaskDefinitionJson {

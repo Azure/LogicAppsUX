@@ -4,7 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { enableManagedIdentityAuthSetting, useNodeDesignTimeWorkerSetting } from '../../../constants';
+import {
+  enableProjectConsistencyChecksSetting,
+  enableManagedIdentityAuthSetting,
+  useNodeDesignTimeWorkerSetting,
+} from '../../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
@@ -171,15 +175,26 @@ export function useNodeDesignTimeWorker(fsPath?: string | WorkspaceFolder): bool
 }
 
 /**
- * Indicates whether the extension should enforce `WORKFLOWS_AUTHENTICATION_METHOD = managedServiceIdentity`
- * in local.settings.json. Controlled by the `azureLogicAppsStandard.enableManagedIdentityAuth` setting.
- * Defaults to `false` when the setting is absent or unset, or when the VS Code API is unavailable (e.g. in tests).
+ * Indicates whether the extension should enforce `WORKFLOWS_AUTHENTICATION_METHOD = managedServiceIdentity` in local.settings.json.
+ * Defaults to `false` when the setting is unset.
  */
 export function isManagedIdentityAuthEnabled(): boolean {
   try {
     return getGlobalSetting<boolean>(enableManagedIdentityAuthSetting) === true;
   } catch {
     return false;
+  }
+}
+
+/**
+ * Indicates whether the extension should perform consistency checks on project files and .vscode artifacts.
+ * Defaults to `true` when the setting is unset.
+ */
+export function isProjectConsistencyCheckEnabled(): boolean {
+  try {
+    return getGlobalSetting<boolean>(enableProjectConsistencyChecksSetting) !== false;
+  } catch {
+    return true;
   }
 }
 

@@ -3,10 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { csDevKitExtensionId, dotnetExtensionId, functionsExtensionId, logicAppsStandardExtensionId } from '../../../../constants';
-
-export interface ExtensionsJsonContent {
-  recommendations: string[];
-}
+import type { ExtensionsJsonContent } from './types';
 
 /**
  * Generates the canonical extensions.json content for a Logic App project.
