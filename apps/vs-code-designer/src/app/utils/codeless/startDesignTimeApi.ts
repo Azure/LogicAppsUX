@@ -26,6 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
+import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
 import { ensureProjectRootArtifacts, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
 import { delay } from '../delay';
 import {
@@ -255,6 +256,10 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           if (!designTimeDirectory) {
             throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
           }
+
+          // If the project uses the JDBC built-in connector (driver JARs present) but no local Java
+          // runtime is installed, warn the user (non-blocking) that a JDK is a prerequisite (issue #8597).
+          warnIfJdbcJavaRuntimeMissing(actionContext, projectPath).catch(() => undefined);
 
           const cwd: string = designTimeDirectory.fsPath;
           const portArgs = `--port ${designTimeInst.port}`;

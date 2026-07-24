@@ -31,6 +31,10 @@ export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
 export const artifactsDirectory = 'Artifacts';
 export const libDirectory = 'lib';
+// Folder (under lib/) that holds the client SDK assemblies for Java/.NET built-in operations.
+export const builtinOperationSdksFolderName = 'builtinOperationSdks';
+// Folder (under lib/builtinOperationSdks/) where JDBC driver JAR files are placed.
+export const jarFolderName = 'JAR';
 export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
@@ -317,6 +321,8 @@ export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 export const azureWebJobsFeatureFlagsKey = 'AzureWebJobsFeatureFlags';
 export const multiLanguageWorkerSetting = 'EnableMultiLanguageWorker';
+// Documentation for the JDBC built-in connector prerequisites (multi-language worker + JDK + driver JARs).
+export const jdbcConnectorDocsUrl = 'https://learn.microsoft.com/azure/logic-apps/connectors/built-in/reference/jdbc/';
 // Azure Functions runtime setting (passed as env var via local.settings.json
 // Values) that pins the absolute path of the `node` binary used by the
 // in-proc8 InlineCodeDependencyGenerator. Keeps inline-JS workflows working

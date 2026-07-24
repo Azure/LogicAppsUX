@@ -5,6 +5,7 @@
 import {
   ProjectDirectoryPathKey,
   appKindSetting,
+  azureWebJobsFeatureFlagsKey,
   connectionsFileName,
   defaultVersionRange,
   designTimeDirectoryName,
@@ -30,6 +31,7 @@ import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { hasCodefulSdkReference } from '../codeful';
 import { isCustomCodeFunctionsProjectInRoot } from '../customCodeUtils';
+import { hasJdbcDriverJars, mergeMultiLanguageWorkerFlag } from '../java/jdbcConnector';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { IHostJsonV2, ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -200,6 +202,20 @@ export async function regenerateLocalSettings(
   for (const key of referencedSettings) {
     if (currentValues[key] === undefined && settingsToAdd[key] === undefined) {
       settingsToAdd[key] = '';
+    }
+  }
+
+  // JDBC/Java built-in connectors run on the Functions multi-language (Java) worker, which is only
+  // enabled by the AzureWebJobsFeatureFlags=EnableMultiLanguageWorker app setting. A plain codeless logic
+  // app does not get this flag by default, so a JDBC driver dropped into lib/builtinOperationSdks/JAR is
+  // never loaded and connections fail with "JDBC client library is missing" (issue #8597). If driver JARs
+  // are present, self-heal by ensuring the flag is set — merged with any flags the user already has so we
+  // never clobber existing values.
+  if (await hasJdbcDriverJars(projectPath)) {
+    const currentFlags = currentValues[azureWebJobsFeatureFlagsKey] ?? settingsToAdd[azureWebJobsFeatureFlagsKey];
+    const mergedFlags = mergeMultiLanguageWorkerFlag(currentFlags);
+    if (mergedFlags !== currentValues[azureWebJobsFeatureFlagsKey]) {
+      settingsToAdd[azureWebJobsFeatureFlagsKey] = mergedFlags;
     }
   }
 
