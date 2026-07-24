@@ -1309,6 +1309,16 @@ async function main(): Promise<void> {
       // Suppress "wants to sign in" auth dialog — uses silent auth that
       // returns undefined instead of prompting when no cached token exists.
       'azureLogicAppsStandard.silentAuth': true,
+      // Skip the pre-debug "You must have Azure Functions Core Tools installed"
+      // modal. On hosted CI runners (notably windows-latest) the auto-provisioned
+      // func.exe is present on disk but `func --version` can fail to execute, which
+      // pops a BLOCKING modal that aborts F5 before any task in the codeful debug
+      // chain (clean/build/publish/func host start) is dispatched. The codeful
+      // debug test only asserts that those tasks START (and that clean/build exit
+      // 0) — it explicitly tolerates `func: host start` failing — so bypassing this
+      // validation modal is required for the F5 task chain to run headlessly and is
+      // safe for every phase (never wanted interactively in automation).
+      'azureLogicAppsStandard.validateFuncCoreTools': false,
       // Short pick-process timeout for Phase 4.10. The codeful-debug
       // recorder test asserts task dispatch, so bound process picking after
       // the generated task chain has started instead of waiting the default
