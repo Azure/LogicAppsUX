@@ -49,6 +49,7 @@ export interface DesignerOptionsState {
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 20)
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
+    hideRetryPolicyStatusCodes?: boolean; // hide the HTTP status codes input for action retry policies
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
     enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
