@@ -74,8 +74,9 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { EditorView, VSBrowser, type WebDriver } from 'vscode-extension-tester';
+import { EditorView, VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
 import { captureScreenshot, sleep } from './helpers';
+import { openWorkspaceFileInSession } from './designerHelpers';
 
 const TEST_TIMEOUT = 1500_000;
 
@@ -344,14 +345,28 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     const workspaceFile = getWorkspaceForVariant(variant);
     console.log(`[codefulDebugTasks] Startup .code-workspace: ${workspaceFile}`);
 
-    // The generated .code-workspace is passed as the runPhase startup resource.
-    // Re-verify the recorder after workspace activation before triggering F5.
-    const ready = await waitForRecorder(driver, 60_000);
+    // Capture the freshness watermark BEFORE opening the workspace so any design-time
+    // evidence produced by onboarding auto-start (after the window reload) counts as
+    // fresh regardless of exact timing.
+    const phaseStartTime = Date.now() - 1000;
+
+    // Explicitly open the generated .code-workspace after launch. Relying solely on
+    // ExTester's startup `resources` (which uses `code -r` / CLI IPC) silently fails on
+    // headless CI: the VS Code IPC socket isn't wired up when launched via ChromeDriver,
+    // so VS Code lands on the empty Welcome screen with NO workspace folder open. With no
+    // folder open, getWorkspaceLogicAppFolders() is empty, codeful design-time auto-start
+    // correctly no-ops, and no `workflow-designtime` evidence is ever produced — which is
+    // exactly the failure the CI screenshots showed. Opening via the command palette (the
+    // same proven path the codeless designer phases use) makes the workspace load
+    // deterministically so codeful onboarding auto-start can fire.
+    await openWorkspaceFileInSession(new Workbench(), workspaceFile);
+
+    // Re-verify the recorder after the workspace open reloads the extension host.
+    const ready = await waitForRecorder(driver, 90_000);
     if (!ready) {
       throw new Error('[codefulDebugTasks] Recorder not ready after workspace switch');
     }
 
-    const phaseStartTime = Date.now() - 1000;
     const designTimeReady = await waitForDesignTimeEvidence(workspaceDir, phaseStartTime);
     if (!designTimeReady) {
       await captureScreenshot(driver, `${variant}-design-time-not-ready`, SCREENSHOT_DIR);
