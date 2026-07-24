@@ -304,6 +304,14 @@ export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Work
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
 
+// globalState key + interval throttling the expensive full-byte extension-bundle
+// integrity hash. On most launches a fast lstat tree fingerprint is compared
+// instead; the deep byte-hash only runs when this throttle says a verification is
+// due (defense-in-depth against an in-place edit that keeps identical size+mtime).
+// Mirrors the dependency update-check throttle pattern.
+export const lastBundleDeepVerificationKey = 'azureLogicAppsStandard.lastBundleDeepVerification';
+export const bundleDeepVerificationIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
