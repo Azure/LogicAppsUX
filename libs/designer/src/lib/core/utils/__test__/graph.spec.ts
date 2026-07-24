@@ -1,6 +1,15 @@
-import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds, isTriggerNode } from '../graph';
+import {
+  createWorkflowEdge,
+  createWorkflowNode,
+  isRootNode,
+  getAllNodesInsideNode,
+  getUpstreamNodeIds,
+  isTriggerNode,
+  isOperationNameValid,
+} from '../graph';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { getTestIntl } from '../../../__test__/intl-test-helper';
 describe('Graph Utilities', () => {
   const graph = {
     id: 'root',
@@ -124,6 +133,20 @@ describe('Graph Utilities', () => {
       expect(isTriggerNode('Compose_2', nodesMetadata)).toBeFalsy();
       expect(isTriggerNode('Compose_10', nodesMetadata)).toBeFalsy();
       expect(isTriggerNode('Compose_3', nodesMetadata)).toBeFalsy();
+    });
+  });
+
+  describe('isOperationNameValid', () => {
+    it('should return true as there is no node with that name', () => {
+      expect(isOperationNameValid('Compose', 'Compose_12', 'Compose_', false, nodesMetadata, {}, getTestIntl()).isValid).toBeTruthy();
+    });
+
+    it('should return true as there is no other node with that name, even if the selected node previous and new name are equal', () => {
+      expect(isOperationNameValid('Compose', 'Compose_13', 'Compose_13', false, nodesMetadata, {}, getTestIntl()).isValid).toBeTruthy();
+    });
+
+    it('should return false as there is already a node with that name', () => {
+      expect(isOperationNameValid('Compose', 'Compose_5', 'Compose_', false, nodesMetadata, {}, getTestIntl()).isValid).toBeFalsy();
     });
   });
 
