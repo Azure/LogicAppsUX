@@ -18,7 +18,7 @@ import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
 import { fetchExpectedMd5, isMissingPackageError } from './integrity';
 import { getJsonFeed } from './feed';
-import { shouldCheckForDependencyUpdates } from './dependencyUpdateCheck';
+import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from './dependencyUpdateCheck';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
@@ -1406,6 +1406,92 @@ function scheduleBackgroundBundleDeepVerification(
 }
 
 /**
+ * Tracks a single in-flight background bundle "is there a newer version?" feed
+ * refresh so a slow/flaky link can't stack up parallel CDN lookups. Reset in
+ * {@link resetCachedBundleVersion}.
+ */
+let backgroundBundleFeedRefreshPromise: Promise<void> | undefined;
+
+/**
+ * Test/coordination seam: resolves once any in-flight background bundle feed
+ * refresh (and its background upgrade download, if triggered) has settled.
+ */
+export function awaitBackgroundBundleFeedRefresh(): Promise<void> {
+  return backgroundBundleFeedRefreshPromise ?? Promise.resolve();
+}
+
+/**
+ * Options for {@link scheduleBackgroundBundleFeedRefresh}.
+ */
+interface BackgroundFeedRefreshOptions {
+  /** Base URL the bundle is served from (public CDN unless pinned/experimental). */
+  baseUrl: string;
+  /** The healthy local bundle version the fast gate just trusted. */
+  localVersion: string;
+  /**
+   * When the effective base URL fell back from a broken experimental source to
+   * the public CDN, the feed lookup must target the public index too.
+   */
+  useExperimentalPublicFallback: boolean;
+}
+
+/**
+ * Discovers whether the CDN publishes a newer bundle version than the trusted
+ * local copy — OFF the activation hot path.
+ *
+ * The version "feed" GET (`index.json` on the bundle CDN) used to run
+ * synchronously inside the activation-time download, which
+ * `ensureExtensionBundleHealthy` awaits via `waitForExtensionBundleReady()`. On
+ * a slow/flaky link to `cdn.functions.azure.com` that single GET adds tens of
+ * seconds to EVERY launch whose daily update-check window is due (the in-memory
+ * feed cache is wiped on each process restart). Since a healthy local bundle is
+ * already good enough for this session, we move that lookup here: activation
+ * proceeds immediately on the local bundle, and a newer version — if any — is
+ * downloaded in the background and applied on the next launch. Mirrors the
+ * throttled Node/Func/.NET "latest version" lookups. Deduped to at most one
+ * in-flight run and gated by the caller to the shared update-check window.
+ */
+function scheduleBackgroundBundleFeedRefresh(context: IActionContext, options: BackgroundFeedRefreshOptions): void {
+  if (backgroundBundleFeedRefreshPromise) {
+    return;
+  }
+  backgroundBundleFeedRefreshPromise = (async () => {
+    try {
+      let feedVersions: string[];
+      if (options.useExperimentalPublicFallback) {
+        const publicIndexUrl = `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${extensionBundleId}/index.json`;
+        feedVersions = await getJsonFeed(context, publicIndexUrl);
+      } else {
+        feedVersions = await getWorkflowBundleFeed(context);
+      }
+      const latestFeedBundleVersion = pickLatestVersion(feedVersions);
+      if (semver.gt(latestFeedBundleVersion, options.localVersion)) {
+        ext.outputChannel?.appendLog(
+          `Logic Apps extension bundle ${latestFeedBundleVersion} is available (local ${options.localVersion}); downloading in the background for the next launch.`
+        );
+        // The bundle on disk is about to change, so the session health cache is
+        // no longer authoritative for the newer version.
+        healthyBundleVersion = null;
+        await downloadBundleWithProgress(context, options.baseUrl, latestFeedBundleVersion, 'newerVersion');
+        ext.defaultBundleVersion = latestFeedBundleVersion;
+        ext.latestBundleVersion = latestFeedBundleVersion;
+      }
+      // Record the shared daily update-check window so the next launch skips this
+      // network lookup entirely (steady-state activation makes zero bundle CDN
+      // calls). The dependency validators also record this when their own update
+      // check runs; a redundant write is a harmless timestamp refresh.
+      await recordDependencyUpdateCheck();
+    } catch (error) {
+      ext.outputChannel?.appendLog(
+        `Logic Apps extension bundle background version check failed: ${error instanceof Error ? error.message : String(error)}`
+      );
+    } finally {
+      backgroundBundleFeedRefreshPromise = undefined;
+    }
+  })();
+}
+
+/**
  * Confirms the CDN hasn't republished `version` with different bytes than the
  * local copy. Compares the sidecar `sourceMd5` against the CDN `Content-MD5`
  * (a cheap HEAD). On a genuine republish, forces a background re-download so the
@@ -1848,28 +1934,44 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
     const fellThroughFromExperimental = baseUrlInfo.isExperimental;
     const effectiveBaseUrl = fellThroughFromExperimental ? PUBLIC_BUNDLE_BASE_URL : baseUrlInfo.baseUrl;
 
-    // Throttle the CDN "is there a newer bundle version?" feed lookup. That GET
-    // (`getWorkflowBundleFeed` -> index.json on the bundle CDN) runs on the
-    // activation hot path: dependency validation blocks on this download via
-    // `waitForExtensionBundleReady`, so on a slow/flaky link to the bundle CDN it
-    // adds tens of seconds to EVERY launch (the in-memory feed cache is wiped on
-    // each process restart). When a healthy local bundle already exists and the
-    // shared daily update-check window is not due, skip the feed entirely and
-    // trust the latest local bundle — its on-disk integrity is still confirmed by
-    // the cheap lstat fast gate, and a genuine corruption/legacy sidecar falls
-    // through to the feed-backed verify/repair path below. Newer bundle versions
-    // are still picked up at most once per update-check window, mirroring the
-    // Node/Func/.NET "latest version" network lookups (`shouldCheckForDependency-
-    // Updates`). `forceVerify` (the background deep verify) intentionally bypasses
-    // this so a due deep check still consults the feed off the activation path.
-    if (!options.forceVerify && latestLocalBundleVersion !== '0.0.0' && !shouldCheckForDependencyUpdates()) {
-      const throttledGate = await evaluateBundleFastGate(latestLocalBundleVersion);
-      if (throttledGate.ok) {
-        context.telemetry.properties.localBundleHashCheck = 'fastPathThrottled';
-        context.telemetry.properties.extensionBundleUpdateCheckThrottled = 'true';
-        if (throttledGate.deepVerify) {
+    // Healthy local bundle short-circuit — NEVER block activation on the CDN.
+    // `ensureExtensionBundleHealthy` awaits this download via
+    // `waitForExtensionBundleReady()`, so any synchronous CDN call here freezes
+    // activation. Two CDN calls used to run on this hot path: the version "feed"
+    // GET (`getWorkflowBundleFeed` -> index.json) and the byte-hash + `Content-
+    // MD5` HEAD inside `verifyLocalBundle`. On a slow/flaky link to the bundle
+    // CDN each adds tens of seconds to launch (the in-memory feed cache is wiped
+    // on every process restart). When a healthy local bundle already exists (the
+    // cheap lstat fast gate passes), trust it for this session and move BOTH the
+    // authoritative byte verification AND the "is there a newer version?" feed
+    // lookup OFF the hot path:
+    //   * deep byte verify + CDN republish check -> throttled background job.
+    //   * newer-version discovery + upgrade download -> throttled background job,
+    //     gated by the shared daily update-check window (mirrors the Node/Func/
+    //     .NET "latest version" lookups). A newer bundle is picked up at most
+    //     once per window and applied on the next launch.
+    // Only a missing / corrupt / legacy-sidecar bundle (fast gate NOT ok) falls
+    // through to the synchronous feed-backed verify/repair path below.
+    // `forceVerify` (the background deep verify itself) bypasses this so a due
+    // deep check still consults the feed off the activation path.
+    if (!options.forceVerify && latestLocalBundleVersion !== '0.0.0') {
+      const localGate = await evaluateBundleFastGate(latestLocalBundleVersion);
+      if (localGate.ok) {
+        const updateCheckDue = shouldCheckForDependencyUpdates();
+        context.telemetry.properties.localBundleHashCheck = updateCheckDue ? 'fastPath' : 'fastPathThrottled';
+        if (!updateCheckDue) {
+          context.telemetry.properties.extensionBundleUpdateCheckThrottled = 'true';
+        }
+        if (localGate.deepVerify) {
           scheduleBackgroundBundleDeepVerification(context, latestLocalBundleVersion, {
             republishBaseUrl: effectiveBaseUrl,
+          });
+        }
+        if (updateCheckDue) {
+          scheduleBackgroundBundleFeedRefresh(context, {
+            baseUrl: effectiveBaseUrl,
+            localVersion: latestLocalBundleVersion,
+            useExperimentalPublicFallback: fellThroughFromExperimental,
           });
         }
         ext.defaultBundleVersion = latestLocalBundleVersion;
@@ -1879,8 +1981,9 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
         context.telemetry.properties.didUpdateExtensionBundle = 'false';
         return false;
       }
-      // Fast gate failed (missing / corrupt / legacy sidecar needing a byte
-      // verify) → fall through to the feed-backed flow so we can repair.
+      // Fast gate NOT ok (missing / corrupt / empty / legacy sidecar needing a
+      // byte verify) → fall through to the synchronous feed-backed verify/repair
+      // flow below so we can bootstrap or repair the bundle.
     }
 
     let latestFeedBundleVersion = '0.0.0';
@@ -1909,31 +2012,12 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
       return true;
     }
 
-    // Local is at least as new as the feed — verify the on-disk bundle before
-    // trusting it. This runs on the activation hot path: `ensureExtensionBundle-
-    // Healthy` awaits this download via `waitForExtensionBundleReady()`, so any
-    // heavy verification here freezes activation. Gate with the cheap lstat fast
-    // path first; only fall back to the ~40s full-byte hash + CDN HEAD when the
-    // bundle is genuinely missing/broken. A healthy bundle confirms its bytes
-    // (and CDN republish) off the activation path via a throttled background
-    // deep verification.
+    // Local is at least as new as the feed but the fast gate did NOT pass (or
+    // there was no local bundle to gate) — verify/repair the on-disk bundle.
+    // This is the rare first-run / genuinely-broken path, so the ~40s full-byte
+    // hash + CDN HEAD is acceptable here (a healthy bundle already returned above
+    // without touching the CDN).
     if (latestLocalBundleVersion !== '0.0.0') {
-      const fastGate = options.forceVerify ? undefined : await evaluateBundleFastGate(latestLocalBundleVersion);
-      if (fastGate?.ok) {
-        context.telemetry.properties.localBundleHashCheck = 'fastPath';
-        if (fastGate.deepVerify) {
-          scheduleBackgroundBundleDeepVerification(context, latestLocalBundleVersion, {
-            republishBaseUrl: effectiveBaseUrl,
-          });
-        }
-        ext.defaultBundleVersion = latestLocalBundleVersion;
-        ext.latestBundleVersion = latestLocalBundleVersion;
-        context.telemetry.properties.extensionBundleVersionSource = 'localLatest';
-        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-        context.telemetry.properties.didUpdateExtensionBundle = 'false';
-        return false;
-      }
-
       const hashCheck = await verifyLocalBundle(context, effectiveBaseUrl, latestLocalBundleVersion, options);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
       if (requiresBundleRepair(hashCheck)) {
@@ -2048,6 +2132,7 @@ export function resetCachedBundleVersion(): void {
   inFlightBundleWork = undefined;
   healthyBundleVersion = null;
   backgroundBundleDeepVerifyPromise = undefined;
+  backgroundBundleFeedRefreshPromise = undefined;
 }
 
 /**

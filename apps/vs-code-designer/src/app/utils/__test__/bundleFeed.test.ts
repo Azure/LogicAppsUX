@@ -13,6 +13,7 @@ import {
   ensureExtensionBundleHealthy,
   invalidateBundleHealthCache,
   awaitBackgroundBundleDeepVerification,
+  awaitBackgroundBundleFeedRefresh,
   computeBundleFingerprints,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -884,9 +885,10 @@ describe('downloadExtensionBundle', () => {
   };
 
   beforeEach(async () => {
-    // Drain any background deep-verify promise a prior test left in flight and
-    // clear the module dedupe flag so this test's fast gate can schedule its own.
+    // Drain any background deep-verify / feed-refresh promise a prior test left
+    // in flight and clear the module dedupe flags so this test can schedule its own.
     await awaitBackgroundBundleDeepVerification();
+    await awaitBackgroundBundleFeedRefresh();
     resetCachedBundleVersion();
     vi.clearAllMocks();
     // Reset environment variables
@@ -984,7 +986,10 @@ describe('downloadExtensionBundle', () => {
 
     // Background deep verification confirms the bytes + CDN republish off the hot
     // path. The published MD5 matches the sidecar, so nothing is re-downloaded.
+    // The due update-check window also spins up a background feed refresh (local
+    // 1.75.0 outranks the feed's 1.2.0, so it downloads nothing either).
     await awaitBackgroundBundleDeepVerification();
+    await awaitBackgroundBundleFeedRefresh();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
@@ -1023,7 +1028,7 @@ describe('downloadExtensionBundle', () => {
     expect(mockedGetJsonFeed).not.toHaveBeenCalled();
   });
 
-  it('consults the CDN version feed on the hot path when the update-check window is due', async () => {
+  it('defers the CDN version feed to a background refresh (never the hot path) when the update-check window is due', async () => {
     setupLocalDisk(['1.75.0'], { '1.75.0': 'md5' });
     mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.75.0'] as any);
     // beforeEach leaves shouldCheckForDependencyUpdates => true (the check is due).
@@ -1031,11 +1036,66 @@ describe('downloadExtensionBundle', () => {
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
 
+    // Hot path returns immediately on the healthy local bundle: the fast-path
+    // telemetry is set synchronously on return, proving the feed lookup did not
+    // block activation even though the update window is due.
     expect(result).toBe(false);
-    expect(mockedGetJsonFeed).toHaveBeenCalled();
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+    expect(context.telemetry.properties.extensionBundleVersionSource).toBe('localLatest');
     expect(context.telemetry.properties.extensionBundleUpdateCheckThrottled).toBeUndefined();
 
+    // The "is there a newer version?" lookup runs off the hot path. The feed's
+    // newest (1.75.0) does not outrank local, so nothing is downloaded.
     await awaitBackgroundBundleDeepVerification();
+    await awaitBackgroundBundleFeedRefresh();
+    expect(mockedGetJsonFeed).toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('downloads a newer bundle version in the background when the due feed refresh finds one', async () => {
+    setupLocalDisk(['1.75.0'], { '1.75.0': 'md5' });
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.95.0'] as any);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
+    // beforeEach leaves shouldCheckForDependencyUpdates => true (the check is due).
+
+    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    // Activation is not blocked: the hot path trusts the local bundle and returns
+    // false (no synchronous upgrade), so `didUpdateExtensionBundle` stays false.
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('false');
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPath');
+
+    // The newer 1.95.0 is fetched in the background for the next launch, and the
+    // shared update-check window is recorded so the next launch skips the lookup.
+    await awaitBackgroundBundleFeedRefresh();
+    expect(mockedGetJsonFeed).toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('1.95.0'),
+      defaultExtensionBundlePathValue,
+      extensionBundleId,
+      '1.95.0'
+    );
+    expect(vi.mocked(depUpdateCheckModule.recordDependencyUpdateCheck)).toHaveBeenCalled();
+  });
+
+  it('records the update-check window from the background refresh even when no newer version exists', async () => {
+    setupLocalDisk(['1.75.0'], { '1.75.0': 'md5' });
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.75.0'] as any);
+    // beforeEach leaves shouldCheckForDependencyUpdates => true (the check is due).
+
+    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+
+    const context = createMockContext();
+    await downloadExtensionBundle(context as any);
+
+    await awaitBackgroundBundleFeedRefresh();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(vi.mocked(depUpdateCheckModule.recordDependencyUpdateCheck)).toHaveBeenCalled();
   });
 
   it('still consults the CDN version feed when throttled but no local bundle exists (bootstrap)', async () => {
