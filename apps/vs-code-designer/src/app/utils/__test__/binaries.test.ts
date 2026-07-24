@@ -38,6 +38,7 @@ import {
   nodeJsBinaryPathSettingKey,
   dotNetBinaryPathSettingKey,
   nodeJsDependencyName,
+  lastDependencyIntegrityCheckKeyPrefix,
 } from '../../../constants';
 import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
 import { executeCommand } from '../funcCoreTools/cpUtils';
@@ -1479,6 +1480,93 @@ describe('binaries', () => {
       expect(result).toBe(false);
       expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
       expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('lib/file-100.dll');
+    });
+  });
+
+  describe('verifyDependencyIntegrity deep-verify throttle', () => {
+    let context: IActionContext;
+    let globalStateGet: Mock;
+    let globalStateUpdate: Mock;
+    const integrityKey = `${lastDependencyIntegrityCheckKeyPrefix}.${funcDependencyName}`;
+
+    const buildManifest = (count: number) => ({
+      dependencyName: funcDependencyName,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      fileCount: count,
+      files: Array.from({ length: count }, (_, i) => ({ path: `lib/file-${i}.dll`, size: i + 1 })),
+    });
+
+    beforeEach(() => {
+      context = { telemetry: { properties: {} } } as IActionContext;
+      (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
+      globalStateGet = vi.fn();
+      globalStateUpdate = vi.fn().mockResolvedValue(undefined);
+      (ext as any).context = { globalState: { get: globalStateGet, update: globalStateUpdate } };
+    });
+
+    afterEach(() => {
+      // Restore the default (no extension context) so the other suites keep exercising the full walk.
+      (ext as any).context = undefined;
+    });
+
+    it('runs only the sampled sentinel (not every file) and passes when the throttle window is open', async () => {
+      const manifest = buildManifest(300);
+      globalStateGet.mockReturnValue(Date.now() - 1000); // within the 24h window -> throttled
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => {
+        const index = Number((filePath.match(/file-(\d+)\.dll$/) as RegExpMatchArray)[1]);
+        return { size: index + 1, isFile: () => true };
+      });
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed-throttled');
+      // Sentinel stats only a bounded sample, never all 300 files.
+      const statCalls = (fs.promises.stat as Mock).mock.calls.length;
+      expect(statCalls).toBeGreaterThan(0);
+      expect(statCalls).toBeLessThanOrEqual(34);
+      // Throttled pass must not advance the deep-verify timestamp.
+      expect(globalStateUpdate).not.toHaveBeenCalled();
+    });
+
+    it('falls through to the full walk (and fails authoritatively) when the sentinel detects a change', async () => {
+      const manifest = buildManifest(300);
+      globalStateGet.mockReturnValue(Date.now() - 1000);
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      // file-0 is always in the sentinel sample and in the first full-walk batch: report a size mismatch.
+      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => {
+        const index = Number((filePath.match(/file-(\d+)\.dll$/) as RegExpMatchArray)[1]);
+        return { size: index === 0 ? 999 : index + 1, isFile: () => true };
+      });
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('lib/file-0.dll');
+    });
+
+    it('runs the full walk and records a fresh timestamp when a deep verification is due', async () => {
+      const manifest = buildManifest(200);
+      globalStateGet.mockReturnValue(undefined); // never verified -> deep check due
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => {
+        const index = Number((filePath.match(/file-(\d+)\.dll$/) as RegExpMatchArray)[1]);
+        return { size: index + 1, isFile: () => true };
+      });
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
+      // Deep path stats every file...
+      expect((fs.promises.stat as Mock).mock.calls).toHaveLength(manifest.files.length);
+      // ...and records the throttle timestamp so subsequent launches take the fast sentinel path.
+      expect(globalStateUpdate).toHaveBeenCalledWith(integrityKey, expect.any(Number));
     });
   });
 
