@@ -29,7 +29,8 @@ import {
 } from '../../../utils/codeless/startDesignTimeApi';
 import { reserveFreePort } from '../../../utils/portReservation';
 import { useNodeDesignTimeWorker } from '../../../utils/vsCodeConfig/settings';
-import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../../../utils/appSettings/localSettings';
+import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSettings';
+import { generateDesignTimeLocalSettingsJson } from '../../../utils/vsCodeConfig/generators';
 import { getFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl } from '../extensionConfig';
 
@@ -54,7 +55,10 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
 
 vi.mock('../../../utils/appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
-  getLocalSettingsSchema: vi.fn(() => ({ Values: {} })),
+}));
+
+vi.mock('../../../utils/vsCodeConfig/generators', () => ({
+  generateDesignTimeLocalSettingsJson: vi.fn(() => ({ Values: {} })),
 }));
 
 vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
@@ -76,7 +80,7 @@ describe('startBackendRuntime', () => {
     vi.mocked(isDesignTimeUp).mockResolvedValue(false);
     vi.mocked(reserveFreePort).mockResolvedValue(7071);
     vi.mocked(useNodeDesignTimeWorker).mockReturnValue(false);
-    vi.mocked(getLocalSettingsSchema).mockReturnValue(settingsSchemaSentinel as any);
+    vi.mocked(generateDesignTimeLocalSettingsJson).mockReturnValue(settingsSchemaSentinel as any);
     vi.mocked(getFunctionsCommand).mockReturnValue('func');
     vi.mocked(waitForDesignTimeStartUp).mockResolvedValue(undefined as any);
   });
@@ -92,7 +96,7 @@ describe('startBackendRuntime', () => {
     expect(isDesignTimeUp).toHaveBeenCalledWith(expectedUrl);
 
     // Design-time settings are built for the dotnet worker (useNodeWorker === false).
-    expect(getLocalSettingsSchema).toHaveBeenCalledWith(true, projectPath, undefined, false);
+    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, undefined, false);
 
     // Both baseline files are written to the design-time directory.
     expect(createJsonFile).toHaveBeenCalledWith(designTimeDir, hostFileName, hostFileContent);
@@ -121,7 +125,7 @@ describe('startBackendRuntime', () => {
 
     await startBackendRuntime(context, projectPath);
 
-    expect(getLocalSettingsSchema).toHaveBeenCalledWith(true, projectPath, undefined, true);
+    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, undefined, true);
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(
       context,
       designTimeDir.fsPath,

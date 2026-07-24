@@ -28,12 +28,11 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { writeFormattedJson } from '../../../utils/fs';
-import { generateHostJson } from '../../../utils/vsCodeConfig/generators';
+import { generateHostJson, generateLocalSettingsJson } from '../../../utils/vsCodeConfig/generators';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
 import type { IFunctionWizardContext, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
-import { getLocalSettingsSchema } from '../../../utils/appSettings/localSettings';
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
@@ -177,7 +176,7 @@ export async function createLocalConfigurationFiles(
     '.debug',
     'workflow-designtime/',
   ];
-  const localSettingsJson = getLocalSettingsSchema(false, logicAppFolderPath, logicAppType);
+  const localSettingsJson = generateLocalSettingsJson(logicAppFolderPath, logicAppType);
 
   if (logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');

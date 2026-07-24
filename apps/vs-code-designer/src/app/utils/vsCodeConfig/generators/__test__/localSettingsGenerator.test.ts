@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import { getLocalSettingsSchema } from '../localSettings';
+import { generateLocalSettingsJson, generateDesignTimeLocalSettingsJson } from '../localSettingsGenerator';
 import {
   ProjectDirectoryPathKey,
   appKindSetting,
@@ -15,21 +15,21 @@ import {
   multiLanguageWorkerSetting,
   workerRuntimeKey,
   workflowCodefulEnabledKey,
-} from '../../../../constants';
+} from '../../../../../constants';
 
 describe('utils/appSettings', () => {
-  // getLocalSettingsSchema is the single source of truth for both local.settings.json files this
-  // extension generates: the project-root (runtime) file (isDesignTime=false) and the
-  // workflow-designtime/ folder file (isDesignTime=true). It is shared by fresh project creation
+  // generateLocalSettingsJson and generateDesignTimeLocalSettingsJson are the single source of truth for both local.settings.json files this
+  // extension generates: the project-root (runtime) file (generateLocalSettingsJson) and the
+  // workflow-designtime/ folder file (generateDesignTimeLocalSettingsJson). They are shared by fresh project creation
   // (CreateLogicAppWorkspace.createLocalConfigurationFiles), the design-time API startup, and
   // regeneration of source-controlled clones (validateProjectArtifacts), so these characterization
   // tests lock the exact content and key order per (isDesignTime x ProjectType) so those paths
   // cannot drift apart.
-  describe('getLocalSettingsSchema', () => {
+  describe('generateLocalSettingsJson / generateDesignTimeLocalSettingsJson', () => {
     const projectPath = 'path/to/project';
 
     it('Should have IsEncrypted property and Values property have basic schema', () => {
-      const settings = getLocalSettingsSchema(true);
+      const settings = generateDesignTimeLocalSettingsJson();
       expect(settings).toHaveProperty('IsEncrypted', false);
       expect(settings).toHaveProperty('Values');
       expect(settings['Values']).toHaveProperty(appKindSetting);
@@ -37,24 +37,24 @@ describe('utils/appSettings', () => {
     });
 
     it('Should not have ProjectDirectoryPath when project path param is not sent', () => {
-      const settings = getLocalSettingsSchema(true);
+      const settings = generateDesignTimeLocalSettingsJson();
       expect(settings).not.toHaveProperty(ProjectDirectoryPathKey);
     });
 
     it('Should have the AzureWebJobsSecretStorageType when is design time localsettings and have ProjectDirectoryPath property when sent', () => {
-      const settings = getLocalSettingsSchema(true, projectPath);
+      const settings = generateDesignTimeLocalSettingsJson(projectPath);
       expect(settings['Values']).toHaveProperty(azureWebJobsSecretStorageTypeKey, azureStorageTypeSetting);
       expect(settings['Values']).toHaveProperty(ProjectDirectoryPathKey, projectPath);
     });
 
     it('Should run the design time host in-process .NET 8 (dotnet worker runtime + inproc flag)', () => {
-      const settings = getLocalSettingsSchema(true, projectPath);
+      const settings = generateDesignTimeLocalSettingsJson(projectPath);
       expect(settings['Values']).toHaveProperty(workerRuntimeKey, WorkerRuntime.Dotnet);
       expect(settings['Values']).toHaveProperty(functionsInprocNet8Enabled, functionsInprocNet8EnabledTrue);
     });
 
     it('Should have the AzureWebJobsStorage when is not design time localsettings and have ProjectDirectoryPath property when sent', () => {
-      const settings = getLocalSettingsSchema(false, projectPath);
+      const settings = generateLocalSettingsJson(projectPath);
       expect(settings['Values']).toHaveProperty(azureWebJobsStorageKey, localEmulatorConnectionString);
       expect(settings['Values']).toHaveProperty(ProjectDirectoryPathKey, projectPath);
     });
@@ -77,14 +77,14 @@ describe('utils/appSettings', () => {
       };
 
       it('logicApp: 5 base keys, no feature or codeful flags', () => {
-        expect(getLocalSettingsSchema(false, projectPath, ProjectType.logicApp)).toEqual({
+        expect(generateLocalSettingsJson(projectPath, ProjectType.logicApp)).toEqual({
           IsEncrypted: false,
           Values: { ...baseRootValues },
         });
       });
 
       it('customCode: adds the multi-language worker feature flag', () => {
-        expect(getLocalSettingsSchema(false, projectPath, ProjectType.customCode)).toEqual({
+        expect(generateLocalSettingsJson(projectPath, ProjectType.customCode)).toEqual({
           IsEncrypted: false,
           Values: {
             ...baseRootValues,
@@ -94,7 +94,7 @@ describe('utils/appSettings', () => {
       });
 
       it('rulesEngine: adds the multi-language worker feature flag', () => {
-        expect(getLocalSettingsSchema(false, projectPath, ProjectType.rulesEngine)).toEqual({
+        expect(generateLocalSettingsJson(projectPath, ProjectType.rulesEngine)).toEqual({
           IsEncrypted: false,
           Values: {
             ...baseRootValues,
@@ -104,7 +104,7 @@ describe('utils/appSettings', () => {
       });
 
       it('codeful: adds the feature flag and WORKFLOW_CODEFUL_ENABLED (and no extension bundle id)', () => {
-        const settings = getLocalSettingsSchema(false, projectPath, ProjectType.codeful);
+        const settings = generateLocalSettingsJson(projectPath, ProjectType.codeful);
         expect(settings).toEqual({
           IsEncrypted: false,
           Values: {
@@ -117,7 +117,7 @@ describe('utils/appSettings', () => {
       });
 
       it('omits ProjectDirectoryPath when no project path is supplied (root, codeless)', () => {
-        expect(getLocalSettingsSchema(false)).toEqual({
+        expect(generateLocalSettingsJson()).toEqual({
           IsEncrypted: false,
           Values: {
             [azureWebJobsStorageKey]: localEmulatorConnectionString,
@@ -131,7 +131,7 @@ describe('utils/appSettings', () => {
 
     describe('expected design-time content by logic app type', () => {
       it('design-time local.settings.json (codeless / Standard in-process .NET 8)', () => {
-        expect(getLocalSettingsSchema(true, projectPath, ProjectType.logicApp)).toEqual({
+        expect(generateDesignTimeLocalSettingsJson(projectPath, ProjectType.logicApp)).toEqual({
           IsEncrypted: false,
           Values: {
             [appKindSetting]: logicAppKind,
@@ -144,7 +144,7 @@ describe('utils/appSettings', () => {
       });
 
       it('design-time local.settings.json (codeful / .NET8) adds WORKFLOW_CODEFUL_ENABLED but no feature flag', () => {
-        expect(getLocalSettingsSchema(true, projectPath, ProjectType.codeful)).toEqual({
+        expect(generateDesignTimeLocalSettingsJson(projectPath, ProjectType.codeful)).toEqual({
           IsEncrypted: false,
           Values: {
             [appKindSetting]: logicAppKind,
@@ -158,7 +158,7 @@ describe('utils/appSettings', () => {
       });
 
       it('design-time local.settings.json (Node-worker fallback) uses the Node runtime without the in-process .NET 8 flag', () => {
-        expect(getLocalSettingsSchema(true, projectPath, ProjectType.logicApp, true)).toEqual({
+        expect(generateDesignTimeLocalSettingsJson(projectPath, ProjectType.logicApp, true)).toEqual({
           IsEncrypted: false,
           Values: {
             [appKindSetting]: logicAppKind,
@@ -176,7 +176,7 @@ describe('utils/appSettings', () => {
     // pin the exact order rather than just the set of keys.
     describe('root key order matches the creation path', () => {
       it('orders keys like CreateLogicAppWorkspace (codeless)', () => {
-        const keys = Object.keys(getLocalSettingsSchema(false, projectPath, ProjectType.logicApp).Values);
+        const keys = Object.keys(generateLocalSettingsJson(projectPath, ProjectType.logicApp).Values);
         expect(keys).toEqual([
           azureWebJobsStorageKey,
           functionsInprocNet8Enabled,
@@ -187,7 +187,7 @@ describe('utils/appSettings', () => {
       });
 
       it('orders keys deterministically for codeful (base keys, then feature flag, then codeful flag)', () => {
-        const keys = Object.keys(getLocalSettingsSchema(false, projectPath, ProjectType.codeful).Values);
+        const keys = Object.keys(generateLocalSettingsJson(projectPath, ProjectType.codeful).Values);
         expect(keys).toEqual([
           azureWebJobsStorageKey,
           functionsInprocNet8Enabled,

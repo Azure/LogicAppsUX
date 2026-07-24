@@ -7,4 +7,5 @@ export * from './launchGenerator';
 export * from './settingsGenerator';
 export * from './extensionsGenerator';
 export * from './hostGenerator';
+export * from './localSettingsGenerator';
 export * from './types';

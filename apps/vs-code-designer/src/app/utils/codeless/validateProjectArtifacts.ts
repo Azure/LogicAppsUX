@@ -23,8 +23,8 @@ import {
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
-import { generateHostJson, generateDesignTimeHostJson } from '../vsCodeConfig/generators';
-import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
+import { generateHostJson, generateDesignTimeHostJson, generateLocalSettingsJson, generateDesignTimeLocalSettingsJson } from '../vsCodeConfig/generators';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
@@ -154,7 +154,7 @@ export async function regenerateLocalSettings(
   // local.settings.json matches what a newly created project of this type would produce. The project
   // type is inferred from the project files because a source-controlled clone has no explicit marker.
   const logicAppType = await detectProjectType(projectPath);
-  const baselineValues = getLocalSettingsSchema(false, projectPath, logicAppType).Values ?? {};
+  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
@@ -369,7 +369,7 @@ export async function regenerateDesignTimeDirectory(
   if (shouldRegenerateLocalSettingsJson) {
     const logicAppType = await detectProjectType(projectPath);
     const useNodeWorker = useNodeDesignTimeWorker(projectPath);
-    const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType, useNodeWorker);
+    const settingsFileContent = generateDesignTimeLocalSettingsJson(projectPath, logicAppType, useNodeWorker);
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, localSettingsFileName), settingsFileContent);
     const runtimeSettings: Record<string, string> = {
       [appKindSetting]: logicAppKind,

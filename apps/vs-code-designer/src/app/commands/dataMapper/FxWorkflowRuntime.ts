@@ -18,7 +18,7 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../../utils/appSettings/localSettings';
+import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
 import { useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
 import {
   createJsonFile,
@@ -32,6 +32,7 @@ import { reserveFreePort } from '../../utils/portReservation';
 import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, type Uri, window } from 'vscode';
+import { generateDesignTimeLocalSettingsJson } from '../../utils/vsCodeConfig/generators';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
@@ -61,7 +62,7 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
     }
 
     const useNodeWorker = useNodeDesignTimeWorker(projectPath);
-    const settingsFileContent = getLocalSettingsSchema(true, projectPath, undefined, useNodeWorker);
+    const settingsFileContent = generateDesignTimeLocalSettingsJson(projectPath, undefined, useNodeWorker);
 
     try {
       if (designTimeDirectory) {
