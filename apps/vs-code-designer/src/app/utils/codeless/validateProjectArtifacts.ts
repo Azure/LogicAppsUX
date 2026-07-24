@@ -6,10 +6,8 @@ import {
   ProjectDirectoryPathKey,
   appKindSetting,
   connectionsFileName,
-  defaultVersionRange,
   designTimeDirectoryName,
   extensionBundleId,
-  hostFileContent,
   hostFileName,
   localSettingsFileName,
   logicAppKind,
@@ -25,17 +23,17 @@ import {
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
-import { addOrUpdateLocalAppSettings, getLocalSettingsJson, getLocalSettingsSchema } from '../appSettings/localSettings';
+import { generateHostJson, generateDesignTimeHostJson, generateLocalSettingsJson, generateDesignTimeLocalSettingsJson } from '../vsCodeConfig/generators';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
-import { hasCodefulSdkReference } from '../codeful';
-import { isCustomCodeFunctionsProjectInRoot } from '../customCodeUtils';
-import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { IHostJsonV2, ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Uri, workspace } from 'vscode';
+import { detectProjectType } from '../project';
 
 /**
  * Matches app setting references such as `@appsetting('MY_SETTING')` and the interpolated
@@ -132,33 +130,6 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
 }
 
 /**
- * Best-effort detection of a logic app project's {@link ProjectType} at regeneration time.
- *
- * Unlike fresh project creation (which knows the type from the creation wizard context), a
- * source-controlled clone carries no explicit type marker, so it is inferred from the project's files:
- *  - codeful: the logic app folder itself is a .NET8 codeful project ({@link hasCodefulSdkReference}).
- *  - customCode / rulesEngine: a sibling custom-code functions (.csproj) project exists in the
- *    workspace root ({@link isCustomCodeFunctionsProjectInRoot}). These two types are indistinguishable
- *    here but produce the same root local.settings.json (both add the multi-language worker flag), so
- *    both are reported as {@link ProjectType.customCode}.
- *  - logicApp: none of the above (a plain codeless logic app).
- * @param {string} projectPath - The logic app project root.
- * @returns {Promise<ProjectType>} The inferred project type.
- */
-export async function detectLogicAppProjectType(projectPath: string): Promise<ProjectType> {
-  if ((await hasCodefulSdkReference(projectPath)) ?? false) {
-    return ProjectType.codeful;
-  }
-
-  const hasCustomCodeSibling = (await isCustomCodeFunctionsProjectInRoot(path.dirname(projectPath))) ?? false;
-  if (hasCustomCodeSibling) {
-    return ProjectType.customCode;
-  }
-
-  return ProjectType.logicApp;
-}
-
-/**
  * Ensures the project-level local.settings.json exists and contains every app setting the project
  * requires. This is needed when source control is enabled: local.settings.json is git-ignored, so a
  * fresh clone is missing it and any `@appsetting('name')` references in connections.json /
@@ -182,8 +153,8 @@ export async function regenerateLocalSettings(
   // Build the baseline from the same source of truth as fresh project creation so a regenerated
   // local.settings.json matches what a newly created project of this type would produce. The project
   // type is inferred from the project files because a source-controlled clone has no explicit marker.
-  const logicAppType = await detectLogicAppProjectType(projectPath);
-  const baselineValues = getLocalSettingsSchema(false, projectPath, logicAppType).Values ?? {};
+  const logicAppType = await detectProjectType(projectPath);
+  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
@@ -218,29 +189,6 @@ export async function regenerateLocalSettings(
 }
 
 /**
- * Returns the baseline project-level host.json content. This mirrors the workspace creation path
- * (CreateLogicAppWorkspace.getHostContent) so a regenerated host.json matches a freshly created one.
- * @returns {IHostJsonV2} The baseline host.json content.
- */
-function getRootHostFileContent(): IHostJsonV2 {
-  return {
-    version: '2.0',
-    logging: {
-      applicationInsights: {
-        samplingSettings: {
-          isEnabled: true,
-          excludedTypes: 'Request',
-        },
-      },
-    },
-    extensionBundle: {
-      id: extensionBundleId,
-      version: defaultVersionRange,
-    },
-  };
-}
-
-/**
  * Ensures the project-level host.json exists and is structurally valid, healing it when needed.
  * Because {@link isLogicAppProject} identifies a project by its workflow-folder signal (not host.json),
  * a source-controlled clone can reach this point with host.json missing or corrupted; without a valid
@@ -258,7 +206,7 @@ export async function regenerateRootHostFile(projectPath: string): Promise<{ cha
     return { changed: false, changedArtifacts: [] };
   }
 
-  await writeFormattedJson(hostFilePath, getRootHostFileContent());
+  await writeFormattedJson(hostFilePath, generateHostJson());
   return { changed: true, changedArtifacts: [hostFileName] };
 }
 
@@ -398,30 +346,30 @@ async function ensureDesignTimeDirectory(projectPath: string): Promise<Uri> {
  * such as a pinned extension bundle version are not lost.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }>}
+ * @returns {Promise<{ uri: Uri; hostRegenerated: boolean; localSettingsRegenerated: boolean; changedArtifacts: string[] }>}
  * The design-time directory Uri, which baseline files were regenerated, and the human-readable label(s)
  * for the artifact(s) that changed.
  */
 export async function regenerateDesignTimeDirectory(
   context: IActionContext,
   projectPath: string
-): Promise<{ uri: Uri; hostRegenerated: boolean; settingsRegenerated: boolean; changedArtifacts: string[] }> {
+): Promise<{ uri: Uri; hostRegenerated: boolean; localSettingsRegenerated: boolean; changedArtifacts: string[] }> {
   const designTimeDirectory = await ensureDesignTimeDirectory(projectPath);
   const validation = await validateDesignTimeDirectory(projectPath);
 
-  const hostRegenerated = !validation.hostFileValid;
-  const settingsRegenerated = !validation.settingsFileValid;
+  const shouldRegenerateHostJson = !validation.hostFileValid;
+  const shouldRegenerateLocalSettingsJson = !validation.settingsFileValid;
   const changedArtifacts: string[] = [];
 
-  if (hostRegenerated) {
-    await writeFormattedJson(path.join(designTimeDirectory.fsPath, hostFileName), hostFileContent);
+  if (shouldRegenerateHostJson) {
+    await writeFormattedJson(path.join(designTimeDirectory.fsPath, hostFileName), generateDesignTimeHostJson());
     changedArtifacts.push(`${designTimeArtifactPrefix}${hostFileName}`);
   }
 
-  if (settingsRegenerated) {
-    const logicAppType = await detectLogicAppProjectType(projectPath);
+  if (shouldRegenerateLocalSettingsJson) {
+    const logicAppType = await detectProjectType(projectPath);
     const useNodeWorker = useNodeDesignTimeWorker(projectPath);
-    const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType, useNodeWorker);
+    const settingsFileContent = generateDesignTimeLocalSettingsJson(projectPath, logicAppType, useNodeWorker);
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, localSettingsFileName), settingsFileContent);
     const runtimeSettings: Record<string, string> = {
       [appKindSetting]: logicAppKind,
@@ -435,7 +383,7 @@ export async function regenerateDesignTimeDirectory(
     changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
-  return { uri: designTimeDirectory, hostRegenerated, settingsRegenerated, changedArtifacts };
+  return { uri: designTimeDirectory, hostRegenerated: shouldRegenerateHostJson, localSettingsRegenerated: shouldRegenerateLocalSettingsJson, changedArtifacts };
 }
 
 /**

@@ -653,46 +653,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
   });
 });
 
-describe('getHostContent', () => {
-  it('should return host.json with correct structure', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-
-    expect(hostJson).toEqual({
-      version: '2.0',
-      logging: {
-        applicationInsights: {
-          samplingSettings: {
-            isEnabled: true,
-            excludedTypes: 'Request',
-          },
-        },
-      },
-      extensionBundle: {
-        id: expect.stringContaining('Microsoft.Azure.Functions.ExtensionBundle.Workflows'),
-        version: expect.any(String),
-      },
-    });
-  });
-
-  it('should return host.json with version 2.0', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.version).toBe('2.0');
-  });
-
-  it('should include application insights logging configuration', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.logging.applicationInsights.samplingSettings.isEnabled).toBe(true);
-    expect(hostJson.logging.applicationInsights.samplingSettings.excludedTypes).toBe('Request');
-  });
-
-  it('should include extension bundle configuration', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.extensionBundle).toBeDefined();
-    expect(hostJson.extensionBundle.id).toContain('Workflows');
-    expect(hostJson.extensionBundle.version).toBeTruthy();
-  });
-});
-
 describe('createLogicAppWorkspace', () => {
   const mockContext: IActionContext = {
     telemetry: { properties: {}, measurements: {} },

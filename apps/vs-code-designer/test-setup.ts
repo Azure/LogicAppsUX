@@ -139,7 +139,12 @@ vi.mock('vscode', () => ({
       readFile: vi.fn(),
       readDirectory: vi.fn(),
     },
-    getConfiguration: vi.fn(),
+    getConfiguration: vi.fn().mockReturnValue({
+      get: vi.fn(),
+      has: vi.fn().mockReturnValue(false),
+      inspect: vi.fn(),
+      update: vi.fn(),
+    }),
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),

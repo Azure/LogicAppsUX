@@ -5,7 +5,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { workspace } from 'vscode';
-import * as path from 'path';
 import * as fse from 'fs-extra';
 import {
   ProjectDirectoryPathKey,
@@ -28,11 +27,10 @@ import {
 } from '../../../../constants';
 import * as localSettings from '../../appSettings/localSettings';
 import { writeFormattedJson } from '../../fs';
-import { hasCodefulSdkReference } from '../../codeful';
-import { isCustomCodeFunctionsProjectInRoot } from '../../customCodeUtils';
+import { hasCodefulSdkReference, hasCodefulWorkflowSetting } from '../../codeful';
+import { isCustomCodeFunctionsProjectInRoot, tryGetLogicAppCustomCodeFunctionsProjects } from '../../customCodeUtils';
 import { useNodeDesignTimeWorker } from '../../vsCodeConfig/settings';
 import {
-  detectLogicAppProjectType,
   extractAppSettingReferences,
   getReferencedAppSettings,
   ensureProjectRootArtifacts,
@@ -42,6 +40,7 @@ import {
   validateDesignTimeDirectory,
   regenerateDesignTimeDirectory,
 } from '../validateProjectArtifacts';
+import { detectProjectType } from '../../project';
 import { ext } from '../../../../extensionVariables';
 
 vi.mock('fs-extra', () => ({
@@ -65,10 +64,12 @@ vi.mock('../../fs', () => ({
 
 vi.mock('../../codeful', () => ({
   hasCodefulSdkReference: vi.fn(() => Promise.resolve(false)),
+  hasCodefulWorkflowSetting: vi.fn(() => Promise.resolve(false)),
 }));
 
 vi.mock('../../customCodeUtils', () => ({
   isCustomCodeFunctionsProjectInRoot: vi.fn(() => Promise.resolve(false)),
+  tryGetLogicAppCustomCodeFunctionsProjects: vi.fn(() => Promise.resolve(undefined)),
 }));
 
 vi.mock('../../vsCodeConfig/settings', async (importActual) => {
@@ -95,6 +96,8 @@ const mockedGetLocalSettingsJson = localSettings.getLocalSettingsJson as unknown
 const mockedWriteFormattedJson = writeFormattedJson as unknown as ReturnType<typeof vi.fn>;
 const mockedIsCodeful = hasCodefulSdkReference as unknown as ReturnType<typeof vi.fn>;
 const mockedIsCustomCodeInRoot = isCustomCodeFunctionsProjectInRoot as unknown as ReturnType<typeof vi.fn>;
+const mockedHasCodefulWorkflowSetting = hasCodefulWorkflowSetting as unknown as ReturnType<typeof vi.fn>;
+const mockedTryGetCustomCodeProjects = tryGetLogicAppCustomCodeFunctionsProjects as unknown as ReturnType<typeof vi.fn>;
 const mockedAppendLog = ext.outputChannel.appendLog as unknown as ReturnType<typeof vi.fn>;
 
 /** Returns every line written to the output channel via appendLog. */
@@ -259,9 +262,9 @@ describe('validateProjectArtifacts', () => {
 
   // Behavior by logic app type: regeneration builds the root local.settings.json from the same shared
   // source of truth as fresh project creation (getLocalSettingsSchema). The project type is inferred from
-  // the project files (detectLogicAppProjectType): codeful via hasCodefulSdkReference, and customCode /
-  // rulesEngine via a sibling custom-code functions (.csproj) project in the workspace root. As a
-  // result every type regenerates the same content a freshly created project of that type would.
+  // the project files (detectProjectType): codeful via hasCodefulWorkflowSetting/hasCodefulSdkReference,
+  // and customCode via tryGetLogicAppCustomCodeFunctionsProjects. As a result every type regenerates
+  // the same content a freshly created project of that type would.
   describe('regenerateLocalSettings — behavior by logic app type', () => {
     const codelessBaseline = {
       [appKindSetting]: logicAppKind,
@@ -292,10 +295,11 @@ describe('validateProjectArtifacts', () => {
     });
 
     it('customCode: regenerates the codeless baseline plus AzureWebJobsFeatureFlags (sibling custom-code project detected)', async () => {
-      // A sibling custom-code functions project in the workspace root identifies this as a customCode
+      // A sibling custom-code functions project identifies this as a customCode
       // logic app, which gets the EnableMultiLanguageWorker flag just like fresh creation.
       mockedIsCodeful.mockResolvedValue(false);
-      mockedIsCustomCodeInRoot.mockResolvedValue(true);
+      mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
+      mockedTryGetCustomCodeProjects.mockResolvedValue(['some/custom-code-path']);
 
       const { changed } = await regenerateLocalSettings(context, projectPath);
 
@@ -312,7 +316,8 @@ describe('validateProjectArtifacts', () => {
       // rulesEngine cannot be told apart from customCode at regeneration time, but both produce the same
       // root local.settings.json, so detecting the sibling custom-code project is sufficient.
       mockedIsCodeful.mockResolvedValue(false);
-      mockedIsCustomCodeInRoot.mockResolvedValue(true);
+      mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
+      mockedTryGetCustomCodeProjects.mockResolvedValue(['some/rules-engine-path']);
 
       const { changed } = await regenerateLocalSettings(context, projectPath);
 
@@ -340,43 +345,44 @@ describe('validateProjectArtifacts', () => {
     });
   });
 
-  describe('detectLogicAppProjectType', () => {
-    it('returns codeful when the project itself is a codeful project', async () => {
-      mockedIsCodeful.mockResolvedValue(true);
-      mockedIsCustomCodeInRoot.mockResolvedValue(true);
+  describe('detectProjectType', () => {
+    it('returns codeful when the project has codeful workflow setting', async () => {
+      mockedHasCodefulWorkflowSetting.mockResolvedValue(true);
+      mockedTryGetCustomCodeProjects.mockResolvedValue(['some/path']);
 
       // Codeful takes precedence even when a sibling custom-code project is also present.
-      expect(await detectLogicAppProjectType(projectPath)).toBe(ProjectType.codeful);
+      expect(await detectProjectType(projectPath)).toBe(ProjectType.codeful);
     });
 
-    it('returns customCode when a sibling custom-code functions project exists in the workspace root', async () => {
+    it('returns codeful when the project has codeful SDK reference', async () => {
+      mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
+      mockedIsCodeful.mockResolvedValue(true);
+
+      expect(await detectProjectType(projectPath)).toBe(ProjectType.codeful);
+    });
+
+    it('returns customCode when a sibling custom-code functions project exists', async () => {
+      mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
       mockedIsCodeful.mockResolvedValue(false);
-      mockedIsCustomCodeInRoot.mockResolvedValue(true);
+      mockedTryGetCustomCodeProjects.mockResolvedValue(['some/custom-code-path']);
 
-      expect(await detectLogicAppProjectType(projectPath)).toBe(ProjectType.customCode);
+      expect(await detectProjectType(projectPath)).toBe(ProjectType.customCode);
     });
 
-    it('returns logicApp when the project is neither codeful nor has a sibling custom-code project', async () => {
+    it('returns logicApp when the project is neither codeful nor has custom-code siblings', async () => {
+      mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
       mockedIsCodeful.mockResolvedValue(false);
-      mockedIsCustomCodeInRoot.mockResolvedValue(false);
+      mockedTryGetCustomCodeProjects.mockResolvedValue(undefined);
 
-      expect(await detectLogicAppProjectType(projectPath)).toBe(ProjectType.logicApp);
+      expect(await detectProjectType(projectPath)).toBe(ProjectType.logicApp);
     });
 
-    it('treats undefined detection results as not-detected (logicApp)', async () => {
-      mockedIsCodeful.mockResolvedValue(undefined);
-      mockedIsCustomCodeInRoot.mockResolvedValue(undefined);
-
-      expect(await detectLogicAppProjectType(projectPath)).toBe(ProjectType.logicApp);
-    });
-
-    it('inspects the workspace root (the parent of the logic app folder) for custom-code siblings', async () => {
+    it('returns logicApp when custom code projects list is empty', async () => {
+      mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
       mockedIsCodeful.mockResolvedValue(false);
-      mockedIsCustomCodeInRoot.mockResolvedValue(false);
+      mockedTryGetCustomCodeProjects.mockResolvedValue([]);
 
-      await detectLogicAppProjectType(projectPath);
-
-      expect(mockedIsCustomCodeInRoot).toHaveBeenCalledWith(path.dirname(projectPath));
+      expect(await detectProjectType(projectPath)).toBe(ProjectType.logicApp);
     });
   });
 

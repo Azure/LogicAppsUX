@@ -7,30 +7,20 @@ import {
   functionsExtensionId,
   vscodeFolderName,
   extensionsFileName,
-  launchFileName,
   settingsFileName,
   tasksFileName,
-  extensionCommand,
 } from '../../../../constants';
-import { FuncVersion, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { TargetFramework, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { getAssetsRoot } from '../../../utils/assets';
-import { getDebugConfigs, updateDebugConfigs } from '../../../utils/vsCodeConfig/launch';
-import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/workspace';
-import { localize } from '../../../../localize';
-import * as vscode from 'vscode';
-import { getCustomCodeRuntime } from '../../../utils/debug';
 import { createCsFile, createProgramFile, createRulesFiles, createCsprojFile } from '../../../utils/functionProjectFiles';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
  */
 export class CreateFunctionAppFiles {
-  // Hide the step count in the wizard UI
-  public hideStepCount = true;
-
   /**
    * Sets up an Azure Function project by creating all necessary files.
    * @param context The project wizard context.
@@ -83,91 +73,6 @@ export class CreateFunctionAppFiles {
       recommendations: [functionsExtensionId, dotnetExtensionId],
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
-  }
-
-  /**
-   * Updates the launch.json file for the logic app corresponding to this functions app.
-   * @param folderPath The functions app folder path.
-   * @param targetFramework The target framework of the functions app.
-   * @param funcVersion The version of the functions app.
-   * @param logicAppName The name of the logic app.
-   */
-  private async updateLogicAppLaunchJson(
-    folderPath: string,
-    targetFramework: TargetFramework,
-    funcVersion: FuncVersion,
-    logicAppName: string
-  ): Promise<void> {
-    const logicAppLaunchJsonPath = path.join(folderPath, '..', '..', logicAppName, vscodeFolderName, launchFileName);
-    let logicAppWorkspaceFolder = getContainingWorkspace(logicAppLaunchJsonPath);
-    if (logicAppWorkspaceFolder === undefined) {
-      // Traverse up the directory tree to find a .code-workspace file
-      let currentPath = path.dirname(logicAppLaunchJsonPath);
-      let workspaceFile: string | undefined;
-
-      while (currentPath !== path.parse(currentPath).root) {
-        const files = await fs.readdir(currentPath);
-        const codeWorkspaceFile = files.find((file) => file.endsWith('.code-workspace'));
-
-        if (codeWorkspaceFile) {
-          workspaceFile = path.join(currentPath, codeWorkspaceFile);
-          break;
-        }
-
-        currentPath = path.dirname(currentPath);
-      }
-
-      // If no workspace file found, cannot update launch.json
-      if (workspaceFile) {
-        logicAppWorkspaceFolder = {
-          uri: vscode.Uri.file(currentPath),
-          name: path.basename(currentPath),
-          index: 0,
-        };
-      }
-    }
-    const debugConfigs = getDebugConfigs(logicAppWorkspaceFolder);
-    const updatedDebugConfigs = debugConfigs.some((debugConfig) => debugConfig.type === 'logicapp')
-      ? debugConfigs.map((debugConfig) => {
-          // Update the logic app debug configuration to use the correct runtime for custom code
-          if (debugConfig.type === 'logicapp') {
-            return {
-              ...debugConfig,
-              customCodeRuntime: getCustomCodeRuntime(targetFramework),
-              isCodeless: true,
-            };
-          }
-          return debugConfig;
-        })
-      : [
-          {
-            name: localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
-            type: 'logicapp',
-            request: 'launch',
-            funcRuntime: funcVersion === FuncVersion.v1 ? 'clr' : 'coreclr',
-            customCodeRuntime: getCustomCodeRuntime(targetFramework),
-            isCodeless: true,
-          },
-          ...debugConfigs.filter(
-            (debugConfig) => debugConfig.request !== 'attach' || debugConfig.processId !== `\${command:${extensionCommand.pickProcess}}`
-          ),
-        ];
-
-    if (isMultiRootWorkspace()) {
-      let launchJsonContent: any;
-      if (await fs.pathExists(logicAppLaunchJsonPath)) {
-        launchJsonContent = await fs.readJson(logicAppLaunchJsonPath);
-        launchJsonContent['configurations'] = updatedDebugConfigs;
-      } else {
-        launchJsonContent = {
-          version: '0.2.0',
-          configurations: updatedDebugConfigs,
-        };
-      }
-      await fs.writeJson(logicAppLaunchJsonPath, launchJsonContent, { spaces: 2 });
-    } else {
-      updateDebugConfigs(logicAppWorkspaceFolder, updatedDebugConfigs);
-    }
   }
 
   /**

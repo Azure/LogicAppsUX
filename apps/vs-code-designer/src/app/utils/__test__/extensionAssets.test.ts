@@ -50,12 +50,4 @@ describe('getExtensionAssetPath', () => {
 
     expect(assetPath.endsWith(path.join('vs-code-designer', 'assets', 'ContainerTemplates', 'devcontainer.json'))).toBe(true);
   });
-
-  it('returns the first fallback candidate when neither assets layout exists', () => {
-    vi.mocked(existsSync).mockReturnValue(false);
-
-    const assetPath = getExtensionAssetPath('WorkspaceTemplates', 'ExtensionsJsonFile');
-
-    expect(assetPath.endsWith(path.join('src', 'assets', 'WorkspaceTemplates', 'ExtensionsJsonFile'))).toBe(true);
-  });
 });

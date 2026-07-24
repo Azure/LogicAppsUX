@@ -4,12 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import { devContainerFileName, devContainerFolderName, tasksFileName, vscodeFolderName } from '../../../constants';
+import { devContainerFileName, devContainerFolderName, funcDependencyName, tasksFileName, vscodeFolderName } from '../../../constants';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { getContainerTemplatePath, getWorkspaceTemplatePath } from '../../utils/assets';
+import { getContainerTemplatePath } from '../../utils/assets';
+import { binariesExistSync } from '../../utils/binaries';
+import { detectProjectType, detectProjectPackageType } from '../../utils/project';
+import { generateTasksJson } from '../../utils/vsCodeConfig/generators';
 
 /**
  * Enables devcontainer support for an existing Logic App workspace
@@ -150,24 +153,18 @@ async function convertWorkspaceTasksToDevContainer(context: IActionContext, work
  * @param tasksJsonPath - Path to the tasks.json file
  */
 async function convertTasksJsonToDevContainer(context: IActionContext, tasksJsonPath: string): Promise<void> {
-  const tasksContent = await fse.readJson(tasksJsonPath);
+  const logicAppPath = path.dirname(path.dirname(tasksJsonPath));
+  const projectType = await detectProjectType(logicAppPath);
+  const projectPackageType = await detectProjectPackageType(logicAppPath);
 
-  // Get the devcontainer-compatible template
-  const devContainerTasksTemplatePath = getWorkspaceTemplatePath('DevContainerTasksJsonFile');
+  const tasksJsonContent = generateTasksJson({
+    projectType,
+    projectPackageType,
+    hasFuncBinaries: binariesExistSync(funcDependencyName),
+    isDevContainer: true,
+  });
 
-  if (!(await fse.pathExists(devContainerTasksTemplatePath))) {
-    throw new Error(localize('templateNotFound', 'DevContainer tasks template not found at: {0}', devContainerTasksTemplatePath));
-  }
-
-  const devContainerTasksTemplate = await fse.readJson(devContainerTasksTemplatePath);
-
-  // Replace the tasks with devcontainer-compatible versions
-  // Keep the version, but update tasks and inputs
-  tasksContent.tasks = devContainerTasksTemplate.tasks;
-  tasksContent.inputs = devContainerTasksTemplate.inputs;
-
-  // Write the updated tasks.json
-  await fse.writeJson(tasksJsonPath, tasksContent, { spaces: 2 });
+  await fse.writeJson(tasksJsonPath, tasksJsonContent, { spaces: 2 });
 }
 
 /**

@@ -83,6 +83,21 @@ export async function isCustomCodeFunctionsProject(folderPath: string): Promise<
 }
 
 /**
+ * Detects the target framework of a custom code functions project for the given logic app project.
+ * @param {string} projectPath - The path to the logic app project.
+ * @returns {Promise<TargetFramework | undefined>} Returns the target framework if found, otherwise undefined.
+ */
+export async function detectCustomCodeTargetFramework(projectPath: string): Promise<TargetFramework | undefined> {
+  const customCodeProjects = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
+  if (customCodeProjects && customCodeProjects.length > 0) {
+    const metadata = await getCustomCodeFunctionsProjectMetadata(customCodeProjects[0]);
+    return metadata?.targetFramework;
+  }
+  
+  return undefined;
+}
+
+/**
  * Gets the metadata of a custom code functions project.
  * @param {string} folderPath - The folder path of the custom code functions project.
  * @returns {Promise<CustomCodeFunctionsProjectMetadata | undefined>} Returns the metadata of the custom code functions project if found, otherwise undefined.

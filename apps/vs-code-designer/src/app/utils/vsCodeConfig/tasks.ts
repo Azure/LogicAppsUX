@@ -2,19 +2,19 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import type { ProjectFile } from '../dotnet/dotnet';
-import { getDotnetDebugSubpath, getProjFiles, getTargetFramework } from '../dotnet/dotnet';
-import { getFuncHostTaskEnv } from '../codeless/funcHostTaskEnv';
+import { binariesExistSync } from '../binaries';
+import { detectProjectType, detectProjectPackageType } from '../project';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
+import { generateTasksJson } from './generators';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectPackageType, ProjectType, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';
 import type { MessageItem, TaskDefinition, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
-import { tasksFileName, vscodeFolderName } from '../../../constants';
+import { funcDependencyName, tasksFileName, vscodeFolderName } from '../../../constants';
+import { tryGetTargetFramework } from '../dotnet/dotnet';
 
 const tasksKey = 'tasks';
 const inputsKey = 'inputs';
@@ -88,43 +88,35 @@ function getTasksConfig(folder: WorkspaceFolder): WorkspaceConfiguration {
  */
 export async function validateTasksJson(context: IActionContext, folders: readonly WorkspaceFolder[] | undefined): Promise<void> {
   context.telemetry.properties.lastStep = 'validateTasksJson';
-  let overwrite = false;
+  if (!folders || folders.length === 0) {
+    return;
+  }
 
-  try {
-    if (folders) {
-      for (const folder of folders) {
-        const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder, true);
-        context.telemetry.properties.projectPath = projectPath;
-        if (projectPath) {
-          const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);
-
-          if (!fse.existsSync(tasksJsonPath)) {
-            throw new Error(localize('noTaskJson', `Failed to find: ${tasksJsonPath}`));
-          }
-
-          const taskJsonData = fse.readFileSync(tasksJsonPath, 'utf-8');
-          const taskJson = JSON.parse(taskJsonData);
-          const tasks: TaskDefinition[] = taskJson.tasks;
-
-          if (tasks && Array.isArray(tasks)) {
-            tasks.forEach((task) => {
-              const command: string = task.command;
-              if (!command.startsWith('${config:azureLogicAppsStandard')) {
-                context.telemetry.properties.overwrite = 'true';
-                overwrite = true;
-              }
-            });
-          }
-        }
-
-        if (overwrite) {
-          await overwriteTasksJson(context, projectPath);
-        }
-      }
+  for (const folder of folders) {
+    const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder, true);
+    if (!projectPath) {
+      continue;
     }
-  } catch (error) {
-    ext.outputChannel.appendLine(error.message);
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.projectPath = projectPath;
+
+    const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);
+
+    if (!fse.existsSync(tasksJsonPath)) {
+      await overwriteTasksJson(context, projectPath);
+      continue;
+    }
+
+    const taskJsonData = fse.readFileSync(tasksJsonPath, 'utf-8');
+    const taskJson = JSON.parse(taskJsonData);
+    const tasks: TaskDefinition[] = taskJson.tasks;
+
+    const shouldOverwriteTasks = tasks
+      && Array.isArray(tasks)
+      && tasks.some((task) => !task.command || !task.command.startsWith('${config:azureLogicAppsStandard'));
+    
+    if (shouldOverwriteTasks) {
+      await overwriteTasksJson(context, projectPath);
+    }
   }
 }
 
@@ -135,151 +127,28 @@ export async function validateTasksJson(context: IActionContext, folders: readon
 async function overwriteTasksJson(context: IActionContext, projectPath: string): Promise<void> {
   if (projectPath) {
     const message =
-      'The Azure Logic Apps extension must update the tasks.json file to use the required and installed binary dependencies for Node JS, .NET Framework, and Azure Functions Core Tools. This update overwrites any custom-defined tasks you might have.' +
+      'The Azure Logic Apps extension must update the tasks.json file for project at "{0}" to use the required and installed binary dependencies for Node JS, .NET Framework, and Azure Functions Core Tools. This update overwrites any custom-defined tasks you might have.' +
       '\n\nSelecting "Cancel" leaves the file unchanged, but shows this message when you open this project again.' +
       '\n\nContinue with the update?';
 
-    const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, tasksFileName);
-    let tasksJsonContent: any;
+    const vscodeFolderPath: string = path.join(projectPath, vscodeFolderName);
+    const tasksJsonPath: string = path.join(vscodeFolderPath, tasksFileName);
+    const projectType = await detectProjectType(projectPath);
+    const projectPackageType = await detectProjectPackageType(projectPath);
 
-    const projectFiles = [
-      ...(await getProjFiles(context, ProjectLanguage.CSharp, projectPath)),
-      ...(await getProjFiles(context, ProjectLanguage.FSharp, projectPath)),
-    ];
-    if (projectFiles.length > 0) {
-      context.telemetry.properties.isNugetProj = 'true';
-      const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
-      const releaseArgs: string[] = ['--configuration', 'Release'];
+    const targetFramework = projectType === ProjectType.codeful || projectPackageType === ProjectPackageType.Nuget
+      ? await tryGetTargetFramework(projectPath)
+      : undefined;
 
-      let projFile: ProjectFile;
-      const projFiles = [
-        ...(await getProjFiles(context, ProjectLanguage.FSharp, projectPath)),
-        ...(await getProjFiles(context, ProjectLanguage.CSharp, projectPath)),
-      ];
+    const tasksJsonContent = generateTasksJson({
+      projectType,
+      projectPackageType: projectPackageType,
+      hasFuncBinaries: binariesExistSync(funcDependencyName),
+      targetFramework,
+    });
 
-      if (projFiles.length === 1) {
-        projFile = projFiles[0];
-      } else if (projFiles.length === 0) {
-        context.errorHandling.suppressReportIssue = true;
-        throw new Error(
-          localize('projNotFound', 'Failed to find {0} file in folder "{1}".', 'csproj or fsproj', path.basename(projectPath))
-        );
-      } else {
-        context.errorHandling.suppressReportIssue = true;
-        throw new Error(
-          localize(
-            'projNotFound',
-            'Expected to find a single {0} file in folder "{1}", but found multiple instead: {2}.',
-            'csproj or fsproj',
-            path.basename(projectPath),
-            projFiles.join(', ')
-          )
-        );
-      }
-
-      const targetFramework: string = await getTargetFramework(projFile);
-      const debugSubpath = getDotnetDebugSubpath(targetFramework);
-      tasksJsonContent = {
-        version: '2.0.0',
-        tasks: [
-          {
-            label: 'generateDebugSymbols',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            args: ['${input:getDebugSymbolDll}'],
-            type: 'process',
-            problemMatcher: '$msCompile',
-          },
-          {
-            label: 'clean',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            args: ['clean', ...commonArgs],
-            type: 'process',
-            problemMatcher: '$msCompile',
-          },
-          {
-            label: 'build',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            args: ['build', ...commonArgs],
-            type: 'process',
-            dependsOn: 'clean',
-            group: {
-              kind: 'build',
-              isDefault: true,
-            },
-            problemMatcher: '$msCompile',
-          },
-          {
-            label: 'clean release',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            args: [...releaseArgs, ...commonArgs],
-            type: 'process',
-            problemMatcher: '$msCompile',
-          },
-          {
-            label: 'publish',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            args: ['publish', ...releaseArgs, ...commonArgs],
-            type: 'process',
-            dependsOn: 'clean release',
-            problemMatcher: '$msCompile',
-          },
-          {
-            label: 'func: host start',
-            dependsOn: 'build',
-            type: 'shell',
-            command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
-            args: ['host', 'start'],
-            ...getFuncHostTaskEnv({ cwd: debugSubpath }),
-            problemMatcher: '$func-watch',
-            isBackground: true,
-          },
-        ],
-        inputs: [
-          {
-            id: 'getDebugSymbolDll',
-            type: 'command',
-            command: 'azureLogicAppsStandard.getDebugSymbolDll',
-          },
-        ],
-      };
-    } else {
-      context.telemetry.properties.isNugetProj = 'false';
-      tasksJsonContent = {
-        version: '2.0.0',
-        tasks: [
-          {
-            label: 'generateDebugSymbols',
-            command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-            args: ['${input:getDebugSymbolDll}'],
-            type: 'process',
-            problemMatcher: '$msCompile',
-          },
-          {
-            type: 'shell',
-            command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
-            args: ['host', 'start'],
-            ...getFuncHostTaskEnv(),
-            problemMatcher: '$func-watch',
-            isBackground: true,
-            label: 'func: host start',
-            group: {
-              kind: 'build',
-              isDefault: true,
-            },
-          },
-        ],
-        inputs: [
-          {
-            id: 'getDebugSymbolDll',
-            type: 'command',
-            command: 'azureLogicAppsStandard.getDebugSymbolDll',
-          },
-        ],
-      };
-    }
-
-    // Add a "Don't warn again" option?
-    if (await confirmOverwriteFile(context, tasksJsonPath, message)) {
+    if (await confirmOverwriteFile(context, tasksJsonPath, localize('overwriteTasksJson', message, projectPath))) {
+      await fse.ensureDir(vscodeFolderPath);
       await fse.writeFile(tasksJsonPath, JSON.stringify(tasksJsonContent, null, 2));
     }
   }
@@ -292,23 +161,27 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
  * @param {string} message - Message.
  * @returns {Promise<boolean>} True if user wants to overwrite file.
  */
-async function confirmOverwriteFile(context: IActionContext, fsPath: string, message?: string): Promise<boolean> {
-  if (await fse.pathExists(fsPath)) {
-    let result: MessageItem;
-    do {
-      result = await context.ui.showWarningMessage(
-        localize('fileAlreadyExists', message),
-        { modal: true },
-        DialogResponses.yes,
-        DialogResponses.learnMore
-      );
-      if (result === DialogResponses.learnMore) {
-        await openUrl('https://learn.microsoft.com/en-us/azure/logic-apps/create-single-tenant-workflows-visual-studio-code');
-      } else if (result === DialogResponses.yes) {
-        return true;
-      } else {
-        return false;
-      }
-    } while (result === DialogResponses.learnMore);
+async function confirmOverwriteFile(context: IActionContext, fsPath: string, message: string): Promise<boolean> {
+  if (!(await fse.pathExists(fsPath))) {
+    return true;
   }
+
+  let result: MessageItem;
+  do {
+    result = await context.ui.showWarningMessage(
+      message,
+      { modal: true },
+      DialogResponses.yes,
+      DialogResponses.learnMore
+    );
+    if (result === DialogResponses.learnMore) {
+      await openUrl('https://learn.microsoft.com/en-us/azure/logic-apps/create-single-tenant-workflows-visual-studio-code');
+    } else if (result === DialogResponses.yes) {
+      return true;
+    } else {
+      return false;
+    }
+  } while (result === DialogResponses.learnMore);
+
+  return false;
 }

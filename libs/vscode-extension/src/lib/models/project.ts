@@ -2,7 +2,7 @@ import type { IWorkerRuntime } from './cliFeed';
 import type { FuncVersion } from './functions';
 import type { IParsedHostJson } from './host';
 import type { ProjectLanguage } from './language';
-import type { TargetFramework, WorkflowProjectType, WorkflowType } from './workflow';
+import type { TargetFramework, ProjectPackageType, WorkflowType } from './workflow';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Uri, WorkspaceFolder } from 'vscode';
 
@@ -67,7 +67,6 @@ export interface IProjectWizardContext extends IActionContext {
   functionAppName?: string;
   customCodeFunctionName?: string;
   functionFolderPath?: string;
-  logicAppFolderPath?: string;
   projectPath: string;
   version: FuncVersion;
   workspacePath: string;
@@ -80,7 +79,7 @@ export interface IProjectWizardContext extends IActionContext {
   workerRuntime?: IWorkerRuntime;
   openBehavior?: OpenBehavior;
   workspaceName?: string;
-  workflowProjectType?: WorkflowProjectType;
+  projectPackageType?: ProjectPackageType;
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];
   targetFramework?: TargetFramework;

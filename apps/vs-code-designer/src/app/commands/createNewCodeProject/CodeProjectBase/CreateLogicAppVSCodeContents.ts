@@ -1,258 +1,97 @@
-import { latestGAVersion, ProjectLanguage, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
-import type { ILaunchJson, ISettingToAdd, IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, ProjectPackageType, type IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import {
-  deploySubpathSetting,
-  dotnetExtensionId,
-  dotnetPublishTaskLabel,
   devContainerFileName,
   devContainerFolderName,
-  extensionCommand,
   extensionsFileName,
-  func,
   funcDependencyName,
-  funcVersionSetting,
-  funcWatchProblemMatcher,
-  hostStartCommand,
   launchFileName,
-  launchVersion,
-  projectLanguageSetting,
   settingsFileName,
   tasksFileName,
   vscodeFolderName,
 } from '../../../../constants';
 import path from 'path';
 import * as fse from 'fs-extra';
-import type { DebugConfiguration } from 'vscode';
-import { getContainerTemplatePath, getWorkspaceTemplatePath } from '../../../utils/assets';
-import { getFuncHostTaskEnv } from '../../../utils/codeless/funcHostTaskEnv';
-import { confirmEditJsonFile } from '../../../utils/fs';
-import { localize } from '../../../../localize';
-import { ext } from '../../../../extensionVariables';
-import { getCustomCodeRuntime } from '../../../utils/debug';
-import { isDebugConfigEqual } from '../../../utils/vsCodeConfig/launch';
+import { getContainerTemplatePath } from '../../../utils/assets';
 import { binariesExistSync } from '../../../utils/binaries';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import {
-  type CustomCodeFunctionsProjectMetadata,
-  getCustomCodeFunctionsProjectMetadata,
-  tryGetLogicAppCustomCodeFunctionsProjects,
-} from '../../../utils/customCodeUtils';
+  generateTasksJson,
+  generateLaunchJson,
+  generateSettingsJson,
+  generateExtensionsJson,
+} from '../../../utils/vsCodeConfig/generators';
+import { detectCustomCodeTargetFramework } from '../../../utils/customCodeUtils';
 
-export async function writeSettingsJson(
-  context: IWebviewProjectContext,
-  additionalSettings: ISettingToAdd[],
-  vscodePath: string
-): Promise<void> {
+export async function createLogicAppVsCodeContents(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {
+  const { logicAppName } = webviewProjectContext;
+  const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
+  await fse.ensureDir(vscodePath);
+
+  await writeSettingsJson(webviewProjectContext, vscodePath);
+  await writeExtensionsJson(webviewProjectContext, vscodePath);
+  await writeTasksJson(webviewProjectContext, vscodePath);
+  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppFolderPath, logicAppName);
+}
+
+export async function writeSettingsJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
   const { targetFramework, logicAppType } = context;
 
-  const settings: ISettingToAdd[] = [
-    ...additionalSettings,
-    { key: projectLanguageSetting, value: logicAppType === ProjectType.codeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript },
-    { key: funcVersionSetting, value: latestGAVersion },
-    // We want the terminal to open after F5, not the debug console because HTTP triggers are printed in the terminal.
-    { prefix: 'debug', key: 'internalConsoleOptions', value: 'neverOpen' },
-    { prefix: 'azureFunctions', key: 'suppressProject', value: true },
-  ];
+  const projectPackageType = logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle;
+  const settingsContent = generateSettingsJson({
+    projectType: logicAppType,
+    projectPackageType,
+    hasFuncBinaries: binariesExistSync(funcDependencyName),
+    targetFramework,
+  });
 
   const settingsJsonPath: string = path.join(vscodePath, settingsFileName);
-
-  if (logicAppType === ProjectType.codeful) {
-    const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
-    settings.push(
-      { prefix: 'azureFunctions', key: 'deploySubpath', value: deploySubPathValue },
-      { prefix: 'azureFunctions', key: 'preDeployTask', value: 'publish' },
-      { prefix: 'azureFunctions', key: 'projectSubpath', value: deploySubPathValue },
-      // Prevent OmniSharp from generating invalid solution files
-      { prefix: 'omnisharp', key: 'enableMsBuildLoadProjectsOnDemand', value: false },
-      { prefix: 'omnisharp', key: 'disableMSBuildDiagnosticWarning', value: true }
-    );
-  }
-  await confirmEditJsonFile(context, settingsJsonPath, (data: Record<string, any>): Record<string, any> => {
-    for (const setting of settings) {
-      const key = `${setting.prefix || ext.prefix}.${setting.key}`;
-      data[key] = setting.value;
-    }
-    return data;
-  });
+  await fse.writeJson(settingsJsonPath, settingsContent, { spaces: 2 });
 }
 
 export async function writeExtensionsJson(webviewProjectContext: IWebviewProjectContext, vscodePath: string): Promise<void> {
-  const { logicAppType } = webviewProjectContext;
   const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
-  const extensionsJsonFile = 'ExtensionsJsonFile';
-  const templatePath = getWorkspaceTemplatePath(extensionsJsonFile);
-  const templateContent = await fse.readFile(templatePath, 'utf-8');
-  const extensionsData = JSON.parse(templateContent);
-
-  if (logicAppType !== ProjectType.logicApp) {
-    extensionsData.recommendations = [...(extensionsData.recommendations || []), ...[dotnetExtensionId]];
-  }
+  const extensionsData = generateExtensionsJson();
 
   await fse.writeJson(extensionsJsonPath, extensionsData, { spaces: 2 });
 }
 
-const getCodefulTasks = (targetFramework: string) => {
-  const commonDotnetArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
-  const releaseDotnetArgs: string[] = ['--configuration', 'Release'];
-  const funcBinariesExist = binariesExistSync(funcDependencyName);
-  const debugSubpath = path.posix.join('bin', 'Debug', targetFramework);
-  const binariesOptions = funcBinariesExist ? getFuncHostTaskEnv({ cwd: debugSubpath }) : {};
-  return [
-    {
-      label: 'clean',
-      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['clean', ...commonDotnetArgs],
-      type: 'process',
-      problemMatcher: '$msCompile',
-    },
-    {
-      label: 'build',
-      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['build', ...commonDotnetArgs],
-      type: 'process',
-      dependsOn: 'clean',
-      group: {
-        kind: 'build',
-        isDefault: true,
-      },
-      problemMatcher: '$msCompile',
-    },
-    {
-      label: 'clean release',
-      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['clean', ...releaseDotnetArgs, ...commonDotnetArgs],
-      type: 'process',
-      problemMatcher: '$msCompile',
-    },
-    {
-      label: dotnetPublishTaskLabel,
-      command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-      args: ['publish', ...releaseDotnetArgs, ...commonDotnetArgs],
-      type: 'process',
-      dependsOn: 'clean release',
-      problemMatcher: '$msCompile',
-    },
-    {
-      label: 'func: host start',
-      type: funcBinariesExist ? 'shell' : func,
-      dependsOn: 'build',
-      ...binariesOptions,
-      command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
-      args: funcBinariesExist ? ['host', 'start'] : undefined,
-      isBackground: true,
-      problemMatcher: funcWatchProblemMatcher,
-    },
-  ];
-};
-
 export async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
   const { targetFramework, logicAppType } = context;
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
-  const tasksJsonFile = context.isDevContainerProject ? 'DevContainerTasksJsonFile' : 'TasksJsonFile';
-  const templatePath = getWorkspaceTemplatePath(tasksJsonFile);
-  const templateContent = await fse.readFile(templatePath, 'utf-8');
-  const tasksData = JSON.parse(templateContent);
 
-  if (logicAppType === ProjectType.codeful && targetFramework) {
-    const codefulTasks = getCodefulTasks(targetFramework);
-    tasksData.tasks = codefulTasks;
+  const projectPackageType = logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle;
 
-    await fse.writeJson(tasksJsonPath, tasksData, { spaces: 2 });
-  } else {
-    await fse.copyFile(templatePath, tasksJsonPath);
-  }
+  const tasksJsonContent = generateTasksJson({
+    projectType: logicAppType,
+    projectPackageType: projectPackageType,
+    hasFuncBinaries: binariesExistSync(funcDependencyName),
+    targetFramework,
+    isDevContainer: context.isDevContainerProject,
+  });
+
+  await fse.writeJson(tasksJsonPath, tasksJsonContent, { spaces: 2 });
 }
 
-export async function writeDevContainerJson(devContainerPath: string): Promise<void> {
-  const devContainerJsonPath: string = path.join(devContainerPath, devContainerFileName);
-  const templatePath = getContainerTemplatePath(devContainerFileName);
-  await fse.copyFile(templatePath, devContainerJsonPath);
-}
-
-export function getDebugConfiguration(
-  logicAppName: string,
-  customCodeTargetFramework?: TargetFramework,
-  isCodeful?: boolean
-): DebugConfiguration {
-  // NOTE(aeldridge): Only use logicapp debug configuration for custom code and codeful projects for now. Simple attach is sufficient for codeless non-custom code.
-  if (isCodeful) {
-    return {
-      name: localize('debugLogicApp', `Run/Debug logic app ${logicAppName}`),
-      type: 'logicapp',
-      request: 'launch',
-      funcRuntime: 'coreclr',
-      isCodeless: false,
-    };
-  }
-
-  if (customCodeTargetFramework) {
-    return {
-      name: localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
-      type: 'logicapp',
-      request: 'launch',
-      funcRuntime: 'coreclr',
-      customCodeRuntime: getCustomCodeRuntime(customCodeTargetFramework),
-      isCodeless: true,
-    };
-  }
-
-  return {
-    name: localize('attachToNetFunc', `Run/Debug logic app ${logicAppName}`),
-    type: 'coreclr',
-    request: 'attach',
-    processId: `\${command:${extensionCommand.pickProcess}}`,
-  };
-}
-
-export async function writeLaunchJson(context: IWebviewProjectContext, vscodePath: string, logicAppName: string): Promise<void> {
+export async function writeLaunchJson(
+  context: IWebviewProjectContext,
+  vscodePath: string,
+  logicAppFolderPath: string,
+  logicAppName: string
+): Promise<void> {
   const customCodeTargetFramework =
     context.logicAppType === ProjectType.customCode || context.logicAppType === ProjectType.rulesEngine
-      ? (context.targetFramework ?? (await tryGetCustomCodeTargetFramework(context)))
+      ? (context.targetFramework ?? (await detectCustomCodeTargetFramework(logicAppFolderPath)))
       : undefined;
-  const isCodeful = context.logicAppType === ProjectType.codeful;
-  const newDebugConfig: DebugConfiguration = getDebugConfiguration(logicAppName, customCodeTargetFramework, isCodeful);
 
-  // otherwise manually edit json
-  const launchJsonPath: string = path.join(vscodePath, launchFileName);
-  await confirmEditJsonFile(context, launchJsonPath, (data: ILaunchJson): ILaunchJson => {
-    data.version = launchVersion;
-    data.configurations = insertLaunchConfig(data.configurations, newDebugConfig);
-    return data;
+  const launchContent = generateLaunchJson({
+    projectType: context.logicAppType,
+    projectPackageType: context.logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle,
+    hasFuncBinaries: binariesExistSync(funcDependencyName),
+    customCodeTargetFramework,
+    logicAppName,
   });
-}
 
-async function tryGetCustomCodeTargetFramework(context: IWebviewProjectContext): Promise<TargetFramework | undefined> {
-  const workspaceFolder = path.join(context.workspaceProjectPath.fsPath, context.workspaceName);
-  const logicAppFolderPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(logicAppFolderPath);
-  let customCodeProjectsMetadata: CustomCodeFunctionsProjectMetadata[];
-  if (customCodeProjectPaths && customCodeProjectPaths.length > 0) {
-    customCodeProjectsMetadata = await Promise.all(customCodeProjectPaths.map(getCustomCodeFunctionsProjectMetadata));
-  }
-  // Currently only support one custom code functions project per logic app
-  return customCodeProjectsMetadata ? customCodeProjectsMetadata[0].targetFramework : undefined;
-}
-
-export function insertLaunchConfig(existingConfigs: DebugConfiguration[] | undefined, newConfig: DebugConfiguration): DebugConfiguration[] {
-  const configs = (existingConfigs ?? []).filter((existingConfig) => !isDebugConfigEqual(existingConfig, newConfig));
-  return [...configs, newConfig];
-}
-
-export async function createLogicAppVsCodeContents(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {
-  const { logicAppType, logicAppName } = webviewProjectContext;
-  const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
-  await fse.ensureDir(vscodePath);
-
-  const additionalSettings: ISettingToAdd[] = [];
-
-  if (logicAppType === ProjectType.logicApp) {
-    additionalSettings.push({ key: deploySubpathSetting, value: '.' });
-  }
-
-  await writeSettingsJson(webviewProjectContext, additionalSettings, vscodePath);
-  await writeExtensionsJson(webviewProjectContext, vscodePath);
-  await writeTasksJson(webviewProjectContext, vscodePath);
-  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppName);
+  const launchJsonPath: string = path.join(vscodePath, launchFileName);
+  await fse.writeJson(launchJsonPath, launchContent, { spaces: 2 });
 }
 
 export async function createDevContainerContents(webviewProjectContext: IWebviewProjectContext, workspaceFolder: string): Promise<void> {
@@ -261,4 +100,10 @@ export async function createDevContainerContents(webviewProjectContext: IWebview
     await fse.ensureDir(devContainerPath);
     await writeDevContainerJson(devContainerPath);
   }
+}
+
+export async function writeDevContainerJson(devContainerPath: string): Promise<void> {
+  const devContainerJsonPath: string = path.join(devContainerPath, devContainerFileName);
+  const templatePath = getContainerTemplatePath(devContainerFileName);
+  await fse.copyFile(templatePath, devContainerJsonPath);
 }
