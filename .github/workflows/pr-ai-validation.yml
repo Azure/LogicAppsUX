@@ -75,12 +75,13 @@ jobs:
         shell: bash
         run: |
           # @github/copilot is a thin loader; the real CLI is a large platform-native binary shipped as
-          # an optionalDependency. npm's optional-dep install is best-effort: a transient registry/network
-          # blip can leave the binary missing/non-executable while npm still exits 0, surfacing later as an
-          # intermittent exit 126 ("cannot execute"). Mitigations:
+          # an optionalDependency. npm's optional-dep install is best-effort, so a transient registry/network
+          # blip can leave the binary missing/incomplete while npm still exits 0. Harden the install so a
+          # broken CLI is caught here rather than mid-validation:
           #   - pin the version (reproducible; the ~/.npm cache above serves it offline on the happy path);
           #   - retry the install and verify the binary actually runs (copilot --version) before proceeding;
           #   - clear the npm cache between retries so a poisoned/partial artifact is not reused.
+          # (The oversized-prompt exit 126 is handled separately in the validation step via stdin.)
           install_ok=0
           for attempt in 1 2 3; do
             if npm install -g "@github/copilot@${COPILOT_CLI_VERSION}" && copilot --version >/dev/null 2>&1; then
@@ -158,9 +159,12 @@ jobs:
           RESULT=""; CLI_EXIT=1
           for MODEL in $MODELS; do
             for try in 1 2; do
+              # Pass the prompt via stdin, NOT as a `-p "$(...)"` argv. On Linux a single argument is
+              # capped at MAX_ARG_STRLEN (128 KB); large-diff PRs push the combined prompt past that,
+              # making execve fail with E2BIG which surfaces as an instant exit 126 with no output.
+              # stdin has no such limit, so this validates PRs of any diff size.
               RESULT=$(timeout 90 copilot --yolo \
-                -p "$(cat /tmp/full-prompt.txt)" \
-                --model "$MODEL" 2>&1)
+                --model "$MODEL" < /tmp/full-prompt.txt 2>&1)
               CLI_EXIT=$?
               if [ $CLI_EXIT -eq 0 ] && [ -n "$RESULT" ]; then break 2; fi
               echo "::warning::Copilot model $MODEL attempt $try failed (exit $CLI_EXIT)"
