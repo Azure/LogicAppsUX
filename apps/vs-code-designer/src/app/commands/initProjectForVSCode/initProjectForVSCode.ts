@@ -12,7 +12,6 @@ import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspace } from '../../utils/workspace';
 import { InitDotnetProjectStep } from './initDotnetProjectStep';
-import { InitProjectStep } from './initProjectStep';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import {
   latestGAVersion,
@@ -22,6 +21,7 @@ import {
   type IProjectWizardContext,
 } from '@microsoft/vscode-extension-logic-apps';
 import { window, workspace, type WorkspaceFolder } from 'vscode';
+import { InitProjectStep } from './initProjectStep';
 
 export async function initProjectForVSCode(context: IActionContext, fsPath?: string, language?: ProjectLanguage): Promise<void> {
   let workspaceFolder: WorkspaceFolder | undefined;

@@ -8,14 +8,14 @@ import { getProjFiles, getTargetFramework, tryGetFuncVersion } from '../../utils
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { InitProjectStepBase } from './initProjectStepBase';
+import { InitProjectStep } from './initProjectStep';
 import { DialogResponses, nonNullProp, openUrl, parseError } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 
-export class InitDotnetProjectStep extends InitProjectStepBase {
+export class InitDotnetProjectStep extends InitProjectStep {
   protected preDeployTask: string = dotnetPublishTaskLabel;
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
