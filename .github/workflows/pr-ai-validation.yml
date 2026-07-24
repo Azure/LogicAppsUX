@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 5
     env:
       PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+      COPILOT_CLI_VERSION: 1.0.72-0
     steps:
       - name: Check if contributor is trusted
         uses: actions/github-script@v8
@@ -64,19 +65,29 @@ jobs:
         with:
           sparse-checkout: prompts/copilot-pr-desc-check.md
 
+      - name: Cache Copilot CLI download
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: copilot-cli-${{ runner.os }}-${{ env.COPILOT_CLI_VERSION }}
+
       - name: Install Copilot CLI
         shell: bash
         run: |
-          # The npm package is a thin loader that fetches a platform-native binary on first run.
-          # A flaky fetch can leave that binary missing/non-executable, which surfaces later as an
-          # intermittent exit 126 ("cannot execute") at invocation time. Retry the install and verify
-          # the binary actually runs (copilot --version) before proceeding.
+          # @github/copilot is a thin loader; the real CLI is a large platform-native binary shipped as
+          # an optionalDependency. npm's optional-dep install is best-effort: a transient registry/network
+          # blip can leave the binary missing/non-executable while npm still exits 0, surfacing later as an
+          # intermittent exit 126 ("cannot execute"). Mitigations:
+          #   - pin the version (reproducible; the ~/.npm cache above serves it offline on the happy path);
+          #   - retry the install and verify the binary actually runs (copilot --version) before proceeding;
+          #   - clear the npm cache between retries so a poisoned/partial artifact is not reused.
           install_ok=0
           for attempt in 1 2 3; do
-            if npm install -g @github/copilot@latest && copilot --version >/dev/null 2>&1; then
+            if npm install -g "@github/copilot@${COPILOT_CLI_VERSION}" && copilot --version >/dev/null 2>&1; then
               install_ok=1; break
             fi
-            echo "::warning::Copilot CLI install/verify attempt ${attempt} failed; retrying..."
+            echo "::warning::Copilot CLI install/verify attempt ${attempt} failed; clearing cache and retrying..."
+            npm cache clean --force >/dev/null 2>&1 || true
             sleep $((attempt * 5))
           done
           if [ "$install_ok" != "1" ]; then
