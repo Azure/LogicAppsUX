@@ -4,7 +4,7 @@ import { StaticResultProperty } from './staticResultProperty';
 import { formatShownProperties, getOptions, initializeShownProperties } from './util';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 interface StaticResultPropertiesProps {
@@ -27,6 +27,18 @@ export const StaticResultProperties = ({
   const [shownProperties, setShownProperties] = useState<Record<string, boolean>>(
     initializeShownProperties(required, propertiesSchema, propertyValues)
   );
+
+  // Debug logging for StaticResultProperties
+  useEffect(() => {
+    console.log('[DEBUG StaticResult] StaticResultProperties rendered', {
+      isRoot,
+      propertiesSchemaKeys: propertiesSchema ? Object.keys(propertiesSchema) : 'none',
+      required,
+      shownProperties,
+      propertyValues,
+      dropdownOptions: getOptions(propertiesSchema, required),
+    });
+  }, [isRoot, propertiesSchema, required, shownProperties, propertyValues]);
 
   const updateShownProperties = (optionValue: string, _optionText: string) => {
     const optionKey = optionValue;

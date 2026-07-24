@@ -15,6 +15,11 @@ export const getStaticResultSchemaForAPIConnector = (
   parser: SwaggerParser | ManifestParser
 ): Promise<StaticResultRootSchemaType | undefined> => {
   const outputSchema = parser.getOutputSchema(operationId);
+  console.log('[DEBUG StaticResult] getStaticResultSchemaForAPIConnector called', {
+    operationId,
+    parserType: parser.constructor.name,
+    outputSchema: JSON.stringify(outputSchema, null, 2),
+  });
   return wrapOutputsSchemaToOperationSchema(outputSchema);
 };
 
@@ -28,9 +33,20 @@ const wrapOutputsSchemaToOperationSchema = (outputSchema: OpenApiSchema): Promis
   if (outputSchema) {
     const newSchema = cleanDynamicSchemaParameters(clone(outputSchema));
     schema.properties.outputs.properties.body = newSchema;
+    console.log('[DEBUG StaticResult] wrapOutputsSchemaToOperationSchema', {
+      originalOutputSchema: JSON.stringify(outputSchema, null, 2),
+      cleanedSchema: JSON.stringify(newSchema, null, 2),
+      finalBodySchema: JSON.stringify(schema.properties.outputs.properties.body, null, 2),
+    });
   } else {
     schema.properties.outputs.properties.body = {};
+    console.log('[DEBUG StaticResult] wrapOutputsSchemaToOperationSchema - no outputSchema, using empty body');
   }
+
+  console.log('[DEBUG StaticResult] Final wrapped schema', {
+    schemaKeys: Object.keys(schema.properties),
+    outputsKeys: Object.keys(schema.properties.outputs.properties),
+  });
 
   return Promise.resolve(schema);
 };
@@ -47,6 +63,9 @@ const cleanDynamicSchemaParameters = (schema: OpenAPIV2.SchemaObject): OpenAPIV2
 
   const currSchema = schema;
   if (currSchema[ExtensionProperties.DynamicSchema]) {
+    console.log('[DEBUG StaticResult] cleanDynamicSchemaParameters - found dynamic schema, stripping to title only', {
+      title: currSchema.title,
+    });
     return { title: currSchema.title };
   }
 
