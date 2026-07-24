@@ -5,8 +5,15 @@ steps:
       versionSpec: '24.x'
     condition: succeeded()
 
+  - task: NpmAuthenticate@0
+    displayName: "Authenticate with CFS npm feed"
+    inputs:
+      workingFile: .npmrc
+
   - script: npm install -g pnpm
     displayName: "Install pnpm"
+    env:
+      npm_config_registry: https://pkgs.dev.azure.com/msazure/one/_packaging/one_PublicPackages/npm/registry/
     condition: succeeded()
 
   - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
