@@ -345,20 +345,22 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     const workspaceFile = getWorkspaceForVariant(variant);
     console.log(`[codefulDebugTasks] Startup .code-workspace: ${workspaceFile}`);
 
-    // Capture the freshness watermark BEFORE opening the workspace so any design-time
-    // evidence produced by onboarding auto-start (after the window reload) counts as
-    // fresh regardless of exact timing.
-    const phaseStartTime = Date.now() - 1000;
+    // Freshness watermark for design-time evidence. Anchored in run-e2e.js right after the
+    // stale folder is cleared and before launch (env var), so a folder created during the
+    // before() hook (Windows) or after the explicit workspace open (Linux) both count as
+    // fresh. Falls back to a local estimate only if the env var is missing.
+    const notBeforeEnv = Number(process.env.LA_E2E_CODEFUL_EVIDENCE_NOT_BEFORE);
+    const phaseStartTime = Number.isFinite(notBeforeEnv) && notBeforeEnv > 0 ? notBeforeEnv : Date.now() - 1000;
 
-    // Explicitly open the generated .code-workspace after launch. Relying solely on
-    // ExTester's startup `resources` (which uses `code -r` / CLI IPC) silently fails on
-    // headless CI: the VS Code IPC socket isn't wired up when launched via ChromeDriver,
-    // so VS Code lands on the empty Welcome screen with NO workspace folder open. With no
-    // folder open, getWorkspaceLogicAppFolders() is empty, codeful design-time auto-start
-    // correctly no-ops, and no `workflow-designtime` evidence is ever produced — which is
-    // exactly the failure the CI screenshots showed. Opening via the command palette (the
-    // same proven path the codeless designer phases use) makes the workspace load
-    // deterministically so codeful onboarding auto-start can fire.
+    // Explicitly open the generated .code-workspace after launch. ExTester's startup
+    // `resources` (which uses `code -r` / CLI IPC) silently fails on headless CI: the VS Code
+    // IPC socket isn't wired up when launched via ChromeDriver, so VS Code lands on the empty
+    // Welcome screen with NO workspace folder open. With no folder open,
+    // getWorkspaceLogicAppFolders() is empty, codeful design-time auto-start correctly no-ops,
+    // and no `workflow-designtime` evidence is ever produced — exactly the failure the CI
+    // screenshots showed. Opening via the command palette (the same proven path the codeless
+    // designer phases use) makes the workspace load deterministically so codeful onboarding
+    // auto-start can fire. No-ops when the workspace is already open (e.g. on Windows).
     await openWorkspaceFileInSession(new Workbench(), workspaceFile);
 
     // Re-verify the recorder after the workspace open reloads the extension host.
