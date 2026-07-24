@@ -35,21 +35,6 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 
 const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
 
-/**
- * Emits fine-grained, timestamped step logs for the activation bundle path so a
- * slow launch reveals exactly which phase consumes the time. The lines are cheap
- * (a single `Date.now()` + string) and only fire during bundle validation, so
- * they can stay in permanently as a diagnostic breadcrumb for the ~40s cold-start
- * investigation. Pass the previous marker's return value as `sinceMs` to log the
- * elapsed delta for that phase.
- */
-function logBundleStep(label: string, sinceMs?: number): number {
-  const now = Date.now();
-  const delta = sinceMs === undefined ? '' : ` (+${now - sinceMs}ms)`;
-  ext.outputChannel?.appendLog(`[bundle-timing] ${label}${delta}`);
-  return now;
-}
-
 export type BundleBaseUrlSource = 'localSettings' | 'envVar' | 'experimentalSetting' | 'default';
 export type BundleVersionSource =
   | 'envVar'
@@ -404,7 +389,6 @@ async function hasRequiredBundleContent(bundleDir: string): Promise<boolean> {
  * Returns the base64 digest, or `undefined` if `bundleDir` doesn't exist.
  */
 export async function computeBundleContentHash(bundleDir: string): Promise<string | undefined> {
-  const hashStart = logBundleStep(`computeBundleContentHash START (full byte SHA-256) for ${bundleDir}`);
   if (!(await fse.pathExists(bundleDir))) {
     return undefined;
   }
@@ -451,7 +435,6 @@ export async function computeBundleContentHash(bundleDir: string): Promise<strin
     hash.update('\0');
   }
   const digest = hash.digest('base64');
-  logBundleStep(`computeBundleContentHash END (${entries.length} files hashed)`, hashStart);
   return digest;
 }
 
@@ -1150,7 +1133,6 @@ function throwBundleHealthError(prefix: string, failure: BundleOnDiskHealthFailu
 }
 
 export async function assertExtensionBundleOnDiskHealthy(version?: string): Promise<BundleOnDiskHealthResult> {
-  logBundleStep(`assertExtensionBundleOnDiskHealthy START${version ? ` (version ${version})` : ''} — may run full byte hash`);
   let targetVersion = version;
   if (!targetVersion) {
     const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
@@ -1290,7 +1272,6 @@ type BundleFastGateResult = { ok: true; version: string; deepVerify: boolean } |
  *    emptyBundleDir) → returned as failures so the caller repairs synchronously.
  */
 async function evaluateBundleFastGate(version?: string): Promise<BundleFastGateResult> {
-  const gateStart = logBundleStep(`evaluateBundleFastGate START${version ? ` (version ${version})` : ''}`);
   let targetVersion = version;
   if (!targetVersion) {
     const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
@@ -1311,16 +1292,13 @@ async function evaluateBundleFastGate(version?: string): Promise<BundleFastGateR
   if (!sidecar.contentHash) {
     return { ok: false, reason: 'sidecarUnreadable', version: targetVersion, detail: 'sidecar missing contentHash field' };
   }
-  const walkStart = logBundleStep(`evaluateBundleFastGate: computing stat fingerprints (lstat walk) for ${targetVersion}`);
   const fingerprints = await computeBundleFingerprints(bundleDir);
-  logBundleStep('evaluateBundleFastGate: stat fingerprints computed', walkStart);
   if (!fingerprints) {
     return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
   }
 
   // 1) Exact fast path: the mtime-sensitive tree fingerprint matches.
   if (sidecar.treeFingerprint && fingerprints.treeFingerprint === sidecar.treeFingerprint) {
-    logBundleStep(`evaluateBundleFastGate: MATCH (tree fingerprint) → fast path, no byte hash`, gateStart);
     return { ok: true, version: targetVersion, deepVerify: isDeepBundleVerificationDue(sidecar) };
   }
 
@@ -1328,7 +1306,6 @@ async function evaluateBundleFastGate(version?: string): Promise<BundleFastGateR
   //    still matches, so only mtimes moved. Refresh the tree fingerprint WITHOUT a
   //    byte hash so the next launch is fast again.
   if (sidecar.structuralFingerprint && fingerprints.structuralFingerprint === sidecar.structuralFingerprint) {
-    logBundleStep(`evaluateBundleFastGate: structural match (mtime drift) → refresh fingerprint, no byte hash`, gateStart);
     ext.outputChannel?.appendLog(
       `Logic Apps extension bundle ${targetVersion} metadata drift detected (sizes + paths unchanged); refreshing fast fingerprint without re-hashing.`
     );
@@ -1349,10 +1326,6 @@ async function evaluateBundleFastGate(version?: string): Promise<BundleFastGateR
   // 3) Legacy sidecar (no fast fingerprints) OR a genuine structural change (file
   //    added / removed / resized). Presence + sidecar checks already passed, so
   //    return ok PROVISIONALLY and confirm bytes / repair off the activation path.
-  logBundleStep(
-    `evaluateBundleFastGate: ${sidecar.treeFingerprint || sidecar.structuralFingerprint ? 'fingerprint drift' : 'legacy sidecar (no fingerprints)'} → deep verify scheduled in background`,
-    gateStart
-  );
   ext.outputChannel?.appendLog(
     sidecar.treeFingerprint || sidecar.structuralFingerprint
       ? `Logic Apps extension bundle ${targetVersion} fast fingerprint drift; scheduling background deep verification.`
@@ -1589,11 +1562,7 @@ export async function ensureExtensionBundleHealthy(
   context?: IActionContext,
   options: EnsureExtensionBundleHealthyOptions = {}
 ): Promise<void> {
-  const ensureStart = logBundleStep(
-    'ensureExtensionBundleHealthy START; awaiting in-flight activation download (waitForExtensionBundleReady)'
-  );
   await waitForExtensionBundleReady();
-  logBundleStep('waitForExtensionBundleReady resolved', ensureStart);
   if (lastBundleInstallResult === 'failed') {
     const cause = lastBundleInstallError?.message ?? 'unknown error';
     throw new Error(
@@ -1612,9 +1581,7 @@ export async function ensureExtensionBundleHealthy(
     return;
   }
 
-  const gateStart = logBundleStep('ensureExtensionBundleHealthy: running fast gate (evaluateBundleFastGate)');
   const initialHealth = await evaluateBundleFastGate();
-  logBundleStep('ensureExtensionBundleHealthy: fast gate returned', gateStart);
   if (initialHealth.ok) {
     healthyBundleVersion = initialHealth.version;
     ext.outputChannel?.appendLog(`Logic Apps extension bundle ${initialHealth.version} on-disk integrity check passed.`);
@@ -1787,9 +1754,6 @@ async function tryHealthyLocalBundleFastPath(
     return false;
   }
   const updateCheckDue = shouldCheckForDependencyUpdates();
-  logBundleStep(
-    `downloadExtensionBundleCore: fast gate OK for ${params.version} (source ${params.versionSource}) → returning on local bundle (updateCheckDue=${updateCheckDue}, deepVerify=${localGate.deepVerify === true}); no synchronous CDN call`
-  );
   context.telemetry.properties.localBundleHashCheck = updateCheckDue ? 'fastPath' : 'fastPathThrottled';
   if (!updateCheckDue) {
     context.telemetry.properties.extensionBundleUpdateCheckThrottled = 'true';
@@ -1813,7 +1777,6 @@ async function tryHealthyLocalBundleFastPath(
 
 async function downloadExtensionBundleCore(context: IActionContext, options: DownloadExtensionBundleOptions): Promise<boolean> {
   const downloadExtensionBundleStartTime = Date.now();
-  logBundleStep(`downloadExtensionBundleCore START (forceVerify=${options.forceVerify === true})`);
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
     const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
@@ -2129,10 +2092,8 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
       // Fast gate NOT ok (missing / corrupt / empty / legacy sidecar needing a
       // byte verify) → fall through to the synchronous feed-backed verify/repair
       // flow below so we can bootstrap or repair the bundle.
-      logBundleStep('downloadExtensionBundleCore: fast gate NOT ok → SYNCHRONOUS feed + verify/repair path (may hit CDN + byte hash)');
     }
 
-    logBundleStep('downloadExtensionBundleCore: fetching CDN version feed (synchronous, on awaited path)');
     let latestFeedBundleVersion = '0.0.0';
     let feedVersions: string[];
     if (fellThroughFromExperimental) {
