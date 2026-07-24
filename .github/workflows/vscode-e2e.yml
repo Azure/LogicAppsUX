@@ -649,30 +649,27 @@ jobs:
   # net8 codeful project. Self-provisions its runtime dependencies + extension
   # bundle at run time (validateDependencies), so it consumes only the
   # cross-platform JS extension-build artifact — no fixtures / bundle artifact.
-  vscode-e2e-codeful:
-    name: vscode-e2e-codeful (${{ matrix.os }})
+  # Codeful debug E2E (E2E_MODE=codefuldebugonly), the first-ever CI presence for this
+  # suite (previously local-only). The test opens the generated .code-workspace after
+  # launch via openWorkspaceFileInSession (ExTester's startup `resources` / `code -r` IPC
+  # silently no-ops headlessly), then relies on onboarding auto-start to emit the
+  # workflow-designtime evidence and asserts FUNCTIONS_WORKER_RUNTIME=node (the Option B
+  # regression signal) plus the F5 build/task chain.
+  #
+  # Split into two independent single-OS jobs (rather than one matrix job) so each has an
+  # unambiguous `result` the summary gate can key on. GitHub's matrix-aggregate result +
+  # per-leg continue-on-error semantics are fuzzy — a separate job per OS makes the ubuntu
+  # leg cleanly blocking and the windows leg cleanly advisory.
+  vscode-e2e-codeful-ubuntu:
+    name: vscode-e2e-codeful (ubuntu-latest)
     needs: setup-extension-build
-    # NEWLY INTEGRATED SHARD — currently NON-BLOCKING while it is stabilized.
-    # This is the first time the codeful debug E2E (E2E_MODE=codefuldebugonly) runs
-    # in CI; it was previously local-only. In headless CI the codeful design-time host
-    # does not auto-start within the test's 180s window on either OS (the extension's
-    # passive onboarding auto-start never emits the workflow-designtime evidence the
-    # test waits for — a test-harness/activation gap, NOT the shipped Option B product
-    # fix, which is covered by unit tests). continue-on-error keeps the signal visible
-    # in the summary without gating the required check until the harness is made
-    # deterministic (explicitly trigger design-time generation instead of relying on
-    # passive auto-start). Flip continue-on-error off + re-add to the summary hard gate
-    # once green.
-    continue-on-error: true
+    # GREEN end-to-end (workspace opens, design-time Node worker, dotnet build succeeds,
+    # task chain records) → BLOCKING, wired into the summary hard gate.
     timeout-minutes: 45
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -685,8 +682,7 @@ jobs:
           node-version: 20.x
           package-manager-cache: false
 
-      - name: Symlink node to system path (Linux, for func host child processes)
-        if: runner.os == 'Linux'
+      - name: Symlink node to system path (for func host child processes)
         run: |
           NODE_BIN="$(which node)"
           NPM_BIN="$(which npm)"
@@ -697,8 +693,92 @@ jobs:
             sudo ln -sf "$NPX_BIN"  "$dir/npx"
           done
 
-      - name: Verify node on PATH (Windows, for func host child processes)
-        if: runner.os == 'Windows'
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      - name: Cache Logic Apps runtime dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Run codeful debug
+        run: |
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          echo "PATH=$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          E2E_MODE: codefuldebugonly
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-codeful-ubuntu-latest
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  vscode-e2e-codeful-windows:
+    name: vscode-e2e-codeful (windows-latest)
+    needs: setup-extension-build
+    # Reaches the F5 stage but the func host / design-time background process does not
+    # finish provisioning Azure Functions Core Tools within the timeout on the runner
+    # ("must have Azure Functions Core Tools installed" / "Timed out waiting for design-time
+    # startup"). ADVISORY (continue-on-error) and intentionally EXCLUDED from the summary
+    # hard gate until Windows func-host provisioning is sorted. Flip continue-on-error off
+    # + add to the gate once green.
+    continue-on-error: true
+    timeout-minutes: 45
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Verify node on PATH (for func host child processes)
         run: |
           echo "node: $(command -v node) $(node --version)"
           echo "npm:  $(command -v npm)  $(npm --version)"
@@ -724,12 +804,6 @@ jobs:
       - name: Extract build artifacts
         run: tar -xzf extension-build.tar.gz
 
-      - name: Install system dependencies for virtual display (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
-
       - name: Cache Logic Apps runtime dependencies
         uses: actions/cache@v5
         with:
@@ -738,22 +812,7 @@ jobs:
           restore-keys: |
             la-runtime-deps-${{ runner.os }}-
 
-      - name: Run codeful debug (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
-          echo "PATH=$PATH"
-          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-            node apps/vs-code-designer/out/test/run-e2e.js
-        env:
-          E2E_MODE: codefuldebugonly
-          LA_E2E_SCENARIO_RETRIES: '1'
-          NODE_OPTIONS: --max-old-space-size=4096
-          TEMP: ${{ runner.temp }}
-          TMPDIR: ${{ runner.temp }}
-
-      - name: Run codeful debug (Windows)
-        if: runner.os == 'Windows'
+      - name: Run codeful debug
         run: |
           echo "PATH=$PATH"
           node apps/vs-code-designer/out/test/run-e2e.js
@@ -769,7 +828,7 @@ jobs:
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: vscode-e2e-screenshots-codeful-${{ matrix.os }}
+          name: vscode-e2e-screenshots-codeful-windows-latest
           path: |
             ${{ runner.temp }}/test-resources/screenshots/
             test-resources/screenshots/
@@ -890,28 +949,30 @@ jobs:
   # ("vscode-e2e-summary") regardless of how many scenarios we add later.
   vscode-e2e-summary:
     name: vscode-e2e-summary
-    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful, vscode-e2e-compat]
+    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-compat]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Verify all jobs passed
         run: |
-          echo "setup-extension-build: ${{ needs.setup-extension-build.result }}"
-          echo "setup-fixtures:        ${{ needs.setup-fixtures.result }}"
-          echo "vscode-e2e (matrix):   ${{ needs.vscode-e2e.result }}"
-          echo "vscode-e2e-windows:    ${{ needs.vscode-e2e-windows.result }}"
-          echo "vscode-e2e-codeful:    ${{ needs.vscode-e2e-codeful.result }} (non-blocking; being stabilized)"
-          echo "compat matrix:         ${{ needs.vscode-e2e-compat.result }}"
+          echo "setup-extension-build:      ${{ needs.setup-extension-build.result }}"
+          echo "setup-fixtures:             ${{ needs.setup-fixtures.result }}"
+          echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"
+          echo "vscode-e2e-windows:         ${{ needs.vscode-e2e-windows.result }}"
+          echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }} (blocking)"
+          echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }} (advisory, not gated)"
+          echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
              [ "${{ needs.setup-fixtures.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-windows.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-codeful-ubuntu.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-compat.result }}" != "success" ]; then
-            echo "::error::One or more vscode-e2e jobs failed"
+            echo "::error::One or more required vscode-e2e jobs failed"
             exit 1
           fi
-          # vscode-e2e-codeful is intentionally EXCLUDED from the hard gate above: it is
-          # a newly integrated, currently non-blocking shard (see its job comment). Its
-          # result is echoed for visibility. Re-add it to the gate once it is green.
-          echo "All required vscode-e2e jobs passed (codeful shard is advisory)."
+          # vscode-e2e-codeful-windows is intentionally EXCLUDED from the gate above: it is
+          # advisory (continue-on-error) until Windows func-host provisioning is sorted. Its
+          # result is echoed for visibility. Add it to the gate once green.
+          echo "All required vscode-e2e jobs passed."
 
