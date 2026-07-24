@@ -49,7 +49,7 @@ export type PayloadData = {
   method?: string;
   headers?: Record<string, string>;
   queries?: Record<string, string>;
-  body?: string;
+  body?: unknown;
 };
 
 /**
