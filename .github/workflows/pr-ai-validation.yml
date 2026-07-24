@@ -137,7 +137,10 @@ jobs:
         run: |
           SYSTEM_PROMPT=$(cat prompts/copilot-pr-desc-check.md 2>/dev/null || echo "Validate this PR description.")
           PR_META=$(cat /tmp/pr-meta.json)
-          PR_DIFF=$(head -2000 /tmp/pr-diff.txt)
+          # Cap the diff sample by BYTES as well as lines: `head -2000` bounds line count but not
+          # size, and recompiled/generated files can have very long single lines that bloat the
+          # prompt (token cost + latency). 100 KB keeps the full prompt comfortably bounded.
+          PR_DIFF=$(head -2000 /tmp/pr-diff.txt | head -c 100000)
 
           # Write combined prompt to file (avoids shell escaping issues)
           {
