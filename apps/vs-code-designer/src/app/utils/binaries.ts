@@ -26,7 +26,6 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { recordDependencyIntegrityCheck, shouldRunDeepDependencyIntegrityCheck } from './dependencyIntegrityCheck';
 import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies';
 import { isDevContainerWorkspaceSync } from './devContainerUtils';
 import { type DownloadAttemptResult, downloadFileWithVerification as downloadFileWithVerificationCore } from './integrity';
@@ -651,39 +650,6 @@ export async function verifyDependencyIntegrity(context: IActionContext, depende
       return false;
     }
 
-    // Throttle the expensive full walk. Stat-ing every file listed in the manifest (Func Core Tools
-    // alone lists ~8.8k files) on a cold file cache can block startup ~15s+. On most launches we skip
-    // it in favor of a cheap sampled sentinel; the authoritative full walk only runs on the first
-    // activation, at most once per interval, or when the sentinel flags a change. This mirrors the
-    // extension-bundle deep-verify throttle.
-    if (!shouldRunDeepDependencyIntegrityCheck(dependencyName)) {
-      const sentinel = selectSentinelSample(manifest.files);
-      const sentinelFailure = await findFirstManifestFailure(targetFolder, sentinel);
-      if (!sentinelFailure) {
-        context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'passed-throttled';
-        context.telemetry.properties[`${dependencyName}IntegritySentinelFiles`] = `${sentinel.length}`;
-        ext.outputChannel.appendLog(
-          localize(
-            'integrityThrottled',
-            '{0} on-disk integrity fast check passed ({1} of {2} sentinel files verified); full verification throttled.',
-            dependencyName,
-            sentinel.length,
-            manifest.files.length
-          )
-        );
-        return true;
-      }
-      ext.outputChannel.appendLog(
-        localize(
-          'integritySentinelChanged',
-          '{0} on-disk integrity fast check detected a change in "{1}"; running full verification.',
-          dependencyName,
-          sentinelFailure.path
-        )
-      );
-      // Fall through to the full walk below for an authoritative healthy-vs-reinstall decision.
-    }
-
     // Deep-verify each recorded file with async, bounded-concurrency stat batches. A dependency
     // manifest can list many thousands of files (Func Core Tools alone is ~8.8k), and a synchronous
     // fs.statSync loop would block the extension-host event loop long enough for VS Code to flag the
@@ -752,7 +718,6 @@ export async function verifyDependencyIntegrity(context: IActionContext, depende
     ext.outputChannel.appendLog(
       localize('integrityPassed', '{0} on-disk integrity check passed ({1} files verified).', dependencyName, manifest.files.length)
     );
-    await recordDependencyIntegrityCheck(dependencyName);
     return true;
   } catch (error) {
     context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'error';
@@ -767,58 +732,6 @@ export async function verifyDependencyIntegrity(context: IActionContext, depende
     );
     return false;
   }
-}
-
-/**
- * Picks a bounded, evenly-spread sample of manifest entries for the cheap "sentinel" integrity check
- * that runs on throttled launches. Always includes the first and last entries (common corruption shows
- * up as a truncated/partial extraction), plus evenly-spaced entries across the tree. Small manifests are
- * returned in full. Keeps the throttled path O(sample) stats instead of O(all-files).
- * @param {IntegrityManifestEntry[]} files - All manifest entries.
- * @returns {IntegrityManifestEntry[]} The sampled subset (in manifest order).
- */
-function selectSentinelSample(files: IntegrityManifestEntry[]): IntegrityManifestEntry[] {
-  const maxSamples = 32;
-  if (files.length <= maxSamples) {
-    return files;
-  }
-  const indices = new Set<number>([0, files.length - 1]);
-  const step = files.length / maxSamples;
-  for (let i = 0; i < maxSamples; i++) {
-    indices.add(Math.floor(i * step));
-  }
-  return Array.from(indices)
-    .sort((a, b) => a - b)
-    .map((i) => files[i]);
-}
-
-/**
- * Stats the given manifest entries and returns the first one that is missing, no longer a regular file,
- * or whose byte size no longer matches the manifest — or undefined when they all match. Used by the
- * throttled sentinel check; a returned failure triggers the authoritative full walk.
- * @param {string} targetFolder - The dependency install folder.
- * @param {IntegrityManifestEntry[]} entries - The manifest entries to stat.
- * @returns {Promise<IntegrityManifestEntry | undefined>} The first failing entry, or undefined if all pass.
- */
-async function findFirstManifestFailure(
-  targetFolder: string,
-  entries: IntegrityManifestEntry[]
-): Promise<IntegrityManifestEntry | undefined> {
-  const stats = await Promise.all(
-    entries.map(async (file) => {
-      try {
-        return { file, stat: await fs.promises.stat(path.join(targetFolder, file.path)) };
-      } catch {
-        return { file, stat: undefined };
-      }
-    })
-  );
-  for (const { file, stat } of stats) {
-    if (!stat || !stat.isFile() || stat.size !== file.size) {
-      return file;
-    }
-  }
-  return undefined;
 }
 
 export function getDotNetBinariesReleaseUrl(): string {

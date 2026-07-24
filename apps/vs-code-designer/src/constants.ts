@@ -138,22 +138,6 @@ export const lastDependencyUpdateCheckKey = 'azureLogicAppsStandard.lastDependen
  */
 export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
 
-// Dependency on-disk integrity deep-verify throttle
-/**
- * Key prefix used to persist, per dependency, the timestamp (epoch ms) of the last time we ran the
- * full per-file on-disk integrity verification (a stat of every file listed in the dependency's
- * integrity manifest). The actual key is `${prefix}.${dependencyName}`.
- */
-export const lastDependencyIntegrityCheckKeyPrefix = 'azureLogicAppsStandard.lastDependencyIntegrityCheck';
-/**
- * Minimum interval between full per-file on-disk integrity verifications. Func Core Tools alone lists
- * ~8.8k files, and stat-ing every one on a cold file cache can block startup ~15s+. On most launches a
- * cheap sampled sentinel check runs instead; the full manifest walk only runs when this interval has
- * elapsed (or the manifest/sentinel indicates a problem). Mirrors the bundle deep-verify and dependency
- * update-check throttles.
- */
-export const dependencyIntegrityCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
-
 // Commands
 export const extensionCommand = {
   openDesigner: 'azureLogicAppsStandard.openDesigner',
