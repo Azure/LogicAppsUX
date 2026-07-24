@@ -1662,8 +1662,8 @@ describe('downloadExtensionBundle', () => {
       expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalFirstDownload');
     });
 
-    it('uses latest local without consulting the public feed when no pin is set', async () => {
-      await setExperimentalSettings({ useExperimental: true });
+    it('experimental with a source URI uses latest local without consulting the public feed when no pin is set', async () => {
+      await setExperimentalSettings({ useExperimental: true, sourceUri: 'https://private-cdn.example.com/public' });
       // Phase 14: experimental no-pin short-circuit now verifies on disk.
       setupLocalDisk(['1.50.0', '1.75.0'], { '1.75.0': 'latestSourceMd5' });
       const integrityModule = await import('../integrity');
@@ -2806,7 +2806,7 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
       if (key === 'useExperimentalExtensionBundle') {
         return true as any;
       }
-      if (key === 'experimentalExtensionBundlePinnedVersion') {
+      if (key === 'experimentalExtensionBundleVersion') {
         return '1.50.0' as any;
       }
       return undefined as any;
@@ -2826,11 +2826,14 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
-  it('experimental no-pin local latest: defers to background deep verify + repair when on-disk content drifts', async () => {
+  it('experimental with source URI, no pin: defers to background deep verify + repair when on-disk content drifts', async () => {
     const settingsMod = await import('../vsCodeConfig/settings');
     vi.mocked(settingsMod.getGlobalSetting).mockImplementation((key: string) => {
       if (key === 'useExperimentalExtensionBundle') {
         return true as any;
+      }
+      if (key === 'experimentalExtensionBundleSourceUri') {
+        return 'https://private-cdn.example.com/public' as any;
       }
       return undefined as any;
     });
@@ -2849,11 +2852,13 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
-  it('experimental no-pin local latest: healthy modern sidecar takes the fast path with NO byte hash', async () => {
-    // Reproduces the real user scenario: experimental toggle ON, a healthy local
-    // bundle whose modern sidecar fingerprint matches. Previously the experimental
-    // branch ran verifyLocalBundle → the ~25s full-byte hash on EVERY launch,
-    // before the hoisted fast gate was ever reached. It must now short-circuit.
+  it('experimental no-pin, no source URI: healthy modern sidecar takes the normal fast path with NO byte hash', async () => {
+    // Reproduces the real user scenario: experimental toggle ON, no pin, no source
+    // URI, and a healthy local bundle whose modern sidecar fingerprint matches.
+    // Previously the experimental branch ran verifyLocalBundle → the ~25s full-byte
+    // hash on EVERY launch, before the hoisted fast gate was ever reached. With
+    // nothing genuinely experimental to honor it now falls through to the normal
+    // resolution and short-circuits on the cheap lstat gate.
     const settingsMod = await import('../vsCodeConfig/settings');
     vi.mocked(settingsMod.getGlobalSetting).mockImplementation((key: string) => {
       if (key === 'useExperimentalExtensionBundle') {
@@ -2875,6 +2880,8 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     // synchronous CDN download is triggered on the activation path.
     expect(vi.mocked(fse.createReadStream)).not.toHaveBeenCalled();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
-    expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalLocalLatest');
+    // No pin and no source URI ⇒ resolves exactly like a normal install (localLatest),
+    // not via the experimental branch.
+    expect(context.telemetry.properties.extensionBundleVersionSource).toBe('localLatest');
   });
 });

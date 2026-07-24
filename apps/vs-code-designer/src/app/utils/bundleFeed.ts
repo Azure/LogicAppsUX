@@ -1979,9 +1979,15 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
         return true;
       }
 
-      if (latestLocalBundleVersion !== '0.0.0') {
+      // Only handle experimental local-latest specially when a real experimental
+      // source URI is configured. With no pin AND no source URI there is nothing
+      // genuinely experimental to honor, so fall through to the normal section-3
+      // resolution below (fast gate + background deep-verify + background feed
+      // refresh, i.e. public-latest auto-upgrade) — identical to a normal install.
+      if (baseUrlInfo.experimentalSourceUri.length > 0 && latestLocalBundleVersion !== '0.0.0') {
         // Verify on disk before trusting the cached experimental local latest.
-        const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
+        // Gated above on a configured source URI, so that is the publisher of record.
+        const verifyBaseUrl = baseUrlInfo.experimentalSourceUri;
         // Fast path first: a healthy local latest passes the cheap lstat gate and
         // is trusted for this session; byte verification moves to the background.
         // Experimental never consults the public *latest* feed, so no feed refresh.
@@ -2000,28 +2006,29 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
         context.telemetry.properties.localBundleHashCheck = hashCheck;
         if (requiresBundleRepair(hashCheck)) {
           notifyCorruptionIfNeeded(hashCheck, latestLocalBundleVersion, verifyBaseUrl);
-          if (baseUrlInfo.experimentalSourceUri.length > 0) {
-            const repair = await tryDownloadBundleWithProgress(
-              context,
-              baseUrlInfo.experimentalSourceUri,
-              latestLocalBundleVersion,
-              'experimentalLocalLatestRepair'
-            );
-            if (repair.ok === true) {
-              ext.defaultBundleVersion = latestLocalBundleVersion;
-              ext.latestBundleVersion = latestLocalBundleVersion;
-              context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
-              context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-              context.telemetry.properties.didUpdateExtensionBundle = 'true';
-              return true;
-            }
-            logExperimentalFallback(
-              context,
-              repair.reason,
-              `Repair of local latest ${latestLocalBundleVersion} from experimental source failed.`,
-              repair.error
-            );
+          // Prefer the configured experimental source for the repair (the block is
+          // gated on a non-empty source URI); fall back to the public CDN only if
+          // that source can't deliver, so the dev isn't left non-running.
+          const repair = await tryDownloadBundleWithProgress(
+            context,
+            baseUrlInfo.experimentalSourceUri,
+            latestLocalBundleVersion,
+            'experimentalLocalLatestRepair'
+          );
+          if (repair.ok === true) {
+            ext.defaultBundleVersion = latestLocalBundleVersion;
+            ext.latestBundleVersion = latestLocalBundleVersion;
+            context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
+            context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+            context.telemetry.properties.didUpdateExtensionBundle = 'true';
+            return true;
           }
+          logExperimentalFallback(
+            context,
+            repair.reason,
+            `Repair of local latest ${latestLocalBundleVersion} from experimental source failed.`,
+            repair.error
+          );
           await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, latestLocalBundleVersion, 'experimentalLocalLatestRepair');
           ext.defaultBundleVersion = latestLocalBundleVersion;
           ext.latestBundleVersion = latestLocalBundleVersion;
