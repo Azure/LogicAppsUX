@@ -414,8 +414,10 @@ export const updateIdentityChangeInConnection = createAsyncThunk(
       api: { id: connectorId },
       connection: { id: connectionId },
     } = getConnectionReference(rootState.connections, nodeId);
-    const connector = await getConnector(connectorId);
-    const connection = await getConnection(connectionId, connectorId);
+    // `getConnector` and `getConnection` are independent reads (getConnection does not
+    // consume the connector result), so fetch them concurrently instead of waterfalling
+    // the two network round-trips.
+    const [connector, connection] = await Promise.all([getConnector(connectorId), getConnection(connectionId, connectorId)]);
 
     await ConnectionService().setupConnectionIfNeeded(connection as Connection, userAssignedIdentity);
 
