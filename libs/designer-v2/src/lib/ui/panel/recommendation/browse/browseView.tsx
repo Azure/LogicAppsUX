@@ -99,7 +99,7 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
         <ConnectorBrowse
           categoryKey={selectedBrowseCategory.key}
           connectorFilters={category.connectorFilters}
-          filters={{ actionType: isTrigger ? 'trigger' : 'action' }}
+          filters={{ actionType: isTrigger ? 'triggers' : 'actions' }}
           displayRuntimeInfo={true}
           onConnectorSelected={onConnectorSelected}
         />
