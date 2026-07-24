@@ -18,6 +18,7 @@ import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
 import { fetchExpectedMd5, isMissingPackageError } from './integrity';
 import { getJsonFeed } from './feed';
+import { shouldCheckForDependencyUpdates } from './dependencyUpdateCheck';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
@@ -1846,6 +1847,41 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
     //    the fallback.
     const fellThroughFromExperimental = baseUrlInfo.isExperimental;
     const effectiveBaseUrl = fellThroughFromExperimental ? PUBLIC_BUNDLE_BASE_URL : baseUrlInfo.baseUrl;
+
+    // Throttle the CDN "is there a newer bundle version?" feed lookup. That GET
+    // (`getWorkflowBundleFeed` -> index.json on the bundle CDN) runs on the
+    // activation hot path: dependency validation blocks on this download via
+    // `waitForExtensionBundleReady`, so on a slow/flaky link to the bundle CDN it
+    // adds tens of seconds to EVERY launch (the in-memory feed cache is wiped on
+    // each process restart). When a healthy local bundle already exists and the
+    // shared daily update-check window is not due, skip the feed entirely and
+    // trust the latest local bundle — its on-disk integrity is still confirmed by
+    // the cheap lstat fast gate, and a genuine corruption/legacy sidecar falls
+    // through to the feed-backed verify/repair path below. Newer bundle versions
+    // are still picked up at most once per update-check window, mirroring the
+    // Node/Func/.NET "latest version" network lookups (`shouldCheckForDependency-
+    // Updates`). `forceVerify` (the background deep verify) intentionally bypasses
+    // this so a due deep check still consults the feed off the activation path.
+    if (!options.forceVerify && latestLocalBundleVersion !== '0.0.0' && !shouldCheckForDependencyUpdates()) {
+      const throttledGate = await evaluateBundleFastGate(latestLocalBundleVersion);
+      if (throttledGate.ok) {
+        context.telemetry.properties.localBundleHashCheck = 'fastPathThrottled';
+        context.telemetry.properties.extensionBundleUpdateCheckThrottled = 'true';
+        if (throttledGate.deepVerify) {
+          scheduleBackgroundBundleDeepVerification(context, latestLocalBundleVersion, {
+            republishBaseUrl: effectiveBaseUrl,
+          });
+        }
+        ext.defaultBundleVersion = latestLocalBundleVersion;
+        ext.latestBundleVersion = latestLocalBundleVersion;
+        context.telemetry.properties.extensionBundleVersionSource = 'localLatest';
+        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+        context.telemetry.properties.didUpdateExtensionBundle = 'false';
+        return false;
+      }
+      // Fast gate failed (missing / corrupt / legacy sidecar needing a byte
+      // verify) → fall through to the feed-backed flow so we can repair.
+    }
 
     let latestFeedBundleVersion = '0.0.0';
     let feedVersions: string[];

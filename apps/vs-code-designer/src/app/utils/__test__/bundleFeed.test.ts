@@ -160,6 +160,16 @@ vi.mock('../codeless/startDesignTimeApi', () => ({
   startAllDesignTimeApis: vi.fn(),
 }));
 
+// Mock the shared daily update-check throttle. `downloadExtensionBundleCore`
+// reads `shouldCheckForDependencyUpdates` to decide whether to skip the CDN
+// bundle-version feed lookup on the activation hot path. Default to `true` (the
+// check is due) so existing tests keep exercising the feed-backed flow; throttle
+// tests override it to `false` per-case.
+vi.mock('../dependencyUpdateCheck', () => ({
+  shouldCheckForDependencyUpdates: vi.fn(() => true),
+  recordDependencyUpdateCheck: vi.fn().mockResolvedValue(undefined),
+}));
+
 const mockedFse = vi.mocked(fse);
 const mockedExecSync = vi.mocked(cp.execSync);
 const mockedExecuteCommand = vi.mocked(cpUtils.executeCommand);
@@ -888,6 +898,11 @@ describe('downloadExtensionBundle', () => {
     // Default: HEAD request returns nothing — keeps tests that don't care about sidecar simple.
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue(undefined);
+    // Default: the daily update-check throttle reports "due" so the feed-backed
+    // flow runs. `vi.clearAllMocks()` keeps mock implementations, so a prior
+    // throttle test that forced `false` would otherwise leak into this one.
+    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(true);
     // Reset fs-extra mocks
     mockedFse.readFile.mockReset();
     mockedFse.outputFile.mockResolvedValue(undefined as any);
@@ -971,6 +986,76 @@ describe('downloadExtensionBundle', () => {
     // path. The published MD5 matches the sidecar, so nothing is re-downloaded.
     await awaitBackgroundBundleDeepVerification();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+  });
+
+  it('skips the CDN version feed on the hot path when the update-check window is throttled and the local bundle is healthy', async () => {
+    // A modern, recently deep-verified sidecar: tree + structural fingerprints of
+    // the empty on-disk walk both equal EMPTY_TREE_HASH and lastDeepVerifiedMs is
+    // fresh, so the fast gate takes the exact-match path with NO background verify.
+    const modernSidecar = JSON.stringify({
+      version: 1,
+      sourceMd5: 'md5',
+      contentHash: EMPTY_TREE_HASH,
+      treeFingerprint: EMPTY_TREE_HASH,
+      structuralFingerprint: EMPTY_TREE_HASH,
+      lastDeepVerifiedMs: Date.now(),
+    });
+    setupLocalDisk(['1.75.0'], {}, { sidecarRaw: { '1.75.0': modernSidecar } });
+
+    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(false);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    // The throttle short-circuits BEFORE any CDN version-feed lookup.
+    expect(result).toBe(false);
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.localBundleHashCheck).toBe('fastPathThrottled');
+    expect(context.telemetry.properties.extensionBundleUpdateCheckThrottled).toBe('true');
+    expect(context.telemetry.properties.extensionBundleVersionSource).toBe('localLatest');
+    expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('false');
+
+    // A recently deep-verified sidecar means the fast gate schedules no background
+    // work, so the feed stays untouched even after draining.
+    await awaitBackgroundBundleDeepVerification();
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+  });
+
+  it('consults the CDN version feed on the hot path when the update-check window is due', async () => {
+    setupLocalDisk(['1.75.0'], { '1.75.0': 'md5' });
+    mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.75.0'] as any);
+    // beforeEach leaves shouldCheckForDependencyUpdates => true (the check is due).
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(result).toBe(false);
+    expect(mockedGetJsonFeed).toHaveBeenCalled();
+    expect(context.telemetry.properties.extensionBundleUpdateCheckThrottled).toBeUndefined();
+
+    await awaitBackgroundBundleDeepVerification();
+  });
+
+  it('still consults the CDN version feed when throttled but no local bundle exists (bootstrap)', async () => {
+    // No local versions on disk → nothing to fast-gate → must hit the feed even
+    // though the update-check window is throttled.
+    setupLocalDisk([]);
+    mockedGetJsonFeed.mockResolvedValue(['1.95.0'] as any);
+    mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(false);
+
+    const context = createMockContext();
+    const result = await downloadExtensionBundle(context as any);
+
+    expect(mockedGetJsonFeed).toHaveBeenCalled();
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.extensionBundleUpdateCheckThrottled).toBeUndefined();
+
+    await awaitBackgroundBundleDeepVerification();
   });
 
   it('backfills sidecar metadata for a valid local bundle without re-downloading', async () => {
