@@ -76,7 +76,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { EditorView, VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
 import { captureScreenshot, sleep } from './helpers';
-import { openWorkspaceFileInSession } from './designerHelpers';
+import { openWorkspaceFileInSession, waitForDependencyValidation } from './designerHelpers';
 
 const TEST_TIMEOUT = 1500_000;
 
@@ -398,6 +398,17 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     console.log(`[codefulDebugTasks] [${variant}] codeful design-time worker runtime: ${workerRuntime}`);
 
     truncateEventsFile();
+
+    // Ensure the extension has finished installing its runtime dependencies — most
+    // importantly the Azure Functions Core Tools (`func`) binary — BEFORE we start F5.
+    // Every other UI test (including the green Windows beachhead, designerActions) waits
+    // for this; the codeful test previously did not. On Ubuntu the runtime-deps cache is
+    // warm so `func` already exists on disk and this returns almost immediately. On the
+    // hosted Windows runner the cache is cold, so without this wait F5 fires while `func`
+    // is still downloading and preDebugValidate shows the modal "You must have the Azure
+    // Functions Core Tools installed" dialog (and the design-time host times out) — exactly
+    // the Windows codeful shard failure. This blocks until `func` exists and is executable.
+    await waitForDependencyValidation(driver, 360_000);
 
     console.log('[codefulDebugTasks] Starting debug...');
     await startDebug();
