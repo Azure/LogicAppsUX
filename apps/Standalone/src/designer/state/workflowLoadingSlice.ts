@@ -35,6 +35,7 @@ export interface WorkflowLoadingState {
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // supports creating multiple variables in one action
+    enableEditableCodeView?: boolean; // allow editing an action's JSON inline from the node code view tab
   };
   showPerformanceDebug?: boolean;
   isFirstDesignerV2Load?: boolean;
@@ -64,6 +65,7 @@ const initialState: WorkflowLoadingState = {
     maxStateHistorySize: 20,
     collapseGraphsByDefault: false,
     enableMultiVariable: true,
+    enableEditableCodeView: true,
   },
   showPerformanceDebug: false,
   isFirstDesignerV2Load: false,
