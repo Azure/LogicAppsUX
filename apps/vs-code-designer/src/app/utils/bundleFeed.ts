@@ -1737,6 +1737,80 @@ export async function downloadExtensionBundle(context: IActionContext, options: 
   }
 }
 
+/**
+ * Parameters describing which local bundle version a caller wants to trust for
+ * this session, and how the background jobs should behave for it.
+ */
+interface HealthyLocalFastPathParams {
+  /** The specific local bundle version the caller resolved (pin or latest). */
+  version: string;
+  /** Telemetry source label recorded when the fast path is taken. */
+  versionSource: BundleVersionSource;
+  /** Base URL used by the background deep-verify republish check. */
+  deepVerifyBaseUrl: string;
+  /**
+   * Whether a background "is there a newer version?" feed refresh is allowed.
+   * Pinned (env / experimental pin) and experimental selections must NOT auto-
+   * upgrade from the public latest feed, so they pass `false`.
+   */
+  allowFeedRefresh: boolean;
+  /** Base URL for the optional background feed refresh (defaults to deepVerifyBaseUrl). */
+  feedRefreshBaseUrl?: string;
+  /** Whether the feed refresh must target the public index (experimental fallback). */
+  useExperimentalPublicFallback?: boolean;
+}
+
+/**
+ * Shared healthy-local-bundle fast path. When a resolved local bundle version
+ * passes the cheap lstat fast gate, trust it for this session and move the
+ * authoritative byte verification (and, when allowed, the newer-version feed
+ * lookup) OFF the awaited activation path into throttled background jobs.
+ *
+ * This is the single choke point that keeps the ~25s full-byte
+ * `computeBundleContentHash` off cold start for EVERY version-selection branch
+ * (env pin, experimental pin, experimental latest, and default latest). Returns
+ * `true` when it fully handled a healthy local bundle (caller should report "no
+ * update"); returns `false` when the caller must fall through to its existing
+ * synchronous `verifyLocalBundle` / repair flow (missing / unreadable sidecar,
+ * or `forceVerify`).
+ */
+async function tryHealthyLocalBundleFastPath(
+  context: IActionContext,
+  options: DownloadExtensionBundleOptions,
+  params: HealthyLocalFastPathParams
+): Promise<boolean> {
+  if (options.forceVerify || !params.version || params.version === '0.0.0') {
+    return false;
+  }
+  const localGate = await evaluateBundleFastGate(params.version);
+  if (!localGate.ok) {
+    return false;
+  }
+  const updateCheckDue = shouldCheckForDependencyUpdates();
+  logBundleStep(
+    `downloadExtensionBundleCore: fast gate OK for ${params.version} (source ${params.versionSource}) → returning on local bundle (updateCheckDue=${updateCheckDue}, deepVerify=${localGate.deepVerify === true}); no synchronous CDN call`
+  );
+  context.telemetry.properties.localBundleHashCheck = updateCheckDue ? 'fastPath' : 'fastPathThrottled';
+  if (!updateCheckDue) {
+    context.telemetry.properties.extensionBundleUpdateCheckThrottled = 'true';
+  }
+  if (localGate.deepVerify) {
+    scheduleBackgroundBundleDeepVerification(context, params.version, { republishBaseUrl: params.deepVerifyBaseUrl });
+  }
+  if (params.allowFeedRefresh && updateCheckDue) {
+    scheduleBackgroundBundleFeedRefresh(context, {
+      baseUrl: params.feedRefreshBaseUrl ?? params.deepVerifyBaseUrl,
+      localVersion: params.version,
+      useExperimentalPublicFallback: params.useExperimentalPublicFallback === true,
+    });
+  }
+  ext.defaultBundleVersion = params.version;
+  ext.latestBundleVersion = params.version;
+  context.telemetry.properties.extensionBundleVersionSource = params.versionSource;
+  context.telemetry.properties.didUpdateExtensionBundle = 'false';
+  return true;
+}
+
 async function downloadExtensionBundleCore(context: IActionContext, options: DownloadExtensionBundleOptions): Promise<boolean> {
   const downloadExtensionBundleStartTime = Date.now();
   logBundleStep(`downloadExtensionBundleCore START (forceVerify=${options.forceVerify === true})`);
@@ -1767,6 +1841,21 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
     if (envVarVer) {
       context.telemetry.properties.extensionBundleVersionSource = 'envVar';
       if (semver.valid(envVarVer) && localVersions.some((v) => v === envVarVer)) {
+        // Fast path first: a pinned local bundle that passes the cheap lstat gate
+        // is trusted for this session; byte verification moves to the background.
+        // A pin must never auto-upgrade, so no feed refresh.
+        if (
+          await tryHealthyLocalBundleFastPath(context, options, {
+            version: envVarVer,
+            versionSource: 'envVar',
+            deepVerifyBaseUrl: baseUrlInfo.baseUrl,
+            allowFeedRefresh: false,
+          })
+        ) {
+          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+          return false;
+        }
+        // Fast gate not ok (missing / unreadable sidecar) → authoritative verify.
         // Verify the on-disk bundle for the pinned version. Without this,
         // a corrupt local copy would silently satisfy the env-var pin and
         // we'd never repair it.
@@ -1804,6 +1893,19 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
           // Verify before trusting the local pin. The experimental URI is
           // the publisher of record for hash verification here.
           const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
+          // Fast path first: a healthy local pin is trusted for this session,
+          // byte verification runs in the background. Pins never auto-upgrade.
+          if (
+            await tryHealthyLocalBundleFastPath(context, options, {
+              version: pin,
+              versionSource: 'experimentalLocalPin',
+              deepVerifyBaseUrl: verifyBaseUrl,
+              allowFeedRefresh: false,
+            })
+          ) {
+            context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+            return false;
+          }
           const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, pin, options);
           context.telemetry.properties.localBundleHashCheck = hashCheck;
           if (requiresBundleRepair(hashCheck)) {
@@ -1880,6 +1982,20 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
       if (latestLocalBundleVersion !== '0.0.0') {
         // Verify on disk before trusting the cached experimental local latest.
         const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
+        // Fast path first: a healthy local latest passes the cheap lstat gate and
+        // is trusted for this session; byte verification moves to the background.
+        // Experimental never consults the public *latest* feed, so no feed refresh.
+        if (
+          await tryHealthyLocalBundleFastPath(context, options, {
+            version: latestLocalBundleVersion,
+            versionSource: 'experimentalLocalLatest',
+            deepVerifyBaseUrl: verifyBaseUrl,
+            allowFeedRefresh: false,
+          })
+        ) {
+          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+          return false;
+        }
         const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, latestLocalBundleVersion, options);
         context.telemetry.properties.localBundleHashCheck = hashCheck;
         if (requiresBundleRepair(hashCheck)) {
@@ -1990,41 +2106,23 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
     // `forceVerify` (the background deep verify itself) bypasses this so a due
     // deep check still consults the feed off the activation path.
     if (!options.forceVerify && latestLocalBundleVersion !== '0.0.0') {
-      const localGate = await evaluateBundleFastGate(latestLocalBundleVersion);
-      if (localGate.ok) {
-        const updateCheckDue = shouldCheckForDependencyUpdates();
-        logBundleStep(
-          `downloadExtensionBundleCore: fast gate OK for ${latestLocalBundleVersion} → returning on local bundle (updateCheckDue=${updateCheckDue}, deepVerify=${localGate.deepVerify === true}); no synchronous CDN call`
-        );
-        context.telemetry.properties.localBundleHashCheck = updateCheckDue ? 'fastPath' : 'fastPathThrottled';
-        if (!updateCheckDue) {
-          context.telemetry.properties.extensionBundleUpdateCheckThrottled = 'true';
-        }
-        if (localGate.deepVerify) {
-          scheduleBackgroundBundleDeepVerification(context, latestLocalBundleVersion, {
-            republishBaseUrl: effectiveBaseUrl,
-          });
-        }
-        if (updateCheckDue) {
-          scheduleBackgroundBundleFeedRefresh(context, {
-            baseUrl: effectiveBaseUrl,
-            localVersion: latestLocalBundleVersion,
-            useExperimentalPublicFallback: fellThroughFromExperimental,
-          });
-        }
-        ext.defaultBundleVersion = latestLocalBundleVersion;
-        ext.latestBundleVersion = latestLocalBundleVersion;
-        context.telemetry.properties.extensionBundleVersionSource = 'localLatest';
+      if (
+        await tryHealthyLocalBundleFastPath(context, options, {
+          version: latestLocalBundleVersion,
+          versionSource: 'localLatest',
+          deepVerifyBaseUrl: effectiveBaseUrl,
+          allowFeedRefresh: true,
+          feedRefreshBaseUrl: effectiveBaseUrl,
+          useExperimentalPublicFallback: fellThroughFromExperimental,
+        })
+      ) {
         context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-        context.telemetry.properties.didUpdateExtensionBundle = 'false';
         return false;
       }
       // Fast gate NOT ok (missing / corrupt / empty / legacy sidecar needing a
       // byte verify) → fall through to the synchronous feed-backed verify/repair
       // flow below so we can bootstrap or repair the bundle.
-      logBundleStep(
-        `downloadExtensionBundleCore: fast gate NOT ok (${(localGate as { reason?: string }).reason ?? 'unknown'}) → SYNCHRONOUS feed + verify/repair path (may hit CDN + byte hash)`
-      );
+      logBundleStep('downloadExtensionBundleCore: fast gate NOT ok → SYNCHRONOUS feed + verify/repair path (may hit CDN + byte hash)');
     }
 
     logBundleStep('downloadExtensionBundleCore: fetching CDN version feed (synchronous, on awaited path)');

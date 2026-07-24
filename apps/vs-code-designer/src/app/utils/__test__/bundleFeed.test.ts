@@ -2752,6 +2752,18 @@ describe('ensureExtensionBundleHealthy fast gate (non-blocking)', () => {
 
 describe('short-circuit verification (envVar / experimental pins)', () => {
   const sidecarJson = (sourceMd5: string, contentHash: string) => JSON.stringify({ version: 1, sourceMd5, contentHash });
+  // Empty-tree sha256 — the tree/structural fingerprints of an empty `readdir`
+  // walk both equal this, so a sidecar carrying it matches the fast gate exactly.
+  const EMPTY_TREE_HASH = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
+  const modernHealthySidecar = () =>
+    JSON.stringify({
+      version: 1,
+      sourceMd5: 'md5',
+      contentHash: EMPTY_TREE_HASH,
+      treeFingerprint: EMPTY_TREE_HASH,
+      structuralFingerprint: EMPTY_TREE_HASH,
+      lastDeepVerifiedMs: Date.now(),
+    });
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -2765,7 +2777,7 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
   });
 
-  it('env-var pin: re-downloads when on-disk content hash drifts', async () => {
+  it('env-var pin: defers to background deep verify + repair when on-disk content drifts', async () => {
     const localSettingsMod = await import('../appSettings/localSettings');
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({
       Values: { AzureFunctionsJobHost_extensionBundle_version: '1.50.0' },
@@ -2774,18 +2786,21 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
     vi.mocked(fse.pathExists).mockResolvedValue(true as any);
     vi.mocked(fse.readdir).mockResolvedValue([] as any);
-    // Sidecar says contentHash X, recompute returns empty-tree hash ≠ X.
+    // Legacy sidecar (contentHash but no fast fingerprints): the fast gate passes
+    // provisionally so activation is NOT blocked by the ~25s byte hash; the byte
+    // verification + repair move to the background deep verify.
     vi.mocked(fse.readFile).mockResolvedValue(sidecarJson('md5', 'STALE') as any);
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
     vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
 
     const context = { telemetry: { properties: {} as any, measurements: {} as any } };
-    await expect(downloadExtensionBundle(context as any)).rejects.toThrow(/no source MD5 was available/);
+    await expect(downloadExtensionBundle(context as any)).resolves.toBe(false);
+    await awaitBackgroundBundleDeepVerification();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
-  it('experimental pin: re-downloads when on-disk content hash drifts', async () => {
+  it('experimental pin: defers to background deep verify + repair when on-disk content drifts', async () => {
     const settingsMod = await import('../vsCodeConfig/settings');
     vi.mocked(settingsMod.getGlobalSetting).mockImplementation((key: string) => {
       if (key === 'useExperimentalExtensionBundle') {
@@ -2806,11 +2821,12 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
 
     const context = { telemetry: { properties: {} as any, measurements: {} as any } };
-    await expect(downloadExtensionBundle(context as any)).rejects.toThrow(/no source MD5 was available/);
+    await expect(downloadExtensionBundle(context as any)).resolves.toBe(false);
+    await awaitBackgroundBundleDeepVerification();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
   });
 
-  it('experimental no-pin local latest: re-downloads when on-disk content hash drifts', async () => {
+  it('experimental no-pin local latest: defers to background deep verify + repair when on-disk content drifts', async () => {
     const settingsMod = await import('../vsCodeConfig/settings');
     vi.mocked(settingsMod.getGlobalSetting).mockImplementation((key: string) => {
       if (key === 'useExperimentalExtensionBundle') {
@@ -2828,7 +2844,37 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
 
     const context = { telemetry: { properties: {} as any, measurements: {} as any } };
-    await expect(downloadExtensionBundle(context as any)).rejects.toThrow(/no source MD5 was available/);
+    await expect(downloadExtensionBundle(context as any)).resolves.toBe(false);
+    await awaitBackgroundBundleDeepVerification();
     expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalled();
+  });
+
+  it('experimental no-pin local latest: healthy modern sidecar takes the fast path with NO byte hash', async () => {
+    // Reproduces the real user scenario: experimental toggle ON, a healthy local
+    // bundle whose modern sidecar fingerprint matches. Previously the experimental
+    // branch ran verifyLocalBundle → the ~25s full-byte hash on EVERY launch,
+    // before the hoisted fast gate was ever reached. It must now short-circuit.
+    const settingsMod = await import('../vsCodeConfig/settings');
+    vi.mocked(settingsMod.getGlobalSetting).mockImplementation((key: string) => {
+      if (key === 'useExperimentalExtensionBundle') {
+        return true as any;
+      }
+      return undefined as any;
+    });
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockResolvedValue(true as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(modernHealthySidecar() as any);
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue(undefined as any);
+
+    const context = { telemetry: { properties: {} as any, measurements: {} as any } };
+    await expect(downloadExtensionBundle(context as any)).resolves.toBe(false);
+    await awaitBackgroundBundleDeepVerification();
+    // Fingerprint match + throttle not due ⇒ the ~25s byte hash never runs and no
+    // synchronous CDN download is triggered on the activation path.
+    expect(vi.mocked(fse.createReadStream)).not.toHaveBeenCalled();
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.extensionBundleVersionSource).toBe('experimentalLocalLatest');
   });
 });
