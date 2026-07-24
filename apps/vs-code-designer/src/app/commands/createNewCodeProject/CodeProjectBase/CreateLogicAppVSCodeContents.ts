@@ -18,7 +18,7 @@ import {
   generateLaunchJson,
   generateSettingsJson,
   generateExtensionsJson,
-} from '../../../utils/vsCodeConfig/generators';
+} from '../../../projectConsistency/fileGenerators';
 import { detectCustomCodeTargetFramework } from '../../../utils/customCodeUtils';
 
 export async function createLogicAppVsCodeContents(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {

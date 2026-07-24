@@ -12,7 +12,7 @@ import * as path from 'path';
 import { getContainerTemplatePath } from '../../utils/assets';
 import { binariesExistSync } from '../../utils/binaries';
 import { detectProjectType, detectProjectPackageType } from '../../utils/project';
-import { generateTasksJson } from '../../utils/vsCodeConfig/generators';
+import { generateTasksJson } from '../../projectConsistency/fileGenerators';
 
 /**
  * Enables devcontainer support for an existing Logic App workspace

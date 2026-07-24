@@ -32,7 +32,7 @@ import { reserveFreePort } from '../../utils/portReservation';
 import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, type Uri, window } from 'vscode';
-import { generateDesignTimeLocalSettingsJson } from '../../utils/vsCodeConfig/generators';
+import { generateDesignTimeLocalSettingsJson } from '../../projectConsistency/fileGenerators';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder

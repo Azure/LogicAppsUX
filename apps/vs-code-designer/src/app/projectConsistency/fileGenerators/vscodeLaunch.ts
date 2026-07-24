@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { LaunchJsonContent, VSCodeProjectConfig } from './types';
-import { extensionCommand, launchVersion } from '../../../../constants';
+import { extensionCommand, launchVersion } from '../../../constants';
 import { FuncVersion, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { getDotnetRuntimeFromFramework, getDotnetRuntimeFromFunc } from '../../dotnet/dotnet';
+import { getDotnetRuntimeFromFramework, getDotnetRuntimeFromFunc } from '../../utils/dotnet/dotnet';
 import type { DebugConfiguration } from 'vscode';
 
 /**

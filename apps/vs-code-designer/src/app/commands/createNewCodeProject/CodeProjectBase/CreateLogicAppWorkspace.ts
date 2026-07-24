@@ -28,7 +28,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { writeFormattedJson } from '../../../utils/fs';
-import { generateHostJson, generateLocalSettingsJson } from '../../../utils/vsCodeConfig/generators';
+import { generateHostJson, generateLocalSettingsJson } from '../../../projectConsistency/fileGenerators';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
 import type { IFunctionWizardContext, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';

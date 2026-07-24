@@ -12,15 +12,15 @@ import {
   settingsFileName,
   tasksFileName,
   vscodeFolderName,
-} from '../../../constants';
-import { localize } from '../../../localize';
-import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
-import { binariesExistSync } from '../binaries';
-import { detectCustomCodeTargetFramework } from '../customCodeUtils';
-import { tryGetTargetFramework } from '../dotnet/dotnet';
-import { writeFormattedJson } from '../fs';
-import { detectProjectPackageType, detectProjectType } from '../project';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
+} from '../../constants';
+import { localize } from '../../localize';
+import { initProjectForVSCode } from '../commands/initProjectForVSCode/initProjectForVSCode';
+import { binariesExistSync } from '../utils/binaries';
+import { detectCustomCodeTargetFramework } from '../utils/customCodeUtils';
+import { tryGetTargetFramework } from '../utils/dotnet/dotnet';
+import { writeFormattedJson } from '../utils/fs';
+import { detectProjectPackageType, detectProjectType } from '../utils/project';
+import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import {
   generateExtensionsJson,
   generateLaunchJson,
@@ -28,8 +28,8 @@ import {
   generateTasksJson,
   type VSCodeConfigJson,
   type VSCodeProjectConfig,
-} from './generators';
-import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from './settings';
+} from './fileGenerators';
+import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../utils/vsCodeConfig/settings';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';

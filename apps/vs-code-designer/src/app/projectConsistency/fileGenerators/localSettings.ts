@@ -18,8 +18,8 @@ import {
   workflowAuthenticationMethodMIValue,
   workflowCodefulEnabledKey,
   workerRuntimeKey,
-} from '../../../../constants';
-import { isManagedIdentityAuthEnabled } from '../../vsCodeConfig/settings';
+} from '../../../constants';
+import { isManagedIdentityAuthEnabled } from '../../utils/vsCodeConfig/settings';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 

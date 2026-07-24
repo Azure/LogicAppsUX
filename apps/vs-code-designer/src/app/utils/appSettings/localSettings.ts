@@ -15,7 +15,7 @@ import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSet
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
-import { generateDesignTimeLocalSettingsJson, generateLocalSettingsJson } from '../vsCodeConfig/generators';
+import { generateDesignTimeLocalSettingsJson, generateLocalSettingsJson } from '../../projectConsistency/fileGenerators';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { MismatchBehavior, type ILocalSettingsJson  } from '@microsoft/vscode-extension-logic-apps';

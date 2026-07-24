@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect } from 'vitest';
-import { generateExtensionsJson } from '../extensionsGenerator';
+import { generateExtensionsJson } from '../vscodeExtensions';
 
 describe('generateExtensionsJson', () => {
   it('should include all standard recommendations', () => {

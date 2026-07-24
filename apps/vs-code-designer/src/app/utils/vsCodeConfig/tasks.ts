@@ -6,7 +6,7 @@ import { localize } from '../../../localize';
 import { binariesExistSync } from '../binaries';
 import { detectProjectType, detectProjectPackageType } from '../project';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { generateTasksJson } from './generators';
+import { generateTasksJson } from '../../projectConsistency/fileGenerators';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectPackageType, ProjectType, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';

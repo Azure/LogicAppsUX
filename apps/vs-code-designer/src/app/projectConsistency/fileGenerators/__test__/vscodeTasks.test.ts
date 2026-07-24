@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect, vi } from 'vitest';
-import { generateTasksJson } from '../tasksGenerator';
+import { generateTasksJson } from '../vscodeTasks';
 import type { VSCodeProjectConfig } from '../types';
 import { ProjectType, ProjectPackageType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 

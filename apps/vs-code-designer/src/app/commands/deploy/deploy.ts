@@ -64,7 +64,7 @@ import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logi
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from '../publishCodefulProject';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
-import { isProjectInitializedForVSCode } from '../../utils/vsCodeConfig/validateVSCodeConfig';
+import { isProjectInitializedForVSCode } from '../../projectConsistency/vscodeConsistency';
 import { initProjectForVSCode } from '../initProjectForVSCode/initProjectForVSCode';
 
 export async function deployProductionSlot(

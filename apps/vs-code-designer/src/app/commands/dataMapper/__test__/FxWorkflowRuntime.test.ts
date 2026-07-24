@@ -30,7 +30,7 @@ import {
 import { reserveFreePort } from '../../../utils/portReservation';
 import { useNodeDesignTimeWorker } from '../../../utils/vsCodeConfig/settings';
 import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSettings';
-import { generateDesignTimeLocalSettingsJson } from '../../../utils/vsCodeConfig/generators';
+import { generateDesignTimeLocalSettingsJson } from '../../../projectConsistency/fileGenerators';
 import { getFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl } from '../extensionConfig';
 

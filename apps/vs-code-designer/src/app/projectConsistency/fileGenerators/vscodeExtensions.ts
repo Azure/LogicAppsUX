@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { csDevKitExtensionId, dotnetExtensionId, functionsExtensionId, logicAppsStandardExtensionId } from '../../../../constants';
+import { csDevKitExtensionId, dotnetExtensionId, functionsExtensionId, logicAppsStandardExtensionId } from '../../../constants';
 import type { ExtensionsJsonContent } from './types';
 
 /**

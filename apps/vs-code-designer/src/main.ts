@@ -10,7 +10,7 @@ import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
-import { ensureVSCodeFiles } from './app/utils/vsCodeConfig/validateVSCodeConfig';
+import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
 import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';

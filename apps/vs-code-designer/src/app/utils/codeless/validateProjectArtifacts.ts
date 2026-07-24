@@ -23,7 +23,7 @@ import {
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
-import { generateHostJson, generateDesignTimeHostJson, generateLocalSettingsJson, generateDesignTimeLocalSettingsJson } from '../vsCodeConfig/generators';
+import { generateHostJson, generateDesignTimeHostJson, generateLocalSettingsJson, generateDesignTimeLocalSettingsJson } from '../../projectConsistency/fileGenerators';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';

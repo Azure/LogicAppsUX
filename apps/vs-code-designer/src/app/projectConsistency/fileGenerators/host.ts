@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultVersionRange, extensionBundleId, workflowOperationDiscoveryHostModeKey } from '../../../../constants';
+import { defaultVersionRange, extensionBundleId, workflowOperationDiscoveryHostModeKey } from '../../../constants';
 import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 
 /**

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import { type Uri, type WorkspaceFolder } from 'vscode';
 import {
@@ -12,16 +12,16 @@ import {
   settingsFileName,
   tasksFileName,
   vscodeFolderName,
-} from '../../../../constants';
-import { generateExtensionsJson, generateLaunchJson, generateSettingsJson, generateTasksJson } from '../generators';
-import { binariesExistSync } from '../../binaries';
-import { detectCustomCodeTargetFramework } from '../../customCodeUtils';
-import { writeFormattedJson } from '../../fs';
-import { detectProjectPackageType, detectProjectType } from '../../project';
-import { tryGetLogicAppProjectRoot } from '../../verifyIsProject';
-import { initProjectForVSCode } from '../../../commands/initProjectForVSCode/initProjectForVSCode';
-import { ensureVSCodeFiles } from '../validateVSCodeConfig';
-import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../settings';
+} from '../../../constants';
+import { generateExtensionsJson, generateLaunchJson, generateSettingsJson, generateTasksJson } from '../fileGenerators';
+import { binariesExistSync } from '../../utils/binaries';
+import { detectCustomCodeTargetFramework } from '../../utils/customCodeUtils';
+import { writeFormattedJson } from '../../utils/fs';
+import { detectProjectPackageType, detectProjectType } from '../../utils/project';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
+import { ensureVSCodeFiles } from '../vscodeConsistency';
+import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../../utils/vsCodeConfig/settings';
 
 vi.mock('../../verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: vi.fn(),
@@ -81,7 +81,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
 // Re-import the mocked module values for use in test assertions
 const { DialogResponses } = await import('@microsoft/vscode-azext-utils');
 
-describe('validateVSCodeConfig', () => {
+describe('vscodeConsistency', () => {
   const projectPath = 'C:\\workspace\\logicapp';
   let context: IActionContext;
   let showWarningMessage: ReturnType<typeof vi.fn>;
@@ -160,8 +160,8 @@ describe('validateVSCodeConfig', () => {
       projectType: ProjectType.logicApp,
       projectPackageType: ProjectPackageType.Bundle,
       hasFuncBinaries: true,
-      funcVersion: '~4',
-      language: 'JavaScript',
+      funcVersion: FuncVersion.v4,
+      language: ProjectLanguage.JavaScript,
       logicAppName: folder.name,
     };
 

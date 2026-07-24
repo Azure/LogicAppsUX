@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect } from 'vitest';
-import { generateLaunchJson } from '../launchGenerator';
+import { generateLaunchJson } from '../vscodeLaunch';
 import type { VSCodeProjectConfig } from '../types';
 import { FuncVersion, ProjectType, ProjectPackageType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 

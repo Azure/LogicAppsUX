@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect } from 'vitest';
-import { generateHostJson, generateDesignTimeHostJson } from '../hostGenerator';
+import { generateHostJson, generateDesignTimeHostJson } from '../host';
 import {
 	extensionBundleId,
 	defaultVersionRange,
 	workflowOperationDiscoveryHostModeKey,
-} from '../../../../../constants';
+} from '../../../../constants';
 
 describe('hostGenerator', () => {
   describe('generateHostJson', () => {

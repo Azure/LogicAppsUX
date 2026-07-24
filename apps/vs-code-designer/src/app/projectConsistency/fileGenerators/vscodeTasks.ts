@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { TasksJsonContent, VSCodeProjectConfig } from './types';
-import { getFuncHostTaskEnv } from '../../codeless/funcHostTaskEnv';
-import { dotnetPublishTaskLabel, extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../constants';
+import { getFuncHostTaskEnv } from '../../utils/codeless/funcHostTaskEnv';
+import { dotnetPublishTaskLabel, extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
 import { ProjectType, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 

@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { VSCodeProjectConfig } from './types';
-import { deploySubpathSetting, funcVersionSetting, projectLanguageSetting } from '../../../../constants';
+import { deploySubpathSetting, funcVersionSetting, projectLanguageSetting } from '../../../constants';
 import { latestGAVersion, ProjectLanguage, ProjectPackageType, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
-import { ext } from '../../../../extensionVariables';
+import { ext } from '../../../extensionVariables';
 
 /**
  * Generates the canonical settings.json content for a Logic App project.
