@@ -5,11 +5,34 @@ steps:
       versionSpec: '24.x'
     condition: succeeded()
 
+  # SFI Network Isolation (SR21): route npm/pnpm restores through the internal CFS feed in CI
+  # only. The registry + auth are written to a file OUTSIDE the repo tree so the tracked .npmrc
+  # stays public (external `git clone && pnpm install` keeps working) and cannot be repointed by
+  # a PR to leak the injected token (cf. pnpm advisory GHSA-3qhv-2rgh-x77r).
+  - powershell: |
+      $ciNpmrc = Join-Path "$(Agent.TempDirectory)" "cfs.npmrc"
+      Set-Content -Path $ciNpmrc -Encoding ascii -Value @(
+        "registry=https://pkgs.dev.azure.com/msazure/one/_packaging/one_PublicPackages/npm/registry/",
+        "always-auth=true"
+      )
+      Write-Host "##vso[task.setvariable variable=CI_NPMRC]$ciNpmrc"
+    displayName: "Write CI-only CFS .npmrc"
+    condition: succeeded()
+
+  - task: NpmAuthenticate@0
+    displayName: "Authenticate with CFS npm feed"
+    inputs:
+      workingFile: $(CI_NPMRC)
+
   - script: npm install -g pnpm
     displayName: "Install pnpm"
+    env:
+      npm_config_userconfig: $(CI_NPMRC)
     condition: succeeded()
 
   - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
     displayName: "Install Dependencies with pnpm"
     workingDirectory: $(working_directory)
+    env:
+      npm_config_userconfig: $(CI_NPMRC)
     condition: succeeded()
