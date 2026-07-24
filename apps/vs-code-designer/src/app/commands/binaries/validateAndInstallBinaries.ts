@@ -22,6 +22,23 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
+/**
+ * Lightweight output-channel timing breadcrumb for the dependency-validation
+ * phase, mirroring bundleFeed's `[bundle-timing]` logs. The four validators run
+ * concurrently via `Promise.allSettled`, so a slow launch previously gave no
+ * signal about WHICH task (or sub-step) consumed the time — three print version
+ * lines but `.NET` and `installLSPSDK` did not surface a clear completion. These
+ * lines are cheap (a `Date.now()` + string) and only fire during validation, so
+ * they can stay as a permanent diagnostic breadcrumb. Pass the previous marker's
+ * return value as `sinceMs` to log the elapsed delta for that phase.
+ */
+function logDepStep(label: string, sinceMs?: number): number {
+  const now = Date.now();
+  const delta = sinceMs === undefined ? '' : ` (+${now - sinceMs}ms)`;
+  ext.outputChannel?.appendLog(`[dep-timing] ${label}${delta}`);
+  return now;
+}
+
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
   const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
@@ -70,6 +87,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         // concurrently instead of sequentially to reduce startup time.
         const validationTasks: Promise<void>[] = [
           runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
+            const step = logDepStep('validateNodeJsIsLatest START');
             progress.report({ increment: 20, message: 'NodeJS' });
             await timeout(
               validateNodeJsIsLatest,
@@ -79,8 +97,10 @@ export async function validateAndInstallBinaries(context: IActionContext) {
               dependenciesVersions?.nodejs
             );
             await setNodeJsCommand();
+            logDepStep('validateNodeJsIsLatest END', step);
           }),
           runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
+            const step = logDepStep('validateFuncCoreToolsIsLatest START');
             progress.report({ increment: 20, message: 'Functions Runtime' });
             await timeout(
               validateFuncCoreToolsIsLatest,
@@ -90,8 +110,10 @@ export async function validateAndInstallBinaries(context: IActionContext) {
               dependenciesVersions?.funcCoreTools
             );
             await setFunctionsCommand();
+            logDepStep('validateFuncCoreToolsIsLatest END', step);
           }),
           runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
+            const step = logDepStep('validateDotNetIsLatest START');
             progress.report({ increment: 10, message: '.NET SDK' });
             const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
             await timeout(
@@ -101,16 +123,23 @@ export async function validateAndInstallBinaries(context: IActionContext) {
               'https://dotnet.microsoft.com/en-us/download/dotnet',
               dotnetDependencies
             );
+            const setStep = logDepStep('validateDotNetIsLatest validate done; setDotNetCommand START', step);
             await setDotNetCommand();
+            logDepStep('validateDotNetIsLatest END (setDotNetCommand done)', setStep);
           }),
           runWithDurationTelemetry(context, 'azureLogicAppsStandard.installLSPSDK', async () => {
+            const step = logDepStep('installLSPSDK START');
             progress.report({ increment: 10, message: 'LSP SDK' });
             await timeout(installLSPSDK, 'LSP SDK', dependencyTimeout);
+            const setStep = logDepStep('installLSPSDK install done; setDotNetCommand START', step);
             await setDotNetCommand();
+            logDepStep('installLSPSDK END (setDotNetCommand done)', setStep);
           }),
         ];
 
+        const allSettledStart = logDepStep('Promise.allSettled(validationTasks) START');
         const results = await Promise.allSettled(validationTasks);
+        logDepStep('Promise.allSettled(validationTasks) END', allSettledStart);
         const failure = results.find((result): result is PromiseRejectedResult => result.status === 'rejected');
         if (failure) {
           throw failure.reason;

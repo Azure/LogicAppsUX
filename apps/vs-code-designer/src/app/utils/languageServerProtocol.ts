@@ -15,6 +15,7 @@ const lockedFileRetryAttempts = 3;
 
 export async function installLSPSDK(): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
+    const overallStart = logLspStep('installLSPSDK body START');
     const targetDirectory = await ensureRuntimeDependenciesPath();
 
     // Check if LSPServer needs to be extracted or updated
@@ -22,23 +23,30 @@ export async function installLSPSDK(): Promise<void> {
     const serverHashMarkerFile = path.join(targetDirectory, lspServerHashMarkerName);
     const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
     const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
+    const zipHashStart = logLspStep('getFileHash(LSPServer.zip) START (full-file SHA-256)');
     const serverZipHash = await getFileHash(serverZipFile);
+    logLspStep('getFileHash(LSPServer.zip) END', zipHashStart);
     const shouldExtract = await shouldUpdateFromHash(serverZipHash, serverHashMarkerFile, lspServerDllPath);
+    logLspStep(`shouldExtract=${shouldExtract}`);
 
     // Check if SDK needs to be copied or updated
     const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
     const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
     const sdkHashMarkerFile = path.join(targetDirectory, lspSdkHashMarkerName);
     const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
+    const nupkgHashStart = logLspStep('getFileHash(SDK .nupkg) START (full-file SHA-256)');
     const sdkHash = await getFileHash(sdkNupkgFile);
+    logLspStep('getFileHash(SDK .nupkg) END', nupkgHashStart);
 
     const shouldCopy = await shouldCopySdkFromHash(sdkHash, sdkHashMarkerFile, destinationFile);
+    logLspStep(`shouldCopy=${shouldCopy}`);
 
     if (shouldExtract || shouldCopy) {
       await stopLanguageClientForUpdate();
     }
 
     if (shouldExtract) {
+      const extractStart = logLspStep('LSP server extract START');
       try {
         if (await fse.pathExists(lspServerPath)) {
           await removeWithRetry(lspServerPath);
@@ -57,9 +65,11 @@ export async function installLSPSDK(): Promise<void> {
       } catch (error) {
         throw new Error(`Error extracting LSP server: ${formatLockedFileError(error)}`);
       }
+      logLspStep('LSP server extract END', extractStart);
     }
 
     if (shouldCopy) {
+      const copyStart = logLspStep('SDK copy START');
       try {
         await fse.ensureDir(lspDirectoryPath);
 
@@ -70,8 +80,25 @@ export async function installLSPSDK(): Promise<void> {
       } catch (error) {
         throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
       }
+      logLspStep('SDK copy END', copyStart);
     }
+    logLspStep('installLSPSDK body END', overallStart);
   });
+}
+
+/**
+ * Lightweight output-channel timing breadcrumb for the LSP SDK install phase,
+ * mirroring bundleFeed's `[bundle-timing]` / validateAndInstallBinaries'
+ * `[dep-timing]` logs. `installLSPSDK` unconditionally full-file SHA-256-hashes
+ * `LSPServer.zip` and the SDK `.nupkg` on every launch (a disk-cache-dependent
+ * cost); these lines pinpoint whether that hashing (or a re-extract/copy) is the
+ * slow step on a given launch.
+ */
+function logLspStep(label: string, sinceMs?: number): number {
+  const now = Date.now();
+  const delta = sinceMs === undefined ? '' : ` (+${now - sinceMs}ms)`;
+  ext.outputChannel?.appendLog(`[dep-timing][lsp] ${label}${delta}`);
+  return now;
 }
 
 /**
