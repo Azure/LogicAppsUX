@@ -204,9 +204,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v1
+          key: la-runtime-deps-${{ runner.os }}-v2
           restore-keys: |
-            la-runtime-deps-${{ runner.os }}-
+            la-runtime-deps-${{ runner.os }}-v2
 
       - name: Run fixtures scenario (p41a-fixtures)
         run: |
@@ -469,9 +469,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v1
+          key: la-runtime-deps-${{ runner.os }}-v2
           restore-keys: |
-            la-runtime-deps-${{ runner.os }}-
+            la-runtime-deps-${{ runner.os }}-v2
 
       - name: Run scenario group (${{ matrix.shard }})
         # Each shard runs one or more scenarios (comma-separated in
@@ -593,9 +593,9 @@ jobs:
           # %USERPROFILE%\.azurelogicapps on Windows; ~ resolves correctly under
           # the job's bash shell.
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v1
+          key: la-runtime-deps-${{ runner.os }}-v2
           restore-keys: |
-            la-runtime-deps-${{ runner.os }}-
+            la-runtime-deps-${{ runner.os }}-v2
 
       - name: Run scenario (${{ matrix.shard }})
         run: |
@@ -730,9 +730,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v1
+          key: la-runtime-deps-${{ runner.os }}-v2
           restore-keys: |
-            la-runtime-deps-${{ runner.os }}-
+            la-runtime-deps-${{ runner.os }}-v2
 
       - name: Run codeful debug
         run: |
@@ -815,9 +815,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.azurelogicapps/dependencies
-          key: la-runtime-deps-${{ runner.os }}-v1
+          key: la-runtime-deps-${{ runner.os }}-v2
           restore-keys: |
-            la-runtime-deps-${{ runner.os }}-
+            la-runtime-deps-${{ runner.os }}-v2
 
       - name: Run codeful debug
         run: |

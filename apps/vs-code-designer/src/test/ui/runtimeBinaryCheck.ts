@@ -6,7 +6,33 @@
  * This module avoids duplication of the executable-check logic across contexts.
  */
 
+import { execFileSync } from 'child_process';
 import * as fs from 'fs';
+
+/**
+ * Runs `<funcBinaryPath> --version` and reports whether it exits successfully.
+ *
+ * File existence (and, on Windows, a ".exe" extension) is NOT sufficient proof that
+ * Azure Functions Core Tools is usable: the pre-debug gate
+ * (`validateFuncCoreToolsInstalled` → `isFuncToolsInstalled`) actually SPAWNS
+ * `func --version`, and if that throws it shows the blocking "You must have the Azure
+ * Functions Core Tools installed" modal that aborts F5. On hosted Windows runners a
+ * provisioned-but-not-yet-runnable func (partial extract, poisoned cache, mid-reinstall)
+ * passes an existence check but fails to execute. This smoke check closes that gap so the
+ * E2E harness gates F5 on the SAME signal the product uses.
+ *
+ * @param funcBinaryPath Absolute path to the func executable.
+ * @param timeoutMs Max time to allow the version probe to run (func can JIT slowly on first run).
+ * @returns true when `func --version` exits 0, false otherwise.
+ */
+export function funcVersionRuns(funcBinaryPath: string, timeoutMs = 60_000): boolean {
+  try {
+    execFileSync(funcBinaryPath, ['--version'], { timeout: timeoutMs, stdio: 'pipe' });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Returns the appropriate fs.access mode for checking runtime binary executability.
