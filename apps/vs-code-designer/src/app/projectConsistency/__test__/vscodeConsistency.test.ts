@@ -23,40 +23,40 @@ import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initPr
 import { ensureVSCodeFiles } from '../vscodeConsistency';
 import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../../utils/vsCodeConfig/settings';
 
-vi.mock('../../verifyIsProject', () => ({
+vi.mock('../../utils/verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: vi.fn(),
 }));
 
-vi.mock('../settings', () => ({
+vi.mock('../../utils/vsCodeConfig/settings', () => ({
   getWorkspaceSetting: vi.fn(),
   updateGlobalSetting: vi.fn(),
   isProjectConsistencyCheckEnabled: vi.fn().mockReturnValue(true),
 }));
 
-vi.mock('../../../commands/initProjectForVSCode/initProjectForVSCode', () => ({
+vi.mock('../../commands/initProjectForVSCode/initProjectForVSCode', () => ({
   initProjectForVSCode: vi.fn(),
 }));
 
-vi.mock('../../project', () => ({
+vi.mock('../../utils/project', () => ({
   detectProjectType: vi.fn(),
   detectProjectPackageType: vi.fn(),
 }));
 
-vi.mock('../../customCodeUtils', () => ({
+vi.mock('../../utils/customCodeUtils', () => ({
   detectCustomCodeTargetFramework: vi.fn(),
 }));
 
-vi.mock('../../dotnet/dotnet', () => ({
+vi.mock('../../utils/dotnet/dotnet', () => ({
   tryGetTargetFramework: vi.fn().mockResolvedValue(undefined),
   getDotnetRuntimeFromFunc: vi.fn().mockReturnValue('coreclr'),
   getDotnetRuntimeFromFramework: vi.fn().mockReturnValue('coreclr'),
 }));
 
-vi.mock('../../binaries', () => ({
+vi.mock('../../utils/binaries', () => ({
   binariesExistSync: vi.fn(),
 }));
 
-vi.mock('../../fs', () => ({
+vi.mock('../../utils/fs', () => ({
   writeFormattedJson: vi.fn(),
 }));
 
@@ -76,6 +76,16 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
     no: { title: 'No' },
     dontWarnAgain: { title: "Don't warn again" },
   },
+  // Stubs needed by transitive imports (e.g. initProjectForVSCode chain)
+  AzureWizard: vi.fn(),
+  AzureWizardExecuteStep: class {},
+  AzureWizardPromptStep: class {},
+  UserCancelledError: class extends Error {},
+  nonNullProp: vi.fn((_obj: unknown, key: string) => key),
+  nonNullOrEmptyValue: vi.fn((val: unknown) => val),
+  openUrl: vi.fn(),
+  parseError: vi.fn((e: unknown) => ({ message: String(e) })),
+  callWithTelemetryAndErrorHandling: vi.fn(),
 }));
 
 // Re-import the mocked module values for use in test assertions

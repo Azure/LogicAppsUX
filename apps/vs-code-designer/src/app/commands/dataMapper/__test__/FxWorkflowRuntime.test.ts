@@ -57,7 +57,7 @@ vi.mock('../../../utils/appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
 }));
 
-vi.mock('../../../utils/vsCodeConfig/generators', () => ({
+vi.mock('../../../projectConsistency/fileGenerators', () => ({
   generateDesignTimeLocalSettingsJson: vi.fn(() => ({ Values: {} })),
 }));
 
