@@ -28,9 +28,6 @@ vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
 vi.mock('../app/utils/funcCoreTools/cpUtils', () => ({
   executeCommand: vi.fn(),
 }));
-vi.mock('../app/utils/vsCodeConfig/tasks', () => ({
-  validateTasksJson: vi.fn(),
-}));
 vi.mock('../app/commands/binaries/validateAndInstallBinaries', () => ({
   validateAndInstallBinaries: vi.fn(),
 }));

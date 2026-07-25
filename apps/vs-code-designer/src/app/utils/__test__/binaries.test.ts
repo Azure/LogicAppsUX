@@ -42,7 +42,6 @@ import {
 import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
-import { validateTasksJson } from '../vsCodeConfig/tasks';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { isNodeJsInstalled } from '../../commands/nodeJs/validateNodeJsInstalled';
@@ -867,7 +866,6 @@ describe('binaries', () => {
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(validateAndInstallBinaries).mockResolvedValue(undefined);
-      vi.mocked(validateTasksJson).mockResolvedValue(undefined);
 
       await installBinaries(context);
 
