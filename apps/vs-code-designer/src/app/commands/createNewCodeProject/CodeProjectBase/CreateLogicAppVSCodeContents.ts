@@ -22,23 +22,23 @@ import {
 import { detectCustomCodeTargetFramework } from '../../../utils/customCodeUtils';
 
 export async function createLogicAppVsCodeContents(webviewProjectContext: IWebviewProjectContext, logicAppFolderPath: string) {
-  const { logicAppName } = webviewProjectContext;
   const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
   await fse.ensureDir(vscodePath);
 
+  webviewProjectContext.projectPackageType = webviewProjectContext.logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle;
+
   await writeSettingsJson(webviewProjectContext, vscodePath);
-  await writeExtensionsJson(webviewProjectContext, vscodePath);
+  await writeExtensionsJson(vscodePath);
   await writeTasksJson(webviewProjectContext, vscodePath);
-  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppFolderPath, logicAppName);
+  await writeLaunchJson(webviewProjectContext, vscodePath, logicAppFolderPath);
 }
 
-export async function writeSettingsJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
+async function writeSettingsJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
   const { targetFramework, logicAppType } = context;
 
-  const projectPackageType = logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle;
   const settingsContent = generateSettingsJson({
     projectType: logicAppType,
-    projectPackageType,
+    projectPackageType: context.projectPackageType!,
     hasFuncBinaries: binariesExistSync(funcDependencyName),
     targetFramework,
   });
@@ -47,22 +47,20 @@ export async function writeSettingsJson(context: IWebviewProjectContext, vscodeP
   await fse.writeJson(settingsJsonPath, settingsContent, { spaces: 2 });
 }
 
-export async function writeExtensionsJson(webviewProjectContext: IWebviewProjectContext, vscodePath: string): Promise<void> {
+async function writeExtensionsJson(vscodePath: string): Promise<void> {
   const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
   const extensionsData = generateExtensionsJson();
 
   await fse.writeJson(extensionsJsonPath, extensionsData, { spaces: 2 });
 }
 
-export async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
+async function writeTasksJson(context: IWebviewProjectContext, vscodePath: string): Promise<void> {
   const { targetFramework, logicAppType } = context;
   const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
 
-  const projectPackageType = logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle;
-
   const tasksJsonContent = generateTasksJson({
     projectType: logicAppType,
-    projectPackageType: projectPackageType,
+    projectPackageType: context.projectPackageType!,
     hasFuncBinaries: binariesExistSync(funcDependencyName),
     targetFramework,
     isDevContainer: context.isDevContainerProject,
@@ -71,11 +69,10 @@ export async function writeTasksJson(context: IWebviewProjectContext, vscodePath
   await fse.writeJson(tasksJsonPath, tasksJsonContent, { spaces: 2 });
 }
 
-export async function writeLaunchJson(
+async function writeLaunchJson(
   context: IWebviewProjectContext,
   vscodePath: string,
-  logicAppFolderPath: string,
-  logicAppName: string
+  logicAppFolderPath: string
 ): Promise<void> {
   const customCodeTargetFramework =
     context.logicAppType === ProjectType.customCode || context.logicAppType === ProjectType.rulesEngine
@@ -84,10 +81,10 @@ export async function writeLaunchJson(
 
   const launchContent = generateLaunchJson({
     projectType: context.logicAppType,
-    projectPackageType: context.logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle,
+    projectPackageType: context.projectPackageType!,
     hasFuncBinaries: binariesExistSync(funcDependencyName),
     customCodeTargetFramework,
-    logicAppName,
+    logicAppName: context.logicAppName,
   });
 
   const launchJsonPath: string = path.join(vscodePath, launchFileName);
@@ -102,7 +99,7 @@ export async function createDevContainerContents(webviewProjectContext: IWebview
   }
 }
 
-export async function writeDevContainerJson(devContainerPath: string): Promise<void> {
+async function writeDevContainerJson(devContainerPath: string): Promise<void> {
   const devContainerJsonPath: string = path.join(devContainerPath, devContainerFileName);
   const templatePath = getContainerTemplatePath(devContainerFileName);
   await fse.copyFile(templatePath, devContainerJsonPath);

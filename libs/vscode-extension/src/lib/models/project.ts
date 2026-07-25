@@ -98,6 +98,7 @@ export interface IWebviewProjectContext extends IActionContext {
   workspaceName: string;
   logicAppName: string;
   logicAppType: ProjectType;
+  projectPackageType?: ProjectPackageType;
   targetFramework?: TargetFramework;
   workflowName: string;
   workflowType?: WorkflowType;
