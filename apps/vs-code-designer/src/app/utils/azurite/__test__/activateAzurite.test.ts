@@ -49,6 +49,10 @@ vi.mock('../../../azuriteExtension/executeOnAzuriteExt', () => ({
   executeOnAzurite: vi.fn(),
 }));
 
+vi.mock('../../delay', () => ({
+  delay: vi.fn(),
+}));
+
 import * as vscode from 'vscode';
 import { activateAzurite } from '../activateAzurite';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../../vsCodeConfig/settings';
@@ -169,7 +173,8 @@ describe('activateAzurite', () => {
 
   it('writes azurite.location to global settings, strips shared copies, and starts azurite (key path)', async () => {
     mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
-    (validateEmulatorIsRunning as any).mockResolvedValue(false);
+    // Not running initially (triggers start), then ready on the readiness poll so waitForAzuriteReady resolves.
+    (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
     const context = createContext();
 
     await activateAzurite(context, PROJECT_PATH);
@@ -183,12 +188,22 @@ describe('activateAzurite', () => {
 
   it('defaults the started azurite location when no ext location is configured', async () => {
     mockSettings({ showWarning: false, autoStart: true, binariesLocation: undefined });
-    (validateEmulatorIsRunning as any).mockResolvedValue(false);
+    // Not running initially (triggers start), then ready on the readiness poll so waitForAzuriteReady resolves.
+    (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
 
     await activateAzurite(createContext(), PROJECT_PATH);
 
     expect(updateGlobalSetting).toHaveBeenCalledWith(azuriteLocationSetting, defaultAzuritePathValue, azuriteExtensionPrefix);
     expect(removeSharedSetting).toHaveBeenCalledWith(azuriteLocationSetting, azuriteExtensionPrefix);
+    expect(executeOnAzurite).toHaveBeenCalled();
+  });
+
+  it('throws when azurite never becomes ready after being started (race-condition guard)', async () => {
+    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    // Never ready: first check triggers start, every readiness poll stays false -> waitForAzuriteReady rejects.
+    (validateEmulatorIsRunning as any).mockResolvedValue(false);
+
+    await expect(activateAzurite(createContext(), PROJECT_PATH)).rejects.toThrow();
     expect(executeOnAzurite).toHaveBeenCalled();
   });
 
