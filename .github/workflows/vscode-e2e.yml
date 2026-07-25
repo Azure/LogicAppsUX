@@ -665,17 +665,13 @@ jobs:
     needs: setup-extension-build
     # Exercises the codeful F5 debug path (workspace opens, design-time Node worker,
     # dotnet build, task chain). The design-time worker=node check (the Option B guard
-    # for the MSB3026 lock) is deterministic and passes every run. HOWEVER, the F5
-    # task-chain assertions are currently FLAKY on main: `preDebugValidate` →
-    # `validateEmulatorIsRunning` intermittently races Azurite startup and pops the
-    # headless-unanswerable "Failed to verify AzureWebJobsStorage connection" modal,
-    # which aborts F5 before any task is dispatched (empirically green then red across
-    # runs on byte-identical code). That race is a real product bug fixed on branch
-    # `lambrian/azurite_race_condition` (adds waitForAzuriteReady retry/backoff), which
-    # is NOT yet merged to main. ADVISORY (continue-on-error) and EXCLUDED from the
-    # summary hard gate until that fix lands — then flip continue-on-error off + add to
-    # the gate so this becomes a real blocking regression guard.
-    continue-on-error: true
+    # for the MSB3026 lock) is deterministic and passes every run. The F5 task-chain
+    # assertions were previously flaky because `preDebugValidate` →
+    # `validateEmulatorIsRunning` raced Azurite startup and popped the
+    # headless-unanswerable "Failed to verify AzureWebJobsStorage connection" modal.
+    # That race is now FIXED in this branch (waitForAzuriteReady retry/backoff, cherry-
+    # picked from `lambrian/azurite_race_condition`), so this leg is BLOCKING again and
+    # is a real regression guard. Windows stays advisory (hosted-runner func-exec gap).
     timeout-minutes: 45
     runs-on: ubuntu-latest
     defaults:
@@ -970,22 +966,22 @@ jobs:
           echo "setup-fixtures:             ${{ needs.setup-fixtures.result }}"
           echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"
           echo "vscode-e2e-windows:         ${{ needs.vscode-e2e-windows.result }}"
-          echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }} (advisory, not gated: Azurite race)"
+          echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }} (BLOCKING: Azurite race fixed in-branch)"
           echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }} (advisory, not gated: func exec)"
           echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
              [ "${{ needs.setup-fixtures.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-windows.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-codeful-ubuntu.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-compat.result }}" != "success" ]; then
             echo "::error::One or more required vscode-e2e jobs failed"
             exit 1
           fi
-          # BOTH codeful legs are intentionally EXCLUDED from the gate above while they
-          # are advisory (continue-on-error): ubuntu is flaky on main due to the Azurite
-          # startup race (fix pending on branch lambrian/azurite_race_condition), and
-          # windows cannot execute the auto-provisioned func.exe on the hosted runner.
-          # Their results are echoed for visibility. Flip each continue-on-error off and
-          # add it back to the gate as its blocker is resolved.
+          # vscode-e2e-codeful-ubuntu is now BLOCKING: the Azurite startup race that made
+          # it flaky is fixed in this branch (waitForAzuriteReady). Only the WINDOWS codeful
+          # leg stays advisory (continue-on-error) because the hosted runner cannot execute
+          # the auto-provisioned func.exe. Flip its continue-on-error off and add it to the
+          # gate once Windows func-host provisioning is sorted.
           echo "All required vscode-e2e jobs passed."
 
