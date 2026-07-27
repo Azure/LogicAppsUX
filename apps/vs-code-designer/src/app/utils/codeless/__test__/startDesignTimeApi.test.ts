@@ -15,16 +15,21 @@ import {
   stopDesignTimeApi,
   promptStartDesignTimeOption,
 } from '../startDesignTimeApi';
-import { ensureProjectRootArtifacts, regenerateLocalSettings, regenerateRootHostFile } from '../validateProjectArtifacts';
+import {
+  ensureProjectRootArtifacts,
+  regenerateLocalSettings,
+  regenerateRootHostFile,
+} from '../../../projectConsistency/projectFilesConsistency';
 import { getWorkspaceSetting } from '../../vsCodeConfig/settings';
 import { autoStartDesignTimeSetting } from '../../../../constants';
 
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
   getLocalSettingsSchema: vi.fn(() => ({ Values: {} })),
+  getLocalSettingsJson: vi.fn(() => ({ IsEncrypted: false, Values: {} })),
 }));
 
-vi.mock('../validateProjectArtifacts', () => ({
+vi.mock('../../../projectConsistency/projectFilesConsistency', () => ({
   regenerateLocalSettings: vi.fn(),
   regenerateRootHostFile: vi.fn(),
   ensureProjectRootArtifacts: vi.fn(),
@@ -52,6 +57,8 @@ vi.mock('../../funcCoreTools/funcVersion', () => ({
 vi.mock('../../vsCodeConfig/settings', () => ({
   getWorkspaceSetting: vi.fn(),
   updateGlobalSetting: vi.fn(),
+  isManagedIdentityAuthEnabled: vi.fn(() => false),
+  useNodeDesignTimeWorker: vi.fn(() => false),
 }));
 
 vi.mock('../../../commands/pickFuncProcess', () => ({

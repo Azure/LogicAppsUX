@@ -26,7 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
-import { ensureProjectRootArtifacts, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
+import { ensureProjectRootArtifacts, validateAndRegenerateProjectArtifacts } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
 import {
   DialogResponses,

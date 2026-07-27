@@ -24,12 +24,12 @@ import {
   workerRuntimeKey,
   workflowCodefulEnabledKey,
   workflowOperationDiscoveryHostModeKey,
-} from '../../../../constants';
-import * as localSettings from '../../appSettings/localSettings';
-import { writeFormattedJson } from '../../fs';
-import { hasCodefulSdkReference, hasCodefulWorkflowSetting } from '../../codeful';
-import { isCustomCodeFunctionsProjectInRoot, tryGetLogicAppCustomCodeFunctionsProjects } from '../../customCodeUtils';
-import { useNodeDesignTimeWorker } from '../../vsCodeConfig/settings';
+} from '../../../constants';
+import * as localSettings from '../../utils/appSettings/localSettings';
+import { writeFormattedJson } from '../../utils/fs';
+import { hasCodefulSdkReference, hasCodefulWorkflowSetting } from '../../utils/codeful';
+import { isCustomCodeFunctionsProjectInRoot, tryGetLogicAppCustomCodeFunctionsProjects } from '../../utils/customCodeUtils';
+import { useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
 import {
   extractAppSettingReferences,
   getReferencedAppSettings,
@@ -39,9 +39,9 @@ import {
   validateAndRegenerateProjectArtifacts,
   validateDesignTimeDirectory,
   regenerateDesignTimeDirectory,
-} from '../validateProjectArtifacts';
-import { detectProjectType } from '../../project';
-import { ext } from '../../../../extensionVariables';
+} from '../projectFilesConsistency';
+import { detectProjectType } from '../../utils/project';
+import { ext } from '../../../extensionVariables';
 
 vi.mock('fs-extra', () => ({
   pathExists: vi.fn(),
@@ -49,8 +49,8 @@ vi.mock('fs-extra', () => ({
   readdir: vi.fn(),
 }));
 
-vi.mock('../../appSettings/localSettings', async (importActual) => {
-  const actual = await importActual<typeof import('../../appSettings/localSettings')>();
+vi.mock('../../utils/appSettings/localSettings', async (importActual) => {
+  const actual = await importActual<typeof import('../../utils/appSettings/localSettings')>();
   return {
     ...actual,
     addOrUpdateLocalAppSettings: vi.fn(),
@@ -58,22 +58,22 @@ vi.mock('../../appSettings/localSettings', async (importActual) => {
   };
 });
 
-vi.mock('../../fs', () => ({
+vi.mock('../../utils/fs', () => ({
   writeFormattedJson: vi.fn(),
 }));
 
-vi.mock('../../codeful', () => ({
+vi.mock('../../utils/codeful', () => ({
   hasCodefulSdkReference: vi.fn(() => Promise.resolve(false)),
   hasCodefulWorkflowSetting: vi.fn(() => Promise.resolve(false)),
 }));
 
-vi.mock('../../customCodeUtils', () => ({
+vi.mock('../../utils/customCodeUtils', () => ({
   isCustomCodeFunctionsProjectInRoot: vi.fn(() => Promise.resolve(false)),
   tryGetLogicAppCustomCodeFunctionsProjects: vi.fn(() => Promise.resolve(undefined)),
 }));
 
-vi.mock('../../vsCodeConfig/settings', async (importActual) => {
-  const actual = await importActual<typeof import('../../vsCodeConfig/settings')>();
+vi.mock('../../utils/vsCodeConfig/settings', async (importActual) => {
+  const actual = await importActual<typeof import('../../utils/vsCodeConfig/settings')>();
   return {
     ...actual,
     useNodeDesignTimeWorker: vi.fn(() => false),
@@ -124,7 +124,7 @@ function mockFiles(files: Record<string, string>): void {
   mockedFse.readFile.mockImplementation((p: string) => Promise.resolve(Buffer.from(normFiles[norm(p)] ?? '')));
 }
 
-describe('validateProjectArtifacts', () => {
+describe('projectFilesConsistency', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockedIsCodeful.mockResolvedValue(false);
