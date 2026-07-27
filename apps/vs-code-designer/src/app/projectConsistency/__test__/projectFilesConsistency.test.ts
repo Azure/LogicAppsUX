@@ -33,12 +33,12 @@ import { useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
 import {
   extractAppSettingReferences,
   getReferencedAppSettings,
-  ensureProjectRootArtifacts,
-  regenerateLocalSettings,
-  regenerateRootHostFile,
-  validateAndRegenerateProjectArtifacts,
+  ensureRootProjectFiles,
+  ensureLocalSettingsFile,
+  ensureHostFile,
+  ensureProjectFiles,
   validateDesignTimeDirectory,
-  regenerateDesignTimeDirectory,
+  ensureDesignTimeFiles,
 } from '../projectFilesConsistency';
 import { detectProjectType } from '../../utils/project';
 import { ext } from '../../../extensionVariables';
@@ -174,13 +174,13 @@ describe('projectFilesConsistency', () => {
     });
   });
 
-  describe('regenerateLocalSettings', () => {
+  describe('ensureLocalSettingsFile', () => {
     it('creates local.settings.json with baseline settings and referenced placeholders when missing', async () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(true);
       expect(mockedAddOrUpdate).toHaveBeenCalledTimes(1);
@@ -195,7 +195,7 @@ describe('projectFilesConsistency', () => {
       mockedIsCodeful.mockResolvedValue(true);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -230,7 +230,7 @@ describe('projectFilesConsistency', () => {
         },
       });
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -253,7 +253,7 @@ describe('projectFilesConsistency', () => {
         },
       });
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(false);
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
@@ -265,7 +265,7 @@ describe('projectFilesConsistency', () => {
   // the project files (detectProjectType): codeful via hasCodefulWorkflowSetting/hasCodefulSdkReference,
   // and customCode via tryGetLogicAppCustomCodeFunctionsProjects. As a result every type regenerates
   // the same content a freshly created project of that type would.
-  describe('regenerateLocalSettings — behavior by logic app type', () => {
+  describe('ensureLocalSettingsFile — behavior by logic app type', () => {
     const codelessBaseline = {
       [appKindSetting]: logicAppKind,
       [ProjectDirectoryPathKey]: projectPath,
@@ -285,7 +285,7 @@ describe('projectFilesConsistency', () => {
       mockedIsCodeful.mockResolvedValue(false);
       mockedIsCustomCodeInRoot.mockResolvedValue(false);
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -301,7 +301,7 @@ describe('projectFilesConsistency', () => {
       mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
       mockedTryGetCustomCodeProjects.mockResolvedValue(['some/custom-code-path']);
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -319,7 +319,7 @@ describe('projectFilesConsistency', () => {
       mockedHasCodefulWorkflowSetting.mockResolvedValue(false);
       mockedTryGetCustomCodeProjects.mockResolvedValue(['some/rules-engine-path']);
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -333,7 +333,7 @@ describe('projectFilesConsistency', () => {
     it('codeful: regenerates the codeless baseline plus WORKFLOW_CODEFUL_ENABLED and AzureWebJobsFeatureFlags (matches fresh creation)', async () => {
       mockedIsCodeful.mockResolvedValue(true);
 
-      const { changed } = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -584,14 +584,14 @@ describe('projectFilesConsistency', () => {
     });
   });
 
-  describe('regenerateDesignTimeDirectory', () => {
+  describe('ensureDesignTimeFiles', () => {
     const designTimeDir = `${projectPath}/workflow-designtime`;
 
     it('regenerates host.json and local.settings.json when the directory is missing', async () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const { uri: dir } = await regenerateDesignTimeDirectory(context, projectPath);
+      const { uri: dir } = await ensureDesignTimeFiles(context, projectPath);
 
       expect(norm(dir.fsPath)).toContain('workflow-designtime');
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
@@ -605,7 +605,7 @@ describe('projectFilesConsistency', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      await regenerateDesignTimeDirectory(context, projectPath);
+      await ensureDesignTimeFiles(context, projectPath);
 
       const runtimeSettings = mockedAddOrUpdate.mock.calls[0]?.[2] as Record<string, string>;
       expect(runtimeSettings[workerRuntimeKey]).toBe(WorkerRuntime.Node);
@@ -631,7 +631,7 @@ describe('projectFilesConsistency', () => {
 
       mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: validSettings });
 
-      await regenerateDesignTimeDirectory(context, projectPath);
+      await ensureDesignTimeFiles(context, projectPath);
 
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
@@ -644,7 +644,7 @@ describe('projectFilesConsistency', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const { uri: dir } = await regenerateDesignTimeDirectory(context, backupPath);
+      const { uri: dir } = await ensureDesignTimeFiles(context, backupPath);
 
       // The design-time directory is nested UNDER the backup folder, not the backup folder itself.
       expect(norm(dir.fsPath)).toContain('workflow-designtime-backup/workflow-designtime');
@@ -680,7 +680,7 @@ describe('projectFilesConsistency', () => {
         mockedFse.readdir.mockResolvedValue([]);
         mockedIsCodeful.mockResolvedValue(false);
 
-        await regenerateDesignTimeDirectory(context, projectPath);
+        await ensureDesignTimeFiles(context, projectPath);
 
         expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
       });
@@ -690,7 +690,7 @@ describe('projectFilesConsistency', () => {
         mockedFse.readdir.mockResolvedValue([]);
         mockedIsCodeful.mockResolvedValue(true);
 
-        await regenerateDesignTimeDirectory(context, projectPath);
+        await ensureDesignTimeFiles(context, projectPath);
 
         // host.json is type-independent: the codeful project produces the same host.json.
         expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
@@ -701,7 +701,7 @@ describe('projectFilesConsistency', () => {
         mockedFse.readdir.mockResolvedValue([]);
         mockedIsCodeful.mockResolvedValue(false);
 
-        await regenerateDesignTimeDirectory(context, projectPath);
+        await ensureDesignTimeFiles(context, projectPath);
 
         expect(writtenContentFor('local.settings.json')).toEqual({
           IsEncrypted: false,
@@ -731,7 +731,7 @@ describe('projectFilesConsistency', () => {
         mockedFse.readdir.mockResolvedValue([]);
         mockedIsCodeful.mockResolvedValue(true);
 
-        await regenerateDesignTimeDirectory(context, projectPath);
+        await ensureDesignTimeFiles(context, projectPath);
 
         expect(writtenContentFor('local.settings.json')).toEqual({
           IsEncrypted: false,
@@ -762,7 +762,7 @@ describe('projectFilesConsistency', () => {
         mockedFse.readdir.mockResolvedValue([]);
         mockedIsCodeful.mockResolvedValue(true);
 
-        await regenerateDesignTimeDirectory(context, projectPath);
+        await ensureDesignTimeFiles(context, projectPath);
 
         // Both artifacts are rewritten to the codeful baseline.
         expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
@@ -781,7 +781,7 @@ describe('projectFilesConsistency', () => {
     });
   });
 
-  describe('regenerateRootHostFile', () => {
+  describe('ensureHostFile', () => {
     const rootHostPath = `${projectPath}/host.json`;
 
     // Mirrors the project-level host.json produced by the creation path
@@ -805,7 +805,7 @@ describe('projectFilesConsistency', () => {
     it('regenerates host.json when it is missing', async () => {
       mockFiles({});
 
-      const created = await regenerateRootHostFile(projectPath);
+      const created = await ensureHostFile(projectPath);
 
       expect(created.changed).toBe(true);
       expect(created.changedArtifacts).toEqual(['host.json']);
@@ -815,7 +815,7 @@ describe('projectFilesConsistency', () => {
     it('regenerates host.json when it exists but is invalid', async () => {
       mockFiles({ [rootHostPath]: JSON.stringify({ version: '2.0', extensionBundle: { id: 'wrong.bundle.id' } }) });
 
-      const created = await regenerateRootHostFile(projectPath);
+      const created = await ensureHostFile(projectPath);
 
       expect(created.changed).toBe(true);
       expect(created.changedArtifacts).toEqual(['host.json']);
@@ -829,7 +829,7 @@ describe('projectFilesConsistency', () => {
       });
       mockFiles({ [rootHostPath]: validHost });
 
-      const created = await regenerateRootHostFile(projectPath);
+      const created = await ensureHostFile(projectPath);
 
       expect(created.changed).toBe(false);
       expect(created.changedArtifacts).toEqual([]);
@@ -840,7 +840,7 @@ describe('projectFilesConsistency', () => {
   // The top-level orchestrator used by the design-time startup flow. These tests prove that a single
   // call accounts for EVERY required artifact together: the project-root host.json, the project-root
   // local.settings.json, and the workflow-designtime baseline (host.json + local.settings.json).
-  describe('validateAndRegenerateProjectArtifacts', () => {
+  describe('ensureProjectFiles', () => {
     const designTimeDir = `${projectPath}/workflow-designtime`;
     const rootHostPath = `${projectPath}/host.json`;
     const rootSettingsPath = `${projectPath}/local.settings.json`;
@@ -867,7 +867,7 @@ describe('projectFilesConsistency', () => {
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      const dir = await validateAndRegenerateProjectArtifacts(context, projectPath);
+      const dir = await ensureProjectFiles(context, projectPath);
 
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       // Project-root host.json (distinct from the design-time copy).
@@ -902,7 +902,7 @@ describe('projectFilesConsistency', () => {
         },
       });
 
-      const dir = await validateAndRegenerateProjectArtifacts(context, projectPath);
+      const dir = await ensureProjectFiles(context, projectPath);
 
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
@@ -929,7 +929,7 @@ describe('projectFilesConsistency', () => {
         },
       });
 
-      await validateAndRegenerateProjectArtifacts(context, projectPath);
+      await ensureProjectFiles(context, projectPath);
 
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths).toEqual([rootHostPath]);
@@ -969,7 +969,7 @@ describe('projectFilesConsistency', () => {
         AzureWebJobsStorage: 'UseDevelopmentStorage=true',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
         // MI auth is mocked on (isManagedIdentityAuthEnabled -> true), so a fully-valid project must
-        // already carry the managed-identity auth method or regenerateLocalSettings would add it.
+        // already carry the managed-identity auth method or ensureLocalSettingsFile would add it.
         [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
       },
     };
@@ -987,31 +987,31 @@ describe('projectFilesConsistency', () => {
       mockedGetLocalSettingsJson.mockResolvedValue(fullValidRootSettings);
     }
 
-    it('regenerateRootHostFile and regenerateLocalSettings emit no output-channel lines', async () => {
+    it('ensureHostFile and ensureLocalSettingsFile emit no output-channel lines', async () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      await regenerateRootHostFile(projectPath);
-      await regenerateLocalSettings(context, projectPath);
+      await ensureHostFile(projectPath);
+      await ensureLocalSettingsFile(context, projectPath);
 
       expect(mockedAppendLog).not.toHaveBeenCalled();
     });
 
-    it('regenerateDesignTimeDirectory emits no output-channel lines', async () => {
+    it('ensureDesignTimeFiles emits no output-channel lines', async () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      await regenerateDesignTimeDirectory(context, projectPath);
+      await ensureDesignTimeFiles(context, projectPath);
 
       expect(mockedAppendLog).not.toHaveBeenCalled();
     });
 
-    it('validateAndRegenerateProjectArtifacts logs exactly one "valid" line when nothing changes', async () => {
+    it('ensureProjectFiles logs exactly one "valid" line when nothing changes', async () => {
       mockFullyValidProject();
 
-      await validateAndRegenerateProjectArtifacts(context, projectPath);
+      await ensureProjectFiles(context, projectPath);
 
       const lines = loggedLines();
       expect(lines).toHaveLength(1);
@@ -1019,12 +1019,12 @@ describe('projectFilesConsistency', () => {
       expect(lines[0]).toContain('no regeneration needed');
     });
 
-    it('validateAndRegenerateProjectArtifacts logs exactly one line naming what was regenerated', async () => {
+    it('ensureProjectFiles logs exactly one line naming what was regenerated', async () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      await validateAndRegenerateProjectArtifacts(context, projectPath);
+      await ensureProjectFiles(context, projectPath);
 
       const lines = loggedLines();
       expect(lines).toHaveLength(1);
@@ -1034,13 +1034,13 @@ describe('projectFilesConsistency', () => {
       expect(lines[0]).toContain('design-time host.json');
     });
 
-    it('validateAndRegenerateProjectArtifacts logs a single "failed" line and rethrows on error', async () => {
+    it('ensureProjectFiles logs a single "failed" line and rethrows on error', async () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
       mockedWriteFormattedJson.mockRejectedValue(new Error('disk full'));
 
-      await expect(validateAndRegenerateProjectArtifacts(context, projectPath)).rejects.toThrow('disk full');
+      await expect(ensureProjectFiles(context, projectPath)).rejects.toThrow('disk full');
 
       const lines = loggedLines();
       expect(lines).toHaveLength(1);
@@ -1048,10 +1048,10 @@ describe('projectFilesConsistency', () => {
       expect(lines[0]).toContain('disk full');
     });
 
-    it('ensureProjectRootArtifacts logs one "valid" line and never touches the design-time directory', async () => {
+    it('ensureRootProjectFiles logs one "valid" line and never touches the design-time directory', async () => {
       mockFullyValidProject();
 
-      await ensureProjectRootArtifacts(context, projectPath);
+      await ensureRootProjectFiles(context, projectPath);
 
       const lines = loggedLines();
       expect(lines).toHaveLength(1);
@@ -1062,12 +1062,12 @@ describe('projectFilesConsistency', () => {
       expect(writtenPaths.some((p) => p.includes('workflow-designtime'))).toBe(false);
     });
 
-    it('ensureProjectRootArtifacts logs one line naming the regenerated root artifacts', async () => {
+    it('ensureRootProjectFiles logs one line naming the regenerated root artifacts', async () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      await ensureProjectRootArtifacts(context, projectPath);
+      await ensureRootProjectFiles(context, projectPath);
 
       const lines = loggedLines();
       expect(lines).toHaveLength(1);

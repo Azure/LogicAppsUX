@@ -63,23 +63,19 @@ const baseRequiredDesignTimeSettingKeys = [appKindSetting, workerRuntimeKey, Pro
 const designTimeArtifactPrefix = 'design-time ';
 
 /**
- * Validates and regenerates the artifacts required for a logic app project to be valid when source
- * control strips git-ignored files: the project-level host.json and local.settings.json (built from
+ * Ensures the logic app project files: the project-level host.json and local.settings.json (built from
  * the logic app, connections.json, and parameters.json) and the workflow-designtime directory baseline.
  *
- * Emits exactly one consolidated status line for the project: valid, regenerated (listing exactly
- * what changed), or failed. The low-level regenerate helpers are silent so multi-project startup
- * output stays readable.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<Uri>} The design-time directory Uri, ready to be used as the host working directory.
  */
-export async function validateAndRegenerateProjectArtifacts(context: IActionContext, projectPath: string): Promise<Uri> {
+export async function ensureProjectFiles(context: IActionContext, projectPath: string): Promise<Uri> {
   const projectName = path.basename(projectPath);
   try {
-    const hostResult = await regenerateRootHostFile(projectPath);
-    const localSettings = await regenerateLocalSettings(context, projectPath);
-    const designTimeData = await regenerateDesignTimeDirectory(context, projectPath);
+    const hostResult = await ensureHostFile(projectPath);
+    const localSettings = await ensureLocalSettingsFile(context, projectPath);
+    const designTimeData = await ensureDesignTimeFiles(context, projectPath);
 
     const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts, ...designTimeData.changedArtifacts];
 
@@ -112,19 +108,17 @@ export async function validateAndRegenerateProjectArtifacts(context: IActionCont
 }
 
 /**
- * Ensures the project-level host.json and local.settings.json are valid (regenerating the
- * git-ignored files a source-controlled clone may be missing) without touching the design-time
- * directory. Emits a single consolidated status line for the project: valid, regenerated (listing
- * exactly what changed), or failed.
+ * Ensures the project-level host.json and local.settings.json.
+ * 
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<void>} Resolves when the root artifacts have been ensured.
  */
-export async function ensureProjectRootArtifacts(context: IActionContext, projectPath: string): Promise<void> {
+export async function ensureRootProjectFiles(context: IActionContext, projectPath: string): Promise<void> {
   const projectName = path.basename(projectPath);
   try {
-    const hostResult = await regenerateRootHostFile(projectPath);
-    const localSettings = await regenerateLocalSettings(context, projectPath);
+    const hostResult = await ensureHostFile(projectPath);
+    const localSettings = await ensureLocalSettingsFile(context, projectPath);
 
     const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts];
 
@@ -156,17 +150,13 @@ export async function ensureProjectRootArtifacts(context: IActionContext, projec
 }
 
 /**
- * Ensures the project-level host.json exists and is structurally valid, healing it when needed.
- * Because {@link isLogicAppProject} identifies a project by its workflow-folder signal (not host.json),
- * a source-controlled clone can reach this point with host.json missing or corrupted; without a valid
- * host.json the function host cannot start. This regenerates the file in either case. A valid existing
- * host.json (correct version + workflows extension bundle) is preserved so that customizations such as a
- * pinned extension bundle version are not lost.
+ * Ensures the project-level host.json exists and is valid.
+ * 
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<{ changed: boolean; changedArtifacts: string[] }>} Whether the file was written
  * (created or repaired), and the human-readable label for the artifact when it changed.
  */
-export async function regenerateRootHostFile(projectPath: string): Promise<{ changed: boolean; changedArtifacts: string[] }> {
+export async function ensureHostFile(projectPath: string): Promise<{ changed: boolean; changedArtifacts: string[] }> {
   const hostFilePath = path.join(projectPath, hostFileName);
 
   if (await isHostFileValid(hostFilePath, false)) {
@@ -178,29 +168,21 @@ export async function regenerateRootHostFile(projectPath: string): Promise<{ cha
 }
 
 /**
- * Ensures the project-level local.settings.json exists and contains every app setting the project
- * requires. This is needed when source control is enabled: local.settings.json is git-ignored, so a
- * fresh clone is missing it and any `@appsetting('name')` references in connections.json /
- * parameters.json / workflows resolve to undefined, making the project invalid.
+ * Ensures the project-level local.settings.json exists and contains all required app settings.
  *
- * Baseline runtime settings are added when missing and every referenced app setting is added with an
- * empty placeholder value when missing. Existing values are never overwritten.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<{ changed: boolean; addedSettings: string[]; changedArtifacts: string[] }>} Whether
  * the file was created or updated, which setting keys were added, and the human-readable label(s) for
  * the artifact(s) that changed (empty when nothing changed).
  */
-export async function regenerateLocalSettings(
+export async function ensureLocalSettingsFile(
   context: IActionContext,
   projectPath: string
 ): Promise<{ changed: boolean; addedSettings: string[]; changedArtifacts: string[] }> {
   const localSettingsPath = path.join(projectPath, localSettingsFileName);
   const fileExisted = await fse.pathExists(localSettingsPath);
 
-  // Build the baseline from the same source of truth as fresh project creation so a regenerated
-  // local.settings.json matches what a newly created project of this type would produce. The project
-  // type is inferred from the project files because a source-controlled clone has no explicit marker.
   const logicAppType = await detectProjectType(projectPath);
   const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
@@ -237,8 +219,9 @@ export async function regenerateLocalSettings(
 }
 
 /**
- * Collects all app settings referenced by the logic app project. This scans connections.json,
+ * Collects all app settings referenced by the logic app project. Scans connections.json,
  * parameters.json, and every workflow.json in the project for `@appsetting('name')` references.
+ * 
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<string[]>} Unique app setting names referenced anywhere in the project.
  */
@@ -272,6 +255,7 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
 /**
  * Extracts the unique set of app setting names referenced through `@appsetting('name')` /
  * `@{appsetting('name')}` expressions in the provided content.
+ * 
  * @param {string} content - Raw file content to scan.
  * @returns {string[]} Unique app setting names referenced in the content.
  */
@@ -293,21 +277,23 @@ export function extractAppSettingReferences(content: string): string[] {
 }
 
 /**
- * Validates and, when needed, regenerates the workflow-designtime directory baseline contents
- * (host.json and local.settings.json). Valid existing files are preserved so that customizations
- * such as a pinned extension bundle version are not lost.
+ * Ensures the workflow-designtime local.settings.json and host.json files.
+ * 
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<{ uri: Uri; changedArtifacts: string[] }>} The design-time directory Uri and the human-readable label(s)
  * for the artifact(s) that changed.
  */
-export async function regenerateDesignTimeDirectory(
+export async function ensureDesignTimeFiles(
   context: IActionContext,
   projectPath: string
 ): Promise<{ uri: Uri; changedArtifacts: string[] }> {
-  const designTimeDirectory = await ensureDesignTimeDirectory(projectPath);
-  const validation = await validateDesignTimeDirectory(projectPath);
+  const designTimeDirectory = Uri.file(path.join(projectPath, designTimeDirectoryName));
+  if (!(await fse.pathExists(designTimeDirectory.fsPath))) {
+    await workspace.fs.createDirectory(designTimeDirectory);
+  }
 
+  const validation = await validateDesignTimeDirectory(projectPath);
   const shouldRegenerateHostJson = !validation.hostFileValid;
   const shouldRegenerateLocalSettingsJson = !validation.settingsFileValid;
   const changedArtifacts: string[] = [];
@@ -338,26 +324,6 @@ export async function regenerateDesignTimeDirectory(
 }
 
 /**
- * Ensures the workflow-designtime directory exists, creating it if necessary.
- * @param {string} projectPath - The logic app project root.
- * @returns {Promise<Uri>} The design-time directory Uri.
- */
-async function ensureDesignTimeDirectory(projectPath: string): Promise<Uri> {
-  // When the project path already points at (or inside) the design-time directory, use it directly.
-  // Match on a full path segment so siblings like "workflow-designtime-backup" don't false-positive.
-  const pathSegments = projectPath.split(/[\\/]/);
-  if (pathSegments.includes(designTimeDirectoryName)) {
-    return Uri.file(projectPath);
-  }
-
-  const designTimeDirectoryUri = Uri.file(path.join(projectPath, designTimeDirectoryName + path.sep));
-  if (!(await fse.pathExists(designTimeDirectoryUri.fsPath))) {
-    await workspace.fs.createDirectory(designTimeDirectoryUri);
-  }
-  return designTimeDirectoryUri;
-}
-
-/**
  * Describes the validation state of a design-time directory.
  */
 export interface DesignTimeDirectoryValidation {
@@ -368,8 +334,8 @@ export interface DesignTimeDirectoryValidation {
 }
 
 /**
- * Validates that the workflow-designtime directory has the expected contents (host.json and
- * local.settings.json with the required settings).
+ * Validates the workflow-designtime contents (host.json and local.settings.json with the required settings).
+ * 
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<DesignTimeDirectoryValidation>} The validation result.
  */
@@ -400,9 +366,10 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
  * host.json: both require a version and the workflows extension bundle (id + version). The design-time
  * host.json additionally must enable workflow operation discovery host mode so the design-time API can
  * enumerate operations.
+ * 
  * @param {string} hostFilePath - Absolute path to the host.json file.
  * @param {boolean} isDesignTime - Whether the file is the design-time host.json (stricter validation).
- * @returns {Promise<boolean>} True when host.json is present and structurally valid.
+ * @returns {Promise<boolean>} True when host.json exists and is valid.
  */
 async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Promise<boolean> {
   const content = await readFileTextSafe(hostFilePath);
@@ -434,6 +401,7 @@ async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Pro
 
 /**
  * Validates the local.settings.json file content in the design-time directory.
+ * 
  * @param {string} settingsFilePath - Absolute path to the design-time local.settings.json file.
  * @returns {Promise<boolean>} True when the file is present and contains the required keys.
  */
@@ -469,6 +437,7 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string, useNodeWo
 
 /**
  * Reads the text content of a file, returning an empty string when the file does not exist or cannot be read.
+ * 
  * @param {string} filePath - Absolute path to the file.
  * @returns {Promise<string>} The file content, or an empty string.
  */

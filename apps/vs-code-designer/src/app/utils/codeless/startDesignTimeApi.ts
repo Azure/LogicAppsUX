@@ -26,7 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
-import { ensureProjectRootArtifacts, validateAndRegenerateProjectArtifacts } from '../../projectConsistency/projectFilesConsistency';
+import { ensureRootProjectFiles, ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
 import {
   DialogResponses,
@@ -250,7 +250,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
           // Regenerate any git-ignored project artifacts (host.json, local.settings.json,
           // workflow-designtime) that a source-controlled clone may be missing before starting the host.
-          const designTimeDirectory: Uri | undefined = await validateAndRegenerateProjectArtifacts(actionContext, projectPath);
+          const designTimeDirectory: Uri | undefined = await ensureProjectFiles(actionContext, projectPath);
 
           if (!designTimeDirectory) {
             throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
@@ -751,7 +751,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         } else {
           // Auto-start is off: keep source-controlled clones valid by regenerating the git-ignored
           // host.json / local.settings.json now. Emits one concise per-project summary line.
-          await ensureProjectRootArtifacts(context, projectPath);
+          await ensureRootProjectFiles(context, projectPath);
         }
       }
     } else {
