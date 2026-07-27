@@ -909,6 +909,11 @@
             "description": "Automatically stop the task running the Azure Functions host when a debug sessions ends.",
             "default": true
           },
+          "azureLogicAppsStandard.alwaysBuildCustomCode": {
+            "type": "boolean",
+            "description": "Always build custom code projects when opening the designer, even if build artifacts already exist.",
+            "default": false
+          },
           "azureLogicAppsStandard.validateFuncCoreTools": {
             "type": "boolean",
             "description": "Make sure that Azure Functions Core Tools is installed before you start debugging.",

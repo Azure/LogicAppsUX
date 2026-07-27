@@ -264,6 +264,7 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
+export const alwaysBuildCustomCodeSetting = 'alwaysBuildCustomCode';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
 export const validateDotNetSDKSetting = 'validateDotNetSDK';
 export const validateNodeJsSetting = 'validateNodeJs';

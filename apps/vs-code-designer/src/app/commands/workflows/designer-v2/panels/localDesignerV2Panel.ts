@@ -120,7 +120,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
     }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
     this.panel = window.createWebviewPanel(this.panelGroupKey, this.panelName, ViewColumn.Active, this.getPanelOptions());
     this.panel.iconPath = {
@@ -182,7 +182,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
       case ExtensionCommand.initialize: {
         clearInterval(this.workflowRuntimeBaseUrlInterval);
         this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
-          const updatedRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+          const updatedRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
           if (updatedRuntimeBaseUrl !== this.workflowRuntimeBaseUrl) {
             this.workflowRuntimeBaseUrl = updatedRuntimeBaseUrl;
@@ -376,10 +376,6 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
   // endregion
 
   // region Workflow utilities
-
-  private getWorkflowRuntimeBaseUrl(): string | undefined {
-    return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
-  }
 
   private async saveWorkflow(
     context: IActionContext,

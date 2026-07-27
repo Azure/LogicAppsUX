@@ -103,7 +103,7 @@ export default class ConnectionPanel extends DesignerPanel {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
     this.panelMetadata = panelMetadata;
 

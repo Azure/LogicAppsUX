@@ -16,6 +16,7 @@ import { localize } from '../../../../localize';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { openDesignerV2 } from '../designer-v2/openDesignerV2';
 import { defaultDesignerVersion, designerVersionSetting } from '../../../../constants';
+import { shouldAlwaysBuildCustomCode } from '../../../utils/vsCodeConfig/settings';
 
 export async function openDesigner(context: IActionContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   const designerVersion = workspace.getConfiguration(ext.prefix).get<number>(designerVersionSetting) ?? defaultDesignerVersion;
@@ -39,7 +40,7 @@ async function getDesignerPanel(context: IActionContext, workflowNode: Uri | Rem
   }
 
   const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
-  if (!(await customCodeArtifactsExist(logicAppNode.fsPath))) {
+  if (shouldAlwaysBuildCustomCode() || !(await customCodeArtifactsExist(logicAppNode.fsPath))) {
     await tryBuildCustomCodeFunctionsProject(context, logicAppNode);
   }
 

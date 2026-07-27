@@ -26,6 +26,7 @@ import {
   ProjectDirectoryPathKey,
   funcVersionSetting,
   projectLanguageSetting,
+  inlineCodeNodeExecutablePathKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -98,6 +99,10 @@ async function deploy(
     ProjectDirectoryPathKey,
     workflowAuthenticationMethodKey,
     'REMOTEDEBUGGINGVERSION',
+    // Local-debug-only: absolute path to the local Node.js binary used by the inline-code
+    // language worker. Deploying it points the cloud worker at a non-existent local path,
+    // which hangs "Execute JavaScript Code" actions in a Running state indefinitely.
+    inlineCodeNodeExecutablePathKey,
   ];
   const deployPaths = await getDeployFsPath(actionContext, target);
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });

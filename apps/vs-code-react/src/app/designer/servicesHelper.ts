@@ -91,9 +91,7 @@ export const getDesignerServices = (
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
-
   const emptyArmId = '00000000-0000-0000-0000-000000000000';
-
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;

@@ -69,8 +69,7 @@ export const DesignerApp = () => {
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
 
-  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
-
+  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const queryClient = useQueryClient();
 
@@ -207,6 +206,9 @@ export const DesignerApp = () => {
   const validateAndSaveCodeView = useCallback(
     async (clearDirtyState?: () => void) => {
       try {
+        if (!codeEditorRef.current?.hasChanges()) {
+          return workflow;
+        }
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
         // code view editor cannot add/remove connections, parameters, settings, or customcode
@@ -224,6 +226,7 @@ export const DesignerApp = () => {
         setInitialWorkflow(newWorkflow);
 
         clearDirtyState?.();
+        codeEditorRef.current?.resetChanges();
         return newWorkflow;
       } catch (error: any) {
         if (error.status !== 404) {
@@ -340,18 +343,17 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
-              showRunHistory={!isCodefulWorkflow}
+              showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
 
             {!isCodeView && (
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                 <Designer />
                 <FloatingRunButton
-                  id={workflowDefinitionId}
                   saveDraftWorkflow={saveWorkflowFromDesigner}
-                  onRun={(newRunId: string | undefined) => {
+                  onRun={(newRunId: string) => {
                     switchToMonitoringView();
-                    setRunId(newRunId ?? '');
+                    setRunId(newRunId);
                   }}
                   isDarkMode={theme === Theme.Dark}
                   isDisabled={!isRuntimeAvailable}

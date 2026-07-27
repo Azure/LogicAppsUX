@@ -8,6 +8,7 @@ import {
   enableProjectConsistencyChecksSetting,
   enableManagedIdentityAuthSetting,
   useNodeDesignTimeWorkerSetting,
+  alwaysBuildCustomCodeSetting,
 } from '../../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
@@ -196,6 +197,15 @@ export function isProjectConsistencyCheckEnabled(): boolean {
   } catch {
     return true;
   }
+}
+
+/**
+ * Indicates whether custom code projects should always be rebuilt when opening the designer,
+ * regardless of whether build artifacts already exist. Controlled by the
+ * `azureLogicAppsStandard.alwaysBuildCustomCode` setting. Defaults to `false`.
+ */
+export function shouldAlwaysBuildCustomCode(): boolean {
+  return getGlobalSetting<boolean>(alwaysBuildCustomCodeSetting) === true;
 }
 
 function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | WorkspaceFolder | undefined {
