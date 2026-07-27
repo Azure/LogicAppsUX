@@ -659,7 +659,8 @@ jobs:
   # Split into two independent single-OS jobs (rather than one matrix job) so each has an
   # unambiguous `result` the summary gate can key on. GitHub's matrix-aggregate result +
   # per-leg continue-on-error semantics are fuzzy — a separate job per OS makes the ubuntu
-  # leg cleanly blocking and the windows leg cleanly advisory.
+  # leg cleanly blocking and the windows leg independently reportable. Both are now
+  # BLOCKING, but keeping them split preserves that clarity.
   vscode-e2e-codeful-ubuntu:
     name: vscode-e2e-codeful (ubuntu-latest)
     needs: setup-extension-build
@@ -671,7 +672,9 @@ jobs:
     # headless-unanswerable "Failed to verify AzureWebJobsStorage connection" modal.
     # That race is now FIXED in this branch (waitForAzuriteReady retry/backoff, cherry-
     # picked from `lambrian/azurite_race_condition`), so this leg is BLOCKING again and
-    # is a real regression guard. Windows stays advisory (hosted-runner func-exec gap).
+    # is a real regression guard. The Windows leg is BLOCKING too as of the
+    # runtime-deps cache fix (there was no hosted-runner func-exec gap after all —
+    # func runs fine; the cold cache was mutating deps under the running test).
     timeout-minutes: 45
     runs-on: ubuntu-latest
     defaults:
@@ -1069,9 +1072,9 @@ jobs:
           TMP: ${{ runner.temp }}
           TMPDIR: ${{ runner.temp }}
 
-      # `actions/cache@v5` is post-if: success(), so this advisory job could never
-      # persist the dependencies it downloaded. Save explicitly instead, but only
-      # when the set is complete — a partial cache would restore as a HIT forever.
+      # `actions/cache@v5` is post-if: success(), so on a red run this job could
+      # never persist the dependencies it downloaded. Save explicitly instead, but
+      # only when the set is complete — a partial cache would restore as a HIT forever.
       - name: Verify hydrated runtime dependencies
         id: deps-check
         if: always()
@@ -1238,7 +1241,7 @@ jobs:
           echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"
           echo "vscode-e2e-windows:         ${{ needs.vscode-e2e-windows.result }}"
           echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }} (BLOCKING: Azurite race fixed in-branch)"
-          echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }} (advisory, not gated: func exec)"
+          echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }} (BLOCKING: warm runtime-deps cache)"
           echo "setup-runtime-deps-windows: ${{ needs.setup-runtime-deps-windows.result }} (advisory, not gated: seeds la-runtime-deps-Windows-v1)"
           echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
