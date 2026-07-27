@@ -26,7 +26,7 @@ import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
-import { useHasRoleAssignmentsWritePermissionQuery, useHasRoleDefinitionsByNameQuery } from '../../../../../core/queries/role';
+import { useHasRoleAssignmentsWritePermissionQuery, useHasRequiredRoleDefinitionsQuery } from '../../../../../core/queries/role';
 import constants from '../../../../../common/constants';
 import { getSubscriptionFromResource } from './cosmosConnector';
 
@@ -322,24 +322,24 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     return cognitiveServiceAccountId;
   }, [cognitiveServiceAccountId, isAgentServiceConnection, selectedCognitiveServiceProject]);
 
-  const requiredRoles = useMemo(() => {
-    return parameter.managedIdentitySettings?.requiredRoles ?? [];
-  }, [parameter.managedIdentitySettings?.requiredRoles]);
-  const requiresRoleAssignments = useMemo(() => requiredRoles.length > 0, [requiredRoles.length]);
+  const requiredRoleDefinitionIds = useMemo(() => {
+    return parameter.managedIdentitySettings?.requiredRoleDefinitionIds ?? [];
+  }, [parameter.managedIdentitySettings?.requiredRoleDefinitionIds]);
+  const requiresRoleAssignments = useMemo(() => requiredRoleDefinitionIds.length > 0, [requiredRoleDefinitionIds.length]);
 
   const { data: hasRoleWritePermission, isFetching: isFetchingRoleWritePermission } = useHasRoleAssignmentsWritePermissionQuery(
     roleResourceId,
     requiresRoleAssignments
   );
 
-  const { data: hasRequiredRoles, isFetching: isFetchingRequiredRoles } = useHasRoleDefinitionsByNameQuery(
+  const { data: hasRequiredRoles, isFetching: isFetchingRequiredRoles } = useHasRequiredRoleDefinitionsQuery(
     roleResourceId,
-    requiredRoles,
+    requiredRoleDefinitionIds,
     requiresRoleAssignments
   );
 
   const validRoleState = useMemo(() => {
-    if (requiredRoles.length === 0) {
+    if (requiredRoleDefinitionIds.length === 0) {
       return true; // No required roles, so valid by default
     }
     if (isFetchingRequiredRoles || isFetchingRoleWritePermission) {
@@ -349,7 +349,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       return true; // Either has required roles or write permission, so valid
     }
     return false; // Does not have required roles or write permission, so not valid
-  }, [hasRequiredRoles, hasRoleWritePermission, isFetchingRequiredRoles, isFetchingRoleWritePermission, requiredRoles]);
+  }, [hasRequiredRoles, hasRoleWritePermission, isFetchingRequiredRoles, isFetchingRoleWritePermission, requiredRoleDefinitionIds]);
 
   // TODO: Once we find a generalized solution for role management, we can remove this logic
   useEffect(() => {

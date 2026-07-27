@@ -122,10 +122,10 @@ vi.mock('../useCognitiveService', () => ({
 }));
 
 const mockUseHasRoleAssignmentsWritePermissionQuery = vi.fn();
-const mockUseHasRoleDefinitionsByNameQuery = vi.fn();
+const mockUseHasRequiredRoleDefinitionsQuery = vi.fn();
 vi.mock('../../../../../../core/queries/role', () => ({
   useHasRoleAssignmentsWritePermissionQuery: (...args: any[]) => mockUseHasRoleAssignmentsWritePermissionQuery(...args),
-  useHasRoleDefinitionsByNameQuery: (...args: any[]) => mockUseHasRoleDefinitionsByNameQuery(...args),
+  useHasRequiredRoleDefinitionsQuery: (...args: any[]) => mockUseHasRequiredRoleDefinitionsQuery(...args),
 }));
 
 vi.mock('../components/SubscriptionDropdown', () => ({
@@ -225,7 +225,7 @@ const setupDefaultMocks = () => {
     refetch: mockRefetchAPIMAccountApis,
   });
   mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: false });
-  mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: false, isFetching: false });
+  mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: false });
 };
 
 describe('CustomOpenAIConnector', () => {
@@ -567,14 +567,14 @@ describe('CustomOpenAIConnector', () => {
       parameter: {
         ...defaultProps.parameter,
         managedIdentitySettings: {
-          requiredRoles: ['Cognitive Services OpenAI Contributor'],
+          requiredRoleDefinitionIds: ['a001fd3d-188f-4b5d-821b-7da978bf7442'],
         },
       },
     };
 
     it('shows spinner + "Fetching resource details..." when fetching role data', async () => {
       mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: true });
-      mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: false, isFetching: true });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: true });
 
       const setKeyValue = vi.fn();
       render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });
@@ -597,7 +597,7 @@ describe('CustomOpenAIConnector', () => {
 
     it('shows "Missing role write permissions" warning when no permissions', async () => {
       mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: false });
-      mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: false, isFetching: false });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: false });
 
       const setKeyValue = vi.fn();
       render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });
@@ -619,7 +619,7 @@ describe('CustomOpenAIConnector', () => {
 
     it('hides role messages when has required roles', async () => {
       mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: true, isFetching: false });
-      mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: true, isFetching: false });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: true, isFetching: false });
 
       const setKeyValue = vi.fn();
       render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });

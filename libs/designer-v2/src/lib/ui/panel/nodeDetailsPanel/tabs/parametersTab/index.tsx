@@ -102,6 +102,7 @@ import {
   getRecordEntry,
   isNullOrUndefined,
   isRecordNotEmpty,
+  AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   SUBGRAPH_TYPES,
   SUPPORTED_AGENT_OPENAI_MODELS,
@@ -504,12 +505,7 @@ export const ParameterSection = ({
     const targetResourceId = foundryAccountResourceId;
     rbacAssignedResourceRef.current = targetResourceId;
     setFoundryRbacStatus('checking');
-    getMissingRoleDefinitions(targetResourceId, [
-      'Azure AI User',
-      'Azure AI Administrator',
-      'Azure AI Developer',
-      'Cognitive Services Contributor',
-    ])
+    getMissingRoleDefinitions(targetResourceId, AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS)
       .then((missingRoles) => {
         if (cancelled || rbacAssignedResourceRef.current !== targetResourceId) {
           return;

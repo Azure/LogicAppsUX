@@ -149,7 +149,11 @@ export interface OAuthSetting {
 export interface ManagedIdentitySetting {
   resourceUri: string;
   additionalResourceUris?: string[];
-  requiredRoles?: string[];
+  /**
+   * Azure built-in role definition IDs (GUIDs) the app identity needs on the selected resource.
+   * IDs are used instead of display names because built-in role names can be renamed by Azure.
+   */
+  requiredRoleDefinitionIds?: string[];
 }
 
 export interface GatewaySetting {

@@ -58,6 +58,7 @@ import {
   isArmResourceId,
   optional,
   BaseCognitiveServiceService,
+  AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
@@ -483,8 +484,10 @@ const DesignerEditor = () => {
           for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
             if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
               const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
-              const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-              const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
+              const missingRoleAssignments = await getMissingRoleDefinitions(
+                roleAssignmentResourceId,
+                AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS
+              );
               const assignmentPromises = [];
               for (const roleDefinition of missingRoleAssignments) {
                 assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));

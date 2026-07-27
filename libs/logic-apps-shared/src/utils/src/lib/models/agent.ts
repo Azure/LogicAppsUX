@@ -52,3 +52,30 @@ export const AGENT_MODEL_CONFIG: Record<string, { name: string; version: string;
 
 /** Supported models for Foundry / MicrosoftFoundry agent connections (derived from AGENT_MODEL_CONFIG). */
 export const SUPPORTED_FOUNDRY_AGENT_MODELS: string[] = Object.keys(AGENT_MODEL_CONFIG);
+
+/**
+ * Azure built-in role definition IDs used for agent connections.
+ *
+ * These are matched by ID rather than by display name. The Foundry roles were renamed
+ * ("Azure AI User" -> "Foundry User", etc.) while keeping their IDs, and Microsoft explicitly
+ * recommends referencing them by ID so the rename rollout does not break lookups.
+ *
+ * @see https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-azure-ai-foundry
+ */
+export const AGENT_ROLE_DEFINITION_IDS = {
+  /** "Foundry User", previously named "Azure AI User". Grants `Microsoft.CognitiveServices/*` data actions. */
+  foundryUser: '53ca6127-db72-4b80-b1b0-d745d6d5456d',
+} as const;
+
+/**
+ * Role definition IDs the workflow app's managed identity needs on the Cognitive Services account
+ * (or Foundry project) backing an agent connection that authenticates with managed identity.
+ *
+ * The runtime only issues data-plane requests against the model endpoint — chat completions with the
+ * `https://cognitiveservices.azure.com/` audience, and the Foundry agents/responses APIs with the
+ * `https://ai.azure.com/` audience. It never calls the ARM control plane for the account, so a single
+ * data-plane role is sufficient. Control-plane roles such as "Azure AI Administrator" and
+ * "Cognitive Services Contributor" declare no `dataActions` and therefore grant nothing at inference
+ * time, while handing the identity account management and key-listing rights it never exercises.
+ */
+export const AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS: string[] = [AGENT_ROLE_DEFINITION_IDS.foundryUser];
