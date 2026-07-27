@@ -2077,6 +2077,8 @@ describe('assertExtensionBundleOnDiskHealthy tree-fingerprint fast path', () => 
   };
   const CONTENT_HASH = digest(['bin/bundle.dll', String(SIZE), CONTENT]);
   const TREE_FINGERPRINT = digest(['bin/bundle.dll', String(SIZE), String(MTIME_MS)]);
+  // Size-only variant: unlike the tree fingerprint it ignores mtime.
+  const STRUCTURAL_FINGERPRINT = digest(['bin/bundle.dll', String(SIZE)]);
 
   // Sets up a one-file bundle tree on the mocked filesystem and returns the last
   // sidecar payload written (for backfill assertions).
@@ -2174,6 +2176,41 @@ describe('assertExtensionBundleOnDiskHealthy tree-fingerprint fast path', () => 
     // Throttle due → byte hash runs even though the fingerprint matched.
     expect(vi.mocked(fse.createReadStream)).toHaveBeenCalled();
     expect(vi.mocked(ext.context.globalState.update)).toHaveBeenCalledWith(lastBundleDeepVerificationKey, expect.any(Number));
+  });
+
+  it('persists the fresh deep-verify timestamp into the sidecar when the fingerprints are unchanged', async () => {
+    // Regression for the throttle that never engaged. On the common healthy path the
+    // fingerprints always match, so the sidecar rewrite used to be skipped and the
+    // STALE `lastDeepVerifiedMs` survived. Since `getLastDeepVerification` reads the
+    // sidecar FIRST, that stale value outvoted the fresh `globalState` mirror and the
+    // 24h throttle stayed due forever — the full byte hash ran on every launch.
+    const STALE = Date.now() - 90 * 60 * 60 * 1000;
+    // globalState is deliberately fresh: only the sidecar can make this due, which
+    // proves the sidecar is the value that has to be refreshed.
+    vi.mocked(ext.context.globalState.get).mockReturnValue(Date.now());
+    const state = setupOneFileTree(
+      JSON.stringify({
+        version: 1,
+        sourceMd5: 'md5',
+        contentHash: CONTENT_HASH,
+        treeFingerprint: TREE_FINGERPRINT,
+        structuralFingerprint: STRUCTURAL_FINGERPRINT,
+        lastDeepVerifiedMs: STALE,
+      })
+    );
+
+    const result = await assertExtensionBundleOnDiskHealthy();
+
+    expect(result.ok).toBe(true);
+    // Stale sidecar timestamp ⇒ throttle due ⇒ the byte hash runs.
+    expect(vi.mocked(fse.createReadStream)).toHaveBeenCalled();
+    // The rewrite must happen even though both fingerprints are identical, or the
+    // next launch re-runs the full hash.
+    expect(vi.mocked(fse.outputFile)).toHaveBeenCalled();
+    const persisted = JSON.parse(state.written);
+    expect(persisted.lastDeepVerifiedMs).toBeGreaterThan(STALE);
+    expect(persisted.treeFingerprint).toBe(TREE_FINGERPRINT);
+    expect(persisted.contentHash).toBe(CONTENT_HASH);
   });
 });
 

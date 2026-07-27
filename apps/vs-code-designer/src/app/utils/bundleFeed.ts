@@ -1229,10 +1229,18 @@ async function refreshBundleSidecarFingerprints(
     if (!fingerprints) {
       return;
     }
+    // Skip the rewrite only when there is genuinely nothing new to persist. The
+    // timestamp must be part of that comparison: on the common "healthy bundle,
+    // nothing changed" path the fingerprints always match, so testing merely that
+    // `lastDeepVerifiedMs` EXISTS made this return before writing the fresh one.
+    // Because `getLastDeepVerification` reads the sidecar first, that stale value
+    // then permanently outvoted the `globalState` mirror and
+    // `isDeepBundleVerificationDue` stayed true forever — the 24h throttle never
+    // engaged and the full byte hash ran on every single launch.
     const unchanged =
       fingerprints.treeFingerprint === sidecar.treeFingerprint &&
       fingerprints.structuralFingerprint === sidecar.structuralFingerprint &&
-      sidecar.lastDeepVerifiedMs !== undefined;
+      sidecar.lastDeepVerifiedMs === lastDeepVerifiedMs;
     if (unchanged) {
       return;
     }
