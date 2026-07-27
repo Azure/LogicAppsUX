@@ -831,8 +831,16 @@ jobs:
   # on the very first run.
   #
   # Advisory (continue-on-error) and deliberately NOT in the vscode-e2e-summary
-  # hard gate while it stabilises. That is precisely why this is a NEW job rather
-  # than an extra shard on `vscode-e2e-windows`, which IS gated.
+  # hard gate. That is precisely why this is a NEW job rather than an extra shard
+  # on `vscode-e2e-windows`, which IS gated.
+  #
+  # It stays advisory permanently, by design — this is a cache-SEEDING job. Once
+  # la-runtime-deps-Windows-v1 exists it is refreshed on every access, so a
+  # transient failure here still leaves the (now blocking) codeful leg with a warm
+  # restore. Just as important: continue-on-error keeps this job's result
+  # "success" for `needs:` purposes, so vscode-e2e-codeful-windows always RUNS
+  # instead of being skipped — a skipped job would trip the summary gate's
+  # != "success" check and fail the build for the wrong reason.
   setup-runtime-deps-windows:
     name: setup-runtime-deps (windows)
     needs: setup-extension-build
@@ -969,14 +977,21 @@ jobs:
     name: vscode-e2e-codeful (windows-latest)
     # Depends on the Windows runtime-dependency bootstrap so this job restores a
     # WARM la-runtime-deps-Windows-v1 cache instead of hydrating from cold.
+    #
+    # BLOCKING as of the Windows runtime-deps cache fix. This leg was previously
+    # advisory because it always failed with buildStart:0 / waitForTaskChain
+    # timeout, which we attributed to Windows func-host provisioning. The real
+    # cause was the cold cache: la-runtime-deps-Windows-v1 could never be saved
+    # (no bootstrap job + actions/cache being post-if: success()), so every run
+    # hydrated dependencies underneath the running test. With a warm restore the
+    # full chain completes — buildStart:1/buildExit:0, publish and func host all
+    # green — and `func --version` succeeds on the runner, so the "cannot execute
+    # auto-provisioned func.exe" theory is disproven.
+    #
+    # Promoted only after two consecutive runs (30298228591, 30305533988) passed
+    # with byte-identical assertion signatures: phase 4.10A 2 passing, 4.10B-modern
+    # 1 passing (publishStart:0), 4.10B-legacy 1 passing (publishStart:1).
     needs: [setup-extension-build, setup-runtime-deps-windows]
-    # Reaches the F5 stage but the func host / design-time background process does not
-    # finish provisioning Azure Functions Core Tools within the timeout on the runner
-    # ("must have Azure Functions Core Tools installed" / "Timed out waiting for design-time
-    # startup"). ADVISORY (continue-on-error) and intentionally EXCLUDED from the summary
-    # hard gate until Windows func-host provisioning is sorted. Flip continue-on-error off
-    # + add to the gate once green.
-    continue-on-error: true
     timeout-minutes: 45
     runs-on: windows-latest
     defaults:
@@ -1231,14 +1246,24 @@ jobs:
              [ "${{ needs.vscode-e2e.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-codeful-ubuntu.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-codeful-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-compat.result }}" != "success" ]; then
             echo "::error::One or more required vscode-e2e jobs failed"
             exit 1
           fi
-          # vscode-e2e-codeful-ubuntu is now BLOCKING: the Azurite startup race that made
-          # it flaky is fixed in this branch (waitForAzuriteReady). Only the WINDOWS codeful
-          # leg stays advisory (continue-on-error) because the hosted runner cannot execute
-          # the auto-provisioned func.exe. Flip its continue-on-error off and add it to the
-          # gate once Windows func-host provisioning is sorted.
+          # Both codeful legs are now BLOCKING. Ubuntu was unblocked by the Azurite
+          # startup race fix (waitForAzuriteReady); Windows was unblocked by the
+          # runtime-deps cache fix (setup-runtime-deps-windows + explicit cache
+          # restore/save), which turned out to be the actual cause of its
+          # buildStart:0 failures rather than func-host provisioning.
+          #
+          # setup-runtime-deps-windows is deliberately NOT gated and stays
+          # continue-on-error. It is a cache-seeding job: once
+          # la-runtime-deps-Windows-v1 exists it is refreshed on access, so a
+          # transient bootstrap failure still leaves the codeful leg with a warm
+          # restore. Keeping it continue-on-error also guarantees
+          # vscode-e2e-codeful-windows still RUNS rather than being skipped —
+          # a skipped job would trip the != "success" check above and fail the
+          # gate for the wrong reason.
           echo "All required vscode-e2e jobs passed."
 
