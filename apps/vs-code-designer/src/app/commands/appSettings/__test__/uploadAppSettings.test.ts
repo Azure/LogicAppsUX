@@ -8,7 +8,6 @@ import {
 } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getLocalSettingsFile } from '../getLocalSettingsFile';
 import { uploadAppSettings } from '../uploadAppSettings';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 
@@ -28,10 +27,6 @@ vi.mock('vscode', () => ({
   },
   ProgressLocation: { Notification: 15 },
   Uri: { file: (p: string) => ({ fsPath: p }) },
-}));
-
-vi.mock('../getLocalSettingsFile', () => ({
-  getLocalSettingsFile: vi.fn(),
 }));
 
 vi.mock('../../../utils/verifyIsProject', () => ({
@@ -63,7 +58,6 @@ describe('uploadAppSettings', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
-    (getLocalSettingsFile as Mock).mockResolvedValue('D:\\workspace\\LogicApp\\local.settings.json');
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/mock/project');
     const vscode = await import('vscode');
     (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/mock/workspace' } }];
