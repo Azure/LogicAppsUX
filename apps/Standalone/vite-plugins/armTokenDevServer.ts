@@ -1,10 +1,10 @@
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { promisify } from 'node:util';
 import type { Plugin } from 'vite';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 /** Same tenant used by `scripts/generateArmToken.js`. */
 const TENANT_ID = '72f988bf-86f1-41af-91ab-2d7cd011db47';
@@ -38,12 +38,23 @@ const TOKEN_TARGETS: TokenTarget[] = [
 const expiryTime = (token: AzToken): number =>
   typeof token.expires_on === 'number' ? token.expires_on * 1000 : new Date(token.expiresOn).getTime();
 
+/** `az` reports `expiresOn` as a local-time string, which browsers parse inconsistently. */
+const expiresOnIso = (token: AzToken): string | undefined => {
+  const expiry = expiryTime(token);
+  return Number.isNaN(expiry) ? undefined : new Date(expiry).toISOString();
+};
+
 const isUsable = (token: AzToken | undefined): token is AzToken => !!token && expiryTime(token) - Date.now() > EXPIRY_MARGIN_MS;
 
 const fetchToken = async (target: TokenTarget): Promise<AzToken> => {
-  const resourceArg = target.resource ? ` --resource ${target.resource}` : '';
-  const { stdout } = await execAsync(`az account get-access-token --tenant ${TENANT_ID}${resourceArg} --output json`, {
+  const args = ['account', 'get-access-token', '--tenant', TENANT_ID, '--output', 'json'];
+  if (target.resource) {
+    args.push('--resource', target.resource);
+  }
+  const { stdout } = await execFileAsync('az', args, {
     maxBuffer: 10 * 1024 * 1024,
+    // On Windows `az` is a .cmd shim, which Node refuses to spawn without a shell.
+    shell: process.platform === 'win32',
   });
   return JSON.parse(stdout) as AzToken;
 };
@@ -93,7 +104,7 @@ export const armTokenDevServer = (): Plugin => {
           TOKEN_TARGETS.map(async (target) => {
             try {
               const token = await getToken(target);
-              return [target.name, { accessToken: token.accessToken, expiresOn: token.expiresOn }] as const;
+              return [target.name, { accessToken: token.accessToken, expiresOn: expiresOnIso(token) }] as const;
             } catch (error) {
               // ARM failures are worth surfacing; the Foundry token is optional.
               if (target.name === 'arm') {
