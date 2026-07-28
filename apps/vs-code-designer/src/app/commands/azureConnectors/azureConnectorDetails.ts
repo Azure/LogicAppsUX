@@ -55,7 +55,7 @@ export async function getAzureConnectorDetailsForLocalProject(
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
   let workflowManagementBaseUrl = localSettings.Values![workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
 
-  if (!tenantId || !subscriptionId || !resourceGroupName || !location) {
+  if (!subscriptionId) {
     if (isConnectorSetupSkipped(projectPath)) {
       const skippedDetails: AzureConnectorDetails = { enabled: false };
       azureDetailsCache.set(projectPath, { timestamp: now, details: skippedDetails });
