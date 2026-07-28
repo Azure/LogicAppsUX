@@ -9,6 +9,7 @@ import {
   azuriteLocationSetting,
   defaultAzuritePathValue,
   extensionCommand,
+  localEmulatorConnectionString,
   showAutoStartAzuriteWarning,
 } from '../../../../constants';
 
@@ -45,6 +46,10 @@ vi.mock('../../../debug/validatePreDebug', () => ({
   validateEmulatorIsRunning: vi.fn(),
 }));
 
+vi.mock('../../appSettings/localSettings', () => ({
+  getAzureWebJobsStorage: vi.fn(),
+}));
+
 vi.mock('../../../azuriteExtension/executeOnAzuriteExt', () => ({
   executeOnAzurite: vi.fn(),
 }));
@@ -58,6 +63,7 @@ import { activateAzurite } from '../activateAzurite';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../../workspace';
 import { tryGetLogicAppProjectRoot } from '../../verifyIsProject';
+import { getAzureWebJobsStorage } from '../../appSettings/localSettings';
 import { validateEmulatorIsRunning } from '../../../debug/validatePreDebug';
 import { executeOnAzurite } from '../../../azuriteExtension/executeOnAzuriteExt';
 
@@ -98,6 +104,7 @@ describe('activateAzurite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: PROJECT_PATH } }];
+    (getAzureWebJobsStorage as any).mockResolvedValue(localEmulatorConnectionString);
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
   });
 
@@ -205,6 +212,36 @@ describe('activateAzurite', () => {
 
     await expect(activateAzurite(createContext(), PROJECT_PATH)).rejects.toThrow();
     expect(executeOnAzurite).toHaveBeenCalled();
+  });
+
+  it('reads AzureWebJobsStorage once while rechecking emulator readiness on each poll', async () => {
+    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    (validateEmulatorIsRunning as any)
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
+
+    await activateAzurite(createContext(), PROJECT_PATH);
+
+    expect(getAzureWebJobsStorage).toHaveBeenCalledTimes(1);
+    expect(validateEmulatorIsRunning).toHaveBeenCalledTimes(4);
+    expect(validateEmulatorIsRunning).toHaveBeenNthCalledWith(1, expect.anything(), PROJECT_PATH, {
+      promptWarningMessage: false,
+      azureWebJobsStorage: localEmulatorConnectionString,
+    });
+    expect(validateEmulatorIsRunning).toHaveBeenNthCalledWith(2, expect.anything(), PROJECT_PATH, {
+      promptWarningMessage: false,
+      azureWebJobsStorage: localEmulatorConnectionString,
+    });
+    expect(validateEmulatorIsRunning).toHaveBeenNthCalledWith(3, expect.anything(), PROJECT_PATH, {
+      promptWarningMessage: false,
+      azureWebJobsStorage: localEmulatorConnectionString,
+    });
+    expect(validateEmulatorIsRunning).toHaveBeenNthCalledWith(4, expect.anything(), PROJECT_PATH, {
+      promptWarningMessage: false,
+      azureWebJobsStorage: localEmulatorConnectionString,
+    });
   });
 
   it('enables autostart without prompting for a directory when an ext location already exists', async () => {

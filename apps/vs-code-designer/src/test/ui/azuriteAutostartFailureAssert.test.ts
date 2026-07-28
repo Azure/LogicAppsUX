@@ -128,9 +128,11 @@ async function blockAzuritePorts(): Promise<http.Server[]> {
       servers.push(await bindPort(port));
       console.log(`[azurite-e2e] Bound local port ${port}`);
     } catch (error) {
-      for (const server of servers) {
-        server.close();
-      }
+      // Await the close callbacks instead of firing them and moving on. `after()`
+      // cannot clean these up — `portBlockers` is only assigned once this function
+      // resolves, so on the throw path these partially-bound servers are the only
+      // reference we will ever have. closeServers() also bounds each close at 1s.
+      await closeServers(servers);
       throw new Error(`Unable to bind Azurite port ${port}. Stop any local Azurite instance and retry. ${error}`);
     }
   }

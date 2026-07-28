@@ -857,7 +857,12 @@ jobs:
   vscode-e2e-azurite:
     name: vscode-e2e-azurite (ubuntu-latest)
     needs: setup-extension-build
-    timeout-minutes: 30
+    # 45 min to match the codeful legs. Phase 4.13A now gates on extension readiness
+    # and runtime-dependency settling before it touches the command palette (up to
+    # ~8 min on a cold runner, since `la-runtime-deps-Linux-*` may not be warm for
+    # this job yet), and 4.13B waits up to 180 s for design-time plus the F5 assertions.
+    # 30 min was not enough headroom for both phases in the worst case.
+    timeout-minutes: 45
     runs-on: ubuntu-latest
     defaults:
       run:

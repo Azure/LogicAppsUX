@@ -15,6 +15,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
 import { validateEmulatorIsRunning } from '../../debug/validatePreDebug';
+import { getAzureWebJobsStorage } from '../appSettings/localSettings';
 import { delay } from '../delay';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
@@ -88,7 +89,11 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         ext.outputChannel.appendLog(localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`));
       }
 
-      const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, false);
+      const azureWebJobsStorage = await getAzureWebJobsStorage(context, projectPath);
+      const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, {
+        promptWarningMessage: false,
+        azureWebJobsStorage,
+      });
 
       if (autoStartAzurite && !isAzuriteRunning) {
         // Use the configured location, or default to the global default path
@@ -100,16 +105,21 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
         context.telemetry.properties.azuriteStart = 'true';
         context.telemetry.properties.azuriteLocation = azuriteLocation;
-        await waitForAzuriteReady(context, projectPath);
+        await waitForAzuriteReady(context, projectPath, azureWebJobsStorage);
       }
     }
   }
 }
 
-async function waitForAzuriteReady(context: IActionContext, projectPath: string): Promise<void> {
+async function waitForAzuriteReady(context: IActionContext, projectPath: string, azureWebJobsStorage: string | undefined): Promise<void> {
   for (let attempt = 1; attempt <= azuriteStartupRetryCount; attempt++) {
     context.telemetry.properties.azuriteStartupAttempt = attempt.toString();
-    if (await validateEmulatorIsRunning(context, projectPath, false)) {
+    if (
+      await validateEmulatorIsRunning(context, projectPath, {
+        promptWarningMessage: false,
+        azureWebJobsStorage,
+      })
+    ) {
       context.telemetry.properties.azuriteReady = 'true';
       return;
     }

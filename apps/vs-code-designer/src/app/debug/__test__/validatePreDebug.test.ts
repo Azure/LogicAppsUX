@@ -53,6 +53,7 @@ describe('validatePreDebug', () => {
     const result = await preDebugValidate(context, projectPath);
 
     expect(result).toBe(false);
+    expect(getAzureWebJobsStorage).toHaveBeenCalledTimes(1);
     expect(context.ui.showWarningMessage).toHaveBeenCalledWith(
       expect.stringContaining('Failed to verify "AzureWebJobsStorage"'),
       expect.objectContaining({ modal: true })
@@ -106,5 +107,19 @@ describe('validatePreDebug', () => {
     await validateEmulatorIsRunning(context, projectPath, false);
 
     expect(azureStorage.createBlobService).toHaveBeenCalledWith(localEmulatorConnectionString);
+  });
+
+  it('uses a provided AzureWebJobsStorage value without rereading settings and still probes each call', async () => {
+    await validateEmulatorIsRunning(context, projectPath, {
+      promptWarningMessage: false,
+      azureWebJobsStorage: localEmulatorConnectionString,
+    });
+    await validateEmulatorIsRunning(context, projectPath, {
+      promptWarningMessage: false,
+      azureWebJobsStorage: localEmulatorConnectionString,
+    });
+
+    expect(getAzureWebJobsStorage).not.toHaveBeenCalled();
+    expect(azureStorage.createBlobService).toHaveBeenCalledTimes(2);
   });
 });

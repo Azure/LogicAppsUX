@@ -27,6 +27,7 @@ import * as vscode from 'vscode';
 export interface ValidateEmulatorOptions {
   promptWarningMessage?: boolean;
   allowDebugAnyway?: boolean;
+  azureWebJobsStorage?: string | undefined;
 }
 
 /**
@@ -62,6 +63,7 @@ export async function preDebugValidate(context: IActionContext, projectPath: str
         const autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
         shouldContinue = await validateEmulatorIsRunning(context, projectPath, {
           allowDebugAnyway: !autoStartAzurite,
+          azureWebJobsStorage,
         });
       } else {
         shouldContinue = await showMissingAzureWebJobsStorageWarning(context);
@@ -181,7 +183,10 @@ export async function validateEmulatorIsRunning(
 ): Promise<boolean> {
   const promptWarningMessage = typeof options === 'boolean' ? options : (options.promptWarningMessage ?? true);
   const allowDebugAnyway = typeof options === 'boolean' ? true : (options.allowDebugAnyway ?? true);
-  const azureWebJobsStorage: string | undefined = await getAzureWebJobsStorage(context, projectPath);
+  const azureWebJobsStorage: string | undefined =
+    typeof options === 'boolean' || !('azureWebJobsStorage' in options)
+      ? await getAzureWebJobsStorage(context, projectPath)
+      : options.azureWebJobsStorage;
 
   if (azureWebJobsStorage && azureWebJobsStorage.toLowerCase() === localEmulatorConnectionString.toLowerCase()) {
     try {
