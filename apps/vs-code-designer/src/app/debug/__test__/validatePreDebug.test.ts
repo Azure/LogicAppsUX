@@ -4,7 +4,7 @@ import { autoStartAzuriteSetting, localEmulatorConnectionString } from '../../..
 import { validateFuncCoreToolsInstalled } from '../../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage } from '../../utils/appSettings/localSettings';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { preDebugValidate, validateEmulatorIsRunning } from '../validatePreDebug';
+import { preDebugValidate, validateEmulatorIsRunning, azuriteProbeTimeoutMs } from '../validatePreDebug';
 
 vi.mock('azure-storage', () => ({
   createBlobService: vi.fn(() => ({
@@ -44,33 +44,53 @@ describe('validatePreDebug', () => {
     vi.mocked(getAzureWebJobsStorage).mockResolvedValue(localEmulatorConnectionString);
   });
 
-  it('does not offer Debug anyway when auto-started Azurite cannot be reached', async () => {
+  it('throws instead of showing a modal when auto-started Azurite cannot be reached', async () => {
     vi.mocked(validateFuncCoreToolsInstalled).mockResolvedValue(true);
     vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => {
       return key === autoStartAzuriteSetting ? true : undefined;
     });
 
-    const result = await preDebugValidate(context, projectPath);
-
-    expect(result).toBe(false);
+    // This is the original hang: a modal here stalls resolveDebugConfiguration
+    // forever because no headless session can answer it. Throwing surfaces the
+    // same text through the non-modal command error notification instead.
+    await expect(preDebugValidate(context, projectPath)).rejects.toThrow(/Failed to verify "AzureWebJobsStorage"/);
     expect(getAzureWebJobsStorage).toHaveBeenCalledTimes(1);
-    expect(context.ui.showWarningMessage).toHaveBeenCalledWith(
-      expect.stringContaining('Failed to verify "AzureWebJobsStorage"'),
-      expect.objectContaining({ modal: true })
-    );
+    expect(context.ui.showWarningMessage).not.toHaveBeenCalled();
   });
 
-  it('blocks debug when AzureWebJobsStorage is missing', async () => {
+  it('gives up on a probe that never answers instead of hanging forever', async () => {
+    // A listener that accepts the connection but never calls back — a half-started
+    // emulator, or an unrelated process squatting on port 10000. Without the probe
+    // timeout this call never settles, which is exactly the hang being fixed.
+    vi.useFakeTimers();
+    try {
+      vi.mocked(azureStorage.createBlobService).mockReturnValueOnce({
+        doesContainerExist: () => {
+          /* never invokes the callback */
+        },
+      } as any);
+
+      const pending = validateEmulatorIsRunning(context, projectPath, { promptWarningMessage: false });
+      await vi.advanceTimersByTimeAsync(azuriteProbeTimeoutMs + 1);
+
+      await expect(pending).resolves.toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not block debug or show a modal when AzureWebJobsStorage is missing', async () => {
     vi.mocked(validateFuncCoreToolsInstalled).mockResolvedValue(true);
     vi.mocked(getAzureWebJobsStorage).mockResolvedValue(undefined);
 
     const result = await preDebugValidate(context, projectPath);
 
-    expect(result).toBe(false);
-    expect(context.ui.showWarningMessage).toHaveBeenCalledWith(
-      expect.stringContaining('Missing required "AzureWebJobsStorage"'),
-      expect.objectContaining({ modal: true })
-    );
+    // preDebugValidate runs inside resolveDebugConfiguration, so any awaited UI
+    // stalls startDebugging() forever. Debug must continue exactly as it did
+    // before the readiness work, and the warning must never be modal.
+    expect(result).toBe(true);
+    expect(context.ui.showWarningMessage).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.missingAzureWebJobsStorage).toBe('true');
   });
 
   it('keeps Debug anyway available when explicitly allowed', async () => {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { preDebugValidate } from '../../debug/validatePreDebug';
-import { verifyLocalConnectionKeys } from '../../utils/appSettings/connectionKeys';
+import { refreshConnectionKeys } from '../../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../../utils/azurite/activateAzurite';
 import { getProjFiles } from '../../utils/dotnet/dotnet';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
@@ -9,8 +9,12 @@ import { pickFuncProcessInternal } from '../pickFuncProcess';
 
 const capturedMessages: string[] = [];
 const telemetryContexts: any[] = [];
-const azuriteTimeoutMessage =
-  'Azurite did not become ready within "5" seconds. Make sure the Azurite extension is installed and running, then try debugging again.';
+// Stand-in for whatever bounded error `activateAzurite` rejects with. `activateAzurite` is mocked
+// here, so this is the test's own rejection fixture. Deliberately the stable PREFIX only: the
+// product's full sentence now reports measured elapsed seconds, so any longer copy here would be a
+// stale duplicate that silently drifts. The real message is pinned in
+// `src/app/utils/azurite/__test__/activateAzurite.test.ts`.
+const azuriteTimeoutMessage = 'Azurite did not become ready';
 
 vi.mock('@microsoft/vscode-azext-utils', () => {
   return {
@@ -20,7 +24,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
           properties: {},
           measurements: {},
         },
-        errorHandling: {},
+        errorHandling: {} as { suppressDisplay?: boolean; rethrow?: boolean },
         ui: {
           showWarningMessage: vi.fn(async (message: string) => {
             capturedMessages.push(message);
@@ -59,7 +63,7 @@ vi.mock('../../utils/azurite/activateAzurite', () => ({
 }));
 
 vi.mock('../../utils/appSettings/connectionKeys', () => ({
-  verifyLocalConnectionKeys: vi.fn(),
+  refreshConnectionKeys: vi.fn(),
 }));
 
 vi.mock('../../utils/dotnet/dotnet', () => ({
@@ -86,7 +90,7 @@ describe('pickFuncProcess Azurite startup', () => {
     capturedMessages.length = 0;
     telemetryContexts.length = 0;
     vi.mocked(activateAzurite).mockRejectedValue(new Error(azuriteTimeoutMessage));
-    vi.mocked(verifyLocalConnectionKeys).mockResolvedValue(undefined);
+    vi.mocked(refreshConnectionKeys).mockResolvedValue(undefined);
     vi.mocked(getProjFiles).mockResolvedValue([]);
     vi.mocked(tryBuildCustomCodeFunctionsProject).mockResolvedValue(undefined);
   });
@@ -94,12 +98,17 @@ describe('pickFuncProcess Azurite startup', () => {
   it('stops debug startup after Azurite auto-start fails without showing AzureWebJobsStorage warning', async () => {
     await expect(pickFuncProcessInternal(context, debugConfig, workspaceFolder, projectPath)).rejects.toThrow(azuriteTimeoutMessage);
 
+    // Nothing at all should reach the user here: the Azurite telemetry scope sets
+    // `errorHandling.suppressDisplay = true` and rethrows so the caller (`startDebugging`) owns the
+    // single, bounded failure. Asserting the whole array is empty also covers the two
+    // specific `not.toContain` checks below, which are kept for failure readability.
+    expect(capturedMessages).toEqual([]);
     expect(capturedMessages).not.toContain(azuriteTimeoutMessage);
     expect(activateAzurite).toHaveBeenCalledWith(telemetryContexts[0], projectPath);
     expect(capturedMessages).not.toContain(
       'Failed to verify "AzureWebJobsStorage" connection specified in "local.settings.json". Is the local emulator installed and running?'
     );
-    expect(verifyLocalConnectionKeys).not.toHaveBeenCalled();
+    expect(refreshConnectionKeys).not.toHaveBeenCalled();
     expect(preDebugValidate).not.toHaveBeenCalled();
     expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
   });

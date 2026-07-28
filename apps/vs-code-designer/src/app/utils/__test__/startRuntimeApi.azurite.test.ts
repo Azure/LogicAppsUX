@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { preDebugValidate } from '../../debug/validatePreDebug';
-import { verifyLocalConnectionKeys } from '../appSettings/connectionKeys';
+import { refreshConnectionKeys } from '../appSettings/connectionKeys';
 import { activateAzurite } from '../azurite/activateAzurite';
 import { startRuntimeApi } from '../startRuntimeApi';
 
 const capturedMessages: string[] = [];
 const telemetryContexts: any[] = [];
-const azuriteTimeoutMessage =
-  'Azurite did not become ready within "5" seconds. Make sure the Azurite extension is installed and running, then try debugging again.';
+// Stand-in for whatever bounded error `activateAzurite` rejects with. `activateAzurite` is mocked
+// here, so this is the test's own rejection fixture. Deliberately the stable PREFIX only: the
+// product's full sentence now reports measured elapsed seconds, so any longer copy here would be a
+// stale duplicate that silently drifts. The real message is pinned in
+// `src/app/utils/azurite/__test__/activateAzurite.test.ts`.
+const azuriteTimeoutMessage = 'Azurite did not become ready';
 
 vi.mock('@microsoft/vscode-azext-utils', () => {
   return {
@@ -17,7 +21,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
           properties: {},
           measurements: {},
         },
-        errorHandling: {},
+        errorHandling: {} as { suppressDisplay?: boolean; rethrow?: boolean },
         ui: {
           showWarningMessage: vi.fn(async (message: string) => {
             capturedMessages.push(message);
@@ -56,7 +60,7 @@ vi.mock('../azurite/activateAzurite', () => ({
 }));
 
 vi.mock('../appSettings/connectionKeys', () => ({
-  verifyLocalConnectionKeys: vi.fn(),
+  refreshConnectionKeys: vi.fn(),
 }));
 
 describe('startRuntimeApi Azurite startup', () => {
@@ -67,18 +71,22 @@ describe('startRuntimeApi Azurite startup', () => {
     capturedMessages.length = 0;
     telemetryContexts.length = 0;
     vi.mocked(activateAzurite).mockRejectedValue(new Error(azuriteTimeoutMessage));
-    vi.mocked(verifyLocalConnectionKeys).mockResolvedValue(undefined);
+    vi.mocked(refreshConnectionKeys).mockResolvedValue(undefined);
   });
 
   it('stops runtime startup after Azurite auto-start fails without showing AzureWebJobsStorage warning', async () => {
     await startRuntimeApi(projectPath);
 
-    expect(capturedMessages).toContain(azuriteTimeoutMessage);
+    // The inner Azurite telemetry scope sets `errorHandling.suppressDisplay = true` and rethrows, so
+    // only the outer scope surfaces the failure. Assert exactly one occurrence: dropping
+    // `suppressDisplay` in the product makes the user see the same error twice, and a bare
+    // `toContain` cannot tell the difference.
+    expect(capturedMessages.filter((message) => message === azuriteTimeoutMessage)).toHaveLength(1);
     expect(activateAzurite).toHaveBeenCalledWith(telemetryContexts[1], projectPath);
     expect(capturedMessages).not.toContain(
       'Failed to verify "AzureWebJobsStorage" connection specified in "local.settings.json". Is the local emulator installed and running?'
     );
-    expect(verifyLocalConnectionKeys).not.toHaveBeenCalled();
+    expect(refreshConnectionKeys).not.toHaveBeenCalled();
     expect(preDebugValidate).not.toHaveBeenCalled();
   });
 });

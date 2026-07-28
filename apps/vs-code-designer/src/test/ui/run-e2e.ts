@@ -2053,6 +2053,25 @@ namespace ${namespaceName}
     }
   };
 
+  /**
+   * Runs a whole phase group, retrying the group from a fresh session on failure.
+   *
+   * `LA_E2E_SCENARIO_RETRIES` was previously read only inside `runScenarioPhases`, so
+   * the codeful and Azurite modes advertised a retry budget in CI they never actually
+   * had. These are now blocking jobs, and the flake they hit (`invalid session id:
+   * session deleted as the browser has closed the connection` at launch) is exactly
+   * the class a fresh-session retry absorbs.
+   */
+  const withPhaseGroupRetries = async (label: string, run: (labelPrefix: string) => Promise<number>): Promise<number> => {
+    const retries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
+    let exitCode = await run(label);
+    for (let attempt = 1; attempt <= retries && exitCode !== 0; attempt++) {
+      console.log(`\n  ↻ [${label}] retry ${attempt}/${retries} in a fresh session after exit code ${exitCode}...`);
+      exitCode = await run(`${label}-retry${attempt}`);
+    }
+    return exitCode;
+  };
+
   const runCodefulDebugPhases = async (labelPrefix: string): Promise<number> => {
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
     process.env.LA_E2E_CODEFUL_CREATE_ONLY = '1';
@@ -2149,6 +2168,21 @@ namespace ${namespaceName}
       console.log(`\n⚠ Phase 4.13A did not produce ${azuriteWorkspaceFile}; skipping Phase 4.13B`);
       delete process.env.AZURITE_E2E_STEP;
       return 1;
+    }
+
+    // Remove the design-time folder that 4.13A leaves behind (it runs with
+    // autoStartDesignTime: true). The in-test gate has its own freshness check, but
+    // clearing it here is strictly better: the 4.13A VS Code process has already
+    // exited by this point, so the delete cannot hit the Windows EBUSY path that
+    // would otherwise force the gate to degrade to existence-only.
+    const azuriteDesignTimeDir = path.join(azuriteWorkspaceParent, 'azuritews', 'azuriteapp', 'workflow-designtime');
+    try {
+      fs.rmSync(azuriteDesignTimeDir, { recursive: true, force: true });
+      console.log(`  Cleared stale Azurite design-time evidence: ${azuriteDesignTimeDir}`);
+    } catch (err: any) {
+      console.log(
+        `  Could not clear ${azuriteDesignTimeDir} (${err instanceof Error ? err.message : String(err)}); the in-test freshness gate still applies.`
+      );
     }
 
     // 4.13B keeps design-time auto-start ON because the assertion test waits for
@@ -2508,13 +2542,13 @@ namespace ${namespaceName}
 
     if (e2eMode === 'codefuldebugonly') {
       await downloadExTesterAssets();
-      const phase10Exit = await runCodefulDebugPhases('phase10-only');
+      const phase10Exit = await withPhaseGroupRetries('phase10-only', runCodefulDebugPhases);
       process.exit(phase10Exit);
     }
 
     if (e2eMode === 'azuriteonly') {
       await downloadExTesterAssets();
-      const phase413Exit = await runAzuriteReadinessPhases('phase413-only');
+      const phase413Exit = await withPhaseGroupRetries('phase413-only', runAzuriteReadinessPhases);
       process.exit(phase413Exit);
     }
 

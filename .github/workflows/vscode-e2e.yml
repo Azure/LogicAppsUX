@@ -1006,6 +1006,11 @@ jobs:
   setup-runtime-deps-windows:
     name: setup-runtime-deps (windows)
     needs: setup-extension-build
+    # WARNING: `continue-on-error` makes `needs.<job>.result` evaluate to "success"
+    # even when the job's conclusion is failure (observed in run 30146114725). It is
+    # therefore only safe on a job that the summary gate does NOT check. This job is
+    # deliberately absent from the gate's `!= "success"` chain below. Never add
+    # `continue-on-error` to a gated job — it would silently green the whole build.
     continue-on-error: true
     timeout-minutes: 45
     runs-on: windows-latest
@@ -1396,6 +1401,11 @@ jobs:
     steps:
       - name: Verify all jobs passed
         run: |
+          # Fail-closed: `!= "success"` treats both `skipped` and `cancelled` as failure.
+          # Every job named in this chain must NOT set `continue-on-error`, which would
+          # force its `result` to "success" regardless of conclusion and silently green
+          # the gate. setup-runtime-deps-windows is the only job using it, and it is
+          # intentionally reported below but excluded from the chain.
           echo "setup-extension-build:      ${{ needs.setup-extension-build.result }}"
           echo "setup-fixtures:             ${{ needs.setup-fixtures.result }}"
           echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"

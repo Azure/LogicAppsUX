@@ -6,6 +6,26 @@
  *
  * This runs in a fresh VS Code session after azuriteAutostartFailure.test.ts
  * creates the workspace through the Create Workspace webview.
+ *
+ * PRE-F5 GATES — read before touching them. This phase is a BLOCKING CI check on
+ * both ubuntu and windows, so a harness-side false positive blocks every PR:
+ *
+ *   1. `waitForExtensionReady()` (hard gate). The real precondition for pressing
+ *      F5 is *commands registered*, not a directory existing. Without it,
+ *      `startDebugging()` finds no "Start Debugging" pick, logs
+ *      `[debug] Could not find "Start Debugging" command`, and returns normally
+ *      WITHOUT throwing (runHelpers.ts) — so the run fails 45 s later on
+ *      "Expected Azurite auto-start timeout to be visible" and points at the
+ *      product instead of the harness. This is the same exposure that made
+ *      Phase 4.13A fail in 9 seconds before it got its 3-stage warm-up.
+ *   2. `waitForDesignTimeFolder()` (freshness-checked evidence gate). Nothing in
+ *      run-e2e.ts deletes `<workspace>/azuriteapp/workflow-designtime` between
+ *      4.13A and 4.13B (4.13A's `removeWorkspaceParent()` runs only at the START
+ *      of 4.13A) and 4.13A runs with `autoStartDesignTime: true`, so it can leave
+ *      a design-time folder behind. An `fs.existsSync()`-only gate would return
+ *      instantly on that stale directory. The folder is therefore cleared here
+ *      first and the gate additionally requires `mtimeMs >= gateStart`, mirroring
+ *      `codefulDebugTasks.test.ts`'s `waitForDesignTimeEvidence()`.
  */
 
 import * as assert from 'assert';
@@ -14,11 +34,22 @@ import * as http from 'http';
 import * as os from 'os';
 import * as path from 'path';
 import { Key, type WebDriver, VSBrowser, Workbench } from 'vscode-extension-tester';
+import { waitForExtensionReady } from './createWorkspaceShared';
 import { openWorkspaceFileInSession } from './designerHelpers';
 import { captureScreenshot, sleep } from './helpers';
 import { startDebugging } from './runHelpers';
 
-const TEST_TIMEOUT = 600_000;
+// Worst case is the sum of two independent gates: waitForExtensionReady (up to 240s)
+// plus the design-time freshness gate (up to 180s), on top of workspace open and the
+// F5 assertions. 600s left no margin if both neared their ceilings; the enclosing job
+// budget is 45 minutes, so the extra headroom is free on healthy runs.
+const TEST_TIMEOUT = 750_000;
+/**
+ * Matches Phase 4.13A's budget for the same gate. 4.13B reuses the session's warm
+ * extension host, so in practice this returns in seconds; the budget only covers a
+ * cold reopen where the LA extension re-runs its async activation.
+ */
+const EXTENSION_READY_TIMEOUT = 240_000;
 const AZURITE_TIMEOUT_TEXT = 'Azurite did not become ready';
 const AZURE_WEB_JOBS_STORAGE_TEXT = 'Failed to verify "AzureWebJobsStorage" connection';
 const DEBUG_ANYWAY_TEXT = 'Debug anyway';
@@ -155,6 +186,15 @@ async function closeServers(servers: http.Server[]): Promise<void> {
 }
 
 async function getVisibleWorkbenchText(driver: WebDriver): Promise<string> {
+  // Scrape the top-level workbench document, never whatever frame the driver happens
+  // to be parked in. A scrape taken from inside a webview iframe returns '' for every
+  // selector below, which would silently make `assertTextDoesNotAppear` vacuous and
+  // `waitForWorkbenchText` blind. The switch is best-effort: if it fails the liveness
+  // assertion in `assertTextDoesNotAppear` is the backstop.
+  await driver
+    .switchTo()
+    .defaultContent()
+    .catch(() => undefined);
   return await driver.executeScript<string>(`
     const selectors = [
       '.monaco-dialog-box',
@@ -252,23 +292,45 @@ function logLatestLogicAppsOutput(label: string): void {
 
 async function waitForWorkbenchText(driver: WebDriver, text: string, timeoutMs: number): Promise<boolean> {
   const deadline = Date.now() + timeoutMs;
+  let emptyScrapes = 0;
   while (Date.now() < deadline) {
     const visibleText = await getVisibleWorkbenchText(driver);
+    if (visibleText.length === 0) {
+      emptyScrapes += 1;
+    }
     if (visibleText.includes(text)) {
       return true;
     }
     await sleep(500);
+  }
+  if (emptyScrapes > 0) {
+    console.log(`[azurite-e2e] ${emptyScrapes} workbench scrape(s) returned no text while waiting for: ${text}`);
   }
   return false;
 }
 
 async function assertTextDoesNotAppear(driver: WebDriver, text: string, timeoutMs: number): Promise<void> {
   const deadline = Date.now() + timeoutMs;
+  let sawWorkbenchContent = false;
   while (Date.now() < deadline) {
     const visibleText = await getVisibleWorkbenchText(driver);
+    if (visibleText.length > 0) {
+      sawWorkbenchContent = true;
+    }
     assert.ok(!visibleText.includes(text), `Unexpected workbench text appeared: ${text}`);
     await sleep(500);
   }
+  // Liveness. "X never appeared" only means something if we were actually scraping a
+  // rendered workbench: if `getVisibleWorkbenchText` returns '' (driver parked inside an
+  // iframe, workbench not rendered yet, a future refactor inserting a frame switch) then
+  // every poll above trivially "passes" and this negative assertion is silently vacuous
+  // while still reporting green. Require at least one poll in the window to have scraped
+  // real content. `.monaco-workbench` always carries text in a live session, so a whole
+  // window of empty scrapes is a harness fault, not a product signal.
+  assert.ok(
+    sawWorkbenchContent,
+    `workbench text scrape was empty for the entire ${timeoutMs}ms window — the "${text}" assertion would be vacuous`
+  );
 }
 
 async function isDebugToolbarVisible(driver: WebDriver): Promise<boolean> {
@@ -320,17 +382,90 @@ async function waitForWorkspaceOpen(driver: WebDriver): Promise<void> {
   );
 }
 
-async function waitForDesignTimeFolder(): Promise<void> {
+/**
+ * Clear a `workflow-designtime` folder left behind by Phase 4.13A so the freshness gate
+ * below has a clean baseline. Nothing else deletes it: 4.13A's `removeWorkspaceParent()`
+ * only runs at the START of 4.13A, and run-e2e.ts has no equivalent of the codeful
+ * phases' `removeDesignTimeEvidence()` for this pair.
+ *
+ * Deliberately best-effort and EBUSY-tolerant, mirroring run-e2e.ts's
+ * `removeDesignTimeEvidence()`. Returns true when the folder is gone (or never existed),
+ * false when it survived — in which case the caller degrades the gate to existence-only
+ * rather than failing a run it cannot prove anything about. A folder we cannot delete is
+ * one a live process is holding as its cwd, i.e. a design-time host that is already
+ * running, which is the state the gate is looking for anyway.
+ *
+ * Safe to call here: this runs seconds after the workbench renders, whereas design-time
+ * auto-start cannot fire until the LA extension finishes its (tens of seconds to minutes)
+ * async activation, so there is no realistic window in which we delete a directory this
+ * session's design-time host has already committed to.
+ */
+async function clearStaleDesignTimeFolder(): Promise<boolean> {
+  if (!fs.existsSync(DESIGN_TIME_DIR)) {
+    return true;
+  }
+
+  let staleMtime = 'unknown';
+  try {
+    staleMtime = new Date(fs.statSync(DESIGN_TIME_DIR).mtimeMs).toISOString();
+  } catch {
+    /* ignore — diagnostics only */
+  }
+  console.log(`[azurite-e2e] Found a pre-existing design-time folder (mtime ${staleMtime}): ${DESIGN_TIME_DIR}`);
+
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      fs.rmSync(DESIGN_TIME_DIR, { recursive: true, force: true, maxRetries: 3, retryDelay: 500 });
+      console.log('[azurite-e2e] Removed the stale design-time folder; the gate now requires a freshly created one');
+      return true;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (attempt === 5) {
+        console.log(
+          `[azurite-e2e] WARNING: could not remove the stale design-time folder (${message}). Falling back to an existence-only gate.`
+        );
+        return false;
+      }
+      console.log(`[azurite-e2e] Waiting to remove the stale design-time folder (attempt ${attempt}): ${message}`);
+      await sleep(2000);
+    }
+  }
+  return false;
+}
+
+/**
+ * Evidence gate: the design-time host started for THIS session.
+ *
+ * `notBeforeMs` is a watermark captured before the workspace is opened. Requiring
+ * `mtimeMs >= notBeforeMs` (the same freshness check `codefulDebugTasks.test.ts`'s
+ * `waitForDesignTimeEvidence()` uses) is what stops a folder left behind by Phase 4.13A
+ * from satisfying the gate instantly. Pass `undefined` only when the stale folder could
+ * not be cleared, which downgrades this to the historical existence-only check.
+ */
+async function waitForDesignTimeFolder(notBeforeMs: number | undefined): Promise<void> {
   // 180 s, matching Phase 4.10's budget for the same evidence. Design-time startup
   // hydrates runtime dependencies on a cold runner, which comfortably exceeds 45 s.
   const deadline = Date.now() + 180_000;
+  let lastMtimeMs: number | undefined;
   while (Date.now() < deadline) {
     if (fs.existsSync(DESIGN_TIME_DIR)) {
-      return;
+      if (notBeforeMs === undefined) {
+        return;
+      }
+      try {
+        lastMtimeMs = fs.statSync(DESIGN_TIME_DIR).mtimeMs;
+        if (lastMtimeMs >= notBeforeMs) {
+          return;
+        }
+      } catch {
+        // Raced with a write/delete — re-check on the next poll.
+      }
     }
     await sleep(1000);
   }
-  throw new Error(`Expected design-time startup to create ${DESIGN_TIME_DIR}`);
+  const observed = lastMtimeMs === undefined ? 'never appeared' : `mtime ${new Date(lastMtimeMs).toISOString()}`;
+  const required = notBeforeMs === undefined ? 'existence only' : `mtime >= ${new Date(notBeforeMs).toISOString()}`;
+  throw new Error(`Expected design-time startup to create ${DESIGN_TIME_DIR} (required: ${required}; observed: ${observed})`);
 }
 
 describe('Azurite auto-start failure E2E assertion', function () {
@@ -338,11 +473,17 @@ describe('Azurite auto-start failure E2E assertion', function () {
 
   let driver: WebDriver;
   let portBlockers: http.Server[] = [];
+  let staleDesignTimeCleared = true;
 
   before(async function () {
-    this.timeout(30_000);
+    // Covers the bounded stale-folder removal below (5 attempts x ~2 s plus rmSync's own
+    // retries) with headroom.
+    this.timeout(90_000);
     fs.mkdirSync(EXPLICIT_SCREENSHOT_DIR, { recursive: true });
     driver = VSBrowser.instance.driver;
+    // Runs as early as the harness allows — before the workspace is opened and long before
+    // the LA extension could have started a design-time host for it.
+    staleDesignTimeCleared = await clearStaleDesignTimeFolder();
   });
 
   after(async function () {
@@ -359,6 +500,10 @@ describe('Azurite auto-start failure E2E assertion', function () {
     this.timeout(TEST_TIMEOUT);
     assert.ok(fs.existsSync(WORKSPACE_FILE), `Expected generated workspace file to exist: ${WORKSPACE_FILE}`);
     configureGeneratedWorkspaceForAzuriteFailure();
+    // Freshness watermark for the design-time gate. Captured BEFORE the workspace is
+    // opened (and after `before()` cleared any stale folder), so only a design-time folder
+    // created by this session can satisfy `waitForDesignTimeFolder`.
+    const gateStart = Date.now();
     // Explicitly open the generated .code-workspace after launch. ExTester's startup
     // `resources` (which uses `code -r` / CLI IPC) silently fails on headless CI: the VS Code
     // IPC socket isn't wired up when launched via ChromeDriver, so VS Code lands on the empty
@@ -367,7 +512,14 @@ describe('Azurite auto-start failure E2E assertion', function () {
     // in this suite does the same. No-ops when the workspace is already open.
     await openWorkspaceFileInSession(new Workbench(), WORKSPACE_FILE);
     await waitForWorkspaceOpen(driver);
-    await waitForDesignTimeFolder();
+    // Hard gate: F5 goes through the "Start Debugging" command pick, which only exists once
+    // the LA extension has registered its commands. `startDebugging()` does NOT throw when
+    // the pick is missing — it logs and returns — so without this gate an early F5 shows up
+    // 45 s later as "Expected Azurite auto-start timeout to be visible" and blames the
+    // product. Throws on timeout, which is the failure we want to read in CI.
+    await waitForExtensionReady(new Workbench(), EXTENSION_READY_TIMEOUT);
+    console.log('[azurite-e2e] Logic Apps extension commands are registered');
+    await waitForDesignTimeFolder(staleDesignTimeCleared ? gateStart : undefined);
     console.log(`[azurite-e2e] Design-time folder exists: ${DESIGN_TIME_DIR}`);
     await sleep(3000);
 

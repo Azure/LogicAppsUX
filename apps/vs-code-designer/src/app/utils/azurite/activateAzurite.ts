@@ -20,12 +20,21 @@ import { delay } from '../delay';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, parseError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import type { MessageItem } from 'vscode';
 
-const azuriteStartupRetryCount = 10;
-const azuriteStartupRetryDelayMs = 500;
+/**
+ * Bounded readiness contract for Azurite auto-start, exported so tests assert the
+ * real numbers rather than hand-copied literals.
+ *
+ * The per-probe bound lives in `validatePreDebug` as `azuriteProbeTimeoutMs`; it is
+ * load-bearing, because without it a listener that accepts the connection but never
+ * responds would stall a single probe forever and re-open the exact hang this module
+ * exists to prevent. The retry/delay pair alone only bounds the sleeping.
+ */
+export const azuriteStartupRetryCount = 10;
+export const azuriteStartupRetryDelayMs = 500;
 
 /**
  * Prompts user to set azurite.location and Start Azurite.
@@ -102,8 +111,25 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         // settings instead of the shared .code-workspace file (which is committed to the repo).
         await updateGlobalSetting(azuriteLocationSetting, azuriteLocation, azuriteExtensionPrefix);
         await removeSharedSetting(azuriteLocationSetting, azuriteExtensionPrefix);
-        await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
-        context.telemetry.properties.azuriteStart = 'true';
+        try {
+          await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
+          context.telemetry.properties.azuriteStart = 'true';
+        } catch (error) {
+          // A rejection here is NOT authoritative. The third-party Azurite extension
+          // rejects `azurite.start` when the port is already bound, which is exactly
+          // what happens when a healthy Azurite is already serving another debug
+          // session. Treating that as fatal would break concurrent projects, so the
+          // readiness probe below stays the single source of truth.
+          context.telemetry.properties.azuriteStart = 'false';
+          context.telemetry.properties.azuriteStartError = parseError(error).message;
+          ext.outputChannel.appendLog(
+            localize(
+              'azuriteStartFailed',
+              'Could not start Azurite via the Azurite extension ({0}). Checking whether it is already running.',
+              parseError(error).message
+            )
+          );
+        }
         context.telemetry.properties.azuriteLocation = azuriteLocation;
         await waitForAzuriteReady(context, projectPath, azureWebJobsStorage);
       }
@@ -112,6 +138,7 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
 }
 
 async function waitForAzuriteReady(context: IActionContext, projectPath: string, azureWebJobsStorage: string | undefined): Promise<void> {
+  const startedAt = Date.now();
   for (let attempt = 1; attempt <= azuriteStartupRetryCount; attempt++) {
     context.telemetry.properties.azuriteStartupAttempt = attempt.toString();
     if (
@@ -130,11 +157,15 @@ async function waitForAzuriteReady(context: IActionContext, projectPath: string,
   }
 
   context.telemetry.properties.azuriteReady = 'false';
+  // Report measured elapsed time rather than count * delay: each probe is itself
+  // bounded by azuriteProbeTimeoutMs, so the sleep budget alone would understate
+  // how long the user actually waited.
+  const elapsedSeconds = Math.round((Date.now() - startedAt) / 100) / 10;
   throw new Error(
     localize(
       'azuriteFailedToStart',
       'Azurite did not become ready within "{0}" seconds. Make sure the Azurite extension is installed and running, then try debugging again.',
-      (azuriteStartupRetryCount * azuriteStartupRetryDelayMs) / 1000
+      elapsedSeconds
     )
   );
 }

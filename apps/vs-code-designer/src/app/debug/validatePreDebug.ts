@@ -11,6 +11,7 @@ import {
   localSettingsFileName,
   inlineCodeNodeExecutablePathKey,
 } from '../../constants';
+import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
@@ -29,6 +30,15 @@ export interface ValidateEmulatorOptions {
   allowDebugAnyway?: boolean;
   azureWebJobsStorage?: string | undefined;
 }
+
+/**
+ * Hard upper bound on a single emulator probe.
+ *
+ * Declared here rather than alongside the retry constants in `activateAzurite`
+ * because that module already imports from this one; importing back would create
+ * a cycle.
+ */
+export const azuriteProbeTimeoutMs = 2000;
 
 /**
  * Validates functions core tools is installed and azure emulator is running
@@ -66,7 +76,7 @@ export async function preDebugValidate(context: IActionContext, projectPath: str
           azureWebJobsStorage,
         });
       } else {
-        shouldContinue = await showMissingAzureWebJobsStorageWarning(context);
+        shouldContinue = warnMissingAzureWebJobsStorage(context);
       }
     }
   } catch (error) {
@@ -126,15 +136,28 @@ async function validateWorkerRuntime(context: IActionContext, projectLanguage: s
   }
 }
 
-async function showMissingAzureWebJobsStorageWarning(context: IActionContext): Promise<boolean> {
+/**
+ * Surfaces a missing `AzureWebJobsStorage` connection without blocking the debug path.
+ *
+ * This runs inside `resolveDebugConfiguration`, where any awaited UI stalls
+ * `vscode.debug.startDebugging()` indefinitely — the exact hang this module was
+ * changed to eliminate. The notification is therefore fire-and-forget and debug
+ * is allowed to continue, matching the behavior before the readiness work: the
+ * func host surfaces its own error if the missing connection actually matters.
+ */
+function warnMissingAzureWebJobsStorage(context: IActionContext): boolean {
   const message: string = localize(
     'missingAzureWebJobsStorage',
-    'Missing required "{0}" connection in "{1}". Add a storage connection string before debugging this project.',
+    'Missing "{0}" connection in "{1}". Add a storage connection string if this project needs one.',
     azureWebJobsStorageKey,
     localSettingsFileName
   );
-  await context.ui.showWarningMessage(message, { modal: true });
-  return false;
+  context.telemetry.properties.missingAzureWebJobsStorage = 'true';
+  ext.outputChannel.appendLog(message);
+  // Fire-and-forget on purpose: this runs inside resolveDebugConfiguration, so
+  // awaiting a dialog here would stall startDebugging() indefinitely.
+  vscode.window.showWarningMessage(message);
+  return true;
 }
 
 /**
@@ -191,16 +214,7 @@ export async function validateEmulatorIsRunning(
   if (azureWebJobsStorage && azureWebJobsStorage.toLowerCase() === localEmulatorConnectionString.toLowerCase()) {
     try {
       const client: azureStorage.BlobService = azureStorage.createBlobService(azureWebJobsStorage);
-      await new Promise<void>((resolve, reject) => {
-        // Checking against a common container for functions, but doesn't really matter what call we make here
-        client.doesContainerExist('azure-webjob-hosts', (err: Error | undefined) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      });
+      await probeEmulator(client);
     } catch {
       if (!promptWarningMessage) {
         return false;
@@ -214,8 +228,12 @@ export async function validateEmulatorIsRunning(
 
       const learnMoreLink: string = process.platform === Platform.windows ? 'https://aka.ms/AA4ym56' : 'https://aka.ms/AA4yef8';
       if (!allowDebugAnyway) {
-        await context.ui.showWarningMessage(message, { learnMoreLink, modal: true });
-        return false;
+        // Deliberately NOT a modal. This runs inside resolveDebugConfiguration, so an
+        // awaited dialog stalls startDebugging() forever — the original bug. Throwing
+        // surfaces the same text through the non-modal command error notification and
+        // aborts the session promptly.
+        ext.outputChannel.appendLog(message);
+        throw new Error(message);
       }
 
       const debugAnyway: vscode.MessageItem = { title: localize('debugAnyway', 'Debug anyway') };
@@ -225,4 +243,30 @@ export async function validateEmulatorIsRunning(
   }
 
   return true;
+}
+
+/**
+ * Probes the emulator with a hard upper bound.
+ *
+ * `doesContainerExist` has no timeout of its own, so a listener that accepts the
+ * TCP connection but never replies (a half-started emulator, or an unrelated
+ * process squatting on port 10000) would hang this call indefinitely and, through
+ * the readiness loop, hang the whole debug session.
+ */
+async function probeEmulator(client: azureStorage.BlobService): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(`Azurite probe timed out after ${azuriteProbeTimeoutMs}ms`));
+    }, azuriteProbeTimeoutMs);
+
+    // Checking against a common container for functions, but doesn't really matter what call we make here
+    client.doesContainerExist('azure-webjob-hosts', (err: Error | undefined) => {
+      clearTimeout(timer);
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 }
