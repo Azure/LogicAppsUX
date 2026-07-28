@@ -92,7 +92,6 @@ import {
   type NewResourceProps,
 } from '@microsoft/designer-ui';
 import {
-  AGENT_MODEL_CONFIG,
   clone,
   ConnectionService,
   EditorService,
@@ -114,6 +113,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
+  getAvailableModelsForConnection,
+  useAvailableModelsForAccount,
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
   useFoundryAccountResourceIdForNode,
@@ -365,12 +366,13 @@ const updateConnectionAndDeployment = async (
         let modelFormat = deploymentInfo.modelFormat;
         let modelVersion = deploymentInfo.modelVersion;
         if (!modelFormat || !modelVersion) {
-          const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+          const availableModels = await getAvailableModelsForConnection(connection);
+          const match = availableModels.find((entry: any) => entry?.model?.name === modelName);
           if (!modelFormat) {
-            modelFormat = config?.format ?? 'OpenAI';
+            modelFormat = match?.model?.format ?? 'OpenAI';
           }
           if (!modelVersion) {
-            modelVersion = config?.version;
+            modelVersion = match?.model?.version;
           }
         }
 
@@ -470,6 +472,7 @@ export const ParameterSection = ({
 
   // Specific for agentic scenarios
   const cognitiveServiceAccountId = useCognitiveServiceAccountId(nodeId, operationInfo?.connectorId);
+  const { data: availableModelsForCognitiveServiceAccount } = useAvailableModelsForAccount(cognitiveServiceAccountId);
   const { data: deploymentsForCognitiveServiceAccount, refetch } = useCognitiveServiceAccountDeploymentsForNode(
     nodeId,
     operationInfo?.connectorId
@@ -1084,14 +1087,14 @@ export const ParameterSection = ({
           let modelFormat = deploymentInfo?.properties?.model?.format;
           let modelVersion = deploymentInfo?.properties?.model?.version;
 
-          // For MicrosoftFoundry, format and version are not in the ARM response — fill from AGENT_MODEL_CONFIG
+          // For MicrosoftFoundry, format and version are not in the ARM response — fill from the account's model catalog
           if (!modelFormat || !modelVersion) {
-            const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+            const match = availableModelsForCognitiveServiceAccount?.find((entry: any) => entry?.model?.name === modelName);
             if (!modelFormat) {
-              modelFormat = config?.format ?? 'OpenAI';
+              modelFormat = match?.model?.format ?? 'OpenAI';
             }
             if (!modelVersion) {
-              modelVersion = config?.version;
+              modelVersion = match?.model?.version;
             }
           }
 
@@ -1157,6 +1160,7 @@ export const ParameterSection = ({
       operationDefinition,
       connector,
       deploymentsForCognitiveServiceAccount,
+      availableModelsForCognitiveServiceAccount,
       foundryAgentsForNode,
       buildDependentParam,
       addFoundryDependentUpdates,
