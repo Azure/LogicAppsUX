@@ -85,6 +85,9 @@ vi.mock('fs', () => ({
   statSync: vi.fn(() => ({
     isDirectory: vi.fn(() => false),
   })),
+  promises: {
+    stat: vi.fn(),
+  },
   dirent: vi.fn().mockImplementation(() => ({
     isDirectory: vi.fn().mockImplementation(() => {
       return true;
