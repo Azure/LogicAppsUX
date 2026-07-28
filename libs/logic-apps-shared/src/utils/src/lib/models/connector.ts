@@ -150,8 +150,12 @@ export interface ManagedIdentitySetting {
   resourceUri: string;
   additionalResourceUris?: string[];
   /**
-   * Azure built-in role definition IDs (GUIDs) the app identity needs on the selected resource.
-   * IDs are used instead of display names because built-in role names can be renamed by Azure.
+   * Azure built-in role definition IDs (GUIDs) the app identity needs on the selected resource,
+   * in order of preference. These are **alternatives, not a set that is all required** — the identity
+   * only needs one of them, and the first that exists in the tenant is the one that gets assigned.
+   *
+   * IDs are used instead of display names because built-in role names can be renamed by Azure
+   * (for example "Azure AI User" was renamed to "Foundry User" without its ID changing).
    */
   requiredRoleDefinitionIds?: string[];
 }

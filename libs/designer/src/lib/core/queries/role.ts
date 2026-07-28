@@ -90,8 +90,8 @@ export const useHasRequiredRoleDefinitionsQuery = (resourceId: string, definitio
   return useQuery<boolean>(
     [roleQueryKeys.roleDefinitions, 'userHasById', resourceId, definitionIds],
     async () => {
-      const missingDefinitions = await getMissingRoleDefinitions(resourceId, definitionIds);
-      return missingDefinitions.length === 0;
+      const rolesToAssign = await getRoleDefinitionsToAssign(resourceId, definitionIds);
+      return rolesToAssign.length === 0;
     },
     {
       enabled: _enabled && !!resourceId,
@@ -101,44 +101,51 @@ export const useHasRequiredRoleDefinitionsQuery = (resourceId: string, definitio
 };
 
 /**
- * Returns the role definitions from `definitionIds` that are not yet assigned to the app identity at `resourceId`.
+ * Resolves the role definitions that still need to be assigned to the app identity at `resourceId`.
  *
- * Roles are looked up by role definition ID rather than display name: Azure renamed the Foundry built-in roles
- * (for example "Azure AI User" -> "Foundry User") without changing their IDs, so name-based lookups silently
- * resolve to nothing once the rename reaches a tenant.
+ * `preferredDefinitionIds` is a **preference-ordered list of alternatives, not a set of roles that are
+ * all required** — the identity only needs one of them. The first entry that exists in the tenant wins.
+ *
+ * Returns an empty array when:
+ * - the identity already holds any one of the alternatives, or
+ * - none of them exist in this cloud (for example the Foundry roles in a sovereign or air-gapped
+ *   cloud), in which case there is nothing we can assign and the caller should not block on it.
+ *
+ * Roles are looked up by role definition ID rather than display name: Azure renamed the Foundry
+ * built-in roles (for example "Azure AI User" -> "Foundry User") without changing their IDs, so
+ * name-based lookups silently resolve to nothing once the rename reaches a tenant.
  */
-export const getMissingRoleDefinitions = async (resourceId: string, definitionIds: string[]): Promise<ArmResource<RoleDefinition>[]> => {
-  if (!resourceId || definitionIds.length === 0) {
+export const getRoleDefinitionsToAssign = async (
+  resourceId: string,
+  preferredDefinitionIds: string[]
+): Promise<ArmResource<RoleDefinition>[]> => {
+  if (!resourceId || preferredDefinitionIds.length === 0) {
     return [];
   }
 
   const queryClient = getReactQueryClient();
   const assignments: ArmResource<RoleAssignment>[] = (await queryClient.fetchQuery(appIdentityRoleAssignmentsQueryOpts(resourceId))) ?? [];
   const definitions: Record<string, ArmResource<RoleDefinition>> = (await queryClient.fetchQuery(
-    roleDefinitionByIdQueryOpts(definitionIds)
+    roleDefinitionByIdQueryOpts(preferredDefinitionIds)
   )) ?? {};
 
-  if (Object.keys(definitions).length === 0) {
-    return []; // No definitions found
+  // Keep caller-supplied preference order, dropping any role that does not exist in this cloud.
+  const availableDefinitions = preferredDefinitionIds
+    .map((definitionId) => definitions[definitionId])
+    .filter((definition): definition is ArmResource<RoleDefinition> => !!definition);
+
+  if (availableDefinitions.length === 0) {
+    return [];
   }
 
-  if (assignments.length === 0) {
-    return Object.values(definitions); // No assignments found, return all definitions
+  const isAssignedAtScope = (definition: ArmResource<RoleDefinition>) =>
+    assignments.some(
+      (assignment) => assignment?.properties?.roleDefinitionId?.endsWith(definition.id) && assignment.properties.scope === resourceId
+    );
+
+  if (availableDefinitions.some(isAssignedAtScope)) {
+    return [];
   }
 
-  const missingDefinitions: ArmResource<RoleDefinition>[] = [];
-  for (const definitionId of definitionIds) {
-    const definition = definitions[definitionId];
-    if (!definition) {
-      continue; // Role definition does not exist in this environment, nothing to assign
-    }
-    if (
-      !assignments.some(
-        (assignment) => assignment?.properties?.roleDefinitionId?.endsWith(definition.id) && assignment.properties.scope === resourceId
-      )
-    ) {
-      missingDefinitions.push(definition);
-    }
-  }
-  return missingDefinitions;
+  return [availableDefinitions[0]];
 };

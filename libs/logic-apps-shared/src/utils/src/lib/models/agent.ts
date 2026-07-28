@@ -65,11 +65,16 @@ export const SUPPORTED_FOUNDRY_AGENT_MODELS: string[] = Object.keys(AGENT_MODEL_
 export const AGENT_ROLE_DEFINITION_IDS = {
   /** "Foundry User", previously named "Azure AI User". Grants `Microsoft.CognitiveServices/*` data actions. */
   foundryUser: '53ca6127-db72-4b80-b1b0-d745d6d5456d',
+  /** "Cognitive Services OpenAI User". Grants the Azure OpenAI data actions, including `deployments/chat/completions/action`. */
+  cognitiveServicesOpenAIUser: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd',
 } as const;
 
 /**
- * Role definition IDs the workflow app's managed identity needs on the Cognitive Services account
+ * Data-plane roles the workflow app's managed identity needs on the Cognitive Services account
  * (or Foundry project) backing an agent connection that authenticates with managed identity.
+ *
+ * This is a **preference-ordered list of alternatives, not a set of roles that are all required**.
+ * The identity only needs one of them, so the first entry that exists in the tenant is assigned.
  *
  * The runtime only issues data-plane requests against the model endpoint — chat completions with the
  * `https://cognitiveservices.azure.com/` audience, and the Foundry agents/responses APIs with the
@@ -77,5 +82,13 @@ export const AGENT_ROLE_DEFINITION_IDS = {
  * data-plane role is sufficient. Control-plane roles such as "Azure AI Administrator" and
  * "Cognitive Services Contributor" declare no `dataActions` and therefore grant nothing at inference
  * time, while handing the identity account management and key-listing rights it never exercises.
+ *
+ * "Foundry User" is preferred because it covers both audiences. "Cognitive Services OpenAI User" is
+ * the fallback for clouds where the Foundry roles have not rolled out yet (sovereign and air-gapped
+ * clouds): it only covers Azure OpenAI, but without it those clouds would get no data-plane grant
+ * at all, which would be a regression from the previous behaviour.
  */
-export const AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS: string[] = [AGENT_ROLE_DEFINITION_IDS.foundryUser];
+export const AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS: string[] = [
+  AGENT_ROLE_DEFINITION_IDS.foundryUser,
+  AGENT_ROLE_DEFINITION_IDS.cognitiveServicesOpenAIUser,
+];

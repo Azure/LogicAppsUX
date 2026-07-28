@@ -71,7 +71,7 @@ import {
   RunHistoryPanel,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
-  getMissingRoleDefinitions,
+  getRoleDefinitionsToAssign,
   roleQueryKeys,
   isAgentWorkflow,
 } from '@microsoft/logic-apps-designer';
@@ -359,12 +359,9 @@ const DesignerEditor = () => {
         for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
           if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
             const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
-            const missingRoleAssignments = await getMissingRoleDefinitions(
-              roleAssignmentResourceId,
-              AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS
-            );
+            const rolesToAssign = await getRoleDefinitionsToAssign(roleAssignmentResourceId, AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS);
             const assignmentPromises = [];
-            for (const roleDefinition of missingRoleAssignments) {
+            for (const roleDefinition of rolesToAssign) {
               assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
             }
             await Promise.all(assignmentPromises);
