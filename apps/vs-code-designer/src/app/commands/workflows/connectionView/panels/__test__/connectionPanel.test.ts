@@ -357,3 +357,47 @@ describe('resolveCurrentConnectionId', () => {
     expect(result).toBe('msnweather-1');
   });
 });
+
+// Regression coverage for the 5.981.0 symptom: a codeful project can open the
+// Language Server connection view while connections.json is empty or missing.
+// The initialize path calls resolveCurrentConnectionId with that (empty) data,
+// so it must degrade gracefully — never throw — and fall back to the raw
+// connector id so the pane still loads with a usable empty state.
+describe('resolveCurrentConnectionId - empty or missing connections.json (5.981.0 symptom)', () => {
+  const resolveCurrentConnectionId = (mockModule as any).resolveCurrentConnectionId;
+
+  it('returns original id when connections data is undefined (file missing)', () => {
+    expect(resolveCurrentConnectionId(undefined, 'msnweather-1')).toBe('msnweather-1');
+  });
+
+  it('returns original id when connections data is an empty string (empty file)', () => {
+    expect(resolveCurrentConnectionId('', 'msnweather-1')).toBe('msnweather-1');
+  });
+
+  it('returns original id when connections data is whitespace only', () => {
+    expect(resolveCurrentConnectionId('   \n  ', 'msnweather-1')).toBe('msnweather-1');
+  });
+
+  it('returns original id when connections json is an empty object', () => {
+    expect(resolveCurrentConnectionId('{}', 'msnweather-1')).toBe('msnweather-1');
+  });
+
+  it('returns original id when managedApiConnections is empty', () => {
+    expect(resolveCurrentConnectionId(JSON.stringify({ managedApiConnections: {} }), 'msnweather-1')).toBe('msnweather-1');
+  });
+
+  it('returns original id when the matched connection has no connection.id', () => {
+    const connectionsData = JSON.stringify({ managedApiConnections: { 'msnweather-1': { connection: {} } } });
+    expect(resolveCurrentConnectionId(connectionsData, 'msnweather-1')).toBe('msnweather-1');
+  });
+
+  it('returns empty current id unchanged when no connector is selected yet', () => {
+    expect(resolveCurrentConnectionId('{}', '')).toBe('');
+  });
+
+  it('does not throw for any empty/missing shape', () => {
+    for (const data of [undefined, '', '   ', '{}', 'null', '[]', JSON.stringify({ managedApiConnections: null })]) {
+      expect(() => resolveCurrentConnectionId(data as any, 'conn-1')).not.toThrow();
+    }
+  });
+});

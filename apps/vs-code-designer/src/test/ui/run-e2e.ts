@@ -1967,6 +1967,12 @@ async function main(): Promise<void> {
     // Create Workspace webview completes: use built-in HTTP trigger/Response
     // APIs that compile with the package currently referenced by the template,
     // and remove the stale provider-registration call.
+    //
+    // The trigger -> action chain is captured into `workflow` and that value is passed
+    // to CreateStatefulWorkflow, mirroring the shipped
+    // assets/CodefulProjectTemplate/StatefulCodefulWorkflow template. Passing the
+    // trigger itself would work only if Then() mutates it in place, which is not a
+    // guarantee the SDK makes.
     const patchedWorkflow = `// -----------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------
@@ -1983,7 +1989,7 @@ namespace ${namespaceName}
         /// <summary>
         /// Gets a built-in HTTP request/response workflow definition.
         /// </summary>
-        public IWorkflowTrigger GetWorkflow()
+        public FlowDefinition GetWorkflow()
         {
             var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
             var response = WorkflowActions.BuiltIn.Response(responseBody: () => "ok");
@@ -2071,11 +2077,20 @@ namespace ${namespaceName}
     process.env.LA_E2E_CODEFUL_VARIANT = 'modern';
     await prepareFreshSession(`${labelPrefix}-phase10b-modern`);
     await removeDesignTimeEvidence(modern, 'modern');
+    // Watermark for the test's design-time freshness gate: captured here — right after
+    // the stale workflow-designtime evidence is cleared and BEFORE VS Code launches. The
+    // folder is (re)created either by onboarding auto-start during the test's before()
+    // hook (Windows opens the startup .code-workspace directly) or after the explicit
+    // openWorkspaceFileInSession call (Linux, where the startup resource silently no-ops).
+    // Both happen after this point, so anchoring the watermark here — rather than inside
+    // the test after launch — keeps a legitimately fresh folder from being rejected as stale.
+    process.env.LA_E2E_CODEFUL_EVIDENCE_NOT_BEFORE = String(Date.now() - 2000);
     const modernExit = await runPhase('Phase 4.10B-modern: codefulDebugTasks', phase10ModernFiles, { resources: [modern.wsFilePath] });
 
     process.env.LA_E2E_CODEFUL_VARIANT = 'legacy';
     await prepareFreshSession(`${labelPrefix}-phase10b-legacy`);
     await removeDesignTimeEvidence(legacy, 'legacy');
+    process.env.LA_E2E_CODEFUL_EVIDENCE_NOT_BEFORE = String(Date.now() - 2000);
     const legacyExit = await runPhase('Phase 4.10B-legacy: codefulDebugTasks', phase10LegacyFiles, { resources: [legacy.wsFilePath] });
     delete process.env.LA_E2E_CODEFUL_VARIANT;
 
