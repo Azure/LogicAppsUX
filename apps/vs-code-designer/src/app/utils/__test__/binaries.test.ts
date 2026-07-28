@@ -1308,7 +1308,7 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockImplementation((filePath: string) => ({
+      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => ({
         size: filePath.endsWith('func.exe') ? 100 : 200,
         isFile: () => true,
       }));
@@ -1337,9 +1337,7 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockImplementation(() => {
-        throw new Error('ENOENT');
-      });
+      (fs.promises.stat as Mock).mockRejectedValue(new Error('ENOENT'));
 
       const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
@@ -1357,7 +1355,7 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockReturnValue({ size: 999, isFile: () => true });
+      (fs.promises.stat as Mock).mockResolvedValue({ size: 999, isFile: () => true });
 
       const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
@@ -1374,7 +1372,7 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockReturnValue({ size: 100, isFile: () => false });
+      (fs.promises.stat as Mock).mockResolvedValue({ size: 100, isFile: () => false });
 
       const result = await verifyDependencyIntegrity(context, funcDependencyName);
 
@@ -1426,7 +1424,7 @@ describe('binaries', () => {
       };
       (fs.existsSync as Mock).mockReturnValue(true);
       (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
-      (fs.statSync as Mock).mockImplementation((filePath: string) => ({
+      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => ({
         size: filePath.endsWith('node.exe') ? 300 : 50,
         isFile: () => true,
       }));
@@ -1435,6 +1433,52 @@ describe('binaries', () => {
 
       expect(result).toBe(true);
       expect(context.telemetry.properties.NodeJsIntegrityResult).toBe('passed');
+    });
+
+    it('verifies a large manifest spanning multiple stat batches', async () => {
+      const files = Array.from({ length: 200 }, (_, i) => ({ path: `lib/file-${i}.dll`, size: i + 1 }));
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: files.length,
+        files,
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => {
+        const index = Number((filePath.match(/file-(\d+)\.dll$/) as RegExpMatchArray)[1]);
+        return { size: index + 1, isFile: () => true };
+      });
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(true);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('passed');
+      // Every recorded file must be stat'd, proving the batched loop covers the whole manifest.
+      expect((fs.promises.stat as Mock).mock.calls).toHaveLength(files.length);
+    });
+
+    it('returns false when a file in a later batch has a size mismatch', async () => {
+      const files = Array.from({ length: 130 }, (_, i) => ({ path: `lib/file-${i}.dll`, size: 10 }));
+      const manifest = {
+        dependencyName: funcDependencyName,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        fileCount: files.length,
+        files,
+      };
+      (fs.existsSync as Mock).mockReturnValue(true);
+      (fs.readFileSync as Mock).mockReturnValue(JSON.stringify(manifest));
+      // File index 100 lives in the third 64-file batch; give it the wrong size on disk.
+      (fs.promises.stat as Mock).mockImplementation(async (filePath: string) => {
+        const index = Number((filePath.match(/file-(\d+)\.dll$/) as RegExpMatchArray)[1]);
+        return { size: index === 100 ? 999 : 10, isFile: () => true };
+      });
+
+      const result = await verifyDependencyIntegrity(context, funcDependencyName);
+
+      expect(result).toBe(false);
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityResult).toBe('size-mismatch');
+      expect(context.telemetry.properties.FuncCoreToolsIntegrityMismatchFile).toBe('lib/file-100.dll');
     });
   });
 
