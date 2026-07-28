@@ -587,8 +587,22 @@ jobs:
       - name: Extract build artifacts
         run: tar -xzf extension-build.tar.gz
 
-      - name: Cache Logic Apps runtime dependencies
-        uses: actions/cache@v5
+      # RESTORE-ONLY (no save) — deliberate. This shard runs p40-nonlogicapp with
+      # LA_E2E_BUNDLE_PREFLIGHT=0 and never hydrates runtime dependencies, so it has
+      # nothing worth saving under the shared key that the codeful Windows job
+      # depends on. `actions/cache@v5` only skips its post-save on an EXACT key hit
+      # (see actions/cache saveImpl.ts) — a `restore-keys` PREFIX hit populates the
+      # directory and then re-saves that stale tree onto `-v1`, and a poisoned entry
+      # is unrecoverable because the codeful jobs' `cache-hit != 'true'` save guard
+      # suppresses the repair. The ubuntu matrix is immune to this by ordering
+      # (`needs: setup-fixtures` guarantees the hydrating job saves first); this job
+      # runs in PARALLEL with setup-runtime-deps-windows for speed, so it gets the
+      # same guarantee by never saving at all.
+      # NOTE: `path`/`key`/`restore-keys` must stay byte-identical to the other
+      # la-runtime-deps steps — actions/cache derives the cache entry *version* from
+      # the path set, so editing it silently invalidates the existing entries.
+      - name: Restore Logic Apps runtime dependencies
+        uses: actions/cache/restore@v5
         with:
           # %USERPROFILE%\.azurelogicapps on Windows; ~ resolves correctly under
           # the job's bash shell.

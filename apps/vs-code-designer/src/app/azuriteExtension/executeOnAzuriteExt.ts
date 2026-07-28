@@ -39,7 +39,13 @@ export async function executeOnAzurite(context: IActionContext, command: string,
 
   context.telemetry.properties.azuriteExtensionActive = 'true';
   context.telemetry.properties.azuriteStartCommandIssued = 'true';
-  await vscode.commands.executeCommand(command, {
-    ...args,
-  });
+  // Forward caller arguments verbatim. Spreading the `args` array into an object
+  // literal would produce numeric keys ({ 0: 'a', 1: 'b' }) and collapse them into
+  // a single argument. The no-arg case keeps passing an empty options object so the
+  // Azurite start command sees the same payload it always has.
+  if (args.length > 0) {
+    await vscode.commands.executeCommand(command, ...args);
+  } else {
+    await vscode.commands.executeCommand(command, {});
+  }
 }

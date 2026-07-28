@@ -61,6 +61,19 @@ describe('executeOnAzurite', () => {
     expect(context.telemetry.properties.azuriteStartCommandIssued).toBe('true');
   });
 
+  it('forwards caller arguments verbatim instead of collapsing them into an object', async () => {
+    vscodeMocks.getExtension.mockReturnValue({
+      isActive: true,
+      activate: vi.fn(),
+    });
+
+    await executeOnAzurite(context, extensionCommand.azureAzuriteStart, 'first', { second: true });
+
+    // Spreading the rest array into an object literal would emit
+    // ({ 0: 'first', 1: { second: true } }) as a single argument.
+    expect(vscodeMocks.executeCommand).toHaveBeenCalledWith(extensionCommand.azureAzuriteStart, 'first', { second: true });
+  });
+
   it('throws a startup error when the Azurite extension fails activation', async () => {
     vscodeMocks.getExtension.mockReturnValue({
       isActive: false,
