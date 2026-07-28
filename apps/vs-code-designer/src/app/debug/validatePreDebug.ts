@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  autoStartAzuriteSetting,
   projectLanguageSetting,
   workerRuntimeKey,
   localEmulatorConnectionString,
@@ -22,6 +23,11 @@ import { MismatchBehavior, Platform } from '@microsoft/vscode-extension-logic-ap
 import * as azureStorage from 'azure-storage';
 import * as path from 'path';
 import * as vscode from 'vscode';
+
+export interface ValidateEmulatorOptions {
+  promptWarningMessage?: boolean;
+  allowDebugAnyway?: boolean;
+}
 
 /**
  * Validates functions core tools is installed and azure emulator is running
@@ -51,7 +57,15 @@ export async function preDebugValidate(context: IActionContext, projectPath: str
       await validateInlineCodeNodePath(context, projectPath);
 
       context.telemetry.properties.lastValidateStep = 'emulatorRunning';
-      shouldContinue = await validateEmulatorIsRunning(context, projectPath);
+      const azureWebJobsStorage: string | undefined = await getAzureWebJobsStorage(context, projectPath);
+      if (azureWebJobsStorage?.trim()) {
+        const autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
+        shouldContinue = await validateEmulatorIsRunning(context, projectPath, {
+          allowDebugAnyway: !autoStartAzurite,
+        });
+      } else {
+        shouldContinue = await showMissingAzureWebJobsStorageWarning(context);
+      }
     }
   } catch (error) {
     if (parseError(error).isUserCancelledError) {
@@ -110,6 +124,17 @@ async function validateWorkerRuntime(context: IActionContext, projectLanguage: s
   }
 }
 
+async function showMissingAzureWebJobsStorageWarning(context: IActionContext): Promise<boolean> {
+  const message: string = localize(
+    'missingAzureWebJobsStorage',
+    'Missing required "{0}" connection in "{1}". Add a storage connection string before debugging this project.',
+    azureWebJobsStorageKey,
+    localSettingsFileName
+  );
+  await context.ui.showWarningMessage(message, { modal: true });
+  return false;
+}
+
 /**
  * Pins the in-proc8 InlineCodeDependencyGenerator's `node` lookup to the
  * absolute path of the extension-managed (or system) `node` binary, written
@@ -146,14 +171,16 @@ async function validateInlineCodeNodePath(context: IActionContext, projectPath: 
  * If AzureWebJobsStorage is set, pings the emulator to make sure it's actually running
  * @param {IActionContext} context - Command context.
  * @param {string} projectPath - Project path.
- * @param {boolean} promptWarningMessage - Boolean to determine whether prompt a message to ask user if emulator is running.
+ * @param {boolean | ValidateEmulatorOptions} options - Options for prompting and allowing debug continuation.
  * @returns {boolean} Returns true if a valid emulator is running, otherwise returns false.
  */
 export async function validateEmulatorIsRunning(
   context: IActionContext,
   projectPath: string,
-  promptWarningMessage = true
+  options: boolean | ValidateEmulatorOptions = true
 ): Promise<boolean> {
+  const promptWarningMessage = typeof options === 'boolean' ? options : (options.promptWarningMessage ?? true);
+  const allowDebugAnyway = typeof options === 'boolean' ? true : (options.allowDebugAnyway ?? true);
   const azureWebJobsStorage: string | undefined = await getAzureWebJobsStorage(context, projectPath);
 
   if (azureWebJobsStorage && azureWebJobsStorage.toLowerCase() === localEmulatorConnectionString.toLowerCase()) {
@@ -181,6 +208,11 @@ export async function validateEmulatorIsRunning(
       );
 
       const learnMoreLink: string = process.platform === Platform.windows ? 'https://aka.ms/AA4ym56' : 'https://aka.ms/AA4yef8';
+      if (!allowDebugAnyway) {
+        await context.ui.showWarningMessage(message, { learnMoreLink, modal: true });
+        return false;
+      }
+
       const debugAnyway: vscode.MessageItem = { title: localize('debugAnyway', 'Debug anyway') };
       const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { learnMoreLink, modal: true }, debugAnyway);
       return result === debugAnyway;

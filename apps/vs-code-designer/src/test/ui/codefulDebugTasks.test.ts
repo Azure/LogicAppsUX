@@ -104,6 +104,39 @@ interface TaskEvent {
   timestamp: string;
 }
 
+/** Recorder phases that prove F5 got past `resolveDebugConfiguration` and reached `executeTask`. */
+const TASK_ACTIVITY_PHASES = new Set(['taskStart', 'taskEnd', 'processStart', 'processEnd']);
+
+/**
+ * Upper bound on the time the recorder can spend inside `startDebugCommand()` BEFORE it
+ * calls `vscode.debug.startDebugging`. It first waits for `azureLogicAppsStandard.debugLogicApp`
+ * to appear in the command registry (`waitForLogicAppsExtension()` in
+ * codefulTaskRecorderExtension/main.js), which is bounded at 360 s and ALWAYS writes a
+ * `debugStartFailed` entry when it expires. Keep this in sync with that bound: it is what
+ * lets us conclude that a `debugStart` with no follow-up past this window is stuck inside
+ * `startDebugging` itself rather than still waiting for the LA extension to activate.
+ */
+const RECORDER_COMMAND_REGISTRATION_TIMEOUT_MS = 360_000;
+
+/** Grace period on top of the recorder's own bounded wait before a lone `debugStart` is called a hang. */
+const DEBUG_START_GRACE_MS = 60_000;
+
+/**
+ * How long a `debugStart` entry may sit with neither `debugStarted` nor `debugStartFailed`
+ * following it — and with no task activity at all — before we fail fast instead of burning
+ * the full 12-minute `waitForTaskChain` budget and reporting the misleading
+ * "F5 never reached the codeful task chain".
+ *
+ * The recorder appends `debugStart` immediately before calling `startDebugCommand()` and
+ * appends `debugStarted` / `debugStartFailed` after it settles, so "debugStart present,
+ * neither follow-up, and not a single task event" is the precise signature of a
+ * `vscode.debug.startDebugging` that never returned — i.e. the `logicapp` debug provider's
+ * `resolveDebugConfiguration` is awaiting a blocking modal (historically the
+ * `Failed to verify "AzureWebJobsStorage" connection` / `Debug anyway` warning raised by
+ * `validatePreDebug` when Azurite was not ready), which nothing can answer headlessly.
+ */
+const DEBUG_START_HANG_TIMEOUT_MS = RECORDER_COMMAND_REGISTRATION_TIMEOUT_MS + DEBUG_START_GRACE_MS;
+
 function getWorkspaceDir(envVar: string): string {
   const value = process.env[envVar];
   if (!value || !fs.existsSync(value)) {
@@ -199,11 +232,14 @@ interface WaitResult {
   publishEnded: boolean;
   funcHostStarted: boolean;
   timedOut: boolean;
+  /** `vscode.debug.startDebugging` was dispatched but never settled — see DEBUG_START_HANG_TIMEOUT_MS. */
+  debugStartHung: boolean;
 }
 
 async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: string, timeoutMs: number): Promise<WaitResult> {
   const deadline = Date.now() + timeoutMs;
   const target = normalizeFsPath(workspaceScope);
+  let debugStartObservedAt: number | undefined;
   while (Date.now() < deadline) {
     const events = readEvents();
     const matchScope = events.filter((e) => normalizeFsPath(e.scopeFsPath) === target);
@@ -212,15 +248,42 @@ async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: st
     const funcHostStarted = matchScope.some((e) => e.phase === 'taskStart' && e.taskName === 'func: host start');
     const expectedChainEnded = variant === 'legacy' ? buildEnded && publishEnded && funcHostStarted : buildEnded && funcHostStarted;
     if (expectedChainEnded) {
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: false };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: false, debugStartHung: false };
     }
     if (events.some((e) => e.phase === 'debugStartFailed')) {
       console.log('[codefulDebugTasks] waitForTaskChain: debugStartFailed event observed, bailing out');
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: true };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: false };
+    }
+
+    // Hang guard: the recorder logged `debugStart` (it is inside
+    // `vscode.debug.startDebugging`) but nothing ever came back — no
+    // `debugStarted`, no `debugStartFailed`, and not a single task event from any
+    // scope. A healthy run always produces task activity (clean/build) long before
+    // `startDebugging` resolves, so this combination only happens when the F5
+    // pre-debug path is blocked on a modal. Fail fast instead of waiting out the
+    // full timeout.
+    const sawDebugStart = events.some((e) => e.phase === 'debugStart');
+    if (sawDebugStart && debugStartObservedAt === undefined) {
+      debugStartObservedAt = Date.now();
+    }
+    const debugStartSettled = events.some((e) => e.phase === 'debugStarted' || e.phase === 'debugStartFailed');
+    const sawTaskActivity = events.some((e) => TASK_ACTIVITY_PHASES.has(e.phase));
+    if (
+      debugStartObservedAt !== undefined &&
+      !debugStartSettled &&
+      !sawTaskActivity &&
+      Date.now() - debugStartObservedAt >= DEBUG_START_HANG_TIMEOUT_MS
+    ) {
+      console.log(
+        `[codefulDebugTasks] waitForTaskChain: debugStart observed ${Math.round(
+          (Date.now() - debugStartObservedAt) / 1000
+        )}s ago with no debugStarted/debugStartFailed and no task activity — treating vscode.debug.startDebugging as hung`
+      );
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: true };
     }
     await sleep(1000);
   }
-  return { buildEnded: false, publishEnded: false, funcHostStarted: false, timedOut: true };
+  return { buildEnded: false, publishEnded: false, funcHostStarted: false, timedOut: true, debugStartHung: false };
 }
 
 async function waitForDesignTimeEvidence(workspaceScope: string, notBeforeMs: number, timeoutMs = 180_000): Promise<boolean> {
@@ -429,6 +492,21 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     // never starts.
     const wait = await waitForTaskChain(variant, workspaceDir, 720_000);
     console.log(`[codefulDebugTasks] waitForTaskChain: ${JSON.stringify(wait)}`);
+
+    // F5 was dispatched but `vscode.debug.startDebugging` never settled and no task
+    // ever ran. Report the actual cause here rather than letting the run fall through
+    // to the generic "F5 never reached the codeful task chain" failure 13 minutes later.
+    if (wait.debugStartHung) {
+      await captureScreenshot(driver, `${variant}-debug-start-hung`, SCREENSHOT_DIR);
+      assert.fail(
+        `[${variant}] vscode.debug.startDebugging never settled: the recorder logged 'debugStart' but neither ` +
+          `'debugStarted' nor 'debugStartFailed' arrived within ${DEBUG_START_HANG_TIMEOUT_MS}ms, and no task event was ` +
+          'captured at all. The likely cause is a blocking modal in the F5 pre-debug path — historically the ' +
+          '`Failed to verify "AzureWebJobsStorage" connection` / `Debug anyway` warning from validatePreDebug when ' +
+          'Azurite is not ready — which cannot be answered in a headless session, so resolveDebugConfiguration awaits ' +
+          `forever. Screenshot: ${SCREENSHOT_DIR}`
+      );
+    }
 
     // Give func host start a chance to spawn so we capture its taskStart event.
     if (!wait.funcHostStarted) {

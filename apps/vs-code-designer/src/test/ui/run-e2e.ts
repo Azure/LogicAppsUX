@@ -1424,6 +1424,14 @@ async function main(): Promise<void> {
   const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
   const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
 
+  // Phase 4.13 — Azurite readiness regression guard (create + assert pair).
+  // 4.13A drives the real Create Workspace webview; 4.13B reopens the generated
+  // .code-workspace in a fresh session, binds Azurite's ports so it cannot start,
+  // presses F5, and asserts the bounded "Azurite did not become ready" error
+  // surfaces instead of the blocking AzureWebJobsStorage modal.
+  const phase413CreateFiles = [testFile('azuriteAutostartFailure.test.js')];
+  const phase413AssertFiles = [testFile('azuriteAutostartFailureAssert.test.js')];
+
   // Phase 4.11 — Bundle CDN integrity probe. Pure Mocha (no ExTester / VS Code).
   // Verifies that cdn.functions.azure.com still emits Content-Length +
   // Content-MD5 headers we depend on for download integrity verification, and
@@ -2097,6 +2105,65 @@ namespace ${namespaceName}
     return Math.max(modernExit, legacyExit);
   };
 
+  // Phase 4.13 — Azurite readiness regression guard.
+  //
+  // D-001 create-and-reopen pair, same shape as runCodefulDebugPhases():
+  //   4.13A  azuriteAutostartFailure.test.js       — Create Workspace webview run.
+  //   4.13B  azuriteAutostartFailureAssert.test.js — fresh session on the generated
+  //          .code-workspace; binds TCP 10000/10001/10002 so Azurite physically
+  //          cannot start, presses F5, and asserts the bounded "Azurite did not
+  //          become ready" error surfaces while the modal
+  //          'Failed to verify "AzureWebJobsStorage" connection' / "Debug anyway"
+  //          warning never does (a modal cannot be answered headlessly, which is
+  //          exactly the 12-minute F5 hang this guards).
+  //
+  // Both test files read AZURITE_E2E_STEP at module scope and derive their paths
+  // from AZURITE_E2E_WORKSPACE_PARENT. ExTester runs Mocha inside THIS Node process
+  // and runPhase() clears require.cache for the files it is about to run, so
+  // flipping AZURITE_E2E_STEP between the two phases is what selects the create vs
+  // assert body — the same env-gate mechanism Phase 4.1b / Phase 4.10A use for
+  // createWorkspace.behavior.test.js. The parent dir is pinned here rather than
+  // left to the tests' os.tmpdir() default so the launcher's `resources` path and
+  // the tests' WORKSPACE_FILE are guaranteed to be the same string.
+  const azuriteWorkspaceParent = path.join(os.tmpdir(), 'la-e2e-test', 'azurite-autostart-failure-parent');
+  const azuriteWorkspaceFile = path.join(azuriteWorkspaceParent, 'azuritews', 'azuritews.code-workspace');
+
+  const runAzuriteReadinessPhases = async (labelPrefix: string): Promise<number> => {
+    process.env.AZURITE_E2E_WORKSPACE_PARENT = azuriteWorkspaceParent;
+    console.log(`  Azurite workspace parent: ${azuriteWorkspaceParent}`);
+    console.log(`  Azurite workspace file:   ${azuriteWorkspaceFile}`);
+
+    // 4.13A is the first session of this mode, so dependency validation is ON
+    // (downloads/validates func, dotnet and node) exactly like Phase 4.1 / 4.10A.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+    process.env.AZURITE_E2E_STEP = 'create';
+    await prepareFreshSession(`${labelPrefix}-phase413a-create`);
+    const createExit = await runPhase('Phase 4.13A: create Azurite readiness workspace', phase413CreateFiles);
+    if (createExit !== 0) {
+      console.log(`\n⚠ Phase 4.13A exited with code ${createExit}; skipping Phase 4.13B`);
+      delete process.env.AZURITE_E2E_STEP;
+      return createExit;
+    }
+
+    if (!fs.existsSync(azuriteWorkspaceFile)) {
+      console.log(`\n⚠ Phase 4.13A did not produce ${azuriteWorkspaceFile}; skipping Phase 4.13B`);
+      delete process.env.AZURITE_E2E_STEP;
+      return 1;
+    }
+
+    // 4.13B keeps design-time auto-start ON because the assertion test waits for
+    // <app>/workflow-designtime as its readiness gate before pressing F5.
+    writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+    process.env.AZURITE_E2E_STEP = 'assert';
+    await prepareFreshSession(`${labelPrefix}-phase413b-assert`);
+    const assertExit = await runPhase('Phase 4.13B: assert Azurite readiness failure', phase413AssertFiles, {
+      resources: [azuriteWorkspaceFile],
+    });
+    delete process.env.AZURITE_E2E_STEP;
+
+    return Math.max(createExit, assertExit);
+  };
+
   try {
     const getPhase2Resources = (): string[] => {
       const manifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
@@ -2443,6 +2510,12 @@ namespace ${namespaceName}
       await downloadExTesterAssets();
       const phase10Exit = await runCodefulDebugPhases('phase10-only');
       process.exit(phase10Exit);
+    }
+
+    if (e2eMode === 'azuriteonly') {
+      await downloadExTesterAssets();
+      const phase413Exit = await runAzuriteReadinessPhases('phase413-only');
+      process.exit(phase413Exit);
     }
 
     // bundleintegrityonly is handled by the early short-circuit at the top

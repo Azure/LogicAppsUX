@@ -680,26 +680,26 @@ jobs:
     # Exercises the codeful F5 debug path (workspace opens, design-time Node worker,
     # dotnet build, task chain).
     #
-    # ADVISORY (continue-on-error) BY DESIGN IN THIS PR — do not promote yet.
-    # The deterministic part of this job is already a real regression guard: the
-    # design-time FUNCTIONS_WORKER_RUNTIME=node assertion (the Option B guard for the
-    # MSB3026 `lib/codeful` DLL lock this PR fixes) passes on every observed run,
-    # cold or warm, on both OSes.
+    # BLOCKING as of this PR — promoted from advisory.
     #
-    # The *F5 task-chain* assertions layered on top are still intermittently flaky, and
-    # the cause is known and out of scope here: `preDebugValidate` →
-    # `validateEmulatorIsRunning` races Azurite startup and pops the
-    # headless-unanswerable "Failed to verify AzureWebJobsStorage connection" modal,
-    # which cancels the debug session before any task is dispatched (symptom: 12-minute
-    # F5 wait, `events captured=1`, buildStart:0). Byte-identical code has produced both
-    # green and red runs purely on that race.
+    # These legs landed advisory (continue-on-error) in #9463 because the F5 task-chain
+    # assertions rode an unfixed Azurite startup race: `preDebugValidate` →
+    # `validateEmulatorIsRunning` raced Azurite startup and popped the
+    # headless-unanswerable "Failed to verify AzureWebJobsStorage connection" modal.
+    # Because that modal is `modal: true`, the awaited `showWarningMessage` never
+    # resolved, so `vscode.debug.startDebugging()` itself never settled. Proven
+    # signature: a lone `debugStart` event with no `debugStarted`/`debugStartFailed`,
+    # a 12-minute wait, `events captured=1`, buildStart:0. Byte-identical code produced
+    # both green and red runs purely on that race.
     #
-    # The fix for that race (waitForAzuriteReady retry/backoff in activateAzurite +
-    # ValidateEmulatorOptions in validatePreDebug) is a separate change set that is
-    # deliberately NOT in this PR. Once it lands, drop `continue-on-error` here and add
-    # this job back to the vscode-e2e-summary hard gate — that promotion is the concrete
-    # deliverable of the follow-up PR.
-    continue-on-error: true
+    # This PR removes the race at the source: `activateAzurite` now awaits
+    # `waitForAzuriteReady()` — non-prompting readiness polling that throws a real error
+    # instead of showing a modal — and it runs BEFORE `preDebugValidate`, so the modal
+    # branch is unreachable. Phase 4.13 covers the failure mode directly by binding
+    # Azurite's ports and asserting the modal never appears. `codefulDebugTasks` also
+    # now fails fast if a debug start ever hangs again, instead of burning the timeout.
+    #
+    # With the race gone these legs are deterministic, so they are required checks again.
     timeout-minutes: 45
     runs-on: ubuntu-latest
     defaults:
@@ -826,6 +826,135 @@ jobs:
         if: always()
         with:
           name: vscode-e2e-screenshots-codeful-ubuntu-latest
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # Azurite readiness regression guard (Phase 4.13).
+  #
+  # This is the direct regression test for the bug this PR fixes. Before the fix,
+  # `preDebugValidate` -> `validateEmulatorIsRunning` could run while Azurite was
+  # still starting; the blob probe threw and the catch branch awaited a
+  # `modal: true` warning ("Failed to verify AzureWebJobsStorage connection").
+  # Nothing can answer a modal headlessly, so the await never resolved and
+  # `vscode.debug.startDebugging()` itself never settled — a lone `debugStart`
+  # event, no `debugStarted`/`debugStartFailed`, and a 12-minute hang.
+  #
+  # Rather than hope for the race, Phase 4.13 FORCES it deterministically: the test
+  # binds TCP 10000/10001/10002 so Azurite physically cannot start, then presses F5
+  # and asserts (a) the new "Azurite did not become ready" error surfaces, (b) the
+  # "Failed to verify AzureWebJobsStorage connection" modal never appears, (c) no
+  # "Debug anyway" affordance appears, and (d) the debug toolbar is not shown.
+  # Because the failure is forced rather than raced, this job is deterministic and
+  # is gated in vscode-e2e-summary from the start.
+  #
+  # Restore-only cache: the Linux entry is kept warm by setup-fixtures and the
+  # vscode-e2e scenario matrix, so this job never needs to save. That also avoids
+  # adding another writer to `la-runtime-deps-Linux-v1`.
+  vscode-e2e-azurite:
+    name: vscode-e2e-azurite (ubuntu-latest)
+    needs: setup-extension-build
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      # The test binds 10000-10002 itself and fails loudly if it cannot. Assert the
+      # ports are free up front so a pre-existing emulator on the image is reported
+      # as an infrastructure problem rather than a product regression.
+      - name: Verify Azurite ports are free
+        run: |
+          for port in 10000 10001 10002; do
+            if ss -ltn "sport = :$port" | tail -n +2 | grep -q .; then
+              echo "::error::Port $port is already in use; Phase 4.13 needs to bind it to simulate an unavailable Azurite."
+              ss -ltnp "sport = :$port" || true
+              exit 1
+            fi
+            echo "port $port: free"
+          done
+
+      - name: Restore Logic Apps runtime dependencies
+        id: la-deps-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Report runtime dependency cache state
+        run: |
+          echo "cache-hit:         ${{ steps.la-deps-cache.outputs.cache-hit }}"
+          echo "cache-matched-key: ${{ steps.la-deps-cache.outputs.cache-matched-key }}"
+
+      - name: Run Azurite readiness E2E
+        run: |
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          E2E_MODE: azuriteonly
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-azurite
           path: |
             ${{ runner.temp }}/test-resources/screenshots/
             test-resources/screenshots/
@@ -1016,13 +1145,10 @@ jobs:
     # execute auto-provisioned func.exe" theory is disproven. That is what
     # setup-runtime-deps-windows below fixes, and it is a genuine win in this PR.
     #
-    # ADVISORY (continue-on-error) BY DESIGN IN THIS PR — same reason as the ubuntu
-    # leg above: the F5 task-chain assertions still ride on the unfixed Azurite
-    # startup race, which is intentionally left to a follow-up change set. The
-    # deterministic design-time worker=node guard (this PR's actual regression
-    # signal) is exercised here cross-platform and passes every run. Promote both
-    # legs together once the Azurite readiness fix lands.
-    continue-on-error: true
+    # BLOCKING as of this PR — promoted from advisory alongside the ubuntu leg above,
+    # for the same reason: the Azurite readiness fix in this change set removes the
+    # startup race that made the F5 task-chain assertions intermittently hang. See the
+    # ubuntu leg for the full explanation of the race and the fix.
     needs: [setup-extension-build, setup-runtime-deps-windows]
     timeout-minutes: 45
     runs-on: windows-latest
@@ -1259,7 +1385,7 @@ jobs:
   # ("vscode-e2e-summary") regardless of how many scenarios we add later.
   vscode-e2e-summary:
     name: vscode-e2e-summary
-    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-compat, setup-runtime-deps-windows]
+    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-compat, setup-runtime-deps-windows]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -1269,28 +1395,30 @@ jobs:
           echo "setup-fixtures:             ${{ needs.setup-fixtures.result }}"
           echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"
           echo "vscode-e2e-windows:         ${{ needs.vscode-e2e-windows.result }}"
-          echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }} (advisory, not gated: F5 task chain rides the unfixed Azurite startup race)"
-          echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }} (advisory, not gated: same Azurite race; runtime-deps cache now warm)"
+          echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }}"
+          echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }}"
+          echo "vscode-e2e-azurite:         ${{ needs.vscode-e2e-azurite.result }}"
           echo "setup-runtime-deps-windows: ${{ needs.setup-runtime-deps-windows.result }} (advisory, not gated: seeds la-runtime-deps-Windows-v1)"
           echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
              [ "${{ needs.setup-fixtures.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-windows.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-codeful-ubuntu.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-codeful-windows.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-azurite.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-compat.result }}" != "success" ]; then
             echo "::error::One or more required vscode-e2e jobs failed"
             exit 1
           fi
-          # Both codeful legs are ADVISORY in this PR and are deliberately excluded
-          # from the hard gate above. They run the real codeful F5 flow and their
-          # deterministic design-time worker=node assertion (the Option B guard for
-          # the MSB3026 lib/codeful DLL lock) passes every run on both OSes — but the
-          # F5 task-chain assertions layered on top still ride on the unfixed Azurite
-          # startup race (preDebugValidate -> validateEmulatorIsRunning pops a
-          # headless-unanswerable AzureWebJobsStorage modal that cancels the debug
-          # session). Gating on them today would make a required check flaky. The
-          # Azurite readiness fix is a separate change set; promoting BOTH legs to
-          # blocking is the concrete deliverable of that follow-up PR.
+          # Both codeful legs are BLOCKING as of this PR. They were advisory in #9463
+          # only because the F5 task-chain assertions rode an unfixed Azurite startup
+          # race (preDebugValidate -> validateEmulatorIsRunning popped a
+          # headless-unanswerable AzureWebJobsStorage modal, so startDebugging never
+          # settled). This change set fixes that race at the source and adds
+          # vscode-e2e-azurite, which reproduces the failure deliberately by binding
+          # Azurite's ports and asserting the modal never appears. Promoting both legs
+          # was the stated deliverable of this follow-up.
           #
           # setup-runtime-deps-windows is deliberately NOT gated and stays
           # continue-on-error. It is a cache-seeding job: once
