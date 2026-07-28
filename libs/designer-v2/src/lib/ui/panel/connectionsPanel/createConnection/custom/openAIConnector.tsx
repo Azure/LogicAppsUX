@@ -32,7 +32,7 @@ import constants from '../../../../../common/constants';
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues, value } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues, value, parameterSet } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>('');
@@ -303,13 +303,22 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     refetchAPIManagementAccounts();
   }, [refetchAPIManagementAccounts]);
 
+  // The API key is only relevant to URL/key-based auth. Managed Identity (and other keyless
+  // auth types) omit the `openAIKey` parameter, so fetching account keys (listKeys) for them
+  // is unnecessary. Gate the key fetch on the selected auth set actually declaring `openAIKey`.
+  const authRequiresAccountKey = useMemo(() => !!parameterSet?.parameters?.['openAIKey'], [parameterSet]);
+
   const onSetOpenAIValues = useCallback(
     async (newValue: string) => {
       setLoadingAccountDetails(true);
-      await Promise.all([setAPIEndpoint(newValue), setAPIKey(newValue)]);
+      const tasks = [setAPIEndpoint(newValue)];
+      if (authRequiresAccountKey) {
+        tasks.push(setAPIKey(newValue));
+      }
+      await Promise.all(tasks);
       setLoadingAccountDetails(false);
     },
-    [setAPIEndpoint, setAPIKey]
+    [setAPIEndpoint, setAPIKey, authRequiresAccountKey]
   );
 
   const roleResourceId = useMemo(() => {
