@@ -1,5 +1,4 @@
 import {
-  localSettingsFileName,
   workflowTenantIdKey,
   workflowSubscriptionIdKey,
   workflowResourceGroupNameKey,
@@ -228,9 +227,8 @@ export async function getAzureConnectorDetailsForLocalProject(
     return cached.details;
   }
 
-  const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
   const connectorsContext = context as IAzureConnectorsContext;
-  const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
+  const localSettings = await getLocalSettingsJson(context, projectPath);
   let tenantId = localSettings.Values![workflowTenantIdKey];
   let subscriptionId = localSettings.Values![workflowSubscriptionIdKey];
   let resourceGroupName = localSettings.Values![workflowResourceGroupNameKey];
@@ -424,7 +422,7 @@ export async function verifyDeploymentResourceGroup(
   workflowResourceGroupRemote: string,
   originalDeployFsPath: string
 ): Promise<void> {
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(originalDeployFsPath, localSettingsFileName));
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, originalDeployFsPath);
   const workflowResourceGroupLocal: string = localSettings.Values[workflowResourceGroupNameKey];
 
   if (workflowResourceGroupLocal && workflowResourceGroupLocal.toLowerCase() !== workflowResourceGroupRemote.toLowerCase()) {

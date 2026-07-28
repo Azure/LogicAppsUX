@@ -597,7 +597,6 @@ describe('projectFilesConsistency', () => {
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths.some((p) => p.includes('host.json'))).toBe(true);
       expect(writtenPaths.some((p) => p.includes('local.settings.json'))).toBe(true);
-      expect(mockedAddOrUpdate).toHaveBeenCalled();
     });
 
     it('regenerates the design-time settings on the Node worker when the fallback is enabled', async () => {
@@ -607,9 +606,9 @@ describe('projectFilesConsistency', () => {
 
       await ensureDesignTimeFiles(context, projectPath);
 
-      const runtimeSettings = mockedAddOrUpdate.mock.calls[0]?.[2] as Record<string, string>;
-      expect(runtimeSettings[workerRuntimeKey]).toBe(WorkerRuntime.Node);
-      expect(runtimeSettings[functionsInprocNet8Enabled]).toBeUndefined();
+      const written = writtenContentFor('local.settings.json') as { Values: Record<string, string> };
+      expect(written.Values[workerRuntimeKey]).toBe(WorkerRuntime.Node);
+      expect(written.Values[functionsInprocNet8Enabled]).toBeUndefined();
     });
 
     it('preserves valid existing files and does not rewrite them', async () => {
@@ -713,17 +712,6 @@ describe('projectFilesConsistency', () => {
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
           },
         });
-        expect(mockedAddOrUpdate).toHaveBeenCalledWith(
-          context,
-          expect.stringContaining('workflow-designtime'),
-          {
-            [appKindSetting]: logicAppKind,
-            [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
-            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
-          },
-          true
-        );
       });
 
       it('writes design-time local.settings.json with WORKFLOW_CODEFUL_ENABLED for a codeful project', async () => {
@@ -738,8 +726,7 @@ describe('projectFilesConsistency', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
-            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+            [workerRuntimeKey]: WorkerRuntime.Node,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
           },
@@ -771,8 +758,7 @@ describe('projectFilesConsistency', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
-            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+            [workerRuntimeKey]: WorkerRuntime.Node,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
           },

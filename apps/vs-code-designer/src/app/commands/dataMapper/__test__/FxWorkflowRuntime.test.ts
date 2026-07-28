@@ -61,6 +61,10 @@ vi.mock('../../../projectConsistency/fileGenerators', () => ({
   generateDesignTimeLocalSettingsJson: vi.fn(() => ({ Values: {} })),
 }));
 
+vi.mock('../../../utils/project', () => ({
+  detectProjectType: vi.fn().mockResolvedValue('logicApp'),
+}));
+
 vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
   getFunctionsCommand: vi.fn(() => 'func'),
 }));
@@ -72,7 +76,7 @@ describe('startBackendRuntime', () => {
   const settingsSchemaSentinel = { Values: { SENTINEL: 'schema-content' } };
   const mockedAppendLine = vi.mocked(ext.outputChannel.appendLine);
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     ext.designTimeInstances.clear();
 
@@ -82,6 +86,8 @@ describe('startBackendRuntime', () => {
     vi.mocked(useNodeDesignTimeWorker).mockReturnValue(false);
     vi.mocked(generateDesignTimeLocalSettingsJson).mockReturnValue(settingsSchemaSentinel as any);
     vi.mocked(getFunctionsCommand).mockReturnValue('func');
+    const projectMod = await import('../../../utils/project');
+    vi.mocked(projectMod.detectProjectType).mockResolvedValue('logicApp' as any);
     vi.mocked(waitForDesignTimeStartUp).mockResolvedValue(undefined as any);
   });
 
@@ -96,7 +102,7 @@ describe('startBackendRuntime', () => {
     expect(isDesignTimeUp).toHaveBeenCalledWith(expectedUrl);
 
     // Design-time settings are built for the dotnet worker (useNodeWorker === false).
-    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, undefined, false);
+    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, 'logicApp', false);
 
     // Both baseline files are written to the design-time directory.
     expect(createJsonFile).toHaveBeenCalledWith(designTimeDir, hostFileName, hostFileContent);
@@ -125,7 +131,7 @@ describe('startBackendRuntime', () => {
 
     await startBackendRuntime(context, projectPath);
 
-    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, undefined, true);
+    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, 'logicApp', true);
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(
       context,
       designTimeDir.fsPath,

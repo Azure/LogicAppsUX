@@ -1,6 +1,5 @@
 import {
   assetsFolderName,
-  localSettingsFileName,
   logicAppsStandardExtensionId,
   managementApiPrefix,
   workflowAppApiVersion,
@@ -487,7 +486,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
         getAzureConnectorDetailsForLocalProject(this.context, projectPath),
       ]);
 
-    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
+    const localSettings = (await getLocalSettingsJson(this.context, projectPath)).Values!;
 
     return {
       panelId: this.panelName,

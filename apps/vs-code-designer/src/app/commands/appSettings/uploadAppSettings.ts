@@ -13,7 +13,6 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
-import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { StringDictionary } from '@azure/arm-appservice';
 import { isString } from '@microsoft/logic-apps-shared';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
@@ -21,23 +20,28 @@ import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
 /**
  * Uploads local settings file to the portal.
  * @param {IActionContext} context - Command context.
  * @param {AppSettingsTreeItem} node - App settings node structure.
- * @param {vscode.WorkspaceFolder} workspacePath - Workspace folder path.
+ * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace folder.
  * @param {(RegExp | string)[]} exclude - Array of settings to exclude from uploading.
  * @returns {Promise<string>} Workspace file path.
  */
 export async function uploadAppSettings(
   context: IActionContext,
   node?: AppSettingsTreeItem,
-  workspacePath?: vscode.WorkspaceFolder,
+  workspaceFolder?: vscode.WorkspaceFolder,
   exclude?: (RegExp | string)[]
 ): Promise<void> {
-  const message: string = localize('selectLocalSettings', 'Select the local settings file to upload.');
-  const localSettingsPath: string = await getLocalSettingsFile(context, message, workspacePath);
+  // TODO(aeldridge): Defaults to the first workspace folder. Should prompt to select logic app across all workspace folders.
+  workspaceFolder = workspaceFolder || vscode.workspace.workspaceFolders?.[0];
+  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, false /* suppressPrompt */);
+  if (!projectPath) {
+    throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
+  }
 
   if (!node) {
     node = await ext.rgApi.pickAppResource<AppSettingsTreeItem>(context, {
@@ -49,7 +53,7 @@ export async function uploadAppSettings(
   const client: IAppSettingsClient = await node.clientProvider.createClient(context);
 
   ext.outputChannel.show(true);
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
 
   if (localSettings.Values) {
     const remoteSettings: StringDictionary = await client.listApplicationSettings();

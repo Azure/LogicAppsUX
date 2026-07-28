@@ -59,7 +59,7 @@ describe('enableAzureConnectors', () => {
     await enableAzureConnectors(context, { fsPath: 'D:\\workspace\\LogicApp\\workflow.json' } as vscode.Uri);
 
     expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context, 'D:\\workspace\\LogicApp\\workflow.json');
-    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, path.join(projectPath, localSettingsFileName));
+    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, projectPath);
     expect(createAzureWizard).toHaveBeenCalledWith(context, projectPath);
     expect(prompt).toHaveBeenCalled();
     expect(execute).toHaveBeenCalled();

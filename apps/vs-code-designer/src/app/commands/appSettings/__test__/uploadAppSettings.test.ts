@@ -7,6 +7,7 @@ import {
   workflowTenantIdKey,
 } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
+import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getLocalSettingsFile } from '../getLocalSettingsFile';
 import { uploadAppSettings } from '../uploadAppSettings';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
@@ -16,8 +17,25 @@ vi.mock('../../../../localize', () => ({
     defaultValue.replace(/{(\d+)}/g, (_match, index) => String(args[Number(index)] ?? '')),
 }));
 
+vi.mock('vscode', () => ({
+  workspace: {
+    workspaceFolders: [{ uri: { fsPath: '/mock/workspace' } }],
+  },
+  window: {
+    showInformationMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
+    withProgress: vi.fn((_opts: unknown, task: (p: unknown) => unknown) => task({ report: vi.fn() })),
+  },
+  ProgressLocation: { Notification: 15 },
+  Uri: { file: (p: string) => ({ fsPath: p }) },
+}));
+
 vi.mock('../getLocalSettingsFile', () => ({
   getLocalSettingsFile: vi.fn(),
+}));
+
+vi.mock('../../../utils/verifyIsProject', () => ({
+  tryGetLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project'),
 }));
 
 vi.mock('../../../utils/appSettings/localSettings', () => ({
@@ -42,10 +60,13 @@ describe('uploadAppSettings', () => {
 
   const portalSubscriptionId = 'real-portal-subscription-id';
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
     (getLocalSettingsFile as Mock).mockResolvedValue('D:\\workspace\\LogicApp\\local.settings.json');
+    (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/mock/project');
+    const vscode = await import('vscode');
+    (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/mock/workspace' } }];
 
     updateApplicationSettings = vi.fn();
     const client = {

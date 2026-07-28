@@ -20,7 +20,7 @@ import {
 } from '../../../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import path from 'path';
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
+import { managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
 import type { WebviewPanel } from 'vscode';
 import { env, Uri, ViewColumn, window } from 'vscode';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
@@ -332,7 +332,7 @@ export default class ConnectionPanel extends DesignerPanel {
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
     ]);
 
-    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
+    const localSettings = (await getLocalSettingsJson(this.context, projectPath)).Values!;
 
     return {
       panelId: this.panelName,

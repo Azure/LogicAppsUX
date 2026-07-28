@@ -33,6 +33,7 @@ import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, type Uri, window } from 'vscode';
 import { generateDesignTimeLocalSettingsJson } from '../../projectConsistency/fileGenerators';
+import { detectProjectType } from '../../utils/project';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
@@ -61,8 +62,9 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
       return;
     }
 
+    const logicAppType = await detectProjectType(projectPath);
     const useNodeWorker = useNodeDesignTimeWorker(projectPath);
-    const settingsFileContent = generateDesignTimeLocalSettingsJson(projectPath, undefined, useNodeWorker);
+    const settingsFileContent = generateDesignTimeLocalSettingsJson(projectPath, logicAppType, useNodeWorker);
 
     try {
       if (designTimeDirectory) {

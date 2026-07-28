@@ -5,7 +5,6 @@
 import {
   defaultVersionRange,
   extensionBundleId,
-  localSettingsFileName,
   defaultExtensionBundlePathValue,
   bundleSourceMd5SidecarFile,
   useExperimentalExtensionBundleSettingKey,
@@ -29,6 +28,7 @@ import { createHash } from 'crypto';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
+import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 
 const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
 
@@ -67,11 +67,13 @@ interface ExtensionBundleBaseUrlResult {
  *   4. Default public CDN.
  */
 export async function getExtensionBundleBaseUrl(context: IActionContext): Promise<ExtensionBundleBaseUrlResult> {
-  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+  const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+
   let localSettingsUri: string | undefined;
   if (projectPath) {
     try {
-      localSettingsUri = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+      localSettingsUri = (await getLocalSettingsJson(context, projectPath))?.Values
         ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
     } catch {
       // Missing/invalid local.settings.json is fine; fall through to other sources.
@@ -1138,10 +1140,12 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
   const downloadExtensionBundleStartTime = Date.now();
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
-    const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+    const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+
     if (projectPath) {
       try {
-        envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+        envVarVer = (await getLocalSettingsJson(context, projectPath))?.Values
           ?.AzureFunctionsJobHost_extensionBundle_version;
       } catch {
         // ignore

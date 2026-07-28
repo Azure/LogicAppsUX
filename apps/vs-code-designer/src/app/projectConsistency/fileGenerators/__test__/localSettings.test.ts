@@ -141,8 +141,7 @@ describe('generateLocalSettingsJson / generateDesignTimeLocalSettingsJson', () =
         Values: {
           [appKindSetting]: logicAppKind,
           [ProjectDirectoryPathKey]: projectPath,
-          [workerRuntimeKey]: WorkerRuntime.Dotnet,
-          [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+          [workerRuntimeKey]: WorkerRuntime.Node,
           [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
           [workflowCodefulEnabledKey]: 'true',
         },
@@ -169,13 +168,7 @@ describe('generateLocalSettingsJson / generateDesignTimeLocalSettingsJson', () =
   describe('root key order matches the creation path', () => {
     it('orders keys like CreateLogicAppWorkspace (codeless)', () => {
       const keys = Object.keys(generateLocalSettingsJson(projectPath, ProjectType.logicApp).Values);
-      expect(keys).toEqual([
-        azureWebJobsStorageKey,
-        functionsInprocNet8Enabled,
-        workerRuntimeKey,
-        appKindSetting,
-        ProjectDirectoryPathKey,
-      ]);
+      expect(keys).toEqual([azureWebJobsStorageKey, functionsInprocNet8Enabled, workerRuntimeKey, appKindSetting, ProjectDirectoryPathKey]);
     });
 
     it('orders keys deterministically for codeful (base keys, then feature flag, then codeful flag)', () => {

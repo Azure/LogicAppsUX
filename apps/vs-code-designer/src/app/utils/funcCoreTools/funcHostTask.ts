@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
+import { defaultFuncPort, stopFuncTaskPostDebugSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
@@ -10,7 +10,6 @@ import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { registerEvent } from '@microsoft/vscode-azext-utils';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { delay } from '../delay';
 import * as cp from 'child_process';
@@ -140,7 +139,7 @@ export async function getFuncPortFromTaskOrProject(
     }
 
     if (projectPath) {
-      const localSettings = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
+      const localSettings = await getLocalSettingsJson(context, projectPath);
       if (localSettings.Host) {
         const key = Object.keys(localSettings.Host).find((k) => k.toLowerCase() === 'localhttpport');
         if (key && localSettings.Host[key]) {

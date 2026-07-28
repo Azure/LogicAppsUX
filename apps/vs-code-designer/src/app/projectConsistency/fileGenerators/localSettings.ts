@@ -78,7 +78,7 @@ export function generateDesignTimeLocalSettingsJson(
   if (projectPath) {
     values[ProjectDirectoryPathKey] = projectPath;
   }
-  if (useNodeWorker) {
+  if (useNodeWorker || logicAppType === ProjectType.codeful) {
     values[workerRuntimeKey] = WorkerRuntime.Node;
   } else {
     values[workerRuntimeKey] = WorkerRuntime.Dotnet;

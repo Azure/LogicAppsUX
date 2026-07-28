@@ -63,6 +63,10 @@ vi.mock('../../../utils/verifyIsProject', () => ({
   isLogicAppProject: vi.fn(),
 }));
 
+vi.mock('../../../utils/appSettings/localSettings', () => ({
+  getLocalSettingsJson: vi.fn().mockResolvedValue({ Values: {} }),
+}));
+
 vi.mock('../generateDeploymentScriptsSteps/DeploymentScriptTypeStep', () => ({
   DeploymentScriptTypeStep: vi.fn(),
 }));
@@ -87,6 +91,8 @@ describe('generateDeploymentScripts', () => {
     (isLogicAppProject as Mock).mockResolvedValue(true);
     (getWorkspaceFolder as Mock).mockResolvedValue({} as vscode.WorkspaceFolder);
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('projectRoot');
+    const localSettingsMod = await import('../../../utils/appSettings/localSettings');
+    vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     (AzureWizard as Mock).mockImplementation(() => ({
       prompt: vi.fn().mockResolvedValue({}),
       execute: vi.fn().mockResolvedValue({}),

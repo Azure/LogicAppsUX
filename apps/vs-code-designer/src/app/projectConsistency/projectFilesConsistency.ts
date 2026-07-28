@@ -10,7 +10,6 @@ import {
   extensionBundleId,
   hostFileName,
   localSettingsFileName,
-  logicAppKind,
   parametersFileName,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
@@ -33,7 +32,7 @@ import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../utils/appS
 import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import { type ILocalSettingsJson, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -187,7 +186,7 @@ export async function ensureLocalSettingsFile(
   const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
-  const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
   const currentValues = currentSettings.Values ?? {};
 
   const settingsToAdd: Record<string, string> = {};
@@ -308,15 +307,6 @@ export async function ensureDesignTimeFiles(
     const useNodeWorker = useNodeDesignTimeWorker(projectPath);
     const settingsFileContent = generateDesignTimeLocalSettingsJson(projectPath, logicAppType, useNodeWorker);
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, localSettingsFileName), settingsFileContent);
-    const runtimeSettings: Record<string, string> = {
-      [appKindSetting]: logicAppKind,
-      [ProjectDirectoryPathKey]: projectPath,
-      [workerRuntimeKey]: useNodeWorker ? WorkerRuntime.Node : WorkerRuntime.Dotnet,
-    };
-    if (!useNodeWorker) {
-      runtimeSettings[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
-    }
-    await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, runtimeSettings, true);
     changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
@@ -348,8 +338,12 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
   }
 
   const hostFileValid = await isHostFileValid(path.join(designTimeDirectoryPath, hostFileName), true);
+
+  const localSettingsPath = path.join(designTimeDirectoryPath, localSettingsFileName);
+  const projectType = await detectProjectType(projectPath);
   const settingsFileValid = await isDesignTimeSettingsFileValid(
-    path.join(designTimeDirectoryPath, localSettingsFileName),
+    localSettingsPath,
+    projectType,
     useNodeDesignTimeWorker(projectPath)
   );
 
@@ -403,9 +397,11 @@ async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Pro
  * Validates the local.settings.json file content in the design-time directory.
  * 
  * @param {string} settingsFilePath - Absolute path to the design-time local.settings.json file.
+ * @param {ProjectType} projectType - The logic app project type.
+ * @param {boolean} useNodeWorker - Whether the design-time host is expected to run with the Node worker.
  * @returns {Promise<boolean>} True when the file is present and contains the required keys.
  */
-async function isDesignTimeSettingsFileValid(settingsFilePath: string, useNodeWorker: boolean): Promise<boolean> {
+async function isDesignTimeSettingsFileValid(settingsFilePath: string, projectType: ProjectType, useNodeWorker: boolean): Promise<boolean> {
   const content = await readFileTextSafe(settingsFilePath);
   if (!content) {
     return false;
@@ -425,7 +421,7 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string, useNodeWo
     // relies on, so require dotnet + FUNCTIONS_INPROC_NET8_ENABLED. A file left on the wrong runtime is
     // treated as invalid and regenerated.
     const workerRuntime = (values[workerRuntimeKey] ?? '').toLowerCase();
-    if (useNodeWorker) {
+    if (useNodeWorker || projectType === ProjectType.codeful) {
       return workerRuntime === WorkerRuntime.Node;
     }
     const inprocNet8Enabled = values[functionsInprocNet8Enabled] === functionsInprocNet8EnabledTrue;

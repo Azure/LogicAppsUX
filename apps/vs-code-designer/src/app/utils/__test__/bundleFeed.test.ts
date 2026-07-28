@@ -144,6 +144,10 @@ vi.mock('../appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn().mockResolvedValue({}),
 }));
 
+vi.mock('../verifyIsProject', () => ({
+  tryGetLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project/path'),
+}));
+
 // Mock the design-time launcher so we can observe the deferred post-install
 // restart fire AFTER `inFlightBundleWork` is cleared and the install result
 // is settled.
@@ -560,6 +564,8 @@ describe('getLatestVersionRange', () => {
 
 describe('getDependenciesVersion', () => {
   it('loads dependency feed using a local settings source URI override', async () => {
+    const verifyIsProjectMod = await import('../verifyIsProject');
+    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
     const mockedGetLocalSettingsJson = await import('../appSettings/localSettings');
     vi.mocked(mockedGetLocalSettingsJson.getLocalSettingsJson).mockResolvedValue({
       Values: {
@@ -875,6 +881,9 @@ describe('downloadExtensionBundle', () => {
     // Default: HEAD request returns nothing — keeps tests that don't care about sidecar simple.
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue(undefined);
+    // Re-establish tryGetLogicAppProjectRoot mock after clearAllMocks
+    const verifyIsProjectMod = await import('../verifyIsProject');
+    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
     // Reset fs-extra mocks
     mockedFse.readFile.mockReset();
     mockedFse.outputFile.mockResolvedValue(undefined as any);
@@ -1686,8 +1695,10 @@ describe('getExtensionBundleBaseUrl', () => {
     ({ getExtensionBundleBaseUrl } = await import('../bundleFeed'));
     settingsModule = await import('../vsCodeConfig/settings');
     localSettingsMod = await import('../appSettings/localSettings');
+    const verifyIsProjectMod = await import('../verifyIsProject');
     vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(undefined);
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({} as any);
+    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
   });
 
   const ctx = () => ({
@@ -2113,6 +2124,8 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(settingsMod.getGlobalSetting).mockReturnValue(undefined);
     const localSettingsMod = await import('../appSettings/localSettings');
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({} as any);
+    const verifyIsProjectMod = await import('../verifyIsProject');
+    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
     vi.mocked(fse.readFile).mockReset();
     vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
   });
