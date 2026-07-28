@@ -1967,6 +1967,12 @@ async function main(): Promise<void> {
     // Create Workspace webview completes: use built-in HTTP trigger/Response
     // APIs that compile with the package currently referenced by the template,
     // and remove the stale provider-registration call.
+    //
+    // The trigger -> action chain is captured into `workflow` and that value is passed
+    // to CreateStatefulWorkflow, mirroring the shipped
+    // assets/CodefulProjectTemplate/StatefulCodefulWorkflow template. Passing the
+    // trigger itself would work only if Then() mutates it in place, which is not a
+    // guarantee the SDK makes.
     const patchedWorkflow = `// -----------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------
@@ -1986,9 +1992,10 @@ namespace ${namespaceName}
         public FlowDefinition GetWorkflow()
         {
             var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
-            trigger.Then(WorkflowActions.BuiltIn.Response(responseBody: () => "ok"));
+            var response = WorkflowActions.BuiltIn.Response(responseBody: () => "ok");
+            var workflow = trigger.Then(response);
 
-            return WorkflowFactory.CreateStatefulWorkflow("${entry.wfName}", trigger);
+            return WorkflowFactory.CreateStatefulWorkflow("${entry.wfName}", workflow);
         }
     }
 }
