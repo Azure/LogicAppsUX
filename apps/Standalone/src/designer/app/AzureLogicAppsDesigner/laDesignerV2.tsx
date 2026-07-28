@@ -58,6 +58,7 @@ import {
   isArmResourceId,
   optional,
   BaseCognitiveServiceService,
+  AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
@@ -75,9 +76,8 @@ import {
   getSKUDefaultHostOptions,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
-  getMissingRoleDefinitions,
+  getRoleDefinitionsToAssign,
   roleQueryKeys,
-  isAgentWorkflow,
   useRun,
   setIsWorkflowDirty,
   setFocusNode,
@@ -469,33 +469,32 @@ const DesignerEditor = () => {
           ...newAgentConnections,
         };
 
-        if (isAgentWorkflow(workflow?.kind ?? '')) {
-          // Assign MSI roles if needed
-          /**
-           *  This is currently only for Agentic workflows,
-           *    but we should work to make this generic in the future
-           *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
-           *  The required roles are listed on connection parameters which we don't have access to here,
-           *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
-           *  One option is to populate that info somewhere in the connection reference for use here,
-           *    but that is unavailable at authoring time when we are populating the values that require the roles
-           */
-          for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
-            if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-              const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
-              const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-              const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
-              const assignmentPromises = [];
-              for (const roleDefinition of missingRoleAssignments) {
-                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
-              }
-              await Promise.all(assignmentPromises);
-
-              // Invalidate the cache for the role assignments
-              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
-              const queryClient = getReactQueryClient();
-              queryClient.invalidateQueries(cacheKey);
+        // Assign MSI roles if needed.
+        /**
+         *  This is keyed off the connection, not the workflow kind: agent actions are allowed in
+         *  stateful workflows too (see `useIsAgenticWorkflow`), and the runtime needs the data-plane
+         *  role for any agent action regardless of the kind of workflow hosting it.
+         *  We should work to make this generic for all connection types in the future.
+         *  The issue with making it generic is that we don't have a good way of getting the required definition ids for any given connection reference
+         *  The required roles are listed on connection parameters which we don't have access to here,
+         *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
+         *  One option is to populate that info somewhere in the connection reference for use here,
+         *    but that is unavailable at authoring time when we are populating the values that require the roles
+         */
+        for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
+          if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+            const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
+            const rolesToAssign = await getRoleDefinitionsToAssign(roleAssignmentResourceId, AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS);
+            const assignmentPromises = [];
+            for (const roleDefinition of rolesToAssign) {
+              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
             }
+            await Promise.all(assignmentPromises);
+
+            // Invalidate the cache for the role assignments
+            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
+            const queryClient = getReactQueryClient();
+            queryClient.invalidateQueries(cacheKey);
           }
         }
       }

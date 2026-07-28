@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   assetsFolderName,
-  localSettingsFileName,
   logicAppsStandardExtensionId,
   managementApiPrefix,
   workflowAppApiVersion,
@@ -49,8 +48,7 @@ import type {
   Parameter,
 } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { writeFileSync, readFileSync } from 'fs';
-import { promises as fsPromises } from 'fs';
+import { writeFileSync, readFileSync, promises as fsPromises } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
@@ -463,7 +461,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
         getAzureConnectorDetailsForLocalProject(this.context, projectPath),
       ]);
 
-    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
+    const localSettings = (await getLocalSettingsJson(this.context, projectPath)).Values!;
 
     return {
       panelId: this.panelName,

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  localSettingsFileName,
   workflowLocationKey,
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
@@ -127,8 +126,7 @@ async function getDeploymentScriptsWizardContext(context: IActionContext, projec
   wizardContext.projectPath = path.normalize(projectPath);
   wizardContext.isValidWorkspace = isMultiRootWorkspace();
 
-  const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
-  const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
+  const localSettings = await getLocalSettingsJson(context, projectPath);
 
   const {
     [workflowTenantIdKey]: defaultTenantId,

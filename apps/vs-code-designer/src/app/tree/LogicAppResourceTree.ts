@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { ContainerApp } from '@azure/arm-appcontainers';
-import { artifactsDirectory, contextValuePrefix, localSettingsFileName } from '../../constants';
+import { artifactsDirectory, contextValuePrefix } from '../../constants';
 import { localize } from '../../localize';
 import { parseHostJson } from '../funcConfig/host';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
@@ -40,7 +40,6 @@ import type {
   ILocalSettingsJson,
   IParsedHostJson,
 } from '@microsoft/vscode-extension-logic-apps';
-import * as path from 'path';
 import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappsettings';
 import { ext } from '../../extensionVariables';
 
@@ -213,10 +212,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   }
 
   public async getApplicationSettings(context: IDeployContext): Promise<ApplicationSettings> {
-    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(
-      context,
-      path.join(context.effectiveDeployFsPath, localSettingsFileName)
-    );
+    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, context.effectiveDeployFsPath);
     return localSettings.Values || {};
   }
 

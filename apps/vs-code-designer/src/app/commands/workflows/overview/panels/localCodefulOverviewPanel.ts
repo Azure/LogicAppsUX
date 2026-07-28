@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { localSettingsFileName } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
@@ -24,7 +23,7 @@ import LocalOverviewPanel from './localOverviewPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
 
 export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
@@ -59,7 +58,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
     }
 
     this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, join(this.projectPath, localSettingsFileName))).Values || {}
+      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
       : {};
 
     const fileContent = readFileSync(this.workflowFilePath, 'utf8');

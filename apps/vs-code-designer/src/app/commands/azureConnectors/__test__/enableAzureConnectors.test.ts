@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../../constants';
+import { workflowSubscriptionIdKey } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { createAzureWizard } from '../azureConnectorWizard';
 import { getLogicAppProjectRoot } from '../../../utils/codeless/connection';
@@ -42,7 +42,8 @@ vi.mock('../../../state/connectors', () => ({
 }));
 
 describe('enableAzureConnectors', () => {
-  const projectPath = 'D:\\workspace\\LogicApp';
+  const projectPath = path.join('/workspace', 'LogicApp');
+  const workflowFilePath = path.join('/workspace', 'LogicApp', 'workflow.json');
   let context: any;
 
   beforeEach(() => {
@@ -61,10 +62,10 @@ describe('enableAzureConnectors', () => {
     (getLocalSettingsJson as Mock).mockResolvedValue({ Values: {} });
     (createAzureWizard as Mock).mockReturnValue({ prompt, execute });
 
-    await enableAzureConnectors(context, { fsPath: 'D:\\workspace\\LogicApp\\workflow.json' } as vscode.Uri);
+    await enableAzureConnectors(context, { fsPath: workflowFilePath } as vscode.Uri);
 
-    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context, 'D:\\workspace\\LogicApp\\workflow.json');
-    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, path.join(projectPath, localSettingsFileName));
+    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context, workflowFilePath);
+    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, projectPath);
     expect(createAzureWizard).toHaveBeenCalledWith(context, projectPath);
     expect(prompt).toHaveBeenCalled();
     expect(execute).toHaveBeenCalled();
