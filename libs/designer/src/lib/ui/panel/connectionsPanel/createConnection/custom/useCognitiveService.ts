@@ -31,6 +31,7 @@ const queryOpts = {
 export const queryKeys = {
   allCognitiveServiceAccounts: 'allCognitiveServiceAccounts',
   allCognitiveServiceAccountsDeployments: 'allCognitiveServiceAccountsDeployments',
+  availableModelsForAccount: 'availableModelsForAccount',
   allSessionPoolAccounts: 'allSessionPoolAccounts',
   allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
   allAPIMServiceAccounts: 'allAPIMServiceAccounts',
@@ -136,6 +137,40 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
       refetchOnMount: true,
       refetchOnReconnect: true,
       enabled: !!serviceAccountId,
+    }
+  );
+};
+
+export const getAvailableModelsForAccount = async (serviceAccountId: string | undefined): Promise<any[]> => {
+  if (!serviceAccountId) {
+    return [];
+  }
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery([queryKeys.availableModelsForAccount, { serviceAccountId }], async () => {
+    return (await CognitiveServiceService().fetchAvailableModelsForAccount(serviceAccountId)) ?? [];
+  });
+};
+
+export const getAvailableModelsForConnection = async (connection: Connection): Promise<any[]> => {
+  const resourceId = connection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundryServiceConnection = foundryServiceConnectionRegex.test(resourceId ?? '');
+  const serviceAccountId = getServiceAccountId(resourceId, isFoundryServiceConnection);
+  return getAvailableModelsForAccount(serviceAccountId);
+};
+
+export const useAvailableModelsForAccount = (serviceAccountId: string | undefined, enabled = true) => {
+  return useQuery(
+    [queryKeys.availableModelsForAccount, { serviceAccountId }],
+    async () => {
+      if (serviceAccountId) {
+        return await CognitiveServiceService().fetchAvailableModelsForAccount(serviceAccountId);
+      }
+
+      return [];
+    },
+    {
+      ...queryOpts,
+      enabled: !!serviceAccountId && enabled,
     }
   );
 };

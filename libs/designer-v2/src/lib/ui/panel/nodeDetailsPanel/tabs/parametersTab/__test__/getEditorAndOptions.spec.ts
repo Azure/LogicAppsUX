@@ -156,6 +156,68 @@ describe('getEditorAndOptions', () => {
     });
   });
 
+  it('agent deployment combobox includes any ready chat-completion-capable deployment, not just hardcoded models', () => {
+    const agentOperationInfo: OperationInfo = { connectorId: 'connectionProviders/agent', operationId: 'agent' };
+    const parameter = getParameterInfo();
+    parameter.parameterName = 'deploymentId';
+    parameter.editor = 'combobox';
+
+    const deployments = [
+      // Newly released model not present in any hardcoded list — must still appear.
+      {
+        name: 'gpt-5.6-luna',
+        properties: { model: { name: 'gpt-5.6-luna' }, capabilities: { chatCompletion: 'true' }, provisioningState: 'Succeeded' },
+      },
+      // Non-chat deployment (embeddings) — must be excluded.
+      {
+        name: 'my-embeddings',
+        properties: { model: { name: 'text-embedding-3-large' }, capabilities: { embeddings: 'true' }, provisioningState: 'Succeeded' },
+      },
+      // Non-OpenAI (Foundry) chat model, no provisioningState reported — must appear.
+      { name: 'llama-chat', properties: { model: { name: 'llama-3.3-70b', format: 'Meta' }, capabilities: { chatCompletion: 'true' } } },
+      // No capabilities object at all — must be excluded (and must not throw).
+      { name: 'no-caps', properties: { model: { name: 'mystery-model' }, provisioningState: 'Succeeded' } },
+      // Capability explicitly disabled — must be excluded.
+      {
+        name: 'disabled-chat',
+        properties: { model: { name: 'gpt-4o-mini' }, capabilities: { chatCompletion: 'false' }, provisioningState: 'Succeeded' },
+      },
+      // Mixed-case capability value — equals() is case-insensitive, must appear.
+      {
+        name: 'mixed-case',
+        properties: { model: { name: 'gpt-4o' }, capabilities: { chatCompletion: 'True' }, provisioningState: 'Succeeded' },
+      },
+      // Boolean capability value — coercion must prevent a throw and still include it.
+      {
+        name: 'bool-chat',
+        properties: { model: { name: 'gpt-4.1' }, capabilities: { chatCompletion: true }, provisioningState: 'Succeeded' },
+      },
+      // Chat-capable but not yet ready — must be excluded.
+      {
+        name: 'failed-chat',
+        properties: { model: { name: 'gpt-5' }, capabilities: { chatCompletion: 'true' }, provisioningState: 'Failed' },
+      },
+      {
+        name: 'creating-chat',
+        properties: { model: { name: 'gpt-5' }, capabilities: { chatCompletion: 'true' }, provisioningState: 'Creating' },
+      },
+    ];
+
+    const result = getEditorAndOptions(agentOperationInfo, parameter, /*upstreamNodeIds: */ [], /*variables: */ {}, deployments);
+
+    expect(result).toEqual({
+      editor: 'combobox',
+      editorOptions: {
+        options: [
+          { value: 'gpt-5.6-luna', displayName: 'gpt-5.6-luna (gpt-5.6-luna)' },
+          { value: 'llama-chat', displayName: 'llama-chat (llama-3.3-70b)' },
+          { value: 'mixed-case', displayName: 'mixed-case (gpt-4o)' },
+          { value: 'bool-chat', displayName: 'bool-chat (gpt-4.1)' },
+        ],
+      },
+    });
+  });
+
   it('should support EditorService override', () => {
     const customEditorOptions = { EditorComponent: vi.fn() };
     const editorService = {

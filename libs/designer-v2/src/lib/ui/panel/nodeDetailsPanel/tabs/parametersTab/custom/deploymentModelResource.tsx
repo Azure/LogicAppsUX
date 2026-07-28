@@ -2,28 +2,72 @@ import { type ChangeState, DropdownEditor, Label, StringEditor } from '@microsof
 import {
   CognitiveServiceService,
   customLengthGuid,
+  equals,
   guid,
   LogEntryLevel,
   LoggerService,
   parseErrorMessage,
-  SUPPORTED_AGENT_OPENAI_MODELS,
-  SUPPORTED_FOUNDRY_AGENT_MODELS,
   type IEditorProps,
 } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { deploymentModelNameStyle, useDeploymentModelResourceStyles } from './styles';
 import { Button, mergeClasses, Text } from '@fluentui/react-components';
+import { useAvailableModelsForAccount } from '../../../../connectionsPanel/createConnection/custom/useCognitiveService';
 
 export const CustomDeploymentModelResource = (props: IEditorProps) => {
   const intl = useIntl();
   const { metadata, onClose } = props;
   const styles = useDeploymentModelResourceStyles();
-  const supportedModels = metadata?.agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
+  const isFoundry = metadata?.agentModelType === 'MicrosoftFoundry';
+  const resourceId = useMemo(() => metadata?.cognitiveServiceAccountId?.replace(/\/models$/, ''), [metadata?.cognitiveServiceAccountId]);
+  const { data: availableModels, isLoading: isLoadingModels } = useAvailableModelsForAccount(resourceId);
+
+  // Build the deployable-model list from the account's region model catalog, keeping only ready
+  // chat-completion models (and, for Azure OpenAI, only OpenAI-format models), deduped to the latest version.
+  const modelOptions = useMemo(() => {
+    const byName = new Map<string, { name: string; version: string; format: string; isDefault: boolean }>();
+    for (const entry of availableModels ?? []) {
+      const model = entry?.model;
+      const modelName = model?.name;
+      if (!modelName) {
+        continue;
+      }
+      const isChatCompletion = equals(String(model?.capabilities?.chatCompletion ?? ''), 'true');
+      const lifecycle = model?.lifecycleStatus;
+      const isActive = !lifecycle || (!equals(String(lifecycle), 'Deprecated') && !equals(String(lifecycle), 'Retired'));
+      const formatOk = isFoundry || equals(String(model?.format ?? ''), 'OpenAI');
+      // Only surface models deployable with the SKU we create with (GlobalStandard); otherwise the create call fails.
+      const skuOk = !Array.isArray(model?.skus) || model.skus.some((sku: any) => equals(String(sku?.name ?? ''), 'GlobalStandard'));
+      if (!isChatCompletion || !isActive || !formatOk || !skuOk) {
+        continue;
+      }
+      const isDefault = model?.isDefaultVersion === true;
+      const version = model?.version ?? '';
+      const existing = byName.get(modelName);
+      // Prefer the catalog's default version; otherwise fall back to the greatest version string.
+      const preferNew = !existing || (isDefault && !existing.isDefault) || (isDefault === existing.isDefault && version > existing.version);
+      if (preferNew) {
+        byName.set(modelName, { name: modelName, version, format: model?.format ?? 'OpenAI', isDefault });
+      }
+    }
+    return Array.from(byName.values())
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(({ name, version, format }) => ({ name, version, format }));
+  }, [availableModels, isFoundry]);
+
   const [name, setName] = useState(`model-${customLengthGuid(5)}`);
-  const [modelKey, setModelKey] = useState(supportedModels[0]);
+  const [modelKey, setModelKey] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Derive the effective selection during render so it can never point at a model that
+  // dropped out of the catalog (account/type change or refetch). Storing the key and only
+  // seeding it once could leave a stale name that resolves to no model on submit.
+  const effectiveModelKey = useMemo(
+    () => (modelKey && modelOptions.some((option) => option.name === modelKey) ? modelKey : (modelOptions[0]?.name ?? '')),
+    [modelKey, modelOptions]
+  );
 
   const stringResources = useMemo(
     () => ({
@@ -62,7 +106,6 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
   );
 
   const onSubmit = useCallback(async () => {
-    const resourceId = metadata?.cognitiveServiceAccountId?.replace(/\/models$/, '');
     if (!resourceId) {
       console.error('OpenAI account ID is not provided in metadata.');
       return;
@@ -70,7 +113,8 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
     setIsSaving(true);
 
     try {
-      const newDeploymentResponse = await CognitiveServiceService().createNewDeployment(name, modelKey, resourceId);
+      const selectedModel = modelOptions.find((option) => option.name === effectiveModelKey);
+      const newDeploymentResponse = await CognitiveServiceService().createNewDeployment(name, effectiveModelKey, resourceId, selectedModel);
       setErrorMessage('');
       setIsSaving(false);
       onClose?.(newDeploymentResponse ? name : undefined);
@@ -85,7 +129,7 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
       setIsSaving(false);
       setErrorMessage(parseErrorMessage(error, stringResources.DEFAULT_ERROR_MESSAGE));
     }
-  }, [metadata?.cognitiveServiceAccountId, modelKey, name, onClose, stringResources.DEFAULT_ERROR_MESSAGE]);
+  }, [resourceId, modelOptions, effectiveModelKey, name, onClose, stringResources.DEFAULT_ERROR_MESSAGE]);
 
   const onCloseModal = useCallback(() => {
     onClose?.(undefined);
@@ -119,17 +163,18 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
           <Label text={stringResources.DEPLOYMENT_MODEL} isRequiredField={true} />
         </div>
         <DropdownEditor
+          key={effectiveModelKey}
           initialValue={[
             {
               type: 'literal',
-              value: modelKey,
+              value: effectiveModelKey,
               id: guid(),
             },
           ]}
-          options={supportedModels.map((supportedModel) => ({
-            key: supportedModel,
-            displayName: supportedModel,
-            value: supportedModel,
+          options={modelOptions.map((option) => ({
+            key: option.name,
+            displayName: option.name,
+            value: option.name,
           }))}
           onChange={(state: ChangeState) => {
             if (state.value.length > 0) {
@@ -138,10 +183,15 @@ export const CustomDeploymentModelResource = (props: IEditorProps) => {
           }}
         />
         <div className={mergeClasses(styles.rowContainer, styles.buttonContainer)}>
-          <Button appearance="primary" disabled={isSaving || !name || !modelKey} size={'small'} onClick={onSubmit}>
+          <Button
+            appearance="primary"
+            disabled={isSaving || isLoadingModels || !name || !effectiveModelKey || modelOptions.length === 0}
+            size={'small'}
+            onClick={onSubmit}
+          >
             {stringResources.SUBMIT_BUTTON}
           </Button>
-          <Button disabled={isSaving || !name || !modelKey} size={'small'} onClick={onCloseModal}>
+          <Button disabled={isSaving || !name} size={'small'} onClick={onCloseModal}>
             {stringResources.CANCEL_BUTTON}
           </Button>
         </div>
