@@ -22,6 +22,14 @@ export class HttpClient implements IHttpClient {
     this._extraHeaders = getExtraHeaders(options.hostVersion ?? '');
   }
 
+  /**
+   * Updates the access token used for authenticated requests.
+   * Call this when the token is refreshed to avoid stale-token failures on save.
+   */
+  updateAccessToken(token: string | undefined): void {
+    this._accessToken = token;
+  }
+
   dispose(): void {}
 
   async get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
@@ -32,7 +40,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        Authorization: isArmId ? (this._accessToken ?? '') : '',
       },
     };
     const response = await axios({
@@ -58,7 +66,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        Authorization: isArmId ? (this._accessToken ?? '') : '',
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -77,7 +85,7 @@ export class HttpClient implements IHttpClient {
   }
 
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
-    const authHeader: Record<string, string> = options.includeAuth || !options.noAuth ? { Authorization: `${this._accessToken}` } : {};
+    const authHeader: Record<string, string> = options.includeAuth || !options.noAuth ? { Authorization: this._accessToken ?? '' } : {};
     const request = {
       ...options,
       url: this.getRequestUrl(options),
@@ -115,7 +123,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''}`,
+        Authorization: isArmId ? (this._accessToken ?? '') : '',
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -144,7 +152,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${this._accessToken}`,
+        Authorization: this._accessToken ?? '',
       },
     };
     const response = await axios({

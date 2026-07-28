@@ -677,6 +677,20 @@ async function main(): Promise<void> {
       throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
     }
   }
+  // Transitive dependencies that the VS Code CLI's --install-extension does NOT
+  // reliably auto-resolve. Installing ms-dotnettools.csdevkit pulls in
+  // ms-dotnettools.csharp, but csharp's own dependency
+  // ms-dotnettools.vscode-dotnet-runtime is not always installed (observed on
+  // Windows). Without it, the C#/C# Dev Kit extensions fail to activate
+  // ("depends on an unknown 'ms-dotnettools.vscode-dotnet-runtime' extension"),
+  // which cascades into the Azure Logic Apps extension never finishing
+  // activation — so azureLogicAppsStandard.createWorkspace / Open Designer are
+  // never registered. Install these explicitly to guarantee activation.
+  const transitiveE2eDependencies = ['ms-dotnettools.vscode-dotnet-runtime'];
+  const allE2eDependencies = [
+    ...extDeps,
+    ...transitiveE2eDependencies.filter((dep) => !extDeps.some((d) => d.toLowerCase() === dep.toLowerCase())),
+  ];
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
   const ourExtTarget = path.join(extDir, extDirName);
 
@@ -739,11 +753,11 @@ async function main(): Promise<void> {
     }
   };
 
-  if (extDeps.length > 0) {
-    console.log(`\n=== Step 2: Install ${extDeps.length} extension dependencies ===`);
+  if (allE2eDependencies.length > 0) {
+    console.log(`\n=== Step 2: Install ${allE2eDependencies.length} extension dependencies ===`);
 
     const depsToInstall: string[] = [];
-    for (const dep of extDeps) {
+    for (const dep of allE2eDependencies) {
       removeInvalidExtensionEntries(dep);
       const alreadyInstalled = !!findValidInstalledExtension(dep);
 
@@ -803,7 +817,7 @@ async function main(): Promise<void> {
       rebuildExtensionsJson(extDir);
     }
 
-    const missingDeps = extDeps.filter((dep) => !findValidInstalledExtension(dep));
+    const missingDeps = allE2eDependencies.filter((dep) => !findValidInstalledExtension(dep));
     if (missingDeps.length > 0) {
       throw new Error(`Missing E2E extension prerequisite(s): ${missingDeps.join(', ')}. Install/retry before running UI E2E tests.`);
     }
@@ -1393,6 +1407,7 @@ async function main(): Promise<void> {
   const phase4Files = [testFile('statelessVariables.test.js')];
   const phase5Files = [testFile('designerViewExtended.test.js')];
   const phase6Files = [testFile('keyboardNavigation.test.js')];
+  const phase9Files = [testFile('descriptionPersistence.test.js')];
 
   const phase7Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js'), testFile('dataMapper.test.js')];
 
@@ -1556,6 +1571,13 @@ async function main(): Promise<void> {
       testFile: phase6Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: false, autoStartDesignTime: true },
+    },
+    {
+      id: 'p49-descriptionpersistence',
+      testFile: phase9Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
 
     // Phase 4.7 — designer-shell smoke + dataMapper. dataMapper.test.ts
@@ -2485,6 +2507,10 @@ namespace ${namespaceName}
       await prepareFreshSession('phase6-only');
       exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
 
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase9-only');
+      exits.push(await runPhase('Phase 4.9: descriptionPersistence', phase9Files, { resources: wsResources }));
+
       const finalExit = Math.max(...exits);
       console.log(`\n=== New tests results: ${exits.map((c, i) => `4.${i + 3}=${c}`).join(', ')} → exit ${finalExit} ===`);
       process.exit(finalExit);
@@ -2716,9 +2742,13 @@ namespace ${namespaceName}
       await prepareFreshSession('phase6-shard');
       exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
 
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase9-shard');
+      exits.push(await runPhase('Phase 4.9: descriptionPersistence', phase9Files, { resources: wsResources }));
+
       const finalExit = Math.max(...exits);
       console.log(
-        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]} → exit ${finalExit} ===`
+        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]}, 4.9=${exits[5]} → exit ${finalExit} ===`
       );
       process.exit(finalExit);
     }
@@ -2858,6 +2888,13 @@ namespace ${namespaceName}
     const phase6Exit = await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: phase2Resources });
     if (phase6Exit !== 0) {
       console.log(`\n⚠ Phase 4.6 exited with code ${phase6Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase9');
+    const phase9Exit = await runPhase('Phase 4.9: descriptionPersistence', phase9Files, { resources: phase2Resources });
+    if (phase9Exit !== 0) {
+      console.log(`\n⚠ Phase 4.9 exited with code ${phase9Exit} — continuing`);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
