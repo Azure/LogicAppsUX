@@ -21,6 +21,7 @@ import {
   Spinner,
   type OptionOnSelectData,
   Text,
+  Tooltip,
 } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
@@ -218,6 +219,12 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'p/Pfr/',
         description: 'Message indicating that the user does not have write permissions for the role',
       }),
+      MISSING_ROLE_WRITE_PERMISSIONS_TOOLTIP: intl.formatMessage({
+        defaultMessage:
+          "To authenticate with a managed identity, your logic app's identity needs a role on this resource. Assigning that role requires permission to create role assignments, such as the Owner or User Access Administrator role. Ask an administrator to assign the role to your logic app, or to grant you permission to assign roles on this resource.",
+        id: 'NOfKRq',
+        description: 'Tooltip explaining why permission to create role assignments is required for this connection',
+      }),
       FETCHING_RESOURCE_DETAILS: intl.formatMessage({
         defaultMessage: 'Fetching resource details...',
         id: 'EXxdfo',
@@ -374,7 +381,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
           validationMessage={stringResources.FETCHING_RESOURCE_DETAILS}
         />
       ) : hasRequiredRoles || hasRoleWritePermission ? null : (
-        <Field validationState="warning" validationMessage={stringResources.MISSING_ROLE_WRITE_PERMISSIONS} />
+        <Tooltip content={stringResources.MISSING_ROLE_WRITE_PERMISSIONS_TOOLTIP} relationship="description" withArrow>
+          <span>
+            <Field validationState="warning" validationMessage={stringResources.MISSING_ROLE_WRITE_PERMISSIONS} />
+          </span>
+        </Tooltip>
       )}
     </div>
   );

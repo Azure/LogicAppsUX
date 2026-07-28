@@ -46,6 +46,11 @@ vi.mock('@fluentui/react-components', () => ({
       {children}
     </div>
   ),
+  Tooltip: ({ children, content, relationship: _relationship, withArrow: _withArrow, ...props }: any) => (
+    <div data-testid="tooltip" data-tooltip-content={content} {...props}>
+      {children}
+    </div>
+  ),
   Button: ({ children, onClick, disabled, icon, ...props }: any) => (
     <button
       data-testid={`button-${props['data-automation-id'] ?? 'refresh'}`}
@@ -622,6 +627,30 @@ describe('CustomOpenAIConnector', () => {
         const field = screen.getByTestId('field');
         expect(field).toHaveAttribute('data-validation-state', 'warning');
         expect(field).toHaveAttribute('data-validation-message', 'Missing role write permissions');
+      });
+    });
+
+    it('explains why role write permissions are needed in a tooltip', async () => {
+      mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: false });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: false });
+
+      const setKeyValue = vi.fn();
+      render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });
+
+      mockFetchAccountById.mockResolvedValue({ properties: { endpoint: 'https://openai1.openai.azure.com/' } });
+      mockFetchAccountKeysById.mockResolvedValue({ key1: 'k' });
+
+      const accountId = '/subscriptions/sub-1/resourceGroups/rg1/providers/Microsoft.CognitiveServices/accounts/openai1';
+      await waitFor(async () => {
+        await capturedOnOptionSelect['openai-combobox']?.({}, { optionValue: accountId });
+      });
+
+      await waitFor(() => {
+        const tooltip = screen.getByTestId('tooltip');
+        expect(tooltip).toHaveAttribute(
+          'data-tooltip-content',
+          expect.stringContaining('permission to create role assignments') as unknown as string
+        );
       });
     });
 
