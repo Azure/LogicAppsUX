@@ -224,8 +224,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       }),
       MISSING_ROLE_WRITE_PERMISSIONS_TOOLTIP: intl.formatMessage({
         defaultMessage:
-          "To authenticate with a managed identity, your logic app's identity needs a role on this resource. Assigning that role requires permission to create role assignments, such as the Owner or User Access Administrator role. Ask an administrator to assign the role to your logic app, or to grant you permission to assign roles on this resource.",
-        id: 'NOfKRq',
+          "To authenticate with a managed identity, your logic app's identity needs a role on this resource. Assigning that role requires permission to create role assignments, such as the Owner or User Access Administrator role.",
+        id: 'SK/2tH',
         description: 'Tooltip explaining why permission to create role assignments is required for this connection',
       }),
       FETCHING_RESOURCE_DETAILS: intl.formatMessage({
