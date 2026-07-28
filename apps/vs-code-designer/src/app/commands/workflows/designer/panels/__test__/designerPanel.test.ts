@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotification } from '../../../../../../constants';
+import { designerVersionSetting, defaultDesignerVersion, suppressDesignerVersionNotificationState } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 
 // Mock dependencies before importing the class
@@ -195,7 +195,7 @@ describe('OpenDesignerBase', () => {
 
       await designer.testShowDesignerVersionNotification();
 
-      expect(mockGlobalState.update).toHaveBeenCalledWith(suppressDesignerVersionNotification, true);
+      expect(mockGlobalState.update).toHaveBeenCalledWith(suppressDesignerVersionNotificationState, true);
     });
 
     it("should suppress notification and update setting when Don't show again is clicked on v2", async () => {
@@ -205,7 +205,7 @@ describe('OpenDesignerBase', () => {
 
       await designer.testShowDesignerVersionNotification();
 
-      expect(mockGlobalState.update).toHaveBeenCalledWith(suppressDesignerVersionNotification, true);
+      expect(mockGlobalState.update).toHaveBeenCalledWith(suppressDesignerVersionNotificationState, true);
     });
 
     it('should not show notification when suppressed', async () => {

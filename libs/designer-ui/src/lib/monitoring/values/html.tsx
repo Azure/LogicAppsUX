@@ -1,10 +1,14 @@
+import { useMemo } from 'react';
 import { useId } from '../../useId';
 import type { ValueProps } from './types';
+import { sanitizeHtmlValue } from './utils';
 
 export const HtmlValue: React.FC<ValueProps> = (props) => {
   const id = useId('msla-html');
 
-  const { displayName, value: __html, visible = true } = props;
+  const { displayName, value, visible = true } = props;
+  const __html = useMemo(() => sanitizeHtmlValue(value), [value]);
+
   if (!visible) {
     return null;
   }
@@ -15,7 +19,7 @@ export const HtmlValue: React.FC<ValueProps> = (props) => {
         {displayName}
       </label>
       <div aria-labelledby={id} className="msla-trace-value-text msla-trace-value-html-table">
-        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: This is needed in this case but we should investigate other ways of doing it */}
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: HTML-formatted run outputs must render as markup; the value is sanitized with DOMPurify in sanitizeHtmlValue above. */}
         <table dangerouslySetInnerHTML={{ __html }} tabIndex={0} />
       </div>
     </section>

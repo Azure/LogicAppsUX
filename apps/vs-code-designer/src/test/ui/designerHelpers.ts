@@ -70,7 +70,7 @@ import {
   waitForQuickInputAndType,
 } from './helpers';
 import type { WorkspaceManifestEntry } from './workspaceManifest';
-import { isExecutableFile } from './runtimeBinaryCheck';
+import { funcVersionRuns, isExecutableFile } from './runtimeBinaryCheck';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -179,6 +179,20 @@ function getFuncCoreToolsPath(): string {
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
 
+/**
+ * True only when func is provisioned AND actually runs (`func --version` exits 0).
+ *
+ * Existence + execute-bit is NOT enough: the product's pre-debug gate spawns
+ * `func --version`, and a func that exists-but-won't-run (partial extract, poisoned
+ * runtime-deps cache, or mid-reinstall on a cold Windows runner) still trips the blocking
+ * "must have Azure Functions Core Tools installed" modal that aborts F5. Gating the E2E on
+ * the same executable signal lets the extension's self-heal (reinstall when `func --version`
+ * returns null) finish before we drive F5, instead of racing it.
+ */
+function isFuncRunnable(funcBinaryPath: string): boolean {
+  return isExecutableFile(funcBinaryPath) && funcVersionRuns(funcBinaryPath);
+}
+
 function assertFuncCoreToolsExecutable(context: string): void {
   ensureRuntimeDependencyExecutablePermissions();
   const funcBinaryPath = getFuncCoreToolsPath();
@@ -194,6 +208,17 @@ function assertFuncCoreToolsExecutable(context: string): void {
     if (!isExecutableFile(candidate)) {
       throw new Error(`[depValidation] FuncCoreTools binary exists but is not executable after ${context}: ${candidate}`);
     }
+  }
+
+  // Existence + execute-bit is necessary but NOT sufficient — the product spawns
+  // `func --version` at pre-debug time. Assert the selected binary actually runs so a
+  // provisioned-but-unrunnable func (partial extract / poisoned cache / mid-reinstall on a
+  // cold Windows runner) fails HERE with a precise message instead of surfacing later as the
+  // opaque "must have Azure Functions Core Tools installed" modal that silently aborts F5.
+  if (!funcVersionRuns(funcBinaryPath)) {
+    throw new Error(
+      `[depValidation] func binary exists but "func --version" failed to run after ${context}: ${funcBinaryPath}. The runtime dependency was provisioned on disk but is not executable on this runner (incomplete extract, poisoned runtime-deps cache, or the reinstall self-heal did not finish in time).`
+    );
   }
 }
 
@@ -881,10 +906,11 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
 
         console.log(`[depValidation] func binary already exists at ${funcBinaryPath} (${Date.now() - t0}ms)`);
         ensureRuntimeDependencyExecutablePermissions();
-        if (isExecutableFile(funcBinaryPath)) {
+        if (isFuncRunnable(funcBinaryPath)) {
+          console.log('[depValidation] func --version succeeded — func is runnable');
           return;
         }
-        console.log('[depValidation] func binary exists but is not executable yet — continuing to poll');
+        console.log('[depValidation] func binary exists but "func --version" not yet succeeding — continuing to poll');
       }
 
       await sleep(2000);
@@ -907,10 +933,13 @@ export async function waitForDependencyValidation(driver: WebDriver, timeoutMs =
       // Also wait a moment for the extension to update its internal state
       await sleep(3000);
       ensureRuntimeDependencyExecutablePermissions();
-      if (isExecutableFile(funcBinaryPath)) {
+      if (isFuncRunnable(funcBinaryPath)) {
+        console.log(`[depValidation] func --version succeeded — func is runnable (${Date.now() - t0}ms)`);
         return;
       }
-      console.log('[depValidation] func binary still not executable after chmod — continuing to poll');
+      console.log(
+        '[depValidation] func exists but "func --version" not yet succeeding — continuing to poll (extension may be reinstalling)'
+      );
     }
 
     // Check if validation notification reappeared (downloading next dependency)

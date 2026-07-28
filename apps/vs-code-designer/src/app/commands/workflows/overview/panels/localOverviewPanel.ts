@@ -7,7 +7,7 @@ import { managementApiPrefix, workflowTenantIdKey } from '../../../../../constan
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
-import { getAzureConnectorDetailsForLocalProject } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';

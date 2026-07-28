@@ -1,21 +1,34 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { workflowSubscriptionIdKey } from '../../../../constants';
 
+vi.mock('../../../../extensionVariables', () => ({
+  ext: {
+    context: {
+      globalState: {
+        get: vi.fn().mockReturnValue(undefined),
+        update: vi.fn().mockResolvedValue(undefined),
+      },
+    },
+  },
+}));
+
+import { ext } from '../../../../extensionVariables';
+
 vi.mock('../../../../localize', () => ({
   localize: (_key: string, defaultMessage: string, ...args: unknown[]) =>
     defaultMessage.replace(/{(\d+)}/g, (_match, index) => String(args[Number(index)] ?? '')),
 }));
 
-vi.mock('../../appSettings/localSettings', () => ({
+vi.mock('../../../utils/appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
   getLocalSettingsJson: vi.fn(),
 }));
 
-vi.mock('../../../commands/workflows/azureConnectorWizard', () => ({
+vi.mock('../azureConnectorWizard', () => ({
   createAzureWizard: vi.fn(),
 }));
 
-vi.mock('../getAuthorizationToken', () => ({
+vi.mock('../../../utils/codeless/getAuthorizationToken', () => ({
   getAuthData: vi.fn(),
 }));
 
@@ -41,14 +54,17 @@ vi.mock('fs-extra', () => ({
   writeFile: vi.fn(),
 }));
 
-import { createAzureWizard } from '../../../commands/workflows/azureConnectorWizard';
-import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../../appSettings/localSettings';
-import { getAuthData } from '../getAuthorizationToken';
-import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../common';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
+import { getAuthData } from '../../../utils/codeless/getAuthorizationToken';
+import { createAzureWizard } from '../azureConnectorWizard';
+import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../azureConnectorDetails';
+import { setConnectorSetupSkipped } from '../../../state/connectors';
 
 describe('getAzureConnectorDetailsForLocalProject', () => {
   const projectPath = 'D:\\workspace\\LogicApp';
   let context: any;
+  let mockGlobalStateGet: ReturnType<typeof vi.fn>;
+  let mockGlobalStateUpdate: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,9 +72,12 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     context = {
       telemetry: { properties: {}, measurements: {} },
     };
+    mockGlobalStateGet = vi.mocked(ext.context.globalState.get);
+    mockGlobalStateUpdate = vi.mocked(ext.context.globalState.update);
+    mockGlobalStateGet.mockReturnValue(undefined);
   });
 
-  it('defaults cancelled Azure connector discovery to disabled settings', async () => {
+  it('defaults cancelled Azure connector discovery to disabled settings via globalState', async () => {
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     vi.mocked(createAzureWizard).mockReturnValue({
       prompt: vi.fn().mockRejectedValue({ isUserCancelledError: true }),
@@ -68,9 +87,8 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     const details = await getAzureConnectorDetailsForLocalProject(context, projectPath);
 
     expect(details).toEqual({ enabled: false });
-    expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, projectPath, {
-      [workflowSubscriptionIdKey]: '',
-    });
+    expect(mockGlobalStateUpdate).toHaveBeenCalledWith(`azureConnectors.skipped.${projectPath}`, true);
+    expect(addOrUpdateLocalAppSettings).not.toHaveBeenCalled();
     expect(getAuthData).not.toHaveBeenCalled();
   });
 
@@ -83,7 +101,19 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     expect(context.telemetry.properties.azureConnectorDetailsProjectPathMissing).toBe('true');
   });
 
-  it('treats explicitly skipped Azure connectors as disabled without requesting auth', async () => {
+  it('skips wizard when globalState indicates user previously skipped', async () => {
+    mockGlobalStateGet.mockReturnValue(true);
+    vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
+
+    const details = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+
+    expect(details.enabled).toBe(false);
+    expect(createAzureWizard).not.toHaveBeenCalled();
+    expect(getAuthData).not.toHaveBeenCalled();
+  });
+
+  it('treats empty string subscription as absent and checks globalState', async () => {
+    mockGlobalStateGet.mockReturnValue(true);
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: { [workflowSubscriptionIdKey]: '' } } as any);
 
     const details = await getAzureConnectorDetailsForLocalProject(context, projectPath);
@@ -91,6 +121,24 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     expect(details.enabled).toBe(false);
     expect(createAzureWizard).not.toHaveBeenCalled();
     expect(getAuthData).not.toHaveBeenCalled();
+  });
+
+  it('shows wizard when subscription is empty and globalState is not skipped', async () => {
+    mockGlobalStateGet.mockReturnValue(undefined);
+    vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: { [workflowSubscriptionIdKey]: '' } } as any);
+    vi.mocked(createAzureWizard).mockImplementation((wizardContext: any) => ({
+      prompt: vi.fn(async () => {
+        wizardContext.enabled = false;
+      }),
+      execute: vi.fn(async () => {
+        await setConnectorSetupSkipped(projectPath);
+      }),
+    })) as any;
+
+    const details = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+
+    expect(details.enabled).toBe(false);
+    expect(createAzureWizard).toHaveBeenCalled();
   });
 
   it('throws non-cancellation wizard failures', async () => {
@@ -101,28 +149,25 @@ describe('getAzureConnectorDetailsForLocalProject', () => {
     } as any);
 
     await expect(getAzureConnectorDetailsForLocalProject(context, projectPath)).rejects.toThrow('wizard failed');
-    expect(addOrUpdateLocalAppSettings).not.toHaveBeenCalled();
+    expect(mockGlobalStateUpdate).not.toHaveBeenCalled();
   });
 
-  it('persists disabled state when the Azure wizard explicitly skips connectors', async () => {
+  it('persists disabled state to globalState when the Azure wizard explicitly skips connectors', async () => {
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     vi.mocked(createAzureWizard).mockImplementation((wizardContext: any) => ({
       prompt: vi.fn(async () => {
         wizardContext.enabled = false;
       }),
       execute: vi.fn(async () => {
-        await addOrUpdateLocalAppSettings(wizardContext, projectPath, {
-          [workflowSubscriptionIdKey]: '',
-        });
+        await setConnectorSetupSkipped(projectPath);
       }),
     })) as any;
 
     const details = await getAzureConnectorDetailsForLocalProject(context, projectPath);
 
     expect(details.enabled).toBe(false);
-    expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, projectPath, {
-      [workflowSubscriptionIdKey]: '',
-    });
+    expect(mockGlobalStateUpdate).toHaveBeenCalledWith(`azureConnectors.skipped.${projectPath}`, true);
+    expect(addOrUpdateLocalAppSettings).not.toHaveBeenCalled();
   });
 
   it('reads existing Azure connector settings without launching the wizard', async () => {

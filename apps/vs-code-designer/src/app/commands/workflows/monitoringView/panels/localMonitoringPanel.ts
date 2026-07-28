@@ -6,12 +6,8 @@ import { assetsFolderName } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
-import {
-  removeWebviewPanelFromCache,
-  cacheWebviewPanel,
-  getAzureConnectorDetailsForLocalProject,
-  getStandardAppData,
-} from '../../../../utils/codeless/common';
+import { removeWebviewPanelFromCache, cacheWebviewPanel, getStandardAppData } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
   getConnectionsFromFile,
   getCustomCodeFromFiles,

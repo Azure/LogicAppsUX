@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
-import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../../utils/codeless/common';
+import { cacheWebviewPanel, removeWebviewPanelFromCache } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { CodeSelection, ConnectionPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
