@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 import { type Uri, type WorkspaceFolder } from 'vscode';
 import {
   enableProjectConsistencyChecksSetting,
@@ -92,7 +93,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
 const { DialogResponses } = await import('@microsoft/vscode-azext-utils');
 
 describe('vscodeConsistency', () => {
-  const projectPath = 'C:\\workspace\\logicapp';
+  const projectPath = path.join('/workspace', 'logicapp');
   let context: IActionContext;
   let showWarningMessage: ReturnType<typeof vi.fn>;
 
@@ -244,7 +245,7 @@ describe('vscodeConsistency', () => {
       DialogResponses.yes,
       DialogResponses.dontWarnAgain
     );
-    expect(fse.ensureDir).toHaveBeenCalledWith(`C:\\workspace\\logicapp\\${vscodeFolderName}`);
+    expect(fse.ensureDir).toHaveBeenCalledWith(path.join(projectPath, vscodeFolderName));
     expect(writeFormattedJson).toHaveBeenCalledTimes(4);
   });
 
