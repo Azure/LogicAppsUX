@@ -104,8 +104,6 @@ import {
   isRecordNotEmpty,
   RoleService,
   SUBGRAPH_TYPES,
-  SUPPORTED_AGENT_OPENAI_MODELS,
-  SUPPORTED_FOUNDRY_AGENT_MODELS,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
 import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
@@ -1435,8 +1433,7 @@ export const ParameterSection = ({
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
         isA2AWorkflow,
-        foundryAgentsForNode ?? [],
-        currentAgentModelType
+        foundryAgentsForNode ?? []
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
@@ -1827,8 +1824,7 @@ export const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
   isA2AWorkflow?: boolean,
-  foundryAgents: any[] = [],
-  agentModelType?: string
+  foundryAgents: any[] = []
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1856,12 +1852,22 @@ export const getEditorAndOptions = (
     };
   }
 
-  // Handle agent connector with supported deployments
+  // Handle agent connector with supported deployments.
+  // Mirror the backend, which accepts any deployment whose model supports chat completions,
+  // instead of restricting to a hardcoded model list (which drops newly released models).
   const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
-    const supportedModels = agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
     const options = deploymentsForCognitiveServiceAccount
-      .filter((deployment) => supportedModels.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+      .filter((deployment) => {
+        // ARM returns capability flags as strings (e.g. "true"); coerce so a non-string shape can't
+        // throw, and compare case-insensitively.
+        const isChatCompletion = equals(String(deployment.properties?.capabilities?.chatCompletion ?? ''), 'true');
+        // Only offer deployments that are ready to use; skip Creating/Failed/Deleting. A missing state
+        // (older API versions) is treated as usable so valid deployments are never hidden.
+        const provisioningState = deployment.properties?.provisioningState;
+        const isReady = !provisioningState || equals(String(provisioningState), 'Succeeded');
+        return isChatCompletion && isReady;
+      })
       .map((deployment) => ({
         value: deployment.name,
         displayName: `${deployment.name}${deployment.properties?.model?.name ? ` (${deployment.properties.model.name})` : ''}`,
