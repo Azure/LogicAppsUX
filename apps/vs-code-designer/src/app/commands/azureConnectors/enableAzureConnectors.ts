@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../constants';
+import { workflowSubscriptionIdKey } from '../../../constants';
 import { localize } from '../../../localize';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { createAzureWizard } from './azureConnectorWizard';
@@ -10,7 +10,6 @@ import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } 
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
-import * as path from 'path';
 import type * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getWorkspaceFolder } from '../../utils/workspace';
@@ -26,8 +25,7 @@ import { clearConnectorSetupSkipped } from '../../state/connectors';
 export async function enableAzureConnectors(context: IActionContext, node: vscode.Uri | undefined): Promise<void> {
   const projectRoot = node !== undefined ? await getLogicAppProjectRoot(context, node.fsPath) : await getWorkspaceFolder(context);
   const projectPath = isString(projectRoot) ? projectRoot : projectRoot.uri.fsPath;
-  const localSettingsFilePath: string = path.join(projectPath, localSettingsFileName);
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsFilePath);
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
 
   const subscriptionId: string | undefined = localSettings.Values?.[workflowSubscriptionIdKey];
   if (subscriptionId) {

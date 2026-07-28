@@ -84,10 +84,7 @@ describe('parameterizeConnections', () => {
     await parameterizeConnections(testContext, testLogicAppProjectPath1);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(parameterUtil.getParametersJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
-    expect(localSettingsUtil.getLocalSettingsJson).toHaveBeenCalledWith(
-      testContext,
-      path.join(testLogicAppProjectPath1, localSettingsFileName)
-    );
+    expect(localSettingsUtil.getLocalSettingsJson).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1);
     expect(parameterizerUtil.parameterizeConnection).toHaveBeenCalled();
     expect(parameterUtil.saveWorkflowParameter).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, testParametersJson);
     expect(connectionUtil.saveConnectionReferences).toHaveBeenCalledOnce();

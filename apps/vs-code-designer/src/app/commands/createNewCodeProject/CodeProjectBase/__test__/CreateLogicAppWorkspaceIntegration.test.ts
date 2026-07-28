@@ -13,11 +13,17 @@ import { devContainerFolderName, devContainerFileName } from '../../../../../con
 // Unmock fs-extra to use real file operations for integration tests
 vi.unmock('fs-extra');
 
+// Mock binariesExistSync to avoid VS Code workspace API calls in test
+vi.mock('../../../../utils/binaries', () => ({
+  binariesExistSync: vi.fn().mockReturnValue(true),
+  binariesExist: vi.fn().mockReturnValue(true),
+}));
+
 // Import fs-extra after unmocking
 import * as fse from 'fs-extra';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 
-const { createWorkspaceStructure, getHostContent, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } =
+const { createWorkspaceStructure, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } =
   CreateLogicAppWorkspaceModule;
 
 describe('createLogicAppWorkspace - Integration Tests', () => {
@@ -282,50 +288,6 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(workflowContent.definition).toHaveProperty('triggers');
       expect(workflowContent.definition).toHaveProperty('actions');
       expect(workflowContent.definition).toHaveProperty('outputs');
-    });
-  });
-
-  describe('Host.json Integration', () => {
-    it('should verify host.json structure from getHostContent', async () => {
-      const hostContent = await getHostContent();
-
-      // Verify exact structure
-      expect(hostContent).toEqual({
-        version: '2.0',
-        logging: {
-          applicationInsights: {
-            samplingSettings: {
-              isEnabled: true,
-              excludedTypes: 'Request',
-            },
-          },
-        },
-        extensionBundle: {
-          id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
-          version: '[1.*, 2.0.0)',
-        },
-      });
-    });
-
-    it('should have correct version', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.version).toBe('2.0');
-    });
-
-    it('should have application insights sampling enabled', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.logging!.applicationInsights!.samplingSettings!.isEnabled).toBe(true);
-    });
-
-    it('should exclude Request type from sampling', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.logging!.applicationInsights!.samplingSettings!.excludedTypes).toBe('Request');
-    });
-
-    it('should have workflows extension bundle', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.extensionBundle!.id).toBe('Microsoft.Azure.Functions.ExtensionBundle.Workflows');
-      expect(hostContent.extensionBundle!.version).toBe('[1.*, 2.0.0)');
     });
   });
 

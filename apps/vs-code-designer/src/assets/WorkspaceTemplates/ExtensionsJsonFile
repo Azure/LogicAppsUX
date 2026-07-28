@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "ms-azuretools.vscode-azurelogicapps",
-    "ms-azuretools.vscode-azurefunctions",
-    "ms-dotnettools.csharp",
-    "ms-dotnettools.csdevkit"
-  ]
-}

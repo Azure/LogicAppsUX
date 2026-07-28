@@ -4,10 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { validateAndInstallBinaries } from '../commands/binaries/validateAndInstallBinaries';
 import { runWithDurationTelemetry } from './telemetry';
-import { validateTasksJson } from './vsCodeConfig/tasks';
 import { extensionCommand, autoRuntimeDependenciesValidationAndInstallationSetting } from '../../constants';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import * as vscode from 'vscode';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import { isDevContainerWorkspace } from './devContainerUtils';
 import { shouldRequireStrictDependencyValidation } from './strictDependencyValidation';
@@ -28,7 +26,6 @@ async function validateRuntimeDependencies(actionContext: IActionContext, activa
     if (binariesInstallation) {
       activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
       await validateAndInstallBinaries(actionContext);
-      await validateTasksJson(actionContext, vscode.workspace.workspaceFolders);
     }
   });
 }

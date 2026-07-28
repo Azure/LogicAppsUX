@@ -83,12 +83,11 @@ export interface ICallbackUrlResponse {
   queries?: Record<string, any>;
 }
 
-export const WorkflowProjectType = {
+export const ProjectPackageType = {
   Nuget: 'Nuget',
   Bundle: 'Bundle',
-  Functions: 'Functions',
 } as const;
-export type WorkflowProjectType = (typeof WorkflowProjectType)[keyof typeof WorkflowProjectType];
+export type ProjectPackageType = (typeof ProjectPackageType)[keyof typeof ProjectPackageType];
 
 export interface ISettingToAdd {
   key: string;
