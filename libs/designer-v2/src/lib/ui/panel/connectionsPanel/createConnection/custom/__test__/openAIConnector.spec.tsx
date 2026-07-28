@@ -186,6 +186,15 @@ const defaultProps: ConnectionParameterProps = {
   },
   setKeyValue: vi.fn(),
   operationParameterValues: { agentModelType: 'AzureOpenAI' },
+  parameterSet: {
+    name: 'Key',
+    parameters: {
+      cognitiveServiceAccountId: { type: 'string' },
+      openAIEndpoint: { type: 'string' },
+      openAIKey: { type: 'securestring' },
+    },
+    uiDefinition: { displayName: 'URL and key-based authentication' },
+  } as any,
 };
 
 const wrapper = ({ children }: { children: React.ReactNode }) => <IntlProvider locale="en">{children}</IntlProvider>;
@@ -359,6 +368,53 @@ describe('CustomOpenAIConnector', () => {
       });
 
       // Verify the service was called
+      expect(mockFetchAccountKeysById).toHaveBeenCalledWith(accountId);
+    });
+
+    it('does NOT fetch account keys (listKeys) when Managed Identity auth is selected', async () => {
+      mockFetchAccountById.mockResolvedValue({ properties: { endpoint: 'https://openai1.openai.azure.com/' } });
+      mockFetchAccountKeysById.mockResolvedValue({ key1: 'test-key-123' });
+
+      // Managed Identity auth set omits the `openAIKey` parameter, so no key fetch should occur.
+      const managedIdentityParameterSet = {
+        name: 'ManagedServiceIdentity',
+        parameters: {
+          cognitiveServiceAccountId: { type: 'string' },
+          openAIEndpoint: { type: 'string' },
+        },
+        uiDefinition: { displayName: 'Managed Service Identity' },
+      } as any;
+
+      const setKeyValue = vi.fn();
+      render(<CustomOpenAIConnector {...defaultProps} parameterSet={managedIdentityParameterSet} setKeyValue={setKeyValue} />, { wrapper });
+
+      const accountId = '/subscriptions/sub-1/resourceGroups/rg1/providers/Microsoft.CognitiveServices/accounts/openai1';
+      await act(async () => {
+        capturedOnOptionSelect['openai-combobox']?.({}, { optionValue: accountId });
+        await new Promise((r) => setTimeout(r, 50));
+      });
+
+      // Endpoint is still populated, but the key (listKeys) call must not be made.
+      expect(mockFetchAccountById).toHaveBeenCalledWith(accountId);
+      expect(setKeyValue).toHaveBeenCalledWith('openAIEndpoint', 'https://openai1.openai.azure.com/');
+      expect(mockFetchAccountKeysById).not.toHaveBeenCalled();
+      expect(setKeyValue).not.toHaveBeenCalledWith('openAIKey', expect.anything());
+    });
+
+    it('still fetches account keys when no auth parameter set is provided (conservative fallback)', async () => {
+      mockFetchAccountById.mockResolvedValue({ properties: { endpoint: 'https://openai1.openai.azure.com/' } });
+      mockFetchAccountKeysById.mockResolvedValue({ key1: 'test-key-123' });
+
+      const setKeyValue = vi.fn();
+      render(<CustomOpenAIConnector {...defaultProps} parameterSet={undefined} setKeyValue={setKeyValue} />, { wrapper });
+
+      const accountId = '/subscriptions/sub-1/resourceGroups/rg1/providers/Microsoft.CognitiveServices/accounts/openai1';
+      await act(async () => {
+        capturedOnOptionSelect['openai-combobox']?.({}, { optionValue: accountId });
+        await new Promise((r) => setTimeout(r, 50));
+      });
+
+      // Without a known auth set we cannot tell it is keyless, so preserve the legacy fetch.
       expect(mockFetchAccountKeysById).toHaveBeenCalledWith(accountId);
     });
 
