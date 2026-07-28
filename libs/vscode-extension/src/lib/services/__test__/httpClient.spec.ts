@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect, vi, afterEach } from 'vitest';
 import axios from 'axios';
-import { HttpClient, HttpOptions } from '../httpClient';
+import { HttpClient, HttpOptions, isSuccessResponse } from '../httpClient';
 import type { HttpRequestOptions } from '@microsoft/logic-apps-shared';
 
 vi.mock('axios');
@@ -273,5 +273,251 @@ describe('HttpClient', () => {
     };
 
     await expect(httpClient.delete(options)).rejects.toThrow(errorMessage);
+  });
+
+  describe('auth token handling', () => {
+    it('should send empty Authorization header for non-ARM GET requests', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      await httpClient.get({ uri: '/local-endpoint', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: '',
+          }),
+        })
+      );
+    });
+
+    it('should send access token for ARM GET requests', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      await httpClient.get({ uri: '/subscriptions/sub-1/resource', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: accessToken,
+          }),
+        })
+      );
+    });
+
+    it('should use stale token when no refresh mechanism exists', async () => {
+      const staleToken = 'expired-token';
+      const staleClient = new HttpClient({ ...httpClientOptions, accessToken: staleToken });
+      (axios as any).mockRejectedValueOnce({
+        response: { status: 401, data: { error: { message: 'Token expired' } } },
+      });
+
+      const options: HttpRequestOptions<unknown> = {
+        uri: '/subscriptions/sub-1/resource',
+        headers: {},
+        content: { key: 'value' },
+      };
+
+      await expect(staleClient.post(options)).rejects.toEqual({
+        error: { message: 'Token expired' },
+      });
+    });
+
+    it('should reject PUT with 401 status when token is invalid', async () => {
+      (axios as any).mockRejectedValueOnce({
+        response: { status: 401, data: { error: { message: 'Unauthorized' } } },
+      });
+
+      const options: HttpRequestOptions<unknown> = {
+        uri: '/subscriptions/sub-1/resource',
+        headers: {},
+        content: {},
+      };
+
+      await expect(httpClient.put(options)).rejects.toEqual(expect.objectContaining({ status: 401 }));
+    });
+
+    it('should construct HttpClient with undefined token without throwing', () => {
+      const clientNoToken = new HttpClient({
+        baseUrl,
+        accessToken: undefined,
+        apiHubBaseUrl,
+        hostVersion,
+      });
+      expect(clientNoToken).toBeDefined();
+    });
+
+    it('should send empty Authorization for ARM requests when token is undefined', async () => {
+      const clientNoToken = new HttpClient({
+        baseUrl,
+        accessToken: undefined,
+        apiHubBaseUrl,
+        hostVersion,
+      });
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      await clientNoToken.get({ uri: '/subscriptions/sub-1/resource', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: '',
+          }),
+        })
+      );
+    });
+  });
+
+  describe('updateAccessToken', () => {
+    it('should update the token used in subsequent requests', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      httpClient.updateAccessToken('new-token');
+
+      await httpClient.get({ uri: '/subscriptions/sub-1/resource', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: 'new-token',
+          }),
+        })
+      );
+    });
+
+    it('should handle undefined token after update', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      httpClient.updateAccessToken(undefined);
+
+      await httpClient.get({ uri: '/subscriptions/sub-1/resource', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: '',
+          }),
+        })
+      );
+    });
+  });
+
+  describe('patch', () => {
+    it('should make a PATCH request with correct headers', async () => {
+      const responseData = { data: { result: 'patched' } };
+      (axios as any).mockResolvedValue({ data: responseData, status: 200 });
+
+      const options: HttpRequestOptions<unknown> = {
+        uri: '/subscriptions/sub-1/resource',
+        headers: {},
+        content: { key: 'updated-value' },
+      };
+
+      const result = await httpClient.patch(options);
+
+      expect(result).toEqual(responseData);
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PATCH',
+          headers: expect.objectContaining({
+            Authorization: accessToken,
+            'Content-Type': 'application/json',
+          }),
+        })
+      );
+    });
+
+    it('should reject when PATCH response is not successful', async () => {
+      (axios as any).mockResolvedValue({ data: { error: 'bad request' }, status: 400 });
+
+      const options: HttpRequestOptions<unknown> = {
+        uri: '/subscriptions/sub-1/resource',
+        headers: {},
+        content: {},
+      };
+
+      await expect(httpClient.patch(options)).rejects.toBeDefined();
+    });
+  });
+
+  describe('returnHeaders', () => {
+    it('should include response headers in GET result when returnHeaders is true', async () => {
+      const mockHeaders = { 'x-ms-request-id': '12345' };
+      (axios as any).mockResolvedValue({ data: { value: 'test' }, status: 200, headers: mockHeaders });
+
+      const result = await httpClient.get({ uri: '/local-endpoint', headers: {}, returnHeaders: true });
+
+      expect(result).toEqual({
+        responseHeaders: mockHeaders,
+        value: 'test',
+      });
+    });
+
+    it('should include response headers in DELETE result when returnHeaders is true', async () => {
+      const mockHeaders = { 'x-ms-request-id': 'abc' };
+      (axios as any).mockResolvedValue({ data: { id: '1' }, status: 200, headers: mockHeaders });
+
+      const result = await httpClient.delete({ uri: '/local-endpoint', headers: {}, returnHeaders: true });
+
+      expect(result).toEqual({
+        responseHeaders: mockHeaders,
+        id: '1',
+      });
+    });
+  });
+
+  describe('isSuccessResponse', () => {
+    it('returns true for 200', () => {
+      expect(isSuccessResponse(200)).toBe(true);
+    });
+
+    it('returns true for 299', () => {
+      expect(isSuccessResponse(299)).toBe(true);
+    });
+
+    it('returns false for 300', () => {
+      expect(isSuccessResponse(300)).toBe(false);
+    });
+
+    it('returns false for 199', () => {
+      expect(isSuccessResponse(199)).toBe(false);
+    });
+  });
+
+  describe('request URL construction', () => {
+    it('should use apiHubBaseUrl for ARM resource IDs', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      await httpClient.get({ uri: '/subscriptions/sub-1/providers/test', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${apiHubBaseUrl}/subscriptions/sub-1/providers/test`,
+        })
+      );
+    });
+
+    it('should use baseUrl for non-ARM URIs', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      await httpClient.get({ uri: '/api/workflows', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${baseUrl}/api/workflows`,
+        })
+      );
+    });
+
+    it('should use the URI as-is when it is a full URL', async () => {
+      (axios as any).mockResolvedValue({ data: {}, status: 200 });
+
+      await httpClient.get({ uri: 'https://other.example.com/api/data', headers: {} });
+
+      expect(axios).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: 'https://other.example.com/api/data',
+        })
+      );
+    });
   });
 });

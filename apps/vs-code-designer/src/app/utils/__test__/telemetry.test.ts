@@ -63,4 +63,34 @@ describe('logSubscriptions', () => {
       { subscriptionId: 'sub2', tenantId: 'tenant2', isCustomCloud: false },
     ]);
   });
+
+  // Regression guard: vscode-azext-utils masks telemetry properties with \S+ / \S* regexes,
+  // which backtrack quadratically over a payload containing no whitespace. A compact
+  // JSON.stringify of a large subscription list is one giant \S+ token and cost ~15s of
+  // synchronous extension-host CPU. The invariant that prevents this is not "is it indented"
+  // (cosmetic) but "is every unbroken non-whitespace run short" (the actual cause).
+  test('should not emit long whitespace-free runs for a large subscription list', async () => {
+    const mockSubscriptions = Array.from({ length: 650 }, (_, i) => ({
+      subscriptionId: `00000000-aaaa-bbbb-cccc-${String(i).padStart(12, '0')}`,
+      tenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47',
+      isCustomCloud: false,
+    }));
+    ext.subscriptionProvider = {
+      isSignedIn: vi.fn().mockResolvedValue(true),
+      getSubscriptions: vi.fn().mockResolvedValue(mockSubscriptions),
+    } as any;
+    const context = {
+      telemetry: { measurements: {} as Record<string, number>, properties: {} },
+    } as any;
+
+    await logSubscriptions(context);
+    const serialized: string = context.telemetry.properties.subscriptions;
+
+    // No data may be lost or reshaped by the formatting change.
+    expect(JSON.parse(serialized)).toEqual(mockSubscriptions);
+
+    // Every whitespace-delimited token must stay short so masking remains linear.
+    const longestRun = serialized.split(/\s/).reduce((max, token) => Math.max(max, token.length), 0);
+    expect(longestRun).toBeLessThan(200);
+  });
 });

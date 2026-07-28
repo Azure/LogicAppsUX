@@ -15,14 +15,6 @@ export async function openConnectionView(
   range: CodeSelection,
   currentConnectionId: string
 ): Promise<void> {
-  const connectionPanel = new ConnectionPanel(
-    context,
-    filePath,
-    methodName,
-    connectorName,
-    connectorType,
-    range,
-    currentConnectionId
-  );
+  const connectionPanel = new ConnectionPanel(context, filePath, methodName, connectorName, connectorType, range, currentConnectionId);
   await connectionPanel.create();
 }

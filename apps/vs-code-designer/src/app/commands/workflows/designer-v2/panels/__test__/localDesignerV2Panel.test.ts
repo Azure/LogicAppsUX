@@ -25,6 +25,9 @@ vi.mock('../../../../../utils/codeless/common', () => ({
   removeWebviewPanelFromCache: vi.fn(),
   getStandardAppData: vi.fn(() => ({ definition: {}, kind: 'Stateful' })),
   getManualWorkflowsInLocalProject: vi.fn().mockResolvedValue({}),
+}));
+
+vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: vi.fn().mockResolvedValue({ enabled: false }),
 }));
 
@@ -108,7 +111,8 @@ import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
 import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
-import { getAzureConnectorDetailsForLocalProject, getManualWorkflowsInLocalProject } from '../../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../../azureConnectors/azureConnectorDetails';
+import { getManualWorkflowsInLocalProject } from '../../../../../utils/codeless/common';
 
 describe('LocalDesignerV2Panel', () => {
   const mockContext = { telemetry: { properties: {}, measurements: {} } } as any;

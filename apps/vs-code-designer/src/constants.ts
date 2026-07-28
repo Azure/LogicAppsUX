@@ -103,7 +103,7 @@ export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8EnabledTrue = '1';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
-export const workflowappRuntime = 'node|20';
+export const workflowappRuntime = 'node|22';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
 export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
@@ -241,7 +241,7 @@ export type customExtensionContext = (typeof customExtensionContext)[keyof typeo
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
-export const suppressDesignerVersionNotification = 'suppressDesignerVersionNotification';
+export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -262,6 +262,7 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
+export const alwaysBuildCustomCodeSetting = 'alwaysBuildCustomCode';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
 export const validateDotNetSDKSetting = 'validateDotNetSDK';
 export const validateNodeJsSetting = 'validateNodeJs';
@@ -291,6 +292,7 @@ export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensio
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
+export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
@@ -301,6 +303,14 @@ export const onStartLanguageServer = 'onStartLanguageServer';
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
+
+// globalState key + interval throttling the expensive full-byte extension-bundle
+// integrity hash. On most launches a fast lstat tree fingerprint is compared
+// instead; the deep byte-hash only runs when this throttle says a verification is
+// due (defense-in-depth against an in-place edit that keeps identical size+mtime).
+// Mirrors the dependency update-check throttle pattern.
+export const lastBundleDeepVerificationKey = 'azureLogicAppsStandard.lastBundleDeepVerification';
+export const bundleDeepVerificationIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
@@ -352,7 +362,7 @@ export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationD
 export const DependencyVersion = {
   dotnet8: '8.0.318',
   funcCoreTools: '4.0.7030',
-  nodeJs: '20.18.3',
+  nodeJs: '24.15.0',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 

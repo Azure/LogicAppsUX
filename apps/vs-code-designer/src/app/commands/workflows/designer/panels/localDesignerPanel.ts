@@ -11,11 +11,11 @@ import { getLocalSettingsJson } from '../../../../utils/appSettings/localSetting
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
 import {
   cacheWebviewPanel,
-  getAzureConnectorDetailsForLocalProject,
   getManualWorkflowsInLocalProject,
   getStandardAppData,
   removeWebviewPanelFromCache,
 } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
@@ -27,6 +27,7 @@ import {
   saveConnectionReferences,
   saveCustomCodeStandard,
 } from '../../../../utils/codeless/connection';
+import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../../utils/requestUtils';
@@ -58,6 +59,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
   private projectPath?: string;
   private panelMetadata?: DesignerPanelMetadata;
   private workflowRuntimeBaseUrlInterval?: NodeJS.Timeout;
+  private accessTokenInterval?: NodeJS.Timeout;
 
   constructor(context: IActionContext, node: Uri, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
@@ -110,7 +112,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -157,6 +159,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     this.panel.onDidDispose(
       () => {
         clearInterval(this.workflowRuntimeBaseUrlInterval);
+        clearInterval(this.accessTokenInterval);
         removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
       },
       null,
@@ -173,7 +176,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
-          const updatedRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+          const updatedRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
           if (updatedRuntimeBaseUrl !== this.workflowRuntimeBaseUrl) {
             this.workflowRuntimeBaseUrl = updatedRuntimeBaseUrl;
@@ -185,6 +188,28 @@ export default class LocalDesignerPanel extends DesignerPanel {
             });
           }
         }, 3000);
+
+        // Refresh access token periodically to prevent stale-token failures on save
+        this.accessTokenInterval = setInterval(async () => {
+          try {
+            const tenantId = this.panelMetadata?.azureDetails?.tenantId;
+            const updatedAccessToken = await getAuthorizationToken(tenantId);
+            // Guard against "Bearer undefined" — only update if we got a real token
+            if (updatedAccessToken && !updatedAccessToken.endsWith('undefined') && updatedAccessToken !== this.panelMetadata?.accessToken) {
+              if (this.panelMetadata) {
+                this.panelMetadata.accessToken = updatedAccessToken;
+              }
+              this.panel?.webview.postMessage({
+                command: ExtensionCommand.update_access_token,
+                data: {
+                  accessToken: updatedAccessToken,
+                },
+              });
+            }
+          } catch {
+            // Silently ignore token refresh failures — the existing token may still be valid
+          }
+        }, 30000);
 
         this.panel?.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
@@ -308,10 +333,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
       default:
         break;
     }
-  }
-
-  private getWorkflowRuntimeBaseUrl(): string | undefined {
-    return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
   }
 
   /**
@@ -480,6 +501,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     };
   }
 
+  /**
   /**
    * Reloads the webview panel and updates the view state.
    * @param webviewPanel The web view panel to update.

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
@@ -32,8 +33,11 @@ export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
   if (task.definition.type === 'shell') {
     const command = (task.execution as vscode.ShellExecution).command?.toString();
+    if (!command) {
+      return false;
+    }
+
     const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
-    // check for args?
     return funcRegex.test(command);
   }
   return /func (host )?start/i.test(commandLine || '');
@@ -60,6 +64,7 @@ export function registerFuncHostTaskEvents(): void {
       context.telemetry.suppressIfSuccessful = true;
       if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
         runningFuncTaskMap.delete(e.execution.task.scope);
+        ext.workflowRuntimePort = undefined;
       }
     }
   );

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { dotnetDependencyName } from '../../../../constants';
 import { binariesExist, getLatestDotNetVersion } from '../../../utils/binaries';
-import { shouldCheckForDependencyUpdates } from '../../../utils/dependencyUpdateCheck';
+import { shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../../../utils/dotnet/dotnet';
 import { installDotNet } from '../installDotNet';
 import { validateDotNetIsLatest } from '../validateDotNetIsLatest';
@@ -23,7 +23,7 @@ vi.mock('../../../utils/binaries', () => ({
   getLatestDotNetVersion: vi.fn(),
 }));
 
-vi.mock('../../../utils/dependencyUpdateCheck', () => ({
+vi.mock('../../../state/dependencies', () => ({
   shouldCheckForDependencyUpdates: vi.fn(),
 }));
 

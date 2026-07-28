@@ -1,3 +1,10 @@
+/**
+ * @vitest-environment jsdom
+ *
+ * The HTML value case sanitizes with DOMPurify, which is incompatible with happy-dom
+ * (sanitize() strips the outermost element). jsdom matches production browser behavior.
+ * See the same note in src/lib/html/plugins/toolbar/helper/__test__/util.spec.ts.
+ */
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { DateTimeValue } from '../datetime';

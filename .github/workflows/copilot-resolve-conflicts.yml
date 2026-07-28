@@ -51,7 +51,7 @@ jobs:
       matrix:
         pr: ${{ fromJSON(needs.find-conflicting-prs.outputs.conflicting-prs) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 

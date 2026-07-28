@@ -29,9 +29,10 @@ export async function openMonitoringView(
     return openDesignerV2(context, node, runId);
   }
 
-  const monitoringPanel = node instanceof Uri
-    ? new LocalMonitoringPanel(context, runId, workflowFilePath)
-    : new RemoteMonitoringPanel(context, runId, workflowFilePath, node);
+  const monitoringPanel =
+    node instanceof Uri
+      ? new LocalMonitoringPanel(context, runId, workflowFilePath)
+      : new RemoteMonitoringPanel(context, runId, workflowFilePath, node);
 
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.openMonitoringView', async (actionContext: IActionContext) => {
     actionContext.telemetry.properties.isLocal = node instanceof Uri ? 'true' : 'false';
