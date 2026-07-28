@@ -26,6 +26,24 @@
  *      instantly on that stale directory. The folder is therefore cleared here
  *      first and the gate additionally requires `mtimeMs >= gateStart`, mirroring
  *      `codefulDebugTasks.test.ts`'s `waitForDesignTimeEvidence()`.
+ *
+ *      This gate applies to BOTH app kinds. A codeful project does produce
+ *      `<app>/workflow-designtime`: `isLogicAppProject()` returns true for it via
+ *      `hasCodefulSdkReference()` (verifyIsProject.ts:60-67), so it is included in
+ *      `getWorkspaceLogicAppFolders()` -> `startAllDesignTimeApis()` ->
+ *      `startDesignTimeApi()` -> `validateAndRegenerateProjectArtifacts()` ->
+ *      `regenerateDesignTimeDirectory()`, which calls `ensureDesignTimeDirectory()`
+ *      unconditionally. Phase 4.10B relies on exactly this: it hard-asserts a fresh
+ *      `<app>/workflow-designtime` and then reads `workflow-designtime/local.settings.json`
+ *      to check `FUNCTIONS_WORKER_RUNTIME=node` (codefulDebugTasks.test.ts:322-334, 468-494).
+ *
+ * APP KIND — `AZURITE_E2E_APP_KIND` selects `codeless` (default) or `codeful`.
+ * `pickFuncProcessInternal` calls `activateAzurite` unconditionally as its FIRST
+ * statement (pickFuncProcess.ts:85), before `preDebugValidate` (:100) and long before
+ * the `hasCodefulWorkflowSetting` branch that runs `publishCodefulProject` (:109-119).
+ * So the codeful variant exercises the same readiness path AND lets us assert the extra
+ * property that only matters for codeful: the bounded failure happens BEFORE the
+ * expensive publish/build. See `assertCodefulFailedBeforePublish()`.
  */
 
 import * as assert from 'assert';
@@ -53,20 +71,68 @@ const EXTENSION_READY_TIMEOUT = 240_000;
 const AZURITE_TIMEOUT_TEXT = 'Azurite did not become ready';
 const AZURE_WEB_JOBS_STORAGE_TEXT = 'Failed to verify "AzureWebJobsStorage" connection';
 const DEBUG_ANYWAY_TEXT = 'Debug anyway';
-const WORKSPACE_PARENT_DIR =
-  process.env.AZURITE_E2E_WORKSPACE_PARENT ?? path.join(os.tmpdir(), 'la-e2e-test', 'azurite-autostart-failure-parent');
-const WORKSPACE_NAME = 'azuritews';
-const APP_NAME = 'azuriteapp';
+
+// ---------------------------------------------------------------------------
+// APP KIND axis. Kept byte-for-byte parallel with azuriteAutostartFailure.test.ts
+// (Phase 4.13A) so the two phases can never disagree about which directory they are
+// operating on. Read at module scope, like every other env gate in this suite:
+// run-e2e.ts's runPhase() drops the module from require.cache before each phase, so a
+// per-phase env change is what re-evaluates these. (Unlike 4.13A this file has no
+// AZURITE_E2E_STEP gate — the launcher selects it by file, not by env.)
+// ---------------------------------------------------------------------------
+const APP_KINDS = ['codeless', 'codeful'] as const;
+type AzuriteAppKind = (typeof APP_KINDS)[number];
+const E2E_APP_KIND = (process.env.AZURITE_E2E_APP_KIND || 'codeless').toLowerCase();
+if (!(APP_KINDS as readonly string[]).includes(E2E_APP_KIND)) {
+  // Fail loudly rather than silently falling back: a typo'd kind that quietly ran
+  // codeless twice would look green while covering nothing new.
+  throw new Error(`AZURITE_E2E_APP_KIND must be one of ${APP_KINDS.join(' | ')} (received "${process.env.AZURITE_E2E_APP_KIND}")`);
+}
+const APP_KIND = E2E_APP_KIND as AzuriteAppKind;
+const IS_CODEFUL = APP_KIND === 'codeful';
+
+// Disjoint on-disk layout per kind so the two runs cannot collide on the filesystem
+// or inside the .code-workspace. Codeless keeps its historical names verbatim.
+const DEFAULT_WORKSPACE_PARENT_DIR = path.join(
+  os.tmpdir(),
+  'la-e2e-test',
+  IS_CODEFUL ? 'azurite-autostart-failure-codeful-parent' : 'azurite-autostart-failure-parent'
+);
+const WORKSPACE_PARENT_DIR = process.env.AZURITE_E2E_WORKSPACE_PARENT ?? DEFAULT_WORKSPACE_PARENT_DIR;
+const WORKSPACE_NAME = IS_CODEFUL ? 'azuritecfws' : 'azuritews';
+const APP_NAME = IS_CODEFUL ? 'azuritecfapp' : 'azuriteapp';
 const WORKSPACE_DIR = path.join(WORKSPACE_PARENT_DIR, WORKSPACE_NAME);
 const PROJECT_DIR = path.join(WORKSPACE_DIR, APP_NAME);
 const WORKSPACE_FILE = path.join(WORKSPACE_DIR, `${WORKSPACE_NAME}.code-workspace`);
+const LOCAL_SETTINGS_FILE = path.join(PROJECT_DIR, 'local.settings.json');
 const DESIGN_TIME_DIR = path.join(PROJECT_DIR, 'workflow-designtime');
+const WORKFLOW_CODEFUL_ENABLED_KEY = 'WORKFLOW_CODEFUL_ENABLED';
+// `<app>/lib/codeful` is written ONLY by the CopyToCodefulFolder MSBuild target
+// (assets/CodefulProjectTemplate/CodefulProj, AfterTargets="Build;Publish"), and
+// `<app>/bin/**/<app>.dll` only by a real dotnet build/publish. Neither is produced by
+// the Node design-time worker, so their absence after F5 is the evidence that the
+// Azurite failure short-circuited before publishCodefulProject.
+const CODEFUL_PUBLISH_OUTPUT_DIR = path.join(PROJECT_DIR, 'lib', 'codeful');
+const CODEFUL_BUILD_OUTPUT_DIRS = [path.join(PROJECT_DIR, 'bin'), path.join(PROJECT_DIR, 'lib')];
+const CODEFUL_ASSEMBLY_NAME = `${APP_NAME}.dll`;
+// New log lines carry the kind so the two runs are distinguishable in a single CI job.
+// Pre-existing `[azurite-e2e]` lines are intentionally left as-is to keep the codeless
+// diff limited to genuinely kind-dependent behavior.
+const LOG_PREFIX = `[azurite-e2e][4.13B][${APP_KIND}]`;
+
 const EXPLICIT_SCREENSHOT_DIR = path.join(
   process.env.TEMP || process.cwd(),
   'test-resources',
   'screenshots',
-  'azuriteAutostartFailure-explicit',
+  IS_CODEFUL ? 'azuriteAutostartFailure-explicit-codeful' : 'azuriteAutostartFailure-explicit',
   new Date().toISOString().replace(/[:.]/g, '-')
+);
+
+// Module-scope banner, mirroring Phase 4.13A. Printed during Mocha's file load so the
+// resolved layout is on the record before any gate runs; if 4.13A and 4.13B ever
+// disagree about a path, the two banners make it obvious in one grep.
+console.log(
+  `${LOG_PREFIX} layout: kind=${APP_KIND} isCodeless=${!IS_CODEFUL} workspaceFile=${WORKSPACE_FILE} projectDir=${PROJECT_DIR} designTimeDir=${DESIGN_TIME_DIR}`
 );
 
 function writeJson(filePath: string, value: unknown): void {
@@ -112,17 +178,20 @@ function configureGeneratedWorkspaceForAzuriteFailure(): void {
     version: '0.2.0',
     configurations: [
       {
+        // Mirrors CreateLogicAppVSCodeContents.getDebugConfiguration: codeful is
+        // `isCodeless: false` with NO preLaunchTask; codeless keeps the historical
+        // `isCodeless: true`. Both are `type: 'logicapp'`, so both route through
+        // debugLogicApp -> pickFuncProcessInternal -> activateAzurite.
         name: `Run/Debug logic app ${APP_NAME}`,
         type: 'logicapp',
         request: 'launch',
         funcRuntime: 'coreclr',
-        isCodeless: true,
+        isCodeless: !IS_CODEFUL,
       },
     ],
   });
 
-  const localSettingsPath = path.join(PROJECT_DIR, 'local.settings.json');
-  const localSettingsJson = readJson(localSettingsPath);
+  const localSettingsJson = readJson(LOCAL_SETTINGS_FILE);
   localSettingsJson.Values = {
     ...(localSettingsJson.Values ?? {}),
     AzureWebJobsStorage: 'UseDevelopmentStorage=true',
@@ -131,7 +200,32 @@ function configureGeneratedWorkspaceForAzuriteFailure(): void {
     WORKFLOWS_RESOURCE_GROUP_NAME: '',
     WORKFLOWS_LOCATION_NAME: '',
   };
-  writeJson(localSettingsPath, localSettingsJson);
+  writeJson(LOCAL_SETTINGS_FILE, localSettingsJson);
+  assertAppKindMarker(localSettingsJson.Values ?? {});
+}
+
+/**
+ * Both directions matter.
+ *   - codeful without `WORKFLOW_CODEFUL_ENABLED=true` would take the CODELESS branch in
+ *     pickFuncProcessInternal (hasCodefulWorkflowSetting, utils/codeful.ts:35-48), so a
+ *     green run would prove nothing new and the "fails before publish" assertion would
+ *     be vacuous.
+ *   - codeless WITH it set would mean the wizard produced the wrong project kind.
+ * This is the one assertion newly added to the codeless path; it only strengthens it.
+ */
+function assertAppKindMarker(values: Record<string, unknown>): void {
+  const marker = values[WORKFLOW_CODEFUL_ENABLED_KEY];
+  if (IS_CODEFUL && marker !== 'true') {
+    throw new Error(
+      `Codeful workspace must have ${WORKFLOW_CODEFUL_ENABLED_KEY}="true" in ${LOCAL_SETTINGS_FILE} (got ${JSON.stringify(marker)}). Without it F5 takes the codeless branch and the codeful variant covers nothing new.`
+    );
+  }
+  if (!IS_CODEFUL && marker === 'true') {
+    throw new Error(
+      `Codeless workspace must NOT have ${WORKFLOW_CODEFUL_ENABLED_KEY}="true" in ${LOCAL_SETTINGS_FILE}; Phase 4.13A produced a codeful project.`
+    );
+  }
+  console.log(`${LOG_PREFIX} ${WORKFLOW_CODEFUL_ENABLED_KEY}=${JSON.stringify(marker)} matches app kind "${APP_KIND}"`);
 }
 
 async function bindPort(port: number): Promise<http.Server> {
@@ -253,6 +347,30 @@ async function logPanelDiagnostics(driver: WebDriver, label: string): Promise<vo
   }
 }
 
+function findLatestLogicAppsOutputLog(): string | undefined {
+  const logsRoot = path.join(os.tmpdir(), 'test-resources', 'settings', 'logs');
+  if (!fs.existsSync(logsRoot)) {
+    return undefined;
+  }
+
+  const matches: string[] = [];
+  const collect = (directory: string) => {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const entryPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        collect(entryPath);
+      } else if (entry.name.includes('Azure Logic Apps') && entry.name.endsWith('.log')) {
+        matches.push(entryPath);
+      }
+    }
+  };
+  collect(logsRoot);
+
+  return matches
+    .map((filePath) => ({ filePath, mtimeMs: fs.statSync(filePath).mtimeMs }))
+    .sort((left, right) => right.mtimeMs - left.mtimeMs)[0]?.filePath;
+}
+
 function logLatestLogicAppsOutput(label: string): void {
   try {
     const logsRoot = path.join(os.tmpdir(), 'test-resources', 'settings', 'logs');
@@ -261,22 +379,7 @@ function logLatestLogicAppsOutput(label: string): void {
       return;
     }
 
-    const matches: string[] = [];
-    const collect = (directory: string) => {
-      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-        const entryPath = path.join(directory, entry.name);
-        if (entry.isDirectory()) {
-          collect(entryPath);
-        } else if (entry.name.includes('Azure Logic Apps') && entry.name.endsWith('.log')) {
-          matches.push(entryPath);
-        }
-      }
-    };
-    collect(logsRoot);
-
-    const latest = matches
-      .map((filePath) => ({ filePath, mtimeMs: fs.statSync(filePath).mtimeMs }))
-      .sort((left, right) => right.mtimeMs - left.mtimeMs)[0]?.filePath;
+    const latest = findLatestLogicAppsOutputLog();
 
     if (!latest) {
       console.log(`[azurite-e2e] ${label} output log: no Azure Logic Apps output log found`);
@@ -468,7 +571,138 @@ async function waitForDesignTimeFolder(notBeforeMs: number | undefined): Promise
   throw new Error(`Expected design-time startup to create ${DESIGN_TIME_DIR} (required: ${required}; observed: ${observed})`);
 }
 
-describe('Azurite auto-start failure E2E assertion', function () {
+// ---------------------------------------------------------------------------
+// Codeful-only: "the bounded failure happens BEFORE the expensive publish/build".
+//
+// pickFuncProcessInternal ordering (pickFuncProcess.ts):
+//    85  activateAzurite                          <- the code under test; throws here
+//   100  preDebugValidate
+//   109  hasCodefulWorkflowSetting -> 116 publishCodefulProject
+//   146  startFuncTask (`func: host start`, which dependsOn the Debug `build` task)
+// Everything that produces compiler output is at >= 116, so if the Azurite timeout is
+// honoured no build artifact can exist. Two independent artifacts are checked:
+//   * `<app>/lib/codeful` — written ONLY by the CopyToCodefulFolder MSBuild target
+//     (assets/CodefulProjectTemplate/CodefulProj, AfterTargets="Build;Publish"). The Node
+//     design-time worker never writes it.
+//   * `<app>.dll` under `<app>/bin` or `<app>/lib` — emitted only by a real
+//     dotnet build/publish. C# Dev Kit's design-time evaluation only touches `obj/`.
+// `obj/` is therefore deliberately NOT asserted on, only logged.
+// ---------------------------------------------------------------------------
+
+/**
+ * Makes the post-F5 assertion non-vacuous: without this, "no build output" could simply
+ * mean "no build ever ran in this workspace", which is trivially true on a fresh clone.
+ * Clearing immediately before F5 means any output found afterwards was produced by THIS F5.
+ *
+ * Failure to remove is fatal on purpose. A locked `bin`/`lib` means something is already
+ * building the project, which invalidates the test's premise; degrading to a skip here is
+ * exactly the "passed for the wrong reason" trap this suite has hit before.
+ */
+async function clearCodefulBuildOutput(): Promise<void> {
+  for (const target of CODEFUL_BUILD_OUTPUT_DIRS) {
+    if (!fs.existsSync(target)) {
+      continue;
+    }
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= 8; attempt++) {
+      try {
+        fs.rmSync(target, { recursive: true, force: true, maxRetries: 3, retryDelay: 500 });
+        lastError = undefined;
+        break;
+      } catch (error) {
+        lastError = error;
+        console.log(`${LOG_PREFIX} Waiting to remove pre-existing build output (attempt ${attempt}): ${target}`);
+        await sleep(1000);
+      }
+    }
+    if (lastError !== undefined || fs.existsSync(target)) {
+      throw new Error(
+        `Could not clear pre-existing codeful build output at ${target} before F5 (${lastError ?? 'still present'}). A locked build directory means a build is already running, which would make the "failed before publish" assertion meaningless.`
+      );
+    }
+  }
+  console.log(`${LOG_PREFIX} Cleared codeful build output dirs before F5: ${CODEFUL_BUILD_OUTPUT_DIRS.join(', ')}`);
+}
+
+function findFilesNamed(root: string, fileName: string, found: string[] = []): string[] {
+  if (!fs.existsSync(root)) {
+    return found;
+  }
+  let entries: fs.Dirent[];
+  try {
+    entries = fs.readdirSync(root, { withFileTypes: true });
+  } catch {
+    return found;
+  }
+  for (const entry of entries) {
+    const entryPath = path.join(root, entry.name);
+    if (entry.isDirectory()) {
+      findFilesNamed(entryPath, fileName, found);
+    } else if (entry.name.toLowerCase() === fileName.toLowerCase()) {
+      found.push(entryPath);
+    }
+  }
+  return found;
+}
+
+function describeDirectory(target: string): string {
+  try {
+    return fs.existsSync(target) ? fs.readdirSync(target).join(', ') || '<empty>' : '<missing>';
+  } catch (error) {
+    return `<unreadable: ${error}>`;
+  }
+}
+
+/**
+ * The codeful-specific value of this variant. Runs AFTER the shared assertions so the
+ * Azurite failure is already proven; this then proves nothing downstream of it ran.
+ */
+function assertCodefulFailedBeforePublish(): void {
+  // Diagnostics first so a failure below is readable without a re-run.
+  console.log(`${LOG_PREFIX} project dir after F5: ${describeDirectory(PROJECT_DIR)}`);
+  console.log(
+    `${LOG_PREFIX} obj/ after F5 (not asserted, design-time builds may write it): ${describeDirectory(path.join(PROJECT_DIR, 'obj'))}`
+  );
+  for (const target of CODEFUL_BUILD_OUTPUT_DIRS) {
+    console.log(`${LOG_PREFIX} ${target} after F5: ${describeDirectory(target)}`);
+  }
+
+  assert.strictEqual(
+    fs.existsSync(CODEFUL_PUBLISH_OUTPUT_DIR),
+    false,
+    `Azurite auto-start failed, so the codeful build/publish must never have run, but ${CODEFUL_PUBLISH_OUTPUT_DIR} exists (only the CopyToCodefulFolder MSBuild target creates it). That means F5 got past activateAzurite (pickFuncProcess.ts:85) into publishCodefulProject/startFuncTask (:116/:146).`
+  );
+
+  const assemblies = CODEFUL_BUILD_OUTPUT_DIRS.flatMap((root) => findFilesNamed(root, CODEFUL_ASSEMBLY_NAME));
+  assert.deepStrictEqual(
+    assemblies,
+    [],
+    `Azurite auto-start failed, so no compiler output should exist, but found ${CODEFUL_ASSEMBLY_NAME} at: ${assemblies.join(', ')}. Only a real dotnet build/publish emits it, and both run strictly after activateAzurite.`
+  );
+
+  // Secondary, one-directional signal. `publishCodefulProject` logs this line when the
+  // modern template's build hooks let it skip; its PRESENCE would prove execution reached
+  // pickFuncProcess.ts:116. Absence is consistent with (but does not by itself prove) an
+  // early exit, which is why the on-disk checks above are the primary assertion.
+  try {
+    const latest = findLatestLogicAppsOutputLog();
+    const content = latest ? fs.readFileSync(latest, 'utf-8') : '';
+    assert.strictEqual(
+      content.includes('Skipping publishCodefulProject for'),
+      false,
+      `The Logic Apps output log shows publishCodefulProject was reached (${latest}), which is after activateAzurite in pickFuncProcessInternal.`
+    );
+  } catch (error) {
+    if (error instanceof assert.AssertionError) {
+      throw error;
+    }
+    console.log(`${LOG_PREFIX} Could not read the output log for the publish-reached check: ${error}`);
+  }
+
+  console.log(`${LOG_PREFIX} Verified the Azurite failure short-circuited before any codeful publish/build output was produced`);
+}
+
+describe(`Azurite auto-start failure E2E assertion (${APP_KIND})`, function () {
   this.timeout(TEST_TIMEOUT);
 
   let driver: WebDriver;
@@ -496,7 +730,7 @@ describe('Azurite auto-start failure E2E assertion', function () {
     await closeServers(portBlockers);
   });
 
-  it('stops debug after Azurite auto-start failure without showing AzureWebJobsStorage warning', async function () {
+  it(`stops debug after Azurite auto-start failure without showing AzureWebJobsStorage warning (${APP_KIND})`, async function () {
     this.timeout(TEST_TIMEOUT);
     assert.ok(fs.existsSync(WORKSPACE_FILE), `Expected generated workspace file to exist: ${WORKSPACE_FILE}`);
     configureGeneratedWorkspaceForAzuriteFailure();
@@ -526,6 +760,10 @@ describe('Azurite auto-start failure E2E assertion', function () {
     const workbench = new Workbench();
     await focusTerminalPanel(driver);
     await logPanelDiagnostics(driver, 'before debug');
+    if (IS_CODEFUL) {
+      // Immediately before F5 so anything found afterwards was produced by this F5.
+      await clearCodefulBuildOutput();
+    }
     portBlockers = await blockAzuritePorts();
     await startDebugging(workbench, driver);
     await focusTerminalPanel(driver);
@@ -544,5 +782,11 @@ describe('Azurite auto-start failure E2E assertion', function () {
     await assertTextDoesNotAppear(driver, AZURE_WEB_JOBS_STORAGE_TEXT, 20_000);
     await assertTextDoesNotAppear(driver, DEBUG_ANYWAY_TEXT, 5_000);
     assert.strictEqual(await isDebugToolbarVisible(driver), false, 'Debug toolbar should not be visible after Azurite auto-start failure');
+
+    if (IS_CODEFUL) {
+      // Runs last: the assertions above already established that F5 started and that the
+      // Azurite timeout was surfaced, so this is specifically about what did NOT happen next.
+      assertCodefulFailedBeforePublish();
+    }
   });
 });

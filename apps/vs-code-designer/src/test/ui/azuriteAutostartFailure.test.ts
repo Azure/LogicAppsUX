@@ -46,6 +46,17 @@
  * So this file uses the equivalent *shared, exported* gate from
  * `designerHelpers.ts` instead of importing from another test file (which would
  * register that file's `describe()` blocks into this phase).
+ *
+ * APP KIND — `AZURITE_E2E_APP_KIND` selects `codeless` (default) or `codeful`.
+ * The Azurite readiness contract is app-kind agnostic in the product:
+ * `pickFuncProcessInternal` calls `activateAzurite` unconditionally as its FIRST
+ * statement (pickFuncProcess.ts:85), long before the `hasCodefulWorkflowSetting`
+ * branch that runs `publishCodefulProject` (pickFuncProcess.ts:109-119) and before
+ * the `isCodeless` read at pickFuncProcess.ts:142. So a codeful F5 traverses the
+ * exact same readiness code path, and it must fail BEFORE the expensive codeful
+ * publish/build — which is what Phase 4.13B additionally asserts for `codeful`.
+ * Every kind gets its own workspace parent / workspace name / logic app name so
+ * the two runs can never collide on disk or inside a `.code-workspace`.
  */
 
 import * as fs from 'fs';
@@ -54,6 +65,7 @@ import * as path from 'path';
 import { type WebDriver, type WebElement, Workbench } from 'vscode-extension-tester';
 import {
   clickCreateWorkspaceButton,
+  deepVerifyWorkspace,
   fillStandardFormFields,
   selectCreateWorkspaceCommand,
   sleep,
@@ -79,34 +91,79 @@ const EXTENSION_READY_TIMEOUT = 240_000;
  * job's 30-minute budget.
  */
 const DEPENDENCY_SETTLE_TIMEOUT = 240_000;
-const WORKSPACE_PARENT_DIR =
-  process.env.AZURITE_E2E_WORKSPACE_PARENT ?? path.join(os.tmpdir(), 'la-e2e-test', 'azurite-autostart-failure-parent');
-// These four names are load-bearing: run-e2e.ts checks for
-// `${AZURITE_E2E_WORKSPACE_PARENT}/azuritews/azuritews.code-workspace` before it
-// will run Phase 4.13B, and azuriteAutostartFailureAssert.test.ts derives
-// WORKSPACE_DIR / PROJECT_DIR / DESIGN_TIME_DIR from the same values. Do not rename.
-const WORKSPACE_NAME = 'azuritews';
-const APP_NAME = 'azuriteapp';
-const WORKFLOW_NAME = 'workflow1';
+
+/**
+ * App kind under test. Read at module scope exactly like `AZURITE_E2E_STEP`, because
+ * `runPhase()` clears `require.cache` for the compiled test file before each phase, so
+ * re-evaluating module scope is what makes the env gate select a different body.
+ *
+ * Unknown values throw rather than silently falling back to `codeless`: only the
+ * launcher sets this, so a bad value is a harness bug that must be loud, not a run that
+ * quietly re-tests the kind we already cover.
+ */
+const APP_KINDS = ['codeless', 'codeful'] as const;
+type AzuriteAppKind = (typeof APP_KINDS)[number];
+const E2E_APP_KIND = (process.env.AZURITE_E2E_APP_KIND || 'codeless').toLowerCase();
+if (!(APP_KINDS as readonly string[]).includes(E2E_APP_KIND)) {
+  throw new Error(`AZURITE_E2E_APP_KIND must be one of ${APP_KINDS.join(' | ')}; got "${process.env.AZURITE_E2E_APP_KIND}"`);
+}
+const APP_KIND = E2E_APP_KIND as AzuriteAppKind;
+const IS_CODEFUL = APP_KIND === 'codeful';
+
+/**
+ * Per-kind layout. The codeless values are byte-for-byte the historical ones, so an
+ * unset `AZURITE_E2E_APP_KIND` reproduces the previous run exactly. The codeful values
+ * are disjoint in BOTH the parent directory and the workspace/app names, so the two
+ * runs cannot collide on disk, in the generated `.code-workspace`, or in the
+ * `workflow-designtime` folder the launcher clears between 4.13A and 4.13B.
+ */
+const DEFAULT_WORKSPACE_PARENT_DIR = path.join(
+  os.tmpdir(),
+  'la-e2e-test',
+  IS_CODEFUL ? 'azurite-autostart-failure-codeful-parent' : 'azurite-autostart-failure-parent'
+);
+const WORKSPACE_PARENT_DIR = process.env.AZURITE_E2E_WORKSPACE_PARENT ?? DEFAULT_WORKSPACE_PARENT_DIR;
+// These names are load-bearing: run-e2e.ts checks for
+// `${AZURITE_E2E_WORKSPACE_PARENT}/${WORKSPACE_NAME}/${WORKSPACE_NAME}.code-workspace`
+// before it will run Phase 4.13B, and azuriteAutostartFailureAssert.test.ts derives
+// WORKSPACE_DIR / PROJECT_DIR / DESIGN_TIME_DIR from the same values. Keep the two
+// files' tables identical.
+const WORKSPACE_NAME = IS_CODEFUL ? 'azuritecfws' : 'azuritews';
+const APP_NAME = IS_CODEFUL ? 'azuritecfapp' : 'azuriteapp';
+const WORKFLOW_NAME = IS_CODEFUL ? 'cfworkflow1' : 'workflow1';
+// Wizard radio label. `fillStandardFormFields` takes the DISPLAY label, not the short
+// manifest kind (see createWorkspace.behavior.test.ts:2580 for the codeful label).
+const APP_TYPE_LABEL = IS_CODEFUL ? 'Logic app (codeful)' : 'Logic app (Standard)';
 const WORKSPACE_DIR = path.join(WORKSPACE_PARENT_DIR, WORKSPACE_NAME);
 const PROJECT_DIR = path.join(WORKSPACE_DIR, APP_NAME);
 const WORKSPACE_FILE = path.join(WORKSPACE_DIR, `${WORKSPACE_NAME}.code-workspace`);
 const LOCAL_SETTINGS_FILE = path.join(PROJECT_DIR, 'local.settings.json');
+// Only codeful generates a .csproj next to local.settings.json; a codeful project has
+// NO `<wfName>/workflow.json` at all (createWorkspaceShared.ts:1430-1448).
+const CSPROJ_FILE = path.join(PROJECT_DIR, `${APP_NAME}.csproj`);
+const WORKFLOW_CODEFUL_ENABLED_KEY = 'WORKFLOW_CODEFUL_ENABLED';
 const E2E_STEP = (process.env.AZURITE_E2E_STEP || 'create').toLowerCase();
 const IS_CREATE_STEP = E2E_STEP === 'create';
 const EXPLICIT_SCREENSHOT_DIR = path.join(
   process.env.TEMP || process.cwd(),
   'test-resources',
   'screenshots',
-  'azuriteAutostartFailure-create',
+  IS_CODEFUL ? 'azuriteAutostartFailure-create-codeful' : 'azuriteAutostartFailure-create',
   new Date().toISOString().replace(/[:.]/g, '-')
 );
 
-const LOG_PREFIX = '[azurite-e2e][4.13A]';
+const LOG_PREFIX = `[azurite-e2e][4.13A][${APP_KIND}]`;
 
 function log(message: string): void {
   console.log(`${LOG_PREFIX} ${message}`);
 }
+
+// Module-scope banner: prints during Mocha's file load, so `--dry-run` (and every CI
+// run) records exactly which layout this phase resolved. Cheap insurance against the two
+// phases silently disagreeing about a path.
+log(
+  `layout: step=${E2E_STEP} kind=${APP_KIND} appType="${APP_TYPE_LABEL}" isCodeless=${!IS_CODEFUL} workspaceFile=${WORKSPACE_FILE} projectDir=${PROJECT_DIR}`
+);
 
 function writeJson(filePath: string, value: unknown): void {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -170,7 +227,10 @@ function describeDirectory(directory: string): string {
  * local.settings.json, which the extension writes slightly later.
  */
 async function waitForWorkspaceArtifacts(timeoutMs = 60_000): Promise<void> {
-  const required = [WORKSPACE_FILE, PROJECT_DIR, LOCAL_SETTINGS_FILE];
+  // Codeful has no `<wfName>/workflow.json`; its project-shaped evidence is the
+  // generated `<appName>.csproj` (createWorkspaceShared.ts:1430-1448). Waiting on it
+  // keeps the codeful phase from configuring a half-written project.
+  const required = [WORKSPACE_FILE, PROJECT_DIR, LOCAL_SETTINGS_FILE, ...(IS_CODEFUL ? [CSPROJ_FILE] : [])];
   const deadline = Date.now() + timeoutMs;
   let missing: string[] = required;
 
@@ -217,9 +277,10 @@ async function createWorkspaceFromWebview(workbench: Workbench, driver: WebDrive
     wsName: WORKSPACE_NAME,
     appName: APP_NAME,
     wfName: WORKFLOW_NAME,
-    // Codeless/Standard: Phase 4.13B writes a `type: logicapp`, `isCodeless: true`
-    // launch configuration against this app.
-    appType: 'Logic app (Standard)',
+    // DISPLAY label, not the short manifest kind. Codeless/Standard gets a
+    // `type: logicapp`, `isCodeless: true` launch configuration below; codeful gets
+    // `isCodeless: false`, mirroring CreateLogicAppVSCodeContents.getDebugConfiguration.
+    appType: APP_TYPE_LABEL,
     wfType: 'Stateful',
   });
   await step(driver, 'form-filled');
@@ -236,7 +297,21 @@ async function createWorkspaceFromWebview(workbench: Workbench, driver: WebDrive
   await step(driver, 'after-create-clicked');
 
   await waitForWorkspaceArtifacts();
-  verifyWorkspaceOnDisk(WORKSPACE_PARENT_DIR, WORKSPACE_NAME, APP_NAME, { wfName: WORKFLOW_NAME });
+  if (IS_CODEFUL) {
+    // deepVerifyWorkspace is the shared verifier that already knows the codeful shape:
+    // it requires `<wfName>.cs`, `<appName>.csproj`, `Program.cs`, host.json and
+    // local.settings.json, and it FAILS if a codeless `workflow.json` was generated.
+    // Asserting codeless artifacts for a codeful app would be wrong here.
+    deepVerifyWorkspace(WORKSPACE_PARENT_DIR, {
+      wsName: WORKSPACE_NAME,
+      appName: APP_NAME,
+      wfName: WORKFLOW_NAME,
+      appType: 'codeful',
+      wfType: 'Stateful',
+    });
+  } else {
+    verifyWorkspaceOnDisk(WORKSPACE_PARENT_DIR, WORKSPACE_NAME, APP_NAME, { wfName: WORKFLOW_NAME });
+  }
 }
 
 function configureGeneratedWorkspaceForAzuriteFailure(): void {
@@ -269,22 +344,29 @@ function configureGeneratedWorkspaceForAzuriteFailure(): void {
   });
 
   const launchPath = path.join(PROJECT_DIR, '.vscode', 'launch.json');
+  // Diagnostics only: record what the wizard itself generated before we pin a
+  // deterministic single-configuration launch.json. For codeful the two should agree
+  // (CreateLogicAppVSCodeContents.getDebugConfiguration); a divergence here is the first
+  // thing to read if the codeful variant ever starts behaving unlike a real F5.
+  if (fs.existsSync(launchPath)) {
+    try {
+      log(`Wizard-generated launch.json: ${JSON.stringify(readJson(launchPath))}`);
+    } catch (error) {
+      log(`Could not read wizard-generated launch.json (${error})`);
+    }
+  }
   writeJson(launchPath, {
     version: '0.2.0',
-    configurations: [
-      {
-        name: `Run/Debug logic app ${APP_NAME}`,
-        type: 'logicapp',
-        request: 'launch',
-        funcRuntime: 'coreclr',
-        isCodeless: true,
-      },
-    ],
+    configurations: [buildLaunchConfiguration()],
   });
 
   const localSettingsJson = readJson(LOCAL_SETTINGS_FILE);
   localSettingsJson.Values = {
     ...(localSettingsJson.Values ?? {}),
+    // The whole scenario hangs off this: activateAzurite only probes/starts the
+    // emulator when AzureWebJobsStorage IS the local emulator connection string
+    // (validatePreDebug.ts:214). Spreading the generated Values first preserves
+    // WORKFLOW_CODEFUL_ENABLED, which is what routes F5 into the codeful branch.
     AzureWebJobsStorage: 'UseDevelopmentStorage=true',
     WORKFLOWS_SUBSCRIPTION_ID: '',
     WORKFLOWS_TENANT_ID: '',
@@ -292,7 +374,51 @@ function configureGeneratedWorkspaceForAzuriteFailure(): void {
     WORKFLOWS_LOCATION_NAME: '',
   };
   writeJson(LOCAL_SETTINGS_FILE, localSettingsJson);
+  assertAppKindMarker(localSettingsJson.Values ?? {});
   log(`Configured generated workspace for the Azurite failure scenario: ${WORKSPACE_FILE}`);
+}
+
+/**
+ * Mirrors what the product itself writes, rather than inventing a shape:
+ *   - codeful  → CreateLogicAppVSCodeContents.getDebugConfiguration(name, undefined, true)
+ *                = { type: 'logicapp', request: 'launch', funcRuntime: 'coreclr', isCodeless: false }
+ *                and, notably, NO preLaunchTask — the `func: host start` task is picked up
+ *                by pickFuncProcessInternal via isFuncHostTask() when preLaunchTask is absent
+ *                (pickFuncProcess.ts:124-128).
+ *   - codeless → the historical `isCodeless: true` config this phase has always written.
+ * Both are `type: 'logicapp'`, so both route F5 through debugLogicApp -> pickFuncProcessInternal,
+ * whose FIRST statement is activateAzurite.
+ */
+function buildLaunchConfiguration(): Record<string, unknown> {
+  return {
+    name: `Run/Debug logic app ${APP_NAME}`,
+    type: 'logicapp',
+    request: 'launch',
+    funcRuntime: 'coreclr',
+    isCodeless: !IS_CODEFUL,
+  };
+}
+
+/**
+ * Guard against the whole codeful variant silently degrading into a second copy of the
+ * codeless one. `pickFuncProcessInternal` chooses the publish branch purely from
+ * `hasCodefulWorkflowSetting()`, i.e. `Values.WORKFLOW_CODEFUL_ENABLED === 'true'`
+ * (utils/codeful.ts:35-48). If the wizard did not write it, a "passing" codeful run
+ * would prove nothing about the codeful path.
+ */
+function assertAppKindMarker(values: Record<string, unknown>): void {
+  const marker = values[WORKFLOW_CODEFUL_ENABLED_KEY];
+  if (IS_CODEFUL && marker !== 'true') {
+    throw new Error(
+      `Codeful workspace must have ${WORKFLOW_CODEFUL_ENABLED_KEY}="true" in ${LOCAL_SETTINGS_FILE} (got ${JSON.stringify(marker)}). Without it pickFuncProcessInternal takes the codeless branch and the codeful variant tests nothing new.`
+    );
+  }
+  if (!IS_CODEFUL && marker === 'true') {
+    throw new Error(
+      `Codeless workspace must NOT have ${WORKFLOW_CODEFUL_ENABLED_KEY}="true" in ${LOCAL_SETTINGS_FILE}; the wizard produced a codeful project.`
+    );
+  }
+  log(`${WORKFLOW_CODEFUL_ENABLED_KEY}=${JSON.stringify(marker)} matches app kind "${APP_KIND}"`);
 }
 
 async function removeWorkspaceParent(): Promise<void> {
@@ -309,7 +435,7 @@ async function removeWorkspaceParent(): Promise<void> {
   }
 }
 
-describe('Azurite auto-start failure E2E workspace creation', function () {
+describe(`Azurite auto-start failure E2E workspace creation (${APP_KIND})`, function () {
   this.timeout(TEST_TIMEOUT);
 
   let workbench: Workbench;
@@ -401,7 +527,7 @@ describe('Azurite auto-start failure E2E workspace creation', function () {
   });
 
   if (IS_CREATE_STEP) {
-    it('creates a Logic Apps workspace through the Create Workspace webview', async function () {
+    it(`creates a ${APP_KIND} Logic Apps workspace through the Create Workspace webview`, async function () {
       this.timeout(TEST_TIMEOUT);
       await createWorkspaceFromWebview(workbench, driver);
       configureGeneratedWorkspaceForAzuriteFailure();
