@@ -241,7 +241,7 @@ export type customExtensionContext = (typeof customExtensionContext)[keyof typeo
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
-export const suppressDesignerVersionNotification = 'suppressDesignerVersionNotification';
+export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 
 // API
 export const defaultRoutePrefix = 'api';

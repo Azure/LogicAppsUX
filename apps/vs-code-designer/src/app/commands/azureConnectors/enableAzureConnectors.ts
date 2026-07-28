@@ -2,20 +2,21 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../../src/constants';
+import { localSettingsFileName, workflowSubscriptionIdKey } from '../../../constants';
 import { localize } from '../../../localize';
-import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
-import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
+import type { IAzureConnectorsContext } from './azureConnectorWizard';
+import { createAzureWizard } from './azureConnectorWizard';
+import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from './azureConnectorDetails';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
-import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import type * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
-import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../../utils/codeless/common';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { isString } from '@microsoft/logic-apps-shared';
 import { ext } from '../../../extensionVariables';
+import { clearConnectorSetupSkipped } from '../../state/connectors';
 
 /**
  * Enables Azure connectors for the project containing workflow node.
@@ -40,6 +41,7 @@ export async function enableAzureConnectors(context: IActionContext, node: vscod
   await wizard.execute();
 
   if (connectorsContext.enabled) {
+    await clearConnectorSetupSkipped(projectPath);
     invalidateAzureDetailsCache(projectPath);
     getAzureConnectorDetailsForLocalProject(context, projectPath).catch(() => {});
 

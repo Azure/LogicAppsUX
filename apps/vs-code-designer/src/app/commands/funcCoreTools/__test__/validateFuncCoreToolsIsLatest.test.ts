@@ -6,7 +6,7 @@ import {
   verifyDependencyIntegrity,
   getLatestFunctionCoreToolsVersion,
 } from '../../../utils/binaries';
-import { shouldCheckForDependencyUpdates } from '../../../utils/dependencyUpdateCheck';
+import { shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { installFuncCoreToolsBinaries } from '../installFuncCoreTools';
@@ -22,7 +22,7 @@ vi.mock('../../../utils/binaries', () => ({
   installBinaries: vi.fn(),
   getCpuArchitecture: vi.fn(),
 }));
-vi.mock('../../../utils/dependencyUpdateCheck', () => ({
+vi.mock('../../../state/dependencies', () => ({
   shouldCheckForDependencyUpdates: vi.fn(),
 }));
 vi.mock('../../../utils/codeless/startDesignTimeApi', () => ({

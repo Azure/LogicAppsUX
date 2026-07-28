@@ -19,6 +19,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
+import { setConnectorSetupSkipped } from '../../state/connectors';
 
 export interface IAzureConnectorsContext extends IActionContext, IProjectWizardContext {
   credentials: any;
@@ -37,6 +38,7 @@ export function createAzureWizard(wizardContext: IAzureConnectorsContext, projec
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
+
 class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsContext> {
   private _projectPath: string;
 
@@ -96,24 +98,24 @@ class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
   }
 
   public async execute(context: IAzureConnectorsContext): Promise<void> {
-    const valuesToUpdateInSettings: Record<string, string> = {};
     if (context.enabled === false) {
-      valuesToUpdateInSettings[workflowSubscriptionIdKey] = '';
-    } else {
-      const { resourceGroup, subscriptionId, tenantId, environment } = context;
-      valuesToUpdateInSettings[workflowTenantIdKey] = tenantId;
-      valuesToUpdateInSettings[workflowSubscriptionIdKey] = subscriptionId;
-      valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
-      valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
-      valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
-      valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
-
-      // Then send notifications for runtime updates
-      ext?.languageClient?.sendNotification('custom/updateApiConfig', {
-        subscriptionId: subscriptionId,
-        resourceGroup: resourceGroup,
-      });
+      await setConnectorSetupSkipped(this._projectPath);
+      return;
     }
+
+    const valuesToUpdateInSettings: Record<string, string> = {};
+    const { resourceGroup, subscriptionId, tenantId, environment } = context;
+    valuesToUpdateInSettings[workflowTenantIdKey] = tenantId;
+    valuesToUpdateInSettings[workflowSubscriptionIdKey] = subscriptionId;
+    valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
+    valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
+    valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
+    valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
+
+    ext?.languageClient?.sendNotification('custom/updateApiConfig', {
+      subscriptionId: subscriptionId,
+      resourceGroup: resourceGroup,
+    });
 
     await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);
   }

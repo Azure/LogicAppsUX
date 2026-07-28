@@ -35,6 +35,12 @@ vi.mock('../../../../extensionVariables', () => ({
     azureAccountTreeItem: {
       getSubscriptionPromptStep: vi.fn(),
     },
+    context: {
+      globalState: {
+        get: vi.fn().mockReturnValue(undefined),
+        update: vi.fn().mockResolvedValue(undefined),
+      },
+    },
     languageClient: {
       sendNotification: vi.fn(),
     },
@@ -102,15 +108,14 @@ describe('createAzureWizard', () => {
     expect(azureConnectorStep.shouldPrompt({ ...context, enabled: false })).toBe(false);
   });
 
-  it('persists empty subscription when Azure connectors are skipped', async () => {
+  it('persists skip state to globalState when Azure connectors are skipped', async () => {
     context.enabled = false;
     const wizard = createAzureWizard(context, projectPath) as any;
 
     await wizard.options.executeSteps[0].execute(context);
 
-    expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, projectPath, {
-      [workflowSubscriptionIdKey]: '',
-    });
+    expect(addOrUpdateLocalAppSettings).not.toHaveBeenCalled();
+    expect(ext.context.globalState.update).toHaveBeenCalledWith(`azureConnectors.skipped.${projectPath}`, true);
   });
 
   it('persists Azure connector settings and notifies the language client when enabled', async () => {

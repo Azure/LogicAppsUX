@@ -6,7 +6,7 @@ import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies, verifyDependencyIntegrity } from '../../utils/binaries';
-import { shouldCheckForDependencyUpdates } from '../../utils/dependencyUpdateCheck';
+import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';

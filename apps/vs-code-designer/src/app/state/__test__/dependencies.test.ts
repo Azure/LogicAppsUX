@@ -5,9 +5,9 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
 import { dependencyUpdateCheckIntervalMs, lastDependencyUpdateCheckKey } from '../../../constants';
-import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../dependencyUpdateCheck';
+import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../dependencies';
 
-describe('dependencyUpdateCheck', () => {
+describe('dependencies', () => {
   let globalStateGet: Mock;
   let globalStateUpdate: Mock;
 

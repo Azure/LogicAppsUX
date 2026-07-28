@@ -21,6 +21,9 @@ vi.mock('../../../../../utils/codeless/common', () => ({
   removeWebviewPanelFromCache: vi.fn(),
   getStandardAppData: vi.fn(() => ({ definition: {}, kind: 'Stateful' })),
   getWorkflowManagementBaseURI: vi.fn(() => 'https://management.azure.com/test'),
+}));
+
+vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: vi.fn().mockResolvedValue({ enabled: false }),
 }));
 
@@ -74,7 +77,7 @@ import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
-import { getAzureConnectorDetailsForLocalProject } from '../../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../../azureConnectors/azureConnectorDetails';
 import {
   getConnectionsFromFile,
   getCustomCodeFromFiles,

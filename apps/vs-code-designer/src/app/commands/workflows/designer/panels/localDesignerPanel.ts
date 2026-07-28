@@ -11,11 +11,11 @@ import { getLocalSettingsJson } from '../../../../utils/appSettings/localSetting
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
 import {
   cacheWebviewPanel,
-  getAzureConnectorDetailsForLocalProject,
   getManualWorkflowsInLocalProject,
   getStandardAppData,
   removeWebviewPanelFromCache,
 } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
@@ -257,7 +257,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
         await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
         break;
       }
-      
+
       case ExtensionCommand.addConnection: {
         await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
           await addConnectionData(activateContext, this.workflowFilePath, msg.connectionAndSetting);
