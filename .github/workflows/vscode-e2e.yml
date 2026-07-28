@@ -519,6 +519,632 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+  # ---------------------------------------------------------------------------
+  # Stage B beachhead (Windows parity): prove the windows-latest toolchain on
+  # ONE cheap, high-signal scenario (p40 activation smoke) before fanning
+  # windows-latest out across the full matrix (Stage D). Kept as a DEDICATED
+  # job — not a `matrix.os` entry on vscode-e2e — so the existing ubuntu matrix
+  # step structure is untouched (zero regression risk to the required Linux
+  # shards while we iterate on Windows-specific flake). p40 self-creates its
+  # workspace (no fixtures artifact) and needs no extension bundle, so it
+  # consumes only the cross-platform JS extension-build artifact. No
+  # xvfb/apt/sudo/symlink here: windows-latest has a real interactive desktop
+  # (ExTester drives VS Code directly) and actions/setup-node puts node on PATH
+  # for the func-host child processes. `shell: bash` is used throughout because
+  # windows-latest ships Git Bash + bsdtar, letting us reuse the same tar /
+  # ${RUNNER_TEMP} idioms as the Linux jobs.
+  vscode-e2e-windows:
+    name: vscode-e2e-windows (${{ matrix.shard }})
+    needs: setup-extension-build
+    # Windows ExTester cold-start (real display, VS Code download, func host on
+    # Windows) is materially slower than Linux xvfb; give generous headroom plus
+    # room for one fresh-session retry (LA_E2E_SCENARIO_RETRIES).
+    timeout-minutes: 45
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Activation smoke on a non-logic-app workspace: exercises extension
+          # activation + command registration without needing dotnet, fixtures,
+          # or the extension bundle. Ideal first Windows signal.
+          - shard: activation-smoke
+            scenario: p40-nonlogicapp
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Verify node on PATH (for func host child processes)
+        run: |
+          echo "node: $(command -v node) $(node --version)"
+          echo "npm:  $(command -v npm)  $(npm --version)"
+          echo "npx:  $(command -v npx)"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      # RESTORE-ONLY (no save) — deliberate. This shard runs p40-nonlogicapp with
+      # LA_E2E_BUNDLE_PREFLIGHT=0 and never hydrates runtime dependencies, so it has
+      # nothing worth saving under the shared key that the codeful Windows job
+      # depends on. `actions/cache@v5` only skips its post-save on an EXACT key hit
+      # (see actions/cache saveImpl.ts) — a `restore-keys` PREFIX hit populates the
+      # directory and then re-saves that stale tree onto `-v1`, and a poisoned entry
+      # is unrecoverable because the codeful jobs' `cache-hit != 'true'` save guard
+      # suppresses the repair. The ubuntu matrix is immune to this by ordering
+      # (`needs: setup-fixtures` guarantees the hydrating job saves first); this job
+      # runs in PARALLEL with setup-runtime-deps-windows for speed, so it gets the
+      # same guarantee by never saving at all.
+      # NOTE: `path`/`key`/`restore-keys` must stay byte-identical to the other
+      # la-runtime-deps steps — actions/cache derives the cache entry *version* from
+      # the path set, so editing it silently invalidates the existing entries.
+      - name: Restore Logic Apps runtime dependencies
+        uses: actions/cache/restore@v5
+        with:
+          # %USERPROFILE%\.azurelogicapps on Windows; ~ resolves correctly under
+          # the job's bash shell.
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Run scenario (${{ matrix.shard }})
+        run: |
+          echo "PATH=$PATH"
+          node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          LA_E2E_SCENARIO: ${{ matrix.scenario }}
+          LA_E2E_BUNDLE_PREFLIGHT: '0'
+          # Retry a failing scenario once in a fresh VS Code session to absorb
+          # transient Windows launch/activation cold-start races. Non-masking.
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          # Pin os.tmpdir() so workspace + manifest creation lands under the
+          # runner temp (matches the Linux jobs' RUNNER_TEMP layout).
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-windows-${{ matrix.shard }}
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # Stage C: codeful debug (F5) as a first-class CI shard on BOTH OSes.
+  #
+  # Why this exists / why it wasn't here before: codeful debug is a bespoke
+  # runCodefulDebugPhases() (run-e2e.ts) — it self-creates modern + legacy
+  # codeful workspaces, patches the generated .csproj targets, installs a
+  # task-recorder extension, and runs a create -> debug flow. It does NOT fit
+  # the declarative scenarios[] table every other shard selects via
+  # LA_E2E_SCENARIO, so no shard ever picked it up. It only ran via E2E_MODE=full
+  # (local) or E2E_MODE=codefuldebugonly. We wire that self-contained mode in
+  # directly here.
+  #
+  # The regression this guards (MSB3026: design-time func host locking
+  # lib/codeful/*.dll during the F5 build) only reproduces on Windows, so
+  # windows-latest is the true end-to-end guard. On ubuntu the assertion is the
+  # cross-platform Option B signal — the codeful design-time local.settings.json
+  # must select the Node worker (FUNCTIONS_WORKER_RUNTIME=node, no
+  # FUNCTIONS_INPROC_NET8_ENABLED) so the host never loads/locks the codeful
+  # assemblies — plus buildExit === 0.
+  #
+  # Needs the .NET 8 SDK on both OSes because F5 runs dotnet build/publish on the
+  # net8 codeful project. Self-provisions its runtime dependencies + extension
+  # bundle at run time (validateDependencies), so it consumes only the
+  # cross-platform JS extension-build artifact — no fixtures / bundle artifact.
+  # Codeful debug E2E (E2E_MODE=codefuldebugonly), the first-ever CI presence for this
+  # suite (previously local-only). The test opens the generated .code-workspace after
+  # launch via openWorkspaceFileInSession (ExTester's startup `resources` / `code -r` IPC
+  # silently no-ops headlessly), then relies on onboarding auto-start to emit the
+  # workflow-designtime evidence and asserts FUNCTIONS_WORKER_RUNTIME=node (the Option B
+  # regression signal) plus the F5 build/task chain.
+  #
+  # Split into two independent single-OS jobs (rather than one matrix job) so each has an
+  # unambiguous `result` the summary gate can key on. GitHub's matrix-aggregate result +
+  # per-leg continue-on-error semantics are fuzzy — a separate job per OS keeps each leg
+  # independently reportable and lets them be promoted to blocking one at a time.
+  vscode-e2e-codeful-ubuntu:
+    name: vscode-e2e-codeful (ubuntu-latest)
+    needs: setup-extension-build
+    # Exercises the codeful F5 debug path (workspace opens, design-time Node worker,
+    # dotnet build, task chain).
+    #
+    # ADVISORY (continue-on-error) BY DESIGN IN THIS PR — do not promote yet.
+    # The deterministic part of this job is already a real regression guard: the
+    # design-time FUNCTIONS_WORKER_RUNTIME=node assertion (the Option B guard for the
+    # MSB3026 `lib/codeful` DLL lock this PR fixes) passes on every observed run,
+    # cold or warm, on both OSes.
+    #
+    # The *F5 task-chain* assertions layered on top are still intermittently flaky, and
+    # the cause is known and out of scope here: `preDebugValidate` →
+    # `validateEmulatorIsRunning` races Azurite startup and pops the
+    # headless-unanswerable "Failed to verify AzureWebJobsStorage connection" modal,
+    # which cancels the debug session before any task is dispatched (symptom: 12-minute
+    # F5 wait, `events captured=1`, buildStart:0). Byte-identical code has produced both
+    # green and red runs purely on that race.
+    #
+    # The fix for that race (waitForAzuriteReady retry/backoff in activateAzurite +
+    # ValidateEmulatorOptions in validatePreDebug) is a separate change set that is
+    # deliberately NOT in this PR. Once it lands, drop `continue-on-error` here and add
+    # this job back to the vscode-e2e-summary hard gate — that promotion is the concrete
+    # deliverable of the follow-up PR.
+    continue-on-error: true
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      - name: Restore Logic Apps runtime dependencies
+        id: la-deps-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Report runtime dependency cache state
+        run: |
+          echo "cache-hit:         ${{ steps.la-deps-cache.outputs.cache-hit }}"
+          echo "cache-matched-key: ${{ steps.la-deps-cache.outputs.cache-matched-key }}"
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          if [ -d "$DEPS_DIR" ]; then
+            echo "deps dir exists: $DEPS_DIR"
+            du -sh "$DEPS_DIR" 2>/dev/null || true
+            ls -la "$DEPS_DIR" || true
+          else
+            echo "deps dir MISSING (cold): $DEPS_DIR"
+          fi
+
+      - name: Run codeful debug
+        run: |
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          echo "PATH=$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          E2E_MODE: codefuldebugonly
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      # `actions/cache@v5` is post-if: success(); saving explicitly keeps the Linux
+      # cache fresh even on a red run. Guarded so a partial set is never persisted.
+      - name: Verify hydrated runtime dependencies
+        id: deps-check
+        if: always()
+        run: |
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          ok=true
+          for d in FuncCoreTools DotNetSDK NodeJs; do
+            if [ -d "$DEPS_DIR/$d" ]; then
+              echo "present: $d"
+            else
+              echo "MISSING: $d"
+              ok=false
+            fi
+          done
+          FUNC_BIN="$(find "$DEPS_DIR/FuncCoreTools" -maxdepth 2 \( -name 'func' -o -name 'func.exe' \) -type f 2>/dev/null | head -n 1 || true)"
+          if [ -n "$FUNC_BIN" ] && "$FUNC_BIN" --version; then
+            echo "func is runnable: $FUNC_BIN"
+          else
+            echo "func did not run (existence is not enough)"
+            ok=false
+          fi
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+
+      - name: Save Logic Apps runtime dependencies
+        if: always() && steps.la-deps-cache.outputs.cache-hit != 'true' && steps.deps-check.outputs.ok == 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-codeful-ubuntu-latest
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # Windows runtime-dependency bootstrap.
+  #
+  # Why this exists: `la-runtime-deps-Windows-*` could never be created, so every
+  # Windows run started cold. Two facts composed to make it impossible:
+  #
+  #   1. No Windows job was designated to seed the cache. On ubuntu that role is
+  #      played by `setup-fixtures` (LA_E2E_STRICT_DEPENDENCY_VALIDATION=1 forces
+  #      the full FuncCoreTools + DotNetSDK + NodeJs hydration) and by the
+  #      `vscode-e2e` scenario matrix — both download the deps AND pass, so they
+  #      write `la-runtime-deps-Linux-v1` every run. Note that
+  #      `vscode-e2e-codeful-ubuntu` only needs `setup-extension-build` too: it is
+  #      green purely because those OTHER ubuntu jobs keep the cache warm for it.
+  #      `setup-extension-build` is a cross-platform JS build whose only caches are
+  #      turbo + pnpm — it never touches runtime deps.
+  #   2. The one Windows job that DID download deps (codeful) could never save
+  #      them, because `actions/cache@v5` declares `post-if: success()` and that
+  #      job fails. The only passing Windows job (`vscode-e2e-windows`) runs the
+  #      `p40-nonlogicapp` scenario, which by design needs no dotnet/fixtures/
+  #      bundle, so its deps directory is empty and there is nothing to save.
+  #
+  # This job is the missing Windows counterpart to `setup-fixtures`: it hydrates
+  # the dependencies and persists them with the restore/save pair (see below), so
+  # `vscode-e2e-codeful-windows` — which `needs:` this job — restores a WARM cache
+  # on the very first run.
+  #
+  # Advisory (continue-on-error) and deliberately NOT in the vscode-e2e-summary
+  # hard gate. That is precisely why this is a NEW job rather than an extra shard
+  # on `vscode-e2e-windows`, which IS gated.
+  #
+  # It stays advisory permanently, by design — this is a cache-SEEDING job. Once
+  # la-runtime-deps-Windows-v1 exists it is refreshed on every access, so a
+  # transient failure here still leaves the (now blocking) codeful leg with a warm
+  # restore. Just as important: continue-on-error keeps this job's result
+  # "success" for `needs:` purposes, so vscode-e2e-codeful-windows always RUNS
+  # instead of being skipped — a skipped job would trip the summary gate's
+  # != "success" check and fail the build for the wrong reason.
+  setup-runtime-deps-windows:
+    name: setup-runtime-deps (windows)
+    needs: setup-extension-build
+    continue-on-error: true
+    timeout-minutes: 45
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      # restore/save pair instead of actions/cache@v5: the plain action is
+      # `post-if: success()`, so a flaky hydration run would save nothing and leave
+      # the cache empty forever. `if: always()` persists whatever was downloaded.
+      - name: Restore Logic Apps runtime dependencies
+        id: la-deps-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Report runtime dependency cache state
+        run: |
+          echo "cache-hit:         ${{ steps.la-deps-cache.outputs.cache-hit }}"
+          echo "cache-matched-key: ${{ steps.la-deps-cache.outputs.cache-matched-key }}"
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          if [ -d "$DEPS_DIR" ]; then
+            echo "deps dir exists: $DEPS_DIR"
+            du -sh "$DEPS_DIR" 2>/dev/null || true
+            ls -la "$DEPS_DIR" || true
+          else
+            echo "deps dir MISSING (cold): $DEPS_DIR"
+          fi
+
+      - name: Hydrate Logic Apps runtime dependencies
+        run: |
+          echo "PATH=$PATH"
+          node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          LA_E2E_SCENARIO: p41a-fixtures
+          # Forces the full FuncCoreTools + DotNetSDK + NodeJs download instead of
+          # letting validation short-circuit. Same switch setup-fixtures uses.
+          LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      # Guard against persisting a half-downloaded dependency set. A partial cache
+      # is worse than none: it would restore as a HIT on every later run and never
+      # be re-downloaded. If hydration did not yield a RUNNABLE func plus the
+      # DotNetSDK/NodeJs roots, skip the save and stay cold instead.
+      - name: Verify hydrated runtime dependencies
+        id: deps-check
+        if: always()
+        run: |
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          ok=true
+          for d in FuncCoreTools DotNetSDK NodeJs; do
+            if [ -d "$DEPS_DIR/$d" ]; then
+              echo "present: $d"
+            else
+              echo "MISSING: $d"
+              ok=false
+            fi
+          done
+          FUNC_BIN="$(find "$DEPS_DIR/FuncCoreTools" -maxdepth 2 \( -name 'func' -o -name 'func.exe' \) -type f 2>/dev/null | head -n 1 || true)"
+          if [ -n "$FUNC_BIN" ] && "$FUNC_BIN" --version; then
+            echo "func is runnable: $FUNC_BIN"
+          else
+            echo "func did not run (existence is not enough)"
+            ok=false
+          fi
+          du -sh "$DEPS_DIR" 2>/dev/null || true
+          ls -la "$DEPS_DIR" 2>/dev/null || true
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+          if [ "$ok" != "true" ]; then
+            echo "::warning::Runtime dependency hydration incomplete - skipping cache save"
+          fi
+
+      - name: Save Logic Apps runtime dependencies
+        if: always() && steps.la-deps-cache.outputs.cache-hit != 'true' && steps.deps-check.outputs.ok == 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+
+      - name: Upload bootstrap screenshots on failure
+        uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: vscode-e2e-screenshots-setup-runtime-deps-windows
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  vscode-e2e-codeful-windows:
+    name: vscode-e2e-codeful (windows-latest)
+    # Depends on the Windows runtime-dependency bootstrap so this job restores a
+    # WARM la-runtime-deps-Windows-v1 cache instead of hydrating from cold.
+    #
+    # This leg used to fail 100% of the time with buildStart:0 / waitForTaskChain
+    # timeout, which we wrongly attributed to Windows func-host provisioning. The
+    # real cause was the cold cache: la-runtime-deps-Windows-v1 could never be
+    # saved (no bootstrap job + actions/cache being post-if: success()), so every
+    # run hydrated dependencies underneath the already-running test. With a warm
+    # restore the full chain completes — buildStart:1/buildExit:0, publish and func
+    # host all green — and `func --version` succeeds on the runner, so the "cannot
+    # execute auto-provisioned func.exe" theory is disproven. That is what
+    # setup-runtime-deps-windows below fixes, and it is a genuine win in this PR.
+    #
+    # ADVISORY (continue-on-error) BY DESIGN IN THIS PR — same reason as the ubuntu
+    # leg above: the F5 task-chain assertions still ride on the unfixed Azurite
+    # startup race, which is intentionally left to a follow-up change set. The
+    # deterministic design-time worker=node guard (this PR's actual regression
+    # signal) is exercised here cross-platform and passes every run. Promote both
+    # legs together once the Azurite readiness fix lands.
+    continue-on-error: true
+    needs: [setup-extension-build, setup-runtime-deps-windows]
+    timeout-minutes: 45
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Verify node on PATH (for func host child processes)
+        run: |
+          echo "node: $(command -v node) $(node --version)"
+          echo "npm:  $(command -v npm)  $(npm --version)"
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      - name: Restore Logic Apps runtime dependencies
+        id: la-deps-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Report runtime dependency cache state
+        run: |
+          echo "cache-hit:         ${{ steps.la-deps-cache.outputs.cache-hit }}"
+          echo "cache-matched-key: ${{ steps.la-deps-cache.outputs.cache-matched-key }}"
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          if [ -d "$DEPS_DIR" ]; then
+            echo "deps dir exists: $DEPS_DIR"
+            du -sh "$DEPS_DIR" 2>/dev/null || true
+            ls -la "$DEPS_DIR" || true
+          else
+            echo "deps dir MISSING (cold): $DEPS_DIR"
+          fi
+
+      - name: Run codeful debug
+        run: |
+          echo "PATH=$PATH"
+          node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          E2E_MODE: codefuldebugonly
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      # `actions/cache@v5` is post-if: success(), so on a red run this job could
+      # never persist the dependencies it downloaded. Save explicitly instead, but
+      # only when the set is complete — a partial cache would restore as a HIT forever.
+      - name: Verify hydrated runtime dependencies
+        id: deps-check
+        if: always()
+        run: |
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          ok=true
+          for d in FuncCoreTools DotNetSDK NodeJs; do
+            if [ -d "$DEPS_DIR/$d" ]; then
+              echo "present: $d"
+            else
+              echo "MISSING: $d"
+              ok=false
+            fi
+          done
+          FUNC_BIN="$(find "$DEPS_DIR/FuncCoreTools" -maxdepth 2 \( -name 'func' -o -name 'func.exe' \) -type f 2>/dev/null | head -n 1 || true)"
+          if [ -n "$FUNC_BIN" ] && "$FUNC_BIN" --version; then
+            echo "func is runnable: $FUNC_BIN"
+          else
+            echo "func did not run (existence is not enough)"
+            ok=false
+          fi
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+
+      - name: Save Logic Apps runtime dependencies
+        if: always() && steps.la-deps-cache.outputs.cache-hit != 'true' && steps.deps-check.outputs.ok == 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-codeful-windows-latest
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
   vscode-e2e-compat:
     name: vscode-e2e compatibility (${{ matrix.label }})
     needs: setup-extension-build
@@ -633,22 +1259,44 @@ jobs:
   # ("vscode-e2e-summary") regardless of how many scenarios we add later.
   vscode-e2e-summary:
     name: vscode-e2e-summary
-    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-compat]
+    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-compat, setup-runtime-deps-windows]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Verify all jobs passed
         run: |
-          echo "setup-extension-build: ${{ needs.setup-extension-build.result }}"
-          echo "setup-fixtures:        ${{ needs.setup-fixtures.result }}"
-          echo "vscode-e2e (matrix):   ${{ needs.vscode-e2e.result }}"
-          echo "compat matrix:         ${{ needs.vscode-e2e-compat.result }}"
+          echo "setup-extension-build:      ${{ needs.setup-extension-build.result }}"
+          echo "setup-fixtures:             ${{ needs.setup-fixtures.result }}"
+          echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"
+          echo "vscode-e2e-windows:         ${{ needs.vscode-e2e-windows.result }}"
+          echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }} (advisory, not gated: F5 task chain rides the unfixed Azurite startup race)"
+          echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }} (advisory, not gated: same Azurite race; runtime-deps cache now warm)"
+          echo "setup-runtime-deps-windows: ${{ needs.setup-runtime-deps-windows.result }} (advisory, not gated: seeds la-runtime-deps-Windows-v1)"
+          echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
              [ "${{ needs.setup-fixtures.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-compat.result }}" != "success" ]; then
-            echo "::error::One or more vscode-e2e jobs failed"
+            echo "::error::One or more required vscode-e2e jobs failed"
             exit 1
           fi
-          echo "All vscode-e2e jobs passed."
+          # Both codeful legs are ADVISORY in this PR and are deliberately excluded
+          # from the hard gate above. They run the real codeful F5 flow and their
+          # deterministic design-time worker=node assertion (the Option B guard for
+          # the MSB3026 lib/codeful DLL lock) passes every run on both OSes — but the
+          # F5 task-chain assertions layered on top still ride on the unfixed Azurite
+          # startup race (preDebugValidate -> validateEmulatorIsRunning pops a
+          # headless-unanswerable AzureWebJobsStorage modal that cancels the debug
+          # session). Gating on them today would make a required check flaky. The
+          # Azurite readiness fix is a separate change set; promoting BOTH legs to
+          # blocking is the concrete deliverable of that follow-up PR.
+          #
+          # setup-runtime-deps-windows is deliberately NOT gated and stays
+          # continue-on-error. It is a cache-seeding job: once
+          # la-runtime-deps-Windows-v1 exists it is refreshed on access, so a
+          # transient bootstrap failure still leaves the codeful leg with a warm
+          # restore. Keeping it continue-on-error also guarantees
+          # vscode-e2e-codeful-windows still RUNS rather than being skipped.
+          echo "All required vscode-e2e jobs passed."
 
