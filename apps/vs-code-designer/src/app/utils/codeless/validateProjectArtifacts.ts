@@ -159,6 +159,33 @@ export async function detectLogicAppProjectType(projectPath: string): Promise<Pr
 }
 
 /**
+ * Decides whether the design-time host for a project should run the Node worker instead of the
+ * dotnet + in-process .NET 8 worker.
+ *
+ * Codeful projects are always forced onto the Node worker. The in-process .NET 8 design-time host
+ * loads the project's compiled workflow assemblies from `lib/codeful` (its `ProjectDirectoryPath`
+ * points at the project root), so its `func.exe`/`dotnet` worker holds file locks on those DLLs. A
+ * subsequent F5 debug build runs the csproj `CopyToCodefulFolder` target which copies
+ * `bin/Debug/net8/**` back into `lib/codeful`, failing with MSB3026 ("the file is locked by .NET
+ * Host") while the design-time host is still running. The Node worker never loads those assemblies,
+ * so it never locks them. Codeful does not need the in-process .NET 8 NetFxWorker (that exists only
+ * for the Data Mapper Test map XSLT transform, which is not a codeful design-time feature).
+ *
+ * For non-codeful projects the behavior is unchanged: honor the
+ * `azureLogicAppsStandard.useNodeDesignTimeWorker` workspace setting (default dotnet + net8).
+ * @param {string} projectPath - The logic app project root.
+ * @param {ProjectType} [logicAppType] - Pre-detected project type; detected on demand when omitted.
+ * @returns {Promise<boolean>} True when the design-time host should use the Node worker.
+ */
+export async function shouldUseNodeDesignTimeWorker(projectPath: string, logicAppType?: ProjectType): Promise<boolean> {
+  if (useNodeDesignTimeWorker(projectPath)) {
+    return true;
+  }
+  const resolvedType = logicAppType ?? (await detectLogicAppProjectType(projectPath));
+  return resolvedType === ProjectType.codeful;
+}
+
+/**
  * Ensures the project-level local.settings.json exists and contains every app setting the project
  * requires. This is needed when source control is enabled: local.settings.json is git-ignored, so a
  * fresh clone is missing it and any `@appsetting('name')` references in connections.json /
@@ -361,7 +388,7 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
   const hostFileValid = await isHostFileValid(path.join(designTimeDirectoryPath, hostFileName), true);
   const settingsFileValid = await isDesignTimeSettingsFileValid(
     path.join(designTimeDirectoryPath, localSettingsFileName),
-    useNodeDesignTimeWorker(projectPath)
+    await shouldUseNodeDesignTimeWorker(projectPath)
   );
 
   return {
@@ -420,7 +447,7 @@ export async function regenerateDesignTimeDirectory(
 
   if (settingsRegenerated) {
     const logicAppType = await detectLogicAppProjectType(projectPath);
-    const useNodeWorker = useNodeDesignTimeWorker(projectPath);
+    const useNodeWorker = await shouldUseNodeDesignTimeWorker(projectPath, logicAppType);
     const settingsFileContent = getLocalSettingsSchema(true, projectPath, logicAppType, useNodeWorker);
     await writeFormattedJson(path.join(designTimeDirectory.fsPath, localSettingsFileName), settingsFileContent);
     const runtimeSettings: Record<string, string> = {
