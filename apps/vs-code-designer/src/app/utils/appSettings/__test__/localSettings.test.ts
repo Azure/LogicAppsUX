@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { getLocalSettingsSchema } from '../localSettings';
 import {
@@ -14,8 +14,16 @@ import {
   logicAppKind,
   multiLanguageWorkerSetting,
   workerRuntimeKey,
+  workflowAuthenticationMethodKey,
+  workflowAuthenticationMethodMIValue,
   workflowCodefulEnabledKey,
 } from '../../../../constants';
+
+vi.mock('../../vsCodeConfig/settings', () => ({
+  isManagedIdentityAuthEnabled: vi.fn(() => false),
+}));
+
+import { isManagedIdentityAuthEnabled } from '../../vsCodeConfig/settings';
 
 describe('utils/appSettings', () => {
   // getLocalSettingsSchema is the single source of truth for both local.settings.json files this
@@ -27,6 +35,10 @@ describe('utils/appSettings', () => {
   // cannot drift apart.
   describe('getLocalSettingsSchema', () => {
     const projectPath = 'path/to/project';
+
+    beforeEach(() => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(false);
+    });
 
     it('Should have IsEncrypted property and Values property have basic schema', () => {
       const settings = getLocalSettingsSchema(true);
@@ -196,6 +208,64 @@ describe('utils/appSettings', () => {
           ProjectDirectoryPathKey,
           azureWebJobsFeatureFlagsKey,
           workflowCodefulEnabledKey,
+        ]);
+      });
+    });
+
+    describe('managed identity auth enabled', () => {
+      beforeEach(() => {
+        vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
+      });
+
+      it('adds WORKFLOWS_AUTHENTICATION_METHOD to root local.settings.json', () => {
+        const settings = getLocalSettingsSchema(false, projectPath, ProjectType.logicApp);
+        expect(settings.Values).toHaveProperty(workflowAuthenticationMethodKey, workflowAuthenticationMethodMIValue);
+      });
+
+      it('adds WORKFLOWS_AUTHENTICATION_METHOD to design-time local.settings.json', () => {
+        const settings = getLocalSettingsSchema(true, projectPath, ProjectType.logicApp);
+        expect(settings.Values).toHaveProperty(workflowAuthenticationMethodKey, workflowAuthenticationMethodMIValue);
+      });
+
+      it('design-time codeful includes both WORKFLOW_CODEFUL_ENABLED and MI auth', () => {
+        expect(getLocalSettingsSchema(true, projectPath, ProjectType.codeful)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+            [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+            [workflowCodefulEnabledKey]: 'true',
+            [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
+          },
+        });
+      });
+
+      it('design-time Node-worker fallback includes MI auth', () => {
+        expect(getLocalSettingsSchema(true, projectPath, ProjectType.logicApp, true)).toEqual({
+          IsEncrypted: false,
+          Values: {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Node,
+            [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+            [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
+          },
+        });
+      });
+
+      it('places WORKFLOWS_AUTHENTICATION_METHOD after codeful flag in key order', () => {
+        const keys = Object.keys(getLocalSettingsSchema(false, projectPath, ProjectType.codeful).Values);
+        expect(keys).toEqual([
+          azureWebJobsStorageKey,
+          functionsInprocNet8Enabled,
+          workerRuntimeKey,
+          appKindSetting,
+          ProjectDirectoryPathKey,
+          azureWebJobsFeatureFlagsKey,
+          workflowCodefulEnabledKey,
+          workflowAuthenticationMethodKey,
         ]);
       });
     });

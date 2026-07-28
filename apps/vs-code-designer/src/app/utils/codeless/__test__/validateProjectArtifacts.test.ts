@@ -30,7 +30,7 @@ import * as localSettings from '../../appSettings/localSettings';
 import { writeFormattedJson } from '../../fs';
 import { hasCodefulSdkReference } from '../../codeful';
 import { isCustomCodeFunctionsProjectInRoot } from '../../customCodeUtils';
-import { useNodeDesignTimeWorker } from '../../vsCodeConfig/settings';
+import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../../vsCodeConfig/settings';
 import {
   detectLogicAppProjectType,
   extractAppSettingReferences,
@@ -396,6 +396,7 @@ describe('validateProjectArtifacts', () => {
         FUNCTIONS_WORKER_RUNTIME: 'dotnet',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
         ProjectDirectoryPath: projectPath,
+        WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       },
     });
 
@@ -552,7 +553,12 @@ describe('validateProjectArtifacts', () => {
         [designTimeDir]: '',
         [hostPath]: validHost,
         [settingsPath]: JSON.stringify({
-          Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'node',
+            ProjectDirectoryPath: projectPath,
+            WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+          },
         }),
       });
 
@@ -575,6 +581,41 @@ describe('validateProjectArtifacts', () => {
       expect(result.hostFileValid).toBe(true);
       expect(result.settingsFileValid).toBe(false);
       expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when MI auth is enabled but the design-time file lacks the auth method', async () => {
+      const settingsWithoutMiAuth = JSON.stringify({
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          ProjectDirectoryPath: projectPath,
+        },
+      });
+      mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: settingsWithoutMiAuth });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports valid settings when MI auth is disabled and the design-time file lacks the auth method', async () => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(false);
+      const settingsWithoutMiAuth = JSON.stringify({
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          ProjectDirectoryPath: projectPath,
+        },
+      });
+      mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: settingsWithoutMiAuth });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(true);
+      expect(result.isValid).toBe(true);
     });
   });
 
@@ -620,6 +661,7 @@ describe('validateProjectArtifacts', () => {
           FUNCTIONS_WORKER_RUNTIME: 'dotnet',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
           ProjectDirectoryPath: projectPath,
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
 
@@ -705,6 +747,7 @@ describe('validateProjectArtifacts', () => {
             [workerRuntimeKey]: WorkerRuntime.Dotnet,
             [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+            [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
         expect(mockedAddOrUpdate).toHaveBeenCalledWith(
@@ -736,6 +779,7 @@ describe('validateProjectArtifacts', () => {
             [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
+            [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
       });
@@ -769,6 +813,7 @@ describe('validateProjectArtifacts', () => {
             [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
+            [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
       });
@@ -853,6 +898,7 @@ describe('validateProjectArtifacts', () => {
         FUNCTIONS_WORKER_RUNTIME: 'dotnet',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
         ProjectDirectoryPath: projectPath,
+        WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       },
     });
 
@@ -952,6 +998,7 @@ describe('validateProjectArtifacts', () => {
         FUNCTIONS_WORKER_RUNTIME: 'dotnet',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
         ProjectDirectoryPath: projectPath,
+        WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       },
     });
     const fullValidRootSettings = {

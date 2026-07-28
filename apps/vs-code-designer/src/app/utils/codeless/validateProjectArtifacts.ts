@@ -318,6 +318,10 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string, useNodeWo
       return false;
     }
 
+    if (isManagedIdentityAuthEnabled() && values[workflowAuthenticationMethodKey] !== workflowAuthenticationMethodMIValue) {
+      return false;
+    }
+
     // Presence alone is not enough: the file must also point at the expected worker runtime. When the
     // Node-worker fallback is enabled, a Node file is valid. Otherwise the design-time host must run
     // in-process .NET 8 so the Functions runtime spawns the NetFxWorker that the Data Mapper Test map
@@ -327,6 +331,7 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string, useNodeWo
     if (useNodeWorker) {
       return workerRuntime === WorkerRuntime.Node;
     }
+
     const inprocNet8Enabled = values[functionsInprocNet8Enabled] === functionsInprocNet8EnabledTrue;
     return workerRuntime === WorkerRuntime.Dotnet && inprocNet8Enabled;
   } catch {

@@ -230,9 +230,6 @@ export const getLocalSettingsSchema = (
     if (projectPath) {
       values[ProjectDirectoryPathKey] = projectPath;
     }
-    if (isManagedIdentityAuthEnabled()) {
-      values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
-    }
     if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
       values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
     }
@@ -240,6 +237,10 @@ export const getLocalSettingsSchema = (
 
   if (logicAppType === ProjectType.codeful) {
     values[workflowCodefulEnabledKey] = 'true';
+  }
+
+  if (isManagedIdentityAuthEnabled()) {
+    values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
 
   return {
