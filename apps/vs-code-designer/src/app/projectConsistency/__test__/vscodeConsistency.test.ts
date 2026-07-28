@@ -3,7 +3,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { type Uri, type WorkspaceFolder } from 'vscode';
+import { type Uri, type WorkspaceFolder, workspace } from 'vscode';
 import {
   enableProjectConsistencyChecksSetting,
   extensionsFileName,
@@ -68,7 +68,11 @@ vi.mock('fs-extra', () => ({
   readJson: vi.fn(),
 }));
 
-vi.mock('vscode', () => ({}));
+vi.mock('vscode', () => ({
+  workspace: {
+    workspaceFolders: [],
+  },
+}));
 
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   // DialogResponses values must be distinct non-undefined objects so `===` checks in source work correctly.
@@ -107,6 +111,7 @@ describe('vscodeConsistency', () => {
       ui: { showWarningMessage },
     } as unknown as IActionContext;
 
+    (workspace as any).workspaceFolders = [createWorkspaceFolder(projectPath, 'logicapp')];
     vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue(projectPath);
     vi.mocked(detectProjectType).mockResolvedValue(ProjectType.logicApp);
     vi.mocked(detectProjectPackageType).mockResolvedValue(ProjectPackageType.Bundle);
@@ -135,7 +140,7 @@ describe('vscodeConsistency', () => {
     vi.mocked(fse.existsSync).mockImplementation((filePath) => !String(filePath).endsWith(settingsFileName));
     showWarningMessage.mockResolvedValue(DialogResponses.yes);
 
-    await ensureVSCodeFiles(context, [createWorkspaceFolder(projectPath, 'logicapp')]);
+    await ensureVSCodeFiles(context);
 
     expect(context.ui.showWarningMessage).toHaveBeenCalledWith(
       expect.stringContaining('logicapp'),
@@ -150,7 +155,7 @@ describe('vscodeConsistency', () => {
     vi.mocked(fse.existsSync).mockImplementation((filePath) => !String(filePath).endsWith(tasksFileName));
     vi.mocked(isProjectConsistencyCheckEnabled).mockReturnValue(false);
 
-    await ensureVSCodeFiles(context, [createWorkspaceFolder(projectPath, 'logicapp')]);
+    await ensureVSCodeFiles(context);
 
     expect(context.ui.showWarningMessage).not.toHaveBeenCalled();
     expect(initProjectForVSCode).not.toHaveBeenCalled();
@@ -160,7 +165,7 @@ describe('vscodeConsistency', () => {
     vi.mocked(fse.existsSync).mockImplementation((filePath) => !String(filePath).endsWith(tasksFileName));
     showWarningMessage.mockImplementation(async (_message, _options, _yes, dontWarnAgain) => dontWarnAgain);
 
-    await ensureVSCodeFiles(context, [createWorkspaceFolder(projectPath, 'logicapp')]);
+    await ensureVSCodeFiles(context);
 
     expect(showWarningMessage).toHaveBeenCalledWith(expect.any(String), {}, DialogResponses.yes, DialogResponses.dontWarnAgain);
   });
@@ -197,7 +202,7 @@ describe('vscodeConsistency', () => {
       return {};
     });
 
-    await ensureVSCodeFiles(context, [folder]);
+    await ensureVSCodeFiles(context);
 
     expect(showWarningMessage).not.toHaveBeenCalled();
     expect(writeFormattedJson).not.toHaveBeenCalled();
@@ -237,7 +242,7 @@ describe('vscodeConsistency', () => {
     });
     showWarningMessage.mockResolvedValue(DialogResponses.yes);
 
-    await ensureVSCodeFiles(context, [folder]);
+    await ensureVSCodeFiles(context);
 
     expect(showWarningMessage).toHaveBeenCalledWith(
       expect.stringContaining('logicapp'),
@@ -253,7 +258,7 @@ describe('vscodeConsistency', () => {
     vi.mocked(fse.readJson).mockResolvedValue({ version: 'stale', tasks: [] });
     showWarningMessage.mockResolvedValue(DialogResponses.dontWarnAgain);
 
-    await ensureVSCodeFiles(context, [createWorkspaceFolder(projectPath, 'logicapp')]);
+    await ensureVSCodeFiles(context);
 
     expect(updateGlobalSetting).toHaveBeenCalledWith(enableProjectConsistencyChecksSetting, false);
   });

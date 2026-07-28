@@ -138,15 +138,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
     activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
-      await ensureVSCodeFiles(actionContext, vscode.workspace.workspaceFolders);
+      await ensureVSCodeFiles(actionContext);
     });
 
     activateContext.telemetry.properties.lastStep = 'registerEvent';
     registerEvent(
       extensionCommand.validateLogicAppProjects,
       vscode.workspace.onDidChangeWorkspaceFolders,
-      async (actionContext: IActionContext, event: vscode.WorkspaceFoldersChangeEvent) => {
-        await ensureVSCodeFiles(actionContext, event.added);
+      async (actionContext: IActionContext) => {
+        await ensureVSCodeFiles(actionContext);
       }
     );
 

@@ -34,18 +34,19 @@ import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-ut
 import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type { MessageItem, WorkspaceFolder } from 'vscode';
+import type { MessageItem } from 'vscode';
+import { workspace } from 'vscode';
 
 /**
- * Ensures that the VS Code configuration files for a Logic App project are present and up-to-date.
+ * Ensures that the VS Code configuration files for all Logic App projects in the workspace are present and up-to-date.
  * @param {IActionContext} context - The action context.
- * @param {readonly WorkspaceFolder[] | undefined} folders - The workspace folders to check.
  * @returns {Promise<void>} A promise that resolves when the check is complete.
  */
-export async function ensureVSCodeFiles(context: IActionContext, folders: readonly WorkspaceFolder[] | undefined): Promise<void> {
+export async function ensureVSCodeFiles(context: IActionContext): Promise<void> {
   context.telemetry.suppressIfSuccessful = true;
   context.telemetry.properties.isActivationEvent = 'true';
 
+  const folders = workspace.workspaceFolders;
   if (!folders || folders.length === 0 || !isProjectConsistencyCheckEnabled()) {
     return;
   }
