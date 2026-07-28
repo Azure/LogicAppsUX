@@ -101,11 +101,12 @@ import {
   getRecordEntry,
   isNullOrUndefined,
   isRecordNotEmpty,
+  AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
-import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
+import { getRoleDefinitionsToAssign } from '../../../../../core/queries/role';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -505,22 +506,17 @@ export const ParameterSection = ({
     const targetResourceId = foundryAccountResourceId;
     rbacAssignedResourceRef.current = targetResourceId;
     setFoundryRbacStatus('checking');
-    getMissingRoleDefinitions(targetResourceId, [
-      'Azure AI User',
-      'Azure AI Administrator',
-      'Azure AI Developer',
-      'Cognitive Services Contributor',
-    ])
-      .then((missingRoles) => {
+    getRoleDefinitionsToAssign(targetResourceId, AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS)
+      .then((rolesToAssign) => {
         if (cancelled || rbacAssignedResourceRef.current !== targetResourceId) {
           return;
         }
-        if (missingRoles.length === 0) {
+        if (rolesToAssign.length === 0) {
           setFoundryRbacStatus('not-needed');
           return;
         }
         setFoundryRbacStatus('assigning');
-        return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
+        return Promise.all(rolesToAssign.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
           () => {
             if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
               setFoundryRbacStatus('assigned');
