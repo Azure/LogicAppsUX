@@ -48,7 +48,29 @@ jobs:
   setup-extension-build:
     name: setup-extension-build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # ---------------------------------------------------------------------
+    # Timeout policy for this workflow.
+    #
+    # A job timeout is a BACKSTOP against a wedged runner, not a performance
+    # SLA. Sizing it to the worst observed run is actively harmful: these are
+    # UI-driven ExTester jobs whose tails are long and legitimate. Measured over
+    # 25 runs, `vscode-e2e (activation-and-create)` has a median of 3.9 min and a
+    # worst HEALTHY run of 14.9 min — a 3.8x tail. A timeout set to "worst
+    # observed" during a fast week would convert those slow-but-green runs into
+    # red builds, which is the exact failure mode the hang-guard work in this PR
+    # exists to eliminate.
+    #
+    # So each timeout below is ~2x the worst healthy observation, which also
+    # absorbs the one fresh-session retry allowed by LA_E2E_SCENARIO_RETRIES,
+    # and (for jobs that consume `la-runtime-deps`) a COLD cache — the Windows
+    # bootstrap is continue-on-error, so its dependents must still fit when it
+    # fails and they hydrate from scratch. Values are deliberately not tuned
+    # below that, because the fast-failure signal lives in the in-test guards,
+    # not here.
+    #
+    # Observed: max 3.2 min over 25 runs.
+    # ---------------------------------------------------------------------
+    timeout-minutes: 10
     outputs:
       build-artifact: extension-build-${{ github.sha }}
     steps:
@@ -537,9 +559,11 @@ jobs:
     name: vscode-e2e-windows (${{ matrix.shard }})
     needs: setup-extension-build
     # Windows ExTester cold-start (real display, VS Code download, func host on
-    # Windows) is materially slower than Linux xvfb; give generous headroom plus
-    # room for one fresh-session retry (LA_E2E_SCENARIO_RETRIES).
-    timeout-minutes: 45
+    # Windows) is materially slower than Linux xvfb; give headroom plus room for
+    # one fresh-session retry (LA_E2E_SCENARIO_RETRIES).
+    # Observed: max 5.9 min over 16 runs. See the timeout policy on
+    # setup-extension-build.
+    timeout-minutes: 20
     runs-on: windows-latest
     defaults:
       run:
@@ -700,7 +724,9 @@ jobs:
     # now fails fast if a debug start ever hangs again, instead of burning the timeout.
     #
     # With the race gone these legs are deterministic, so they are required checks again.
-    timeout-minutes: 45
+    # Observed: max 8.8 min over 13 runs. Sized to absorb one retry plus a cold
+    # `la-runtime-deps-Linux` hydration. See the policy on setup-extension-build.
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -861,8 +887,9 @@ jobs:
     # and runtime-dependency settling before it touches the command palette (up to
     # ~8 min on a cold runner, since `la-runtime-deps-Linux-*` may not be warm for
     # this job yet), and 4.13B waits up to 180 s for design-time plus the F5 assertions.
-    # 30 min was not enough headroom for both phases in the worst case.
-    timeout-minutes: 45
+    # Observed: max 6.6 min across the ubuntu azurite legs. Sized to absorb one
+    # retry plus a cold hydration. See the policy on setup-extension-build.
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     # Sharded by app kind rather than looping both kinds in one job. Two reasons:
     # keeping wall-clock at the ~5 min single-kind baseline instead of doubling the
@@ -1023,7 +1050,9 @@ jobs:
     # deliberately absent from the gate's `!= "success"` chain below. Never add
     # `continue-on-error` to a gated job — it would silently green the whole build.
     continue-on-error: true
-    timeout-minutes: 45
+    # Observed: max 11.3 min over 16 runs. This job IS the cold-download path, so
+    # network variance is inherent. See the policy on setup-extension-build.
+    timeout-minutes: 25
     runs-on: windows-latest
     defaults:
       run:
@@ -1171,7 +1200,11 @@ jobs:
     # startup race that made the F5 task-chain assertions intermittently hang. See the
     # ubuntu leg for the full explanation of the race and the fix.
     needs: [setup-extension-build, setup-runtime-deps-windows]
-    timeout-minutes: 45
+    # Observed: max 12.8 min over 6 runs — the slowest gated job in the workflow.
+    # Kept at 35 because 2x the worst run is already 25.6 min, and this leg must
+    # still fit when setup-runtime-deps-windows fails and it hydrates cold.
+    # See the policy on setup-extension-build.
+    timeout-minutes: 35
     runs-on: windows-latest
     defaults:
       run:
@@ -1314,7 +1347,11 @@ jobs:
     # extension hydrates dependencies underneath the already-running test, which is
     # what used to make the Windows legs fail for reasons unrelated to the product.
     needs: [setup-extension-build, setup-runtime-deps-windows]
-    timeout-minutes: 45
+    # Observed: max 8.5 min, but from only ONE run — these legs are brand new.
+    # Sized generously on purpose until more samples exist, and to still fit when
+    # setup-runtime-deps-windows fails and this hydrates cold (~+10 min).
+    # See the policy on setup-extension-build.
+    timeout-minutes: 25
     runs-on: windows-latest
     # Sharded by app kind — see the ubuntu leg for the rationale. It matters more
     # here: Windows is the slower runner and the codeful kind additionally drives a
@@ -1431,7 +1468,8 @@ jobs:
     name: vscode-e2e compatibility (${{ matrix.label }})
     needs: setup-extension-build
     # Headroom for one activation-smoke retry (LA_E2E_SCENARIO_RETRIES).
-    timeout-minutes: 25
+    # Observed: max 5.6 min over 25 runs. See the policy on setup-extension-build.
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
