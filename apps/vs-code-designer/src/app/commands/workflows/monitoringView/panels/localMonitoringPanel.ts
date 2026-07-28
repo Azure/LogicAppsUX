@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { assetsFolderName, localSettingsFileName } from '../../../../../constants';
+import { assetsFolderName } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
@@ -58,7 +58,9 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
 
     this.baseUrl = ext.getWorkflowRuntimeBaseUrl();
     if (!this.baseUrl) {
-      throw new Error(localize('FunctionRuntimeNotStarted', 'Unable to determine function runtime base url. Please ensure the local runtime is started.'));
+      throw new Error(
+        localize('FunctionRuntimeNotStarted', 'Unable to determine function runtime base url. Please ensure the local runtime is started.')
+      );
     }
 
     this.panel = vscode.window.createWebviewPanel(
@@ -67,7 +69,7 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
-    
+
     this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
@@ -203,7 +205,7 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
         this.getWorkflowContent(),
       ]);
 
-    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
+    const localSettings = (await getLocalSettingsJson(this.context, projectPath)).Values!;
 
     return {
       panelId: this.panelName,

@@ -4,7 +4,6 @@ import { startOnboarding } from '../onboarding';
 import * as binaries from '../app/utils/binaries';
 import { promptStartDesignTimeOption, scheduleStartAllDesignTimeApis } from '../app/utils/codeless/startDesignTimeApi';
 import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
-import { validateTasksJson } from '../app/utils/vsCodeConfig/tasks';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
 import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -15,7 +14,6 @@ vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
 }));
 // Auto-mocks: no problematic transitive imports once the above chains are broken.
 vi.mock('../app/commands/binaries/validateAndInstallBinaries');
-vi.mock('../app/utils/vsCodeConfig/tasks');
 vi.mock('../app/utils/devContainerUtils');
 vi.mock('../app/utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
@@ -52,7 +50,6 @@ describe('onboardBinaries', () => {
       await onboardBinaries(mockContext);
 
       expect(validateAndInstallBinaries).not.toHaveBeenCalled();
-      expect(validateTasksJson).not.toHaveBeenCalled();
     });
 
     it('should not set lastStep when skipping in devContainer', async () => {
@@ -70,19 +67,16 @@ describe('onboardBinaries', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(getGlobalSetting).mockReturnValue(true);
       vi.mocked(validateAndInstallBinaries).mockResolvedValue(undefined);
-      vi.mocked(validateTasksJson).mockResolvedValue(undefined);
 
       await onboardBinaries(mockContext);
 
       expect(validateAndInstallBinaries).toHaveBeenCalled();
-      expect(validateTasksJson).toHaveBeenCalled();
     });
 
     it('should set telemetry lastStep when validating binaries', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(getGlobalSetting).mockReturnValue(true);
       vi.mocked(validateAndInstallBinaries).mockResolvedValue(undefined);
-      vi.mocked(validateTasksJson).mockResolvedValue(undefined);
 
       await onboardBinaries(mockContext);
 
@@ -96,7 +90,6 @@ describe('onboardBinaries', () => {
       await onboardBinaries(mockContext);
 
       expect(validateAndInstallBinaries).not.toHaveBeenCalled();
-      expect(validateTasksJson).not.toHaveBeenCalled();
     });
 
     it('should rethrow dependency validation failures in strict E2E mode', async () => {
@@ -108,33 +101,18 @@ describe('onboardBinaries', () => {
       await expect(onboardBinaries(mockContext)).rejects.toThrow('Bundle sidecar missing');
 
       expect(validateAndInstallBinaries).toHaveBeenCalled();
-      expect(validateTasksJson).not.toHaveBeenCalled();
     });
   });
 
-  describe('validateTasksJson integration', () => {
-    it('should call validateTasksJson with workspace folders when binaries are enabled', async () => {
-      const vscode = await import('vscode');
-      const mockWorkspaceFolders = [{ uri: { fsPath: '/test/path' } }];
-      (vscode.workspace as any).workspaceFolders = mockWorkspaceFolders;
-
+  describe('workspace validation integration', () => {
+    it('should not invoke .vscode artifact validation during binary onboarding', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(getGlobalSetting).mockReturnValue(true);
       vi.mocked(validateAndInstallBinaries).mockResolvedValue(undefined);
-      vi.mocked(validateTasksJson).mockResolvedValue(undefined);
 
       await onboardBinaries(mockContext);
 
-      expect(validateTasksJson).toHaveBeenCalledWith(expect.any(Object), mockWorkspaceFolders);
-    });
-
-    it('should not call validateTasksJson in devContainer workspace', async () => {
-      vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
-      vi.mocked(getGlobalSetting).mockReturnValue(true);
-
-      await onboardBinaries(mockContext);
-
-      expect(validateTasksJson).not.toHaveBeenCalled();
+      expect(validateAndInstallBinaries).toHaveBeenCalledTimes(1);
     });
   });
 });

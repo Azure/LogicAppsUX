@@ -28,5 +28,6 @@ import * as Swagger from './swagger';
 import * as Template from './template';
 export * from './mcp';
 export * from './knowledge';
+export * from './roleDefinitions';
 
 export { LogicApps, LogicAppsV2, OpenAPIV2, Swagger, Template };

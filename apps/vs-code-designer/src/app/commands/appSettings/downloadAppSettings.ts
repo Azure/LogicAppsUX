@@ -9,13 +9,14 @@ import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsE
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { decryptLocalSettings } from './decryptLocalSettings';
 import { encryptLocalSettings } from './encryptLocalSettings';
-import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { StringDictionary } from '@azure/arm-appservice';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-azext-azureappsettings';
 import { AzExtFsExtra, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
 export async function downloadAppSettings(context: IActionContext, node?: AppSettingsTreeItem): Promise<void> {
   if (!node) {
@@ -33,11 +34,17 @@ export async function downloadAppSettings(context: IActionContext, node?: AppSet
 }
 
 async function downloadAppSettingsInternal(context: IActionContext, client: IAppSettingsClient): Promise<void> {
-  const message: string = localize('selectLocalSettings', 'Select the destination file for your downloaded settings.');
-  const localSettingsPath: string = await getLocalSettingsFile(context, message);
+  // TODO(aeldridge): Defaults to the first workspace folder. Should prompt to select logic app across all workspace folders.
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, false /* suppressPrompt */);
+  if (!projectPath) {
+    throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
+  }
+
+  const localSettingsPath = path.join(projectPath, localSettingsFileName);
   const localSettingsUri: vscode.Uri = vscode.Uri.file(localSettingsPath);
 
-  let localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  let localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
 
   const isEncrypted: boolean | undefined = localSettings.IsEncrypted;
 
