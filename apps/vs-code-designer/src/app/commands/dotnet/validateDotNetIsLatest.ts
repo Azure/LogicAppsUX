@@ -5,7 +5,7 @@
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { dotnetDependencyName } from '../../../constants';
 import { binariesExist, getLatestDotNetVersion } from '../../utils/binaries';
-import { shouldCheckForDependencyUpdates } from '../../utils/dependencyUpdateCheck';
+import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../../utils/dotnet/dotnet';
 import { installDotNet } from './installDotNet';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
