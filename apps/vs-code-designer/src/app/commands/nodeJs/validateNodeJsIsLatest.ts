@@ -6,6 +6,7 @@ import { nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installNodeJs } from './installNodeJs';
@@ -25,7 +26,7 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
     context.telemetry.properties.binariesExist = `${binaries}`;
     // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
     // install (e.g. a removed file) forces a wipe + reinstall instead of silently failing at runtime.
-    const integrityValid = binaries ? verifyDependencyIntegrity(context, nodeJsDependencyName) : false;
+    const integrityValid = binaries ? await verifyDependencyIntegrity(context, nodeJsDependencyName) : false;
     context.telemetry.properties.integrityValid = `${integrityValid}`;
 
     if (!binaries || !integrityValid) {
@@ -41,7 +42,9 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
         context.telemetry.properties.nodeJsWarningDecision = 'localMissing';
         await installNodeJs(context, majorVersion);
         logNodeJsWarningDecision(context);
-      } else {
+      } else if (shouldCheckForDependencyUpdates()) {
+        // Throttle: only re-check the newest published version once per window (see
+        // shouldCheckForDependencyUpdates). A missing/unrunnable Node is still reinstalled above.
         const newestVersion = await getNewestNodeJsWarningVersion(context, localVersion, majorVersion);
         context.telemetry.properties.newestVersion = newestVersion;
 
@@ -50,6 +53,9 @@ export async function validateNodeJsIsLatest(majorVersion?: string): Promise<voi
           context.telemetry.properties.outOfDateNodeJs = 'true';
           showOutdatedNodeJsWarning(context, localVersion, newestVersion, majorVersion, showNodeJsWarningKey);
         }
+        logNodeJsWarningDecision(context);
+      } else {
+        context.telemetry.properties.nodeJsWarningDecision = 'updateCheckThrottled';
         logNodeJsWarningDecision(context);
       }
     } else {

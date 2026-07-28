@@ -85,6 +85,9 @@ vi.mock('fs', () => ({
   statSync: vi.fn(() => ({
     isDirectory: vi.fn(() => false),
   })),
+  promises: {
+    stat: vi.fn(),
+  },
   dirent: vi.fn().mockImplementation(() => ({
     isDirectory: vi.fn().mockImplementation(() => {
       return true;
@@ -192,14 +195,18 @@ vi.mock('./src/extensionVariables', () => ({
       appendLine: vi.fn(),
     },
     designTimeInstances: new Map(),
+    runtimeInstances: new Map(),
     pinnedBundleVersion: new Map(),
     currentBundleVersion: new Map(),
     extensionVersion: '1.0.0',
     latestBundleVersion: '1.2.3',
     prefix: 'azureLogicAppsStandard',
+    getWorkflowRuntimeBaseUrl: vi.fn(() => 'http://localhost:7071/runtime/webhooks/workflow/api/management'),
     webViewKey: {
       designerLocal: 'designerLocal',
+      designerLocalV2: 'designerLocalV2',
       designerAzure: 'designerAzure',
+      designerAzureV2: 'designerAzureV2',
       monitoring: 'monitoring',
       export: 'export',
       overview: 'overview',

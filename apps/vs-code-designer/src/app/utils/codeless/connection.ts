@@ -4,6 +4,7 @@ import {
   localSettingsFileName,
   parameterizeConnectionsInProjectLoadSetting,
   workflowAuthenticationMethodKey,
+  workflowAuthenticationMethodMIValue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../detectProjectLanguage';
@@ -40,7 +41,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
-import { getGlobalSetting } from '../vsCodeConfig/settings';
+import { getGlobalSetting, isManagedIdentityAuthEnabled } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
 
@@ -216,7 +217,7 @@ async function getConnectionReference(
   settingsToAdd: Record<string, string>,
   parametersToAdd: any,
   parameterizeConnectionsSetting: any,
-  useMSI: boolean
+  isMIEnabled: boolean
 ): Promise<ConnectionReferenceModel> {
   const {
     api: { id: apiId },
@@ -244,13 +245,13 @@ async function getConnectionReference(
     )
     .then(({ data: response }) => {
       // Only add connection key to settings if NOT using MSI
-      if (!useMSI) {
+      if (!isMIEnabled) {
         const appSettingKey = `${referenceKey}-connectionKey`;
         settingsToAdd[appSettingKey] = response.connectionKey;
       }
 
       // Determine authentication based on ext.useMSI
-      const authValue = useMSI
+      const authValue = isMIEnabled
         ? { type: 'ManagedServiceIdentity' }
         : {
             type: 'Raw',
@@ -303,7 +304,7 @@ export async function getConnectionsAndSettingsToUpdate(
     const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
     const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
     const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
-    const useMsi = await isMSIEnabled(projectPath, context);
+    const isMIEnabled = await isMISettingEnabled(context, projectPath);
 
     let areKeysRefreshed = false;
     let areKeysGenerated = false;
@@ -329,17 +330,17 @@ export async function getConnectionsAndSettingsToUpdate(
           settingsToAdd,
           parametersFromDefinition,
           parameterizeConnectionsSetting,
-          useMsi
+          isMIEnabled
         );
 
-        context.telemetry.properties.connectionKeyGenerated = useMsi
+        context.telemetry.properties.connectionKeyGenerated = isMIEnabled
           ? `${referenceKey} configured for MSI authentication`
           : `${referenceKey}-connectionKey generated and is valid for 7 days`;
 
-        if (!useMsi) {
+        if (!isMIEnabled) {
           areKeysGenerated = true;
         }
-      } else if (!useMsi && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
+      } else if (!isMIEnabled && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
         const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
         accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
@@ -354,13 +355,13 @@ export async function getConnectionsAndSettingsToUpdate(
           settingsToAdd,
           parametersFromDefinition,
           parameterizeConnectionsSetting,
-          useMsi
+          isMIEnabled
         );
 
         context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
         areKeysGenerated = true;
       } else if (
-        !useMsi &&
+        !isMIEnabled &&
         isApiHubConnectionId(reference.connection.id) &&
         localSettings.Values[`${referenceKey}-connectionKey`] &&
         isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3, context, referenceKey)
@@ -379,7 +380,7 @@ export async function getConnectionsAndSettingsToUpdate(
           settingsToAdd,
           parametersFromDefinition,
           parameterizeConnectionsSetting,
-          useMsi
+          isMIEnabled
         );
 
         context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;
@@ -390,7 +391,7 @@ export async function getConnectionsAndSettingsToUpdate(
     }
 
     // Update MSI connection permissions if MSI is enabled
-    if (useMsi) {
+    if (isMIEnabled) {
       try {
         const updatedReferences = await updateConnectionReferencesLocalMSI(
           context,
@@ -986,28 +987,19 @@ async function checkExistingPolicy(
 }
 
 /**
- * Checks if Managed Service Identity (MSI) authentication is enabled for a Logic Apps project.
+ * Checks if managed identity authentication is enabled in the local settings.
  *
- * @param projectPath - The absolute path to the project directory containing the local settings file
- * @param context - The action context used for reading local settings
- * @returns A promise that resolves to `true` if MSI authentication is enabled, `false` otherwise.
- *          Returns `false` if the settings file cannot be read or parsed.
+ * @param context - The action context.
+ * @param projectPath - The logic apps project path.
+ * @returns A promise that resolves to `true` if MSI authentication is enabled, `false` otherwise. Returns `false` if the settings file cannot be read or parsed.
  */
-async function isMSIEnabled(projectPath: string, context: IActionContext): Promise<boolean> {
+async function isMISettingEnabled(context: IActionContext, projectPath: string): Promise<boolean> {
   try {
     const localSettingsPath = path.join(projectPath, localSettingsFileName);
     const localSettings = await getLocalSettingsJson(context, localSettingsPath);
-
-    // Retrieve the configured authentication method
     const authMethod = localSettings.Values?.[workflowAuthenticationMethodKey];
-
-    // Explicitly check for MSI, using string literal comparison instead of enum
-    if (typeof authMethod === 'string' && authMethod.toLowerCase() === 'managedserviceidentity') {
-      return true;
-    }
-
-    return false; // Not MSI or invalid value
+    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase()
   } catch {
-    return false; // Default to false if settings can't be read or parsed
+    return false;
   }
 }

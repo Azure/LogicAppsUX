@@ -154,24 +154,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     _saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
   });
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Unit test
+  const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const definition = await getNodeOutputOperations(designerState);
 
-  // TODO(aeldridge): Enable unit test creation in V2 designer
-  // const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
-  //   const designerState = DesignerStore.getState();
-  //   const definition = await getNodeOutputOperations(designerState);
+    vscode.postMessage({
+      command: ExtensionCommand.logTelemetry,
+      data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
+    });
 
-  //   vscode.postMessage({
-  //     command: ExtensionCommand.logTelemetry,
-  //     data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
-  //   });
-
-  //   await vscode.postMessage({
-  //     command: ExtensionCommand.createUnitTest,
-  //     definition,
-  //   });
-  // });
+    await vscode.postMessage({
+      command: ExtensionCommand.createUnitTest,
+      definition,
+    });
+  });
 
   const onCreateUnitTestFromRun = async () => {
     const designerState = DesignerStore.getState();
@@ -308,7 +304,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     </>
   );
 
-  // TODO(aeldridge): Will need to update to support unit test creation from V2 designer
+  const isCreateUnitTestDisabled = isCreatingUnitTest || designerIsDirty;
+
   const OverflowMenu = () => (
     <Menu>
       <MenuTrigger>
@@ -316,8 +313,18 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
-          {isLocal && (
-            <MenuItem key={'create-unit-test'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
+          {isLocal && isDesignerView && (
+            <MenuItem
+              key={'create-unit-test'}
+              disabled={isCreateUnitTestDisabled}
+              onClick={() => createUnitTestMutate()}
+              icon={<CreateUnitTestIcon />}
+            >
+              {intlText.CREATE_UNIT_TEST}
+            </MenuItem>
+          )}
+          {isLocal && isMonitoringView && runId && (
+            <MenuItem key={'create-unit-test-from-run'} onClick={onCreateUnitTestFromRun} icon={<CreateUnitTestIcon />}>
               {intlText.CREATE_UNIT_TEST_FROM_RUN}
             </MenuItem>
           )}

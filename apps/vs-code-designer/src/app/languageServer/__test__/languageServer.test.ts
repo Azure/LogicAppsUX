@@ -65,7 +65,9 @@ vi.mock('../../utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: mocks.getGlobalSetting,
 }));
 
-vi.mock('../../utils/codeless/common', () => ({
+vi.mock('../../utils/codeless/common', () => ({}));
+
+vi.mock('../../commands/azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: mocks.getAzureConnectorDetailsForLocalProject,
 }));
 

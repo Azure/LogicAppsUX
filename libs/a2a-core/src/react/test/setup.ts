@@ -120,8 +120,8 @@ global.DataTransfer = DataTransferPolyfill;
 beforeEach(() => {
   vi.mocked(global.fetch).mockReset();
 
-  // Ensure document.body exists for happy-dom v18
-  if (!document.body) {
+  // Ensure document.body exists for happy-dom v18 (jsdom-only; skipped in the node environment)
+  if (typeof document !== 'undefined' && !document.body) {
     const body = document.createElement('body');
     document.documentElement.appendChild(body);
   }
@@ -149,20 +149,22 @@ global.TextDecoderStream = class TextDecoderStream {
   }
 };
 
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation((query) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(), // deprecated
-    removeListener: vi.fn(), // deprecated
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
+// Mock window.matchMedia (jsdom-only; skipped in the node environment)
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(), // deprecated
+      removeListener: vi.fn(), // deprecated
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+}
 
 // Reset all mocks after each test
 afterEach(() => {

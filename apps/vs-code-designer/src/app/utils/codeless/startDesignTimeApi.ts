@@ -26,7 +26,7 @@ import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
-import { regenerateLocalSettings, regenerateRootHostFile, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
+import { ensureProjectRootArtifacts, validateAndRegenerateProjectArtifacts } from './validateProjectArtifacts';
 import { delay } from '../delay';
 import {
   DialogResponses,
@@ -42,7 +42,6 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
@@ -54,6 +53,7 @@ import {
   isInsideBundleDownloadScope,
   waitForExtensionBundleReady,
 } from '../bundleFeed';
+import { releaseReservedPort, reserveFreePort } from '../portReservation';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -234,7 +234,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         designTimeInst.isStarting = true;
 
         if (!designTimeInst.port) {
-          designTimeInst.port = await portfinder.getPortPromise();
+          designTimeInst.port = await reserveFreePort();
         }
 
         const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
@@ -637,6 +637,7 @@ export async function stopDesignTimeApi(projectPath: string): Promise<void> {
 
   const { process: proc, childFuncPid } = designTimeInst;
   ext.designTimeInstances.delete(projectPath);
+  releaseReservedPort(designTimeInst.port);
   if (proc === null || proc === undefined) {
     return;
   }
@@ -742,16 +743,15 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
       }
 
       for (const projectPath of logicAppFolders) {
-        // Keep source-controlled projects valid by regenerating the git-ignored host.json /
-        // local.settings.json (incl. every app setting the logic app references).
-        ext.outputChannel.appendLog(
-          localize('ensuringProjectArtifacts', 'Ensuring host.json and local.settings.json for logic app "{0}".', projectPath)
-        );
-        await regenerateRootHostFile(projectPath);
-        await regenerateLocalSettings(context, projectPath);
-
         if (autoStartDesignTime) {
+          // The scheduled startDesignTimeApi() runs validateAndRegenerateProjectArtifacts() once and
+          // logs a single per-project artifact summary, so don't regenerate up-front here — doing so
+          // would repeat both the work and the log lines for every project.
           scheduleStartDesignTimeApi(projectPath);
+        } else {
+          // Auto-start is off: keep source-controlled clones valid by regenerating the git-ignored
+          // host.json / local.settings.json now. Emits one concise per-project summary line.
+          await ensureProjectRootArtifacts(context, projectPath);
         }
       }
     } else {

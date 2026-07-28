@@ -46,7 +46,7 @@ import {
 } from '../../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../../core/utils/tokens';
-import { getAllVariables, getAvailableVariables } from '../../../../../core/utils/variables';
+import { getAvailableVariables } from '../../../../../core/utils/variables';
 import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
@@ -92,7 +92,6 @@ import {
   type NewResourceProps,
 } from '@microsoft/designer-ui';
 import {
-  AGENT_MODEL_CONFIG,
   clone,
   ConnectionService,
   EditorService,
@@ -104,8 +103,6 @@ import {
   isRecordNotEmpty,
   RoleService,
   SUBGRAPH_TYPES,
-  SUPPORTED_AGENT_OPENAI_MODELS,
-  SUPPORTED_FOUNDRY_AGENT_MODELS,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
 import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
@@ -116,6 +113,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
+  getAvailableModelsForConnection,
+  useAvailableModelsForAccount,
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
   useFoundryAccountResourceIdForNode,
@@ -368,12 +367,13 @@ const updateConnectionAndDeployment = async (
         let modelFormat = deploymentInfo.modelFormat;
         let modelVersion = deploymentInfo.modelVersion;
         if (!modelFormat || !modelVersion) {
-          const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+          const availableModels = await getAvailableModelsForConnection(connection);
+          const match = availableModels.find((entry: any) => entry?.model?.name === modelName);
           if (!modelFormat) {
-            modelFormat = config?.format ?? 'OpenAI';
+            modelFormat = match?.model?.format ?? 'OpenAI';
           }
           if (!modelVersion) {
-            modelVersion = config?.version;
+            modelVersion = match?.model?.version;
           }
         }
 
@@ -473,6 +473,7 @@ export const ParameterSection = ({
 
   // Specific for agentic scenarios
   const cognitiveServiceAccountId = useCognitiveServiceAccountId(nodeId, operationInfo?.connectorId);
+  const { data: availableModelsForCognitiveServiceAccount } = useAvailableModelsForAccount(cognitiveServiceAccountId);
   const { data: deploymentsForCognitiveServiceAccount, refetch } = useCognitiveServiceAccountDeploymentsForNode(
     nodeId,
     operationInfo?.connectorId
@@ -1077,14 +1078,14 @@ export const ParameterSection = ({
           let modelFormat = deploymentInfo?.properties?.model?.format;
           let modelVersion = deploymentInfo?.properties?.model?.version;
 
-          // For MicrosoftFoundry, format and version are not in the ARM response — fill from AGENT_MODEL_CONFIG
+          // For MicrosoftFoundry, format and version are not in the ARM response — fill from the account's model catalog
           if (!modelFormat || !modelVersion) {
-            const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+            const match = availableModelsForCognitiveServiceAccount?.find((entry: any) => entry?.model?.name === modelName);
             if (!modelFormat) {
-              modelFormat = config?.format ?? 'OpenAI';
+              modelFormat = match?.model?.format ?? 'OpenAI';
             }
             if (!modelVersion) {
-              modelVersion = config?.version;
+              modelVersion = match?.model?.version;
             }
           }
 
@@ -1147,6 +1148,7 @@ export const ParameterSection = ({
       operationDefinition,
       connector,
       deploymentsForCognitiveServiceAccount,
+      availableModelsForCognitiveServiceAccount,
       foundryAgentsForNode,
     ]
   );
@@ -1435,8 +1437,7 @@ export const ParameterSection = ({
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
         isA2AWorkflow,
-        foundryAgentsForNode ?? [],
-        currentAgentModelType
+        foundryAgentsForNode ?? []
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
@@ -1827,8 +1828,7 @@ export const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
   isA2AWorkflow?: boolean,
-  foundryAgents: any[] = [],
-  agentModelType?: string
+  foundryAgents: any[] = []
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1843,17 +1843,12 @@ export const getEditorAndOptions = (
 
   // Handle variable dropdown editor
   if (equals(editor, constants.EDITOR.VARIABLE_NAME)) {
-    const toOption = (variable: VariableDeclaration) => ({ value: variable.name, displayName: variable.name });
-    const typeMatches = (variable: VariableDeclaration) => supportedTypes.length === 0 || supportedTypes.includes(variable.type);
-
-    const scopedOptions = getAvailableVariables(variables, upstreamNodeIds).filter(typeMatches).map(toOption);
-
-    // Fallback: when the scoped list is empty but variables are declared elsewhere in the workflow,
-    // show all declared variables. The runtime does not scope variables by graph position, so any
-    // declared variable is legally assignable (see: pasteScopeOperation bug where a pasted node's
-    // upstreamNodeIds does not include the root InitializeVariable). Preserves the ideal UX when
-    // the scoped list is non-empty; only kicks in to prevent an empty-dropdown dead-end.
-    const options = scopedOptions.length === 0 ? getAllVariables(variables).filter(typeMatches).map(toOption) : scopedOptions;
+    const options = getAvailableVariables(variables, upstreamNodeIds)
+      .filter((variable) => supportedTypes.length === 0 || supportedTypes.includes(variable.type))
+      .map((variable) => ({
+        value: variable.name,
+        displayName: variable.name,
+      }));
 
     return {
       editor: 'dropdown',
@@ -1861,12 +1856,22 @@ export const getEditorAndOptions = (
     };
   }
 
-  // Handle agent connector with supported deployments
+  // Handle agent connector with supported deployments.
+  // Mirror the backend, which accepts any deployment whose model supports chat completions,
+  // instead of restricting to a hardcoded model list (which drops newly released models).
   const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
-    const supportedModels = agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
     const options = deploymentsForCognitiveServiceAccount
-      .filter((deployment) => supportedModels.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+      .filter((deployment) => {
+        // ARM returns capability flags as strings (e.g. "true"); coerce so a non-string shape can't
+        // throw, and compare case-insensitively.
+        const isChatCompletion = equals(String(deployment.properties?.capabilities?.chatCompletion ?? ''), 'true');
+        // Only offer deployments that are ready to use; skip Creating/Failed/Deleting. A missing state
+        // (older API versions) is treated as usable so valid deployments are never hidden.
+        const provisioningState = deployment.properties?.provisioningState;
+        const isReady = !provisioningState || equals(String(provisioningState), 'Succeeded');
+        return isChatCompletion && isReady;
+      })
       .map((deployment) => ({
         value: deployment.name,
         displayName: `${deployment.name}${deployment.properties?.model?.name ? ` (${deployment.properties.model.name})` : ''}`,

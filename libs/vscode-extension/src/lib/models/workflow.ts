@@ -9,7 +9,7 @@ export interface ILocalSettingsJson {
   ConnectionStrings?: { [key: string]: string };
 }
 
-export interface IDesignerPanelMetadata {
+export interface DesignerPanelMetadata {
   panelId: string;
   appSettingNames?: string[];
   standardApp: StandardApp;

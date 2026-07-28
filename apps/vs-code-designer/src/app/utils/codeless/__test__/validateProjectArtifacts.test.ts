@@ -21,6 +21,7 @@ import {
   localEmulatorConnectionString,
   logicAppKind,
   multiLanguageWorkerSetting,
+  workflowAuthenticationMethodKey,
   workerRuntimeKey,
   workflowCodefulEnabledKey,
   workflowOperationDiscoveryHostModeKey,
@@ -29,16 +30,19 @@ import * as localSettings from '../../appSettings/localSettings';
 import { writeFormattedJson } from '../../fs';
 import { hasCodefulSdkReference } from '../../codeful';
 import { isCustomCodeFunctionsProjectInRoot } from '../../customCodeUtils';
+import { useNodeDesignTimeWorker } from '../../vsCodeConfig/settings';
 import {
   detectLogicAppProjectType,
   extractAppSettingReferences,
   getReferencedAppSettings,
+  ensureProjectRootArtifacts,
   regenerateLocalSettings,
   regenerateRootHostFile,
   validateAndRegenerateProjectArtifacts,
   validateDesignTimeDirectory,
   regenerateDesignTimeDirectory,
 } from '../validateProjectArtifacts';
+import { ext } from '../../../../extensionVariables';
 
 vi.mock('fs-extra', () => ({
   pathExists: vi.fn(),
@@ -67,6 +71,15 @@ vi.mock('../../customCodeUtils', () => ({
   isCustomCodeFunctionsProjectInRoot: vi.fn(() => Promise.resolve(false)),
 }));
 
+vi.mock('../../vsCodeConfig/settings', async (importActual) => {
+  const actual = await importActual<typeof import('../../vsCodeConfig/settings')>();
+  return {
+    ...actual,
+    useNodeDesignTimeWorker: vi.fn(() => false),
+    isManagedIdentityAuthEnabled: vi.fn(() => true),
+  };
+});
+
 const projectPath = '/workspace/LogicApp';
 
 /** Normalize path separators so tests behave the same on Windows and POSIX. */
@@ -82,6 +95,12 @@ const mockedGetLocalSettingsJson = localSettings.getLocalSettingsJson as unknown
 const mockedWriteFormattedJson = writeFormattedJson as unknown as ReturnType<typeof vi.fn>;
 const mockedIsCodeful = hasCodefulSdkReference as unknown as ReturnType<typeof vi.fn>;
 const mockedIsCustomCodeInRoot = isCustomCodeFunctionsProjectInRoot as unknown as ReturnType<typeof vi.fn>;
+const mockedAppendLog = ext.outputChannel.appendLog as unknown as ReturnType<typeof vi.fn>;
+
+/** Returns every line written to the output channel via appendLog. */
+function loggedLines(): string[] {
+  return mockedAppendLog.mock.calls.map((c) => String(c[0]));
+}
 
 /** Returns the object written via writeFormattedJson for the file whose path ends with fileName. */
 function writtenContentFor(fileName: string): unknown {
@@ -108,6 +127,7 @@ describe('validateProjectArtifacts', () => {
     mockedIsCodeful.mockResolvedValue(false);
     mockedIsCustomCodeInRoot.mockResolvedValue(false);
     mockedFse.readdir.mockResolvedValue([]);
+    vi.mocked(useNodeDesignTimeWorker).mockReturnValue(false);
     (workspace as any).fs = { createDirectory: vi.fn(() => Promise.resolve()) };
   });
 
@@ -157,7 +177,7 @@ describe('validateProjectArtifacts', () => {
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(true);
       expect(mockedAddOrUpdate).toHaveBeenCalledTimes(1);
@@ -172,7 +192,7 @@ describe('validateProjectArtifacts', () => {
       mockedIsCodeful.mockResolvedValue(true);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -182,6 +202,7 @@ describe('validateProjectArtifacts', () => {
         [workerRuntimeKey]: WorkerRuntime.Dotnet,
         [azureWebJobsStorageKey]: localEmulatorConnectionString,
         [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+        [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
         [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
         [workflowCodefulEnabledKey]: 'true',
       });
@@ -201,11 +222,12 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
           EXISTING_SECRET: 'super-secret',
         },
       });
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -224,10 +246,11 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(false);
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
@@ -246,6 +269,7 @@ describe('validateProjectArtifacts', () => {
       [workerRuntimeKey]: WorkerRuntime.Dotnet,
       [azureWebJobsStorageKey]: localEmulatorConnectionString,
       [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+      [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
     };
 
     beforeEach(() => {
@@ -258,7 +282,7 @@ describe('validateProjectArtifacts', () => {
       mockedIsCodeful.mockResolvedValue(false);
       mockedIsCustomCodeInRoot.mockResolvedValue(false);
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -273,7 +297,7 @@ describe('validateProjectArtifacts', () => {
       mockedIsCodeful.mockResolvedValue(false);
       mockedIsCustomCodeInRoot.mockResolvedValue(true);
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -290,7 +314,7 @@ describe('validateProjectArtifacts', () => {
       mockedIsCodeful.mockResolvedValue(false);
       mockedIsCustomCodeInRoot.mockResolvedValue(true);
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -304,7 +328,7 @@ describe('validateProjectArtifacts', () => {
     it('codeful: regenerates the codeless baseline plus WORKFLOW_CODEFUL_ENABLED and AzureWebJobsFeatureFlags (matches fresh creation)', async () => {
       mockedIsCodeful.mockResolvedValue(true);
 
-      const changed = await regenerateLocalSettings(context, projectPath);
+      const { changed } = await regenerateLocalSettings(context, projectPath);
 
       expect(changed).toBe(true);
       const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
@@ -367,7 +391,12 @@ describe('validateProjectArtifacts', () => {
       extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
     });
     const validSettings = JSON.stringify({
-      Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+      Values: {
+        APP_KIND: 'workflowapp',
+        FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        ProjectDirectoryPath: projectPath,
+      },
     });
 
     it('reports invalid when the directory does not exist', async () => {
@@ -455,6 +484,98 @@ describe('validateProjectArtifacts', () => {
       expect(result.settingsFileValid).toBe(false);
       expect(result.isValid).toBe(false);
     });
+
+    it('reports invalid settings for a stale Node design-time file lacking the in-process .NET 8 flag', async () => {
+      // An older extension generated a design-time file on the Node worker without
+      // FUNCTIONS_INPROC_NET8_ENABLED. It must be treated as invalid so it is regenerated to the
+      // in-process .NET 8 host that spawns the NetFxWorker required by the Data Mapper Test map.
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when all required keys are present but the worker runtime is still Node', async () => {
+      // Presence of every required key is not enough: a file that carries the in-process .NET 8 flag but
+      // still points FUNCTIONS_WORKER_RUNTIME at "node" would launch the host on the wrong worker. It must
+      // be treated as invalid so it is regenerated to dotnet + in-process .NET 8.
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'node',
+            FUNCTIONS_INPROC_NET8_ENABLED: '1',
+            ProjectDirectoryPath: projectPath,
+          },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when the worker runtime is dotnet but the in-process .NET 8 flag is disabled', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+            FUNCTIONS_INPROC_NET8_ENABLED: '0',
+            ProjectDirectoryPath: projectPath,
+          },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports valid settings for a Node design-time file when the Node-worker fallback is enabled', async () => {
+      vi.mocked(useNodeDesignTimeWorker).mockReturnValue(true);
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(true);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('reports invalid settings for a dotnet + in-process .NET 8 file when the Node-worker fallback is enabled', async () => {
+      // Toggling into the fallback must invalidate the dotnet file so it is regenerated to Node.
+      vi.mocked(useNodeDesignTimeWorker).mockReturnValue(true);
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: validSettings,
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
   });
 
   describe('regenerateDesignTimeDirectory', () => {
@@ -464,13 +585,25 @@ describe('validateProjectArtifacts', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const dir = await regenerateDesignTimeDirectory(context, projectPath);
+      const { uri: dir } = await regenerateDesignTimeDirectory(context, projectPath);
 
       expect(norm(dir.fsPath)).toContain('workflow-designtime');
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths.some((p) => p.includes('host.json'))).toBe(true);
       expect(writtenPaths.some((p) => p.includes('local.settings.json'))).toBe(true);
       expect(mockedAddOrUpdate).toHaveBeenCalled();
+    });
+
+    it('regenerates the design-time settings on the Node worker when the fallback is enabled', async () => {
+      vi.mocked(useNodeDesignTimeWorker).mockReturnValue(true);
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+
+      await regenerateDesignTimeDirectory(context, projectPath);
+
+      const runtimeSettings = mockedAddOrUpdate.mock.calls[0]?.[2] as Record<string, string>;
+      expect(runtimeSettings[workerRuntimeKey]).toBe(WorkerRuntime.Node);
+      expect(runtimeSettings[functionsInprocNet8Enabled]).toBeUndefined();
     });
 
     it('preserves valid existing files and does not rewrite them', async () => {
@@ -482,7 +615,12 @@ describe('validateProjectArtifacts', () => {
         extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
       });
       const validSettings = JSON.stringify({
-        Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          ProjectDirectoryPath: projectPath,
+        },
       });
 
       mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: validSettings });
@@ -500,7 +638,7 @@ describe('validateProjectArtifacts', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const dir = await regenerateDesignTimeDirectory(context, backupPath);
+      const { uri: dir } = await regenerateDesignTimeDirectory(context, backupPath);
 
       // The design-time directory is nested UNDER the backup folder, not the backup folder itself.
       expect(norm(dir.fsPath)).toContain('workflow-designtime-backup/workflow-designtime');
@@ -552,7 +690,7 @@ describe('validateProjectArtifacts', () => {
         expect(writtenContentFor('host.json')).toEqual(expectedHostJson);
       });
 
-      it('writes design-time local.settings.json with the exact baseline and upserts Node runtime (codeless)', async () => {
+      it('writes design-time local.settings.json with the exact baseline and upserts dotnet in-process .NET 8 runtime (codeless)', async () => {
         mockFiles({});
         mockedFse.readdir.mockResolvedValue([]);
         mockedIsCodeful.mockResolvedValue(false);
@@ -564,14 +702,20 @@ describe('validateProjectArtifacts', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
           },
         });
         expect(mockedAddOrUpdate).toHaveBeenCalledWith(
           context,
           expect.stringContaining('workflow-designtime'),
-          { [appKindSetting]: logicAppKind, [ProjectDirectoryPathKey]: projectPath, [workerRuntimeKey]: WorkerRuntime.Node },
+          {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPathKey]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
+          },
           true
         );
       });
@@ -588,7 +732,8 @@ describe('validateProjectArtifacts', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
           },
@@ -620,7 +765,8 @@ describe('validateProjectArtifacts', () => {
           Values: {
             [appKindSetting]: logicAppKind,
             [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Node,
+            [workerRuntimeKey]: WorkerRuntime.Dotnet,
+            [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
           },
@@ -655,7 +801,8 @@ describe('validateProjectArtifacts', () => {
 
       const created = await regenerateRootHostFile(projectPath);
 
-      expect(created).toBe(true);
+      expect(created.changed).toBe(true);
+      expect(created.changedArtifacts).toEqual(['host.json']);
       expect(writtenContentFor('host.json')).toEqual(expectedRootHostJson);
     });
 
@@ -664,7 +811,8 @@ describe('validateProjectArtifacts', () => {
 
       const created = await regenerateRootHostFile(projectPath);
 
-      expect(created).toBe(true);
+      expect(created.changed).toBe(true);
+      expect(created.changedArtifacts).toEqual(['host.json']);
       expect(writtenContentFor('host.json')).toEqual(expectedRootHostJson);
     });
 
@@ -677,7 +825,8 @@ describe('validateProjectArtifacts', () => {
 
       const created = await regenerateRootHostFile(projectPath);
 
-      expect(created).toBe(false);
+      expect(created.changed).toBe(false);
+      expect(created.changedArtifacts).toEqual([]);
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
     });
   });
@@ -699,7 +848,12 @@ describe('validateProjectArtifacts', () => {
       extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
     });
     const validDesignSettings = JSON.stringify({
-      Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+      Values: {
+        APP_KIND: 'workflowapp',
+        FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        ProjectDirectoryPath: projectPath,
+      },
     });
 
     it('regenerates the root host.json, root local.settings.json and design-time directory when all are missing', async () => {
@@ -738,6 +892,7 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
 
@@ -764,6 +919,7 @@ describe('validateProjectArtifacts', () => {
           ProjectDirectoryPath: projectPath,
           AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
 
@@ -772,6 +928,145 @@ describe('validateProjectArtifacts', () => {
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths).toEqual([rootHostPath]);
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  // The consolidated, multi-project-friendly logging contract: the low-level helpers stay silent so
+  // the orchestrators can emit exactly ONE status line per project (valid / regenerated / failed).
+  describe('consolidated status logging', () => {
+    const rootHostPath = `${projectPath}/host.json`;
+    const rootSettingsPath = `${projectPath}/local.settings.json`;
+    const designTimeDir = `${projectPath}/workflow-designtime`;
+    const validHostJson = JSON.stringify({
+      version: '2.0',
+      extensionBundle: { id: extensionBundleId, version: '[1.*, 2.0.0)' },
+    });
+    const validDesignHostJson = JSON.stringify({
+      version: '2.0',
+      extensionBundle: { id: extensionBundleId, version: '[1.*, 2.0.0)' },
+      extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
+    });
+    const validDesignSettings = JSON.stringify({
+      Values: {
+        APP_KIND: 'workflowapp',
+        FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        ProjectDirectoryPath: projectPath,
+      },
+    });
+    const fullValidRootSettings = {
+      IsEncrypted: false,
+      Values: {
+        APP_KIND: 'workflowapp',
+        FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        ProjectDirectoryPath: projectPath,
+        AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+        FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        // MI auth is mocked on (isManagedIdentityAuthEnabled -> true), so a fully-valid project must
+        // already carry the managed-identity auth method or regenerateLocalSettings would add it.
+        [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
+      },
+    };
+
+    /** Backs the fs mocks with a fully-valid project so nothing needs regeneration. */
+    function mockFullyValidProject(): void {
+      mockFiles({
+        [rootHostPath]: validHostJson,
+        [rootSettingsPath]: '{}',
+        [designTimeDir]: '',
+        [`${designTimeDir}/host.json`]: validDesignHostJson,
+        [`${designTimeDir}/local.settings.json`]: validDesignSettings,
+      });
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue(fullValidRootSettings);
+    }
+
+    it('regenerateRootHostFile and regenerateLocalSettings emit no output-channel lines', async () => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+
+      await regenerateRootHostFile(projectPath);
+      await regenerateLocalSettings(context, projectPath);
+
+      expect(mockedAppendLog).not.toHaveBeenCalled();
+    });
+
+    it('regenerateDesignTimeDirectory emits no output-channel lines', async () => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+
+      await regenerateDesignTimeDirectory(context, projectPath);
+
+      expect(mockedAppendLog).not.toHaveBeenCalled();
+    });
+
+    it('validateAndRegenerateProjectArtifacts logs exactly one "valid" line when nothing changes', async () => {
+      mockFullyValidProject();
+
+      await validateAndRegenerateProjectArtifacts(context, projectPath);
+
+      const lines = loggedLines();
+      expect(lines).toHaveLength(1);
+      expect(lines[0]).toContain('Project "LogicApp"');
+      expect(lines[0]).toContain('no regeneration needed');
+    });
+
+    it('validateAndRegenerateProjectArtifacts logs exactly one line naming what was regenerated', async () => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+
+      await validateAndRegenerateProjectArtifacts(context, projectPath);
+
+      const lines = loggedLines();
+      expect(lines).toHaveLength(1);
+      expect(lines[0]).toContain('Project "LogicApp": regenerated');
+      expect(lines[0]).toContain('host.json');
+      expect(lines[0]).toContain('local.settings.json');
+      expect(lines[0]).toContain('design-time host.json');
+    });
+
+    it('validateAndRegenerateProjectArtifacts logs a single "failed" line and rethrows on error', async () => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+      mockedWriteFormattedJson.mockRejectedValue(new Error('disk full'));
+
+      await expect(validateAndRegenerateProjectArtifacts(context, projectPath)).rejects.toThrow('disk full');
+
+      const lines = loggedLines();
+      expect(lines).toHaveLength(1);
+      expect(lines[0]).toContain('Project "LogicApp": failed to validate/regenerate artifacts');
+      expect(lines[0]).toContain('disk full');
+    });
+
+    it('ensureProjectRootArtifacts logs one "valid" line and never touches the design-time directory', async () => {
+      mockFullyValidProject();
+
+      await ensureProjectRootArtifacts(context, projectPath);
+
+      const lines = loggedLines();
+      expect(lines).toHaveLength(1);
+      expect(lines[0]).toContain('Project "LogicApp"');
+      expect(lines[0]).toContain('no regeneration needed');
+      // Root-only path must not write the design-time baseline files.
+      const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
+      expect(writtenPaths.some((p) => p.includes('workflow-designtime'))).toBe(false);
+    });
+
+    it('ensureProjectRootArtifacts logs one line naming the regenerated root artifacts', async () => {
+      mockFiles({});
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
+
+      await ensureProjectRootArtifacts(context, projectPath);
+
+      const lines = loggedLines();
+      expect(lines).toHaveLength(1);
+      expect(lines[0]).toContain('Project "LogicApp": regenerated');
+      expect(lines[0]).toContain('host.json');
     });
   });
 });

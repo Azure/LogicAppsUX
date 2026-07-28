@@ -677,6 +677,20 @@ async function main(): Promise<void> {
       throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
     }
   }
+  // Transitive dependencies that the VS Code CLI's --install-extension does NOT
+  // reliably auto-resolve. Installing ms-dotnettools.csdevkit pulls in
+  // ms-dotnettools.csharp, but csharp's own dependency
+  // ms-dotnettools.vscode-dotnet-runtime is not always installed (observed on
+  // Windows). Without it, the C#/C# Dev Kit extensions fail to activate
+  // ("depends on an unknown 'ms-dotnettools.vscode-dotnet-runtime' extension"),
+  // which cascades into the Azure Logic Apps extension never finishing
+  // activation — so azureLogicAppsStandard.createWorkspace / Open Designer are
+  // never registered. Install these explicitly to guarantee activation.
+  const transitiveE2eDependencies = ['ms-dotnettools.vscode-dotnet-runtime'];
+  const allE2eDependencies = [
+    ...extDeps,
+    ...transitiveE2eDependencies.filter((dep) => !extDeps.some((d) => d.toLowerCase() === dep.toLowerCase())),
+  ];
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
   const ourExtTarget = path.join(extDir, extDirName);
 
@@ -739,11 +753,11 @@ async function main(): Promise<void> {
     }
   };
 
-  if (extDeps.length > 0) {
-    console.log(`\n=== Step 2: Install ${extDeps.length} extension dependencies ===`);
+  if (allE2eDependencies.length > 0) {
+    console.log(`\n=== Step 2: Install ${allE2eDependencies.length} extension dependencies ===`);
 
     const depsToInstall: string[] = [];
-    for (const dep of extDeps) {
+    for (const dep of allE2eDependencies) {
       removeInvalidExtensionEntries(dep);
       const alreadyInstalled = !!findValidInstalledExtension(dep);
 
@@ -803,7 +817,7 @@ async function main(): Promise<void> {
       rebuildExtensionsJson(extDir);
     }
 
-    const missingDeps = extDeps.filter((dep) => !findValidInstalledExtension(dep));
+    const missingDeps = allE2eDependencies.filter((dep) => !findValidInstalledExtension(dep));
     if (missingDeps.length > 0) {
       throw new Error(`Missing E2E extension prerequisite(s): ${missingDeps.join(', ')}. Install/retry before running UI E2E tests.`);
     }
@@ -1393,6 +1407,7 @@ async function main(): Promise<void> {
   const phase4Files = [testFile('statelessVariables.test.js')];
   const phase5Files = [testFile('designerViewExtended.test.js')];
   const phase6Files = [testFile('keyboardNavigation.test.js')];
+  const phase9Files = [testFile('descriptionPersistence.test.js')];
 
   const phase7Files = [testFile('demo.test.js'), testFile('smoke.test.js'), testFile('standalone.test.js'), testFile('dataMapper.test.js')];
 
@@ -1556,6 +1571,13 @@ async function main(): Promise<void> {
       testFile: phase6Files[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: false, autoStartDesignTime: true },
+    },
+    {
+      id: 'p49-descriptionpersistence',
+      testFile: phase9Files[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: false, autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
 
     // Phase 4.7 — designer-shell smoke + dataMapper. dataMapper.test.ts
@@ -2208,6 +2230,20 @@ namespace ${namespaceName}
     //
     // Returns the aggregate exit code.
     const runScenarioPhases = async (scenarioList: Scenario[] /* , opts */): Promise<number> => {
+      // Retry a failing scenario in a fresh VS Code session before giving up.
+      // This absorbs transient xvfb/focus/timing/cold-start races (the dominant
+      // flake class for ExTester UI tests) WITHOUT masking real regressions: a
+      // scenario that fails every attempt still fails the shard, and a scenario
+      // that only passes after a retry is surfaced loudly as a `::warning::`
+      // flake annotation so the underlying race can still be root-caused.
+      // Opt-in via LA_E2E_SCENARIO_RETRIES (default 0 = fail fast locally; CI
+      // sets it). Each retry is a full prepareFreshSession(), so it also clears
+      // the stale-window / leftover-process flakes.
+      const scenarioRetries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
+      const maxAttempts = scenarioRetries + 1;
+      if (scenarioRetries > 0) {
+        console.log(`Scenario retry enabled: up to ${scenarioRetries} retry(ies) per failing scenario (LA_E2E_SCENARIO_RETRIES).`);
+      }
       const exits: number[] = [];
       for (const scenario of scenarioList) {
         const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
@@ -2220,6 +2256,11 @@ namespace ${namespaceName}
         // Apply per-scenario env overrides (e.g. LA_E2E_SHAPE for parameterized
         // shape-specific shards). Captured here so we can restore afterward.
         const envOverridesApplied: EnvOverride[] = [];
+        // Re-point LA_E2E_SCENARIO at the current scenario id so tests/helpers
+        // that read it as the active scenario keep their per-scenario semantics
+        // during grouped runs.
+        envOverridesApplied.push({ key: 'LA_E2E_SCENARIO', prev: process.env.LA_E2E_SCENARIO });
+        process.env.LA_E2E_SCENARIO = id;
         if (scenarioEnv && typeof scenarioEnv === 'object') {
           for (const [key, value] of Object.entries(scenarioEnv)) {
             envOverridesApplied.push({ key, prev: process.env[key] });
@@ -2228,27 +2269,65 @@ namespace ${namespaceName}
           }
         }
 
-        await prepareFreshSession(id);
-        if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
-          pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
-          pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
-        }
-
-        const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
-        if (legacyDir) {
-          process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
-        }
         const fileList = Array.isArray(files) ? files : [files];
         if (!monolithic && fileList.length !== 1) {
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
         }
-        if (process.env.LA_E2E_BUNDLE_PREFLIGHT === '1') {
-          verifyLogicAppsExtensionBundle(`preflight:${id}`);
+
+        let exit = 1;
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          if (attempt > 1) {
+            console.log(`\n  ↻ [${id}] retry ${attempt - 1}/${scenarioRetries} in a fresh session after a failed attempt...`);
+            // Give VS Code/chromedriver/func extra time to release ports and
+            // sockets before relaunching, on top of prepareFreshSession()'s kill.
+            await new Promise((r) => setTimeout(r, 8000));
+          }
+
+          try {
+            await prepareFreshSession(id);
+            if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+              pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
+              pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
+            }
+
+            const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
+            if (legacyDir) {
+              process.env.LA_E2E_LEGACY_PROJECT_DIR = legacyDir;
+            }
+            if (process.env.LA_E2E_BUNDLE_PREFLIGHT === '1') {
+              verifyLogicAppsExtensionBundle(`preflight:${id}`);
+            }
+
+            const attemptLabel = maxAttempts > 1 ? `Scenario ${id} (attempt ${attempt}/${maxAttempts})` : `Scenario ${id}`;
+            exit = await runPhase(attemptLabel, fileList, { resources });
+
+            // p41a-fixtures must also pass its post-run bundle verification to
+            // count as a successful attempt; a failure here is retryable and
+            // must not emit a "passed" flake annotation below.
+            if (exit === 0 && id === 'p41a-fixtures') {
+              verifyLogicAppsExtensionBundle('p41a-fixtures');
+            }
+          } catch (e) {
+            // Any throw in session prep / preflight / run / verify is treated as
+            // a failed (retryable) attempt rather than aborting the whole run.
+            // A deterministic failure (e.g. a genuinely corrupt bundle) simply
+            // throws again on every attempt and still fails the shard.
+            exit = 1;
+            console.warn(`  [${id}] attempt ${attempt}/${maxAttempts} threw: ${getErrorMessage(e)}`);
+          }
+
+          if (exit === 0) {
+            if (attempt > 1) {
+              // Surface the flake loudly (but non-fatally). A scenario that
+              // needed a retry to pass is a signal to fix the underlying race.
+              const flakeMsg = `${id} passed on attempt ${attempt}/${maxAttempts} (failed ${attempt - 1}x)`;
+              console.warn(`  ⚠ FLAKE: ${flakeMsg}`);
+              console.log(`::warning title=E2E scenario flake::${flakeMsg}`);
+            }
+            break;
+          }
         }
-        const exit = await runPhase(`Scenario ${id}`, fileList, { resources });
-        if (exit === 0 && id === 'p41a-fixtures') {
-          verifyLogicAppsExtensionBundle('p41a-fixtures');
-        }
+
         // Restore env overrides so subsequent scenarios aren't contaminated.
         for (const { key, prev } of envOverridesApplied) {
           if (prev === undefined) {
@@ -2267,23 +2346,51 @@ namespace ${namespaceName}
       return aggregate;
     };
 
-    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects a single
-    // scenarios[] entry by id. Takes precedence over E2E_MODE so a matrix
-    // shard that sets both env vars (e.g. for transitional debugging)
-    // still runs exactly one scenario. E2E_MODE remains supported as a
-    // fallback for legacy grouped-shard invocations.
-    const singleScenarioId = process.env.LA_E2E_SCENARIO;
-    if (singleScenarioId) {
-      const scenarioEntry = scenarios.find((s) => s.id === singleScenarioId);
-      if (!scenarioEntry) {
-        console.error(`Unknown LA_E2E_SCENARIO: ${singleScenarioId}`);
+    // Step 3 (per-scenario matrix): LA_E2E_SCENARIO selects one or more
+    // scenarios[] entries by id. Accepts a single id or a comma-separated
+    // list so a matrix shard can run several scenarios sequentially on one
+    // runner — each scenario still gets its own fresh VS Code session via
+    // prepareFreshSession(), so grouping amortizes CI setup cost without
+    // sacrificing per-scenario isolation. Takes precedence over E2E_MODE so a
+    // matrix shard that sets both env vars (e.g. for transitional debugging)
+    // still runs exactly the selected scenarios. E2E_MODE remains supported
+    // as a fallback for legacy grouped-shard invocations.
+    const scenarioSelector = process.env.LA_E2E_SCENARIO;
+    if (scenarioSelector) {
+      const requestedIds = scenarioSelector
+        .split(',')
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0);
+      const selectedScenarios: Scenario[] = [];
+      const unknownIds: string[] = [];
+      const seenIds = new Set<string>();
+      for (const requestedId of requestedIds) {
+        // Dedup so a repeated id in the list doesn't run the same scenario twice.
+        if (seenIds.has(requestedId)) {
+          continue;
+        }
+        seenIds.add(requestedId);
+        const scenarioEntry = scenarios.find((s) => s.id === requestedId);
+        if (scenarioEntry) {
+          selectedScenarios.push(scenarioEntry);
+        } else {
+          unknownIds.push(requestedId);
+        }
+      }
+      if (unknownIds.length > 0) {
+        console.error(`Unknown LA_E2E_SCENARIO id(s): ${unknownIds.join(', ')}`);
         console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
         process.exit(2);
       }
-      console.log(`\nRunning single scenario (LA_E2E_SCENARIO): ${singleScenarioId}`);
+      if (selectedScenarios.length === 0) {
+        console.error(`LA_E2E_SCENARIO resolved to no scenarios: ${scenarioSelector}`);
+        console.error(`Known scenarios: ${scenarios.map((s) => s.id).join(', ')}`);
+        process.exit(2);
+      }
+      console.log(`\nRunning ${selectedScenarios.length} scenario(s) (LA_E2E_SCENARIO): ${selectedScenarios.map((s) => s.id).join(', ')}`);
       await downloadExTesterAssets();
-      const singleExit = await runScenarioPhases([scenarioEntry]);
-      process.exit(singleExit);
+      const selectedExit = await runScenarioPhases(selectedScenarios);
+      process.exit(selectedExit);
     }
 
     if (e2eMode === 'scenarios') {
@@ -2399,6 +2506,10 @@ namespace ${namespaceName}
       await new Promise((r) => setTimeout(r, 3000));
       await prepareFreshSession('phase6-only');
       exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
+
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase9-only');
+      exits.push(await runPhase('Phase 4.9: descriptionPersistence', phase9Files, { resources: wsResources }));
 
       const finalExit = Math.max(...exits);
       console.log(`\n=== New tests results: ${exits.map((c, i) => `4.${i + 3}=${c}`).join(', ')} → exit ${finalExit} ===`);
@@ -2631,9 +2742,13 @@ namespace ${namespaceName}
       await prepareFreshSession('phase6-shard');
       exits.push(await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: wsResources }));
 
+      await new Promise((r) => setTimeout(r, 3000));
+      await prepareFreshSession('phase9-shard');
+      exits.push(await runPhase('Phase 4.9: descriptionPersistence', phase9Files, { resources: wsResources }));
+
       const finalExit = Math.max(...exits);
       console.log(
-        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]} → exit ${finalExit} ===`
+        `\n=== Newtests shard results: 4.1=${exits[0]}, 4.3=${exits[1]}, 4.4=${exits[2]}, 4.5=${exits[3]}, 4.6=${exits[4]}, 4.9=${exits[5]} → exit ${finalExit} ===`
       );
       process.exit(finalExit);
     }
@@ -2773,6 +2888,13 @@ namespace ${namespaceName}
     const phase6Exit = await runPhase('Phase 4.6: keyboardNavigation', phase6Files, { resources: phase2Resources });
     if (phase6Exit !== 0) {
       console.log(`\n⚠ Phase 4.6 exited with code ${phase6Exit} — continuing`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await prepareFreshSession('phase9');
+    const phase9Exit = await runPhase('Phase 4.9: descriptionPersistence', phase9Files, { resources: phase2Resources });
+    if (phase9Exit !== 0) {
+      console.log(`\n⚠ Phase 4.9 exited with code ${phase9Exit} — continuing`);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 3000));

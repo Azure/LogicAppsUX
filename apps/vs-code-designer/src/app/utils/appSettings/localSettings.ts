@@ -16,7 +16,9 @@ import {
   azureStorageTypeSetting,
   functionsInprocNet8Enabled,
   functionsInprocNet8EnabledTrue,
+  workflowAuthenticationMethodKey,
   workflowCodefulEnabledKey,
+  workflowAuthenticationMethodMIValue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -24,6 +26,7 @@ import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSet
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
+import { isManagedIdentityAuthEnabled } from '../vsCodeConfig/settings';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { MismatchBehavior, ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
@@ -190,18 +193,32 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
  * @param {boolean} isDesignTime - Whether to build the design-time folder file (true) or the project-root file (false).
  * @param {string} [projectPath] - Absolute path to the logic app project folder (ProjectDirectoryPath value). Omitted -> the key is not written.
  * @param {ProjectType} [logicAppType] - The logic app project type; drives the multi-language worker and codeful flags.
+ * @param {boolean} [useNodeWorker] - Design-time only: emit the Node worker runtime (fallback) instead of dotnet + in-process .NET 8.
  * @returns {ILocalSettingsJson} The local.settings.json content.
  */
-export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, logicAppType?: ProjectType): ILocalSettingsJson => {
+export const getLocalSettingsSchema = (
+  isDesignTime: boolean,
+  projectPath?: string,
+  logicAppType?: ProjectType,
+  useNodeWorker = false
+): ILocalSettingsJson => {
   const values: Record<string, string> = {};
 
   if (isDesignTime) {
-    // Design-time order: APP_KIND, ProjectDirectoryPath, FUNCTIONS_WORKER_RUNTIME, AzureWebJobsSecretStorageType.
+    // Design-time order: APP_KIND, ProjectDirectoryPath, FUNCTIONS_WORKER_RUNTIME, FUNCTIONS_INPROC_NET8_ENABLED, AzureWebJobsSecretStorageType.
+    // Run the design-time host in-process .NET 8 so the Functions runtime spawns the NetFxWorker that the
+    // Data Mapper Test map relies on for its XSLT transform. When the user opts into the Node-worker
+    // fallback, emit the Node runtime instead (no in-process .NET 8 flag) at the cost of the Test map.
     values[appKindSetting] = logicAppKind;
     if (projectPath) {
       values[ProjectDirectoryPathKey] = projectPath;
     }
-    values[workerRuntimeKey] = WorkerRuntime.Node;
+    if (useNodeWorker) {
+      values[workerRuntimeKey] = WorkerRuntime.Node;
+    } else {
+      values[workerRuntimeKey] = WorkerRuntime.Dotnet;
+      values[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+    }
     values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
   } else {
     // Root order mirrors the creation path (CreateLogicAppWorkspace.createLocalConfigurationFiles) so a
@@ -212,6 +229,9 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     values[appKindSetting] = logicAppKind;
     if (projectPath) {
       values[ProjectDirectoryPathKey] = projectPath;
+    }
+    if (isManagedIdentityAuthEnabled()) {
+      values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
     }
     if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
       values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;

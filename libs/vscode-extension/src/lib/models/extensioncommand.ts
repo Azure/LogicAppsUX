@@ -3,6 +3,7 @@ export const ExtensionCommand = {
   select_folder: 'select-folder',
   initialize: 'initialize',
   loadRun: 'LoadRun',
+  selectRun: 'SelectRun',
   dispose: 'dispose',
   fetchSchema: 'fetchSchema',
   getConfigurationSetting: 'getConfigurationSetting',

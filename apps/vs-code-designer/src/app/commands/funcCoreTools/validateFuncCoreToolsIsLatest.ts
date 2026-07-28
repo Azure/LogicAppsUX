@@ -6,6 +6,7 @@ import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies, verifyDependencyIntegrity } from '../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
@@ -40,14 +41,19 @@ async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Pro
     context.telemetry.properties.binariesExist = `${binaries}`;
     // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
     // install (e.g. a removed Function Host DLL) forces a wipe + reinstall instead of failing at startup.
-    const integrityValid = binaries ? verifyDependencyIntegrity(context, funcDependencyName) : false;
+    const integrityValid = binaries ? await verifyDependencyIntegrity(context, funcDependencyName) : false;
     context.telemetry.properties.integrityValid = `${integrityValid}`;
 
     const hasValidBinaries = binaries && integrityValid;
     const localVersion: string | null = hasValidBinaries ? await getLocalFuncCoreToolsVersion() : null;
     context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-    const newestVersion: string | undefined = hasValidBinaries ? await getLatestFunctionCoreToolsVersion(context, majorVersion) : undefined;
+    // Throttle: only re-check the newest published version once per window (see
+    // shouldCheckForDependencyUpdates). Missing/corrupt binaries are still reinstalled below.
+    const shouldCheckForUpdate = hasValidBinaries && shouldCheckForDependencyUpdates();
+    const newestVersion: string | undefined = shouldCheckForUpdate
+      ? await getLatestFunctionCoreToolsVersion(context, majorVersion)
+      : undefined;
     const isOutdated = hasValidBinaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
 
     const shouldInstall = !binaries || !integrityValid || localVersion === null || isOutdated;

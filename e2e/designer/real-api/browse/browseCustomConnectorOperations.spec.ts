@@ -1,5 +1,5 @@
 import { test, expect } from '../../fixtures/real-api';
-import workflow from './workflow.json' assert { type: 'json' };
+import workflow from './workflow.json' with { type: 'json' };
 
 test.describe(
   'Browse Custom Connector Operations',

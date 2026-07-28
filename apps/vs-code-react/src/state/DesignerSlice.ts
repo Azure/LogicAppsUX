@@ -1,14 +1,10 @@
 import type { ApiHubServiceDetails, ConnectionsData, ListDynamicValue } from '@microsoft/logic-apps-shared';
-import type {
-  CompleteFileSystemConnectionData,
-  ICallbackUrlResponse,
-  IDesignerPanelMetadata,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { CompleteFileSystemConnectionData, ICallbackUrlResponse, DesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DesignerState {
-  panelMetaData: IDesignerPanelMetadata | null;
+  panelMetaData: DesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
   workflowRuntimeBaseUrl: string;
@@ -97,7 +93,7 @@ export const designerSlice: Slice<DesignerState> = createSlice({
     updatePanelMetadata: (
       state,
       action: PayloadAction<{
-        panelMetadata: IDesignerPanelMetadata;
+        panelMetadata: DesignerPanelMetadata;
         connectionData: ConnectionsData;
         apiHubServiceDetails: ApiHubServiceDetails;
       }>
@@ -106,6 +102,11 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       state.panelMetaData = panelMetadata;
       state.connectionData = connectionData;
       state.apiHubServiceDetails = apiHubServiceDetails;
+    },
+    updateDesignerAccessToken: (state, action: PayloadAction<string | undefined>) => {
+      if (state.panelMetaData) {
+        state.panelMetaData = { ...state.panelMetaData, accessToken: action.payload };
+      }
     },
     createFileSystemConnection: (state, action: PayloadAction<any>) => {
       const { connectionName, resolve, reject } = action.payload;
@@ -121,6 +122,10 @@ export const designerSlice: Slice<DesignerState> = createSlice({
       }
       delete state.fileSystemConnections[connectionName];
     },
+    selectRun: (state, action: PayloadAction<string>) => {
+      state.runId = action.payload;
+      state.isMonitoringView = true;
+    },
   },
 });
 
@@ -131,4 +136,6 @@ export const {
   createFileSystemConnection,
   updateFileSystemConnection,
   updatePanelMetadata,
+  updateDesignerAccessToken,
+  selectRun,
 } = designerSlice.actions;
