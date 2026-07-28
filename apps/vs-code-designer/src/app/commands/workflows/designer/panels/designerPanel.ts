@@ -7,15 +7,10 @@ import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
 import { getRecordEntry, isEmptyString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
-import {
-  azurePublicBaseUrl,
-  workflowManagementBaseURIKey,
-  designerVersionSetting,
-  defaultDesignerVersion,
-  suppressDesignerVersionNotification,
-} from '../../../../../constants';
+import { azurePublicBaseUrl, workflowManagementBaseURIKey, designerVersionSetting, defaultDesignerVersion } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
+import { isDesignerVersionNotificationSuppressed, suppressDesignerVersionNotification } from '../../../../state/designer';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 import { workspace, window, ConfigurationTarget } from 'vscode';
 
@@ -189,7 +184,7 @@ export abstract class DesignerPanel {
   }
 
   protected async showDesignerVersionNotification(): Promise<void> {
-    const isSuppressed = ext.context.globalState.get<boolean>(suppressDesignerVersionNotification) === true;
+    const isSuppressed = isDesignerVersionNotificationSuppressed();
     if (isSuppressed) {
       return;
     }
@@ -215,7 +210,7 @@ export abstract class DesignerPanel {
 
     const selection = await window.showInformationMessage(message, enablePreview, dontShowAgain);
     if (selection === dontShowAgain) {
-      await ext.context.globalState.update(suppressDesignerVersionNotification, true);
+      await suppressDesignerVersionNotification();
     } else if (selection === enablePreview) {
       await config.update(designerVersionSetting, 2, ConfigurationTarget.Global);
       const closeButton = localize('close', 'Close');
@@ -243,7 +238,7 @@ export abstract class DesignerPanel {
         this.panel?.dispose();
       }
     } else if (selection === dontShowAgain) {
-      await ext.context.globalState.update(suppressDesignerVersionNotification, true);
+      await suppressDesignerVersionNotification();
     }
   }
 }

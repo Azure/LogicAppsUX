@@ -15,11 +15,11 @@ import { getLocalSettingsJson } from '../../../../utils/appSettings/localSetting
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
 import {
   cacheWebviewPanel,
-  getAzureConnectorDetailsForLocalProject,
   getManualWorkflowsInLocalProject,
   getStandardAppData,
   removeWebviewPanelFromCache,
 } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
@@ -49,8 +49,7 @@ import type {
   Parameter,
 } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { writeFileSync, readFileSync } from 'fs';
-import { promises as fsPromises } from 'fs';
+import { writeFileSync, readFileSync, promises as fsPromises } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';

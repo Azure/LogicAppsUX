@@ -48,7 +48,7 @@ import { stopLogicApp } from './stopLogicApp';
 import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
 import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
-import { enableAzureConnectors } from './workflows/enableAzureConnectors';
+import { enableAzureConnectors } from './azureConnectors/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { openDesigner } from './workflows/designer/openDesigner';
 import { openOverview } from './workflows/overview/openOverview';

@@ -6,12 +6,8 @@ import { assetsFolderName, localSettingsFileName } from '../../../../../constant
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
-import {
-  removeWebviewPanelFromCache,
-  cacheWebviewPanel,
-  getAzureConnectorDetailsForLocalProject,
-  getStandardAppData,
-} from '../../../../utils/codeless/common';
+import { removeWebviewPanelFromCache, cacheWebviewPanel, getStandardAppData } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
   getConnectionsFromFile,
   getCustomCodeFromFiles,
@@ -62,7 +58,9 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
 
     this.baseUrl = ext.getWorkflowRuntimeBaseUrl();
     if (!this.baseUrl) {
-      throw new Error(localize('FunctionRuntimeNotStarted', 'Unable to determine function runtime base url. Please ensure the local runtime is started.'));
+      throw new Error(
+        localize('FunctionRuntimeNotStarted', 'Unable to determine function runtime base url. Please ensure the local runtime is started.')
+      );
     }
 
     this.panel = vscode.window.createWebviewPanel(
@@ -71,7 +69,7 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
-    
+
     this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
