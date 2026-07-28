@@ -7,7 +7,7 @@ import { localSettingsFileName } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
-import { getAzureConnectorDetailsForLocalProject } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/codeless/connection';
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../../../utils/startRuntimeApi';

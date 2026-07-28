@@ -9,6 +9,11 @@ const mockGetLogicAppProjectRoot = vi.fn();
 const mockGetParametersFromFile = vi.fn();
 const mockSaveWorkflowParameter = vi.fn();
 
+vi.mock('../../../../../utils/codeless/common', () => ({
+  cacheWebviewPanel: vi.fn(),
+  removeWebviewPanelFromCache: vi.fn(),
+}));
+
 vi.mock('../../../../../utils/codeless/connection', () => ({
   addConnectionData: mockAddConnectionData,
   getConnectionsAndSettingsToUpdate: mockGetConnectionsAndSettingsToUpdate,
@@ -18,14 +23,8 @@ vi.mock('../../../../../utils/codeless/connection', () => ({
   getParametersFromFile: mockGetParametersFromFile,
 }));
 
-vi.mock('../../../../../utils/codeless/parameter', () => ({
-  saveWorkflowParameter: mockSaveWorkflowParameter,
-}));
-
-vi.mock('../../../../../utils/codeless/common', () => ({
-  cacheWebviewPanel: vi.fn(),
+vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: vi.fn(),
-  removeWebviewPanelFromCache: vi.fn(),
 }));
 
 vi.mock('../../../../../utils/codeless/startDesignTimeApi', () => ({
@@ -218,7 +217,7 @@ describe('ConnectionPanel – getConnectionPanelMetadata reads localSettings aft
   });
 
   it('reads localSettings after getAzureConnectorDetailsForLocalProject to avoid stale data from wizard writes', async () => {
-    const { getAzureConnectorDetailsForLocalProject } = await import('../../../../../utils/codeless/common');
+    const { getAzureConnectorDetailsForLocalProject } = await import('../../../../azureConnectors/azureConnectorDetails');
     const { getLocalSettingsJson } = await import('../../../../../utils/appSettings/localSettings');
 
     let azureDetailsResolved = false;

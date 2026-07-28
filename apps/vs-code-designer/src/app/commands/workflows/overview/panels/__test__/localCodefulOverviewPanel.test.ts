@@ -96,10 +96,13 @@ vi.mock('../../../../../utils/appSettings/localSettings', () => ({
 
 vi.mock('../../../../../utils/codeless/common', () => ({
   cacheWebviewPanel: mocks.cacheWebviewPanel,
-  getAzureConnectorDetailsForLocalProject: mocks.getAzureConnectorDetailsForLocalProject,
   getStandardAppData: mocks.getStandardAppData,
   removeWebviewPanelFromCache: mocks.removeWebviewPanelFromCache,
   tryGetWebviewPanel: mocks.tryGetWebviewPanel,
+}));
+
+vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
+  getAzureConnectorDetailsForLocalProject: mocks.getAzureConnectorDetailsForLocalProject,
 }));
 
 vi.mock('../../../../../utils/codeless/connection', () => ({

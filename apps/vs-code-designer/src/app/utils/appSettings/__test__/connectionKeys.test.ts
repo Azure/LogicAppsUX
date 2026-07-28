@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import * as workspace from '../../workspace';
 import * as verifyIsProject from '../../verifyIsProject';
 import * as parameter from '../../codeless/parameter';
-import * as common from '../../codeless/common';
+import * as azureConnectorDetails from '../../../commands/azureConnectors/azureConnectorDetails';
 import * as connection from '../../codeless/connection';
 import * as path from 'path';
 import { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
@@ -15,7 +15,7 @@ vi.mock('../workspace', () => ({
   getWorkspaceLogicAppFolders: vi.fn(),
 }));
 
-vi.mock('../codeless/common', () => ({
+vi.mock('../../../commands/azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: vi.fn(),
 }));
 
@@ -53,7 +53,7 @@ describe('refreshConnectionKeys', () => {
     };
     (vscode.workspace as any).workspaceFolders = testWorkspaceFolders;
     ext.outputChannel.appendLog = vi.fn();
-    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({
+    vi.spyOn(azureConnectorDetails, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({
       enabled: true,
       tenantId: '4bb01b15-004c-4b95-9568-5165b5f89c41',
       workflowManagementBaseUrl: 'https://management.azure.com/',
@@ -86,7 +86,7 @@ describe('refreshConnectionKeys', () => {
       tenantId: '4bb01b15-004c-4b95-9568-5165b5f89c41',
       workflowManagementBaseUrl: 'https://management.azure.com/',
     };
-    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue(azureDetails);
+    vi.spyOn(azureConnectorDetails, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue(azureDetails);
 
     const parametersData = { param: { type: 'string', value: 'test' } };
     vi.spyOn(parameter, 'getParametersJson').mockResolvedValue(parametersData);
@@ -109,7 +109,9 @@ describe('refreshConnectionKeys', () => {
   });
 
   it('should skip connection key verification when Azure connectors are disabled', async () => {
-    vi.spyOn(common, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({ enabled: false } as AzureConnectorDetails);
+    vi.spyOn(azureConnectorDetails, 'getAzureConnectorDetailsForLocalProject').mockResolvedValue({
+      enabled: false,
+    } as AzureConnectorDetails);
     const getConnectionsJsonSpy = vi
       .spyOn(connection, 'getConnectionsJson')
       .mockResolvedValue(JSON.stringify({ managedApiConnections: { conn1: {} } }));

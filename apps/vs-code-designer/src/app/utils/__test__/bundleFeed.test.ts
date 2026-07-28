@@ -166,7 +166,7 @@ vi.mock('../codeless/startDesignTimeApi', () => ({
 // bundle-version feed lookup on the activation hot path. Default to `true` (the
 // check is due) so existing tests keep exercising the feed-backed flow; throttle
 // tests override it to `false` per-case.
-vi.mock('../dependencyUpdateCheck', () => ({
+vi.mock('../../state/dependencies', () => ({
   shouldCheckForDependencyUpdates: vi.fn(() => true),
   recordDependencyUpdateCheck: vi.fn().mockResolvedValue(undefined),
 }));
@@ -903,7 +903,7 @@ describe('downloadExtensionBundle', () => {
     // Default: the daily update-check throttle reports "due" so the feed-backed
     // flow runs. `vi.clearAllMocks()` keeps mock implementations, so a prior
     // throttle test that forced `false` would otherwise leak into this one.
-    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    const depUpdateCheckModule = await import('../../state/dependencies');
     vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(true);
     // Reset fs-extra mocks
     mockedFse.readFile.mockReset();
@@ -1007,7 +1007,7 @@ describe('downloadExtensionBundle', () => {
     });
     setupLocalDisk(['1.75.0'], {}, { sidecarRaw: { '1.75.0': modernSidecar } });
 
-    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    const depUpdateCheckModule = await import('../../state/dependencies');
     vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(false);
 
     const context = createMockContext();
@@ -1058,7 +1058,7 @@ describe('downloadExtensionBundle', () => {
     mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
     // beforeEach leaves shouldCheckForDependencyUpdates => true (the check is due).
 
-    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    const depUpdateCheckModule = await import('../../state/dependencies');
 
     const context = createMockContext();
     const result = await downloadExtensionBundle(context as any);
@@ -1088,7 +1088,7 @@ describe('downloadExtensionBundle', () => {
     mockedGetJsonFeed.mockResolvedValue(['1.0.0', '1.75.0'] as any);
     // beforeEach leaves shouldCheckForDependencyUpdates => true (the check is due).
 
-    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    const depUpdateCheckModule = await import('../../state/dependencies');
 
     const context = createMockContext();
     await downloadExtensionBundle(context as any);
@@ -1105,7 +1105,7 @@ describe('downloadExtensionBundle', () => {
     mockedGetJsonFeed.mockResolvedValue(['1.95.0'] as any);
     mockedDownloadAndExtract.mockResolvedValue({ actualMd5: 'md5' } as any);
 
-    const depUpdateCheckModule = await import('../dependencyUpdateCheck');
+    const depUpdateCheckModule = await import('../../state/dependencies');
     vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(false);
 
     const context = createMockContext();

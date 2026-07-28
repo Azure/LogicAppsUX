@@ -18,7 +18,7 @@ import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
 import { fetchExpectedMd5, isMissingPackageError } from './integrity';
 import { getJsonFeed } from './feed';
-import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from './dependencyUpdateCheck';
+import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../state/dependencies';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
