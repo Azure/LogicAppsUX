@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { azuriteExtensionId } from '../../constants';
 import { localize } from '../../localize';
+import { AzuriteExtensionTerminalError } from './azuriteErrors';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { extensions } from 'vscode';
 import * as vscode from 'vscode';
@@ -13,7 +14,8 @@ export async function executeOnAzurite(context: IActionContext, command: string,
 
   if (!azuriteExtension) {
     context.telemetry.properties.azuriteExtensionAvailable = 'false';
-    throw new Error(
+    // Terminal: no amount of waiting makes a missing extension appear.
+    throw new AzuriteExtensionTerminalError(
       localize(
         'missingAzuriteExt',
         'Azurite extension is not installed or is unavailable in the current VS Code extension host. Make sure the Azurite extension is installed and enabled, then try debugging again.'
@@ -27,7 +29,8 @@ export async function executeOnAzurite(context: IActionContext, command: string,
     try {
       await azuriteExtension.activate();
     } catch (error) {
-      throw new Error(
+      // Terminal: an extension that cannot activate will not start serving on a retry.
+      throw new AzuriteExtensionTerminalError(
         localize(
           'activateAzuriteExtFailed',
           'Azurite extension could not be activated. Make sure the Azurite extension is installed and enabled, then try debugging again. {0}',

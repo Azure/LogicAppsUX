@@ -16,6 +16,12 @@ const telemetryContexts: any[] = [];
 // `src/app/utils/azurite/__test__/activateAzurite.test.ts`.
 const azuriteTimeoutMessage = 'Azurite did not become ready';
 
+// Hoisted so the module mock below and the tests share one class identity -- `instanceof` checks in
+// the product and in the assertions must agree on which class this is.
+const { UserCancelledErrorMock } = vi.hoisted(() => ({
+  UserCancelledErrorMock: class UserCancelledError extends Error {},
+}));
+
 vi.mock('@microsoft/vscode-azext-utils', () => {
   return {
     callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
@@ -36,6 +42,13 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
       try {
         return await callback(context);
       } catch (error) {
+        // Mirror the real library: a cancellation is never displayed AND never rethrown, whatever
+        // the callback asked for -- `handleError` force-sets both knobs. That force-swallow is
+        // exactly why the product must re-raise cancellations outside this scope rather than
+        // relying on `rethrow`.
+        if (error instanceof UserCancelledErrorMock) {
+          return undefined;
+        }
         if (!context.errorHandling.suppressDisplay) {
           capturedMessages.push(error instanceof Error ? error.message : String(error));
         }
@@ -45,7 +58,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
         return undefined;
       }
     }),
-    UserCancelledError: class UserCancelledError extends Error {},
+    UserCancelledError: UserCancelledErrorMock,
   };
 });
 
@@ -98,16 +111,39 @@ describe('pickFuncProcess Azurite startup', () => {
   it('stops debug startup after Azurite auto-start fails without showing AzureWebJobsStorage warning', async () => {
     await expect(pickFuncProcessInternal(context, debugConfig, workspaceFolder, projectPath)).rejects.toThrow(azuriteTimeoutMessage);
 
-    // Nothing at all should reach the user here: the Azurite telemetry scope sets
-    // `errorHandling.suppressDisplay = true` and rethrows so the caller (`startDebugging`) owns the
-    // single, bounded failure. Asserting the whole array is empty also covers the two
-    // specific `not.toContain` checks below, which are kept for failure readability.
+    // `capturedMessages` is empty ONLY because this test mocks the telemetry wrapper away and calls
+    // `pickFuncProcessInternal` directly. In production the failure is shown exactly once, by the
+    // outer scope that owns this command:
+    // `registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess)` in
+    // registerCommands.ts. The inner scope sets `suppressDisplay` so that single notification is
+    // not duplicated -- `errorHandling` is allocated fresh per scope, so dropping it would show and
+    // log the same message twice. Asserted separately from the message array so a regression in
+    // either knob produces a readable diff instead of a bare "expected [] to equal [...]".
+    expect(telemetryContexts[0].errorHandling).toEqual({ suppressDisplay: true, rethrow: true });
     expect(capturedMessages).toEqual([]);
     expect(capturedMessages).not.toContain(azuriteTimeoutMessage);
     expect(activateAzurite).toHaveBeenCalledWith(telemetryContexts[0], projectPath);
     expect(capturedMessages).not.toContain(
       'Failed to verify "AzureWebJobsStorage" connection specified in "local.settings.json". Is the local emulator installed and running?'
     );
+    expect(refreshConnectionKeys).not.toHaveBeenCalled();
+    expect(preDebugValidate).not.toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+  });
+
+  it('aborts debug startup silently when the user dismisses an Azurite prompt', async () => {
+    // `activateAzurite` prompts for the autostart opt-in and then for the Azurite directory.
+    // Dismissing either throws `UserCancelledError`, which the telemetry wrapper force-swallows.
+    // Without explicit propagation the dismissal would fall through to `preDebugValidate` and
+    // re-open the modal "Debug anyway" hang. Nothing is displayed: a deliberate cancellation is
+    // not an error the user needs to be told about.
+    vi.mocked(activateAzurite).mockRejectedValue(new UserCancelledErrorMock('autoStartAzurite'));
+
+    await expect(pickFuncProcessInternal(context, debugConfig, workspaceFolder, projectPath)).rejects.toBeInstanceOf(
+      UserCancelledErrorMock
+    );
+
+    expect(capturedMessages).toEqual([]);
     expect(refreshConnectionKeys).not.toHaveBeenCalled();
     expect(preDebugValidate).not.toHaveBeenCalled();
     expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();

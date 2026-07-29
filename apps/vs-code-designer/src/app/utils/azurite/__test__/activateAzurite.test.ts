@@ -30,7 +30,10 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
 }));
 
 vi.mock('../../../../localize', () => ({
-  localize: (_key: string, msg: string) => msg,
+  // Substitutes {0}, {1}, ... so assertions read the sentence a user would actually see. Without
+  // this, the generic readiness message and the one that names a terminal cause are identical.
+  localize: (_key: string, msg: string, ...args: unknown[]) =>
+    msg.replace(/\{(\d+)\}/g, (token, index) => (args[Number(index)] === undefined ? token : String(args[Number(index)]))),
 }));
 
 vi.mock('../../vsCodeConfig/settings', () => ({
@@ -71,14 +74,15 @@ import { tryGetLogicAppProjectRoot } from '../../verifyIsProject';
 import { getAzureWebJobsStorage } from '../../appSettings/localSettings';
 import { validateEmulatorIsRunning } from '../../../debug/validatePreDebug';
 import { executeOnAzurite } from '../../../azuriteExtension/executeOnAzuriteExt';
+import { AzuriteExtensionTerminalError } from '../../../azuriteExtension/azuriteErrors';
 import { delay } from '../../delay';
 
 const PROJECT_PATH = '/workspace/logicapp';
 
 /**
  * The product reports MEASURED elapsed seconds, and `delay` is mocked here, so the rendered number
- * is not stable (and the localize mock does not substitute `{0}` at all). Match the stable prefix
- * only -- asserting the full sentence would couple these tests to wording that is free to change.
+ * is not stable. Match the stable prefix only -- asserting the full sentence would couple these
+ * tests to wording that is free to change.
  */
 const AZURITE_TIMEOUT_MESSAGE = /Azurite did not become ready/;
 
@@ -88,6 +92,13 @@ const AZURITE_TIMEOUT_MESSAGE = /Azurite did not become ready/;
  * a perfectly healthy Azurite is already serving the first one.
  */
 const START_COMMAND_FAILURE = 'Command "azurite.start" failed: port 10000 is already in use';
+
+/**
+ * A TERMINAL failure, by contrast: the Azurite extension is absent from the extension host. No
+ * amount of waiting changes that, so it is worth reporting as the cause -- but only after the
+ * readiness probe has had its full budget, since Azurite may still be running outside VS Code.
+ */
+const MISSING_EXTENSION_FAILURE = 'Azurite extension is not installed or is unavailable in the current VS Code extension host.';
 
 /** Build the settings the function reads, keyed by the first arg to getWorkspaceSetting. */
 function mockSettings(values: {
@@ -389,5 +400,86 @@ describe('activateAzurite', () => {
 
     expect(removeSharedSetting).not.toHaveBeenCalled();
     expect(executeOnAzurite).not.toHaveBeenCalled();
+  });
+
+  it('starts azurite at the directory the user just typed, not the default (stale-capture guard)', async () => {
+    // Opting in flips autostart on in-process, so for the FIRST time the same run both prompts for
+    // a directory and reaches the start block below. The binaries location was read into a local
+    // before that prompt, so re-using it here would write defaultAzuritePathValue to
+    // azurite.location and silently discard the directory the user just entered.
+    mockSettings({ showWarning: true, autoStart: false, binariesLocation: undefined });
+    const showWarningMessage = vi.fn().mockImplementation((_title, enableMessage) => Promise.resolve(enableMessage));
+    const showInputBox = vi.fn().mockResolvedValue('/custom/azurite/dir');
+    // Not running, so the start block is entered; ready on the first poll so the call resolves.
+    (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
+    const context = createContext({ showWarningMessage, showInputBox });
+
+    await activateAzurite(context, PROJECT_PATH);
+
+    expect(updateGlobalSetting).toHaveBeenCalledWith(azuriteLocationSetting, '/custom/azurite/dir', azuriteExtensionPrefix);
+    expect(updateGlobalSetting).not.toHaveBeenCalledWith(azuriteLocationSetting, defaultAzuritePathValue, azuriteExtensionPrefix);
+    expect(context.telemetry.properties.azuriteLocation).toBe('/custom/azurite/dir');
+    expect(executeOnAzurite).toHaveBeenCalledWith(context, extensionCommand.azureAzuriteStart);
+  });
+
+  it('starts azurite at the default path when the directory prompt is cancelled', async () => {
+    mockSettings({ showWarning: true, autoStart: false, binariesLocation: undefined });
+    const showWarningMessage = vi.fn().mockImplementation((_title, enableMessage) => Promise.resolve(enableMessage));
+    const showInputBox = vi.fn().mockResolvedValue(undefined);
+    (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
+    const context = createContext({ showWarningMessage, showInputBox });
+
+    await activateAzurite(context, PROJECT_PATH);
+
+    expect(updateGlobalSetting).toHaveBeenCalledWith(azuriteLocationSetting, defaultAzuritePathValue, azuriteExtensionPrefix);
+    expect(context.telemetry.properties.azuriteLocation).toBe(defaultAzuritePathValue);
+  });
+
+  it('names the terminal extension failure as the cause when the probe also never succeeds', async () => {
+    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    (executeOnAzurite as any).mockRejectedValue(new AzuriteExtensionTerminalError(MISSING_EXTENSION_FAILURE));
+    (validateEmulatorIsRunning as any).mockResolvedValue(false);
+    const context = createContext();
+
+    const error = await activateAzurite(context, PROJECT_PATH).catch((thrown) => thrown);
+
+    // Still the bounded readiness error -- Phase 4.13B asserts on that prefix -- but it now names
+    // the cause the user can act on instead of asking them to check something already known broken.
+    expect(error.message).toMatch(AZURITE_TIMEOUT_MESSAGE);
+    expect(error.message).toContain(MISSING_EXTENSION_FAILURE);
+    expect(context.telemetry.properties.azuriteStartTerminalError).toBe('true');
+    // The budget is unchanged: classification only decides the wording, never short-circuits.
+    expect(validateEmulatorIsRunning).toHaveBeenCalledTimes(1 + azuriteStartupRetryCount);
+    expect(delay).toHaveBeenCalledTimes(azuriteStartupRetryCount - 1);
+  });
+
+  it('gives a terminal extension failure the full budget so an externally managed azurite still wins', async () => {
+    // Docker or `npm -g azurite` with the VS Code extension disabled: getExtension() returns
+    // undefined so the start command fails terminally, yet the emulator IS serving. Failing fast on
+    // the terminal tag would regress exactly this user, so the probe must still run and be believed.
+    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    (executeOnAzurite as any).mockRejectedValue(new AzuriteExtensionTerminalError(MISSING_EXTENSION_FAILURE));
+    (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
+    const context = createContext();
+
+    await expect(activateAzurite(context, PROJECT_PATH)).resolves.toBeUndefined();
+
+    expect(context.telemetry.properties.azuriteReady).toBe('true');
+    expect(context.telemetry.properties.azuriteStartTerminalError).toBe('true');
+  });
+
+  it('leaves the generic message alone when the start rejection is not a terminal extension failure', async () => {
+    // Fail-open guard: an unrecognised rejection must not be promoted to a cause.
+    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    (executeOnAzurite as any).mockRejectedValue(new Error(START_COMMAND_FAILURE));
+    (validateEmulatorIsRunning as any).mockResolvedValue(false);
+    const context = createContext();
+
+    const error = await activateAzurite(context, PROJECT_PATH).catch((thrown) => thrown);
+
+    expect(error.message).toMatch(AZURITE_TIMEOUT_MESSAGE);
+    expect(error.message).toContain('Make sure the Azurite extension is installed and running');
+    expect(error.message).not.toContain(START_COMMAND_FAILURE);
+    expect(context.telemetry.properties.azuriteStartTerminalError).toBeUndefined();
   });
 });
