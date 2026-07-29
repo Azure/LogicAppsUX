@@ -34,8 +34,18 @@ import { getSubscriptionFromResource } from './cosmosConnector';
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues, value, cssOverrides, styleOverrides } =
-    props;
+  const {
+    parameterKey,
+    setKeyValue,
+    setValue,
+    parameter,
+    operationParameterValues,
+    parameterValues,
+    value,
+    parameterSet,
+    cssOverrides,
+    styleOverrides,
+  } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>(value ?? '');
@@ -246,8 +256,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       } catch (e: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
-          area: 'agent-connection-account-key',
-          message: 'Failed to fetch account key for cognitive service',
+          area: 'agent-connection-account-endpoint',
+          message: 'Failed to fetch account endpoint for cognitive service',
           error: e,
         });
         setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
@@ -313,13 +323,24 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     refetchAPIManagementAccounts();
   }, [refetchAPIManagementAccounts]);
 
+  // The API key is only relevant to URL/key-based auth. Managed Identity (and other keyless
+  // auth types) omit the `openAIKey` parameter, so fetching account keys (listKeys) for them
+  // is unnecessary. Gate the key fetch on the selected auth set actually declaring `openAIKey`.
+  // When no auth set is available yet (undefined), fall back to the pre-existing fetch behavior
+  // so a key-based flow can never silently lose its auto-filled key.
+  const authRequiresAccountKey = useMemo(() => parameterSet == null || !!parameterSet.parameters?.['openAIKey'], [parameterSet]);
+
   const onSetOpenAIValues = useCallback(
     async (newValue: string) => {
       setLoadingAccountDetails(true);
-      await Promise.all([setAPIEndpoint(newValue), setAPIKey(newValue)]);
+      const tasks = [setAPIEndpoint(newValue)];
+      if (authRequiresAccountKey) {
+        tasks.push(setAPIKey(newValue));
+      }
+      await Promise.all(tasks);
       setLoadingAccountDetails(false);
     },
-    [setAPIEndpoint, setAPIKey]
+    [setAPIEndpoint, setAPIKey, authRequiresAccountKey]
   );
 
   const roleResourceId = useMemo(() => {
