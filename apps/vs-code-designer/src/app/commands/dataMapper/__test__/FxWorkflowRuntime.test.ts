@@ -29,7 +29,8 @@ import {
 } from '../../../utils/codeless/startDesignTimeApi';
 import { reserveFreePort } from '../../../utils/portReservation';
 import { useNodeDesignTimeWorker } from '../../../utils/vsCodeConfig/settings';
-import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../../../utils/appSettings/localSettings';
+import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSettings';
+import { generateDesignTimeLocalSettingsJson } from '../../../projectConsistency/fileGenerators';
 import { getFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl } from '../extensionConfig';
 
@@ -54,7 +55,14 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
 
 vi.mock('../../../utils/appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
-  getLocalSettingsSchema: vi.fn(() => ({ Values: {} })),
+}));
+
+vi.mock('../../../projectConsistency/fileGenerators', () => ({
+  generateDesignTimeLocalSettingsJson: vi.fn(() => ({ Values: {} })),
+}));
+
+vi.mock('../../../utils/project', () => ({
+  detectProjectType: vi.fn().mockResolvedValue('logicApp'),
 }));
 
 vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
@@ -68,7 +76,7 @@ describe('startBackendRuntime', () => {
   const settingsSchemaSentinel = { Values: { SENTINEL: 'schema-content' } };
   const mockedAppendLine = vi.mocked(ext.outputChannel.appendLine);
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     ext.designTimeInstances.clear();
 
@@ -76,8 +84,10 @@ describe('startBackendRuntime', () => {
     vi.mocked(isDesignTimeUp).mockResolvedValue(false);
     vi.mocked(reserveFreePort).mockResolvedValue(7071);
     vi.mocked(useNodeDesignTimeWorker).mockReturnValue(false);
-    vi.mocked(getLocalSettingsSchema).mockReturnValue(settingsSchemaSentinel as any);
+    vi.mocked(generateDesignTimeLocalSettingsJson).mockReturnValue(settingsSchemaSentinel as any);
     vi.mocked(getFunctionsCommand).mockReturnValue('func');
+    const projectMod = await import('../../../utils/project');
+    vi.mocked(projectMod.detectProjectType).mockResolvedValue('logicApp' as any);
     vi.mocked(waitForDesignTimeStartUp).mockResolvedValue(undefined as any);
   });
 
@@ -92,7 +102,7 @@ describe('startBackendRuntime', () => {
     expect(isDesignTimeUp).toHaveBeenCalledWith(expectedUrl);
 
     // Design-time settings are built for the dotnet worker (useNodeWorker === false).
-    expect(getLocalSettingsSchema).toHaveBeenCalledWith(true, projectPath, undefined, false);
+    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, 'logicApp', false);
 
     // Both baseline files are written to the design-time directory.
     expect(createJsonFile).toHaveBeenCalledWith(designTimeDir, hostFileName, hostFileContent);
@@ -121,7 +131,7 @@ describe('startBackendRuntime', () => {
 
     await startBackendRuntime(context, projectPath);
 
-    expect(getLocalSettingsSchema).toHaveBeenCalledWith(true, projectPath, undefined, true);
+    expect(generateDesignTimeLocalSettingsJson).toHaveBeenCalledWith(projectPath, 'logicApp', true);
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(
       context,
       designTimeDir.fsPath,

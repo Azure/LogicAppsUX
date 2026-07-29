@@ -10,7 +10,8 @@ import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
-import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
+import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
+import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { startOnboarding } from './onboarding';
@@ -94,7 +95,10 @@ export async function activate(context: vscode.ExtensionContext) {
       // leave the design-time host pointing at a half-extracted bundle.
       downloadExtensionBundle(activateContext).catch((error) => {
         ext.outputChannel?.appendLog(
-          localize('bundleDownloadFailed', `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`)
+          localize(
+            'bundleDownloadFailed',
+            `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
+          )
         );
       });
     }
@@ -108,7 +112,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
     promptManagedIdentityAuth(activateContext).catch((error) => {
       ext.outputChannel?.appendLog(
-        localize('managedIdentityAuthPromptFailed', `Managed identity auth startup prompt failed: ${error instanceof Error ? error.message : String(error)}`)
+        localize(
+          'managedIdentityAuthPromptFailed',
+          `Managed identity auth startup prompt failed: ${error instanceof Error ? error.message : String(error)}`
+        )
       );
     });
 
@@ -116,17 +123,30 @@ export async function activate(context: vscode.ExtensionContext) {
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
-    activateContext.telemetry.properties.lastStep = 'verifyVSCodeConfigOnActivate';
+    // TODO(aeldridge): This was added to avoid behavior change after modifying .vscode config validation to not set
+    // ext.defaultLogicAppPath. This should be revisited - a default logic app shouldn't be needed in ext context.
+    activateContext.telemetry.properties.lastStep = 'setDefaultLogicAppPath';
+    if (vscode.workspace.workspaceFolders) {
+      for (const folder of vscode.workspace.workspaceFolders) {
+        const projectPath = await tryGetLogicAppProjectRoot(activateContext, folder, true);
+        if (projectPath) {
+          ext.defaultLogicAppPath = projectPath;
+          break;
+        }
+      }
+    }
+
+    activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
-      await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
+      await ensureVSCodeFiles(actionContext);
     });
 
     activateContext.telemetry.properties.lastStep = 'registerEvent';
     registerEvent(
       extensionCommand.validateLogicAppProjects,
       vscode.workspace.onDidChangeWorkspaceFolders,
-      async (actionContext: IActionContext, event: vscode.WorkspaceFoldersChangeEvent) => {
-        await verifyVSCodeConfigOnActivate(actionContext, event.added);
+      async (actionContext: IActionContext) => {
+        await ensureVSCodeFiles(actionContext);
       }
     );
 
@@ -135,6 +155,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
+
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
 

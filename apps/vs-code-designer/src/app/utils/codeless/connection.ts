@@ -1,7 +1,6 @@
 import {
   azurePublicBaseUrl,
   connectionsFileName,
-  localSettingsFileName,
   parameterizeConnectionsInProjectLoadSetting,
   workflowAuthenticationMethodKey,
   workflowAuthenticationMethodMIValue,
@@ -41,7 +40,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
-import { getGlobalSetting, isManagedIdentityAuthEnabled } from '../vsCodeConfig/settings';
+import { getGlobalSetting } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
 
@@ -302,8 +301,7 @@ export async function getConnectionsAndSettingsToUpdate(
   try {
     const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
     const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
-    const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
-    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
     const isMIEnabled = await isMISettingEnabled(context, projectPath);
 
     let areKeysRefreshed = false;
@@ -995,8 +993,7 @@ async function checkExistingPolicy(
  */
 async function isMISettingEnabled(context: IActionContext, projectPath: string): Promise<boolean> {
   try {
-    const localSettingsPath = path.join(projectPath, localSettingsFileName);
-    const localSettings = await getLocalSettingsJson(context, localSettingsPath);
+    const localSettings = await getLocalSettingsJson(context, projectPath);
     const authMethod = localSettings.Values?.[workflowAuthenticationMethodKey];
     return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase()
   } catch {

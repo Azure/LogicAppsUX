@@ -347,7 +347,7 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     const connectionsString = await getConnectionsJson(context.projectPath);
 
     // merge the app settings from local.settings.json and the settings from the zip file
-    appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
+    appSettings = await getLocalSettingsJson(context, context.projectPath, false);
     const zipEntries = await getPackageEntries(context.packagePath);
     const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === localSettingsFileName);
     if (zipSettingsBuffer) {
@@ -365,7 +365,7 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     if (Object.keys(connectionsData).length && connectionsData.managedApiConnections) {
       /** Extract details from connections and add to local.settings.json
        * independent of the parameterizeConnectionsInProject setting */
-      appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
+      appSettings = await getLocalSettingsJson(context, context.projectPath, false);
       await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
       if (parameterizeConnectionsSetting) {

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  localSettingsFileName,
   workflowTenantIdKey,
   workflowSubscriptionIdKey,
   workflowResourceGroupNameKey,
@@ -18,7 +17,6 @@ import { getAuthData } from '../../utils/codeless/getAuthorizationToken';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
-import * as path from 'path';
 
 // --- Azure connector details cache and orchestration ---
 
@@ -43,9 +41,8 @@ export async function getAzureConnectorDetailsForLocalProject(
     return cached.details;
   }
 
-  const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
   const connectorsContext = context as IAzureConnectorsContext;
-  const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
+  const localSettings = await getLocalSettingsJson(context, projectPath);
   let tenantId = localSettings.Values![workflowTenantIdKey];
   let subscriptionId = localSettings.Values![workflowSubscriptionIdKey];
   let resourceGroupName = localSettings.Values![workflowResourceGroupNameKey];

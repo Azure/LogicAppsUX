@@ -2,9 +2,7 @@ import {
   artifactsDirectory,
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
-  defaultVersionRange,
   devContainerFolderName,
-  extensionBundleId,
   extensionCommand,
   funcIgnoreFileName,
   gitignoreFileName,
@@ -30,14 +28,13 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { writeFormattedJson } from '../../../utils/fs';
+import { generateHostJson, generateLocalSettingsJson } from '../../../projectConsistency/fileGenerators';
 import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
-import type { IFunctionWizardContext, IHostJsonV2, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IWebviewProjectContext, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
-import { getLocalSettingsSchema } from '../../../utils/appSettings/localSettings';
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
-import { isLogicAppProject } from '../../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
@@ -60,25 +57,6 @@ export async function createRulesFiles(context: IFunctionWizardContext): Promise
 export async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'JAR'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'net472'), { recursive: true });
-}
-
-export async function getHostContent(): Promise<IHostJsonV2> {
-  const hostJson: IHostJsonV2 = {
-    version: '2.0',
-    logging: {
-      applicationInsights: {
-        samplingSettings: {
-          isEnabled: true,
-          excludedTypes: 'Request',
-        },
-      },
-    },
-    extensionBundle: {
-      id: extensionBundleId,
-      version: defaultVersionRange,
-    },
-  };
-  return hostJson;
 }
 
 export async function createLogicAppAndWorkflow(
@@ -197,15 +175,14 @@ export async function createLocalConfigurationFiles(
     '.debug',
     'workflow-designtime/',
   ];
-  const localSettingsJson = getLocalSettingsSchema(false, logicAppFolderPath, logicAppType);
+  const localSettingsJson = generateLocalSettingsJson(logicAppFolderPath, logicAppType);
 
   if (logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
-  const hostJson: IHostJsonV2 = await getHostContent();
-  await writeFormattedJson(hostJsonPath, hostJson);
+  await writeFormattedJson(hostJsonPath, generateHostJson());
 
   const localSettingsJsonPath: string = path.join(logicAppFolderPath, localSettingsFileName);
   await writeFormattedJson(localSettingsJsonPath, localSettingsJson);
@@ -378,71 +355,4 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
   }
 
   await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
-}
-
-export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
-  addLocalFuncTelemetry(context);
-
-  const webviewProjectContext: IWebviewProjectContext = options;
-  // Create the workspace folder
-  const workspaceFolder = workspaceRootFolder;
-  // Path to the logic app folder
-  const logicAppFolderPath = path.join(workspaceFolder, webviewProjectContext.logicAppName);
-
-  // Check if the logic app directory already exists
-  const logicAppExists = await fse.pathExists(logicAppFolderPath);
-  let doesLogicAppExist = false;
-  if (logicAppExists) {
-    // Check if it's actually a Logic App project
-    doesLogicAppExist = await isLogicAppProject(logicAppFolderPath);
-  }
-
-  // Check if we're in a workspace and get the workspace folder
-  if (vscode.workspace.workspaceFile) {
-    // Get the directory containing the .code-workspace file
-    const workspaceFilePath = vscode.workspace.workspaceFile.fsPath;
-    webviewProjectContext.workspaceFilePath = workspaceFilePath;
-    webviewProjectContext.shouldCreateLogicAppProject = !doesLogicAppExist;
-    // need to get logic app in projects
-    await updateWorkspaceFile(webviewProjectContext);
-  } else {
-    // Fall back to the newly created workspace folder if not in a workspace
-    vscode.window.showErrorMessage(
-      localize('notInWorkspace', 'Please open an existing logic app workspace before trying to add a new logic app project.')
-    );
-    return;
-  }
-
-  const mySubContext: IFunctionWizardContext = context as IFunctionWizardContext;
-  mySubContext.logicAppName = options.logicAppName;
-  mySubContext.projectPath = logicAppFolderPath;
-  mySubContext.projectType = webviewProjectContext.logicAppType;
-  mySubContext.functionFolderName = options.functionFolderName;
-  mySubContext.functionAppName = options.functionName;
-  mySubContext.functionAppNamespace = options.functionNamespace;
-  mySubContext.targetFramework = options.targetFramework;
-  mySubContext.workspacePath = workspaceFolder;
-
-  if (!doesLogicAppExist) {
-    await createLogicAppAndWorkflow(webviewProjectContext, logicAppFolderPath, context);
-
-    // .vscode folder
-    await createLogicAppVsCodeContents(webviewProjectContext, logicAppFolderPath);
-
-    await createLocalConfigurationFiles(webviewProjectContext, logicAppFolderPath);
-
-    if ((await isGitInstalled(workspaceFolder)) && !(await isInsideRepo(workspaceFolder))) {
-      await gitInit(workspaceFolder);
-    }
-
-    await createArtifactsFolder(mySubContext);
-    await createRulesFiles(mySubContext);
-    await createLibFolder(mySubContext);
-  }
-
-  if (webviewProjectContext.logicAppType !== ProjectType.logicApp) {
-    const createFunctionAppFilesStep = new CreateFunctionAppFiles();
-    await createFunctionAppFilesStep.setup(mySubContext);
-  }
-  ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
 }

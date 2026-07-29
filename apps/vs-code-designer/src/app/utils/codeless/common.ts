@@ -1,5 +1,4 @@
 import {
-  localSettingsFileName,
   managementApiPrefix,
   workflowFileName,
   workflowResourceGroupNameKey,
@@ -308,7 +307,7 @@ export async function verifyDeploymentResourceGroup(
   workflowResourceGroupRemote: string,
   originalDeployFsPath: string
 ): Promise<void> {
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(originalDeployFsPath, localSettingsFileName));
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, originalDeployFsPath);
   const workflowResourceGroupLocal: string = localSettings.Values[workflowResourceGroupNameKey];
 
   if (workflowResourceGroupLocal && workflowResourceGroupLocal.toLowerCase() !== workflowResourceGroupRemote.toLowerCase()) {
