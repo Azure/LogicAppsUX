@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  designTimeDirectoryName,
   enableManagedIdentityAuthSetting,
   localSettingsFileName,
   suppressManagedIdentityAuthNotification,
@@ -15,6 +16,8 @@ import { isManagedIdentityAuthEnabled, updateGlobalSetting } from './vsCodeConfi
 import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { addOrUpdateLocalAppSettings } from './appSettings/localSettings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import * as fse from 'fs-extra';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 /**
@@ -22,7 +25,7 @@ import * as vscode from 'vscode';
  * authentication for local workflows. The notification is suppressed if:
  * - The user has already enabled the setting.
  * - The user previously selected "Don't show again".
- * 
+ *
  * @param {IActionContext} context - The action context for telemetry and error handling.
  */
 export async function promptManagedIdentityAuth(context: IActionContext): Promise<void> {
@@ -41,7 +44,9 @@ export async function promptManagedIdentityAuth(context: IActionContext): Promis
   if (selection === enableButton) {
     await updateGlobalSetting(enableManagedIdentityAuthSetting, true);
     await updateLocalSettingsForAllProjects(context);
-    ext.outputChannel.appendLog(localize('managedIdentityAuthEnabled', 'Managed identity authentication has been enabled for local workflows.'));
+    ext.outputChannel.appendLog(
+      localize('managedIdentityAuthEnabled', 'Managed identity authentication has been enabled for local workflows.')
+    );
   } else if (selection === dontShowAgain) {
     await ext.context.globalState.update(suppressManagedIdentityAuthNotification, true);
   }
@@ -49,7 +54,8 @@ export async function promptManagedIdentityAuth(context: IActionContext): Promis
 
 /**
  * Iterates over all workspace folders and adds/updates `WORKFLOWS_AUTHENTICATION_METHOD` to
- * `managedServiceIdentity` in each Logic Apps project's `local.settings.json`.
+ * `managedServiceIdentity` in each Logic Apps project's `local.settings.json` and its
+ * `workflow-designtime/local.settings.json` (when the design-time directory exists).
  */
 async function updateLocalSettingsForAllProjects(context: IActionContext): Promise<void> {
   const folders = vscode.workspace.workspaceFolders;
@@ -57,13 +63,20 @@ async function updateLocalSettingsForAllProjects(context: IActionContext): Promi
     return;
   }
 
+  const miSettings = {
+    [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
+  };
+
   for (const folder of folders) {
     try {
       const projectPath = await tryGetLogicAppProjectRoot(context, folder);
       if (projectPath) {
-        await addOrUpdateLocalAppSettings(context, projectPath, {
-          [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
-        });
+        await addOrUpdateLocalAppSettings(context, projectPath, miSettings);
+
+        const designTimePath = path.join(projectPath, designTimeDirectoryName);
+        if (await fse.pathExists(designTimePath)) {
+          await addOrUpdateLocalAppSettings(context, designTimePath, miSettings, true);
+        }
       }
     } catch (error) {
       ext.outputChannel.appendLog(

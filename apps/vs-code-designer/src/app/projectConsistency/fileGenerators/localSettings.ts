@@ -42,9 +42,11 @@ export function generateLocalSettingsJson(
   if (projectPath) {
     values[ProjectDirectoryPathKey] = projectPath;
   }
+
   if (isManagedIdentityAuthEnabled()) {
     values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
+  
   if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
     values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }
@@ -78,12 +80,18 @@ export function generateDesignTimeLocalSettingsJson(
   if (projectPath) {
     values[ProjectDirectoryPathKey] = projectPath;
   }
+
+  if (isManagedIdentityAuthEnabled()) {
+    values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
+  }
+
   if (useNodeWorker || logicAppType === ProjectType.codeful) {
     values[workerRuntimeKey] = WorkerRuntime.Node;
   } else {
     values[workerRuntimeKey] = WorkerRuntime.Dotnet;
     values[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
   }
+
   values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
 
   if (logicAppType === ProjectType.codeful) {

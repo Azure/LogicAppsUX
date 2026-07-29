@@ -29,7 +29,7 @@ import * as localSettings from '../../utils/appSettings/localSettings';
 import { writeFormattedJson } from '../../utils/fs';
 import { hasCodefulSdkReference, hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { isCustomCodeFunctionsProjectInRoot, tryGetLogicAppCustomCodeFunctionsProjects } from '../../utils/customCodeUtils';
-import { useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
+import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
 import {
   extractAppSettingReferences,
   getReferencedAppSettings,
@@ -77,7 +77,7 @@ vi.mock('../../utils/vsCodeConfig/settings', async (importActual) => {
   return {
     ...actual,
     useNodeDesignTimeWorker: vi.fn(() => false),
-    isManagedIdentityAuthEnabled: vi.fn(() => true),
+    isManagedIdentityAuthEnabled: vi.fn(() => false),
   };
 });
 
@@ -190,6 +190,7 @@ describe('projectFilesConsistency', () => {
     });
 
     it('adds the full codeful baseline (incl. WORKFLOW_CODEFUL_ENABLED and AzureWebJobsFeatureFlags) when missing for a codeful project', async () => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedIsCodeful.mockResolvedValue(true);
@@ -276,6 +277,7 @@ describe('projectFilesConsistency', () => {
     };
 
     beforeEach(() => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
@@ -558,7 +560,11 @@ describe('projectFilesConsistency', () => {
         [designTimeDir]: '',
         [hostPath]: validHost,
         [settingsPath]: JSON.stringify({
-          Values: { APP_KIND: 'workflowapp', FUNCTIONS_WORKER_RUNTIME: 'node', ProjectDirectoryPath: projectPath },
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'node',
+            ProjectDirectoryPath: projectPath,
+          },
         }),
       });
 
@@ -581,6 +587,42 @@ describe('projectFilesConsistency', () => {
       expect(result.hostFileValid).toBe(true);
       expect(result.settingsFileValid).toBe(false);
       expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when MI auth is enabled but the design-time file lacks the auth method', async () => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
+      const settingsWithoutMiAuth = JSON.stringify({
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          ProjectDirectoryPath: projectPath,
+        },
+      });
+      mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: settingsWithoutMiAuth });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports valid settings when MI auth is disabled and the design-time file lacks the auth method', async () => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(false);
+      const settingsWithoutMiAuth = JSON.stringify({
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+          ProjectDirectoryPath: projectPath,
+        },
+      });
+      mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: settingsWithoutMiAuth });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(true);
+      expect(result.isValid).toBe(true);
     });
 
     it('reports valid settings for a Node design-time file for a codeful project (setting off)', async () => {
@@ -693,6 +735,10 @@ describe('projectFilesConsistency', () => {
     // change to the generated files is caught while the key/value strings stay in sync with the
     // named constants the codebase uses.
     describe('expected content by logic app type', () => {
+      beforeEach(() => {
+        vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
+      });
+
       // Mirrors the host.json that startDesignTimeApi generated inline before the regeneration
       // refactor. It is the regression baseline for the design-time host.
       const expectedHostJson = {
@@ -746,6 +792,7 @@ describe('projectFilesConsistency', () => {
             [workerRuntimeKey]: WorkerRuntime.Dotnet,
             [functionsInprocNet8Enabled]: functionsInprocNet8EnabledTrue,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+            [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
       });
@@ -767,6 +814,7 @@ describe('projectFilesConsistency', () => {
             [workerRuntimeKey]: WorkerRuntime.Node,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
+            [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
       });
@@ -799,6 +847,7 @@ describe('projectFilesConsistency', () => {
             [workerRuntimeKey]: WorkerRuntime.Node,
             [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
             [workflowCodefulEnabledKey]: 'true',
+            [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
       });
@@ -865,6 +914,10 @@ describe('projectFilesConsistency', () => {
   // call accounts for EVERY required artifact together: the project-root host.json, the project-root
   // local.settings.json, and the workflow-designtime baseline (host.json + local.settings.json).
   describe('ensureProjectFiles', () => {
+    beforeEach(() => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
+    });
+
     const designTimeDir = `${projectPath}/workflow-designtime`;
     const rootHostPath = `${projectPath}/host.json`;
     const rootSettingsPath = `${projectPath}/local.settings.json`;
@@ -883,6 +936,7 @@ describe('projectFilesConsistency', () => {
         FUNCTIONS_WORKER_RUNTIME: 'dotnet',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
         ProjectDirectoryPath: projectPath,
+        WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       },
     });
 
@@ -964,6 +1018,10 @@ describe('projectFilesConsistency', () => {
   // The consolidated, multi-project-friendly logging contract: the low-level helpers stay silent so
   // the orchestrators can emit exactly ONE status line per project (valid / regenerated / failed).
   describe('consolidated status logging', () => {
+    beforeEach(() => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
+    });
+
     const rootHostPath = `${projectPath}/host.json`;
     const rootSettingsPath = `${projectPath}/local.settings.json`;
     const designTimeDir = `${projectPath}/workflow-designtime`;
@@ -982,6 +1040,7 @@ describe('projectFilesConsistency', () => {
         FUNCTIONS_WORKER_RUNTIME: 'dotnet',
         FUNCTIONS_INPROC_NET8_ENABLED: '1',
         ProjectDirectoryPath: projectPath,
+        WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       },
     });
     const fullValidRootSettings = {

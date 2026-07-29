@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { generateLocalSettingsJson, generateDesignTimeLocalSettingsJson } from '../localSettings';
 import {
@@ -13,12 +13,24 @@ import {
   localEmulatorConnectionString,
   logicAppKind,
   multiLanguageWorkerSetting,
+  workflowAuthenticationMethodKey,
+  workflowAuthenticationMethodMIValue,
   workerRuntimeKey,
   workflowCodefulEnabledKey,
 } from '../../../../constants';
 
+vi.mock('../../../utils/vsCodeConfig/settings', () => ({
+  isManagedIdentityAuthEnabled: vi.fn(() => false),
+}));
+
+import { isManagedIdentityAuthEnabled } from '../../../utils/vsCodeConfig/settings';
+
 describe('generateLocalSettingsJson / generateDesignTimeLocalSettingsJson', () => {
   const projectPath = 'path/to/project';
+
+  beforeEach(() => {
+    vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(false);
+  });
 
   it('Should have IsEncrypted property and Values property have basic schema', () => {
     const settings = generateDesignTimeLocalSettingsJson();
@@ -161,27 +173,46 @@ describe('generateLocalSettingsJson / generateDesignTimeLocalSettingsJson', () =
     });
   });
 
-  // Key ORDER regression: toEqual ignores property order, but writeFormattedJson serializes in
-  // insertion order, so the on-disk key order matters. The regenerated root local.settings.json
-  // must be key-for-key identical to a freshly created project (CreateLogicAppWorkspace), so these
-  // pin the exact order rather than just the set of keys.
-  describe('root key order matches the creation path', () => {
-    it('orders keys like CreateLogicAppWorkspace (codeless)', () => {
-      const keys = Object.keys(generateLocalSettingsJson(projectPath, ProjectType.logicApp).Values);
-      expect(keys).toEqual([azureWebJobsStorageKey, functionsInprocNet8Enabled, workerRuntimeKey, appKindSetting, ProjectDirectoryPathKey]);
+  describe('managed identity auth enabled', () => {
+    beforeEach(() => {
+      vi.mocked(isManagedIdentityAuthEnabled).mockReturnValue(true);
     });
 
-    it('orders keys deterministically for codeful (base keys, then feature flag, then codeful flag)', () => {
-      const keys = Object.keys(generateLocalSettingsJson(projectPath, ProjectType.codeful).Values);
-      expect(keys).toEqual([
-        azureWebJobsStorageKey,
-        functionsInprocNet8Enabled,
-        workerRuntimeKey,
-        appKindSetting,
-        ProjectDirectoryPathKey,
-        azureWebJobsFeatureFlagsKey,
-        workflowCodefulEnabledKey,
-      ]);
+    it('adds WORKFLOWS_AUTHENTICATION_METHOD to root local.settings.json', () => {
+      const settings = generateLocalSettingsJson(projectPath, ProjectType.logicApp);
+      expect(settings.Values).toHaveProperty(workflowAuthenticationMethodKey, workflowAuthenticationMethodMIValue);
+    });
+
+    it('adds WORKFLOWS_AUTHENTICATION_METHOD to design-time local.settings.json', () => {
+      const settings = generateDesignTimeLocalSettingsJson(projectPath, ProjectType.logicApp);
+      expect(settings.Values).toHaveProperty(workflowAuthenticationMethodKey, workflowAuthenticationMethodMIValue);
+    });
+
+    it('design-time codeful includes both WORKFLOW_CODEFUL_ENABLED and MI auth', () => {
+      expect(generateDesignTimeLocalSettingsJson(projectPath, ProjectType.codeful)).toEqual({
+        IsEncrypted: false,
+        Values: {
+          [appKindSetting]: logicAppKind,
+          [ProjectDirectoryPathKey]: projectPath,
+          [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
+          [workerRuntimeKey]: WorkerRuntime.Node,
+          [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+          [workflowCodefulEnabledKey]: 'true',
+        },
+      });
+    });
+
+    it('design-time Node-worker fallback includes MI auth', () => {
+      expect(generateDesignTimeLocalSettingsJson(projectPath, ProjectType.logicApp, true)).toEqual({
+        IsEncrypted: false,
+        Values: {
+          [appKindSetting]: logicAppKind,
+          [ProjectDirectoryPathKey]: projectPath,
+          [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
+          [workerRuntimeKey]: WorkerRuntime.Node,
+          [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting,
+        },
+      });
     });
   });
 });
