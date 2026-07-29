@@ -21,10 +21,6 @@ resources:
     - repository: LogicAppsUX
       type: github
       name: Azure/LogicAppsUX
-      # TEMP (testing only, remove before merge): pin templates to this branch so test runs
-      # exercise the CFS changes in setup.yml. Without a ref, template references like
-      # `setup.yml@LogicAppsUX` resolve to the default branch (main), not the run branch.
-      ref: refs/heads/elaina/update-pipeline
       endpoint: LogicApps-VSCode-connection  # The service connection to use when accessing this repository
 
 parameters:
