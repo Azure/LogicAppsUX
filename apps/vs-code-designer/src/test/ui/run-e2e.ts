@@ -1424,6 +1424,14 @@ async function main(): Promise<void> {
   const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
   const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
 
+  // Phase 4.13 — Azurite readiness regression guard (create + assert pair).
+  // 4.13A drives the real Create Workspace webview; 4.13B reopens the generated
+  // .code-workspace in a fresh session, binds Azurite's ports so it cannot start,
+  // presses F5, and asserts the bounded "Azurite did not become ready" error
+  // surfaces instead of the blocking AzureWebJobsStorage modal.
+  const phase413CreateFiles = [testFile('azuriteAutostartFailure.test.js')];
+  const phase413AssertFiles = [testFile('azuriteAutostartFailureAssert.test.js')];
+
   // Phase 4.11 — Bundle CDN integrity probe. Pure Mocha (no ExTester / VS Code).
   // Verifies that cdn.functions.azure.com still emits Content-Length +
   // Content-MD5 headers we depend on for download integrity verification, and
@@ -2045,6 +2053,25 @@ namespace ${namespaceName}
     }
   };
 
+  /**
+   * Runs a whole phase group, retrying the group from a fresh session on failure.
+   *
+   * `LA_E2E_SCENARIO_RETRIES` was previously read only inside `runScenarioPhases`, so
+   * the codeful and Azurite modes advertised a retry budget in CI they never actually
+   * had. These are now blocking jobs, and the flake they hit (`invalid session id:
+   * session deleted as the browser has closed the connection` at launch) is exactly
+   * the class a fresh-session retry absorbs.
+   */
+  const withPhaseGroupRetries = async (label: string, run: (labelPrefix: string) => Promise<number>): Promise<number> => {
+    const retries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
+    let exitCode = await run(label);
+    for (let attempt = 1; attempt <= retries && exitCode !== 0; attempt++) {
+      console.log(`\n  ↻ [${label}] retry ${attempt}/${retries} in a fresh session after exit code ${exitCode}...`);
+      exitCode = await run(`${label}-retry${attempt}`);
+    }
+    return exitCode;
+  };
+
   const runCodefulDebugPhases = async (labelPrefix: string): Promise<number> => {
     writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
     process.env.LA_E2E_CODEFUL_CREATE_ONLY = '1';
@@ -2095,6 +2122,152 @@ namespace ${namespaceName}
     delete process.env.LA_E2E_CODEFUL_VARIANT;
 
     return Math.max(modernExit, legacyExit);
+  };
+
+  // Phase 4.13 — Azurite readiness regression guard.
+  //
+  // D-001 create-and-reopen pair, same shape as runCodefulDebugPhases():
+  //   4.13A  azuriteAutostartFailure.test.js       — Create Workspace webview run.
+  //   4.13B  azuriteAutostartFailureAssert.test.js — fresh session on the generated
+  //          .code-workspace; binds TCP 10000/10001/10002 so Azurite physically
+  //          cannot start, presses F5, and asserts the bounded "Azurite did not
+  //          become ready" error surfaces while the modal
+  //          'Failed to verify "AzureWebJobsStorage" connection' / "Debug anyway"
+  //          warning never does (a modal cannot be answered headlessly, which is
+  //          exactly the 12-minute F5 hang this guards).
+  //
+  // Both test files read AZURITE_E2E_STEP / AZURITE_E2E_APP_KIND at module scope and
+  // derive their paths from AZURITE_E2E_WORKSPACE_PARENT. ExTester runs Mocha inside
+  // THIS Node process and runPhase() clears require.cache for the files it is about to
+  // run, so flipping those env vars between phases is what selects the create vs assert
+  // body and the codeless vs codeful layout — the same env-gate mechanism Phase 4.1b /
+  // Phase 4.10A use for createWorkspace.behavior.test.js. The parent dir is pinned here
+  // rather than left to the tests' os.tmpdir() default so the launcher's `resources`
+  // path and the tests' WORKSPACE_FILE are guaranteed to be the same string.
+  //
+  // APP KIND: the scenario runs for BOTH kinds. A codeful F5 reaches the same
+  // activateAzurite call (pickFuncProcess.ts:85) before preDebugValidate (:100) and long
+  // before publishCodefulProject (:116) / startFuncTask (:146), and 4.13B additionally
+  // asserts no codeful build output was produced. The layouts are disjoint on disk so the
+  // two runs cannot collide, and each kind must exactly match the constants in the two
+  // test files.
+  type AzuriteAppKind = 'codeless' | 'codeful';
+  const azuriteLayouts: Record<AzuriteAppKind, { parent: string; wsName: string; appName: string }> = {
+    codeless: {
+      parent: path.join(os.tmpdir(), 'la-e2e-test', 'azurite-autostart-failure-parent'),
+      wsName: 'azuritews',
+      appName: 'azuriteapp',
+    },
+    codeful: {
+      parent: path.join(os.tmpdir(), 'la-e2e-test', 'azurite-autostart-failure-codeful-parent'),
+      wsName: 'azuritecfws',
+      appName: 'azuritecfapp',
+    },
+  };
+
+  /**
+   * `AZURITE_E2E_APP_KINDS` (plural) shards the mode in CI; unset runs both, which is
+   * what the azuriteonly job wants. Unknown values are fatal rather than silently
+   * dropped — a typo that ran zero kinds would report success having tested nothing.
+   */
+  const parseAzuriteAppKinds = (): AzuriteAppKind[] => {
+    const allKinds: AzuriteAppKind[] = ['codeless', 'codeful'];
+    const raw = (process.env.AZURITE_E2E_APP_KINDS ?? '').trim();
+    if (!raw) {
+      return allKinds;
+    }
+    const requested = raw
+      .split(',')
+      .map((value) => value.trim().toLowerCase())
+      .filter(Boolean);
+    // Deliberately an Array.includes check, not `in azuriteLayouts`: `in` walks the
+    // prototype chain, so `AZURITE_E2E_APP_KINDS=constructor` would sail through.
+    const unknown = requested.filter((value) => !allKinds.includes(value as AzuriteAppKind));
+    if (unknown.length > 0 || requested.length === 0) {
+      throw new Error(`AZURITE_E2E_APP_KINDS must be a comma-separated list of ${allKinds.join('|')} (received "${raw}")`);
+    }
+    return requested as AzuriteAppKind[];
+  };
+
+  const runAzuriteReadinessPhasesForKind = async (labelPrefix: string, kind: AzuriteAppKind): Promise<number> => {
+    const layout = azuriteLayouts[kind];
+    const azuriteWorkspaceParent = layout.parent;
+    const azuriteWorkspaceFile = path.join(azuriteWorkspaceParent, layout.wsName, `${layout.wsName}.code-workspace`);
+
+    process.env.AZURITE_E2E_WORKSPACE_PARENT = azuriteWorkspaceParent;
+    process.env.AZURITE_E2E_APP_KIND = kind;
+    console.log(`  Azurite app kind:         ${kind}`);
+    console.log(`  Azurite workspace parent: ${azuriteWorkspaceParent}`);
+    console.log(`  Azurite workspace file:   ${azuriteWorkspaceFile}`);
+
+    // 4.13A is the first session of this mode, so dependency validation is ON
+    // (downloads/validates func, dotnet and node) exactly like Phase 4.1 / 4.10A.
+    writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+    process.env.AZURITE_E2E_STEP = 'create';
+    await prepareFreshSession(`${labelPrefix}-phase413a-create`);
+    const createExit = await runPhase(`Phase 4.13A: create Azurite readiness workspace (${kind})`, phase413CreateFiles);
+    if (createExit !== 0) {
+      console.log(`\n⚠ Phase 4.13A (${kind}) exited with code ${createExit}; skipping Phase 4.13B`);
+      delete process.env.AZURITE_E2E_STEP;
+      delete process.env.AZURITE_E2E_APP_KIND;
+      return createExit;
+    }
+
+    if (!fs.existsSync(azuriteWorkspaceFile)) {
+      console.log(`\n⚠ Phase 4.13A (${kind}) did not produce ${azuriteWorkspaceFile}; skipping Phase 4.13B`);
+      delete process.env.AZURITE_E2E_STEP;
+      delete process.env.AZURITE_E2E_APP_KIND;
+      return 1;
+    }
+
+    // Remove the design-time folder that 4.13A leaves behind (it runs with
+    // autoStartDesignTime: true). The in-test gate has its own freshness check, but
+    // clearing it here is strictly better: the 4.13A VS Code process has already
+    // exited by this point, so the delete cannot hit the Windows EBUSY path that
+    // would otherwise force the gate to degrade to existence-only. Codeful projects
+    // produce this folder too (isLogicAppProject -> hasCodefulSdkReference ->
+    // startAllDesignTimeApis -> ensureDesignTimeDirectory), which is what Phase 4.10B
+    // already relies on, so the same cleanup applies to both kinds.
+    const azuriteDesignTimeDir = path.join(azuriteWorkspaceParent, layout.wsName, layout.appName, 'workflow-designtime');
+    try {
+      fs.rmSync(azuriteDesignTimeDir, { recursive: true, force: true });
+      console.log(`  Cleared stale Azurite design-time evidence: ${azuriteDesignTimeDir}`);
+    } catch (err: any) {
+      console.log(
+        `  Could not clear ${azuriteDesignTimeDir} (${err instanceof Error ? err.message : String(err)}); the in-test freshness gate still applies.`
+      );
+    }
+
+    // 4.13B keeps design-time auto-start ON because the assertion test waits for
+    // <app>/workflow-designtime as its readiness gate before pressing F5.
+    writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
+    process.env.AZURITE_E2E_STEP = 'assert';
+    await prepareFreshSession(`${labelPrefix}-phase413b-assert`);
+    const assertExit = await runPhase(`Phase 4.13B: assert Azurite readiness failure (${kind})`, phase413AssertFiles, {
+      resources: [azuriteWorkspaceFile],
+    });
+    delete process.env.AZURITE_E2E_STEP;
+    delete process.env.AZURITE_E2E_APP_KIND;
+
+    return Math.max(createExit, assertExit);
+  };
+
+  /**
+   * Runs 4.13A+4.13B once per app kind. `withPhaseGroupRetries` wraps EACH kind rather
+   * than the whole sweep, so a codeful flake retries only the codeful pair instead of
+   * re-running an already-green codeless pair.
+   */
+  const runAzuriteReadinessPhases = async (labelPrefix: string): Promise<number> => {
+    const kinds = parseAzuriteAppKinds();
+    console.log(`\n  Azurite readiness app kinds: ${kinds.join(', ')}`);
+    let worstExit = 0;
+    for (const kind of kinds) {
+      const exitCode = await withPhaseGroupRetries(`${labelPrefix}-${kind}`, (retryLabel) =>
+        runAzuriteReadinessPhasesForKind(retryLabel, kind)
+      );
+      worstExit = Math.max(worstExit, exitCode);
+    }
+    return worstExit;
   };
 
   try {
@@ -2441,8 +2614,16 @@ namespace ${namespaceName}
 
     if (e2eMode === 'codefuldebugonly') {
       await downloadExTesterAssets();
-      const phase10Exit = await runCodefulDebugPhases('phase10-only');
+      const phase10Exit = await withPhaseGroupRetries('phase10-only', runCodefulDebugPhases);
       process.exit(phase10Exit);
+    }
+
+    if (e2eMode === 'azuriteonly') {
+      await downloadExTesterAssets();
+      // NOTE: no withPhaseGroupRetries here — runAzuriteReadinessPhases already applies
+      // it per app kind, so wrapping again would multiply the retry budget.
+      const phase413Exit = await runAzuriteReadinessPhases('phase413-only');
+      process.exit(phase413Exit);
     }
 
     // bundleintegrityonly is handled by the early short-circuit at the top

@@ -78,11 +78,36 @@ export async function pickFuncProcessInternal(
   workspaceFolder: vscode.WorkspaceFolder,
   projectPath: string
 ): Promise<string | undefined> {
+  // `activateAzurite` prompts the user (autostart opt-in, then the Azurite directory). Dismissing a
+  // prompt throws `UserCancelledError`, and the telemetry wrapper force-swallows cancellations --
+  // it overrides `rethrow` to false regardless of what we set. Left unhandled, a dismissal would
+  // fall straight through to `preDebugValidate` and re-open the modal "Debug anyway" hang this
+  // function exists to prevent, so the cancellation is re-raised outside the wrapper.
+  let azuriteSetupCancelled = false;
   await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
     await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-      await activateAzurite(context, projectPath);
+      try {
+        await activateAzurite(actionContext, projectPath);
+      } catch (error) {
+        if (error instanceof UserCancelledError) {
+          azuriteSetupCancelled = true;
+        }
+        // Rethrown so this scope still records the failure, but displayed by nobody here: this
+        // scope is nested inside one that already shows it -- for this command that is
+        // `registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess)`
+        // in registerCommands.ts. `suppressDisplay` is per-scope, so without it the same message
+        // is shown and logged twice. `rethrow` stays on: it is what makes an Azurite failure
+        // terminal and stops the flow before `preDebugValidate`.
+        actionContext.errorHandling.suppressDisplay = true;
+        throw error instanceof Error ? error : new Error(String(error));
+      }
     });
   });
+
+  if (azuriteSetupCancelled) {
+    throw new UserCancelledError(autoStartAzuriteSetting);
+  }
 
   await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
