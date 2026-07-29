@@ -866,3 +866,77 @@ Always:
 
 Synthetic codeful Phase 4.10 fixtures are prohibited by Rule 1 and D-001. Keep Phase 4.10 on the real Create Workspace + fresh reopen pattern; if the codeful wizard flow changes, update `createWorkspace.test.ts` helpers rather than writing project files directly to disk.
 
+## 17. Pattern: Running One Scenario for Both App Kinds (Phase 4.13 APP KIND axis)
+
+Phase 4.13 (Azurite auto-start readiness) runs the *same* scenario twice: once for a
+codeless (Standard) logic app and once for a codeful one. Use this pattern whenever a
+product code path is app-kind agnostic but the surrounding F5 flow is not.
+
+### When it is worth doing
+
+Only when the product code under test is genuinely shared AND the second kind adds an
+assertion the first cannot make. For 4.13:
+
+- `pickFuncProcessInternal` (`app/commands/pickFuncProcess.ts`) calls `activateAzurite`
+  at line 85 **unconditionally**, before `preDebugValidate` (:100), before
+  `publishCodefulProject` (:116) and before `startFuncTask` (:146). The
+  `debugConfig.isCodeless` read is at :142.
+- So a codeful F5 traverses the identical Azurite readiness code, *and* it lets 4.13B
+  assert the codeful-only property: the bounded failure happens **before** the expensive
+  publish/build.
+
+If the second kind cannot add a new assertion, do not duplicate the run — you are just
+buying CI minutes.
+
+### The mechanism
+
+1. **One env var, read at module scope, in every file of the phase group.**
+   `AZURITE_E2E_APP_KIND` = `codeless` (default) | `codeful`. `runPhase()` drops the
+   compiled test file from `require.cache` before each phase, so re-evaluating module
+   scope is what makes the gate select a different layout. Same mechanism as
+   `AZURITE_E2E_STEP` / `LA_E2E_CODEFUL_CREATE_ONLY`.
+2. **Throw on an unknown value at module scope.** Only the launcher sets it, so a typo is
+   a harness bug. Silently defaulting to `codeless` would run the covered kind twice and
+   still report green.
+3. **Disjoint on-disk layout per kind** — different workspace parent AND workspace/app
+   names (`azuritews`/`azuriteapp` vs `azuritecfws`/`azuritecfapp`). Sharing a parent
+   invites cross-kind contamination of `.code-workspace`, `workflow-designtime` and
+   `.vscode/launch.json`.
+4. **Keep the default byte-for-byte identical to the pre-existing behavior**, so an unset
+   env var reproduces the historical run exactly.
+5. **Emit a module-scope layout banner.** It prints during Mocha''s file load, so
+   `mocha --dry-run` and every CI log record which layout each phase resolved.
+6. **Launcher loops the kinds and wraps EACH kind in `withPhaseGroupRetries`**, not the
+   whole sweep — a flake in the second kind must not re-run an already-green first kind.
+   Do not double-wrap at the call site.
+
+### Kind-specific things you must not get wrong
+
+- `fillStandardFormFields` takes the **display** label (`Logic app (codeful)`), not the
+  short manifest kind (`codeful`).
+- A codeful app has **no** `workflow.json`. Verify it with `deepVerifyWorkspace(...,
+  { appType: ''codeful'' })`, which requires `<wfName>.cs`, `<appName>.csproj`,
+  `Program.cs`, `host.json`, `local.settings.json` and *fails* if a `workflow.json` exists.
+- The codeful launch config is `isCodeless: false` with **no** `preLaunchTask`
+  (`CreateLogicAppVSCodeContents.getDebugConfiguration`). Mirror what the product
+  generates; do not invent a shape.
+- Assert the kind marker: `local.settings.json` `Values.WORKFLOW_CODEFUL_ENABLED === ''true''`
+  for codeful and not-`''true''` for codeless. `hasCodefulWorkflowSetting()` is what routes
+  F5 into the codeful branch, so without this a "passing" codeful run may have silently
+  exercised the codeless path.
+- Codeful **does** produce `<app>/workflow-designtime`: `isLogicAppProject()` accepts it
+  via `hasCodefulSdkReference()`, so `startAllDesignTimeApis()` reaches
+  `ensureDesignTimeDirectory()`. Phase 4.10B already hard-asserts this. Reuse the same
+  freshness-checked design-time gate for both kinds; do not degrade it for codeful.
+
+### Asserting "it failed before the build"
+
+Assert on **build output that only a real build can produce**, and clear it immediately
+before F5 so the check is not vacuous:
+
+- `<app>/lib/codeful` is written only by the `CopyToCodefulFolder` MSBuild target
+  (`src/assets/CodefulProjectTemplate/CodefulProj`, `AfterTargets="Build;Publish"`).
+- `<app>.dll` under `<app>/bin` or `<app>/lib` is emitted only by `dotnet build`/`publish`.
+- Do **not** assert on `obj/` — a C# Dev Kit design-time evaluation legitimately writes it.
+- Treat a locked `bin`/`lib` at clear-time as a hard failure, not a skip: it means a build
+  is already running, which invalidates the premise.

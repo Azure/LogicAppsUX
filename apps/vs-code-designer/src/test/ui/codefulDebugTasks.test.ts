@@ -96,13 +96,54 @@ const SCREENSHOT_DIR = path.join(
 );
 
 interface TaskEvent {
-  phase: 'activate' | 'taskStart' | 'taskEnd' | 'processStart' | 'processEnd' | 'ping' | 'debugStart' | 'debugStarted' | 'debugStartFailed';
+  phase:
+    | 'activate'
+    | 'taskStart'
+    | 'taskEnd'
+    | 'processStart'
+    | 'processEnd'
+    | 'ping'
+    | 'debugStart'
+    | 'debugInvoke'
+    | 'debugStarted'
+    | 'debugStartFailed';
   taskName: string;
   scopeFsPath: string | null;
   processId: number | null;
   exitCode: number | null;
   timestamp: string;
 }
+
+/** Recorder phases that prove F5 got past `resolveDebugConfiguration` and reached `executeTask`. */
+const TASK_ACTIVITY_PHASES = new Set(['taskStart', 'taskEnd', 'processStart', 'processEnd']);
+
+/**
+ * How long `vscode.debug.startDebugging` may sit with neither `debugStarted` nor
+ * `debugStartFailed` following it — and with no task activity at all — before we fail fast
+ * instead of burning the full 12-minute `waitForTaskChain` budget and reporting the
+ * misleading "F5 never reached the codeful task chain".
+ *
+ * ANCHOR — `debugInvoke`, not `debugStart`. The recorder appends `debugInvoke` immediately
+ * after `waitForLogicAppsExtension()` resolves and immediately before it calls
+ * `vscode.debug.startDebugging`, so this window measures the `startDebugging` call and
+ * nothing else. `debugStart` is written when the trigger file is consumed, i.e. BEFORE the
+ * recorder's bounded 360 s command-registration wait, so anchoring there made the real
+ * grace `threshold - registrationLatency`: with a 360 s + 60 s threshold a 355 s
+ * registration left only 65 s of grace and failed working code. Registration latency now
+ * lands entirely before the anchor and cannot squeeze the window.
+ *
+ * BUDGET — 600 s, the documented worst case for the first task event. SKILL.md's Phase 4.10
+ * wire-up checklist (item 9) records that `vscode.tasks.fetchTasks()` activates and awaits
+ * every task-type provider, so the first `taskStart` can arrive 4-10 minutes after
+ * `startDebugging` is called. The `modern` variant is the worst case: `publishCodefulProject`
+ * is skipped by design, so there is genuinely zero task activity until `fetchTasks()`
+ * returns. Anything below 600 s can fail a healthy modern run.
+ *
+ * The `debugStartFailed` early-bail above still covers the registration-timeout case — the
+ * recorder always writes `debugStartFailed` when its 360 s wait expires, and in that case no
+ * `debugInvoke` is ever written, so this guard stays disarmed.
+ */
+const DEBUG_INVOKE_HANG_TIMEOUT_MS = 600_000;
 
 function getWorkspaceDir(envVar: string): string {
   const value = process.env[envVar];
@@ -144,6 +185,32 @@ function normalizeFsPath(value: string | null | undefined): string {
     return '';
   }
   return path.normalize(value).toLowerCase();
+}
+
+/**
+ * Epoch-ms timestamp of the LAST event of `phase`, or undefined when the log has none or
+ * carries an unparseable `timestamp`.
+ *
+ * Uses the event's own `timestamp` rather than the reader's `Date.now()`, so the anchor is
+ * the moment the extension host actually reached that point instead of the moment this
+ * poll happened to notice it. Both clocks are the same machine's system clock, so the two
+ * are directly comparable.
+ *
+ * Returning undefined disarms the hang guard, which is the safe direction on both counts:
+ * a recorded log written by a recorder build that predates the `debugInvoke` phase (or one
+ * where the append failed) must never be able to fail a run, and a real hang is still
+ * caught by `waitForTaskChain`'s own deadline plus the "F5 never reached the codeful task
+ * chain" assertion. Taking the LAST occurrence is deliberate: it is the most recent — and
+ * therefore longest-grace — anchor, so a retried F5 can never shorten the window.
+ */
+function lastEventTimeMs(events: TaskEvent[], phase: TaskEvent['phase']): number | undefined {
+  for (let index = events.length - 1; index >= 0; index--) {
+    if (events[index].phase === phase) {
+      const parsed = Date.parse(events[index].timestamp);
+      return Number.isFinite(parsed) ? parsed : undefined;
+    }
+  }
+  return undefined;
 }
 
 function truncateEventsFile(): void {
@@ -199,6 +266,8 @@ interface WaitResult {
   publishEnded: boolean;
   funcHostStarted: boolean;
   timedOut: boolean;
+  /** `vscode.debug.startDebugging` was dispatched but never settled — see DEBUG_INVOKE_HANG_TIMEOUT_MS. */
+  debugStartHung: boolean;
 }
 
 async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: string, timeoutMs: number): Promise<WaitResult> {
@@ -212,15 +281,42 @@ async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: st
     const funcHostStarted = matchScope.some((e) => e.phase === 'taskStart' && e.taskName === 'func: host start');
     const expectedChainEnded = variant === 'legacy' ? buildEnded && publishEnded && funcHostStarted : buildEnded && funcHostStarted;
     if (expectedChainEnded) {
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: false };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: false, debugStartHung: false };
     }
     if (events.some((e) => e.phase === 'debugStartFailed')) {
       console.log('[codefulDebugTasks] waitForTaskChain: debugStartFailed event observed, bailing out');
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: true };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: false };
+    }
+
+    // Hang guard: the recorder logged `debugInvoke` (it is inside
+    // `vscode.debug.startDebugging`) but nothing ever came back — no `debugStarted`, no
+    // `debugStartFailed`, and not a single task event from any scope. A healthy run
+    // produces task activity (clean/build) well within the documented worst-case
+    // `fetchTasks()` window, so this combination only happens when the F5 pre-debug path
+    // is blocked on a modal. Fail fast instead of waiting out the full timeout.
+    //
+    // Every clause is a disarming clause: no `debugInvoke` (older recorder artifact, or the
+    // append failed) disarms it, any `debugStarted` disarms it, and a single task event
+    // from any scope disarms it permanently.
+    const debugInvokeAt = lastEventTimeMs(events, 'debugInvoke');
+    const debugStartSettled = events.some((e) => e.phase === 'debugStarted' || e.phase === 'debugStartFailed');
+    const sawTaskActivity = events.some((e) => TASK_ACTIVITY_PHASES.has(e.phase));
+    if (
+      debugInvokeAt !== undefined &&
+      !debugStartSettled &&
+      !sawTaskActivity &&
+      Date.now() - debugInvokeAt >= DEBUG_INVOKE_HANG_TIMEOUT_MS
+    ) {
+      console.log(
+        `[codefulDebugTasks] waitForTaskChain: vscode.debug.startDebugging invoked ${Math.round(
+          (Date.now() - debugInvokeAt) / 1000
+        )}s ago with no debugStarted/debugStartFailed and no task activity — treating it as hung`
+      );
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: true };
     }
     await sleep(1000);
   }
-  return { buildEnded: false, publishEnded: false, funcHostStarted: false, timedOut: true };
+  return { buildEnded: false, publishEnded: false, funcHostStarted: false, timedOut: true, debugStartHung: false };
 }
 
 async function waitForDesignTimeEvidence(workspaceScope: string, notBeforeMs: number, timeoutMs = 180_000): Promise<boolean> {
@@ -427,8 +523,34 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     // codeful project. Allow up to 12 minutes total to absorb
     // LA extension cold-start while still failing fast if the chain
     // never starts.
+    //
+    // Interaction with the hang guard: the guard fires 600 s after `debugInvoke`, which the
+    // recorder writes `R` seconds into this wait (`R` = command-registration latency,
+    // 0-360 s). So the guard can only report inside this budget when `R <= 120 s`. Beyond
+    // that the 720 s deadline lands first and a real hang still fails the run — just via the
+    // generic "F5 never reached the codeful task chain" assertion below rather than with the
+    // precise diagnosis. That is the correct trade: the guard is a diagnostic accelerator,
+    // and buying earlier reporting by shrinking its window is exactly what made it fail
+    // healthy runs.
     const wait = await waitForTaskChain(variant, workspaceDir, 720_000);
     console.log(`[codefulDebugTasks] waitForTaskChain: ${JSON.stringify(wait)}`);
+
+    // F5 was dispatched but `vscode.debug.startDebugging` never settled and no task
+    // ever ran. Report the actual cause here rather than letting the run fall through
+    // to the generic "F5 never reached the codeful task chain" failure 13 minutes later.
+    if (wait.debugStartHung) {
+      await captureScreenshot(driver, `${variant}-debug-start-hung`, SCREENSHOT_DIR);
+      assert.fail(
+        [
+          `[${variant}] vscode.debug.startDebugging never settled: the recorder logged 'debugInvoke' (the instant before it called`,
+          `startDebugging) but neither 'debugStarted' nor 'debugStartFailed' arrived within ${DEBUG_INVOKE_HANG_TIMEOUT_MS}ms, and no`,
+          'task event was captured at all. The likely cause is a blocking modal in the F5 pre-debug path — historically the',
+          '`Failed to verify "AzureWebJobsStorage" connection` / `Debug anyway` warning from validatePreDebug when Azurite is not',
+          'ready — which cannot be answered in a headless session, so resolveDebugConfiguration awaits forever.',
+          `Screenshot: ${SCREENSHOT_DIR}`,
+        ].join(' ')
+      );
+    }
 
     // Give func host start a chance to spawn so we capture its taskStart event.
     if (!wait.funcHostStarted) {

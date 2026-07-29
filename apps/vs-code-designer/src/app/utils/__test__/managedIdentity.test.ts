@@ -34,10 +34,15 @@ vi.mock('../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock('fs-extra', () => ({
+  pathExists: vi.fn(),
+}));
+
 vi.mock('../../../localize', () => ({
   localize: (_key: string, defaultValue: string) => defaultValue,
 }));
 
+import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import { isManagedIdentityAuthEnabled, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
@@ -69,6 +74,7 @@ describe('managedIdentity', () => {
     mockContext = { telemetry: { properties: {} }, errorHandling: {} } as any;
 
     (vscode.workspace as any).workspaceFolders = undefined;
+    (fse.pathExists as Mock).mockResolvedValue(false);
   });
 
   describe('promptManagedIdentityAuth', () => {
@@ -207,6 +213,46 @@ describe('managedIdentity', () => {
       expect(appendLog).toHaveBeenCalledWith(expect.stringContaining('Failed to update local.settings.json in /project1'));
       expect(appendLog).toHaveBeenCalledWith(expect.stringContaining('Permission denied'));
       expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(mockContext, '/project2', {
+        WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+      });
+    });
+
+    it('also updates the design-time directory when it exists', async () => {
+      globalStateGet.mockReturnValue(false);
+      (isManagedIdentityAuthEnabled as Mock).mockReturnValue(false);
+      (vscode.window.showInformationMessage as Mock).mockResolvedValue('Enable');
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/project1' } }];
+      (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/project1');
+      (fse.pathExists as Mock).mockResolvedValue(true);
+
+      await promptManagedIdentityAuth(mockContext);
+
+      expect(addOrUpdateLocalAppSettings).toHaveBeenCalledTimes(2);
+      // Root local.settings.json
+      expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(mockContext, '/project1', {
+        WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+      });
+      // Design-time local.settings.json
+      expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(
+        mockContext,
+        expect.stringContaining('workflow-designtime'),
+        { WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity' },
+        true
+      );
+    });
+
+    it('skips design-time directory update when it does not exist', async () => {
+      globalStateGet.mockReturnValue(false);
+      (isManagedIdentityAuthEnabled as Mock).mockReturnValue(false);
+      (vscode.window.showInformationMessage as Mock).mockResolvedValue('Enable');
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/project1' } }];
+      (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/project1');
+      (fse.pathExists as Mock).mockResolvedValue(false);
+
+      await promptManagedIdentityAuth(mockContext);
+
+      expect(addOrUpdateLocalAppSettings).toHaveBeenCalledTimes(1);
+      expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(mockContext, '/project1', {
         WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       });
     });
