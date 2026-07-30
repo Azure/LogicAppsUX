@@ -19,6 +19,7 @@ import {
   guid,
   removeIdTag,
   WORKFLOW_NODE_TYPES,
+  DEFAULT_NOTE_SIZE,
   type WorkflowNodeType,
 } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
@@ -33,7 +34,7 @@ import { clearPanel, expandDiscoveryPanel, setNodeSelection } from '../core/stat
 import { useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
+import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useIsDarkMode, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';

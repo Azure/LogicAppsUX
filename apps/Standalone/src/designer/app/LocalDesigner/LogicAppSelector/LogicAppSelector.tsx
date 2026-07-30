@@ -17,6 +17,7 @@ const fileOptions = [
   // { key: 'straightLine.json', text: 'Straight Line' },
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
   { key: 'UnicodeKeys.json', text: 'Unicode Keys' },
+  { key: 'NotesInMetadata.json', text: 'Notes In Metadata' },
 
   // Agent
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },

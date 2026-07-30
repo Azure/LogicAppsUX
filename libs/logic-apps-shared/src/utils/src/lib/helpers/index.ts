@@ -10,6 +10,7 @@ export * from './hooks';
 export * from './http';
 export * from './logicapps';
 export * from './navigator';
+export * from './notes';
 export * from './operations';
 export * from './recurrence';
 export * from './run';
