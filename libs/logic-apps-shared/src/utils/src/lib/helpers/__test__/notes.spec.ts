@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DEFAULT_NOTE_COLOR, DEFAULT_NOTE_SIZE, sanitizeNotes } from '../notes';
+import { DEFAULT_NOTE_COLOR, DEFAULT_NOTE_SIZE, mergeDesignerNotes, sanitizeNotes } from '../notes';
 
 describe('lib/helpers/notes', () => {
   describe('sanitizeNotes', () => {
@@ -68,6 +68,43 @@ describe('lib/helpers/notes', () => {
         width: DEFAULT_NOTE_SIZE.width,
         height: DEFAULT_NOTE_SIZE.height,
       });
+    });
+  });
+
+  describe('mergeDesignerNotes', () => {
+    const designerNote = {
+      content: 'Real note',
+      color: DEFAULT_NOTE_COLOR,
+      metadata: { position: { x: 1, y: 2 }, width: 10, height: 20 },
+    };
+
+    // https://github.com/Azure/LogicAppsUX/issues/9466 - saving must not delete metadata the
+    // designer never owned.
+    it('preserves foreign entries that sanitizeNotes drops', () => {
+      const merged = mergeDesignerNotes(
+        {
+          purpose: 'Poll Microsoft Entra ID Protection risk detections.',
+          owner: { team: 'identity' },
+          note1: { content: 'Stale content' },
+        },
+        { note1: designerNote }
+      );
+
+      expect(merged).toEqual({
+        purpose: 'Poll Microsoft Entra ID Protection risk detections.',
+        owner: { team: 'identity' },
+        note1: designerNote,
+      });
+    });
+
+    it('drops designer notes that are no longer present', () => {
+      const merged = mergeDesignerNotes({ purpose: 'keep me', note1: { content: 'Deleted note' } }, {});
+      expect(merged).toEqual({ purpose: 'keep me' });
+    });
+
+    it('handles missing or non-object existing notes', () => {
+      expect(mergeDesignerNotes(undefined, { note1: designerNote })).toEqual({ note1: designerNote });
+      expect(mergeDesignerNotes('nope', {})).toEqual({});
     });
   });
 });

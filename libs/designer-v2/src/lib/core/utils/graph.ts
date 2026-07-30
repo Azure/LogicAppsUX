@@ -10,7 +10,6 @@ import {
   WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
   getRecordEntry,
-  DEFAULT_NOTE_SIZE as SHARED_DEFAULT_NOTE_SIZE,
 } from '@microsoft/logic-apps-shared';
 import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
@@ -42,8 +41,6 @@ export const DEFAULT_NODE_SIZE = {
   width: 200,
   height: 40,
 };
-
-export const DEFAULT_NOTE_SIZE = SHARED_DEFAULT_NOTE_SIZE;
 
 // Creating generic layout nodes and edges below
 

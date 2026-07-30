@@ -13,6 +13,10 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 const toFiniteNumber = (value: unknown, fallback: number): number =>
   typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 
+// A note always serializes with a string `content`; anything else is foreign metadata.
+const isNoteLike = (value: unknown): value is Record<string, unknown> & { content: string } =>
+  isPlainObject(value) && typeof value['content'] === 'string';
+
 /**
  * Normalizes an untrusted `notes` record into designer notes.
  *
@@ -28,8 +32,7 @@ export const sanitizeNotes = (notes: unknown): Record<string, Note> => {
 
   const sanitized: Record<string, Note> = {};
   for (const [id, value] of Object.entries(notes)) {
-    // A note always serializes with a string `content`; anything else is foreign metadata.
-    if (!isPlainObject(value) || typeof value['content'] !== 'string') {
+    if (!isNoteLike(value)) {
       continue;
     }
 
@@ -54,4 +57,26 @@ export const sanitizeNotes = (notes: unknown): Record<string, Note> => {
   }
 
   return sanitized;
+};
+
+/**
+ * Merges designer notes back into an untrusted `notes` record for persistence.
+ *
+ * `sanitizeNotes` drops entries that aren't well-formed notes, so writing the designer's notes
+ * straight back over `definition.metadata.notes` would silently delete that foreign content.
+ * Foreign entries are carried over untouched, while designer notes the user deleted are dropped
+ * because they were well-formed on load and are absent from `designerNotes`.
+ */
+export const mergeDesignerNotes = (existingNotes: unknown, designerNotes: Record<string, Note>): Record<string, unknown> => {
+  const merged: Record<string, unknown> = {};
+
+  if (isPlainObject(existingNotes)) {
+    for (const [id, value] of Object.entries(existingNotes)) {
+      if (!isNoteLike(value)) {
+        merged[id] = value;
+      }
+    }
+  }
+
+  return { ...merged, ...designerNotes };
 };

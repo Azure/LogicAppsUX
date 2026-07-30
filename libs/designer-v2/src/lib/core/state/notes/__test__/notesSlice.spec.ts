@@ -57,6 +57,18 @@ describe('notesSlice', () => {
       expect(state.notes['missing']).toBeUndefined();
     });
 
+    it('does not mark the workflow dirty when the note is unknown', () => {
+      const state = reducer(stateWithNote(), updateNote({ id: 'missing', note: { metadata: { position: { x: 1, y: 2 } } } }));
+      expect(state.isDirty).toBe(false);
+      expect(state.changeCount).toBe(0);
+    });
+
+    it('marks the workflow dirty when the note exists', () => {
+      const state = reducer(stateWithNote(), updateNote({ id: 'note1', note: { content: 'Updated' } }));
+      expect(state.isDirty).toBe(true);
+      expect(state.changeCount).toBe(1);
+    });
+
     it('does not throw when the stored note has no metadata', () => {
       const state: NotesState = { ...initialState, notes: { note1: { content: 'x', color: '#FFF' } as Note } };
       expect(() => reducer(state, updateNote({ id: 'note1', note: { metadata: { position: { x: 1, y: 2 } } } }))).not.toThrow();

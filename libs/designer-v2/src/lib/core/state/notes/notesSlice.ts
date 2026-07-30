@@ -18,6 +18,11 @@ export const initialState: NotesState = {
   changeCount: 0,
 };
 
+const markDirty = (state: NotesState) => {
+  state.isDirty = true;
+  state.changeCount += 1;
+};
+
 const notesSlice = createSlice({
   name: 'notes',
   initialState,
@@ -41,6 +46,8 @@ const notesSlice = createSlice({
     updateNote: (state, action: PayloadAction<{ id: string; note: DeepPartial<Note> }>) => {
       const note = state.notes[action.payload.id];
       if (!note) {
+        // React Flow can emit measurement events for nodes that are no longer in state; ignoring
+        // them here keeps the workflow from being marked dirty by a no-op.
         return;
       }
       if (action.payload.note?.color) {
@@ -68,6 +75,7 @@ const notesSlice = createSlice({
           note.metadata.height = action.payload.note.metadata.height;
         }
       }
+      markDirty(state);
     },
     deleteNote: (state, action: PayloadAction<string>) => {
       delete state.notes[action.payload];
@@ -79,10 +87,7 @@ const notesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.notes);
-    builder.addMatcher(isAnyOf(addNote, updateNote, deleteNote), (state) => {
-      state.isDirty = true;
-      state.changeCount += 1;
-    });
+    builder.addMatcher(isAnyOf(addNote, deleteNote), markDirty);
   },
 });
 
