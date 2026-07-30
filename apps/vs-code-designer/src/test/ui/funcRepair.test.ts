@@ -33,19 +33,28 @@
  *   2. Backs up the func executable bytes and overwrites them IN PLACE with a short garbage
  *      line. The file still exists and keeps its `.exe` extension / execute bit, but no
  *      longer executes — the real "provisioned but unrunnable" state, not a simulation.
- *   3. Anchors the debug context on the Logic App project (see `anchorDebugContextOnWorkflow`)
- *      and presses F5, which routes through `pickFuncProcessInternal` -> `preDebugValidate`
- *      -> `validateFuncCoreToolsInstalled`.
- *   4. Gates on evidence that the product actually reacted to F5 (see
- *      `waitForPreDebugGateEvidence`) BEFORE settling in to wait for the repair, so
- *      "the harness never triggered the product" can never masquerade as
- *      "the product failed to repair".
+ *   3. Starts debugging through the recorder extension's marker-file trigger (see
+ *      `triggerDebugViaRecorder`), which routes through `pickFuncProcessInternal` ->
+ *      `preDebugValidate` -> `validateFuncCoreToolsInstalled`.
+ *   4. Gates on evidence that the product actually reacted BEFORE settling in to wait for the
+ *      repair, so "the harness never triggered the product" can never masquerade as "the
+ *      product failed to repair".
  *   5. Asserts `func --version` runs again (PRIMARY, disk-level — modeled on
  *      `waitForBundleRepaired` in bundleRepair.test.ts) and that the blocking modal never
  *      appeared. The "no suppressed error toast" check is a documented SOFT check.
  *   6. Restores the original bytes in `afterEach` if the repair did not already replace them,
  *      so a mid-test failure cannot poison the shared runtime-dependency cache for the rest
  *      of the shard.
+ *
+ * WHY NOT F5 FROM THE COMMAND PALETTE: `startDebugging()` resolves the launch configuration
+ * from whatever editor happens to be active, and a headless CI session does not settle that
+ * reliably. Run 30549543233 debugged with an auto-opened markdown preview focused; run
+ * 30554041131 debugged with `settings.json` focused even after closing all editors and opening
+ * `workflow.json` via Quick Open three times. Both produced the same useless outcome: VS Code
+ * never resolved the Logic App folder's launch.json, `pickProcess` never ran, and the test
+ * timed out blaming the product. The recorder extension calls
+ * `vscode.debug.startDebugging(folder, configName)` with an EXPLICIT folder, so the trigger has
+ * no dependency on focus at all. See SKILL.md rule 18.
  *
  * Wiring: scenario `p414-funcrepair` in run-e2e.ts (also runnable in isolation via
  * E2E_MODE=funcrepaironly). Requires a workspace manifest from a prior Phase 4.1a
@@ -65,35 +74,39 @@ import * as fs from 'fs';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
-import { EditorView, VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
+import { VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
 import { waitForExtensionReady } from './createWorkspaceShared';
 import {
   getFuncCoreToolsCandidatePaths,
   getFuncCoreToolsPath,
   getManagedFuncCoreToolsDir,
-  openFileInEditor,
   openWorkspaceFileInSession,
   waitForDependencyValidation,
 } from './designerHelpers';
 import { captureScreenshot, sleep } from './helpers';
-import { startDebugging, stopDebugging } from './runHelpers';
+import { stopDebugging } from './runHelpers';
 import { funcVersionRuns, isExecutableFile } from './runtimeBinaryCheck';
 import { loadWorkspaceManifest } from './workspaceManifest';
 
 const LOG_PREFIX = '[funcRepair]';
 
 /**
- * Deliberately larger than the sum of the sub-timeouts below (240s extension-ready + 300s
- * baseline + ~95s worst-case anchor + 60s liveness gate + 300s repair) so that a stall always
- * fails with the specific diagnostic from the waiter that stalled — a bare Mocha timeout would
- * throw that evidence away. It is a ceiling, not a budget: a healthy run is ~5-8 minutes,
- * dominated by the two func downloads (initial install + repair).
+ * Deliberately larger than the sum of the sub-timeouts below (180s extension-ready + 240s
+ * baseline + 60s recorder + 60s dispatch + 60s liveness gate + 300s repair = 900s) so that a
+ * stall always fails with the specific diagnostic from the waiter that stalled — a bare Mocha
+ * timeout would throw that evidence away.
+ *
+ * BUDGET: the `func-selfheal` job is `timeout-minutes: 35` with `LA_E2E_SCENARIO_RETRIES: '1'`,
+ * so it must fit `p41a-fixtures` plus up to two attempts of this scenario. The 900s figure is a
+ * worst-case ceiling that only binds on an already-failing attempt; a healthy run is ~5-8
+ * minutes, dominated by the two Func Core Tools downloads (initial managed install + repair).
+ * Do not raise the sub-timeouts without re-checking that arithmetic.
  */
-const TEST_TIMEOUT = 1_080_000;
-const EXTENSION_READY_TIMEOUT_MS = 240_000;
+const TEST_TIMEOUT = 960_000;
+const EXTENSION_READY_TIMEOUT_MS = 180_000;
 
 /** How long we wait for the initial managed install to produce a runnable func. */
-const BASELINE_TIMEOUT_MS = 300_000;
+const BASELINE_TIMEOUT_MS = 240_000;
 
 /**
  * How long we wait for the pre-debug gate to reinstall the managed binaries. The repair
@@ -103,16 +116,27 @@ const BASELINE_TIMEOUT_MS = 300_000;
 const REPAIR_TIMEOUT_MS = 300_000;
 
 /**
- * How long we allow for the product to visibly react to F5 before declaring that the harness,
- * not the product, is at fault. Sized off the slowest pre-gate step: `activateAzurite` starts
- * the emulator and `waitForAzuriteReady` polls it, and the repair's own first download line
- * only lands after a version lookup over the network. 60s is comfortably past both on a cold
- * runner while still failing ~5x faster than the repair wait it protects.
+ * How long the recorder extension has to prove it is alive (an `activate` or `ping` event).
+ * It activates on `onStartupFinished`, and by the time we get here the Logic Apps extension has
+ * already activated and installed its dependencies, so this is only ever a fast sanity check.
+ */
+const RECORDER_READY_TIMEOUT_MS = 60_000;
+
+/**
+ * How long the recorder has to consume the `start-debug` marker and reach
+ * `vscode.debug.startDebugging`. The marker is polled every 500ms and the recorder's own
+ * command-registration wait is already satisfied, so a healthy run takes a couple of seconds.
+ */
+const DEBUG_DISPATCH_TIMEOUT_MS = 60_000;
+
+/**
+ * How long we allow for the product to visibly react to the debug start before declaring that
+ * the harness, not the product, is at fault. Sized off the slowest pre-gate step:
+ * `activateAzurite` starts the emulator and `waitForAzuriteReady` polls it, and the repair's own
+ * first download line only lands after a version lookup over the network. 60s is comfortably
+ * past both on a cold runner while still failing ~5x faster than the repair wait it protects.
  */
 const GATE_EVIDENCE_TIMEOUT_MS = 60_000;
-
-/** How long the workflow.json editor has to become the active editor before F5. */
-const ANCHOR_TIMEOUT_MS = 60_000;
 
 /** Bound on a single `func --version` probe. Generous because func can JIT slowly on first run. */
 const FUNC_PROBE_TIMEOUT_MS = 60_000;
@@ -135,7 +159,7 @@ const BLOCKING_PROMPT_TEXT = 'You must have the Azure Functions Core Tools insta
 const SUPPRESSED_ERROR_FRAGMENTS = ['Error downloading the', 'Checksum verification failed', 'could not be installed at'];
 
 /**
- * Output-channel lines that only the F5 -> `pickFuncProcessInternal` path can produce.
+ * Output-channel lines that only the debug-start -> `pickFuncProcessInternal` path can produce.
  *
  * Ordered by how far into that path they prove we got. Everything here is written
  * unconditionally by its own step (none of them are gated on `suppressUi`, which only guards
@@ -162,11 +186,23 @@ const GATE_EVIDENCE_MARKERS = [
 
 /**
  * Azurite blob port. `activateAzurite` starts the emulator before the gate runs, so a listener
- * appearing here after F5 is independent proof that `pickFuncProcessInternal` executed — no
- * log parsing involved. Only counted when nothing was listening before F5 (see
+ * appearing here after the debug start is independent proof that `pickFuncProcessInternal`
+ * executed — no log parsing involved. Only counted when nothing was listening beforehand (see
  * `isPortListening`), otherwise the signal would be vacuous.
  */
 const AZURITE_BLOB_PORT = 10000;
+
+/**
+ * JSONL written by the codeful task recorder extension (`codefulTaskRecorderExtension/main.js`),
+ * and the directory it polls for marker files. Both are configured per attempt by
+ * `configureCodefulRecorderEnvironment()` in run-e2e.ts, which is wired to this scenario by
+ * `recorder: true`. The fallbacks mirror the recorder's own so a hand-run still lines up.
+ */
+const EVENTS_FILE =
+  process.env.LA_E2E_TASK_EVENTS_JSONL ||
+  process.env.CODEFUL_TASK_EVENTS_JSONL ||
+  path.join(os.tmpdir(), 'la-e2e-test', 'codeful-events.jsonl');
+const TRIGGER_DIR = process.env.LA_E2E_TRIGGER_DIR || path.join(os.tmpdir(), 'la-e2e-test', 'triggers');
 
 /**
  * Bytes written over the func executable.
@@ -473,96 +509,148 @@ async function isPortListening(port: number, timeoutMs = 1000): Promise<boolean>
 }
 
 /**
- * Gives F5 a Logic App debug context.
- *
- * WHY THIS EXISTS: the first CI run of this scenario failed with a 300s silent timeout whose
- * cause was entirely in the harness. The runner auto-opens a markdown preview
- * ("Preview WBD-hybrid announcement.md - ... (Workspace)") and that webview still held focus at
- * F5 time. `startDebugging` -> `focusEditor` focuses the *active* editor group, so
- * `Debug: Start Debugging` ran with a non-project preview active; VS Code never resolved the
- * Logic App folder's `.vscode/launch.json`, `${command:azureLogicAppsStandard.pickProcess}` was
- * never evaluated, and `preDebugValidate` never ran. `startDebugging` does not throw in that
- * situation, so the test sailed on and blamed the product for a repair that was never asked for.
- * The identical auto-preview hazard was fixed for Phase 4.1 in commit d866b336
- * ("close auto-opened editors before workspace conversion prompt poll").
- *
- * Fix: clear stray editors per SKILL.md rule 6 (defaultContent -> closeAllEditors -> settle),
- * then make the project's own `workflow.json` the active editor. `workflow.json` has no
- * `customEditors` contribution in package.json — the designer is only ever opened by explicit
- * command — so this yields a plain text editor inside the Logic App folder and cannot
- * reintroduce the "focus is inside a webview iframe" problem it is here to solve.
- *
- * Note on `openResources`: the task description suggested `VSBrowser.instance.openResources`,
- * but this suite's own hard-won knowledge is that it goes through `code -r` CLI IPC and is a
- * silent no-op on headless Linux CI (designerHelpers.ts:499, designerActions.test.ts:1807-1841
- * keeps it only as a fallback behind a no-op detector). `openFileInEditor` already implements
- * the Quick Open path that works there, with retries and active-tab verification, so we reuse
- * it. It logs a warning instead of throwing when it cannot confirm the tab, hence the hard
- * assertion below.
+ * One line of the recorder extension's JSONL. Only the debug-lifecycle phases matter here; the
+ * task phases belong to Phase 4.10 and are ignored.
  */
-async function anchorDebugContextOnWorkflow(workbench: Workbench, driver: WebDriver, workflowJsonPath: string): Promise<void> {
-  assert.ok(fs.existsSync(workflowJsonPath), `Cannot anchor the debug context: ${workflowJsonPath} does not exist`);
+interface RecorderEvent {
+  phase: string;
+  taskName?: string;
+  scopeFsPath?: string | null;
+  timestamp?: string;
+}
 
-  const deadline = Date.now() + ANCHOR_TIMEOUT_MS;
-  let lastTitle = '(never read)';
-  let lastTab = '(none)';
-
-  // Two outer attempts, because clearing focus and taking focus are separate failures: a toast
-  // or a re-opened preview can steal the editor back between the two, and re-running the whole
-  // clear-then-open sequence is the only thing that recovers from that.
-  for (let attempt = 1; attempt <= 2 && Date.now() < deadline; attempt++) {
-    await driver
-      .switchTo()
-      .defaultContent()
-      .catch(() => undefined);
-    await new EditorView().closeAllEditors().catch(() => undefined);
-    await sleep(1000);
-
-    console.log(`${LOG_PREFIX} Anchoring debug context on ${workflowJsonPath} (attempt ${attempt}/2)`);
-    await openFileInEditor(workbench, driver, workflowJsonPath);
-
-    // Poll rather than trust openFileInEditor: the window title is what actually tells us which
-    // editor VS Code considers active, and it is the exact signal whose value in the failing run
-    // ("Preview WBD-hybrid announcement.md - ...") identified the bug.
-    const attemptDeadline = Math.min(deadline, Date.now() + ANCHOR_TIMEOUT_MS / 2);
-    while (Date.now() < attemptDeadline) {
-      lastTitle = await driver.getTitle().catch(() => '(title unavailable)');
-      lastTab = await new EditorView()
-        .getActiveTab()
-        .then((tab) => (tab ? tab.getTitle() : '(none)'))
-        .catch(() => '(unreadable)');
-      if (lastTitle.includes('workflow.json') && lastTab.includes('workflow.json')) {
-        console.log(`${LOG_PREFIX} Debug context anchored — title "${lastTitle}", active tab "${lastTab}"`);
-        return;
-      }
-      await sleep(2000);
+/** Reads the recorder's JSONL, skipping partially-flushed trailing lines. */
+function readRecorderEvents(): RecorderEvent[] {
+  try {
+    if (!fs.existsSync(EVENTS_FILE)) {
+      return [];
     }
-    console.log(`${LOG_PREFIX} Anchor attempt ${attempt} did not stick — title "${lastTitle}", active tab "${lastTab}"`);
+    return fs
+      .readFileSync(EVENTS_FILE, 'utf8')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .flatMap((line) => {
+        try {
+          return [JSON.parse(line) as RecorderEvent];
+        } catch {
+          // A line the recorder was still appending when we read. It will parse next poll.
+          return [];
+        }
+      });
+  } catch {
+    return [];
   }
+}
 
-  assert.fail(
-    `Could not anchor the debug context on workflow.json within ${ANCHOR_TIMEOUT_MS}ms. Window title: "${lastTitle}". Active tab: "${lastTab}". Expected both to reference workflow.json (${workflowJsonPath}). Pressing F5 from here would not resolve the Logic App launch configuration, so the pre-debug gate under test would never run.`
-  );
+/** Drops a marker file for the recorder's 500ms trigger poll to consume. */
+function dropRecorderTrigger(name: 'start-debug' | 'stop-debug' | 'ping'): void {
+  fs.mkdirSync(TRIGGER_DIR, { recursive: true });
+  fs.writeFileSync(path.join(TRIGGER_DIR, name), '');
+}
+
+/** Compact JSONL dump for failure messages. */
+function describeRecorderEvents(events: RecorderEvent[]): string {
+  if (events.length === 0) {
+    return '(no recorder events)';
+  }
+  return events.map((event) => `${event.phase}${event.taskName ? `:${event.taskName}` : ''}`).join(', ');
 }
 
 /**
- * Proves that F5 actually reached the product before we commit to the long repair wait.
+ * Waits until the recorder extension proves it is alive.
+ *
+ * It writes an `activate` line on `onStartupFinished`, so in practice this returns on the first
+ * poll; the `ping` marker is a second chance in case activation raced the events-file
+ * truncation that run-e2e.ts performs per attempt.
+ */
+async function waitForRecorderReady(timeoutMs: number): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (readRecorderEvents().some((event) => event.phase === 'activate' || event.phase === 'ping')) {
+      return true;
+    }
+    try {
+      dropRecorderTrigger('ping');
+    } catch {
+      // Trigger dir may not be writable yet — retried on the next poll.
+    }
+    await sleep(2000);
+  }
+  return false;
+}
+
+/**
+ * Starts debugging the Logic App and confirms the request actually reached
+ * `vscode.debug.startDebugging`.
+ *
+ * WHY NOT THE COMMAND PALETTE: `startDebugging()` in runHelpers resolves whichever launch
+ * configuration the ACTIVE EDITOR belongs to, and it does not throw when that resolves to
+ * nothing. Two consecutive CI runs proved that unfixable from the test side — the first had an
+ * auto-opened markdown preview focused, the second had `settings.json` focused even after
+ * closing all editors and re-opening `workflow.json` through Quick Open three times. Both
+ * silently skipped the product entirely. The recorder reads `.vscode/launch.json` off disk and
+ * calls `vscode.debug.startDebugging(folder, configName)` with an EXPLICIT folder, so the
+ * trigger is independent of focus, of the Quick Open file index, and of the palette.
+ *
+ * The product path is unchanged: `startDebugging` runs the same resolution pipeline as F5,
+ * including `${command:azureLogicAppsStandard.pickProcess}` substitution, which is what invokes
+ * `pickFuncProcessInternal -> preDebugValidate -> validateFuncCoreToolsInstalled`.
+ *
+ * Returns once the recorder has logged `debugInvoke` (it is INSIDE `startDebugging` at that
+ * point). We deliberately do NOT wait for `debugStarted` here: for the codeless `attach`
+ * configuration, `startDebugging` only resolves after `pickProcess` has finished — which
+ * includes the repair we are here to measure — so waiting for it would collapse the fast-fail
+ * gate back into the slow one.
+ */
+async function triggerDebugViaRecorder(timeoutMs: number): Promise<{ dispatched: boolean; reason: string; events: RecorderEvent[] }> {
+  dropRecorderTrigger('start-debug');
+  console.log(`${LOG_PREFIX} Dropped start-debug marker in ${TRIGGER_DIR}`);
+
+  const deadline = Date.now() + timeoutMs;
+  let events: RecorderEvent[] = [];
+  while (Date.now() < deadline) {
+    events = readRecorderEvents();
+    if (events.some((event) => event.phase === 'debugStartFailed')) {
+      return { dispatched: false, reason: 'the recorder logged debugStartFailed', events };
+    }
+    const invoked = events.find((event) => event.phase === 'debugInvoke');
+    if (invoked) {
+      return {
+        dispatched: true,
+        reason: `the recorder logged debugInvoke (config "${invoked.taskName ?? ''}" in ${invoked.scopeFsPath ?? '?'})`,
+        events,
+      };
+    }
+    if (events.some((event) => event.phase === 'debugStarted')) {
+      return { dispatched: true, reason: 'the recorder logged debugStarted', events };
+    }
+    await sleep(1000);
+  }
+  return { dispatched: false, reason: `no debugInvoke within ${timeoutMs}ms`, events };
+}
+
+/**
+ * Proves that the debug start actually reached the product before we commit to the long repair
+ * wait.
  *
  * WHY THIS EXISTS: "repair absent" and "modal absent" together mean the gate never ran, but the
- * previous shape of this test could only discover that by burning the full 300s repair timeout
+ * original shape of this test could only discover that by burning the full 300s repair timeout
  * and then reporting it as a repair failure. A wrong diagnosis is worse than a slow one, so
  * this gate separates "the product failed to repair" from "the harness never triggered the
- * product".
+ * product". `triggerDebugViaRecorder` proves the REQUEST was dispatched; this proves the
+ * extension actually started executing it.
  *
- * What it keys off, in order of directness — all of them are things ONLY the F5 path produces,
- * and all of them are watermarked or pre-checked so they cannot match pre-F5 state:
+ * What it keys off, in order of directness — all of them are things ONLY the debug path
+ * produces, and all of them are watermarked or pre-checked so they cannot match earlier state:
  *   1. New output-channel lines matching {@link GATE_EVIDENCE_MARKERS}.
  *   2. Azurite's blob port opening, which `activateAzurite` does as step 1 of
- *      `pickFuncProcessInternal` (only counted if nothing was listening before F5).
+ *      `pickFuncProcessInternal` (only counted if nothing was listening beforehand).
  *   3. The blocking prompt on screen — the gate ran and took the branch this feature exists to
  *      avoid. Reported as "reached" on purpose: `watchForFuncRepair` owns that assertion and
  *      will fail with the right message immediately.
  *   4. The corruption marker disappearing from the binary — the extract already landed.
+ *   5. `debugStartFailed` arriving late — VS Code rejected the configuration after dispatch.
  *
  * Deliberately NOT used: the debug toolbar, debug terminals and the func host port. Those only
  * appear AFTER `preDebugValidate` returns (pickFuncProcess.ts:143-165), i.e. on the far side of
@@ -576,7 +664,7 @@ async function waitForPreDebugGateEvidence(
     funcBinaryPath: string;
     timeoutMs: number;
   }
-): Promise<{ reached: boolean; evidence: string; newOutput: string }> {
+): Promise<{ reached: boolean; evidence: string; newOutput: string; debugStartFailed: boolean }> {
   const deadline = Date.now() + options.timeoutMs;
   const startedAt = Date.now();
   let newOutput = '';
@@ -585,32 +673,51 @@ async function waitForPreDebugGateEvidence(
     newOutput = readOutputSinceWatermark(options.watermark);
     const marker = GATE_EVIDENCE_MARKERS.find((candidate) => newOutput.includes(candidate));
     if (marker) {
-      return { reached: true, evidence: `output channel logged "${marker}" after F5`, newOutput };
+      return { reached: true, evidence: `output channel logged "${marker}" after the debug start`, newOutput, debugStartFailed: false };
     }
 
     if (!options.azuriteWasListening && (await isPortListening(AZURITE_BLOB_PORT))) {
       return {
         reached: true,
-        evidence: `Azurite started listening on port ${AZURITE_BLOB_PORT} after F5 (activateAzurite runs first in pickFuncProcessInternal)`,
+        evidence: `Azurite started listening on port ${AZURITE_BLOB_PORT} (activateAzurite runs first in pickFuncProcessInternal)`,
         newOutput,
+        debugStartFailed: false,
       };
     }
 
     if (!stillHoldsCorruption(options.funcBinaryPath)) {
-      return { reached: true, evidence: 'the corruption marker was already overwritten (repair extract landed)', newOutput };
+      return {
+        reached: true,
+        evidence: 'the corruption marker was already overwritten (repair extract landed)',
+        newOutput,
+        debugStartFailed: false,
+      };
     }
 
     const visibleText = await getVisibleWorkbenchText(driver).catch(() => '');
     if (visibleText.includes(BLOCKING_PROMPT_TEXT)) {
-      return { reached: true, evidence: 'the blocking install prompt appeared (the gate ran and chose the prompt branch)', newOutput };
+      return {
+        reached: true,
+        evidence: 'the blocking install prompt appeared (the gate ran and chose the prompt branch)',
+        newOutput,
+        debugStartFailed: false,
+      };
+    }
+
+    // VS Code rejected the configuration after the recorder dispatched it (e.g. an unsupported
+    // debug type). Harness-side, and worth reporting distinctly from "nothing happened".
+    if (readRecorderEvents().some((event) => event.phase === 'debugStartFailed')) {
+      return { reached: false, evidence: 'none', newOutput, debugStartFailed: true };
     }
 
     const elapsedSeconds = Math.round((Date.now() - startedAt) / 1000);
-    console.log(`${LOG_PREFIX} waiting for evidence that F5 reached the product (${elapsedSeconds}s/${options.timeoutMs / 1000}s)`);
+    console.log(
+      `${LOG_PREFIX} waiting for evidence that the debug start reached the product (${elapsedSeconds}s/${options.timeoutMs / 1000}s)`
+    );
     await sleep(3000);
   }
 
-  return { reached: false, evidence: 'none', newOutput };
+  return { reached: false, evidence: 'none', newOutput, debugStartFailed: false };
 }
 
 /**
@@ -690,6 +797,14 @@ async function watchForFuncRepair(
     if (result.blockingPromptText !== '') {
       break;
     }
+
+    // The same early-bail logic for the harness-side failure: if VS Code gave up on the debug
+    // configuration there will never be a repair, so stop rather than time out silently. The
+    // reason is recorded so the assertion message names the real cause.
+    if (readRecorderEvents().some((event) => event.phase === 'debugStartFailed')) {
+      result.lastReason = 'the recorder logged debugStartFailed — VS Code abandoned the debug session, so the gate never completed';
+      break;
+    }
     await sleep(2000);
   }
 
@@ -716,6 +831,16 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
   afterEach(async function () {
     this.timeout(120_000);
 
+    // Stop the session the same way we started it — the recorder calls
+    // vscode.debug.stopDebugging() directly, which does not depend on the palette or on the
+    // debug toolbar being visible. The palette path stays as a fallback because the recorder
+    // marker is only consumed if the recorder is alive.
+    try {
+      dropRecorderTrigger('stop-debug');
+      await sleep(2000);
+    } catch (error) {
+      console.log(`${LOG_PREFIX} Could not drop the stop-debug marker: ${error}`);
+    }
     try {
       await stopDebugging(driver);
     } catch (error) {
@@ -774,9 +899,12 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     console.log(`${LOG_PREFIX} Step 1: opening ${standard.wsFilePath}`);
     await openWorkspaceFileInSession(workbench, standard.wsFilePath);
     workbench = new Workbench();
-    // Hard gate: F5 goes through the "Start Debugging" command pick, and `startDebugging()`
-    // does NOT throw when the pick is missing — it logs and returns. Without this gate an
-    // early F5 would surface minutes later as "func was never repaired" and blame the product.
+    // Hard gate before anything else touches the binaries: the recorder's own
+    // `waitForLogicAppsExtension()` is bounded at 360s, and if the LA extension were still
+    // activating when we drop the start-debug marker the recorder would sit in that wait while
+    // our (much shorter) dispatch timeout expired. Confirming command registration here means
+    // the recorder's wait is already satisfied when it runs, so a dispatch timeout can only
+    // mean the recorder itself is wedged — a genuinely different failure.
     await waitForExtensionReady(workbench, EXTENSION_READY_TIMEOUT_MS);
     console.log(`${LOG_PREFIX} Logic Apps extension commands are registered`);
     await waitForDependencyValidation(driver);
@@ -832,27 +960,41 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
 
     // ── Step 3: trigger the pre-debug gate ───────────────────────────────────
     // The generated launch.json is `type: coreclr, request: attach,
-    // processId: ${command:azureLogicAppsStandard.pickProcess}`, so F5 runs
-    // pickFuncProcessInternal -> preDebugValidate -> validateFuncCoreToolsInstalled. Nothing
-    // else in the extension calls that gate. That resolution is per-folder, so F5 only reaches
-    // it when the active editor belongs to the Logic App folder — hence the anchor. Done AFTER
-    // the corruption so that nothing between the anchor and F5 can change editor focus.
-    await anchorDebugContextOnWorkflow(workbench, driver, path.join(standard.wfDir, 'workflow.json'));
+    // processId: ${command:azureLogicAppsStandard.pickProcess}` (vscodeLaunch.ts:50-55), so
+    // starting this configuration runs pickFuncProcessInternal -> preDebugValidate ->
+    // validateFuncCoreToolsInstalled. Nothing else in the extension calls that gate.
+    //
+    // The recorder resolves the folder and configuration itself and calls
+    // vscode.debug.startDebugging(folder, name) — no editor focus, no Quick Open, no palette.
+    // See triggerDebugViaRecorder for the two CI runs that proved the palette path unusable.
+    console.log(`${LOG_PREFIX} Step 3: starting the debug session via the recorder extension`);
+    assert.ok(
+      await waitForRecorderReady(RECORDER_READY_TIMEOUT_MS),
+      `The task recorder extension never reported activate/ping within ${RECORDER_READY_TIMEOUT_MS}ms (events file ${EVENTS_FILE}, trigger dir ${TRIGGER_DIR}). Without it there is no way to start debugging deterministically — check that the p414-funcrepair scenario still has recorder: true in run-e2e.ts.`
+    );
 
-    // Take the readings the liveness gate diffs against, as late as possible before F5.
+    // Take the readings the liveness gate diffs against, as late as possible before the trigger.
     const outputWatermark = captureOutputWatermark();
     const azuriteWasListening = await isPortListening(AZURITE_BLOB_PORT);
     console.log(
-      `${LOG_PREFIX} Pre-F5 watermark: log=${outputWatermark?.filePath ?? '(none)'} at ${outputWatermark?.length ?? 0} bytes, azurite:${AZURITE_BLOB_PORT} listening=${azuriteWasListening}`
+      `${LOG_PREFIX} Pre-debug watermark: log=${outputWatermark?.filePath ?? '(none)'} at ${outputWatermark?.length ?? 0} bytes, azurite:${AZURITE_BLOB_PORT} listening=${azuriteWasListening}`
     );
 
-    console.log(`${LOG_PREFIX} Step 3: pressing F5 (Debug: Start Debugging)`);
-    await startDebugging(workbench, driver);
+    const dispatch = await triggerDebugViaRecorder(DEBUG_DISPATCH_TIMEOUT_MS);
+    if (!dispatch.dispatched) {
+      await captureScreenshot(driver, 'funcRepair-debug-not-dispatched', EXPLICIT_SCREENSHOT_DIR);
+      logLatestLogicAppsOutput('debug start was never dispatched');
+      assert.fail(
+        `THE DEBUG START WAS NEVER DISPATCHED — this run proves nothing about the product. ${dispatch.reason}. This is a HARNESS failure, not a repair failure: vscode.debug.startDebugging was never entered, so pickFuncProcessInternal -> preDebugValidate never ran. Check the recorder's own [la-e2e-recorder] lines in the VS Code stdout above — it logs the workspace folders it saw and the launch configuration it chose. Recorder events: ${describeRecorderEvents(dispatch.events)}. Events file: ${EVENTS_FILE}`
+      );
+    }
+    console.log(`${LOG_PREFIX} ✓ Debug start dispatched — ${dispatch.reason}`);
 
-    // ── Step 3b: fail fast if F5 never reached the product ───────────────────
-    // Without this, a harness-side no-op is indistinguishable from a product-side repair
-    // failure until 300s have elapsed — which is exactly how the first CI run of this scenario
-    // wasted a whole shard to discover that F5 had done nothing at all.
+    // ── Step 3b: fail fast if the product never started executing it ─────────
+    // Dispatch proves the REQUEST reached VS Code; this proves the EXTENSION started running.
+    // Without it, a harness-side no-op is indistinguishable from a product-side repair failure
+    // until 300s have elapsed — which is exactly how the first CI run of this scenario wasted a
+    // whole shard to discover that F5 had done nothing at all.
     const gate = await waitForPreDebugGateEvidence(driver, {
       watermark: outputWatermark,
       azuriteWasListening,
@@ -862,12 +1004,14 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     if (!gate.reached) {
       await captureScreenshot(driver, 'funcRepair-gate-never-reached', EXPLICIT_SCREENSHOT_DIR);
       logLatestLogicAppsOutput('pre-debug gate never reached');
-      const title = await driver.getTitle().catch(() => '(title unavailable)');
+      const rejected = gate.debugStartFailed
+        ? 'VS Code REJECTED the debug configuration after it was dispatched (the recorder logged debugStartFailed) — check that the coreclr debug adapter (ms-dotnettools.csdevkit) is installed in the E2E extensions dir.'
+        : 'The debug configuration was dispatched but the extension never started executing it.';
       assert.fail(
-        `THE PRE-DEBUG GATE WAS NEVER REACHED — this run proves nothing about the product. Within ${GATE_EVIDENCE_TIMEOUT_MS}ms of pressing F5 there was no sign that the extension reacted: no new output-channel line from ${JSON.stringify(GATE_EVIDENCE_MARKERS)}, no Azurite listener on port ${AZURITE_BLOB_PORT}, no install prompt, and the func binary still held the corruption marker. This is a HARNESS failure, not a repair failure: F5 most likely did not resolve the Logic App folder's launch configuration (check that the active editor is the project's workflow.json and not an auto-opened markdown preview). Window title at failure: "${title}". New output since F5: ${JSON.stringify(gate.newOutput.slice(-1500))}`
+        `THE PRE-DEBUG GATE WAS NEVER REACHED — this run proves nothing about the product. ${rejected} Within ${GATE_EVIDENCE_TIMEOUT_MS}ms of the debug start there was no sign that the extension reacted: no new output-channel line from ${JSON.stringify(GATE_EVIDENCE_MARKERS)}, no Azurite listener on port ${AZURITE_BLOB_PORT}, no install prompt, and the func binary still held the corruption marker. This is a HARNESS failure, not a repair failure. Recorder events: ${describeRecorderEvents(readRecorderEvents())}. New output since the debug start: ${JSON.stringify(gate.newOutput.slice(-1500))}`
       );
     }
-    console.log(`${LOG_PREFIX} ✓ F5 reached the product — ${gate.evidence}`);
+    console.log(`${LOG_PREFIX} ✓ The debug start reached the product — ${gate.evidence}`);
 
     // ── Step 4: wait for the repair, watching the UI at the same time ────────
     console.log(`${LOG_PREFIX} Step 4: waiting for the managed func to become runnable again`);
@@ -889,7 +1033,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     assert.strictEqual(
       watch.blockingPromptText,
       '',
-      `The blocking "${BLOCKING_PROMPT_TEXT}" prompt appeared after F5. attemptManagedFuncCoreToolsRepair either never ran (is useBinariesDependencies() false? check azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation) or failed to produce a runnable func.`
+      `The blocking "${BLOCKING_PROMPT_TEXT}" prompt appeared after the debug start. attemptManagedFuncCoreToolsRepair either never ran (is useBinariesDependencies() false? check azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation) or failed to produce a runnable func.`
     );
 
     // HARD + PRIMARY: disk-level proof that the corrupted binary was actually replaced.

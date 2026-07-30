@@ -753,6 +753,17 @@ Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
 
 17. **Built-in operations (Request, Response) are always available; connectors (Compose) may not be.** When the design-time API hasn't fully loaded the connector catalog, the search results may not include connector-level operations like Compose. Use only built-in operations (Request, Response) in tests that need reliability. The connector catalog loads asynchronously from the func host, which may not be running in all test scenarios.
 
+18. **Never trigger F5 / debug from the command palette in a test that is not already inside the designer (CRITICAL).** `> Debug: Start Debugging` resolves `launch.json` from the *active editor's* workspace folder. In a multi-root `.code-workspace` opened headlessly on Linux CI, the active editor at F5 time is whatever VS Code decided to restore — a markdown preview, `settings.json`, an empty group — and none of those resolve the Logic App folder. `runHelpers.startDebugging()` **does not throw** in that case: it logs `[debug] Selecting: "Debug: Start Debugging"` and returns normally, so the test then waits out its full timeout on a product path that never executed. Anchoring the active editor first does not fix it — Quick Open depends on VS Code's file index being warm, which it is not right after a workspace open.
+
+    Instead, **install the codeful task recorder extension (§ 16) and trigger the debug session through it**: set `recorder: true` on the scenario in `run-e2e.ts` (which installs the extension into the scenario's ext dir and sets `LA_E2E_TASK_EVENTS_JSONL` / `CODEFUL_TASK_EVENTS_JSONL` / `LA_E2E_TRIGGER_DIR`), then drop a `start-debug` marker into `${LA_E2E_TRIGGER_DIR}` and wait for a `debugInvoke` line in the JSONL. The recorder waits for `azureLogicAppsStandard.debugLogicApp` to register, reads `<folder>/.vscode/launch.json` itself, and calls `vscode.debug.startDebugging(folder, configName)` with an **explicit folder** — zero dependence on editor focus, Quick Open, or the palette. It runs the identical resolution pipeline as F5, including `${command:azureLogicAppsStandard.pickProcess}` substitution, so `pickFuncProcessInternal -> preDebugValidate -> validateFuncCoreToolsInstalled` still executes: only the trigger changes, not the product path under test.
+
+    Failure signatures that mean you have hit this (all from real CI runs of `p414-funcrepair`):
+    - `[depValidation] VS Code title at start: "Preview WBD-hybrid announcement.md - testws_xxx (Workspace) - Visual Studio Code"` — a restored markdown preview held focus (run 30549543233).
+    - `[openFileInEditor] Active tab is "settings.json", expected "workflow.json" — retrying` ×3, then `Warning: could not confirm active tab`, and a window title stuck on a non-project file (run 30554041131). Deterministic, not flaky — it reproduced on both outer attempts and on the scenario retry.
+    - Symptomatically: **no repair AND no blocking modal**, and grepping the whole job log for `pickProcess` / `preDebugValidate` / `launch.json` / `No configuration` returns zero hits from the extension side. Absence of *both* outcomes means the gate never ran.
+
+    Two corollaries: (a) gate the recorder's `debugInvoke` event, **not** `debugStarted` — for a `request: attach` config `startDebugging()` only resolves *after* `${command:pickProcess}` finishes, i.e. after the very repair you are waiting on, so `debugStarted` cannot be a fast-fail signal; (b) always add an explicit fast-fail that distinguishes "the product failed" from "the harness never triggered the product." A 300 s silent timeout costs a whole shard to learn "F5 did nothing."
+
 ### Architecture Decisions That Paid Off
 
 - **Phase separation (4.1 / 4.2)**: Allows re-running designer tests without re-creating workspaces
@@ -832,6 +843,7 @@ Ship a **tiny test-only "recorder" extension** alongside the product extension a
   - `patchLegacyCodefulCsproj(entry)` minimally changes only the generated legacy control `.csproj`, replacing `CopyToCodefulFolder AfterTargets="Build;Publish"` with `AfterTargets="Publish"`.
   - `installCodefulTaskRecorderExtension(extDir)` copies the recorder source dir to `${extDir}/la-e2e.la-e2e-codeful-task-recorder-0.0.1/` and refreshes `extensions.json`.
   - `e2eMode === 'codefuldebugonly'` branch runs Phase 4.10 standalone.
+  - **`recorder: true` on any `scenarios[]` entry** opts that scenario into the same recorder: `runScenarioPhases()` installs it into the scenario's ext dir and calls `configureCodefulRecorderEnvironment()` after each `prepareFreshSession()`, so the test file can read `LA_E2E_TASK_EVENTS_JSONL` and write markers into `LA_E2E_TRIGGER_DIR`. Phase 4.14 (`p414-funcrepair`) uses this purely as a **deterministic debug trigger** — see rule 18.
 
 ### Wire-up checklist
 
@@ -846,6 +858,8 @@ Ship a **tiny test-only "recorder" extension** alongside the product extension a
 9. **Allow 10-15 minutes for the LA extension's cold-start activation per variant.** `vscode.tasks.fetchTasks()` activates every task-type provider (grunt, gulp, jake, npm) and waits for all of them. Combined with the LA extension's own awaits, the first `taskStart` event can arrive 4-10 minutes after `vscode.debug.startDebugging` is called.
 10. **Sleep ≥ 30 s after `stopDebug()` before reading events.** The task chain may finish writing `processEnd` entries after the wait deadline. The post-stop sleep gives the recorder time to flush remaining events to disk.
 11. **Assert on the JSONL summary, not the wait result.** The wall-clock wait is an upper-bound optimization. The actual signal is what's in the JSONL after `stopDebug` + sleep + readEvents.
+12. **The recorder picks its own folder and config — do not assume `folders[0]`.** `pickDebugTarget()` selects, in order: the workspace folder whose `.vscode/launch.json` contains a config with `processId` referencing `azureLogicAppsStandard.pickProcess`, else the first folder with any config, else `folders[0]`. Within that folder it prefers (a) the `pickProcess` config, (b) `type === 'logicapp'`, (c) `configs[0]`. This matters because `vscodeLaunch.ts` generates the **Standard codeless** config as `type: 'coreclr', request: 'attach', processId: '${command:azureLogicAppsStandard.pickProcess}'` — *not* `type: 'logicapp'` — so without preference (a) it would only be found by the `configs[0]` fallback. Codeful/custom-code configs have no `processId`, so (a) never matches them and Phase 4.10's selection is unchanged.
+13. **Rules 9 and 10 are Phase-4.10-specific.** They exist because Phase 4.10 asserts on *task* events, and `vscode.tasks.fetchTasks()` is what makes the first `taskStart` take minutes. A test that only needs a debug session started (e.g. Phase 4.14) should gate on `debugInvoke` and skip those long waits entirely.
 
 ### Reusing this pattern
 

@@ -85,6 +85,16 @@ type Scenario = {
   settings?: ScenarioSettings;
   monolithic?: boolean;
   env?: Record<string, string>;
+  /**
+   * Install the codeful task recorder extension and point it at a freshly truncated
+   * events/trigger pair for this scenario.
+   *
+   * Opt in for any scenario that has to start a debug session. Driving F5 through the command
+   * palette depends on which editor happens to have focus, which is not something a headless
+   * CI session settles reliably (see SKILL.md rule 18); the recorder's marker-file trigger
+   * calls `vscode.debug.startDebugging(folder, config)` with an explicit folder instead.
+   */
+  recorder?: boolean;
 };
 type PhaseRunOptions = {
   vscodeVersion: string;
@@ -1660,7 +1670,7 @@ async function main(): Promise<void> {
     // Phase 4.14 — Func Core Tools pre-debug self-heal.
     // Reuses a Standard/Stateful workspace from the fixtures manifest, waits for
     // the managed func binaries to install and run, overwrites them in place so
-    // they still exist but no longer execute, presses F5, and asserts the
+    // they still exist but no longer execute, starts debugging, and asserts the
     // pre-debug gate silently reinstalls them instead of showing the blocking
     // "You must have the Azure Functions Core Tools installed" modal.
     //
@@ -1673,15 +1683,21 @@ async function main(): Promise<void> {
     //     It also provisions the managed func binaries this test corrupts.
     //   autoStartDesignTime: false  — a running design-time `func host start`
     //     holds func.exe open, and a running .exe cannot be overwritten on
-    //     Windows. F5 itself does not need design time: the generated
+    //     Windows. Debugging itself does not need design time: the generated
     //     launch.json attaches via azureLogicAppsStandard.pickProcess, whose
     //     pre-debug gate (validatePreDebug.ts:58) is exactly the code under
     //     test, and it runs before anything design-time related.
+    //
+    // recorder: true — the palette F5 path is focus-dependent and does not
+    // survive a headless CI session (run 30549543233 debugged a markdown
+    // preview; run 30554041131 debugged settings.json). The recorder calls
+    // vscode.debug.startDebugging(folder, config) with an explicit folder.
     {
       id: 'p414-funcrepair',
       testFile: phaseFuncRepairFiles[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
+      recorder: true,
     },
   ];
 
@@ -2479,7 +2495,7 @@ namespace ${namespaceName}
       }
       const exits: number[] = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv, recorder } = scenario;
         const resolvedSettings: ScenarioSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
@@ -2502,6 +2518,20 @@ namespace ${namespaceName}
           }
         }
 
+        // Scenarios that start a debug session drive it through the recorder extension's
+        // marker-file trigger rather than the command palette, so the trigger does not depend
+        // on which editor has focus. Install once per scenario (prepareFreshSession does not
+        // touch extDir); the events/trigger files are reset per attempt below so a retry never
+        // reads the previous attempt's events. The env keys are captured here, once, so the
+        // restore loop below cannot double-restore them across retries.
+        if (recorder) {
+          installCodefulTaskRecorderExtension(extDir);
+          rebuildExtensionsJson(extDir);
+          for (const key of ['LA_E2E_TASK_EVENTS_JSONL', 'CODEFUL_TASK_EVENTS_JSONL', 'LA_E2E_TRIGGER_DIR']) {
+            envOverridesApplied.push({ key, prev: process.env[key] });
+          }
+        }
+
         const fileList = Array.isArray(files) ? files : [files];
         if (!monolithic && fileList.length !== 1) {
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
@@ -2518,6 +2548,11 @@ namespace ${namespaceName}
 
           try {
             await prepareFreshSession(id);
+            if (recorder) {
+              // Truncates the JSONL and clears stale markers — must run per attempt, after
+              // prepareFreshSession, so the test never sees a previous attempt's debugStarted.
+              configureCodefulRecorderEnvironment();
+            }
             if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
               pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
               pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
