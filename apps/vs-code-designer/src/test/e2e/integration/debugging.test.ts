@@ -419,7 +419,6 @@ suite('Debugging Functionality', () => {
         // Extension not installed in test host — verify the expected command IDs are well-known constants
         const debugCommands = [
           'azureLogicAppsStandard.pickProcess',
-          'azureLogicAppsStandard.pickCustomCodeNetHostProcess',
           'azureLogicAppsStandard.getDebugSymbolDll',
           'azureLogicAppsStandard.switchDebugMode',
           'azureLogicAppsStandard.debugLogicApp',

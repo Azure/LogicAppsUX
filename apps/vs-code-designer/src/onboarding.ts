@@ -4,13 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import { installBinaries } from './app/utils/binaries';
 import { promptStartDesignTimeOption, scheduleStartAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
-import { runWithDurationTelemetry } from './app/utils/telemetry';
-import {
-  autoRuntimeDependenciesValidationAndInstallationSetting,
-  autoStartDesignTimeSetting,
-  showStartDesignTimeMessageSetting,
-} from './constants';
-import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithDurationTelemetry } from './app/utils/telemetry';
+import { extensionCommand } from './constants';
+import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { ext } from './extensionVariables';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
@@ -24,43 +20,29 @@ import { shouldRequireStrictDependencyValidation } from './app/utils/strictDepen
 export const startOnboarding = async (activateContext: IActionContext) => {
   const isDevContainer = await isDevContainerWorkspace();
   activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
-  const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
 
   if (isDevContainer) {
     activateContext.telemetry.properties.skippedDependencyOnboarding = 'true';
     activateContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
     ext.outputChannel.appendLog('Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.');
-  } else if (requireStrictDependencyValidation) {
-    const binariesInstallStartTime = Date.now();
-    await runWithDurationTelemetry(activateContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
-      activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
-      await installBinaries(activateContext);
-    });
-    activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
   } else {
-    await callWithTelemetryAndErrorHandling(
-      autoRuntimeDependenciesValidationAndInstallationSetting,
-      async (actionContext: IActionContext) => {
-        const binariesInstallStartTime = Date.now();
-        await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
-          activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
-          await installBinaries(actionContext);
-        });
-        activateContext.telemetry.measurements.binariesInstallDuration = Date.now() - binariesInstallStartTime;
+    activateContext.telemetry.properties.lastStep = 'validateAndInstallBinaries';
+    await callWithDurationTelemetry(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
+      if (shouldRequireStrictDependencyValidation()) {
+        actionContext.errorHandling.rethrow = true;
       }
-    );
+      await installBinaries(actionContext);
+    });
   }
 
-  await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
-      if (isDevContainer) {
-        activateContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
-        activateContext.telemetry.properties.designTimeStartupState = 'scheduled';
-        ext.outputChannel.appendLog('Scheduling background design-time startup for devcontainer workspace.');
-        scheduleStartAllDesignTimeApis();
-      } else {
-        await promptStartDesignTimeOption(activateContext);
-      }
-    });
+  await callWithDurationTelemetry(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
+    if (isDevContainer) {
+      actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
+      actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
+      ext.outputChannel.appendLog('Scheduling background design-time startup for devcontainer workspace.');
+      scheduleStartAllDesignTimeApis();
+    } else {
+      await promptStartDesignTimeOption(actionContext);
+    }
   });
 };

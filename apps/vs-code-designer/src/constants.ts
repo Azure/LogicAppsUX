@@ -164,8 +164,11 @@ export const extensionCommand = {
   startLogicApp: 'azureLogicAppsStandard.startLogicApp',
   stopLogicApp: 'azureLogicAppsStandard.stopLogicApp',
   restartLogicApp: 'azureLogicAppsStandard.restartLogicApp',
+  startDesignTimeApi: 'azureLogicAppsStandard.startDesignTimeApi',
+  startRuntimeApi: 'azureLogicAppsStandard.startRuntimeApi',
   pickProcess: 'azureLogicAppsStandard.pickProcess',
   pickCustomCodeNetHostProcess: 'azureLogicAppsStandard.pickCustomCodeNetHostProcess',
+  pickCustomCodeNetFxWorkerProcess: 'azureLogicAppsStandard.pickCustomCodeNetFxWorkerProcess',
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
@@ -230,6 +233,12 @@ export const extensionCommand = {
   sdkLspApplyEdits: 'sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
   logSubscriptions: 'azureLogicAppsStandard.logSubscriptions',
+  startAzurite: 'azureLogicAppsStandard.startAzurite',
+  refreshConnectionKeys: 'azureLogicAppsStandard.refreshConnectionKeys',
+  ensureNodeJs: 'azureLogicAppsStandard.ensureNodeJs',
+  ensureFuncCoreTools: 'azureLogicAppsStandard.ensureFuncCoreTools',
+  ensureDotnet: 'azureLogicAppsStandard.ensureDotnet',
+  ensureSdkLanguageServer: 'azureLogicAppsStandard.ensureSdkLanguageServer',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
@@ -297,7 +306,6 @@ export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
-export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 export const onStartLanguageServer = 'onStartLanguageServer';
 

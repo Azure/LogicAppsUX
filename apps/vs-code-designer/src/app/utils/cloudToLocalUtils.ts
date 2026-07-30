@@ -252,7 +252,7 @@ export async function parameterizeConnectionsDuringImport(
 
       if (parametersJson && Object.keys(parametersJson).length) {
         await writeFormattedJson(parametersFilePath, parametersJson);
-        if (!parametersFileExists && (await isCSharpProject(context, logicAppPath))) {
+        if (!parametersFileExists && (await isCSharpProject(logicAppPath))) {
           await addNewFileInCSharpProject(context, parametersFileName, logicAppPath);
         }
       } else if (parametersFileExists) {

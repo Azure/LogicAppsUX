@@ -33,7 +33,7 @@ async function addPathInCSharpProject(context: IActionContext, projectPath: stri
 }
 
 export async function getDotnetBuildFile(context: IActionContext, projectPath: string): Promise<string> {
-  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
+  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, projectPath);
   const projFileName: string | undefined = projectFiles.length === 1 ? projectFiles[0].name : undefined;
   if (projFileName) {
     const buildFileUri: Uri = Uri.file(path.join(projectPath, projFileName));
@@ -182,7 +182,7 @@ export function allowLocalSettingsToPublishDirectory(context: IActionContext, xm
 }
 
 export async function writeBuildFileToDisk(context: IActionContext, xmlObject: Record<string, any>, projectPath: string): Promise<void> {
-  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
+  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, projectPath);
   const projFileName: string | undefined = projectFiles.length === 1 ? projectFiles[0].name : undefined;
   if (projFileName) {
     const builder: xml2js.Builder = new xml2js.Builder();

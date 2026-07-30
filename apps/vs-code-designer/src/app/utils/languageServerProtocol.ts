@@ -1,4 +1,3 @@
-import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import path from 'path';
 import * as fse from 'fs-extra';
 import { assetsFolderName, lspDirectory } from '../../constants';
@@ -14,64 +13,62 @@ const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;
 
 export async function installLSPSDK(): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.installLSPSDK', async () => {
-    const targetDirectory = await ensureRuntimeDependenciesPath();
+  const targetDirectory = await ensureRuntimeDependenciesPath();
 
-    // Check if LSPServer needs to be extracted or updated
-    const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
-    const serverHashMarkerFile = path.join(targetDirectory, lspServerHashMarkerName);
-    const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
-    const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
-    const serverZipHash = await getFileHash(serverZipFile);
-    const shouldExtract = await shouldUpdateFromHash(serverZipHash, serverHashMarkerFile, lspServerDllPath);
+  // Check if LSPServer needs to be extracted or updated
+  const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
+  const serverHashMarkerFile = path.join(targetDirectory, lspServerHashMarkerName);
+  const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
+  const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
+  const serverZipHash = await getFileHash(serverZipFile);
+  const shouldExtract = await shouldUpdateFromHash(serverZipHash, serverHashMarkerFile, lspServerDllPath);
 
-    // Check if SDK needs to be copied or updated
-    const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-    const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
-    const sdkHashMarkerFile = path.join(targetDirectory, lspSdkHashMarkerName);
-    const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
-    const sdkHash = await getFileHash(sdkNupkgFile);
+  // Check if SDK needs to be copied or updated
+  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
+  const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+  const sdkHashMarkerFile = path.join(targetDirectory, lspSdkHashMarkerName);
+  const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
+  const sdkHash = await getFileHash(sdkNupkgFile);
 
-    const shouldCopy = await shouldCopySdkFromHash(sdkHash, sdkHashMarkerFile, destinationFile);
+  const shouldCopy = await shouldCopySdkFromHash(sdkHash, sdkHashMarkerFile, destinationFile);
 
-    if (shouldExtract || shouldCopy) {
-      await stopLanguageClientForUpdate();
-    }
+  if (shouldExtract || shouldCopy) {
+    await stopLanguageClientForUpdate();
+  }
 
-    if (shouldExtract) {
-      try {
-        if (await fse.pathExists(lspServerPath)) {
-          await removeWithRetry(lspServerPath);
-        }
-
-        const zip = new AdmZip(serverZipFile);
-        await runWithLockedFileRetry(() => zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true));
-
-        if (!(await fse.pathExists(lspServerDllPath))) {
-          throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);
-        }
-
-        await fse.writeFile(serverHashMarkerFile, serverZipHash);
-        await removeLegacyLspMarkers(targetDirectory);
-        await cleanupStaleLspServerFolders(targetDirectory);
-      } catch (error) {
-        throw new Error(`Error extracting LSP server: ${formatLockedFileError(error)}`);
+  if (shouldExtract) {
+    try {
+      if (await fse.pathExists(lspServerPath)) {
+        await removeWithRetry(lspServerPath);
       }
-    }
 
-    if (shouldCopy) {
-      try {
-        await fse.ensureDir(lspDirectoryPath);
+      const zip = new AdmZip(serverZipFile);
+      await runWithLockedFileRetry(() => zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true));
 
-        await fse.copyFile(sdkNupkgFile, destinationFile);
-
-        await fse.writeFile(sdkHashMarkerFile, sdkHash);
-        await fse.remove(path.join(targetDirectory, '.lspsdk-version'));
-      } catch (error) {
-        throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
+      if (!(await fse.pathExists(lspServerDllPath))) {
+        throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);
       }
+
+      await fse.writeFile(serverHashMarkerFile, serverZipHash);
+      await removeLegacyLspMarkers(targetDirectory);
+      await cleanupStaleLspServerFolders(targetDirectory);
+    } catch (error) {
+      throw new Error(`Error extracting LSP server: ${formatLockedFileError(error)}`);
     }
-  });
+  }
+
+  if (shouldCopy) {
+    try {
+      await fse.ensureDir(lspDirectoryPath);
+
+      await fse.copyFile(sdkNupkgFile, destinationFile);
+
+      await fse.writeFile(sdkHashMarkerFile, sdkHash);
+      await fse.remove(path.join(targetDirectory, '.lspsdk-version'));
+    } catch (error) {
+      throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
+    }
+  }
 }
 
 /**

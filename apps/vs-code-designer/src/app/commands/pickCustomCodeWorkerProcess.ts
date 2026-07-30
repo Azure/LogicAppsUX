@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getMatchingWorkspaceFolder } from '../debug/validatePreDebug';
 import { runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -10,83 +9,10 @@ import type * as vscode from 'vscode';
 import * as path from 'path';
 import { getUnixChildren, getWindowsChildren, pickChildProcess } from './pickFuncProcess';
 import { localize } from '../../localize';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { ext } from '../../extensionVariables';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
-
-/**
- * Picks the .NET host child process for the custom code project by polling the running function tasks for the workspace folder.
- * @param context The action context.
- * @param debugConfig The debug configuration.
- * @returns A promise that resolves to the .NET host child process ID or undefined if not found.
- */
-export async function pickCustomCodeNetHostProcess(
-  context: IActionContext,
-  debugConfig: vscode.DebugConfiguration | undefined
-): Promise<string | undefined> {
-  if (!debugConfig) {
-    throw new Error(localize('noDebugConfig', 'Debug configuration is undefined.'));
-  }
-
-  context.telemetry.properties.lastStep = 'getMatchingWorkspaceFolder';
-  const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
-  if (!workspaceFolder) {
-    const errorMessage = 'Failed to find a workspace folder matching the debug configuration.';
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage;
-    throw new Error(localize('noMatchingWorkspaceFolder', errorMessage));
-  }
-
-  context.telemetry.properties.lastStep = 'tryGetLogicAppProjectRoot';
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  if (!projectPath) {
-    const errorMessage = 'Failed to find a logic app project in the workspace folder "{0}".';
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', workspaceFolder?.uri?.fsPath);
-    throw new Error(localize('noLogicAppProject', errorMessage, workspaceFolder?.uri?.fsPath));
-  }
-  const logicAppName = path.basename(projectPath);
-
-  context.telemetry.properties.lastStep = 'getRunningFuncTask';
-  let taskInfo: IRunningFuncTask | undefined;
-  const maxRetries = 10;
-  const delayMs = 5000;
-  for (let i = 0; i < maxRetries; i++) {
-    taskInfo = runningFuncTaskMap.get(workspaceFolder);
-    if (taskInfo) {
-      break;
-    }
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
-  }
-  if (!taskInfo) {
-    const errorMessage =
-      'Failed to find a running func task for the logic app "{0}". The logic app must be running to attach the function debugger.';
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', logicAppName);
-    throw new Error(localize('noFuncTask', errorMessage, logicAppName));
-  }
-
-  context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
-  let customCodeNetHostProcess: string | undefined;
-  for (let i = 0; i < maxRetries; i++) {
-    customCodeNetHostProcess = await pickCustomCodeWorkerChildProcess(taskInfo, false, debugConfig.isCodeless);
-    if (customCodeNetHostProcess) {
-      break;
-    }
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
-  }
-  if (!customCodeNetHostProcess) {
-    const errorMessage = 'Failed to find the .NET host child process for the functions project for logic app "{0}".';
-    context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', logicAppName);
-    throw new Error(localize('netHostProcessNotFound', errorMessage, logicAppName));
-  }
-
-  context.telemetry.properties.result = 'Succeeded';
-  return customCodeNetHostProcess;
-}
 
 /**
  * Picks the .NET host child process of the running function task for the custom code project.
@@ -116,6 +42,7 @@ export async function pickCustomCodeNetHostProcessInternal(
   context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
   const customCodeNetHostProcess = await pickCustomCodeWorkerChildProcess(taskInfo, false, isCodeless);
   if (!customCodeNetHostProcess) {
+    context.telemetry.properties.result = 'Failed';
     ext.outputChannel.appendLog(
       localize(
         'customCodeNet8ChildProcessNotFound',
@@ -149,6 +76,7 @@ export async function pickCustomCodeNetFxWorkerProcessInternal(
   context.telemetry.properties.lastStep = 'pickNetFxWorkerChildProcess';
   const customCodeNetFxWorkerProcess = await pickCustomCodeWorkerChildProcess(taskInfo, true);
   if (!customCodeNetFxWorkerProcess) {
+    context.telemetry.properties.result = 'Failed';
     ext.outputChannel.appendLog(
       localize(
         'customCodeNetFxChildProcessNotFound',

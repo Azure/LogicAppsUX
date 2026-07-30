@@ -13,14 +13,15 @@ import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
-import { runWithDurationTelemetry } from '../../utils/telemetry';
-import { timeout } from '../../utils/timeout';
+import { callWithDurationTelemetry } from '../../utils/telemetry';
+import { runWithTimeout } from '../../utils/timeout';
 import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
+import { extensionCommand } from '../../../constants';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
@@ -66,51 +67,52 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       context.telemetry.properties.lastStep = 'validateDependencies';
 
       try {
-        // The four dependency validations are independent of one another, so run them
-        // concurrently instead of sequentially to reduce startup time.
-        const validationTasks: Promise<void>[] = [
-          runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
+        // Run ensure dependency tasks concurrently
+        const ensureDependencyTasks: Promise<void>[] = [
+          callWithDurationTelemetry(extensionCommand.ensureNodeJs, async (actionContext: IActionContext) => {
             progress.report({ increment: 20, message: 'NodeJS' });
-            await timeout(
-              validateNodeJsIsLatest,
+            await runWithTimeout(
+              () => validateNodeJsIsLatest(actionContext, dependenciesVersions?.nodejs),
               'NodeJs',
               dependencyTimeout,
-              'https://github.com/nodesource/distributions',
-              dependenciesVersions?.nodejs
+              'https://github.com/nodesource/distributions'
             );
             await setNodeJsCommand();
           }),
-          runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
+          callWithDurationTelemetry(extensionCommand.ensureFuncCoreTools, async (actionContext: IActionContext) => {
             progress.report({ increment: 20, message: 'Functions Runtime' });
-            await timeout(
-              validateFuncCoreToolsIsLatest,
+            await runWithTimeout(
+              () => validateFuncCoreToolsIsLatest(actionContext, dependenciesVersions?.funcCoreTools),
               'Functions Runtime',
               dependencyTimeout,
-              'https://github.com/Azure/azure-functions-core-tools/releases',
-              dependenciesVersions?.funcCoreTools
+              'https://github.com/Azure/azure-functions-core-tools/releases'
             );
             await setFunctionsCommand();
           }),
-          runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
+          callWithDurationTelemetry(extensionCommand.ensureDotnet, async (actionContext: IActionContext) => {
             progress.report({ increment: 10, message: '.NET SDK' });
             const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
-            await timeout(
-              validateDotNetIsLatest,
+            await runWithTimeout(
+              () => validateDotNetIsLatest(actionContext, dotnetDependencies),
               '.NET SDK',
               dependencyTimeout,
-              'https://dotnet.microsoft.com/en-us/download/dotnet',
-              dotnetDependencies
+              'https://dotnet.microsoft.com/en-us/download/dotnet'
             );
             await setDotNetCommand();
           }),
-          runWithDurationTelemetry(context, 'azureLogicAppsStandard.installLSPSDK', async () => {
-            progress.report({ increment: 10, message: 'LSP SDK' });
-            await timeout(installLSPSDK, 'LSP SDK', dependencyTimeout);
+          callWithDurationTelemetry(extensionCommand.ensureSdkLanguageServer, async (_actionContext: IActionContext) => {
+            progress.report({ increment: 10, message: 'SDK LSP Server' });
+            await runWithTimeout(
+              () => installLSPSDK(),
+              'SDK LSP Server',
+              dependencyTimeout
+            );
+            // TODO(aeldridge): Why is setDotNetCommand called here?
             await setDotNetCommand();
           }),
         ];
 
-        const results = await Promise.allSettled(validationTasks);
+        const results = await Promise.allSettled(ensureDependencyTasks);
         const failure = results.find((result): result is PromiseRejectedResult => result.status === 'rejected');
         if (failure) {
           throw failure.reason;

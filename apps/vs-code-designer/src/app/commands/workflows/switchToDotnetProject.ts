@@ -75,7 +75,7 @@ export async function switchToDotnetProject(
     version = FuncVersion.v4;
   }
 
-  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, target.fsPath);
+  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, target.fsPath);
   if (projectFiles.length > 0) {
     ext.outputChannel.appendLog(localize('projectAlreadyDotnet', 'The Logic App project is already a NuGet-based project.'));
     return;
@@ -96,7 +96,7 @@ export async function switchToDotnetProject(
 
   // We need to get the templates first to ensure that the we can create the dotnet project
   // 1. try to get cached templates
-  let templates: ITemplates | undefined = await dotnetTemplateProvider.getCachedTemplates(context);
+  let templates: ITemplates | undefined = await dotnetTemplateProvider.getCachedTemplates();
 
   // 2. try to download the latest templates
   if (!templates) {
@@ -131,7 +131,7 @@ export async function switchToDotnetProject(
   const identity = `Microsoft.AzureFunctions.ProjectTemplate.${templateLanguage}.${Number.parseInt(majorVersion) < 4 ? majorVersion : 3}.x`;
   const functionsVersion: string = `v${majorVersion}`;
   const projectPath: string = target.fsPath;
-  const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
+  const projTemplateKey = await getTemplateKeyFromProjFile(projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
   const useBinaries = await useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';

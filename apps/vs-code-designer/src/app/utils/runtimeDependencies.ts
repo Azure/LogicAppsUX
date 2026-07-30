@@ -3,9 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { validateAndInstallBinaries } from '../commands/binaries/validateAndInstallBinaries';
-import { runWithDurationTelemetry } from './telemetry';
-import { extensionCommand, autoRuntimeDependenciesValidationAndInstallationSetting } from '../../constants';
-import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { autoRuntimeDependenciesValidationAndInstallationSetting } from '../../constants';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import { isDevContainerWorkspace } from './devContainerUtils';
 import { shouldRequireStrictDependencyValidation } from './strictDependencyValidation';
@@ -20,23 +19,13 @@ export const useBinariesDependencies = async (): Promise<boolean> => {
   return !!binariesInstallation;
 };
 
-async function validateRuntimeDependencies(actionContext: IActionContext, activateContext: IActionContext): Promise<void> {
-  await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
-    const binariesInstallation = await useBinariesDependencies();
-    if (binariesInstallation) {
-      activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
-      await validateAndInstallBinaries(actionContext);
-    }
-  });
-}
-
-export const onboardBinaries = async (activateContext: IActionContext) => {
+export async function onboardBinaries(context: IActionContext): Promise<void> {
   if (shouldRequireStrictDependencyValidation()) {
-    await validateRuntimeDependencies(activateContext, activateContext);
-    return;
+    context.errorHandling.rethrow = true;
   }
-
-  await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
-    await validateRuntimeDependencies(actionContext, activateContext);
-  });
-};
+  
+  const binariesInstallation = await useBinariesDependencies();
+  if (binariesInstallation) {
+    await validateAndInstallBinaries(context);
+  }
+}

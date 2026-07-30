@@ -150,7 +150,7 @@ async function addConnectionDataInJson(
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
 
-  if (!connectionsFileExists && (await isCSharpProject(context, functionAppPath))) {
+  if (!connectionsFileExists && (await isCSharpProject(functionAppPath))) {
     await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
   }
 }
@@ -491,7 +491,7 @@ export async function saveConnectionReferences(
 
   if (connections && Object.keys(connections).length) {
     await writeFormattedJson(connectionsFilePath, connections);
-    if (!connectionsFileExists && (await isCSharpProject(context, projectPath))) {
+    if (!connectionsFileExists && (await isCSharpProject(projectPath))) {
       await addNewFileInCSharpProject(context, connectionsFileName, projectPath);
     }
   }

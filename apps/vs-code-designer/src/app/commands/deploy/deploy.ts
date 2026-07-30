@@ -27,6 +27,7 @@ import {
   funcVersionSetting,
   projectLanguageSetting,
   inlineCodeNodeExecutablePathKey,
+  extensionCommand,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -67,6 +68,7 @@ import { publishCodefulProject } from '../publishCodefulProject';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { isProjectInitializedForVSCode } from '../../projectConsistency/vscodeConsistency';
 import { initProjectForVSCode } from '../initProjectForVSCode/initProjectForVSCode';
+import { callWithDurationTelemetry } from '../../utils/telemetry';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -120,7 +122,9 @@ async function deploy(
     } else {
       const customCodeFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
       if (customCodeFolderExists) {
-        await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+        await callWithDurationTelemetry(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+          await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+        });
       }
     }
   }

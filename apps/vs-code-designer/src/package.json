@@ -138,11 +138,6 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
-        "title": "Pick Custom Code .NET Host Process",
-        "category": "Azure Logic Apps"
-      },
-      {
         "command": "azureLogicAppsStandard.openOverview",
         "title": "Overview",
         "category": "Azure Logic Apps"
@@ -779,10 +774,6 @@
         },
         {
           "command": "azureLogicAppsStandard.pickProcess",
-          "when": "never"
-        },
-        {
-          "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
           "when": "never"
         },
         {

@@ -69,7 +69,6 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { pickCustomCodeNetHostProcess } from './pickCustomCodeWorkerProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/debug';
@@ -105,7 +104,6 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.stopLogicApp, stopLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.restartLogicApp, restartLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcess);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
