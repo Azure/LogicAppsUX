@@ -40,7 +40,16 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
     } else if (await isFuncToolsInstalled()) {
       installed = true;
     } else if (await useBinariesDependencies()) {
-      installed = await validateFuncCoreToolsInstalledBinaries(innerContext, message, install, input, installed);
+      // The managed func binaries may exist on disk but fail to execute (partial extract,
+      // poisoned runtime-deps cache, or a reinstall that hasn't finished). Before dead-ending
+      // on the interactive "Install" modal — which cannot be answered headlessly and blocks
+      // debug — attempt a silent reinstall of the managed binaries and re-verify. This lets a
+      // provisioned-but-unrunnable func self-heal instead of aborting F5.
+      if (await attemptManagedFuncCoreToolsRepair(innerContext)) {
+        installed = true;
+      } else {
+        installed = await validateFuncCoreToolsInstalledBinaries(innerContext, message, install, input, installed);
+      }
     } else {
       installed = await validateFuncCoreToolsInstalledSystem(innerContext, message, install, input, installed, fsPath);
     }
@@ -75,6 +84,28 @@ async function isFuncToolsInstalled(): Promise<boolean> {
     await executeCommand(undefined, undefined, funcCommand, '--version');
     return true;
   } catch {
+    return false;
+  }
+}
+
+/**
+ * Silently reinstalls the managed (auto-provisioned) Azure Functions Core Tools binaries and
+ * re-verifies that `func --version` runs. Used to self-heal a func that exists on disk but
+ * fails to execute (partial extract / poisoned cache / interrupted install) so we don't
+ * dead-end on the interactive install modal that cannot be answered headlessly.
+ * @param {IActionContext} context - Command context.
+ * @returns {Promise<boolean>} True when the repair produced a runnable func, false otherwise.
+ */
+async function attemptManagedFuncCoreToolsRepair(context: IActionContext): Promise<boolean> {
+  context.telemetry.properties.funcRepairAttempted = 'true';
+  try {
+    await installFuncCoreToolsBinaries(context);
+    const repaired = await isFuncToolsInstalled();
+    context.telemetry.properties.funcRepairSucceeded = `${repaired}`;
+    return repaired;
+  } catch (error) {
+    context.telemetry.properties.funcRepairSucceeded = 'false';
+    context.telemetry.properties.funcRepairError = error instanceof Error ? error.message : String(error);
     return false;
   }
 }

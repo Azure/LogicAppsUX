@@ -4,6 +4,8 @@ import { useBinariesDependencies } from '../../../utils/binaries';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
 import { ensureFuncCoreToolsCommandExecutablePermissions } from '../../../utils/funcCoreTools/funcVersion';
+import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
+import { installFuncCoreToolsBinaries } from '../installFuncCoreTools';
 
 vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
@@ -113,6 +115,56 @@ describe('validateFuncCoreToolsInstalled', () => {
       await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
 
       expect(executeCommand).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('managed FuncCoreTools auto-repair', () => {
+    it('reinstalls and returns true when a provisioned-but-unrunnable func self-heals', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      // First `func --version` fails (exists but won't run); after the silent reinstall it runs.
+      vi.mocked(executeCommand).mockRejectedValueOnce(new Error('not runnable')).mockResolvedValue('4.12.0');
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+    });
+
+    it('falls back to the install prompt when the repair still cannot run func', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      // func never runs, even after reinstall.
+      vi.mocked(executeCommand).mockRejectedValue(new Error('not runnable'));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+    });
+
+    it('falls back to the install prompt when the silent reinstall itself throws', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(executeCommand).mockRejectedValue(new Error('not runnable'));
+      vi.mocked(installFuncCoreToolsBinaries).mockRejectedValueOnce(new Error('download failed'));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('validateFuncCoreTools setting', () => {
+    it('skips validation entirely when the validateFuncCoreTools setting is disabled', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(getWorkspaceSetting).mockReturnValueOnce(false);
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(executeCommand).not.toHaveBeenCalled();
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
     });
   });
 
