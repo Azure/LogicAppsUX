@@ -33,12 +33,17 @@
  *   2. Backs up the func executable bytes and overwrites them IN PLACE with a short garbage
  *      line. The file still exists and keeps its `.exe` extension / execute bit, but no
  *      longer executes — the real "provisioned but unrunnable" state, not a simulation.
- *   3. Presses F5 on a Standard/Stateful workspace from the fixtures manifest, which routes
- *      through `pickFuncProcessInternal` -> `preDebugValidate` -> `validateFuncCoreToolsInstalled`.
- *   4. Asserts `func --version` runs again (PRIMARY, disk-level — modeled on
+ *   3. Anchors the debug context on the Logic App project (see `anchorDebugContextOnWorkflow`)
+ *      and presses F5, which routes through `pickFuncProcessInternal` -> `preDebugValidate`
+ *      -> `validateFuncCoreToolsInstalled`.
+ *   4. Gates on evidence that the product actually reacted to F5 (see
+ *      `waitForPreDebugGateEvidence`) BEFORE settling in to wait for the repair, so
+ *      "the harness never triggered the product" can never masquerade as
+ *      "the product failed to repair".
+ *   5. Asserts `func --version` runs again (PRIMARY, disk-level — modeled on
  *      `waitForBundleRepaired` in bundleRepair.test.ts) and that the blocking modal never
  *      appeared. The "no suppressed error toast" check is a documented SOFT check.
- *   5. Restores the original bytes in `afterEach` if the repair did not already replace them,
+ *   6. Restores the original bytes in `afterEach` if the repair did not already replace them,
  *      so a mid-test failure cannot poison the shared runtime-dependency cache for the rest
  *      of the shard.
  *
@@ -57,14 +62,16 @@
 
 import * as assert from 'assert';
 import * as fs from 'fs';
+import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
-import { VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
+import { EditorView, VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
 import { waitForExtensionReady } from './createWorkspaceShared';
 import {
   getFuncCoreToolsCandidatePaths,
   getFuncCoreToolsPath,
   getManagedFuncCoreToolsDir,
+  openFileInEditor,
   openWorkspaceFileInSession,
   waitForDependencyValidation,
 } from './designerHelpers';
@@ -76,12 +83,13 @@ import { loadWorkspaceManifest } from './workspaceManifest';
 const LOG_PREFIX = '[funcRepair]';
 
 /**
- * Deliberately larger than the sum of the sub-timeouts below (240s + 300s + 300s) so that a
- * stall always fails with the specific diagnostic from the waiter that stalled — a bare Mocha
- * timeout would throw that evidence away. It is a ceiling, not a budget: a healthy run is
- * ~5-8 minutes, dominated by the two func downloads (initial install + repair).
+ * Deliberately larger than the sum of the sub-timeouts below (240s extension-ready + 300s
+ * baseline + ~95s worst-case anchor + 60s liveness gate + 300s repair) so that a stall always
+ * fails with the specific diagnostic from the waiter that stalled — a bare Mocha timeout would
+ * throw that evidence away. It is a ceiling, not a budget: a healthy run is ~5-8 minutes,
+ * dominated by the two func downloads (initial install + repair).
  */
-const TEST_TIMEOUT = 960_000;
+const TEST_TIMEOUT = 1_080_000;
 const EXTENSION_READY_TIMEOUT_MS = 240_000;
 
 /** How long we wait for the initial managed install to produce a runnable func. */
@@ -93,6 +101,18 @@ const BASELINE_TIMEOUT_MS = 300_000;
  * CI runner rather than a warm dev box (same 5 minutes bundleRepair.test.ts allows its repair).
  */
 const REPAIR_TIMEOUT_MS = 300_000;
+
+/**
+ * How long we allow for the product to visibly react to F5 before declaring that the harness,
+ * not the product, is at fault. Sized off the slowest pre-gate step: `activateAzurite` starts
+ * the emulator and `waitForAzuriteReady` polls it, and the repair's own first download line
+ * only lands after a version lookup over the network. 60s is comfortably past both on a cold
+ * runner while still failing ~5x faster than the repair wait it protects.
+ */
+const GATE_EVIDENCE_TIMEOUT_MS = 60_000;
+
+/** How long the workflow.json editor has to become the active editor before F5. */
+const ANCHOR_TIMEOUT_MS = 60_000;
 
 /** Bound on a single `func --version` probe. Generous because func can JIT slowly on first run. */
 const FUNC_PROBE_TIMEOUT_MS = 60_000;
@@ -113,6 +133,40 @@ const BLOCKING_PROMPT_TEXT = 'You must have the Azure Functions Core Tools insta
  * half of "silent repair" — but see `SOFT` handling below.
  */
 const SUPPRESSED_ERROR_FRAGMENTS = ['Error downloading the', 'Checksum verification failed', 'could not be installed at'];
+
+/**
+ * Output-channel lines that only the F5 -> `pickFuncProcessInternal` path can produce.
+ *
+ * Ordered by how far into that path they prove we got. Everything here is written
+ * unconditionally by its own step (none of them are gated on `suppressUi`, which only guards
+ * `showErrorMessage`), and all of them precede or belong to the repair itself:
+ *   - `activateAzurite` runs FIRST in pickFuncProcessInternal (pickFuncProcess.ts:87-106).
+ *   - `refreshConnectionKeys` runs SECOND (:112-116) and logs one of these two lines whenever
+ *     the fixture has no Azure connectors, which is the case for a wizard-generated workspace.
+ *   - `Downloading dependency from` is `downloadAndExtractDependency`'s first line
+ *     (binaries.ts:92) — reached only via the self-heal branch of the gate itself.
+ *
+ * Any one of them is sufficient: this is a liveness gate, not a behavioural assertion. A false
+ * positive only costs us the ordinary repair wait; a false negative would fail a run in which
+ * the product actually did its job, so the set is deliberately broad.
+ */
+const GATE_EVIDENCE_MARKERS = [
+  'Downloading dependency from',
+  'Successfully downloaded',
+  'Successfully installed',
+  'Azurite is setup to auto start',
+  'Could not start Azurite',
+  'Azure connectors are disabled',
+  'No connection keys found',
+];
+
+/**
+ * Azurite blob port. `activateAzurite` starts the emulator before the gate runs, so a listener
+ * appearing here after F5 is independent proof that `pickFuncProcessInternal` executed — no
+ * log parsing involved. Only counted when nothing was listening before F5 (see
+ * `isPortListening`), otherwise the signal would be vacuous.
+ */
+const AZURITE_BLOB_PORT = 10000;
 
 /**
  * Bytes written over the func executable.
@@ -321,18 +375,18 @@ async function getVisibleWorkbenchText(driver: WebDriver): Promise<string> {
 }
 
 /**
- * Tails the most recent "Azure Logic Apps" output-channel log.
+ * Locates and reads the most recent "Azure Logic Apps" output-channel log.
  *
- * Mirrors `logLatestLogicAppsOutput` in azuriteAutostartFailureAssert.test.ts. This is where
- * the repair's own breadcrumbs land (`Validating FuncCoreTools...`, the download/extract
- * lines), so it is the first thing worth reading for a CI-only failure.
+ * Mirrors the log discovery in azuriteAutostartFailureAssert.test.ts. This is where the
+ * repair's own breadcrumbs land (`Validating FuncCoreTools...`, the download/extract lines),
+ * so it backs both the failure diagnostics and the post-F5 liveness gate. Returns `undefined`
+ * rather than throwing: every caller treats a missing log as "no evidence", never as an error.
  */
-function logLatestLogicAppsOutput(label: string): void {
+function readLatestLogicAppsOutput(): { filePath: string; content: string } | undefined {
   try {
     const logsRoot = path.join(os.tmpdir(), 'test-resources', 'settings', 'logs');
     if (!fs.existsSync(logsRoot)) {
-      console.log(`${LOG_PREFIX} ${label} output log: logs root does not exist (${logsRoot})`);
-      return;
+      return undefined;
     }
 
     const matches: string[] = [];
@@ -352,13 +406,211 @@ function logLatestLogicAppsOutput(label: string): void {
       .map((filePath) => ({ filePath, mtimeMs: fs.statSync(filePath).mtimeMs }))
       .sort((left, right) => right.mtimeMs - left.mtimeMs)[0]?.filePath;
     if (!latest) {
-      console.log(`${LOG_PREFIX} ${label} output log: no Azure Logic Apps output log found`);
-      return;
+      return undefined;
     }
-    console.log(`${LOG_PREFIX} ${label} output log (${latest}):\n${fs.readFileSync(latest, 'utf-8').slice(-6000)}`);
-  } catch (error) {
-    console.log(`${LOG_PREFIX} Failed to read ${label} output log: ${error}`);
+    return { filePath: latest, content: fs.readFileSync(latest, 'utf-8') };
+  } catch {
+    return undefined;
   }
+}
+
+/** Tails the most recent "Azure Logic Apps" output-channel log into the CI transcript. */
+function logLatestLogicAppsOutput(label: string): void {
+  const log = readLatestLogicAppsOutput();
+  if (!log) {
+    console.log(`${LOG_PREFIX} ${label} output log: no Azure Logic Apps output log found`);
+    return;
+  }
+  console.log(`${LOG_PREFIX} ${label} output log (${log.filePath}):\n${log.content.slice(-6000)}`);
+}
+
+/**
+ * Marks how much output-channel log already existed, so the liveness gate can only ever match
+ * on lines written AFTER F5. Without this watermark the gate would happily match the initial
+ * install's own download lines and pass no matter what F5 did.
+ */
+interface OutputWatermark {
+  filePath: string;
+  length: number;
+}
+
+function captureOutputWatermark(): OutputWatermark | undefined {
+  const log = readLatestLogicAppsOutput();
+  return log ? { filePath: log.filePath, length: log.content.length } : undefined;
+}
+
+/**
+ * Returns only the output written since the watermark. If the newest log file has changed
+ * identity (VS Code rotates per session/window) everything in the new file is new by
+ * definition, and if we had no watermark at all the whole file is new.
+ */
+function readOutputSinceWatermark(watermark: OutputWatermark | undefined): string {
+  const log = readLatestLogicAppsOutput();
+  if (!log) {
+    return '';
+  }
+  if (!watermark || watermark.filePath !== log.filePath) {
+    return log.content;
+  }
+  return log.content.slice(watermark.length);
+}
+
+/** Non-throwing TCP liveness probe used to notice Azurite coming up after F5. */
+async function isPortListening(port: number, timeoutMs = 1000): Promise<boolean> {
+  return await new Promise<boolean>((resolve) => {
+    const socket = new net.Socket();
+    const finish = (listening: boolean): void => {
+      socket.removeAllListeners();
+      socket.destroy();
+      resolve(listening);
+    };
+    socket.setTimeout(timeoutMs);
+    socket.once('connect', () => finish(true));
+    socket.once('timeout', () => finish(false));
+    socket.once('error', () => finish(false));
+    socket.connect(port, '127.0.0.1');
+  });
+}
+
+/**
+ * Gives F5 a Logic App debug context.
+ *
+ * WHY THIS EXISTS: the first CI run of this scenario failed with a 300s silent timeout whose
+ * cause was entirely in the harness. The runner auto-opens a markdown preview
+ * ("Preview WBD-hybrid announcement.md - ... (Workspace)") and that webview still held focus at
+ * F5 time. `startDebugging` -> `focusEditor` focuses the *active* editor group, so
+ * `Debug: Start Debugging` ran with a non-project preview active; VS Code never resolved the
+ * Logic App folder's `.vscode/launch.json`, `${command:azureLogicAppsStandard.pickProcess}` was
+ * never evaluated, and `preDebugValidate` never ran. `startDebugging` does not throw in that
+ * situation, so the test sailed on and blamed the product for a repair that was never asked for.
+ * The identical auto-preview hazard was fixed for Phase 4.1 in commit d866b336
+ * ("close auto-opened editors before workspace conversion prompt poll").
+ *
+ * Fix: clear stray editors per SKILL.md rule 6 (defaultContent -> closeAllEditors -> settle),
+ * then make the project's own `workflow.json` the active editor. `workflow.json` has no
+ * `customEditors` contribution in package.json — the designer is only ever opened by explicit
+ * command — so this yields a plain text editor inside the Logic App folder and cannot
+ * reintroduce the "focus is inside a webview iframe" problem it is here to solve.
+ *
+ * Note on `openResources`: the task description suggested `VSBrowser.instance.openResources`,
+ * but this suite's own hard-won knowledge is that it goes through `code -r` CLI IPC and is a
+ * silent no-op on headless Linux CI (designerHelpers.ts:499, designerActions.test.ts:1807-1841
+ * keeps it only as a fallback behind a no-op detector). `openFileInEditor` already implements
+ * the Quick Open path that works there, with retries and active-tab verification, so we reuse
+ * it. It logs a warning instead of throwing when it cannot confirm the tab, hence the hard
+ * assertion below.
+ */
+async function anchorDebugContextOnWorkflow(workbench: Workbench, driver: WebDriver, workflowJsonPath: string): Promise<void> {
+  assert.ok(fs.existsSync(workflowJsonPath), `Cannot anchor the debug context: ${workflowJsonPath} does not exist`);
+
+  const deadline = Date.now() + ANCHOR_TIMEOUT_MS;
+  let lastTitle = '(never read)';
+  let lastTab = '(none)';
+
+  // Two outer attempts, because clearing focus and taking focus are separate failures: a toast
+  // or a re-opened preview can steal the editor back between the two, and re-running the whole
+  // clear-then-open sequence is the only thing that recovers from that.
+  for (let attempt = 1; attempt <= 2 && Date.now() < deadline; attempt++) {
+    await driver
+      .switchTo()
+      .defaultContent()
+      .catch(() => undefined);
+    await new EditorView().closeAllEditors().catch(() => undefined);
+    await sleep(1000);
+
+    console.log(`${LOG_PREFIX} Anchoring debug context on ${workflowJsonPath} (attempt ${attempt}/2)`);
+    await openFileInEditor(workbench, driver, workflowJsonPath);
+
+    // Poll rather than trust openFileInEditor: the window title is what actually tells us which
+    // editor VS Code considers active, and it is the exact signal whose value in the failing run
+    // ("Preview WBD-hybrid announcement.md - ...") identified the bug.
+    const attemptDeadline = Math.min(deadline, Date.now() + ANCHOR_TIMEOUT_MS / 2);
+    while (Date.now() < attemptDeadline) {
+      lastTitle = await driver.getTitle().catch(() => '(title unavailable)');
+      lastTab = await new EditorView()
+        .getActiveTab()
+        .then((tab) => (tab ? tab.getTitle() : '(none)'))
+        .catch(() => '(unreadable)');
+      if (lastTitle.includes('workflow.json') && lastTab.includes('workflow.json')) {
+        console.log(`${LOG_PREFIX} Debug context anchored — title "${lastTitle}", active tab "${lastTab}"`);
+        return;
+      }
+      await sleep(2000);
+    }
+    console.log(`${LOG_PREFIX} Anchor attempt ${attempt} did not stick — title "${lastTitle}", active tab "${lastTab}"`);
+  }
+
+  assert.fail(
+    `Could not anchor the debug context on workflow.json within ${ANCHOR_TIMEOUT_MS}ms. Window title: "${lastTitle}". Active tab: "${lastTab}". Expected both to reference workflow.json (${workflowJsonPath}). Pressing F5 from here would not resolve the Logic App launch configuration, so the pre-debug gate under test would never run.`
+  );
+}
+
+/**
+ * Proves that F5 actually reached the product before we commit to the long repair wait.
+ *
+ * WHY THIS EXISTS: "repair absent" and "modal absent" together mean the gate never ran, but the
+ * previous shape of this test could only discover that by burning the full 300s repair timeout
+ * and then reporting it as a repair failure. A wrong diagnosis is worse than a slow one, so
+ * this gate separates "the product failed to repair" from "the harness never triggered the
+ * product".
+ *
+ * What it keys off, in order of directness — all of them are things ONLY the F5 path produces,
+ * and all of them are watermarked or pre-checked so they cannot match pre-F5 state:
+ *   1. New output-channel lines matching {@link GATE_EVIDENCE_MARKERS}.
+ *   2. Azurite's blob port opening, which `activateAzurite` does as step 1 of
+ *      `pickFuncProcessInternal` (only counted if nothing was listening before F5).
+ *   3. The blocking prompt on screen — the gate ran and took the branch this feature exists to
+ *      avoid. Reported as "reached" on purpose: `watchForFuncRepair` owns that assertion and
+ *      will fail with the right message immediately.
+ *   4. The corruption marker disappearing from the binary — the extract already landed.
+ *
+ * Deliberately NOT used: the debug toolbar, debug terminals and the func host port. Those only
+ * appear AFTER `preDebugValidate` returns (pickFuncProcess.ts:143-165), i.e. on the far side of
+ * a repair that can take minutes, so they cannot distinguish "not yet" from "never".
+ */
+async function waitForPreDebugGateEvidence(
+  driver: WebDriver,
+  options: {
+    watermark: OutputWatermark | undefined;
+    azuriteWasListening: boolean;
+    funcBinaryPath: string;
+    timeoutMs: number;
+  }
+): Promise<{ reached: boolean; evidence: string; newOutput: string }> {
+  const deadline = Date.now() + options.timeoutMs;
+  const startedAt = Date.now();
+  let newOutput = '';
+
+  while (Date.now() < deadline) {
+    newOutput = readOutputSinceWatermark(options.watermark);
+    const marker = GATE_EVIDENCE_MARKERS.find((candidate) => newOutput.includes(candidate));
+    if (marker) {
+      return { reached: true, evidence: `output channel logged "${marker}" after F5`, newOutput };
+    }
+
+    if (!options.azuriteWasListening && (await isPortListening(AZURITE_BLOB_PORT))) {
+      return {
+        reached: true,
+        evidence: `Azurite started listening on port ${AZURITE_BLOB_PORT} after F5 (activateAzurite runs first in pickFuncProcessInternal)`,
+        newOutput,
+      };
+    }
+
+    if (!stillHoldsCorruption(options.funcBinaryPath)) {
+      return { reached: true, evidence: 'the corruption marker was already overwritten (repair extract landed)', newOutput };
+    }
+
+    const visibleText = await getVisibleWorkbenchText(driver).catch(() => '');
+    if (visibleText.includes(BLOCKING_PROMPT_TEXT)) {
+      return { reached: true, evidence: 'the blocking install prompt appeared (the gate ran and chose the prompt branch)', newOutput };
+    }
+
+    const elapsedSeconds = Math.round((Date.now() - startedAt) / 1000);
+    console.log(`${LOG_PREFIX} waiting for evidence that F5 reached the product (${elapsedSeconds}s/${options.timeoutMs / 1000}s)`);
+    await sleep(3000);
+  }
+
+  return { reached: false, evidence: 'none', newOutput };
 }
 
 /**
@@ -582,9 +834,40 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     // The generated launch.json is `type: coreclr, request: attach,
     // processId: ${command:azureLogicAppsStandard.pickProcess}`, so F5 runs
     // pickFuncProcessInternal -> preDebugValidate -> validateFuncCoreToolsInstalled. Nothing
-    // else in the extension calls that gate.
+    // else in the extension calls that gate. That resolution is per-folder, so F5 only reaches
+    // it when the active editor belongs to the Logic App folder — hence the anchor. Done AFTER
+    // the corruption so that nothing between the anchor and F5 can change editor focus.
+    await anchorDebugContextOnWorkflow(workbench, driver, path.join(standard.wfDir, 'workflow.json'));
+
+    // Take the readings the liveness gate diffs against, as late as possible before F5.
+    const outputWatermark = captureOutputWatermark();
+    const azuriteWasListening = await isPortListening(AZURITE_BLOB_PORT);
+    console.log(
+      `${LOG_PREFIX} Pre-F5 watermark: log=${outputWatermark?.filePath ?? '(none)'} at ${outputWatermark?.length ?? 0} bytes, azurite:${AZURITE_BLOB_PORT} listening=${azuriteWasListening}`
+    );
+
     console.log(`${LOG_PREFIX} Step 3: pressing F5 (Debug: Start Debugging)`);
     await startDebugging(workbench, driver);
+
+    // ── Step 3b: fail fast if F5 never reached the product ───────────────────
+    // Without this, a harness-side no-op is indistinguishable from a product-side repair
+    // failure until 300s have elapsed — which is exactly how the first CI run of this scenario
+    // wasted a whole shard to discover that F5 had done nothing at all.
+    const gate = await waitForPreDebugGateEvidence(driver, {
+      watermark: outputWatermark,
+      azuriteWasListening,
+      funcBinaryPath: primaryFuncPath,
+      timeoutMs: GATE_EVIDENCE_TIMEOUT_MS,
+    });
+    if (!gate.reached) {
+      await captureScreenshot(driver, 'funcRepair-gate-never-reached', EXPLICIT_SCREENSHOT_DIR);
+      logLatestLogicAppsOutput('pre-debug gate never reached');
+      const title = await driver.getTitle().catch(() => '(title unavailable)');
+      assert.fail(
+        `THE PRE-DEBUG GATE WAS NEVER REACHED — this run proves nothing about the product. Within ${GATE_EVIDENCE_TIMEOUT_MS}ms of pressing F5 there was no sign that the extension reacted: no new output-channel line from ${JSON.stringify(GATE_EVIDENCE_MARKERS)}, no Azurite listener on port ${AZURITE_BLOB_PORT}, no install prompt, and the func binary still held the corruption marker. This is a HARNESS failure, not a repair failure: F5 most likely did not resolve the Logic App folder's launch configuration (check that the active editor is the project's workflow.json and not an auto-opened markdown preview). Window title at failure: "${title}". New output since F5: ${JSON.stringify(gate.newOutput.slice(-1500))}`
+      );
+    }
+    console.log(`${LOG_PREFIX} ✓ F5 reached the product — ${gate.evidence}`);
 
     // ── Step 4: wait for the repair, watching the UI at the same time ────────
     console.log(`${LOG_PREFIX} Step 4: waiting for the managed func to become runnable again`);
