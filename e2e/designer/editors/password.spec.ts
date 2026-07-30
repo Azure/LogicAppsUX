@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { GoToMockWorkflowUrl } from '../utils/GoToWorkflow';
 
 test(
   'password mask',
@@ -7,9 +7,7 @@ test(
     tag: '@mock',
   },
   async ({ page }) => {
-    await page.goto('/');
-
-    await GoToMockWorkflow(page, 'Panel');
+    await GoToMockWorkflowUrl(page, 'Panel');
 
     await page.getByTestId('card-http').click();
     await page.getByPlaceholder('Showing 0 of').click();

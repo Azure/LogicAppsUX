@@ -4,6 +4,7 @@ import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector/Log
 import ContextSettings from '../app/SettingsSections/contextSettings';
 import SourceSettings from '../app/SettingsSections/sourceSettings';
 import { useHostingPlan, useIsDarkMode, useIsLocal } from '../state/workflowLoadingSelectors';
+import { isToolboxExpandedByDefault } from '../state/urlParams';
 import { LocalizationSettings } from './LocalizationSettings';
 import styles from './settings_box.module.less';
 import { darkTheme } from './themes';
@@ -12,7 +13,7 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 
 export const SettingsBox = () => {
-  const [active, toggleActive] = useBoolean(true);
+  const [active, toggleActive] = useBoolean(isToolboxExpandedByDefault(typeof window === 'undefined' ? '' : window.location.search));
   const isDark = useIsDarkMode();
   const isLocal = useIsLocal();
   const isConsumption = useHostingPlan() === 'consumption';

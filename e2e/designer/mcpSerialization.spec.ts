@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { GoToMockWorkflow, GoToMockWorkflowUrl } from './utils/GoToWorkflow';
 import {
   getConnectionReferencesFromState,
   getSerializedWorkflowFromState,
@@ -13,9 +13,7 @@ test.describe(
   },
   () => {
     test('Should serialize an Agent workflow with MCP tools (built-in and managed) and match', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Agent with MCP Tools');
+      await GoToMockWorkflowUrl(page, 'Agent with MCP Tools');
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 
@@ -59,9 +57,7 @@ test.describe(
     });
 
     test('Should not include built-in MCP connections in connectionReferences', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Agent with MCP Tools');
+      await GoToMockWorkflowUrl(page, 'Agent with MCP Tools');
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 
@@ -74,9 +70,7 @@ test.describe(
     });
 
     test('Should preserve all three tool types in the Agent after round-trip', async ({ page }) => {
-      await page.goto('/');
-
-      await GoToMockWorkflow(page, 'Agent with MCP Tools');
+      await GoToMockWorkflowUrl(page, 'Agent with MCP Tools');
 
       const serialized: any = await getSerializedWorkflowFromState(page);
       const toolKeys = Object.keys(serialized.definition.actions.WorkflowAgent.tools ?? {});
@@ -89,12 +83,8 @@ test.describe(
     });
 
     test('Should preserve inline Connection shape for built-in MCP tool on Consumption', async ({ page }) => {
-      await page.goto('/');
-
-      // Toggle Plan to Consumption to route through serializeConsumptionBuiltInMcpOperation.
-      await page.getByRole('radio', { name: 'Consumption' }).click({ force: true });
-
-      await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
+      // Load as Consumption so serialization routes through serializeConsumptionBuiltInMcpOperation.
+      await GoToMockWorkflowUrl(page, 'Agent with MCP Tools (Consumption)', { plan: 'consumption' });
 
       const serialized: any = await getSerializedWorkflowFromState(page);
       const tool = serialized.definition.actions.WorkflowAgent.tools.BuiltIn_MCP_Server;
@@ -113,9 +103,7 @@ test.describe(
     test('Should serialize Standard built-in MCP as connectionReference on designer-v2', async ({ page }) => {
       // Mirrors the v1 shape assertion on the v2 designer to catch divergence between the two
       // packages' serializers — both must emit `inputs.connectionReference.connectionName` on Standard.
-      await page.goto('/v2');
-
-      await GoToMockWorkflow(page, 'Agent with MCP Tools');
+      await GoToMockWorkflowUrl(page, 'Agent with MCP Tools', { route: '/v2' });
 
       const serialized: any = await getSerializedWorkflowFromStateV2(page);
       const tool = serialized.definition.actions.WorkflowAgent.tools.BuiltIn_MCP_Server;
@@ -130,11 +118,7 @@ test.describe(
     test('Should preserve inline Connection shape for built-in MCP tool on Consumption (designer-v2)', async ({ page }) => {
       // Mirrors the v1 Consumption test on the v2 designer so a regression on
       // serializeConsumptionBuiltInMcpOperation in the v2 package is caught.
-      await page.goto('/v2');
-
-      await page.getByRole('radio', { name: 'Consumption' }).click({ force: true });
-
-      await GoToMockWorkflow(page, 'Agent with MCP Tools (Consumption)');
+      await GoToMockWorkflowUrl(page, 'Agent with MCP Tools (Consumption)', { plan: 'consumption', route: '/v2' });
 
       const serialized: any = await getSerializedWorkflowFromStateV2(page);
       const tool = serialized.definition.actions.WorkflowAgent.tools.BuiltIn_MCP_Server;
@@ -149,9 +133,7 @@ test.describe(
 
     test('Should surface UAMI identity on a managed MCP connection loaded from $connections.value', async ({ page }) => {
       // The connectionReferences rebuild from $connections.value lives in the designer-v2 deserializer.
-      await page.goto('/v2');
-
-      await GoToMockWorkflow(page, 'Agent with MCP UAMI');
+      await GoToMockWorkflowUrl(page, 'Agent with MCP UAMI', { route: '/v2' });
 
       // Consumption workflows store connections in parameters.$connections.value. The deserializer
       // rebuilds connectionReferences from that, preserving connectionProperties so the UAMI surfaces on load.

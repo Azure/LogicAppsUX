@@ -45,6 +45,30 @@ To develop against Azure Resource Manager, run `pnpm run start:arm` from the rep
 
 Unknown routes fall back to the production designer development shell.
 
+## URL parameters (designer shells)
+
+The `/` and `/v2` designer shells can be bootstrapped entirely from the query string, so a workflow and its run data load without touching the Dev Toolbox. This is what the Playwright E2E helpers (`GoToMockWorkflowUrl` / `buildMockWorkflowUrl`) use.
+
+```
+http://localhost:4200/?workflow=Panel
+http://localhost:4200/?workflow=MonitoringViewConditional&runFile=normalState
+http://localhost:4200/v2/?workflow=SimpleBigworkflow&darkMode&readOnly
+```
+
+| Parameter | Values | Description |
+|---|---|---|
+| `workflow` | mock file key (`Panel`, `Panel.json`) or Dev Toolbox label (`Simple Big Workflow`) | Local mock workflow to load |
+| `runFile` | run file name from `__mocks__/runs` | Loads the run and switches to monitoring view |
+| `appId` / `workflowName` / `runId` | Azure resource identifiers | Load from Azure instead of a mock (requires an ARM token) |
+| `plan` | `standard`, `consumption`, `hybrid` | Hosting plan |
+| `language` | locale string | UI locale |
+| `monitoringView`, `readOnly`, `darkMode`, `customEditors`, `showEdgeDrawing`, `displayRuntimeInfo`, `collapseGraphs`, `suppressDefaultNodeSelect`, `multiVariable`, `queryCachePersist`, `firstDesignerV2Load` | boolean | Toggle the matching Dev Toolbox setting |
+| `toolbox` | boolean | Force the Dev Toolbox open; it collapses by default when a workflow is supplied via URL |
+
+Booleans accept a bare flag (`?readOnly`) or `true`/`1`/`yes` and `false`/`0`/`no`.
+
+Settings are applied synchronously when the store module initializes, before the first render, so mount-only options such as dark mode, locale, and query-cache persistence take effect correctly. The workflow and run fetches happen in an effect during the first mount.
+
 ## Development model
 
 `src/App.tsx` owns route registration and lazy-loads each experience with its Redux store. `src/designer/app/DesignerShell` configures the designer host and its environment-specific services. Changes to workspace libraries are picked up by Vite during local development.

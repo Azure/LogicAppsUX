@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { GoToMockWorkflowUrl } from './utils/GoToWorkflow';
 
 test.describe(
   'TabFocus Tests',
@@ -11,8 +11,7 @@ test.describe(
       test.skip(browserName === 'firefox', 'Still working on it');
       const tab = async () => page.locator('*:focus').press('Tab');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await GoToMockWorkflowUrl(page, 'All Scope Nodes');
 
       // Find element with text 'Recurrence'
       await page.getByText('Recurrence', { exact: true }).click();
@@ -52,8 +51,7 @@ test.describe(
       const tab = async () => page.locator('*:focus').press('Tab');
       const backTab = async () => page.locator('*:focus').press('Shift+Tab');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
 
       // Find element with text 'manual'
       await page.getByText('manual', { exact: true }).click();
@@ -79,8 +77,7 @@ test.describe(
     test('Should focus toolbar controls after workflow elements', async ({ page, browserName }) => {
       test.skip(browserName === 'firefox', 'Still working on it');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await GoToMockWorkflowUrl(page, 'All Scope Nodes');
 
       // Wait for workflow to load
       await page.waitForSelector('.react-flow__node');
@@ -139,8 +136,7 @@ test.describe(
     test('Should focus toolbar controls after closing panel', async ({ page, browserName }) => {
       test.skip(browserName === 'firefox', 'Still working on it');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'All Scope Nodes');
+      await GoToMockWorkflowUrl(page, 'All Scope Nodes');
 
       // Wait for workflow to load
       await page.waitForSelector('.react-flow__node');
@@ -169,8 +165,7 @@ test.describe(
       test.skip(browserName === 'firefox', 'Still working on it');
       const tab = async () => page.locator('*:focus').press('Tab');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
 
       // Focus directly on the first toolbar control
       const collapseExpandButton = page.locator('#control-expand-collapse-button');
@@ -209,8 +204,7 @@ test.describe(
     test('Should activate toolbar controls with keyboard', async ({ page, browserName }) => {
       test.skip(browserName === 'firefox', 'Still working on it');
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
 
       // Focus on zoom in button and press Enter
       const zoomInButton = page.locator('#control-zoom-in-button');

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { buildMockWorkflowUrl } from '../utils/GoToWorkflow';
 
 test.describe(
   'Variable Editor Tests',
@@ -14,13 +15,9 @@ test.describe(
       async ({ page }) => {
         await page.goto('/');
         await page.evaluate(() => localStorage.clear());
-        await page.getByText('Local', { exact: true }).click();
-
-        await page.getByText('Select an option').click();
-        await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
+        await page.goto(buildMockWorkflowUrl('Multi Variable'));
         await page.waitForTimeout(100);
         await page.getByRole('button', { name: 'Yes' }).click();
-        await page.getByRole('button', { name: 'Toolbox' }).click();
         await page.getByLabel('Zoom view to fit').click({ force: true });
 
         await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();

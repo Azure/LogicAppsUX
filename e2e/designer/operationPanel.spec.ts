@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { GoToMockWorkflow, GoToMockWorkflowUrl } from './utils/GoToWorkflow';
 
 test.describe(
   'OperationPanel Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     const openSelectedAndPinnedPanels = async (page: Page) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
 
       // Left-click on 'Parse JSON' node.
       await page.getByTestId('card-parse_json').click();
@@ -41,8 +40,7 @@ test.describe(
         await expect(page.locator('.msla-panel-container-nested')).not.toBeVisible();
       };
 
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
 
       // Left-click on 'Initialize ArrayVariable' node.
       await page.getByTestId('card-initialize_arrayvariable').click();
@@ -56,8 +54,7 @@ test.describe(
     });
 
     test('Can pin a node, and close the panel', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
 
       // Left-click on 'Initialize ArrayVariable' node.
       await page.getByTestId('card-initialize_arrayvariable').click({ button: 'right' });
@@ -127,8 +124,7 @@ test.describe(
     });
 
     test('Should only show the panel info message when trigger type is request', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
 
       // Left-click on 'manual' trigger.
       await page.getByTestId('card-manual').click();
@@ -145,8 +141,7 @@ test.describe(
     });
 
     test('Should show proper operation panel tabs', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Panel');
+      await GoToMockWorkflowUrl(page, 'Panel');
       // Left-click on 'manual' trigger.
       await page.getByTestId('card-manual').click();
       await expect(page.getByRole('tab', { name: 'Parameters' })).toBeVisible();
@@ -162,8 +157,7 @@ test.describe(
       { designer: 'designer v2', route: '/v2' },
     ]) {
       test(`Should keep dynamic output failure details inside the panel in ${designer}`, async ({ page }) => {
-        await page.goto(route);
-        await GoToMockWorkflow(page, 'Dynamic Outputs Overflow');
+        await GoToMockWorkflowUrl(page, 'Dynamic Outputs Overflow', { route });
 
         await page.getByTestId('card-manual').click();
 

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { buildMockWorkflowUrl } from '../utils/GoToWorkflow';
 
 test.describe(
   'MultiVariable Tests',
@@ -17,13 +18,9 @@ test.describe(
           localStorage.clear();
           localStorage.setItem('control-expand-collapse-button', 'true');
         });
-        await page.getByText('Local', { exact: true }).click();
-
-        await page.getByText('Select an option').click();
-        await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
+        await page.goto(buildMockWorkflowUrl('Multi Variable'));
         await page.waitForTimeout(100);
         await page.getByRole('button', { name: 'Yes' }).click();
-        await page.getByRole('button', { name: 'Toolbox' }).click();
         await page.getByLabel('Zoom view to fit').click({ force: true });
 
         await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
@@ -48,13 +45,9 @@ test.describe(
         localStorage.clear();
         localStorage.setItem('control-expand-collapse-button', 'true');
       });
-      await page.getByText('Local', { exact: true }).click();
-
-      await page.getByText('Select an option').click();
-      await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
+      await page.goto(buildMockWorkflowUrl('Multi Variable'));
       await page.waitForTimeout(100);
       await page.getByRole('button', { name: 'No' }).click();
-      await page.getByRole('button', { name: 'Toolbox' }).click();
       await page.getByLabel('Zoom view to fit').click({ force: true });
 
       await page.getByLabel('Zoom view to fit').press('ControlOrMeta+Shift+P');
@@ -84,14 +77,10 @@ test.describe(
         localStorage.clear();
         localStorage.setItem('control-expand-collapse-button', 'true');
       });
-      await page.getByText('Local', { exact: true }).click();
-
-      await page.getByText('Select an option').click();
-      await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
+      await page.goto(buildMockWorkflowUrl('Multi Variable'));
       await page.waitForTimeout(100);
       await page.getByLabel('Remember my choice').check();
       await page.getByRole('button', { name: 'Yes' }).click();
-      await page.getByRole('button', { name: 'Toolbox' }).click();
       await page.getByLabel('Zoom view to fit').click({ force: true });
 
       await page.waitForFunction(() => localStorage.getItem('msla-combine-initialize-variables') !== null);
@@ -106,12 +95,7 @@ test.describe(
         '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testVariable1", "type": "string", "value": "123" }, { "name": "testVariable2", "type": "float", "value": 123.5 }, { "name": "testVariable3", "type": "array", "value": [] } ] }, "runAfter": {}}'
       );
 
-      await page.goto('/');
-
-      await page.getByText('Local', { exact: true }).click();
-      await page.getByText('Select an option').click();
-      await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
-      await page.getByRole('button', { name: 'Toolbox' }).click();
+      await page.goto(buildMockWorkflowUrl('Multi Variable'));
       await page.getByLabel('Zoom view to fit').click();
       await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { GoToMockWorkflowUrl } from './utils/GoToWorkflow';
 
 test.describe(
   'NodeSearchPanel Tests',
@@ -8,8 +8,7 @@ test.describe(
   },
   () => {
     test('Selecting action from node panel should open action panel', async ({ page }) => {
-      await page.goto('/');
-      await GoToMockWorkflow(page, 'Conditionals (Complex)');
+      await GoToMockWorkflowUrl(page, 'Conditionals (Complex)');
 
       // Ensure conditional and action inside is visible
       expect(await page.getByText('Verify property changes', { exact: true }).isVisible()).toBeTruthy();

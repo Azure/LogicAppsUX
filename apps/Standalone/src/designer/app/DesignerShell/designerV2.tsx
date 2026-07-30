@@ -5,6 +5,7 @@ import { useHostingPlan, useIsLocal, useQueryCachePersist, useResourcePath } fro
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesignerV2';
 import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumptionV2';
 import { LocalDesigner } from '../LocalDesigner/localDesignerV2';
+import { useStandaloneUrlBootstrap } from '../../state/useStandaloneUrlBootstrap';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer-v2';
 import { useQuery } from '@tanstack/react-query';
 
@@ -18,6 +19,7 @@ export const DesignerWrapper = () => {
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
   const queryCachePersist = useQueryCachePersist();
+  useStandaloneUrlBootstrap();
 
   return (
     <ReactQueryProvider persistEnabled={queryCachePersist}>
