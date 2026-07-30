@@ -60,6 +60,7 @@ import {
   Field,
   Input,
   Link,
+  makeStyles,
   MessageBar,
   MessageBarBody,
   Option,
@@ -91,7 +92,6 @@ import {
   type NewResourceProps,
 } from '@microsoft/designer-ui';
 import {
-  AGENT_MODEL_CONFIG,
   clone,
   ConnectionService,
   EditorService,
@@ -101,13 +101,12 @@ import {
   getRecordEntry,
   isNullOrUndefined,
   isRecordNotEmpty,
+  AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   SUBGRAPH_TYPES,
-  SUPPORTED_AGENT_OPENAI_MODELS,
-  SUPPORTED_FOUNDRY_AGENT_MODELS,
 } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, CreateFoundryAgentOptions, FoundryAgentVersion, OperationInfo } from '@microsoft/logic-apps-shared';
-import { getMissingRoleDefinitions } from '../../../../../core/queries/role';
+import { getRoleDefinitionsToAssign } from '../../../../../core/queries/role';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -115,6 +114,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 import {
+  getAvailableModelsForConnection,
+  useAvailableModelsForAccount,
   useCognitiveServiceAccountDeploymentsForNode,
   useCognitiveServiceAccountId,
   useFoundryAccountResourceIdForNode,
@@ -155,8 +156,16 @@ export interface ParametersTabProps extends PanelTabProps {
   isTabReadOnly?: boolean;
 }
 
+const useParametersTabStyles = makeStyles({
+  errorMessageBody: {
+    minWidth: 0,
+    overflowWrap: 'anywhere',
+  },
+});
+
 export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const { nodeId: selectedNodeId, isTabReadOnly } = props;
+  const styles = useParametersTabStyles();
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const { tokenState, workflowParametersState, workflowState } = useSelector((state: RootState) => ({
@@ -244,7 +253,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
           }
           layout="multiline"
         >
-          <MessageBarBody>
+          <MessageBarBody className={styles.errorMessageBody} data-automation-id="msla-operation-error-message">
             <Text>{errorInfo.message}</Text>
           </MessageBarBody>
         </MessageBar>
@@ -359,12 +368,13 @@ const updateConnectionAndDeployment = async (
         let modelFormat = deploymentInfo.modelFormat;
         let modelVersion = deploymentInfo.modelVersion;
         if (!modelFormat || !modelVersion) {
-          const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+          const availableModels = await getAvailableModelsForConnection(connection);
+          const match = availableModels.find((entry: any) => entry?.model?.name === modelName);
           if (!modelFormat) {
-            modelFormat = config?.format ?? 'OpenAI';
+            modelFormat = match?.model?.format ?? 'OpenAI';
           }
           if (!modelVersion) {
-            modelVersion = config?.version;
+            modelVersion = match?.model?.version;
           }
         }
 
@@ -464,6 +474,7 @@ export const ParameterSection = ({
 
   // Specific for agentic scenarios
   const cognitiveServiceAccountId = useCognitiveServiceAccountId(nodeId, operationInfo?.connectorId);
+  const { data: availableModelsForCognitiveServiceAccount } = useAvailableModelsForAccount(cognitiveServiceAccountId);
   const { data: deploymentsForCognitiveServiceAccount, refetch } = useCognitiveServiceAccountDeploymentsForNode(
     nodeId,
     operationInfo?.connectorId
@@ -495,22 +506,17 @@ export const ParameterSection = ({
     const targetResourceId = foundryAccountResourceId;
     rbacAssignedResourceRef.current = targetResourceId;
     setFoundryRbacStatus('checking');
-    getMissingRoleDefinitions(targetResourceId, [
-      'Azure AI User',
-      'Azure AI Administrator',
-      'Azure AI Developer',
-      'Cognitive Services Contributor',
-    ])
-      .then((missingRoles) => {
+    getRoleDefinitionsToAssign(targetResourceId, AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS)
+      .then((rolesToAssign) => {
         if (cancelled || rbacAssignedResourceRef.current !== targetResourceId) {
           return;
         }
-        if (missingRoles.length === 0) {
+        if (rolesToAssign.length === 0) {
           setFoundryRbacStatus('not-needed');
           return;
         }
         setFoundryRbacStatus('assigning');
-        return Promise.all(missingRoles.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
+        return Promise.all(rolesToAssign.map((role) => RoleService().addAppRoleAssignmentForResource(targetResourceId, role.id))).then(
           () => {
             if (!cancelled && rbacAssignedResourceRef.current === targetResourceId) {
               setFoundryRbacStatus('assigned');
@@ -1068,14 +1074,14 @@ export const ParameterSection = ({
           let modelFormat = deploymentInfo?.properties?.model?.format;
           let modelVersion = deploymentInfo?.properties?.model?.version;
 
-          // For MicrosoftFoundry, format and version are not in the ARM response — fill from AGENT_MODEL_CONFIG
+          // For MicrosoftFoundry, format and version are not in the ARM response — fill from the account's model catalog
           if (!modelFormat || !modelVersion) {
-            const config = modelName ? AGENT_MODEL_CONFIG[modelName] : undefined;
+            const match = availableModelsForCognitiveServiceAccount?.find((entry: any) => entry?.model?.name === modelName);
             if (!modelFormat) {
-              modelFormat = config?.format ?? 'OpenAI';
+              modelFormat = match?.model?.format ?? 'OpenAI';
             }
             if (!modelVersion) {
-              modelVersion = config?.version;
+              modelVersion = match?.model?.version;
             }
           }
 
@@ -1138,6 +1144,7 @@ export const ParameterSection = ({
       operationDefinition,
       connector,
       deploymentsForCognitiveServiceAccount,
+      availableModelsForCognitiveServiceAccount,
       foundryAgentsForNode,
     ]
   );
@@ -1426,8 +1433,7 @@ export const ParameterSection = ({
         variables,
         deploymentsForCognitiveServiceAccount ?? [],
         isA2AWorkflow,
-        foundryAgentsForNode ?? [],
-        currentAgentModelType
+        foundryAgentsForNode ?? []
       );
 
       const createNewResourceEditorProps = getCustomEditorForNewResource(
@@ -1818,8 +1824,7 @@ export const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>,
   deploymentsForCognitiveServiceAccount: any[] = [],
   isA2AWorkflow?: boolean,
-  foundryAgents: any[] = [],
-  agentModelType?: string
+  foundryAgents: any[] = []
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -1847,12 +1852,22 @@ export const getEditorAndOptions = (
     };
   }
 
-  // Handle agent connector with supported deployments
+  // Handle agent connector with supported deployments.
+  // Mirror the backend, which accepts any deployment whose model supports chat completions,
+  // instead of restricting to a hardcoded model list (which drops newly released models).
   const isAgent = isAgentConnectorAndDeploymentId(operationInfo?.connectorId, parameter.parameterName);
   if (equals(editor, 'combobox') && isAgent) {
-    const supportedModels = agentModelType === 'MicrosoftFoundry' ? SUPPORTED_FOUNDRY_AGENT_MODELS : SUPPORTED_AGENT_OPENAI_MODELS;
     const options = deploymentsForCognitiveServiceAccount
-      .filter((deployment) => supportedModels.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+      .filter((deployment) => {
+        // ARM returns capability flags as strings (e.g. "true"); coerce so a non-string shape can't
+        // throw, and compare case-insensitively.
+        const isChatCompletion = equals(String(deployment.properties?.capabilities?.chatCompletion ?? ''), 'true');
+        // Only offer deployments that are ready to use; skip Creating/Failed/Deleting. A missing state
+        // (older API versions) is treated as usable so valid deployments are never hidden.
+        const provisioningState = deployment.properties?.provisioningState;
+        const isReady = !provisioningState || equals(String(provisioningState), 'Succeeded');
+        return isChatCompletion && isReady;
+      })
       .map((deployment) => ({
         value: deployment.name,
         displayName: `${deployment.name}${deployment.properties?.model?.name ? ` (${deployment.properties.model.name})` : ''}`,

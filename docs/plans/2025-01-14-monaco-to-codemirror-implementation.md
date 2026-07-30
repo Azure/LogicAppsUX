@@ -1613,26 +1613,6 @@ git add libs/designer-ui/src/lib/editor/base/plugins/TokenPickerButtonLegacy.tsx
 git commit -m "refactor: update TokenPicker components to use CodeMirror types"
 ```
 
----
-
-### Task 17: Update Unit Testing Components
-
-**Files:**
-- Modify: `libs/designer-ui/src/lib/unitTesting/conditionExpression/index.tsx`
-
-**Step 1: Update imports**
-
-Check and update any Monaco imports in `libs/designer-ui/src/lib/unitTesting/conditionExpression/index.tsx`.
-
-**Step 2: Commit**
-
-```bash
-git add libs/designer-ui/src/lib/unitTesting/
-git commit -m "refactor: update unitTesting components to use CodeMirror"
-```
-
----
-
 ## Phase 6: Cleanup
 
 ### Task 18: Remove Monaco Dependencies

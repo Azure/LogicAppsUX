@@ -11,6 +11,7 @@ import {
   isNullOrEmpty,
   parseErrorMessage,
   RunService,
+  WorkflowService,
 } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -260,6 +261,21 @@ export const FloatingRunButton = ({
       }
 
       setRunHasPayload(!!payload);
+
+      // Local workflow — use callback URL from runtime API
+      if (!siteResourceId) {
+        setRunStatusMessage(runStatusMessages.running);
+        const callbackInfo = await WorkflowService().getCallbackUrl?.(triggerId);
+        if (!callbackInfo) {
+          throw new Error('Unable to get trigger callback URL. Please ensure the workflow runtime is running.');
+        }
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        const runResponse = await RunService().runTrigger(callbackInfo, payload);
+        const runId = runResponse?.responseHeaders?.['x-ms-workflow-run-id'] ?? runResponse?.headers?.['x-ms-workflow-run-id'];
+        onRun?.(runId ?? '');
+        setRunStatusMessage(null);
+        return;
+      }
 
       if (isDraftMode) {
         await runDraftWorkflow(triggerId, payload);

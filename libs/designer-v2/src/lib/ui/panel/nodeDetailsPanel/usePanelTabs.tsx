@@ -2,8 +2,8 @@ import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
-import { useIsA2AWorkflow, useIsAgenticWorkflowOnly } from '../../../core/state/designerView/designerViewSelectors';
-import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsA2AWorkflow, useIsAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -12,7 +12,6 @@ import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors'
 import { isTriggerNode } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
-import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
@@ -32,7 +31,6 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
-  const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
   const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
   const isTrigger = useSelector((state: RootState) => isTriggerNode(nodeId, state.workflow.nodesMetadata));
@@ -43,7 +41,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
   const isAgentNode = useMemo(() => equals(operationInfo?.type ?? '', constants.NODE.TYPE.AGENT, true), [operationInfo?.type]);
   const isA2AWorkflow = useIsA2AWorkflow();
-  const isAgenticWorkflowOnly = useIsAgenticWorkflowOnly();
+  const isAgenticWorkflow = useIsAgenticWorkflow();
   const operationManifestQuery = useOperationManifest(operationInfo);
   const enableAgentHarness = operationManifestQuery.data?.properties?.enableAgentHarness ?? false;
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
@@ -64,14 +62,6 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       visible: !isScopeNode && isMonitoringView,
     }),
     [intl, isMonitoringView, isScopeNode, tabProps]
-  );
-
-  const mockResultsTabItem = useMemo(
-    () => ({
-      ...mockResultsTab(intl, tabProps),
-      visible: isUnitTestView,
-    }),
-    [intl, isUnitTestView, tabProps]
   );
 
   const parametersTabItem = useMemo(
@@ -100,10 +90,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const channelsTabItem = useMemo(
     () => ({
       ...channelsTab(intl, tabProps),
-      // Note: Channels tab is disabled until we have the teams integration ready
-      visible: isAgentNode && isAgenticWorkflowOnly,
+      visible: isAgentNode && isAgenticWorkflow,
     }),
-    [intl, tabProps, isAgentNode, isAgenticWorkflowOnly]
+    [intl, tabProps, isAgentNode, isAgenticWorkflow]
   );
 
   const handoffTabItem = useMemo(
@@ -151,9 +140,6 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   );
 
   const tabs = useMemo(() => {
-    if (isUnitTestView) {
-      return [mockResultsTabItem];
-    }
     // Switch cases and regular agent tools should only show parameters tab.
     // Built-in agent tools (e.g. code_interpreter) are excluded — they need the monitoring tab
     // to display their inputs/outputs since they don't have editable parameters.
@@ -187,8 +173,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);
   }, [
-    mockResultsTabItem,
-    isUnitTestView,
+    nodeId,
     aboutTabItem,
     agentHarnessTabItem,
     channelsTabItem,

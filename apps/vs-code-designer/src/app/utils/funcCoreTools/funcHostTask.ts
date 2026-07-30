@@ -2,14 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
+import { defaultFuncPort, stopFuncTaskPostDebugSetting } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { registerEvent } from '@microsoft/vscode-azext-utils';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { delay } from '../delay';
 import * as cp from 'child_process';
@@ -32,8 +32,11 @@ export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
   if (task.definition.type === 'shell') {
     const command = (task.execution as vscode.ShellExecution).command?.toString();
+    if (!command) {
+      return false;
+    }
+
     const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
-    // check for args?
     return funcRegex.test(command);
   }
   return /func (host )?start/i.test(commandLine || '');
@@ -60,6 +63,7 @@ export function registerFuncHostTaskEvents(): void {
       context.telemetry.suppressIfSuccessful = true;
       if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
         runningFuncTaskMap.delete(e.execution.task.scope);
+        ext.workflowRuntimePort = undefined;
       }
     }
   );
@@ -131,11 +135,11 @@ export async function getFuncPortFromTaskOrProject(
     if (isString(projectPathOrTaskScope)) {
       projectPath = projectPathOrTaskScope;
     } else if (typeof projectPathOrTaskScope === 'object') {
-      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope);
+      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope, true);
     }
 
     if (projectPath) {
-      const localSettings = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
+      const localSettings = await getLocalSettingsJson(context, projectPath);
       if (localSettings.Host) {
         const key = Object.keys(localSettings.Host).find((k) => k.toLowerCase() === 'localhttpport');
         if (key && localSettings.Host[key]) {

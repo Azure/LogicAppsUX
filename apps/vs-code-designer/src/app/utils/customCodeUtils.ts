@@ -24,29 +24,22 @@ export async function customCodeArtifactsExist(projectPath: string): Promise<boo
   }
 
   const customCodeArtifactsPath = path.join(projectPath, libDirectory, customDirectory);
-  const customFolderExists = await fse.pathExists(customCodeArtifactsPath);
-  if (!customFolderExists) {
+  if (!(await fse.pathExists(customCodeArtifactsPath))) {
     return false;
   }
 
-  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
-  if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
-    return false;
-  }
-  const customCodeProjects = customCodeProjectPaths.map((p) => path.basename(p));
-
-  const customCodeArtifactFiles = await fse.readdir(customCodeArtifactsPath);
-  for (const projectName of customCodeProjects) {
-    if (!customCodeArtifactFiles.includes(projectName)) {
-      return false;
-    }
-
-    if (!fse.pathExistsSync(path.join(customCodeArtifactsPath, projectName, 'function.json'))) {
-      return false;
+  const entries = await fse.readdir(customCodeArtifactsPath);
+  for (const entry of entries) {
+    const entryPath = path.join(customCodeArtifactsPath, entry);
+    if ((await fse.stat(entryPath)).isDirectory()) {
+      const files = await fse.readdir(entryPath);
+      if (files.some((f) => f.endsWith('.dll'))) {
+        return true;
+      }
     }
   }
 
-  return true;
+  return false;
 }
 
 export async function getAllCustomCodeFunctionsProjects(context: IActionContext): Promise<string[]> {
@@ -87,6 +80,21 @@ export async function isCustomCodeFunctionsProject(folderPath: string): Promise<
 
   const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
   return !isNullOrUndefined(getCustomCodeTargetFramework(csprojContent));
+}
+
+/**
+ * Detects the target framework of a custom code functions project for the given logic app project.
+ * @param {string} projectPath - The path to the logic app project.
+ * @returns {Promise<TargetFramework | undefined>} Returns the target framework if found, otherwise undefined.
+ */
+export async function detectCustomCodeTargetFramework(projectPath: string): Promise<TargetFramework | undefined> {
+  const customCodeProjects = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
+  if (customCodeProjects && customCodeProjects.length > 0) {
+    const metadata = await getCustomCodeFunctionsProjectMetadata(customCodeProjects[0]);
+    return metadata?.targetFramework;
+  }
+  
+  return undefined;
 }
 
 /**
@@ -180,7 +188,7 @@ function usesLogicAppFolderToPublish(targetFramework: TargetFramework): boolean 
   return targetFramework !== TargetFramework.NetFx;
 }
 
-function isCustomCodeNetCoreCsproj(csprojContent: string, targetFramework: TargetFramework.Net8 | TargetFramework.Net10): boolean {
+function isCustomCodeNetCoreCsproj(csprojContent: string, targetFramework: TargetFramework): boolean {
   return (
     csprojContent.includes(`<TargetFramework>${targetFramework}</TargetFramework>`) &&
     csprojContent.includes('Microsoft.Azure.Workflows.Webjobs.Sdk') &&

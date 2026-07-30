@@ -53,3 +53,33 @@ export async function isDevContainerWorkspace(): Promise<boolean> {
     return false;
   }
 }
+
+export function isDevContainerWorkspaceSync(): boolean {
+  try {
+    const workspaceFile = vscode.workspace.workspaceFile;
+    if (!workspaceFile) {
+      return false;
+    }
+
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders || workspaceFolders.length === 0) {
+      return false;
+    }
+
+    const workspaceFileContent = fse.readJsonSync(workspaceFile.fsPath);
+    const folders = workspaceFileContent.folders || [];
+    const hasDevContainerFolder = folders.some(
+      (folder: any) => folder.path === devContainerFolderName || folder.path === `./${devContainerFolderName}`
+    );
+
+    if (!hasDevContainerFolder) {
+      return false;
+    }
+
+    const workspaceFolder = path.dirname(workspaceFile.fsPath);
+    const devContainerJsonPath = path.join(workspaceFolder, devContainerFolderName, devContainerFileName);
+    return fse.pathExistsSync(devContainerJsonPath);
+  } catch {
+    return false;
+  }
+}

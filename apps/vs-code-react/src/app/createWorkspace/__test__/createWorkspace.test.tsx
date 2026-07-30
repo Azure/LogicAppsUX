@@ -43,7 +43,7 @@ vi.mock('react-router-dom', () => ({
   useOutletContext: vi.fn(),
 }));
 
-import { CreateWorkspace, CreateWorkspaceFromPackage, CreateWorkspaceStructure, CreateLogicApp } from '../createWorkspace';
+import { CreateWorkspace, CreateWorkspaceFromPackage, CreateWorkspaceStructure, CreateLogicApp, CreateWorkflow } from '../createWorkspace';
 
 const setTestCreateWorkspaceState = 'test/setCreateWorkspaceState';
 
@@ -67,6 +67,7 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     isComplete: false,
     workspaceFileJson: '',
     logicAppsWithoutCustomCode: undefined,
+    existingFolders: [],
     flowType: 'createWorkspace',
     pathValidationResults: { '/home/user/projects': true },
     packageValidationResults: {},
@@ -76,6 +77,7 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     separator: '/',
     platform: null,
     isDevContainerProject: false,
+    availableProjects: [],
     ...overrides,
   };
 };
@@ -236,6 +238,59 @@ describe('CreateWorkspace', () => {
       expect(nextButton).toBeDisabled();
     });
 
+    it('should disable Next when the workspace folder already exists', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'existing-ws',
+        workspaceExistenceResults: {
+          '/valid/path/existing-ws': true,
+        },
+        currentStep: 0,
+      });
+      const buttons = screen.getAllByRole('button');
+      const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
+      expect(nextButton).toBeDisabled();
+    });
+
+    it('should disable Next when the workspace file already exists', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'existing-ws',
+        workspaceExistenceResults: {
+          '/valid/path/existing-ws': false,
+          '/valid/path/existing-ws/existing-ws.code-workspace': true,
+        },
+        currentStep: 0,
+      });
+      const buttons = screen.getAllByRole('button');
+      const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
+      expect(nextButton).toBeDisabled();
+    });
+
+    it('should disable Next while workspace existence validation is pending', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
+        pathValidationResults: { '/valid/path': true },
+        workspaceName: 'pending-ws',
+        logicAppType: ProjectType.logicApp,
+        logicAppName: 'valid-app',
+        workflowType: 'Stateful-Codeless',
+        workflowName: 'valid-workflow',
+        workspaceExistenceResults: {
+          '/valid/path/pending-ws': false,
+        },
+        currentStep: 0,
+      });
+      const buttons = screen.getAllByRole('button');
+      const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
+      expect(nextButton).toBeDisabled();
+    });
+
     it('should disable Next when logic app name is empty for createWorkspace', () => {
       renderWithStore({
         flowType: 'createWorkspace',
@@ -253,6 +308,10 @@ describe('CreateWorkspace', () => {
         workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
         pathValidationResults: { '/valid/path': true },
         workspaceName: 'valid-name',
+        workspaceExistenceResults: {
+          '/valid/path/valid-name': false,
+          '/valid/path/valid-name/valid-name.code-workspace': false,
+        },
         logicAppType: ProjectType.logicApp,
         logicAppName: 'valid-app',
         workflowType: 'Stateful-Codeless',
@@ -271,6 +330,10 @@ describe('CreateWorkspace', () => {
           workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
           pathValidationResults: { '/valid/path': true },
           workspaceName: 'valid-name',
+          workspaceExistenceResults: {
+            '/valid/path/valid-name': false,
+            '/valid/path/valid-name/valid-name.code-workspace': false,
+          },
           logicAppType: '',
           logicAppName: '',
           currentStep: 0,
@@ -486,6 +549,10 @@ describe('CreateWorkspace', () => {
         workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
         pathValidationResults: { '/valid/path': true },
         workspaceName: 'valid-name',
+        workspaceExistenceResults: {
+          '/valid/path/valid-name': false,
+          '/valid/path/valid-name/valid-name.code-workspace': false,
+        },
         logicAppType: ProjectType.logicApp,
         logicAppName: 'valid-app',
         workflowType: 'Stateful-Codeless',
@@ -496,11 +563,12 @@ describe('CreateWorkspace', () => {
       const buttons = screen.getAllByRole('button');
       const nextButton = buttons.find((b) => b.textContent?.includes('Next'));
 
-      if (nextButton && !nextButton.hasAttribute('disabled')) {
-        fireEvent.click(nextButton);
-        const state = store.getState().createWorkspace;
-        expect(state.currentStep).toBe(1);
-      }
+      expect(nextButton).toBeDefined();
+      expect(nextButton?.hasAttribute('disabled')).toBe(false);
+
+      fireEvent.click(nextButton as HTMLElement);
+      const state = store.getState().createWorkspace;
+      expect(state.currentStep).toBe(1);
     });
 
     it('should enable Next button for custom code with dotted namespace', () => {
@@ -509,6 +577,10 @@ describe('CreateWorkspace', () => {
         workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
         pathValidationResults: { '/valid/path': true },
         workspaceName: 'valid-name',
+        workspaceExistenceResults: {
+          '/valid/path/valid-name': false,
+          '/valid/path/valid-name/valid-name.code-workspace': false,
+        },
         logicAppType: ProjectType.customCode,
         logicAppName: 'valid-app',
         workflowType: 'Stateful-Codeless',
@@ -579,5 +651,95 @@ describe('Flow type wrapper components', () => {
 
     const state = store.getState().createWorkspace;
     expect(state.flowType).toBe('createLogicApp');
+  });
+});
+
+describe('CreateLogicApp state preservation (resetState race condition)', () => {
+  it('should preserve existingFolders after mount when initializeProject has populated them', () => {
+    const store = configureStore({
+      reducer: { createWorkspace: createWorkspaceSlice.reducer },
+    });
+
+    // Simulate initializeProject being dispatched (as extension host sends initialize_frame)
+    act(() => {
+      store.dispatch(
+        createWorkspaceSlice.actions.initializeProject({
+          workspaceFileJson: { folders: [{ name: 'TestApp', path: './TestApp' }] },
+          logicAppsWithoutCustomCode: [],
+          existingFolders: ['TestApp', 'CustomCodeProject', '.vscode'],
+        })
+      );
+    });
+
+    // Verify state has existingFolders before mount
+    expect(store.getState().createWorkspace.existingFolders).toEqual(['TestApp', 'CustomCodeProject', '.vscode']);
+
+    // Mount CreateLogicApp — this previously called resetState which wiped existingFolders
+    render(
+      <Provider store={store}>
+        <CreateLogicApp />
+      </Provider>
+    );
+
+    // After mount, existingFolders must still be preserved
+    const stateAfterMount = store.getState().createWorkspace;
+    expect(stateAfterMount.existingFolders).toEqual(['TestApp', 'CustomCodeProject', '.vscode']);
+    expect(stateAfterMount.flowType).toBe('createLogicApp');
+  });
+
+  it('should preserve workspaceFileJson after mount when initializeProject has populated it', () => {
+    const store = configureStore({
+      reducer: { createWorkspace: createWorkspaceSlice.reducer },
+    });
+
+    const workspaceFileJson = { folders: [{ name: 'MyApp', path: './MyApp' }] };
+
+    act(() => {
+      store.dispatch(
+        createWorkspaceSlice.actions.initializeProject({
+          workspaceFileJson,
+          logicAppsWithoutCustomCode: [{ label: 'MyApp' }],
+          existingFolders: ['MyApp'],
+        })
+      );
+    });
+
+    render(
+      <Provider store={store}>
+        <CreateLogicApp />
+      </Provider>
+    );
+
+    const stateAfterMount = store.getState().createWorkspace;
+    expect(stateAfterMount.workspaceFileJson).toEqual(workspaceFileJson);
+    expect(stateAfterMount.logicAppsWithoutCustomCode).toEqual([{ label: 'MyApp' }]);
+  });
+
+  it('should not interfere with CreateWorkflow preserving availableProjects', () => {
+    const store = configureStore({
+      reducer: { createWorkspace: createWorkspaceSlice.reducer },
+    });
+
+    const availableProjects = [
+      { name: 'Project1', path: '/workspace/Project1', isCodeful: false, existingWorkflows: ['workflow-a'] },
+      { name: 'Project2', path: '/workspace/Project2', isCodeful: true, existingWorkflows: [] },
+    ];
+
+    act(() => {
+      store.dispatch(createWorkspaceSlice.actions.initializeWorkspace({ availableProjects }));
+    });
+
+    expect(store.getState().createWorkspace.availableProjects).toEqual(availableProjects);
+
+    // Dynamically import CreateWorkflow
+    render(
+      <Provider store={store}>
+        <CreateWorkflow />
+      </Provider>
+    );
+
+    const stateAfterMount = store.getState().createWorkspace;
+    expect(stateAfterMount.availableProjects).toEqual(availableProjects);
+    expect(stateAfterMount.flowType).toBe('createWorkflow');
   });
 });

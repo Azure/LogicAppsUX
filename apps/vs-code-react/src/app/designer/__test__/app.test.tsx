@@ -142,8 +142,6 @@ const designerInitialState = {
   iaMapArtifacts: [],
   oauthRedirectUrl: '',
   hostVersion: '',
-  isUnitTest: false,
-  unitTestDefinition: null,
 };
 
 const createTestStore = (designerVersion?: number) => {

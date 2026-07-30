@@ -24,8 +24,6 @@ import {
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
-  serializeUnitTestDefinition,
-  useAssertionsValidationErrors,
   getNodeOutputOperations,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
@@ -72,7 +70,6 @@ export const DesignerCommandBar = ({
   showRunHistory,
   toggleRunHistory,
   enableCopilot,
-  isUnitTest,
   switchViews,
   saveWorkflowFromCode,
   toggleMonitoringView,
@@ -86,7 +83,6 @@ export const DesignerCommandBar = ({
   isDesignerView?: boolean;
   isMonitoringView?: boolean;
   isDarkMode: boolean;
-  isUnitTest: boolean;
   showRunHistory?: boolean;
   toggleRunHistory: () => void;
   enableCopilot?: () => void;
@@ -179,14 +175,6 @@ export const DesignerCommandBar = ({
     }
   });
 
-  const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const definition = await serializeUnitTestDefinition(designerState);
-
-    console.log(definition);
-    alert('Check console for unit test serialization');
-  });
-
   const { isLoading: isCreatingUnitTest, mutate: createUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const operationContents = await getNodeOutputOperations(designerState);
@@ -239,13 +227,10 @@ export const DesignerCommandBar = ({
   });
   const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
   const haveWorkflowParameterErrors = Object.keys(allWorkflowParameterErrors ?? {}).length > 0;
-  const allAssertionsErrors = useAssertionsValidationErrors();
-  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
   const allSettingsErrors = useAllSettingsValidationErrors();
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
-  const isCreateUnitTestDisabled = !isUnitTest || isCreatingUnitTest || haveAssertionErrors;
 
   const haveErrors = useMemo(
     () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -254,7 +239,6 @@ export const DesignerCommandBar = ({
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
 
-  const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
   const isUndoDisabled = !useCanUndo();
   const isRedoDisabled = !useCanRedo();
 
@@ -364,24 +348,9 @@ export const DesignerCommandBar = ({
         },
       },
       {
-        key: 'saveUnitTest',
-        text: 'Save Unit Test',
-        disabled: saveUnitTestIsDisabled,
-        onRenderIcon: () => {
-          return isSavingUnitTest ? (
-            <Spinner size={'extra-tiny'} />
-          ) : (
-            <FontIcon aria-label="Save" iconName="Save" className={saveUnitTestIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
-          );
-        },
-        onClick: () => {
-          saveUnitTestMutate();
-        },
-      },
-      {
         key: 'createUnitTest',
         text: 'Create Unit Test',
-        disabled: isCreateUnitTestDisabled,
+        disabled: isCreatingUnitTest,
         onRenderIcon: () => {
           return isCreatingUnitTest ? (
             <Spinner size="small" />
@@ -409,15 +378,6 @@ export const DesignerCommandBar = ({
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
-      },
-      {
-        key: 'Assertions',
-        text: 'Assertions',
-        ariaLabel: 'Assertions',
-        iconProps: { iconName: 'CheckMark' },
-        disabled: !isUnitTest,
-        onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
-        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveAssertionErrors} />,
       },
       {
         key: 'codeview',
@@ -487,9 +447,6 @@ export const DesignerCommandBar = ({
       isRunLoading,
       isSaving,
       saveIsDisabled,
-      saveUnitTestIsDisabled,
-      isCreateUnitTestDisabled,
-      isUnitTest,
       haveErrors,
       isDarkMode,
       isCopilotReady,
@@ -503,13 +460,10 @@ export const DesignerCommandBar = ({
       saveWorkflowMutate,
       saveWorkflowFromCode,
       dispatch,
-      isSavingUnitTest,
-      saveUnitTestMutate,
       isCreatingUnitTest,
       createUnitTestMutate,
       discard,
       haveWorkflowParameterErrors,
-      haveAssertionErrors,
       switchViews,
       haveConnectionErrors,
       enableCopilot,

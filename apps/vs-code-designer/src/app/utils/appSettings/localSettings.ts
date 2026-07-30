@@ -5,15 +5,9 @@
 import {
   azureWebJobsStorageKey,
   localSettingsFileName,
-  ProjectDirectoryPathKey,
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
-  localEmulatorConnectionString,
-  logicAppKind,
-  workerRuntimeKey,
   azureStorageTypeSetting,
-  functionsInprocNet8Enabled,
-  functionsInprocNet8EnabledTrue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -21,13 +15,15 @@ import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSet
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
+import { generateDesignTimeLocalSettingsJson, generateLocalSettingsJson } from '../../projectConsistency/fileGenerators';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, type ILocalSettingsJson  } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Uri } from 'vscode';
+import { useNodeDesignTimeWorker } from '../vsCodeConfig/settings';
+import { detectProjectType } from '../project';
 
 /**
  * Updates local.settings.json file.
@@ -43,7 +39,7 @@ export async function addOrUpdateLocalAppSettings(
   isDesignTime = false
 ): Promise<void> {
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
-  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath, isDesignTime);
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath, isDesignTime);
 
   settings.Values = settings.Values || {};
   settings.Values = {
@@ -52,6 +48,49 @@ export async function addOrUpdateLocalAppSettings(
   };
 
   await writeFormattedJson(localSettingsPath, settings);
+}
+
+/**
+ * Gets local.settings.json file.
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - The logic app project path.
+ * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
+ * @returns {Promise<ILocalSettingsJson>} local.setting.json file.
+ */
+export async function getLocalSettingsJson(
+  context: IActionContext,
+  projectPath: string,
+  isDesignTime = false
+): Promise<ILocalSettingsJson> {
+  const localSettingsPath = path.join(projectPath, localSettingsFileName);
+  if (fse.existsSync(localSettingsPath)) {
+    const data: string = (await fse.readFile(localSettingsPath)).toString();
+    const localSettingsUri: Uri = Uri.file(localSettingsPath);
+
+    if (/[^\s]/.test(data)) {
+      try {
+        const localSettings = parseJson(data) as ILocalSettingsJson;
+        localSettings.Values = localSettings.Values || {};
+        const decryptedlocalSettings = await getDecryptedLocalSettings(context, localSettings, localSettingsUri, localSettingsPath);
+        decryptedlocalSettings.Values ??= {};
+
+        if (isDesignTime) {
+          decryptedlocalSettings.Values![azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
+          delete decryptedlocalSettings.Values![azureWebJobsStorageKey];
+        }
+        return decryptedlocalSettings;
+      } catch (error) {
+        const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', localSettingsFileName, parseError(error).message);
+        throw new Error(message);
+      }
+    }
+  }
+
+  const projectType = await detectProjectType(projectPath);
+  const useNodeWorker = useNodeDesignTimeWorker(projectPath);
+  return isDesignTime
+    ? generateDesignTimeLocalSettingsJson(projectPath, projectType, useNodeWorker)
+    : generateLocalSettingsJson(projectPath, projectType);
 }
 
 /**
@@ -80,57 +119,22 @@ async function getDecryptedLocalSettings(
 }
 
 /**
- * Gets local.settings.json file.
- * @param {IActionContext} context - Command context.
- * @param {string} localSettingsPath - File path.
- * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
- * @returns {Promise<ILocalSettingsJson>} local.setting.json file.
- */
-export async function getLocalSettingsJson(
-  context: IActionContext,
-  localSettingsPath: string,
-  isDesignTime = false
-): Promise<ILocalSettingsJson> {
-  if (fse.existsSync(localSettingsPath)) {
-    const data: string = (await fse.readFile(localSettingsPath)).toString();
-    const localSettingsUri: Uri = Uri.file(localSettingsPath);
-
-    if (/[^\s]/.test(data)) {
-      try {
-        const localSettings = parseJson(data) as ILocalSettingsJson;
-        const decryptedlocalSettings = await getDecryptedLocalSettings(context, localSettings, localSettingsUri, localSettingsPath);
-        if (isDesignTime) {
-          decryptedlocalSettings.Values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
-          delete decryptedlocalSettings.Values[azureWebJobsStorageKey];
-        }
-        return decryptedlocalSettings;
-      } catch (error) {
-        const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', localSettingsFileName, parseError(error).message);
-        throw new Error(message);
-      }
-    }
-  }
-
-  return getLocalSettingsSchema(isDesignTime);
-}
-
-/**
  * Set local.settings.json values.
- * @param {IActionContext} context - Command context.
- * @param {string} logicAppPath - Project path.
- * @param {string} key - Key to be updated.
- * @param {string} value - Value to be updated.
- * @param {MismatchBehavior} behavior - Behaviour of the update.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The logic app project path.
+ * @param {string} key - The key to be updated.
+ * @param {string} value - The value to be updated.
+ * @param {MismatchBehavior} behavior - The behaviour of the update.
  */
 export async function setLocalAppSetting(
   context: IActionContext,
-  logicAppPath: string,
+  projectPath: string,
   key: string,
   value: string,
   behavior: MismatchBehavior = MismatchBehavior.Prompt
 ): Promise<void> {
-  const localSettingsPath: string = path.join(logicAppPath, localSettingsFileName);
-  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
 
   settings.Values = settings.Values || {};
   if (settings.Values[key] === value) {
@@ -164,52 +168,13 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
     return process.env[azureWebJobsStorageKey];
   }
 
-  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
   return settings.Values && settings.Values[azureWebJobsStorageKey];
 }
 
-/**
- * Retrieves the local settings schema based on the project path and design time flag.
- * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
- * @param {string} projectPath - The path of the project.
- * @returns The local settings schema.
- */
-export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string, isCodeful?: boolean): ILocalSettingsJson => {
-  const baseSettings: ILocalSettingsJson = {
-    IsEncrypted: false,
-    Values: {
-      [appKindSetting]: logicAppKind,
-    },
-  };
-
-  // Add project path if provided
-  if (projectPath) {
-    baseSettings.Values[ProjectDirectoryPathKey] = projectPath;
-  }
-
-  // Add runtime-specific settings
-  if (isDesignTime) {
-    baseSettings.Values[workerRuntimeKey] = WorkerRuntime.Node;
-    baseSettings.Values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
-  } else {
-    baseSettings.Values[workerRuntimeKey] = WorkerRuntime.Dotnet;
-    baseSettings.Values[azureWebJobsStorageKey] = localEmulatorConnectionString;
-    baseSettings.Values[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
-  }
-
-  // Add codeful-specific settings
-  if (isCodeful) {
-    Object.assign(baseSettings.Values, {
-      WORKFLOW_CODEFUL_ENABLED: 'true',
-    });
-  }
-
-  return baseSettings;
-};
-
-export async function removeAppKindFromLocalSettings(logicAppPath: string, context: IActionContext): Promise<void> {
-  const localSettingsPath: string = path.join(logicAppPath, localSettingsFileName);
-  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+export async function removeAppKindFromLocalSettings(projectPath: string, context: IActionContext): Promise<void> {
+  const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
 
   if (settings.Values && settings.Values[appKindSetting]) {
     delete settings.Values[appKindSetting];

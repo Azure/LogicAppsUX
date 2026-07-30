@@ -23,7 +23,6 @@ manage business logic.
   details, Foundry agent picker, copilot get-started, copilot chat components
 - **MCP**: MCP resource selection and configuration components
 - **Knowledge**: Knowledge source management components
-- **Unit Testing**: Unit test definition editors, assertion components
 - **Common**: Labels, buttons, checkboxes, dropdowns, dialogs, modals, flyouts,
   copy-to-clipboard controls, recommendation panels, peek overlays
 

@@ -21,18 +21,19 @@ import {
   Spinner,
   type OptionOnSelectData,
   Text,
+  Tooltip,
 } from '@fluentui/react-components';
 import { NavigateIcon } from '@microsoft/designer-ui';
 import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
 import { useSubscriptions } from '../../../../../core/state/connection/connectionSelector';
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
-import { useHasRoleAssignmentsWritePermissionQuery, useHasRoleDefinitionsByNameQuery } from '../../../../../core/queries/role';
+import { useHasRoleAssignmentsWritePermissionQuery, useHasRequiredRoleDefinitionsQuery } from '../../../../../core/queries/role';
 import constants from '../../../../../common/constants';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues, value } = props;
+  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues, value, parameterSet } = props;
   const intl = useIntl();
   const styles = useStyles();
   const [parameterValue, setParameterValue] = useState<string>('');
@@ -218,6 +219,12 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         id: 'p/Pfr/',
         description: 'Message indicating that the user does not have write permissions for the role',
       }),
+      MISSING_ROLE_WRITE_PERMISSIONS_TOOLTIP: intl.formatMessage({
+        defaultMessage:
+          "To authenticate with a managed identity, your logic app's identity needs a role on this resource. Assigning that role requires permission to create role assignments, such as the Owner or User Access Administrator role.",
+        id: 'SK/2tH',
+        description: 'Tooltip explaining why permission to create role assignments is required for this connection',
+      }),
       FETCHING_RESOURCE_DETAILS: intl.formatMessage({
         defaultMessage: 'Fetching resource details...',
         id: 'EXxdfo',
@@ -236,8 +243,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       } catch (e: any) {
         LoggerService().log({
           level: LogEntryLevel.Error,
-          area: 'agent-connection-account-key',
-          message: 'Failed to fetch account key for cognitive service',
+          area: 'agent-connection-account-endpoint',
+          message: 'Failed to fetch account endpoint for cognitive service',
           error: e,
         });
         setErrorMessage(e.message ?? 'Failed to fetch account endpoint');
@@ -303,13 +310,24 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     refetchAPIManagementAccounts();
   }, [refetchAPIManagementAccounts]);
 
+  // The API key is only relevant to URL/key-based auth. Managed Identity (and other keyless
+  // auth types) omit the `openAIKey` parameter, so fetching account keys (listKeys) for them
+  // is unnecessary. Gate the key fetch on the selected auth set actually declaring `openAIKey`.
+  // When no auth set is available yet (undefined), fall back to the pre-existing fetch behavior
+  // so a key-based flow can never silently lose its auto-filled key.
+  const authRequiresAccountKey = useMemo(() => parameterSet == null || !!parameterSet.parameters?.['openAIKey'], [parameterSet]);
+
   const onSetOpenAIValues = useCallback(
     async (newValue: string) => {
       setLoadingAccountDetails(true);
-      await Promise.all([setAPIEndpoint(newValue), setAPIKey(newValue)]);
+      const tasks = [setAPIEndpoint(newValue)];
+      if (authRequiresAccountKey) {
+        tasks.push(setAPIKey(newValue));
+      }
+      await Promise.all(tasks);
       setLoadingAccountDetails(false);
     },
-    [setAPIEndpoint, setAPIKey]
+    [setAPIEndpoint, setAPIKey, authRequiresAccountKey]
   );
 
   const roleResourceId = useMemo(() => {
@@ -319,24 +337,24 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     return cognitiveServiceAccountId;
   }, [cognitiveServiceAccountId, isAgentServiceConnection, selectedCognitiveServiceProject]);
 
-  const requiredRoles = useMemo(() => {
-    return parameter.managedIdentitySettings?.requiredRoles ?? [];
-  }, [parameter.managedIdentitySettings?.requiredRoles]);
-  const requiresRoleAssignments = useMemo(() => requiredRoles.length > 0, [requiredRoles.length]);
+  const requiredRoleDefinitionIds = useMemo(() => {
+    return parameter.managedIdentitySettings?.requiredRoleDefinitionIds ?? [];
+  }, [parameter.managedIdentitySettings?.requiredRoleDefinitionIds]);
+  const requiresRoleAssignments = useMemo(() => requiredRoleDefinitionIds.length > 0, [requiredRoleDefinitionIds.length]);
 
   const { data: hasRoleWritePermission, isFetching: isFetchingRoleWritePermission } = useHasRoleAssignmentsWritePermissionQuery(
     roleResourceId,
     requiresRoleAssignments
   );
 
-  const { data: hasRequiredRoles, isFetching: isFetchingRequiredRoles } = useHasRoleDefinitionsByNameQuery(
+  const { data: hasRequiredRoles, isFetching: isFetchingRequiredRoles } = useHasRequiredRoleDefinitionsQuery(
     roleResourceId,
-    requiredRoles,
+    requiredRoleDefinitionIds,
     requiresRoleAssignments
   );
 
   const validRoleState = useMemo(() => {
-    if (requiredRoles.length === 0) {
+    if (requiredRoleDefinitionIds.length === 0) {
       return true; // No required roles, so valid by default
     }
     if (isFetchingRequiredRoles || isFetchingRoleWritePermission) {
@@ -346,7 +364,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
       return true; // Either has required roles or write permission, so valid
     }
     return false; // Does not have required roles or write permission, so not valid
-  }, [hasRequiredRoles, hasRoleWritePermission, isFetchingRequiredRoles, isFetchingRoleWritePermission, requiredRoles]);
+  }, [hasRequiredRoles, hasRoleWritePermission, isFetchingRequiredRoles, isFetchingRoleWritePermission, requiredRoleDefinitionIds]);
 
   // TODO: Once we find a generalized solution for role management, we can remove this logic
   useEffect(() => {
@@ -374,7 +392,11 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
           validationMessage={stringResources.FETCHING_RESOURCE_DETAILS}
         />
       ) : hasRequiredRoles || hasRoleWritePermission ? null : (
-        <Field validationState="warning" validationMessage={stringResources.MISSING_ROLE_WRITE_PERMISSIONS} />
+        <Tooltip content={stringResources.MISSING_ROLE_WRITE_PERMISSIONS_TOOLTIP} relationship="description" withArrow>
+          <span>
+            <Field validationState="warning" validationMessage={stringResources.MISSING_ROLE_WRITE_PERMISSIONS} />
+          </span>
+        </Tooltip>
       )}
     </div>
   );

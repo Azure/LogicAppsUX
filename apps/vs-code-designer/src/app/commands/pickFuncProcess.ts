@@ -12,7 +12,7 @@ import {
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
-import { verifyLocalConnectionKeys } from '../utils/appSettings/connectionKeys';
+import { refreshConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
 import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
@@ -21,20 +21,20 @@ import { executeIfNotActive } from '../utils/taskUtils';
 import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
-import { getChildProcessesWithScript } from '../utils/findChildProcess/findChildProcess';
-import { getWindowsProcess } from '../utils/windowsProcess';
+import { getChildProcesses } from '../utils/findChildProcess/findChildProcess';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { Platform, ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from './publishCodefulProject';
 import { getProjFiles } from '../utils/dotnet/dotnet';
+import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
@@ -47,7 +47,14 @@ const workflowProcessRegex = /(dotnet|func)(\.exe|)$/i;
  * @param debugConfig The debug configuration.
  * @returns A promise that resolves to the child process ID or undefined if not found.
  */
-export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<string | undefined> {
+export async function pickFuncProcess(
+  context: IActionContext,
+  debugConfig: vscode.DebugConfiguration | undefined
+): Promise<string | undefined> {
+  if (!debugConfig) {
+    throw new Error(localize('noDebugConfig', 'Debug configuration is undefined.'));
+  }
+
   const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
   if (!projectPath) {
@@ -71,15 +78,40 @@ export async function pickFuncProcessInternal(
   workspaceFolder: vscode.WorkspaceFolder,
   projectPath: string
 ): Promise<string | undefined> {
+  // `activateAzurite` prompts the user (autostart opt-in, then the Azurite directory). Dismissing a
+  // prompt throws `UserCancelledError`, and the telemetry wrapper force-swallows cancellations --
+  // it overrides `rethrow` to false regardless of what we set. Left unhandled, a dismissal would
+  // fall straight through to `preDebugValidate` and re-open the modal "Debug anyway" hang this
+  // function exists to prevent, so the cancellation is re-raised outside the wrapper.
+  let azuriteSetupCancelled = false;
   await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
     await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-      await activateAzurite(context, projectPath);
+      try {
+        await activateAzurite(actionContext, projectPath);
+      } catch (error) {
+        if (error instanceof UserCancelledError) {
+          azuriteSetupCancelled = true;
+        }
+        // Rethrown so this scope still records the failure, but displayed by nobody here: this
+        // scope is nested inside one that already shows it -- for this command that is
+        // `registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess)`
+        // in registerCommands.ts. `suppressDisplay` is per-scope, so without it the same message
+        // is shown and logged twice. `rethrow` stays on: it is what makes an Azurite failure
+        // terminal and stops the flow before `preDebugValidate`.
+        actionContext.errorHandling.suppressDisplay = true;
+        throw error instanceof Error ? error : new Error(String(error));
+      }
     });
   });
 
+  if (azuriteSetupCancelled) {
+    throw new UserCancelledError(autoStartAzuriteSetting);
+  }
+
   await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
-      await verifyLocalConnectionKeys(context, projectPath);
+      await refreshConnectionKeys(context, projectPath);
     });
   });
 
@@ -89,16 +121,22 @@ export async function pickFuncProcessInternal(
     throw new UserCancelledError('preDebugValidate');
   }
 
-  await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
-  // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
-  // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
-  // `AfterTargets="Build;Publish"`. Running an explicit Release `publish` first would just
-  // duplicate the clean+build cycle and its output would be overwritten by the subsequent
-  // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
-  // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
-  await publishCodefulProject(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
-
+  // Stop any previous func process BEFORE building to avoid file lock errors
+  // (e.g. GenerateFunctionMetadata failing on obj/Debug/net8/WorkerExtensions)
   await waitForPrevFuncTaskToStop(workspaceFolder);
+
+  if (await hasCodefulWorkflowSetting(projectPath)) {
+    // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
+    // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
+    // `AfterTargets="Build;Publish"`. Running an explicit Release `publish` first would just
+    // duplicate the clean+build cycle and its output would be overwritten by the subsequent
+    // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
+    // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
+    await publishCodefulProject(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+  } else {
+    await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
+  }
+
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
@@ -457,35 +495,22 @@ export async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]>
 }
 
 export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
-  try {
-    const processes = await getChildProcessesWithScript(pid);
-    if (processes.length > 0) {
-      ext.outputChannel.appendLog(
-        localize(
-          'workflowDebugProcessScript',
-          'Resolved Windows child processes for PID "{0}" using the PowerShell child-process script.',
-          pid
-        )
-      );
-      return processes.map((c) => {
-        return { command: c.name, pid: c.processId };
-      });
-    }
-  } catch (error) {
+  const processes = await getChildProcesses(pid);
+  if (processes.length > 0) {
     ext.outputChannel.appendLog(
       localize(
-        'workflowDebugProcessScriptFallback',
-        'Falling back to process-tree for Windows child process resolution on PID "{0}". Error: {1}',
-        pid,
-        error instanceof Error ? error.message : String(error)
+        'workflowDebugProcess',
+        'Resolved Windows child processes "{0}" for parent PID "{1}".',
+        processes.map((c) => c.name).join(', '),
+        pid
       )
     );
+    return processes.map((c) => {
+      return { command: c.name, pid: c.processId };
+    });
   }
 
-  const processes: IProcessInfo[] = await getWindowsProcess(pid);
-  return (processes || []).map((c) => {
-    return { command: c.name, pid: c.pid };
-  });
+  return [];
 }
 
 async function pickFuncHostChildProcess(taskInfo: IRunningFuncTask): Promise<string | undefined> {

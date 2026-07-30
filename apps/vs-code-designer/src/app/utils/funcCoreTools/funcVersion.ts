@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 
-function getFuncCoreToolsCandidatePaths(funcBinariesPath: string): string[] {
+export function getFuncCoreToolsCandidatePaths(funcBinariesPath: string): string[] {
   const executableNames =
     process.platform === 'win32' && !ext.funcCliPath.toLowerCase().endsWith('.exe')
       ? [`${ext.funcCliPath}.exe`, ext.funcCliPath]
@@ -33,6 +33,110 @@ function getFuncCoreToolsCandidatePaths(funcBinariesPath: string): string[] {
 function resolveFuncCoreToolsCommand(funcBinariesPath: string): string {
   const candidates = getFuncCoreToolsCandidatePaths(funcBinariesPath);
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
+}
+
+function getManagedFuncCoreToolsPath(command?: string): string | undefined {
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const funcBinariesPath = binariesLocation ? path.join(binariesLocation, funcDependencyName) : undefined;
+  if (!funcBinariesPath) {
+    return undefined;
+  }
+
+  if (!command) {
+    return fs.existsSync(funcBinariesPath) ? funcBinariesPath : undefined;
+  }
+
+  const relativePath = path.relative(funcBinariesPath, command);
+  const isManagedCommand = relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
+  return isManagedCommand ? funcBinariesPath : undefined;
+}
+
+function getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath: string): string[] {
+  const executableNames = process.platform === 'win32' ? ['func.exe', 'func'] : ['func'];
+  const knownCandidates = ['', 'in-proc8', 'in-proc6'].flatMap((subdir) =>
+    executableNames.map((executableName) => path.join(funcBinariesPath, subdir, executableName))
+  );
+  const discoveredCandidates: string[] = [];
+  const directoriesToScan = [funcBinariesPath];
+
+  for (const directory of directoriesToScan) {
+    if (!fs.existsSync(directory)) {
+      continue;
+    }
+
+    try {
+      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+        const entryPath = path.join(directory, entry.name);
+        if (entry.isDirectory()) {
+          directoriesToScan.push(entryPath);
+        } else if (executableNames.includes(entry.name)) {
+          discoveredCandidates.push(entryPath);
+        }
+      }
+    } catch (error) {
+      ext.outputChannel.appendLog(`Unable to inspect FuncCoreTools directory ${directory}: ${error}`);
+    }
+  }
+
+  return [...new Set([...knownCandidates, ...discoveredCandidates])];
+}
+
+function addExecutePermission(filePath: string): void {
+  const stats = fs.statSync(filePath);
+  fs.chmodSync(filePath, stats.mode | 0o111);
+}
+
+function isExecutable(filePath: string): boolean {
+  if (process.platform === 'win32') {
+    return true;
+  }
+
+  try {
+    fs.accessSync(filePath, fs.constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function repairFuncCoreToolsExecutablePermissions(funcBinariesPath: string): void {
+  if (process.platform === 'win32' || !fs.existsSync(funcBinariesPath)) {
+    return;
+  }
+
+  const pathsToRepair = getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath);
+  for (const candidate of pathsToRepair) {
+    if (!fs.existsSync(candidate)) {
+      continue;
+    }
+
+    try {
+      addExecutePermission(candidate);
+    } catch (error) {
+      ext.outputChannel.appendLog(`Unable to set execute permission on FuncCoreTools file ${candidate}: ${error}`);
+    }
+  }
+}
+
+export function areFuncCoreToolsExecutablePermissionsValid(funcBinariesPath: string, selectedCommand?: string): boolean {
+  if (process.platform === 'win32') {
+    return true;
+  }
+
+  const candidates = selectedCommand
+    ? [selectedCommand, ...getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath)]
+    : getFuncCoreToolsExecutableRepairCandidates(funcBinariesPath);
+  return [...new Set(candidates)].every((candidate) => !fs.existsSync(candidate) || isExecutable(candidate));
+}
+
+export function ensureFuncCoreToolsCommandExecutablePermissions(command: string): boolean {
+  const managedFuncBinariesPath = getManagedFuncCoreToolsPath(command);
+  if (!managedFuncBinariesPath) {
+    return true;
+  }
+
+  repairFuncCoreToolsExecutablePermissions(managedFuncBinariesPath);
+  return areFuncCoreToolsExecutablePermissionsValid(managedFuncBinariesPath, command);
 }
 
 /**
@@ -186,6 +290,8 @@ export function getFunctionsCommand(): string {
   if (!command) {
     throw Error('Functions Core Tools Binary Path Setting is empty');
   }
+
+  ensureFuncCoreToolsCommandExecutablePermissions(command);
   return command;
 }
 
@@ -196,13 +302,8 @@ export async function setFunctionsCommand(): Promise<void> {
     const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
     const binariesExist = fs.existsSync(funcBinariesPath);
     if (binariesExist) {
+      repairFuncCoreToolsExecutablePermissions(funcBinariesPath);
       command = resolveFuncCoreToolsCommand(funcBinariesPath);
-      fs.chmodSync(funcBinariesPath, 0o777);
-
-      const funcExist = fs.existsSync(command);
-      if (funcExist) {
-        fs.chmodSync(command, 0o777);
-      }
     }
   }
 

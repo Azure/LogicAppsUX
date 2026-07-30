@@ -429,7 +429,10 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
         location: { type: 'string' },
         connectedEnvironmentName: { type: 'string' },
         connectedEnvironmentResourceGroup: { type: 'string' },
-        customLocationId: { type: 'string', metadata: { description: 'Resource ID of the custom location tied to the connected environment' } },
+        customLocationId: {
+          type: 'string',
+          metadata: { description: 'Resource ID of the custom location tied to the connected environment' },
+        },
         sqlConnectionString: { type: 'securestring' },
         fileShareHostName: { type: 'string' },
         fileSharePath: { type: 'string' },
@@ -544,9 +547,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
           apiVersion: '2024-02-02-preview',
           name: "[parameters('logicAppName')]",
           scope: "[concat('Microsoft.App/containerApps/', parameters('logicAppName'))]",
-          dependsOn: [
-            "[concat('Microsoft.App/containerApps/', parameters('logicAppName'))]",
-          ],
+          dependsOn: ["[concat('Microsoft.App/containerApps/', parameters('logicAppName'))]"],
           properties: {},
         },
       ],
@@ -561,9 +562,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       return;
     }
 
-    const templateFiles = fs
-      .readdirSync(infraFolder)
-      .filter((f) => f.endsWith('.template.json') && f !== 'hybrid-logicapp-template.json');
+    const templateFiles = fs.readdirSync(infraFolder).filter((f) => f.endsWith('.template.json') && f !== 'hybrid-logicapp-template.json');
 
     for (const file of templateFiles) {
       const filePath = path.join(infraFolder, file);
@@ -586,9 +585,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     }
 
     // Also update corresponding parameter files
-    const paramFiles = fs
-      .readdirSync(infraFolder)
-      .filter((f) => f.endsWith('.parameters.json') && f !== 'hybrid-logicapp-parameters.json');
+    const paramFiles = fs.readdirSync(infraFolder).filter((f) => f.endsWith('.parameters.json') && f !== 'hybrid-logicapp-parameters.json');
 
     for (const file of paramFiles) {
       const filePath = path.join(infraFolder, file);

@@ -17,6 +17,14 @@
 //     timestamp: string  // ISO 8601
 //   }
 //
+// Debug-lifecycle phases written around the file-trigger / command entry points:
+//   - `debugStart`       trigger consumed, BEFORE the bounded command-registration wait.
+//   - `debugInvoke`      command registry is ready, IMMEDIATELY BEFORE
+//                        `vscode.debug.startDebugging`. This is the anchor the test's hang
+//                        guard measures from; only it excludes registration latency.
+//   - `debugStarted`     `startDebugging` resolved truthy.
+//   - `debugStartFailed` `startDebugging` resolved falsy/threw, or registration timed out.
+//
 // The extension also contributes three commands:
 //   - la-e2e.startDebug   Start the first 'logicapp' launch config in the first workspace folder.
 //   - la-e2e.stopDebug    Stop all active debug sessions.
@@ -105,7 +113,7 @@ async function waitForLogicAppsExtension(timeoutMs = 360_000) {
   return false;
 }
 
-async function startDebugCommand() {
+async function startDebugCommand(eventsFile) {
   try {
     const folders = vscode.workspace.workspaceFolders || [];
     if (folders.length === 0) {
@@ -147,6 +155,24 @@ async function startDebugCommand() {
     }
 
     console.log(`[la-e2e-recorder] startDebug: starting "${configName}" in ${folder.uri.fsPath}`);
+
+    // Anchor for the test-side hang guard (`DEBUG_INVOKE_HANG_TIMEOUT_MS` in
+    // codefulDebugTasks.test.ts). Written AFTER `waitForLogicAppsExtension()` resolved and
+    // IMMEDIATELY BEFORE `vscode.debug.startDebugging`, so the guard measures only the
+    // `startDebugging` call itself. `debugStart` is written when the trigger file is
+    // consumed — i.e. BEFORE the bounded 360 s command-registration wait above — so
+    // anchoring on it makes the effective grace `threshold - registrationLatency`, which
+    // is what let slow-but-healthy runs trip the guard. Do not move this line above the
+    // `waitForLogicAppsExtension()` await.
+    appendEvent(eventsFile, {
+      phase: 'debugInvoke',
+      taskName: '',
+      scopeFsPath: null,
+      processId: null,
+      exitCode: null,
+      timestamp: new Date().toISOString(),
+    });
+
     return await vscode.debug.startDebugging(folder, configName);
   } catch (err) {
     console.log(`[la-e2e-recorder] startDebug failed: ${err && err.message}`);
@@ -234,7 +260,7 @@ function activate(context) {
           exitCode: null,
           timestamp: new Date().toISOString(),
         });
-        startDebugCommand()
+        startDebugCommand(eventsFile)
           .then((ok) => {
             appendEvent(eventsFile, {
               phase: ok ? 'debugStarted' : 'debugStartFailed',
@@ -358,7 +384,7 @@ function activate(context) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand('la-e2e.startDebug', async () => {
-      return await startDebugCommand();
+      return await startDebugCommand(eventsFile);
     })
   );
 

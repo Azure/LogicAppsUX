@@ -5,13 +5,12 @@
 import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { runWithDurationTelemetry } from './telemetry';
 import { activateAzurite } from './azurite/activateAzurite';
-import { verifyLocalConnectionKeys } from './appSettings/connectionKeys';
+import { refreshConnectionKeys } from './appSettings/connectionKeys';
 import { autoStartAzuriteSetting, designerApiLoadTimeout, designerStartApi, verifyConnectionKeysSetting } from '../../constants';
 import { getContainingWorkspace } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
 import * as vscode from 'vscode';
-import * as portfinder from 'portfinder';
 import * as os from 'os';
 import * as cp from 'child_process';
 import find_process from 'find-process';
@@ -20,21 +19,46 @@ import { localize } from '../../localize';
 import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
-import { getChildProcessesWithScript } from './findChildProcess/findChildProcess';
+import { getChildProcesses } from './findChildProcess/findChildProcess';
+import { releaseReservedPort, reserveFreePort } from './portReservation';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 export async function startRuntimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {
+    // `activateAzurite` prompts the user (autostart opt-in, then the Azurite directory). Dismissing
+    // a prompt throws `UserCancelledError`, and the telemetry wrapper force-swallows cancellations
+    // -- it overrides `rethrow` to false regardless of what we set. Left unhandled, a dismissal
+    // would fall straight through to `preDebugValidate` and re-open the modal "Debug anyway" hang
+    // this function exists to prevent, so the cancellation is re-raised outside the inner wrapper.
+    let azuriteSetupCancelled = false;
     await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
       await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-        await activateAzurite(context, projectPath);
+        try {
+          await activateAzurite(actionContext, projectPath);
+        } catch (error) {
+          if (error instanceof UserCancelledError) {
+            azuriteSetupCancelled = true;
+          }
+          // Rethrown so this scope still records the failure, but displayed by nobody here: this
+          // scope is nested inside the enclosing `azureLogicAppsStandard.startRuntimeProcess`
+          // scope, which already shows it. `suppressDisplay` is per-scope, so without it the same
+          // message is shown and logged twice. `rethrow` stays on: it is what makes an Azurite
+          // failure terminal and stops the flow before `preDebugValidate`.
+          actionContext.errorHandling.suppressDisplay = true;
+          throw error instanceof Error ? error : new Error(String(error));
+        }
       });
     });
 
+    if (azuriteSetupCancelled) {
+      throw new UserCancelledError(autoStartAzuriteSetting);
+    }
+
     await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
       await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
-        await verifyLocalConnectionKeys(context, projectPath);
+        await refreshConnectionKeys(context, projectPath);
       });
     });
 
@@ -51,7 +75,7 @@ export async function startRuntimeApi(projectPath: string): Promise<void> {
     let isNewRuntimeProcess = false;
     if (!ext.runtimeInstances.has(projectPath)) {
       ext.runtimeInstances.set(projectPath, {
-        port: await portfinder.getPortPromise(),
+        port: await reserveFreePort(),
         isStarting: true,
       });
       isNewRuntimeProcess = true;
@@ -163,7 +187,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   }
 
   if (os.platform() === Platform.windows) {
-    const children = await getChildProcessesWithScript(process.pid);
+    const children = await getChildProcesses(process.pid);
     const runtimeInst = ext.runtimeInstances.get(projectPath);
     const resolvedChildFuncPid =
       childFuncPid ??
@@ -214,8 +238,14 @@ async function resolveChildFuncPid(processId: number, retries = 5, delayMs = 500
 
 export function stopRuntimeApi(projectPath: string): void {
   ext.outputChannel.appendLog(`Stopping Runtime API for project: ${projectPath}`);
-  const { process, childFuncPid } = ext.runtimeInstances.get(projectPath);
+  const runtimeInstance = ext.runtimeInstances.get(projectPath);
+  if (!runtimeInstance) {
+    return;
+  }
+
+  const { process, childFuncPid, port } = runtimeInstance;
   ext.runtimeInstances.delete(projectPath);
+  releaseReservedPort(port);
   if (process === null || process === undefined) {
     return;
   }

@@ -15,6 +15,11 @@ export const commonMessages = defineMessages({
     id: 'XtVOMn',
     description: 'Something went wrong text',
   },
+  RUNTIME_NOT_AVAILABLE: {
+    defaultMessage: 'Start debugging to run the workflow',
+    id: 'g0M0Ey',
+    description: 'Tooltip text shown when the workflow runtime is not available',
+  },
   LOADING: {
     defaultMessage: 'Loading',
     id: 'WgJsL1',
@@ -49,19 +54,6 @@ export const commonMessages = defineMessages({
     defaultMessage: 'Browse',
     id: 'swjISX',
     description: 'Browse button text',
-  },
-});
-
-export const unitTestMessages = defineMessages({
-  VIEW_WORKFLOW: {
-    defaultMessage: 'View workflow',
-    id: '69+CIW',
-    description: 'View workflow button text',
-  },
-  TEST_ICON: {
-    defaultMessage: 'Test icon',
-    id: 'BfGFkk',
-    description: 'Test icon aria label',
   },
 });
 
@@ -170,6 +162,16 @@ export const workspaceMessages = defineMessages({
     defaultMessage: 'Workflow name must start with a letter and can only contain letters, digits, "_" and "-".',
     id: 'V3DWT4',
     description: 'Workflow name validation message text',
+  },
+  WORKFLOW_NAME_EXISTS: {
+    defaultMessage: 'A workflow with this name already exists in the selected project.',
+    id: 'aIk72V',
+    description: 'Warning message when workflow name collides with an existing workflow in the project',
+  },
+  WORKFLOW_NAME_RESERVED: {
+    defaultMessage: 'This name is reserved and cannot be used as a workflow name.',
+    id: '1Ch1Od',
+    description: 'Error message when workflow name matches a reserved project folder name',
   },
   // Package step messages
   PACKAGE_SETUP: {
@@ -1073,16 +1075,6 @@ export const designerMessages = defineMessages({
     defaultMessage: 'Create unit test from run',
     id: 'AmlQmq',
     description: 'Create unit test from run button',
-  },
-  SAVE_UNIT_TEST: {
-    defaultMessage: 'Save unit test definition',
-    id: 'VfUtlo',
-    description: 'Save unit test button',
-  },
-  UNIT_TEST_ASSERTIONS: {
-    defaultMessage: 'Assertions',
-    id: 'LG7hSo',
-    description: 'Unit test assertions button',
   },
   COMMAND_BAR_ARIA: {
     defaultMessage: 'Use left and right arrow keys to navigate between commands',

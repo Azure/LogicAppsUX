@@ -48,10 +48,17 @@ export const logSubscriptions = async (context: IActionContext) => {
     const errorMessage = error instanceof Error ? error.message : isString(error) ? error : 'Unknown error';
     context.telemetry.properties.logSubscriptionsError = errorMessage;
   }
-  context.telemetry.properties.subscriptions = JSON.stringify(azureSubscriptions);
+  // NOTE: pretty-print (indent 1) is deliberate and load-bearing, not cosmetic.
+  // vscode-azext-utils masks every telemetry property with regexes built on \S+ / \S*.
+  // Compact JSON.stringify emits zero whitespace, so the whole payload is a single
+  // \S+ token and masking backtracks quadratically: ~650 subscriptions (~85KB) burned
+  // ~15s of synchronous CPU on the extension host, tripping VS Code's unresponsive
+  // detector and stalling every other extension. Indenting breaks the payload into
+  // short whitespace-delimited runs, making masking linear (~6ms) with identical data.
+  context.telemetry.properties.subscriptions = JSON.stringify(azureSubscriptions, null, 1);
 };
 
-export const logExtensionSettings = async (context: IActionContext) => {
+export const logExtensionSettings = (context: IActionContext) => {
   const settingsToLog = [
     'autoRuntimeDependenciesValidationAndInstallation',
     'autoStartAzurite',

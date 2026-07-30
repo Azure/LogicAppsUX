@@ -1,18 +1,41 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { window, workspace } from 'vscode';
+import { Uri, window, workspace } from 'vscode';
 import axios from 'axios';
 import * as cp from 'child_process';
 import { EventEmitter } from 'events';
 import findProcess from 'find-process';
 import * as os from 'os';
-import * as portfinder from 'portfinder';
 import { ext } from '../../../../extensionVariables';
 import * as workspaceUtils from '../../workspace';
-import { startAllDesignTimeApis, startDesignTimeApi, startDesignTimeProcess, stopDesignTimeApi } from '../startDesignTimeApi';
+import { releaseReservedPort, reserveFreePort } from '../../portReservation';
+import {
+  startAllDesignTimeApis,
+  startDesignTimeApi,
+  startDesignTimeProcess,
+  stopDesignTimeApi,
+  promptStartDesignTimeOption,
+} from '../startDesignTimeApi';
+import { ensureRootProjectFiles, ensureLocalSettingsFile, ensureHostFile } from '../../../projectConsistency/projectFilesConsistency';
+import { getWorkspaceSetting } from '../../vsCodeConfig/settings';
+import { autoStartDesignTimeSetting } from '../../../../constants';
 
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
   getLocalSettingsSchema: vi.fn(() => ({ Values: {} })),
+  getLocalSettingsJson: vi.fn(() => ({ IsEncrypted: false, Values: {} })),
+}));
+
+vi.mock('../../../projectConsistency/projectFilesConsistency', () => ({
+  ensureLocalSettingsFile: vi.fn(),
+  ensureHostFile: vi.fn(),
+  ensureRootProjectFiles: vi.fn(),
+  // Preserve the existing failure-injection semantics: the design-time startup tests drive
+  // success/failure through workspace.fs.createDirectory, so route the orchestrator through it.
+  ensureProjectFiles: vi.fn(async (_context: unknown, projectPath: string) => {
+    const designTimeDirectory = Uri.file(`${projectPath}/workflow-designtime`);
+    await workspace.fs.createDirectory(designTimeDirectory);
+    return designTimeDirectory;
+  }),
 }));
 
 vi.mock('../../fs', () => ({
@@ -30,6 +53,8 @@ vi.mock('../../funcCoreTools/funcVersion', () => ({
 vi.mock('../../vsCodeConfig/settings', () => ({
   getWorkspaceSetting: vi.fn(),
   updateGlobalSetting: vi.fn(),
+  isManagedIdentityAuthEnabled: vi.fn(() => false),
+  useNodeDesignTimeWorker: vi.fn(() => false),
 }));
 
 vi.mock('../../../commands/pickFuncProcess', () => ({
@@ -37,7 +62,7 @@ vi.mock('../../../commands/pickFuncProcess', () => ({
 }));
 
 vi.mock('../../findChildProcess/findChildProcess', () => ({
-  getChildProcessesWithScript: vi.fn(),
+  getChildProcesses: vi.fn(),
 }));
 
 vi.mock('axios', () => ({
@@ -55,8 +80,10 @@ vi.mock('../../workspace', () => ({
   getWorkspaceLogicAppFolders: vi.fn(),
 }));
 
-vi.mock('portfinder', () => ({
-  getPortPromise: vi.fn(),
+vi.mock('../../portReservation', () => ({
+  reserveFreePort: vi.fn(),
+  releaseReservedPort: vi.fn(),
+  resetReservedPorts: vi.fn(),
 }));
 
 describe('startAllDesignTimeApis', () => {
@@ -67,7 +94,8 @@ describe('startAllDesignTimeApis', () => {
     workspace.fs.createDirectory = vi.fn().mockRejectedValue(new Error('skip startup after logging')) as any;
     vi.mocked(window.showErrorMessage).mockResolvedValue(undefined as any);
     vi.mocked(axios.get).mockRejectedValue(new Error('API not ready'));
-    vi.mocked(portfinder.getPortPromise).mockResolvedValue(7071 as never);
+    let nextPort = 7071;
+    vi.mocked(reserveFreePort).mockImplementation(async () => nextPort++);
   });
 
   it('logs and exits when no workspace folders are available', async () => {
@@ -86,7 +114,7 @@ describe('startAllDesignTimeApis', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Starting design-time APIs for 0 Logic App project(s) in the current workspace.'
     );
-    expect(portfinder.getPortPromise).not.toHaveBeenCalled();
+    expect(reserveFreePort).not.toHaveBeenCalled();
   });
 
   it('starts each Logic App project discovered in the workspace', async () => {
@@ -100,7 +128,15 @@ describe('startAllDesignTimeApis', () => {
     );
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-one');
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-two');
-    expect(portfinder.getPortPromise).toHaveBeenCalledTimes(2);
+    expect(reserveFreePort).toHaveBeenCalledTimes(2);
+
+    // Each concurrently started project must receive its own reserved port so
+    // sibling design-time hosts never collide on the same "free" port.
+    const portOne = ext.designTimeInstances.get('D:/workspace/app-one')?.port;
+    const portTwo = ext.designTimeInstances.get('D:/workspace/app-two')?.port;
+    expect(portOne).toBeDefined();
+    expect(portTwo).toBeDefined();
+    expect(portOne).not.toBe(portTwo);
   });
 
   it('rejects when Logic App folder discovery fails', async () => {
@@ -134,7 +170,7 @@ describe('startAllDesignTimeApis', () => {
     const firstStart = startDesignTimeApi('D:/workspace/app-one');
     const secondStart = startDesignTimeApi('D:/workspace/app-one');
 
-    expect(portfinder.getPortPromise).toHaveBeenCalledTimes(1);
+    expect(reserveFreePort).toHaveBeenCalledTimes(1);
 
     rejectCreateDirectory?.(new Error('startup still failed'));
     await Promise.all([firstStart, secondStart]);
@@ -152,7 +188,7 @@ describe('startAllDesignTimeApis', () => {
 
     await startDesignTimeApi('D:/workspace/app-one');
 
-    expect(portfinder.getPortPromise).not.toHaveBeenCalled();
+    expect(reserveFreePort).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(
       'Invalid func child process PID set for project at "D:/workspace/app-one". Restarting workflow design-time API.'
     );
@@ -163,10 +199,75 @@ describe('startAllDesignTimeApis', () => {
     vi.mocked(cp.spawn).mockReturnValue({} as any);
     ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '222' });
 
-    stopDesignTimeApi('D:/workspace/app-one');
+    await stopDesignTimeApi('D:/workspace/app-one');
 
     expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '222']);
     expect(cp.spawn).toHaveBeenCalledWith('kill', ['-9', '111']);
+  });
+
+  it('releases the reserved port when stopping a design-time host so it can be reused', async () => {
+    vi.mocked(os.platform).mockReturnValue('linux' as any);
+    vi.mocked(cp.spawn).mockReturnValue({} as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { port: 7071, process: { pid: 111 } as any, childFuncPid: '222' });
+
+    await stopDesignTimeApi('D:/workspace/app-one');
+
+    expect(releaseReservedPort).toHaveBeenCalledWith(7071);
+  });
+
+  it('waits for Windows taskkill callbacks before resolving stopDesignTimeApi', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32' as any);
+    const taskkillCallbacks: Array<() => void> = [];
+    vi.spyOn(cp, 'exec').mockImplementation(((command: string, callback?: cp.ExecException | any) => {
+      taskkillCallbacks.push(() => callback?.(null, '', ''));
+      return {} as cp.ChildProcess;
+    }) as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '222' });
+
+    let resolved = false;
+    const stopPromise = stopDesignTimeApi('D:/workspace/app-one').then(() => {
+      resolved = true;
+    });
+    await Promise.resolve();
+
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 222 /t /f', expect.any(Function));
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 111 /t /f', expect.any(Function));
+    expect(resolved).toBe(false);
+
+    taskkillCallbacks[0]();
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+
+    taskkillCallbacks[1]();
+    await stopPromise;
+    expect(resolved).toBe(true);
+  });
+
+  it('passes string child func pids to taskkill on Windows', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32' as any);
+    vi.spyOn(cp, 'exec').mockImplementation(((_command: string, callback?: cp.ExecException | any) => {
+      callback?.(null, '', '');
+      return {} as cp.ChildProcess;
+    }) as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '12345' });
+
+    await stopDesignTimeApi('D:/workspace/app-one');
+
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 12345 /t /f', expect.any(Function));
+    expect(cp.exec).toHaveBeenCalledWith('taskkill /pid 111 /t /f', expect.any(Function));
+  });
+
+  it('skips taskkill when the tracked pid is undefined on Windows', async () => {
+    vi.mocked(os.platform).mockReturnValue('win32' as any);
+    vi.spyOn(cp, 'exec').mockImplementation(((_command: string, callback?: cp.ExecException | any) => {
+      callback?.(null, '', '');
+      return {} as cp.ChildProcess;
+    }) as any);
+    ext.designTimeInstances.set('D:/workspace/app-one', { process: {} as any });
+
+    await expect(stopDesignTimeApi('D:/workspace/app-one')).resolves.toBeUndefined();
+
+    expect(cp.exec).not.toHaveBeenCalled();
   });
 });
 
@@ -291,5 +392,79 @@ describe('startDesignTimeProcess', () => {
       'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
     );
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Conflicting port found when launching func. Restarting design-time process.');
+  });
+});
+
+describe('promptStartDesignTimeOption', () => {
+  const context = { ui: { showWarningMessage: vi.fn() }, telemetry: { properties: {}, measurements: {} } } as any;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    ext.designTimeInstances.clear();
+    (workspace as any).workspaceFolders = [];
+    // Default: auto-start disabled and the prompt suppressed (getWorkspaceSetting -> undefined), so
+    // only the artifact-regeneration loop runs — no scheduled design-time startup, no warning dialog.
+    vi.mocked(getWorkspaceSetting).mockReturnValue(undefined as any);
+  });
+
+  it('ensures root artifacts once per detected logic app folder when auto-start is off', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
+
+    await promptStartDesignTimeOption(context);
+
+    // The consolidated helper is the single validation entry point; the low-level regenerate helpers
+    // are no longer called directly from the prompt loop.
+    expect(ensureRootProjectFiles).toHaveBeenCalledWith(context, 'D:/workspace/app-one');
+    expect(ensureRootProjectFiles).toHaveBeenCalledWith(context, 'D:/workspace/app-two');
+    expect(ensureRootProjectFiles).toHaveBeenCalledTimes(2);
+    expect(ensureHostFile).not.toHaveBeenCalled();
+    expect(ensureLocalSettingsFile).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Detected 2 logic app project folder(s) for artifact regeneration: D:/workspace/app-one, D:/workspace/app-two.'
+    );
+  });
+
+  it('does not run the up-front artifact pass when auto-start is on (validation happens via the start path)', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
+    // Auto-start enabled.
+    vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => (key === autoStartDesignTimeSetting ? true : undefined) as any);
+    // Pre-seed each project's design-time instance with a resolved startup promise so the fire-and-forget
+    // scheduleStartDesignTimeApi() -> startDesignTimeApi() short-circuits without doing real work.
+    ext.designTimeInstances.set('D:/workspace/app-one', { startupPromise: Promise.resolve() } as any);
+    ext.designTimeInstances.set('D:/workspace/app-two', { startupPromise: Promise.resolve() } as any);
+
+    await promptStartDesignTimeOption(context);
+
+    // No duplicate up-front pass: the prompt loop must not ensure root artifacts when auto-starting.
+    expect(ensureRootProjectFiles).not.toHaveBeenCalled();
+    expect(ensureHostFile).not.toHaveBeenCalled();
+    expect(ensureLocalSettingsFile).not.toHaveBeenCalled();
+  });
+
+  it('logs and skips regeneration when no logic app folders are detected', async () => {
+    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppFolders).mockResolvedValue([]);
+
+    await promptStartDesignTimeOption(context);
+
+    expect(ensureRootProjectFiles).not.toHaveBeenCalled();
+    expect(ensureHostFile).not.toHaveBeenCalled();
+    expect(ensureLocalSettingsFile).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('No logic app project folders were detected'));
+  });
+
+  it('logs and skips regeneration when no workspace folders are open', async () => {
+    (workspace as any).workspaceFolders = undefined;
+
+    await promptStartDesignTimeOption(context);
+
+    expect(workspaceUtils.getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+    expect(ensureRootProjectFiles).not.toHaveBeenCalled();
+    expect(ensureHostFile).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'No workspace folders are open. Skipping host.json and local.settings.json regeneration.'
+    );
   });
 });

@@ -8,6 +8,13 @@ import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { ITargetDirectory } from '../run-service';
 
+export interface AvailableProject {
+  name: string;
+  path: string;
+  isCodeful: boolean;
+  existingWorkflows: string[];
+}
+
 export interface CreateWorkspaceState {
   currentStep: number;
   packagePath: ITargetDirectory;
@@ -28,6 +35,7 @@ export interface CreateWorkspaceState {
   isComplete: boolean;
   workspaceFileJson: any;
   logicAppsWithoutCustomCode: any | undefined;
+  existingFolders: string[];
   flowType: 'createWorkspace' | 'createWorkspaceFromPackage' | 'createLogicApp' | 'convertToWorkspace' | 'createWorkflow';
   pathValidationResults: Record<string, boolean>;
   packageValidationResults: Record<string, boolean>;
@@ -37,6 +45,7 @@ export interface CreateWorkspaceState {
   separator: string;
   platform: Platform | null;
   isDevContainerProject: boolean;
+  availableProjects: AvailableProject[];
 }
 
 const initialState: CreateWorkspaceState = {
@@ -64,6 +73,7 @@ const initialState: CreateWorkspaceState = {
   isComplete: false,
   workspaceFileJson: '',
   logicAppsWithoutCustomCode: undefined,
+  existingFolders: [],
   flowType: 'createWorkspace',
   pathValidationResults: {},
   packageValidationResults: {},
@@ -73,6 +83,7 @@ const initialState: CreateWorkspaceState = {
   separator: '/',
   platform: null,
   isDevContainerProject: false,
+  availableProjects: [],
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -80,16 +91,28 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
   initialState,
   reducers: {
     initializeProject: (state, action: PayloadAction<any>) => {
-      const { workspaceFileJson, logicAppsWithoutCustomCode } = action.payload;
+      const { workspaceFileJson, logicAppsWithoutCustomCode, existingFolders, platform, separator } = action.payload;
       state.workspaceFileJson = workspaceFileJson;
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
+      state.existingFolders = existingFolders || [];
+      // platform and separator are host-environment values sent by the extension host in the
+      // initialize_frame payload. The createProject (createLogicApp) webview flow only dispatches
+      // initializeProject, so they must be captured here for platform-gated options (e.g. the
+      // Windows-only .NET Framework target framework) to appear.
+      if (platform !== undefined) {
+        state.platform = platform;
+      }
+      if (separator !== undefined) {
+        state.separator = separator;
+      }
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform, logicAppType, logicAppName } = action.payload;
+      const { separator, platform, logicAppType, logicAppName, availableProjects } = action.payload;
       state.separator = separator;
       state.platform = platform;
       state.logicAppType = logicAppType || '';
       state.logicAppName = logicAppName || '';
+      state.availableProjects = availableProjects || [];
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
@@ -194,19 +217,24 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
     },
     resetState: (state, action: PayloadAction<{ preserveLogicAppData?: boolean } | undefined>) => {
       const preserveLogicAppData = action.payload?.preserveLogicAppData;
-      const preservedLogicAppType = preserveLogicAppData ? state.logicAppType : '';
-      const preservedLogicAppName = preserveLogicAppData ? state.logicAppName : '';
-      const preservedSeparator = preserveLogicAppData ? state.separator : '/';
-      const preservedPlatform = preserveLogicAppData ? state.platform : null;
+      // Object.assign(state, initialState) overwrites every field with the initial defaults, so any
+      // value we want to keep must be captured here (before the reset) and merged back in the same
+      // call. platform and separator are host-environment values (from initialize_frame), not user
+      // form input, so they must always survive a form reset — otherwise the flow wrappers' mount-time
+      // resetState(undefined) wipes platform to null, hiding the Windows-only .NET Framework option.
+      const preserved: Partial<CreateWorkspaceState> = {
+        platform: state.platform,
+        separator: state.separator,
+        ...(preserveLogicAppData
+          ? {
+              logicAppType: state.logicAppType,
+              logicAppName: state.logicAppName,
+              availableProjects: state.availableProjects,
+            }
+          : {}),
+      };
 
-      Object.assign(state, initialState);
-
-      if (preserveLogicAppData) {
-        state.logicAppType = preservedLogicAppType;
-        state.logicAppName = preservedLogicAppName;
-        state.separator = preservedSeparator;
-        state.platform = preservedPlatform;
-      }
+      Object.assign(state, initialState, preserved);
     },
     nextStep: (state) => {
       if (state.currentStep < 7) {

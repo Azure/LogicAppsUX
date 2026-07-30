@@ -6,7 +6,7 @@ export const GoToRealWorkflow = async (page: Page, appName: string, workflowName
   await page.getByPlaceholder('Select an App').press('Enter');
   await page.getByLabel('Workflow').locator('span').filter({ hasText: '' }).click();
   await page.getByRole('option', { name: workflowName }).click();
-  await page.waitForTimeout(100);
+  await page.waitForSelector('[data-testid^="card-"]', { timeout: 30000 });
   await page.getByRole('button', { name: 'Toolbox' }).click();
   await page.getByLabel('Zoom view to fit').click({ force: true });
 };
@@ -15,7 +15,7 @@ export const GoToMockWorkflow = async (page: Page, workflowName: string) => {
   await page.getByText('Local', { exact: true }).click();
   await page.getByText('Select an option').click();
   await page.getByRole('option', { name: workflowName, exact: true }).click();
-  await page.waitForTimeout(100);
+  await page.waitForSelector('[data-testid^="card-"]', { timeout: 30000 });
   await page.getByRole('button', { name: 'Toolbox' }).click();
   await page.getByLabel('Zoom view to fit').click({ force: true });
 };

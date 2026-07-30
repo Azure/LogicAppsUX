@@ -4,12 +4,39 @@ export const nameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const namespaceValidation = /^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
 export const functionNameValidation = /^[a-z][a-z\d_]*$/i;
 
-export const validateWorkflowName = (name: string, intlText: any) => {
+// Reserved folder names that exist in Logic App projects by default.
+// Workflows must not use these names to avoid conflicts.
+export const reservedWorkflowNames = [
+  '.vscode',
+  '.debug',
+  '.devcontainer',
+  '.testResults',
+  'Artifacts',
+  'lib',
+  'workflow-designtime',
+  'Tests',
+  'diagnostics',
+  'locks',
+  'wwwroot',
+  'custom',
+  'DeploymentScriptTemplates',
+  'WorkspaceTemplates',
+];
+
+const reservedNamesLower = new Set(reservedWorkflowNames.map((n) => n.toLowerCase()));
+
+export const validateWorkflowName = (name: string, intlText: any, existingWorkflows?: string[]) => {
   if (!name) {
     return intlText.EMPTY_WORKFLOW_NAME;
   }
-  if (!functionNameValidation.test(name)) {
+  if (!nameValidation.test(name)) {
     return intlText.WORKFLOW_NAME_VALIDATION_MESSAGE;
+  }
+  if (reservedNamesLower.has(name.trim().toLowerCase())) {
+    return intlText.WORKFLOW_NAME_RESERVED ?? 'This name is reserved and cannot be used as a workflow name.';
+  }
+  if (existingWorkflows?.some((w) => w.toLowerCase() === name.trim().toLowerCase())) {
+    return intlText.WORKFLOW_NAME_EXISTS ?? 'A workflow with this name already exists in the selected project.';
   }
   return undefined;
 };
@@ -57,7 +84,7 @@ export const getValidationRequirements = (flowType: string, logicAppType: string
   // Override for specific flow types that need more fields
   if (flowType === 'createWorkflow') {
     requirements.needsLogicAppType = false;
-    requirements.needsLogicAppName = false;
+    requirements.needsLogicAppName = true;
     requirements.needsWorkspaceName = false;
     requirements.needsWorkspacePath = false;
     requirements.needsWorkflowFields = true;

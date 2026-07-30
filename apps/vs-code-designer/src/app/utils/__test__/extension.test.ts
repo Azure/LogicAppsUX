@@ -1,13 +1,9 @@
-import { customExtensionContext, extensionCommand, logicAppsStandardExtensionId } from '../../../constants';
+import { extensionCommand, logicAppsStandardExtensionId } from '../../../constants';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { detectCodefulWorkflow, hasCodefulWorkflowSetting } from '../codeful';
 import {
   getExtensionVersion,
   initializeCustomExtensionContext,
-  scanWorkspaceForCodefulWorkflows,
-  updateCodefulWorkflowContext,
-  updateCodefulWorkflowFilesContext,
   updateLogicAppsContext,
 } from '../extension';
 import { getWorkspaceFolderWithoutPrompting } from '../workspace';
@@ -19,11 +15,6 @@ vi.mock('../workspace', () => ({
 
 vi.mock('../verifyIsProject', () => ({
   isLogicAppProjectInRoot: vi.fn(),
-}));
-
-vi.mock('../codeful', () => ({
-  detectCodefulWorkflow: vi.fn(),
-  hasCodefulWorkflowSetting: vi.fn(),
 }));
 
 describe('extension utilities', () => {
@@ -70,43 +61,5 @@ describe('extension utilities', () => {
 
     expect(isLogicAppProjectInRoot).toHaveBeenCalledWith(workspaceFolder);
     expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', 'logicApps.hasProject', true);
-  });
-
-  it('scans only codeful projects for workflow C# files', async () => {
-    const settingsUri = { fsPath: '/workspace/logicapp/local.settings.json' };
-    const workflowUri = { fsPath: '/workspace/logicapp/Workflow.cs' };
-    const unrelatedUri = { fsPath: '/workspace/other/Workflow.cs' };
-    (vscode.workspace.findFiles as any).mockResolvedValueOnce([settingsUri]).mockResolvedValueOnce([workflowUri, unrelatedUri]);
-    (hasCodefulWorkflowSetting as any).mockResolvedValue(true);
-    (vscode.workspace.openTextDocument as any).mockResolvedValue({
-      getText: () => 'workflow source',
-    });
-    (detectCodefulWorkflow as any).mockReturnValue({ workflowName: 'workflow' });
-
-    await expect(scanWorkspaceForCodefulWorkflows()).resolves.toEqual([workflowUri.fsPath]);
-    expect(vscode.workspace.openTextDocument).toHaveBeenCalledWith(workflowUri);
-    expect(vscode.workspace.openTextDocument).not.toHaveBeenCalledWith(unrelatedUri);
-  });
-
-  it('updates codeful workflow file context from the workspace scan', async () => {
-    (vscode.workspace.findFiles as any).mockResolvedValue([]);
-
-    await updateCodefulWorkflowFilesContext();
-
-    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', customExtensionContext.codefulWorkflowFiles, []);
-  });
-
-  it('updates active editor context for C# workflow files', () => {
-    (detectCodefulWorkflow as any).mockReturnValue({ workflowName: 'workflow' });
-
-    updateCodefulWorkflowContext({
-      document: {
-        fileName: 'D:\\workspace\\logicapp\\Workflow.cs',
-        getText: () => 'workflow source',
-        languageId: 'csharp',
-      },
-    } as any);
-
-    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', customExtensionContext.isCodefulWorkflowFile, true);
   });
 });

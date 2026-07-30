@@ -25,9 +25,36 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
+import * as os from 'os';
 import * as path from 'path';
 import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
 import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
+
+// Uses the default dependency path (~/.azurelogicapps/dependencies) since E2E tests
+// always configure autoRuntimeDependenciesPath to this default via run-e2e.js settings injection.
+function getFuncCoreToolsDiagnosticPaths(): string[] {
+  const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
+  const funcExecutable = process.platform === 'win32' ? 'func.exe' : 'func';
+  return [
+    path.join(funcToolsRoot, funcExecutable),
+    path.join(funcToolsRoot, 'in-proc8', funcExecutable),
+    path.join(funcToolsRoot, 'in-proc6', funcExecutable),
+  ];
+}
+
+function getExecutableDiagnostic(filePath: string): string {
+  if (!fs.existsSync(filePath)) {
+    return 'missing';
+  }
+
+  const mode = process.platform === 'win32' ? 'n/a' : `0${(fs.statSync(filePath).mode & 0o777).toString(8)}`;
+  try {
+    fs.accessSync(filePath, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK);
+    return `executable mode=${mode}`;
+  } catch {
+    return `not-executable mode=${mode}`;
+  }
+}
 
 // ===========================================================================
 // Port management helpers
@@ -662,6 +689,16 @@ export async function waitForRuntimeReady(
     console.log(`[waitForRuntimeReady][diag] Running processes:\n${output}`);
   } catch (e: any) {
     console.log(`[waitForRuntimeReady][diag] Process inventory failed: ${e?.message ?? e}`);
+  }
+
+  // Dump C2 — managed FuncCoreTools executable permissions. p43 failures can
+  // start the top-level wrapper but fail when it dispatches in-proc8/func.
+  try {
+    for (const funcToolsPath of getFuncCoreToolsDiagnosticPaths()) {
+      console.log(`[waitForRuntimeReady][diag] FuncCoreTools permission ${funcToolsPath}: ${getExecutableDiagnostic(funcToolsPath)}`);
+    }
+  } catch (e: any) {
+    console.log(`[waitForRuntimeReady][diag] FuncCoreTools permission dump failed: ${e?.message ?? e}`);
   }
 
   // Dump D — Structured final gate state (single grep-friendly line)

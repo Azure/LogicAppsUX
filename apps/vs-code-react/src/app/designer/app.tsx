@@ -1,9 +1,8 @@
-import { createFileSystemConnection, updateUnitTestDefinition } from '../../state/DesignerSlice';
+import { createFileSystemConnection } from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { getDesignerServices } from './servicesHelper';
-import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
@@ -53,10 +52,7 @@ const DesignerAppV1 = () => {
     isMonitoringView,
     runId,
     hostVersion,
-    isUnitTest,
-    unitTestDefinition,
     workflowRuntimeBaseUrl,
-    supportsUnitTest,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
@@ -182,7 +178,7 @@ const DesignerAppV1 = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     initialData: null,
-    enabled: (isMonitoringView || isUnitTest) && !isEmptyString(runId),
+    enabled: isMonitoringView && !isEmptyString(runId),
   });
 
   const onRefreshMonitoringView = useCallback(() => {
@@ -206,30 +202,14 @@ const DesignerAppV1 = () => {
           definition: runData.properties.workflow.properties.definition,
         };
       });
-    } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
-      const updateTestDefinition = async () => {
-        if (!isNullOrUndefined(runData)) {
-          const { triggerMocks, actionMocks } = await getRunInstanceMocks(runData, services, false);
-          dispatch(
-            updateUnitTestDefinition({
-              unitTestDefinition: {
-                triggerMocks: triggerMocks,
-                actionMocks: actionMocks,
-                assertions: [],
-              },
-            })
-          );
-        }
-      };
-      updateTestDefinition();
     }
-  }, [runData, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
+  }, [runData, isMonitoringView, services, dispatch]);
 
   useEffect(() => {
-    if ((isMonitoringView || isUnitTest) && !isEmptyString(runId)) {
+    if (isMonitoringView && !isEmptyString(runId)) {
       refetch();
     }
-  }, [isMonitoringView, isUnitTest, runId, services, refetch]);
+  }, [isMonitoringView, runId, services, refetch]);
 
   useEffect(() => {
     setStandardApp(panelMetaData?.standardApp);
@@ -241,18 +221,16 @@ const DesignerAppV1 = () => {
   const loadingApp = <Spinner className={styles.designerLoading} size="large" label={intlText.LOADING_DESIGNER} />;
 
   const designerCommandBar =
-    readOnly && !isMonitoringView && !isUnitTest ? null : (
+    readOnly && !isMonitoringView ? null : (
       <DesignerCommandBar
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
         onRefresh={onRefreshMonitoringView}
         isDarkMode={theme === Theme.Dark}
-        isUnitTest={isUnitTest}
         isLocal={isLocal}
         runId={runId}
         getAgentUrl={getAgentUrl}
-        supportsUnitTest={supportsUnitTest}
       />
     );
 
@@ -266,7 +244,6 @@ const DesignerAppV1 = () => {
       }}
       customCode={customCode}
       runInstance={runInstance}
-      unitTestDefinition={unitTestDefinition}
       appSettings={panelMetaData?.localSettings}
     >
       <Designer />
@@ -282,7 +259,6 @@ const DesignerAppV1 = () => {
         options={{
           isDarkMode: theme === Theme.Dark,
           isVSCode: true,
-          isUnitTest,
           readOnly,
           isMonitoringView,
           services: services,

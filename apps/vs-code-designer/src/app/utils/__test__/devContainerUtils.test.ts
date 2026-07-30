@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isDevContainerWorkspace } from '../devContainerUtils';
+import { isDevContainerWorkspace, isDevContainerWorkspaceSync } from '../devContainerUtils';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
@@ -150,6 +150,65 @@ describe('devContainerUtils', () => {
       (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
 
       const result = await isDevContainerWorkspace();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return false when no workspace file exists', () => {
+      (vscode.workspace as any).workspaceFile = undefined;
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return false when no workspace folders exist', () => {
+      (vscode.workspace as any).workspaceFile = { fsPath: path.join(tempDir, 'test.code-workspace') };
+      (vscode.workspace as any).workspaceFolders = [];
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return true when devcontainer folder is listed and devcontainer.json exists', async () => {
+      const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
+      const devcontainerDir = path.join(tempDir, '.devcontainer');
+      const devcontainerJsonPath = path.join(devcontainerDir, 'devcontainer.json');
+
+      await fse.ensureDir(devcontainerDir);
+      await fse.writeJson(devcontainerJsonPath, { name: 'Test DevContainer' });
+      await fse.writeJson(workspaceFilePath, {
+        folders: [{ path: './.devcontainer' }, { path: './LogicApp' }],
+      });
+
+      (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(true);
+    });
+
+    it('should synchronously return false when devcontainer folder is listed but devcontainer.json does not exist', async () => {
+      const workspaceFilePath = path.join(tempDir, 'test.code-workspace');
+      await fse.writeJson(workspaceFilePath, {
+        folders: [{ path: './.devcontainer' }, { path: './LogicApp' }],
+      });
+
+      (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
+
+      const result = isDevContainerWorkspaceSync();
+
+      expect(result).toBe(false);
+    });
+
+    it('should synchronously return false when workspace file cannot be read', () => {
+      (vscode.workspace as any).workspaceFile = { fsPath: path.join(tempDir, 'missing.code-workspace') };
+      (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: tempDir } }];
+
+      const result = isDevContainerWorkspaceSync();
 
       expect(result).toBe(false);
     });

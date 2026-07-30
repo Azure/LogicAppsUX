@@ -29,6 +29,7 @@ interface SubgraphCardProps {
   setFocus?: boolean;
   isLoading?: boolean;
   isSelected?: boolean;
+  isPinned?: boolean;
   active?: boolean;
 }
 
@@ -48,6 +49,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   setFocus,
   isLoading,
   isSelected,
+  isPinned,
   active = true,
 }) => {
   const intl = useIntl();
@@ -208,7 +210,13 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         role="button"
         id={`msla-node-${id}`}
         aria-label={cardAltText}
-        className={mergeClasses(styles.root, styles.scope, !active && styles.inactive, isSelected && styles.selected)}
+        className={mergeClasses(
+          styles.root,
+          styles.scope,
+          !active && styles.inactive,
+          isPinned && styles.pinned,
+          isSelected && styles.selected
+        )}
         data-testid={`card-${title}`}
         data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
         onClick={handleTitleClick}
@@ -231,7 +239,14 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       <div
         role="button"
         aria-label={cardAltText}
-        className={mergeClasses(styles.root, styles.scope, styles.small, !active && styles.inactive, isSelected && styles.selected)}
+        className={mergeClasses(
+          styles.root,
+          styles.scope,
+          styles.small,
+          !active && styles.inactive,
+          isPinned && styles.pinned,
+          isSelected && styles.selected
+        )}
         style={colorVars}
         onClick={(e) => handleCollapse?.(e.shiftKey)}
         onContextMenu={onContextMenu}

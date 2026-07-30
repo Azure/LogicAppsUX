@@ -233,7 +233,7 @@ export const panelSlice = createSlice({
         args: [uniqueIds.join(',')],
       });
     },
-    // Toggles a single node in the multi-selection set (used by shift-click).
+    // Toggles a single node in the multi-selection set (used by shift/ctrl/cmd-click on the card body).
     toggleNodeSelection: (state, action: PayloadAction<string>) => {
       const nodeId = action.payload;
       const current = state.operationContent.selectedNodeIds ?? [];

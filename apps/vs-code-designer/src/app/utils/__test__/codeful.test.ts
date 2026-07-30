@@ -49,23 +49,15 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
   const projectPath = 'D:\\workspace\\CodefulLogicApp';
   const runtimeDependenciesPath = 'D:\\runtime-dependencies';
   const lspDirectoryPath = path.join(runtimeDependenciesPath, lspDirectory);
-  const csprojPath = path.join(projectPath, 'CodefulLogicApp.csproj');
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
   const installedSdkHashMarkerPath = path.join(runtimeDependenciesPath, '.lspsdk-hash');
   const projectSdkHashMarkerPath = path.join(projectPath, '.nuget', '.logicapps-lspsdk-hash');
   const projectSdkPackagePath = path.join(projectPath, '.nuget', 'packages', 'microsoft.azure.workflows.sdk', '1.0.0-preview.1');
   const projectAssetsPath = path.join(projectPath, 'obj', 'project.assets.json');
   const projectNugetCachePath = path.join(projectPath, 'obj', 'project.nuget.cache');
+  const localSettingsPath = path.join(projectPath, 'local.settings.json');
+  const codefulLocalSettings = JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'true' } });
   const currentSdkHash = 'current-sdk-hash';
-  const csprojContent = `
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8</TargetFramework>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview.1" />
-  </ItemGroup>
-</Project>`;
   const codefulNugetConfig = `
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
@@ -87,7 +79,7 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
     mocks.readdir.mockResolvedValue(['CodefulLogicApp.csproj']);
     mocks.statSync.mockReturnValue({ isDirectory: () => true });
     setExistingPaths([
-      csprojPath,
+      localSettingsPath,
       nugetConfigPath,
       installedSdkHashMarkerPath,
       projectSdkPackagePath,
@@ -95,8 +87,8 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
       projectNugetCachePath,
     ]);
     mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === csprojPath) {
-        return csprojContent;
+      if (filePath === localSettingsPath) {
+        return codefulLocalSettings;
       }
       if (filePath === nugetConfigPath) {
         return codefulNugetConfig;
@@ -125,10 +117,10 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
   });
 
   it('keeps the project cache when its marker already matches the installed SDK hash', async () => {
-    setExistingPaths([csprojPath, nugetConfigPath, installedSdkHashMarkerPath, projectSdkHashMarkerPath, projectSdkPackagePath]);
+    setExistingPaths([localSettingsPath, nugetConfigPath, installedSdkHashMarkerPath, projectSdkHashMarkerPath, projectSdkPackagePath]);
     mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === csprojPath) {
-        return csprojContent;
+      if (filePath === localSettingsPath) {
+        return codefulLocalSettings;
       }
       if (filePath === nugetConfigPath) {
         return codefulNugetConfig;
@@ -148,8 +140,8 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
 
   it('does not touch caches for projects that do not use the extension local SDK source and project-local packages folder', async () => {
     mocks.readFile.mockImplementation(async (filePath: string) => {
-      if (filePath === csprojPath) {
-        return csprojContent;
+      if (filePath === localSettingsPath) {
+        return codefulLocalSettings;
       }
       if (filePath === nugetConfigPath) {
         return codefulNugetConfig.replace(lspDirectoryPath, 'https://api.nuget.org/v3/index.json');

@@ -35,7 +35,6 @@ Redux Toolkit with 15+ slices:
 - `workflowparametersSlice` — Workflow parameters validation
 - `staticresultsSlice` — Static test result schemas
 - `undoRedoSlice` — **v2 NEW**: Undo/redo with compressed state snapshots
-- `unitTestSlice` — **v2 NEW**: Unit test definitions and assertions
 - `customcodeSlice` — **v2 NEW**: Custom code management
 - `notesSlice` — **v2 NEW**: Canvas sticky notes
 - `modalSlice` — Modal dialog state
@@ -50,7 +49,6 @@ Redux Toolkit with 15+ slices:
   detection, Foundry agent integration
 - **MCP Integration** — Model Context Protocol resource selection and management
 - **Compressed Undo/Redo** — `Uint8Array` state snapshots with `lz-string` compression
-- **Unit Testing** — Test definition serialization, assertions panel
 - **Run History Panel** — In-designer run history viewer with tree view
 - **Canvas Finder** — Node search/finder overlay
 - **Performance Debug** — Performance metrics display
@@ -62,7 +60,7 @@ Redux Toolkit with 15+ slices:
 - `FloatingRunButton/` — Workflow run trigger with chat
 - `CustomNodes/` — OperationCard, ScopeCard, SubgraphCard, CollapsedCard,
   GraphContainer, Placeholder, Hidden, **NoteNode** (sticky notes)
-- Panels: agentChat, assertionsPanel, connectionsPanel, errorsPanel,
+- Panels: agentChat, connectionsPanel, errorsPanel,
   nodeDetailsPanel, nodeSearchPanel, runHistoryPanel, runTreeView,
   templatePanel, workflowParametersPanel, recommendation
 - `exportconsumption/` — Export workflow wizard
@@ -83,7 +81,6 @@ Redux Toolkit with 15+ slices:
 - FloatingRunButton or agent chat issues (v2 only)
 - Canvas notes behavior
 - Undo/redo bugs in v2 (compressed snapshots)
-- Unit test panel or assertions issues
 - Run history panel within the designer
 
 ### Issues that are often MISATTRIBUTED here:

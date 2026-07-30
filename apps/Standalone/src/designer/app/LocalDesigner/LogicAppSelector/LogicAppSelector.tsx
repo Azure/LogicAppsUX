@@ -11,11 +11,13 @@ const fileOptions = [
   { key: 'GeneralHeader', text: 'General Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'Empty.json', text: 'Empty/New' },
   { key: 'Panel.json', text: 'Panel' },
+  { key: 'DynamicOutputsOverflow.json', text: 'Dynamic Outputs Overflow' },
   { key: 'Recurrence.json', text: 'Recurrence' },
   { key: 'MultiVariable.json', text: 'Multi Variable' },
   // { key: 'straightLine.json', text: 'Straight Line' },
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
   { key: 'UnicodeKeys.json', text: 'Unicode Keys' },
+  { key: 'NotesInMetadata.json', text: 'Notes In Metadata' },
 
   // Agent
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
@@ -25,6 +27,7 @@ const fileOptions = [
   { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
   { key: 'AgentWithMcp.json', text: 'Agent with MCP Tools' },
   { key: 'AgentWithMcpUami.json', text: 'Agent with MCP UAMI' },
+  { key: 'AgentWithMcpConsumption.json', text: 'Agent with MCP Tools (Consumption)' },
 
   // A2A
   { key: 'divider_A2A', text: '-', itemType: DropdownMenuItemType.Divider },

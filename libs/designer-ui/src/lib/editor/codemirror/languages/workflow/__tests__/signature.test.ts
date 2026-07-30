@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { workflowSignatureHelp, getSignatureAtPosition } from '../signature';
-
-describe('workflowSignatureHelp', () => {
-  it('should export signature help extension', () => {
-    expect(workflowSignatureHelp).toBeDefined();
-  });
-});
+import { getSignatureAtPosition } from '../signature';
 
 describe('getSignatureAtPosition', () => {
   it('should return null for empty text', () => {

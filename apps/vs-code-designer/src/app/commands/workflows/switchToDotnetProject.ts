@@ -77,10 +77,7 @@ export async function switchToDotnetProject(
 
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, target.fsPath);
   if (projectFiles.length > 0) {
-    vscode.window.showInformationMessage(
-      localize('moveToDotnetCompleted', 'The Logic App project is already a NuGet-based project.'),
-      'OK'
-    );
+    ext.outputChannel.appendLog(localize('projectAlreadyDotnet', 'The Logic App project is already a NuGet-based project.'));
     return;
   }
 
@@ -184,10 +181,7 @@ export async function switchToDotnetProject(
   const dotnetInitVSCodeStep = new InitDotnetProjectStep();
   dotnetInitVSCodeStep.execute(wizardContext);
 
-  vscode.window.showInformationMessage(
-    localize('moveToDotnetCompleted', 'Completed moving your Logic App project to a NuGet-based project.'),
-    'OK'
-  );
+  ext.outputChannel.appendLog(localize('moveToDotnetCompleted', 'Successfully converted to NuGet-based Logic App project.'));
 }
 
 async function createGlobalJsonFile(sdkVersion: string, projectRoot: string) {

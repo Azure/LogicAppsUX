@@ -24,10 +24,6 @@ export async function notifyDeployComplete(node: SlotTreeItem, isHybridLogiApp: 
     node.isHybridLogicApp ? node.hybridSite.name : node.site.fullName
   );
 
-  if (isHybridLogiApp) {
-    window.showInformationMessage(deployComplete);
-  }
-
   const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
   const streamLogs: MessageItem = { title: localize('streamLogs', 'Stream logs') };
   const items = [viewOutput, streamLogs];

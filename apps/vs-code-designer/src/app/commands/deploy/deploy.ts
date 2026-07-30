@@ -24,6 +24,9 @@ import {
   customDirectory,
   workflowAuthenticationMethodKey,
   ProjectDirectoryPathKey,
+  funcVersionSetting,
+  projectLanguageSetting,
+  inlineCodeNodeExecutablePathKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -33,9 +36,8 @@ import { SubscriptionTreeItem } from '../../tree/subscriptionTree/subscriptionTr
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
-import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
+import { addLocalFuncTelemetry, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting, getGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { createLogicAppAdvanced, createLogicApp } from '../createLogicApp/createLogicApp';
 import {
   AdvancedIdentityObjectIdStep,
@@ -51,7 +53,7 @@ import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
-import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -62,7 +64,9 @@ import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from '../publishCodefulProject';
-import { isCodefulProject } from '../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../utils/codeful';
+import { isProjectInitializedForVSCode } from '../../projectConsistency/vscodeConsistency';
+import { initProjectForVSCode } from '../initProjectForVSCode/initProjectForVSCode';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -95,6 +99,10 @@ async function deploy(
     ProjectDirectoryPathKey,
     workflowAuthenticationMethodKey,
     'REMOTEDEBUGGINGVERSION',
+    // Local-debug-only: absolute path to the local Node.js binary used by the inline-code
+    // language worker. Deploying it points the cloud worker at a non-existent local path,
+    // which hangs "Execute JavaScript Code" actions in a Running state indefinitely.
+    inlineCodeNodeExecutablePathKey,
   ];
   const deployPaths = await getDeployFsPath(actionContext, target);
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
@@ -103,19 +111,15 @@ async function deploy(
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
 
-    // Check if this is a codeful project and build/publish if needed
-    const isCodeful = await isCodefulProject(logicAppNode.fsPath);
+    const isCodeful = await hasCodefulWorkflowSetting(logicAppNode.fsPath);
     if (isCodeful) {
       context.telemetry.properties.isCodefulProject = 'true';
       ext.outputChannel.appendLog(localize('buildingCodefulProject', 'Building and publishing codeful Logic App project...'));
-
-      // Build the codeful project
       await publishCodefulProject(actionContext, logicAppNode);
       ext.outputChannel.appendLog(localize('codefulProjectPublished', 'Codeful project built and published successfully.'));
     } else {
-      // For codeless projects, build custom code functions if they exist
-      const customFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
-      if (customFolderExists) {
+      const customCodeFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
+      if (customCodeFolderExists) {
         await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
       }
     }
@@ -144,7 +148,15 @@ async function deploy(
   const nodeKind = (isHybridLogicApp ? node.hybridSite.type : node.site.kind).toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
-  const [language, version]: [ProjectLanguage, FuncVersion] = await verifyInitForVSCode(context, effectiveDeployFsPath);
+
+  if (!isProjectInitializedForVSCode(effectiveDeployFsPath)) {
+    const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
+    await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
+    await initProjectForVSCode(context, effectiveDeployFsPath);
+  }
+
+  const language = nonNullOrEmptyValue(getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath), projectLanguageSetting) as ProjectLanguage;
+  const version = nonNullOrEmptyValue(tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)), funcVersionSetting) as FuncVersion;
 
   context.telemetry.properties.projectLanguage = language;
   context.telemetry.properties.projectRuntime = version;

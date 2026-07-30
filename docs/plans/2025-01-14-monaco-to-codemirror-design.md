@@ -270,7 +270,6 @@ Theme updates use CodeMirror's compartment system for efficient re-configuration
 - `libs/designer-ui/src/lib/expressioneditor/index.tsx` - Update import path
 - `libs/designer-ui/src/lib/schemaeditor/index.tsx` - Update import path
 - `libs/designer-ui/src/lib/tokenpicker/tokenpickersection/tokenpickersection.tsx` - Update import
-- `libs/designer-ui/src/lib/unitTesting/conditionExpression/index.tsx` - Update import
 - `libs/designer-ui/src/lib/editor/base/plugins/TokenPickerButtonLegacy.tsx` - Update types
 
 ### Delete

@@ -1,0 +1,226 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import { assetsFolderName } from '../../../../../constants';
+import { ext } from '../../../../../extensionVariables';
+import type { RemoteWorkflowTreeItem } from '../../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
+import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../../utils/codeless/common';
+import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
+import { openMonitoringView } from '../../monitoringView/openMonitoringView';
+import { shouldUpdateOverviewCallbackInfo } from '../../overviewCallbackInfo';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
+import * as path from 'path';
+import * as vscode from 'vscode';
+import type { OverviewWorkflowProperties } from '../utils/types';
+
+export abstract class OverviewPanel {
+  protected readonly context: IActionContext;
+  protected workflowName: string;
+  protected panelName: string;
+  protected panelTitle: string;
+  protected apiVersion: string;
+  protected isLocal: boolean;
+  protected panelGroupKey: string;
+  protected baseUrl?: string;
+  protected accessToken?: string;
+  protected isCodefulOverview = false;
+  protected callbackInfo?: ICallbackUrlResponse;
+  protected panel?: vscode.WebviewPanel;
+  protected workflowContent: any;
+  protected workflowProps?: OverviewWorkflowProperties;
+  protected workflowPropertiesList?: OverviewWorkflowProperties[];
+  protected triggerName?: string;
+  protected azureDetails?: AzureConnectorDetails;
+  protected corsNotice?: string;
+  protected connectionData: Record<string, any> = {};
+  protected workflowFilePath?: string;
+
+  private pollingInterval?: NodeJS.Timeout;
+
+  protected constructor(
+    context: IActionContext,
+    workflowName: string,
+    panelName: string,
+    panelTitle: string,
+    apiVersion: string,
+    isLocal: boolean
+  ) {
+    this.context = context;
+    this.workflowName = workflowName;
+    this.panelName = panelName;
+    this.panelTitle = panelTitle;
+    this.apiVersion = apiVersion;
+    this.isLocal = isLocal;
+    this.panelGroupKey = ext.webViewKey.overview;
+  }
+
+  protected abstract isEnvironmentReady(): Promise<boolean>;
+  protected abstract initializeOverviewData(): Promise<void>;
+  protected abstract getBaseUrl(): string | undefined;
+  protected abstract getCallbackInfo(baseUrl: string): Promise<ICallbackUrlResponse | undefined>;
+  protected abstract getAccessToken(): Promise<string>;
+  protected abstract getWorkflowNode(): vscode.Uri | RemoteWorkflowTreeItem | undefined;
+
+  public async create(): Promise<void> {
+    const existingPanel = tryGetWebviewPanel(this.panelGroupKey, this.panelName);
+    if (existingPanel) {
+      if (await this.isEnvironmentReady()) {
+        if (!existingPanel.active) {
+          existingPanel.reveal(vscode.ViewColumn.Active);
+        }
+        return;
+      }
+      existingPanel.dispose();
+    }
+
+    await this.initializeOverviewData();
+
+    this.panel = vscode.window.createWebviewPanel('workflowOverview', this.panelTitle, vscode.ViewColumn.Active, this.getPanelOptions());
+
+    this.panel.iconPath = {
+      light: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'Codeless.svg')),
+      dark: vscode.Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'Codeless.svg')),
+    };
+
+    this.panel.webview.html = await getWebViewHTML('vs-code-react', this.panel);
+
+    this.panel.webview.onDidReceiveMessage(async (message) => await this.handleWebviewMsg(message), ext.context.subscriptions);
+
+    this.panel.onDidDispose(() => this.dispose(), null, ext.context.subscriptions);
+
+    cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
+  }
+
+  protected getPanelOptions(): vscode.WebviewOptions & vscode.WebviewPanelOptions {
+    return {
+      enableScripts: true,
+      retainContextWhenHidden: true,
+    };
+  }
+
+  protected async handleWebviewMsg(message: any): Promise<void> {
+    switch (message.command) {
+      case ExtensionCommand.loadRun: {
+        openMonitoringView(this.context, this.getWorkflowNode(), message.item.id, this.workflowFilePath);
+        break;
+      }
+      case ExtensionCommand.initialize: {
+        this.sendInitializeFrame();
+        this.startPollingInterval();
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  protected sendInitializeFrame(): void {
+    const { kind } = this.workflowProps ?? {};
+    this.panel?.webview.postMessage({
+      command: ExtensionCommand.initialize_frame,
+      data: {
+        apiVersion: this.apiVersion,
+        baseUrl: this.baseUrl,
+        corsNotice: this.corsNotice,
+        accessToken: this.accessToken,
+        workflowProperties: this.workflowProps,
+        workflowPropertiesList: this.workflowPropertiesList,
+        project: ProjectName.overview,
+        hostVersion: ext.extensionVersion,
+        isLocal: this.isLocal,
+        azureDetails: this.azureDetails,
+        kind: this.workflowProps?.kind ?? kind,
+        isCodeful: this.isCodefulOverview,
+        connectionData: this.connectionData,
+      },
+    });
+  }
+
+  private startPollingInterval(): void {
+    let consecutiveCallbackErrors = 0;
+    const MAX_CALLBACK_ERRORS = 3;
+
+    this.pollingInterval = setInterval(async () => {
+      await this.pollAccessToken();
+
+      const hasBaseUrlChanged = await this.pollBaseUrl();
+      if (hasBaseUrlChanged) {
+        consecutiveCallbackErrors = 0;
+      }
+
+      await this.onIntervalTick();
+
+      const shouldFetchCallback =
+        this.baseUrl && (hasBaseUrlChanged || (this.callbackInfo === undefined && consecutiveCallbackErrors < MAX_CALLBACK_ERRORS));
+
+      if (shouldFetchCallback) {
+        try {
+          await this.handleCallbackInfoUpdate(this.baseUrl!);
+          consecutiveCallbackErrors = 0;
+        } catch {
+          consecutiveCallbackErrors++;
+          if (consecutiveCallbackErrors >= MAX_CALLBACK_ERRORS) {
+            ext.outputChannel.appendLog(
+              `Stopped fetching callback URL after ${MAX_CALLBACK_ERRORS} consecutive errors. Trigger may not exist for workflow '${this.workflowName}'.`
+            );
+          }
+        }
+      }
+    }, 5000);
+  }
+
+  private async pollAccessToken(): Promise<void> {
+    const updatedAccessToken = await this.getAccessToken();
+    if (updatedAccessToken !== this.accessToken) {
+      this.accessToken = updatedAccessToken;
+      this.panel?.webview.postMessage({
+        command: ExtensionCommand.update_access_token,
+        data: {
+          accessToken: this.accessToken,
+        },
+      });
+    }
+  }
+
+  /**
+   * Polls the baseUrl and updates the webview if it has changed.
+   * @returns {Promise<boolean>} - Returns true if the baseUrl has changed, false otherwise.
+   */
+  private async pollBaseUrl(): Promise<boolean> {
+    const updatedBaseUrl = this.getBaseUrl();
+    if (updatedBaseUrl !== this.baseUrl) {
+      this.baseUrl = updatedBaseUrl;
+      this.panel?.webview.postMessage({
+        command: ExtensionCommand.update_runtime_base_url,
+        data: {
+          baseUrl: this.baseUrl,
+        },
+      });
+      return true;
+    }
+    return false;
+  }
+
+  protected async onIntervalTick(): Promise<void> {}
+
+  protected async handleCallbackInfoUpdate(baseUrl: string): Promise<void> {
+    const updatedCallbackInfo = await this.getCallbackInfo(baseUrl);
+    if (shouldUpdateOverviewCallbackInfo(this.callbackInfo, updatedCallbackInfo)) {
+      this.callbackInfo = updatedCallbackInfo;
+      this.panel?.webview.postMessage({
+        command: ExtensionCommand.update_callback_info,
+        data: {
+          callbackInfo: this.callbackInfo,
+        },
+      });
+    }
+  }
+
+  private dispose(): void {
+    clearInterval(this.pollingInterval);
+    removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);
+  }
+}

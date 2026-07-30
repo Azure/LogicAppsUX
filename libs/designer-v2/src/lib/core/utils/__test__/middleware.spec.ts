@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { storeStateHistoryMiddleware } from '../middleware';
+import { monitoringDirtyGuardMiddleware, storeStateHistoryMiddleware } from '../middleware';
 import { undoableActionTypes } from '../../state/undoRedo/undoRedoTypes';
 import { saveStateToHistory } from '../../state/undoRedo/undoRedoSlice';
+import { setIsWorkflowDirty } from '../../state/workflow/workflowSlice';
+import { setIsWorkflowParametersDirty } from '../../state/workflowparameters/workflowparametersSlice';
 import * as undoRedoUtils from '../undoredo';
 import { default as CONSTANTS } from '../../../common/constants';
 
@@ -105,5 +107,103 @@ describe('middleware utils', () => {
     invoke({ type: undoableActionTypes[0] });
 
     expect(compressSpy).toHaveBeenCalledWith(mockState);
+  });
+
+  it('skips saving history for undoable actions while read-only', () => {
+    const compressSpy = vi.spyOn(undoRedoUtils, 'getCompressedSlicesFromRootState');
+    const skipSpy = vi.spyOn(undoRedoUtils, 'shouldSkipSavingStateToHistory');
+    store.getState.mockReturnValue({ ...createMockState(), designerOptions: { hostOptions: {}, readOnly: true } });
+
+    invoke({ type: undoableActionTypes[0] });
+
+    expect(next).toHaveBeenCalled();
+    expect(store.dispatch).not.toHaveBeenCalled();
+    expect(compressSpy).not.toHaveBeenCalled();
+    expect(skipSpy).not.toHaveBeenCalled();
+  });
+
+  it('skips saving history for undoable actions while in monitoring view', () => {
+    const compressSpy = vi.spyOn(undoRedoUtils, 'getCompressedSlicesFromRootState');
+    store.getState.mockReturnValue({ ...createMockState(), designerOptions: { hostOptions: {}, isMonitoringView: true } });
+
+    invoke({ type: undoableActionTypes[0] });
+
+    expect(next).toHaveBeenCalled();
+    expect(store.dispatch).not.toHaveBeenCalled();
+    expect(compressSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('monitoringDirtyGuardMiddleware', () => {
+  let dispatch: ReturnType<typeof vi.fn>;
+  let next: ReturnType<typeof vi.fn>;
+  const action = { type: 'ANY_ACTION' };
+
+  const buildState = (overrides: {
+    workflowDirty?: boolean;
+    parametersDirty?: boolean;
+    readOnly?: boolean;
+    isMonitoringView?: boolean;
+  }) => ({
+    workflow: { isDirty: !!overrides.workflowDirty },
+    workflowParameters: { isDirty: !!overrides.parametersDirty },
+    designerOptions: { readOnly: !!overrides.readOnly, isMonitoringView: !!overrides.isMonitoringView },
+  });
+
+  const run = (before: any, after: any) => {
+    const getState = vi.fn().mockReturnValueOnce(before).mockReturnValueOnce(after);
+    dispatch = vi.fn();
+    next = vi.fn();
+    const result = monitoringDirtyGuardMiddleware({ getState, dispatch } as any)(next)(action);
+    return { result, getState };
+  };
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('always forwards the action to next', () => {
+    run(buildState({}), buildState({}));
+    expect(next).toHaveBeenCalledWith(action);
+  });
+
+  it('reverts a false -> true workflow dirty transition while read-only', () => {
+    run(buildState({ workflowDirty: false, readOnly: true }), buildState({ workflowDirty: true, readOnly: true }));
+    expect(dispatch).toHaveBeenCalledWith(setIsWorkflowDirty(false));
+  });
+
+  it('reverts a false -> true workflow dirty transition while in monitoring view', () => {
+    run(buildState({ workflowDirty: false, isMonitoringView: true }), buildState({ workflowDirty: true, isMonitoringView: true }));
+    expect(dispatch).toHaveBeenCalledWith(setIsWorkflowDirty(false));
+  });
+
+  it('reverts a false -> true workflow parameters dirty transition while read-only', () => {
+    run(buildState({ parametersDirty: false, readOnly: true }), buildState({ parametersDirty: true, readOnly: true }));
+    expect(dispatch).toHaveBeenCalledWith(setIsWorkflowParametersDirty(false));
+  });
+
+  it('reverts both workflow and workflow parameters dirty flags flipped in the same action', () => {
+    run(
+      buildState({ workflowDirty: false, parametersDirty: false, readOnly: true }),
+      buildState({ workflowDirty: true, parametersDirty: true, readOnly: true })
+    );
+    expect(dispatch).toHaveBeenCalledWith(setIsWorkflowDirty(false));
+    expect(dispatch).toHaveBeenCalledWith(setIsWorkflowParametersDirty(false));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  it('preserves a pre-existing dirty flag while read-only (does not revert)', () => {
+    run(buildState({ workflowDirty: true, readOnly: true }), buildState({ workflowDirty: true, readOnly: true }));
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it('does not revert a false -> true transition when not read-only or monitoring', () => {
+    run(buildState({ workflowDirty: false }), buildState({ workflowDirty: true }));
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it('does not dispatch when the dirty flag is unchanged while read-only', () => {
+    run(buildState({ workflowDirty: false, readOnly: true }), buildState({ workflowDirty: false, readOnly: true }));
+    expect(dispatch).not.toHaveBeenCalled();
   });
 });

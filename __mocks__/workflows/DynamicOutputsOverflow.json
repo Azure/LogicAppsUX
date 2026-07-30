@@ -1,0 +1,22 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {},
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object"
+          }
+        },
+        "splitOn": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/overflow-test/providers/Microsoft.Insights/components/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-DYNAMIC-OUTPUTS-SENTINEL?api-version=2020-02-02"
+      }
+    }
+  },
+  "connectionReferences": {},
+  "parameters": {}
+}

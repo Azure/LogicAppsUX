@@ -20,7 +20,6 @@ export interface InitializePayload {
   isCodeful?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
-  supportsUnitTest?: boolean;
   connectionData?: Record<string, any>;
 }
 
@@ -59,7 +58,6 @@ export interface WorkflowState {
   isLocal?: boolean;
   isWorkflowRuntimeRunning?: boolean;
   isCodeful?: boolean;
-  supportsUnitTest?: boolean;
   azureDetails?: AzureConnectorDetails;
   kind?: string;
   connectionData?: Record<string, any>;
@@ -112,7 +110,6 @@ export const workflowSlice = createSlice({
         isCodeful,
         azureDetails,
         kind,
-        supportsUnitTest,
         connectionData,
       } = action.payload;
       const initializedState = state;
@@ -148,7 +145,6 @@ export const workflowSlice = createSlice({
       initializedState.isCodeful = isCodeful;
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
-      initializedState.supportsUnitTest = supportsUnitTest;
       initializedState.connectionData = connectionData || {};
     },
     updateBaseUrl: (state: WorkflowState, action: PayloadAction<string | undefined>) => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
@@ -43,14 +42,12 @@ const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
 const mockUseSuppressDefault = vi.fn().mockReturnValue(false);
 const mockUseNodeSelectCallback = vi.fn().mockReturnValue(undefined);
-const mockUseUnitTest = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
   useSuppressDefaultNodeSelectFunctionality: () => mockUseSuppressDefault(),
   useNodeSelectAdditionalCallback: () => mockUseNodeSelectCallback(),
-  useUnitTest: () => mockUseUnitTest(),
 }));
 
 vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
@@ -89,11 +86,13 @@ const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
   useIsNodeInMultiSelection: vi.fn().mockReturnValue(false),
+  useIsNodePinnedToOperationPanel: vi.fn().mockReturnValue(false),
 }));
 
 vi.mock('../../../core/state/panel/panelSlice', () => ({
   changePanelNode: vi.fn((payload) => ({ type: 'panel/changePanelNode', payload })),
   setSelectedNodeId: vi.fn((payload) => ({ type: 'panel/setSelectedNodeId', payload })),
+  toggleNodeSelection: vi.fn((payload) => ({ type: 'panel/toggleNodeSelection', payload })),
 }));
 
 const mockUseAllOperations = vi.fn().mockReturnValue({});
@@ -116,11 +115,6 @@ vi.mock('../../../core/state/setting/settingSelector', () => ({
 
 const mockUseIsMockSupported = vi.fn().mockReturnValue(false);
 const mockUseMocksByOperation = vi.fn().mockReturnValue(undefined);
-
-vi.mock('../../../core/state/unitTest/unitTestSelectors', () => ({
-  useIsMockSupported: (...args: any[]) => mockUseIsMockSupported(...args),
-  useMocksByOperation: (...args: any[]) => mockUseMocksByOperation(...args),
-}));
 
 const mockUseNodeDisplayName = vi.fn().mockReturnValue('Test Action');
 const mockUseNodeMetadata = vi.fn().mockReturnValue({ graphId: 'root', isTrigger: false });
@@ -203,7 +197,12 @@ vi.mock('../components/handles/EdgeDrawTargetHandle', () => ({
 
 vi.mock('../components/card', () => ({
   ActionCard: ({ id, title, isSelected, onClick, onContextMenu, onDeleteClick, errorMessages }: any) => (
-    <div data-testid={`action-card-${id}`} data-selected={isSelected} onClick={() => onClick?.()} onContextMenu={(e) => onContextMenu?.(e)}>
+    <div
+      data-testid={`action-card-${id}`}
+      data-selected={isSelected}
+      onClick={(e) => onClick?.(e)}
+      onContextMenu={(e) => onContextMenu?.(e)}
+    >
       <span>{title}</span>
       {errorMessages?.length > 0 && <span data-testid="error-messages">{errorMessages.join(', ')}</span>}
       {onDeleteClick && (
@@ -231,7 +230,6 @@ describe('OperationCardNode (v2)', () => {
     mockUseMonitoringView.mockReturnValue(false);
     mockUseSuppressDefault.mockReturnValue(false);
     mockUseNodeSelectCallback.mockReturnValue(undefined);
-    mockUseUnitTest.mockReturnValue(false);
     mockUseIsA2AWorkflow.mockReturnValue(false);
     mockUseIsNodeSelectedInOperationPanel.mockReturnValue(false);
     mockUseNodeMetadata.mockReturnValue({ graphId: 'root', isTrigger: false });
@@ -303,6 +301,45 @@ describe('OperationCardNode (v2)', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'panel/changePanelNode',
+        payload: 'testNode',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on ctrl-click', () => {
+    render(<DefaultNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testNode');
+    fireEvent.click(card, { ctrlKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
+        payload: 'testNode',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on meta-click', () => {
+    render(<DefaultNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testNode');
+    fireEvent.click(card, { metaKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
+        payload: 'testNode',
+      })
+    );
+  });
+
+  it('should dispatch toggleNodeSelection on shift-click of the card body', () => {
+    render(<DefaultNode {...defaultProps} />);
+    const card = screen.getByTestId('action-card-testNode');
+    fireEvent.click(card, { shiftKey: true });
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/toggleNodeSelection',
         payload: 'testNode',
       })
     );

@@ -6,12 +6,19 @@ export interface ICognitiveServiceService {
   fetchCognitiveServiceAccountById(accountId: string): Promise<any>;
   fetchCognitiveServiceAccountKeysById(accountId: string): Promise<any>;
   fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any>;
+  /** Lists the models that can be deployed on the account's region (Microsoft.CognitiveServices location model catalog). */
+  fetchAvailableModelsForAccount(accountId: string): Promise<any[]>;
   fetchAllCognitiveServiceProjects(serviceAccountId: string): Promise<any>;
   fetchAllSessionPoolAccounts(subscriptionId: string): Promise<any>;
   fetchSessionPoolAccountById(accountId: string): Promise<any>;
   fetchBuiltInRoleDefinitions(): Promise<any>;
   hasRolePermission(accountId: string, roleDefinitionId: string): Promise<boolean>;
-  createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any>;
+  createNewDeployment(
+    deploymentName: string,
+    model: string,
+    openAIResourceId: string,
+    modelProperties?: { name?: string; version?: string; format?: string }
+  ): Promise<any>;
   getFoundryAccessToken?(): Promise<string>;
   /** Base URL for the Foundry proxy endpoint on the Logic Apps management API. */
   foundryProxyBaseUrl?: string;

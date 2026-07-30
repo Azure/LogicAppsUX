@@ -1,7 +1,8 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalCommand, NodeKey } from 'lexical';
-import { COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
+import { $getNodeByKey, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
 import type { OPEN_TOKEN_PICKER_PAYLOAD } from '../../editor/base/plugins/OpenTokenPicker';
+import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
 import { useEffect } from 'react';
 
 export const INITIALIZE_TOKENPICKER_EXPRESSION: LexicalCommand<OPEN_TOKEN_PICKER_PAYLOAD> = createCommand();
@@ -18,8 +19,19 @@ export default function TokenPickerExpressionHandler({ handleInitializeExpressio
       INITIALIZE_TOKENPICKER_EXPRESSION,
       (payload: OPEN_TOKEN_PICKER_PAYLOAD) => {
         const { token, nodeKey } = payload;
-        if (token?.value) {
-          handleInitializeExpression?.(token.value, nodeKey);
+        // Prefer the token's value, but fall back to the node's segment value for token types
+        // (e.g. parameters, iteration indexes) that don't store a value on the token itself.
+        let expressionValue = token?.value;
+        if (!expressionValue) {
+          editor.getEditorState().read(() => {
+            const node = $getNodeByKey(nodeKey);
+            if ($isTokenNode(node)) {
+              expressionValue = node.__data?.value;
+            }
+          });
+        }
+        if (expressionValue) {
+          handleInitializeExpression?.(expressionValue, nodeKey);
         }
         return true;
       },

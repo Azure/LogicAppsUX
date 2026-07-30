@@ -8,7 +8,6 @@ import panelReducer from './state/panel/panelSlice';
 import settingsReducer from './state/setting/settingSlice';
 import staticResultsSchemasReducer from './state/staticresultschema/staticresultsSlice';
 import tokens from './state/tokens/tokensSlice';
-import unitTestReducer from './state/unitTest/unitTestSlice';
 import undoRedoReducer from './state/undoRedo/undoRedoSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
@@ -17,7 +16,7 @@ import notesReducer from './state/notes/notesSlice';
 
 import { configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
-import { storeStateHistoryMiddleware } from './utils/middleware';
+import { monitoringDirtyGuardMiddleware, storeStateHistoryMiddleware } from './utils/middleware';
 
 declare global {
   interface Window {
@@ -37,7 +36,6 @@ export const store = configureStore({
     tokens: tokens,
     workflowParameters: workflowParametersReducer,
     staticResults: staticResultsSchemasReducer,
-    unitTest: unitTestReducer,
     customCode: customCodeReducer,
     undoRedo: undoRedoReducer,
     modal: modalReducer,
@@ -48,7 +46,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(storeStateHistoryMiddleware),
+    }).concat(storeStateHistoryMiddleware, monitoringDirtyGuardMiddleware),
 });
 
 if (process.env.NODE_ENV === 'development') {

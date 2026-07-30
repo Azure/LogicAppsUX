@@ -38,6 +38,7 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     isComplete: false,
     workspaceFileJson: '',
     logicAppsWithoutCustomCode: undefined,
+    existingFolders: [],
     flowType: 'createWorkspace',
     pathValidationResults: {},
     packageValidationResults: {},
@@ -47,6 +48,7 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     separator: '/',
     platform: null,
     isDevContainerProject: false,
+    availableProjects: [],
     ...overrides,
   };
 
@@ -69,6 +71,15 @@ const renderWithStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
         <DotNetFrameworkStep />
       </Provider>
     ),
+  };
+};
+
+const getCustomCodeInputs = () => {
+  const textboxes = screen.getAllByRole('textbox');
+  return {
+    folderInput: textboxes[0],
+    namespaceInput: textboxes[1],
+    functionNameInput: textboxes[2],
   };
 };
 
@@ -95,9 +106,13 @@ describe('DotNetFrameworkStep', () => {
       renderWithStore({ logicAppType: ProjectType.customCode, platform: 'win32' as any });
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
+      // Positive Windows case: the dropdown must expose exactly the three correct options.
       expect(screen.getByText('.NET Framework')).toBeInTheDocument();
       expect(screen.getByText('.NET 8')).toBeInTheDocument();
       expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options).toHaveLength(3);
+      expect(options.map((option) => option.textContent)).toEqual(['.NET Framework', '.NET 8', '.NET 10']);
     });
 
     it('should not render .NET Framework option on non-Windows', () => {
@@ -105,6 +120,28 @@ describe('DotNetFrameworkStep', () => {
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
       expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+    });
+
+    it('should not render .NET Framework option on Linux', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: 'linux' as any });
+      const combobox = screen.getByRole('combobox');
+      fireEvent.click(combobox);
+      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+      expect(screen.getByText('.NET 8')).toBeInTheDocument();
+      expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options.map((option) => option.textContent)).toEqual(['.NET 8', '.NET 10']);
+    });
+
+    it('should not render .NET Framework option when platform is not yet initialized (null)', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: null });
+      const combobox = screen.getByRole('combobox');
+      fireEvent.click(combobox);
+      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+      expect(screen.getByText('.NET 8')).toBeInTheDocument();
+      expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options.map((option) => option.textContent)).toEqual(['.NET 8', '.NET 10']);
     });
   });
 
@@ -173,6 +210,57 @@ describe('DotNetFrameworkStep', () => {
 
       const state = store.getState().createWorkspace;
       expect(state.targetFramework).toBe('net10.0');
+    });
+  });
+
+  describe('field validation messages', () => {
+    it('shows the function folder validation message for invalid folder names', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { folderInput } = getCustomCodeInputs();
+
+      fireEvent.change(folderInput, { target: { value: '1folder' } });
+
+      expect(
+        screen.getByText('Function folder name must start with a letter and can only contain letters, digits, "_" and "-".')
+      ).toBeInTheDocument();
+    });
+
+    it('allows valid hyphenated function folder names', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { folderInput } = getCustomCodeInputs();
+
+      fireEvent.change(folderInput, { target: { value: 'func-folder_01' } });
+
+      expect(
+        screen.queryByText('Function folder name must start with a letter and can only contain letters, digits, "_" and "-".')
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows the function folder same-as-logic-app message', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, logicAppName: 'LogicApp' });
+      const { folderInput } = getCustomCodeInputs();
+
+      fireEvent.change(folderInput, { target: { value: 'logicapp' } });
+
+      expect(screen.getByText('Function folder name cannot be the same as the logic app name.')).toBeInTheDocument();
+    });
+
+    it('shows the namespace validation message for invalid namespaces', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { namespaceInput } = getCustomCodeInputs();
+
+      fireEvent.change(namespaceInput, { target: { value: 'Invalid-Namespace' } });
+
+      expect(screen.getByText('Function namespace must be a valid C# namespace.')).toBeInTheDocument();
+    });
+
+    it('shows the function name validation message for invalid C# identifiers', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { functionNameInput } = getCustomCodeInputs();
+
+      fireEvent.change(functionNameInput, { target: { value: 'my-function' } });
+
+      expect(screen.getByText('Function name must start with a letter and can only contain letters, digits, and "_".')).toBeInTheDocument();
     });
   });
 });

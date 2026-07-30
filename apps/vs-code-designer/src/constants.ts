@@ -21,7 +21,6 @@ export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
-export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
 export const sdkLspServer = 'SdkLspServer';
 
@@ -42,7 +41,6 @@ export const lspDirectory = 'LanguageServerLogicApps';
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
 export const testMockOutputsDirectory = 'MockOutputs';
-export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 export const devContainerFolderName = '.devcontainer';
 export const assetsFolderName = 'assets';
@@ -61,8 +59,11 @@ export const testMockClassTemplateName = 'TestMockClass';
 export const testCsprojFileTemplateName = 'TestCsprojFile';
 export const testSettingsConfigFileTemplateName = 'TestSettingsConfigFile';
 
-// Extension Id
+// VS Code Extensions
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
+export const dotnetExtensionId = 'ms-dotnettools.csharp';
+export const csDevKitExtensionId = 'ms-dotnettools.csdevkit';
 
 // Azurite
 export const azuriteExtensionId = 'Azurite.azurite';
@@ -71,7 +72,6 @@ export const azuriteLocationSetting = 'location';
 
 // Functions
 export const func = 'func';
-export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
@@ -98,13 +98,14 @@ export const customConnectorResourceGroupNameKey = 'CUSTOM_CONNECTOR_RESOURCE_GR
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
+export const workflowCodefulEnabledKey = 'WORKFLOW_CODEFUL_ENABLED';
 export const workflowAppApiVersion = '2018-11-01';
 export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8EnabledTrue = '1';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
-export const workflowappRuntime = 'node|20';
+export const workflowappRuntime = 'node|22';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
 export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
@@ -112,14 +113,6 @@ export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
-// Codeful settings
-export const workflowCodefulEnabled = 'WORKFLOW_CODEFUL_ENABLED';
-
-export const workflowCodeType = {
-  codeful: 'Codeful',
-  codeless: 'Codeless',
-} as const;
-export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
 
 export const WorkflowKind = {
   stateful: 'Stateful',
@@ -133,6 +126,19 @@ export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
 export const designerApiLoadTimeout = 300000;
+
+// Dependency update-check throttle
+/**
+ * Key used to persist the timestamp (epoch ms) of the last time we checked whether the
+ * runtime dependencies (Node.js, Functions Core Tools, .NET SDK) had newer versions available.
+ */
+export const lastDependencyUpdateCheckKey = 'azureLogicAppsStandard.lastDependencyUpdateCheck';
+/**
+ * Minimum interval between "is there a newer version?" checks. Missing binaries are always
+ * installed regardless of this interval; only the network lookups that compare an already
+ * installed binary against the latest published version are throttled.
+ */
+export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
 
 // Commands
 export const extensionCommand = {
@@ -148,7 +154,6 @@ export const extensionCommand = {
   createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createWorkflow: 'azureLogicAppsStandard.createWorkflow',
-  createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
   deploy: 'azureLogicAppsStandard.deploy',
@@ -164,6 +169,7 @@ export const extensionCommand = {
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
+  toggleDesignTimeNodeWorker: 'azureLogicAppsStandard.toggleDesignTimeNodeWorker',
   openInPortal: 'azureLogicAppsStandard.openInPortal',
   azureFunctionsOpenFile: 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
@@ -223,19 +229,21 @@ export const extensionCommand = {
   openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
   sdkLspApplyEdits: 'sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
+  logSubscriptions: 'azureLogicAppsStandard.logSubscriptions',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
 // Extension context
 export const customExtensionContext = {
   isCodeful: 'azureLogicAppsStandard.isCodeful',
-  isCodefulWorkflowFile: 'azureLogicAppsStandard.isCodefulWorkflowFile',
-  codefulWorkflowFiles: 'azureLogicAppsStandard.codefulWorkflowFiles',
 } as const;
 export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
+
+// Global state
+export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -256,6 +264,7 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
+export const alwaysBuildCustomCodeSetting = 'alwaysBuildCustomCode';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
 export const validateDotNetSDKSetting = 'validateDotNetSDK';
 export const validateNodeJsSetting = 'validateNodeJs';
@@ -264,10 +273,11 @@ export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
-export const showProjectWarningSetting = 'showProjectWarning';
+export const enableProjectConsistencyChecksSetting = 'enableProjectConsistencyChecks';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
+export const useNodeDesignTimeWorkerSetting = 'useNodeDesignTimeWorker';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
@@ -283,7 +293,10 @@ export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValid
 export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
-export const unitTestExplorer = 'unitTestExplorer';
+export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
+export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
+export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
+export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 export const onStartLanguageServer = 'onStartLanguageServer';
@@ -293,10 +306,19 @@ export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Work
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
 
+// globalState key + interval throttling the expensive full-byte extension-bundle
+// integrity hash. On most launches a fast lstat tree fingerprint is compared
+// instead; the deep byte-hash only runs when this throttle says a verification is
+// due (defense-in-depth against an in-place edit that keeps identical size+mtime).
+// Mirrors the dependency update-check throttle pattern.
+export const lastBundleDeepVerificationKey = 'azureLogicAppsStandard.lastBundleDeepVerification';
+export const bundleDeepVerificationIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
+export const workflowAuthenticationMethodMIValue = 'managedServiceIdentity';
 
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
@@ -334,11 +356,15 @@ export const defaultExtensionBundlePathValue = path.join(
 export const defaultDataMapperVersion = 2;
 export const defaultDesignerVersion = 1;
 
+// The design-time host.json enables workflow operation discovery host mode so the design-time API can
+// enumerate operations. Shared between the generated host.json content and its validation.
+export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationDiscoveryHostMode';
+
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet8: '8.0.318',
   funcCoreTools: '4.0.7030',
-  nodeJs: '20.18.3',
+  nodeJs: '24.15.0',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
@@ -351,7 +377,7 @@ export const hostFileContent = {
   extensions: {
     workflow: {
       settings: {
-        'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+        [workflowOperationDiscoveryHostModeKey]: 'true',
       },
     },
   },
@@ -374,8 +400,6 @@ export const DotnetVersion = {
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
 
-export const dotnetExtensionId = 'ms-dotnettools.csharp';
-
 // Packages Manager
 export const PackageManager = {
   npm: 'npm',
@@ -394,9 +418,6 @@ export const logicAppFilter = {
   kind: 'functionapp,workflowapp',
 };
 
-// Telemetry Events
-export const saveUnitTestEvent = 'saveUnitTestDefinition';
-export const runUnitTestEvent = 'runUnitTest';
 // Container Apps
 export const containerAppsId = 'containerApps';
 export const managedEnvironmentsId = 'managedEnvironments';

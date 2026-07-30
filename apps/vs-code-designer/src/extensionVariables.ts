@@ -5,24 +5,13 @@
 import type { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import type { TestData } from './app/tree/unitTestTree';
-import { dotnet, func, node, npm } from './constants';
+import { dotnet, func, managementApiPrefix, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
-import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type TelemetryReporter from '@vscode/extension-telemetry';
 import type * as cp from 'child_process';
-import {
-  window,
-  type ExtensionContext,
-  type WebviewPanel,
-  type TestItem,
-  type TestRunProfile,
-  EventEmitter,
-  type Uri,
-  type TestController,
-  type MessageOptions,
-} from 'vscode';
+import { window, type ExtensionContext, type WebviewPanel, type MessageOptions } from 'vscode';
 import type { AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import type { LanguageClient } from 'vscode-languageclient/node';
 
@@ -46,14 +35,16 @@ type FuncInstance = {
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
-  export let codefulEnabled: boolean;
   export const designTimeInstances: Map<string, FuncInstance> = new Map();
   export const runtimeInstances: Map<string, FuncInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let defaultLogicAppPath: string;
   export let outputChannel: IAzExtOutputChannel;
-  export let workflowRuntimePort: number;
+  // TODO(aeldridge): Multiple runtime processes are supported with runningFuncTaskMap, but only a single runtime port is tracked.
+  // This will cause issues if multiple runtime processes are started on different ports. Currently we use the default port (7071)
+  // unless user modifies the 'func: host start' task to use a different port so this issue isn't surfaced by default.
+  export let workflowRuntimePort: number | undefined;
   export let extensionVersion: string;
   export let bundleFolderRoot: string | undefined;
   export const prefix = 'azureLogicAppsStandard';
@@ -92,11 +83,12 @@ export namespace ext {
   // WebViews
   export const webViewKey = {
     designerLocal: 'designerLocal',
+    designerLocalV2: 'designerLocalV2',
     designerAzure: 'designerAzure',
+    designerAzureV2: 'designerAzureV2',
     monitoring: 'monitoring',
     export: 'export',
     overview: 'overview',
-    unitTest: 'unitTest',
     languageServer: 'languageServer',
     createWorkspace: 'createWorkspace',
     createWorkspaceFromPackage: 'createWorkspaceFromPackage',
@@ -108,7 +100,9 @@ export namespace ext {
 
   export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
     [webViewKey.designerLocal]: {},
+    [webViewKey.designerLocalV2]: {},
     [webViewKey.designerAzure]: {},
+    [webViewKey.designerAzureV2]: {},
     [webViewKey.monitoring]: {},
     [webViewKey.export]: {},
     [webViewKey.createWorkspace]: {},
@@ -120,38 +114,18 @@ export namespace ext {
     [webViewKey.languageServer]: {},
   };
 
-  export const log = (text: string) => {
-    ext.outputChannel.appendLine(text);
-    ext.outputChannel.show();
-  };
-
-  export const showWarning = (errMsg: string) => {
-    ext.log(errMsg);
-    window.showWarningMessage(errMsg);
-  };
-
-  export const showInformation = (msg: string) => {
-    window.showInformationMessage(msg);
-  };
-
   export const showError = (errMsg: string, options?: MessageOptions) => {
-    ext.log(errMsg);
+    ext.outputChannel.appendLine(errMsg);
     if (options && options.detail) {
-      ext.log(options.detail);
+      ext.outputChannel.appendLine(options.detail);
     }
     window.showErrorMessage(errMsg, options);
   };
 
-  export const logTelemetry = (context: IActionContext, key: string, value: string) => {
-    context.telemetry.properties[key] = value;
-  };
+  export function getWorkflowRuntimeBaseUrl(): string | undefined {
+    return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
+  }
 
-  // Unit Test
-  export const watchingTests = new Map<TestItem | 'ALL', TestRunProfile | undefined>();
-  export const testFileChangedEmitter = new EventEmitter<Uri>();
-  export const testData = new WeakMap<TestItem, TestData>();
-  export let unitTestController: TestController;
-  export const testRuns = new Map<string, any>();
   // Telemetry
   export let telemetryReporter: TelemetryReporter;
   export const telemetryString = 'setInGitHubBuild';
@@ -164,6 +138,7 @@ export const ExtensionCommand = {
   select_folder: 'select-folder',
   initialize: 'initialize',
   loadRun: 'LoadRun',
+  selectRun: 'SelectRun',
   dispose: 'dispose',
   initialize_frame: 'initialize-frame',
   update_access_token: 'update-access-token',

@@ -259,7 +259,6 @@ export const OverviewApp = () => {
         }}
         onRunTrigger={runTriggerCall}
         onVerifyRunId={onVerifyRunId}
-        supportsUnitTest={workflowState.supportsUnitTest ?? false}
         onCreateUnitTestFromRun={(run: RunDisplayItem) => {
           vscode.postMessage({
             command: ExtensionCommand.createUnitTestFromRun,

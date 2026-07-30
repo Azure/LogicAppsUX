@@ -6,6 +6,7 @@ import 'dotenv/config';
 export default defineConfig({
   testDir: './e2e',
   testMatch: ['designer/**/*.spec.ts', 'templates/**/*.spec.ts'],
+  globalSetup: './e2e/designer/globalSetup.ts',
   reporter: process.env.TEST_SHARDED ? 'blob' : 'html',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

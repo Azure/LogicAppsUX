@@ -96,7 +96,7 @@ vi.mock('../../../utils/verifyIsProject', () => ({
 }));
 
 vi.mock('../../../../extensionVariables', () => ({
-  ext: { showError: vi.fn() },
+  ext: { showError: vi.fn(), outputChannel: { appendLog: vi.fn() } },
 }));
 
 vi.mock('path', async () => {
@@ -108,6 +108,7 @@ vi.mock('path', async () => {
   };
 });
 
+import { ext } from '../../../../extensionVariables';
 import { switchToDotnetProject, switchToDotnetProjectCommand } from '../switchToDotnetProject';
 import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -238,7 +239,7 @@ describe('switchToDotnetProject', () => {
 
       await switchToDotnetProject(mockContext, mockTarget);
 
-      expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('already a NuGet-based project'), 'OK');
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('already a NuGet-based project'));
       // Should not proceed to template resolution
       expect(DotnetTemplateProvider).not.toHaveBeenCalled();
     });
@@ -308,10 +309,10 @@ describe('switchToDotnetProject', () => {
       );
     });
 
-    it('should show completion message on success', async () => {
+    it('should log completion message on success', async () => {
       await switchToDotnetProject(mockContext, mockTarget);
 
-      expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Completed moving'), 'OK');
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Successfully converted to NuGet-based'));
     });
   });
 

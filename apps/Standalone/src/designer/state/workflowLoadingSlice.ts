@@ -14,6 +14,7 @@ export interface WorkflowLoadingState {
   workflowName?: string;
   runId?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
+  notes: Record<string, any> | undefined;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
   isReadOnly: boolean;
@@ -21,7 +22,6 @@ export interface WorkflowLoadingState {
   isDarkMode: boolean;
   hostingPlan: HostingPlanTypes;
   isLocal: boolean;
-  isUnitTest: boolean;
   showChatBot?: boolean;
   showRunHistory?: boolean;
   parameters: Record<string, WorkflowParameter>;
@@ -47,13 +47,13 @@ export interface WorkflowLoadingState {
 const initialState: WorkflowLoadingState = {
   appId: undefined,
   workflowDefinition: null,
+  notes: undefined,
   parameters: {},
   runInstance: null,
   connections: {},
   resourcePath: '',
   isReadOnly: false,
   isMonitoringView: false,
-  isUnitTest: false,
   isDarkMode: false,
   hostingPlan: 'standard',
   isLocal: false,
@@ -77,6 +77,7 @@ const initialState: WorkflowLoadingState = {
 
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
+  notes: Record<string, any> | undefined;
   connectionReferences: ConnectionReferences;
   parameters: Record<string, WorkflowParameter>;
   runFiles: any[];
@@ -100,6 +101,8 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
+    // Notes are stored on the definition metadata, which is user-writable and may not be well-formed
+    notes: wf?.notes ?? wf?.definition?.metadata?.notes,
     connectionReferences: wf.connections as ConnectionReferences,
     parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
     workflowKind: wf?.kind,
@@ -161,12 +164,6 @@ export const workflowLoadingSlice = createSlice({
         state.isReadOnly = true;
       }
     },
-    setUnitTest: (state, action: PayloadAction<boolean>) => {
-      state.isUnitTest = action.payload;
-      if (action.payload) {
-        state.isReadOnly = true;
-      }
-    },
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.isDarkMode = action.payload;
     },
@@ -206,9 +203,9 @@ export const workflowLoadingSlice = createSlice({
       state.isDarkMode = lastWorkflow.isDarkMode;
       state.isReadOnly = lastWorkflow.isReadOnly;
       state.isMonitoringView = lastWorkflow.isMonitoringView;
-      state.isUnitTest = lastWorkflow.isUnitTest;
       // Clear these state values, they get built with the other values
       state.workflowDefinition = null;
+      state.notes = undefined;
       state.runInstance = null;
       state.connections = {};
     },
@@ -243,13 +240,15 @@ export const workflowLoadingSlice = createSlice({
         return;
       }
       state.workflowDefinition = action.payload?.workflowDefinition;
+      state.notes = action.payload?.notes;
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
-      state.workflowKind = action.payload?.workflowKind ?? 'stateful';
+      state.workflowKind = action.payload?.workflowKind ?? (state.hostingPlan === 'consumption' ? undefined : 'stateful');
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
+      state.notes = undefined;
       state.parameters = {};
     });
     builder.addCase(loadRun.fulfilled, (state, action: PayloadAction<RunPayload | null>) => {
@@ -271,7 +270,6 @@ export const {
   clearWorkflowDetails,
   setReadOnly,
   setMonitoringView,
-  setUnitTest,
   setDarkMode,
   setHostingPlan,
   setIsLocalSelected,

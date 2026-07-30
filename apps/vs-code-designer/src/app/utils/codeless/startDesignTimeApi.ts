@@ -3,20 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  ProjectDirectoryPathKey,
   autoStartDesignTimeSetting,
   defaultVersionRange,
   designTimeDirectoryName,
   designerStartApi,
   extensionBundleId,
   hostFileName,
-  localSettingsFileName,
-  logicAppKind,
   showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
   type hostFileContent,
-  workerRuntimeKey,
-  appKindSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 
@@ -26,12 +21,12 @@ import { ext } from '../../../extensionVariables';
 const processValidationCache = new Map<string, { timestamp: number; isValid: boolean }>();
 const VALIDATION_CACHE_TTL = 60000; // Cache for 60 seconds - revalidate every minute to catch process changes
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../workspace';
+import { ensureRootProjectFiles, ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
 import {
   DialogResponses,
@@ -41,25 +36,24 @@ import {
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
-import { Platform, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
-import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
-import { isCodefulProject } from '../codeful';
+import { getChildProcesses } from '../findChildProcess/findChildProcess';
 import {
   ensureExtensionBundleHealthy,
   isExtensionBundleDownloadInFlight,
   isInsideBundleDownloadScope,
   waitForExtensionBundleReady,
 } from '../bundleFeed';
+import { releaseReservedPort, reserveFreePort } from '../portReservation';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -240,7 +234,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         designTimeInst.isStarting = true;
 
         if (!designTimeInst.port) {
-          designTimeInst.port = await portfinder.getPortPromise();
+          designTimeInst.port = await reserveFreePort();
         }
 
         const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
@@ -254,41 +248,14 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         try {
           ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
-          const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-          const isCodeful = (await isCodefulProject(projectPath)) ?? false;
-          const settingsFileContent = getLocalSettingsSchema(true, projectPath, isCodeful);
-
-          const hostFileContent: any = {
-            version: '2.0',
-            extensionBundle: {
-              id: extensionBundleId,
-              version: defaultVersionRange,
-            },
-            extensions: {
-              workflow: {
-                settings: {
-                  'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
-                },
-              },
-            },
-          };
+          // Regenerate any git-ignored project artifacts (host.json, local.settings.json,
+          // workflow-designtime) that a source-controlled clone may be missing before starting the host.
+          const designTimeDirectory: Uri | undefined = await ensureProjectFiles(actionContext, projectPath);
 
           if (!designTimeDirectory) {
             throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
           }
 
-          await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
-          await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-          await addOrUpdateLocalAppSettings(
-            actionContext,
-            designTimeDirectory.fsPath,
-            {
-              [appKindSetting]: logicAppKind,
-              [ProjectDirectoryPathKey]: projectPath,
-              [workerRuntimeKey]: WorkerRuntime.Node,
-            },
-            true
-          );
           const cwd: string = designTimeDirectory.fsPath;
           const portArgs = `--port ${designTimeInst.port}`;
           ext.outputChannel.appendLog(
@@ -436,7 +403,7 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
     )
   );
   processValidationCache.delete(projectPath);
-  stopDesignTimeApi(projectPath);
+  await stopDesignTimeApi(projectPath);
   await startDesignTimeApi(projectPath);
 }
 
@@ -461,7 +428,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     }
 
     if (!childFuncPid) {
-      const children = await getChildProcessesWithScript(processId);
+      const children = await getChildProcesses(processId);
       const funcChildProcess = [...children].reverse().find((p) => /func(\.exe)?$/i.test(p.name || ''));
       if (funcChildProcess) {
         designTimeInst.childFuncPid = funcChildProcess.processId.toString();
@@ -470,7 +437,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
       return false;
     }
 
-    const children = await getChildProcessesWithScript(processId);
+    const children = await getChildProcesses(processId);
     return children.some((p) => p.processId.toString() === childFuncPid && /func(\.exe)?$/i.test(p.name || ''));
   }
 
@@ -616,8 +583,13 @@ export function startDesignTimeProcess(
         'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
       );
 
-      stopDesignTimeApi(projectPath);
-      scheduleStartDesignTimeApi(projectPath);
+      stopDesignTimeApi(projectPath)
+        .catch((error) => {
+          ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
+        })
+        .finally(() => {
+          scheduleStartDesignTimeApi(projectPath);
+        });
     }
   });
   stdout?.on('end', () => appendStdout?.flush());
@@ -634,8 +606,13 @@ export function startDesignTimeProcess(
     if (data.toLowerCase().includes(portUnavailableText.toLowerCase())) {
       ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting design-time process.');
 
-      stopDesignTimeApi(projectPath);
-      scheduleStartDesignTimeApi(projectPath);
+      stopDesignTimeApi(projectPath)
+        .catch((error) => {
+          ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
+        })
+        .finally(() => {
+          scheduleStartDesignTimeApi(projectPath);
+        });
     }
   });
   stderr?.on('end', () => appendStderr?.flush());
@@ -647,33 +624,50 @@ export function startDesignTimeProcess(
   }
 }
 
-export function stopAllDesignTimeApis(): void {
-  for (const projectPath of ext.designTimeInstances.keys()) {
-    stopDesignTimeApi(projectPath);
-  }
+export async function stopAllDesignTimeApis(): Promise<void> {
+  await Promise.allSettled([...ext.designTimeInstances.keys()].map((projectPath) => stopDesignTimeApi(projectPath)));
 }
 
-export function stopDesignTimeApi(projectPath: string): void {
+export async function stopDesignTimeApi(projectPath: string): Promise<void> {
   ext.outputChannel.appendLog(`Stopping Design Time Api for project: ${projectPath}`);
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
     return;
   }
 
-  const { process, childFuncPid } = designTimeInst;
+  const { process: proc, childFuncPid } = designTimeInst;
   ext.designTimeInstances.delete(projectPath);
-  if (process === null || process === undefined) {
+  releaseReservedPort(designTimeInst.port);
+  if (proc === null || proc === undefined) {
     return;
   }
 
   if (os.platform() === Platform.windows) {
+    const killPromises: Promise<void>[] = [];
     if (childFuncPid) {
-      cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+      killPromises.push(execTaskkill(childFuncPid));
     }
-    cp.exec(`taskkill /pid ${process.pid} /t /f`);
+    killPromises.push(execTaskkill(proc.pid));
+    await Promise.allSettled(killPromises);
   } else {
-    killTrackedUnixProcesses(process, childFuncPid);
+    killTrackedUnixProcesses(proc, childFuncPid);
   }
+}
+
+/**
+ * Runs taskkill and waits for it to complete so file locks are released
+ * before subsequent build steps.
+ */
+function execTaskkill(pid: number | string | undefined): Promise<void> {
+  if (pid === undefined) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    cp.exec(`taskkill /pid ${pid} /t /f`, () => {
+      resolve();
+    });
+  });
 }
 
 export function scheduleStartAllDesignTimeApis(): void {
@@ -718,6 +712,15 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
     let autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
 
+    ext.outputChannel.appendLog(
+      localize(
+        'detectedLogicAppFolders',
+        'Detected {0} logic app project folder(s) for artifact regeneration: {1}.',
+        logicAppFolders.length,
+        logicAppFolders.join(', ') || '(none)'
+      )
+    );
+
     if (logicAppFolders && logicAppFolders.length > 0) {
       if (!autoStartDesignTime && showStartDesignTimeMessage) {
         const message = localize(
@@ -740,17 +743,32 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
       }
 
       for (const projectPath of logicAppFolders) {
-        if (!fs.existsSync(path.join(projectPath, localSettingsFileName))) {
-          const settingsFileContent = getLocalSettingsSchema(false, projectPath);
-          const projectUri: Uri = Uri.file(projectPath);
-          await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
-        }
-
         if (autoStartDesignTime) {
+          // The scheduled startDesignTimeApi() runs validateAndRegenerateProjectArtifacts() once and
+          // logs a single per-project artifact summary, so don't regenerate up-front here — doing so
+          // would repeat both the work and the log lines for every project.
           scheduleStartDesignTimeApi(projectPath);
+        } else {
+          // Auto-start is off: keep source-controlled clones valid by regenerating the git-ignored
+          // host.json / local.settings.json now. Emits one concise per-project summary line.
+          await ensureRootProjectFiles(context, projectPath);
         }
       }
+    } else {
+      // A folder is only recognized as a logic app project when its host.json is present. If host.json
+      // itself is missing the folder is not detected here, so host.json and local.settings.json cannot
+      // be regenerated on this path. Log this so the situation is diagnosable from the output channel.
+      ext.outputChannel.appendLog(
+        localize(
+          'noLogicAppFoldersForRegen',
+          'No logic app project folders were detected in the open workspace, so host.json and local.settings.json were not regenerated. A folder is only recognized as a logic app when its host.json exists; if host.json is missing, restore it (it is normally committed to source control) and reload the window.'
+        )
+      );
     }
+  } else {
+    ext.outputChannel.appendLog(
+      localize('noWorkspaceFoldersForRegen', 'No workspace folders are open. Skipping host.json and local.settings.json regeneration.')
+    );
   }
 }
 

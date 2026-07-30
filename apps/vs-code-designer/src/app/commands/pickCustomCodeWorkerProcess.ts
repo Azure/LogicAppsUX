@@ -24,8 +24,12 @@ type OSAgnosticProcess = { command: string | undefined; pid: number | string };
  */
 export async function pickCustomCodeNetHostProcess(
   context: IActionContext,
-  debugConfig: vscode.DebugConfiguration
+  debugConfig: vscode.DebugConfiguration | undefined
 ): Promise<string | undefined> {
+  if (!debugConfig) {
+    throw new Error(localize('noDebugConfig', 'Debug configuration is undefined.'));
+  }
+
   context.telemetry.properties.lastStep = 'getMatchingWorkspaceFolder';
   const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
   if (!workspaceFolder) {

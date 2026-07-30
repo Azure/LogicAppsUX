@@ -1,5 +1,6 @@
 import type { ConnectionAndAppSetting, ConnectionsData, NotesData, ParametersData } from '../Models/Workflow';
 import { isOpenApiSchemaVersion, type ConnectionReferences } from '@microsoft/logic-apps-designer';
+import { sanitizeNotes } from '@microsoft/logic-apps-shared';
 
 export class WorkflowUtility {
   public static convertToCanonicalFormat(value: string): string {
@@ -136,7 +137,9 @@ export const getDataForConsumption = (data: any) => {
   const connectionReferences = formatConnectionReferencesForConsumption(connections);
   const parameters: ParametersData = formatWorkflowParametersForConsumption(properties);
   // TODO: Move notes out of metadata once backend is updated
-  const notes: NotesData = properties?.definition?.metadata?.notes;
+  // `definition.metadata.notes` may contain arbitrary user-authored content, so only well-formed
+  // notes are kept — see https://github.com/Azure/LogicAppsUX/issues/9466
+  const notes: NotesData = sanitizeNotes(properties?.definition?.metadata?.notes);
 
   return { workflow, connectionReferences, parameters, notes };
 };

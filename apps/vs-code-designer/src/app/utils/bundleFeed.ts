@@ -5,17 +5,19 @@
 import {
   defaultVersionRange,
   extensionBundleId,
-  localSettingsFileName,
   defaultExtensionBundlePathValue,
   bundleSourceMd5SidecarFile,
   useExperimentalExtensionBundleSettingKey,
   experimentalExtensionBundleSourceUriSettingKey,
   experimentalExtensionBundleVersionSettingKey,
+  lastBundleDeepVerificationKey,
+  bundleDeepVerificationIntervalMs,
 } from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
 import { fetchExpectedMd5, isMissingPackageError } from './integrity';
 import { getJsonFeed } from './feed';
+import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../state/dependencies';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
@@ -29,6 +31,7 @@ import { createHash } from 'crypto';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
+import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 
 const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
 
@@ -67,11 +70,13 @@ interface ExtensionBundleBaseUrlResult {
  *   4. Default public CDN.
  */
 export async function getExtensionBundleBaseUrl(context: IActionContext): Promise<ExtensionBundleBaseUrlResult> {
-  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+  const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+
   let localSettingsUri: string | undefined;
   if (projectPath) {
     try {
-      localSettingsUri = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+      localSettingsUri = (await getLocalSettingsJson(context, projectPath))?.Values
         ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
     } catch {
       // Missing/invalid local.settings.json is fine; fall through to other sources.
@@ -191,6 +196,36 @@ interface BundleSidecar {
   version: number;
   sourceMd5: string;
   contentHash: string;
+  /**
+   * Fast lstat-only tree fingerprint (see {@link computeBundleTreeFingerprint}).
+   * Includes each file's mtimeMs, so any re-write or metadata touch shifts it.
+   * Optional: legacy sidecars written before Phase 15 omit it and auto-upgrade on
+   * a background byte hash, after which the fingerprint is backfilled.
+   */
+  treeFingerprint?: string;
+  /**
+   * Fast lstat-only STRUCTURAL fingerprint: relPath + size only (NO mtime). Lets
+   * the fast gate distinguish a benign metadata-only drift (mtime changed, size +
+   * paths identical — e.g. the Functions host touching bundle files) from a real
+   * structural change (a file added / removed / resized). A mtime-only drift can
+   * be trusted without re-running the ~40s byte hash; a structural change schedules
+   * a background deep verification. Optional for legacy sidecars.
+   */
+  structuralFingerprint?: string;
+  /**
+   * Epoch ms of the last successful full-byte deep verification. Persisted here
+   * (on disk, next to the fingerprints) so the 24h deep-verify throttle survives
+   * even when `globalState` isn't yet available during early activation. Optional.
+   */
+  lastDeepVerifiedMs?: number;
+}
+
+interface BundleSidecarFields {
+  sourceMd5: string;
+  contentHash: string;
+  treeFingerprint?: string;
+  structuralFingerprint?: string;
+  lastDeepVerifiedMs?: number;
 }
 
 const SIDECAR_FORMAT_VERSION = 1;
@@ -226,10 +261,23 @@ async function readBundleSidecar(version: string): Promise<BundleSidecar | undef
       typeof (parsed as Record<string, unknown>).version === 'number'
     ) {
       const obj = parsed as Record<string, unknown>;
+      // treeFingerprint / structuralFingerprint / lastDeepVerifiedMs are parsed
+      // leniently: a missing/wrong-typed value leaves it undefined (legacy
+      // sidecar) which is still valid — it just forces a background deep byte-hash
+      // verification + backfill on the next health check.
+      const treeFingerprint = typeof obj.treeFingerprint === 'string' ? (obj.treeFingerprint as string) : undefined;
+      const structuralFingerprint = typeof obj.structuralFingerprint === 'string' ? (obj.structuralFingerprint as string) : undefined;
+      const lastDeepVerifiedMs =
+        typeof obj.lastDeepVerifiedMs === 'number' && Number.isFinite(obj.lastDeepVerifiedMs)
+          ? (obj.lastDeepVerifiedMs as number)
+          : undefined;
       return {
         version: obj.version as number,
         sourceMd5: obj.sourceMd5 as string,
         contentHash: obj.contentHash as string,
+        treeFingerprint,
+        structuralFingerprint,
+        lastDeepVerifiedMs,
       };
     }
     return undefined;
@@ -238,10 +286,17 @@ async function readBundleSidecar(version: string): Promise<BundleSidecar | undef
   }
 }
 
-async function writeBundleSidecar(version: string, sourceMd5: string, contentHash: string): Promise<void> {
+async function writeBundleSidecar(version: string, fields: BundleSidecarFields): Promise<void> {
   const sidecarPath = getBundleSidecarPath(version);
   const tempSidecarPath = `${sidecarPath}.${process.pid}.${Date.now()}.tmp`;
-  const payload: BundleSidecar = { version: SIDECAR_FORMAT_VERSION, sourceMd5, contentHash };
+  const payload: BundleSidecar = {
+    version: SIDECAR_FORMAT_VERSION,
+    sourceMd5: fields.sourceMd5,
+    contentHash: fields.contentHash,
+    treeFingerprint: fields.treeFingerprint,
+    structuralFingerprint: fields.structuralFingerprint,
+    lastDeepVerifiedMs: fields.lastDeepVerifiedMs,
+  };
   try {
     await fse.outputFile(tempSidecarPath, JSON.stringify(payload), 'utf8');
     await fse.move(tempSidecarPath, sidecarPath, { overwrite: true });
@@ -381,7 +436,135 @@ export async function computeBundleContentHash(bundleDir: string): Promise<strin
     });
     hash.update('\0');
   }
-  return hash.digest('base64');
+  const digest = hash.digest('base64');
+  return digest;
+}
+
+/**
+ * Fast, stat-only fingerprints of the extracted bundle tree — the cheap
+ * front-line check that replaces the ~40s full-byte {@link computeBundleContentHash}
+ * on the hot startup path.
+ *
+ * - Walks the tree with `lstat` only (NO byte reads), so it runs in milliseconds
+ *   even for the hundreds-of-MB PowerShell runtime + .NET assemblies + workflow
+ *   bundle.
+ * - Sorts entries by POSIX-normalized relative path so the digests are stable
+ *   across filesystems / OSes.
+ * - Skips the sidecar file itself (same as `computeBundleContentHash`).
+ *
+ * Produces two digests from a single walk:
+ * - `treeFingerprint`: `<relPath>\0<size>\0<mtimeMs>\0` per entry. A deleted subfile
+ *   drops an entry, and any resize / re-write / metadata touch shifts it.
+ * - `structuralFingerprint`: `<relPath>\0<size>\0` per entry (NO mtime). Only shifts
+ *   when a file is added, removed, or resized — a benign mtime-only touch leaves it
+ *   unchanged, letting the fast gate skip the byte hash for pure metadata drift.
+ *
+ * Returns `undefined` if `bundleDir` doesn't exist.
+ */
+export async function computeBundleFingerprints(
+  bundleDir: string
+): Promise<{ treeFingerprint: string; structuralFingerprint: string } | undefined> {
+  if (!(await fse.pathExists(bundleDir))) {
+    return undefined;
+  }
+  const entries: Array<{ rel: string; size: number; mtimeMs: number }> = [];
+  // Fan the traversal out per directory with Promise.all instead of awaiting each
+  // lstat serially. The serial version issues ~2 sequential awaits per file
+  // (readdir + lstat); on the hot activation path — where the extension-host event
+  // loop is saturated by other extensions, the Functions host, and the design-time
+  // API starting up — those thousands of sequential continuations get starved and
+  // the ~1.5k-file walk balloons from ~300ms to ~25s (the observed freeze). Fanning
+  // out collapses the critical path to O(tree depth) round-trips, keeping the walk
+  // sub-second even under a starved event loop / constrained threadpool. Entries are
+  // sorted below before hashing, so the parallel push order is irrelevant and the
+  // resulting digests are byte-identical to the serial walk.
+  const walk = async (dir: string): Promise<void> => {
+    const items = await fse.readdir(dir);
+    await Promise.all(
+      items.map(async (item) => {
+        const abs = path.join(dir, item);
+        const stat = await fse.lstat(abs);
+        if (stat.isDirectory()) {
+          await walk(abs);
+        } else if (stat.isFile()) {
+          const rel = path.relative(bundleDir, abs).split(path.sep).join('/');
+          if (rel === bundleSourceMd5SidecarFile) {
+            return;
+          }
+          entries.push({ rel, size: stat.size, mtimeMs: stat.mtimeMs });
+        }
+      })
+    );
+  };
+  await walk(bundleDir);
+  entries.sort((a, b) => (a.rel < b.rel ? -1 : a.rel > b.rel ? 1 : 0));
+
+  const treeHash = createHash('sha256');
+  const structuralHash = createHash('sha256');
+  for (const entry of entries) {
+    treeHash.update(entry.rel);
+    treeHash.update('\0');
+    treeHash.update(String(entry.size));
+    treeHash.update('\0');
+    treeHash.update(String(entry.mtimeMs));
+    treeHash.update('\0');
+
+    structuralHash.update(entry.rel);
+    structuralHash.update('\0');
+    structuralHash.update(String(entry.size));
+    structuralHash.update('\0');
+  }
+  return { treeFingerprint: treeHash.digest('base64'), structuralFingerprint: structuralHash.digest('base64') };
+}
+
+/**
+ * Convenience wrapper returning only the mtime-sensitive tree fingerprint.
+ * Returns the base64 digest, or `undefined` if `bundleDir` doesn't exist.
+ */
+export async function computeBundleTreeFingerprint(bundleDir: string): Promise<string | undefined> {
+  const fingerprints = await computeBundleFingerprints(bundleDir);
+  return fingerprints?.treeFingerprint;
+}
+
+/**
+ * Epoch ms of the last successful full-byte deep verification, read sidecar-first
+ * (survives early activation before `globalState` is populated) with a
+ * `globalState` fallback. Returns `undefined` when neither source has a value.
+ */
+function getLastDeepVerification(sidecar?: BundleSidecar | null): number | undefined {
+  if (sidecar && typeof sidecar.lastDeepVerifiedMs === 'number' && Number.isFinite(sidecar.lastDeepVerifiedMs)) {
+    return sidecar.lastDeepVerifiedMs;
+  }
+  const fromGlobal = ext.context?.globalState?.get<number>(lastBundleDeepVerificationKey);
+  return typeof fromGlobal === 'number' && Number.isFinite(fromGlobal) ? fromGlobal : undefined;
+}
+
+/**
+ * True when the throttled deep (full-byte) bundle verification is due — i.e. no
+ * successful deep verification has been recorded within
+ * {@link bundleDeepVerificationIntervalMs}. Reads the timestamp sidecar-first
+ * (robust during early activation), with a `globalState` fallback. When no
+ * timestamp exists at all it is due (legacy / first run).
+ */
+function isDeepBundleVerificationDue(sidecar?: BundleSidecar | null): boolean {
+  const last = getLastDeepVerification(sidecar);
+  if (last === undefined) {
+    return true;
+  }
+  return Date.now() - last >= bundleDeepVerificationIntervalMs;
+}
+
+/**
+ * Records "now" as the last successful deep bundle verification in `globalState`
+ * (a best-effort mirror of the authoritative sidecar timestamp).
+ */
+async function recordDeepBundleVerification(): Promise<void> {
+  try {
+    await ext.context?.globalState?.update(lastBundleDeepVerificationKey, Date.now());
+  } catch {
+    // Non-fatal: failing to persist the timestamp only means the next launch may
+    // re-run the deep hash, which is safe (just slower).
+  }
 }
 
 /**
@@ -433,7 +616,18 @@ async function downloadBundleAndWriteSidecar(context: IActionContext, baseUrl: s
     // the partial install as "good" and never re-download.
     throw new Error(`Bundle ${version} was downloaded but the extracted directory at ${bundleDir} is empty. Refusing to write sidecar.`);
   }
-  await writeBundleSidecar(version, result.actualMd5, contentHash);
+  const fingerprints = await computeBundleFingerprints(bundleDir);
+  const now = Date.now();
+  await writeBundleSidecar(version, {
+    sourceMd5: result.actualMd5,
+    contentHash,
+    treeFingerprint: fingerprints?.treeFingerprint,
+    structuralFingerprint: fingerprints?.structuralFingerprint,
+    lastDeepVerifiedMs: now,
+  });
+  // Fresh download already computed the full byte hash, so reset the deep-verify
+  // throttle — the next 24h can safely rely on the fast fingerprint path.
+  await recordDeepBundleVerification();
 }
 
 /**
@@ -640,7 +834,7 @@ async function downloadBundleWithProgress(
   await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title, cancellable: false }, async () => {
     await downloadBundleAndWriteSidecar(context, baseUrl, version);
   });
-  vscode.window.showInformationMessage(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
+  ext.outputChannel.appendLog(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
 }
 
 /**
@@ -663,7 +857,7 @@ async function tryDownloadBundleWithProgress(
     outcome = await tryDownloadBundleAndWriteSidecar(context, baseUrl, version);
   });
   if (outcome.ok) {
-    vscode.window.showInformationMessage(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
+    ext.outputChannel.appendLog(localize('bundleDownloadReady', 'Logic Apps extension bundle {0} is ready.', version));
   }
   return outcome;
 }
@@ -780,10 +974,19 @@ async function tryBackfillBundleSidecar(context: IActionContext, publicBaseUrl: 
   }
 
   try {
-    await writeBundleSidecar(localVersion, publishedMd5 ?? '', actualContentHash);
+    const fingerprints = await computeBundleFingerprints(bundleDir);
+    await writeBundleSidecar(localVersion, {
+      sourceMd5: publishedMd5 ?? '',
+      contentHash: actualContentHash,
+      treeFingerprint: fingerprints?.treeFingerprint,
+      structuralFingerprint: fingerprints?.structuralFingerprint,
+      lastDeepVerifiedMs: Date.now(),
+    });
   } catch {
     return false;
   }
+  // The backfill just computed the full byte hash, so reset the deep-verify throttle.
+  await recordDeepBundleVerification();
   ext.outputChannel?.appendLog(`Logic Apps extension bundle ${localVersion} sidecar metadata backfilled from existing install.`);
   return true;
 }
@@ -828,6 +1031,26 @@ let inFlightBundleWork: Promise<void> | undefined;
 export type BundleInstallResult = 'unknown' | 'ok' | 'failed';
 let lastBundleInstallResult: BundleInstallResult = 'unknown';
 let lastBundleInstallError: Error | undefined;
+
+/**
+ * Version of the extension bundle whose on-disk integrity has already been
+ * verified this session. `ensureExtensionBundleHealthy` short-circuits the
+ * expensive full-tree SHA-256 recompute while this is set. Startup dependency
+ * validation verifies the bundle once; the design-time / runtime hosts launched
+ * immediately after reuse that result instead of rehashing the whole bundle on
+ * every launch. Invalidated on any (re)download/repair and via
+ * `resetCachedBundleVersion`.
+ */
+let healthyBundleVersion: string | null = null;
+
+/**
+ * Clears the session bundle-health cache so the next
+ * `ensureExtensionBundleHealthy` re-runs the on-disk integrity check. Invoked
+ * whenever the bundle on disk may have changed (download/repair) or on reset.
+ */
+export function invalidateBundleHealthCache(): void {
+  healthyBundleVersion = null;
+}
 
 export function getLastBundleInstallResult(): BundleInstallResult {
   return lastBundleInstallResult;
@@ -932,6 +1155,44 @@ export async function assertExtensionBundleOnDiskHealthy(version?: string): Prom
   if (!sidecar.contentHash) {
     return { ok: false, reason: 'sidecarUnreadable', version: targetVersion, detail: 'sidecar missing contentHash field' };
   }
+
+  // Fast path: when the sidecar carries a cheap lstat tree fingerprint, compare
+  // that first. A match lets us skip the ~40s full-byte content hash entirely —
+  // unless the daily deep-verify throttle says a full check is due.
+  if (sidecar.treeFingerprint) {
+    const actualFingerprint = await computeBundleTreeFingerprint(bundleDir);
+    if (!actualFingerprint) {
+      return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
+    }
+    if (actualFingerprint === sidecar.treeFingerprint) {
+      if (!isDeepBundleVerificationDue(sidecar)) {
+        return { ok: true, version: targetVersion };
+      }
+      // Throttle due: run the full byte hash even though the fingerprint matched,
+      // to catch an in-place edit that preserved size + mtime.
+      const deepHash = await computeBundleContentHash(bundleDir);
+      if (!deepHash) {
+        return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
+      }
+      if (deepHash !== sidecar.contentHash) {
+        return {
+          ok: false,
+          reason: 'contentMismatch',
+          version: targetVersion,
+          detail: `expected ${sidecar.contentHash}, got ${deepHash}`,
+        };
+      }
+      await recordDeepBundleVerification();
+      // Persist the deep-verify timestamp (and current fingerprints) into the
+      // sidecar so the 24h throttle survives even when globalState isn't yet
+      // populated on the next early activation.
+      await refreshBundleSidecarFingerprints(targetVersion, sidecar, bundleDir, Date.now());
+      return { ok: true, version: targetVersion };
+    }
+    // Fingerprint mismatch → fall through to the full byte hash to decide
+    // healthy-vs-repair (keeps the existing contentMismatch/repair flow).
+  }
+
   const actualHash = await computeBundleContentHash(bundleDir);
   if (!actualHash) {
     return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
@@ -944,7 +1205,335 @@ export async function assertExtensionBundleOnDiskHealthy(version?: string): Prom
       detail: `expected ${sidecar.contentHash}, got ${actualHash}`,
     };
   }
+  // Full byte hash passed. Record the deep verification and, when the sidecar
+  // lacked a fingerprint (legacy) or it drifted (e.g. a touch that changed mtime
+  // but not bytes), backfill the current fingerprints so future launches take the
+  // fast path. Best-effort: a backfill write failure must not fail the health check.
+  await recordDeepBundleVerification();
+  await refreshBundleSidecarFingerprints(targetVersion, sidecar, bundleDir, Date.now());
   return { ok: true, version: targetVersion };
+}
+
+/**
+ * Recomputes the cheap lstat fingerprints for `bundleDir` and rewrites the
+ * sidecar with them plus the supplied `lastDeepVerifiedMs`, preserving the
+ * existing `sourceMd5`/`contentHash`. Best-effort: any failure is swallowed —
+ * the bundle is already known healthy; we just didn't upgrade the sidecar.
+ */
+async function refreshBundleSidecarFingerprints(
+  version: string,
+  sidecar: BundleSidecar,
+  bundleDir: string,
+  lastDeepVerifiedMs: number
+): Promise<void> {
+  try {
+    const fingerprints = await computeBundleFingerprints(bundleDir);
+    if (!fingerprints) {
+      return;
+    }
+    // Skip the rewrite only when there is genuinely nothing new to persist. The
+    // timestamp must be part of that comparison: on the common "healthy bundle,
+    // nothing changed" path the fingerprints always match, so testing merely that
+    // `lastDeepVerifiedMs` EXISTS made this return before writing the fresh one.
+    // Because `getLastDeepVerification` reads the sidecar first, that stale value
+    // then permanently outvoted the `globalState` mirror and
+    // `isDeepBundleVerificationDue` stayed true forever — the 24h throttle never
+    // engaged and the full byte hash ran on every single launch.
+    const unchanged =
+      fingerprints.treeFingerprint === sidecar.treeFingerprint &&
+      fingerprints.structuralFingerprint === sidecar.structuralFingerprint &&
+      sidecar.lastDeepVerifiedMs === lastDeepVerifiedMs;
+    if (unchanged) {
+      return;
+    }
+    await writeBundleSidecar(version, {
+      sourceMd5: sidecar.sourceMd5,
+      contentHash: sidecar.contentHash,
+      treeFingerprint: fingerprints.treeFingerprint,
+      structuralFingerprint: fingerprints.structuralFingerprint,
+      lastDeepVerifiedMs,
+    });
+  } catch {
+    // Non-fatal: the bundle is healthy; we just didn't upgrade the sidecar.
+  }
+}
+
+/**
+ * Result of the cheap, non-blocking fast gate used on the hot activation path.
+ * On success it also reports whether a background deep (full-byte) verification
+ * should be scheduled (`deepVerify`). Failures reuse {@link BundleOnDiskHealthResult}'s
+ * failure shape so the caller's existing repair/bootstrap handling is unchanged.
+ */
+type BundleFastGateResult = { ok: true; version: string; deepVerify: boolean } | BundleOnDiskHealthFailure;
+
+/**
+ * Cheap, lstat-only bundle health gate for the hot activation path. NEVER runs
+ * the ~40s full-byte hash — that is the whole point: activation must not freeze
+ * on it. Decisions:
+ *  - tree fingerprint match → ok; background deep verify only if the 24h throttle
+ *    is due.
+ *  - tree mismatch but STRUCTURAL match (benign mtime-only drift, e.g. the
+ *    Functions host touched bundle files) → refresh the tree fingerprint inline
+ *    (no byte hash) → ok; background deep verify only if throttle due. This is the
+ *    key fix for the per-launch re-hash freeze.
+ *  - legacy sidecar (no fingerprints) OR a genuine structural change → ok
+ *    provisionally + schedule a background deep verify to confirm bytes / repair.
+ *  - presence / sidecar failures (noBundle / sidecarMissing / sidecarUnreadable /
+ *    emptyBundleDir) → returned as failures so the caller repairs synchronously.
+ */
+async function evaluateBundleFastGate(version?: string): Promise<BundleFastGateResult> {
+  let targetVersion = version;
+  if (!targetVersion) {
+    const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
+    const latest = pickLatestVersion(localVersions);
+    if (latest === '0.0.0') {
+      return { ok: false, reason: 'noBundle' };
+    }
+    targetVersion = latest;
+  }
+  const bundleDir = path.join(defaultExtensionBundlePathValue, targetVersion);
+  if (!(await fse.pathExists(bundleDir))) {
+    return { ok: false, reason: 'noBundle', version: targetVersion };
+  }
+  const sidecar = await readBundleSidecar(targetVersion);
+  if (!sidecar) {
+    return { ok: false, reason: 'sidecarMissing', version: targetVersion };
+  }
+  if (!sidecar.contentHash) {
+    return { ok: false, reason: 'sidecarUnreadable', version: targetVersion, detail: 'sidecar missing contentHash field' };
+  }
+  const fingerprints = await computeBundleFingerprints(bundleDir);
+  if (!fingerprints) {
+    return { ok: false, reason: 'emptyBundleDir', version: targetVersion };
+  }
+
+  // 1) Exact fast path: the mtime-sensitive tree fingerprint matches.
+  if (sidecar.treeFingerprint && fingerprints.treeFingerprint === sidecar.treeFingerprint) {
+    return { ok: true, version: targetVersion, deepVerify: isDeepBundleVerificationDue(sidecar) };
+  }
+
+  // 2) Benign metadata drift: structural fingerprint (paths + sizes, no mtime)
+  //    still matches, so only mtimes moved. Refresh the tree fingerprint WITHOUT a
+  //    byte hash so the next launch is fast again.
+  if (sidecar.structuralFingerprint && fingerprints.structuralFingerprint === sidecar.structuralFingerprint) {
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${targetVersion} metadata drift detected (sizes + paths unchanged); refreshing fast fingerprint without re-hashing.`
+    );
+    try {
+      await writeBundleSidecar(targetVersion, {
+        sourceMd5: sidecar.sourceMd5,
+        contentHash: sidecar.contentHash,
+        treeFingerprint: fingerprints.treeFingerprint,
+        structuralFingerprint: fingerprints.structuralFingerprint,
+        lastDeepVerifiedMs: sidecar.lastDeepVerifiedMs,
+      });
+    } catch {
+      // Non-fatal: we still pass; the fingerprint just won't be refreshed.
+    }
+    return { ok: true, version: targetVersion, deepVerify: isDeepBundleVerificationDue(sidecar) };
+  }
+
+  // 3) Legacy sidecar (no fast fingerprints) OR a genuine structural change (file
+  //    added / removed / resized). Presence + sidecar checks already passed, so
+  //    return ok PROVISIONALLY and confirm bytes / repair off the activation path.
+  ext.outputChannel?.appendLog(
+    sidecar.treeFingerprint || sidecar.structuralFingerprint
+      ? `Logic Apps extension bundle ${targetVersion} fast fingerprint drift; scheduling background deep verification.`
+      : `Logic Apps extension bundle ${targetVersion} sidecar predates fast fingerprints; scheduling background deep verification.`
+  );
+  return { ok: true, version: targetVersion, deepVerify: true };
+}
+
+/**
+ * Tracks a single in-flight background deep verification so we don't launch a
+ * herd of full-byte hashes. Reset in {@link resetCachedBundleVersion}.
+ */
+let backgroundBundleDeepVerifyPromise: Promise<void> | undefined;
+
+/**
+ * Test/coordination seam: resolves once any in-flight background deep bundle
+ * verification (and its repair, if triggered) has settled.
+ */
+export function awaitBackgroundBundleDeepVerification(): Promise<void> {
+  return backgroundBundleDeepVerifyPromise ?? Promise.resolve();
+}
+
+/**
+ * Options for {@link scheduleBackgroundBundleDeepVerification}.
+ */
+interface BackgroundDeepVerifyOptions {
+  /**
+   * When set, the background job also confirms the CDN hasn't republished this
+   * same version with different bytes (compares the sidecar `sourceMd5` against
+   * the CDN `Content-MD5`). This republish check used to run synchronously on
+   * the activation hot path inside `verifyLocalBundle`; it now runs here, off
+   * the hot path and with a short HEAD timeout.
+   */
+  republishBaseUrl?: string;
+}
+
+/**
+ * Runs the authoritative full-byte bundle verification OFF the activation path.
+ * The fast gate has already returned ok, so activation proceeds immediately while
+ * this confirms the bytes and — on genuine corruption — kicks off an async repair
+ * download. Deduped to at most one in-flight run.
+ */
+function scheduleBackgroundBundleDeepVerification(
+  context: IActionContext,
+  version: string,
+  options: BackgroundDeepVerifyOptions = {}
+): void {
+  if (backgroundBundleDeepVerifyPromise) {
+    return;
+  }
+  backgroundBundleDeepVerifyPromise = (async () => {
+    try {
+      const health = await assertExtensionBundleOnDiskHealthy(version);
+      if (!health.ok) {
+        const failure = health as BundleOnDiskHealthFailure;
+        if (failure.reason === 'contentMismatch' || failure.reason === 'emptyBundleDir') {
+          ext.outputChannel?.appendLog(
+            `Logic Apps extension bundle ${version} failed background deep verification (${formatBundleHealthFailure(failure)}). Repairing in the background.`
+          );
+          healthyBundleVersion = null;
+          await downloadExtensionBundle(context, { allowSidecarBackfill: false, forceVerify: true });
+        }
+        return;
+      }
+      // Bytes confirmed. Optionally detect a CDN republish of the same version
+      // (rare) off the hot path — the byte hash can't catch it because the local
+      // bytes still match the local sidecar's recorded content hash.
+      if (options.republishBaseUrl) {
+        await verifyBundleRepublishOffHotPath(context, options.republishBaseUrl, version);
+      }
+    } catch (error) {
+      ext.outputChannel?.appendLog(
+        `Logic Apps extension bundle background deep verification failed: ${error instanceof Error ? error.message : String(error)}`
+      );
+    } finally {
+      backgroundBundleDeepVerifyPromise = undefined;
+    }
+  })();
+}
+
+/**
+ * Tracks a single in-flight background bundle "is there a newer version?" feed
+ * refresh so a slow/flaky link can't stack up parallel CDN lookups. Reset in
+ * {@link resetCachedBundleVersion}.
+ */
+let backgroundBundleFeedRefreshPromise: Promise<void> | undefined;
+
+/**
+ * Test/coordination seam: resolves once any in-flight background bundle feed
+ * refresh (and its background upgrade download, if triggered) has settled.
+ */
+export function awaitBackgroundBundleFeedRefresh(): Promise<void> {
+  return backgroundBundleFeedRefreshPromise ?? Promise.resolve();
+}
+
+/**
+ * Options for {@link scheduleBackgroundBundleFeedRefresh}.
+ */
+interface BackgroundFeedRefreshOptions {
+  /** Base URL the bundle is served from (public CDN unless pinned/experimental). */
+  baseUrl: string;
+  /** The healthy local bundle version the fast gate just trusted. */
+  localVersion: string;
+  /**
+   * When the effective base URL fell back from a broken experimental source to
+   * the public CDN, the feed lookup must target the public index too.
+   */
+  useExperimentalPublicFallback: boolean;
+}
+
+/**
+ * Discovers whether the CDN publishes a newer bundle version than the trusted
+ * local copy — OFF the activation hot path.
+ *
+ * The version "feed" GET (`index.json` on the bundle CDN) used to run
+ * synchronously inside the activation-time download, which
+ * `ensureExtensionBundleHealthy` awaits via `waitForExtensionBundleReady()`. On
+ * a slow/flaky link to `cdn.functions.azure.com` that single GET adds tens of
+ * seconds to EVERY launch whose daily update-check window is due (the in-memory
+ * feed cache is wiped on each process restart). Since a healthy local bundle is
+ * already good enough for this session, we move that lookup here: activation
+ * proceeds immediately on the local bundle, and a newer version — if any — is
+ * downloaded in the background and applied on the next launch. Mirrors the
+ * throttled Node/Func/.NET "latest version" lookups. Deduped to at most one
+ * in-flight run and gated by the caller to the shared update-check window.
+ */
+function scheduleBackgroundBundleFeedRefresh(context: IActionContext, options: BackgroundFeedRefreshOptions): void {
+  if (backgroundBundleFeedRefreshPromise) {
+    return;
+  }
+  backgroundBundleFeedRefreshPromise = (async () => {
+    try {
+      let feedVersions: string[];
+      if (options.useExperimentalPublicFallback) {
+        const publicIndexUrl = `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${extensionBundleId}/index.json`;
+        feedVersions = await getJsonFeed(context, publicIndexUrl);
+      } else {
+        feedVersions = await getWorkflowBundleFeed(context);
+      }
+      const latestFeedBundleVersion = pickLatestVersion(feedVersions);
+      if (semver.gt(latestFeedBundleVersion, options.localVersion)) {
+        ext.outputChannel?.appendLog(
+          `Logic Apps extension bundle ${latestFeedBundleVersion} is available (local ${options.localVersion}); downloading in the background for the next launch.`
+        );
+        // The bundle on disk is about to change, so the session health cache is
+        // no longer authoritative for the newer version.
+        healthyBundleVersion = null;
+        await downloadBundleWithProgress(context, options.baseUrl, latestFeedBundleVersion, 'newerVersion');
+        ext.defaultBundleVersion = latestFeedBundleVersion;
+        ext.latestBundleVersion = latestFeedBundleVersion;
+      }
+      // Record the shared daily update-check window so the next launch skips this
+      // network lookup entirely (steady-state activation makes zero bundle CDN
+      // calls). The dependency validators also record this when their own update
+      // check runs; a redundant write is a harmless timestamp refresh.
+      await recordDependencyUpdateCheck();
+    } catch (error) {
+      ext.outputChannel?.appendLog(
+        `Logic Apps extension bundle background version check failed: ${error instanceof Error ? error.message : String(error)}`
+      );
+    } finally {
+      backgroundBundleFeedRefreshPromise = undefined;
+    }
+  })();
+}
+
+/**
+ * Confirms the CDN hasn't republished `version` with different bytes than the
+ * local copy. Compares the sidecar `sourceMd5` against the CDN `Content-MD5`
+ * (a cheap HEAD). On a genuine republish, forces a background re-download so the
+ * next launch picks up the fresh bytes. Best-effort: a HEAD failure (offline /
+ * flaky CDN) is logged and ignored — the cached bundle stays trusted. This
+ * check used to run synchronously on the activation hot path inside
+ * `verifyLocalBundle`; it now runs here, off the hot path and with a short
+ * HEAD timeout.
+ */
+async function verifyBundleRepublishOffHotPath(context: IActionContext, baseUrl: string, version: string): Promise<void> {
+  const sidecar = await readBundleSidecar(version);
+  if (!sidecar?.sourceMd5) {
+    return;
+  }
+  const headUrl = buildExtensionBundleZipUrl(baseUrl, version);
+  let publishedMd5: string | undefined;
+  try {
+    publishedMd5 = await fetchExpectedMd5(headUrl);
+  } catch (error) {
+    ext.outputChannel?.appendLog(
+      `Background extension-bundle republish check skipped for ${version}: ${error instanceof Error ? error.message : String(error)}`
+    );
+    return;
+  }
+  if (publishedMd5 && publishedMd5 !== sidecar.sourceMd5) {
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${version} was republished on the CDN (source MD5 drift); repairing in the background.`
+    );
+    healthyBundleVersion = null;
+    await downloadBundleWithProgress(context, baseUrl, version, 'sidecarMismatch');
+  }
 }
 
 /**
@@ -953,13 +1542,13 @@ export async function assertExtensionBundleOnDiskHealthy(version?: string): Prom
  * (e.g. design-time host startup, runtime dependency validation) should
  * call this rather than the lower-level `waitForExtensionBundleReady`.
  *
- * Phase 14: when a context is supplied this also proactively re-checks the
- * on-disk bundle (see `assertExtensionBundleOnDiskHealthy`). If the disk
- * has drifted from the sidecar (user deleted a subfolder, AV restored a
- * stale copy, etc.) we kick off a synchronous repair download, then
- * re-check. If repair still fails the function throws so the dependency
- * validation refuses to mark the runtime "successfully installed" and the
- * design-time host never spawns against a corrupt bundle.
+ * Phase 15: the hot on-disk re-check now uses a cheap lstat fast gate
+ * (see `evaluateBundleFastGate`) that never blocks activation on the ~40s
+ * full-byte hash. Presence / sidecar failures still trigger a synchronous
+ * repair download (and, in `requireInstalled` mode, a hard failure if the
+ * bundle still isn't installed). A genuine byte-level corruption is detected
+ * and repaired by a background deep verification scheduled off the activation
+ * path.
  *
  * Callers without a context (legacy) still get the old await-only behavior.
  */
@@ -969,6 +1558,14 @@ interface EnsureExtensionBundleHealthyOptions {
 
 interface DownloadExtensionBundleOptions {
   allowSidecarBackfill?: boolean;
+  /**
+   * When true, skip the cheap lstat fast gate and always run the authoritative
+   * `verifyLocalBundle` (full byte hash + CDN HEAD) → repair. Used by the
+   * background deep-verify repair path, which has already detected a genuine
+   * byte mismatch the fast gate can't see (an in-place edit preserving size +
+   * mtime) and must force a real re-download rather than short-circuit.
+   */
+  forceVerify?: boolean;
 }
 
 export async function ensureExtensionBundleHealthy(
@@ -987,9 +1584,20 @@ export async function ensureExtensionBundleHealthy(
     return;
   }
 
-  const initialHealth = await assertExtensionBundleOnDiskHealthy();
+  if (healthyBundleVersion) {
+    ext.outputChannel?.appendLog(
+      `Logic Apps extension bundle ${healthyBundleVersion} already verified this session; skipping on-disk integrity re-check.`
+    );
+    return;
+  }
+
+  const initialHealth = await evaluateBundleFastGate();
   if (initialHealth.ok) {
+    healthyBundleVersion = initialHealth.version;
     ext.outputChannel?.appendLog(`Logic Apps extension bundle ${initialHealth.version} on-disk integrity check passed.`);
+    if (initialHealth.deepVerify) {
+      scheduleBackgroundBundleDeepVerification(context, initialHealth.version);
+    }
     return;
   }
   const initialFailure = initialHealth as Extract<BundleOnDiskHealthResult, { ok: false }>;
@@ -1005,6 +1613,7 @@ export async function ensureExtensionBundleHealthy(
     await downloadExtensionBundle(context, { allowSidecarBackfill: false });
     const postInstallHealth = await assertExtensionBundleOnDiskHealthy();
     if (postInstallHealth.ok) {
+      healthyBundleVersion = postInstallHealth.version;
       return;
     }
     throwBundleHealthError('Install completed but on-disk integrity still failed', postInstallHealth as BundleOnDiskHealthFailure);
@@ -1031,6 +1640,7 @@ export async function ensureExtensionBundleHealthy(
 
   const postRepairHealth = await assertExtensionBundleOnDiskHealthy();
   if (postRepairHealth.ok) {
+    healthyBundleVersion = postRepairHealth.version;
     return;
   }
   throwBundleHealthError('Repair completed but on-disk integrity still failed', postRepairHealth as BundleOnDiskHealthFailure);
@@ -1043,6 +1653,10 @@ export async function ensureExtensionBundleHealthy(
  * @returns {Promise<bool>} A boolean indicating whether the bundle was updated.
  */
 export async function downloadExtensionBundle(context: IActionContext, options: DownloadExtensionBundleOptions = {}): Promise<boolean> {
+  // Any (re)download or repair changes the bundle on disk, so the session
+  // health cache is no longer authoritative — force the next
+  // `ensureExtensionBundleHealthy` to re-verify.
+  healthyBundleVersion = null;
   // Dedupe concurrent calls: if a download is already in flight, await it
   // instead of kicking off a parallel attempt that would race for the same
   // extraction directory.
@@ -1100,14 +1714,87 @@ export async function downloadExtensionBundle(context: IActionContext, options: 
   }
 }
 
+/**
+ * Parameters describing which local bundle version a caller wants to trust for
+ * this session, and how the background jobs should behave for it.
+ */
+interface HealthyLocalFastPathParams {
+  /** The specific local bundle version the caller resolved (pin or latest). */
+  version: string;
+  /** Telemetry source label recorded when the fast path is taken. */
+  versionSource: BundleVersionSource;
+  /** Base URL used by the background deep-verify republish check. */
+  deepVerifyBaseUrl: string;
+  /**
+   * Whether a background "is there a newer version?" feed refresh is allowed.
+   * Pinned (env / experimental pin) and experimental selections must NOT auto-
+   * upgrade from the public latest feed, so they pass `false`.
+   */
+  allowFeedRefresh: boolean;
+  /** Base URL for the optional background feed refresh (defaults to deepVerifyBaseUrl). */
+  feedRefreshBaseUrl?: string;
+  /** Whether the feed refresh must target the public index (experimental fallback). */
+  useExperimentalPublicFallback?: boolean;
+}
+
+/**
+ * Shared healthy-local-bundle fast path. When a resolved local bundle version
+ * passes the cheap lstat fast gate, trust it for this session and move the
+ * authoritative byte verification (and, when allowed, the newer-version feed
+ * lookup) OFF the awaited activation path into throttled background jobs.
+ *
+ * This is the single choke point that keeps the ~25s full-byte
+ * `computeBundleContentHash` off cold start for EVERY version-selection branch
+ * (env pin, experimental pin, experimental latest, and default latest). Returns
+ * `true` when it fully handled a healthy local bundle (caller should report "no
+ * update"); returns `false` when the caller must fall through to its existing
+ * synchronous `verifyLocalBundle` / repair flow (missing / unreadable sidecar,
+ * or `forceVerify`).
+ */
+async function tryHealthyLocalBundleFastPath(
+  context: IActionContext,
+  options: DownloadExtensionBundleOptions,
+  params: HealthyLocalFastPathParams
+): Promise<boolean> {
+  if (options.forceVerify || !params.version || params.version === '0.0.0') {
+    return false;
+  }
+  const localGate = await evaluateBundleFastGate(params.version);
+  if (!localGate.ok) {
+    return false;
+  }
+  const updateCheckDue = shouldCheckForDependencyUpdates();
+  context.telemetry.properties.localBundleHashCheck = updateCheckDue ? 'fastPath' : 'fastPathThrottled';
+  if (!updateCheckDue) {
+    context.telemetry.properties.extensionBundleUpdateCheckThrottled = 'true';
+  }
+  if (localGate.deepVerify) {
+    scheduleBackgroundBundleDeepVerification(context, params.version, { republishBaseUrl: params.deepVerifyBaseUrl });
+  }
+  if (params.allowFeedRefresh && updateCheckDue) {
+    scheduleBackgroundBundleFeedRefresh(context, {
+      baseUrl: params.feedRefreshBaseUrl ?? params.deepVerifyBaseUrl,
+      localVersion: params.version,
+      useExperimentalPublicFallback: params.useExperimentalPublicFallback === true,
+    });
+  }
+  ext.defaultBundleVersion = params.version;
+  ext.latestBundleVersion = params.version;
+  context.telemetry.properties.extensionBundleVersionSource = params.versionSource;
+  context.telemetry.properties.didUpdateExtensionBundle = 'false';
+  return true;
+}
+
 async function downloadExtensionBundleCore(context: IActionContext, options: DownloadExtensionBundleOptions): Promise<boolean> {
   const downloadExtensionBundleStartTime = Date.now();
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
-    const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+    const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+
     if (projectPath) {
       try {
-        envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+        envVarVer = (await getLocalSettingsJson(context, projectPath))?.Values
           ?.AzureFunctionsJobHost_extensionBundle_version;
       } catch {
         // ignore
@@ -1129,6 +1816,21 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
     if (envVarVer) {
       context.telemetry.properties.extensionBundleVersionSource = 'envVar';
       if (semver.valid(envVarVer) && localVersions.some((v) => v === envVarVer)) {
+        // Fast path first: a pinned local bundle that passes the cheap lstat gate
+        // is trusted for this session; byte verification moves to the background.
+        // A pin must never auto-upgrade, so no feed refresh.
+        if (
+          await tryHealthyLocalBundleFastPath(context, options, {
+            version: envVarVer,
+            versionSource: 'envVar',
+            deepVerifyBaseUrl: baseUrlInfo.baseUrl,
+            allowFeedRefresh: false,
+          })
+        ) {
+          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+          return false;
+        }
+        // Fast gate not ok (missing / unreadable sidecar) → authoritative verify.
         // Verify the on-disk bundle for the pinned version. Without this,
         // a corrupt local copy would silently satisfy the env-var pin and
         // we'd never repair it.
@@ -1166,6 +1868,19 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
           // Verify before trusting the local pin. The experimental URI is
           // the publisher of record for hash verification here.
           const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
+          // Fast path first: a healthy local pin is trusted for this session,
+          // byte verification runs in the background. Pins never auto-upgrade.
+          if (
+            await tryHealthyLocalBundleFastPath(context, options, {
+              version: pin,
+              versionSource: 'experimentalLocalPin',
+              deepVerifyBaseUrl: verifyBaseUrl,
+              allowFeedRefresh: false,
+            })
+          ) {
+            context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+            return false;
+          }
           const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, pin, options);
           context.telemetry.properties.localBundleHashCheck = hashCheck;
           if (requiresBundleRepair(hashCheck)) {
@@ -1239,35 +1954,56 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
         return true;
       }
 
-      if (latestLocalBundleVersion !== '0.0.0') {
+      // Only handle experimental local-latest specially when a real experimental
+      // source URI is configured. With no pin AND no source URI there is nothing
+      // genuinely experimental to honor, so fall through to the normal section-3
+      // resolution below (fast gate + background deep-verify + background feed
+      // refresh, i.e. public-latest auto-upgrade) — identical to a normal install.
+      if (baseUrlInfo.experimentalSourceUri.length > 0 && latestLocalBundleVersion !== '0.0.0') {
         // Verify on disk before trusting the cached experimental local latest.
-        const verifyBaseUrl = baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
+        // Gated above on a configured source URI, so that is the publisher of record.
+        const verifyBaseUrl = baseUrlInfo.experimentalSourceUri;
+        // Fast path first: a healthy local latest passes the cheap lstat gate and
+        // is trusted for this session; byte verification moves to the background.
+        // Experimental never consults the public *latest* feed, so no feed refresh.
+        if (
+          await tryHealthyLocalBundleFastPath(context, options, {
+            version: latestLocalBundleVersion,
+            versionSource: 'experimentalLocalLatest',
+            deepVerifyBaseUrl: verifyBaseUrl,
+            allowFeedRefresh: false,
+          })
+        ) {
+          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+          return false;
+        }
         const hashCheck = await verifyLocalBundle(context, verifyBaseUrl, latestLocalBundleVersion, options);
         context.telemetry.properties.localBundleHashCheck = hashCheck;
         if (requiresBundleRepair(hashCheck)) {
           notifyCorruptionIfNeeded(hashCheck, latestLocalBundleVersion, verifyBaseUrl);
-          if (baseUrlInfo.experimentalSourceUri.length > 0) {
-            const repair = await tryDownloadBundleWithProgress(
-              context,
-              baseUrlInfo.experimentalSourceUri,
-              latestLocalBundleVersion,
-              'experimentalLocalLatestRepair'
-            );
-            if (repair.ok === true) {
-              ext.defaultBundleVersion = latestLocalBundleVersion;
-              ext.latestBundleVersion = latestLocalBundleVersion;
-              context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
-              context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-              context.telemetry.properties.didUpdateExtensionBundle = 'true';
-              return true;
-            }
-            logExperimentalFallback(
-              context,
-              repair.reason,
-              `Repair of local latest ${latestLocalBundleVersion} from experimental source failed.`,
-              repair.error
-            );
+          // Prefer the configured experimental source for the repair (the block is
+          // gated on a non-empty source URI); fall back to the public CDN only if
+          // that source can't deliver, so the dev isn't left non-running.
+          const repair = await tryDownloadBundleWithProgress(
+            context,
+            baseUrlInfo.experimentalSourceUri,
+            latestLocalBundleVersion,
+            'experimentalLocalLatestRepair'
+          );
+          if (repair.ok === true) {
+            ext.defaultBundleVersion = latestLocalBundleVersion;
+            ext.latestBundleVersion = latestLocalBundleVersion;
+            context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
+            context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+            context.telemetry.properties.didUpdateExtensionBundle = 'true';
+            return true;
           }
+          logExperimentalFallback(
+            context,
+            repair.reason,
+            `Repair of local latest ${latestLocalBundleVersion} from experimental source failed.`,
+            repair.error
+          );
           await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, latestLocalBundleVersion, 'experimentalLocalLatestRepair');
           ext.defaultBundleVersion = latestLocalBundleVersion;
           ext.latestBundleVersion = latestLocalBundleVersion;
@@ -1331,6 +2067,45 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
     const fellThroughFromExperimental = baseUrlInfo.isExperimental;
     const effectiveBaseUrl = fellThroughFromExperimental ? PUBLIC_BUNDLE_BASE_URL : baseUrlInfo.baseUrl;
 
+    // Healthy local bundle short-circuit — NEVER block activation on the CDN.
+    // `ensureExtensionBundleHealthy` awaits this download via
+    // `waitForExtensionBundleReady()`, so any synchronous CDN call here freezes
+    // activation. Two CDN calls used to run on this hot path: the version "feed"
+    // GET (`getWorkflowBundleFeed` -> index.json) and the byte-hash + `Content-
+    // MD5` HEAD inside `verifyLocalBundle`. On a slow/flaky link to the bundle
+    // CDN each adds tens of seconds to launch (the in-memory feed cache is wiped
+    // on every process restart). When a healthy local bundle already exists (the
+    // cheap lstat fast gate passes), trust it for this session and move BOTH the
+    // authoritative byte verification AND the "is there a newer version?" feed
+    // lookup OFF the hot path:
+    //   * deep byte verify + CDN republish check -> throttled background job.
+    //   * newer-version discovery + upgrade download -> throttled background job,
+    //     gated by the shared daily update-check window (mirrors the Node/Func/
+    //     .NET "latest version" lookups). A newer bundle is picked up at most
+    //     once per window and applied on the next launch.
+    // Only a missing / corrupt / legacy-sidecar bundle (fast gate NOT ok) falls
+    // through to the synchronous feed-backed verify/repair path below.
+    // `forceVerify` (the background deep verify itself) bypasses this so a due
+    // deep check still consults the feed off the activation path.
+    if (!options.forceVerify && latestLocalBundleVersion !== '0.0.0') {
+      if (
+        await tryHealthyLocalBundleFastPath(context, options, {
+          version: latestLocalBundleVersion,
+          versionSource: 'localLatest',
+          deepVerifyBaseUrl: effectiveBaseUrl,
+          allowFeedRefresh: true,
+          feedRefreshBaseUrl: effectiveBaseUrl,
+          useExperimentalPublicFallback: fellThroughFromExperimental,
+        })
+      ) {
+        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+        return false;
+      }
+      // Fast gate NOT ok (missing / corrupt / empty / legacy sidecar needing a
+      // byte verify) → fall through to the synchronous feed-backed verify/repair
+      // flow below so we can bootstrap or repair the bundle.
+    }
+
     let latestFeedBundleVersion = '0.0.0';
     let feedVersions: string[];
     if (fellThroughFromExperimental) {
@@ -1357,8 +2132,11 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
       return true;
     }
 
-    // Local is at least as new as the feed — verify the on-disk bundle's source MD5
-    // and re-download if it's missing or has drifted (e.g. CDN republished the same version).
+    // Local is at least as new as the feed but the fast gate did NOT pass (or
+    // there was no local bundle to gate) — verify/repair the on-disk bundle.
+    // This is the rare first-run / genuinely-broken path, so the ~40s full-byte
+    // hash + CDN HEAD is acceptable here (a healthy bundle already returned above
+    // without touching the CDN).
     if (latestLocalBundleVersion !== '0.0.0') {
       const hashCheck = await verifyLocalBundle(context, effectiveBaseUrl, latestLocalBundleVersion, options);
       context.telemetry.properties.localBundleHashCheck = hashCheck;
@@ -1472,6 +2250,9 @@ export function resetCachedBundleVersion(): void {
   lastBundleInstallResult = 'unknown';
   lastBundleInstallError = undefined;
   inFlightBundleWork = undefined;
+  healthyBundleVersion = null;
+  backgroundBundleDeepVerifyPromise = undefined;
+  backgroundBundleFeedRefreshPromise = undefined;
 }
 
 /**

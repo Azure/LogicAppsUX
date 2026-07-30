@@ -6,12 +6,10 @@ import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
-import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isTriggerNode } from '../../utils/graph';
 import {
-  castValueSegments,
   encodePathValue,
   getAndEscapeSegment,
   getEncodeValue,
@@ -60,21 +58,10 @@ import {
   getRecordEntry,
   RunAfterType,
 } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
-import { TokenType, UIConstants } from '@microsoft/designer-ui';
-import type {
-  Segment,
-  LocationSwapMap,
-  LogicAppsV2,
-  OperationManifest,
-  SubGraphDetail,
-  OperationMock,
-  AssertionDefinition,
-  Assertion,
-  UnitTestDefinition,
-} from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { UIConstants } from '@microsoft/designer-ui';
+import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
-import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
 import { isA2AWorkflow, isBuiltInMcpOperation, isManagedMcpOperation } from '../../../core/state/workflow/helper';
 
@@ -284,9 +271,9 @@ export const parseWorkflowParameterValue = (parameterType: any, parameterValue: 
         : typeof parameterValue !== 'string'
           ? parameterValue
           : JSON.parse(parameterValue);
-  } catch (error) {
-    console.log(error);
-    return undefined;
+  } catch {
+    // Return the raw value rather than undefined to avoid silently dropping parameter data
+    return parameterValue;
   }
 };
 
@@ -308,12 +295,14 @@ export const serializeOperation = async (
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   const isManagedMcpClient = isManagedMcpOperation(operation);
-  const isBuiltInMcpClient = isBuiltInMcpOperation(operation);
+  // Consumption-only: inline `inputs.Connection` (PR #8953). Standard has workflowKind set and
+  // falls through to the manifest branch, which emits `inputs.connectionReference.connectionName`.
+  const isConsumptionBuiltInMcpClient = isBuiltInMcpOperation(operation) && !rootState.workflow.workflowKind;
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
-  } else if (isBuiltInMcpClient) {
-    serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
+  } else if (isConsumptionBuiltInMcpClient) {
+    serializedOperation = await serializeConsumptionBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
@@ -554,7 +543,9 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   };
 };
 
-const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+// Consumption has no `agentMcpConnections` category, so the tool must inline
+// `inputs.Connection.{McpServerUrl,Authentication}`. Standard is routed via the manifest path.
+const serializeConsumptionBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
   if (!operationInfo) {
     throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
@@ -1022,6 +1013,13 @@ interface McpConnectionInfo {
   };
 }
 
+// Resolve the authoritative `agentMcpConnections` key from a Redux reference. Prefers connection.id's
+// last segment (which by construction matches the connections.json key) and falls back to the raw
+// referenceKey when the id is missing or produces an empty segment (e.g. trailing slash). Exported
+// for unit tests.
+export const resolveMcpConnectionName = (referenceKey: string, connectionId: string | undefined): string =>
+  connectionId?.split('/').pop() || referenceKey;
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -1101,12 +1099,14 @@ const serializeHost = (
           },
         },
       };
-    case ConnectionReferenceKeyFormat.McpConnection:
+    case ConnectionReferenceKeyFormat.McpConnection: {
+      const reference = getRecordEntry(rootState.connections.connectionReferences, referenceKey);
       return {
         connectionReference: {
-          connectionName: referenceKey,
+          connectionName: resolveMcpConnectionName(referenceKey, reference?.connection?.id),
         },
       };
+    }
     default:
       throw new AssertionException(
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
@@ -1539,22 +1539,6 @@ const removeRunAfterTriggerFromOperation = (operation: LogicAppsV2.ActionDefinit
 };
 
 /**
- * Serializes the unit test definition based on the provided root state.
- * @param {RootState} rootState The root state object containing the unit test data.
- * @returns A promise that resolves to the serialized unit test definition.
- */
-export const serializeUnitTestDefinition = async (rootState: RootState): Promise<UnitTestDefinition> => {
-  const { mockResults, assertions } = rootState.unitTest;
-  const { triggerMocks, actionMocks } = getTriggerActionMocks(mockResults);
-
-  return {
-    triggerMocks: triggerMocks,
-    actionMocks: actionMocks,
-    assertions: getAssertions(assertions),
-  };
-};
-
-/**
  * Gets the node output operations based on the provided root state.
  * @param {RootState} rootState The root state object containing the current designer state.
  * @returns A promise that resolves to the serialized unit test definition.
@@ -1568,114 +1552,4 @@ export const getNodeOutputOperations = (state: RootState) => {
     outputParameters: state.operations.outputParameters,
   };
   return outputOperations;
-};
-
-/**
- * Retrieves an array of Assertion objects based on the provided Assertion definitions.
- * @param {Record<string, AssertionDefinition>} assertions - The Assertion definitions.
- * @returns An array of Assertion objects.
- */
-const getAssertions = (assertions: Record<string, AssertionDefinition>): Assertion[] => {
-  return Object.values(assertions).map((assertion) => {
-    const { name, description, assertionString } = assertion;
-    const assertionValueSegment = createTokenValueSegment(
-      {
-        title: assertionString,
-        key: assertionString,
-        tokenType: TokenType.FX,
-        type: Constants.SWAGGER.TYPE.STRING,
-      },
-      assertionString,
-      TokenType.FX
-    );
-    const castAsertionString = castValueSegments([assertionValueSegment], false, Constants.SWAGGER.TYPE.STRING, false);
-
-    return { name, description, assertionString: castAsertionString };
-  });
-};
-
-/**
- * Parses the output of a workflow into a more structured format.
- * @param {Record<string, ValueSegment[]>} outputs - The outputs of the workflow.
- * @returns The parsed outputs in a more structured format.
- */
-const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any> => {
-  const outputValues: Record<string, any> = {};
-  for (const [key, value] of Object.entries(outputs)) {
-    if (value && value.length > 0) {
-      outputValues[key] = value[0].value;
-    }
-  }
-  return unifyOutputs(outputValues);
-};
-
-/**
- * Unifies the outputs by converting a dot-separated key-value object into a nested object.
- * @param {Record<string, any>} outputs - The dot-separated key-value object to unify.
- * @returns The unified object with nested properties.
- */
-const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
-  const result: Record<string, any> = {};
-
-  Object.keys(outputs).forEach((key) => {
-    const parts = key.split('.').filter((part) => part !== '$');
-    let currentLevel = result;
-
-    parts.forEach((part, index) => {
-      if (index === parts.length - 1) {
-        currentLevel[part] = outputs[key];
-      } else {
-        if (!currentLevel[part]) {
-          currentLevel[part] = {};
-        }
-        currentLevel = currentLevel[part];
-      }
-    });
-  });
-
-  return result;
-};
-
-/**
- * Retrieves the trigger and action mocks from the provided mock results.
- * @param {Record<string, OutputMock>} mockResults - The mock results containing the trigger and action mocks.
- * @returns An object containing the trigger mocks and action mocks.
- */
-const getTriggerActionMocks = (
-  mockResults: Record<string, OutputMock>
-): {
-  triggerMocks: Record<string, OperationMock>;
-  actionMocks: Record<string, OperationMock>;
-} => {
-  const triggerMocks: Record<string, OperationMock> = {};
-  const actionMocks: Record<string, OperationMock> = {};
-
-  Object.keys(mockResults).forEach((key) => {
-    const outputMock = mockResults[key];
-    if (outputMock) {
-      const outputsValue = parseOutputMock(outputMock.output);
-      const operationMock: OperationMock = {
-        properties: {
-          status: outputMock.actionResult,
-        },
-        ...outputsValue,
-      };
-
-      // Only add error property if errorCode or errorMessage exists
-      if (outputMock.errorCode || outputMock.errorMessage) {
-        operationMock.error = {
-          ...(outputMock.errorCode && { code: outputMock.errorCode }),
-          ...(outputMock.errorMessage && { message: outputMock.errorMessage }),
-        };
-      }
-
-      if (key.charAt(0) === '&') {
-        const triggerName = key.substring(1);
-        triggerMocks[triggerName] = operationMock;
-      } else {
-        actionMocks[key] = operationMock;
-      }
-    }
-  });
-  return { triggerMocks, actionMocks };
 };

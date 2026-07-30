@@ -162,7 +162,6 @@ const baseWorkflowState = {
   isCodeful: false,
   isLocal: true,
   kind: 'Stateful',
-  supportsUnitTest: true,
   workflowProperties: {
     callbackInfo: {
       method: 'POST',

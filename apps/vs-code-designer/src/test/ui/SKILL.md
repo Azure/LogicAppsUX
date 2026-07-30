@@ -20,7 +20,7 @@ These are the rules whose violation has caused entire test suites to be rewritte
 
 For any test that touches debug, the design-time API, the language server, the overview page, or anything that runs after a workspace opens:
 
-1. Create the workspace via the real **Create Workspace** webview in one `run-e2e.js` phase.
+1. Create the workspace via the real **Create Workspace** webview in one `run-e2e.ts` phase.
 2. After it generates the `.code-workspace`, end that VS Code session.
 3. Open a fresh phase with the generated `.code-workspace` as the `resources` argument.
 4. Wait for design-time startup evidence (e.g., `workflow-designtime/`) before any debug or designer assertion.
@@ -31,7 +31,7 @@ For any test that touches debug, the design-time API, the language server, the o
 - Pure non-Logic-App smoke tests (e.g., `nonLogicAppStartup.test.ts`).
 - Standalone-runner unit tests that explicitly do not start VS Code.
 
-**Anti-precedents in this repo**: `createLegacyProjectFixture` in `run-e2e.js` exists because it predates this rule, and the former `createCodefulProjectFixture` was deleted after Phase 4.10 moved to Create Workspace + reopen. **Do not use synthetic helpers as templates for new tests.**
+**Anti-precedents in this repo**: `createLegacyProjectFixture` in `run-e2e.ts` exists because it predates this rule, and the former `createCodefulProjectFixture` was deleted after Phase 4.10 moved to Create Workspace + reopen. **Do not use synthetic helpers as templates for new tests.**
 
 **If the wizard helper does not yet support your project type**, the correct fix is to extend `createWorkspace.test.ts`'s helper to support the new `appType`, not to synthesize a fixture. The extension already supports codeful project creation via `CreateLogicAppWorkspace.ts` -> `createCodefulWorkflowFile`, and the E2E helper now exposes that flow for Phase 4.10.
 
@@ -69,7 +69,7 @@ Run `npx biome check --write <files>` and `npx tsup --config tsup.e2e.test.confi
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
 | `src/test/ui/workspaceManifest.ts` | Shared manifest types and utilities (~110 lines) |
-| `src/test/ui/run-e2e.js` | Launcher script (~695 lines). Orchestrates ExTester programmatically. Plain JS (no compilation needed) |
+| `src/test/ui/run-e2e.ts` | Launcher script (~2600 lines). Orchestrates ExTester programmatically. Compiled by tsup to `out/test/run-e2e.js` |
 | `src/test/ui/run-clean.ps1` | PowerShell helper to kill stuck processes, compile, and run |
 | `src/test/ui/smoke.test.ts` | Extension smoke tests |
 | `src/test/ui/commands.test.ts` | Logic Apps command tests |
@@ -95,17 +95,17 @@ cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts
 
 # 3. Run all tests (Phase 4.0+)
-node src/test/ui/run-e2e.js
+node out/test/run-e2e.js
 
 # 4. Run only Phase 4.2 (designer tests) using existing workspaces
 $env:E2E_MODE="designeronly"    # PowerShell
 export E2E_MODE=designeronly    # bash
-node src/test/ui/run-e2e.js
+node out/test/run-e2e.js
 
 # 5. Run only the plain-folder startup regression test
 $env:E2E_MODE="nonlogicappstartup"  # PowerShell
 export E2E_MODE=nonlogicappstartup  # bash
-node src/test/ui/run-e2e.js
+node out/test/run-e2e.js
 
 # Or use the PowerShell helper (kills stuck processes first):
 powershell -ExecutionPolicy Bypass -File src/test/ui/run-clean.ps1
@@ -115,7 +115,7 @@ powershell -ExecutionPolicy Bypass -File src/test/ui/run-clean.ps1
 
 ```bash
 pnpm run build:ui       # Compiles test TypeScript via tsup → CJS
-pnpm run test:ui        # Runs node src/test/ui/run-e2e.js
+pnpm run test:ui        # Runs node out/test/run-e2e.js
 ```
 
 ### E2E_MODE Environment Variable
@@ -132,7 +132,7 @@ pnpm run test:ui        # Runs node src/test/ui/run-e2e.js
 **NOTE**: When running from a background terminal, run from `apps/vs-code-designer`:
 ```bash
 cd apps/vs-code-designer
-node src/test/ui/run-e2e.js
+node out/test/run-e2e.js
 ```
 
 ## 4. Architecture
@@ -197,7 +197,7 @@ The Compose action parameter panel uses a Lexical contenteditable editor, not a 
 
 ### Operational guidance from this session
 
-- If Phase 4.2 reports missing workspace paths, re-run full `run-e2e.js` (without `E2E_MODE`) to regenerate fresh Phase 4.1 outputs before retrying designer tests.
+- If Phase 4.2 reports missing workspace paths, re-run full `run-e2e.ts` (without `E2E_MODE`) to regenerate fresh Phase 4.1 outputs before retrying designer tests.
 - If settings cleanup encounters file locks, clear stale VS Code test processes and retry with the existing cleanup fallback (`settings/User` deletion path).
 - Use actions-only runs while iterating on discovery panel selectors, then promote to full Phase 4.2 once stable.
 
@@ -223,7 +223,7 @@ VS Code will auto-update our old-versioned extension (`5.110.0`) from the market
   "update.mode": "none"
 }
 ```
-And `run-e2e.js` removes any stale auto-updated versions of our extension on startup.
+And `run-e2e.ts` removes any stale auto-updated versions of our extension on startup.
 
 ### Test-Extensions Directory Structure
 
@@ -243,12 +243,12 @@ dist/test-extensions/
 ### Issue: `.obsolete` file blocks extension loading
 **Symptom**: Extension host log shows no activation for our extension. Commands don't appear in palette.
 **Cause**: VS Code writes `{"ms-azuretools.vscode-azurelogicapps-5.110.0":true}` to `.obsolete` in the extensions dir.
-**Fix**: Delete `.obsolete` after copying extension. Already handled in `run-e2e.js`.
+**Fix**: Delete `.obsolete` after copying extension. Already handled in `run-e2e.ts`.
 
 ### Issue: Extension auto-updated from marketplace
 **Symptom**: 5 command palette picks instead of expected 2-3. Errors reference `5.230.15/main.js` instead of `5.110.0`.
 **Cause**: VS Code downloads newer version from marketplace, creating duplicate extension.
-**Fix**: Set `extensions.autoUpdate: false` in VS Code settings. Remove stale versions in `run-e2e.js`.
+**Fix**: Set `extensions.autoUpdate: false` in VS Code settings. Remove stale versions in `run-e2e.ts`.
 
 ### Issue: Wrong webview opened ("Create Workspace From Package")
 **Symptom**: Webview shows "Package path" input. Tab title includes "From Package". Tests can't find expected fields.
@@ -327,13 +327,12 @@ await input.setText('logic app workspace');    // ❌ switches to file search
 
 ### Issue: Azure connector wizard blocks designer loading (FIXED)
 **Symptom**: Designer never loads for CustomCode and RulesEngine workspaces. VS Code shows QuickPick prompts that require manual intervention.
-**Cause**: When `WORKFLOWS_SUBSCRIPTION_ID` is undefined in `local.settings.json`, the extension shows two blocking QuickPick prompts:
+**Cause**: When `WORKFLOWS_SUBSCRIPTION_ID` is undefined in `local.settings.json`, the extension shows a blocking QuickPick prompt:
   1. "Enable connectors in Azure for Logic App" → "Use connectors from Azure" / "Skip for now"
-  2. "Select authentication method for Azure connectors" → "Managed Service Identity" / "Connection Keys"
-**Code path**: `getAzureConnectorDetailsForLocalProject()` in `apps/vs-code-designer/src/app/utils/codeless/common.ts` triggers `azureConnectorWizard.ts` which calls `authenticationMethodStep.ts`.
+**Code path**: `getAzureConnectorDetailsForLocalProject()` in `apps/vs-code-designer/src/app/utils/codeless/common.ts` triggers `azureConnectorWizard.ts`.
 **Fix applied (2026-02-24)**: Two-layer fix in both `designerOpen.test.ts` and `designerActions.test.ts`:
   1. `ensureLocalSettingsForDesigner(appDir)` — patches `local.settings.json` with `WORKFLOWS_SUBSCRIPTION_ID: ""` before opening the designer. Setting it to empty string (not undefined) prevents the wizard from launching.
-  2. `handleDesignerPrompts(workbench, driver)` — fallback safety net that polls for QuickPick dialogs and auto-selects "Skip for now" / "Connection Keys" if they still appear.
+  2. `handleDesignerPrompts(workbench, driver)` — fallback safety net that polls for QuickPick dialogs and auto-selects "Skip for now" if they still appear.
 **Standard workspaces** already had `WORKFLOWS_SUBSCRIPTION_ID: ""` in their `local.settings.json` (set by the creation wizard), so they were unaffected.
 
 ### Issue: Command palette fails to open in designer tests (FIXED)
@@ -377,7 +376,7 @@ await input.setText('logic app workspace');    // ❌ switches to file search
 **Symptom**: `E2E_MODE=designeronly` tests fail with "Missing workspace directories" for several workspace types.
 **Cause**: The `after()` hook in `designerOpen.test.ts` calls `cleanupAllWorkspaces()` which deletes workspace directories. If Phase 4.2 is re-run after cleanup, the workspaces no longer exist.
 **Impact**: Tests 1, 2, 6-9 fail in Phase 4.2 (workspace structure verification).
-**Fix**: Always run Phase 4.1 (createWorkspace) before Phase 4.2 to ensure fresh workspaces. The `run-e2e.js` script does this automatically when `E2E_MODE` is not set.
+**Fix**: Always run Phase 4.1 (createWorkspace) before Phase 4.2 to ensure fresh workspaces. The `run-e2e.ts` script does this automatically when `E2E_MODE` is not set.
 
 ### Issue: `openFileInEditor()` via Quick Open is unreliable
 **Symptom**: "Failed to open workflow.json" errors when using the old `InputBox`-based Quick Open approach.
@@ -654,7 +653,7 @@ They are independent. The CLI tests (`src/test/e2e/`) use `@vscode/test-cli` and
 ```json
 // In apps/vs-code-designer/package.json:
 "build:ui": "npx tsup --config tsup.e2e.test.config.ts",
-"test:ui": "node src/test/ui/run-e2e.js"
+"test:ui": "node out/test/run-e2e.js"
 ```
 
 **Note**: The build was migrated from `tsc` to `tsup` for CJS output compatibility with ExTester/Mocha. The `tsup.e2e.test.config.ts` file compiles all `src/test/ui/*.test.ts` to `out/test/*.test.js` in CommonJS format.
@@ -758,7 +757,7 @@ Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
 - **Phase separation (4.1 / 4.2)**: Allows re-running designer tests without re-creating workspaces
 - **tsup for test compilation**: Reliable CJS output; `tsc` had inconsistent module format issues
 - **Workspace manifest**: Single source of truth for workspace paths, prevents hardcoded path drift
-- **`run-e2e.js` as orchestrator**: Plain JS (no compile step needed), handles extension copying, dependency installation, process cleanup, and test execution in one script
+- **`run-e2e.ts` as orchestrator**: Plain JS (no compile step needed), handles extension copying, dependency installation, process cleanup, and test execution in one script
 - **Multi-layered process cleanup**: 6 fallback strategies for EBUSY errors; always succeeds eventually
 - **2 focused tests instead of 15+ scattered tests**: Reduced from 15+ tests (23 min, 20% pass rate) to 2 comprehensive end-to-end tests (5 min, ~80% pass rate). Each test covers the complete lifecycle.
 - **`assert.ok()` at every step**: Each step has a clear assertion with a descriptive message. No more swallowed errors in try/catch blocks.
@@ -774,7 +773,7 @@ Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
 
 ### VS Code Settings Required for Testing
 
-The `run-e2e.js` script generates these settings for the test VS Code instance:
+The `run-e2e.ts` script generates these settings for the test VS Code instance:
 
 ```json
 {
@@ -866,3 +865,78 @@ Always:
 ### Anti-precedent flag
 
 Synthetic codeful Phase 4.10 fixtures are prohibited by Rule 1 and D-001. Keep Phase 4.10 on the real Create Workspace + fresh reopen pattern; if the codeful wizard flow changes, update `createWorkspace.test.ts` helpers rather than writing project files directly to disk.
+
+## 17. Pattern: Running One Scenario for Both App Kinds (Phase 4.13 APP KIND axis)
+
+Phase 4.13 (Azurite auto-start readiness) runs the *same* scenario twice: once for a
+codeless (Standard) logic app and once for a codeful one. Use this pattern whenever a
+product code path is app-kind agnostic but the surrounding F5 flow is not.
+
+### When it is worth doing
+
+Only when the product code under test is genuinely shared AND the second kind adds an
+assertion the first cannot make. For 4.13:
+
+- `pickFuncProcessInternal` (`app/commands/pickFuncProcess.ts`) calls `activateAzurite`
+  at line 85 **unconditionally**, before `preDebugValidate` (:100), before
+  `publishCodefulProject` (:116) and before `startFuncTask` (:146). The
+  `debugConfig.isCodeless` read is at :142.
+- So a codeful F5 traverses the identical Azurite readiness code, *and* it lets 4.13B
+  assert the codeful-only property: the bounded failure happens **before** the expensive
+  publish/build.
+
+If the second kind cannot add a new assertion, do not duplicate the run — you are just
+buying CI minutes.
+
+### The mechanism
+
+1. **One env var, read at module scope, in every file of the phase group.**
+   `AZURITE_E2E_APP_KIND` = `codeless` (default) | `codeful`. `runPhase()` drops the
+   compiled test file from `require.cache` before each phase, so re-evaluating module
+   scope is what makes the gate select a different layout. Same mechanism as
+   `AZURITE_E2E_STEP` / `LA_E2E_CODEFUL_CREATE_ONLY`.
+2. **Throw on an unknown value at module scope.** Only the launcher sets it, so a typo is
+   a harness bug. Silently defaulting to `codeless` would run the covered kind twice and
+   still report green.
+3. **Disjoint on-disk layout per kind** — different workspace parent AND workspace/app
+   names (`azuritews`/`azuriteapp` vs `azuritecfws`/`azuritecfapp`). Sharing a parent
+   invites cross-kind contamination of `.code-workspace`, `workflow-designtime` and
+   `.vscode/launch.json`.
+4. **Keep the default byte-for-byte identical to the pre-existing behavior**, so an unset
+   env var reproduces the historical run exactly.
+5. **Emit a module-scope layout banner.** It prints during Mocha''s file load, so
+   `mocha --dry-run` and every CI log record which layout each phase resolved.
+6. **Launcher loops the kinds and wraps EACH kind in `withPhaseGroupRetries`**, not the
+   whole sweep — a flake in the second kind must not re-run an already-green first kind.
+   Do not double-wrap at the call site.
+
+### Kind-specific things you must not get wrong
+
+- `fillStandardFormFields` takes the **display** label (`Logic app (codeful)`), not the
+  short manifest kind (`codeful`).
+- A codeful app has **no** `workflow.json`. Verify it with `deepVerifyWorkspace(...,
+  { appType: ''codeful'' })`, which requires `<wfName>.cs`, `<appName>.csproj`,
+  `Program.cs`, `host.json`, `local.settings.json` and *fails* if a `workflow.json` exists.
+- The codeful launch config is `isCodeless: false` with **no** `preLaunchTask`
+  (`CreateLogicAppVSCodeContents.getDebugConfiguration`). Mirror what the product
+  generates; do not invent a shape.
+- Assert the kind marker: `local.settings.json` `Values.WORKFLOW_CODEFUL_ENABLED === ''true''`
+  for codeful and not-`''true''` for codeless. `hasCodefulWorkflowSetting()` is what routes
+  F5 into the codeful branch, so without this a "passing" codeful run may have silently
+  exercised the codeless path.
+- Codeful **does** produce `<app>/workflow-designtime`: `isLogicAppProject()` accepts it
+  via `hasCodefulSdkReference()`, so `startAllDesignTimeApis()` reaches
+  `ensureDesignTimeDirectory()`. Phase 4.10B already hard-asserts this. Reuse the same
+  freshness-checked design-time gate for both kinds; do not degrade it for codeful.
+
+### Asserting "it failed before the build"
+
+Assert on **build output that only a real build can produce**, and clear it immediately
+before F5 so the check is not vacuous:
+
+- `<app>/lib/codeful` is written only by the `CopyToCodefulFolder` MSBuild target
+  (`src/assets/CodefulProjectTemplate/CodefulProj`, `AfterTargets="Build;Publish"`).
+- `<app>.dll` under `<app>/bin` or `<app>/lib` is emitted only by `dotnet build`/`publish`.
+- Do **not** assert on `obj/` — a C# Dev Kit design-time evaluation legitimately writes it.
+- Treat a locked `bin`/`lib` at clear-time as a hard failure, not a skip: it means a build
+  is already running, which invalidates the premise.

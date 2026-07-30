@@ -15,6 +15,7 @@ import * as cloudToLocalUtilsModule from '../../../../utils/cloudToLocalUtils';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+import { ext } from '../../../../../extensionVariables';
 
 vi.mock('vscode', () => ({
   window: {
@@ -64,6 +65,7 @@ vi.mock('path', () => ({
 
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
+  isManagedIdentityAuthEnabled: vi.fn(() => true),
 }));
 
 // Import actual path for test setup (not affected by mock)
@@ -651,46 +653,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
   });
 });
 
-describe('getHostContent', () => {
-  it('should return host.json with correct structure', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-
-    expect(hostJson).toEqual({
-      version: '2.0',
-      logging: {
-        applicationInsights: {
-          samplingSettings: {
-            isEnabled: true,
-            excludedTypes: 'Request',
-          },
-        },
-      },
-      extensionBundle: {
-        id: expect.stringContaining('Microsoft.Azure.Functions.ExtensionBundle.Workflows'),
-        version: expect.any(String),
-      },
-    });
-  });
-
-  it('should return host.json with version 2.0', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.version).toBe('2.0');
-  });
-
-  it('should include application insights logging configuration', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.logging.applicationInsights.samplingSettings.isEnabled).toBe(true);
-    expect(hostJson.logging.applicationInsights.samplingSettings.excludedTypes).toBe('Request');
-  });
-
-  it('should include extension bundle configuration', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.extensionBundle).toBeDefined();
-    expect(hostJson.extensionBundle.id).toContain('Workflows');
-    expect(hostJson.extensionBundle.version).toBeTruthy();
-  });
-});
-
 describe('createLogicAppWorkspace', () => {
   const mockContext: IActionContext = {
     telemetry: { properties: {}, measurements: {} },
@@ -1010,7 +972,7 @@ describe('createLogicAppWorkspace', () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, true);
 
     expect(cloudToLocalUtilsModule.logicAppPackageProcessing).toHaveBeenCalled();
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished extracting package'));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Finished extracting package'));
   });
 
   it('should create function app files for custom code projects when not from package', async () => {
@@ -1057,10 +1019,10 @@ describe('createLogicAppWorkspace', () => {
     );
   });
 
-  it('should show success message after workspace creation', async () => {
+  it('should log success message after workspace creation', async () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, false);
 
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
   });
 });
 
@@ -1308,6 +1270,13 @@ describe('createLocalConfigurationFiles', () => {
     workflowName: 'TestWorkflow',
   } as any;
 
+  const mockContextCodeful: IWebviewProjectContext = {
+    workspaceName: 'TestWorkspace',
+    logicAppName: 'TestLogicApp',
+    logicAppType: ProjectType.codeful,
+    workflowName: 'TestWorkflow',
+  } as any;
+
   const logicAppFolderPath = actualPath.join('test', 'workspace', 'TestLogicApp');
 
   beforeEach(() => {
@@ -1408,10 +1377,11 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
     });
 
     // Verify no other properties exist
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(5);
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
   });
 
   it('should include global.json in .funcignore for custom code projects', async () => {
@@ -1453,11 +1423,12 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
     });
 
-    // Verify exactly 6 properties exist (5 standard + 1 feature flag)
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+    // Verify exactly 7 properties exist (5 standard + auth method + 1 feature flag)
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
   });
 
   it('should include global.json in .funcignore for rules engine projects', async () => {
@@ -1499,11 +1470,38 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
     });
 
-    // Verify exactly 6 properties exist (5 standard + 1 feature flag)
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+    // Verify exactly 7 properties exist (5 standard + auth method + 1 feature flag)
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
+  });
+
+  it('should create local.settings.json with exact required values for codeful projects', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContextCodeful, logicAppFolderPath);
+
+    const localSettingsCall = vi
+      .mocked(fsUtils.writeFormattedJson)
+      .mock.calls.find((call) => call[0].toString().includes('local.settings.json'));
+    expect(localSettingsCall).toBeDefined();
+    const localSettingsData = localSettingsCall![1] as any;
+
+    // Codeful is not a plain logic app (so it gets the multi-language worker flag) and additionally
+    // gets the codeful-enabled flag.
+    expect(localSettingsData.Values).toEqual({
+      AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+      FUNCTIONS_INPROC_NET8_ENABLED: '1',
+      FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+      APP_KIND: 'workflowapp',
+      ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+      AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
+      WORKFLOW_CODEFUL_ENABLED: 'true',
+    });
+
+    // Verify exactly 8 properties exist (5 standard + auth method + feature flag + codeful-enabled).
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(8);
   });
 
   it('should include extension bundle configuration in host.json', async () => {

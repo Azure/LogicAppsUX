@@ -1,7 +1,7 @@
 import path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
-import { autoRuntimeDependenciesPathSettingKey, localSettingsFileName, lspDirectory } from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, localSettingsFileName, lspDirectory, workflowCodefulEnabledKey } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 
@@ -31,10 +31,6 @@ export async function codefulProjectsExist(): Promise<boolean> {
  * Checks if the codeful agent is enabled for a given folder by examining the local settings file.
  * @param folderPath - The path to the folder containing the local settings file
  * @returns A promise that resolves to true if the codeful agent is enabled, false otherwise
- * @remarks
- * This function reads the local settings file (typically local.settings.json) from the specified
- * folder path and checks for the WORKFLOW_CODEFUL_ENABLED flag in the Values section.
- * Returns false if the file doesn't exist, cannot be read, or doesn't contain valid JSON.
  */
 export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boolean> => {
   const localSettingsFilePath = path.join(folderPath, localSettingsFileName);
@@ -45,18 +41,18 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
   try {
     const localSettingsData = await fse.readFile(localSettingsFilePath, 'utf-8');
     const localSettings = JSON.parse(localSettingsData);
-    return localSettings.Values?.WORKFLOW_CODEFUL_ENABLED === 'true' ? true : false;
+    return localSettings.Values?.[workflowCodefulEnabledKey] === 'true';
   } catch {
     return false;
   }
 };
 
 /**
- * Checks if the folder is a custom code functions project.
+ * Checks if the folder contains a .NET 8 project with a reference to the codeful SDK.
  * @param {string} folderPath - The folder path.
- * @returns {Promise<boolean>} Returns true if the folder is a custom code functions project, otherwise false.
+ * @returns {Promise<boolean>} Returns true if the folder contains a .NET 8 project with a reference to the codeful SDK, otherwise false.
  */
-export const isCodefulProject = async (folderPath: string): Promise<boolean> => {
+export const hasCodefulSdkReference = async (folderPath: string): Promise<boolean> => {
   try {
     if (!fse.statSync(folderPath).isDirectory()) {
       return false;
@@ -79,11 +75,11 @@ export const isCodefulProject = async (folderPath: string): Promise<boolean> => 
  * when the VSIX ships changed nupkg bits with the same package ID/version.
  */
 export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Promise<boolean> => {
-  if (!(await isCodefulProject(projectPath))) {
+  if (!(await hasCodefulWorkflowSetting(projectPath))) {
     return false;
   }
 
-  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey) || defaultDependencyPathValue;
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
   const installedSdkHashMarkerPath = path.join(targetDirectory, lspSdkHashMarkerName);

@@ -161,7 +161,7 @@ describe('validateAndInstallBinaries', () => {
     await validateAndInstallBinaries(context);
 
     expect(context.telemetry.properties).toMatchObject({
-      lastStep: 'validateNodeJsIsLatest',
+      lastStep: 'validateDependencies',
       dependenciesError: 'Node validation failed',
     });
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(

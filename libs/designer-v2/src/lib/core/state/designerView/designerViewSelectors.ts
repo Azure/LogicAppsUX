@@ -33,12 +33,6 @@ export const useIsAgenticWorkflow = () => {
   return equals(workflowKind, 'agentic', true) || equals(workflowKind, 'stateful', true);
 };
 
-// Temporary hook for backwards compatibility with agentic wf, TODO: delete once stateful is merged in
-export const useIsAgenticWorkflowOnly = () => {
-  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
-  return equals(workflowKind, 'agentic', true);
-};
-
 const selectIsA2AWorkflow = createSelector(
   (state: RootState) => state.workflow,
   (workflow) => isA2AWorkflow(workflow)

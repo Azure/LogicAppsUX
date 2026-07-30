@@ -24,7 +24,6 @@
 export { useIntlMessages, useIntlFormatters } from './useIntlMessages';
 export {
   commonMessages,
-  unitTestMessages,
   workspaceMessages,
   exportMessages,
   designerMessages,

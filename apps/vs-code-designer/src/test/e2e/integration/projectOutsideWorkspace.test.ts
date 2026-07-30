@@ -383,22 +383,4 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
     assert.ok(error.message.includes('workspace open'), 'Error message should mention workspace requirement');
     assert.strictEqual(error.message, errorMessage, 'Error message should match expected text');
   });
-
-  // -------------------------------------------------------
-  // Tests: unit test commands outside workspace
-  // -------------------------------------------------------
-
-  test('Should produce correct "unit test requires workspace" message', () => {
-    // Mirrors the message in editUnitTest.ts / openUnitTestResults.ts
-    const expectedMessage = 'In order to create unit tests, you must have a workspace open.';
-    assert.ok(expectedMessage.includes('unit tests'), 'Message should mention unit tests');
-    assert.ok(expectedMessage.includes('workspace open'), 'Message should mention workspace requirement');
-  });
-
-  test('Should produce correct "run unit test requires workspace" message', () => {
-    // Mirrors the message in runUnitTest.ts
-    const expectedMessage = 'In order to run unit tests, you must have a workspace open.';
-    assert.ok(expectedMessage.includes('run unit tests'), 'Message should mention running unit tests');
-    assert.ok(expectedMessage.includes('workspace open'), 'Message should mention workspace requirement');
-  });
 });

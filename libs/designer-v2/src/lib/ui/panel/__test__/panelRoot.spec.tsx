@@ -57,10 +57,6 @@ vi.mock('../errorsPanel/errorsPanel', () => ({
   ErrorsPanel: () => React.createElement('div', { 'data-testid': 'errors-panel' }, 'Errors Panel'),
 }));
 
-vi.mock('../assertionsPanel/assertionsPanel', () => ({
-  AssertionsPanel: () => React.createElement('div', { 'data-testid': 'assertions-panel' }, 'Assertions Panel'),
-}));
-
 vi.mock('../recommendation/recommendationPanelContext', () => ({
   RecommendationPanelContext: () => React.createElement('div', { 'data-testid': 'recommendation-panel' }, 'Recommendation Panel'),
 }));
@@ -187,14 +183,6 @@ describe('PanelRoot', () => {
     render(<PanelRoot {...defaultProps} />, { wrapper: createWrapper() });
 
     expect(screen.getByTestId('errors-panel')).toBeDefined();
-  });
-
-  test('should render AssertionsPanel when mode is Assertions', () => {
-    mockUseCurrentPanelMode.mockReturnValue('Assertions');
-
-    render(<PanelRoot {...defaultProps} />, { wrapper: createWrapper() });
-
-    expect(screen.getByTestId('assertions-panel')).toBeDefined();
   });
 
   test('should render NodeSearchDialog in a Dialog when mode is NodeSearch', () => {

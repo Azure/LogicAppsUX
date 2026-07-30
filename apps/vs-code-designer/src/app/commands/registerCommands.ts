@@ -48,10 +48,10 @@ import { stopLogicApp } from './stopLogicApp';
 import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
 import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
-import { enableAzureConnectors } from './workflows/enableAzureConnectors';
+import { enableAzureConnectors } from './azureConnectors/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
-import { openDesigner } from './workflows/openDesigner/openDesigner';
-import { openOverview } from './workflows/openOverview';
+import { openDesigner } from './workflows/designer/openDesigner';
+import { openOverview } from './workflows/overview/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject';
@@ -69,7 +69,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
+import { pickCustomCodeNetHostProcess } from './pickCustomCodeWorkerProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/debug';
@@ -78,8 +78,9 @@ import { switchToDataMapperV2 } from './setDataMapperVersion';
 import { reportAnIssue } from '../utils/reportAnIssue';
 import { localize } from '../../localize';
 import { guid } from '@microsoft/logic-apps-shared';
-import { openLanguageServerConnectionView } from './workflows/languageServer/connectionView';
+import { openConnectionView } from './workflows/connectionView/openConnectionView';
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
+import { toggleDesignTimeNodeWorker } from './toggleDesignTimeNodeWorker';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -90,7 +91,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createProject, createNewProject);
   registerCommand(extensionCommand.createWorkspace, createWorkspace);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
-  registerCommand(extensionCommand.createWorkflow, createWorkflow);
+  registerCommand(extensionCommand.createWorkflow, (context: IActionContext, uri: vscode.Uri) => createWorkflow(context, uri));
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
@@ -111,6 +112,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.reviewValidation, reviewValidation);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProjectCommand);
+  registerCommand(extensionCommand.toggleDesignTimeNodeWorker, toggleDesignTimeNodeWorker);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openInPortal, openInPortal);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.browseWebsite, browseWebsite);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewProperties, viewProperties);
@@ -160,18 +162,20 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
-  // Data Mapper Commands
+
+  // Data Mapper
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: vscode.Uri) => loadDataMapFileCmd(context, uri));
-  // Custom code commands
+
+  // Custom code
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
   registerCommand(extensionCommand.enableDevContainer, enableDevContainer);
 
-  // Language server protocol
-  registerCommand(extensionCommand.openLanguageServerConnectionView, openLanguageServerConnectionView);
+  // Connections
+  registerCommand(extensionCommand.openLanguageServerConnectionView, openConnectionView);
 
   // Error handler
   registerErrorHandler((errorContext: IErrorHandlerContext): void => {
@@ -179,6 +183,34 @@ export function registerCommands(): void {
     errorContext.errorHandling.suppressReportIssue = true;
     const errorData: IParsedError = parseError(errorContext.error);
     const correlationId = guid();
+
+    // Diagnostic: log raw error details for debugging opaque errors like "Error: {}"
+    if (errorData.message === '{}' || errorData.message === 'Unknown Error') {
+      const rawError = errorContext.error;
+      const diagnosticInfo = {
+        callbackId: errorContext.callbackId,
+        type: typeof rawError,
+        constructor: rawError?.constructor?.name,
+        message: rawError?.message,
+        keys: rawError ? Object.keys(rawError) : [],
+        stringified: (() => {
+          try {
+            return JSON.stringify(rawError);
+          } catch {
+            return '<circular>';
+          }
+        })(),
+        fullStack: rawError?.stack,
+      };
+      ext.outputChannel.appendLog(
+        `[Error Diagnostics] Raw error producing "${errorData.message}": ${JSON.stringify(diagnosticInfo, null, 2)}`
+      );
+
+      // Suppress display of opaque internal errors that provide no useful info to users
+      if (errorData.message === '{}') {
+        errorContext.errorHandling.suppressDisplay = true;
+      }
+    }
 
     if (errorContext.error instanceof UserCancelledError) {
       errorContext.errorHandling.suppressDisplay = true;

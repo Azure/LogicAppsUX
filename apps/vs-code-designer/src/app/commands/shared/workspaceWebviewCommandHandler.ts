@@ -55,6 +55,7 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
   const options: vscode.WebviewOptions & vscode.WebviewPanelOptions = {
     enableScripts: true,
     retainContextWhenHidden: true,
+    localResourceRoots: [vscode.Uri.file(path.join(ext.context.extensionPath, 'vs-code-react'))],
   };
 
   const panel = vscode.window.createWebviewPanel('CreateWorkspace', panelName, vscode.ViewColumn.Active, options);
@@ -70,39 +71,24 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
   // Standard message handlers
   const messageHandlers = {
     [ExtensionCommand.initialize]: async () => {
+      const initData = {
+        apiVersion,
+        project: projectName,
+        hostVersion: ext.extensionVersion,
+        separator: path.sep,
+        platform: os.platform(),
+        ...extraInitializeData,
+      };
+      ext.outputChannel.appendLog(
+        `[WebviewInit] Sending initialize_frame for ${projectName}. existingFolders=${JSON.stringify(initData.existingFolders ?? 'NOT_SET')}`
+      );
       panel.webview.postMessage({
         command: ExtensionCommand.initialize_frame,
-        data: {
-          apiVersion,
-          project: projectName,
-          hostVersion: ext.extensionVersion,
-          separator: path.sep,
-          platform: os.platform(),
-          ...extraInitializeData,
-        },
+        data: initData,
       });
     },
 
     [createCommand]: async (message: any) => {
-      // Log diagnostic data sent from webview if available
-      if (message?._diagnostics) {
-        ext.outputChannel.appendLog(`[CreateWorkspace Diagnostics] ${JSON.stringify(message._diagnostics, null, 2)}`);
-      }
-
-      // Log received message data for debugging
-      const receivedDiagnostics = {
-        command: createCommand,
-        timestamp: new Date().toISOString(),
-        hasMessageData: !!message?.data,
-        messageDataType: typeof message?.data,
-        messageDataKeys: message?.data ? Object.keys(message.data) : [],
-        workspaceProjectPath: message?.data?.workspaceProjectPath,
-        workspaceName: message?.data?.workspaceName,
-        logicAppName: message?.data?.logicAppName,
-        logicAppType: message?.data?.logicAppType,
-      };
-      ext.outputChannel.appendLog(`[CreateWorkspace Handler] ${JSON.stringify(receivedDiagnostics, null, 2)}`);
-
       if (isCreateInProgress) {
         return;
       }

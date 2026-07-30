@@ -14,11 +14,11 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
+import { getGlobalSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
 import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
-import type { IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { type IWorkerRuntime, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -92,24 +92,60 @@ function getProjectTemplateKey(targetFramework: string, isIsolated: boolean): st
  * Gets property in project file.
  * @param {ProjectFile} projFile - File.
  * @param {string} property - Property key name.
- * @returns {Promise<string>} Property value.
+ * @returns {Promise<string | undefined>} Property value.
  */
-async function getPropertyInProjFile(projFile: ProjectFile, property: string): Promise<string> {
+async function tryGetPropertyInProjFile(projFile: ProjectFile, property: string): Promise<string | undefined> {
   const regExp = new RegExp(`<${property}>(.*)<\\/${property}>`);
   const matches: RegExpMatchArray | null = (await projFile.getContents()).match(regExp);
   if (!matches) {
-    throw new Error(localize('failedToFindProp', 'Failed to find "{0}" in project file "{1}".', property, projFile.name));
+    return undefined;
   }
   return matches[1];
 }
 
 /**
- * Gets target framework property in project file.
- * @param {ProjectFile} projFile - File.
- * @returns {Promise<string>} Property value.
+ * Attempts to read the target framework from the first .csproj/.fsproj in the folder.
+ * @param {string} projectPath - The logic app project path.
+ * @returns {Promise<TargetFramework | undefined>} The target framework or undefined if not found.
  */
-export async function getTargetFramework(projFile: ProjectFile): Promise<string> {
-  return await getPropertyInProjFile(projFile, 'TargetFramework');
+export async function tryGetTargetFramework(projectPath: string): Promise<TargetFramework | undefined> {
+  const files = fs.readdirSync(projectPath);
+  const projFileName = files.find((f) => (f.endsWith('.csproj') || f.endsWith('.fsproj')) && f.toLowerCase() !== 'extensions.csproj');
+  if (projFileName) {
+    return await getTargetFramework(new ProjectFile(projFileName, projectPath));
+  }
+  return undefined;
+}
+
+/**
+ * Gets target framework property in project file.
+ * @param {ProjectFile} projFile - The .csproj or .fsproj file.
+ * @returns {Promise<TargetFramework>} The target framework.
+ */
+export async function getTargetFramework(projFile: ProjectFile): Promise<TargetFramework> {
+  const targetFramework = await tryGetPropertyInProjFile(projFile, 'TargetFramework');
+  if (!targetFramework) {
+    throw new Error(localize('targetFrameworkNotFound', 'Failed to parse TargetFramework in project file "{1}".', projFile.name));
+  }
+  return targetFramework as TargetFramework;
+}
+
+/**
+ * Gets the .NET runtime from target framework.
+ * @param {TargetFramework} targetFramework - The target framework.
+ * @returns {'coreclr' | 'clr'} The .NET runtime.
+ */
+export function getDotnetRuntimeFromFramework(targetFramework: TargetFramework): 'coreclr' | 'clr' {
+  return targetFramework === TargetFramework.NetFx ? 'clr' : 'coreclr';
+}
+
+/**
+ * Gets the .NET runtime from Func version.
+ * @param {FuncVersion} funcVersion - The Func version.
+ * @returns {'coreclr' | 'clr'} The .NET runtime.
+ */
+export function getDotnetRuntimeFromFunc(funcVersion: FuncVersion): 'coreclr' | 'clr' {
+  return funcVersion === FuncVersion.v1 ? 'clr' : 'coreclr';
 }
 
 /**
@@ -174,11 +210,7 @@ export function getDotnetDebugSubpath(targetFramework: string): string {
  * @returns {Promise<string | undefined>} Property value.
  */
 export async function tryGetFuncVersion(projFile: ProjectFile): Promise<string | undefined> {
-  try {
-    return await getPropertyInProjFile(projFile, 'AzureFunctionsVersion');
-  } catch {
-    return undefined;
-  }
+  return await tryGetPropertyInProjFile(projFile, 'AzureFunctionsVersion');
 }
 
 export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string {
@@ -207,7 +239,7 @@ export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): 
     const sdkFolders = files.filter((file) => file.isDirectory()).map((file) => file.name);
     const version = semver.maxSatisfying(sdkFolders, `~${majorVersion}`);
     if (version !== null) {
-      await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
+      ext.outputChannel.appendLog(`Local binary .NET SDK version ${version}`);
       return version;
     }
   }
@@ -242,30 +274,36 @@ export async function setDotNetCommand(): Promise<void> {
 
     try {
       const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
-      for (const projectPath of workspaceLogicAppFolders) {
+      if (workspaceLogicAppFolders.length > 0) {
         const pathEnv = {
           PATH: newPath,
         };
 
+        // These point at machine-local binary paths, so they belong in the user's global
+        // settings rather than the shared .code-workspace file (which is committed to the repo).
         // Required for dotnet cli in VSCode Terminal
         switch (process.platform) {
           case Platform.windows: {
-            await updateWorkspaceSetting('integrated.env.windows', pathEnv, projectPath, 'terminal');
+            await updateGlobalSetting('integrated.env.windows', pathEnv, 'terminal');
+            await removeSharedSetting('integrated.env.windows', 'terminal');
             break;
           }
 
           case Platform.linux: {
-            await updateWorkspaceSetting('integrated.env.linux', pathEnv, projectPath, 'terminal');
+            await updateGlobalSetting('integrated.env.linux', pathEnv, 'terminal');
+            await removeSharedSetting('integrated.env.linux', 'terminal');
             break;
           }
 
           case Platform.mac: {
-            await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
+            await updateGlobalSetting('integrated.env.osx', pathEnv, 'terminal');
+            await removeSharedSetting('integrated.env.osx', 'terminal');
             break;
           }
         }
         // Required for CoreClr
-        await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], projectPath, 'omnisharp');
+        await updateGlobalSetting('dotNetCliPaths', [dotNetBinariesPath], 'omnisharp');
+        await removeSharedSetting('dotNetCliPaths', 'omnisharp');
       }
     } catch (error) {
       console.log(error);

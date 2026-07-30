@@ -17,7 +17,7 @@ Portal, VS Code, and standalone environments.
 - `McpDataProvider`, `McpWizardProvider` — MCP resource integration
 - `KnowledgeDataProvider`, `KnowledgeWizardProvider` — Knowledge management
 - `ConfigureTemplateDataProvider` — Template configuration
-- Serialization: `serializeWorkflow`, `serializeBJSWorkflow`, `serializeUnitTestDefinition`
+- Serialization: `serializeWorkflow`, `serializeBJSWorkflow`
 - Redux stores (`store`, `mcpStore`, `templateStore`), hooks, and selectors
 
 ## Architecture
@@ -34,7 +34,6 @@ Redux Toolkit with feature-based slices (14 core slices + feature-specific):
 - `tokensSlice` — Expression token state
 - `workflowparametersSlice` — Workflow-level parameter definitions and validation
 - `staticresultsSlice` — Static test result schemas
-- `unitTestSlice` — Unit test definitions and assertions
 - `customcodeSlice` — Custom code file management
 - `undoRedoSlice` — Undo/redo history stack
 - `modalSlice` — Modal dialog state
@@ -67,7 +66,7 @@ Graph node type implementations for the React Flow canvas:
 
 ### UI Layer (ui/)
 - `ui/panel/` — Side panels (node details, parameters, monitoring, templates,
-  agent chat, assertions, connections, errors, run history, workflow parameters)
+  agent chat, connections, errors, run history, workflow parameters)
 - `ui/connections/` — Connection selection and configuration UI
 - `ui/settings/` — Operation settings tabs
 - `ui/templates/` — Template gallery and wizard

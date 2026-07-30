@@ -6,40 +6,61 @@
 /**
  * Phase 4.10: Codeful debug F5 task-event regression test.
  *
- * Guards against the "double clean+build" regression where pressing F5 on a
- * codeful Logic App ran:
- *   - `pickFuncProcessInternal` → `publishCodefulProject` (`clean release` → `publish` Release)
- * AND
- *   - `startFuncTask` → `func: host start` (`dependsOn: build` → `dependsOn: clean` → `clean` → `build` Debug)
+ * Guards two related codeful debug regressions:
  *
- * For modern codeful project templates (commit `8b1bd1764`, 2025-11-11) the
- * `CopyToCodefulFolder` and `ReplaceLanguageNetCore` MSBuild targets carry
- * `AfterTargets="Build;Publish"`. A Debug `Build` alone populates `lib/codeful/`,
- * so the explicit Release `publish` is redundant. Legacy templates with
- * `AfterTargets="Publish"` still need the explicit publish (otherwise
- * `listCallbackUrl` and `runs` APIs return 404).
+ * 1. "Double clean+build": pressing F5 on a codeful Logic App used to run
+ *    `pickFuncProcessInternal` → `publishCodefulProject` (`clean release` →
+ *    `publish` Release) AND `startFuncTask` → `func: host start`
+ *    (`dependsOn: build` → `dependsOn: clean` → `clean` → `build` Debug).
+ *    For modern codeful project templates (commit `8b1bd1764`, 2025-11-11) the
+ *    `CopyToCodefulFolder` and `ReplaceLanguageNetCore` MSBuild targets carry
+ *    `AfterTargets="Build;Publish"`. A Debug `Build` alone populates
+ *    `lib/codeful/`, so the explicit Release `publish` is redundant. Legacy
+ *    templates with `AfterTargets="Publish"` still need the explicit publish
+ *    (otherwise `listCallbackUrl` and `runs` APIs return 404). The fix in
+ *    `pickFuncProcess.ts` passes `{ skipIfBuildPopulatesCodeful: true }` to
+ *    `publishCodefulProject`, which inspects the `.csproj` and skips publish
+ *    only when both targets hook `Build`.
  *
- * The fix in `pickFuncProcess.ts:99` passes
- *   `{ skipIfBuildPopulatesCodeful: true }`
- * to `publishCodefulProject`. The implementation inspects the project's
- * `.csproj` and skips publish only when both targets hook `Build`.
+ * 2. "lib/codeful file lock" (MSB3026): the codeful design-time host used to run
+ *    the in-process .NET 8 worker (`FUNCTIONS_WORKER_RUNTIME=dotnet` +
+ *    `FUNCTIONS_INPROC_NET8_ENABLED=true`, introduced by #9410). That worker
+ *    loads the compiled workflow assemblies out of `lib/codeful` and on Windows
+ *    locks those DLLs. Pressing F5 rebuilds the project and the
+ *    `CopyToCodefulFolder` target must overwrite `lib/codeful`; that copy failed
+ *    with MSB3026 ("the file is locked by .NET Host"). The fix (Option B) forces
+ *    the codeful design-time host onto the **Node** worker, which never loads the
+ *    project's .NET assemblies, so it can never lock `lib/codeful` — no per-debug
+ *    kill/restart of the design-time host is needed. This test asserts the
+ *    codeful design-time `local.settings.json` uses `FUNCTIONS_WORKER_RUNTIME=node`
+ *    with no `FUNCTIONS_INPROC_NET8_ENABLED` (a deterministic, cross-platform
+ *    signal that runs on the existing ubuntu CI) and that the F5 Debug `build`
+ *    still exits 0; a dotnet/in-proc-net8 design-time worker or a non-zero `build`
+ *    exit is the regression signal.
  *
  * This test:
  *   1. Boots VS Code with a real codeful workspace created by Phase 4.10A's
  *      Create Workspace webview session and reopened via `.code-workspace`.
- *   2. Triggers F5 via the `la-e2e.startDebug` command contributed by the
+ *   2. Waits for the design-time host to start and asserts its
+ *      `local.settings.json` selected the Node worker.
+ *   3. Triggers F5 via the `la-e2e.startDebug` command contributed by the
  *      bundled `codefulTaskRecorderExtension`. The recorder also subscribes
  *      to all `vscode.tasks.*` events and appends them as JSON lines to a file
  *      pointed to by `process.env.LA_E2E_TASK_EVENTS_JSONL` /
  *      `process.env.CODEFUL_TASK_EVENTS_JSONL`.
- *   3. Waits for the Debug `build` task to end.
- *   4. Stops debug.
- *   5. Reads the JSONL, filters by `scopeFsPath === <codeful project>`,
- *      and asserts the expected task pattern per variant.
+ *   4. Waits for the Debug `build` task to end.
+ *   5. Stops debug.
+ *   6. Reads the JSONL, filters by `scopeFsPath === <codeful project>`,
+ *      and asserts the expected task pattern per variant, including
+ *      `build` exiting 0 (the file-lock guard).
  *
- * The negative control: temporarily reverting the fix in `pickFuncProcess.ts`
- * (calling `publishCodefulProject` without options) makes the modern-template
- * `it` block fail with `publish start events = 1` instead of `0`.
+ * The negative controls:
+ *   - Reverting the publish-skip fix (`publishCodefulProject` without options)
+ *     makes the modern-template `it` block fail with `publish start events = 1`.
+ *   - Reverting the Node-worker fix (codeful design-time back on dotnet + in-proc
+ *     .NET 8) makes the `FUNCTIONS_WORKER_RUNTIME=node` assertion fail, and on
+ *     Windows makes `build` exit non-zero (MSB3026) because the design-time host
+ *     holds `lib/codeful` locks.
  *
  * Notes on flakiness:
  *   - `func: host start` may exit non-zero on machines without a working
@@ -53,8 +74,9 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { EditorView, VSBrowser, type WebDriver } from 'vscode-extension-tester';
+import { EditorView, VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
 import { captureScreenshot, sleep } from './helpers';
+import { openWorkspaceFileInSession, waitForDependencyValidation } from './designerHelpers';
 
 const TEST_TIMEOUT = 1500_000;
 
@@ -74,13 +96,54 @@ const SCREENSHOT_DIR = path.join(
 );
 
 interface TaskEvent {
-  phase: 'activate' | 'taskStart' | 'taskEnd' | 'processStart' | 'processEnd' | 'ping' | 'debugStart' | 'debugStarted' | 'debugStartFailed';
+  phase:
+    | 'activate'
+    | 'taskStart'
+    | 'taskEnd'
+    | 'processStart'
+    | 'processEnd'
+    | 'ping'
+    | 'debugStart'
+    | 'debugInvoke'
+    | 'debugStarted'
+    | 'debugStartFailed';
   taskName: string;
   scopeFsPath: string | null;
   processId: number | null;
   exitCode: number | null;
   timestamp: string;
 }
+
+/** Recorder phases that prove F5 got past `resolveDebugConfiguration` and reached `executeTask`. */
+const TASK_ACTIVITY_PHASES = new Set(['taskStart', 'taskEnd', 'processStart', 'processEnd']);
+
+/**
+ * How long `vscode.debug.startDebugging` may sit with neither `debugStarted` nor
+ * `debugStartFailed` following it — and with no task activity at all — before we fail fast
+ * instead of burning the full 12-minute `waitForTaskChain` budget and reporting the
+ * misleading "F5 never reached the codeful task chain".
+ *
+ * ANCHOR — `debugInvoke`, not `debugStart`. The recorder appends `debugInvoke` immediately
+ * after `waitForLogicAppsExtension()` resolves and immediately before it calls
+ * `vscode.debug.startDebugging`, so this window measures the `startDebugging` call and
+ * nothing else. `debugStart` is written when the trigger file is consumed, i.e. BEFORE the
+ * recorder's bounded 360 s command-registration wait, so anchoring there made the real
+ * grace `threshold - registrationLatency`: with a 360 s + 60 s threshold a 355 s
+ * registration left only 65 s of grace and failed working code. Registration latency now
+ * lands entirely before the anchor and cannot squeeze the window.
+ *
+ * BUDGET — 600 s, the documented worst case for the first task event. SKILL.md's Phase 4.10
+ * wire-up checklist (item 9) records that `vscode.tasks.fetchTasks()` activates and awaits
+ * every task-type provider, so the first `taskStart` can arrive 4-10 minutes after
+ * `startDebugging` is called. The `modern` variant is the worst case: `publishCodefulProject`
+ * is skipped by design, so there is genuinely zero task activity until `fetchTasks()`
+ * returns. Anything below 600 s can fail a healthy modern run.
+ *
+ * The `debugStartFailed` early-bail above still covers the registration-timeout case — the
+ * recorder always writes `debugStartFailed` when its 360 s wait expires, and in that case no
+ * `debugInvoke` is ever written, so this guard stays disarmed.
+ */
+const DEBUG_INVOKE_HANG_TIMEOUT_MS = 600_000;
 
 function getWorkspaceDir(envVar: string): string {
   const value = process.env[envVar];
@@ -122,6 +185,32 @@ function normalizeFsPath(value: string | null | undefined): string {
     return '';
   }
   return path.normalize(value).toLowerCase();
+}
+
+/**
+ * Epoch-ms timestamp of the LAST event of `phase`, or undefined when the log has none or
+ * carries an unparseable `timestamp`.
+ *
+ * Uses the event's own `timestamp` rather than the reader's `Date.now()`, so the anchor is
+ * the moment the extension host actually reached that point instead of the moment this
+ * poll happened to notice it. Both clocks are the same machine's system clock, so the two
+ * are directly comparable.
+ *
+ * Returning undefined disarms the hang guard, which is the safe direction on both counts:
+ * a recorded log written by a recorder build that predates the `debugInvoke` phase (or one
+ * where the append failed) must never be able to fail a run, and a real hang is still
+ * caught by `waitForTaskChain`'s own deadline plus the "F5 never reached the codeful task
+ * chain" assertion. Taking the LAST occurrence is deliberate: it is the most recent — and
+ * therefore longest-grace — anchor, so a retried F5 can never shorten the window.
+ */
+function lastEventTimeMs(events: TaskEvent[], phase: TaskEvent['phase']): number | undefined {
+  for (let index = events.length - 1; index >= 0; index--) {
+    if (events[index].phase === phase) {
+      const parsed = Date.parse(events[index].timestamp);
+      return Number.isFinite(parsed) ? parsed : undefined;
+    }
+  }
+  return undefined;
 }
 
 function truncateEventsFile(): void {
@@ -177,6 +266,8 @@ interface WaitResult {
   publishEnded: boolean;
   funcHostStarted: boolean;
   timedOut: boolean;
+  /** `vscode.debug.startDebugging` was dispatched but never settled — see DEBUG_INVOKE_HANG_TIMEOUT_MS. */
+  debugStartHung: boolean;
 }
 
 async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: string, timeoutMs: number): Promise<WaitResult> {
@@ -190,15 +281,42 @@ async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: st
     const funcHostStarted = matchScope.some((e) => e.phase === 'taskStart' && e.taskName === 'func: host start');
     const expectedChainEnded = variant === 'legacy' ? buildEnded && publishEnded && funcHostStarted : buildEnded && funcHostStarted;
     if (expectedChainEnded) {
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: false };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: false, debugStartHung: false };
     }
     if (events.some((e) => e.phase === 'debugStartFailed')) {
       console.log('[codefulDebugTasks] waitForTaskChain: debugStartFailed event observed, bailing out');
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: true };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: false };
+    }
+
+    // Hang guard: the recorder logged `debugInvoke` (it is inside
+    // `vscode.debug.startDebugging`) but nothing ever came back — no `debugStarted`, no
+    // `debugStartFailed`, and not a single task event from any scope. A healthy run
+    // produces task activity (clean/build) well within the documented worst-case
+    // `fetchTasks()` window, so this combination only happens when the F5 pre-debug path
+    // is blocked on a modal. Fail fast instead of waiting out the full timeout.
+    //
+    // Every clause is a disarming clause: no `debugInvoke` (older recorder artifact, or the
+    // append failed) disarms it, any `debugStarted` disarms it, and a single task event
+    // from any scope disarms it permanently.
+    const debugInvokeAt = lastEventTimeMs(events, 'debugInvoke');
+    const debugStartSettled = events.some((e) => e.phase === 'debugStarted' || e.phase === 'debugStartFailed');
+    const sawTaskActivity = events.some((e) => TASK_ACTIVITY_PHASES.has(e.phase));
+    if (
+      debugInvokeAt !== undefined &&
+      !debugStartSettled &&
+      !sawTaskActivity &&
+      Date.now() - debugInvokeAt >= DEBUG_INVOKE_HANG_TIMEOUT_MS
+    ) {
+      console.log(
+        `[codefulDebugTasks] waitForTaskChain: vscode.debug.startDebugging invoked ${Math.round(
+          (Date.now() - debugInvokeAt) / 1000
+        )}s ago with no debugStarted/debugStartFailed and no task activity — treating it as hung`
+      );
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: true };
     }
     await sleep(1000);
   }
-  return { buildEnded: false, publishEnded: false, funcHostStarted: false, timedOut: true };
+  return { buildEnded: false, publishEnded: false, funcHostStarted: false, timedOut: true, debugStartHung: false };
 }
 
 async function waitForDesignTimeEvidence(workspaceScope: string, notBeforeMs: number, timeoutMs = 180_000): Promise<boolean> {
@@ -213,6 +331,29 @@ async function waitForDesignTimeEvidence(workspaceScope: string, notBeforeMs: nu
   }
   console.log(`[codefulDebugTasks] Design-time evidence not found within ${timeoutMs}ms: ${designTimeDir}`);
   return false;
+}
+
+/**
+ * Reads the codeful design-time `workflow-designtime/local.settings.json` and returns its `Values`
+ * map, or null when the file is missing / unparseable. Cross-platform: the Option B fix forces the
+ * codeful design-time host onto the Node worker (never in-process .NET 8), so the regression signal
+ * is now the worker runtime recorded here rather than a Windows-only `lib/codeful` file lock. Never
+ * throws — a missing/unreadable file is logged and reported as null so callers can assert on it.
+ */
+function readDesignTimeValues(projectDir: string): Record<string, string> | null {
+  const settingsPath = path.join(projectDir, 'workflow-designtime', 'local.settings.json');
+  if (!fs.existsSync(settingsPath)) {
+    console.log(`[codefulDebugTasks] Design-time settings not found: ${settingsPath}`);
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+    return (parsed?.Values ?? {}) as Record<string, string>;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.log(`[codefulDebugTasks] Failed to parse design-time settings ${settingsPath}: ${message}`);
+    return null;
+  }
 }
 
 interface ScenarioSummary {
@@ -300,21 +441,70 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     const workspaceFile = getWorkspaceForVariant(variant);
     console.log(`[codefulDebugTasks] Startup .code-workspace: ${workspaceFile}`);
 
-    // The generated .code-workspace is passed as the runPhase startup resource.
-    // Re-verify the recorder after workspace activation before triggering F5.
-    const ready = await waitForRecorder(driver, 60_000);
+    // Freshness watermark for design-time evidence. Anchored in run-e2e.js right after the
+    // stale folder is cleared and before launch (env var), so a folder created during the
+    // before() hook (Windows) or after the explicit workspace open (Linux) both count as
+    // fresh. Falls back to a local estimate only if the env var is missing.
+    const notBeforeEnv = Number(process.env.LA_E2E_CODEFUL_EVIDENCE_NOT_BEFORE);
+    const phaseStartTime = Number.isFinite(notBeforeEnv) && notBeforeEnv > 0 ? notBeforeEnv : Date.now() - 1000;
+
+    // Explicitly open the generated .code-workspace after launch. ExTester's startup
+    // `resources` (which uses `code -r` / CLI IPC) silently fails on headless CI: the VS Code
+    // IPC socket isn't wired up when launched via ChromeDriver, so VS Code lands on the empty
+    // Welcome screen with NO workspace folder open. With no folder open,
+    // getWorkspaceLogicAppFolders() is empty, codeful design-time auto-start correctly no-ops,
+    // and no `workflow-designtime` evidence is ever produced — exactly the failure the CI
+    // screenshots showed. Opening via the command palette (the same proven path the codeless
+    // designer phases use) makes the workspace load deterministically so codeful onboarding
+    // auto-start can fire. No-ops when the workspace is already open (e.g. on Windows).
+    await openWorkspaceFileInSession(new Workbench(), workspaceFile);
+
+    // Re-verify the recorder after the workspace open reloads the extension host.
+    const ready = await waitForRecorder(driver, 90_000);
     if (!ready) {
       throw new Error('[codefulDebugTasks] Recorder not ready after workspace switch');
     }
 
-    const phaseStartTime = Date.now() - 1000;
     const designTimeReady = await waitForDesignTimeEvidence(workspaceDir, phaseStartTime);
     if (!designTimeReady) {
       await captureScreenshot(driver, `${variant}-design-time-not-ready`, SCREENSHOT_DIR);
       assert.fail(`[${variant}] Design-time startup evidence was not created before debug assertions.`);
     }
 
+    // Regression guard for the codeful debug file-lock issue (Option B fix). The codeful
+    // design-time host used to run the in-process .NET 8 worker, which loads the compiled workflow
+    // assemblies out of `lib/codeful` and (on Windows) locks those DLLs, so F5's
+    // `CopyToCodefulFolder` build failed with MSB3026. The fix forces the codeful design-time host
+    // onto the Node worker, which never loads the project's .NET assemblies. Assert that
+    // deterministically here (cross-platform, so it bites on the ubuntu CI); the `buildExit === 0`
+    // assertion later is the end-to-end signal.
+    const designTimeValues = readDesignTimeValues(workspaceDir);
+    assert.ok(designTimeValues, `[${variant}] Design-time local.settings.json was not created/readable.`);
+    const workerRuntime = designTimeValues['FUNCTIONS_WORKER_RUNTIME'];
+    assert.strictEqual(
+      (workerRuntime ?? '').toLowerCase(),
+      'node',
+      `[${variant}] codeful design-time must use the Node worker (FUNCTIONS_WORKER_RUNTIME=node), got '${workerRuntime}'. Under the in-process .NET 8 worker the design-time host loads and locks lib/codeful, breaking F5 debug with MSB3026.`
+    );
+    assert.strictEqual(
+      designTimeValues['FUNCTIONS_INPROC_NET8_ENABLED'],
+      undefined,
+      `[${variant}] codeful design-time must NOT set FUNCTIONS_INPROC_NET8_ENABLED (got '${designTimeValues['FUNCTIONS_INPROC_NET8_ENABLED']}'); in-process .NET 8 is exactly what loads and locks lib/codeful.`
+    );
+    console.log(`[codefulDebugTasks] [${variant}] codeful design-time worker runtime: ${workerRuntime}`);
+
     truncateEventsFile();
+
+    // Ensure the extension has finished installing its runtime dependencies — most
+    // importantly the Azure Functions Core Tools (`func`) binary — BEFORE we start F5.
+    // Every other UI test (including the green Windows beachhead, designerActions) waits
+    // for this; the codeful test previously did not. On Ubuntu the runtime-deps cache is
+    // warm so `func` already exists on disk and this returns almost immediately. On the
+    // hosted Windows runner the cache is cold, so without this wait F5 fires while `func`
+    // is still downloading and preDebugValidate shows the modal "You must have the Azure
+    // Functions Core Tools installed" dialog (and the design-time host times out) — exactly
+    // the Windows codeful shard failure. This blocks until `func` exists and is executable.
+    await waitForDependencyValidation(driver, 360_000);
 
     console.log('[codefulDebugTasks] Starting debug...');
     await startDebug();
@@ -333,8 +523,34 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     // codeful project. Allow up to 12 minutes total to absorb
     // LA extension cold-start while still failing fast if the chain
     // never starts.
+    //
+    // Interaction with the hang guard: the guard fires 600 s after `debugInvoke`, which the
+    // recorder writes `R` seconds into this wait (`R` = command-registration latency,
+    // 0-360 s). So the guard can only report inside this budget when `R <= 120 s`. Beyond
+    // that the 720 s deadline lands first and a real hang still fails the run — just via the
+    // generic "F5 never reached the codeful task chain" assertion below rather than with the
+    // precise diagnosis. That is the correct trade: the guard is a diagnostic accelerator,
+    // and buying earlier reporting by shrinking its window is exactly what made it fail
+    // healthy runs.
     const wait = await waitForTaskChain(variant, workspaceDir, 720_000);
     console.log(`[codefulDebugTasks] waitForTaskChain: ${JSON.stringify(wait)}`);
+
+    // F5 was dispatched but `vscode.debug.startDebugging` never settled and no task
+    // ever ran. Report the actual cause here rather than letting the run fall through
+    // to the generic "F5 never reached the codeful task chain" failure 13 minutes later.
+    if (wait.debugStartHung) {
+      await captureScreenshot(driver, `${variant}-debug-start-hung`, SCREENSHOT_DIR);
+      assert.fail(
+        [
+          `[${variant}] vscode.debug.startDebugging never settled: the recorder logged 'debugInvoke' (the instant before it called`,
+          `startDebugging) but neither 'debugStarted' nor 'debugStartFailed' arrived within ${DEBUG_INVOKE_HANG_TIMEOUT_MS}ms, and no`,
+          'task event was captured at all. The likely cause is a blocking modal in the F5 pre-debug path — historically the',
+          '`Failed to verify "AzureWebJobsStorage" connection` / `Debug anyway` warning from validatePreDebug when Azurite is not',
+          'ready — which cannot be answered in a headless session, so resolveDebugConfiguration awaits forever.',
+          `Screenshot: ${SCREENSHOT_DIR}`,
+        ].join(' ')
+      );
+    }
 
     // Give func host start a chance to spawn so we capture its taskStart event.
     if (!wait.funcHostStarted) {
@@ -385,7 +601,11 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
         `[modern] 'func: host start' must start at least once (got ${summary.funcHostStartStart})`
       );
       assert.strictEqual(summary.cleanExit, 0, `[modern] clean must exit 0 (got ${summary.cleanExit})`);
-      assert.strictEqual(summary.buildExit, 0, `[modern] build must exit 0 (got ${summary.buildExit})`);
+      assert.strictEqual(
+        summary.buildExit,
+        0,
+        `[modern] build must exit 0 (got ${summary.buildExit}). A non-zero exit here is the codeful debug file-lock regression: the design-time host ran the in-process .NET 8 worker and held lib/codeful locks so CopyToCodefulFolder failed with MSB3026. The codeful design-time host must run the Node worker.`
+      );
     } else {
       assert.strictEqual(summary.publishStart, 1, `[legacy] publish task must run exactly once (got ${summary.publishStart})`);
       assert.strictEqual(
@@ -399,7 +619,11 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
         `[legacy] 'func: host start' must start at least once (got ${summary.funcHostStartStart})`
       );
       assert.strictEqual(summary.cleanExit, 0, `[legacy] clean must exit 0 (got ${summary.cleanExit})`);
-      assert.strictEqual(summary.buildExit, 0, `[legacy] build must exit 0 (got ${summary.buildExit})`);
+      assert.strictEqual(
+        summary.buildExit,
+        0,
+        `[legacy] build must exit 0 (got ${summary.buildExit}). A non-zero exit here is the codeful debug file-lock regression: the design-time host ran the in-process .NET 8 worker and held lib/codeful locks so CopyToCodefulFolder failed with MSB3026. The codeful design-time host must run the Node worker.`
+      );
       assert.strictEqual(summary.cleanReleaseExit, 0, `[legacy] 'clean release' must exit 0 (got ${summary.cleanReleaseExit})`);
       assert.strictEqual(summary.publishExit, 0, `[legacy] publish must exit 0 (got ${summary.publishExit})`);
     }

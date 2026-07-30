@@ -13,7 +13,6 @@ import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 
 // Mock all selector hooks
 const mockUseMonitoringView = vi.fn();
-const mockUseUnitTest = vi.fn();
 const mockUsePanelTabHideKeys = vi.fn();
 const mockUseIsNodePinnedToOperationPanel = vi.fn();
 const mockUseParameterValidationErrors = vi.fn();
@@ -23,7 +22,7 @@ const mockUseRetryHistory = vi.fn();
 const mockUseNodeMetadata = vi.fn();
 const mockUseOperationInfo = vi.fn();
 const mockUseIsA2AWorkflow = vi.fn();
-const mockUseIsAgenticWorkflowOnly = vi.fn();
+const mockUseIsAgenticWorkflow = vi.fn();
 const mockUseOperationManifest = vi.fn();
 
 vi.mock('../../../../core', () => ({
@@ -33,13 +32,12 @@ vi.mock('../../../../core', () => ({
 
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
-  useUnitTest: () => mockUseUnitTest(),
   usePanelTabHideKeys: () => mockUsePanelTabHideKeys(),
 }));
 
 vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
   useIsA2AWorkflow: () => mockUseIsA2AWorkflow(),
-  useIsAgenticWorkflowOnly: () => mockUseIsAgenticWorkflowOnly(),
+  useIsAgenticWorkflow: () => mockUseIsAgenticWorkflow(),
 }));
 
 vi.mock('../../../../core/state/selectors/actionMetadataSelector', () => ({
@@ -99,10 +97,6 @@ vi.mock('../tabs/retryTab', () => ({
   monitorRetryTab: () => ({ id: 'retry', title: 'Retry', order: 5, visible: true, content: null }),
 }));
 
-vi.mock('../tabs/mockResultsTab/mockResultsTab', () => ({
-  mockResultsTab: () => ({ id: 'mockResults', title: 'Mock Results', order: 0, visible: true, content: null }),
-}));
-
 vi.mock('../tabs/scratchTab', () => ({
   scratchTab: { id: 'scratch', title: 'Scratch', order: 100, visible: true, content: null },
 }));
@@ -134,7 +128,6 @@ describe('usePanelTabs', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseMonitoringView.mockReturnValue(false);
-    mockUseUnitTest.mockReturnValue(false);
     mockUsePanelTabHideKeys.mockReturnValue([]);
     mockUseIsNodePinnedToOperationPanel.mockReturnValue(false);
     mockUseParameterValidationErrors.mockReturnValue([]);
@@ -144,17 +137,8 @@ describe('usePanelTabs', () => {
     mockUseNodeMetadata.mockReturnValue(null);
     mockUseOperationInfo.mockReturnValue({ type: 'Action', connectorId: 'test', operationId: 'test' });
     mockUseIsA2AWorkflow.mockReturnValue(false);
-    mockUseIsAgenticWorkflowOnly.mockReturnValue(false);
+    mockUseIsAgenticWorkflow.mockReturnValue(false);
     mockUseOperationManifest.mockReturnValue({ data: undefined, isLoading: false, isFetched: true });
-  });
-
-  it('should return only mockResultsTab when isUnitTestView is true', () => {
-    mockUseUnitTest.mockReturnValue(true);
-
-    const { result } = renderHook(() => usePanelTabs({ nodeId: 'testNode' }), { wrapper: createWrapper() });
-
-    expect(result.current).toHaveLength(1);
-    expect(result.current[0].id).toBe('mockResults');
   });
 
   it('should return only parametersTab for SWITCH_CASE subgraphType', () => {
@@ -239,7 +223,7 @@ describe('usePanelTabs', () => {
 
   it('should show channels tab for agent nodes in agentic workflow', () => {
     mockUseOperationInfo.mockReturnValue({ type: constants.NODE.TYPE.AGENT, connectorId: 'test', operationId: 'test' });
-    mockUseIsAgenticWorkflowOnly.mockReturnValue(true);
+    mockUseIsAgenticWorkflow.mockReturnValue(true);
 
     const { result } = renderHook(() => usePanelTabs({ nodeId: 'testNode' }), { wrapper: createWrapper() });
 

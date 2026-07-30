@@ -357,6 +357,15 @@ export const useIsGraphEmpty = () => {
   return useSelector((state: RootState) => state.workflow.graph?.children?.length === 0);
 };
 
+// A brand-new/empty workflow still contains a placeholder trigger node in `operations`
+// (see BJSDeserializer). It is considered "empty" when there are no real triggers and no
+// actions, i.e. every operation id is the placeholder trigger (or there are none at all).
+const selectIsWorkflowEmpty = createSelector(getWorkflowState, (state: WorkflowState) =>
+  Object.keys(state.operations).every((id) => id === commonConstants.NODE.TYPE.PLACEHOLDER_TRIGGER)
+);
+
+export const useIsWorkflowEmpty = (): boolean => useSelector(selectIsWorkflowEmpty);
+
 export const useIsLeafNode = (nodeId: string): boolean => {
   const targets = useNodeEdgeTargets(nodeId);
   return useMemo(() => targets.length === 0, [targets.length]);

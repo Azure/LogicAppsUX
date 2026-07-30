@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { updateTemplateCacheValue, getTemplateCacheValue } from '../state/templates';
 import { NotImplementedError } from '../utils/errors';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ITemplates } from '@microsoft/vscode-extension-logic-apps';
@@ -74,11 +75,11 @@ export abstract class TemplateProviderBase implements Disposable {
   }
 
   public async updateCachedValue(key: string, value: unknown): Promise<void> {
-    ext.context.globalState.update(await this.getCacheKey(key), value);
+    updateTemplateCacheValue(await this.getCacheKey(key), value);
   }
 
   public async getCachedValue<T>(key: string): Promise<T | undefined> {
-    return ext.context.globalState.get<T>(await this.getCacheKey(key));
+    return getTemplateCacheValue<T>(await this.getCacheKey(key));
   }
 
   public abstract getLatestTemplateVersion(context: IActionContext): Promise<string>;
