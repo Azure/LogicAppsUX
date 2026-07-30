@@ -38,7 +38,9 @@
  *      `preDebugValidate` -> `validateFuncCoreToolsInstalled`.
  *   4. Gates on evidence that the product actually reacted BEFORE settling in to wait for the
  *      repair, so "the harness never triggered the product" can never masquerade as "the
- *      product failed to repair".
+ *      product failed to repair". Every polling wait from that point on also answers the Azure
+ *      connectors QuickPick, which `refreshConnectionKeys` raises two statements before the gate
+ *      and which otherwise parks the whole flow (see `dismissConnectorsPromptIfVisible`).
  *   5. Asserts `func --version` runs again (PRIMARY, disk-level — modeled on
  *      `waitForBundleRepaired` in bundleRepair.test.ts) and that the blocking modal never
  *      appeared. The "no suppressed error toast" check is a documented SOFT check.
@@ -83,7 +85,7 @@ import {
   openWorkspaceFileInSession,
   waitForDependencyValidation,
 } from './designerHelpers';
-import { captureScreenshot, sleep } from './helpers';
+import { captureScreenshot, dismissQuickPickIfVisible, sleep } from './helpers';
 import { stopDebugging } from './runHelpers';
 import { funcVersionRuns, isExecutableFile } from './runtimeBinaryCheck';
 import { loadWorkspaceManifest } from './workspaceManifest';
@@ -185,6 +187,39 @@ const GATE_EVIDENCE_MARKERS = [
 ];
 
 /**
+ * Output-channel lines that prove execution got PAST `refreshConnectionKeys` — i.e. past the
+ * last step before the gate we are actually testing.
+ *
+ * Both are terminal `return`s of `refreshConnectionKeys` (connectionKeys.ts:22 and :29), and
+ * both are what a wizard-generated fixture produces: with no Azure account, answering the
+ * connectors prompt with "Skip for now" (or Escape, which `azureConnectorWizard.ts:59-62` maps
+ * to the same `{ data: 'no' }`) leaves `azureConnectorDetails.enabled` false and logs
+ * "Azure connectors are disabled. Skipping connection key refresh."
+ *
+ * WHY THIS IS A SEPARATE SET FROM {@link GATE_EVIDENCE_MARKERS}, even though the two overlap:
+ * the two sets answer different questions and must not be conflated.
+ *   - `GATE_EVIDENCE_MARKERS` answers "did the harness reach the product at all?" It is
+ *     deliberately broad and its earliest member, the Azurite line, is written by
+ *     `activateAzurite` — pickFuncProcessInternal's FIRST step (pickFuncProcess.ts:87-106).
+ *   - This set answers "did the product get far enough to reach the func gate?"
+ *     `refreshConnectionKeys` runs at :112-116 and `preDebugValidate` — the gate — at :119.
+ *
+ * That gap is not hypothetical. In run 30557613214 the flow logged the Azurite line, so the
+ * liveness gate correctly reported "reached", and then parked on the unanswered connectors
+ * QuickPick two steps before the gate. The repair therefore never ran, and with only one set we
+ * reported it as a repair failure. Tracking these separately lets the failure message say which
+ * of the two happened.
+ */
+const PAST_CONNECTION_KEYS_MARKERS = ['Azure connectors are disabled', 'No connection keys found'];
+
+/**
+ * Identifies the connectors QuickPick from `GetSubscriptionDetailsStep.prompt`
+ * (azureConnectorWizard.ts:50-68). Matched case-insensitively against the visible
+ * `.quick-input-widget` text before anything is clicked — see `dismissConnectorsPromptIfVisible`.
+ */
+const CONNECTORS_PROMPT_FRAGMENTS = ['enable connectors in azure', 'use connectors from azure', 'skip for now'];
+
+/**
  * Azurite blob port. `activateAzurite` starts the emulator before the gate runs, so a listener
  * appearing here after the debug start is independent proof that `pickFuncProcessInternal`
  * executed — no log parsing involved. Only counted when nothing was listening beforehand (see
@@ -259,6 +294,10 @@ interface RepairWatchResult {
   blockingPromptText: string;
   suppressedErrorText: string;
   scrapedWorkbenchContent: boolean;
+  /** True once the output channel shows `refreshConnectionKeys` returned — i.e. the flow reached the gate. */
+  pastConnectionKeys: boolean;
+  /** How many times the connectors QuickPick had to be answered. Normally 1; 0 means it never appeared. */
+  connectorsPromptDismissals: number;
 }
 
 /**
@@ -450,20 +489,10 @@ function readLatestLogicAppsOutput(): { filePath: string; content: string } | un
   }
 }
 
-/** Tails the most recent "Azure Logic Apps" output-channel log into the CI transcript. */
-function logLatestLogicAppsOutput(label: string): void {
-  const log = readLatestLogicAppsOutput();
-  if (!log) {
-    console.log(`${LOG_PREFIX} ${label} output log: no Azure Logic Apps output log found`);
-    return;
-  }
-  console.log(`${LOG_PREFIX} ${label} output log (${log.filePath}):\n${log.content.slice(-6000)}`);
-}
-
 /**
  * Marks how much output-channel log already existed, so the liveness gate can only ever match
- * on lines written AFTER F5. Without this watermark the gate would happily match the initial
- * install's own download lines and pass no matter what F5 did.
+ * on lines written AFTER the debug start. Without this watermark the gate would happily match
+ * the initial install's own download lines and pass no matter what the debug start did.
  */
 interface OutputWatermark {
   filePath: string;
@@ -476,19 +505,60 @@ function captureOutputWatermark(): OutputWatermark | undefined {
 }
 
 /**
- * Returns only the output written since the watermark. If the newest log file has changed
- * identity (VS Code rotates per session/window) everything in the new file is new by
- * definition, and if we had no watermark at all the whole file is new.
+ * Returns only the output written since the watermark.
+ *
+ * PINNED TO `watermark.filePath` ON PURPOSE. The previous version re-ran the "newest log by
+ * mtime" search on every call, which is not stable: the logs tree contains many `*.log` files
+ * and a different one can become the newest at any moment, at which point this returned that
+ * unrelated file's entire contents as "new output". That is how the failing run at
+ * https://github.com/Azure/LogicAppsUX/actions/runs/30557613214 printed a node tarball listing
+ * instead of the extension's own log and hid a `refreshConnectionKeys` stall for a whole CI
+ * cycle. Once the watermark is taken we read that exact file and nothing else.
+ *
+ * With no watermark at all there is nothing to pin to, so we fall back to the latest file and
+ * treat all of it as new — the same behaviour as before, but now only on that one path.
  */
 function readOutputSinceWatermark(watermark: OutputWatermark | undefined): string {
-  const log = readLatestLogicAppsOutput();
-  if (!log) {
+  if (!watermark) {
+    return readLatestLogicAppsOutput()?.content ?? '';
+  }
+  try {
+    const content = fs.readFileSync(watermark.filePath, 'utf-8');
+    // A shorter file means it was rotated or truncated under us; everything in it is new.
+    return content.length < watermark.length ? content : content.slice(watermark.length);
+  } catch {
     return '';
   }
-  if (!watermark || watermark.filePath !== log.filePath) {
-    return log.content;
+}
+
+/**
+ * Dumps the output the extension wrote SINCE the watermark, pinned to the watermarked file.
+ *
+ * This is the diagnostic every failure path should use: the whole point is to show what the
+ * product did in response to the debug start, and unwatermarked tails of a re-resolved "latest"
+ * file answer a different (and, as the run above showed, useless) question. Bounded to the last
+ * 8 KB so a chatty install cannot bury the tail that matters.
+ */
+function logOutputSinceWatermark(label: string, watermark: OutputWatermark | undefined): void {
+  if (!watermark) {
+    const log = readLatestLogicAppsOutput();
+    console.log(
+      log
+        ? `${LOG_PREFIX} ${label} — no watermark was taken; tail of the latest log (${log.filePath}):\n${log.content.slice(-8000)}`
+        : `${LOG_PREFIX} ${label} — no watermark and no Azure Logic Apps output log found`
+    );
+    return;
   }
-  return log.content.slice(watermark.length);
+  const newOutput = readOutputSinceWatermark(watermark);
+  if (newOutput.trim().length === 0) {
+    console.log(
+      `${LOG_PREFIX} ${label} — the extension wrote NOTHING to ${watermark.filePath} after the debug start (watermark ${watermark.length} bytes). Execution is parked somewhere that does not log.`
+    );
+    return;
+  }
+  console.log(
+    `${LOG_PREFIX} ${label} — ${newOutput.length} bytes written to ${watermark.filePath} since the debug start (last 8 KB):\n${newOutput.slice(-8000)}`
+  );
 }
 
 /** Non-throwing TCP liveness probe used to notice Azurite coming up after F5. */
@@ -631,6 +701,105 @@ async function triggerDebugViaRecorder(timeoutMs: number): Promise<{ dispatched:
 }
 
 /**
+ * Answers the Azure connectors QuickPick if it is on screen, and does nothing otherwise.
+ *
+ * WHY THIS IS NEEDED: `pickFuncProcessInternal` calls `refreshConnectionKeys` (:112-116) BEFORE
+ * `preDebugValidate` (:119), and with no Azure account `refreshConnectionKeys` ->
+ * `getAzureConnectorDetailsForLocalProject` runs `GetSubscriptionDetailsStep.prompt`
+ * (azureConnectorWizard.ts:50-68). That is a `showQuickPick`, so it parks the whole flow until
+ * somebody answers it. In run 30557613214 nobody did: the screenshot shows the prompt still open
+ * after 300s with the output channel frozen at the Azurite line, so `validateFuncCoreToolsInstalled`
+ * was never called and the test reported a repair failure for a gate that never ran.
+ *
+ * It is NOT a one-off: `prepareFreshSession()` wipes the settings `User` dir every attempt, and
+ * the choice is cached in `ext.context.globalState` (app/state/connectors.ts:13-22), so the
+ * prompt is guaranteed on every run. It also appears several seconds after the debug start, so
+ * a single pre-emptive dismissal before the trigger would race it — every polling caller must
+ * call this on each iteration.
+ *
+ * "Skip for now" is the correct answer, not merely a convenient one: this test asserts on the
+ * func binary, not on connectors, and the skip path is what the fixture's own configuration
+ * implies. Escape is equally safe — `azureConnectorWizard.ts:59-62` catches
+ * `isUserCancelledError` and resolves to the same `{ data: 'no' }`.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────────────────
+ * WHY THIS CANNOT SWALLOW THE MODAL UNDER TEST. Verified, not assumed:
+ *
+ *   a. The prompt this test asserts on is
+ *      `innerContext.ui.showWarningMessage(message, { modal: true }, ...items)`
+ *      (validateFuncCoreToolsInstalled.ts:135 and :164). VS Code renders `modal: true` message
+ *      boxes as `.monaco-dialog-box`, a different widget from the `.quick-input-widget` that
+ *      `showQuickPick` renders.
+ *   b. `dismissQuickPickIfVisible` (helpers.ts:740-778) only ever queries
+ *      `.quick-input-widget:not(.hidden)` and only ever clicks a `.monaco-list-row` inside it.
+ *      It has no selector that can reach a dialog button, so it cannot click "Install" or
+ *      "Learn more".
+ *   c. Its one non-scoped action is the Escape fallback on `body`, which fires when a QuickPick
+ *      is visible but no row matched. Escape CAN dismiss a modal dialog, so we do not rely on
+ *      (a)+(b) alone: this wrapper reads the widget text first and returns without touching
+ *      anything unless it matches {@link CONNECTORS_PROMPT_FRAGMENTS}. The func modal's text
+ *      contains none of them.
+ *   d. Belt and braces: both callers refuse to invoke this once the blocking prompt has been
+ *      observed, so the dismisser and the modal are mutually exclusive in time as well.
+ *
+ * A non-matching QuickPick is logged (once per distinct text) and deliberately left alone —
+ * swallowing an unexpected prompt would hide the next bug of exactly this class.
+ * ─────────────────────────────────────────────────────────────────────────────────────────
+ */
+async function dismissConnectorsPromptIfVisible(driver: WebDriver, seenOtherPrompts: Set<string>): Promise<boolean> {
+  let widgetText: string;
+  try {
+    // Both this probe and `dismissQuickPickIfVisible` run raw `executeScript` against whatever
+    // frame the driver is parked in. Inside a webview iframe the selector finds nothing, so the
+    // prompt would go unanswered forever and look exactly like the bug we are fixing. Switch
+    // explicitly rather than relying on the caller having just scraped the workbench.
+    await driver
+      .switchTo()
+      .defaultContent()
+      .catch(() => undefined);
+    widgetText =
+      (await driver.executeScript<string | null>(`
+        const widget = document.querySelector('.quick-input-widget:not(.hidden)');
+        if (!widget) { return null; }
+        // The placeholder ("Enable connectors in Azure for Logic App <name>") lives in an
+        // <input placeholder> ATTRIBUTE, which contributes nothing to textContent, so read it
+        // explicitly. The row labels ("Use connectors from Azure" / "Skip for now") do come
+        // through textContent, which is why matching stays correct even if VS Code changes how
+        // the placeholder is rendered.
+        const input = widget.querySelector('.quick-input-box input');
+        const placeholder = input ? (input.getAttribute('placeholder') || '') : '';
+        return placeholder + '\\n' + (widget.textContent || '');
+      `)) ?? '';
+  } catch {
+    // A transient DOM/CDP hiccup. The caller polls, so the next pass retries.
+    return false;
+  }
+
+  if (widgetText.trim().length === 0) {
+    return false;
+  }
+
+  const normalized = widgetText.toLowerCase();
+  if (!CONNECTORS_PROMPT_FRAGMENTS.some((fragment) => normalized.includes(fragment))) {
+    const summary = widgetText.replace(/\s+/g, ' ').trim().slice(0, 160);
+    if (!seenOtherPrompts.has(summary)) {
+      seenOtherPrompts.add(summary);
+      console.log(`${LOG_PREFIX} ⚠ A QuickPick is open that is NOT the connectors prompt — leaving it alone: "${summary}"`);
+    }
+    return false;
+  }
+
+  console.log(`${LOG_PREFIX} Connectors QuickPick detected (blocks refreshConnectionKeys before the gate) — answering it`);
+  const dismissed = await dismissQuickPickIfVisible(driver);
+  console.log(
+    dismissed
+      ? `${LOG_PREFIX} ✓ Answered the connectors prompt; refreshConnectionKeys should now log "Azure connectors are disabled"`
+      : `${LOG_PREFIX} ⚠ dismissQuickPickIfVisible did not act on the connectors prompt — retrying on the next poll`
+  );
+  return dismissed;
+}
+
+/**
  * Proves that the debug start actually reached the product before we commit to the long repair
  * wait.
  *
@@ -652,9 +821,18 @@ async function triggerDebugViaRecorder(timeoutMs: number): Promise<{ dispatched:
  *   4. The corruption marker disappearing from the binary — the extract already landed.
  *   5. `debugStartFailed` arriving late — VS Code rejected the configuration after dispatch.
  *
+ * It also polls {@link dismissConnectorsPromptIfVisible} each iteration, because the connectors
+ * QuickPick lands two statements before the gate and can therefore block inside this window.
+ *
  * Deliberately NOT used: the debug toolbar, debug terminals and the func host port. Those only
  * appear AFTER `preDebugValidate` returns (pickFuncProcess.ts:143-165), i.e. on the far side of
  * a repair that can take minutes, so they cannot distinguish "not yet" from "never".
+ *
+ * CAUTION: "reached" here is a LIVENESS verdict, not a progress verdict. Its earliest marker is
+ * the Azurite line, which `activateAzurite` writes as pickFuncProcessInternal's first step — so
+ * this can legitimately report "reached" while execution later parks on the connectors prompt,
+ * two steps short of the gate. `watchForFuncRepair` tracks {@link PAST_CONNECTION_KEYS_MARKERS}
+ * to tell those two apart.
  */
 async function waitForPreDebugGateEvidence(
   driver: WebDriver,
@@ -663,17 +841,25 @@ async function waitForPreDebugGateEvidence(
     azuriteWasListening: boolean;
     funcBinaryPath: string;
     timeoutMs: number;
+    seenOtherPrompts: Set<string>;
   }
-): Promise<{ reached: boolean; evidence: string; newOutput: string; debugStartFailed: boolean }> {
+): Promise<{ reached: boolean; evidence: string; newOutput: string; debugStartFailed: boolean; dismissedConnectorsPrompt: boolean }> {
   const deadline = Date.now() + options.timeoutMs;
   const startedAt = Date.now();
   let newOutput = '';
+  let dismissedConnectorsPrompt = false;
 
   while (Date.now() < deadline) {
     newOutput = readOutputSinceWatermark(options.watermark);
     const marker = GATE_EVIDENCE_MARKERS.find((candidate) => newOutput.includes(candidate));
     if (marker) {
-      return { reached: true, evidence: `output channel logged "${marker}" after the debug start`, newOutput, debugStartFailed: false };
+      return {
+        reached: true,
+        evidence: `output channel logged "${marker}" after the debug start`,
+        newOutput,
+        debugStartFailed: false,
+        dismissedConnectorsPrompt,
+      };
     }
 
     if (!options.azuriteWasListening && (await isPortListening(AZURITE_BLOB_PORT))) {
@@ -682,6 +868,7 @@ async function waitForPreDebugGateEvidence(
         evidence: `Azurite started listening on port ${AZURITE_BLOB_PORT} (activateAzurite runs first in pickFuncProcessInternal)`,
         newOutput,
         debugStartFailed: false,
+        dismissedConnectorsPrompt,
       };
     }
 
@@ -691,6 +878,7 @@ async function waitForPreDebugGateEvidence(
         evidence: 'the corruption marker was already overwritten (repair extract landed)',
         newOutput,
         debugStartFailed: false,
+        dismissedConnectorsPrompt,
       };
     }
 
@@ -701,13 +889,22 @@ async function waitForPreDebugGateEvidence(
         evidence: 'the blocking install prompt appeared (the gate ran and chose the prompt branch)',
         newOutput,
         debugStartFailed: false,
+        dismissedConnectorsPrompt,
       };
+    }
+
+    // The connectors QuickPick can already be up inside this window (it is only two statements
+    // before the gate), so poll for it here too rather than waiting for `watchForFuncRepair`.
+    // Runs only after the blocking-prompt check above has cleared for this iteration, so the
+    // modal under test can never be on screen when the dismisser fires.
+    if (await dismissConnectorsPromptIfVisible(driver, options.seenOtherPrompts)) {
+      dismissedConnectorsPrompt = true;
     }
 
     // VS Code rejected the configuration after the recorder dispatched it (e.g. an unsupported
     // debug type). Harness-side, and worth reporting distinctly from "nothing happened".
     if (readRecorderEvents().some((event) => event.phase === 'debugStartFailed')) {
-      return { reached: false, evidence: 'none', newOutput, debugStartFailed: true };
+      return { reached: false, evidence: 'none', newOutput, debugStartFailed: true, dismissedConnectorsPrompt };
     }
 
     const elapsedSeconds = Math.round((Date.now() - startedAt) / 1000);
@@ -717,7 +914,7 @@ async function waitForPreDebugGateEvidence(
     await sleep(3000);
   }
 
-  return { reached: false, evidence: 'none', newOutput, debugStartFailed: false };
+  return { reached: false, evidence: 'none', newOutput, debugStartFailed: false, dismissedConnectorsPrompt };
 }
 
 /**
@@ -726,12 +923,19 @@ async function waitForPreDebugGateEvidence(
  * Disk is the authoritative signal (same shape as `waitForBundleRepaired`); the UI scrape runs
  * in the same loop so that a blocking modal is observed at the moment it appears rather than
  * inferred afterwards from a timeout.
+ *
+ * The same loop also (a) answers the connectors QuickPick that otherwise parks
+ * `refreshConnectionKeys` two steps before the gate, and (b) records whether the flow ever got
+ * past that step, so a timeout can say WHICH of the two failures happened instead of always
+ * blaming the repair.
  */
 async function watchForFuncRepair(
   driver: WebDriver,
   primaryFuncPath: string,
   corrupted: CorruptedBinary[],
-  timeoutMs: number
+  timeoutMs: number,
+  watermark: OutputWatermark | undefined,
+  seenOtherPrompts: Set<string>
 ): Promise<RepairWatchResult> {
   const startedAt = Date.now();
   const deadline = startedAt + timeoutMs;
@@ -742,6 +946,8 @@ async function watchForFuncRepair(
     blockingPromptText: '',
     suppressedErrorText: '',
     scrapedWorkbenchContent: false,
+    pastConnectionKeys: false,
+    connectorsPromptDismissals: 0,
   };
   let lastLoggedAt = 0;
   let loggedScrapeFailure = false;
@@ -785,9 +991,31 @@ async function watchForFuncRepair(
       result.lastReason = '"func --version" still does not exit 0';
     }
 
+    // Progress probe, distinct from the disk state above: did the flow get past
+    // `refreshConnectionKeys` (pickFuncProcess.ts:112-116) and therefore actually reach the gate
+    // at :119? Latched, because the line is written once and this loop runs for minutes.
+    if (!result.pastConnectionKeys) {
+      const sinceDebugStart = readOutputSinceWatermark(watermark);
+      if (PAST_CONNECTION_KEYS_MARKERS.some((marker) => sinceDebugStart.includes(marker))) {
+        result.pastConnectionKeys = true;
+        console.log(`${LOG_PREFIX} ✓ refreshConnectionKeys returned — execution reached preDebugValidate (the gate under test)`);
+      }
+    }
+
+    // Answer the connectors QuickPick if it is up. Placed AFTER the blocking-prompt scrape above
+    // and guarded on it: `dismissConnectorsPromptIfVisible` only ever acts on a
+    // `.quick-input-widget` whose text matches the connectors prompt, and the modal under test is
+    // a `.monaco-dialog-box` from `showWarningMessage({ modal: true })` — but this guard makes the
+    // two mutually exclusive in time as well, so no future change to the helper can make the
+    // dismisser swallow the assertion this test exists for.
+    if (result.blockingPromptText === '' && (await dismissConnectorsPromptIfVisible(driver, seenOtherPrompts))) {
+      result.connectorsPromptDismissals += 1;
+    }
+
     if (Date.now() - lastLoggedAt >= 15_000) {
       lastLoggedAt = Date.now();
-      console.log(`${LOG_PREFIX} waiting for repair (${Math.round((Date.now() - startedAt) / 1000)}s): ${result.lastReason}`);
+      const progress = result.pastConnectionKeys ? 'past refreshConnectionKeys' : 'NOT yet past refreshConnectionKeys';
+      console.log(`${LOG_PREFIX} waiting for repair (${Math.round((Date.now() - startedAt) / 1000)}s, ${progress}): ${result.lastReason}`);
     }
 
     // Once the blocking modal is up the verdict is already decided: the product only reaches
@@ -809,7 +1037,14 @@ async function watchForFuncRepair(
   }
 
   result.elapsedMs = Date.now() - startedAt;
-  result.lastReason = `${result.lastReason}. Candidates: ${corrupted.map((entry) => describeBinary(entry.filePath)).join('; ')}`;
+
+  // Name the failure precisely. Timing out WITHOUT ever seeing refreshConnectionKeys return
+  // means execution never reached preDebugValidate at all, so this is not a repair failure —
+  // it is a stall in an earlier, unrelated step (historically: an unanswered prompt).
+  const stallDiagnosis = result.pastConnectionKeys
+    ? 'The flow DID get past refreshConnectionKeys, so preDebugValidate -> validateFuncCoreToolsInstalled was reached and this is a genuine repair failure.'
+    : `The flow NEVER got past refreshConnectionKeys (no ${JSON.stringify(PAST_CONNECTION_KEYS_MARKERS)} line after the debug start), so preDebugValidate was never called and the self-heal was never given a chance. This is a STALL BEFORE THE GATE, not a repair failure — check the screenshot for an unanswered prompt (connectors QuickPick dismissals so far: ${result.connectorsPromptDismissals}).`;
+  result.lastReason = `${result.lastReason}. ${stallDiagnosis} Candidates: ${corrupted.map((entry) => describeBinary(entry.filePath)).join('; ')}`;
   return result;
 }
 
@@ -983,7 +1218,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     const dispatch = await triggerDebugViaRecorder(DEBUG_DISPATCH_TIMEOUT_MS);
     if (!dispatch.dispatched) {
       await captureScreenshot(driver, 'funcRepair-debug-not-dispatched', EXPLICIT_SCREENSHOT_DIR);
-      logLatestLogicAppsOutput('debug start was never dispatched');
+      logOutputSinceWatermark('debug start was never dispatched', outputWatermark);
       assert.fail(
         `THE DEBUG START WAS NEVER DISPATCHED — this run proves nothing about the product. ${dispatch.reason}. This is a HARNESS failure, not a repair failure: vscode.debug.startDebugging was never entered, so pickFuncProcessInternal -> preDebugValidate never ran. Check the recorder's own [la-e2e-recorder] lines in the VS Code stdout above — it logs the workspace folders it saw and the launch configuration it chose. Recorder events: ${describeRecorderEvents(dispatch.events)}. Events file: ${EVENTS_FILE}`
       );
@@ -995,15 +1230,22 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     // Without it, a harness-side no-op is indistinguishable from a product-side repair failure
     // until 300s have elapsed — which is exactly how the first CI run of this scenario wasted a
     // whole shard to discover that F5 had done nothing at all.
+    //
+    // From here on, every polling wait also answers the connectors QuickPick — see
+    // `dismissConnectorsPromptIfVisible` for why that is mandatory and why it cannot swallow the
+    // modal this test asserts on. `seenOtherPrompts` is shared across both waits so an
+    // unexpected prompt is reported once, not once per poll.
+    const seenOtherPrompts = new Set<string>();
     const gate = await waitForPreDebugGateEvidence(driver, {
       watermark: outputWatermark,
       azuriteWasListening,
       funcBinaryPath: primaryFuncPath,
       timeoutMs: GATE_EVIDENCE_TIMEOUT_MS,
+      seenOtherPrompts,
     });
     if (!gate.reached) {
       await captureScreenshot(driver, 'funcRepair-gate-never-reached', EXPLICIT_SCREENSHOT_DIR);
-      logLatestLogicAppsOutput('pre-debug gate never reached');
+      logOutputSinceWatermark('pre-debug gate never reached', outputWatermark);
       const rejected = gate.debugStartFailed
         ? 'VS Code REJECTED the debug configuration after it was dispatched (the recorder logged debugStartFailed) — check that the coreclr debug adapter (ms-dotnettools.csdevkit) is installed in the E2E extensions dir.'
         : 'The debug configuration was dispatched but the extension never started executing it.';
@@ -1011,14 +1253,30 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
         `THE PRE-DEBUG GATE WAS NEVER REACHED — this run proves nothing about the product. ${rejected} Within ${GATE_EVIDENCE_TIMEOUT_MS}ms of the debug start there was no sign that the extension reacted: no new output-channel line from ${JSON.stringify(GATE_EVIDENCE_MARKERS)}, no Azurite listener on port ${AZURITE_BLOB_PORT}, no install prompt, and the func binary still held the corruption marker. This is a HARNESS failure, not a repair failure. Recorder events: ${describeRecorderEvents(readRecorderEvents())}. New output since the debug start: ${JSON.stringify(gate.newOutput.slice(-1500))}`
       );
     }
-    console.log(`${LOG_PREFIX} ✓ The debug start reached the product — ${gate.evidence}`);
+    console.log(
+      `${LOG_PREFIX} ✓ The debug start reached the product — ${gate.evidence}${gate.dismissedConnectorsPrompt ? ' (connectors prompt already answered)' : ''}`
+    );
 
     // ── Step 4: wait for the repair, watching the UI at the same time ────────
     console.log(`${LOG_PREFIX} Step 4: waiting for the managed func to become runnable again`);
-    const watch = await watchForFuncRepair(driver, primaryFuncPath, corruptedBinaries, REPAIR_TIMEOUT_MS);
+    const watch = await watchForFuncRepair(
+      driver,
+      primaryFuncPath,
+      corruptedBinaries,
+      REPAIR_TIMEOUT_MS,
+      outputWatermark,
+      seenOtherPrompts
+    );
+    console.log(
+      `${LOG_PREFIX} Repair watch finished: repaired=${watch.repaired}, pastConnectionKeys=${watch.pastConnectionKeys}, connectorsPromptDismissals=${watch.connectorsPromptDismissals}`
+    );
     if (!watch.repaired || watch.blockingPromptText !== '') {
       await captureScreenshot(driver, 'funcRepair-not-repaired', EXPLICIT_SCREENSHOT_DIR);
-      logLatestLogicAppsOutput('repair did not complete');
+      // Watermarked and pinned: this must show what the extension did AFTER the debug start, in
+      // the file we watermarked. The un-watermarked "latest log" tail this replaced printed an
+      // unrelated node tarball listing in run 30557613214 and hid the real cause (a
+      // refreshConnectionKeys stall) for a whole CI cycle.
+      logOutputSinceWatermark('repair did not complete', outputWatermark);
     }
 
     // Liveness: "the modal never appeared" is only meaningful if we were scraping a rendered
