@@ -152,16 +152,14 @@ export const useCardStyles = makeStyles({
 
   // Indicators (testing / description / secure inputs & outputs)
   indicators: {
+    position: 'absolute',
+    right: 0,
+    bottom: '-20px',
     display: 'flex',
     alignItems: 'center',
-    alignSelf: 'flex-start',
     gap: '4px',
-    flexShrink: 0,
     color: tokens.colorNeutralForeground3,
     lineHeight: '20px',
-  },
-  scopeIndicators: {
-    color: '#fff',
   },
   indicator: {
     display: 'flex',

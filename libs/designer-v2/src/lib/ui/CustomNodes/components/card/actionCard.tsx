@@ -179,10 +179,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       <div className={styles.icon}>{cardIcon}</div>
       <Text className={mergeClasses(styles.title, isScope && styles.scopeTitle)}>{title}</Text>
       <CardIndicatorBadges
-        cardTitle={title}
         comment={comment}
         isLoadingDynamicData={isLoadingDynamicData}
-        isScope={isScope}
         isSecureInputsOutputs={isSecureInputsOutputs}
         nodeIndex={nodeIndex}
         staticResultsEnabled={staticResultsEnabled}
