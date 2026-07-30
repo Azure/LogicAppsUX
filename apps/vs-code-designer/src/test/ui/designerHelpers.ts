@@ -145,9 +145,21 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
 
 // isExecutableFile is imported from ./runtimeBinaryCheck (shared with run-e2e.ts)
 
-function getFuncCoreToolsCandidatePaths(): string[] {
+/**
+ * Directory that holds the extension-managed Azure Functions Core Tools binaries.
+ *
+ * The default mirrors `getRuntimeDependencyPaths()` in run-e2e.ts, which is what
+ * `writeTestSettings({ includeRuntimeDependencyPaths: true })` writes into
+ * `azureLogicAppsStandard.autoRuntimeDependenciesPath`. Tests that must follow a harness
+ * override of that setting (see funcRepair.test.ts) pass the configured root explicitly
+ * instead of re-deriving the layout.
+ */
+export function getManagedFuncCoreToolsDir(dependenciesRoot?: string): string {
+  return path.join(dependenciesRoot ?? path.join(os.homedir(), '.azurelogicapps', 'dependencies'), 'FuncCoreTools');
+}
+
+export function getFuncCoreToolsCandidatePaths(funcToolsRoot: string = getManagedFuncCoreToolsDir()): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
-  const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
   const candidates = [
     path.join(funcToolsRoot, executableName),
     path.join(funcToolsRoot, 'in-proc8', executableName),
@@ -173,8 +185,8 @@ function getFuncCoreToolsCandidatePaths(): string[] {
   return [...new Set(candidates)];
 }
 
-function getFuncCoreToolsPath(): string {
-  const candidates = getFuncCoreToolsCandidatePaths();
+export function getFuncCoreToolsPath(funcToolsRoot: string = getManagedFuncCoreToolsDir()): string {
+  const candidates = getFuncCoreToolsCandidatePaths(funcToolsRoot);
   // All candidates are already func binaries (getFuncCoreToolsCandidatePaths only matches executableNames)
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }

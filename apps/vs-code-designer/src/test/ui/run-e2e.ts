@@ -1326,6 +1326,13 @@ async function main(): Promise<void> {
     };
     if (includeRuntimeDependencyPaths) {
       const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths(runtimeDependenciesPathOverride);
+      // Publish the resolved root to the ExTester child process (same mechanism as
+      // LA_E2E_LSP_EPERM_DEPS_ROOT). Tests that have to touch the extension-managed
+      // dependency copy on disk — funcRepair.test.ts overwrites the managed func
+      // executable — must never guess a path and risk clobbering a developer's global
+      // install. Set here rather than once in main() so it always reflects the settings
+      // actually written, including runtimeDependenciesPathOverride.
+      process.env.LA_E2E_RUNTIME_DEPS_ROOT = depsRoot;
       Object.assign(settings, {
         // Point to auto-downloaded runtime binaries so the extension can start
         // the design-time API process (func host start) without relying on PATH.
@@ -1444,6 +1451,17 @@ async function main(): Promise<void> {
   // synchronously, and the sidecar is rewritten so the cached hash matches
   // disk). See bundleRepair.test.ts for the full scenario.
   const phaseBundleRepairFiles = [testFile('bundleRepair.test.js')];
+
+  // Phase 4.14 — Func Core Tools pre-debug self-heal E2E. Real ExTester / VS
+  // Code session. Corrupts the extension-managed func executable in place so it
+  // still EXISTS but no longer RUNS, then presses F5 and proves the pre-debug
+  // gate silently reinstalls it instead of dead-ending on the blocking "You must
+  // have the Azure Functions Core Tools installed" modal. See funcRepair.test.ts.
+  //
+  // 4.14, not 4.13: 4.13 is already the Azurite readiness guard above
+  // (phase413CreateFiles / phase413AssertFiles), so this phase takes the next
+  // free number and is named phaseFuncRepair* rather than phase414*.
+  const phaseFuncRepairFiles = [testFile('funcRepair.test.js')];
 
   // ------------------------------------------------------------------
   // Per-scenario inventory (Phase A scaffold).
@@ -1635,6 +1653,33 @@ async function main(): Promise<void> {
     {
       id: 'p412-bundlerepair',
       testFile: phaseBundleRepairFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+
+    // Phase 4.14 — Func Core Tools pre-debug self-heal.
+    // Reuses a Standard/Stateful workspace from the fixtures manifest, waits for
+    // the managed func binaries to install and run, overwrites them in place so
+    // they still exist but no longer execute, presses F5, and asserts the
+    // pre-debug gate silently reinstalls them instead of showing the blocking
+    // "You must have the Azure Functions Core Tools installed" modal.
+    //
+    // Both settings are load-bearing:
+    //   validateDependencies: true  — writes
+    //     autoRuntimeDependenciesValidationAndInstallation, which IS
+    //     useBinariesDependencies() (binaries.ts:793). With it off,
+    //     validateFuncCoreToolsInstalled never reaches
+    //     attemptManagedFuncCoreToolsRepair and the test would assert nothing.
+    //     It also provisions the managed func binaries this test corrupts.
+    //   autoStartDesignTime: false  — a running design-time `func host start`
+    //     holds func.exe open, and a running .exe cannot be overwritten on
+    //     Windows. F5 itself does not need design time: the generated
+    //     launch.json attaches via azureLogicAppsStandard.pickProcess, whose
+    //     pre-debug gate (validatePreDebug.ts:58) is exactly the code under
+    //     test, and it runs before anything design-time related.
+    {
+      id: 'p414-funcrepair',
+      testFile: phaseFuncRepairFiles[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
@@ -2637,6 +2682,16 @@ namespace ${namespaceName}
       await downloadExTesterAssets();
       const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
       process.exit(phase12Exit);
+    }
+
+    if (e2eMode === 'funcrepaironly') {
+      const funcRepairScenario = scenarios.find((s) => s.id === 'p414-funcrepair');
+      if (!funcRepairScenario) {
+        throw new Error('funcrepaironly: p414-funcrepair scenario not found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const funcRepairExit = await runScenarioPhases([funcRepairScenario]);
+      process.exit(funcRepairExit);
     }
 
     if (e2eMode === 'nonlogicappstartup') {

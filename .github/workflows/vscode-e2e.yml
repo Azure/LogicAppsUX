@@ -389,6 +389,15 @@ jobs:
             scenario: p47-suite,p412-bundlerepair
             use_workspace_fixtures: true
             use_bundle_artifact: true
+          # Func Core Tools pre-debug self-heal. Own shard on purpose: it is the
+          # only scenario that downloads the Func Core Tools package twice (the
+          # initial managed install, then the repair after it is corrupted), so
+          # its wall time is dominated by network and would put a retried
+          # suite-and-bundle over this job's 35 min budget.
+          - shard: func-selfheal
+            scenario: p414-funcrepair
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
           # Legacy project → workspace conversion variants.
           - shard: project-conversion
             scenario: p48a-conversionno,p48c-multipledesigners,p48d-conversionyes,p48e-conversionsubfolder

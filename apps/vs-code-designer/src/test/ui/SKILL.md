@@ -65,6 +65,7 @@ Run `npx biome check --write <files>` and `npx tsup --config tsup.e2e.test.confi
 |------|---------|
 | `src/test/ui/nonLogicAppStartup.test.ts` | Plain-folder startup regression test. Phase 4.0 |
 | `src/test/ui/bundleCdnHealth.test.ts` | CDN integrity probe (`Content-Length` + `Content-MD5` on Microsoft.Azure.Functions.ExtensionBundle.Workflows). Pure Mocha — runs without VS Code. Phase 4.11 / `E2E_MODE=bundleintegrityonly`. |
+| `src/test/ui/funcRepair.test.ts` | Func Core Tools pre-debug self-heal. Corrupts the extension-managed func executable in place (exists but won't execute), presses F5, asserts the gate silently reinstalls it instead of showing the blocking "must have Azure Functions Core Tools installed" modal. Phase 4.14 / `E2E_MODE=funcrepaironly`. Mutates the runtime-dependency cache — it restores the original bytes in `afterEach`, and resolves its target from `LA_E2E_RUNTIME_DEPS_ROOT` so it can never touch a global func install. |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
