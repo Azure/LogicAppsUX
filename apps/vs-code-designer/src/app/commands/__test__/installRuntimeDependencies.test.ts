@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PackageManager, dotnetDependencyName, funcDependencyName, nodeJsDependencyName } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { downloadAndExtractDependency } from '../../utils/binaries';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
@@ -7,7 +8,12 @@ import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import { installDotNet } from '../dotnet/installDotNet';
-import { installFuncCoreToolsBinaries, installFuncCoreToolsSystem } from '../funcCoreTools/installFuncCoreTools';
+import {
+  installFuncCoreToolsBinaries,
+  installFuncCoreToolsSystem,
+  isFuncCoreToolsInstallInFlight,
+  waitForFuncCoreToolsInstall,
+} from '../funcCoreTools/installFuncCoreTools';
 import { installNodeJs } from '../nodeJs/installNodeJs';
 
 vi.mock('../../../extensionVariables', () => ({
@@ -93,7 +99,10 @@ describe('runtime dependency installers', () => {
       context,
       'https://example.com/func.zip',
       'D:\\dependencies',
-      funcDependencyName
+      funcDependencyName,
+      undefined,
+      undefined,
+      undefined
     );
   });
 
@@ -106,7 +115,10 @@ describe('runtime dependency installers', () => {
       context,
       'https://example.com/func.zip',
       'D:\\dependencies',
-      funcDependencyName
+      funcDependencyName,
+      undefined,
+      undefined,
+      undefined
     );
   });
 
@@ -152,5 +164,114 @@ describe('runtime dependency installers', () => {
 
   it('rejects unsupported system package managers', async () => {
     await expect(installFuncCoreToolsSystem(context, ['unknown' as PackageManager], '4' as any)).rejects.toThrow('Invalid package manager');
+  });
+
+  describe('concurrent Functions Core Tools installs', () => {
+    // `downloadAndExtractDependency` stages into a shared temp folder and `extractDependency` deletes and
+    // recreates the target folder, so two overlapping installs would corrupt each other's output.
+    function deferred() {
+      let resolve!: () => void;
+      let reject!: (error: unknown) => void;
+      const promise = new Promise<undefined>((res, rej) => {
+        resolve = () => res(undefined);
+        reject = rej;
+      });
+      return { promise, resolve, reject };
+    }
+
+    function installContext() {
+      return { telemetry: { properties: {} } } as any;
+    }
+
+    it('joins a concurrent install of the same major version instead of extracting twice', async () => {
+      const gate = deferred();
+      vi.mocked(downloadAndExtractDependency).mockReturnValueOnce(gate.promise);
+      const firstContext = installContext();
+      const secondContext = installContext();
+
+      const first = installFuncCoreToolsBinaries(firstContext, '4');
+      const second = installFuncCoreToolsBinaries(secondContext, '4');
+      gate.resolve();
+      await Promise.all([first, second]);
+
+      expect(downloadAndExtractDependency).toHaveBeenCalledTimes(1);
+      expect(secondContext.telemetry.properties.funcInstallCoalesced).toBe('true');
+    });
+
+    it('waits for an in-flight install before starting one for a different major version', async () => {
+      const gate = deferred();
+      vi.mocked(downloadAndExtractDependency).mockReturnValueOnce(gate.promise);
+      const firstContext = installContext();
+      const secondContext = installContext();
+
+      const first = installFuncCoreToolsBinaries(firstContext, '4');
+      const second = installFuncCoreToolsBinaries(secondContext);
+
+      await new Promise((resolve) => setImmediate(resolve));
+      expect(downloadAndExtractDependency).toHaveBeenCalledTimes(1);
+
+      gate.resolve();
+      await Promise.all([first, second]);
+
+      expect(downloadAndExtractDependency).toHaveBeenCalledTimes(2);
+      expect(secondContext.telemetry.properties.funcInstallSerialized).toBe('true');
+    });
+
+    it('reports an install as in flight only while it is running', async () => {
+      const gate = deferred();
+      vi.mocked(downloadAndExtractDependency).mockReturnValueOnce(gate.promise);
+
+      expect(isFuncCoreToolsInstallInFlight()).toBe(false);
+      const install = installFuncCoreToolsBinaries(installContext(), '4');
+      expect(isFuncCoreToolsInstallInFlight()).toBe(true);
+
+      gate.resolve();
+      await install;
+
+      expect(isFuncCoreToolsInstallInFlight()).toBe(false);
+    });
+
+    it('lets waiters observe a failed install without rethrowing', async () => {
+      const gate = deferred();
+      vi.mocked(downloadAndExtractDependency).mockReturnValueOnce(gate.promise);
+
+      const install = installFuncCoreToolsBinaries(installContext(), '4');
+      const waiter = waitForFuncCoreToolsInstall();
+      gate.reject(new Error('extract failed'));
+
+      await expect(install).rejects.toThrow('extract failed');
+      await expect(waiter).resolves.toBeUndefined();
+      expect(isFuncCoreToolsInstallInFlight()).toBe(false);
+    });
+
+    it('resolves immediately when no install is in flight', async () => {
+      await expect(waitForFuncCoreToolsInstall()).resolves.toBeUndefined();
+      expect(downloadAndExtractDependency).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('non-interactive Functions Core Tools installs', () => {
+    it('reveals the output channel for user-initiated installs', async () => {
+      await installFuncCoreToolsBinaries({ telemetry: { properties: {} } } as any, '4');
+
+      expect(ext.outputChannel.show).toHaveBeenCalled();
+    });
+
+    it('stays silent and forwards the suppressUi flag when repairing in the background', async () => {
+      const silentContext = { telemetry: { properties: {} } } as any;
+
+      await installFuncCoreToolsBinaries(silentContext, '4', { suppressUi: true });
+
+      expect(ext.outputChannel.show).not.toHaveBeenCalled();
+      expect(downloadAndExtractDependency).toHaveBeenCalledWith(
+        silentContext,
+        'https://example.com/func.zip',
+        'D:\\dependencies',
+        funcDependencyName,
+        undefined,
+        undefined,
+        { suppressUi: true }
+      );
+    });
   });
 });

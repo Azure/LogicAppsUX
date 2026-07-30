@@ -13,7 +13,12 @@ import {
 } from '../../utils/funcCoreTools/funcVersion';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { installFuncCoreToolsBinaries, installFuncCoreToolsSystem } from './installFuncCoreTools';
+import {
+  installFuncCoreToolsBinaries,
+  installFuncCoreToolsSystem,
+  isFuncCoreToolsInstallInFlight,
+  waitForFuncCoreToolsInstall,
+} from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
@@ -99,7 +104,16 @@ async function isFuncToolsInstalled(): Promise<boolean> {
 async function attemptManagedFuncCoreToolsRepair(context: IActionContext): Promise<boolean> {
   context.telemetry.properties.funcRepairAttempted = 'true';
   try {
-    await installFuncCoreToolsBinaries(context);
+    if (isFuncCoreToolsInstallInFlight()) {
+      // Another code path — typically the activation-time version check — is already writing to the
+      // shared runtime-dependencies folder, which is also the reason `func --version` is failing right
+      // now. Starting a second install would delete and re-extract that folder underneath the first
+      // one, so wait for it to settle and re-probe instead.
+      context.telemetry.properties.funcRepairAwaitedExistingInstall = 'true';
+      await waitForFuncCoreToolsInstall();
+    } else {
+      await installFuncCoreToolsBinaries(context, undefined, { suppressUi: true });
+    }
     const repaired = await isFuncToolsInstalled();
     context.telemetry.properties.funcRepairSucceeded = `${repaired}`;
     return repaired;

@@ -5,7 +5,7 @@ import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
 import { ensureFuncCoreToolsCommandExecutablePermissions } from '../../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
-import { installFuncCoreToolsBinaries } from '../installFuncCoreTools';
+import { installFuncCoreToolsBinaries, isFuncCoreToolsInstallInFlight, waitForFuncCoreToolsInstall } from '../installFuncCoreTools';
 
 vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
@@ -37,6 +37,8 @@ vi.mock('../../../utils/funcCoreTools/getFuncPackageManagers', () => ({
 vi.mock('../installFuncCoreTools', () => ({
   installFuncCoreToolsBinaries: vi.fn(),
   installFuncCoreToolsSystem: vi.fn(),
+  isFuncCoreToolsInstallInFlight: vi.fn(() => false),
+  waitForFuncCoreToolsInstall: vi.fn(() => Promise.resolve()),
 }));
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {
@@ -69,6 +71,8 @@ describe('validateFuncCoreToolsInstalled', () => {
     };
     vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
     vi.mocked(executeCommand).mockRejectedValue(new Error('not installed'));
+    vi.mocked(isFuncCoreToolsInstallInFlight).mockReturnValue(false);
+    vi.mocked(waitForFuncCoreToolsInstall).mockResolvedValue(undefined);
   });
 
   describe('devContainer workspace', () => {
@@ -129,6 +133,8 @@ describe('validateFuncCoreToolsInstalled', () => {
       await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
 
       expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+      // The repair is automatic, so it must not pop the output channel or an error toast on its own.
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledWith(expect.anything(), undefined, { suppressUi: true });
     });
 
     it('falls back to the install prompt when the repair still cannot run func', async () => {
@@ -153,6 +159,33 @@ describe('validateFuncCoreToolsInstalled', () => {
       await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
 
       expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+    });
+
+    it('waits for an install that is already running instead of starting a second one', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(isFuncCoreToolsInstallInFlight).mockReturnValue(true);
+      // func can't run while the other install is mid-extract, then works once it finishes.
+      vi.mocked(executeCommand).mockRejectedValueOnce(new Error('not runnable')).mockResolvedValue('4.12.0');
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(waitForFuncCoreToolsInstall).toHaveBeenCalledTimes(1);
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
+    });
+
+    it('falls back to the install prompt when the already-running install leaves func unrunnable', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(isFuncCoreToolsInstallInFlight).mockReturnValue(true);
+      vi.mocked(executeCommand).mockRejectedValue(new Error('not runnable'));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(waitForFuncCoreToolsInstall).toHaveBeenCalledTimes(1);
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
     });
   });
 

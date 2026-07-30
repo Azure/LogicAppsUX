@@ -19,8 +19,105 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type FuncVersion, type INpmDistTag } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from 'vscode-nls';
 
-export async function installFuncCoreToolsBinaries(context: IActionContext, majorVersion?: string): Promise<void> {
-  ext.outputChannel.show();
+export interface InstallFuncCoreToolsOptions {
+  /**
+   * Suppresses user-facing UI (revealing the output channel, error toasts) for installs the user did
+   * not explicitly request — for example the automatic repair attempted before a debug session.
+   * Output-channel logging and telemetry are unaffected, so failures stay diagnosable.
+   */
+  suppressUi?: boolean;
+}
+
+interface InFlightFuncInstall {
+  majorVersion?: string;
+  work: Promise<void>;
+}
+
+/**
+ * Tracks the install currently writing to the shared runtime-dependencies folder. `downloadAndExtractDependency`
+ * stages into a shared temp folder and `extractDependency` deletes and recreates the target folder, so two
+ * concurrent installs would corrupt each other's output.
+ */
+let inFlightFuncInstall: InFlightFuncInstall | undefined;
+
+/**
+ * Whether an extension-managed Functions Core Tools install is currently running in this window.
+ * @returns {boolean} True while an install is in progress.
+ */
+export function isFuncCoreToolsInstallInFlight(): boolean {
+  return inFlightFuncInstall !== undefined;
+}
+
+/**
+ * Waits for the in-flight extension-managed Functions Core Tools install (if any) to settle. Never rejects:
+ * the failure belongs to whoever started the install, callers here only need the folder to stop changing
+ * before they re-probe the binaries.
+ */
+export async function waitForFuncCoreToolsInstall(): Promise<void> {
+  while (inFlightFuncInstall) {
+    const current = inFlightFuncInstall;
+    try {
+      await current.work;
+    } catch {
+      // Owned and reported by the caller that started this install.
+    }
+    if (inFlightFuncInstall === current) {
+      // The owner always clears its entry before its promise settles; bail out rather than spin
+      // if that invariant is ever broken.
+      break;
+    }
+  }
+}
+
+/**
+ * Installs the extension-managed Functions Core Tools binaries, ensuring only one install writes to the
+ * shared dependencies folder at a time. A concurrent request for the same major version joins the running
+ * install; a request for a different version waits for it to finish first.
+ * @param {IActionContext} context - Command context.
+ * @param {string} majorVersion - Optional major version to install. Defaults to the latest.
+ * @param {InstallFuncCoreToolsOptions} options - Optional install behavior overrides.
+ */
+export async function installFuncCoreToolsBinaries(
+  context: IActionContext,
+  majorVersion?: string,
+  options?: InstallFuncCoreToolsOptions
+): Promise<void> {
+  while (inFlightFuncInstall) {
+    const current = inFlightFuncInstall;
+    if (current.majorVersion === majorVersion) {
+      context.telemetry.properties.funcInstallCoalesced = 'true';
+      return current.work;
+    }
+    context.telemetry.properties.funcInstallSerialized = 'true';
+    try {
+      await current.work;
+    } catch {
+      // Failures belong to the caller that started that install; we only need the folder to settle.
+    }
+    if (inFlightFuncInstall === current) {
+      break;
+    }
+  }
+
+  const entry: InFlightFuncInstall = { majorVersion, work: Promise.resolve() };
+  inFlightFuncInstall = entry;
+  entry.work = downloadFuncCoreToolsBinaries(context, majorVersion, options).finally(() => {
+    if (inFlightFuncInstall === entry) {
+      inFlightFuncInstall = undefined;
+    }
+  });
+
+  return entry.work;
+}
+
+async function downloadFuncCoreToolsBinaries(
+  context: IActionContext,
+  majorVersion?: string,
+  options?: InstallFuncCoreToolsOptions
+): Promise<void> {
+  if (!options?.suppressUi) {
+    ext.outputChannel.show();
+  }
   const arch = getCpuArchitecture();
   const targetDirectory = await ensureRuntimeDependenciesPath();
   context.telemetry.properties.lastStep = 'getLatestFunctionCoreToolsVersion';
@@ -45,7 +142,15 @@ export async function installFuncCoreToolsBinaries(context: IActionContext, majo
     }
   }
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractDependency(context, azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
+  await downloadAndExtractDependency(
+    context,
+    azureFunctionCoreToolsReleasesUrl,
+    targetDirectory,
+    funcDependencyName,
+    undefined,
+    undefined,
+    options
+  );
 }
 
 export async function installFuncCoreToolsSystem(
