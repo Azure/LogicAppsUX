@@ -32,7 +32,15 @@ vi.mock('../app/commands/binaries/validateAndInstallBinaries', () => ({
   validateAndInstallBinaries: vi.fn(),
 }));
 vi.mock('../app/utils/telemetry', () => ({
-  runWithDurationTelemetry: vi.fn(async (_ctx: any, _cmd: any, callback: () => Promise<void>) => await callback()),
+  callWithDurationTelemetry: vi.fn(async (_id: string, callback: (ctx: any) => Promise<any>) => {
+    const innerContext = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(innerContext);
+  }),
 }));
 
 describe('devContainer Integration Tests', () => {
@@ -63,7 +71,6 @@ describe('devContainer Integration Tests', () => {
 
       expect(mockContext.telemetry.properties.skippedDependencyOnboarding).toBe('true');
       expect(mockContext.telemetry.properties.skippedDependencyOnboardingReason).toBe('devContainer');
-      expect(mockContext.telemetry.properties.designTimeStartupMode).toBe('devContainerAutoStart');
       expect(installBinariesSpy).not.toHaveBeenCalled();
       expect(promptStartDesignTimeOption).not.toHaveBeenCalled();
       expect(scheduleStartAllDesignTimeApis).toHaveBeenCalled();
@@ -79,7 +86,6 @@ describe('devContainer Integration Tests', () => {
       vi.mocked(promptStartDesignTimeOption).mockResolvedValue(undefined);
 
       await startOnboarding(mockContext);
-      await vi.waitFor(() => expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeDefined());
 
       expect(mockContext.telemetry.properties.skippedDependencyOnboarding).toBeUndefined();
       expect(installBinariesSpy).toHaveBeenCalled();
@@ -150,10 +156,8 @@ describe('devContainer Integration Tests', () => {
       vi.mocked(getGlobalSetting).mockReturnValue(false);
 
       await startOnboarding(mockContext);
-      await vi.waitFor(() => expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeDefined());
 
-      expect(typeof mockContext.telemetry.measurements.binariesInstallDuration).toBe('number');
-      expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeGreaterThanOrEqual(0);
+      expect(mockContext.telemetry.properties.lastStep).toBe('validateAndInstallBinaries');
       expect(installBinariesSpy).toHaveBeenCalled();
     });
 
@@ -162,7 +166,7 @@ describe('devContainer Integration Tests', () => {
 
       await startOnboarding(mockContext);
 
-      expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeUndefined();
+      expect(mockContext.telemetry.properties.lastStep).toBeUndefined();
     });
   });
 

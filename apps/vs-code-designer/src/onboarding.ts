@@ -6,7 +6,7 @@ import { installBinaries } from './app/utils/binaries';
 import { promptStartDesignTimeOption, scheduleStartAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { callWithDurationTelemetry } from './app/utils/telemetry';
 import { extensionCommand } from './constants';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { ext } from './extensionVariables';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
@@ -28,14 +28,16 @@ export const startOnboarding = async (activateContext: IActionContext) => {
   } else {
     activateContext.telemetry.properties.lastStep = 'validateAndInstallBinaries';
     await callWithDurationTelemetry(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
-      if (shouldRequireStrictDependencyValidation()) {
-        actionContext.errorHandling.rethrow = true;
+      if (!shouldRequireStrictDependencyValidation()) {
+        actionContext.errorHandling.rethrow = false;
       }
       await installBinaries(actionContext);
     });
   }
 
   await callWithDurationTelemetry(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
+    // Design-time startup failures are non-blocking during activation
+    actionContext.errorHandling.rethrow = false;
     if (isDevContainer) {
       actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
       actionContext.telemetry.properties.designTimeStartupState = 'scheduled';

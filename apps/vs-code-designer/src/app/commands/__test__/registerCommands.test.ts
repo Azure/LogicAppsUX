@@ -133,7 +133,6 @@ vi.mock('../workflows/switchDebugMode/switchDebugMode', () => ({ switchDebugMode
 vi.mock('../workflows/switchToDotnetProject', () => ({ switchToDotnetProjectCommand: vi.fn() }));
 vi.mock('../workflows/useSQLStorage', () => ({ useSQLStorage: vi.fn() }));
 vi.mock('../workflows/viewContent', () => ({ viewContent: vi.fn() }));
-vi.mock('../pickCustomCodeWorkerProcess', () => ({ pickCustomCodeNetHostProcess: vi.fn() }));
 vi.mock('../debugLogicApp', () => ({ debugLogicApp: vi.fn() }));
 vi.mock('../syncCloudSettings', () => ({ syncCloudSettings: vi.fn() }));
 vi.mock('../../utils/debug', () => ({ getDebugSymbolDll: vi.fn() }));

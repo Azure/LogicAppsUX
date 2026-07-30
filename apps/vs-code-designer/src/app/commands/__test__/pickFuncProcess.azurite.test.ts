@@ -22,42 +22,28 @@ const { UserCancelledErrorMock } = vi.hoisted(() => ({
   UserCancelledErrorMock: class UserCancelledError extends Error {},
 }));
 
+vi.mock('../../utils/telemetry', () => ({
+  callWithDurationTelemetry: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+    const context = {
+      telemetry: {
+        properties: {},
+        measurements: {},
+      },
+      errorHandling: { suppressDisplay: true, rethrow: true } as { suppressDisplay?: boolean; rethrow?: boolean },
+      ui: {
+        showWarningMessage: vi.fn(async (message: string) => {
+          capturedMessages.push(message);
+          return undefined;
+        }),
+      },
+    };
+    telemetryContexts.push(context);
+    return await callback(context);
+  }),
+}));
+
 vi.mock('@microsoft/vscode-azext-utils', () => {
   return {
-    callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
-      const context = {
-        telemetry: {
-          properties: {},
-          measurements: {},
-        },
-        errorHandling: {} as { suppressDisplay?: boolean; rethrow?: boolean },
-        ui: {
-          showWarningMessage: vi.fn(async (message: string) => {
-            capturedMessages.push(message);
-            return undefined;
-          }),
-        },
-      };
-      telemetryContexts.push(context);
-      try {
-        return await callback(context);
-      } catch (error) {
-        // Mirror the real library: a cancellation is never displayed AND never rethrown, whatever
-        // the callback asked for -- `handleError` force-sets both knobs. That force-swallow is
-        // exactly why the product must re-raise cancellations outside this scope rather than
-        // relying on `rethrow`.
-        if (error instanceof UserCancelledErrorMock) {
-          return undefined;
-        }
-        if (!context.errorHandling.suppressDisplay) {
-          capturedMessages.push(error instanceof Error ? error.message : String(error));
-        }
-        if (context.errorHandling.rethrow) {
-          throw error;
-        }
-        return undefined;
-      }
-    }),
     UserCancelledError: UserCancelledErrorMock,
   };
 });

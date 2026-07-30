@@ -9,12 +9,18 @@ import { createSettingsDetails } from './vsCodeConfig/settings';
 
 /**
  * Creates a telemetry wrapper that measures the duration of the provided callback function.
+ * Errors are re-thrown after being recorded in telemetry so callers can handle them.
  * @param {string} callbackId - The identifier for the telemetry event.
  * @param {function} callback - The callback function to execute.
  * @returns {Promise<T | undefined>} Returns the result of the callback function, or undefined if an error occurs.
  */
-export async function callWithDurationTelemetry<T>(callbackId: string, callback: (context: IActionContext) => T | PromiseLike<T>): Promise<T | undefined> {
+export async function callWithDurationTelemetry<T>(
+  callbackId: string,
+  callback: (context: IActionContext) => T | PromiseLike<T>
+): Promise<T | undefined> {
   return await callWithTelemetryAndErrorHandling(callbackId, async (context: IActionContext) => {
+    context.errorHandling.rethrow = true;
+    context.errorHandling.suppressDisplay = true;
     return await runWithDurationTelemetry(context, () => callback(context));
   });
 }

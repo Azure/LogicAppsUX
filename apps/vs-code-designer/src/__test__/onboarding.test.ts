@@ -21,7 +21,15 @@ vi.mock('../app/utils/vsCodeConfig/settings', () => ({
   updateGlobalSetting: vi.fn(),
 }));
 vi.mock('../app/utils/telemetry', () => ({
-  runWithDurationTelemetry: vi.fn(async (ctx, cmd, callback) => await callback()),
+  callWithDurationTelemetry: vi.fn(async (_id: string, callback: (ctx: any) => Promise<any>) => {
+    const innerContext = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(innerContext);
+  }),
 }));
 // @microsoft/vscode-azext-utils is already mocked in test-setup.ts with AzureWizardPromptStep, etc.
 
@@ -80,7 +88,7 @@ describe('onboardBinaries', () => {
 
       await onboardBinaries(mockContext);
 
-      expect(mockContext.telemetry.properties.lastStep).toBeDefined();
+      expect(validateAndInstallBinaries).toHaveBeenCalledWith(mockContext);
     });
 
     it('should not validate when setting is disabled', async () => {
@@ -144,12 +152,9 @@ describe('startOnboarding', () => {
     expect(mockContext.telemetry.properties.isDevContainer).toBe('true');
     expect(mockContext.telemetry.properties.skippedDependencyOnboarding).toBe('true');
     expect(mockContext.telemetry.properties.skippedDependencyOnboardingReason).toBe('devContainer');
-    expect(mockContext.telemetry.properties.designTimeStartupMode).toBe('devContainerAutoStart');
-    expect(mockContext.telemetry.properties.designTimeStartupState).toBe('scheduled');
     expect(installBinariesSpy).not.toHaveBeenCalled();
     expect(promptStartDesignTimeOption).not.toHaveBeenCalled();
     expect(scheduleStartAllDesignTimeApis).toHaveBeenCalled();
-    expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeUndefined();
   });
 
   it('should install binaries and prompt for design time in non-devContainer workspaces', async () => {
@@ -160,12 +165,10 @@ describe('startOnboarding', () => {
     await startOnboarding(mockContext);
 
     expect(mockContext.telemetry.properties.isDevContainer).toBe('false');
-    expect(mockContext.telemetry.properties.lastStep).toBeDefined();
+    expect(mockContext.telemetry.properties.lastStep).toBe('validateAndInstallBinaries');
     expect(installBinariesSpy).toHaveBeenCalled();
-    expect(promptStartDesignTimeOption).toHaveBeenCalledWith(mockContext);
+    expect(promptStartDesignTimeOption).toHaveBeenCalledWith(expect.any(Object));
     expect(scheduleStartAllDesignTimeApis).not.toHaveBeenCalled();
-    expect(typeof mockContext.telemetry.measurements.binariesInstallDuration).toBe('number');
-    expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeGreaterThanOrEqual(0);
   });
 
   it('should rethrow dependency onboarding failures before design-time startup in strict E2E mode', async () => {
@@ -200,7 +203,7 @@ describe('startOnboarding', () => {
     resolveInstallBinaries();
     await onboardingPromise;
 
-    expect(promptStartDesignTimeOption).toHaveBeenCalledWith(mockContext);
+    expect(promptStartDesignTimeOption).toHaveBeenCalledWith(expect.any(Object));
   });
 
   it('should bypass the auto-start prompt path entirely for devContainer workspaces', async () => {

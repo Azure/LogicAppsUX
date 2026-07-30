@@ -858,6 +858,7 @@ describe('binaries', () => {
         telemetry: {
           properties: {},
         },
+        errorHandling: {},
       } as IActionContext;
     });
 

@@ -47,6 +47,18 @@ vi.mock('../../utils/customCodeUtils', () => ({
   detectCustomCodeTargetFramework: vi.fn(),
 }));
 
+vi.mock('../../utils/telemetry', () => ({
+  callWithDurationTelemetry: vi.fn(async (_id: string, callback: (ctx: any) => Promise<any>) => {
+    const innerContext = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(innerContext);
+  }),
+}));
+
 vi.mock('../../utils/dotnet/dotnet', () => ({
   tryGetTargetFramework: vi.fn().mockResolvedValue(undefined),
   getDotnetRuntimeFromFunc: vi.fn().mockReturnValue('coreclr'),
@@ -148,7 +160,7 @@ describe('vscodeConsistency', () => {
       DialogResponses.yes,
       DialogResponses.dontWarnAgain
     );
-    expect(initProjectForVSCode).toHaveBeenCalledWith(context, projectPath);
+    expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath);
   });
 
   it('suppresses the initialization prompt when the warning setting is disabled', async () => {

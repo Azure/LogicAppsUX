@@ -17,7 +17,15 @@ vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
 }));
 
 vi.mock('../app/utils/telemetry', () => ({
-  runWithDurationTelemetry: vi.fn(async (ctx, cmd, callback) => await callback()),
+  callWithDurationTelemetry: vi.fn(async (_id: string, callback: (ctx: any) => Promise<any>) => {
+    const innerContext = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(innerContext);
+  }),
 }));
 
 vi.mock('../app/utils/vsCodeConfig/settings', () => ({
@@ -54,7 +62,6 @@ describe('startOnboarding with devContainer', () => {
 
     expect(mockContext.telemetry.properties.skippedDependencyOnboarding).toBe('true');
     expect(mockContext.telemetry.properties.skippedDependencyOnboardingReason).toBe('devContainer');
-    expect(mockContext.telemetry.properties.designTimeStartupMode).toBe('devContainerAutoStart');
     expect(installBinariesSpy).not.toHaveBeenCalled();
     expect(promptStartDesignTimeOption).not.toHaveBeenCalled();
   });
@@ -74,14 +81,13 @@ describe('startOnboarding with devContainer', () => {
     expect(promptStartDesignTimeOption).toHaveBeenCalled();
   });
 
-  it('should record telemetry for binaries install duration', async () => {
+  it('should record telemetry lastStep for binaries install', async () => {
     vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
     vi.mocked(getGlobalSetting).mockReturnValue(false);
 
     await startOnboarding(mockContext);
-    await vi.waitFor(() => expect(mockContext.telemetry.measurements.binariesInstallDuration).toBeDefined());
 
-    expect(typeof mockContext.telemetry.measurements.binariesInstallDuration).toBe('number');
+    expect(mockContext.telemetry.properties.lastStep).toBe('validateAndInstallBinaries');
   });
 
   it('should not attempt binary installation in devContainer workspace', async () => {

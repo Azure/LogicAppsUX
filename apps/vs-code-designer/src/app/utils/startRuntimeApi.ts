@@ -56,19 +56,19 @@ export async function startRuntimeApi(context: IActionContext, projectPath: stri
   if (runtimeInst.isStarting && !isNewRuntimeProcess) {
     await waitForRuntimeStartUp(context, projectPath, runtimeInst.port);
     context.telemetry.properties.isRuntimeUp = 'true';
-    await validateRunningFuncProcess(projectPath);
+    await validateRunningFuncProcess(context, projectPath);
     return;
   }
 
   if (!isNewRuntimeProcess && (await isRuntimeUp(runtimeInst.port))) {
     context.telemetry.properties.isRuntimeUp = 'true';
-    await validateRunningFuncProcess(projectPath);
+    await validateRunningFuncProcess(context, projectPath);
     return;
   }
 
   try {
     ext.outputChannel.appendLog(localize('startingRuntime', 'Starting Runtime API for project: {0}', projectPath));
-    startRuntimeProcess(projectPath, getFunctionsCommand(), 'host', 'start', `--port ${runtimeInst.port}`);
+    startRuntimeProcess(context, projectPath, getFunctionsCommand(), 'host', 'start', `--port ${runtimeInst.port}`);
     await waitForRuntimeStartUp(context, projectPath, runtimeInst.port, true);
     context.telemetry.properties.isRuntimeUp = 'true';
   } catch (error) {
@@ -128,7 +128,7 @@ export async function isRuntimeUp(port: number): Promise<boolean> {
   }
 }
 
-async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+async function validateRunningFuncProcess(context: IActionContext, projectPath: string): Promise<void> {
   const correctFuncProcess = await checkFuncProcessId(projectPath);
   if (!correctFuncProcess) {
     ext.outputChannel.appendLog(
@@ -139,7 +139,7 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
       )
     );
     stopRuntimeApi(projectPath);
-    await startRuntimeApi(projectPath);
+    await startRuntimeApi(context, projectPath);
   }
 }
 
@@ -230,7 +230,7 @@ export function stopRuntimeApi(projectPath: string): void {
   }
 }
 
-export function startRuntimeProcess(projectPath: string, command: string, ...args: string[]): void {
+export function startRuntimeProcess(context: IActionContext, projectPath: string, command: string, ...args: string[]): void {
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
   const formattedArgs: string = args.join(' ');
@@ -260,7 +260,7 @@ export function startRuntimeProcess(projectPath: string, command: string, ...arg
       );
 
       stopRuntimeApi(projectPath);
-      startRuntimeApi(projectPath);
+      startRuntimeApi(context, projectPath);
     }
   });
 
@@ -273,7 +273,7 @@ export function startRuntimeProcess(projectPath: string, command: string, ...arg
       ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting runtime process.');
 
       stopRuntimeApi(projectPath);
-      startRuntimeApi(projectPath);
+      startRuntimeApi(context, projectPath);
     }
   });
 
