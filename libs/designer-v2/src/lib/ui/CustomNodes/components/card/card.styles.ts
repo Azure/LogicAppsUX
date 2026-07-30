@@ -149,6 +149,30 @@ export const useCardStyles = makeStyles({
     padding: '4px',
     maxWidth: '200px',
   },
+
+  // Indicators (testing / description / secure inputs & outputs)
+  indicators: {
+    display: 'flex',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: '4px',
+    flexShrink: 0,
+    color: tokens.colorNeutralForeground3,
+    lineHeight: '20px',
+  },
+  scopeIndicators: {
+    color: '#fff',
+  },
+  indicator: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    '& > svg': {
+      width: '14px',
+      height: '14px',
+    },
+  },
   copilotModified: {
     overflow: 'visible',
     '&::after': {
