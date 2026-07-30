@@ -22,6 +22,74 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import { createWorkspaceWebviewCommandHandler } from './shared/workspaceWebviewCommandHandler';
 
+export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
+  const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
+  if (await isLogicAppProjectInRoot(workspaceFolder)) {
+    addLocalFuncTelemetry(context);
+
+    const wizardContext = context as Partial<IFunctionWizardContext> & IActionContext;
+    context.telemetry.properties.isWorkspace = 'false';
+    wizardContext.workspaceFilePath = (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));
+    // save uri variable for open project folder command
+    wizardContext.workspacePath = await getWorkspaceRoot(wizardContext);
+    if (wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
+      const openWorkspaceMessage = localize(
+        'openContainingWorkspace',
+        `You must open your workspace to use the full functionality in the Azure Logic Apps (Standard) extension. You can find the workspace with your logic app project at the following location: ${wizardContext.workspaceFilePath}. Do you want to open this workspace now?`
+      );
+      const shouldOpenWorkspace = await vscode.window.showInformationMessage(
+        openWorkspaceMessage,
+        { modal: true },
+        DialogResponses.yes,
+        DialogResponses.no
+      );
+      if (shouldOpenWorkspace === DialogResponses.yes) {
+        await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspaceFilePath));
+        context.telemetry.properties.openContainingWorkspace = 'true';
+        return true;
+      }
+      context.telemetry.properties.openContainingWorkspace = 'false';
+      return false;
+    }
+
+    if (!wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
+      const createWorkspaceMessage = localize(
+        'createContainingWorkspace',
+        'Your logic app projects must exist inside a workspace to use the full functionality in the Azure Logic Apps (Standard) extension. Visual Studio Code will copy your projects to a new workspace. Do you want to create the workspace now?'
+      );
+      const shouldCreateWorkspace = await vscode.window.showInformationMessage(
+        createWorkspaceMessage,
+        { modal: true },
+        DialogResponses.yes,
+        DialogResponses.no
+      );
+      if (shouldCreateWorkspace === DialogResponses.yes) {
+        return await createWorkspaceStructureWebview(context);
+      }
+      context.telemetry.properties.createContainingWorkspace = 'false';
+      return false;
+    }
+
+    context.telemetry.properties.isWorkspace = 'true';
+    return true;
+  }
+}
+
+async function createWorkspaceStructureWebview(context: IActionContext): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
+    createWorkspaceWebviewCommandHandler({
+      panelName: localize('createWorkspaceStructure', 'Create workspace structure'),
+      panelGroupKey: ext.webViewKey.createWorkspaceStructure,
+      projectName: ProjectName.createWorkspaceStructure,
+      createCommand: ExtensionCommand.createWorkspaceStructure,
+      createHandler: async (data: any) => {
+        await createWorkspaceFile(context, data);
+      },
+      onResolve: resolve,
+    });
+  });
+}
+
 export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
   addLocalFuncTelemetry(context);
 
@@ -86,70 +154,4 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
   const uri = vscode.Uri.file(workspaceFilePath);
 
   await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, true /* forceNewWindow */);
-}
-
-async function createWorkspaceStructureWebview(_context: IActionContext): Promise<boolean> {
-  return new Promise<boolean>((resolve) => {
-    createWorkspaceWebviewCommandHandler({
-      panelName: localize('createWorkspaceStructure', 'Create workspace structure'),
-      panelGroupKey: ext.webViewKey.createWorkspaceStructure,
-      projectName: ProjectName.createWorkspaceStructure,
-      createCommand: ExtensionCommand.createWorkspaceStructure,
-      createHandler: createWorkspaceFile,
-      onResolve: resolve,
-    });
-  });
-}
-
-export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
-  const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
-  if (await isLogicAppProjectInRoot(workspaceFolder)) {
-    addLocalFuncTelemetry(context);
-
-    const wizardContext = context as Partial<IFunctionWizardContext> & IActionContext;
-    context.telemetry.properties.isWorkspace = 'false';
-    wizardContext.workspaceFilePath = (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));
-    // save uri variable for open project folder command
-    wizardContext.workspacePath = await getWorkspaceRoot(wizardContext);
-    if (wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
-      const openWorkspaceMessage = localize(
-        'openContainingWorkspace',
-        `You must open your workspace to use the full functionality in the Azure Logic Apps (Standard) extension. You can find the workspace with your logic app project at the following location: ${wizardContext.workspaceFilePath}. Do you want to open this workspace now?`
-      );
-      const shouldOpenWorkspace = await vscode.window.showInformationMessage(
-        openWorkspaceMessage,
-        { modal: true },
-        DialogResponses.yes,
-        DialogResponses.no
-      );
-      if (shouldOpenWorkspace === DialogResponses.yes) {
-        await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspaceFilePath));
-        context.telemetry.properties.openContainingWorkspace = 'true';
-        return true;
-      }
-      context.telemetry.properties.openContainingWorkspace = 'false';
-      return false;
-    }
-
-    if (!wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
-      const createWorkspaceMessage = localize(
-        'createContainingWorkspace',
-        'Your logic app projects must exist inside a workspace to use the full functionality in the Azure Logic Apps (Standard) extension. Visual Studio Code will copy your projects to a new workspace. Do you want to create the workspace now?'
-      );
-      const shouldCreateWorkspace = await vscode.window.showInformationMessage(
-        createWorkspaceMessage,
-        { modal: true },
-        DialogResponses.yes,
-        DialogResponses.no
-      );
-      if (shouldCreateWorkspace === DialogResponses.yes) {
-        return await createWorkspaceStructureWebview(context);
-      }
-      context.telemetry.properties.createContainingWorkspace = 'false';
-      return false;
-    }
-
-    context.telemetry.properties.isWorkspace = 'true';
-    return true;
-  }
 }

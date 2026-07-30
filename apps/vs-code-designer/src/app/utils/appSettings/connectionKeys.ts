@@ -51,7 +51,7 @@ export async function refreshConnectionKeys(context: IActionContext, projectPath
         (error as Error).message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { AzureWizardExecuteStep, DialogResponses, UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, DialogResponses, type IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 import { getBaseGraphApi, OpenBehavior, DeploymentTargetType } from '@microsoft/vscode-extension-logic-apps';
 import { getConnectionsJson } from '../../../../utils/codeless/connection';
@@ -17,11 +17,12 @@ import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { parameterizeConnections } from '../../../parameterizeConnections';
 import { FileManagement } from '../../iacGestureHelperFunctions';
-import { deploymentDirectory, managementApiPrefix, workflowFileName } from '../../../../../constants';
+import { deploymentDirectory, extensionCommand, managementApiPrefix, workflowFileName } from '../../../../../constants';
 import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { getAuthorizationToken, getCloudHost } from '../../../../utils/codeless/getAuthorizationToken';
 import type { IAzureDeploymentScriptsContext } from '../../generateDeploymentScripts';
+import { callWithDurationTelemetry } from '../../../../utils/telemetry';
 
 export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAzureDeploymentScriptsContext> {
   public priority = 250;
@@ -77,7 +78,9 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       );
       if (shouldParameterizeConnections === DialogResponses.yes) {
         context.telemetry.properties.lastStep = 'parameterizeConnections';
-        await parameterizeConnections(context);
+        await callWithDurationTelemetry(extensionCommand.parameterizeConnections, async (actionContext: IActionContext) => {
+          await parameterizeConnections(actionContext);
+        });
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
       } else {
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'false';

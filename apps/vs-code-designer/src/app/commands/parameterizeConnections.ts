@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { parameterizeConnectionsInProjectLoadSetting } from '../../constants';
+import { extensionCommand, parameterizeConnectionsInProjectLoadSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
@@ -15,20 +15,23 @@ import { getWorkspaceLogicAppFolders } from '../utils/workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { window, workspace } from 'vscode';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
+import { callWithDurationTelemetry } from '../utils/telemetry';
 
 /**
  * Parameterizes the connections in each workspace project if needed.
- * @param {IActionContext} context - The action context.
+ * @param {IActionContext} activateContext - The extension activate context.
  * @param {boolean} [showMessage] - A flag indicating whether to show information message to the user.
  * @returns A promise that resolves when the operation is complete.
  */
-export async function parameterizeConnectionsIfNeeded(context: IActionContext, showMessage?: boolean): Promise<void> {
-  const parameterizeConnectionsStartTime = Date.now();
-  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0 && (await shouldParameterizeConnections(context))) {
+export async function parameterizeConnectionsIfNeeded(activateContext: IActionContext, showMessage?: boolean): Promise<void> {
+  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0 && (await shouldParameterizeConnections(activateContext))) {
     const projectPaths = await getWorkspaceLogicAppFolders();
-    await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath, showMessage)));
+    await Promise.all(projectPaths.map(
+      (projectPath) => callWithDurationTelemetry(extensionCommand.parameterizeConnections, async (context: IActionContext) => {
+        await parameterizeConnections(context, projectPath, showMessage);
+      })
+    ));
   }
-  context.telemetry.measurements.parameterizeConnectionsDuration = (Date.now() - parameterizeConnectionsStartTime) / 1000;
 }
 
 async function shouldParameterizeConnections(context: IActionContext): Promise<boolean> {
@@ -107,7 +110,8 @@ export async function parameterizeConnections(context: IActionContext, projectPa
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }

@@ -87,7 +87,7 @@ export async function downloadAndExtractDependency(
   } catch (error) {
     const errorMessage = `Error downloading the ${dependencyName} file: ${error instanceof Error ? error.message : String(error)}`;
     vscode.window.showErrorMessage(errorMessage);
-    context.telemetry.properties.error = errorMessage;
+    context.telemetry.properties.errorMessage = errorMessage;
     // Clean up partials before bailing.
     try {
       if (fs.existsSync(tempFolderPath)) {
@@ -117,7 +117,7 @@ export async function downloadAndExtractDependency(
     if (actualSha256.toLowerCase() !== expectedSha256.toLowerCase()) {
       const errorMessage = `Checksum verification failed for ${dependencyName}: expected SHA256 ${expectedSha256} but got ${actualSha256}.`;
       vscode.window.showErrorMessage(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.errorMessage = errorMessage;
       try {
         if (fs.existsSync(tempFolderPath)) {
           fs.rmSync(tempFolderPath, { recursive: true, force: true });

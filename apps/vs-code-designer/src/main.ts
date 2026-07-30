@@ -69,13 +69,13 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
+    activateContext.telemetry.properties.isActivationEvent = 'true';
     vscode.commands.executeCommand(
       'setContext',
       extensionCommand.customCodeSetFunctionsFolders,
       await getAllCustomCodeFunctionsProjects(activateContext)
     );
 
-    activateContext.telemetry.properties.isActivationEvent = 'true';
     runPostExtractStepsFromCache();
     callWithTelemetryAndErrorHandling(extensionCommand.logSubscriptions, async (actionContext: IActionContext) => {
       await logSubscriptions(actionContext);
@@ -85,23 +85,21 @@ export async function activate(context: vscode.ExtensionContext) {
       await convertToWorkspace(activateContext);
     }
 
+    activateContext.telemetry.properties.lastStep = 'ensureExtensionBundle';
     if (shouldRequireStrictDependencyValidation()) {
-      await downloadExtensionBundle(activateContext);
+      await callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        await downloadExtensionBundle(actionContext);
+      });
     } else {
-      // Intentionally not awaited so activation stays snappy. Downstream code
-      // that depends on the extracted bundle (startDesignTimeApi) calls
-      // waitForExtensionBundleReady() to block on the in-flight work and avoid
-      // racing the re-extract — which on Windows can lock the bundle folder and
-      // leave the design-time host pointing at a half-extracted bundle.
-      downloadExtensionBundle(activateContext).catch((error) => {
-        ext.outputChannel?.appendLog(
-          localize(
-            'bundleDownloadFailed',
-            `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
-          )
-        );
+      callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
+        await downloadExtensionBundle(actionContext).catch((error) => {
+          ext.outputChannel?.appendLog(localize('bundleDownloadFailed', `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`));
+        });
       });
     }
+    
     parameterizeConnectionsIfNeeded(activateContext, false);
     await startOnboarding(activateContext);
 

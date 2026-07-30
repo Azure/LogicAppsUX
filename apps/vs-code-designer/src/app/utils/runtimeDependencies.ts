@@ -7,7 +7,6 @@ import { autoRuntimeDependenciesValidationAndInstallationSetting } from '../../c
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import { isDevContainerWorkspace } from './devContainerUtils';
-import { shouldRequireStrictDependencyValidation } from './strictDependencyValidation';
 
 export const useBinariesDependencies = async (): Promise<boolean> => {
   const isDevContainer = await isDevContainerWorkspace();
@@ -20,10 +19,6 @@ export const useBinariesDependencies = async (): Promise<boolean> => {
 };
 
 export async function onboardBinaries(context: IActionContext): Promise<void> {
-  if (shouldRequireStrictDependencyValidation()) {
-    context.errorHandling.rethrow = true;
-  }
-  
   const binariesInstallation = await useBinariesDependencies();
   if (binariesInstallation) {
     await validateAndInstallBinaries(context);

@@ -51,33 +51,36 @@ import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
 import { callWithDurationTelemetry } from '../../utils/telemetry';
 
-export async function switchToDotnetProjectCommand(context: IProjectWizardContext, target: vscode.Uri) {
-  switchToDotnetProject(context, target);
+export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
+  switchToDotnetProject(context, node);
 }
 
 export async function switchToDotnetProject(
-  context: IProjectWizardContext,
-  target: vscode.Uri,
+  context: IActionContext,
+  node?: vscode.Uri,
   localDotNetMajorVersion = '10',
   isCodeful = false
 ) {
-  if (target === undefined || Object.keys(target).length === 0) {
+  if (node === undefined || Object.keys(node).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    target = vscode.Uri.file(projectPath);
+    if (!projectPath) {
+      throw new Error(localize('logicAppProjectNotFound', 'Logic App project could not be found.'));
+    }
+    node = vscode.Uri.file(projectPath);
   }
 
-  const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
+  const isDotNetInstalled = await validateDotNetIsInstalled(context, node.fsPath);
   if (!isDotNetInstalled) {
     return;
   }
 
-  let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath));
+  let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, node.fsPath));
   if (isCodeful) {
     version = FuncVersion.v4;
   }
 
-  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, target.fsPath);
+  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, node.fsPath);
   if (projectFiles.length > 0) {
     ext.outputChannel.appendLog(localize('projectAlreadyDotnet', 'The Logic App project is already a NuGet-based project.'));
     return;
@@ -87,16 +90,16 @@ export async function switchToDotnetProject(
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
     await callWithDurationTelemetry(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
-      await initProjectForVSCode(actionContext, target.fsPath);
+      await initProjectForVSCode(actionContext, node.fsPath);
     });
 
     version = nonNullOrEmptyValue(
-      tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath)),
+      tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, node.fsPath)),
       funcVersionSetting
     ) as FuncVersion;
   }
 
-  const dotnetTemplateProvider = new DotnetTemplateProvider(version, target.fsPath);
+  const dotnetTemplateProvider = new DotnetTemplateProvider(version, node.fsPath);
 
   // We need to get the templates first to ensure that the we can create the dotnet project
   // 1. try to get cached templates
@@ -120,7 +123,7 @@ export async function switchToDotnetProject(
   if (!templates) {
     throw new Error(localize('dotnetTemplateError', `Can't find dotnet templates.`));
   }
-  const logicAppFolderName = path.basename(target.fsPath);
+  const logicAppFolderName = path.basename(node.fsPath);
   const warning: string = localize(
     'confirmMoveToDotnet',
     `This action moves your logic app project, ${logicAppFolderName}, to a NuGet-based project. Confirm that you want to move to a NuGet-based project?`
@@ -129,25 +132,25 @@ export async function switchToDotnetProject(
   const moveButton: vscode.MessageItem = { title: localize('move', 'Move to a NuGet-based project') };
   await context.ui.showWarningMessage(warning, { modal: true }, moveButton, DialogResponses.cancel);
 
-  const projectName: string = path.basename(target.fsPath);
+  const projectName: string = path.basename(node.fsPath);
   const templateLanguage = 'CSharp';
   const majorVersion: string = tryGetMajorVersion(version);
   const identity = `Microsoft.AzureFunctions.ProjectTemplate.${templateLanguage}.${Number.parseInt(majorVersion) < 4 ? majorVersion : 3}.x`;
   const functionsVersion: string = `v${majorVersion}`;
-  const projectPath: string = target.fsPath;
+  const projectPath: string = node.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
   const useBinaries = await useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
 
-  await deleteBundleProjectFiles(target);
-  await renameBundleProjectFiles(target);
+  await deleteBundleProjectFiles(node);
+  await renameBundleProjectFiles(node);
 
   await executeDotnetTemplateCommand(
     context,
     version,
     projTemplateKey,
-    target.fsPath,
+    node.fsPath,
     'create',
     '--identity',
     identity,
@@ -157,10 +160,10 @@ export async function switchToDotnetProject(
     functionsVersion
   );
 
-  await copyBundleProjectFiles(target);
-  await updateBuildFile(context, target, dotnetVersion, isCodeful);
+  await copyBundleProjectFiles(node);
+  await updateBuildFile(context, node, dotnetVersion, isCodeful);
   if (useBinaries && dotnetLocalVersion) {
-    await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
+    await createGlobalJsonFile(dotnetLocalVersion, node.fsPath);
   } else if (useBinaries) {
     ext.outputChannel.appendLog(
       localize(
@@ -171,12 +174,12 @@ export async function switchToDotnetProject(
     );
   }
 
-  const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(target.fsPath);
+  const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(node.fsPath);
 
   const wizardOptions = {
     projectPath,
     workspaceFolder,
-    workspacePath: (workspaceFolder && workspaceFolder.uri.fsPath) || target.fsPath,
+    workspacePath: (workspaceFolder && workspaceFolder.uri.fsPath) || node.fsPath,
     language: ProjectLanguage.CSharp,
     version,
   };

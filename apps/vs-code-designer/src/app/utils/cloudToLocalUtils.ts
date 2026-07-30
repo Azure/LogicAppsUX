@@ -97,7 +97,8 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
 
       return settings;
     } catch (error) {
-      context.telemetry.properties.error = error.message;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
       console.error('Error encountered while extracting connection details:', error);
     }
   }
@@ -162,7 +163,8 @@ export async function changeAuthTypeToRaw(context: IFunctionWizardContext, param
         }
       }
     } catch (error) {
-      context.telemetry.properties.error = error.message;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
       console.error(error);
     }
     await writeFormattedJson(connectionsPath, connectionsData);
@@ -206,7 +208,8 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }
@@ -267,7 +270,8 @@ export async function parameterizeConnectionsDuringImport(
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }
@@ -330,7 +334,8 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
     const readMeContent = fse.readFileSync(readMePath, 'utf8');
     fse.writeFileSync(path.join(context.projectPath, 'README.md'), readMeContent);
   } catch (error) {
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message;
     console.error(`Failed to extract contents of package to ${context.projectPath}`, error);
   }
 }
@@ -386,7 +391,8 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     }, 5 * 1000);
     runPostExtractSteps({ projectPath: context.projectPath, textDocumentPath: readMePath });
   } catch (error) {
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message;
   }
 }
 

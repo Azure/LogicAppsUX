@@ -12,13 +12,13 @@ import { ext } from '../../../extensionVariables';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 
-export async function cloudToLocal(): Promise<void> {
+export async function cloudToLocal(context: IActionContext): Promise<void> {
   await createWorkspaceWebviewCommandHandler({
     panelName: localize('createWorkspaceFromPackage', 'Create workspace from package'),
     panelGroupKey: ext.webViewKey.createWorkspaceFromPackage,
     projectName: ProjectName.createWorkspaceFromPackage,
     createCommand: ExtensionCommand.createWorkspaceFromPackage,
-    createHandler: async (context: IActionContext, data: any) => {
+    createHandler: async (data: any) => {
       await createLogicAppWorkspace(context, data, true);
     },
     dialogOptions: {

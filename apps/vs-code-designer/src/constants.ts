@@ -236,6 +236,7 @@ export const extensionCommand = {
   logSubscriptions: 'azureLogicAppsStandard.logSubscriptions',
   startAzurite: 'azureLogicAppsStandard.startAzurite',
   refreshConnectionKeys: 'azureLogicAppsStandard.refreshConnectionKeys',
+  ensureExtensionBundle: 'azureLogicAppsStandard.ensureExtensionBundle',
   ensureNodeJs: 'azureLogicAppsStandard.ensureNodeJs',
   ensureFuncCoreTools: 'azureLogicAppsStandard.ensureFuncCoreTools',
   ensureDotnet: 'azureLogicAppsStandard.ensureDotnet',

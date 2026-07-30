@@ -56,8 +56,8 @@ export async function createNewProject(context: IActionContext): Promise<void> {
     panelGroupKey: ext.webViewKey.createLogicApp,
     projectName: ProjectName.createLogicApp,
     createCommand: ExtensionCommand.createLogicApp,
-    createHandler: async (activateContext: IActionContext, data: any) => {
-      await createLogicAppProject(activateContext, data, workspaceRootFolder);
+    createHandler: async (data: any) => {
+      await createLogicAppProject(context, data, workspaceRootFolder);
     },
     dialogOptions: {
       workspace: {

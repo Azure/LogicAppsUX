@@ -35,7 +35,7 @@ export async function pickCustomCodeNetHostProcessInternal(
     const errorMessage =
       'Failed to find a running func task for the logic app "{0}". The logic app must be running to attach the function debugger.';
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', logicAppName);
+    context.telemetry.properties.errorMessage = errorMessage.replace('{0}', logicAppName);
     throw new Error(localize('noFuncTask', errorMessage, logicAppName));
   }
 
@@ -69,7 +69,7 @@ export async function pickCustomCodeNetFxWorkerProcessInternal(
     const errorMessage =
       'Failed to find a running func task for the logic app "{0}". The logic app must be running to attach the function debugger.';
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage.replace('{0}', logicAppName);
+    context.telemetry.properties.errorMessage = errorMessage.replace('{0}', logicAppName);
     throw new Error(localize('noFuncTask', errorMessage, logicAppName));
   }
 

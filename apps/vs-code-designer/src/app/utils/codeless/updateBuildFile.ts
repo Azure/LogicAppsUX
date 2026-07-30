@@ -174,7 +174,8 @@ export function allowLocalSettingsToPublishDirectory(context: IActionContext, xm
     }
     context.telemetry.properties.allowSettingsToPublish = 'true';
   } catch (error) {
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message;
     context.telemetry.properties.allowSettingsToPublish = 'false';
   }
 
