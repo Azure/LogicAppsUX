@@ -102,7 +102,9 @@ export async function pickFuncProcessInternal(
     // duplicate the clean+build cycle and its output would be overwritten by the subsequent
     // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
     // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
-    await publishCodefulProject(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    await callWithDurationTelemetry(extensionCommand.publishCodefulProject, async (actionContext: IActionContext) => {
+      await publishCodefulProject(actionContext, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    });
   } else {
     await callWithDurationTelemetry(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
       await tryBuildCustomCodeFunctionsProject(actionContext, workspaceFolder.uri);

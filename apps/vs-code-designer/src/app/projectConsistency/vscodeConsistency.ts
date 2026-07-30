@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   enableProjectConsistencyChecksSetting,
+  extensionCommand,
   extensionsFileName,
   funcDependencyName,
   funcVersionSetting,
@@ -36,6 +37,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { workspace } from 'vscode';
+import { callWithDurationTelemetry } from '../utils/telemetry';
 
 /**
  * Ensures that the VS Code configuration files for all Logic App projects in the workspace are present and up-to-date.
@@ -112,7 +114,9 @@ async function promptToInitializeProject(context: IActionContext, projectPath: s
   );
 
   if (result === DialogResponses.yes) {
-    await initProjectForVSCode(context, projectPath);
+    await callWithDurationTelemetry(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+      await initProjectForVSCode(actionContext, projectPath);
+    });
   } else if (result === DialogResponses.dontWarnAgain) {
     await updateGlobalSetting(enableProjectConsistencyChecksSetting, false);
     return false;

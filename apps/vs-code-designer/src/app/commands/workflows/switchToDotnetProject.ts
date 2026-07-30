@@ -14,6 +14,7 @@ import {
   CodefulSdkVersions,
   artifactsDirectory,
   libDirectory,
+  extensionCommand,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
@@ -48,6 +49,7 @@ import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
+import { callWithDurationTelemetry } from '../../utils/telemetry';
 
 export async function switchToDotnetProjectCommand(context: IProjectWizardContext, target: vscode.Uri) {
   switchToDotnetProject(context, target);
@@ -84,7 +86,9 @@ export async function switchToDotnetProject(
   if (!version) {
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
-    await initProjectForVSCode(context, target.fsPath);
+    await callWithDurationTelemetry(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+      await initProjectForVSCode(actionContext, target.fsPath);
+    });
 
     version = nonNullOrEmptyValue(
       tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath)),
