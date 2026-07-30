@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
 import { Button, Card, mergeClasses, Textarea } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { DEFAULT_NOTE_COLOR, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 import type { AppDispatch } from '../../../core';
 import { deleteNote, updateNote } from '../../../core/state/notes/notesSlice';
@@ -67,7 +67,7 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
       <Card
         className={mergeClasses(styles.noteCard, dragging && styles.draggingNote)}
         style={{
-          backgroundColor: noteData?.color || '#FFFBCC',
+          backgroundColor: noteData?.color || DEFAULT_NOTE_COLOR,
           width: noteData?.metadata?.width ?? 200,
           resize: isReadOnly ? 'none' : 'horizontal',
         }}
