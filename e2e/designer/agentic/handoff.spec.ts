@@ -47,6 +47,66 @@ const getAgentToolNames = async (page: Page, agentId: string): Promise<string[]>
   return Object.keys(await getAgentTools(page, agentId)).sort();
 };
 
+// `addAgentHandoff` adds the tool and edge synchronously but populates the handoff action's `inputs`
+// from an unawaited `initializeOperationDetails`, so the tool key shows up in the serialized workflow
+// before its payload does. Always poll this whole shape rather than the tool names alone, otherwise
+// assertions on the payload race initialization.
+const getHandoffToolShape = async (page: Page, agentId: string, toolId: string) => {
+  const tool = (await getAgentTools(page, agentId))[toolId];
+  if (!tool) {
+    return null;
+  }
+  const actionIds = Object.keys(tool.actions ?? {});
+  const action = actionIds.length === 1 ? tool.actions[actionIds[0]] : undefined;
+  return {
+    description: tool.description,
+    actionCount: actionIds.length,
+    actionIdIsGenerated: actionIds.length === 1 ? /^handoff_[a-z0-9]{8}$/i.test(actionIds[0]) : false,
+    // Handoffs created at runtime currently serialize as `AgentHandOff` while ones read from a
+    // definition round-trip as `AgentHandoff`, so compare case-insensitively.
+    type: typeof action?.type === 'string' ? action.type.toLowerCase() : action?.type,
+    inputs: action?.inputs,
+  };
+};
+
+const fixtureHandoffs = [
+  {
+    agentId: 'TriageAgent',
+    toolId: 'handoff_from_TriageAgent_to_SalesAgent_tool',
+    actionId: 'handoff_from_TriageAgent_to_SalesAgent',
+    target: 'SalesAgent',
+    description: 'Hand off to sales agent who can fulfill sales requests such as ordering a product.',
+  },
+  {
+    agentId: 'TriageAgent',
+    toolId: 'handoff_from_TriageAgent_to_RefundAgent_tool',
+    actionId: 'handoff_from_TriageAgent_to_RefundAgent',
+    target: 'RefundAgent',
+    description: 'Hand off to refund agent who can fulfill refund requests.',
+  },
+  {
+    agentId: 'SalesAgent',
+    toolId: 'handoff_from_SalesAgent_to_TriageAgent_tool',
+    actionId: 'handoff_from_SalesAgent_to_TriageAgent',
+    target: 'TriageAgent',
+    description: 'Hand off to triage agent who can check if there are any further help needed.',
+  },
+  {
+    agentId: 'RefundAgent',
+    toolId: 'handoff_from_RefundAgent_to_TriageAgent_tool',
+    actionId: 'handoff_from_RefundAgent_to_TriageAgent',
+    target: 'TriageAgent',
+    description: 'Hand off to triage agent who can check if there are any further help needed.',
+  },
+  {
+    agentId: 'RefundAgent',
+    toolId: 'handoff_from_RefundAgent_to_SalesAgent_tool',
+    actionId: 'handoff_from_RefundAgent_to_SalesAgent',
+    target: 'SalesAgent',
+    description: 'Hand off to sales agent who can fulfill refund requests.',
+  },
+];
+
 test.describe(
   'Agent handoff tests',
   {
@@ -75,19 +135,30 @@ test.describe(
         'handoff_from_TriageAgent_to_RefundAgent_tool',
         'handoff_from_TriageAgent_to_SalesAgent_tool',
       ]);
-
-      // The tool description and the inner AgentHandoff action (including its target) round-trip.
-      const toSales = triageTools.handoff_from_TriageAgent_to_SalesAgent_tool;
-      expect(toSales.description).toBe('Hand off to sales agent who can fulfill sales requests such as ordering a product.');
-      expect(toSales.actions.handoff_from_TriageAgent_to_SalesAgent.type).toMatch(/^AgentHandoff$/i);
-      expect(toSales.actions.handoff_from_TriageAgent_to_SalesAgent.inputs).toEqual({ name: 'SalesAgent' });
-
-      const toRefund = triageTools.handoff_from_TriageAgent_to_RefundAgent_tool;
-      expect(toRefund.description).toBe('Hand off to refund agent who can fulfill refund requests.');
-      expect(toRefund.actions.handoff_from_TriageAgent_to_RefundAgent.inputs).toEqual({ name: 'RefundAgent' });
-
       // A handoff tool and a regular tool coexist on the same agent without either being dropped.
       expect(await getAgentToolNames(page, 'SalesAgent')).toEqual(['handoff_from_SalesAgent_to_TriageAgent_tool', 'place_order']);
+      expect(await getAgentToolNames(page, 'RefundAgent')).toEqual([
+        'handoff_from_RefundAgent_to_SalesAgent_tool',
+        'handoff_from_RefundAgent_to_TriageAgent_tool',
+      ]);
+
+      // Every fixture handoff keeps its description and its inner AgentHandoff action, id, and target.
+      for (const handoff of fixtureHandoffs) {
+        const tool = (await getAgentTools(page, handoff.agentId))[handoff.toolId];
+        expect(tool.description, `description of ${handoff.toolId}`).toBe(handoff.description);
+        expect(Object.keys(tool.actions), `actions of ${handoff.toolId}`).toEqual([handoff.actionId]);
+        expect(tool.actions[handoff.actionId].type, `type of ${handoff.actionId}`).toMatch(/^AgentHandoff$/i);
+        expect(tool.actions[handoff.actionId].inputs, `inputs of ${handoff.actionId}`).toEqual({ name: handoff.target });
+      }
+
+      // The non-handoff tool on SalesAgent round-trips untouched alongside the handoff tools.
+      const placeOrder = (await getAgentTools(page, 'SalesAgent')).place_order;
+      expect(placeOrder.description).toBe('Place the order');
+      expect(Object.keys(placeOrder.actions)).toEqual([
+        'set_order_parameters',
+        'resetset_state_variable_from_sales_to_triage',
+        'complete_order',
+      ]);
     });
 
     test('Selecting an agent in the handoff selector adds a handoff tool, edge, and tab entry', async ({ page }) => {
@@ -103,19 +174,24 @@ test.describe(
       await expect(handoffEntryHeader(page, 'RefundAgent')).toBeVisible();
       await expect(handoffEntryHeader(page, 'TriageAgent')).toBeVisible();
 
-      await expect
-        .poll(() => getAgentToolNames(page, 'SalesAgent'))
-        .toEqual(['handoff_from_SalesAgent_to_TriageAgent_tool', 'handoff_to_RefundAgent_from_SalesAgent', 'place_order']);
-
       // generateHandoffToolName() names the tool `handoff_to_<target>_from_<source>`, and the inner
-      // action gets a generated `handoff_<guid>` id whose only input is the target agent name.
-      const tools = await getAgentTools(page, 'SalesAgent');
-      const added = tools.handoff_to_RefundAgent_from_SalesAgent;
-      const addedActionIds = Object.keys(added.actions);
-      expect(addedActionIds).toHaveLength(1);
-      expect(addedActionIds[0]).toMatch(/^handoff_[a-z0-9]{8}$/i);
-      expect(added.actions[addedActionIds[0]].type).toMatch(/^AgentHandoff$/i);
-      expect(added.actions[addedActionIds[0]].inputs).toEqual({ name: 'RefundAgent' });
+      // action gets a generated `handoff_<guid>` id whose only input is the target agent name. Poll
+      // the whole payload, since `inputs` is filled in asynchronously after the tool itself appears.
+      await expect
+        .poll(() => getHandoffToolShape(page, 'SalesAgent', 'handoff_to_RefundAgent_from_SalesAgent'))
+        .toEqual({
+          description: '',
+          actionCount: 1,
+          actionIdIsGenerated: true,
+          type: 'agenthandoff',
+          inputs: { name: 'RefundAgent' },
+        });
+
+      expect(await getAgentToolNames(page, 'SalesAgent')).toEqual([
+        'handoff_from_SalesAgent_to_TriageAgent_tool',
+        'handoff_to_RefundAgent_from_SalesAgent',
+        'place_order',
+      ]);
     });
 
     test('Deleting a handoff entry removes its tool and edge while leaving other tools intact', async ({ page }) => {
@@ -135,6 +211,22 @@ test.describe(
       await expect.poll(() => getAgentToolNames(page, 'RefundAgent')).toEqual(['handoff_from_RefundAgent_to_TriageAgent_tool']);
       // Deleting a handoff on one agent must not touch tools on another agent.
       expect(await getAgentToolNames(page, 'SalesAgent')).toEqual(['handoff_from_SalesAgent_to_TriageAgent_tool', 'place_order']);
+    });
+
+    test('Unchecking an agents only handoff removes it', async ({ page }) => {
+      await GoToMockWorkflowV2(page, 'Handoff A2A');
+
+      // SalesAgent has exactly one handoff, so unchecking it drives `checkedItems` to zero — the
+      // boundary the selector used to bail out of, which made the last handoff unremovable.
+      await openHandoffTab(page, 'card-salesagent');
+      await expect(handoffEntryHeader(page, 'TriageAgent')).toBeVisible();
+
+      await toggleAgentInSelector(page, 'TriageAgent');
+
+      await expect(agentEdge(page, 'SalesAgent', 'TriageAgent')).toHaveCount(0);
+      await expect(handoffEntryHeader(page, 'TriageAgent')).toHaveCount(0);
+      // The agent's non-handoff tool is left alone.
+      await expect.poll(() => getAgentToolNames(page, 'SalesAgent')).toEqual(['place_order']);
     });
 
     test('Unchecking an agent in the selector removes the handoff and flags the target as unreachable', async ({ page }) => {
