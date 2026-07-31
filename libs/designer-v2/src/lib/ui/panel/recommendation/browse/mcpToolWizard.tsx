@@ -34,6 +34,7 @@ import {
 import { addOperation } from '../../../../core/actions/bjsworkflow/add';
 import { useMcpToolWizardStyles } from './styles/McpToolWizard.styles';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
+import { connectorDeclaresOwnAuth } from '../../../../common/constants';
 import type { Connection, ConnectionParameterSets, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { MCP_CLIENT_CONNECTOR_ID } from '../helpers';
@@ -160,22 +161,9 @@ export const McpToolWizard = () => {
   // connection experience; forcing the generic MCP auth parameter sets onto them replaces the
   // sign-in dialog with a "None / Basic / Key / Managed identity" form and produces an
   // unauthenticated connection.
-  const connectorDeclaresOwnAuth = useMemo(() => {
-    const connectorProperties = connector?.properties;
-    if (!connectorProperties) {
-      return false;
-    }
-    return (
-      (connectorProperties.connectionParameterSets?.values?.length ?? 0) > 0 ||
-      Object.keys(connectorProperties.connectionParameters ?? {}).length > 0
-    );
-  }, [connector]);
-
-  // Managed MCP servers whose connector declares no auth of its own rely on the MCP auth fallback
-  // (and therefore on a managed identity) to reach the server.
   const usesMcpAuthFallback = useMemo(
-    () => isManagedMcpServer && !!connector && !connectorDeclaresOwnAuth,
-    [isManagedMcpServer, connector, connectorDeclaresOwnAuth]
+    () => isManagedMcpServer && !!connector && !connectorDeclaresOwnAuth(connector),
+    [isManagedMcpServer, connector]
   );
 
   // Fetch connections for the appropriate connector
