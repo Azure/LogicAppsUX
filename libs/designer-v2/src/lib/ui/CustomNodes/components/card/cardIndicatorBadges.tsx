@@ -1,4 +1,4 @@
-import { Spinner, Tooltip } from '@fluentui/react-components';
+import { Tooltip } from '@fluentui/react-components';
 import type { FluentIcon } from '@fluentui/react-icons';
 import { BeakerFilled, CommentFilled, LockClosedFilled } from '@fluentui/react-icons';
 import { useMemo } from 'react';
@@ -7,7 +7,6 @@ import { useCardStyles } from './card.styles';
 
 export interface CardIndicatorBadgesProps {
   comment?: string;
-  isLoadingDynamicData?: boolean;
   isSecureInputsOutputs?: boolean;
   nodeIndex?: number;
   staticResultsEnabled?: boolean;
@@ -16,13 +15,11 @@ export interface CardIndicatorBadgesProps {
 interface Indicator {
   key: string;
   content: string;
-  Icon?: FluentIcon;
-  isSpinner?: boolean;
+  Icon: FluentIcon;
 }
 
 export const CardIndicatorBadges: React.FC<CardIndicatorBadgesProps> = ({
   comment,
-  isLoadingDynamicData,
   isSecureInputsOutputs,
   nodeIndex,
   staticResultsEnabled,
@@ -42,25 +39,12 @@ export const CardIndicatorBadges: React.FC<CardIndicatorBadgesProps> = ({
         id: 'byRkj+',
         description: 'This operation has secure inputs or outputs enabled.',
       }),
-      LOADING_DYNAMIC_DATA: intl.formatMessage({
-        defaultMessage: 'Loading dynamic data',
-        id: 'qMFpNH',
-        description: 'Loading dynamic data',
-      }),
     }),
     [intl]
   );
 
   const indicators = useMemo<Indicator[]>(() => {
     const result: Indicator[] = [];
-
-    if (isLoadingDynamicData) {
-      result.push({
-        key: 'loading-dynamic-data',
-        content: strings.LOADING_DYNAMIC_DATA,
-        isSpinner: true,
-      });
-    }
 
     if (staticResultsEnabled) {
       result.push({
@@ -87,7 +71,7 @@ export const CardIndicatorBadges: React.FC<CardIndicatorBadgesProps> = ({
     }
 
     return result;
-  }, [comment, isLoadingDynamicData, isSecureInputsOutputs, staticResultsEnabled, strings]);
+  }, [comment, isSecureInputsOutputs, staticResultsEnabled, strings]);
 
   if (indicators.length === 0) {
     return null;
@@ -95,7 +79,7 @@ export const CardIndicatorBadges: React.FC<CardIndicatorBadgesProps> = ({
 
   return (
     <div className={styles.indicators} data-testid="card-indicator-badges" data-automation-id="card-indicator-badges">
-      {indicators.map(({ key, content, Icon, isSpinner }) => (
+      {indicators.map(({ key, content, Icon }) => (
         <Tooltip key={key} relationship="label" withArrow positioning="below" content={content}>
           <span
             className={styles.indicator}
@@ -103,7 +87,7 @@ export const CardIndicatorBadges: React.FC<CardIndicatorBadgesProps> = ({
             data-automation-id={`card-indicator-${key}`}
             tabIndex={nodeIndex}
           >
-            {isSpinner ? <Spinner className={styles.spinner} size="extra-tiny" /> : Icon ? <Icon /> : null}
+            <Icon />
           </span>
         </Tooltip>
       ))}

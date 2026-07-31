@@ -32,17 +32,14 @@ describe('CardIndicatorBadges', () => {
     expect(screen.getByTestId('card-indicator-secure-inputs-outputs')).toBeInTheDocument();
   });
 
-  it('should render a spinner when dynamic data is loading', () => {
-    render(<CardIndicatorBadges isLoadingDynamicData={true} />);
-    expect(screen.getByTestId('card-indicator-loading-dynamic-data')).toBeInTheDocument();
-    expect(screen.getAllByRole('progressbar').length).toBeGreaterThanOrEqual(1);
+  it('should not render a loading indicator; the dynamic data spinner stays inline on the card', () => {
+    const { container } = render(<CardIndicatorBadges />);
+    expect(container.firstChild).toBeNull();
+    expect(screen.queryByTestId('card-indicator-loading-dynamic-data')).not.toBeInTheDocument();
   });
 
   it('should render every enabled indicator at once', () => {
-    render(
-      <CardIndicatorBadges comment="A comment" isLoadingDynamicData={true} isSecureInputsOutputs={true} staticResultsEnabled={true} />
-    );
-    expect(screen.getByTestId('card-indicator-loading-dynamic-data')).toBeInTheDocument();
+    render(<CardIndicatorBadges comment="A comment" isSecureInputsOutputs={true} staticResultsEnabled={true} />);
     expect(screen.getByTestId('card-indicator-static-results')).toBeInTheDocument();
     expect(screen.getByTestId('card-indicator-comment')).toBeInTheDocument();
     expect(screen.getByTestId('card-indicator-secure-inputs-outputs')).toBeInTheDocument();

@@ -105,6 +105,19 @@ describe('ActionCard', () => {
     expect(screen.getAllByRole('progressbar').length).toBeGreaterThanOrEqual(1);
   });
 
+  it('should keep the dynamic data spinner inline on the card, not in the indicator strip below it', () => {
+    render(<ActionCard {...defaultProps} icon="https://example.com/icon.svg" isLoadingDynamicData={true} />);
+    expect(screen.queryByTestId('card-indicator-badges')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('progressbar').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should not put the dynamic data spinner inside the indicator strip when other indicators are shown', () => {
+    render(<ActionCard {...defaultProps} isLoadingDynamicData={true} staticResultsEnabled={true} />);
+    const indicators = screen.getByTestId('card-indicator-badges');
+    expect(indicators).toBeInTheDocument();
+    expect(indicators.querySelector('[role="progressbar"]')).toBeNull();
+  });
+
   it('should render the static results indicator when staticResultsEnabled is true', () => {
     render(<ActionCard {...defaultProps} staticResultsEnabled={true} />);
     expect(screen.getByTestId('card-indicator-static-results')).toBeInTheDocument();
