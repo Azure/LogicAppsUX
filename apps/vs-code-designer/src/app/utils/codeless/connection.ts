@@ -1,7 +1,6 @@
 import {
   azurePublicBaseUrl,
   connectionsFileName,
-  parameterizeConnectionsInProjectLoadSetting,
   workflowAuthenticationMethodKey,
   workflowAuthenticationMethodMIValue,
 } from '../../../constants';
@@ -40,7 +39,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
-import { getGlobalSetting } from '../vsCodeConfig/settings';
+import { shouldParameterizeConnections } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
 
@@ -118,7 +117,6 @@ async function addConnectionDataInJson(
   connectionAndAppSetting: ConnectionAndAppSetting<any>,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
@@ -143,7 +141,7 @@ async function addConnectionDataInJson(
     return;
   }
 
-  if (parameterizeConnectionsSetting) {
+  if (shouldParameterizeConnections()) {
     parameterizeConnection(connectionData, connectionKey, parametersData, settings);
   }
 
@@ -215,7 +213,6 @@ async function getConnectionReference(
   workflowBaseManagementUri: string,
   settingsToAdd: Record<string, string>,
   parametersToAdd: any,
-  parameterizeConnectionsSetting: any,
   isMIEnabled: boolean
 ): Promise<ConnectionReferenceModel> {
   const {
@@ -280,7 +277,7 @@ async function getConnectionReference(
         connectionReference.connectionProperties = connectionProperties;
       }
 
-      return parameterizeConnectionsSetting
+      return shouldParameterizeConnections()
         ? (parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd) as ConnectionReferenceModel)
         : connectionReference;
     })
@@ -311,7 +308,6 @@ export async function getConnectionsAndSettingsToUpdate(
     const settingsToAdd: Record<string, string> = {};
     const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
     let accessToken: string | undefined;
-    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
     for (const referenceKey of Object.keys(connectionReferences)) {
       const reference = connectionReferences[referenceKey];
@@ -327,7 +323,6 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
           isMIEnabled
         );
 
@@ -352,7 +347,6 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
           isMIEnabled
         );
 
@@ -377,7 +371,6 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
           isMIEnabled
         );
 

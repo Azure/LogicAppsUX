@@ -22,7 +22,6 @@ import {
   funcIgnoreFileName,
   hostFileName,
   localSettingsFileName,
-  parameterizeConnectionsInProjectLoadSetting,
   parametersFileName,
   vscodeFolderName,
 } from '../../constants';
@@ -30,7 +29,7 @@ import { addNewFileInCSharpProject } from './codeless/updateBuildFile';
 import { writeFormattedJson } from './fs';
 import { Uri, window, workspace } from 'vscode';
 import { unzipLogicAppArtifacts } from './taskUtils';
-import { getGlobalSetting } from './vsCodeConfig/settings';
+import { shouldParameterizeConnections } from './vsCodeConfig/settings';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { getContainingWorkspace } from './workspace';
@@ -116,7 +115,7 @@ export async function getParametersArtifactData(projectRoot: string): Promise<st
   return '';
 }
 
-export async function changeAuthTypeToRaw(context: IFunctionWizardContext, parameterizeConnectionsSetting: any): Promise<any> {
+export async function changeAuthTypeToRaw(context: IFunctionWizardContext): Promise<any> {
   const logicAppPath = path.join(context.workspacePath, context.logicAppName || 'LogicApp');
   const connectionsPath = path.join(logicAppPath, connectionsFileName);
   const parametersPath = path.join(logicAppPath, parametersFileName);
@@ -131,7 +130,7 @@ export async function changeAuthTypeToRaw(context: IFunctionWizardContext, param
       }
       connectionsData = JSON.parse(connectionsJson);
       parametersJson = await getParametersJson(logicAppPath);
-      if (parameterizeConnectionsSetting) {
+      if (shouldParameterizeConnections()) {
         for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
           parametersJson[`${referenceKey}-Authentication`].value = {
             type: 'Raw',
@@ -342,7 +341,6 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
 
 export async function logicAppPackageProcessing(context: IFunctionWizardContext): Promise<void> {
   const localSettingsPath = path.join(context.projectPath, localSettingsFileName);
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
   let appSettings: ILocalSettingsJson = {};
   let zipSettings: ILocalSettingsJson = {};
@@ -373,11 +371,11 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
       appSettings = await getLocalSettingsJson(context, context.projectPath, false);
       await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
-      if (parameterizeConnectionsSetting) {
+      if (shouldParameterizeConnections()) {
         await parameterizeConnectionsDuringImport(context as IFunctionWizardContext, appSettings.Values);
       }
 
-      await changeAuthTypeToRaw(context, parameterizeConnectionsSetting);
+      await changeAuthTypeToRaw(context);
       await updateConnectionKeys(context);
       await cleanLocalSettings(context);
     }

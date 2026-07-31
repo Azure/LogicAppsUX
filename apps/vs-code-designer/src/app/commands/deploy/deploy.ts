@@ -16,7 +16,6 @@ import {
   kubernetesKind,
   showDeployConfirmationSetting,
   logicAppFilter,
-  parameterizeConnectionsInProjectLoadSetting,
   azureWebJobsStorageKey,
   isZipDeployEnabledSetting,
   useSmbDeployment,
@@ -38,7 +37,7 @@ import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/c
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { getWorkspaceSetting, getGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { getWorkspaceSetting, shouldParameterizeConnections } from '../../utils/vsCodeConfig/settings';
 import { createLogicAppAdvanced, createLogicApp } from '../createLogicApp/createLogicApp';
 import {
   AdvancedIdentityObjectIdStep,
@@ -413,7 +412,6 @@ async function getProjectPathToDeploy(
   const connectionsJson = await getConnectionsJson(workspaceFolderPath);
   const parametersJson = await getParametersJson(workspaceFolderPath);
   const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   let resolvedConnections: ConnectionsData;
   let connectionsData: ConnectionsData;
 
@@ -448,7 +446,7 @@ async function getProjectPathToDeploy(
         }
       : { type: 'ManagedServiceIdentity' };
 
-    if (parameterizeConnectionsSetting) {
+    if (shouldParameterizeConnections()) {
       updateAuthenticationParameters(authValue);
     } else {
       updateAuthenticationInConnections(authValue);

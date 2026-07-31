@@ -39,7 +39,7 @@ import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
-import { parameterizeConnections } from './parameterizeConnections';
+import { parameterizeAllConnections, parameterizeProjectConnections } from './parameterizeConnections';
 import { pickFuncProcess } from './pickFuncProcess';
 import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
@@ -80,6 +80,7 @@ import { guid } from '@microsoft/logic-apps-shared';
 import { openConnectionView } from './workflows/connectionView/openConnectionView';
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
 import { toggleDesignTimeNodeWorker } from './toggleDesignTimeNodeWorker';
+import { enableLocalManagedIdentityAuth } from '../utils/managedIdentity';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -156,7 +157,9 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
-  registerCommand(extensionCommand.parameterizeConnections, parameterizeConnections);
+  registerCommand(extensionCommand.parameterizeAllConnections, parameterizeAllConnections);
+  registerCommand(extensionCommand.parameterizeProjectConnections, parameterizeProjectConnections);
+  registerCommand(extensionCommand.enableLocalManagedIdentityAuth, enableLocalManagedIdentityAuth);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);

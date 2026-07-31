@@ -215,7 +215,9 @@ export const extensionCommand = {
   resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
   disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
   azureAzuriteStart: 'azurite.start',
-  parameterizeConnections: 'azureLogicAppsStandard.parameterizeConnections',
+  parameterizeAllConnections: 'azureLogicAppsStandard.parameterizeAllConnections',
+  parameterizeProjectConnections: 'azureLogicAppsStandard.parameterizeProjectConnections',
+  enableLocalManagedIdentityAuth: 'azureLogicAppsStandard.enableLocalManagedIdentityAuth',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
   dataMapAddSchemaFromFile: 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
   dataMapAttemptToResolveMissingSchemaFile: 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
@@ -306,6 +308,7 @@ export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExten
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
+export const suppressParameterizeConnectionsNotification = 'suppressParameterizeConnectionsNotification';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';

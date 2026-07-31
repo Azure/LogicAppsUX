@@ -9,6 +9,7 @@ import {
   enableManagedIdentityAuthSetting,
   useNodeDesignTimeWorkerSetting,
   alwaysBuildCustomCodeSetting,
+  parameterizeConnectionsInProjectLoadSetting,
 } from '../../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
@@ -173,6 +174,14 @@ export function getWorkspaceSetting<T>(key: string, fsPath?: string | WorkspaceF
  */
 export function useNodeDesignTimeWorker(fsPath?: string | WorkspaceFolder): boolean {
   return getWorkspaceSetting<boolean>(useNodeDesignTimeWorkerSetting, fsPath) === true;
+}
+
+/**
+ * Indicates whether the extension should parameterize connections in Logic App projects on startup.
+ * Defaults to `false` when the setting is unset.
+ */
+export function shouldParameterizeConnections(): boolean {
+  return getGlobalSetting<boolean>(parameterizeConnectionsInProjectLoadSetting) === true;
 }
 
 /**

@@ -21,7 +21,7 @@ import * as vscode from 'vscode';
 import { v4 as uuidv4 } from 'uuid';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
-import { parameterizeConnections } from '../../../parameterizeConnections';
+import { parameterizeProjectConnections } from '../../../parameterizeConnections';
 import { FileManagement } from '../../iacGestureHelperFunctions';
 import { deploymentDirectory, extensionCommand, managementApiPrefix, workflowFileName } from '../../../../../constants';
 import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
@@ -83,10 +83,10 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       );
       if (shouldParameterizeConnections === DialogResponses.yes) {
         context.telemetry.properties.lastStep = 'parameterizeConnections';
-        await callWithTelemetryAndErrorHandling(extensionCommand.parameterizeConnections, async (actionContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling(extensionCommand.parameterizeProjectConnections, async (actionContext: IActionContext) => {
           actionContext.errorHandling.rethrow = true;
           actionContext.errorHandling.suppressDisplay = true;
-          await parameterizeConnections(actionContext);
+          await parameterizeProjectConnections(actionContext);
         });
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
       } else {
