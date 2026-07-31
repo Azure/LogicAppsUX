@@ -9,6 +9,11 @@ let mockCanRedo = false;
 let mockIsReadOnly = false;
 let mockIsMonitoringView = false;
 let mockIsVSCode = false;
+let mockWorkflowKind: string | undefined;
+let mockHasUnsupportedMultipleTriggers = false;
+let mockRunInstance: { id: string; name: string } | null = null;
+
+const mockOpenRun = vi.fn();
 
 vi.mock('../../core', () => ({
   openPanel: vi.fn((arg: unknown) => ({ type: 'openPanel', payload: arg })),
@@ -34,8 +39,32 @@ vi.mock('../../core/state/designerOptions/designerOptionsSelectors', () => ({
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
-  useSelector: vi.fn(() => undefined),
+  // Most selectors in this test are mocked directly via their hook exports and never reach real
+  // `useSelector` logic, so the fallback behavior (returning undefined) is preserved for them.
+  // The one exception is Designer.tsx's inline `useSelector((state) => state.workflow.workflowKind)`,
+  // which we special-case here since it isn't backed by a named/mockable selector hook.
+  useSelector: vi.fn((selector: (state: any) => unknown) => {
+    try {
+      return selector({ workflow: { workflowKind: mockWorkflowKind } });
+    } catch {
+      return undefined;
+    }
+  }),
 }));
+
+vi.mock('../../core/state/workflow/workflowSelectors', () => ({
+  useAllSelectableNodeIds: () => [],
+  useHasUnsupportedMultipleTriggers: () => mockHasUnsupportedMultipleTriggers,
+  useRunInstance: () => mockRunInstance,
+}));
+
+vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@microsoft/logic-apps-shared')>();
+  return {
+    ...actual,
+    HostService: () => ({ openRun: mockOpenRun }),
+  };
+});
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(() => ({ data: null })),
@@ -49,6 +78,15 @@ vi.mock('@fluentui/react', () => ({
 vi.mock('@microsoft/designer-ui', () => ({
   mergeClasses: (...args: string[]) => args.filter(Boolean).join(' '),
   PanelLocation: { Right: 'right', Left: 'left' },
+  MultiTriggerUnsupportedMessage: ({ isStandard, onRunDetailsClick }: { isStandard: boolean; onRunDetailsClick?: () => void }) => (
+    <div data-testid="multi-trigger-unsupported-message" data-is-standard={isStandard ? 'true' : 'false'}>
+      {onRunDetailsClick ? (
+        <button type="button" data-testid="run-details-button" onClick={onRunDetailsClick}>
+          Run details
+        </button>
+      ) : null}
+    </div>
+  ),
 }));
 
 // Mock react-hotkeys-hook to capture registrations
@@ -111,6 +149,9 @@ describe('Designer', () => {
     mockIsReadOnly = false;
     mockIsMonitoringView = false;
     mockIsVSCode = false;
+    mockWorkflowKind = undefined;
+    mockHasUnsupportedMultipleTriggers = false;
+    mockRunInstance = null;
   });
 
   it('should render the designer canvas', () => {
@@ -228,5 +269,67 @@ describe('Designer', () => {
     );
     expect(searchRegistration).toBeDefined();
     expect(searchRegistration?.options.enabled).toBe(true);
+  });
+
+  describe('multiple triggers unsupported', () => {
+    it('should render the normal designer canvas (not the unsupported message) when there is not a multiple-trigger workflow', () => {
+      mockHasUnsupportedMultipleTriggers = false;
+      render(<Designer />);
+      expect(screen.getByTestId('dnd-provider')).toBeDefined();
+      expect(screen.queryByTestId('multi-trigger-unsupported-message')).toBeNull();
+    });
+
+    it('should skip the designer canvas entirely and render the unsupported message instead', () => {
+      mockHasUnsupportedMultipleTriggers = true;
+      render(<Designer />);
+      expect(screen.queryByTestId('dnd-provider')).toBeNull();
+      expect(screen.queryByTestId('reactflow-provider')).toBeNull();
+      expect(screen.getByTestId('multi-trigger-unsupported-message')).toBeDefined();
+    });
+
+    it('should not show a Run details button for Consumption in design/edit mode', () => {
+      mockHasUnsupportedMultipleTriggers = true;
+      mockWorkflowKind = undefined; // Consumption
+      mockIsMonitoringView = false;
+      mockRunInstance = { id: '/subscriptions/x/runs/run1', name: 'run1' };
+      render(<Designer />);
+      const message = screen.getByTestId('multi-trigger-unsupported-message');
+      expect(message.getAttribute('data-is-standard')).toBe('false');
+      expect(screen.queryByTestId('run-details-button')).toBeNull();
+    });
+
+    it('should show a Run details button for Consumption in monitoring/run-history mode and invoke HostService().openRun with the run id', () => {
+      mockHasUnsupportedMultipleTriggers = true;
+      mockWorkflowKind = undefined; // Consumption
+      mockIsMonitoringView = true;
+      mockRunInstance = { id: '/subscriptions/x/runs/run1', name: 'run1' };
+      render(<Designer />);
+      const message = screen.getByTestId('multi-trigger-unsupported-message');
+      expect(message.getAttribute('data-is-standard')).toBe('false');
+      const button = screen.getByTestId('run-details-button');
+      button.click();
+      expect(mockOpenRun).toHaveBeenCalledWith('/subscriptions/x/runs/run1');
+    });
+
+    it('should not show a Run details button for Standard in design/edit mode', () => {
+      mockHasUnsupportedMultipleTriggers = true;
+      mockWorkflowKind = 'stateful'; // Standard
+      mockIsMonitoringView = false;
+      render(<Designer />);
+      const message = screen.getByTestId('multi-trigger-unsupported-message');
+      expect(message.getAttribute('data-is-standard')).toBe('true');
+      expect(screen.queryByTestId('run-details-button')).toBeNull();
+    });
+
+    it('should not show a Run details button for Standard in monitoring mode either', () => {
+      mockHasUnsupportedMultipleTriggers = true;
+      mockWorkflowKind = 'stateless'; // Standard
+      mockIsMonitoringView = true;
+      mockRunInstance = { id: '/subscriptions/x/runs/run1', name: 'run1' };
+      render(<Designer />);
+      const message = screen.getByTestId('multi-trigger-unsupported-message');
+      expect(message.getAttribute('data-is-standard')).toBe('true');
+      expect(screen.queryByTestId('run-details-button')).toBeNull();
+    });
   });
 });

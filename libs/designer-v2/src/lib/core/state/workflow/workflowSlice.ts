@@ -51,6 +51,7 @@ import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
+import { UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -90,6 +91,7 @@ export const initialWorkflowState: WorkflowState = {
   timelineRepetitionArray: [],
   flowErrors: {},
   copilotModifiedNodeIds: {},
+  hasUnsupportedMultipleTriggers: false,
 };
 
 export const workflowSlice = createSlice({
@@ -104,6 +106,9 @@ export const workflowSlice = createSlice({
     },
     setRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
+    },
+    setHasUnsupportedMultipleTriggers: (state: WorkflowState, action: PayloadAction<boolean>) => {
+      state.hasUnsupportedMultipleTriggers = action.payload;
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
       const { nodeId, description } = action.payload;
@@ -983,6 +988,14 @@ export const workflowSlice = createSlice({
       state.operations = deserializedWorkflow.actionData;
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
     });
+    // Defense-in-depth: BJSWorkflowProvider checks for multiple triggers before dispatching this thunk,
+    // so this should be unreachable in the normal designer flow. Kept as a safety net for any other
+    // caller of initializeGraphState that has not yet added the same pre-check.
+    builder.addCase(initializeGraphState.rejected, (state, action) => {
+      if ((action.error as { code?: string } | undefined)?.code === UnsupportedExceptionCode.RENDER_MULTIPLE_TRIGGERS) {
+        state.hasUnsupportedMultipleTriggers = true;
+      }
+    });
     builder.addCase(updateNodeParameters, (state, action) => {
       if (action.payload.isUserAction) {
         state.isDirty = true;
@@ -1078,6 +1091,7 @@ export const {
   initWorkflowSpec,
   setWorkflowKind,
   setRunInstance,
+  setHasUnsupportedMultipleTriggers,
   addNode,
   addImplicitForeachNode,
   wrapNodesInScope,

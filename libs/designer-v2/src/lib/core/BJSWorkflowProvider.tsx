@@ -9,10 +9,11 @@ import {
   useReadOnly,
 } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
-import { setWorkflowKind, setRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
+import { setWorkflowKind, setRunInstance, setHasUnsupportedMultipleTriggers, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { hasMultipleTriggers } from '@microsoft/logic-apps-shared';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
@@ -54,7 +55,17 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(setRunInstance(runInstance ?? null));
     dispatch(initRunInPanel(runInstance ?? null));
     dispatch(initCustomCode(customCode));
-    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
+
+    // Neither the Consumption nor Standard designer/monitoring experiences support workflow definitions
+    // with more than one trigger. Detect this before initializing any graph/designer state so the
+    // canvas is never rendered against unsupported data (see BJSDeserializer's RENDER_MULTIPLE_TRIGGERS
+    // guard, which this pre-check is intended to make unreachable in the normal designer flow).
+    const isUnsupportedMultipleTriggers = hasMultipleTriggers(workflow?.definition);
+    dispatch(setHasUnsupportedMultipleTriggers(isUnsupportedMultipleTriggers));
+
+    if (!isUnsupportedMultipleTriggers) {
+      dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
+    }
   }, [workflowId, runInstance, workflow, customCode, isReadOnly, isMonitoringView]);
 
   // Store app settings in query to access outside of functional components
