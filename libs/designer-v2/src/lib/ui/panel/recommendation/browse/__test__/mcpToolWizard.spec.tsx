@@ -602,7 +602,6 @@ describe('McpToolWizard', () => {
 
       const props = mockCreateConnectionInternal.mock.calls[0][0] as any;
       expect(props.connectionParameterSetsOverride).toBeUndefined();
-      expect(props.enableManagedIdentityPicker).toBe(false);
     });
 
     test('should not override connection parameter sets when the managed MCP connector declares parameter sets', () => {
@@ -621,7 +620,18 @@ describe('McpToolWizard', () => {
 
       const props = mockCreateConnectionInternal.mock.calls[0][0] as any;
       expect(props.connectionParameterSetsOverride).toBeUndefined();
-      expect(props.enableManagedIdentityPicker).toBe(false);
+    });
+
+    test('should keep the managed identity picker available for managed MCP servers that declare their own auth', () => {
+      mockUseMcpToolWizard.mockReturnValue(managedWizardState(MCP_WIZARD_STEP.CREATE_CONNECTION));
+      mockUseConnector.mockReturnValue({ data: oauthConnector } as any);
+
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      // CreateConnection narrows this down to parameter sets that actually declare a
+      // `managedIdentity` parameter, so it stays enabled for every managed MCP server.
+      const props = mockCreateConnectionInternal.mock.calls[0][0] as any;
+      expect(props.enableManagedIdentityPicker).toBe(true);
     });
   });
 

@@ -789,6 +789,10 @@ export const McpToolWizard = () => {
     // experience - notably the OAuth sign-in dialog used by first-party connectors.
     const parameterSetsOverride = usesMcpAuthFallback ? mcpConnectionParameterSets : undefined;
 
+    // Opt every managed MCP server into the standalone managed identity dropdown. CreateConnection
+    // only renders it for a parameter set that actually declares a `managedIdentity` typed
+    // parameter, so connectors keeping their own OAuth sets are unaffected.
+
     return (
       <div className={classes.createConnectionContainer}>
         <CreateConnectionInternal
@@ -804,7 +808,7 @@ export const McpToolWizard = () => {
           onConnectionCancelled={handleConnectionCancelled}
           description=" "
           connectionParameterSetsOverride={parameterSetsOverride}
-          enableManagedIdentityPicker={usesMcpAuthFallback}
+          enableManagedIdentityPicker={isManagedMcpServer}
         />
       </div>
     );
