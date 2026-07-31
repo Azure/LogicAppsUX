@@ -93,7 +93,7 @@ export async function detectCustomCodeTargetFramework(projectPath: string): Prom
     const metadata = await getCustomCodeFunctionsProjectMetadata(customCodeProjects[0]);
     return metadata?.targetFramework;
   }
-
+  
   return undefined;
 }
 

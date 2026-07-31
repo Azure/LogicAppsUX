@@ -1,4 +1,9 @@
-import { assetsFolderName, logicAppsStandardExtensionId, managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
+import {
+  assetsFolderName,
+  logicAppsStandardExtensionId,
+  managementApiPrefix,
+  workflowAppApiVersion,
+} from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';

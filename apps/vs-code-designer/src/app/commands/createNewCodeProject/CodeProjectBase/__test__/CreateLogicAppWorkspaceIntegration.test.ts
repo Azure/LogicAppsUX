@@ -23,7 +23,8 @@ vi.mock('../../../../utils/binaries', () => ({
 import * as fse from 'fs-extra';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 
-const { createWorkspaceStructure, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } = CreateLogicAppWorkspaceModule;
+const { createWorkspaceStructure, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } =
+  CreateLogicAppWorkspaceModule;
 
 describe('createLogicAppWorkspace - Integration Tests', () => {
   let tempDir: string;

@@ -340,6 +340,8 @@ describe('projectFilesConsistency', () => {
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
     });
   });
+
+  // Behavior by logic app type: regeneration builds the root local.settings.json from the same shared
   // source of truth as fresh project creation (getLocalSettingsSchema). The project type is inferred from
   // the project files (detectProjectType): codeful via hasCodefulWorkflowSetting/hasCodefulSdkReference,
   // and customCode via tryGetLogicAppCustomCodeFunctionsProjects. As a result every type regenerates

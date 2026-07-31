@@ -18,7 +18,7 @@ import { parseJson } from '../parseJson';
 import { generateDesignTimeLocalSettingsJson, generateLocalSettingsJson } from '../../projectConsistency/fileGenerators';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior, type ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, type ILocalSettingsJson  } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Uri } from 'vscode';

@@ -37,7 +37,7 @@ async function shouldParameterizeConnections(context: IActionContext): Promise<b
   if (parameterizeConnectionsSetting) {
     return true;
   }
-
+  
   const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
   if (result === DialogResponses.yes) {
     await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);

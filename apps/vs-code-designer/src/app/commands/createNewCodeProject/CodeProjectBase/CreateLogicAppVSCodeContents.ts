@@ -25,8 +25,7 @@ export async function createLogicAppVsCodeContents(webviewProjectContext: IWebvi
   const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
   await fse.ensureDir(vscodePath);
 
-  webviewProjectContext.projectPackageType =
-    webviewProjectContext.logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle;
+  webviewProjectContext.projectPackageType = webviewProjectContext.logicAppType === ProjectType.codeful ? ProjectPackageType.Nuget : ProjectPackageType.Bundle;
 
   await writeSettingsJson(webviewProjectContext, vscodePath);
   await writeExtensionsJson(vscodePath);
@@ -70,7 +69,11 @@ async function writeTasksJson(context: IWebviewProjectContext, vscodePath: strin
   await fse.writeJson(tasksJsonPath, tasksJsonContent, { spaces: 2 });
 }
 
-async function writeLaunchJson(context: IWebviewProjectContext, vscodePath: string, logicAppFolderPath: string): Promise<void> {
+async function writeLaunchJson(
+  context: IWebviewProjectContext,
+  vscodePath: string,
+  logicAppFolderPath: string
+): Promise<void> {
   const customCodeTargetFramework =
     context.logicAppType === ProjectType.customCode || context.logicAppType === ProjectType.rulesEngine
       ? (context.targetFramework ?? (await detectCustomCodeTargetFramework(logicAppFolderPath)))

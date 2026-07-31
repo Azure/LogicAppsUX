@@ -7,7 +7,12 @@ import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
-import { azureWebJobsStorageKey, cloudSettingsFileName, ProjectDirectoryPathKey, webhookRedirectHostUri } from '../../constants';
+import {
+  azureWebJobsStorageKey,
+  cloudSettingsFileName,
+  ProjectDirectoryPathKey,
+  webhookRedirectHostUri,
+} from '../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import { writeFormattedJson } from '../utils/fs';
 import * as path from 'path';

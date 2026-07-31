@@ -10,7 +10,7 @@ import {
   settingsFileName,
   tasksFileName,
 } from '../../../../constants';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { TargetFramework, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';

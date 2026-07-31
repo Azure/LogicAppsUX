@@ -29,7 +29,10 @@ import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps'
  * @param projectPath - The project path (used for ProjectDirectoryPath).
  * @param logicAppType - The project type (affects feature flags and codeful settings).
  */
-export function generateLocalSettingsJson(projectPath?: string, logicAppType?: ProjectType): ILocalSettingsJson {
+export function generateLocalSettingsJson(
+  projectPath?: string,
+  logicAppType?: ProjectType
+): ILocalSettingsJson {
   const values: Record<string, string> = {};
 
   values[azureWebJobsStorageKey] = localEmulatorConnectionString;
@@ -43,7 +46,7 @@ export function generateLocalSettingsJson(projectPath?: string, logicAppType?: P
   if (isManagedIdentityAuthEnabled()) {
     values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
-
+  
   if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
     values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }

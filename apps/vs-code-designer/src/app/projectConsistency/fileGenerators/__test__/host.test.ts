@@ -4,7 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect } from 'vitest';
 import { generateHostJson, generateDesignTimeHostJson } from '../host';
-import { extensionBundleId, defaultVersionRange, workflowOperationDiscoveryHostModeKey } from '../../../../constants';
+import {
+	extensionBundleId,
+	defaultVersionRange,
+	workflowOperationDiscoveryHostModeKey,
+} from '../../../../constants';
 
 describe('hostGenerator', () => {
   describe('generateHostJson', () => {

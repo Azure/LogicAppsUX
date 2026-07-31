@@ -58,7 +58,9 @@ export default class LocalOverviewPanel extends OverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
+    this.localSettings = this.projectPath
+      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
+      : {};
 
     this.workflowContent = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this.triggerName = getTriggerName(this.workflowContent.definition);

@@ -57,7 +57,9 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
+    this.localSettings = this.projectPath
+      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
+      : {};
 
     const fileContent = readFileSync(this.workflowFilePath, 'utf8');
     this.codefulWorkflowFileContent = fileContent;

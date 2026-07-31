@@ -16,12 +16,7 @@ import { binariesExistSync } from '../../utils/binaries';
 import { detectCustomCodeTargetFramework } from '../../utils/customCodeUtils';
 import { isSubpath, writeFormattedJson } from '../../utils/fs';
 import { removeFromGitIgnore } from '../../utils/git';
-import {
-  generateTasksJson,
-  generateLaunchJson,
-  generateSettingsJson,
-  generateExtensionsJson,
-} from '../../projectConsistency/fileGenerators';
+import { generateTasksJson, generateLaunchJson, generateSettingsJson, generateExtensionsJson } from '../../projectConsistency/fileGenerators';
 import type { VSCodeProjectConfig } from '../../projectConsistency/fileGenerators';
 import { AzureWizardExecuteStep, DialogResponses, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ProjectLanguage, FuncVersion } from '@microsoft/vscode-extension-logic-apps';

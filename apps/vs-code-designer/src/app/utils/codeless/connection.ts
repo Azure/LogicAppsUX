@@ -995,7 +995,7 @@ async function isMISettingEnabled(context: IActionContext, projectPath: string):
   try {
     const localSettings = await getLocalSettingsJson(context, projectPath);
     const authMethod = localSettings.Values?.[workflowAuthenticationMethodKey];
-    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase();
+    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase()
   } catch {
     return false;
   }

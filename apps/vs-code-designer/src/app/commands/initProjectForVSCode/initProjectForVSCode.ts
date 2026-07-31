@@ -65,7 +65,9 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     projectPackageType,
   });
 
-  const executeSteps = projectPackageType === ProjectPackageType.Nuget ? [new InitDotnetProjectStep()] : [new InitProjectStep()];
+  const executeSteps = projectPackageType === ProjectPackageType.Nuget
+    ? [new InitDotnetProjectStep()]
+    : [new InitProjectStep()];
 
   const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, { executeSteps });
   await wizard.execute();
