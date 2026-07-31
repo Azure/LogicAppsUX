@@ -161,6 +161,50 @@ import {
 } from '../../../../../core/state/panel/panelSelectors';
 import { closeMcpToolWizard, setMcpWizardStep, setMcpWizardConnection } from '../../../../../core/state/panel/panelSlice';
 import { useConnectionsForConnector, useConnectionResource } from '../../../../../core/queries/connections';
+import { useConnector } from '../../../../../core/state/connection/connectionSelector';
+import { CreateConnectionInternal } from '../../../../panel/connectionsPanel/createConnection/createConnectionInternal';
+
+const mockUseConnector = vi.mocked(useConnector);
+const mockCreateConnectionInternal = vi.mocked(CreateConnectionInternal);
+
+const defaultMcpClientConnector = {
+  id: 'connectionProviders/mcpclient',
+  name: 'mcpclient',
+  properties: {
+    connectionParameters: {},
+  },
+};
+
+// Single-auth OAuth connector shape used by first-party managed connectors (e.g. GitHub):
+// no `connectionParameterSets`, auth declared through an `oauthSetting` connection parameter.
+const oauthConnector = {
+  id: '/subscriptions/x/providers/Microsoft.Web/locations/westus/managedApis/github',
+  name: 'github',
+  properties: {
+    connectionParameters: {
+      token: {
+        type: 'oauthSetting',
+        oAuthSettings: { identityProvider: 'github', clientId: 'client-id', scopes: [] },
+      },
+    },
+  },
+};
+
+const managedWizardState = (step: string): any => ({
+  ...mockWizardState,
+  step,
+  operation: {
+    ...mockWizardState.operation,
+    properties: {
+      ...mockWizardState.operation.properties,
+      operationKind: 'Managed',
+      api: {
+        ...mockWizardState.operation.properties.api,
+        id: '/subscriptions/x/providers/Microsoft.Web/customApis/managed-mcp',
+      },
+    },
+  },
+});
 
 const mockUseMcpToolWizard = vi.mocked(useMcpToolWizard);
 const mockUseMcpWizardStep = vi.mocked(useMcpWizardStep);
@@ -222,6 +266,7 @@ describe('McpToolWizard', () => {
       refetch: vi.fn(),
     } as any);
     mockUseConnectionResource.mockReturnValue({ data: undefined, isLoading: false } as any);
+    mockUseConnector.mockReturnValue({ data: defaultMcpClientConnector } as any);
   });
 
   describe('Connection Step', () => {
@@ -373,6 +418,39 @@ describe('McpToolWizard', () => {
       expect(primaryButton.disabled).toBe(true);
     });
 
+    test('should not warn or disable Next when the managed MCP connector uses its own OAuth auth', () => {
+      const mockConnections = [
+        {
+          id: 'conn-1',
+          name: 'connection-1',
+          properties: { displayName: 'Connection 1' },
+        },
+      ];
+
+      mockUseMcpToolWizard.mockReturnValue({ ...managedWizardState(MCP_WIZARD_STEP.CONNECTION), connectionId: 'conn-1' });
+      mockUseMcpWizardConnectionId.mockReturnValue('conn-1');
+      mockUseConnector.mockReturnValue({ data: oauthConnector } as any);
+      mockUseConnectionsForConnector.mockReturnValue({
+        data: mockConnections,
+        isLoading: false,
+        refetch: vi.fn(),
+      } as any);
+      mockUseConnectionResource.mockReturnValue({
+        data: { id: 'conn-1', properties: {} },
+        isLoading: false,
+      } as any);
+
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      expect(
+        screen.queryByText(
+          'This MCP connection has no resolvable managed identity. Re-create the connection and select a managed identity to load tools.'
+        )
+      ).toBeNull();
+      const primaryButton = screen.getByTestId('footer-button-primary') as HTMLButtonElement;
+      expect(primaryButton.disabled).toBe(false);
+    });
+
     test('should disable Next while full connection resource is still loading', () => {
       const mockConnections = [
         {
@@ -484,6 +562,66 @@ describe('McpToolWizard', () => {
       render(<McpToolWizard />, { wrapper: createWrapper() });
 
       expect(screen.queryByText('Create a new connection for the MCP server.')).toBeNull();
+    });
+
+    test('should not override connection parameter sets for built-in MCP servers', () => {
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      const props = mockCreateConnectionInternal.mock.calls[0][0] as any;
+      expect(props.connectionParameterSetsOverride).toBeUndefined();
+      expect(props.enableManagedIdentityPicker).toBe(false);
+    });
+
+    test('should override connection parameter sets for managed MCP servers whose connector declares no auth', () => {
+      mockUseMcpToolWizard.mockReturnValue(managedWizardState(MCP_WIZARD_STEP.CREATE_CONNECTION));
+      mockUseConnector.mockReturnValue({
+        data: {
+          id: '/subscriptions/x/providers/Microsoft.Web/customApis/managed-mcp',
+          name: 'managed-mcp',
+          properties: {},
+        },
+      } as any);
+
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      const props = mockCreateConnectionInternal.mock.calls[0][0] as any;
+      expect(props.connectionParameterSetsOverride?.values?.map((v: any) => v.name)).toEqual([
+        'None',
+        'Basic',
+        'Key',
+        'ManagedServiceIdentity',
+      ]);
+      expect(props.enableManagedIdentityPicker).toBe(true);
+    });
+
+    test('should not override connection parameter sets when the managed MCP connector declares its own OAuth auth', () => {
+      mockUseMcpToolWizard.mockReturnValue(managedWizardState(MCP_WIZARD_STEP.CREATE_CONNECTION));
+      mockUseConnector.mockReturnValue({ data: oauthConnector } as any);
+
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      const props = mockCreateConnectionInternal.mock.calls[0][0] as any;
+      expect(props.connectionParameterSetsOverride).toBeUndefined();
+      expect(props.enableManagedIdentityPicker).toBe(false);
+    });
+
+    test('should not override connection parameter sets when the managed MCP connector declares parameter sets', () => {
+      mockUseMcpToolWizard.mockReturnValue(managedWizardState(MCP_WIZARD_STEP.CREATE_CONNECTION));
+      mockUseConnector.mockReturnValue({
+        data: {
+          id: '/subscriptions/x/providers/Microsoft.Web/customApis/managed-mcp',
+          name: 'managed-mcp',
+          properties: {
+            connectionParameterSets: { uiDefinition: {}, values: [{ name: 'oauth', parameters: {} }] },
+          },
+        },
+      } as any);
+
+      render(<McpToolWizard />, { wrapper: createWrapper() });
+
+      const props = mockCreateConnectionInternal.mock.calls[0][0] as any;
+      expect(props.connectionParameterSetsOverride).toBeUndefined();
+      expect(props.enableManagedIdentityPicker).toBe(false);
     });
   });
 

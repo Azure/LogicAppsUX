@@ -39,9 +39,11 @@ import { useQuery } from '@tanstack/react-query';
 import { MCP_CLIENT_CONNECTOR_ID } from '../helpers';
 
 /**
- * Connection parameter sets for MCP servers. Used as a fallback when a custom connector
- * doesn't have its own connectionParameterSets, so users can select auth type
- * (None, Basic, Key, or Managed Identity) during connection creation.
+ * Connection parameter sets for MCP servers. Used as a fallback when a connector declares no
+ * authentication of its own, so users can select auth type (None, Basic, Key, or Managed Identity)
+ * during connection creation. Connectors that declare their own authentication (multi-auth
+ * parameter sets, or single-auth connection parameters such as an OAuth `token`) must keep their
+ * own connection experience instead.
  */
 const mcpConnectionParameterSets: ConnectionParameterSets = {
   uiDefinition: {
@@ -152,6 +154,30 @@ export const McpToolWizard = () => {
   const { data: connector } = useConnector(connectorId);
   const assistedConnectionProps = useMemo(() => (connector ? getAssistedConnectionProps(connector) : undefined), [connector]);
 
+  // A managed MCP server can be backed by a connector that already declares how to authenticate -
+  // either multi-auth parameter sets, or single-auth connection parameters such as an OAuth `token`
+  // (first-party connectors like GitHub work this way). Those connectors must keep their own
+  // connection experience; forcing the generic MCP auth parameter sets onto them replaces the
+  // sign-in dialog with a "None / Basic / Key / Managed identity" form and produces an
+  // unauthenticated connection.
+  const connectorDeclaresOwnAuth = useMemo(() => {
+    const connectorProperties = connector?.properties;
+    if (!connectorProperties) {
+      return false;
+    }
+    return (
+      (connectorProperties.connectionParameterSets?.values?.length ?? 0) > 0 ||
+      Object.keys(connectorProperties.connectionParameters ?? {}).length > 0
+    );
+  }, [connector]);
+
+  // Managed MCP servers whose connector declares no auth of its own rely on the MCP auth fallback
+  // (and therefore on a managed identity) to reach the server.
+  const usesMcpAuthFallback = useMemo(
+    () => isManagedMcpServer && !!connector && !connectorDeclaresOwnAuth,
+    [isManagedMcpServer, connector, connectorDeclaresOwnAuth]
+  );
+
   // Fetch connections for the appropriate connector
   const {
     data: connectionsData,
@@ -203,10 +229,11 @@ export const McpToolWizard = () => {
   // an undefined identity into addOperation.
   const isFetchingFullConnection = !!localConnectionId && !createdIdentity && isFullConnectionLoading;
 
-  // For managed MCP connectors the connection must surface an identity, otherwise listMcpTools
-  // returns 401. Surface a non-blocking warning + disable Next when we know the connection has
-  // resolved but no identity is available.
-  const needsManagedIdentityWarning = !!localConnectionId && !isFullConnectionLoading && !selectedIdentity && isManagedMcpServer;
+  // Connections created through the MCP auth fallback must surface an identity, otherwise
+  // listMcpTools returns 401. Surface a non-blocking warning + disable Next when we know the
+  // connection has resolved but no identity is available. Connectors with their own auth (OAuth,
+  // key, etc.) carry their credentials on the connection, so no identity is expected there.
+  const needsManagedIdentityWarning = !!localConnectionId && !isFullConnectionLoading && !selectedIdentity && usesMcpAuthFallback;
 
   useEffect(() => {
     if (currentStep === MCP_WIZARD_STEP.CREATE_CONNECTION) {
@@ -768,11 +795,11 @@ export const McpToolWizard = () => {
     // Managed MCP servers use the default Azure connection flow
     const connectionMetadata = isManagedMcpServer ? undefined : { type: ConnectionType.Mcp, required: true };
 
-    // For managed MCP servers (custom connectors), the connector from Azure API
-    // may not include connectionParameterSets (auth options). Provide MCP auth
-    // parameter sets as a fallback so users can select auth type (None, Basic,
-    // Managed Identity, etc.) when creating a connection.
-    const parameterSetsOverride = isManagedMcpServer ? mcpConnectionParameterSets : undefined;
+    // Managed MCP servers backed by a connector that declares no authentication of its own get the
+    // MCP auth parameter sets as a fallback, so users can pick an auth type (None, Basic, Key,
+    // Managed Identity). Connectors that do declare their own authentication keep their native
+    // experience - notably the OAuth sign-in dialog used by first-party connectors.
+    const parameterSetsOverride = usesMcpAuthFallback ? mcpConnectionParameterSets : undefined;
 
     return (
       <div className={classes.createConnectionContainer}>
@@ -789,7 +816,7 @@ export const McpToolWizard = () => {
           onConnectionCancelled={handleConnectionCancelled}
           description=" "
           connectionParameterSetsOverride={parameterSetsOverride}
-          enableManagedIdentityPicker={isManagedMcpServer}
+          enableManagedIdentityPicker={usesMcpAuthFallback}
         />
       </div>
     );
