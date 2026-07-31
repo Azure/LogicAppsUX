@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { IntlProvider } from 'react-intl';
@@ -97,12 +97,16 @@ vi.mock('@microsoft/designer-ui', async (importOriginal) => {
   };
 });
 
+const { mockGetActiveSearchOperations } = vi.hoisted(() => ({
+  mockGetActiveSearchOperations: vi.fn(() => Promise.resolve([])),
+}));
+
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@microsoft/logic-apps-shared')>();
   return {
     ...actual,
     SearchService: vi.fn(() => ({
-      getActiveSearchOperations: vi.fn(() => Promise.resolve([])),
+      getActiveSearchOperations: mockGetActiveSearchOperations,
     })),
     FavoriteContext: {
       Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -182,6 +186,7 @@ describe('RecommendationPanelContext', () => {
     mockUseMcpToolWizard.mockReturnValue(null);
     mockUseDiscoveryPanelSearchTerm.mockReturnValue('');
     mockUseAllOperations.mockReturnValue({ data: [], isLoading: false } as any);
+    mockGetActiveSearchOperations.mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -478,6 +483,29 @@ describe('RecommendationPanelContext', () => {
       fireEvent.click(screen.getByRole('button', { name: /return to search/i }));
 
       expect(mockSetDiscoverySearchTerm).not.toHaveBeenCalled();
+    });
+
+    test('should not run a global active operation search for a scoped MCP search term', async () => {
+      // The active search only runs while the full operation list is still preloading.
+      mockUseAllOperations.mockReturnValue({ data: [], isLoading: true } as any);
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue(mcpCategory);
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('github');
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      expect(mockGetActiveSearchOperations).not.toHaveBeenCalled();
+    });
+
+    test('should run a global active operation search for other categories', async () => {
+      mockUseAllOperations.mockReturnValue({ data: [], isLoading: true } as any);
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue({ key: 'favorites', title: 'Favorites' });
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('github');
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+
+      await waitFor(() => expect(mockGetActiveSearchOperations).toHaveBeenCalledWith('github'));
     });
   });
 });

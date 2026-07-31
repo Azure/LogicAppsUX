@@ -99,6 +99,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   // Active search
   useDebouncedEffect(
     () => {
+      // The term is scoped to the MCP server list, so it must not trigger a global operation search.
+      if (isBrowsingMcpServers) {
+        return;
+      }
       // if preload is complete, no need to actively search
       if (!isLoadingOperations) {
         return;
@@ -114,7 +118,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));
       });
     },
-    [searchedTerms, isLoadingOperations, searchTerm, activeSearchOperations],
+    [searchedTerms, isLoadingOperations, searchTerm, activeSearchOperations, isBrowsingMcpServers],
     300
   );
 
