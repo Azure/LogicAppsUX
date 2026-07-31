@@ -5,7 +5,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
+import { promptStartDesignTimeOption, scheduleStartAllDesignTimeApis, stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -14,7 +14,6 @@ import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
 import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
-import { startOnboarding } from './onboarding';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
   callWithTelemetryAndErrorHandling,
@@ -37,6 +36,8 @@ import { codefulProjectsExist } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
 import { promptManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
+import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
+import { installBinaries } from './app/utils/binaries';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -86,22 +87,20 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     activateContext.telemetry.properties.lastStep = 'ensureExtensionBundle';
-    if (shouldRequireStrictDependencyValidation()) {
-      await callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
-        actionContext.errorHandling.rethrow = true;
-        actionContext.errorHandling.suppressDisplay = true;
-        await downloadExtensionBundle(actionContext);
-      });
-    } else {
-      callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
-        await downloadExtensionBundle(actionContext).catch((error) => {
-          ext.outputChannel?.appendLog(localize('bundleDownloadFailed', `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`));
-        });
-      });
-    }
+    await ensureExtensionBundle();
     
-    parameterizeConnectionsIfNeeded(activateContext, false);
-    await startOnboarding(activateContext);
+    activateContext.telemetry.properties.lastStep = 'parameterizedConnectionsIfNeeded';
+    parameterizeConnectionsIfNeeded(activateContext);
+
+    activateContext.telemetry.properties.lastStep = 'isDevContainerWorkspace';
+    const isDevContainer = await isDevContainerWorkspace();
+    activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
+
+    activateContext.telemetry.properties.lastStep = 'ensureBinaries';
+    await ensureBinaries(isDevContainer);
+
+    activateContext.telemetry.properties.lastStep = 'ensureDesignTimeApi';
+    await ensureDesignTimeApi(isDevContainer);
 
     const hasCodefulProjects = await codefulProjectsExist();
     if (hasCodefulProjects) {
@@ -166,6 +165,51 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     logExtensionSettings(activateContext);
+  });
+}
+
+async function ensureExtensionBundle(): Promise<void> {
+  if (shouldRequireStrictDependencyValidation()) {
+    await callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await downloadExtensionBundle(actionContext);
+    });
+  } else {
+    callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
+      await downloadExtensionBundle(actionContext).catch((error) => {
+        ext.outputChannel?.appendLog(localize('bundleDownloadFailed', `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`));
+      });
+    });
+  }
+}
+
+async function ensureBinaries(isDevContainer: boolean): Promise<void> {
+  await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
+    if (isDevContainer) {
+      actionContext.telemetry.properties.skippedDependencyOnboarding = 'true';
+      actionContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
+      ext.outputChannel?.appendLog(localize('devContainerDetected', 'Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.'));
+    } else {
+      if (shouldRequireStrictDependencyValidation()) {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+      }
+      await installBinaries(actionContext);
+    }
+  });
+}
+
+async function ensureDesignTimeApi(isDevContainer: boolean): Promise<void> {
+  await callWithTelemetryAndErrorHandling(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
+    if (isDevContainer) {
+      actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
+      actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
+      ext.outputChannel?.appendLog(localize('schedulingDesignTimeStartup', 'Scheduling background design-time startup for devcontainer workspace.'));
+      scheduleStartAllDesignTimeApis();
+    } else {
+      await promptStartDesignTimeOption(actionContext);
+    }
   });
 }
 

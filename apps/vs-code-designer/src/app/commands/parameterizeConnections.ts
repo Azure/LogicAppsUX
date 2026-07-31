@@ -19,10 +19,9 @@ import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 /**
  * Parameterizes the connections in each workspace project if needed.
  * @param {IActionContext} activateContext - The extension activate context.
- * @param {boolean} [showMessage] - A flag indicating whether to show information message to the user.
  * @returns A promise that resolves when the operation is complete.
  */
-export async function parameterizeConnectionsIfNeeded(activateContext: IActionContext, showMessage?: boolean): Promise<void> {
+export async function parameterizeConnectionsIfNeeded(activateContext: IActionContext): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0 && (await shouldParameterizeConnections(activateContext))) {
     const projectPaths = await getWorkspaceLogicAppFolders();
     await Promise.all(
@@ -30,7 +29,7 @@ export async function parameterizeConnectionsIfNeeded(activateContext: IActionCo
         callWithTelemetryAndErrorHandling(extensionCommand.parameterizeConnections, async (context: IActionContext) => {
           context.errorHandling.rethrow = true;
           context.errorHandling.suppressDisplay = true;
-          await parameterizeConnections(context, projectPath, showMessage);
+          await parameterizeConnections(context, projectPath, false);
         })
       )
     );
@@ -70,7 +69,7 @@ export async function parameterizeConnections(context: IActionContext, projectPa
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
       const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
-      await Promise.all(workspaceLogicAppFolders.map((projectPath) => parameterizeConnections(context, projectPath)));
+      await Promise.all(workspaceLogicAppFolders.map((projectPath) => parameterizeConnections(context, projectPath, showMessage)));
       return;
     }
 
