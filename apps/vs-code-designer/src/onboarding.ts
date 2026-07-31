@@ -4,9 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { installBinaries } from './app/utils/binaries';
 import { promptStartDesignTimeOption, scheduleStartAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
-import { callWithDurationTelemetry } from './app/utils/telemetry';
 import { extensionCommand } from './constants';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { ext } from './extensionVariables';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
@@ -27,7 +26,9 @@ export const startOnboarding = async (activateContext: IActionContext) => {
     ext.outputChannel.appendLog('Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.');
   } else {
     activateContext.telemetry.properties.lastStep = 'validateAndInstallBinaries';
-    await callWithDurationTelemetry(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
       if (!shouldRequireStrictDependencyValidation()) {
         actionContext.errorHandling.rethrow = false;
       }
@@ -35,7 +36,9 @@ export const startOnboarding = async (activateContext: IActionContext) => {
     });
   }
 
-  await callWithDurationTelemetry(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
     // Design-time startup failures are non-blocking during activation
     actionContext.errorHandling.rethrow = false;
     if (isDevContainer) {

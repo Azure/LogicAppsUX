@@ -1,7 +1,7 @@
 import { extensionCommand } from '../../constants';
 import { localize } from '../../localize';
 import { addLocalFuncTelemetry } from '../utils/funcCoreTools/funcVersion';
-import { DialogResponses } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import {
   ExtensionCommand,
@@ -64,7 +64,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
         DialogResponses.no
       );
       if (shouldCreateWorkspace === DialogResponses.yes) {
-        return await createWorkspaceStructureWebview(context);
+        return await createWorkspaceStructureWebview();
       }
       context.telemetry.properties.createContainingWorkspace = 'false';
       return false;
@@ -75,7 +75,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
   }
 }
 
-async function createWorkspaceStructureWebview(context: IActionContext): Promise<boolean> {
+async function createWorkspaceStructureWebview(): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
     createWorkspaceWebviewCommandHandler({
       panelName: localize('createWorkspaceStructure', 'Create workspace structure'),
@@ -83,7 +83,9 @@ async function createWorkspaceStructureWebview(context: IActionContext): Promise
       projectName: ProjectName.createWorkspaceStructure,
       createCommand: ExtensionCommand.createWorkspaceStructure,
       createHandler: async (data: any) => {
-        await createWorkspaceFile(context, data);
+        await callWithTelemetryAndErrorHandling(ExtensionCommand.createWorkspaceStructure, async (actionContext: IActionContext) => {
+          await createWorkspaceFile(actionContext, data);
+        });
       },
       onResolve: resolve,
     });

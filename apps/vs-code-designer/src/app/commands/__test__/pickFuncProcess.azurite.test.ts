@@ -22,29 +22,31 @@ const { UserCancelledErrorMock } = vi.hoisted(() => ({
   UserCancelledErrorMock: class UserCancelledError extends Error {},
 }));
 
-vi.mock('../../utils/telemetry', () => ({
-  callWithDurationTelemetry: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
-    const context = {
-      telemetry: {
-        properties: {},
-        measurements: {},
-      },
-      errorHandling: { suppressDisplay: true, rethrow: true } as { suppressDisplay?: boolean; rethrow?: boolean },
-      ui: {
-        showWarningMessage: vi.fn(async (message: string) => {
-          capturedMessages.push(message);
-          return undefined;
-        }),
-      },
-    };
-    telemetryContexts.push(context);
-    return await callback(context);
-  }),
-}));
-
 vi.mock('@microsoft/vscode-azext-utils', () => {
   return {
     UserCancelledError: UserCancelledErrorMock,
+    callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+      const context = {
+        telemetry: {
+          properties: {},
+          measurements: {},
+        },
+        errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} } as {
+          suppressDisplay?: boolean;
+          rethrow?: boolean;
+          issueProperties?: Record<string, unknown>;
+        },
+        ui: {
+          showWarningMessage: vi.fn(async (message: string) => {
+            capturedMessages.push(message);
+            return undefined;
+          }),
+        },
+        valuesToMask: [],
+      };
+      telemetryContexts.push(context);
+      return await callback(context);
+    }),
   };
 });
 
@@ -105,7 +107,7 @@ describe('pickFuncProcess Azurite startup', () => {
     // not duplicated -- `errorHandling` is allocated fresh per scope, so dropping it would show and
     // log the same message twice. Asserted separately from the message array so a regression in
     // either knob produces a readable diff instead of a bare "expected [] to equal [...]".
-    expect(telemetryContexts[0].errorHandling).toEqual({ suppressDisplay: true, rethrow: true });
+    expect(telemetryContexts[0].errorHandling).toEqual({ suppressDisplay: true, rethrow: true, issueProperties: {} });
     expect(capturedMessages).toEqual([]);
     expect(capturedMessages).not.toContain(azuriteTimeoutMessage);
     expect(activateAzurite).toHaveBeenCalledWith(telemetryContexts[0], projectPath);

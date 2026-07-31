@@ -53,8 +53,16 @@ import type { SiteConfigResource, StringDictionary, Site, ContainerAppSecret } f
 import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
-import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
-import { AzureWizard, DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
+import {
+  AzureWizard,
+  callWithTelemetryAndErrorHandling,
+  DialogResponses,
+  nonNullOrEmptyValue,
+  type AzExtParentTreeItem,
+  type IActionContext,
+  type IAzureQuickPickItem,
+  type ISubscriptionContext,
+} from '@microsoft/vscode-azext-utils';
 import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -68,7 +76,6 @@ import { publishCodefulProject } from '../publishCodefulProject';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { isProjectInitializedForVSCode } from '../../projectConsistency/vscodeConsistency';
 import { initProjectForVSCode } from '../initProjectForVSCode/initProjectForVSCode';
-import { callWithDurationTelemetry } from '../../utils/telemetry';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -117,13 +124,17 @@ async function deploy(
     if (isCodeful) {
       deployContext.telemetry.properties.isCodefulProject = 'true';
       ext.outputChannel.appendLog(localize('buildingCodefulProject', 'Building and publishing codeful Logic App project...'));
-      await callWithDurationTelemetry(extensionCommand.publishCodefulProject, async (actionContext: IActionContext) => {
+      await callWithTelemetryAndErrorHandling(extensionCommand.publishCodefulProject, async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
         await publishCodefulProject(actionContext, logicAppNode);
       });
     } else {
       const customCodeFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
       if (customCodeFolderExists) {
-        await callWithDurationTelemetry(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+          actionContext.errorHandling.rethrow = true;
+          actionContext.errorHandling.suppressDisplay = true;
           await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
         });
       }
@@ -157,13 +168,21 @@ async function deploy(
   if (!isProjectInitializedForVSCode(effectiveDeployFsPath)) {
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await deployContext.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
-    await callWithDurationTelemetry(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
       await initProjectForVSCode(actionContext, effectiveDeployFsPath);
     });
   }
 
-  const language = nonNullOrEmptyValue(getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath), projectLanguageSetting) as ProjectLanguage;
-  const version = nonNullOrEmptyValue(tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)), funcVersionSetting) as FuncVersion;
+  const language = nonNullOrEmptyValue(
+    getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath),
+    projectLanguageSetting
+  ) as ProjectLanguage;
+  const version = nonNullOrEmptyValue(
+    tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)),
+    funcVersionSetting
+  ) as FuncVersion;
 
   deployContext.telemetry.properties.projectLanguage = language;
   deployContext.telemetry.properties.projectRuntime = version;

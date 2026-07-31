@@ -11,12 +11,12 @@ import { installLSPSDK } from '../../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../../utils/runtimeDependenciesPath';
 import { shouldRequireStrictDependencyValidation } from '../../../utils/strictDependencyValidation';
-import { callWithDurationTelemetry } from '../../../utils/telemetry';
 import { runWithTimeout } from '../../../utils/timeout';
 import { validateDotNetIsLatest } from '../../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../../nodeJs/validateNodeJsIsLatest';
 import { validateAndInstallBinaries } from '../validateAndInstallBinaries';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 
 vi.mock('../../../../localize', () => ({
   localize: (_key: string, defaultValue: string, ...args: unknown[]) =>
@@ -61,15 +61,15 @@ vi.mock('../../../utils/strictDependencyValidation', () => ({
   shouldRequireStrictDependencyValidation: vi.fn(),
 }));
 
-vi.mock('../../../utils/telemetry', () => ({
-  callWithDurationTelemetry: vi.fn(async (_id: string, callback: (ctx: any) => Promise<any>) => {
-    const innerContext = {
+vi.mock('@microsoft/vscode-azext-utils', () => ({
+  callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+    const context = {
       telemetry: { properties: {}, measurements: {} },
-      errorHandling: { suppressDisplay: false, rethrow: true, issueProperties: {} },
+      errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
       ui: {} as any,
       valuesToMask: [],
     };
-    return await callback(innerContext);
+    return await callback(context);
   }),
 }));
 
@@ -150,7 +150,7 @@ describe('validateAndInstallBinaries', () => {
         dotnetVersions: '8.0.100',
       }),
     });
-    expect(callWithDurationTelemetry).toHaveBeenCalledTimes(4);
+    expect(callWithTelemetryAndErrorHandling).toHaveBeenCalledTimes(4);
     expect(runWithTimeout).toHaveBeenNthCalledWith(1, expect.any(Function), 'NodeJs', 3000, 'https://github.com/nodesource/distributions');
     expect(runWithTimeout).toHaveBeenNthCalledWith(
       2,

@@ -31,13 +31,12 @@ import {
   type VSCodeProjectConfig,
 } from './fileGenerators';
 import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../utils/vsCodeConfig/settings';
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { workspace } from 'vscode';
-import { callWithDurationTelemetry } from '../utils/telemetry';
 
 /**
  * Ensures that the VS Code configuration files for all Logic App projects in the workspace are present and up-to-date.
@@ -114,7 +113,9 @@ async function promptToInitializeProject(context: IActionContext, projectPath: s
   );
 
   if (result === DialogResponses.yes) {
-    await callWithDurationTelemetry(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
       await initProjectForVSCode(actionContext, projectPath);
     });
   } else if (result === DialogResponses.dontWarnAgain) {

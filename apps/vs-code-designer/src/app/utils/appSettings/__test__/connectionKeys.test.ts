@@ -131,6 +131,6 @@ describe('refreshConnectionKeys', () => {
     );
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalled();
-    expect(testContext.telemetry.properties.error).toContain('Test error');
+    expect(testContext.telemetry.properties.errorMessage).toContain('Test error');
   });
 });

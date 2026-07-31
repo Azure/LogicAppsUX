@@ -40,7 +40,7 @@ import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
@@ -49,18 +49,12 @@ import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
-import { callWithDurationTelemetry } from '../../utils/telemetry';
 
 export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
   switchToDotnetProject(context, node);
 }
 
-export async function switchToDotnetProject(
-  context: IActionContext,
-  node?: vscode.Uri,
-  localDotNetMajorVersion = '10',
-  isCodeful = false
-) {
+export async function switchToDotnetProject(context: IActionContext, node?: vscode.Uri, localDotNetMajorVersion = '10', isCodeful = false) {
   if (node === undefined || Object.keys(node).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
@@ -89,7 +83,9 @@ export async function switchToDotnetProject(
   if (!version) {
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
-    await callWithDurationTelemetry(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
       await initProjectForVSCode(actionContext, node.fsPath);
     });
 

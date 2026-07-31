@@ -21,6 +21,18 @@ vi.mock('../../../localize', () => ({
     defaultValue.replace(/{(\d+)}/g, (_match, index) => String(args[Number(index)] ?? '')),
 }));
 
+vi.mock('@microsoft/vscode-azext-utils', () => ({
+  callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+    const context = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: false, rethrow: false, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(context);
+  }),
+}));
+
 vi.mock('../shared/workspaceWebviewCommandHandler', () => ({
   createWorkspaceWebviewCommandHandler: vi.fn(),
 }));
@@ -75,7 +87,7 @@ describe('workspace webview command wrappers', () => {
   });
 
   it('createWorkspace passes workspace config and invokes createLogicAppWorkspace', async () => {
-    await createWorkspace();
+    await createWorkspace(context);
 
     const config = getLastWebviewConfig();
     expect(config).toMatchObject({
@@ -86,13 +98,13 @@ describe('workspace webview command wrappers', () => {
     });
 
     const data = { workspaceName: 'MyWorkspace' };
-    await config.createHandler(context, data);
+    await config.createHandler(data);
 
-    expect(createLogicAppWorkspace).toHaveBeenCalledWith(context, data, false);
+    expect(createLogicAppWorkspace).toHaveBeenCalledWith(expect.any(Object), data, false);
   });
 
   it('cloudToLocal passes package config and invokes createLogicAppWorkspace for package import', async () => {
-    await cloudToLocal();
+    await cloudToLocal(context);
 
     const config = getLastWebviewConfig();
     expect(config).toMatchObject({
@@ -108,9 +120,9 @@ describe('workspace webview command wrappers', () => {
     });
 
     const data = { packagePath: 'D:\\downloads\\app.zip' };
-    await config.createHandler(context, data);
+    await config.createHandler(data);
 
-    expect(createLogicAppWorkspace).toHaveBeenCalledWith(context, data, true);
+    expect(createLogicAppWorkspace).toHaveBeenCalledWith(expect.any(Object), data, true);
   });
 
   it('createNewProject opens the project webview when a workspace is present', async () => {
@@ -148,9 +160,9 @@ describe('workspace webview command wrappers', () => {
     });
 
     const data = { logicAppName: 'Orders' };
-    await config.createHandler(context, data);
+    await config.createHandler(data);
 
-    expect(createLogicAppProject).toHaveBeenCalledWith(context, data, path.dirname(workspaceFile.fsPath));
+    expect(createLogicAppProject).toHaveBeenCalledWith(expect.any(Object), data, path.dirname(workspaceFile.fsPath));
   });
 
   it('getExistingFoldersOnDisk filters out non-directory entries using FileType mock', async () => {
@@ -213,8 +225,8 @@ describe('workspace webview command wrappers', () => {
     });
 
     const data = { workflowName: 'ProcessOrder', logicAppName: 'CodefulLogicApp' };
-    await config.createHandler(context, data);
+    await config.createHandler(data);
 
-    expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, projectRoot);
+    expect(createLogicAppWorkflow).toHaveBeenCalledWith(expect.any(Object), data, projectRoot);
   });
 });

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 import { localize } from '../../../localize';
@@ -75,16 +75,18 @@ export async function createWorkflow(context: IActionContext, uri?: vscode.Uri) 
     projectName: ProjectName.createWorkflow,
     createCommand: ExtensionCommand.createWorkflow,
     createHandler: async (data: any) => {
-      ext.outputChannel.appendLog(`[createWorkflow] createHandler invoked. logicAppName="${data.logicAppName}"`);
-      // Resolve project root from the user's selection in the webview
-      const selectedName = data.logicAppName;
-      const project = availableProjects.find((p) => p.name === selectedName);
-      const projectRoot = project?.path;
-      if (!projectRoot) {
-        ext.outputChannel.appendLog(`[createWorkflow] Project "${selectedName}" not found in available projects`);
-        throw new Error(localize('noProjectSelected', 'No project selected. Please select a project and try again.'));
-      }
-      await createLogicAppWorkflow(context, data, projectRoot);
+      await callWithTelemetryAndErrorHandling(ExtensionCommand.createWorkflow, async (actionContext: IActionContext) => {
+        ext.outputChannel.appendLog(`[createWorkflow] createHandler invoked. logicAppName="${data.logicAppName}"`);
+        // Resolve project root from the user's selection in the webview
+        const selectedName = data.logicAppName;
+        const project = availableProjects.find((p) => p.name === selectedName);
+        const projectRoot = project?.path;
+        if (!projectRoot) {
+          ext.outputChannel.appendLog(`[createWorkflow] Project "${selectedName}" not found in available projects`);
+          throw new Error(localize('noProjectSelected', 'No project selected. Please select a project and try again.'));
+        }
+        await createLogicAppWorkflow(actionContext, data, projectRoot);
+      });
     },
     extraInitializeData: {
       logicAppType: selectedProject?.isCodeful ? ProjectType.codeful : '',

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { pickFuncProcessInternal } from './pickFuncProcess';
@@ -11,7 +11,6 @@ import { ext } from '../../extensionVariables';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from './pickCustomCodeWorkerProcess';
 import { extensionCommand } from '../../constants';
-import { callWithDurationTelemetry } from '../utils/telemetry';
 
 export async function debugLogicApp(
   context: IActionContext,
@@ -48,7 +47,9 @@ export async function debugLogicApp(
     )
   );
 
-  const funcProcessId = await callWithDurationTelemetry(extensionCommand.pickProcess, async (actionContext: IActionContext) => {
+  const funcProcessId = await callWithTelemetryAndErrorHandling(extensionCommand.pickProcess, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
     return await pickFuncProcessInternal(actionContext, debugConfig, resolvedWorkspaceFolder, projectPath);
   });
   const logicAppLaunchConfig = {
@@ -79,14 +80,14 @@ export async function debugLogicApp(
   let functionLaunchConfig: vscode.DebugConfiguration | undefined;
   if (debugConfig.customCodeRuntime) {
     if (debugConfig.customCodeRuntime === 'coreclr') {
-      const customCodeNetHostProcessId = await callWithDurationTelemetry(extensionCommand.pickCustomCodeNetHostProcess, async (actionContext: IActionContext) => {
-        return await pickCustomCodeNetHostProcessInternal(
-          actionContext,
-          resolvedWorkspaceFolder,
-          projectPath,
-          debugConfig.isCodeless
-        );
-      });
+      const customCodeNetHostProcessId = await callWithTelemetryAndErrorHandling(
+        extensionCommand.pickCustomCodeNetHostProcess,
+        async (actionContext: IActionContext) => {
+          actionContext.errorHandling.rethrow = true;
+          actionContext.errorHandling.suppressDisplay = true;
+          return await pickCustomCodeNetHostProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath, debugConfig.isCodeless);
+        }
+      );
       functionLaunchConfig = {
         name: localize('attachToCustomCodeFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,
@@ -94,9 +95,14 @@ export async function debugLogicApp(
         processId: customCodeNetHostProcessId,
       };
     } else if (debugConfig.customCodeRuntime === 'clr') {
-      const customCodeNetFxWorkerProcessId = await callWithDurationTelemetry(extensionCommand.pickCustomCodeNetFxWorkerProcess, async (actionContext: IActionContext) => {
-        return await pickCustomCodeNetFxWorkerProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath);
-      });
+      const customCodeNetFxWorkerProcessId = await callWithTelemetryAndErrorHandling(
+        extensionCommand.pickCustomCodeNetFxWorkerProcess,
+        async (actionContext: IActionContext) => {
+          actionContext.errorHandling.rethrow = true;
+          actionContext.errorHandling.suppressDisplay = true;
+          return await pickCustomCodeNetFxWorkerProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath);
+        }
+      );
       functionLaunchConfig = {
         name: localize('attachToFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,

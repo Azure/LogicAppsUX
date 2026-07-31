@@ -16,15 +16,15 @@ vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
   scheduleStartAllDesignTimeApis: vi.fn(),
 }));
 
-vi.mock('../app/utils/telemetry', () => ({
-  callWithDurationTelemetry: vi.fn(async (_id: string, callback: (ctx: any) => Promise<any>) => {
-    const innerContext = {
+vi.mock('@microsoft/vscode-azext-utils', () => ({
+  callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+    const context = {
       telemetry: { properties: {}, measurements: {} },
       errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
       ui: {} as any,
       valuesToMask: [],
     };
-    return await callback(innerContext);
+    return await callback(context);
   }),
 }));
 

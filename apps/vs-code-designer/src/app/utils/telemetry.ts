@@ -2,44 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../extensionVariables';
 import { isString } from '@microsoft/logic-apps-shared';
 import { createSettingsDetails } from './vsCodeConfig/settings';
-
-/**
- * Creates a telemetry wrapper that measures the duration of the provided callback function.
- * Errors are re-thrown after being recorded in telemetry so callers can handle them.
- * @param {string} callbackId - The identifier for the telemetry event.
- * @param {function} callback - The callback function to execute.
- * @returns {Promise<T | undefined>} Returns the result of the callback function, or undefined if an error occurs.
- */
-export async function callWithDurationTelemetry<T>(
-  callbackId: string,
-  callback: (context: IActionContext) => T | PromiseLike<T>
-): Promise<T | undefined> {
-  return await callWithTelemetryAndErrorHandling(callbackId, async (context: IActionContext) => {
-    context.errorHandling.rethrow = true;
-    context.errorHandling.suppressDisplay = true;
-    return await runWithDurationTelemetry(context, () => callback(context));
-  });
-}
-
-/**
- * Executes function and logs duration in telemetry.
- * @param {IActionContext} context - Command context.
- * @param {function} callback - Callback function to execute.
- * @returns {Promise<T>} Returns what callback function returns.
- */
-export async function runWithDurationTelemetry<T>(context: IActionContext, callback: () => T | PromiseLike<T>): Promise<T> {
-  const start = Date.now();
-  try {
-    return await callback();
-  } finally {
-    const end = Date.now();
-    context.telemetry.measurements.duration = (end - start) / 1000;
-  }
-}
 
 export const logSubscriptions = async (context: IActionContext) => {
   let azureSubscriptions: any[] = [];

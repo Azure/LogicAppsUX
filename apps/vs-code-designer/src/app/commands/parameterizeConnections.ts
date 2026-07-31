@@ -12,10 +12,9 @@ import { getParametersJson, saveWorkflowParameter } from '../utils/codeless/para
 import { areAllConnectionsParameterized, parameterizeConnection } from '../utils/codeless/parameterizer';
 import { getGlobalSetting, updateGlobalSetting } from '../utils/vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../utils/workspace';
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { window, workspace } from 'vscode';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
-import { callWithDurationTelemetry } from '../utils/telemetry';
 
 /**
  * Parameterizes the connections in each workspace project if needed.
@@ -26,11 +25,15 @@ import { callWithDurationTelemetry } from '../utils/telemetry';
 export async function parameterizeConnectionsIfNeeded(activateContext: IActionContext, showMessage?: boolean): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0 && (await shouldParameterizeConnections(activateContext))) {
     const projectPaths = await getWorkspaceLogicAppFolders();
-    await Promise.all(projectPaths.map(
-      (projectPath) => callWithDurationTelemetry(extensionCommand.parameterizeConnections, async (context: IActionContext) => {
-        await parameterizeConnections(context, projectPath, showMessage);
-      })
-    ));
+    await Promise.all(
+      projectPaths.map((projectPath) =>
+        callWithTelemetryAndErrorHandling(extensionCommand.parameterizeConnections, async (context: IActionContext) => {
+          context.errorHandling.rethrow = true;
+          context.errorHandling.suppressDisplay = true;
+          await parameterizeConnections(context, projectPath, showMessage);
+        })
+      )
+    );
   }
 }
 
@@ -40,7 +43,7 @@ async function shouldParameterizeConnections(context: IActionContext): Promise<b
   if (parameterizeConnectionsSetting) {
     return true;
   }
-  
+
   const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
   if (result === DialogResponses.yes) {
     await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);

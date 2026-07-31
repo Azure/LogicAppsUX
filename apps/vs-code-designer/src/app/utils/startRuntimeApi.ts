@@ -2,8 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { type IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import { callWithDurationTelemetry } from './telemetry';
+import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { activateAzurite } from './azurite/activateAzurite';
 import { refreshConnectionKeys } from './appSettings/connectionKeys';
 import { designerApiLoadTimeout, designerStartApi, extensionCommand } from '../../constants';
@@ -25,11 +24,15 @@ import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 export async function startRuntimeApi(context: IActionContext, projectPath: string): Promise<void> {
-  await callWithDurationTelemetry(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
     await activateAzurite(actionContext, projectPath);
   });
 
-  await callWithDurationTelemetry(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
     await refreshConnectionKeys(actionContext, projectPath);
   });
 

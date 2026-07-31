@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { convertToWorkspace } from '../convertToWorkspace';
 import { localize } from '../../../localize';
@@ -57,7 +57,9 @@ export async function createNewProject(context: IActionContext): Promise<void> {
     projectName: ProjectName.createLogicApp,
     createCommand: ExtensionCommand.createLogicApp,
     createHandler: async (data: any) => {
-      await createLogicAppProject(context, data, workspaceRootFolder);
+      await callWithTelemetryAndErrorHandling(ExtensionCommand.createLogicApp, async (actionContext: IActionContext) => {
+        await createLogicAppProject(actionContext, data, workspaceRootFolder);
+      });
     },
     dialogOptions: {
       workspace: {

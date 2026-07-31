@@ -2,12 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  defaultFuncPort,
-  hostStartTaskName,
-  pickProcessTimeoutSetting,
-  extensionCommand,
-} from '../../constants';
+import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting, extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
@@ -17,7 +12,6 @@ import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
-import { callWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getChildProcesses } from '../utils/findChildProcess/findChildProcess';
@@ -25,7 +19,7 @@ import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
@@ -77,11 +71,15 @@ export async function pickFuncProcessInternal(
   workspaceFolder: vscode.WorkspaceFolder,
   projectPath: string
 ): Promise<string | undefined> {
-  await callWithDurationTelemetry(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
     await activateAzurite(actionContext, projectPath);
   });
 
-  await callWithDurationTelemetry(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
     await refreshConnectionKeys(actionContext, projectPath);
   });
 
@@ -102,11 +100,15 @@ export async function pickFuncProcessInternal(
     // duplicate the clean+build cycle and its output would be overwritten by the subsequent
     // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
     // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
-    await callWithDurationTelemetry(extensionCommand.publishCodefulProject, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling(extensionCommand.publishCodefulProject, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
       await publishCodefulProject(actionContext, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
     });
   } else {
-    await callWithDurationTelemetry(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
       await tryBuildCustomCodeFunctionsProject(actionContext, workspaceFolder.uri);
     });
   }

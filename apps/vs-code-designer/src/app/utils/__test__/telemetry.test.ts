@@ -1,28 +1,6 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { runWithDurationTelemetry, logSubscriptions } from '../telemetry';
+import { logSubscriptions } from '../telemetry';
 import { ext } from '../../../extensionVariables';
-
-describe('runWithDurationTelemetry', () => {
-  test('should return callback result and update telemetry duration measurement', async () => {
-    const context = {
-      telemetry: { measurements: {} as Record<string, number>, properties: {} },
-    } as any;
-    const result = await runWithDurationTelemetry(context, async () => 'success');
-    expect(result).toBe('success');
-    expect(context.telemetry.measurements.duration).toBeGreaterThanOrEqual(0);
-  });
-
-  test('should update telemetry measurements even when callback throws error', async () => {
-    const context = {
-      telemetry: { measurements: {} as Record<string, number>, properties: {} },
-    } as any;
-    const errorCallback = async () => {
-      throw new Error('failure');
-    };
-    await expect(runWithDurationTelemetry(context, errorCallback)).rejects.toThrow('failure');
-    expect(context.telemetry.measurements.duration).toBeGreaterThanOrEqual(0);
-  });
-});
 
 describe('logSubscriptions', () => {
   const originalSubscriptionProvider = ext.subscriptionProvider;

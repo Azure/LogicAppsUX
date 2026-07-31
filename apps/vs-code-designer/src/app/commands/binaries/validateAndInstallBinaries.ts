@@ -13,12 +13,11 @@ import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
-import { callWithDurationTelemetry } from '../../utils/telemetry';
 import { runWithTimeout } from '../../utils/timeout';
 import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import { extensionCommand } from '../../../constants';
@@ -69,7 +68,9 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         // Run ensure dependency tasks concurrently
         const ensureDependencyTasks: Promise<void>[] = [
-          callWithDurationTelemetry(extensionCommand.ensureNodeJs, async (actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling(extensionCommand.ensureNodeJs, async (actionContext: IActionContext) => {
+            actionContext.errorHandling.rethrow = true;
+            actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 20, message: 'NodeJS' });
             await runWithTimeout(
               () => validateNodeJsIsLatest(actionContext, dependenciesVersions?.nodejs),
@@ -79,7 +80,9 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setNodeJsCommand();
           }),
-          callWithDurationTelemetry(extensionCommand.ensureFuncCoreTools, async (actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling(extensionCommand.ensureFuncCoreTools, async (actionContext: IActionContext) => {
+            actionContext.errorHandling.rethrow = true;
+            actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 20, message: 'Functions Runtime' });
             await runWithTimeout(
               () => validateFuncCoreToolsIsLatest(actionContext, dependenciesVersions?.funcCoreTools),
@@ -89,7 +92,9 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setFunctionsCommand();
           }),
-          callWithDurationTelemetry(extensionCommand.ensureDotnet, async (actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling(extensionCommand.ensureDotnet, async (actionContext: IActionContext) => {
+            actionContext.errorHandling.rethrow = true;
+            actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 10, message: '.NET SDK' });
             const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
             await runWithTimeout(
@@ -100,13 +105,11 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setDotNetCommand();
           }),
-          callWithDurationTelemetry(extensionCommand.ensureSdkLanguageServer, async (_actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling(extensionCommand.ensureSdkLanguageServer, async (_actionContext: IActionContext) => {
+            _actionContext.errorHandling.rethrow = true;
+            _actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 10, message: 'SDK LSP Server' });
-            await runWithTimeout(
-              () => installLSPSDK(),
-              'SDK LSP Server',
-              dependencyTimeout
-            );
+            await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeout);
             // TODO(aeldridge): Why is setDotNetCommand called here?
             await setDotNetCommand();
           }),
