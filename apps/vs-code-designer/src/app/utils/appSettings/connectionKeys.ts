@@ -1,6 +1,6 @@
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { localize } from '../../../localize';
-import { getAzureConnectorDetailsForLocalProject } from '../codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../commands/azureConnectors/azureConnectorDetails';
 import { getParametersJson } from '../codeless/parameter';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { workspace } from 'vscode';
@@ -19,9 +19,7 @@ export async function refreshConnectionKeys(context: IActionContext, projectPath
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const azureConnectorDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
     if (!azureConnectorDetails.enabled) {
-      ext.outputChannel.appendLog(
-        localize('azureConnectorsDisabled', 'Azure connectors are disabled. Skipping connection key refresh.')
-      );
+      ext.outputChannel.appendLog(localize('azureConnectorsDisabled', 'Azure connectors are disabled. Skipping connection key refresh.'));
       return;
     }
 
@@ -34,7 +32,7 @@ export async function refreshConnectionKeys(context: IActionContext, projectPath
       const connections: ConnectionsData = JSON.parse(connectionsJson);
       const parametersData = await getParametersJson(projectPath);
 
-      if (connections.managedApiConnections && (Object.keys(connections.managedApiConnections!).length !== 0)) {
+      if (connections.managedApiConnections && Object.keys(connections.managedApiConnections!).length !== 0) {
         const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
           context,
           projectPath,

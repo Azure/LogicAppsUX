@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
-import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject, removeWebviewPanelFromCache } from '../../../../utils/codeless/common';
+import { cacheWebviewPanel, removeWebviewPanelFromCache } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { CodeSelection, ConnectionPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-extension-logic-apps';
@@ -20,7 +21,7 @@ import {
 } from '../../../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import path from 'path';
-import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
+import { managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
 import type { WebviewPanel } from 'vscode';
 import { env, Uri, ViewColumn, window } from 'vscode';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
@@ -103,7 +104,7 @@ export default class ConnectionPanel extends DesignerPanel {
       throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
     }
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
     this.panelMetadata = panelMetadata;
 
@@ -332,7 +333,7 @@ export default class ConnectionPanel extends DesignerPanel {
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
     ]);
 
-    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
+    const localSettings = (await getLocalSettingsJson(this.context, projectPath)).Values!;
 
     return {
       panelId: this.panelName,

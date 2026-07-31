@@ -40,6 +40,9 @@ vi.mock('../../../../../utils/codeless/common', () => ({
   getStandardAppData: vi.fn(() => ({ definition: {}, kind: 'Stateful' })),
   getWorkflowManagementBaseURI: vi.fn(() => 'https://management.azure.com/test'),
   getManualWorkflowsInLocalProject: vi.fn().mockResolvedValue({}),
+}));
+
+vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: vi.fn().mockResolvedValue({ enabled: false }),
 }));
 
@@ -138,7 +141,8 @@ import {
   saveConnectionReferences,
   saveCustomCodeStandard,
 } from '../../../../../utils/codeless/connection';
-import { getAzureConnectorDetailsForLocalProject, getManualWorkflowsInLocalProject } from '../../../../../utils/codeless/common';
+import { getManualWorkflowsInLocalProject } from '../../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../../azureConnectors/azureConnectorDetails';
 import { startDesignTimeApi } from '../../../../../utils/codeless/startDesignTimeApi';
 import { saveWorkflowParameter } from '../../../../../utils/codeless/parameter';
 

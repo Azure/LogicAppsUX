@@ -1,21 +1,15 @@
-import {
-  assetsFolderName,
-  localSettingsFileName,
-  logicAppsStandardExtensionId,
-  managementApiPrefix,
-  workflowAppApiVersion,
-} from '../../../../../constants';
+import { assetsFolderName, logicAppsStandardExtensionId, managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
 import { getArtifactsInLocalProject } from '../../../../utils/codeless/artifacts';
 import {
   cacheWebviewPanel,
-  getAzureConnectorDetailsForLocalProject,
   getManualWorkflowsInLocalProject,
   getStandardAppData,
   removeWebviewPanelFromCache,
 } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
@@ -113,7 +107,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -177,7 +171,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
-          const updatedRuntimeBaseUrl = this.getWorkflowRuntimeBaseUrl();
+          const updatedRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
 
           if (updatedRuntimeBaseUrl !== this.workflowRuntimeBaseUrl) {
             this.workflowRuntimeBaseUrl = updatedRuntimeBaseUrl;
@@ -343,10 +337,6 @@ export default class LocalDesignerPanel extends DesignerPanel {
     }
   }
 
-  private getWorkflowRuntimeBaseUrl(): string | undefined {
-    return ext.workflowRuntimePort ? `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}` : undefined;
-  }
-
   /**
    * Saves workflow locally in the workflow.json.
    * @param {string} filePath - File path of file to save the workflow.
@@ -491,7 +481,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
         getAzureConnectorDetailsForLocalProject(this.context, projectPath),
       ]);
 
-    const localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values!;
+    const localSettings = (await getLocalSettingsJson(this.context, projectPath)).Values!;
 
     return {
       panelId: this.panelName,

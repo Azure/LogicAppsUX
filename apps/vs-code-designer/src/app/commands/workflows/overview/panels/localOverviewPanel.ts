@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { localSettingsFileName, managementApiPrefix, workflowTenantIdKey } from '../../../../../constants';
+import { managementApiPrefix, workflowTenantIdKey } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
-import { getAzureConnectorDetailsForLocalProject } from '../../../../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';
@@ -17,7 +17,7 @@ import { OverviewPanel } from './overviewPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
 import { sendRequest } from '../../../../utils/requestUtils';
 
@@ -58,9 +58,7 @@ export default class LocalOverviewPanel extends OverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, join(this.projectPath, localSettingsFileName))).Values || {}
-      : {};
+    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
 
     this.workflowContent = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this.triggerName = getTriggerName(this.workflowContent.definition);

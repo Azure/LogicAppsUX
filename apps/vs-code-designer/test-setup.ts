@@ -85,6 +85,9 @@ vi.mock('fs', () => ({
   statSync: vi.fn(() => ({
     isDirectory: vi.fn(() => false),
   })),
+  promises: {
+    stat: vi.fn(),
+  },
   dirent: vi.fn().mockImplementation(() => ({
     isDirectory: vi.fn().mockImplementation(() => {
       return true;
@@ -139,7 +142,12 @@ vi.mock('vscode', () => ({
       readFile: vi.fn(),
       readDirectory: vi.fn(),
     },
-    getConfiguration: vi.fn(),
+    getConfiguration: vi.fn().mockReturnValue({
+      get: vi.fn(),
+      has: vi.fn().mockReturnValue(false),
+      inspect: vi.fn(),
+      update: vi.fn(),
+    }),
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
@@ -198,9 +206,12 @@ vi.mock('./src/extensionVariables', () => ({
     extensionVersion: '1.0.0',
     latestBundleVersion: '1.2.3',
     prefix: 'azureLogicAppsStandard',
+    getWorkflowRuntimeBaseUrl: vi.fn(() => 'http://localhost:7071/runtime/webhooks/workflow/api/management'),
     webViewKey: {
       designerLocal: 'designerLocal',
+      designerLocalV2: 'designerLocalV2',
       designerAzure: 'designerAzure',
+      designerAzureV2: 'designerAzureV2',
       monitoring: 'monitoring',
       export: 'export',
       overview: 'overview',

@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { nodeJsDependencyName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../../utils/binaries';
-import { shouldCheckForDependencyUpdates } from '../../../utils/dependencyUpdateCheck';
+import { shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { installNodeJs } from '../installNodeJs';
@@ -42,7 +42,7 @@ vi.mock('../../../utils/binaries', () => ({
   verifyDependencyIntegrity: vi.fn(() => true),
 }));
 
-vi.mock('../../../utils/dependencyUpdateCheck', () => ({
+vi.mock('../../../state/dependencies', () => ({
   shouldCheckForDependencyUpdates: vi.fn(),
 }));
 

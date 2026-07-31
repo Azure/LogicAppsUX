@@ -6,7 +6,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getDependencyTimeout } from '../../utils/binaries';
 import { getDependenciesVersion, ensureExtensionBundleHealthy } from '../../utils/bundleFeed';
-import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../utils/dependencyUpdateCheck';
+import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../utils/languageServerProtocol';

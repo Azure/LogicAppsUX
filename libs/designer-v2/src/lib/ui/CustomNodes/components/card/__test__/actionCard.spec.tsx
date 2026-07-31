@@ -105,6 +105,22 @@ describe('ActionCard', () => {
     expect(screen.getAllByRole('progressbar').length).toBeGreaterThanOrEqual(1);
   });
 
+  it('should render the static results indicator when staticResultsEnabled is true', () => {
+    render(<ActionCard {...defaultProps} staticResultsEnabled={true} />);
+    expect(screen.getByTestId('card-indicator-static-results')).toBeInTheDocument();
+  });
+
+  it('should not render any indicators by default', () => {
+    render(<ActionCard {...defaultProps} />);
+    expect(screen.queryByTestId('card-indicator-badges')).not.toBeInTheDocument();
+  });
+
+  it('should render comment and secure inputs/outputs indicators when provided', () => {
+    render(<ActionCard {...defaultProps} comment="Some description" isSecureInputsOutputs={true} />);
+    expect(screen.getByTestId('card-indicator-comment')).toBeInTheDocument();
+    expect(screen.getByTestId('card-indicator-secure-inputs-outputs')).toBeInTheDocument();
+  });
+
   it('should set brand color as CSS variable', () => {
     render(<ActionCard {...defaultProps} brandColor="#FF0000" />);
     const card = screen.getByTestId('card-Test Action');

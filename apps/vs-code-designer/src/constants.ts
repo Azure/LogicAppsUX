@@ -63,8 +63,11 @@ export const testMockClassTemplateName = 'TestMockClass';
 export const testCsprojFileTemplateName = 'TestCsprojFile';
 export const testSettingsConfigFileTemplateName = 'TestSettingsConfigFile';
 
-// Extension Id
+// VS Code Extensions
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
+export const dotnetExtensionId = 'ms-dotnettools.csharp';
+export const csDevKitExtensionId = 'ms-dotnettools.csdevkit';
 
 // Azurite
 export const azuriteExtensionId = 'Azurite.azurite';
@@ -73,7 +76,6 @@ export const azuriteLocationSetting = 'location';
 
 // Functions
 export const func = 'func';
-export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
@@ -245,7 +247,7 @@ export type customExtensionContext = (typeof customExtensionContext)[keyof typeo
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
-export const suppressDesignerVersionNotification = 'suppressDesignerVersionNotification';
+export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -266,6 +268,7 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
+export const alwaysBuildCustomCodeSetting = 'alwaysBuildCustomCode';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
 export const validateDotNetSDKSetting = 'validateDotNetSDK';
 export const validateNodeJsSetting = 'validateNodeJs';
@@ -274,7 +277,7 @@ export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
-export const showProjectWarningSetting = 'showProjectWarning';
+export const enableProjectConsistencyChecksSetting = 'enableProjectConsistencyChecks';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
@@ -295,6 +298,7 @@ export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensio
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
+export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
@@ -305,6 +309,14 @@ export const onStartLanguageServer = 'onStartLanguageServer';
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
+
+// globalState key + interval throttling the expensive full-byte extension-bundle
+// integrity hash. On most launches a fast lstat tree fingerprint is compared
+// instead; the deep byte-hash only runs when this throttle says a verification is
+// due (defense-in-depth against an in-place edit that keeps identical size+mtime).
+// Mirrors the dependency update-check throttle pattern.
+export const lastBundleDeepVerificationKey = 'azureLogicAppsStandard.lastBundleDeepVerification';
+export const bundleDeepVerificationIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
@@ -393,8 +405,6 @@ export const DotnetVersion = {
   net48: 'net48',
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
-
-export const dotnetExtensionId = 'ms-dotnettools.csharp';
 
 // Packages Manager
 export const PackageManager = {

@@ -7,13 +7,7 @@ import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
-import {
-  azureWebJobsStorageKey,
-  cloudSettingsFileName,
-  localSettingsFileName,
-  ProjectDirectoryPathKey,
-  webhookRedirectHostUri,
-} from '../../constants';
+import { azureWebJobsStorageKey, cloudSettingsFileName, ProjectDirectoryPathKey, webhookRedirectHostUri } from '../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import { writeFormattedJson } from '../utils/fs';
 import * as path from 'path';
@@ -39,22 +33,21 @@ export async function syncCloudSettings(context: IActionContext, node: vscode.Ur
     node = vscode.Uri.file(path.dirname(node.fsPath));
   }
 
-  const logicAppProjectPath = await tryGetLogicAppProjectRoot(context, node.fsPath);
-  if (!logicAppProjectPath) {
+  const projectPath = await tryGetLogicAppProjectRoot(context, node.fsPath);
+  if (!projectPath) {
     throw new Error(localize('noProjectSelected', 'Could not find a Logic App project at "{0}".', node.fsPath));
   }
 
-  const localSettingsPath = path.join(logicAppProjectPath, localSettingsFileName);
-  const localSettings = await getLocalSettingsJson(context, localSettingsPath, false);
+  const localSettings = await getLocalSettingsJson(context, projectPath, false);
   if (!localSettings) {
-    throw new Error(localize('localSettingsNotFound', 'No settings found in "{0}".', localSettingsPath));
+    throw new Error(localize('localSettingsNotFound', 'No local.settings.json found in logic app project "{0}".', projectPath));
   }
 
   // Exclude managed API connection keys from cloud settings
   // TODO: REMOTEDEBUGGINGVERSION should not be in local.settings.json
   const settingsToExclude: string[] = [webhookRedirectHostUri, azureWebJobsStorageKey, ProjectDirectoryPathKey, 'REMOTEDEBUGGINGVERSION'];
   const cloudSettingValues = {};
-  const connectionsJson = await getConnectionsJson(logicAppProjectPath);
+  const connectionsJson = await getConnectionsJson(projectPath);
   if (connectionsJson) {
     const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
     if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
@@ -83,7 +76,7 @@ export async function syncCloudSettings(context: IActionContext, node: vscode.Ur
     );
   }
 
-  const cloudSettingsPath = path.join(logicAppProjectPath, cloudSettingsFileName);
+  const cloudSettingsPath = path.join(projectPath, cloudSettingsFileName);
   const cloudSettings = {
     IsEncrypted: false,
     Values: cloudSettingValues,

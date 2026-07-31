@@ -4,7 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { enableManagedIdentityAuthSetting, useNodeDesignTimeWorkerSetting } from '../../../constants';
+import {
+  enableProjectConsistencyChecksSetting,
+  enableManagedIdentityAuthSetting,
+  useNodeDesignTimeWorkerSetting,
+  alwaysBuildCustomCodeSetting,
+} from '../../../constants';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
@@ -171,16 +176,36 @@ export function useNodeDesignTimeWorker(fsPath?: string | WorkspaceFolder): bool
 }
 
 /**
- * Indicates whether the extension should enforce `WORKFLOWS_AUTHENTICATION_METHOD = managedServiceIdentity`
- * in local.settings.json. Controlled by the `azureLogicAppsStandard.enableManagedIdentityAuth` setting.
- * Defaults to `true` when the setting is absent or unset, or when the VS Code API is unavailable (e.g. in tests).
+ * Indicates whether the extension should enforce `WORKFLOWS_AUTHENTICATION_METHOD = managedServiceIdentity` in local.settings.json.
+ * Defaults to `false` when the setting is unset.
  */
 export function isManagedIdentityAuthEnabled(): boolean {
   try {
-    return getGlobalSetting<boolean>(enableManagedIdentityAuthSetting) !== false;
+    return getGlobalSetting<boolean>(enableManagedIdentityAuthSetting) === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Indicates whether the extension should perform consistency checks on project files and .vscode artifacts.
+ * Defaults to `true` when the setting is unset.
+ */
+export function isProjectConsistencyCheckEnabled(): boolean {
+  try {
+    return getGlobalSetting<boolean>(enableProjectConsistencyChecksSetting) !== false;
   } catch {
     return true;
   }
+}
+
+/**
+ * Indicates whether custom code projects should always be rebuilt when opening the designer,
+ * regardless of whether build artifacts already exist. Controlled by the
+ * `azureLogicAppsStandard.alwaysBuildCustomCode` setting. Defaults to `false`.
+ */
+export function shouldAlwaysBuildCustomCode(): boolean {
+  return getGlobalSetting<boolean>(alwaysBuildCustomCodeSetting) === true;
 }
 
 function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | WorkspaceFolder | undefined {

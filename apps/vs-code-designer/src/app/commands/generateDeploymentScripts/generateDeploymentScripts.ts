@@ -2,13 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  localSettingsFileName,
-  workflowLocationKey,
-  workflowResourceGroupNameKey,
-  workflowSubscriptionIdKey,
-  workflowTenantIdKey,
-} from '../../../constants';
+import { workflowLocationKey, workflowResourceGroupNameKey, workflowSubscriptionIdKey, workflowTenantIdKey } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
@@ -127,8 +121,7 @@ async function getDeploymentScriptsWizardContext(context: IActionContext, projec
   wizardContext.projectPath = path.normalize(projectPath);
   wizardContext.isValidWorkspace = isMultiRootWorkspace();
 
-  const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
-  const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
+  const localSettings = await getLocalSettingsJson(context, projectPath);
 
   const {
     [workflowTenantIdKey]: defaultTenantId,

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { localSettingsFileName, parameterizeConnectionsInProjectLoadSetting } from '../../constants';
+import { parameterizeConnectionsInProjectLoadSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
@@ -13,7 +13,6 @@ import { areAllConnectionsParameterized, parameterizeConnection } from '../utils
 import { getGlobalSetting, updateGlobalSetting } from '../utils/vsCodeConfig/settings';
 import { getWorkspaceLogicAppFolders } from '../utils/workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
-import * as path from 'path';
 import { window, workspace } from 'vscode';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
@@ -38,7 +37,7 @@ async function shouldParameterizeConnections(context: IActionContext): Promise<b
   if (parameterizeConnectionsSetting) {
     return true;
   }
-  
+
   const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
   if (result === DialogResponses.yes) {
     await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
@@ -76,7 +75,7 @@ export async function parameterizeConnections(context: IActionContext, projectPa
       }
       const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
       const parametersJson = await getParametersJson(projectPath);
-      const localSettingsJson = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName))) as Record<string, any>;
+      const localSettingsJson = (await getLocalSettingsJson(context, projectPath)) as Record<string, any>;
 
       if (areAllConnectionsParameterized(connectionsData)) {
         if (showMessage) {

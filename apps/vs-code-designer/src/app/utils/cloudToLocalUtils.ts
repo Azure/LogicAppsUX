@@ -5,11 +5,12 @@ import type {
   AzureConnectorDetails,
   ILocalSettingsJson,
 } from '@microsoft/vscode-extension-logic-apps';
-import { getAzureConnectorDetailsForLocalProject } from './codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../commands/azureConnectors/azureConnectorDetails';
 import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionReferences } from './codeless/connection';
 import { extend, isEmptyString } from '@microsoft/logic-apps-shared';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { setPostExtractCache, getPostExtractCache, clearPostExtractCache } from '../state/cloudToLocal';
 import { getParametersJson } from './codeless/parameter';
 import { areAllConnectionsParameterized, parameterizeConnection } from './codeless/parameterizer';
 import * as path from 'path';
@@ -35,13 +36,6 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import { getContainingWorkspace } from './workspace';
 import { getExtensionAssetPath } from './extensionAssets';
 import AdmZip from 'adm-zip';
-
-interface ICachedTextDocument {
-  projectPath: string;
-  textDocumentPath: string;
-}
-
-const cacheKey = 'azLAPostExtractReadMe';
 
 export async function extractConnectionDetails(connections: any): Promise<any> {
   const SUBSCRIPTION_INDEX = 2;
@@ -353,7 +347,7 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     const connectionsString = await getConnectionsJson(context.projectPath);
 
     // merge the app settings from local.settings.json and the settings from the zip file
-    appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
+    appSettings = await getLocalSettingsJson(context, context.projectPath, false);
     const zipEntries = await getPackageEntries(context.packagePath);
     const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === localSettingsFileName);
     if (zipSettingsBuffer) {
@@ -371,7 +365,7 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     if (Object.keys(connectionsData).length && connectionsData.managedApiConnections) {
       /** Extract details from connections and add to local.settings.json
        * independent of the parameterizeConnectionsInProject setting */
-      appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
+      appSettings = await getLocalSettingsJson(context, context.projectPath, false);
       await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
       if (parameterizeConnectionsSetting) {
@@ -385,13 +379,12 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
 
     // OpenFolder will restart the extension host so we will cache README to open on next activation
     const readMePath = path.join(context.projectPath, 'README.md');
-    const postExtractCache: ICachedTextDocument = { projectPath: context.projectPath, textDocumentPath: readMePath };
-    ext.context.globalState.update(cacheKey, postExtractCache);
+    setPostExtractCache(context.projectPath, readMePath);
     // Delete cached information if the extension host was not restarted after 5 seconds
     setTimeout(() => {
-      ext.context.globalState.update(cacheKey, undefined);
+      clearPostExtractCache();
     }, 5 * 1000);
-    runPostExtractSteps(postExtractCache);
+    runPostExtractSteps({ projectPath: context.projectPath, textDocumentPath: readMePath });
   } catch (error) {
     context.telemetry.properties.error = error.message;
   }
@@ -403,21 +396,21 @@ export async function getPackageEntries(zipFilePath: string) {
 }
 
 export function runPostExtractStepsFromCache(): void {
-  const cachedDocument: ICachedTextDocument | undefined = ext.context.globalState.get(cacheKey);
+  const cachedDocument = getPostExtractCache();
   if (cachedDocument) {
     try {
       runPostExtractSteps(cachedDocument);
     } finally {
-      ext.context.globalState.update(cacheKey, undefined);
+      clearPostExtractCache();
     }
   }
 }
 
-function runPostExtractSteps(cache: ICachedTextDocument): void {
+function runPostExtractSteps(cache: { projectPath: string; textDocumentPath: string }): void {
   callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
-    if (getContainingWorkspace(cache.projectPath) && await fse.pathExists(cache.textDocumentPath)) {
+    if (getContainingWorkspace(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
       window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
     context.telemetry.properties.result = 'Succeeded';

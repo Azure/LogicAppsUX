@@ -5,13 +5,13 @@ import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  getMissingRoleDefinitions,
+  getRoleDefinitionsToAssign,
   roleQueryKeys,
   useAppIdentityRoleAssignmentsForResourceQuery,
   useHasRoleAssignmentsWritePermissionQuery,
-  useHasRoleDefinitionsByNameQuery,
+  useHasRequiredRoleDefinitionsQuery,
   useResourceRoleDefinitionsQuery,
-  useRoleDefinitionsByNameQuery,
+  useRoleDefinitionsByIdQuery,
   useUserRoleAssignmentsForResourceQuery,
 } from '../role';
 
@@ -33,10 +33,11 @@ vi.mock('../../ReactQueryProvider', () => ({
 
 const resourceId = '/subscriptions/sub-1/resourceGroups/rg-1/providers/Microsoft.Web/sites/site-1';
 
-const createRoleDefinition = (id: string, roleName: string): ArmResource<RoleDefinition> =>
+const createRoleDefinition = (definitionId: string, roleName: string): ArmResource<RoleDefinition> =>
   ({
-    id,
-    name: roleName,
+    // ARM returns the role definition GUID as the resource `name`.
+    id: `/subscriptions/sub-1/providers/Microsoft.Authorization/roleDefinitions/${definitionId}`,
+    name: definitionId,
     properties: {
       roleName,
     },
@@ -45,17 +46,27 @@ const createRoleDefinition = (id: string, roleName: string): ArmResource<RoleDef
 const createRoleAssignment = (roleDefinitionId: string, scope = resourceId): ArmResource<RoleAssignment> =>
   ({
     properties: {
-      roleDefinitionId: `/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionId}`,
+      roleDefinitionId,
       scope,
     },
   }) as ArmResource<RoleAssignment>;
 
-const azureAiDeveloper = createRoleDefinition('role-def-1', 'Azure AI Developer');
-const storageBlobDataContributor = createRoleDefinition('role-def-2', 'Storage Blob Data Contributor');
-const definitionNames = ['Azure AI Developer', 'Storage Blob Data Contributor'];
+const foundryUserId = '53ca6127-db72-4b80-b1b0-d745d6d5456d';
+const cognitiveServicesOpenAIUserId = '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd';
+const unknownRoleId = '00000000-0000-0000-0000-000000000000';
+
+const foundryUser = createRoleDefinition(foundryUserId, 'Foundry User');
+const cognitiveServicesOpenAIUser = createRoleDefinition(cognitiveServicesOpenAIUserId, 'Cognitive Services OpenAI User');
+
+// Preference-ordered alternatives: Foundry User first, Cognitive Services OpenAI User as fallback.
+const definitionIds = [foundryUserId, cognitiveServicesOpenAIUserId];
 const definitions: Record<string, ArmResource<RoleDefinition>> = {
-  'Azure AI Developer': azureAiDeveloper,
-  'Storage Blob Data Contributor': storageBlobDataContributor,
+  [foundryUserId]: foundryUser,
+  [cognitiveServicesOpenAIUserId]: cognitiveServicesOpenAIUser,
+};
+// A cloud where the Foundry roles have not rolled out yet.
+const fallbackOnlyDefinitions: Record<string, ArmResource<RoleDefinition>> = {
+  [cognitiveServicesOpenAIUserId]: cognitiveServicesOpenAIUser,
 };
 
 let queryClient: QueryClient;
@@ -89,27 +100,27 @@ afterEach(() => {
 const wrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(QueryClientProvider, { client: queryClient }, children);
 
-describe('getMissingRoleDefinitions', () => {
+describe('getRoleDefinitionsToAssign', () => {
   it('returns empty array when resourceId is empty', async () => {
-    const result = await getMissingRoleDefinitions('', ['Azure AI Developer']);
+    const result = await getRoleDefinitionsToAssign('', [foundryUserId]);
 
     expect(result).toEqual([]);
     expect(mockFetchQuery).not.toHaveBeenCalled();
   });
 
-  it('returns empty array when definitionNames is empty', async () => {
-    const result = await getMissingRoleDefinitions(resourceId, []);
+  it('returns empty array when definitionIds is empty', async () => {
+    const result = await getRoleDefinitionsToAssign(resourceId, []);
 
     expect(result).toEqual([]);
     expect(mockFetchQuery).not.toHaveBeenCalled();
   });
 
-  it('returns all definitions when no existing assignments', async () => {
+  it('returns only the preferred role when none are assigned', async () => {
     mockFetchQuery.mockResolvedValueOnce([]).mockResolvedValueOnce(definitions);
 
-    const result = await getMissingRoleDefinitions(resourceId, definitionNames);
+    const result = await getRoleDefinitionsToAssign(resourceId, definitionIds);
 
-    expect(result).toEqual([azureAiDeveloper, storageBlobDataContributor]);
+    expect(result).toEqual([foundryUser]);
     expect(mockFetchQuery).toHaveBeenCalledTimes(2);
     expect(mockFetchQuery).toHaveBeenNthCalledWith(
       1,
@@ -117,47 +128,58 @@ describe('getMissingRoleDefinitions', () => {
     );
     expect(mockFetchQuery).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({ queryKey: [roleQueryKeys.roleDefinitions, 'byName', definitionNames] })
+      expect.objectContaining({ queryKey: [roleQueryKeys.roleDefinitions, 'byId', definitionIds] })
     );
   });
 
-  it('returns empty array when all roles are already assigned', async () => {
-    const assignments = [createRoleAssignment(azureAiDeveloper.id), createRoleAssignment(storageBlobDataContributor.id)];
+  it('falls back to the next role when the preferred one does not exist in this cloud', async () => {
+    mockFetchQuery.mockResolvedValueOnce([]).mockResolvedValueOnce(fallbackOnlyDefinitions);
 
-    mockFetchQuery.mockResolvedValueOnce(assignments).mockResolvedValueOnce(definitions);
+    const result = await getRoleDefinitionsToAssign(resourceId, definitionIds);
 
-    const result = await getMissingRoleDefinitions(resourceId, definitionNames);
+    expect(result).toEqual([cognitiveServicesOpenAIUser]);
+  });
+
+  it('returns empty array when the preferred role is already assigned', async () => {
+    mockFetchQuery.mockResolvedValueOnce([createRoleAssignment(foundryUser.id)]).mockResolvedValueOnce(definitions);
+
+    const result = await getRoleDefinitionsToAssign(resourceId, definitionIds);
 
     expect(result).toEqual([]);
   });
 
-  it('returns only missing roles when only some roles are assigned', async () => {
-    const assignments = [createRoleAssignment(azureAiDeveloper.id)];
+  it('returns empty array when only the fallback role is assigned, so we do not stack roles', async () => {
+    mockFetchQuery.mockResolvedValueOnce([createRoleAssignment(cognitiveServicesOpenAIUser.id)]).mockResolvedValueOnce(definitions);
 
-    mockFetchQuery.mockResolvedValueOnce(assignments).mockResolvedValueOnce(definitions);
-
-    const result = await getMissingRoleDefinitions(resourceId, definitionNames);
-
-    expect(result).toEqual([storageBlobDataContributor]);
-  });
-
-  it('returns empty array when no definitions found', async () => {
-    mockFetchQuery.mockResolvedValueOnce([createRoleAssignment('role-def-1')]).mockResolvedValueOnce({});
-
-    const result = await getMissingRoleDefinitions(resourceId, ['Azure AI Developer']);
+    const result = await getRoleDefinitionsToAssign(resourceId, definitionIds);
 
     expect(result).toEqual([]);
   });
 
-  it('skips requested names with no matching definition when assignments exist', async () => {
-    // e.g. 'Azure AI User' is not returned as a built-in role in some environments
-    const assignments = [createRoleAssignment(azureAiDeveloper.id)];
+  it('returns empty array when none of the roles exist in this cloud', async () => {
+    mockFetchQuery.mockResolvedValueOnce([]).mockResolvedValueOnce({});
+
+    const result = await getRoleDefinitionsToAssign(resourceId, definitionIds);
+
+    expect(result).toEqual([]);
+  });
+
+  it('ignores requested ids with no matching definition', async () => {
+    mockFetchQuery.mockResolvedValueOnce([]).mockResolvedValueOnce(definitions);
+
+    const result = await getRoleDefinitionsToAssign(resourceId, [unknownRoleId, ...definitionIds]);
+
+    expect(result).toEqual([foundryUser]);
+  });
+
+  it('ignores assignments made at a different scope', async () => {
+    const assignments = [createRoleAssignment(foundryUser.id, '/subscriptions/sub-1/resourceGroups/rg-1')];
 
     mockFetchQuery.mockResolvedValueOnce(assignments).mockResolvedValueOnce(definitions);
 
-    const result = await getMissingRoleDefinitions(resourceId, ['Azure AI User', ...definitionNames]);
+    const result = await getRoleDefinitionsToAssign(resourceId, definitionIds);
 
-    expect(result).toEqual([storageBlobDataContributor]);
+    expect(result).toEqual([foundryUser]);
   });
 
   it('does not throw when an assignment has no roleDefinitionId', async () => {
@@ -165,27 +187,27 @@ describe('getMissingRoleDefinitions', () => {
 
     mockFetchQuery.mockResolvedValueOnce(assignments).mockResolvedValueOnce(definitions);
 
-    const result = await getMissingRoleDefinitions(resourceId, definitionNames);
+    const result = await getRoleDefinitionsToAssign(resourceId, definitionIds);
 
-    expect(result).toEqual([azureAiDeveloper, storageBlobDataContributor]);
+    expect(result).toEqual([foundryUser]);
   });
 });
 
 describe('useResourceRoleDefinitionsQuery', () => {
   it('fetches role definitions for the resource', async () => {
-    mockRoleService.fetchRoleDefinitions.mockResolvedValue([azureAiDeveloper]);
+    mockRoleService.fetchRoleDefinitions.mockResolvedValue([foundryUser]);
 
     const { result } = renderHook(() => useResourceRoleDefinitionsQuery(resourceId), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual([azureAiDeveloper]);
+    expect(result.current.data).toEqual([foundryUser]);
     expect(mockRoleService.fetchRoleDefinitions).toHaveBeenCalledWith(resourceId);
   });
 });
 
 describe('useUserRoleAssignmentsForResourceQuery', () => {
   it('fetches user role assignments for the resource', async () => {
-    const assignments = [createRoleAssignment(azureAiDeveloper.id)];
+    const assignments = [createRoleAssignment(foundryUser.id)];
     mockRoleService.fetchUserRoleAssignmentsForResource.mockResolvedValue(assignments);
 
     const { result } = renderHook(() => useUserRoleAssignmentsForResourceQuery(resourceId), { wrapper });
@@ -198,7 +220,7 @@ describe('useUserRoleAssignmentsForResourceQuery', () => {
 
 describe('useAppIdentityRoleAssignmentsForResourceQuery', () => {
   it('fetches app identity role assignments for the resource', async () => {
-    const assignments = [createRoleAssignment(storageBlobDataContributor.id)];
+    const assignments = [createRoleAssignment(cognitiveServicesOpenAIUser.id)];
     mockRoleService.fetchAppRoleAssignmentsForResource.mockResolvedValue(assignments);
 
     const { result } = renderHook(() => useAppIdentityRoleAssignmentsForResourceQuery(resourceId), { wrapper });
@@ -236,24 +258,34 @@ describe('useHasRoleAssignmentsWritePermissionQuery', () => {
   });
 });
 
-describe('useRoleDefinitionsByNameQuery', () => {
-  it('returns only the built-in roles matching the requested names', async () => {
-    mockRoleService.fetchRoleDefinitions.mockResolvedValue([azureAiDeveloper, storageBlobDataContributor]);
+describe('useRoleDefinitionsByIdQuery', () => {
+  it('returns only the built-in roles matching the requested definition ids', async () => {
+    mockRoleService.fetchRoleDefinitions.mockResolvedValue([foundryUser, cognitiveServicesOpenAIUser]);
 
-    const { result } = renderHook(() => useRoleDefinitionsByNameQuery(['Azure AI Developer', 'Azure AI User']), { wrapper });
+    const { result } = renderHook(() => useRoleDefinitionsByIdQuery([foundryUserId, unknownRoleId]), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({ 'Azure AI Developer': azureAiDeveloper });
+    expect(result.current.data).toEqual({ [foundryUserId]: foundryUser });
     expect(mockRoleService.fetchRoleDefinitions).toHaveBeenCalledWith('', { $filter: "type eq 'BuiltInRole'" });
+  });
+
+  it('matches definition ids case-insensitively', async () => {
+    mockRoleService.fetchRoleDefinitions.mockResolvedValue([foundryUser]);
+
+    const upperCaseId = foundryUserId.toUpperCase();
+    const { result } = renderHook(() => useRoleDefinitionsByIdQuery([upperCaseId]), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual({ [upperCaseId]: foundryUser });
   });
 });
 
-describe('useHasRoleDefinitionsByNameQuery', () => {
+describe('useHasRequiredRoleDefinitionsQuery', () => {
   it('returns true when no role definitions are missing', async () => {
-    const assignments = [createRoleAssignment(azureAiDeveloper.id), createRoleAssignment(storageBlobDataContributor.id)];
+    const assignments = [createRoleAssignment(foundryUser.id), createRoleAssignment(cognitiveServicesOpenAIUser.id)];
     mockFetchQuery.mockResolvedValueOnce(assignments).mockResolvedValueOnce(definitions);
 
-    const { result } = renderHook(() => useHasRoleDefinitionsByNameQuery(resourceId, definitionNames), { wrapper });
+    const { result } = renderHook(() => useHasRequiredRoleDefinitionsQuery(resourceId, definitionIds), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toBe(true);
@@ -262,7 +294,7 @@ describe('useHasRoleDefinitionsByNameQuery', () => {
   it('returns false when some role definitions are missing', async () => {
     mockFetchQuery.mockResolvedValueOnce([]).mockResolvedValueOnce(definitions);
 
-    const { result } = renderHook(() => useHasRoleDefinitionsByNameQuery(resourceId, definitionNames), { wrapper });
+    const { result } = renderHook(() => useHasRequiredRoleDefinitionsQuery(resourceId, definitionIds), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toBe(false);
