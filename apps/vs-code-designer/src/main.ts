@@ -15,13 +15,7 @@ import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTa
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
 import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
-import {
-  extensionCommand,
-  logicAppFilter,
-  parameterizeConnectionsInProjectLoadSetting,
-  suppressManagedIdentityAuthNotification,
-  suppressParameterizeConnectionsNotification,
-} from './constants';
+import { extensionCommand, logicAppFilter, parameterizeConnectionsInProjectLoadSetting } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
@@ -50,6 +44,12 @@ import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { installBinaries } from './app/utils/binaries';
 import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
 import { isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
+import {
+  isManagedIdentityAuthNotificationSuppressed,
+  isParameterizeConnectionsNotificationSuppressed,
+  suppressManagedIdentityAuthNotification,
+  suppressParameterizeConnectionsNotification,
+} from './app/state/notifications';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -190,8 +190,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 async function promptShouldParameterizeConnections(context: IActionContext): Promise<boolean> {
-  const isSuppressed = ext.context.globalState.get<boolean>(suppressParameterizeConnectionsNotification) === true;
-  if (isSuppressed) {
+  if (isParameterizeConnectionsNotificationSuppressed()) {
     return false;
   }
 
@@ -209,7 +208,7 @@ async function promptShouldParameterizeConnections(context: IActionContext): Pro
   }
 
   if (result === DialogResponses.dontWarnAgain) {
-    await ext.context.globalState.update(suppressParameterizeConnectionsNotification, true);
+    await suppressParameterizeConnectionsNotification();
     context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'suppressed';
   }
 
@@ -223,8 +222,7 @@ async function promptShouldParameterizeConnections(context: IActionContext): Pro
  * - The user previously selected "Don't show again".
  */
 async function promptEnableLocalManagedIdentityAuth(): Promise<void> {
-  const isSuppressed = ext.context.globalState.get<boolean>(suppressManagedIdentityAuthNotification) === true;
-  if (isSuppressed || isManagedIdentityAuthEnabled()) {
+  if (isManagedIdentityAuthNotificationSuppressed() || isManagedIdentityAuthEnabled()) {
     return;
   }
 
@@ -241,7 +239,7 @@ async function promptEnableLocalManagedIdentityAuth(): Promise<void> {
       await enableLocalManagedIdentityAuth(actionContext);
     });
   } else if (selection === dontShowAgain) {
-    await ext.context.globalState.update(suppressManagedIdentityAuthNotification, true);
+    await suppressManagedIdentityAuthNotification();
   }
 }
 

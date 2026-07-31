@@ -257,6 +257,8 @@ export const contextValuePrefix = 'azLogicApps';
 
 // Global state
 export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
+export const suppressManagedIdentityAuthNotificationState = 'suppressManagedIdentityAuthNotification';
+export const suppressParameterizeConnectionsNotificationState = 'suppressParameterizeConnectionsNotification';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -307,8 +309,6 @@ export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensio
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
-export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
-export const suppressParameterizeConnectionsNotification = 'suppressParameterizeConnectionsNotification';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
