@@ -233,23 +233,13 @@ export const Designer = (props: DesignerProps) => {
   const hasUnsupportedMultipleTriggers = useHasUnsupportedMultipleTriggers();
   const runInstance = useRunInstance();
 
-  if (hasUnsupportedMultipleTriggers) {
-    // Neither Consumption nor Standard support designer/monitoring rendering of workflows with more
-    // than one trigger, so no graph/designer state was initialized for this workflow. Render a
-    // centered message in place of the canvas instead of the designer tree below.
-    const canShowRunDetails = !isStandard && isMonitoringView && !!runInstance?.id;
-    return (
-      <div
-        ref={designerContainerRef}
-        className={mergeClasses('msla-designer-canvas', 'msla-panel-mode', styles.vars, isDarkMode ? styles.darkVars : styles.lightVars)}
-      >
-        <MultiTriggerUnsupportedMessage
-          isStandard={isStandard}
-          onRunDetailsClick={canShowRunDetails ? () => HostService().openRun?.(runInstance!.id) : undefined}
-        />
-      </div>
-    );
-  }
+  // Neither Consumption nor Standard support designer/monitoring rendering of workflows with more
+  // than one trigger, so no graph/designer state was initialized for this workflow (see
+  // BJSWorkflowProvider's pre-check, which makes BJSDeserializer's RENDER_MULTIPLE_TRIGGERS throw
+  // unreachable in the normal flow). Only the canvas/graph region is replaced with a centered
+  // message here -- the surrounding shell (run-history panel, side panels, and other host-facing
+  // controls) still renders and functions normally.
+  const canShowRunDetails = !isStandard && isMonitoringView && !!runInstance?.id;
 
   return (
     <DndProvider options={DND_OPTIONS}>
@@ -261,29 +251,36 @@ export const Designer = (props: DesignerProps) => {
         <ReactFlowProvider>
           <RunHistoryPanel />
           <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'row', position: 'relative' }} ref={canvasRef}>
-            <DesignerReactFlow canvasRef={canvasRef}>
-              {backgroundProps ? (
-                <Background {...backgroundProps} />
-              ) : (
-                <Background
-                  bgColor={isReadOnly ? '#80808010' : undefined}
-                  color={isReadOnly ? '#00000000' : '#80808080'}
-                  size={2}
-                  // gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
-                  gap={[20, 20]}
-                  offset={[10, 10]}
-                />
-              )}
-              <DeleteModal />
-              <MultiSelectDeleteModal />
-              <DesignerContextualMenu />
-              <EdgeContextualMenu />
-              <RunDisplay />
-              <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-                <Controls />
-                <Minimap />
-              </div>
-            </DesignerReactFlow>
+            {hasUnsupportedMultipleTriggers ? (
+              <MultiTriggerUnsupportedMessage
+                isStandard={isStandard}
+                onRunDetailsClick={canShowRunDetails ? () => HostService().openRun?.(runInstance!.id) : undefined}
+              />
+            ) : (
+              <DesignerReactFlow canvasRef={canvasRef}>
+                {backgroundProps ? (
+                  <Background {...backgroundProps} />
+                ) : (
+                  <Background
+                    bgColor={isReadOnly ? '#80808010' : undefined}
+                    color={isReadOnly ? '#00000000' : '#80808080'}
+                    size={2}
+                    // gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                    gap={[20, 20]}
+                    offset={[10, 10]}
+                  />
+                )}
+                <DeleteModal />
+                <MultiSelectDeleteModal />
+                <DesignerContextualMenu />
+                <EdgeContextualMenu />
+                <RunDisplay />
+                <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
+                  <Controls />
+                  <Minimap />
+                </div>
+              </DesignerReactFlow>
+            )}
           </div>
           <PanelRoot
             panelContainerRef={designerContainerRef}

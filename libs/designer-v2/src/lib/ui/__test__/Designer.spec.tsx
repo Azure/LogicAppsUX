@@ -122,15 +122,15 @@ vi.mock('../Controls', () => ({ default: () => <div data-testid="controls" /> })
 vi.mock('../Minimap', () => ({ default: () => <div data-testid="minimap" /> }));
 vi.mock('../common/DeleteModal/DeleteModal', () => ({ default: () => null }));
 vi.mock('../common/DeleteModal/MultiSelectDeleteModal', () => ({ MultiSelectDeleteModal: () => null }));
-vi.mock('../panel/panelRoot', () => ({ PanelRoot: () => null }));
+vi.mock('../panel/panelRoot', () => ({ PanelRoot: () => <div data-testid="panel-root" /> }));
 vi.mock('../common/PerformanceDebug/PerformanceDebug', () => ({ PerformanceDebugTool: () => null }));
-vi.mock('../CanvasFinder', () => ({ CanvasFinder: () => null }));
+vi.mock('../CanvasFinder', () => ({ CanvasFinder: () => <div data-testid="canvas-finder" /> }));
 vi.mock('../common/DesignerContextualMenu/DesignerContextualMenu', () => ({ DesignerContextualMenu: () => null }));
 vi.mock('../common/EdgeContextualMenu/EdgeContextualMenu', () => ({ EdgeContextualMenu: () => null }));
 vi.mock('../common/DragPanMonitor/DragPanMonitor', () => ({ DragPanMonitor: () => null }));
 vi.mock('../CanvasSizeMonitor', () => ({ CanvasSizeMonitor: () => null }));
 vi.mock('../DesignerReactFlow', () => ({ default: ({ children }: any) => <div data-testid="designer-reactflow">{children}</div> }));
-vi.mock('../panel', () => ({ RunHistoryPanel: () => null }));
+vi.mock('../panel', () => ({ RunHistoryPanel: () => <div data-testid="run-history-panel" /> }));
 vi.mock('../Designer.styles', () => ({
   useDesignerStyles: () => ({ vars: '', darkVars: '', lightVars: '', layerHost: '' }),
 }));
@@ -158,6 +158,9 @@ describe('Designer', () => {
     render(<Designer />);
     expect(screen.getByTestId('dnd-provider')).toBeDefined();
     expect(screen.getByTestId('reactflow-provider')).toBeDefined();
+    expect(screen.getByTestId('designer-reactflow')).toBeDefined();
+    expect(screen.getByTestId('run-history-panel')).toBeDefined();
+    expect(screen.getByTestId('panel-root')).toBeDefined();
   });
 
   it('should register undo hotkeys (meta+z, ctrl+z)', () => {
@@ -276,15 +279,23 @@ describe('Designer', () => {
       mockHasUnsupportedMultipleTriggers = false;
       render(<Designer />);
       expect(screen.getByTestId('dnd-provider')).toBeDefined();
+      expect(screen.getByTestId('designer-reactflow')).toBeDefined();
       expect(screen.queryByTestId('multi-trigger-unsupported-message')).toBeNull();
     });
 
-    it('should skip the designer canvas entirely and render the unsupported message instead', () => {
+    it('should skip only the canvas/graph region (not the surrounding shell) and render the unsupported message in its place', () => {
       mockHasUnsupportedMultipleTriggers = true;
       render(<Designer />);
-      expect(screen.queryByTestId('dnd-provider')).toBeNull();
-      expect(screen.queryByTestId('reactflow-provider')).toBeNull();
+      // The canvas/graph region (which would otherwise trigger graph initialization) is replaced...
+      expect(screen.queryByTestId('designer-reactflow')).toBeNull();
       expect(screen.getByTestId('multi-trigger-unsupported-message')).toBeDefined();
+      // ...but the rest of the designer shell -- drag/drop root, react flow context, run-history
+      // panel, side panels, and other host-facing controls -- still renders normally.
+      expect(screen.getByTestId('dnd-provider')).toBeDefined();
+      expect(screen.getByTestId('reactflow-provider')).toBeDefined();
+      expect(screen.getByTestId('run-history-panel')).toBeDefined();
+      expect(screen.getByTestId('panel-root')).toBeDefined();
+      expect(screen.getByTestId('canvas-finder')).toBeDefined();
     });
 
     it('should not show a Run details button for Consumption in design/edit mode', () => {
