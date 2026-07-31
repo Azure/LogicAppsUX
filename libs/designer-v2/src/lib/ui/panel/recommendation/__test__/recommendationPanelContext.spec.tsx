@@ -61,7 +61,11 @@ vi.mock('../searchView', () => ({
 }));
 
 vi.mock('../browse/browseView', () => ({
-  BrowseView: vi.fn(({ isTrigger }) => <div data-testid="browse-view">Browse View - Trigger: {String(isTrigger)}</div>),
+  BrowseView: vi.fn(({ isTrigger, searchTerm }) => (
+    <div data-testid="browse-view">
+      Browse View - Trigger: {String(isTrigger)} - Search: {searchTerm}
+    </div>
+  )),
 }));
 
 vi.mock('../browse/mcpToolWizard', () => ({
@@ -117,7 +121,7 @@ import {
   useDiscoveryPanelSearchTerm,
   useMcpToolWizard,
 } from '../../../../core/state/panel/panelSelectors';
-import { selectOperationGroupId, selectBrowseCategory } from '../../../../core/state/panel/panelSlice';
+import { selectOperationGroupId, selectBrowseCategory, setDiscoverySearchTerm } from '../../../../core/state/panel/panelSlice';
 import { useAllOperations } from '../../../../core/queries/browse';
 
 const mockUseDiscoveryPanelIsAddingTrigger = vi.mocked(useDiscoveryPanelIsAddingTrigger);
@@ -129,6 +133,7 @@ const mockUseDiscoveryPanelSearchTerm = vi.mocked(useDiscoveryPanelSearchTerm);
 const mockUseMcpToolWizard = vi.mocked(useMcpToolWizard);
 const mockSelectOperationGroupId = vi.mocked(selectOperationGroupId);
 const mockSelectBrowseCategory = vi.mocked(selectBrowseCategory);
+const mockSetDiscoverySearchTerm = vi.mocked(setDiscoverySearchTerm);
 const mockUseAllOperations = vi.mocked(useAllOperations);
 
 const createTestStore = () =>
@@ -175,6 +180,7 @@ describe('RecommendationPanelContext', () => {
     mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue(null);
     mockUseDiscoveryPanelSelectionState.mockReturnValue(SELECTION_STATES.SEARCH);
     mockUseMcpToolWizard.mockReturnValue(null);
+    mockUseDiscoveryPanelSearchTerm.mockReturnValue('');
     mockUseAllOperations.mockReturnValue({ data: [], isLoading: false } as any);
   });
 
@@ -419,6 +425,59 @@ describe('RecommendationPanelContext', () => {
       const icon = screen.getByRole('presentation');
       expect(icon).toBeDefined();
       expect(icon.getAttribute('src')).toBe('https://example.com/icon.svg');
+    });
+  });
+
+  describe('MCP servers browse search', () => {
+    const mcpCategory = { key: 'mcpServers', title: 'MCP servers' };
+
+    test('should keep rendering BrowseView instead of SearchView while browsing MCP servers', () => {
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue(mcpCategory);
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('github');
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+
+      expect(screen.queryByTestId('search-view')).toBeNull();
+      expect(screen.getByTestId('browse-view')).toBeDefined();
+    });
+
+    test('should pass the search term down to BrowseView', () => {
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue(mcpCategory);
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('github');
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+
+      expect(screen.getByTestId('browse-view').textContent).toContain('Search: github');
+    });
+
+    test('should still render SearchView for other categories', () => {
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue({ key: 'favorites', title: 'Favorites' });
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('github');
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+
+      expect(screen.getByTestId('search-view')).toBeDefined();
+    });
+
+    test('should clear the search term when navigating back out of the MCP servers category', () => {
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue(mcpCategory);
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('github');
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+      fireEvent.click(screen.getByRole('button', { name: /return to search/i }));
+
+      expect(mockSelectBrowseCategory).toHaveBeenCalledWith(undefined);
+      expect(mockSetDiscoverySearchTerm).toHaveBeenCalledWith('');
+    });
+
+    test('should not clear the search term when navigating back out of other categories', () => {
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue({ key: 'favorites', title: 'Favorites' });
+      mockUseDiscoveryPanelSearchTerm.mockReturnValue('github');
+
+      render(<RecommendationPanelContext {...defaultProps} />, { wrapper: createWrapper() });
+      fireEvent.click(screen.getByRole('button', { name: /return to search/i }));
+
+      expect(mockSetDiscoverySearchTerm).not.toHaveBeenCalled();
     });
   });
 });

@@ -338,4 +338,72 @@ describe('McpServersBrowse', () => {
       );
     });
   });
+
+  describe('searchTerm', () => {
+    const githubServer = {
+      id: 'github-server',
+      name: 'github-server',
+      type: 'custom',
+      properties: {
+        summary: 'GitHub MCP',
+        description: 'Tools for GitHub repositories',
+        api: { id: 'test', brandColor: '#000', iconUri: '' },
+      },
+    };
+    const weatherServer = {
+      id: 'weather-server',
+      name: 'weather-server',
+      type: 'custom',
+      properties: {
+        summary: 'Weather',
+        description: 'Get the current forecast',
+        api: { id: 'test', brandColor: '#000', iconUri: '' },
+      },
+    };
+
+    beforeEach(() => {
+      mockUseMcpServersQuery.mockReturnValue({
+        data: { data: [githubServer, weatherServer] },
+        isLoading: false,
+      } as any);
+    });
+
+    test('should only render servers matching the search term', () => {
+      render(<McpServersBrowse searchTerm="github" />, { wrapper: createWrapper() });
+
+      expect(screen.getByTestId('grid-item-github-server')).toBeDefined();
+      expect(screen.queryByTestId('grid-item-weather-server')).toBeNull();
+      expect(screen.queryByTestId('grid-item-nativemcpclient')).toBeNull();
+    });
+
+    test('should render all servers when the search term is empty', () => {
+      render(<McpServersBrowse searchTerm="" />, { wrapper: createWrapper() });
+
+      expect(screen.getByTestId('grid-item-github-server')).toBeDefined();
+      expect(screen.getByTestId('grid-item-weather-server')).toBeDefined();
+    });
+
+    test('should update the item count to reflect the search results', () => {
+      render(<McpServersBrowse searchTerm="github" />, { wrapper: createWrapper() });
+
+      expect(screen.getByText('Displaying 1 item')).toBeDefined();
+    });
+
+    test('should show the no results message when nothing matches', () => {
+      render(<McpServersBrowse searchTerm="zzzz" />, { wrapper: createWrapper() });
+
+      expect(screen.getByText('No MCP servers match your search')).toBeDefined();
+    });
+
+    test('should keep filtering when switching tabs', async () => {
+      render(<McpServersBrowse searchTerm="github" />, { wrapper: createWrapper() });
+
+      fireEvent.click(screen.getByRole('tab', { name: 'Custom' }));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('grid-item-github-server')).toBeDefined();
+        expect(screen.queryByTestId('grid-item-weather-server')).toBeNull();
+      });
+    });
+  });
 });
