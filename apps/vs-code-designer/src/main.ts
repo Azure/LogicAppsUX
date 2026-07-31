@@ -15,7 +15,7 @@ import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTa
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
 import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
-import { extensionCommand, logicAppFilter, parameterizeConnectionsInProjectLoadSetting } from './constants';
+import { DependencyDefaultPath, dotNetBinaryPathSettingKey, extensionCommand, funcCoreToolsBinaryPathSettingKey, logicAppFilter, nodeJsBinaryPathSettingKey, parameterizeConnectionsInProjectLoadSetting } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
@@ -41,7 +41,6 @@ import { logicAppDebugConfigProvider } from './app/utils/debug';
 import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
-import { installBinaries } from './app/utils/binaries';
 import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
 import { isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import {
@@ -50,6 +49,8 @@ import {
   suppressManagedIdentityAuthNotification,
   suppressParameterizeConnectionsNotification,
 } from './app/state/notifications';
+import { useBinariesDependencies } from './app/utils/binaries';
+import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -283,7 +284,18 @@ async function ensureBinaries(isDevContainer: boolean): Promise<void> {
         actionContext.errorHandling.rethrow = true;
         actionContext.errorHandling.suppressDisplay = true;
       }
-      await installBinaries(actionContext);
+      
+      const useBinaries = await useBinariesDependencies();
+
+      if (useBinaries) {
+        await validateAndInstallBinaries(actionContext);
+        actionContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
+      } else {
+        await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+        await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+        await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+        actionContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
+      }
     }
   });
 }

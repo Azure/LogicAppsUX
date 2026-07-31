@@ -26,8 +26,7 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies';
-import { isDevContainerWorkspaceSync } from './devContainerUtils';
+import { isDevContainerWorkspace, isDevContainerWorkspaceSync } from './devContainerUtils';
 import { type DownloadAttemptResult, downloadFileWithVerification as downloadFileWithVerificationCore } from './integrity';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
@@ -44,10 +43,6 @@ import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { repairFuncCoreToolsExecutablePermissions, setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
-
-export { useBinariesDependencies } from './runtimeDependencies';
-export { DownloadIntegrityError } from './integrity';
-export type { DownloadAttemptResult } from './integrity';
 
 /**
  * Download and Extracts dependency zip.
@@ -760,6 +755,16 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
   }
 
   return await binariesExistFromSettings(dependencyName, true);
+}
+
+export async function useBinariesDependencies(): Promise<boolean> {
+  const isDevContainer = await isDevContainerWorkspace();
+  if (isDevContainer) {
+    return false;
+  }
+
+  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
+  return !!binariesInstallation;
 }
 
 export function binariesExistSync(dependencyName: string): boolean {
@@ -1476,22 +1481,4 @@ export function getDependencyTimeout(): number {
   }
 
   return timeoutInSeconds;
-}
-
-/**
- * Prompts warning message to decide the auto validation/installation of dependency binaries.
- * @param {IActionContext} context - Activation context.
- */
-export async function installBinaries(context: IActionContext) {
-  const useBinaries = await useBinariesDependencies();
-
-  if (useBinaries) {
-    await onboardBinaries(context);
-    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
-  } else {
-    await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-    await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-    await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
-  }
 }
