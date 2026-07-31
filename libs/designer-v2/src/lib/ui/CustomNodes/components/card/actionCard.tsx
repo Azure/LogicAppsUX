@@ -9,12 +9,14 @@ import { useIntl } from 'react-intl';
 import { useCardStyles } from './card.styles';
 import { CardRunStatusBadge } from './cardRunStatusBadge';
 import { CardErrorBadge } from './cardErrorBadge';
+import { CardIndicatorBadges } from './cardIndicatorBadges';
 import { CollapseToggle } from './collapseToggle';
 
 export interface ActionCardProps {
   active?: boolean;
   brandColor?: string;
   cloned?: boolean;
+  comment?: string;
   connectorName?: string;
   drag: ConnectDragSource;
   dragPreview: ConnectDragPreview;
@@ -25,6 +27,7 @@ export interface ActionCardProps {
   isLoading?: boolean;
   isSelected?: boolean;
   isPinned?: boolean;
+  isSecureInputsOutputs?: boolean;
   nodeIndex?: number;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
@@ -48,6 +51,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   id,
   active = true,
   brandColor,
+  comment,
   connectorName,
   drag,
   errorMessages = [],
@@ -55,6 +59,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   isLoading,
   isSelected,
   isPinned,
+  isSecureInputsOutputs,
   nodeIndex,
   onClick,
   onDeleteClick,
@@ -68,6 +73,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   copilotModified,
   collapsed = false,
   handleCollapse,
+  staticResultsEnabled,
 }) => {
   const styles = useCardStyles();
 
@@ -172,7 +178,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       ) : null}
       <div className={styles.icon}>{cardIcon}</div>
       <Text className={mergeClasses(styles.title, isScope && styles.scopeTitle)}>{title}</Text>
-      {isLoadingDynamicData ? <Spinner size={'extra-tiny'} /> : null}
+      <CardIndicatorBadges
+        comment={comment}
+        isLoadingDynamicData={isLoadingDynamicData}
+        isSecureInputsOutputs={isSecureInputsOutputs}
+        nodeIndex={nodeIndex}
+        staticResultsEnabled={staticResultsEnabled}
+      />
       {isScope ? (
         <CollapseToggle id={`${id}-collapse-toggle`} tabIndex={nodeIndex} collapsed={collapsed} handleCollapse={handleCollapse!} />
       ) : null}

@@ -21,6 +21,7 @@ import {
   useActionMetadata,
   useIsGraphCollapsed,
   useIsLeafNode,
+  useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
   useRunData,
@@ -91,6 +92,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(scopeId);
+  const nodeComment = useNodeDescription(scopeId);
   const normalizedType = node?.type.toLowerCase();
   const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
   const isSwitch = normalizedType === constants.NODE.TYPE.SWITCH;
@@ -435,6 +437,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
             brandColor={brandColor}
             title={label}
             icon={iconUri}
+            comment={nodeComment}
             connectorName={connectorName?.result}
             drag={drag}
             dragPreview={dragPreview}
