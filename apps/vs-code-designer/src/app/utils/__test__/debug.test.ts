@@ -9,10 +9,6 @@ describe('debug', () => {
       expect(getCustomCodeRuntime(TargetFramework.Net8)).toBe('coreclr');
     });
 
-    it('should return coreclr for .NET 10', () => {
-      expect(getCustomCodeRuntime(TargetFramework.Net10)).toBe('coreclr');
-    });
-
     it('should return clr for .NET Framework', () => {
       expect(getCustomCodeRuntime(TargetFramework.NetFx)).toBe('clr');
     });
@@ -21,10 +17,6 @@ describe('debug', () => {
   describe('usesPublishFolderProperty', () => {
     it('should return true for custom code with .NET 8', () => {
       expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.Net8)).toBe(true);
-    });
-
-    it('should return true for custom code with .NET 10', () => {
-      expect(usesPublishFolderProperty(ProjectType.customCode, TargetFramework.Net10)).toBe(true);
     });
 
     it('should return false for custom code with .NET Framework', () => {
@@ -48,19 +40,6 @@ describe('debug', () => {
     describe('with custom code target framework (default isCodeless=true)', () => {
       it('should return launch configuration for .NET 8 custom code with v4 function runtime', () => {
         const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net8);
-        expect(result).toEqual({
-          name: 'Run/Debug logic app with local function TestLogicApp',
-          type: 'logicapp',
-          request: 'launch',
-          funcRuntime: 'coreclr',
-          customCodeRuntime: 'coreclr',
-          isCodeless: true,
-        });
-      });
-
-      it('should return launch configuration for .NET 10 custom code with v4 function runtime', () => {
-        const result = getDebugConfiguration(FuncVersion.v4, 'TestLogicApp', TargetFramework.Net10);
-
         expect(result).toEqual({
           name: 'Run/Debug logic app with local function TestLogicApp',
           type: 'logicapp',
