@@ -34,6 +34,27 @@ vi.mock('@fluentui/react-icons', () => {
         }
         return cache[prop];
       },
+      has(target: Record<string, unknown>, prop: string | symbol) {
+        // Symbols (e.g. Symbol.toStringTag) and `then` must fall through to the real
+        // target so the mocked namespace isn't mistaken for a thenable by dynamic import
+        // interop, and so built-in symbol checks behave normally.
+        if (typeof prop === 'symbol' || prop === 'then') {
+          return prop in target;
+        }
+        return true;
+      },
+      getOwnPropertyDescriptor(target: Record<string, unknown>, prop: string | symbol) {
+        if (prop in target) {
+          return Object.getOwnPropertyDescriptor(target, prop);
+        }
+        if (typeof prop === 'symbol') {
+          return undefined;
+        }
+        if (!cache[prop]) {
+          cache[prop] = createStub(prop);
+        }
+        return { configurable: true, enumerable: true, value: cache[prop], writable: true };
+      },
     }
   );
 });
