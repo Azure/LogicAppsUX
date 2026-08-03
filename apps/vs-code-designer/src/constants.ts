@@ -142,6 +142,7 @@ export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
 
 // Commands
 export const extensionCommand = {
+  ensureWorkspace: 'azureLogicAppsStandard.ensureWorkspace',
   openDesigner: 'azureLogicAppsStandard.openDesigner',
   activate: 'azureLogicAppsStandard.activate',
   viewContent: 'azureLogicAppsStandard.viewContent',

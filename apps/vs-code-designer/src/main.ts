@@ -15,7 +15,15 @@ import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTa
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
 import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
-import { DependencyDefaultPath, dotNetBinaryPathSettingKey, extensionCommand, funcCoreToolsBinaryPathSettingKey, logicAppFilter, nodeJsBinaryPathSettingKey, parameterizeConnectionsInProjectLoadSetting } from './constants';
+import {
+  DependencyDefaultPath,
+  dotNetBinaryPathSettingKey,
+  extensionCommand,
+  funcCoreToolsBinaryPathSettingKey,
+  logicAppFilter,
+  nodeJsBinaryPathSettingKey,
+  parameterizeConnectionsInProjectLoadSetting,
+} from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
@@ -27,7 +35,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { convertToWorkspace } from './app/commands/convertToWorkspace';
+import { ensureWorkspace } from './app/commands/ensureWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
@@ -92,8 +100,12 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      activateContext.telemetry.properties.lastStep = 'convertToWorkspace';
-      await convertToWorkspace(activateContext);
+      activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
+      await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        await ensureWorkspace(actionContext);
+      });
 
       activateContext.telemetry.properties.lastStep = 'parameterizeConnections';
       callWithTelemetryAndErrorHandling(extensionCommand.parameterizeAllConnections, async (actionContext: IActionContext) => {
@@ -277,7 +289,7 @@ async function ensureBinaries(isDevContainer: boolean): Promise<void> {
         actionContext.errorHandling.rethrow = true;
         actionContext.errorHandling.suppressDisplay = true;
       }
-      
+
       const useBinaries = await useBinariesDependencies();
 
       if (useBinaries) {

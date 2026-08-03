@@ -24,7 +24,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
-import { convertToWorkspace } from '../../convertToWorkspace';
+import { ensureWorkspace } from '../../ensureWorkspace';
 import { syncCloudSettings } from '../../syncCloudSettings';
 import { extensionCommand } from '../../../../constants';
 
@@ -67,8 +67,14 @@ export async function createUnitTest(node: vscode.Uri | undefined, nodeOutputOpe
     });
 
     try {
-      context.telemetry.properties.lastStep = 'convertToWorkspace';
-      if (!(await convertToWorkspace(context))) {
+      context.telemetry.properties.lastStep = 'ensureWorkspace';
+      const isWorkspaceReady = await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        return await ensureWorkspace(actionContext);
+      });
+
+      if (!isWorkspaceReady) {
         context.telemetry.properties.multiRootWorkspaceValid = 'false';
         ext.outputChannel.appendLog(
           localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
@@ -286,12 +292,7 @@ async function generateUnitTest(
 
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
     ext.outputChannel.appendLog(
-      localize(
-        'generateCodefulUnitTest',
-        'Successfully created unit test "{0}" at "{1}".',
-        unitTestName,
-        unitTestFolderPath
-      )
+      localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}".', unitTestName, unitTestFolderPath)
     );
   } catch (error) {
     context.telemetry.properties.result = 'Failed';

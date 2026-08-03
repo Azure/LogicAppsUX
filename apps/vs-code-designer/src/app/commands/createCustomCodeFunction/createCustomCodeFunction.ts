@@ -5,9 +5,10 @@
 import { ExistingWorkspaceStep } from '../createProject/createProjectSteps/existingWorkspaceStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import { type IFunctionWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { convertToWorkspace } from '../convertToWorkspace';
+import { ensureWorkspace } from '../ensureWorkspace';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { extensionCommand } from '../../../constants';
 import { localize } from '../../../localize';
 import { type Uri, window } from 'vscode';
 import { FunctionNameStep } from './createCustomCodeFunctionSteps/functionNameStep';
@@ -21,7 +22,13 @@ import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } f
  * @returns
  */
 export async function createCustomCodeFunction(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
-  if (await convertToWorkspace(context)) {
+  const isWorkspaceReady = await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    return await ensureWorkspace(actionContext);
+  });
+
+  if (isWorkspaceReady) {
     addLocalFuncTelemetry(context);
 
     const options = {

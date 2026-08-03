@@ -5,7 +5,8 @@
 
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { convertToWorkspace } from '../convertToWorkspace';
+import { ensureWorkspace } from '../ensureWorkspace';
+import { extensionCommand } from '../../../constants';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
@@ -38,7 +39,11 @@ export async function createNewProject(context: IActionContext): Promise<void> {
     workspaceRootFolder = path.dirname(vscode.workspace.workspaceFile.fsPath);
   } else {
     // Fall back to the newly created workspace folder if not in a workspace
-    await convertToWorkspace(context);
+    await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await ensureWorkspace(actionContext);
+    });
     return;
   }
 

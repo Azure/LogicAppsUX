@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../localize';
-import { convertToWorkspace } from '../../convertToWorkspace';
+import { ensureWorkspace } from '../../ensureWorkspace';
 import {
   createTestCsFile,
   createTestExecutorFile,
@@ -48,8 +48,14 @@ export async function createUnitTestFromRun(node: vscode.Uri | undefined, runId?
       context.telemetry.properties.lastStep = 'extractAndValidateRunId';
       const validatedRunId = await extractAndValidateRunId(runId);
 
-      context.telemetry.properties.lastStep = 'convertToWorkspace';
-      if (!(await convertToWorkspace(context))) {
+      context.telemetry.properties.lastStep = 'ensureWorkspace';
+      const isWorkspaceReady = await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        return await ensureWorkspace(actionContext);
+      });
+      
+      if (!isWorkspaceReady) {
         ext.outputChannel.appendLog(
           localize('createUnitTestFromRunCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
         );
@@ -320,7 +326,9 @@ async function generateUnitTestFromRun(
       throw workspaceError;
     }
 
-    ext.outputChannel.appendLog(localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}".', unitTestName, paths.unitTestFolderPath));
+    ext.outputChannel.appendLog(
+      localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}".', unitTestName, paths.unitTestFolderPath)
+    );
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
     context.telemetry.measurements.generateCodefulUnitTestMs = Date.now() - startTime;
     try {

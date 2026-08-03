@@ -7,7 +7,7 @@ import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { getLogicAppWithoutCustomCode, getWorkspaceRoot } from '../../utils/workspace';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { cloudToLocal } from '../cloudToLocal/cloudToLocal';
-import { convertToWorkspace } from '../convertToWorkspace';
+import { ensureWorkspace } from '../ensureWorkspace';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
 import { createNewProject } from '../createProject/createProject';
@@ -45,8 +45,8 @@ vi.mock('../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects', () => 
   createLogicAppProject: vi.fn(),
 }));
 
-vi.mock('../convertToWorkspace', () => ({
-  convertToWorkspace: vi.fn(),
+vi.mock('../ensureWorkspace', () => ({
+  ensureWorkspace: vi.fn(),
 }));
 
 vi.mock('../createWorkflow/createLogicAppWorkflow', () => ({
@@ -188,10 +188,10 @@ describe('workspace webview command wrappers', () => {
     });
   });
 
-  it('createNewProject falls back to convertToWorkspace when no workspace file is open', async () => {
+  it('createNewProject falls back to ensureWorkspace when no workspace file is open', async () => {
     await createNewProject(context);
 
-    expect(convertToWorkspace).toHaveBeenCalledWith(context);
+    expect(ensureWorkspace).toHaveBeenCalledWith(expect.any(Object));
     expect(createWorkspaceWebviewCommandHandler).not.toHaveBeenCalled();
   });
 
