@@ -15,6 +15,7 @@ import {
   useOperationErrorInfo,
   useParameterStaticResult,
   useParameterValidationErrors,
+  useSecureInputsOutputs,
   useTokenDependencies,
   useOperationVisuals,
   useIsNodeLoadingDynamicData,
@@ -28,6 +29,7 @@ import { changePanelNode, setSelectedNodeId, toggleNodeSelection } from '../../c
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
+  useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
   useRunData,
@@ -326,6 +328,8 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
+  const nodeComment = useNodeDescription(id);
+  const isSecureInputsOutputs = useSecureInputsOutputs(id);
 
   const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
@@ -355,6 +359,8 @@ const DefaultNode = ({ id }: NodeProps) => {
           onCopyClick={copyClick}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults && staticResults.staticResultOptions === StaticResultOption.ENABLED}
+          comment={nodeComment}
+          isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
           subtleBackground={isA2AWorkflow && isTrigger}

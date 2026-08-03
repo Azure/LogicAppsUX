@@ -1,4 +1,4 @@
-import Constants, { isManagedMcpConnector, MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
+import Constants, { MCP_AUTH_PROPERTY_KEYS, usesMcpManagedIdentityFallback } from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -330,11 +330,14 @@ export const updateNodeConnectionAndProperties = async (
   }
 };
 
-const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
-  // For managed MCP connections, always include MSI auth properties if the Logic App has a managed identity.
-  // These connectors don't follow the standard multi-auth/single-auth MSI detection patterns.
+export const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
+  // Managed MCP connectors that declare no auth of their own rely on the generic MCP auth parameter
+  // sets, which are managed identity based, so they always need MSI auth properties when the Logic
+  // App has a managed identity. They don't follow the standard multi-auth/single-auth MSI detection
+  // patterns. Connectors that declare their own auth (e.g. OAuth-backed `foundrygithubmcp`) must
+  // fall through to the standard detection so their credentials aren't replaced by an MSI token.
   if (
-    !isManagedMcpConnector(connector) &&
+    !usesMcpManagedIdentityFallback(connector) &&
     !isConnectionMultiAuthManagedIdentityType(connection, connector) &&
     !isConnectionSingleAuthManagedIdentityType(connection)
   ) {

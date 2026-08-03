@@ -1,5 +1,5 @@
 import { isOpenApiSchemaVersion } from '@microsoft/logic-apps-designer';
-import { clone } from '@microsoft/logic-apps-shared';
+import { clone, mergeDesignerNotes } from '@microsoft/logic-apps-shared';
 
 ///////////////////////////////////////////////////////////////////////////////
 // This was mostly copied straight from what we have in portal
@@ -35,7 +35,9 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
     if (!workflow.definition.metadata) {
       workflow.definition.metadata = {};
     }
-    workflow.definition.metadata.notes = workflow.notes;
+    // `definition.metadata.notes` predates designer notes and may hold unrelated user content, so
+    // merge rather than replace to avoid deleting it on save (see #9466).
+    workflow.definition.metadata.notes = mergeDesignerNotes(workflow.definition.metadata.notes, workflow.notes);
     delete workflow.notes;
   }
 

@@ -191,6 +191,7 @@ const connectionParameterEditorService = new CustomConnectionParameterEditorServ
 export const LocalDesigner = () => {
   const {
     workflowDefinition,
+    notes,
     parameters,
     isReadOnly,
     isMonitoringView,
@@ -245,6 +246,7 @@ export const LocalDesigner = () => {
             definition: workflowDefinition,
             connectionReferences: connections,
             parameters: parameters,
+            notes: notes,
             kind: workflowKind,
           }}
           runInstance={runInstance}
