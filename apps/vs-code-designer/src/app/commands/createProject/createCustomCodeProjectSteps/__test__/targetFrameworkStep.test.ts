@@ -29,7 +29,7 @@ describe('TargetFrameworkStep', () => {
   });
 
   describe('prompt', () => {
-    it('should offer .NET 8 and .NET 10 picks on non-Windows platforms', async () => {
+    it('should offer only the .NET 8 pick on non-Windows platforms', async () => {
       const originalPlatform = process.platform;
       Object.defineProperty(process, 'platform', { value: 'darwin' });
 
@@ -47,9 +47,8 @@ describe('TargetFrameworkStep', () => {
 
       await step.prompt(context);
 
-      expect(capturedPicks).toHaveLength(2);
+      expect(capturedPicks).toHaveLength(1);
       expect(capturedPicks[0].data).toBe(TargetFramework.Net8);
-      expect(capturedPicks[1].data).toBe(TargetFramework.Net10);
 
       Object.defineProperty(process, 'platform', { value: originalPlatform });
     });
@@ -72,10 +71,9 @@ describe('TargetFrameworkStep', () => {
 
       await step.prompt(context);
 
-      expect(capturedPicks).toHaveLength(3);
+      expect(capturedPicks).toHaveLength(2);
       expect(capturedPicks[0].data).toBe(TargetFramework.NetFx);
       expect(capturedPicks[1].data).toBe(TargetFramework.Net8);
-      expect(capturedPicks[2].data).toBe(TargetFramework.Net10);
 
       Object.defineProperty(process, 'platform', { value: originalPlatform });
     });
@@ -89,15 +87,15 @@ describe('TargetFrameworkStep', () => {
         projectType: ProjectType.customCode,
         ui: {
           showQuickPick: vi.fn((picks: any[]) => {
-            // Simulate selecting .NET 10
-            const net10Pick = picks.find((p: any) => p.data === TargetFramework.Net10);
-            return Promise.resolve(net10Pick);
+            // Simulate selecting .NET 8
+            const net8Pick = picks.find((p: any) => p.data === TargetFramework.Net8);
+            return Promise.resolve(net8Pick);
           }),
         },
       } as any;
 
       await step.prompt(context);
-      expect(context.targetFramework).toBe(TargetFramework.Net10);
+      expect(context.targetFramework).toBe(TargetFramework.Net8);
 
       Object.defineProperty(process, 'platform', { value: originalPlatform });
     });

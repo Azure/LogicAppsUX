@@ -56,7 +56,7 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
 export async function switchToDotnetProject(
   context: IProjectWizardContext,
   target: vscode.Uri,
-  localDotNetMajorVersion = '10',
+  localDotNetMajorVersion = '8',
   isCodeful = false
 ) {
   if (target === undefined || Object.keys(target).length === 0) {

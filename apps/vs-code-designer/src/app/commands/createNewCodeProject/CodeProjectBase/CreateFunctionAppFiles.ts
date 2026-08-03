@@ -22,7 +22,7 @@ import { getContainingWorkspace, isMultiRootWorkspace } from '../../../utils/wor
 import { localize } from '../../../../localize';
 import * as vscode from 'vscode';
 import { getCustomCodeRuntime } from '../../../utils/debug';
-import { createCsFile, createProgramFile, createRulesFiles, createCsprojFile } from '../../../utils/functionProjectFiles';
+import { createCsFile, createRulesFiles, createCsprojFile } from '../../../utils/functionProjectFiles';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
@@ -43,7 +43,6 @@ export class CreateFunctionAppFiles {
 
     await fs.ensureDir(functionFolderPath);
     await createCsFile(assetsPath, functionFolderPath, functionAppName, namespace, projectType, targetFramework);
-    await createProgramFile(assetsPath, functionFolderPath, namespace, projectType, targetFramework);
 
     if (projectType === ProjectType.rulesEngine) {
       await createRulesFiles(assetsPath, functionFolderPath);
