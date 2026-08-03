@@ -52,10 +52,16 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
   };
 });
 
+let mockRunDeepCompareEffect = true;
+
 vi.mock('@react-hookz/web', () => ({
   useDeepCompareEffect: (effect: () => void, _deps: unknown[]) => {
-    // Run synchronously so the effect body executes during render for test purposes.
-    effect();
+    // Run synchronously so the effect body executes during render for most tests. One test below
+    // disables this (mockRunDeepCompareEffect = false) to prove the multi-trigger context value is
+    // derived purely from render (useMemo), not from this effect having run.
+    if (mockRunDeepCompareEffect) {
+      effect();
+    }
   },
 }));
 
@@ -75,7 +81,7 @@ vi.mock('../state/operation/operationMetadataSlice', () => ({
   clearAllErrors: vi.fn(() => ({ type: 'clearAllErrors' })),
 }));
 
-import { BJSWorkflowProvider } from '../BJSWorkflowProvider';
+import { BJSWorkflowProvider, useIsUnsupportedMultipleTriggers } from '../BJSWorkflowProvider';
 import { ProviderWrappedContext } from '../ProviderWrappedContext';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 import { setHasUnsupportedMultipleTriggers } from '../state/workflow/workflowSlice';
@@ -84,6 +90,7 @@ describe('BJSWorkflowProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockHasMultipleTriggers = false;
+    mockRunDeepCompareEffect = true;
   });
 
   const renderProvider = (workflow: unknown) =>
@@ -159,5 +166,33 @@ describe('BJSWorkflowProvider', () => {
     mockHasMultipleTriggers = true;
     const { getByTestId } = renderProvider({ definition: { triggers: { trigger1: {}, trigger2: {} } } });
     expect(getByTestId('shell-child')).toBeDefined();
+  });
+
+  it('exposes the multi-trigger flag via context synchronously during render, even if the deep-compare effect never runs', () => {
+    // Simulates the real React timing: passive effects (useDeepCompareEffect/useEffect) run after
+    // commit, so a child rendered in the same pass as BJSWorkflowProvider must see the correct
+    // fallback decision without waiting on that effect. Disabling the effect here isolates the
+    // context value from any effect-driven (Redux) state entirely.
+    mockRunDeepCompareEffect = false;
+    mockHasMultipleTriggers = true;
+
+    const ContextConsumer = () => <div data-testid="context-value">{String(useIsUnsupportedMultipleTriggers())}</div>;
+
+    const { getByTestId } = render(
+      <ProviderWrappedContext.Provider value={{} as any}>
+        <BJSWorkflowProvider workflow={{ definition: { triggers: { trigger1: {}, trigger2: {} } } } as any}>
+          <ContextConsumer />
+        </BJSWorkflowProvider>
+      </ProviderWrappedContext.Provider>
+    );
+
+    expect(getByTestId('context-value').textContent).toBe('true');
+    // The deep-compare effect never ran, so none of its dispatches happened -- proving the context
+    // value did not come from the effect-driven setHasUnsupportedMultipleTriggers dispatch. (The
+    // outer BJSWorkflowProvider's plain useEffect for initializeServices still fires independently.)
+    const dispatchedActionTypes = mockDispatch.mock.calls.map(([action]) => action.type);
+    expect(dispatchedActionTypes).not.toContain('setHasUnsupportedMultipleTriggers');
+    expect(dispatchedActionTypes).not.toContain('resetWorkflowState');
+    expect(initializeGraphState).not.toHaveBeenCalled();
   });
 });

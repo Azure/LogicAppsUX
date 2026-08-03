@@ -1,4 +1,5 @@
 import { openPanel, useNodesInitialized, onUndoClick, onRedoClick, useCanUndo, useCanRedo } from '../core';
+import { useIsUnsupportedMultipleTriggers } from '../core/BJSWorkflowProvider';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import {
   useMonitoringView,
@@ -10,7 +11,7 @@ import {
 import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { setNodeSelection } from '../core/state/panel/panelSlice';
 import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
-import { useAllSelectableNodeIds, useHasUnsupportedMultipleTriggers, useRunInstance } from '../core/state/workflow/workflowSelectors';
+import { useAllSelectableNodeIds, useRunInstance } from '../core/state/workflow/workflowSelectors';
 import { copyOperation, copyOperations, cutOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
@@ -230,7 +231,7 @@ export const Designer = (props: DesignerProps) => {
 
   // Consumption workflows have no workflowKind; Standard sets it to stateful/stateless/agentic/agent.
   const isStandard = !!workflowKind;
-  const hasUnsupportedMultipleTriggers = useHasUnsupportedMultipleTriggers();
+  const hasUnsupportedMultipleTriggers = useIsUnsupportedMultipleTriggers();
   const runInstance = useRunInstance();
 
   // Neither Consumption nor Standard support designer/monitoring rendering of workflows with more

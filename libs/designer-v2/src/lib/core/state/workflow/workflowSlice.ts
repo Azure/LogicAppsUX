@@ -982,6 +982,13 @@ export const workflowSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
+      // If the workflow was switched to a multi-trigger definition while this thunk was still in
+      // flight (e.g. code view <-> designer view without a workflowId change), the effect that
+      // dispatched it has already reset state and marked the workflow unsupported. Drop this now-stale
+      // result instead of repopulating graph/operations/nodesMetadata for the previous workflow.
+      if (state.hasUnsupportedMultipleTriggers) {
+        return;
+      }
       const { deserializedWorkflow, originalDefinition } = action.payload;
       state.originalDefinition = originalDefinition;
       state.graph = deserializedWorkflow.graph;

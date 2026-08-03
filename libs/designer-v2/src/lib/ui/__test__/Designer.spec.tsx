@@ -54,8 +54,11 @@ vi.mock('react-redux', () => ({
 
 vi.mock('../../core/state/workflow/workflowSelectors', () => ({
   useAllSelectableNodeIds: () => [],
-  useHasUnsupportedMultipleTriggers: () => mockHasUnsupportedMultipleTriggers,
   useRunInstance: () => mockRunInstance,
+}));
+
+vi.mock('../../core/BJSWorkflowProvider', () => ({
+  useIsUnsupportedMultipleTriggers: () => mockHasUnsupportedMultipleTriggers,
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
