@@ -23,6 +23,7 @@ import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@mi
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { MessageItem } from 'vscode';
+import { ext } from '../../../extensionVariables';
 
 /**
  * Checks if functions core tools is installed, and installs it if needed.
@@ -103,6 +104,10 @@ async function isFuncToolsInstalled(): Promise<boolean> {
  */
 async function attemptManagedFuncCoreToolsRepair(context: IActionContext): Promise<boolean> {
   context.telemetry.properties.funcRepairAttempted = 'true';
+  // This repair runs silently in the middle of F5. Without a trace in the output channel a failure here
+  // is indistinguishable from the gate never running at all, both for users reporting "debug does
+  // nothing" and for anyone reading a CI log.
+  ext.outputChannel.appendLog('Functions Core Tools did not run; attempting a silent repair of the managed binaries.');
   try {
     if (isFuncCoreToolsInstallInFlight()) {
       // Another code path — typically the activation-time version check — is already writing to the
@@ -110,16 +115,24 @@ async function attemptManagedFuncCoreToolsRepair(context: IActionContext): Promi
       // now. Starting a second install would delete and re-extract that folder underneath the first
       // one, so wait for it to settle and re-probe instead.
       context.telemetry.properties.funcRepairAwaitedExistingInstall = 'true';
+      ext.outputChannel.appendLog('An install is already in progress; waiting for it to finish instead of starting another.');
       await waitForFuncCoreToolsInstall();
     } else {
       await installFuncCoreToolsBinaries(context, undefined, { suppressUi: true });
     }
     const repaired = await isFuncToolsInstalled();
     context.telemetry.properties.funcRepairSucceeded = `${repaired}`;
+    ext.outputChannel.appendLog(
+      repaired
+        ? 'Functions Core Tools repair succeeded; continuing to debug.'
+        : 'Functions Core Tools repair completed but "func --version" still fails.'
+    );
     return repaired;
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     context.telemetry.properties.funcRepairSucceeded = 'false';
-    context.telemetry.properties.funcRepairError = error instanceof Error ? error.message : String(error);
+    context.telemetry.properties.funcRepairError = message;
+    ext.outputChannel.appendLog(`Functions Core Tools repair failed: ${message}`);
     return false;
   }
 }

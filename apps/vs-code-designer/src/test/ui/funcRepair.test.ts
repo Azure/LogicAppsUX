@@ -596,6 +596,61 @@ function logOutputSinceWatermark(label: string, watermark: OutputWatermark | und
   );
 }
 
+/**
+ * Lists every "Azure Logic Apps" output log with its size, newest first.
+ *
+ * The liveness gate reads one pinned file on purpose (see `readOutputSinceWatermark`), but that
+ * pinning has a blind spot on the failure path: if VS Code starts a new `output_logging_*` folder
+ * — an extension-host restart does this — the product keeps logging into a file the watermark
+ * never sees, and "the extension wrote NOTHING" becomes a false statement that costs a whole CI
+ * cycle to disprove. Only used for diagnostics, never for assertions.
+ */
+function logAllLogicAppsOutputFiles(label: string, watermark: OutputWatermark | undefined): void {
+  try {
+    const logsRoot = path.join(os.tmpdir(), 'test-resources', 'settings', 'logs');
+    if (!fs.existsSync(logsRoot)) {
+      return;
+    }
+    const matches: { filePath: string; size: number; mtimeMs: number }[] = [];
+    const collect = (directory: string): void => {
+      for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+        const entryPath = path.join(directory, entry.name);
+        if (entry.isDirectory()) {
+          collect(entryPath);
+        } else if (entry.name.includes('Azure Logic Apps') && entry.name.endsWith('.log')) {
+          const stat = fs.statSync(entryPath);
+          matches.push({ filePath: entryPath, size: stat.size, mtimeMs: stat.mtimeMs });
+        }
+      }
+    };
+    collect(logsRoot);
+    if (matches.length === 0) {
+      console.log(`${LOG_PREFIX} ${label} — no Azure Logic Apps output logs exist at all under ${logsRoot}`);
+      return;
+    }
+    matches.sort((left, right) => right.mtimeMs - left.mtimeMs);
+    console.log(
+      `${LOG_PREFIX} ${label} — ${matches.length} Azure Logic Apps output log(s), newest first (watermarked file marked <-- PINNED):`
+    );
+    for (const match of matches) {
+      const pinned = watermark && match.filePath === watermark.filePath ? '  <-- PINNED' : '';
+      console.log(`${LOG_PREFIX}     ${match.size} bytes  ${match.filePath}${pinned}`);
+    }
+    // If the product logged into a file the watermark never saw, that file's tail is the evidence.
+    const unpinnedNewest = matches.find((match) => !watermark || match.filePath !== watermark.filePath);
+    if (unpinnedNewest) {
+      try {
+        const content = fs.readFileSync(unpinnedNewest.filePath, 'utf-8');
+        console.log(`${LOG_PREFIX} ${label} — tail of the newest NON-pinned log ${unpinnedNewest.filePath}:\n${content.slice(-4000)}`);
+      } catch {
+        // Diagnostics only.
+      }
+    }
+  } catch {
+    // Diagnostics only.
+  }
+}
+
 /** Non-throwing TCP liveness probe used to notice Azurite coming up after F5. */
 async function isPortListening(port: number, timeoutMs = 1000): Promise<boolean> {
   return await new Promise<boolean>((resolve) => {
@@ -1312,6 +1367,11 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
       // unrelated node tarball listing in run 30557613214 and hid the real cause (a
       // refreshConnectionKeys stall) for a whole CI cycle.
       logOutputSinceWatermark('repair did not complete', outputWatermark);
+      logAllLogicAppsOutputFiles('repair did not complete', outputWatermark);
+      const funcProcesses = describeRunningFuncProcesses();
+      if (funcProcesses) {
+        console.log(`${LOG_PREFIX} ${funcProcesses}`);
+      }
     }
 
     // Liveness: "the modal never appeared" is only meaningful if we were scraping a rendered

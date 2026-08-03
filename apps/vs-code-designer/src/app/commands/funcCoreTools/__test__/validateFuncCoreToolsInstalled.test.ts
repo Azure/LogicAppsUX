@@ -40,6 +40,13 @@ vi.mock('../installFuncCoreTools', () => ({
   isFuncCoreToolsInstallInFlight: vi.fn(() => false),
   waitForFuncCoreToolsInstall: vi.fn(() => Promise.resolve()),
 }));
+vi.mock('../../../../extensionVariables', () => ({
+  ext: {
+    outputChannel: {
+      appendLog: vi.fn(),
+    },
+  },
+}));
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {
     return await callback({
