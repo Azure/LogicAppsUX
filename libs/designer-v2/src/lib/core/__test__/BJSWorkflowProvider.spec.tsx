@@ -36,6 +36,10 @@ vi.mock('../state/workflow/workflowSlice', () => ({
   initWorkflowSpec: vi.fn((payload: unknown) => ({ type: 'initWorkflowSpec', payload })),
 }));
 
+vi.mock('../state/global', () => ({
+  resetWorkflowState: vi.fn(() => ({ type: 'resetWorkflowState' })),
+}));
+
 vi.mock('../utils/workflow', () => ({
   parseWorkflowKind: vi.fn((kind: unknown) => kind),
 }));
@@ -99,6 +103,14 @@ describe('BJSWorkflowProvider', () => {
     expect(initializeGraphState).toHaveBeenCalled();
   });
 
+  it('does not dispatch resetWorkflowState for a normal (single-trigger) workflow', () => {
+    mockHasMultipleTriggers = false;
+    renderProvider({ definition: { triggers: { trigger1: {} } } });
+
+    const dispatchedActionTypes = mockDispatch.mock.calls.map(([action]) => action.type);
+    expect(dispatchedActionTypes).not.toContain('resetWorkflowState');
+  });
+
   it('does not dispatch initializeGraphState for a multiple-trigger workflow, but still flags it and dispatches other shell state', () => {
     mockHasMultipleTriggers = true;
     renderProvider({ definition: { triggers: { trigger1: {}, trigger2: {} } } });
@@ -111,6 +123,7 @@ describe('BJSWorkflowProvider', () => {
     const dispatchedActionTypes = mockDispatch.mock.calls.map(([action]) => action.type);
     expect(dispatchedActionTypes).toEqual(
       expect.arrayContaining([
+        'resetWorkflowState',
         'clearAllErrors',
         'initWorkflowSpec',
         'setWorkflowKind',
@@ -119,6 +132,27 @@ describe('BJSWorkflowProvider', () => {
         'initCustomCode',
       ])
     );
+  });
+
+  it('clears stale graph/panel/operation state (resetWorkflowState) before re-establishing kind/run-instance when flagging a multi-trigger workflow', () => {
+    mockHasMultipleTriggers = true;
+    renderProvider({ definition: { triggers: { trigger1: {}, trigger2: {} } } });
+
+    const dispatchedActionTypes = mockDispatch.mock.calls.map(([action]) => action.type);
+    const resetIndex = dispatchedActionTypes.indexOf('resetWorkflowState');
+    const setKindIndex = dispatchedActionTypes.indexOf('setWorkflowKind');
+    const setFlagIndex = dispatchedActionTypes.indexOf('setHasUnsupportedMultipleTriggers');
+
+    // resetWorkflowState must run first so that stale state from a prior workflow (e.g. a
+    // previously-loaded graph, panel selection, or operation metadata still held by a
+    // long-lived DesignerProvider instance) is cleared before we re-establish the essentials
+    // (workflow kind, run instance) and flag the workflow as unsupported. Otherwise shell
+    // components that remain mounted (PanelRoot, CanvasFinder, KindChangeDialog) could keep
+    // referencing a previous, now-irrelevant workflow's state indefinitely, since
+    // initializeGraphState -- which would normally overwrite it -- is never dispatched here.
+    expect(resetIndex).toBeGreaterThanOrEqual(0);
+    expect(resetIndex).toBeLessThan(setKindIndex);
+    expect(resetIndex).toBeLessThan(setFlagIndex);
   });
 
   it('still renders children (the designer shell) regardless of the multiple-trigger check', () => {

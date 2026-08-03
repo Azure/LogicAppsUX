@@ -9,6 +9,7 @@ import {
   useReadOnly,
 } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
+import { resetWorkflowState } from './state/global';
 import { setWorkflowKind, setRunInstance, setHasUnsupportedMultipleTriggers, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
@@ -49,18 +50,29 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   const isMonitoringView = useMonitoringView();
 
   useDeepCompareEffect(() => {
+    // Neither the Consumption nor Standard designer/monitoring experiences support workflow definitions
+    // with more than one trigger. Detect this before initializing any graph/designer state so the
+    // canvas is never rendered against unsupported data (see BJSDeserializer's RENDER_MULTIPLE_TRIGGERS
+    // guard, which this pre-check is intended to make unreachable in the normal designer flow).
+    const isUnsupportedMultipleTriggers = hasMultipleTriggers(workflow?.definition);
+
+    if (isUnsupportedMultipleTriggers) {
+      // Clear any graph/operation/panel-selection state left over from a previously-loaded workflow in
+      // this same DesignerProvider instance (e.g. switching from code view back to designer view after
+      // editing in a second trigger, without the id/workflowId changing). Without this, the canvas
+      // itself is correctly replaced by the unsupported-designer message, but shell components that stay
+      // mounted (PanelRoot, CanvasFinder, KindChangeDialog) would keep operating on stale data from the
+      // prior workflow instead of a clean/empty baseline, since initializeGraphState -- which normally
+      // overwrites that state -- is never dispatched for multi-trigger workflows.
+      dispatch(resetWorkflowState());
+    }
+
     dispatch(clearAllErrors());
     dispatch(initWorkflowSpec('BJS'));
     dispatch(setWorkflowKind(parseWorkflowKind(workflow?.kind)));
     dispatch(setRunInstance(runInstance ?? null));
     dispatch(initRunInPanel(runInstance ?? null));
     dispatch(initCustomCode(customCode));
-
-    // Neither the Consumption nor Standard designer/monitoring experiences support workflow definitions
-    // with more than one trigger. Detect this before initializing any graph/designer state so the
-    // canvas is never rendered against unsupported data (see BJSDeserializer's RENDER_MULTIPLE_TRIGGERS
-    // guard, which this pre-check is intended to make unreachable in the normal designer flow).
-    const isUnsupportedMultipleTriggers = hasMultipleTriggers(workflow?.definition);
     dispatch(setHasUnsupportedMultipleTriggers(isUnsupportedMultipleTriggers));
 
     if (!isUnsupportedMultipleTriggers) {
