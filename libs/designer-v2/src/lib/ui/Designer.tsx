@@ -1,4 +1,5 @@
 import { openPanel, useNodesInitialized, onUndoClick, onRedoClick, useCanUndo, useCanRedo } from '../core';
+import { useIsUnsupportedMultipleTriggers } from '../core/BJSWorkflowProvider';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import {
   useMonitoringView,
@@ -10,7 +11,7 @@ import {
 import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { setNodeSelection } from '../core/state/panel/panelSlice';
 import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
-import { useAllSelectableNodeIds } from '../core/state/workflow/workflowSelectors';
+import { useAllSelectableNodeIds, useRunInstance } from '../core/state/workflow/workflowSelectors';
 import { copyOperation, copyOperations, cutOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
@@ -19,8 +20,9 @@ import DeleteModal from './common/DeleteModal/DeleteModal';
 import { MultiSelectDeleteModal } from './common/DeleteModal/MultiSelectDeleteModal';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
-import { mergeClasses, PanelLocation } from '@microsoft/designer-ui';
+import { mergeClasses, PanelLocation, MultiTriggerUnsupportedMessage } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
+import { HostService } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -227,6 +229,19 @@ export const Designer = (props: DesignerProps) => {
   // This delayes the query until the workflowKind is available
   useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
 
+  // Consumption workflows have no workflowKind; Standard sets it to stateful/stateless/agentic/agent.
+  const isStandard = !!workflowKind;
+  const hasUnsupportedMultipleTriggers = useIsUnsupportedMultipleTriggers();
+  const runInstance = useRunInstance();
+
+  // Neither Consumption nor Standard support designer/monitoring rendering of workflows with more
+  // than one trigger, so no graph/designer state was initialized for this workflow (see
+  // BJSWorkflowProvider's pre-check, which makes BJSDeserializer's RENDER_MULTIPLE_TRIGGERS throw
+  // unreachable in the normal flow). Only the canvas/graph region is replaced with a centered
+  // message here -- the surrounding shell (run-history panel, side panels, and other host-facing
+  // controls) still renders and functions normally.
+  const canShowRunDetails = !isStandard && isMonitoringView && !!runInstance?.id;
+
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
@@ -237,29 +252,36 @@ export const Designer = (props: DesignerProps) => {
         <ReactFlowProvider>
           <RunHistoryPanel />
           <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'row', position: 'relative' }} ref={canvasRef}>
-            <DesignerReactFlow canvasRef={canvasRef}>
-              {backgroundProps ? (
-                <Background {...backgroundProps} />
-              ) : (
-                <Background
-                  bgColor={isReadOnly ? '#80808010' : undefined}
-                  color={isReadOnly ? '#00000000' : '#80808080'}
-                  size={2}
-                  // gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
-                  gap={[20, 20]}
-                  offset={[10, 10]}
-                />
-              )}
-              <DeleteModal />
-              <MultiSelectDeleteModal />
-              <DesignerContextualMenu />
-              <EdgeContextualMenu />
-              <RunDisplay />
-              <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-                <Controls />
-                <Minimap />
-              </div>
-            </DesignerReactFlow>
+            {hasUnsupportedMultipleTriggers ? (
+              <MultiTriggerUnsupportedMessage
+                isStandard={isStandard}
+                onRunDetailsClick={canShowRunDetails ? () => HostService().openRun?.(runInstance!.id) : undefined}
+              />
+            ) : (
+              <DesignerReactFlow canvasRef={canvasRef}>
+                {backgroundProps ? (
+                  <Background {...backgroundProps} />
+                ) : (
+                  <Background
+                    bgColor={isReadOnly ? '#80808010' : undefined}
+                    color={isReadOnly ? '#00000000' : '#80808080'}
+                    size={2}
+                    // gap={[19.9, 20.3333]} // I don't know why, but it renders not exact by default
+                    gap={[20, 20]}
+                    offset={[10, 10]}
+                  />
+                )}
+                <DeleteModal />
+                <MultiSelectDeleteModal />
+                <DesignerContextualMenu />
+                <EdgeContextualMenu />
+                <RunDisplay />
+                <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
+                  <Controls />
+                  <Minimap />
+                </div>
+              </DesignerReactFlow>
+            )}
           </div>
           <PanelRoot
             panelContainerRef={designerContainerRef}
