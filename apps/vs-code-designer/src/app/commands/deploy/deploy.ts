@@ -112,6 +112,8 @@ async function deploy(
     // which hangs "Execute JavaScript Code" actions in a Running state indefinitely.
     inlineCodeNodeExecutablePathKey,
   ];
+
+  context.telemetry.properties.lastStep = 'getDeployFsPath';
   const deployPaths = await getDeployFsPath(context, target);
   const deployContext: IDeployContext = Object.assign(context, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;
@@ -119,6 +121,7 @@ async function deploy(
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
 
+    deployContext.telemetry.properties.lastStep = 'buildProject';
     const isCodeful = await hasCodefulWorkflowSetting(logicAppNode.fsPath);
     if (isCodeful) {
       deployContext.telemetry.properties.isCodefulProject = 'true';
@@ -142,6 +145,7 @@ async function deploy(
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
+  deployContext.telemetry.properties.lastStep = 'getDeployNode';
   let node: SlotTreeItem;
 
   if (expectedContextValue) {
@@ -245,6 +249,7 @@ async function deploy(
     }
   }
 
+  deployContext.telemetry.properties.lastStep = 'deploy';
   await node.runWithTemporaryDescription(deployContext, localize('deploying', 'Deploying...'), async () => {
     // preDeploy tasks are only required for zipdeploy so subpath may not exist
     let deployFsPath: string = effectiveDeployFsPath;

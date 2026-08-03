@@ -71,18 +71,21 @@ export async function pickFuncProcessInternal(
   workspaceFolder: vscode.WorkspaceFolder,
   projectPath: string
 ): Promise<string | undefined> {
+  context.telemetry.properties.lastStep = 'activateAzurite';
   await callWithTelemetryAndErrorHandling(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     await activateAzurite(actionContext, projectPath);
   });
 
+  context.telemetry.properties.lastStep = 'refreshConnectionKeys';
   await callWithTelemetryAndErrorHandling(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     await refreshConnectionKeys(actionContext, projectPath);
   });
 
+  context.telemetry.properties.lastStep = 'preDebugValidate';
   context.telemetry.properties.debugType = debugConfig.type;
   const shouldContinue: boolean = await preDebugValidate(context, projectPath);
   if (!shouldContinue) {
@@ -91,8 +94,10 @@ export async function pickFuncProcessInternal(
 
   // Stop any previous func process BEFORE building to avoid file lock errors
   // (e.g. GenerateFunctionMetadata failing on obj/Debug/net8/WorkerExtensions)
+  context.telemetry.properties.lastStep = 'waitForPrevFuncTaskToStop';
   await waitForPrevFuncTaskToStop(workspaceFolder);
 
+  context.telemetry.properties.lastStep = 'buildProject';
   if (await hasCodefulWorkflowSetting(projectPath)) {
     // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
     // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
@@ -113,6 +118,7 @@ export async function pickFuncProcessInternal(
     });
   }
 
+  context.telemetry.properties.lastStep = 'startFuncTask';
   const projectFiles = await getProjFiles(ProjectLanguage.CSharp, projectPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 

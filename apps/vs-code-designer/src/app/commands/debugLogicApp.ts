@@ -47,6 +47,7 @@ export async function debugLogicApp(
     )
   );
 
+  context.telemetry.properties.lastStep = 'pickFuncProcess';
   const funcProcessId = await callWithTelemetryAndErrorHandling(extensionCommand.pickProcess, async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
@@ -67,6 +68,7 @@ export async function debugLogicApp(
       String(logicAppLaunchConfig.processId)
     )
   );
+  context.telemetry.properties.lastStep = 'startDebugging';
   const workflowAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, logicAppLaunchConfig);
   ext.outputChannel.appendLog(
     localize(
@@ -79,6 +81,7 @@ export async function debugLogicApp(
 
   let functionLaunchConfig: vscode.DebugConfiguration | undefined;
   if (debugConfig.customCodeRuntime) {
+    context.telemetry.properties.lastStep = 'pickCustomCodeProcess';
     if (debugConfig.customCodeRuntime === 'coreclr') {
       const customCodeNetHostProcessId = await callWithTelemetryAndErrorHandling(
         extensionCommand.pickCustomCodeNetHostProcess,
