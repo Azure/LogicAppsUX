@@ -23,15 +23,21 @@ import { isManagedIdentityAuthEnabled } from '../../utils/vsCodeConfig/settings'
 import { ProjectType, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 
+export interface LocalSettingsJsonOptions {
+  hasJdbcDriverJars?: boolean;
+}
+
 /**
  * Generates the canonical local.settings.json content for a Logic App project.
  *
  * @param projectPath - The project path (used for ProjectDirectoryPath).
  * @param logicAppType - The project type (affects feature flags and codeful settings).
+ * @param options - Optional project content signals that affect generated settings.
  */
 export function generateLocalSettingsJson(
   projectPath?: string,
-  logicAppType?: ProjectType
+  logicAppType?: ProjectType,
+  options: LocalSettingsJsonOptions = {}
 ): ILocalSettingsJson {
   const values: Record<string, string> = {};
 
@@ -47,7 +53,7 @@ export function generateLocalSettingsJson(
     values[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
   
-  if (logicAppType !== undefined && logicAppType !== ProjectType.logicApp) {
+  if ((logicAppType !== undefined && logicAppType !== ProjectType.logicApp) || options.hasJdbcDriverJars) {
     values[azureWebJobsFeatureFlagsKey] = multiLanguageWorkerSetting;
   }
 

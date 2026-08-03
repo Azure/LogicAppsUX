@@ -185,7 +185,8 @@ export async function ensureLocalSettingsFile(
   const fileExisted = await fse.pathExists(localSettingsPath);
 
   const logicAppType = await detectProjectType(projectPath);
-  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
+  const hasJdbcDrivers = await hasJdbcDriverJars(projectPath);
+  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType, { hasJdbcDriverJars: hasJdbcDrivers }).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
@@ -206,12 +207,10 @@ export async function ensureLocalSettingsFile(
   }
 
   // JDBC/Java built-in connectors run on the Functions multi-language (Java) worker, which is only
-  // enabled by the AzureWebJobsFeatureFlags=EnableMultiLanguageWorker app setting. A plain codeless logic
-  // app does not get this flag by default, so a JDBC driver dropped into lib/builtinOperationSdks/JAR is
-  // never loaded and connections fail with "JDBC client library is missing" (issue #8597). If driver JARs
-  // are present, self-heal by ensuring the flag is set — merged with any flags the user already has so we
-  // never clobber existing values.
-  if (await hasJdbcDriverJars(projectPath)) {
+  // enabled by the AzureWebJobsFeatureFlags=EnableMultiLanguageWorker app setting (issue #8597). The
+  // generator owns whether that flag belongs in the baseline for this project, while the repair path here
+  // merges it with any user-defined flags so existing values are never clobbered.
+  if (hasJdbcDrivers) {
     const currentFlags = currentValues[azureWebJobsFeatureFlagsKey] ?? settingsToAdd[azureWebJobsFeatureFlagsKey];
     const mergedFlags = mergeMultiLanguageWorkerFlag(currentFlags);
     if (mergedFlags !== currentValues[azureWebJobsFeatureFlagsKey]) {
