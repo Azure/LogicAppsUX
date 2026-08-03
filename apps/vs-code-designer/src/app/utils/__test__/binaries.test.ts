@@ -44,7 +44,12 @@ import {
 import { validateAndInstallBinaries } from '../../commands/binaries/validateAndInstallBinaries';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
-import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
+import {
+  getGlobalSetting,
+  getWorkspaceSetting,
+  updateGlobalSetting,
+  shouldValidateAndInstallRuntimeDependencies,
+} from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { isNodeJsInstalled } from '../../commands/nodeJs/validateNodeJsInstalled';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
@@ -252,6 +257,7 @@ describe('binaries', () => {
   describe('binariesExist', () => {
     beforeEach(() => {
       (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
+      (shouldValidateAndInstallRuntimeDependencies as Mock).mockReturnValue(true);
     });
 
     afterEach(() => {
@@ -530,12 +536,10 @@ describe('binaries', () => {
     it('should return true when the configured binary exists', async () => {
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      (shouldValidateAndInstallRuntimeDependencies as Mock).mockReturnValue(true);
       const funcFolder = path.join('binariesLocation', funcDependencyName);
       const funcBinary = path.join(funcFolder, 'func.exe');
       (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
-        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
-          return true;
-        }
         if (settingName === funcCoreToolsBinaryPathSettingKey) {
           return funcBinary;
         }
@@ -551,6 +555,7 @@ describe('binaries', () => {
     it('should return false when the dependency folder exists but the configured binary is missing', async () => {
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      (shouldValidateAndInstallRuntimeDependencies as Mock).mockReturnValue(true);
       const funcFolder = path.join('binariesLocation', funcDependencyName);
       const funcBinary = path.join(funcFolder, 'func.exe');
       (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
@@ -973,7 +978,9 @@ describe('binaries', () => {
 
   describe('useBinariesDependencies', () => {
     it('should return true if binaries dependencies are used', async () => {
-      (getGlobalSetting as Mock).mockReturnValue(true);
+      (shouldValidateAndInstallRuntimeDependencies as Mock).mockReturnValue(true);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
 
       const result = await useBinariesDependencies();
 
@@ -981,7 +988,9 @@ describe('binaries', () => {
     });
 
     it('should return false if binaries dependencies are not used', async () => {
-      (getGlobalSetting as Mock).mockReturnValue(false);
+      (shouldValidateAndInstallRuntimeDependencies as Mock).mockReturnValue(false);
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
 
       const result = await useBinariesDependencies();
 
@@ -989,9 +998,7 @@ describe('binaries', () => {
     });
 
     it('should return false for devContainer workspace regardless of setting', async () => {
-      (getGlobalSetting as Mock).mockReturnValue(true);
-
-      // Mock devContainer detection
+      (shouldValidateAndInstallRuntimeDependencies as Mock).mockReturnValue(true);
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(true);
 
@@ -1001,9 +1008,7 @@ describe('binaries', () => {
     });
 
     it('should respect setting when not in devContainer workspace', async () => {
-      (getGlobalSetting as Mock).mockReturnValue(true);
-
-      // Mock devContainer detection
+      (shouldValidateAndInstallRuntimeDependencies as Mock).mockReturnValue(true);
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspace).mockResolvedValue(false);
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fs from 'fs';
 import * as binaries from '../app/utils/binaries';
 import { isDevContainerWorkspace } from '../app/utils/devContainerUtils';
-import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
+import { getGlobalSetting, shouldValidateAndInstallRuntimeDependencies } from '../app/utils/vsCodeConfig/settings';
 
 vi.mock('../app/utils/devContainerUtils', () => ({
   isDevContainerWorkspace: vi.fn(),
@@ -11,6 +11,7 @@ vi.mock('../app/utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
   getWorkspaceSetting: vi.fn(),
   updateGlobalSetting: vi.fn(),
+  shouldValidateAndInstallRuntimeDependencies: vi.fn(),
 }));
 
 // Mock transitive dependencies of binaries.ts to prevent real module loading.
@@ -45,7 +46,7 @@ describe('devContainer Integration Tests', () => {
 
     it('should respect global setting in non-devContainer workspace', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
-      vi.mocked(getGlobalSetting).mockReturnValue(true);
+      vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
 
       const result = await binaries.useBinariesDependencies();
 
@@ -58,6 +59,7 @@ describe('devContainer Integration Tests', () => {
       const existsSyncSpy = vi.spyOn(fs, 'existsSync').mockReturnValue(true);
 
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
+      vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
       vi.mocked(getGlobalSetting).mockReturnValue('test/path');
 
       const result = await binaries.binariesExist('dotnet');
@@ -70,6 +72,7 @@ describe('devContainer Integration Tests', () => {
       const existsSyncSpy = vi.spyOn(fs, 'existsSync').mockReturnValue(true);
 
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
       vi.mocked(getGlobalSetting).mockReturnValue('test/path');
 
       const result = await binaries.binariesExist('dotnet');

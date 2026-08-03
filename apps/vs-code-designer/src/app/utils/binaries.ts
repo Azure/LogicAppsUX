@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
-  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dependencyMetadataRequestTimeoutMs,
@@ -26,7 +25,7 @@ import { localize } from '../../localize';
 import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
-import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
+import { getGlobalSetting, getWorkspaceSetting, shouldValidateAndInstallRuntimeDependencies, updateGlobalSetting } from './vsCodeConfig/settings';
 import { isDevContainerWorkspace, isDevContainerWorkspaceSync } from './devContainerUtils';
 import { type DownloadAttemptResult, downloadFileWithVerification as downloadFileWithVerificationCore } from './integrity';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -764,25 +763,23 @@ export async function useBinariesDependencies(): Promise<boolean> {
     return false;
   }
 
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
-  return !!binariesInstallation;
+  return shouldValidateAndInstallRuntimeDependencies();
 }
 
 export function binariesExistSync(dependencyName: string): boolean {
-  if (!useBinariesDependenciesFromSettings()) {
+  if (!useBinariesDependenciesSync()) {
     return false;
   }
 
   return binariesExistFromSettings(dependencyName, false);
 }
 
-function useBinariesDependenciesFromSettings(): boolean {
+export function useBinariesDependenciesSync(): boolean {
   if (isDevContainerWorkspaceSync()) {
     return false;
   }
 
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
-  return !!binariesInstallation;
+  return shouldValidateAndInstallRuntimeDependencies();
 }
 
 function getExpectedBinaryPath(dependencyName: string): string | undefined {
