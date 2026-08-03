@@ -1473,6 +1473,267 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+  # ---------------------------------------------------------------------------
+  # Func Core Tools pre-debug self-heal (p414-funcrepair) on Windows.
+  #
+  # Why Windows specifically. The behaviour under test is the repair of an
+  # extension-managed func that EXISTS but will not RUN, and every real-world cause
+  # of that state skews Windows: AV quarantine, a partial extract, and an orphan
+  # func.exe holding a file lock (binaries.ts:224-243 reasons explicitly about
+  # EPERM/EBUSY from a locked func.exe). Critically, a running .exe is UNWRITABLE on
+  # Windows — a failure mode Linux structurally cannot reproduce, because there an
+  # executable can be overwritten while it runs. The ubuntu `func-selfheal` shard
+  # therefore proves the repair logic but not the platform it matters on. Nothing
+  # else covers this change on Windows either: test.yml, pr-coverage.yml and
+  # private-vsix-build.yml are all `runs-on: ubuntu-latest`, so even the unit tests
+  # never execute there.
+  #
+  # Why this job CREATES its own fixtures instead of consuming
+  # `workspace-fixtures-<sha>` the way the ubuntu shard does: THAT ARTIFACT IS NOT
+  # CROSS-PLATFORM. `created-workspaces.json` records ABSOLUTE paths (wsDir /
+  # wsFilePath / appDir — see workspaceManifest.ts) produced under the ubuntu
+  # runner's RUNNER_TEMP (/home/runner/work/_temp/...). Extracting that tarball on
+  # windows-latest puts the tree under D:\a\_temp\la-e2e-test while every path inside
+  # the manifest still points at a directory that does not exist there, so
+  # selectWorkspaceForSpec() falls through to `resources: []` and funcRepair.test.ts
+  # opens a nonexistent .code-workspace. Nothing rebases those paths, and no existing
+  # Windows job consumes the artifact — it is ubuntu-bound by construction. So we run
+  # p41a-fixtures HERE, which builds the workspaces through the real Create Workspace
+  # wizard on this runner (SKILL.md rule 1) and, as a side effect, guarantees the
+  # runtime dependencies are hydrated BEFORE the scenario that corrupts them runs.
+  # The extension bundle is provisioned by that same run, so this job consumes only
+  # the cross-platform JS extension-build artifact — the same shape as
+  # vscode-e2e-codeful-windows.
+  #
+  # BLOCKING: listed in the vscode-e2e-summary gate below with NO continue-on-error
+  # (continue-on-error would force `needs.<job>.result` to "success" and silently
+  # green the gate).
+  vscode-e2e-funcselfheal-windows:
+    name: vscode-e2e-funcselfheal (windows-latest)
+    # setup-runtime-deps-windows is REQUIRED here, not decorative. This is the most
+    # cold-cache-sensitive job in the workflow: p414-funcrepair is the only scenario
+    # that downloads the Func Core Tools package TWICE (the initial managed install,
+    # then the repair after it has been corrupted). vscode-e2e-codeful-windows used to
+    # fail 100% of the time purely because la-runtime-deps-Windows-v1 was cold and
+    # hydrated underneath the already-running test. Here a cold cache is worse than
+    # merely slow: an activation-time install ends in startAllDesignTimeApis()
+    # (binaries.ts:213 — which does NOT honour autoStartDesignTime), and the resulting
+    # live func.exe makes the in-place corruption fail with EPERM/EBUSY on Windows.
+    # The p41a-fixtures step below is the second line of defence for that.
+    #
+    # setup-fixtures is deliberately ABSENT: its artifact is ubuntu-path-bound (see
+    # above), so depending on it would only serialize this job behind an unrelated
+    # ubuntu run for an artifact it must not use.
+    needs: [setup-extension-build, setup-runtime-deps-windows]
+    # Timeout reasoning (see the policy on setup-extension-build — a backstop against a
+    # wedged runner, ~2x the worst HEALTHY run, not an SLA):
+    #   ~4 min  fixed setup (checkout, node, dotnet, pnpm install, artifact, restore).
+    #           Derived from setup-runtime-deps-windows, whose whole job — the same
+    #           p41a-fixtures scenario plus this same preamble — maxed at 11.3 min over
+    #           16 runs INCLUDING a cold dependency download.
+    #   ~8 min  p41a-fixtures on Windows (the 11.3 min above minus that preamble).
+    #  ~12 min  p414-funcrepair on Windows. Healthy on ubuntu is 5-8 min and Windows
+    #           adds ExTester cold start plus a slower second Func Core Tools download.
+    #           A single attempt is hard-bounded at 16 min by TEST_TIMEOUT inside
+    #           funcRepair.test.ts, so a wedged attempt self-terminates with its own
+    #           diagnostic rather than riding this timeout.
+    # => ~24 min for a healthy pass; ~36-42 min when LA_E2E_SCENARIO_RETRIES burns one
+    # retry, which is exactly the slow-but-green case a tight timeout would convert
+    # into a red build. 45 leaves margin over that without letting a genuinely wedged
+    # runner sit for an hour. This is a first-ever run on this platform, so it is sized
+    # to survive the unknown and can be tightened once real observations exist.
+    timeout-minutes: 45
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Verify node on PATH (for func host child processes)
+        run: |
+          echo "node: $(command -v node) $(node --version)"
+          echo "npm:  $(command -v npm)  $(npm --version)"
+
+      # p41a-fixtures creates the customCode / rulesEngine / codeful workspace shapes,
+      # which run dotnet. setup-runtime-deps-windows installs the SDK for the same
+      # reason before running the same scenario.
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      # RESTORE-ONLY (no save) — deliberate, and for a stronger reason than the
+      # vscode-e2e-windows shard's. This job DELIBERATELY CORRUPTS the managed func
+      # binaries; funcRepair.test.ts restores the pristine bytes in afterEach, but a
+      # crashed session can leave a corrupted or partially-restored tree behind.
+      # Saving that onto la-runtime-deps-Windows-v1 would be unrecoverable: every
+      # later run would restore it as an EXACT-key HIT, and the hydrating jobs'
+      # `cache-hit != 'true'` save guard would suppress the repair. The existing
+      # `deps-check` guard on the other Windows jobs is not sufficient protection
+      # either — it probes only the FIRST func it finds via `find -maxdepth 2`, so a
+      # still-corrupted in-proc6/func.exe would pass it. setup-runtime-deps-windows
+      # already seeds and refreshes this key on every run, so there is nothing to gain
+      # against a real risk of poisoning it.
+      # NOTE: `path`/`key`/`restore-keys` must stay byte-identical to the other
+      # la-runtime-deps steps — actions/cache derives the cache entry *version* from
+      # the path set, so editing it silently invalidates the existing entries.
+      - name: Restore Logic Apps runtime dependencies
+        id: la-deps-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Report runtime dependency cache state
+        run: |
+          echo "cache-hit:         ${{ steps.la-deps-cache.outputs.cache-hit }}"
+          echo "cache-matched-key: ${{ steps.la-deps-cache.outputs.cache-matched-key }}"
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          if [ -d "$DEPS_DIR" ]; then
+            echo "deps dir exists: $DEPS_DIR"
+            du -sh "$DEPS_DIR" 2>/dev/null || true
+            ls -la "$DEPS_DIR" || true
+          else
+            echo "deps dir MISSING (cold): $DEPS_DIR"
+          fi
+
+      # Separate step from the scenario below on purpose: it makes a fixtures failure
+      # unambiguously distinguishable from a repair failure in the CI log, and it keeps
+      # LA_E2E_STRICT_DEPENDENCY_VALIDATION scoped to this step only. That env var is
+      # read by the PRODUCT inside the VS Code process
+      # (strictDependencyValidation.ts:6), and leaking it into the funcrepair step
+      # could force a dependency reinstall during that session's activation — which
+      # ends in startAllDesignTimeApis() and a live func.exe that cannot be
+      # overwritten. The ubuntu func-selfheal shard does not set it either.
+      - name: Create Windows workspace fixtures (p41a-fixtures)
+        run: |
+          echo "PATH=$PATH"
+          node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          LA_E2E_SCENARIO: p41a-fixtures
+          LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
+          LA_E2E_BUNDLE_PREFLIGHT: '0'
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      # Closes a silent-green hole: funcRepair.test.ts calls `this.skip()` when the
+      # manifest has no Standard/Stateful entry, which would report a PASSING job with
+      # zero coverage. Resolved through node + os.tmpdir() rather than $RUNNER_TEMP so
+      # this checks the exact path the test itself will read (and so the Windows
+      # backslashes in RUNNER_TEMP never reach a bash path test).
+      - name: Verify the Windows fixtures manifest is usable
+        env:
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+        run: |
+          node -e '
+          const fs = require("fs");
+          const os = require("os");
+          const path = require("path");
+          const manifestPath = path.join(os.tmpdir(), "la-e2e-test", "created-workspaces.json");
+          if (!fs.existsSync(manifestPath)) {
+            console.log("::error::Fixtures manifest missing at " + manifestPath + " - p414-funcrepair has nothing to press F5 on.");
+            process.exit(1);
+          }
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+          const entry = manifest.find((e) => e.appType === "standard" && e.wfType === "Stateful");
+          if (!entry) {
+            console.log("::error::No Standard/Stateful workspace in " + manifestPath + " - funcRepair.test.ts would call this.skip() and pass vacuously.");
+            console.log(JSON.stringify(manifest, null, 2));
+            process.exit(1);
+          }
+          if (!fs.existsSync(entry.wsFilePath)) {
+            console.log("::error::Manifest entry points at a missing .code-workspace: " + entry.wsFilePath);
+            process.exit(1);
+          }
+          console.log("Fixtures OK: " + entry.wsFilePath);
+          '
+
+      - name: Run func self-heal scenario (p414-funcrepair)
+        run: |
+          echo "PATH=$PATH"
+          node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          LA_E2E_SCENARIO: p414-funcrepair
+          # No bundle artifact is hydrated here; the p41a-fixtures step above already
+          # downloaded and verified the extension bundle on this runner.
+          LA_E2E_BUNDLE_PREFLIGHT: '0'
+          # Retry a failing scenario once in a fresh VS Code session. Non-masking: a
+          # scenario that fails both attempts still fails the job.
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      # First run of this scenario on Windows, so report the disk state either way — a
+      # func that is still unrunnable after the test's afterEach restore is the signal
+      # that the cleanup path itself needs work on this platform.
+      - name: Report managed func state after the run
+        if: always()
+        run: |
+          DEPS_DIR="${HOME}/.azurelogicapps/dependencies"
+          if [ ! -d "$DEPS_DIR/FuncCoreTools" ]; then
+            echo "FuncCoreTools MISSING under $DEPS_DIR"
+            exit 0
+          fi
+          find "$DEPS_DIR/FuncCoreTools" -maxdepth 2 -name 'func.exe' -type f -print -exec ls -la {} \; 2>/dev/null || true
+          FUNC_BIN="$(find "$DEPS_DIR/FuncCoreTools" -maxdepth 2 -name 'func.exe' -type f 2>/dev/null | head -n 1 || true)"
+          if [ -n "$FUNC_BIN" ] && "$FUNC_BIN" --version; then
+            echo "func is runnable after the run: $FUNC_BIN"
+          else
+            echo "::warning::Managed func is NOT runnable after the run - funcRepair.test.ts's afterEach restore may have failed on Windows"
+          fi
+
+      # On a platform this scenario has never run on, the screenshot artifact is the
+      # difference between a diagnosable failure and a blind one — a screenshot
+      # artifact is how the last ubuntu failure of this scenario got root-caused. The
+      # test also writes explicit captures under
+      # <TEMP>/test-resources/screenshots/funcRepair-explicit/, which is inside the
+      # first path below because TEMP is pinned to runner.temp above.
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-funcselfheal-windows
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
   vscode-e2e-compat:
     name: vscode-e2e compatibility (${{ matrix.label }})
     needs: setup-extension-build
@@ -1588,7 +1849,7 @@ jobs:
   # ("vscode-e2e-summary") regardless of how many scenarios we add later.
   vscode-e2e-summary:
     name: vscode-e2e-summary
-    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-compat, setup-runtime-deps-windows]
+    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-funcselfheal-windows, vscode-e2e-compat, setup-runtime-deps-windows]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -1607,6 +1868,7 @@ jobs:
           echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }}"
           echo "vscode-e2e-azurite:         ${{ needs.vscode-e2e-azurite.result }}"
           echo "vscode-e2e-azurite-windows: ${{ needs.vscode-e2e-azurite-windows.result }}"
+          echo "vscode-e2e-funcselfheal-windows: ${{ needs.vscode-e2e-funcselfheal-windows.result }}"
           echo "setup-runtime-deps-windows: ${{ needs.setup-runtime-deps-windows.result }} (advisory, not gated: seeds la-runtime-deps-Windows-v1)"
           echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
@@ -1617,6 +1879,7 @@ jobs:
              [ "${{ needs.vscode-e2e-codeful-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-azurite.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-azurite-windows.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-funcselfheal-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-compat.result }}" != "success" ]; then
             echo "::error::One or more required vscode-e2e jobs failed"
             exit 1
@@ -1641,8 +1904,21 @@ jobs:
           # la-runtime-deps-Windows-v1 exists it is refreshed on access, so a
           # transient bootstrap failure still leaves the codeful leg with a warm
           # restore. Keeping it continue-on-error also guarantees the Windows jobs
-          # that depend on it (vscode-e2e-codeful-windows, vscode-e2e-azurite-windows)
-          # still RUN rather than being skipped — and a skipped job would trip the
-          # `!= "success"` check above and fail the build for the wrong reason.
+          # that depend on it (vscode-e2e-codeful-windows, vscode-e2e-azurite-windows,
+          # vscode-e2e-funcselfheal-windows) still RUN rather than being skipped — and
+          # a skipped job would trip the `!= "success"` check above and fail the build
+          # for the wrong reason.
+          #
+          # vscode-e2e-funcselfheal-windows is BLOCKING and has no continue-on-error.
+          # Its `needs` are [setup-extension-build, setup-runtime-deps-windows]: the
+          # second can never cause a skip (continue-on-error pins its result to
+          # "success"), and the first is itself gated here, so the only way this job is
+          # skipped is a build failure that already fails the gate on its own line. It
+          # covers p414-funcrepair on Windows, which is the platform the repaired
+          # failure mode actually comes from — AV quarantine, partial extraction, and
+          # an orphan func.exe holding a lock, plus the fact that a running .exe is
+          # unwritable there at all. It also creates its own workspace fixtures rather
+          # than consuming workspace-fixtures-<sha>, whose manifest stores ubuntu
+          # absolute paths; see the job for the full rationale.
           echo "All required vscode-e2e jobs passed."
 

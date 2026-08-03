@@ -127,6 +127,7 @@ pnpm run test:ui        # Runs node out/test/run-e2e.js
 | `nonlogicappstartup` | Runs only Phase 4.0 with minimal settings and no runtime dependency paths |
 | `designeronly` | Skips Phase 4.1, runs Phase 4.2 using workspaces from a previous Phase 4.1 run |
 | `bundleintegrityonly` | Runs Phase 4.11 (`bundleCdnHealth.test.ts`) — pure-Mocha probe of `cdn.functions.azure.com` integrity headers. No VS Code session, no compiled extension required (only `npx tsup --config tsup.e2e.test.config.ts`). Bundled into the `independentonly` shard for CI. |
+| `funcrepaironly` | Runs Phase 4.14 (`funcRepair.test.ts`) only — the Func Core Tools pre-debug self-heal. Requires a manifest from a previous `p41a-fixtures` run. In CI this scenario runs as the ubuntu `func-selfheal` shard and as the `vscode-e2e-funcselfheal-windows` job (which creates its own fixtures first — see section 19). |
 
 **IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.
 
@@ -967,3 +968,109 @@ before F5 so the check is not vacuous:
 - Do **not** assert on `obj/` — a C# Dev Kit design-time evaluation legitimately writes it.
 - Treat a locked `bin`/`lib` at clear-time as a hard failure, not a skip: it means a build
   is already running, which invalidates the premise.
+
+---
+
+## 18. Rule: Start debug sessions from the recorder extension, never from the command palette
+
+Referenced as "SKILL.md rule 18" by `funcRepair.test.ts` and by the `recorder` flag in
+`run-e2e.ts`'s scenario table.
+
+`workbench.executeCommand('Debug: Start Debugging')` resolves the launch configuration from
+**whatever editor happens to be active**, and a headless CI session does not settle focus
+reliably. Two CI runs proved it: run 30549543233 debugged an auto-opened markdown preview, and
+run 30554041131 debugged `settings.json` even after closing all editors and opening
+`workflow.json` via Quick Open three times. Both produced the same useless outcome — VS Code
+never resolved the Logic App folder's `launch.json`, `pickProcess` never ran, and the test
+timed out blaming the product.
+
+Use the bundled task-recorder extension instead (see section 16). It calls
+`vscode.debug.startDebugging(folder, configName)` with an **explicit** folder, so the trigger
+has no dependency on focus at all.
+
+Wire-up: set `recorder: true` on the scenario in `run-e2e.ts`. That installs the extension
+once per scenario and resets the events/trigger files per attempt via
+`configureCodefulRecorderEnvironment()`. Drop a marker file into `LA_E2E_TRIGGER_DIR` to start
+or stop the session, and always gate on the recorder reporting `activate`/`ping` first, so a
+wedged recorder is distinguishable from a product failure.
+
+---
+
+## 19. Porting an existing scenario to a Windows CI leg
+
+Everything below was learned wiring `p414-funcrepair` (Phase 4.14) onto `windows-latest` in
+`.github/workflows/vscode-e2e.yml`. Read it before adding any further Windows job.
+
+### The `workspace-fixtures-<sha>` artifact is ubuntu-bound — do NOT consume it on Windows
+
+`created-workspaces.json` records **absolute** paths (`wsDir` / `wsFilePath` / `appDir`, see
+`workspaceManifest.ts`), written under the ubuntu runner's `RUNNER_TEMP`
+(`/home/runner/work/_temp/...`). Extracting that tarball on `windows-latest` puts the tree
+under `D:\a\_temp\la-e2e-test` while every path inside the manifest still points at a
+directory that does not exist there. Nothing rebases them, so `selectWorkspaceForSpec()`
+falls through to `resources: []` and the test opens a nonexistent `.code-workspace`. This is
+why no Windows job in the workflow consumes it.
+
+A Windows leg that needs fixtures must **create them on that runner** by running
+`p41a-fixtures` first (which is Rule 1 compliant — real Create Workspace wizard). The
+`logic-apps-extension-bundle-<sha>` artifact is unnecessary too, because that run downloads
+and verifies the bundle itself. Net effect: a Windows leg consumes only the cross-platform JS
+`extension-build` artifact, exactly like `vscode-e2e-codeful-windows`.
+
+### A running `.exe` is unwritable on Windows — Linux cannot reproduce it
+
+Any test that overwrites a runtime binary **in place** (`funcRepair.test.ts` corrupts
+`func.exe`) is a no-op risk on Linux and a hard failure on Windows. Three things must hold:
+
+1. The scenario runs with `autoStartDesignTime: false`, so the session under test never
+   spawns a design-time `func host start`.
+2. `prepareFreshSession()` actually killed leftover func hosts from the PREVIOUS scenario.
+   `p41a-fixtures` runs with `autoStartDesignTime: true`, so a Windows job that runs it
+   before the corrupting scenario depends on that kill landing. Each PowerShell kill is now
+   guarded individually and followed by a bounded poll (`waitForWindowsFuncProcessesToExit`)
+   that confirms the processes are actually gone — `Stop-Process` only *signals*.
+3. The runtime-dependency cache is WARM. A cold cache means activation performs a real
+   install, and `installFuncCoreToolsBinaries` ends in `startAllDesignTimeApis()`
+   (`binaries.ts:213`), which does **not** honour `autoStartDesignTime`. The resulting live
+   `func.exe` makes the corruption fail with EPERM/EBUSY. Hence
+   `needs: setup-runtime-deps-windows` plus the local `p41a-fixtures` step as a second line
+   of defence.
+
+### A job that corrupts runtime dependencies must be cache RESTORE-ONLY
+
+Never pair a corrupting scenario with `actions/cache/save`. `afterEach` restores the pristine
+bytes, but a crashed session can leave a corrupted or partly-restored tree, and saving that
+onto `la-runtime-deps-Windows-v1` is unrecoverable: later runs restore it as an EXACT-key HIT
+and the hydrating jobs' `cache-hit != 'true'` guard suppresses the repair. The `deps-check`
+guard used elsewhere is not enough — it probes only the FIRST func it finds via
+`find -maxdepth 2`, so a still-corrupted `in-proc6/func.exe` slips past it.
+
+### Close the `this.skip()` hole with a manifest guard step
+
+Tests that `this.skip()` when the manifest is missing report a **passing** job with zero
+coverage. On a brand-new platform leg that is the most likely silent failure. Add an explicit
+guard step between fixture creation and the scenario that asserts the manifest exists, has the
+entry the test looks for, and that the entry's `wsFilePath` exists on disk. Resolve the path
+with `node` + `os.tmpdir()` rather than `$RUNNER_TEMP`, so it checks the exact path the test
+will read.
+
+### `shell: bash` on `windows-latest` — env var gotchas
+
+- `RUNNER_TEMP` contains **backslashes** (`D:\a\_temp`). Do not feed it to bash path tests;
+  `$HOME` is POSIX (`/c/Users/runneradmin`) and is what the existing steps use.
+- Set `TEMP`, `TMP` **and** `TMPDIR` — `os.tmpdir()` reads `TEMP`/`TMP` on Windows, and the
+  screenshot/backup/manifest paths all derive from it.
+- `LA_E2E_STRICT_DEPENDENCY_VALIDATION` is read by the **product** inside the VS Code process
+  (`strictDependencyValidation.ts`), not just by the harness. Scope it to the step that needs
+  it; leaking it into a corrupting scenario can force a reinstall during activation, which
+  ends in `startAllDesignTimeApis()` and a live `func.exe`.
+
+### Sizing the timeout
+
+Follow the policy documented on `setup-extension-build`: a backstop against a wedged runner,
+~2x the worst HEALTHY observation, sized to absorb one `LA_E2E_SCENARIO_RETRIES` retry and a
+cold cache. Prefer borrowing a real observation from a job that already runs the same scenario
+on the same OS (`setup-runtime-deps-windows` runs `p41a-fixtures` on Windows and is the only
+existing datapoint for it) over copying a neighbour's number. Remember the in-test
+`TEST_TIMEOUT` already hard-bounds a single attempt, so the fast-failure signal lives there,
+not in `timeout-minutes`.

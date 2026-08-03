@@ -72,6 +72,7 @@
  */
 
 import * as assert from 'assert';
+import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as net from 'net';
 import * as os from 'os';
@@ -364,6 +365,40 @@ function assertInsideManagedFuncDir(candidate: string, funcToolsDir: string): vo
     isManaged,
     `Refusing to corrupt "${candidate}": it is not inside the extension-managed FuncCoreTools folder "${funcToolsDir}". Only the harness-provisioned copy may be touched.`
   );
+}
+
+/**
+ * Windows-only: names the processes that can be holding a func executable open.
+ *
+ * A running `.exe` is unwritable on Windows, so the in-place corruption in step 2 is the one
+ * step of this test that a live func host can break — and it is a failure mode Linux
+ * structurally cannot reproduce, because there an executable can be overwritten while it runs.
+ * Printing the actual process list turns an otherwise blind EPERM/EBUSY on the platform with
+ * the least history behind this scenario into a self-explaining failure.
+ *
+ * Best-effort and never throws: it only ever runs on a path that is already failing.
+ */
+function describeRunningFuncProcesses(): string {
+  if (process.platform !== 'win32') {
+    return '';
+  }
+  try {
+    const output = execFileSync(
+      'powershell',
+      [
+        '-NoProfile',
+        '-Command',
+        'Get-Process -Name func -ErrorAction SilentlyContinue | Select-Object -First 10 Id,Path | Format-Table -AutoSize | Out-String',
+      ],
+      { timeout: 15_000, encoding: 'utf-8' }
+    );
+    const text = String(output).trim();
+    return text === ''
+      ? ' No running "func" processes were found, so the handle is held by something else (check for a read-only attribute on the file).'
+      : ` Running func processes:\n${text}`;
+  } catch (error) {
+    return ` (could not list running func processes: ${error})`;
+  }
 }
 
 /** Describes one func candidate for timeout/diagnostic messages. */
@@ -1174,7 +1209,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
         fs.writeFileSync(candidate, CORRUPTION_MARKER);
       } catch (error) {
         assert.fail(
-          `Could not overwrite ${candidate}: ${error}. On Windows this means a func process still holds the binary open — check that the scenario runs with autoStartDesignTime: false and that prepareFreshSession killed leftover func hosts.`
+          `Could not overwrite ${candidate}: ${error}. On Windows this means a func process still holds the binary open — check that the scenario runs with autoStartDesignTime: false and that prepareFreshSession killed leftover func hosts.${describeRunningFuncProcesses()}`
         );
       }
       fs.chmodSync(candidate, originalMode);

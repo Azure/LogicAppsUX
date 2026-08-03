@@ -1717,6 +1717,64 @@ async function main(): Promise<void> {
     resources: [],
   };
 
+  /**
+   * Windows-only: confirms the `func` processes killed by prepareFreshSession() have actually
+   * exited before the next scenario starts.
+   *
+   * Detection-based rather than another fixed sleep, because on Windows this is a correctness
+   * gate, not a tidiness one: a running .exe holds its own image file open, so a surviving func
+   * host makes any in-place write to `func.exe` fail with EPERM/EBUSY. `funcRepair.test.ts`
+   * (p414-funcrepair) overwrites the managed func binaries in place, and it can run directly
+   * after a scenario that leaves a design-time host alive (`p41a-fixtures` runs with
+   * autoStartDesignTime: true). Linux cannot reproduce this at all — there, overwriting a
+   * running executable simply succeeds.
+   *
+   * Log-only by design: a stray func on a developer box must not fail a run that would
+   * otherwise pass, and the corrupting test already fails loudly with its own diagnostic. What
+   * this buys is that the CI log says WHY, instead of leaving an EPERM to be guessed at.
+   */
+  const waitForWindowsFuncProcessesToExit = async (label: string, timeoutMs = 15000): Promise<void> => {
+    if (process.platform !== 'win32') {
+      return;
+    }
+    const { execFileSync } = require('child_process');
+    // execFileSync (not execSync) so the PowerShell argument never round-trips through cmd.exe
+    // quoting. Returns -1 when the probe itself failed, so "could not tell" is never reported
+    // as "all clear".
+    const countFuncProcesses = (): number => {
+      try {
+        const out = execFileSync(
+          'powershell',
+          ['-NoProfile', '-Command', '@(Get-Process -Name func -ErrorAction SilentlyContinue).Count'],
+          {
+            timeout: 10000,
+            encoding: 'utf8',
+          }
+        );
+        const parsed = Number.parseInt(String(out).trim(), 10);
+        return Number.isNaN(parsed) ? -1 : parsed;
+      } catch {
+        return -1;
+      }
+    };
+
+    const deadline = Date.now() + timeoutMs;
+    let remaining = countFuncProcesses();
+    while (remaining > 0 && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 1000));
+      remaining = countFuncProcesses();
+    }
+    if (remaining > 0) {
+      console.log(
+        `  [${label}] ⚠ ${remaining} func process(es) still running after ${timeoutMs}ms — an in-place overwrite of func.exe will fail with EPERM/EBUSY`
+      );
+    } else if (remaining < 0) {
+      console.log(`  [${label}] Could not probe for leftover func processes (PowerShell probe failed)`);
+    } else {
+      console.log(`  [${label}] ✓ No func processes remain`);
+    }
+  };
+
   const prepareFreshSession = async (label: string): Promise<void> => {
     const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
     const userDir = path.join(settingsDir, 'User');
@@ -1768,11 +1826,21 @@ async function main(): Promise<void> {
         // processes. Only kill dotnet processes that are children of func (covered
         // by the "func.*host.*start" pkill above which terminates the process group).
       } else {
-        // Windows: use PowerShell
-        execSync(
-          'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
-          { stdio: 'ignore', timeout: 10000 }
-        );
+        // Windows: use PowerShell. Every kill is guarded INDIVIDUALLY, matching the pkill
+        // chain above. The VS Code kill used to run unguarded, so a PowerShell start-up
+        // hiccup or the 10s timeout threw straight past the func kill into the outer catch,
+        // which only logs "kill failed — continuing". That asymmetry is invisible on Linux
+        // (a running executable is freely overwritable there) but load-bearing on Windows:
+        // a surviving func.exe holds its own image open, and p414-funcrepair overwrites the
+        // managed func binaries in place right after p41a-fixtures has run a design-time host.
+        try {
+          execSync(
+            'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
+            { stdio: 'ignore', timeout: 10000 }
+          );
+        } catch {
+          /* no matching VS Code process, or the probe timed out — fall through to the func kill */
+        }
         // Kill orphan Functions runtime / vsdbg processes on Windows
         try {
           execSync(
@@ -1782,6 +1850,8 @@ async function main(): Promise<void> {
         } catch {
           /* OK */
         }
+        // Stop-Process only SIGNALS termination; confirm the handles are actually gone.
+        await waitForWindowsFuncProcessesToExit(label);
       }
       console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver/func/vsdbg processes`);
       // Wait for processes to fully exit and release IPC sockets.
