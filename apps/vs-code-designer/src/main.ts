@@ -52,11 +52,6 @@ import {
 import { useBinariesDependencies } from './app/utils/binaries';
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
 
-const perfStats = {
-  loadStartTime: Date.now(),
-  loadEndTime: undefined as number | undefined,
-};
-
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -183,8 +178,6 @@ export async function activate(context: vscode.ExtensionContext) {
     ext.rgApiV2 = azureResourcesApi;
 
     vscode.window.registerUriHandler(new UriHandler());
-    perfStats.loadEndTime = Date.now();
-    activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     logExtensionSettings(activateContext);
   });

@@ -12,6 +12,7 @@ import {
   showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
   type hostFileContent,
+  extensionCommand,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 
@@ -226,8 +227,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
   designTimeInst.startupPromise = (async () => {
     try {
-      await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
-        const loadDesignTimeStart = Date.now();
+      await callWithTelemetryAndErrorHandling(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.startDesignTimeApi = 'false';
 
         designTimeInst.startupError = undefined;
@@ -315,7 +315,6 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           designTimeInst.validationRetryCount = 0;
           actionContext.telemetry.properties.startDesignTimeApi = 'true';
           updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
-          actionContext.telemetry.measurements.startDesignTimeApiDuration = (Date.now() - loadDesignTimeStart) / 1000;
         } catch (error) {
           const errorMessage = getErrorMessage(error);
           const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };

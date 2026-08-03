@@ -15,7 +15,6 @@ import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionRe
  * @returns {Promise<void>} A promise that resolves when the refresh is complete.
  */
 export async function refreshConnectionKeys(context: IActionContext, projectPath: string): Promise<void> {
-  const refreshConnectionKeysStartTime = Date.now();
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const azureConnectorDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
     if (!azureConnectorDetails.enabled) {
@@ -55,5 +54,4 @@ export async function refreshConnectionKeys(context: IActionContext, projectPath
       throw new Error(errorMessage);
     }
   }
-  context.telemetry.measurements.refreshConnectionKeysDuration = (Date.now() - refreshConnectionKeysStartTime) / 1000;
 }
