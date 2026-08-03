@@ -1,4 +1,4 @@
-import { Button, Text } from '@fluentui/react-components';
+import { Button, MessageBar, MessageBarActions, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { useMultiTriggerUnsupportedMessageStyles } from './styles';
 
@@ -27,11 +27,18 @@ export const MultiTriggerUnsupportedMessage: React.FC<MultiTriggerUnsupportedMes
   const styles = useMultiTriggerUnsupportedMessageStyles();
   const intl = useIntl();
 
-  const consumptionMessage = intl.formatMessage({
-    defaultMessage: 'The designer does not support workflows with multiple triggers. Use Run details to view this run.',
-    id: 'AdZ/11',
+  const consumptionDesignMessage = intl.formatMessage({
+    defaultMessage: 'The designer does not support workflows with multiple triggers.',
+    id: '+PAY/q',
     description:
-      'Message shown instead of the designer canvas when a Consumption workflow definition has more than one trigger. The backend supports the workflow, but the designer cannot render it.',
+      'Message shown instead of the designer canvas when a Consumption workflow definition has more than one trigger and no run is selected (design mode). The backend supports the workflow, but the designer cannot render it.',
+  });
+
+  const consumptionMonitoringMessage = intl.formatMessage({
+    defaultMessage: 'The designer does not support workflows with multiple triggers. Use Run details to view this run.',
+    id: '9iYe3N',
+    description:
+      'Message shown instead of the designer canvas when a Consumption workflow definition has more than one trigger and a run is selected in monitoring view. The backend supports the workflow, but the designer cannot render it; the Run details action opens the full run experience.',
   });
 
   const standardMessage = intl.formatMessage({
@@ -47,16 +54,32 @@ export const MultiTriggerUnsupportedMessage: React.FC<MultiTriggerUnsupportedMes
     description: 'Text for a button that opens the run details experience for a workflow the designer cannot render',
   });
 
+  const titleText = intl.formatMessage({
+    defaultMessage: 'Workflow not supported in designer',
+    id: 'rQ9u5v',
+    description:
+      'Title of the message shown instead of the designer canvas when a workflow definition has more than one trigger. The workflow itself may still be supported by the backend/runtime; only the designer/monitoring UI cannot render it.',
+  });
+
+  const showRunDetailsAction = !isStandard && Boolean(onRunDetailsClick);
+
+  const bodyMessage = isStandard ? standardMessage : showRunDetailsAction ? consumptionMonitoringMessage : consumptionDesignMessage;
+
   return (
     <div className={styles.root}>
-      <div className={styles.content}>
-        <Text className={styles.message}>{isStandard ? standardMessage : consumptionMessage}</Text>
-        {!isStandard && onRunDetailsClick ? (
-          <Button appearance="primary" onClick={onRunDetailsClick}>
-            {runDetailsButtonText}
-          </Button>
+      <MessageBar intent={isStandard ? 'warning' : 'info'} layout="multiline" className={styles.content}>
+        <MessageBarBody>
+          <MessageBarTitle>{titleText}</MessageBarTitle>
+          {bodyMessage}
+        </MessageBarBody>
+        {showRunDetailsAction ? (
+          <MessageBarActions>
+            <Button appearance="primary" onClick={onRunDetailsClick}>
+              {runDetailsButtonText}
+            </Button>
+          </MessageBarActions>
         ) : null}
-      </div>
+      </MessageBar>
     </div>
   );
 };

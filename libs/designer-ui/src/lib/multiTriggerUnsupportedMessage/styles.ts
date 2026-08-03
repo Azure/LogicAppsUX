@@ -7,18 +7,11 @@ export const useMultiTriggerUnsupportedMessageStyles = makeStyles({
     justifyContent: 'center',
     width: '100%',
     height: '100%',
+    padding: tokens.spacingHorizontalXXL,
+    boxSizing: 'border-box',
   },
   content: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: tokens.spacingVerticalM,
+    width: '100%',
     maxWidth: '480px',
-    textAlign: 'center',
-    padding: tokens.spacingHorizontalXXL,
-  },
-  message: {
-    color: tokens.colorNeutralForeground1,
   },
 });
