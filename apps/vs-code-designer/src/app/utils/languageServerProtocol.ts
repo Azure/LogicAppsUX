@@ -3,9 +3,9 @@ import * as fse from 'fs-extra';
 import { assetsFolderName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName } from './languageServerProtocolConstants';
-import { ensureRuntimeDependenciesPath } from './runtimeDependenciesPath';
 import AdmZip from 'adm-zip';
 import { createHash } from 'crypto';
+import { ensureRuntimeDependenciesDir } from './binaries';
 
 export { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
@@ -13,7 +13,7 @@ const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;
 
 export async function installLSPSDK(): Promise<void> {
-  const targetDirectory = await ensureRuntimeDependenciesPath();
+  const targetDirectory = await ensureRuntimeDependenciesDir();
 
   // Check if LSPServer needs to be extracted or updated
   const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');

@@ -19,6 +19,7 @@ import {
   funcDependencyName,
   extensionBundleId,
   nodeJsDependencyName,
+  defaultDependencyPathValue,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -1460,6 +1461,23 @@ function extractContainerFolder(targetFolder: string) {
       fs.rmSync(containerFolderPath, { recursive: true });
     }
   }
+}
+
+/**
+ * Ensures that the runtime dependencies path exists and returns it.
+ * If the path is not configured, it uses the default path and updates the global setting accordingly.
+ * @returns {Promise<string>} The path to the runtime dependencies folder.
+ */
+export async function ensureRuntimeDependenciesDir(): Promise<string> {
+  const configuredPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const dependenciesPath = configuredPath || defaultDependencyPathValue;
+
+  if (!configuredPath) {
+    await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, dependenciesPath);
+  }
+
+  await fs.mkdirSync(dependenciesPath, { recursive: true });
+  return dependenciesPath;
 }
 
 /**

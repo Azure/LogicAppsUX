@@ -25,12 +25,15 @@ import {
   useBinariesDependencies,
   removeWithLockWait,
   mkdirWithLockWait,
+  ensureRuntimeDependenciesDir,
 } from '../binaries';
 import { DownloadIntegrityError } from '../integrity';
 import { ext } from '../../../extensionVariables';
 import {
   DependencyVersion,
+  autoRuntimeDependenciesPathSettingKey,
   autoRuntimeDependenciesValidationAndInstallationSetting,
+  defaultDependencyPathValue,
   dotnetDependencyName,
   funcCoreToolsBinaryPathSettingKey,
   funcDependencyName,
@@ -48,15 +51,11 @@ import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../funcCoreTools/cpUtils');
 vi.mock('../nodeJs/nodeJsVersion');
-vi.mock('../../../onboarding');
 vi.mock('../../commands/binaries/validateAndInstallBinaries');
 vi.mock('../vsCodeConfig/settings');
 vi.mock('../vsCodeConfig/tasks');
 vi.mock('../../commands/nodeJs/validateNodeJsInstalled');
 vi.mock('../devContainerUtils');
-vi.mock('../telemetry', () => ({
-  runWithDurationTelemetry: vi.fn(async (_ctx, _cmd, callback) => await callback()),
-}));
 
 describe('binaries', () => {
   describe('downloadAndExtractDependency', () => {
@@ -1505,6 +1504,35 @@ describe('binaries', () => {
       expect(written.fileCount).toBe(1);
       expect(written.files.map((f: { path: string }) => f.path)).toEqual(['func.exe']);
       expect(written.files).not.toContainEqual(expect.objectContaining({ path: '.logicapps-integrity.json' }));
+    });
+  });
+
+  describe('ensureRuntimeDependenciesDir', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.mocked(updateGlobalSetting).mockResolvedValue(undefined);
+      vi.mocked(fs.mkdirSync).mockReturnValue(undefined);
+    });
+
+    it('defaults the dependency path setting and creates the default directory when unset', async () => {
+      vi.mocked(getGlobalSetting).mockReturnValue(undefined);
+
+      const result = await ensureRuntimeDependenciesDir();
+
+      expect(result).toBe(defaultDependencyPathValue);
+      expect(updateGlobalSetting).toHaveBeenCalledWith(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
+      expect(fs.mkdirSync).toHaveBeenCalledWith(defaultDependencyPathValue, { recursive: true });
+    });
+
+    it('preserves and creates a configured dependency path', async () => {
+      const configuredPath = 'D:\\custom-dependencies';
+      vi.mocked(getGlobalSetting).mockReturnValue(configuredPath);
+
+      const result = await ensureRuntimeDependenciesDir();
+
+      expect(result).toBe(configuredPath);
+      expect(updateGlobalSetting).not.toHaveBeenCalled();
+      expect(fs.mkdirSync).toHaveBeenCalledWith(configuredPath, { recursive: true });
     });
   });
 });

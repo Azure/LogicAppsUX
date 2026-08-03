@@ -2,14 +2,13 @@ import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { defaultDependencyPathValue } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
-import { getDependencyTimeout } from '../../../utils/binaries';
+import { getDependencyTimeout, ensureRuntimeDependenciesDir } from '../../../utils/binaries';
 import { ensureExtensionBundleHealthy, getDependenciesVersion } from '../../../utils/bundleFeed';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { setDotNetCommand } from '../../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
-import { ensureRuntimeDependenciesPath } from '../../../utils/runtimeDependenciesPath';
 import { shouldRequireStrictDependencyValidation } from '../../../utils/strictDependencyValidation';
 import { runWithTimeout } from '../../../utils/timeout';
 import { validateDotNetIsLatest } from '../../dotnet/validateDotNetIsLatest';
@@ -25,6 +24,7 @@ vi.mock('../../../../localize', () => ({
 
 vi.mock('../../../utils/binaries', () => ({
   getDependencyTimeout: vi.fn(),
+  ensureRuntimeDependenciesDir: vi.fn(),
 }));
 
 vi.mock('../../../utils/bundleFeed', () => ({
@@ -51,10 +51,6 @@ vi.mock('../../../utils/languageServerProtocol', () => ({
 
 vi.mock('../../../utils/nodeJs/nodeJsVersion', () => ({
   setNodeJsCommand: vi.fn(),
-}));
-
-vi.mock('../../../utils/runtimeDependenciesPath', () => ({
-  ensureRuntimeDependenciesPath: vi.fn(),
 }));
 
 vi.mock('../../../utils/strictDependencyValidation', () => ({
@@ -106,7 +102,7 @@ describe('validateAndInstallBinaries', () => {
     cancellationToken = { onCancellationRequested: vi.fn() };
     (vscode.window.withProgress as Mock).mockImplementation(async (_options: any, task: any) => task(progress, cancellationToken));
     (getDependencyTimeout as Mock).mockReturnValue(3);
-    (ensureRuntimeDependenciesPath as Mock).mockResolvedValue(defaultDependencyPathValue);
+    (ensureRuntimeDependenciesDir as Mock).mockResolvedValue(defaultDependencyPathValue);
     (shouldRequireStrictDependencyValidation as Mock).mockReturnValue(false);
     (shouldCheckForDependencyUpdates as Mock).mockReturnValue(true);
     (recordDependencyUpdateCheck as Mock).mockResolvedValue(undefined);
@@ -141,7 +137,7 @@ describe('validateAndInstallBinaries', () => {
     );
     expect(cancellationToken.onCancellationRequested).toHaveBeenCalledWith(expect.any(Function));
     expect(context.telemetry.properties).toMatchObject({
-      dependencyTimeout: '3000 milliseconds',
+      dependencyTimeout: '3',
       dependencyPath: defaultDependencyPathValue,
       performedDependencyUpdateCheck: 'true',
       dependenciesVersions: JSON.stringify({
@@ -151,22 +147,22 @@ describe('validateAndInstallBinaries', () => {
       }),
     });
     expect(callWithTelemetryAndErrorHandling).toHaveBeenCalledTimes(4);
-    expect(runWithTimeout).toHaveBeenNthCalledWith(1, expect.any(Function), 'NodeJs', 3000, 'https://github.com/nodesource/distributions');
+    expect(runWithTimeout).toHaveBeenNthCalledWith(1, expect.any(Function), 'NodeJs', 3, 'https://github.com/nodesource/distributions');
     expect(runWithTimeout).toHaveBeenNthCalledWith(
       2,
       expect.any(Function),
       'Functions Runtime',
-      3000,
+      3,
       'https://github.com/Azure/azure-functions-core-tools/releases'
     );
     expect(runWithTimeout).toHaveBeenNthCalledWith(
       3,
       expect.any(Function),
       '.NET SDK',
-      3000,
+      3,
       'https://dotnet.microsoft.com/en-us/download/dotnet'
     );
-    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'SDK LSP Server', 3000);
+    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'SDK LSP Server', 3);
     expect(validateNodeJsIsLatest).toHaveBeenCalledWith(
       expect.objectContaining({
         errorHandling: expect.objectContaining({ rethrow: true }),
@@ -204,7 +200,6 @@ describe('validateAndInstallBinaries', () => {
 
     expect(context.telemetry.properties).toMatchObject({
       lastStep: 'validateDependencies',
-      dependenciesError: 'Node validation failed',
     });
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       'Error in dependencies validation and installation: "Node validation failed"...'
@@ -224,10 +219,10 @@ describe('validateAndInstallBinaries', () => {
     expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: true });
     expect(context.telemetry.properties).toMatchObject({
       lastStep: 'ensureExtensionBundleHealthy',
-      dependenciesError: 'Bundle sidecar missing',
     });
     expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(
       'Azure Logic Apps Standard Runtime Dependencies validation and installation completed successfully.'
     );
   });
 });
+

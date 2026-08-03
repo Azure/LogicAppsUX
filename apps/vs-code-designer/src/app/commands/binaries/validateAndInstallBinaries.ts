@@ -4,14 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getDependencyTimeout } from '../../utils/binaries';
+import { ensureRuntimeDependenciesDir, getDependencyTimeout } from '../../utils/binaries';
 import { getDependenciesVersion, ensureExtensionBundleHealthy } from '../../utils/bundleFeed';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { installLSPSDK } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
-import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
 import { runWithTimeout } from '../../utils/timeout';
 import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
@@ -41,10 +40,10 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: 'Get Settings' });
 
-      const dependencyTimeout = getDependencyTimeout() * 1000;
-
-      context.telemetry.properties.dependencyTimeout = `${dependencyTimeout} milliseconds`;
-      context.telemetry.properties.dependencyPath = await ensureRuntimeDependenciesPath();
+      const dependencyPath = await ensureRuntimeDependenciesDir();
+      const dependencyTimeout = getDependencyTimeout();
+      context.telemetry.properties.dependencyPath = dependencyPath;
+      context.telemetry.properties.dependencyTimeout = String(dependencyTimeout);
 
       // Decide once, up front, whether this pass should perform the network "is there a newer
       // version?" checks. Individual validators read the same throttle flag, so they stay in sync
@@ -148,7 +147,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         ext.outputChannel.appendLog(
           localize('azureLogicApsBinariesError', 'Error in dependencies validation and installation: "{0}"...', errorMessage)
         );
-        context.telemetry.properties.dependenciesError = errorMessage;
+        context.telemetry.properties.result = 'Failed';
+        context.telemetry.properties.errorMessage = errorMessage;
         vscode.window.showErrorMessage(
           localize(
             'binariesTroubleshoot',
