@@ -105,6 +105,35 @@ describe('ActionCard', () => {
     expect(screen.getAllByRole('progressbar').length).toBeGreaterThanOrEqual(1);
   });
 
+  it('should keep the dynamic data spinner inline on the card, not in the indicator strip below it', () => {
+    render(<ActionCard {...defaultProps} icon="https://example.com/icon.svg" isLoadingDynamicData={true} />);
+    expect(screen.queryByTestId('card-indicator-badges')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('progressbar').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should not put the dynamic data spinner inside the indicator strip when other indicators are shown', () => {
+    render(<ActionCard {...defaultProps} isLoadingDynamicData={true} staticResultsEnabled={true} />);
+    const indicators = screen.getByTestId('card-indicator-badges');
+    expect(indicators).toBeInTheDocument();
+    expect(indicators.querySelector('[role="progressbar"]')).toBeNull();
+  });
+
+  it('should render the static results indicator when staticResultsEnabled is true', () => {
+    render(<ActionCard {...defaultProps} staticResultsEnabled={true} />);
+    expect(screen.getByTestId('card-indicator-static-results')).toBeInTheDocument();
+  });
+
+  it('should not render any indicators by default', () => {
+    render(<ActionCard {...defaultProps} />);
+    expect(screen.queryByTestId('card-indicator-badges')).not.toBeInTheDocument();
+  });
+
+  it('should render comment and secure inputs/outputs indicators when provided', () => {
+    render(<ActionCard {...defaultProps} comment="Some description" isSecureInputsOutputs={true} />);
+    expect(screen.getByTestId('card-indicator-comment')).toBeInTheDocument();
+    expect(screen.getByTestId('card-indicator-secure-inputs-outputs')).toBeInTheDocument();
+  });
+
   it('should set brand color as CSS variable', () => {
     render(<ActionCard {...defaultProps} brandColor="#FF0000" />);
     const card = screen.getByTestId('card-Test Action');

@@ -6,9 +6,17 @@ interface OperationSearchHeaderProps {
   searchTerm?: string;
   isTriggerNode: boolean;
   hideOperations?: boolean;
+  /** Overrides the default placeholder, used when the search box is scoped to a specific browse category. */
+  placeholder?: string;
 }
 
-export const OperationSearchHeaderV2 = ({ searchCallback, searchTerm, isTriggerNode, hideOperations }: OperationSearchHeaderProps) => {
+export const OperationSearchHeaderV2 = ({
+  searchCallback,
+  searchTerm,
+  isTriggerNode,
+  hideOperations,
+  placeholder,
+}: OperationSearchHeaderProps) => {
   const intl = useIntl();
 
   const connectorSearchPlaceholder = intl.formatMessage({
@@ -29,11 +37,8 @@ export const OperationSearchHeaderV2 = ({ searchCallback, searchTerm, isTriggerN
     description: 'Placeholder text for Action search bar',
   });
 
-  const searchPlaceholderText = hideOperations
-    ? connectorSearchPlaceholder
-    : isTriggerNode
-      ? triggerSearchPlaceholder
-      : actionSearchPlaceholder;
+  const searchPlaceholderText =
+    placeholder ?? (hideOperations ? connectorSearchPlaceholder : isTriggerNode ? triggerSearchPlaceholder : actionSearchPlaceholder);
 
   return (
     <div className="msla-sub-heading-container">

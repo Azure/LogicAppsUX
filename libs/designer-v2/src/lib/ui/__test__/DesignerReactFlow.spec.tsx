@@ -96,7 +96,6 @@ vi.mock('../../core/graphlayout', () => ({
 
 vi.mock('../../core/utils/graph', () => ({
   DEFAULT_NODE_SIZE: { width: 200, height: 40 },
-  DEFAULT_NOTE_SIZE: { width: 250, height: 100 },
 }));
 
 vi.mock('../../core/utils/designerLayoutHelpers', () => ({

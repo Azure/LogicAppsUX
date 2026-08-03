@@ -41,9 +41,6 @@ test.describe('Chat History Loading', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&withHistory=true`);
     await page.waitForLoadState('networkidle');
 
-    // Wait for sessions to load and render
-    await page.waitForTimeout(1000);
-
     // Should display "Chats" heading in sidebar
     await expect(page.getByRole('heading', { name: 'Chats' })).toBeVisible({ timeout: 5000 });
 
@@ -76,9 +73,6 @@ test.describe('Loading Messages for Historical Session', { tag: '@mock' }, () =>
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&withHistory=true`);
     await page.waitForLoadState('networkidle');
 
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
-
     // Set up request listener for tasks/list BEFORE clicking
     const tasksListPromise = page.waitForRequest((request) => {
       const postData = request.postDataJSON();
@@ -105,16 +99,10 @@ test.describe('Loading Messages for Historical Session', { tag: '@mock' }, () =>
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true&withHistory=true`);
     await page.waitForLoadState('networkidle');
 
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
-
     // Click on the second session (Bug Investigation) to load its messages
     const sessionItem = page.getByRole('group').filter({ hasText: 'Bug Investigation' }).filter({ hasText: '1/9/2025' });
     await expect(sessionItem).toBeVisible({ timeout: 5000 });
     await sessionItem.click();
-
-    // Wait for messages to load
-    await page.waitForTimeout(2000);
 
     // Verify historical messages from session-2 ("Bug Investigation") are visible
     await expect(page.getByText('Help me debug this timeout issue')).toBeVisible({ timeout: 5000 });
@@ -126,16 +114,10 @@ test.describe('Loading Messages for Historical Session', { tag: '@mock' }, () =>
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true&withHistory=true`);
     await page.waitForLoadState('networkidle');
 
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
-
     // Click on the second session (Bug Investigation) to load its messages
     const sessionItem = page.getByRole('group').filter({ hasText: 'Bug Investigation' }).filter({ hasText: '1/9/2025' });
     await expect(sessionItem).toBeVisible({ timeout: 5000 });
     await sessionItem.click();
-
-    // Wait for messages to load
-    await page.waitForTimeout(2000);
 
     // Verify user message is visible
     await expect(page.getByText('Help me debug this timeout issue')).toBeVisible({ timeout: 5000 });
@@ -150,9 +132,6 @@ test.describe('Session Switching', { tag: '@mock' }, () => {
     // Enable multi-session mode to see session list
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true&withHistory=true`);
     await page.waitForLoadState('networkidle');
-
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
 
     // Verify both sessions are visible
     const session1 = page.getByRole('group').filter({ hasText: 'Project Discussion' }).filter({ hasText: '1/10/2025' });
@@ -185,9 +164,6 @@ test.describe('Session Switching', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true&withHistory=true`);
     await page.waitForLoadState('networkidle');
 
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
-
     // Get session items by their visible text
     const session1 = page.getByRole('group').filter({ hasText: 'Project Discussion' }).filter({ hasText: '1/10/2025' });
     const session2 = page.getByRole('group').filter({ hasText: 'Bug Investigation' }).filter({ hasText: '1/9/2025' });
@@ -197,7 +173,6 @@ test.describe('Session Switching', { tag: '@mock' }, () => {
 
     // Click first session and verify its messages are displayed
     await session1.click();
-    await page.waitForTimeout(1000);
 
     // Verify first session's messages are visible (indicating it's active)
     await expect(page.getByText('Tell me about the project architecture')).toBeVisible({
@@ -207,7 +182,6 @@ test.describe('Session Switching', { tag: '@mock' }, () => {
 
     // Click second session and verify its messages are now displayed
     await session2.click();
-    await page.waitForTimeout(1000);
 
     // Verify second session's messages are visible (indicating it's now active)
     await expect(page.getByText('Help me debug this timeout issue')).toBeVisible({ timeout: 5000 });
@@ -261,9 +235,6 @@ test.describe('Chat History with Authentication', { tag: '@mock' }, () => {
     );
     await page.waitForLoadState('networkidle');
 
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
-
     // Set up request listener for tasks/list
     const tasksListPromise = page.waitForRequest((request) => {
       const postData = request.postDataJSON();
@@ -288,9 +259,6 @@ test.describe('Chat History Error Handling', { tag: '@mock' }, () => {
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&errorHistory=true`);
     await page.waitForLoadState('networkidle');
 
-    // Wait a moment for the error to be handled
-    await page.waitForTimeout(1000);
-
     // App should still render even if contexts/list fails - should show "Start a new chat" button
     const newChatButton = page.getByRole('button', { name: /start a new chat/i });
     await expect(newChatButton).toBeVisible({ timeout: 5000 });
@@ -303,9 +271,6 @@ test.describe('Chat History Error Handling', { tag: '@mock' }, () => {
       `http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true&withHistory=true&errorTasks=true`
     );
     await page.waitForLoadState('networkidle');
-
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
 
     // Click on a session to trigger tasks/list
     const sessionItem = page.getByRole('group').filter({ hasText: 'Project Discussion' }).first();
@@ -328,9 +293,6 @@ test.describe('Creating New Chat with Existing History', { tag: '@mock' }, () =>
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true&withHistory=true`);
     await page.waitForLoadState('networkidle');
 
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
-
     // Verify existing sessions are displayed
     const session1 = page.getByRole('group').filter({ hasText: 'Project Discussion' });
     await expect(session1).toBeVisible({ timeout: 5000 });
@@ -350,9 +312,6 @@ test.describe('Creating New Chat with Existing History', { tag: '@mock' }, () =>
     // Enable multiSession mode
     await page.goto(`http://localhost:3001/?agentCard=${encodeURIComponent(AGENT_CARD_URL)}&multiSession=true&withHistory=true`);
     await page.waitForLoadState('networkidle');
-
-    // Wait for sessions to load
-    await page.waitForTimeout(1000);
 
     // Click "New Chat" button
     const newChatButton = page.getByRole('button', { name: /new chat/i });

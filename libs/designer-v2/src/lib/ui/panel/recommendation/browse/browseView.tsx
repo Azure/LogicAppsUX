@@ -16,15 +16,16 @@ import { Favorites } from '../categories/Favorites';
 import type { AppDispatch } from '../../../../core';
 import { equals, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { getNodeId } from '../helpers';
-import { getTriggerCategories, getActionCategories, BrowseCategoryType } from './helper';
+import { getTriggerCategories, getActionCategories, BrowseCategoryType, MCP_SERVERS_CATEGORY_KEY } from './helper';
 import { useDisableMcpClientTools } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 
 interface BrowseViewProps {
   isTrigger?: boolean;
   onOperationClick: (operationId: string, apiId?: string) => void;
+  searchTerm?: string;
 }
 
-export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewProps) => {
+export const BrowseView = ({ isTrigger = false, onOperationClick, searchTerm }: BrowseViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const classes = useBrowseViewStyles();
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
@@ -91,8 +92,8 @@ export const BrowseView = ({ isTrigger = false, onOperationClick }: BrowseViewPr
       if (selectedBrowseCategory.key === 'favorites') {
         return <Favorites onConnectorSelected={onConnectorSelected} onOperationSelected={onOperationSelected} />;
       }
-      if (selectedBrowseCategory.key === 'mcpServers') {
-        return <McpServersBrowse onOperationClick={onOperationClick} />;
+      if (selectedBrowseCategory.key === MCP_SERVERS_CATEGORY_KEY) {
+        return <McpServersBrowse onOperationClick={onOperationClick} searchTerm={searchTerm} />;
       }
 
       return (

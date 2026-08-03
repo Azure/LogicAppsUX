@@ -4,6 +4,7 @@ import Constants from '../../../../common/constants';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import {
   getConnectionMappingForNode,
+  getConnectionPropertiesIfRequired,
   getLegacyConnectionReferenceKey,
   getManifestBasedConnectionMapping,
   isOpenApiConnectionType,
@@ -21,7 +22,10 @@ import {
   OperationManifestService,
   createItem,
   ConnectionReferenceKeyFormat,
+  ConnectionParameterTypes,
   InitLoggerService,
+  InitWorkflowService,
+  ResourceIdentityType,
 } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest, Connector } from '@microsoft/logic-apps-shared';
 
@@ -355,3 +359,68 @@ function createDeferred<T>() {
   });
   return { promise, reject, resolve };
 }
+
+describe('getConnectionPropertiesIfRequired', () => {
+  const mcpConnectorId = '/subscriptions/sub/providers/Microsoft.Web/locations/eastus2/managedApis/foundrygithubmcp';
+  const oauthConnection: any = { id: '/connections/foundrygithubmcp', properties: { parameterValues: {} } };
+
+  beforeEach(() => {
+    InitWorkflowService({
+      getAppIdentity: () => ({ type: ResourceIdentityType.SYSTEM_ASSIGNED, principalId: 'principal', tenantId: 'tenant' }),
+      isExplicitAuthRequiredForManagedIdentity: () => true,
+    } as any);
+  });
+
+  it('should not force managed identity properties on an OAuth-backed managed MCP connector', () => {
+    const connector: any = {
+      id: mcpConnectorId,
+      properties: {
+        capabilities: [],
+        connectionParameters: { token: { type: 'oauthSetting', oAuthSettings: { identityProvider: 'oauth2pkce' } } },
+      },
+    };
+
+    expect(getConnectionPropertiesIfRequired(oauthConnection, connector)).toBeUndefined();
+  });
+
+  it('should add managed identity properties for a managed MCP connector that declares no auth of its own', () => {
+    const connector: any = { id: mcpConnectorId, properties: { capabilities: [] } };
+
+    expect(getConnectionPropertiesIfRequired(oauthConnection, connector)).toEqual({
+      authentication: { type: 'ManagedServiceIdentity' },
+    });
+  });
+
+  it('should return undefined for a non-MCP OAuth connector', () => {
+    const connector: any = {
+      id: '/subscriptions/sub/providers/Microsoft.Web/locations/eastus2/managedApis/github',
+      properties: { capabilities: [], connectionParameters: { token: { type: 'oauthSetting' } } },
+    };
+
+    expect(getConnectionPropertiesIfRequired(oauthConnection, connector)).toBeUndefined();
+  });
+
+  it('should still add managed identity properties when the MCP connection itself uses a managed identity', () => {
+    const connector: any = {
+      id: mcpConnectorId,
+      properties: {
+        capabilities: [],
+        connectionParameterSets: {
+          uiDefinition: {},
+          values: [
+            { name: 'oauth', uiDefinition: {}, parameters: { token: { type: 'oauthSetting' } } },
+            { name: 'managedIdentity', uiDefinition: {}, parameters: { identity: { type: ConnectionParameterTypes.managedIdentity } } },
+          ],
+        },
+      },
+    };
+    const msiConnection: any = {
+      id: '/connections/foundrygithubmcp',
+      properties: { parameterValues: {}, parameterValueSet: { name: 'managedIdentity', values: {} } },
+    };
+
+    expect(getConnectionPropertiesIfRequired(msiConnection, connector)).toEqual({
+      authentication: { type: 'ManagedServiceIdentity' },
+    });
+  });
+});

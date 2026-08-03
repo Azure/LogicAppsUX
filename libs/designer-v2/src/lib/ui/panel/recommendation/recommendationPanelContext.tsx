@@ -43,6 +43,7 @@ import { BrowseView } from './browse/browseView';
 import { McpToolWizard } from './browse/mcpToolWizard';
 import { useRecommendationPanelContextStyles } from './styles/RecommendationPanelContext.styles';
 import { getNodeId, MCP_CLIENT_CONNECTOR_ID } from './helpers';
+import { MCP_SERVERS_CATEGORY_KEY } from './browse/helper';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -57,6 +58,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const selectedBrowseCategory = useDiscoveryPanelSelectedBrowseCategory();
   const mcpToolWizard = useMcpToolWizard();
+
+  // While browsing MCP servers the search box filters that list instead of falling back
+  // to the global operation search, which would otherwise unmount the MCP browse view.
+  const isBrowsingMcpServers = selectedBrowseCategory?.key === MCP_SERVERS_CATEGORY_KEY;
 
   const [isGrouped, setIsGrouped] = useState(true);
 
@@ -94,6 +99,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   // Active search
   useDebouncedEffect(
     () => {
+      // The term is scoped to the MCP server list, so it must not trigger a global operation search.
+      if (isBrowsingMcpServers) {
+        return;
+      }
       // if preload is complete, no need to actively search
       if (!isLoadingOperations) {
         return;
@@ -109,7 +118,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));
       });
     },
-    [searchedTerms, isLoadingOperations, searchTerm, activeSearchOperations],
+    [searchedTerms, isLoadingOperations, searchTerm, activeSearchOperations, isBrowsingMcpServers],
     300
   );
 
@@ -132,7 +141,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const handleBackToCategories = useCallback(() => {
     dispatch(selectBrowseCategory(undefined));
-  }, [dispatch]);
+    if (isBrowsingMcpServers) {
+      // The term was scoped to the MCP list, so it shouldn't leak into the global search results.
+      dispatch(setDiscoverySearchTerm(''));
+    }
+  }, [dispatch, isBrowsingMcpServers]);
 
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const isParallelBranch = useDiscoveryPanelIsParallelBranch();
@@ -286,6 +299,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Aria label for the close button in the Add Action Panel',
   });
 
+  const mcpSearchPlaceholder = intl.formatMessage({
+    defaultMessage: 'Search for an MCP server',
+    id: 'BjCr68',
+    description: 'Placeholder text for the search box when browsing MCP servers',
+  });
+
   return (
     <FavoriteContext.Provider value={contextValue}>
       <div className={`msla-app-action-header-v2 ${classes.container}`} ref={recommendationPanelRef}>
@@ -312,7 +331,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           </div>
         </div>
         {!mcpToolWizard?.operation && (
-          <OperationSearchHeaderV2 searchCallback={setSearchTerm} searchTerm={searchTerm} isTriggerNode={isTrigger} />
+          <OperationSearchHeaderV2
+            searchCallback={setSearchTerm}
+            searchTerm={searchTerm}
+            isTriggerNode={isTrigger}
+            placeholder={isBrowsingMcpServers ? mcpSearchPlaceholder : undefined}
+          />
         )}
       </div>
       {
@@ -328,7 +352,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 <div className={classes.wizardWrapper}>
                   <McpToolWizard />
                 </div>
-              ) : searchTerm ? (
+              ) : searchTerm && !isBrowsingMcpServers ? (
                 <SearchView
                   searchTerm={searchTerm}
                   allOperations={allOperations ?? []}
@@ -340,7 +364,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   displayRuntimeInfo={displayRuntimeInfo}
                 />
               ) : (
-                <BrowseView isTrigger={isTrigger} onOperationClick={onOperationClick} />
+                <BrowseView isTrigger={isTrigger} onOperationClick={onOperationClick} searchTerm={searchTerm} />
               )}
             </>
           ),
