@@ -15,7 +15,7 @@ export async function executeCommand(
   command: string,
   ...args: string[]
 ): Promise<string> {
-  return executeCommandInternal(outputChannel, workingDirectory, undefined, command, ...args);
+  return executeCommandInternal(outputChannel, workingDirectory, undefined, undefined, command, ...args);
 }
 
 export async function executeCommandWithSanityLogging(
@@ -25,17 +25,40 @@ export async function executeCommandWithSanityLogging(
   command: string,
   ...args: string[]
 ): Promise<string> {
-  return executeCommandInternal(outputChannel, workingDirectory, sanitizedCommandForLogging, command, ...args);
+  return executeCommandInternal(outputChannel, workingDirectory, sanitizedCommandForLogging, undefined, command, ...args);
+}
+
+/**
+ * Runs a command that must not be allowed to run forever, killing it once it outlives `timeoutMs`.
+ * The default execution helpers only settle on 'close'/'error', so a binary that hangs instead of
+ * exiting stalls its caller indefinitely and keeps its file handles open. Use this for probes that
+ * sit on an interactive path, where a hang is worse than a failure.
+ * @param {IAzExtOutputChannel | undefined} outputChannel - Output channel to stream the command output to.
+ * @param {string | undefined} workingDirectory - Directory to run the command from.
+ * @param {number} timeoutMs - Milliseconds to wait before killing the command.
+ * @param {string} command - Command to run.
+ * @param {string[]} args - Command arguments.
+ * @returns {Promise<string>} The command output, or a rejection when it fails or times out.
+ */
+export async function executeCommandWithTimeout(
+  outputChannel: IAzExtOutputChannel | undefined,
+  workingDirectory: string | undefined,
+  timeoutMs: number,
+  command: string,
+  ...args: string[]
+): Promise<string> {
+  return executeCommandInternal(outputChannel, workingDirectory, undefined, timeoutMs, command, ...args);
 }
 
 async function executeCommandInternal(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   sanitizedCommandForLogging: string | undefined,
+  timeoutMs: number | undefined,
   command: string,
   ...args: string[]
 ): Promise<string> {
-  const result: ICommandResult = await tryExecuteCommand(outputChannel, workingDirectory, command, ...args);
+  const result: ICommandResult = await tryExecuteCommandInternal(outputChannel, workingDirectory, timeoutMs, command, ...args);
 
   const commandForLogging = sanitizedCommandForLogging ?? `${command} ${result.formattedArgs}`;
   if (result.code !== 0) {
@@ -71,6 +94,34 @@ export async function tryExecuteCommand(
   command: string,
   ...args: string[]
 ): Promise<ICommandResult> {
+  return await tryExecuteCommandInternal(outputChannel, workingDirectory, undefined, command, ...args);
+}
+
+/**
+ * Terminates a spawned command. Because commands are spawned with `shell: true`, the tracked pid is
+ * the shell, and on Windows killing it leaves the actual command running — and still holding its
+ * file handles — so the whole tree has to be taken down.
+ * @param {cp.ChildProcess} childProc - The spawned shell process.
+ */
+function killProcessTree(childProc: cp.ChildProcess): void {
+  try {
+    if (process.platform === Platform.windows && childProc.pid !== undefined) {
+      cp.exec(`taskkill /pid ${childProc.pid} /t /f`);
+    } else {
+      childProc.kill('SIGKILL');
+    }
+  } catch {
+    // Best effort only: the process may have exited between the timeout firing and the kill.
+  }
+}
+
+async function tryExecuteCommandInternal(
+  outputChannel: IAzExtOutputChannel | undefined,
+  workingDirectory: string | undefined,
+  timeoutMs: number | undefined,
+  command: string,
+  ...args: string[]
+): Promise<ICommandResult> {
   return await new Promise((resolve: (res: ICommandResult) => void, reject: (e: Error) => void): void => {
     let cmdOutput = '';
     let cmdOutputIncludingStderr = '';
@@ -82,6 +133,33 @@ export async function tryExecuteCommand(
       shell: true,
     };
     const childProc: cp.ChildProcess = cp.spawn(command, args, options);
+
+    let timedOut = false;
+    let timer: NodeJS.Timeout | undefined;
+    if (timeoutMs !== undefined) {
+      timer = setTimeout(() => {
+        timedOut = true;
+        killProcessTree(childProc);
+        reject(
+          new Error(
+            localize(
+              'commandTimedOut',
+              'Command "{0} {1}" did not complete within {2} ms and was terminated.',
+              command,
+              formattedArgs,
+              timeoutMs
+            )
+          )
+        );
+      }, timeoutMs);
+    }
+
+    const settle = (): void => {
+      if (timer !== undefined) {
+        clearTimeout(timer);
+        timer = undefined;
+      }
+    };
 
     if (outputChannel && command !== 'echo') {
       outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
@@ -104,8 +182,17 @@ export async function tryExecuteCommand(
       }
     });
 
-    childProc.on('error', reject);
+    childProc.on('error', (error: Error) => {
+      settle();
+      if (!timedOut) {
+        reject(error);
+      }
+    });
     childProc.on('close', (code: number) => {
+      settle();
+      if (timedOut) {
+        return;
+      }
       resolve({
         code,
         cmdOutput,

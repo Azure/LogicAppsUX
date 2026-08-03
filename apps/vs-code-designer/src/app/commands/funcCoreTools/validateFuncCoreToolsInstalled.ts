@@ -5,7 +5,7 @@
 import { type PackageManager, funcVersionSetting, validateFuncCoreToolsSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { useBinariesDependencies } from '../../utils/binaries';
-import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
+import { executeCommandWithTimeout } from '../../utils/funcCoreTools/cpUtils';
 import {
   ensureFuncCoreToolsCommandExecutablePermissions,
   getFunctionsCommand,
@@ -77,6 +77,17 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
 }
 
 /**
+ * How long to wait for `func --version` before treating the binary as unusable.
+ *
+ * This probe sits on the F5 critical path. A corrupt or quarantined executable can hang instead of
+ * exiting — on Windows a non-PE `func.exe` can stall inside the shell rather than returning an
+ * error — and an unbounded wait there stalls debug with no feedback and no chance for the repair
+ * below to run. The bound is deliberately generous so that a genuinely slow first run (for example,
+ * on-access antivirus scanning a freshly extracted binary) is not mistaken for a broken one.
+ */
+const funcVersionProbeTimeoutMs = 60 * 1000;
+
+/**
  * Check is functions core tools is installed.
  * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
  */
@@ -87,9 +98,14 @@ async function isFuncToolsInstalled(): Promise<boolean> {
   }
 
   try {
-    await executeCommand(undefined, undefined, funcCommand, '--version');
+    await executeCommandWithTimeout(undefined, undefined, funcVersionProbeTimeoutMs, funcCommand, '--version');
     return true;
-  } catch {
+  } catch (error) {
+    // A binary that hangs is as unusable as one that errors, and both mean the managed copy needs
+    // repairing, so they are reported identically. The reason is logged because it is the only
+    // signal distinguishing "func is broken" from "the gate never ran" when debug appears to do nothing.
+    const message = error instanceof Error ? error.message : String(error);
+    ext.outputChannel.appendLog(`Functions Core Tools check failed for "${funcCommand}": ${message}`);
     return false;
   }
 }
