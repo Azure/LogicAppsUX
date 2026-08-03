@@ -4,5 +4,8 @@
   "private": true,
   "peerDependencies": {
     "react": ">=18"
+  },
+  "devDependencies": {
+    "@fluentui/react-icons": "^2.0.224"
   }
 }
