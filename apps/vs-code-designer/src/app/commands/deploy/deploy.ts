@@ -256,12 +256,12 @@ async function deploy(
           context
         );
       }
+      await uploadAppSettings(context, getAppSettingsFromNode(node), workspaceFolder, settingsToExclude);
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
         await node.loadAllChildren(context);
       }
-      await uploadAppSettings(context, getAppSettingsFromNode(node), workspaceFolder, settingsToExclude);
     }
   });
 
