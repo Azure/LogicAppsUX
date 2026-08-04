@@ -6,7 +6,7 @@ import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledEr
 import { activateAzurite } from './azurite/activateAzurite';
 import { refreshConnectionKeys } from './appSettings/connectionKeys';
 import { designerApiLoadTimeout, designerStartApi, extensionCommand } from '../../constants';
-import { getContainingWorkspace } from './workspace';
+import { getContainingWorkspaceFolder } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
 import * as vscode from 'vscode';
@@ -41,7 +41,7 @@ export async function startRuntimeApi(context: IActionContext, projectPath: stri
     throw new UserCancelledError('preDebugValidate');
   }
 
-  const workspaceFolder = getContainingWorkspace(projectPath);
+  const workspaceFolder = getContainingWorkspaceFolder(projectPath);
   if (!workspaceFolder) {
     throw new Error(localize('noWorkspace', 'Unable to find the workspace containing the project path "{0}".', projectPath));
   }

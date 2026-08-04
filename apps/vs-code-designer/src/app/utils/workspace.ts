@@ -113,7 +113,7 @@ export const getWorkspaceFileInParentDirectory = async (actionContext: IActionCo
  * @param {string} fsPath - The path of the file in the workspace folder.
  * @returns {vscode.WorkspaceFolder | undefined} - The workspace folder.
  */
-export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder | undefined {
+export function getContainingWorkspaceFolder(fsPath: string): vscode.WorkspaceFolder | undefined {
   const openFolders = vscode.workspace.workspaceFolders || [];
   return openFolders.find((folder: vscode.WorkspaceFolder): boolean => {
     return isPathEqual(folder.uri.fsPath, fsPath) || isSubpath(folder.uri.fsPath, fsPath);
@@ -126,7 +126,7 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
  * @returns The path of the workspace folder.
  */
 export const getWorkspacePath = (workflowFilePath: string): string => {
-  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  const workspaceFolder = nonNullValue(getContainingWorkspaceFolder(workflowFilePath), 'workspaceFolder');
   return workspaceFolder.uri.fsPath;
 };
 
@@ -232,7 +232,7 @@ async function logicAppFoundInFolders(subFolders: string[]): Promise<vscode.Work
     return undefined;
   }
 
-  return getContainingWorkspace(logicAppProjectRoots[0]);
+  return getContainingWorkspaceFolder(logicAppProjectRoots[0]);
 }
 
 async function getLogicAppWorkspaceFolder(
@@ -252,7 +252,7 @@ async function getLogicAppWorkspaceFolder(
   }
 
   if (logicAppProjectRoots.length === 1 || skipPromptOnMultipleFolders) {
-    return getContainingWorkspace(logicAppProjectRoots[0]);
+    return getContainingWorkspaceFolder(logicAppProjectRoots[0]);
   }
 
   const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
@@ -261,7 +261,7 @@ async function getLogicAppWorkspaceFolder(
     return {
       label: path.basename(projectRoot),
       description: projectRoot,
-      data: workspaceFolder ?? getContainingWorkspace(projectRoot),
+      data: workspaceFolder ?? getContainingWorkspaceFolder(projectRoot),
     };
   });
 

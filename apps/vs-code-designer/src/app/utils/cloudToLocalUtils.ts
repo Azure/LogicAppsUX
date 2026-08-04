@@ -32,7 +32,7 @@ import { unzipLogicAppArtifacts } from './taskUtils';
 import { shouldParameterizeConnections } from './vsCodeConfig/settings';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { getContainingWorkspace } from './workspace';
+import { getContainingWorkspaceFolder } from './workspace';
 import { getExtensionAssetPath } from './extensionAssets';
 import AdmZip from 'adm-zip';
 
@@ -414,7 +414,7 @@ function runPostExtractSteps(cache: { projectPath: string; textDocumentPath: str
   callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
-    if (getContainingWorkspace(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
+    if (getContainingWorkspaceFolder(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
       window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
     context.telemetry.properties.result = 'Succeeded';

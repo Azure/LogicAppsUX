@@ -37,7 +37,7 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspace';
+import { getContainingWorkspaceFolder, getWorkspaceFolder } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
@@ -170,7 +170,7 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
     );
   }
 
-  const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspace(node.fsPath);
+  const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspaceFolder(node.fsPath);
 
   const wizardOptions = {
     projectPath,

@@ -5,7 +5,7 @@
 import { webhookRedirectHostUri } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getContainingWorkspace, getWorkspaceFolder } from '../../../utils/workspace';
+import { getContainingWorkspaceFolder, getWorkspaceFolder } from '../../../utils/workspace';
 import { ConfigureRedirectEndpointStep } from './configureWebhookRedirectEndpointSteps/ConfigureRedirectEndpointStep';
 import { SaveWebhookContextStep } from './configureWebhookRedirectEndpointSteps/SaveWebhookContextStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -21,7 +21,7 @@ export async function configureWebhookRedirectEndpoint(context: IActionContext, 
   let workspaceFolder: WorkspaceFolder;
 
   if (data?.fsPath) {
-    workspaceFolder = nonNullValue(getContainingWorkspace(data.fsPath), 'workspaceFolder');
+    workspaceFolder = nonNullValue(getContainingWorkspaceFolder(data.fsPath), 'workspaceFolder');
   } else {
     workspaceFolder = await getWorkspaceFolder(context);
   }

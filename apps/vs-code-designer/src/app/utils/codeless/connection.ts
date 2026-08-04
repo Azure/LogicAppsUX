@@ -10,7 +10,7 @@ import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSetting
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { getContainingWorkspace } from '../workspace';
+import { getContainingWorkspaceFolder } from '../workspace';
 import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
@@ -99,7 +99,7 @@ export async function addConnectionData(
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  const workspaceFolder = nonNullValue(getContainingWorkspaceFolder(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
 
   const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
