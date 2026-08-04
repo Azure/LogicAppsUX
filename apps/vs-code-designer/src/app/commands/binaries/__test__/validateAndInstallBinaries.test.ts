@@ -137,7 +137,7 @@ describe('validateAndInstallBinaries', () => {
     );
     expect(cancellationToken.onCancellationRequested).toHaveBeenCalledWith(expect.any(Function));
     expect(context.telemetry.properties).toMatchObject({
-      dependencyTimeout: '3',
+      dependencyTimeoutMs: '3000',
       dependencyPath: defaultDependencyPathValue,
       performedDependencyUpdateCheck: 'true',
       dependenciesVersions: JSON.stringify({
@@ -147,22 +147,22 @@ describe('validateAndInstallBinaries', () => {
       }),
     });
     expect(callWithTelemetryAndErrorHandling).toHaveBeenCalledTimes(4);
-    expect(runWithTimeout).toHaveBeenNthCalledWith(1, expect.any(Function), 'NodeJs', 3, 'https://github.com/nodesource/distributions');
+    expect(runWithTimeout).toHaveBeenNthCalledWith(1, expect.any(Function), 'NodeJs', 3000, 'https://github.com/nodesource/distributions');
     expect(runWithTimeout).toHaveBeenNthCalledWith(
       2,
       expect.any(Function),
       'Functions Runtime',
-      3,
+      3000,
       'https://github.com/Azure/azure-functions-core-tools/releases'
     );
     expect(runWithTimeout).toHaveBeenNthCalledWith(
       3,
       expect.any(Function),
       '.NET SDK',
-      3,
+      3000,
       'https://dotnet.microsoft.com/en-us/download/dotnet'
     );
-    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'SDK LSP Server', 3);
+    expect(runWithTimeout).toHaveBeenNthCalledWith(4, expect.any(Function), 'SDK LSP Server', 3000);
     expect(validateNodeJsIsLatest).toHaveBeenCalledWith(
       expect.objectContaining({
         errorHandling: expect.objectContaining({ rethrow: true }),
