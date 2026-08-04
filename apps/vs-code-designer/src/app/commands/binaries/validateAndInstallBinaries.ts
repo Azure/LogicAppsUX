@@ -41,9 +41,9 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       progress.report({ increment: 10, message: 'Get Settings' });
 
       const dependencyPath = await ensureRuntimeDependenciesDir();
-      const dependencyTimeout = getDependencyTimeout();
+      const dependencyTimeoutMs = getDependencyTimeout() * 1000;
       context.telemetry.properties.dependencyPath = dependencyPath;
-      context.telemetry.properties.dependencyTimeout = String(dependencyTimeout);
+      context.telemetry.properties.dependencyTimeoutMs = String(dependencyTimeoutMs);
 
       // Decide once, up front, whether this pass should perform the network "is there a newer
       // version?" checks. Individual validators read the same throttle flag, so they stay in sync
@@ -74,7 +74,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             await runWithTimeout(
               () => validateNodeJsIsLatest(actionContext, dependenciesVersions?.nodejs),
               'NodeJs',
-              dependencyTimeout,
+              dependencyTimeoutMs,
               'https://github.com/nodesource/distributions'
             );
             await setNodeJsCommand();
@@ -86,7 +86,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             await runWithTimeout(
               () => validateFuncCoreToolsIsLatest(actionContext, dependenciesVersions?.funcCoreTools),
               'Functions Runtime',
-              dependencyTimeout,
+              dependencyTimeoutMs,
               'https://github.com/Azure/azure-functions-core-tools/releases'
             );
             await setFunctionsCommand();
@@ -99,7 +99,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             await runWithTimeout(
               () => validateDotNetIsLatest(actionContext, dotnetDependencies),
               '.NET SDK',
-              dependencyTimeout,
+              dependencyTimeoutMs,
               'https://dotnet.microsoft.com/en-us/download/dotnet'
             );
             await setDotNetCommand();
@@ -108,7 +108,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             _actionContext.errorHandling.rethrow = true;
             _actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 10, message: 'SDK LSP Server' });
-            await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeout);
+            await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeoutMs);
             // TODO(aeldridge): Why is setDotNetCommand called here?
             await setDotNetCommand();
           }),
