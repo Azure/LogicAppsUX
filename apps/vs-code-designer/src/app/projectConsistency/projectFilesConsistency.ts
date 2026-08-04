@@ -5,6 +5,7 @@
 import {
   ProjectDirectoryPathKey,
   appKindSetting,
+  azureWebJobsFeatureFlagsKey,
   connectionsFileName,
   designTimeDirectoryName,
   extensionBundleId,
@@ -29,6 +30,7 @@ import {
   generateDesignTimeLocalSettingsJson,
 } from './fileGenerators';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../utils/appSettings/localSettings';
+import { hasJdbcDriverJars, mergeMultiLanguageWorkerFlag } from '../utils/java/jdbcConnector';
 import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
@@ -183,7 +185,8 @@ export async function ensureLocalSettingsFile(
   const fileExisted = await fse.pathExists(localSettingsPath);
 
   const logicAppType = await detectProjectType(projectPath);
-  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
+  const hasJdbcDrivers = await hasJdbcDriverJars(projectPath);
+  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType, { hasJdbcDriverJars: hasJdbcDrivers }).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
@@ -200,6 +203,18 @@ export async function ensureLocalSettingsFile(
   for (const key of referencedSettings) {
     if (currentValues[key] === undefined && settingsToAdd[key] === undefined) {
       settingsToAdd[key] = '';
+    }
+  }
+
+  // JDBC/Java built-in connectors run on the Functions multi-language (Java) worker, which is only
+  // enabled by the AzureWebJobsFeatureFlags=EnableMultiLanguageWorker app setting (issue #8597). The
+  // generator owns whether that flag belongs in the baseline for this project, while the repair path here
+  // merges it with any user-defined flags so existing values are never clobbered.
+  if (hasJdbcDrivers) {
+    const currentFlags = currentValues[azureWebJobsFeatureFlagsKey] ?? settingsToAdd[azureWebJobsFeatureFlagsKey];
+    const mergedFlags = mergeMultiLanguageWorkerFlag(currentFlags);
+    if (mergedFlags !== currentValues[azureWebJobsFeatureFlagsKey]) {
+      settingsToAdd[azureWebJobsFeatureFlagsKey] = mergedFlags;
     }
   }
 

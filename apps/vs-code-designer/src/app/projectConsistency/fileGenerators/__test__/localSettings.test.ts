@@ -87,6 +87,16 @@ describe('generateLocalSettingsJson / generateDesignTimeLocalSettingsJson', () =
       });
     });
 
+    it('logicApp with JDBC driver JARs: adds the multi-language worker feature flag', () => {
+      expect(generateLocalSettingsJson(projectPath, ProjectType.logicApp, { hasJdbcDriverJars: true })).toEqual({
+        IsEncrypted: false,
+        Values: {
+          ...baseRootValues,
+          [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting,
+        },
+      });
+    });
+
     it('customCode: adds the multi-language worker feature flag', () => {
       expect(generateLocalSettingsJson(projectPath, ProjectType.customCode)).toEqual({
         IsEncrypted: false,

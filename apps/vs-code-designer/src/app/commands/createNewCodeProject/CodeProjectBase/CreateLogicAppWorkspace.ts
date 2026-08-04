@@ -3,10 +3,12 @@ import {
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   devContainerFolderName,
+  builtinOperationSdksFolderName,
   extensionCommand,
   funcIgnoreFileName,
   gitignoreFileName,
   hostFileName,
+  jarFolderName,
   libDirectory,
   localSettingsFileName,
   lspDirectory,
@@ -55,8 +57,8 @@ export async function createRulesFiles(context: IFunctionWizardContext): Promise
 }
 
 export async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'JAR'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, builtinOperationSdksFolderName, jarFolderName), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, builtinOperationSdksFolderName, 'net472'), { recursive: true });
 }
 
 export async function createLogicAppAndWorkflow(
