@@ -467,7 +467,10 @@ async function readFileTextSafe(filePath: string): Promise<string> {
   return '';
 }
 
-function arePathsEqual(path1: string, path2: string): boolean {
+function arePathsEqual(path1: unknown, path2: unknown): boolean {
+  if (typeof path1 !== 'string' || typeof path2 !== 'string' || !path1 || !path2) {
+    return false;
+  }
   const resolved1 = path.resolve(path1);
   const resolved2 = path.resolve(path2);
   return process.platform === 'win32' ? resolved1.toLowerCase() === resolved2.toLowerCase() : resolved1 === resolved2;
