@@ -61,6 +61,7 @@ import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
+import { getAppSettingsFromNode } from '../../utils/tree/slotTreeUtils';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from '../publishCodefulProject';
@@ -260,7 +261,7 @@ async function deploy(
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
         await node.loadAllChildren(context);
       }
-      await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
+      await uploadAppSettings(context, getAppSettingsFromNode(node), workspaceFolder, settingsToExclude);
     }
   });
 
