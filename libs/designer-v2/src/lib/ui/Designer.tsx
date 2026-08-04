@@ -255,7 +255,7 @@ export const Designer = (props: DesignerProps) => {
             {hasUnsupportedMultipleTriggers ? (
               <MultiTriggerUnsupportedMessage
                 isStandard={isStandard}
-                onRunDetailsClick={canShowRunDetails ? () => HostService().openRun?.(runInstance!.id) : undefined}
+                onRunDetailsClick={canShowRunDetails ? () => HostService().openRunDetails?.(runInstance!.id) : undefined}
               />
             ) : (
               <DesignerReactFlow canvasRef={canvasRef}>
