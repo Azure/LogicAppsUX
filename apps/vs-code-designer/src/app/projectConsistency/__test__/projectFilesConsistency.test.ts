@@ -47,6 +47,10 @@ vi.mock('fs-extra', () => ({
   pathExists: vi.fn(),
   readFile: vi.fn(),
   readdir: vi.fn(),
+  lstat: vi.fn(),
+  readlink: vi.fn(),
+  symlink: vi.fn(),
+  remove: vi.fn(),
 }));
 
 vi.mock('../../utils/appSettings/localSettings', async (importActual) => {
@@ -90,6 +94,10 @@ const mockedFse = fse as unknown as {
   pathExists: ReturnType<typeof vi.fn>;
   readFile: ReturnType<typeof vi.fn>;
   readdir: ReturnType<typeof vi.fn>;
+  lstat: ReturnType<typeof vi.fn>;
+  readlink: ReturnType<typeof vi.fn>;
+  symlink: ReturnType<typeof vi.fn>;
+  remove: ReturnType<typeof vi.fn>;
 };
 const mockedAddOrUpdate = localSettings.addOrUpdateLocalAppSettings as unknown as ReturnType<typeof vi.fn>;
 const mockedGetLocalSettingsJson = localSettings.getLocalSettingsJson as unknown as ReturnType<typeof vi.fn>;
@@ -850,6 +858,115 @@ describe('projectFilesConsistency', () => {
             [workflowAuthenticationMethodKey]: 'managedServiceIdentity',
           },
         });
+      });
+    });
+
+    describe('artifacts junction', () => {
+      const designTimeDir = `${projectPath}/workflow-designtime`;
+      const artifactsTarget = `${projectPath}/Artifacts`;
+      const artifactsLink = `${designTimeDir}/Artifacts`;
+
+      beforeEach(() => {
+        // Default: valid design-time directory so host/settings are not rewritten
+        const hostPath = `${designTimeDir}/host.json`;
+        const settingsPath = `${designTimeDir}/local.settings.json`;
+        const validHost = JSON.stringify({
+          version: '2.0',
+          extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' },
+          extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
+        });
+        const validSettings = JSON.stringify({
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+            FUNCTIONS_INPROC_NET8_ENABLED: '1',
+            ProjectDirectoryPath: projectPath,
+          },
+        });
+        mockFiles({ [designTimeDir]: '', [hostPath]: validHost, [settingsPath]: validSettings, [artifactsTarget]: '' });
+        mockedFse.lstat.mockRejectedValue(new Error('ENOENT'));
+        mockedFse.symlink.mockResolvedValue(undefined);
+        mockedFse.readlink.mockResolvedValue(artifactsTarget);
+        mockedFse.remove.mockResolvedValue(undefined);
+      });
+
+      it('creates a junction when Artifacts exists and no link is present', async () => {
+        mockedFse.lstat.mockRejectedValue(new Error('ENOENT'));
+
+        await ensureDesignTimeFiles(context, projectPath);
+
+        expect(mockedFse.symlink).toHaveBeenCalledWith(
+          expect.stringContaining('Artifacts'),
+          expect.stringContaining('workflow-designtime'),
+          'junction'
+        );
+      });
+
+      it('does not create a junction when Artifacts folder does not exist', async () => {
+        // Remove Artifacts from the mock file system
+        mockFiles({
+          [designTimeDir]: '',
+          [`${designTimeDir}/host.json`]: JSON.stringify({
+            version: '2.0',
+            extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows', version: '[1.*, 2.0.0)' },
+            extensions: { workflow: { settings: { [workflowOperationDiscoveryHostModeKey]: 'true' } } },
+          }),
+          [`${designTimeDir}/local.settings.json`]: JSON.stringify({
+            Values: {
+              APP_KIND: 'workflowapp',
+              FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+              FUNCTIONS_INPROC_NET8_ENABLED: '1',
+              ProjectDirectoryPath: projectPath,
+            },
+          }),
+        });
+
+        await ensureDesignTimeFiles(context, projectPath);
+
+        expect(mockedFse.symlink).not.toHaveBeenCalled();
+      });
+
+      it('does not recreate junction when it already points to correct target', async () => {
+        mockedFse.lstat.mockResolvedValue({ isSymbolicLink: () => true });
+        mockedFse.readlink.mockResolvedValue(artifactsTarget);
+
+        await ensureDesignTimeFiles(context, projectPath);
+
+        expect(mockedFse.symlink).not.toHaveBeenCalled();
+        expect(mockedFse.remove).not.toHaveBeenCalled();
+      });
+
+      it('recreates junction when it points to wrong target', async () => {
+        mockedFse.lstat.mockResolvedValue({ isSymbolicLink: () => true });
+        mockedFse.readlink.mockResolvedValue('/some/other/path');
+
+        await ensureDesignTimeFiles(context, projectPath);
+
+        expect(mockedFse.remove).toHaveBeenCalled();
+        expect(mockedFse.symlink).toHaveBeenCalledWith(
+          expect.stringContaining('Artifacts'),
+          expect.stringContaining('workflow-designtime'),
+          'junction'
+        );
+      });
+
+      it('does not overwrite a real directory at the link path', async () => {
+        mockedFse.lstat.mockResolvedValue({ isSymbolicLink: () => false });
+
+        await ensureDesignTimeFiles(context, projectPath);
+
+        expect(mockedFse.symlink).not.toHaveBeenCalled();
+        expect(mockedFse.remove).not.toHaveBeenCalled();
+      });
+
+      it('logs a warning when symlink creation fails', async () => {
+        mockedFse.lstat.mockRejectedValue(new Error('ENOENT'));
+        mockedFse.symlink.mockRejectedValue(new Error('EPERM'));
+
+        await ensureDesignTimeFiles(context, projectPath);
+
+        const lines = loggedLines();
+        expect(lines.some((l) => l.includes('junction'))).toBe(true);
       });
     });
   });
