@@ -21,10 +21,23 @@ export async function runWithTimeout(
   timeoutMs: number,
   helpLink?: string
 ): Promise<void> {
+  let timedOut = false;
+
   try {
-    // If timeOutErrorOperation settles firsts, callback will continue to run.
-    await Promise.race([callback(), timeOutErrorOperation(timeoutMs)]);
-  } catch {
+    await Promise.race([
+      callback(),
+      new Promise<void>((_, reject) => {
+        setTimeout(() => {
+          timedOut = true;
+          reject(new Error('timeout'));
+        }, timeoutMs);
+      }),
+    ]);
+  } catch (error) {
+    if (!timedOut) {
+      throw error;
+    }
+
     ext.outputChannel.appendLog(`Timeout: ${callback.name}`);
     const result = await vscode.window.showWarningMessage(
       localize('asyncTimeout', `${dependencyName} timed out after ${timeoutMs} ms. Retry ${dependencyName}?`),
@@ -36,7 +49,7 @@ export async function runWithTimeout(
       ext.outputChannel.appendLog(`Retrying: ${callback.name}`);
       return await runWithTimeout(callback, dependencyName, timeoutMs, helpLink);
     }
-    
+
     vscode.window.showErrorMessage(
       localize(
         'timeoutError',
@@ -46,15 +59,4 @@ export async function runWithTimeout(
       )
     );
   }
-}
-
-/**
- * Sets a timeout and throws an error if timeout.
- */
-async function timeOutErrorOperation(ms: number): Promise<void> {
-  return await new Promise<void>((_, reject) => {
-    setTimeout(() => {
-      reject(new Error());
-    }, ms);
-  });
 }

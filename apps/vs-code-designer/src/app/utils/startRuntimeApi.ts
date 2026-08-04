@@ -23,12 +23,18 @@ import { releaseReservedPort, reserveFreePort } from './portReservation';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
+// TODO(aeldridge): Unused
 export async function startRuntimeApi(context: IActionContext, projectPath: string): Promise<void> {
-  await callWithTelemetryAndErrorHandling(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     await activateAzurite(actionContext, projectPath);
+    return true;
   });
+
+  if (!isAzuriteStarted) {
+    throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
+  }
 
   await callWithTelemetryAndErrorHandling(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;

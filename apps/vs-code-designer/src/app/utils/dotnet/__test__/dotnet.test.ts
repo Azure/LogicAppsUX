@@ -47,11 +47,6 @@ vi.mock('semver', () => ({
 import { getTemplateKeyFromProjFile } from '../dotnet';
 
 describe('dotnet utilities', () => {
-  const createContext = () =>
-    ({
-      telemetry: { properties: {}, measurements: {} },
-    }) as any;
-
   beforeEach(() => {
     vi.clearAllMocks();
     mockPathExists.mockResolvedValue(false);
