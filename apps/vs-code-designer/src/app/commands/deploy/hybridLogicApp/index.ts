@@ -1,6 +1,7 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
+import { getHybridSiteSecretsFromNode } from '../../../utils/tree/slotTreeUtils';
 import { localize } from '../../../../localize';
 import { connectToSMB } from './connectToSMB';
 import { cleanSMB, deleteSMBFolder, unMountSMB } from './cleanResources';
@@ -268,7 +269,7 @@ async function getAccessTokenForZipDeploy(node: SlotTreeItem, context: ILogicApp
   const tenantId = envVars.find((e) => e.name === workflowAppAADTenantId)?.value;
   const clientId = envVars.find((e) => e.name === workflowAppAADClientId)?.value;
   const clientSecretKey = envVars.find((e) => e.name === workflowAppAADClientSecret)?.secretRef;
-  const clientSecret = node.resourceTree?.hybridSiteSecrets?.find((s) => s.name === clientSecretKey)?.value ?? context.aad?.clientSecret;
+  const clientSecret = getHybridSiteSecretsFromNode(node)?.find((s) => s.name === clientSecretKey)?.value ?? context.aad?.clientSecret;
 
   if (!tenantId || !clientId || !clientSecret) {
     const errorMessage = 'Missing required environment variables for ZIP deploy: "{0}", "{1}", "{2}"';

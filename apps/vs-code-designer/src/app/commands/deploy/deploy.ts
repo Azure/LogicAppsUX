@@ -61,6 +61,7 @@ import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp, zipDeployHybridLogicApp } from './hybridLogicApp';
 import { createContainerClient } from '../../utils/azureClients';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
+import { getAppSettingsFromNode } from '../../utils/tree/slotTreeUtils';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from '../publishCodefulProject';
@@ -155,8 +156,14 @@ async function deploy(
     await initProjectForVSCode(context, effectiveDeployFsPath);
   }
 
-  const language = nonNullOrEmptyValue(getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath), projectLanguageSetting) as ProjectLanguage;
-  const version = nonNullOrEmptyValue(tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)), funcVersionSetting) as FuncVersion;
+  const language = nonNullOrEmptyValue(
+    getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath),
+    projectLanguageSetting
+  ) as ProjectLanguage;
+  const version = nonNullOrEmptyValue(
+    tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)),
+    funcVersionSetting
+  ) as FuncVersion;
 
   context.telemetry.properties.projectLanguage = language;
   context.telemetry.properties.projectRuntime = version;
@@ -255,12 +262,14 @@ async function deploy(
           context
         );
       }
+      if (!isHybridLogicApp) {
+        await uploadAppSettings(context, getAppSettingsFromNode(node), workspaceFolder, settingsToExclude);
+      }
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
         await node.loadAllChildren(context);
       }
-      await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
     }
   });
 
