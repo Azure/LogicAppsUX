@@ -156,8 +156,14 @@ async function deploy(
     await initProjectForVSCode(context, effectiveDeployFsPath);
   }
 
-  const language = nonNullOrEmptyValue(getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath), projectLanguageSetting) as ProjectLanguage;
-  const version = nonNullOrEmptyValue(tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)), funcVersionSetting) as FuncVersion;
+  const language = nonNullOrEmptyValue(
+    getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath),
+    projectLanguageSetting
+  ) as ProjectLanguage;
+  const version = nonNullOrEmptyValue(
+    tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)),
+    funcVersionSetting
+  ) as FuncVersion;
 
   context.telemetry.properties.projectLanguage = language;
   context.telemetry.properties.projectRuntime = version;
@@ -256,7 +262,9 @@ async function deploy(
           context
         );
       }
-      await uploadAppSettings(context, getAppSettingsFromNode(node), workspaceFolder, settingsToExclude);
+      if (!isHybridLogicApp) {
+        await uploadAppSettings(context, getAppSettingsFromNode(node), workspaceFolder, settingsToExclude);
+      }
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
