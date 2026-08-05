@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { cleanup, render } from '@testing-library/react';
 
 const mockDispatch = vi.fn();
 let mockHasMultipleTriggers = false;
+
+afterEach(cleanup);
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
