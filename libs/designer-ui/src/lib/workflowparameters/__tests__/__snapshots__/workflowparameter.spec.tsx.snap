@@ -13,7 +13,7 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
       className="___r7kt3y0_0000000 fqerorx"
       data-automation-id="id-parameter-heading-button"
       data-testid="id-parameter-heading-button"
-      icon={<CompoundIcon />}
+      icon={<ForwardRef />}
       id="id"
       onClick={[Function]}
       style={
@@ -50,7 +50,7 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
           <Button
             appearance="subtle"
             aria-label="Delete parameter"
-            icon={<CompoundIcon />}
+            icon={<ForwardRef />}
             onClick={[Function]}
             style={
               {

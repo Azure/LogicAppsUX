@@ -78,6 +78,17 @@ export function getRunTriggerName(definition: LogicAppsV2.WorkflowDefinition): s
 }
 
 /**
+ * Determines whether a Logic Apps V2 workflow definition declares more than one trigger.
+ * Multiple triggers are only supported by the Consumption backend (via Code View); neither the
+ * Standard runtime nor the visual designer support rendering or editing such definitions.
+ * @param {LogicAppsV2.WorkflowDefinition | undefined | null} definition - The workflow definition to check.
+ * @returns {boolean} True when the definition has more than one trigger.
+ */
+export function hasMultipleTriggers(definition: LogicAppsV2.WorkflowDefinition | undefined | null): boolean {
+  return !!definition?.triggers && Object.keys(definition.triggers).length > 1;
+}
+
+/**
  * Checks if the runtime is running on the specified baseUrl.
  * @param {string} baseUrl - The base URL to check.
  * @returns {Promise<boolean>} - A promise that resolves to true if the runtime is up, false otherwise.

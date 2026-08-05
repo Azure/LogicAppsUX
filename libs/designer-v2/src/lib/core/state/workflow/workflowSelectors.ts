@@ -541,6 +541,13 @@ const selectRunInstance = createSelector(getWorkflowState, (state: WorkflowState
 
 export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null => useSelector(selectRunInstance);
 
+const selectHasUnsupportedMultipleTriggers = createSelector(
+  getWorkflowState,
+  (state: WorkflowState) => state.hasUnsupportedMultipleTriggers
+);
+
+export const useHasUnsupportedMultipleTriggers = (): boolean => useSelector(selectHasUnsupportedMultipleTriggers);
+
 const selectRunMode = createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance?.properties?.workflow?.mode ?? null);
 
 export const useRunMode = (): string | null => useSelector(selectRunMode);
