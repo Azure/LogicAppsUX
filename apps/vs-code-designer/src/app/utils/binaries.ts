@@ -49,16 +49,6 @@ export { useBinariesDependencies } from './runtimeDependencies';
 export { DownloadIntegrityError } from './integrity';
 export type { DownloadAttemptResult } from './integrity';
 
-export interface DownloadDependencyOptions {
-  /**
-   * Suppresses user-facing error toasts for installs the user did not explicitly request — for example
-   * the automatic Functions Core Tools repair attempted before a debug session, which already surfaces
-   * its own actionable prompt when it can't recover. Output-channel logging and telemetry are
-   * unaffected, so failures stay diagnosable.
-   */
-  suppressUi?: boolean;
-}
-
 /**
  * Download and Extracts dependency zip.
  * @param {string} downloadUrl - download url.
@@ -66,7 +56,6 @@ export interface DownloadDependencyOptions {
  * @param {string} dependencyName - The Dedependency name.
  * @param {string} folderName - Optional Folder name. Will default to dependency name if empty.
  * @param {string} dotNetVersion - The .NET Major Version from CDN.
- * @param {DownloadDependencyOptions} options - Optional behavior overrides.
  */
 
 export async function downloadAndExtractDependency(
@@ -75,8 +64,7 @@ export async function downloadAndExtractDependency(
   targetFolder: string,
   dependencyName: string,
   folderName?: string,
-  dotNetVersion?: string,
-  options?: DownloadDependencyOptions
+  dotNetVersion?: string
 ): Promise<DownloadAttemptResult | undefined> {
   folderName = folderName || dependencyName;
   const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, folderName);
@@ -99,9 +87,6 @@ export async function downloadAndExtractDependency(
   } catch (error) {
     const errorMessage = `Error downloading the ${dependencyName} file: ${error instanceof Error ? error.message : String(error)}`;
     ext.outputChannel.appendLog(errorMessage);
-    if (!options?.suppressUi) {
-      vscode.window.showErrorMessage(errorMessage);
-    }
     context.telemetry.properties.error = errorMessage;
     // Clean up partials before bailing.
     try {
@@ -132,9 +117,6 @@ export async function downloadAndExtractDependency(
     if (actualSha256.toLowerCase() !== expectedSha256.toLowerCase()) {
       const errorMessage = `Checksum verification failed for ${dependencyName}: expected SHA256 ${expectedSha256} but got ${actualSha256}.`;
       ext.outputChannel.appendLog(errorMessage);
-      if (!options?.suppressUi) {
-        vscode.window.showErrorMessage(errorMessage);
-      }
       context.telemetry.properties.error = errorMessage;
       try {
         if (fs.existsSync(tempFolderPath)) {
@@ -242,16 +224,6 @@ export async function downloadAndExtractDependency(
             error instanceof Error ? error.message : String(error)
           }.${lockHint}`;
     ext.outputChannel.appendLog(baseMessage);
-    if (!options?.suppressUi) {
-      vscode.window.showErrorMessage(
-        localize(
-          'bundleInstallFailed',
-          'Logic Apps extension bundle {0} could not be installed at {1}. Another process may be holding the folder. Close other VS Code windows and any running func.exe processes, then reload this window to retry.',
-          dependencyName,
-          targetFolder
-        )
-      );
-    }
     context.telemetry.properties.extractError = error instanceof Error ? error.message : String(error);
     throw error;
   } finally {

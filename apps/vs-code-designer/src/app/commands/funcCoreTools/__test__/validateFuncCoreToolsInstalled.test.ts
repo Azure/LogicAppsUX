@@ -6,6 +6,12 @@ import { executeCommandWithTimeout } from '../../../utils/funcCoreTools/cpUtils'
 import { ensureFuncCoreToolsCommandExecutablePermissions } from '../../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import { installFuncCoreToolsBinaries, isFuncCoreToolsInstallInFlight, waitForFuncCoreToolsInstall } from '../installFuncCoreTools';
+import { ext } from '../../../../extensionVariables';
+
+const testState = vi.hoisted(() => ({
+  telemetryContexts: [] as Array<{ callbackId: string; context: any }>,
+  showWarningMessage: vi.fn(),
+}));
 
 vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
@@ -44,23 +50,35 @@ vi.mock('../../../../extensionVariables', () => ({
   ext: {
     outputChannel: {
       appendLog: vi.fn(),
+      show: vi.fn(),
     },
   },
 }));
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {
-    return await callback({
+    const context = {
       telemetry: { properties: {}, measurements: {} },
-      errorHandling: { suppressDisplay: true },
+      errorHandling: { suppressDisplay: false, rethrow: false },
       ui: {
-        showWarningMessage: vi.fn(() => Promise.resolve({ title: 'Cancel' })),
+        showWarningMessage: (...args: unknown[]) => testState.showWarningMessage(...args),
       },
       valuesToMask: [],
-    });
+    };
+    testState.telemetryContexts.push({ callbackId: cmd, context });
+    try {
+      return await callback(context);
+    } catch (error) {
+      if (context.errorHandling.rethrow) {
+        throw error;
+      }
+      return undefined;
+    }
   }),
   DialogResponses: {
     cancel: { title: 'Cancel' },
+    learnMore: { title: 'Learn more' },
   },
+  openUrl: vi.fn(),
 }));
 
 describe('validateFuncCoreToolsInstalled', () => {
@@ -68,6 +86,8 @@ describe('validateFuncCoreToolsInstalled', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    testState.telemetryContexts.length = 0;
+    testState.showWarningMessage.mockResolvedValue({ title: 'Cancel' });
     mockContext = {
       telemetry: { properties: {}, measurements: {} },
       errorHandling: {},
@@ -81,6 +101,10 @@ describe('validateFuncCoreToolsInstalled', () => {
     vi.mocked(isFuncCoreToolsInstallInFlight).mockReturnValue(false);
     vi.mocked(waitForFuncCoreToolsInstall).mockResolvedValue(undefined);
   });
+
+  function getTelemetryContext(callbackId: string): any {
+    return testState.telemetryContexts.find((entry) => entry.callbackId === callbackId)?.context;
+  }
 
   describe('devContainer workspace', () => {
     it('should skip binaries validation in devContainer workspace', async () => {
@@ -140,8 +164,13 @@ describe('validateFuncCoreToolsInstalled', () => {
       await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
 
       expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
-      // The repair is automatic, so it must not pop the output channel or an error toast on its own.
-      expect(installFuncCoreToolsBinaries).toHaveBeenCalledWith(expect.anything(), undefined, { suppressUi: true });
+      const repairContext = getTelemetryContext('azureLogicAppsStandard.repairFuncCoreTools');
+      expect(repairContext.errorHandling.rethrow).toBe(true);
+      expect(repairContext.errorHandling.suppressDisplay).toBe(true);
+      expect(repairContext.telemetry.properties.funcRepairAttempted).toBe('true');
+      expect(repairContext.telemetry.properties.funcRepairSucceeded).toBe('true');
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledWith(repairContext);
+      expect(ext.outputChannel.show).not.toHaveBeenCalled();
     });
 
     it('falls back to the install prompt when the repair still cannot run func', async () => {
@@ -154,6 +183,26 @@ describe('validateFuncCoreToolsInstalled', () => {
       await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
 
       expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows the output channel only when the user chooses the interactive install', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(executeCommandWithTimeout).mockRejectedValue(new Error('not runnable'));
+      vi.mocked(installFuncCoreToolsBinaries)
+        .mockRejectedValueOnce(new Error('repair download failed'))
+        .mockRejectedValueOnce(new Error('interactive install failed'));
+      testState.showWarningMessage
+        .mockImplementationOnce((_message, _options, ...items) => Promise.resolve(items[0]))
+        .mockImplementationOnce((_message, ...items) => Promise.resolve(items[0]));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(2);
+      expect(ext.outputChannel.show).toHaveBeenCalledTimes(1);
+      expect(testState.showWarningMessage).toHaveBeenCalledTimes(2);
+      expect(testState.showWarningMessage.mock.calls[1][0]).toContain('will have to be installed manually');
     });
 
     it('falls back to the install prompt when the silent reinstall itself throws', async () => {

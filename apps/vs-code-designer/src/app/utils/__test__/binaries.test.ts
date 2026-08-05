@@ -94,24 +94,12 @@ describe('binaries', () => {
         );
       }
 
-      it('shows an error toast by default', async () => {
+      it('logs and records telemetry without owning user notification UI', async () => {
         const showErrorMessage = vi.fn();
         vscode.window.showErrorMessage = showErrorMessage;
         mockNonRetryableDownloadFailure();
 
         await expect(downloadAndExtractDependency(context, downloadUrl, 'targetFolder', 'dependency')).rejects.toThrowError();
-
-        expect(showErrorMessage).toHaveBeenCalledWith(expect.stringContaining('Error downloading the dependency file'));
-      });
-
-      it('stays silent but still logs and records telemetry when suppressUi is set', async () => {
-        const showErrorMessage = vi.fn();
-        vscode.window.showErrorMessage = showErrorMessage;
-        mockNonRetryableDownloadFailure();
-
-        await expect(
-          downloadAndExtractDependency(context, downloadUrl, 'targetFolder', 'dependency', undefined, undefined, { suppressUi: true })
-        ).rejects.toThrowError();
 
         expect(showErrorMessage).not.toHaveBeenCalled();
         expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Error downloading the dependency file'));

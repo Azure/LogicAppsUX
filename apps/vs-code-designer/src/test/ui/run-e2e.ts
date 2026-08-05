@@ -1678,8 +1678,8 @@ async function main(): Promise<void> {
     //   validateDependencies: true  — writes
     //     autoRuntimeDependenciesValidationAndInstallation, which IS
     //     useBinariesDependencies() (binaries.ts:793). With it off,
-    //     validateFuncCoreToolsInstalled never reaches
-    //     attemptManagedFuncCoreToolsRepair and the test would assert nothing.
+    //     validateFuncCoreToolsInstalled never reaches the managed-binaries
+    //     repair path and the test would assert nothing.
     //     It also provisions the managed func binaries this test corrupts.
     //   autoStartDesignTime: false  — a running design-time `func host start`
     //     holds func.exe open, and a running .exe cannot be overwritten on

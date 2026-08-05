@@ -5,7 +5,7 @@
 
 /**
  * End-to-end repair test for the pre-debug Azure Functions Core Tools self-heal
- * (Phase 4.14 — `validateFuncCoreToolsInstalled` -> `attemptManagedFuncCoreToolsRepair`).
+ * (Phase 4.14 — `validateFuncCoreToolsInstalled` -> managed-binaries validation repair).
  *
  * The reported failure mode: the extension-managed func binaries EXIST on disk (so every
  * existence / execute-bit check passes) but fail to EXECUTE — a partial extract, a poisoned
@@ -18,13 +18,11 @@
  *
  * which cannot be answered headlessly and aborts F5 outright.
  *
- * After the fix, `validateFuncCoreToolsInstalled` (:47-57) reaches
- * `attemptManagedFuncCoreToolsRepair` whenever `useBinariesDependencies()` is true, which
- * either joins an in-flight install (`waitForFuncCoreToolsInstall`) or silently reinstalls
- * the managed binaries (`installFuncCoreToolsBinaries(context, undefined, { suppressUi: true })`),
- * then re-probes `func --version`. F5 continues without ever showing the modal, and without
- * the download/checksum/extract error toasts that `{ suppressUi: true }` guards
- * (binaries.ts:100-136, :245-249).
+ * After the fix, the managed-binaries validation branch first attempts a silent repair whenever
+ * `useBinariesDependencies()` is true. It either joins an in-flight install
+ * (`waitForFuncCoreToolsInstall`) or silently reinstalls the managed binaries in a nested telemetry
+ * scope, then re-probes `func --version`. F5 continues without ever showing the modal, and without
+ * download/checksum/extract errors surfacing as user-facing toasts during the repair.
  *
  * What this test does:
  *   1. Waits for the managed func binaries to be installed AND for `func --version` to
@@ -155,9 +153,8 @@ const REQUIRED_STABLE_PROBES = 2;
 const BLOCKING_PROMPT_TEXT = 'You must have the Azure Functions Core Tools installed';
 
 /**
- * Toasts that `downloadAndExtractDependency` suppresses when the caller passes
- * `{ suppressUi: true }` (binaries.ts:100-136, :245-249). Their absence is the user-visible
- * half of "silent repair" — but see `SOFT` handling below.
+ * Toasts that must stay off screen while the automatic repair is running. Their absence is the
+ * user-visible half of "silent repair" — but see `SOFT` handling below.
  */
 const SUPPRESSED_ERROR_FRAGMENTS = ['Error downloading the', 'Checksum verification failed', 'could not be installed at'];
 
@@ -165,8 +162,7 @@ const SUPPRESSED_ERROR_FRAGMENTS = ['Error downloading the', 'Checksum verificat
  * Output-channel lines that only the debug-start -> `pickFuncProcessInternal` path can produce.
  *
  * Ordered by how far into that path they prove we got. Everything here is written
- * unconditionally by its own step (none of them are gated on `suppressUi`, which only guards
- * `showErrorMessage`), and all of them precede or belong to the repair itself:
+ * unconditionally by its own step, and all of them precede or belong to the repair itself:
  *   - `activateAzurite` runs FIRST in pickFuncProcessInternal (pickFuncProcess.ts:87-106).
  *   - `refreshConnectionKeys` runs SECOND (:112-116) and logs one of these two lines whenever
  *     the fixture has no Azure connectors, which is the case for a wizard-generated workspace.
@@ -1109,7 +1105,7 @@ async function watchForFuncRepair(
     }
 
     // Once the blocking modal is up the verdict is already decided: the product only reaches
-    // it after attemptManagedFuncCoreToolsRepair has returned false, and a modal blocks the
+    // it after the managed-binaries repair path has returned false, and a modal blocks the
     // extension host anyway. Stop early so a genuine regression fails in seconds with the disk
     // state captured, instead of burning the whole timeout.
     if (result.blockingPromptText !== '') {
@@ -1386,7 +1382,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     assert.strictEqual(
       watch.blockingPromptText,
       '',
-      `The blocking "${BLOCKING_PROMPT_TEXT}" prompt appeared after the debug start. attemptManagedFuncCoreToolsRepair either never ran (is useBinariesDependencies() false? check azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation) or failed to produce a runnable func.`
+      `The blocking "${BLOCKING_PROMPT_TEXT}" prompt appeared after the debug start. The managed-binaries repair path either never ran (is useBinariesDependencies() false? check azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation) or failed to produce a runnable func.`
     );
 
     // HARD + PRIMARY: disk-level proof that the corrupted binary was actually replaced.
@@ -1400,7 +1396,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     );
     console.log(`${LOG_PREFIX} ✓ Managed func repaired in ${Math.round(watch.elapsedMs / 1000)}s — ${describeBinary(primaryFuncPath)}`);
 
-    // SOFT: `{ suppressUi: true }` should keep the download/checksum/extract toasts off screen.
+    // SOFT: the silent repair should keep download/checksum/extract toasts off screen.
     // Non-blocking on purpose, exactly like `waitForRepairNotification` in bundleRepair.test.ts:
     // toast timing is racy (they auto-dismiss, and an unrelated toast can match a fragment),
     // and the disk-level repair above is the authoritative pass/fail signal.
@@ -1408,7 +1404,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
       console.log(`${LOG_PREFIX} ✓ No suppressed-by-design error toast observed during the repair`);
     } else {
       console.log(
-        `${LOG_PREFIX} ⚠ Observed an error toast fragment that { suppressUi: true } is meant to suppress: "${watch.suppressedErrorText}" (soft check — not failing the test)`
+        `${LOG_PREFIX} ⚠ Observed an error toast fragment that silent repair is meant to suppress: "${watch.suppressedErrorText}" (soft check — not failing the test)`
       );
     }
   });

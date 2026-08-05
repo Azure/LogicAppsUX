@@ -99,10 +99,7 @@ describe('runtime dependency installers', () => {
       context,
       'https://example.com/func.zip',
       'D:\\dependencies',
-      funcDependencyName,
-      undefined,
-      undefined,
-      undefined
+      funcDependencyName
     );
   });
 
@@ -115,10 +112,7 @@ describe('runtime dependency installers', () => {
       context,
       'https://example.com/func.zip',
       'D:\\dependencies',
-      funcDependencyName,
-      undefined,
-      undefined,
-      undefined
+      funcDependencyName
     );
   });
 
@@ -250,28 +244,11 @@ describe('runtime dependency installers', () => {
     });
   });
 
-  describe('non-interactive Functions Core Tools installs', () => {
-    it('reveals the output channel for user-initiated installs', async () => {
+  describe('Functions Core Tools install UI ownership', () => {
+    it('does not reveal the output channel from the installer itself', async () => {
       await installFuncCoreToolsBinaries({ telemetry: { properties: {} } } as any, '4');
 
-      expect(ext.outputChannel.show).toHaveBeenCalled();
-    });
-
-    it('stays silent and forwards the suppressUi flag when repairing in the background', async () => {
-      const silentContext = { telemetry: { properties: {} } } as any;
-
-      await installFuncCoreToolsBinaries(silentContext, '4', { suppressUi: true });
-
       expect(ext.outputChannel.show).not.toHaveBeenCalled();
-      expect(downloadAndExtractDependency).toHaveBeenCalledWith(
-        silentContext,
-        'https://example.com/func.zip',
-        'D:\\dependencies',
-        funcDependencyName,
-        undefined,
-        undefined,
-        { suppressUi: true }
-      );
     });
   });
 });

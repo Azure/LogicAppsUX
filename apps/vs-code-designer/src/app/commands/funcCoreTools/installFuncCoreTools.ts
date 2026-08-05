@@ -19,15 +19,6 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type FuncVersion, type INpmDistTag } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from 'vscode-nls';
 
-export interface InstallFuncCoreToolsOptions {
-  /**
-   * Suppresses user-facing UI (revealing the output channel, error toasts) for installs the user did
-   * not explicitly request — for example the automatic repair attempted before a debug session.
-   * Output-channel logging and telemetry are unaffected, so failures stay diagnosable.
-   */
-  suppressUi?: boolean;
-}
-
 interface InFlightFuncInstall {
   majorVersion?: string;
   work: Promise<void>;
@@ -75,13 +66,8 @@ export async function waitForFuncCoreToolsInstall(): Promise<void> {
  * install; a request for a different version waits for it to finish first.
  * @param {IActionContext} context - Command context.
  * @param {string} majorVersion - Optional major version to install. Defaults to the latest.
- * @param {InstallFuncCoreToolsOptions} options - Optional install behavior overrides.
  */
-export async function installFuncCoreToolsBinaries(
-  context: IActionContext,
-  majorVersion?: string,
-  options?: InstallFuncCoreToolsOptions
-): Promise<void> {
+export async function installFuncCoreToolsBinaries(context: IActionContext, majorVersion?: string): Promise<void> {
   while (inFlightFuncInstall) {
     const current = inFlightFuncInstall;
     if (current.majorVersion === majorVersion) {
@@ -101,7 +87,7 @@ export async function installFuncCoreToolsBinaries(
 
   const entry: InFlightFuncInstall = { majorVersion, work: Promise.resolve() };
   inFlightFuncInstall = entry;
-  entry.work = downloadFuncCoreToolsBinaries(context, majorVersion, options).finally(() => {
+  entry.work = downloadFuncCoreToolsBinaries(context, majorVersion).finally(() => {
     if (inFlightFuncInstall === entry) {
       inFlightFuncInstall = undefined;
     }
@@ -110,14 +96,7 @@ export async function installFuncCoreToolsBinaries(
   return entry.work;
 }
 
-async function downloadFuncCoreToolsBinaries(
-  context: IActionContext,
-  majorVersion?: string,
-  options?: InstallFuncCoreToolsOptions
-): Promise<void> {
-  if (!options?.suppressUi) {
-    ext.outputChannel.show();
-  }
+async function downloadFuncCoreToolsBinaries(context: IActionContext, majorVersion?: string): Promise<void> {
   const arch = getCpuArchitecture();
   const targetDirectory = await ensureRuntimeDependenciesPath();
   context.telemetry.properties.lastStep = 'getLatestFunctionCoreToolsVersion';
@@ -142,15 +121,7 @@ async function downloadFuncCoreToolsBinaries(
     }
   }
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractDependency(
-    context,
-    azureFunctionCoreToolsReleasesUrl,
-    targetDirectory,
-    funcDependencyName,
-    undefined,
-    undefined,
-    options
-  );
+  await downloadAndExtractDependency(context, azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
 }
 
 export async function installFuncCoreToolsSystem(
