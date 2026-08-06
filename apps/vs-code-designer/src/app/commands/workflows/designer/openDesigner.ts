@@ -15,7 +15,7 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { openDesignerV2 } from '../designer-v2/openDesignerV2';
-import { defaultDesignerVersion, designerVersionSetting, extensionCommand } from '../../../../constants';
+import { defaultDesignerVersion, designerVersionSetting } from '../../../../constants';
 import { shouldAlwaysBuildCustomCode } from '../../../utils/vsCodeConfig/settings';
 
 export async function openDesigner(context: IActionContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
@@ -41,7 +41,7 @@ async function getDesignerPanel(context: IActionContext, workflowNode: Uri | Rem
 
   const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
   if (shouldAlwaysBuildCustomCode() || !(await customCodeArtifactsExist(logicAppNode.fsPath))) {
-    await callWithTelemetryAndErrorHandling(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('openDesigner.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);

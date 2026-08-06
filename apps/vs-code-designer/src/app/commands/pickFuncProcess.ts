@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting, extensionCommand } from '../../constants';
+import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
@@ -72,7 +72,7 @@ export async function pickFuncProcessInternal(
   projectPath: string
 ): Promise<string | undefined> {
   context.telemetry.properties.lastStep = 'activateAzurite';
-  const isAzuriteStarted = await callWithTelemetryAndErrorHandling(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling('pickFuncProcess.startAzurite', async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     await activateAzurite(actionContext, projectPath);
@@ -84,7 +84,7 @@ export async function pickFuncProcessInternal(
   }
 
   context.telemetry.properties.lastStep = 'refreshConnectionKeys';
-  await callWithTelemetryAndErrorHandling(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('pickFuncProcess.refreshConnectionKeys', async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     await refreshConnectionKeys(actionContext, projectPath);
@@ -110,13 +110,13 @@ export async function pickFuncProcessInternal(
     // duplicate the clean+build cycle and its output would be overwritten by the subsequent
     // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
     // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
-    await callWithTelemetryAndErrorHandling(extensionCommand.publishCodefulProject, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('pickFuncProcess.publishCodefulProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await publishCodefulProject(actionContext, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
     });
   } else {
-    await callWithTelemetryAndErrorHandling(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('pickFuncProcess.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await tryBuildCustomCodeFunctionsProject(actionContext, workspaceFolder.uri);

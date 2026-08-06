@@ -87,6 +87,14 @@ vi.mock('../../portReservation', () => ({
 }));
 
 describe('startAllDesignTimeApis', () => {
+  const createMockContext = () =>
+    ({
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { rethrow: false, suppressDisplay: false },
+      ui: {},
+      valuesToMask: [],
+    }) as any;
+
   beforeEach(() => {
     vi.clearAllMocks();
     ext.designTimeInstances.clear();
@@ -147,7 +155,7 @@ describe('startAllDesignTimeApis', () => {
   });
 
   it('cleans up startup state after a startup failure', async () => {
-    await startDesignTimeApi('D:/workspace/app-one');
+    await startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
 
     const designTimeInstance = ext.designTimeInstances.get('D:/workspace/app-one');
 
@@ -167,8 +175,8 @@ describe('startAllDesignTimeApis', () => {
     });
     workspace.fs.createDirectory = vi.fn().mockReturnValue(createDirectoryPromise) as any;
 
-    const firstStart = startDesignTimeApi('D:/workspace/app-one');
-    const secondStart = startDesignTimeApi('D:/workspace/app-one');
+    const firstStart = startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
+    const secondStart = startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
 
     expect(reserveFreePort).toHaveBeenCalledTimes(1);
 
@@ -186,7 +194,7 @@ describe('startAllDesignTimeApis', () => {
     vi.mocked(axios.get).mockResolvedValueOnce({} as any);
     vi.mocked(findProcess).mockImplementation(async (_query, pid) => (Number(pid) === 222 ? [{ name: 'func' }] : [{ name: 'sh' }]) as any);
 
-    await startDesignTimeApi('D:/workspace/app-one');
+    await startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
 
     expect(reserveFreePort).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(
@@ -431,7 +439,7 @@ describe('promptStartDesignTimeOption', () => {
     // Auto-start enabled.
     vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => (key === autoStartDesignTimeSetting ? true : undefined) as any);
     // Pre-seed each project's design-time instance with a resolved startup promise so the fire-and-forget
-    // scheduleStartDesignTimeApi() -> startDesignTimeApi() short-circuits without doing real work.
+    // tryStartDesignTimeApi() -> startDesignTimeApi() short-circuits without doing real work.
     ext.designTimeInstances.set('D:/workspace/app-one', { startupPromise: Promise.resolve() } as any);
     ext.designTimeInstances.set('D:/workspace/app-two', { startupPromise: Promise.resolve() } as any);
 

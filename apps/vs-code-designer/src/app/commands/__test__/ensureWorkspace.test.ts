@@ -11,7 +11,7 @@ import * as workspaceWebviewCommandHandler from '../shared/workspaceWebviewComma
 import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
-import { extensionCommand } from '../../../constants';
+import { extensionCommand, vscodeCommand } from '../../../constants';
 import { WorkspaceWebviewCommandConfig } from '../shared/workspaceWebviewCommandHandler';
 
 class MockDirent {
@@ -166,10 +166,7 @@ describe('ensureWorkspace', () => {
       DialogResponses.yes,
       DialogResponses.no
     );
-    expect(executeCommandSpy).toHaveBeenCalledWith(
-      extensionCommand.vscodeOpenFolder,
-      expect.objectContaining({ fsPath: testWorkspaceFile })
-    );
+    expect(executeCommandSpy).toHaveBeenCalledWith(vscodeCommand.openFolder, expect.objectContaining({ fsPath: testWorkspaceFile }));
     expect(result).toBe(true);
   });
 
@@ -208,10 +205,7 @@ describe('ensureWorkspace', () => {
       DialogResponses.yes,
       DialogResponses.no
     );
-    expect(executeCommandSpy).toHaveBeenCalledWith(
-      extensionCommand.vscodeOpenFolder,
-      expect.objectContaining({ fsPath: testWorkspaceFile })
-    );
+    expect(executeCommandSpy).toHaveBeenCalledWith(vscodeCommand.openFolder, expect.objectContaining({ fsPath: testWorkspaceFile }));
     expect(result).toBe(true);
   });
 });

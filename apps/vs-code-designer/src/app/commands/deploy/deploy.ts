@@ -26,7 +26,6 @@ import {
   funcVersionSetting,
   projectLanguageSetting,
   inlineCodeNodeExecutablePathKey,
-  extensionCommand,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -126,7 +125,7 @@ async function deploy(
     if (isCodeful) {
       deployContext.telemetry.properties.isCodefulProject = 'true';
       ext.outputChannel.appendLog(localize('buildingCodefulProject', 'Building and publishing codeful Logic App project...'));
-      await callWithTelemetryAndErrorHandling(extensionCommand.publishCodefulProject, async (actionContext: IActionContext) => {
+      await callWithTelemetryAndErrorHandling('deploy.publishCodefulProject', async (actionContext: IActionContext) => {
         actionContext.errorHandling.rethrow = true;
         actionContext.errorHandling.suppressDisplay = true;
         await publishCodefulProject(actionContext, logicAppNode);
@@ -134,7 +133,7 @@ async function deploy(
     } else {
       const customCodeFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
       if (customCodeFolderExists) {
-        await callWithTelemetryAndErrorHandling(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling('deploy.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
           actionContext.errorHandling.rethrow = true;
           actionContext.errorHandling.suppressDisplay = true;
           await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
@@ -171,7 +170,7 @@ async function deploy(
   if (!isProjectInitializedForVSCode(effectiveDeployFsPath)) {
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await deployContext.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
-    await callWithTelemetryAndErrorHandling(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('deploy.initProjectForVSCode', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await initProjectForVSCode(actionContext, effectiveDeployFsPath);

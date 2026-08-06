@@ -2202,7 +2202,7 @@ function readWorkflowJson(wfDir: string): any {
 
 /**
  * Start debugging via "Debug: Start Debugging" command palette.
- * The workspace launch.json uses "azureLogicAppsStandard.pickProcess"
+ * The workspace launch.json uses "azureLogicAppsStandard.pickFuncProcess"
  * which triggers pickFuncProcessInternal — this:
  *   1. Starts Azurite
  *   2. Validates connection keys

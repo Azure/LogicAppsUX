@@ -19,7 +19,6 @@ import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-import { extensionCommand } from '../../../constants';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
@@ -67,7 +66,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         // Run ensure dependency tasks concurrently
         const ensureDependencyTasks: Promise<void>[] = [
-          callWithTelemetryAndErrorHandling(extensionCommand.ensureNodeJs, async (actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling('validateAndInstallBinaries.ensureNodeJs', async (actionContext: IActionContext) => {
             actionContext.errorHandling.rethrow = true;
             actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 20, message: 'NodeJS' });
@@ -79,7 +78,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setNodeJsCommand();
           }),
-          callWithTelemetryAndErrorHandling(extensionCommand.ensureFuncCoreTools, async (actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling('validateAndInstallBinaries.ensureFuncCoreTools', async (actionContext: IActionContext) => {
             actionContext.errorHandling.rethrow = true;
             actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 20, message: 'Functions Runtime' });
@@ -91,7 +90,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setFunctionsCommand();
           }),
-          callWithTelemetryAndErrorHandling(extensionCommand.ensureDotnet, async (actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling('validateAndInstallBinaries.ensureDotnet', async (actionContext: IActionContext) => {
             actionContext.errorHandling.rethrow = true;
             actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 10, message: '.NET SDK' });
@@ -104,7 +103,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setDotNetCommand();
           }),
-          callWithTelemetryAndErrorHandling(extensionCommand.ensureSdkLanguageServer, async (_actionContext: IActionContext) => {
+          callWithTelemetryAndErrorHandling('validateAndInstallBinaries.ensureSdkLanguageServer', async (_actionContext: IActionContext) => {
             _actionContext.errorHandling.rethrow = true;
             _actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 10, message: 'SDK LSP Server' });

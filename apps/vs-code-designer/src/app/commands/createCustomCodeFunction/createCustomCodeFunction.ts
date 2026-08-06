@@ -8,7 +8,6 @@ import { type IFunctionWizardContext, ProjectType } from '@microsoft/vscode-exte
 import { ensureWorkspace } from '../ensureWorkspace';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { callWithTelemetryAndErrorHandling, type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import { extensionCommand } from '../../../constants';
 import { localize } from '../../../localize';
 import { type Uri, window } from 'vscode';
 import { FunctionNameStep } from './createCustomCodeFunctionSteps/functionNameStep';
@@ -22,7 +21,7 @@ import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } f
  * @returns
  */
 export async function createCustomCodeFunction(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
-  const isWorkspaceReady = await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+  const isWorkspaceReady = await callWithTelemetryAndErrorHandling('createCustomCodeFunction.ensureWorkspace', async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     return await ensureWorkspace(actionContext);

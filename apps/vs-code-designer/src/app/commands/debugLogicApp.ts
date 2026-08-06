@@ -48,7 +48,7 @@ export async function debugLogicApp(
   );
 
   context.telemetry.properties.lastStep = 'pickFuncProcess';
-  const funcProcessId = await callWithTelemetryAndErrorHandling(extensionCommand.pickProcess, async (actionContext: IActionContext) => {
+  const funcProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickFuncProcess', async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     return await pickFuncProcessInternal(actionContext, debugConfig, resolvedWorkspaceFolder, projectPath);
@@ -83,14 +83,11 @@ export async function debugLogicApp(
   if (debugConfig.customCodeRuntime) {
     context.telemetry.properties.lastStep = 'pickCustomCodeProcess';
     if (debugConfig.customCodeRuntime === 'coreclr') {
-      const customCodeNetHostProcessId = await callWithTelemetryAndErrorHandling(
-        extensionCommand.pickCustomCodeNetHostProcess,
-        async (actionContext: IActionContext) => {
-          actionContext.errorHandling.rethrow = true;
-          actionContext.errorHandling.suppressDisplay = true;
-          return await pickCustomCodeNetHostProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath, debugConfig.isCodeless);
-        }
-      );
+      const customCodeNetHostProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickCustomCodeNetHostProcess', async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        return await pickCustomCodeNetHostProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath, debugConfig.isCodeless);
+      });
       functionLaunchConfig = {
         name: localize('attachToCustomCodeFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,
@@ -98,14 +95,11 @@ export async function debugLogicApp(
         processId: customCodeNetHostProcessId,
       };
     } else if (debugConfig.customCodeRuntime === 'clr') {
-      const customCodeNetFxWorkerProcessId = await callWithTelemetryAndErrorHandling(
-        extensionCommand.pickCustomCodeNetFxWorkerProcess,
-        async (actionContext: IActionContext) => {
-          actionContext.errorHandling.rethrow = true;
-          actionContext.errorHandling.suppressDisplay = true;
-          return await pickCustomCodeNetFxWorkerProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath);
-        }
-      );
+      const customCodeNetFxWorkerProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickCustomCodeNetFxWorkerProcess', async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        return await pickCustomCodeNetFxWorkerProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath);
+      });
       functionLaunchConfig = {
         name: localize('attachToFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,

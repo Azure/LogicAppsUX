@@ -79,7 +79,7 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
   return '';
 }
 
-export async function addConnectionData(
+export async function addConnection(
   context: IActionContext,
   filePath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>
@@ -95,7 +95,7 @@ export async function addConnectionData(
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
   await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
 
-  ext.outputChannel.appendLog(localize('azureFunctions.addConnection', 'Connection added.'));
+  ext.outputChannel.appendLog(localize('connectionAdded', 'Connection added.'));
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {

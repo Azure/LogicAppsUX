@@ -19,6 +19,7 @@ import {
   DependencyDefaultPath,
   dotNetBinaryPathSettingKey,
   extensionCommand,
+  extensionContext,
   funcCoreToolsBinaryPathSettingKey,
   logicAppFilter,
   nodeJsBinaryPathSettingKey,
@@ -89,26 +90,26 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.isActivationEvent = 'true';
     vscode.commands.executeCommand(
       'setContext',
-      extensionCommand.customCodeSetFunctionsFolders,
+      extensionContext.customCodeFunctionsFolders,
       await getAllCustomCodeFunctionsProjects(activateContext)
     );
 
     runPostExtractStepsFromCache();
-    callWithTelemetryAndErrorHandling(extensionCommand.logSubscriptions, async (actionContext: IActionContext) => {
+    callWithTelemetryAndErrorHandling('activate.logSubscriptions', async (actionContext: IActionContext) => {
       actionContext.telemetry.properties.isActivationEvent = 'true';
       await logSubscriptions(actionContext);
     });
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
-      await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+      await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
         actionContext.errorHandling.rethrow = true;
         actionContext.errorHandling.suppressDisplay = true;
         await ensureWorkspace(actionContext);
       });
 
       activateContext.telemetry.properties.lastStep = 'parameterizeConnections';
-      callWithTelemetryAndErrorHandling(extensionCommand.parameterizeAllConnections, async (actionContext: IActionContext) => {
+      callWithTelemetryAndErrorHandling('activate.parameterizeAllConnections', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
         if (shouldParameterizeConnections() || (await promptShouldParameterizeConnections(actionContext))) {
           await parameterizeAllConnections(actionContext);
@@ -134,10 +135,10 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
 
     activateContext.telemetry.properties.lastStep = 'ensureBinaries';
-    await ensureBinaries(isDevContainer);
+    await ensureBinaries(activateContext, isDevContainer);
 
     activateContext.telemetry.properties.lastStep = 'ensureDesignTimeApi';
-    await ensureDesignTimeApi(isDevContainer);
+    await ensureDesignTimeApi(activateContext, isDevContainer);
 
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
     const hasCodefulProjects = await codefulProjectsExist();
@@ -163,13 +164,13 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
-    callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
+    callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
       await ensureVSCodeFiles(actionContext);
     });
 
     activateContext.telemetry.properties.lastStep = 'registerEvent';
     registerEvent(
-      extensionCommand.validateLogicAppProjects,
+      'azureLogicAppsStandard.onDidChangeWorkspaceFolders',
       vscode.workspace.onDidChangeWorkspaceFolders,
       async (actionContext: IActionContext) => {
         await ensureVSCodeFiles(actionContext);
@@ -240,7 +241,7 @@ async function promptEnableLocalManagedIdentityAuth(): Promise<void> {
   const selection = await vscode.window.showInformationMessage(message, enableButton, closeButton, dontShowAgain);
 
   if (selection === enableButton) {
-    await callWithTelemetryAndErrorHandling(extensionCommand.enableLocalManagedIdentityAuth, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {
       actionContext.telemetry.properties.isActivationEvent = 'true';
       await enableLocalManagedIdentityAuth(actionContext);
     });
@@ -251,14 +252,14 @@ async function promptEnableLocalManagedIdentityAuth(): Promise<void> {
 
 async function ensureExtensionBundle(): Promise<void> {
   if (shouldRequireStrictDependencyValidation()) {
-    await callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('activate.downloadExtensionBundle', async (actionContext: IActionContext) => {
       actionContext.telemetry.properties.isActivationEvent = 'true';
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await downloadExtensionBundle(actionContext);
     });
   } else {
-    callWithTelemetryAndErrorHandling(extensionCommand.ensureExtensionBundle, async (actionContext: IActionContext) => {
+    callWithTelemetryAndErrorHandling('activate.downloadExtensionBundle', async (actionContext: IActionContext) => {
       actionContext.telemetry.properties.isActivationEvent = 'true';
       await downloadExtensionBundle(actionContext).catch((error) => {
         ext.outputChannel?.appendLog(
@@ -272,53 +273,51 @@ async function ensureExtensionBundle(): Promise<void> {
   }
 }
 
-async function ensureBinaries(isDevContainer: boolean): Promise<void> {
-  await callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
-    actionContext.telemetry.properties.isActivationEvent = 'true';
-    if (isDevContainer) {
-      actionContext.telemetry.properties.skippedDependencyOnboarding = 'true';
-      actionContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
-      ext.outputChannel?.appendLog(
-        localize(
-          'devContainerDetected',
-          'Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.'
-        )
-      );
-    } else {
-      if (shouldRequireStrictDependencyValidation()) {
-        actionContext.errorHandling.rethrow = true;
-        actionContext.errorHandling.suppressDisplay = true;
-      }
+async function ensureBinaries(activateContext: IActionContext, isDevContainer: boolean): Promise<void> {
+  if (isDevContainer) {
+    activateContext.telemetry.properties.skippedDependencyOnboarding = 'true';
+    activateContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
+    ext.outputChannel?.appendLog(
+      localize(
+        'devContainerDetected',
+        'Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.'
+      )
+    );
+  } else {
+    const useBinaries = await useBinariesDependencies();
 
-      const useBinaries = await useBinariesDependencies();
+    if (useBinaries) {
+      await callWithTelemetryAndErrorHandling('activate.validateAndInstallBinaries', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        if (shouldRequireStrictDependencyValidation()) {
+          actionContext.errorHandling.rethrow = true;
+          actionContext.errorHandling.suppressDisplay = true;
+        }
 
-      if (useBinaries) {
         await validateAndInstallBinaries(actionContext);
-        actionContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
-      } else {
-        await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-        await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-        await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-        actionContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
-      }
+      });
+
+      activateContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
+    } else {
+      await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+      await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+      await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+      activateContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
     }
-  });
+  }
 }
 
-async function ensureDesignTimeApi(isDevContainer: boolean): Promise<void> {
-  await callWithTelemetryAndErrorHandling(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
-    actionContext.telemetry.properties.isActivationEvent = 'true';
-    if (isDevContainer) {
-      actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
-      actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
-      ext.outputChannel?.appendLog(
-        localize('schedulingDesignTimeStartup', 'Scheduling background design-time startup for devcontainer workspace.')
-      );
-      scheduleStartAllDesignTimeApis();
-    } else {
-      await promptStartDesignTimeOption(actionContext);
-    }
-  });
+async function ensureDesignTimeApi(activateContext: IActionContext, isDevContainer: boolean): Promise<void> {
+  if (isDevContainer) {
+    activateContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
+    activateContext.telemetry.properties.designTimeStartupState = 'scheduled';
+    ext.outputChannel?.appendLog(
+      localize('schedulingDesignTimeStartup', 'Scheduling background design-time startup for devcontainer workspace.')
+    );
+    scheduleStartAllDesignTimeApis();
+  } else {
+    await promptStartDesignTimeOption(activateContext);
+  }
 }
 
 export async function deactivate(): Promise<void> {

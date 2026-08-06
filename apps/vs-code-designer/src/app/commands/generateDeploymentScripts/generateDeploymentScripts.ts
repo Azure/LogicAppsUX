@@ -60,7 +60,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     addLocalFuncTelemetry(context);
 
     context.telemetry.properties.lastStep = 'ensureWorkspace';
-    const isWorkspaceReady = await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+    const isWorkspaceReady = await callWithTelemetryAndErrorHandling('generateDeploymentScripts.ensureWorkspace', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       return await ensureWorkspace(actionContext);
