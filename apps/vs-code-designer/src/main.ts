@@ -19,6 +19,7 @@ import {
   DependencyDefaultPath,
   dotNetBinaryPathSettingKey,
   extensionCommand,
+  extensionEvent,
   funcCoreToolsBinaryPathSettingKey,
   logicAppFilter,
   nodeJsBinaryPathSettingKey,
@@ -124,7 +125,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
       const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
-        await callWithTelemetryAndErrorHandling(extensionCommand.ensureProjectFiles, async (actionContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
           actionContext.telemetry.properties.isActivationEvent = 'true';
           await ensureProjectFiles(actionContext, projectPath);
         });
@@ -132,7 +133,7 @@ export async function activate(context: vscode.ExtensionContext) {
       await Promise.all(ensureProjectFilesTasks);
 
       activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
-      callWithTelemetryAndErrorHandling(extensionCommand.ensureVSCodeFiles, async (actionContext: IActionContext) => {
+      callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
         await ensureVSCodeFiles(actionContext, projectPaths);
       });
@@ -140,7 +141,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     activateContext.telemetry.properties.lastStep = 'registerProjectConsistencyCheckEvent';
     registerEvent(
-      extensionCommand.runProjectConsistencyCheck,
+      extensionEvent.onDidChangeWorkspaceFolders,
       vscode.workspace.onDidChangeWorkspaceFolders,
       async (actionContext: IActionContext) => {
         await runProjectConsistencyCheck(actionContext);

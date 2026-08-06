@@ -239,8 +239,6 @@ export const extensionCommand = {
   startAzurite: 'azureLogicAppsStandard.startAzurite',
   refreshConnectionKeys: 'azureLogicAppsStandard.refreshConnectionKeys',
   runProjectConsistencyCheck: 'azureLogicAppsStandard.runProjectConsistencyCheck',
-  ensureProjectFiles: 'azureLogicAppsStandard.ensureProjectFiles',
-  ensureVSCodeFiles: 'azureLogicAppsStandard.ensureVSCodeFiles',
   ensureExtensionBundle: 'azureLogicAppsStandard.ensureExtensionBundle',
   ensureNodeJs: 'azureLogicAppsStandard.ensureNodeJs',
   ensureFuncCoreTools: 'azureLogicAppsStandard.ensureFuncCoreTools',
@@ -248,6 +246,14 @@ export const extensionCommand = {
   ensureSdkLanguageServer: 'azureLogicAppsStandard.ensureSdkLanguageServer',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
+
+export const extensionEvent = {
+  onDidStartTask: 'azureLogicAppsStandard.onDidStartTask',
+  onDidEndTask: 'azureLogicAppsStandard.onDidEndTask',
+  onDidTerminateDebugSession: 'azureLogicAppsStandard.onDidTerminateDebugSession',
+  onDidChangeWorkspaceFolders: 'azureLogicAppsStandard.onDidChangeWorkspaceFolders',
+} as const;
+export type extensionEvent = (typeof extensionEvent)[keyof typeof extensionEvent];
 
 // Extension context
 export const customExtensionContext = {
