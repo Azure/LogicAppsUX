@@ -14,7 +14,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getGlobalSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
-import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
+import { findFiles, getWorkspaceLogicAppRoots } from '../workspace';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import { type IWorkerRuntime, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
@@ -266,8 +266,8 @@ export async function setDotNetCommand(): Promise<void> {
     fs.chmodSync(dotNetBinariesPath, 0o777);
 
     try {
-      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
-      if (workspaceLogicAppFolders.length > 0) {
+      const projectPaths = await getWorkspaceLogicAppRoots();
+      if (projectPaths.length > 0) {
         const pathEnv = {
           PATH: newPath,
         };

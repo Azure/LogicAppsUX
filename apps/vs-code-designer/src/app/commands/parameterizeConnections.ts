@@ -9,7 +9,7 @@ import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { getConnectionsJson, saveConnectionReferences } from '../utils/codeless/connection';
 import { getParametersJson, saveWorkflowParameter } from '../utils/codeless/parameter';
 import { areAllConnectionsParameterized, parameterizeConnection } from '../utils/codeless/parameterizer';
-import { getWorkspaceLogicAppFolders } from '../utils/workspace';
+import { getWorkspaceLogicAppRoots } from '../utils/workspace';
 import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import { workspace } from 'vscode';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
@@ -20,7 +20,7 @@ import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
  * @returns A promise that resolves when all connections have been parameterized.
  */
 export async function parameterizeAllConnections(context: IActionContext): Promise<void> {
-  const projectPaths = await getWorkspaceLogicAppFolders();
+  const projectPaths = await getWorkspaceLogicAppRoots();
   context.telemetry.properties.projectPaths = projectPaths.join(';');
 
   const failedProjectPaths: string[] = [];
@@ -57,8 +57,8 @@ export async function parameterizeAllConnections(context: IActionContext): Promi
 export async function parameterizeProjectConnections(context: IActionContext, projectPath?: string): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
-      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
-      await Promise.all(workspaceLogicAppFolders.map((projectPath) => parameterizeProjectConnections(context, projectPath)));
+      const projectPaths = await getWorkspaceLogicAppRoots();
+      await Promise.all(projectPaths.map((projectPath) => parameterizeProjectConnections(context, projectPath)));
       return;
     }
 

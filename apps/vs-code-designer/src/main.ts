@@ -59,6 +59,9 @@ import {
 } from './app/state/notifications';
 import { useBinariesDependencies } from './app/utils/binaries';
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
+import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
+import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
+import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
 
 const telemetryString = 'setInGitHubBuild';
 
@@ -93,6 +96,7 @@ export async function activate(context: vscode.ExtensionContext) {
       await getAllCustomCodeFunctionsProjects(activateContext)
     );
 
+    // Workspace setup and consistency checks
     runPostExtractStepsFromCache();
     callWithTelemetryAndErrorHandling(extensionCommand.logSubscriptions, async (actionContext: IActionContext) => {
       actionContext.telemetry.properties.isActivationEvent = 'true';
@@ -102,6 +106,7 @@ export async function activate(context: vscode.ExtensionContext) {
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
       await callWithTelemetryAndErrorHandling(extensionCommand.ensureWorkspace, async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
         actionContext.errorHandling.rethrow = true;
         actionContext.errorHandling.suppressDisplay = true;
         await ensureWorkspace(actionContext);
@@ -114,7 +119,33 @@ export async function activate(context: vscode.ExtensionContext) {
           await parameterizeAllConnections(actionContext);
         }
       });
+
+      const projectPaths = await getWorkspaceLogicAppRoots();
+
+      activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
+      const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
+        await callWithTelemetryAndErrorHandling(extensionCommand.ensureProjectFiles, async (actionContext: IActionContext) => {
+          actionContext.telemetry.properties.isActivationEvent = 'true';
+          await ensureProjectFiles(actionContext, projectPath);
+        });
+      });
+      await Promise.all(ensureProjectFilesTasks);
+
+      activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
+      callWithTelemetryAndErrorHandling(extensionCommand.ensureVSCodeFiles, async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        await ensureVSCodeFiles(actionContext, projectPaths);
+      });
     }
+
+    activateContext.telemetry.properties.lastStep = 'registerProjectConsistencyCheckEvent';
+    registerEvent(
+      extensionCommand.runProjectConsistencyCheck,
+      vscode.workspace.onDidChangeWorkspaceFolders,
+      async (actionContext: IActionContext) => {
+        await runProjectConsistencyCheck(actionContext);
+      }
+    );
 
     activateContext.telemetry.properties.lastStep = 'promptEnableManagedIdentityAuth';
     promptEnableLocalManagedIdentityAuth().catch((error) => {
@@ -126,6 +157,7 @@ export async function activate(context: vscode.ExtensionContext) {
       );
     });
 
+    // Dependencies and environment setup
     activateContext.telemetry.properties.lastStep = 'ensureExtensionBundle';
     await ensureExtensionBundle();
 
@@ -136,8 +168,9 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'ensureBinaries';
     await ensureBinaries(isDevContainer);
 
-    activateContext.telemetry.properties.lastStep = 'ensureDesignTimeApi';
-    await ensureDesignTimeApi(isDevContainer);
+    // Start background processes (design-time func, codeful language server)
+    activateContext.telemetry.properties.lastStep = 'startDesignTime';
+    await startDesignTime(isDevContainer);
 
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
     const hasCodefulProjects = await codefulProjectsExist();
@@ -161,20 +194,6 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       }
     }
-
-    activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
-    callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
-      await ensureVSCodeFiles(actionContext);
-    });
-
-    activateContext.telemetry.properties.lastStep = 'registerEvent';
-    registerEvent(
-      extensionCommand.validateLogicAppProjects,
-      vscode.workspace.onDidChangeWorkspaceFolders,
-      async (actionContext: IActionContext) => {
-        await ensureVSCodeFiles(actionContext);
-      }
-    );
 
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
@@ -305,7 +324,7 @@ async function ensureBinaries(isDevContainer: boolean): Promise<void> {
   });
 }
 
-async function ensureDesignTimeApi(isDevContainer: boolean): Promise<void> {
+async function startDesignTime(isDevContainer: boolean): Promise<void> {
   await callWithTelemetryAndErrorHandling(extensionCommand.startDesignTimeApi, async (actionContext: IActionContext) => {
     actionContext.telemetry.properties.isActivationEvent = 'true';
     if (isDevContainer) {

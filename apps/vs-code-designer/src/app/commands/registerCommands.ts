@@ -81,6 +81,7 @@ import { openConnectionView } from './workflows/connectionView/openConnectionVie
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
 import { toggleDesignTimeNodeWorker } from './toggleDesignTimeNodeWorker';
 import { enableLocalManagedIdentityAuth } from '../utils/managedIdentity';
+import { runProjectConsistencyCheck } from './runProjectConsistencyCheck';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -160,6 +161,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.parameterizeAllConnections, parameterizeAllConnections);
   registerCommand(extensionCommand.parameterizeProjectConnections, parameterizeProjectConnections);
   registerCommand(extensionCommand.enableLocalManagedIdentityAuth, enableLocalManagedIdentityAuth);
+  registerCommand(extensionCommand.runProjectConsistencyCheck, runProjectConsistencyCheck);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);

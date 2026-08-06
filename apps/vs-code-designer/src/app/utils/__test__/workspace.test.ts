@@ -1,13 +1,24 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
-import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot, tryGetAllLogicAppProjectRoots } from '../verifyIsProject';
+import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import * as vscode from 'vscode';
+import type { WorkspaceFolder } from 'vscode';
 import * as workspaceUtils from '../workspace';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { tryGetWorkspaceFolderLogicApps } from '../workspace';
+import { hostFileName, workflowFileName } from '../../../constants';
+import * as verifyIsProject from '../verifyIsProject';
 
-vi.mock('../verifyIsProject');
+vi.mock('../verifyIsProject', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    promptOpenProjectOrWorkspace: vi.fn(),
+    tryGetLogicAppProjectRoot: vi.fn(),
+  };
+});
 
-describe('workspaceUtils.getWorkspaceFolder', () => {
+describe('getWorkspaceFolder', () => {
   const originalWorkspace = { ...vscode.workspace };
 
   const mockContext: any = {
@@ -192,7 +203,7 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
   });
 });
 
-describe('workspaceUtils.getWorkspaceLogicAppFolders', () => {
+describe('getWorkspaceLogicAppRoots', () => {
   const testLogicAppProjectPath1 = path.join('test', 'project', 'LogicApp1');
   const testLogicAppProjectPath2 = path.join('test', 'project', 'LogicApp2');
   const testWorkspaceFolders = [
@@ -210,47 +221,149 @@ describe('workspaceUtils.getWorkspaceLogicAppFolders', () => {
 
   it('should return an empty array if no workspace folders are open', async () => {
     (vscode.workspace as any).workspaceFolders = [];
-    const tryGetAllLogicAppProjectRootsSpy = vi.fn(async (folder: vscode.WorkspaceFolder) => {
+    const tryGetWorkspaceFolderLogicAppsSpy = vi.fn(async (folder: vscode.WorkspaceFolder) => {
       if (folder.uri.fsPath === testLogicAppProjectPath1) {
-        return [folder];
+        return [folder.uri.fsPath];
       } else if (folder.uri.fsPath === testLogicAppProjectPath2) {
         return ['root2a', 'root2b'];
       }
       return [];
     });
 
-    const result = await workspaceUtils.getWorkspaceLogicAppFolders();
+    const result = await workspaceUtils.getWorkspaceLogicAppRoots();
 
-    expect(tryGetAllLogicAppProjectRootsSpy).not.toHaveBeenCalled();
+    expect(tryGetWorkspaceFolderLogicAppsSpy).not.toHaveBeenCalled();
     expect(result).toEqual([]);
   });
 
   it('should collect logic app roots from each workspace folder', async () => {
-    const tryGetAllLogicAppProjectRootsSpy = vi.fn(async (folder: vscode.WorkspaceFolder) => {
-      if (folder.uri.fsPath === testLogicAppProjectPath1) {
-        return [folder];
-      } else if (folder.uri.fsPath === testLogicAppProjectPath2) {
-        return ['root2a', 'root2b'];
-      }
-      return [];
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockImplementation(async (projectPath: string) => {
+      return projectPath === testLogicAppProjectPath1 || projectPath === testLogicAppProjectPath2;
     });
-    (tryGetAllLogicAppProjectRoots as Mock).mockImplementation(tryGetAllLogicAppProjectRootsSpy);
+    vi.spyOn(fse, 'readdir').mockResolvedValue([]);
 
-    const result = await workspaceUtils.getWorkspaceLogicAppFolders();
+    const result = await workspaceUtils.getWorkspaceLogicAppRoots();
 
-    expect(tryGetAllLogicAppProjectRootsSpy).toHaveBeenCalledTimes(2);
-    expect(result).toEqual([testLogicAppProjectPath1, 'root2a', 'root2b']);
+    expect(result).toEqual([testLogicAppProjectPath1, testLogicAppProjectPath2]);
   });
 
   it('should return an empty array if none of the workspace folders contain a logic app project', async () => {
-    const tryGetAllLogicAppProjectRootsSpy = vi.fn(async () => {
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockResolvedValue(false);
+    vi.spyOn(fse, 'readdir').mockResolvedValue([]);
+
+    const result = await workspaceUtils.getWorkspaceLogicAppRoots();
+
+    expect(result).toEqual([]);
+  });
+});
+
+describe('tryGetWorkspaceFolderLogicApps', () => {
+  const testWorkspaceFolderPath = path.join('test', 'workspace', 'LogicApp1');
+  const testWorkspaceFolder = {
+    uri: { fsPath: testWorkspaceFolderPath },
+    name: path.basename(testWorkspaceFolderPath),
+    index: 0,
+  } as WorkspaceFolder;
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should return an empty array if workspaceFolder is undefined', async () => {
+    const result = await tryGetWorkspaceFolderLogicApps(undefined);
+    expect(result).toEqual([]);
+  });
+
+  it('should return an empty array if folderPath does not exist', async () => {
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
+    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
+    expect(result).toEqual([]);
+  });
+
+  it('should return the folderPath if it is a logic app project', async () => {
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
+      if (filePath === testWorkspaceFolderPath) return [hostFileName, 'workflow1'];
+      if (filePath === path.join(testWorkspaceFolderPath, 'workflow1')) return [workflowFileName];
       return [];
     });
-    (tryGetAllLogicAppProjectRoots as Mock).mockImplementation(tryGetAllLogicAppProjectRootsSpy);
+    vi.spyOn(fse, 'readFile').mockImplementation(async (filePath: fse.PathLike) => {
+      if (filePath === path.join(testWorkspaceFolderPath, hostFileName)) {
+        return JSON.stringify({ version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' } });
+      }
+      if (filePath === path.join(testWorkspaceFolderPath, 'workflow1', workflowFileName)) {
+        return JSON.stringify({
+          definition: {
+            $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          },
+        });
+      }
+      return '';
+    });
 
-    const result = await workspaceUtils.getWorkspaceLogicAppFolders();
+    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
+    expect(result).toEqual([testWorkspaceFolderPath]);
+  });
 
-    expect(tryGetAllLogicAppProjectRootsSpy).toHaveBeenCalledTimes(2);
+  it('should return matching subpaths that are logic app projects', async () => {
+    const testLogicAppProjectPath1 = path.join(testWorkspaceFolderPath, 'LogicApp1');
+    const testLogicAppProjectPath2 = path.join(testWorkspaceFolderPath, 'LogicApp2');
+
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
+      if (filePath === testWorkspaceFolderPath) return ['LogicApp1', 'LogicApp2'];
+      if (filePath === testLogicAppProjectPath1) return [hostFileName, 'workflow1'];
+      if (filePath === testLogicAppProjectPath2) return [hostFileName, 'workflow1'];
+      if (filePath === path.join(testLogicAppProjectPath1, 'workflow1')) return [workflowFileName];
+      if (filePath === path.join(testLogicAppProjectPath2, 'workflow1')) return [workflowFileName];
+      return [];
+    });
+    vi.spyOn(fse, 'readFile').mockImplementation(async (filePath: fse.PathLike) => {
+      if (filePath === path.join(testLogicAppProjectPath1, hostFileName)) {
+        return JSON.stringify({ version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' } });
+      }
+      if (filePath === path.join(testLogicAppProjectPath2, hostFileName)) {
+        return JSON.stringify({ version: '2.0', extensionBundle: { id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' } });
+      }
+      if (filePath === path.join(testLogicAppProjectPath1, 'workflow1', workflowFileName)) {
+        return JSON.stringify({
+          definition: {
+            $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          },
+        });
+      }
+      if (filePath === path.join(testLogicAppProjectPath2, 'workflow1', workflowFileName)) {
+        return JSON.stringify({
+          definition: {
+            $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          },
+        });
+      }
+      return '';
+    });
+
+    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
+    expect(result).toEqual([testLogicAppProjectPath1, testLogicAppProjectPath2]);
+  });
+
+  it('should return an empty array if no logic app project is found in root or subfolders', async () => {
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    vi.spyOn(fse, 'readdir').mockImplementation(async (filePath: fse.PathLike) => {
+      if (filePath === testWorkspaceFolderPath) return ['sub1', 'sub2'];
+      if (filePath === path.join(testWorkspaceFolderPath, 'sub1')) return [workflowFileName];
+      return [];
+    });
+    vi.spyOn(fse, 'readFile').mockImplementation(async (filePath: fse.PathLike) => {
+      // A workflow.json that is not a Microsoft.Logic workflow definition is not a Logic Apps signal.
+      if (filePath === path.join(testWorkspaceFolderPath, 'sub1', workflowFileName)) {
+        return JSON.stringify({ definition: { $schema: 'https://example.com/not-a-logic-workflow.json#' } });
+      }
+      return '';
+    });
+
+    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
     expect(result).toEqual([]);
   });
 });

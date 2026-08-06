@@ -26,8 +26,8 @@ import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
-import { getWorkspaceLogicAppFolders } from '../workspace';
-import { ensureRootProjectFiles, ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
+import { getWorkspaceLogicAppRoots } from '../workspace';
+import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
 import {
   DialogResponses,
@@ -248,22 +248,16 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         try {
           ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
-          // Regenerate any git-ignored project artifacts (host.json, local.settings.json,
-          // workflow-designtime) that a source-controlled clone may be missing before starting the host.
-          const designTimeDirectory: Uri | undefined = await ensureProjectFiles(actionContext, projectPath);
+          await ensureProjectFiles(actionContext, projectPath);
 
-          if (!designTimeDirectory) {
-            throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
-          }
-
-          const cwd: string = designTimeDirectory.fsPath;
+          const designTimeDirectory = path.join(projectPath, designTimeDirectoryName);
           const portArgs = `--port ${designTimeInst.port}`;
           ext.outputChannel.appendLog(
             localize(
               'startingDesignTimeApiDetails',
               'Launching design-time host for project "{0}" from "{1}" on port {2}.',
               projectPath,
-              cwd,
+              designTimeDirectory,
               designTimeInst.port
             )
           );
@@ -294,12 +288,12 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           // error here is strictly better than letting the host start broken.
           await ensureExtensionBundleHealthy(actionContext);
 
-          startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
+          startDesignTimeProcess(ext.outputChannel, designTimeDirectory, getFunctionsCommand(), 'host', 'start', portArgs);
           await waitForDesignTimeStartUp(actionContext, projectPath, url, true);
           actionContext.telemetry.properties.isDesignTimeUp = 'true';
 
           ext.pinnedBundleVersion.set(projectPath, false);
-          const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
+          const hostfilepath: Uri = Uri.file(path.join(designTimeDirectory, hostFileName));
           const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
           if (data.extensionBundle) {
             const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
@@ -686,15 +680,15 @@ export function scheduleStartAllDesignTimeApis(): void {
  */
 export async function startAllDesignTimeApis(): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const logicAppFolders = await getWorkspaceLogicAppFolders();
+    const projectPaths = await getWorkspaceLogicAppRoots();
     ext.outputChannel.appendLog(
       localize(
         'startingAllDesignTimeApis',
         'Starting design-time APIs for {0} Logic App project(s) in the current workspace.',
-        logicAppFolders.length
+        projectPaths.length
       )
     );
-    await Promise.all(logicAppFolders.map(startDesignTimeApi));
+    await Promise.all(projectPaths.map(startDesignTimeApi));
   } else {
     ext.outputChannel.appendLog(localize('noWorkspaceFoldersForDesignTime', 'No workspace folders found. Skipping design-time startup.'));
   }
@@ -707,7 +701,7 @@ export async function startAllDesignTimeApis(): Promise<void> {
  */
 export async function promptStartDesignTimeOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const logicAppFolders = await getWorkspaceLogicAppFolders();
+    const projectPaths = await getWorkspaceLogicAppRoots();
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
     let autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
 
@@ -715,12 +709,12 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
       localize(
         'detectedLogicAppFolders',
         'Detected {0} logic app project folder(s) for artifact regeneration: {1}.',
-        logicAppFolders.length,
-        logicAppFolders.join(', ') || '(none)'
+        projectPaths.length,
+        projectPaths.join(', ') || '(none)'
       )
     );
 
-    if (logicAppFolders && logicAppFolders.length > 0) {
+    if (projectPaths && projectPaths.length > 0) {
       if (!autoStartDesignTime && showStartDesignTimeMessage) {
         const message = localize(
           'startDesignTimeApi',
@@ -741,16 +735,9 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         } while (result === DialogResponses.learnMore);
       }
 
-      for (const projectPath of logicAppFolders) {
+      for (const projectPath of projectPaths) {
         if (autoStartDesignTime) {
-          // The scheduled startDesignTimeApi() runs validateAndRegenerateProjectArtifacts() once and
-          // logs a single per-project artifact summary, so don't regenerate up-front here — doing so
-          // would repeat both the work and the log lines for every project.
           scheduleStartDesignTimeApi(projectPath);
-        } else {
-          // Auto-start is off: keep source-controlled clones valid by regenerating the git-ignored
-          // host.json / local.settings.json now. Emits one concise per-project summary line.
-          await ensureRootProjectFiles(context, projectPath);
         }
       }
     } else {
