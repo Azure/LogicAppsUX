@@ -31,6 +31,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import {
   DependencyVersion,
+  autoRuntimeDependenciesPathSettingKey,
   autoRuntimeDependenciesValidationAndInstallationSetting,
   dotnetDependencyName,
   funcCoreToolsBinaryPathSettingKey,
@@ -505,12 +506,18 @@ describe('binaries', () => {
   });
 
   describe('binariesExistSync', () => {
-    it('should return false when automatic runtime dependencies are disabled', async () => {
+    it('should return false when automatic runtime dependencies are disabled and no dependency path is configured', async () => {
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
-      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
-        settingName === autoRuntimeDependenciesValidationAndInstallationSetting ? false : 'binariesLocation'
-      );
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return false;
+        }
+        if (settingName === autoRuntimeDependenciesPathSettingKey) {
+          return undefined;
+        }
+        return 'binariesLocation';
+      });
 
       const result = binariesExistSync(funcDependencyName);
 
@@ -544,6 +551,53 @@ describe('binaries', () => {
         return 'binariesLocation';
       });
       (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder || filePath === funcBinary);
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(true);
+    });
+
+    it('should use configured binaries when validation is disabled but a dependency path is configured', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      const funcFolder = path.join('binariesLocation', funcDependencyName);
+      const funcBinary = path.join(funcFolder, 'func.exe');
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return false;
+        }
+        if (settingName === autoRuntimeDependenciesPathSettingKey) {
+          return 'binariesLocation';
+        }
+        if (settingName === funcCoreToolsBinaryPathSettingKey) {
+          return funcBinary;
+        }
+        return undefined;
+      });
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder || filePath === funcBinary);
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(true);
+    });
+
+    it('should use the dependency folder when the configured binary path is a command name', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      const funcFolder = path.join('binariesLocation', funcDependencyName);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return false;
+        }
+        if (settingName === autoRuntimeDependenciesPathSettingKey) {
+          return 'binariesLocation';
+        }
+        if (settingName === funcCoreToolsBinaryPathSettingKey) {
+          return 'func';
+        }
+        return undefined;
+      });
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder);
 
       const result = binariesExistSync(funcDependencyName);
 

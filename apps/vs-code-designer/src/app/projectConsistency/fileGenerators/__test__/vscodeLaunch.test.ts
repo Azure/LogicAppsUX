@@ -9,7 +9,7 @@ import { FuncVersion, ProjectType, ProjectPackageType, TargetFramework } from '@
 
 describe('generateLaunchJson', () => {
   describe('codeless project', () => {
-    it('should generate attach configuration for codeless projects', () => {
+    it('should generate attach configuration for bundle codeless projects', () => {
       const config: VSCodeProjectConfig = {
         projectType: ProjectType.logicApp,
         projectPackageType: ProjectPackageType.Bundle,
@@ -24,6 +24,28 @@ describe('generateLaunchJson', () => {
       expect(result.configurations[0].type).toBe('coreclr');
       expect(result.configurations[0].request).toBe('attach');
       expect(result.configurations[0].name).toContain('MyApp');
+    });
+
+    it('should keep the attach configuration for NuGet codeless projects converted from bundle', () => {
+      const config: VSCodeProjectConfig = {
+        projectType: ProjectType.logicApp,
+        projectPackageType: ProjectPackageType.Nuget,
+        hasFuncBinaries: true,
+        logicAppName: 'NugetApp',
+        funcVersion: FuncVersion.v4,
+      };
+      const result = generateLaunchJson(config);
+
+      expect(result.version).toBe('0.2.0');
+      expect(result.configurations).toHaveLength(1);
+      expect(result.configurations[0]).toMatchObject({
+        name: expect.stringContaining('NugetApp'),
+        type: 'coreclr',
+        request: 'attach',
+        processId: '${command:azureLogicAppsStandard.pickProcess}',
+      });
+      expect(result.configurations[0]).not.toHaveProperty('funcRuntime');
+      expect(result.configurations[0]).not.toHaveProperty('isCodeless');
     });
   });
 
@@ -42,6 +64,7 @@ describe('generateLaunchJson', () => {
       expect(result.configurations[0].request).toBe('launch');
       expect(result.configurations[0].funcRuntime).toBe('coreclr');
       expect(result.configurations[0].isCodeless).toBe(false);
+      expect(result.configurations[0]).not.toHaveProperty('customCodeRuntime');
     });
   });
 
@@ -89,37 +112,6 @@ describe('generateLaunchJson', () => {
       const result = generateLaunchJson(config);
 
       expect(result.configurations[0].customCodeRuntime).toBe('coreclr');
-    });
-  });
-
-  describe('codeful project', () => {
-    it('should generate logicapp launch configuration', () => {
-      const config: VSCodeProjectConfig = {
-        projectType: ProjectType.codeful,
-        projectPackageType: ProjectPackageType.Nuget,
-        hasFuncBinaries: true,
-        logicAppName: 'CodefulApp',
-        funcVersion: FuncVersion.v4,
-      };
-      const result = generateLaunchJson(config);
-
-      expect(result.configurations[0].type).toBe('logicapp');
-      expect(result.configurations[0].request).toBe('launch');
-      expect(result.configurations[0].funcRuntime).toBe('coreclr');
-      expect(result.configurations[0].isCodeless).toBe(false);
-    });
-
-    it('should not include customCodeRuntime for codeful projects', () => {
-      const config: VSCodeProjectConfig = {
-        projectType: ProjectType.codeful,
-        projectPackageType: ProjectPackageType.Nuget,
-        hasFuncBinaries: true,
-        logicAppName: 'CodefulApp',
-        funcVersion: FuncVersion.v4,
-      };
-      const result = generateLaunchJson(config);
-
-      expect(result.configurations[0]).not.toHaveProperty('customCodeRuntime');
     });
   });
 

@@ -775,8 +775,9 @@ function useBinariesDependenciesFromSettings(): boolean {
     return false;
   }
 
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
-  return !!binariesInstallation;
+  const binariesInstallationEnabled = getGlobalSetting<boolean>(autoRuntimeDependenciesValidationAndInstallationSetting) === true;
+  const binariesLocationConfigured = Boolean(getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey));
+  return binariesInstallationEnabled || binariesLocationConfigured;
 }
 
 function getExpectedBinaryPath(dependencyName: string): string | undefined {
@@ -804,7 +805,7 @@ function binariesExistFromSettings(dependencyName: string, updateMissingExeSetti
   const expectedBinaryPath = binariesExist ? getExpectedBinaryPath(dependencyName) : undefined;
 
   ext.outputChannel.appendLog(`${dependencyName} Binaries: ${binariesPath}`);
-  if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
+  if (expectedBinaryPath && isPathLikeBinarySetting(expectedBinaryPath) && !fs.existsSync(expectedBinaryPath)) {
     const repairedBinaryPath = getRepairableWindowsBinaryPath(dependencyName, binariesPath, expectedBinaryPath);
     if (repairedBinaryPath) {
       if (updateMissingExeSetting) {
@@ -819,6 +820,10 @@ function binariesExistFromSettings(dependencyName: string, updateMissingExeSetti
   }
 
   return binariesExist;
+}
+
+function isPathLikeBinarySetting(binaryPath: string): boolean {
+  return /[\\/]/.test(binaryPath);
 }
 
 async function updateBinaryPathSetting(dependencyName: string, binaryPath: string): Promise<void> {

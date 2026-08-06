@@ -108,14 +108,17 @@ function getFuncHostStartTask(config: VSCodeProjectConfig, options?: { dependsOn
   const isDotnet = projectType === ProjectType.codeful || projectPackageType === ProjectPackageType.Nuget;
   const debugSubpath = isDotnet && targetFramework ? path.posix.join('bin', 'Debug', targetFramework) : undefined;
 
-  const envOptions = hasFuncBinaries && !isDevContainer ? getFuncHostTaskEnv(debugSubpath ? { cwd: debugSubpath } : undefined) : {};
+  const envOptions = hasFuncBinaries && !isDevContainer ? getFuncHostTaskEnv(debugSubpath ? { cwd: debugSubpath } : undefined) : undefined;
+  if (debugSubpath && envOptions) {
+    envOptions.options.cwd = `\${workspaceFolder}/${debugSubpath}`;
+  }
 
   const task: Record<string, unknown> = {
     label: 'func: host start',
     type: hasFuncBinaries ? 'shell' : func,
     command: hasFuncBinaries ? FUNC_BINARY_PATH : hostStartCommand,
     args: hasFuncBinaries ? ['host', 'start'] : undefined,
-    ...envOptions,
+    ...(envOptions ?? {}),
     problemMatcher: funcWatchProblemMatcher,
     isBackground: true,
   };

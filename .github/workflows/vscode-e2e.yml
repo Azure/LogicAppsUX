@@ -384,6 +384,12 @@ jobs:
             scenario: p44-statelessvariables,p45-designerviewextended,p46-keyboardnav,p49-descriptionpersistence
             use_workspace_fixtures: true
             use_bundle_artifact: true
+          # NuGet debug lifecycle regression: bundle debug/run -> convert to
+          # NuGet -> debug/run again without harness port cleanup.
+          - shard: nuget-debug-lifecycle
+            scenario: p49-nugetdebugconversion
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
           # Multi-designer + dataMapper suite (manifest-multi) + bundle repair.
           - shard: suite-and-bundle
             scenario: p47-suite,p412-bundlerepair
@@ -1636,4 +1642,3 @@ jobs:
           # still RUN rather than being skipped — and a skipped job would trip the
           # `!= "success"` check above and fail the build for the wrong reason.
           echo "All required vscode-e2e jobs passed."
-
