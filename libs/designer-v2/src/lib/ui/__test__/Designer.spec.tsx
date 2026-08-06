@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
 
 const mockDispatch = vi.fn();
 let mockCanUndo = false;
@@ -14,6 +14,7 @@ let mockHasUnsupportedMultipleTriggers = false;
 let mockRunInstance: { id: string; name: string } | null = null;
 
 const mockOpenRun = vi.fn();
+const mockOpenRunDetails = vi.fn();
 
 vi.mock('../../core', () => ({
   openPanel: vi.fn((arg: unknown) => ({ type: 'openPanel', payload: arg })),
@@ -65,7 +66,7 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@microsoft/logic-apps-shared')>();
   return {
     ...actual,
-    HostService: () => ({ openRun: mockOpenRun }),
+    HostService: () => ({ openRun: mockOpenRun, openRunDetails: mockOpenRunDetails }),
   };
 });
 
@@ -144,6 +145,8 @@ import { Designer } from '../Designer';
 import { onUndoClick, onRedoClick } from '../../core';
 
 describe('Designer', () => {
+  afterEach(cleanup);
+
   beforeEach(() => {
     vi.clearAllMocks();
     hotkeysRegistrations.length = 0;
@@ -312,7 +315,7 @@ describe('Designer', () => {
       expect(screen.queryByTestId('run-details-button')).toBeNull();
     });
 
-    it('should show a Run details button for Consumption in monitoring/run-history mode and invoke HostService().openRun with the run id', () => {
+    it('should show a Run details button for Consumption in monitoring/run-history mode and invoke only HostService().openRunDetails', () => {
       mockHasUnsupportedMultipleTriggers = true;
       mockWorkflowKind = undefined; // Consumption
       mockIsMonitoringView = true;
@@ -322,7 +325,8 @@ describe('Designer', () => {
       expect(message.getAttribute('data-is-standard')).toBe('false');
       const button = screen.getByTestId('run-details-button');
       button.click();
-      expect(mockOpenRun).toHaveBeenCalledWith('/subscriptions/x/runs/run1');
+      expect(mockOpenRunDetails).toHaveBeenCalledWith('/subscriptions/x/runs/run1');
+      expect(mockOpenRun).not.toHaveBeenCalled();
     });
 
     it('should not show a Run details button for Standard in design/edit mode', () => {
