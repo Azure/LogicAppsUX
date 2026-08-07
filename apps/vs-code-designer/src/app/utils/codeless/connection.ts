@@ -452,17 +452,20 @@ export async function saveCustomCodeStandard(context: IActionContext, workflowFi
   try {
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     const workflowFolderPath = path.dirname(workflowFilePath);
-    // to prevent 404's we first check which custom code files are already present before deleting
-    Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+    const customCodePromises = Object.entries(customCode).map(([fileName, customCodeData]) => {
       const { isModified, isDeleted, fileData } = customCodeData;
       if (isDeleted) {
-        deleteCustomCode(workflowFolderPath, fileName);
+        return deleteCustomCode(workflowFolderPath, fileName);
       } else if (isModified && fileData) {
-        uploadCustomCode(workflowFolderPath, fileName, fileData);
+        return uploadCustomCode(workflowFolderPath, fileName, fileData);
       }
+      return Promise.resolve();
     });
     // upload the app files needed for powershell actions
-    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => uploadCustomCode(projectPath, fileName, fileData));
+    const appFilePromises = Object.entries(appFiles ?? {}).map(([fileName, fileData]) =>
+      uploadCustomCode(projectPath, fileName, fileData)
+    );
+    await Promise.all([...customCodePromises, ...appFilePromises]);
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
     throw new Error(errorMessage);
