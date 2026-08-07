@@ -121,16 +121,24 @@ export class RemoteDesignerPanel extends DesignerPanel {
   }
 
   private async getDesignerPanelMetadata(): Promise<DesignerPanelMetadata> {
-    const accessToken = await getAuthorizationTokenFromNode(this.node);
+    const [accessToken, connectionsData, parametersData, localSettings, artifacts, customCodeData, workflowDetails] = await Promise.all([
+      getAuthorizationTokenFromNode(this.node),
+      this.node.getConnectionsData(),
+      this.node.getParametersData(),
+      this.node.getAppSettings(),
+      this.node.getArtifacts(),
+      this.node.getCustomCodeData(),
+      this.node.getChildWorkflows(this.context),
+    ]);
 
     return {
       panelId: this.panelName,
-      connectionsData: await this.node.getConnectionsData(),
-      parametersData: await this.node.getParametersData(),
-      localSettings: await this.node.getAppSettings(),
-      artifacts: await this.node.getArtifacts(),
-      customCodeData: await this.node.getCustomCodeData(),
-      workflowDetails: await this.node.getChildWorkflows(this.context),
+      connectionsData,
+      parametersData,
+      localSettings,
+      artifacts,
+      customCodeData,
+      workflowDetails,
       accessToken,
       azureDetails: {
         enabled: true,
