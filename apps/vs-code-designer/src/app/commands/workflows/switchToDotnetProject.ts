@@ -14,7 +14,6 @@ import {
   CodefulSdkVersions,
   artifactsDirectory,
   libDirectory,
-  extensionCommand,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
@@ -83,7 +82,7 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
   if (!version) {
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
-    await callWithTelemetryAndErrorHandling(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('switchToDotnetProject.initProjectForVSCode', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await initProjectForVSCode(actionContext, node.fsPath);

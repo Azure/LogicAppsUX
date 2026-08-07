@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   enableProjectConsistencyChecksSetting,
-  extensionCommand,
   extensionsFileName,
   funcDependencyName,
   funcVersionSetting,
@@ -112,7 +111,7 @@ async function promptToInitializeProject(context: IActionContext, projectPath: s
   );
 
   if (result === DialogResponses.yes) {
-    await callWithTelemetryAndErrorHandling(extensionCommand.initProjectForVSCode, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('ensureVSCodeFiles.initProjectForVSCode', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await initProjectForVSCode(actionContext, projectPath);

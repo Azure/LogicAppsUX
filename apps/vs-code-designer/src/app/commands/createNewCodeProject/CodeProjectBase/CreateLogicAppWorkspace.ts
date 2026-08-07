@@ -3,7 +3,6 @@ import {
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   devContainerFolderName,
-  extensionCommand,
   funcIgnoreFileName,
   gitignoreFileName,
   hostFileName,
@@ -13,6 +12,7 @@ import {
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
+  vscodeCommand,
   vscodeFolderName,
   workflowFileName,
 } from '../../../../constants';
@@ -354,5 +354,5 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }
 
-  await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
+  await vscode.commands.executeCommand(vscodeCommand.openFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
 }

@@ -1,4 +1,4 @@
-import { extensionCommand } from '../../constants';
+import { vscodeCommand } from '../../constants';
 import { localize } from '../../localize';
 import { addLocalFuncTelemetry } from '../utils/funcCoreTools/funcVersion';
 import { callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
@@ -53,7 +53,7 @@ export async function ensureWorkspace(context: IActionContext): Promise<boolean>
       DialogResponses.no
     );
     if (shouldOpenWorkspace === DialogResponses.yes) {
-      await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspaceFilePath));
+      await vscode.commands.executeCommand(vscodeCommand.openFolder, vscode.Uri.file(wizardContext.workspaceFilePath));
       context.telemetry.properties.openContainingWorkspace = 'true';
       return true;
     }
@@ -163,5 +163,5 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
 
   const uri = vscode.Uri.file(workspaceFilePath);
 
-  await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, true /* forceNewWindow */);
+  await vscode.commands.executeCommand(vscodeCommand.openFolder, uri, true /* forceNewWindow */);
 }

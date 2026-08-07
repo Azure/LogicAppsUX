@@ -16,7 +16,7 @@ import { Uri, window } from 'vscode';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 
-export async function createNewDataMapCmd(context: IActionContext): Promise<void> {
+export async function createDataMap(context: IActionContext): Promise<void> {
   if (isNullOrUndefined(ext.defaultLogicAppPath)) {
     const workspaceFolder = await getWorkspaceFolder(
       context,
@@ -32,7 +32,7 @@ export async function createNewDataMapCmd(context: IActionContext): Promise<void
   DataMapperExt.openDataMapperPanel(context);
 }
 
-export async function loadDataMapFileCmd(context: IActionContext, uri: Uri): Promise<void> {
+export async function loadDataMapFile(context: IActionContext, uri: Uri): Promise<void> {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
   if (isNullOrUndefined(ext.defaultLogicAppPath)) {
@@ -118,7 +118,7 @@ export async function loadDataMapFileCmd(context: IActionContext, uri: Uri): Pro
 
   const attemptToResolveMissingSchemaFile = async (schemaName: string, schemaPath: string): Promise<boolean> => {
     return !!(await callWithTelemetryAndErrorHandling(
-      extensionCommand.dataMapAttemptToResolveMissingSchemaFile,
+      'loadDataMapFile.attemptToResolveMissingSchemaFile',
       async (_context: IActionContext) => {
         const findSchemaFileButton = 'Find schema file';
         const clickedButton = await window.showErrorMessage(

@@ -108,7 +108,7 @@ describe('createUnitTest', () => {
   });
 
   test('should successfully create a unit test', async () => {
-    await createUnitTest(dummyNode, dummyUnitTestDefinition);
+    await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
     expect(dummyContext.telemetry.properties.unitTestSaveStatus).toBe('Success');
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(1);
@@ -124,7 +124,7 @@ describe('createUnitTest', () => {
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(false);
     vi.spyOn(EnsureWorkspace, 'ensureWorkspace').mockResolvedValue(false);
 
-    await createUnitTest(dummyNode, dummyUnitTestDefinition);
+    await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
     expect(dummyContext.telemetry.properties.multiRootWorkspaceValid).toBe('false');
@@ -136,7 +136,7 @@ describe('createUnitTest', () => {
     const testError = new Error('Test error');
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockRejectedValueOnce(testError);
 
-    await createUnitTest(dummyNode, dummyUnitTestDefinition);
+    await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
     expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
     expect(dummyContext.telemetry.properties.result).toBe('Failed');

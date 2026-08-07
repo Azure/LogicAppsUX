@@ -1,4 +1,4 @@
-import { extensionCommand, logicAppsStandardExtensionId } from '../../../constants';
+import { extensionContext, logicAppsStandardExtensionId } from '../../../constants';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -41,12 +41,12 @@ describe('extension utilities', () => {
 
     expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
       'setContext',
-      extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
+      extensionContext.dataMapSupportedDataMapDefinitionFileExts,
       expect.any(Array)
     );
     expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
       'setContext',
-      extensionCommand.dataMapSetSupportedFileExts,
+      extensionContext.dataMapSupportedFileExts,
       expect.any(Array)
     );
   });
@@ -60,6 +60,6 @@ describe('extension utilities', () => {
     await updateLogicAppsContext();
 
     expect(isLogicAppProjectInRoot).toHaveBeenCalledWith(workspaceFolder);
-    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', 'logicApps.hasProject', true);
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', 'azureLogicAppsStandard.hasProject', true);
   });
 });

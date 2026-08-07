@@ -5,7 +5,7 @@
 import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { activateAzurite } from './azurite/activateAzurite';
 import { refreshConnectionKeys } from './appSettings/connectionKeys';
-import { designerApiLoadTimeout, designerStartApi, extensionCommand } from '../../constants';
+import { designerApiLoadTimeout, designerStartApi } from '../../constants';
 import { getContainingWorkspaceFolder } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
@@ -25,7 +25,7 @@ import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 // TODO(aeldridge): Unused
 export async function startRuntimeApi(context: IActionContext, projectPath: string): Promise<void> {
-  const isAzuriteStarted = await callWithTelemetryAndErrorHandling(extensionCommand.startAzurite, async (actionContext: IActionContext) => {
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling('startRuntimeApi.startAzurite', async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     await activateAzurite(actionContext, projectPath);
@@ -36,7 +36,7 @@ export async function startRuntimeApi(context: IActionContext, projectPath: stri
     throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
   }
 
-  await callWithTelemetryAndErrorHandling(extensionCommand.refreshConnectionKeys, async (actionContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('startRuntimeApi.refreshConnectionKeys', async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
     actionContext.errorHandling.suppressDisplay = true;
     await refreshConnectionKeys(actionContext, projectPath);

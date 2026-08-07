@@ -83,7 +83,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       );
       if (shouldParameterizeConnections === DialogResponses.yes) {
         context.telemetry.properties.lastStep = 'parameterizeConnections';
-        await callWithTelemetryAndErrorHandling(extensionCommand.parameterizeProjectConnections, async (actionContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling('GenerateADODeploymentScriptsStep.parameterizeProjectConnections', async (actionContext: IActionContext) => {
           actionContext.errorHandling.rethrow = true;
           actionContext.errorHandling.suppressDisplay = true;
           await parameterizeProjectConnections(actionContext);
@@ -317,14 +317,20 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
   private static async getLogicAppDeploymentArtifactsBuffer(context: IAzureDeploymentScriptsContext): Promise<Buffer> {
     try {
       ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
-      await startDesignTimeApi(context.projectPath);
+
+      await callWithTelemetryAndErrorHandling('GenerateADODeploymentScriptsStep.getLogicAppDeploymentArtifactsBuffer.startDesignTimeApi', async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, context.projectPath);
+      });
+
       if (!ext.designTimeInstances.has(context.projectPath)) {
         throw new Error('Design time API is undefined. Please retry once Azure Functions Core Tools has started.');
       }
+
       const designTimeInst = ext.designTimeInstances.get(context.projectPath);
       if (designTimeInst.port === undefined) {
         throw new Error('Design time port is undefined. Please retry once Azure Functions Core Tools has started.');
       }
+
       const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
 
       ext.outputChannel.appendLog(

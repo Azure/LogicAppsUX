@@ -10,7 +10,7 @@ import { cloudToLocal } from '../cloudToLocal/cloudToLocal';
 import { ensureWorkspace } from '../ensureWorkspace';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
-import { createNewProject } from '../createProject/createProject';
+import { createProject } from '../createProject/createProject';
 import { createLogicAppWorkflow } from '../createWorkflow/createLogicAppWorkflow';
 import { createWorkflow } from '../createWorkflow/createWorkflow';
 import { createWorkspace } from '../createWorkspace/createWorkspace';
@@ -125,7 +125,7 @@ describe('workspace webview command wrappers', () => {
     expect(createLogicAppWorkspace).toHaveBeenCalledWith(expect.any(Object), data, true);
   });
 
-  it('createNewProject opens the project webview when a workspace is present', async () => {
+  it('createProject opens the project webview when a workspace is present', async () => {
     const workspaceFile = { fsPath: 'D:\\workspace\\MyWorkspace.code-workspace' };
     const workspaceFileJson = { folders: [{ path: './LogicApp' }] };
     const logicAppsWithoutCustomCode = ['LogicApp'];
@@ -138,7 +138,7 @@ describe('workspace webview command wrappers', () => {
     ]);
     (getLogicAppWithoutCustomCode as Mock).mockResolvedValue(logicAppsWithoutCustomCode);
 
-    await createNewProject(context);
+    await createProject(context);
 
     const config = getLastWebviewConfig();
     expect(config).toMatchObject({
@@ -178,7 +178,7 @@ describe('workspace webview command wrappers', () => {
       ['UnknownEntry', ''],
     ]);
 
-    await createNewProject(context);
+    await createProject(context);
 
     const config = getLastWebviewConfig();
     expect(config.extraInitializeData).toEqual({
@@ -188,8 +188,8 @@ describe('workspace webview command wrappers', () => {
     });
   });
 
-  it('createNewProject falls back to ensureWorkspace when no workspace file is open', async () => {
-    await createNewProject(context);
+  it('createProject falls back to ensureWorkspace when no workspace file is open', async () => {
+    await createProject(context);
 
     expect(ensureWorkspace).toHaveBeenCalledWith(expect.any(Object));
     expect(createWorkspaceWebviewCommandHandler).not.toHaveBeenCalled();

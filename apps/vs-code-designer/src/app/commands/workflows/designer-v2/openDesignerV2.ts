@@ -15,7 +15,6 @@ import type { DesignerV2Panel } from './panels/designerV2Panel';
 import LocalDesignerV2Panel from './panels/localDesignerV2Panel';
 import { RemoteDesignerV2Panel } from './panels/remoteDesignerV2Panel';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { extensionCommand } from '../../../../constants';
 
 /**
  * Opens the V2 designer for a workflow. If `runId` is provided, the designer
@@ -48,7 +47,7 @@ async function getDesignerV2Panel(
   const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
   const isMonitoringView = !!runId;
   if (!isMonitoringView && (shouldAlwaysBuildCustomCode() || !(await customCodeArtifactsExist(logicAppNode.fsPath)))) {
-    await callWithTelemetryAndErrorHandling(extensionCommand.buildCustomCodeFunctionsProject, async (actionContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('openDesignerV2.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
       await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);

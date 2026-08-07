@@ -17,7 +17,7 @@ import * as os from 'os';
 
 // ── Constants matching the extension source ──────────────────────────
 
-const EXTENSION_COMMAND_PICK_PROCESS = 'azureLogicAppsStandard.pickProcess';
+const EXTENSION_COMMAND_PICK_PROCESS = 'azureLogicAppsStandard.pickFuncProcess';
 const LAUNCH_VERSION = '0.2.0';
 const TASKS_VERSION = '2.0.0';
 const FUNC_WATCH_PROBLEM_MATCHER = '$func-watch';
@@ -418,7 +418,7 @@ suite('Debugging Functionality', () => {
       if (!ext) {
         // Extension not installed in test host — verify the expected command IDs are well-known constants
         const debugCommands = [
-          'azureLogicAppsStandard.pickProcess',
+          'azureLogicAppsStandard.pickFuncProcess',
           'azureLogicAppsStandard.getDebugSymbolDll',
           'azureLogicAppsStandard.switchDebugMode',
           'azureLogicAppsStandard.debugLogicApp',
