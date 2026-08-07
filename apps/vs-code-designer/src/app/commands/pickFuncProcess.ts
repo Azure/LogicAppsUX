@@ -8,7 +8,13 @@ import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
 import { refreshConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
-import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
+import {
+  getFuncPortFromTaskOrProject,
+  getRunningFuncTaskForWorkspace,
+  isFuncHostTask,
+  scopeMatchesWorkspace,
+  stopFuncTaskForWorkspace,
+} from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
@@ -26,6 +32,8 @@ import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from './publishCodefulProject';
+
+const funcTaskStartupTimeoutSeconds = 10 * 60;
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
@@ -72,13 +80,16 @@ export async function pickFuncProcessInternal(
   projectPath: string
 ): Promise<string | undefined> {
   context.telemetry.properties.lastStep = 'activateAzurite';
-  const isAzuriteStarted = await callWithTelemetryAndErrorHandling('pickFuncProcess.startAzurite', async (actionContext: IActionContext) => {
-    actionContext.errorHandling.rethrow = true;
-    actionContext.errorHandling.suppressDisplay = true;
-    await activateAzurite(actionContext, projectPath);
-    return true;
-  });
-  
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling(
+    'pickFuncProcess.startAzurite',
+    async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await activateAzurite(actionContext, projectPath);
+      return true;
+    }
+  );
+
   if (!isAzuriteStarted) {
     throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
   }
@@ -99,8 +110,8 @@ export async function pickFuncProcessInternal(
 
   // Stop any previous func process BEFORE building to avoid file lock errors
   // (e.g. GenerateFunctionMetadata failing on obj/Debug/net8/WorkerExtensions)
-  context.telemetry.properties.lastStep = 'waitForPrevFuncTaskToStop';
-  await waitForPrevFuncTaskToStop(workspaceFolder);
+  context.telemetry.properties.lastStep = 'stopPreviousFuncTask';
+  await stopFuncTaskForWorkspace(workspaceFolder);
 
   context.telemetry.properties.lastStep = 'buildProject';
   if (await hasCodefulWorkflowSetting(projectPath)) {
@@ -130,11 +141,13 @@ export async function pickFuncProcessInternal(
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const funcTask: vscode.Task | undefined = tasks.find((task) => {
-    return task.scope === workspaceFolder && (preLaunchTaskName ? task.name === preLaunchTaskName : isFuncHostTask(task));
+    return (
+      scopeMatchesWorkspace(task.scope, workspaceFolder) && (preLaunchTaskName ? task.name === preLaunchTaskName : isFuncHostTask(task))
+    );
   });
 
   const debugTask: vscode.Task | undefined = tasks.find((task) => {
-    return task.scope === workspaceFolder && task.name === 'generateDebugSymbols';
+    return scopeMatchesWorkspace(task.scope, workspaceFolder) && task.name === 'generateDebugSymbols';
   });
 
   if (!funcTask) {
@@ -145,7 +158,8 @@ export async function pickFuncProcessInternal(
 
   getPickProcessTimeout(context);
 
-  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless)) {
+  const isCodelessNugetProject = !isBundleProject && debugConfig.isCodeless === true && !debugConfig.customCodeRuntime;
+  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless || isCodelessNugetProject)) {
     await startDebugTask(debugTask, workspaceFolder);
   }
 
@@ -164,28 +178,6 @@ export async function pickFuncProcessInternal(
     )
   );
   return await pickWorkflowDebugProcess(taskInfo, preferHostChildProcess);
-}
-
-/**
- * Waits for functions tasks to stop.
- * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace path.
- */
-async function waitForPrevFuncTaskToStop(workspaceFolder: vscode.WorkspaceFolder): Promise<void> {
-  const timeoutInSeconds = 30;
-  const maxTime: number = Date.now() + timeoutInSeconds * 1000;
-  while (Date.now() < maxTime) {
-    if (!runningFuncTaskMap.has(workspaceFolder)) {
-      return;
-    }
-    await delay(1000);
-  }
-  throw new Error(
-    localize(
-      'failedToFindFuncHost',
-      'Failed to stop previous running Functions host within "{0}" seconds. Make sure the task has stopped before you debug again.',
-      timeoutInSeconds
-    )
-  );
 }
 
 /**
@@ -238,7 +230,7 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
 
   return new Promise<void>((resolve) => {
     const disposable: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e) => {
-      if (e.execution.task.scope === workspaceFolder && e.execution.task === debugTask) {
+      if (scopeMatchesWorkspace(e.execution.task.scope, workspaceFolder) && e.execution.task.name === debugTask.name) {
         if (e.exitCode !== 0) {
           vscode.window.showWarningMessage(
             localize('azureLogicAppsStandard.debugSymbols', 'Unable to debug the workflow app. Debug symbols could not be generated.')
@@ -267,7 +259,7 @@ async function startFuncTask(
 
   let taskError: Error | undefined;
   const errorListener: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e: vscode.TaskProcessEndEvent) => {
-    if (e.execution.task.scope === workspaceFolder && e.exitCode !== 0) {
+    if (scopeMatchesWorkspace(e.execution.task.scope, workspaceFolder) && e.exitCode !== 0) {
       context.errorHandling.suppressReportIssue = true;
       // Throw if _any_ task fails, not just funcTask (since funcTask often depends on build/clean tasks)
       taskError = new Error(
@@ -284,45 +276,63 @@ async function startFuncTask(
 
   try {
     // The "IfNotActive" part helps when the user starts, stops and restarts debugging quickly in succession. We want to use the already-active task to avoid two func tasks causing a port conflict error
-    // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we would've stopped it in `waitForPrevFuncTaskToStop` above
+    // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we already stopped any previous workspace-scoped func task above.
     await executeIfNotActive(funcTask);
 
     const intervalMs = 500;
     const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);
     let statusRequestTimeout: number = intervalMs;
+    const taskStartMaxTime: number = Date.now() + Math.max(pickProcessTimeout, funcTaskStartupTimeoutSeconds) * 1000;
+    let taskInfo: IRunningFuncTask | undefined = getRunningFuncTaskForWorkspace(workspaceFolder);
+    while (!taskInfo && Date.now() < taskStartMaxTime) {
+      if (taskError !== undefined) {
+        throw taskError;
+      }
+      await delay(intervalMs);
+      taskInfo = getRunningFuncTaskForWorkspace(workspaceFolder);
+    }
+
+    if (!taskInfo) {
+      throw new Error(
+        localize(
+          'failedToStartFuncHostTask',
+          'Failed to start the Functions host task within "{0}" seconds. View task output for build or restore details.',
+          Math.max(pickProcessTimeout, funcTaskStartupTimeoutSeconds)
+        )
+      );
+    }
+
     const maxTime: number = Date.now() + pickProcessTimeout * 1000;
     while (Date.now() < maxTime) {
       if (taskError !== undefined) {
         throw taskError;
       }
 
-      const taskInfo: IRunningFuncTask | undefined = runningFuncTaskMap.get(workspaceFolder);
-      if (taskInfo) {
-        for (const scheme of ['http', 'https']) {
-          const statusRequest: AzExtRequestPrepareOptions = {
-            url: `${scheme}://localhost:${funcPort}/admin/host/status`,
-            method: HTTP_METHODS.GET,
-          };
-          if (scheme === 'https') {
-            statusRequest.rejectUnauthorized = false;
-          }
+      taskInfo = getRunningFuncTaskForWorkspace(workspaceFolder) ?? taskInfo;
+      for (const scheme of ['http', 'https']) {
+        const statusRequest: AzExtRequestPrepareOptions = {
+          url: `${scheme}://localhost:${funcPort}/admin/host/status`,
+          method: HTTP_METHODS.GET,
+        };
+        if (scheme === 'https') {
+          statusRequest.rejectUnauthorized = false;
+        }
 
-          try {
-            // wait for status url to indicate functions host is running
-            const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
-            if (response.parsedBody.state.toLowerCase() === 'running') {
-              funcTaskReadyEmitter.fire(workspaceFolder);
-              taskInfo.childProcessId = await getWorkflowDebugProcessCandidates(taskInfo);
-              return taskInfo;
-            }
-          } catch (error) {
-            if (isTimeoutError(error)) {
-              // Timeout likely means localhost isn't ready yet, but we'll increase the timeout each time it fails just in case it's a slow computer that can't handle a request that fast
-              statusRequestTimeout *= 2;
-              context.telemetry.measurements.maxStatusTimeout = statusRequestTimeout;
-            } else {
-              // ignore
-            }
+        try {
+          // wait for status url to indicate functions host is running
+          const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
+          if (response.parsedBody.state.toLowerCase() === 'running') {
+            funcTaskReadyEmitter.fire(workspaceFolder);
+            taskInfo.childProcessId = await getWorkflowDebugProcessCandidates(taskInfo);
+            return taskInfo;
+          }
+        } catch (error) {
+          if (isTimeoutError(error)) {
+            // Timeout likely means localhost isn't ready yet, but we'll increase the timeout each time it fails just in case it's a slow computer that can't handle a request that fast
+            statusRequestTimeout *= 2;
+            context.telemetry.measurements.maxStatusTimeout = statusRequestTimeout;
+          } else {
+            // ignore
           }
         }
       }

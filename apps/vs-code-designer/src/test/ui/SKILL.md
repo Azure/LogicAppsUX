@@ -41,21 +41,85 @@ For any test that touches debug, the design-time API, the language server, the o
 
 Tests sharing a Phase 4.x session fail due to lingering func.exe, language-server file locks, and webview iframes still in the DOM after a workspace switch. Every new test owns its own phase via `prepareFreshSession()`.
 
-### Rule 3. Use Selenium Actions API for clicks inside webview iframes
+### Rule 3. Check focused-scenario prerequisites before running
+
+Before running a focused `E2E_MODE` or `LA_E2E_SCENARIO`, inspect the scenario's `workspaceSpec` in `run-e2e.ts`:
+
+1. `workspaceSpec: { ... }` and `workspaceSpec: 'manifest-multi'` require the Phase 4.1 fixture manifest at `%TEMP%\la-e2e-test\created-workspaces.json`.
+2. Run `p41a-fixtures` or a grouped/full mode that runs Phase 4.1 first before scenarios such as `p49-nugetdebugconversion` / `E2E_MODE=nugetdebugonly`.
+3. If the manifest exists but directories are missing or stale, rerun the fixture phase instead of debugging the focused scenario.
+4. `self-contained`, `self-creates`, and `plain-folder` scenarios create or select their own resources and do not need the Phase 4.1 manifest.
+
+Do not spend iteration cycles on a focused scenario until its prerequisite fixture setup is present.
+
+Current manifest-backed scenarios:
+
+| Scenario | Required manifest entry / resource |
+|----------|------------------------------------|
+| `p42-standard` | Standard Stateful `.code-workspace` |
+| `p42-customcode` | CustomCode Stateful `.code-workspace` |
+| `p42-rulesengine` | RulesEngine Stateful `.code-workspace` |
+| `p42-connectionprompt` | Standard Stateful `.code-workspace` |
+| `p43-inlinejavascript` | Standard Stateful `.code-workspace` |
+| `p43-customcode` | CustomCode Stateful `.code-workspace` |
+| `p43-rulesengine` | RulesEngine Stateful `.code-workspace` |
+| `p44-statelessvariables` | Standard Stateless `.code-workspace` |
+| `p45-designerviewextended` | Standard Stateful `.code-workspace` |
+| `p46-keyboardnav` | Standard Stateful `.code-workspace` |
+| `p47-suite` | `manifest-multi`; preferred Standard Stateful startup resource, then test reads the manifest |
+| `p48a-conversionno` | Standard Stateful workspace directory (`use: 'wsDir'`) |
+| `p48c-multipledesigners` | `manifest-multi`; preferred Standard Stateful startup resource, then test reads the manifest |
+| `p48e-conversionsubfolder` | Standard Stateful app directory (`use: 'appDir'`) |
+| `p49-descriptionpersistence` | Standard Stateful `.code-workspace` |
+| `p49-nugetdebugconversion` | Standard Stateful manifest entry, but no startup resource (`use: 'none'`) because the test clones and opens its own workspace |
+| `p412-bundlerepair` | Standard Stateful `.code-workspace` |
+
+No Phase 4.1 fixture manifest required: `p40-nonlogicapp`, `p41a-fixtures`, `p41b-createworkspace-behavior`, `p48b-conversioncreate`, and standalone `p48d-conversionyes`. The grouped `conversiononly` mode still needs the manifest because its p48a/p48c/p48e phases and workspace-dir resource selection are manifest-backed.
+
+When adding a new scenario, update this map in the same PR as the `run-e2e.ts` scenario entry.
+
+### Rule 4. Use Selenium Actions API for clicks inside webview iframes
 
 Direct `element.click()` does not dispatch native events that React's synthetic event system captures. Use `driver.actions().move({ origin: element }).click().perform()`.
 
-### Rule 4. Find inputs by label, not by DOM index
+### Rule 5. Find inputs by label, not by DOM index
 
 `findInputByLabel('Workspace name')` survives re-renders; index-based lookups silently write into the wrong field when the wizard reorders inputs.
 
-### Rule 5. Gate Next/Create clicks on validation success, not on button visibility
+### Rule 6. Gate Next/Create clicks on validation success, not on button visibility
 
 Webview validators are async. Wait for the button to be enabled and for error decorators to clear, not just for it to appear.
 
-### Rule 6. Lint and rebuild after every test edit
+### Rule 7. Lint and rebuild after every test edit
 
 Run `npx biome check --write <files>` and `npx tsup --config tsup.e2e.test.config.ts` before claiming the test passes. Biome failures break CI; an un-rebuilt test runs the stale compiled JS.
+
+### Rule 8. Wire new `run-e2e.ts` scenarios into CI
+
+Adding a scenario to `run-e2e.ts` or a focused `E2E_MODE` is not enough. If the scenario is intended to protect PRs, add it to `.github/workflows/vscode-e2e.yml` in the grouped `vscode-e2e` matrix, or explicitly document it as local-only.
+
+**Why this matters**: `p49-nugetdebugconversion` was available locally through `E2E_MODE=nugetdebugonly`, but until it was added to the workflow matrix, CI never ran the NuGet debug lifecycle regression.
+
+When adding a scenario:
+
+1. Add the scenario entry in `run-e2e.ts`.
+2. Add the scenario to an appropriate `.github/workflows/vscode-e2e.yml` matrix shard with the correct `use_workspace_fixtures` and `use_bundle_artifact` flags.
+3. Update this file's scenario map and mode table.
+4. If the scenario is deliberately local-only, document that explicitly next to the scenario entry and in the local run instructions.
+
+### Rule 9. Opening designer requires popup hygiene
+
+Before any test opens the designer, account for known blocking prompts:
+
+1. Patch `local.settings.json` with `WORKFLOWS_SUBSCRIPTION_ID: ""` via `ensureLocalSettingsForDesigner()` so the "Enable connectors in Azure for Logic App" / "Use connectors from Azure" QuickPick does not appear.
+2. Use shared helpers such as `handleDesignerPrompts()`, `dismissNotifications()`, command-palette retries, and modal/QuickInput cleanup around workspace open, designer launch, and webview waits.
+3. If a new C# Dev Kit sign-in, auth, connector parameterization, notification, modal, or QuickPick blocker is found, fix it in shared helpers instead of adding a one-off sleep or test-local dismissal.
+
+These popups are suite infrastructure blockers. Do not spend product-debug iteration cycles waiting on them unless the popup itself is the behavior under test.
+
+### Rule 10. Debug lifecycle regressions must run a real workflow, not just start the host
+
+For debug lifecycle regressions, especially bundle → NuGet conversion, seed a deterministic built-in Request trigger + Response action workflow and verify callback URL, Run trigger, run history `Succeeded`, and action-level evidence such as `Response:Succeeded`. `admin/host/status` is not enough.
 
 ---
 
@@ -112,6 +176,12 @@ node out/test/run-e2e.js
 powershell -ExecutionPolicy Bypass -File src/test/ui/run-clean.ps1
 ```
 
+You can also use the root VS Code Run and Debug menu:
+
+- `E2E: p49 NuGet debug conversion` runs `E2E_MODE=nugetdebugonly`.
+- `E2E: Select mode (run-e2e)` opens a picker for supported `E2E_MODE` values.
+- Manifest-backed Debug menu modes (`designeronly`, `newtestsonly`, `conversiononly`, `nugetdebugonly`, `bundlerepaironly`, and selected `LA_E2E_SCENARIO` runs) detect a missing/stale Phase 4.1 fixture manifest and run `p41a-fixtures` automatically before the focused scenario.
+
 ### Build Scripts
 
 ```bash
@@ -126,10 +196,13 @@ pnpm run test:ui        # Runs node out/test/run-e2e.js
 | (unset) | Runs Phase 4.0 (non-Logic-App startup), Phase 4.1 (createWorkspace), then later designer/conversion phases |
 | `nonlogicappstartup` | Runs only Phase 4.0 with minimal settings and no runtime dependency paths |
 | `designeronly` | Skips Phase 4.1, runs Phase 4.2 using workspaces from a previous Phase 4.1 run |
+| `nugetdebugonly` | Runs `p49-nugetdebugconversion`: bundle debug → run Request/Response workflow → stop → convert to NuGet → debug again without harness port cleanup → run workflow again. Requires the Phase 4.1 fixture manifest from `p41a-fixtures` / createWorkspace setup. |
 | `bundleintegrityonly` | Runs Phase 4.11 (`bundleCdnHealth.test.ts`) — pure-Mocha probe of `cdn.functions.azure.com` integrity headers. No VS Code session, no compiled extension required (only `npx tsup --config tsup.e2e.test.config.ts`). Bundled into the `independentonly` shard for CI. |
 | `funcrepaironly` | Runs Phase 4.14 (`funcRepair.test.ts`) only — the Func Core Tools pre-debug self-heal. Requires a manifest from a previous `p41a-fixtures` run. In CI this scenario runs as the ubuntu `func-selfheal` shard and as the `vscode-e2e-funcselfheal-windows` job (which creates its own fixtures first — see section 19). |
 
-**IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.
+**IMPORTANT**: Any focused mode whose scenario uses a manifest-backed `workspaceSpec` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. This includes `designeronly` and `nugetdebugonly`. If the manifest is missing, stale, or a previous run's cleanup removed workspace directories, rerun the fixture/createWorkspace phase before the focused mode.
+
+**NOTE**: On Windows, `openWorkspaceFileInSession()` may fail to switch workspaces through the simple dialog even when no exception is thrown. The helper falls back to `VSBrowser.instance.openResources()` on Windows and requires a positive title/Explorer postcondition before continuing.
 
 **NOTE**: When running from a background terminal, run from `apps/vs-code-designer`:
 ```bash
@@ -298,6 +371,11 @@ await input.setText('logic app workspace');    // ❌ switches to file search
 **Symptom**: `ElementClickInterceptedError` when trying to interact with webview. A notification toast covers the element.
 **Cause**: Extension activation (especially dependency extensions like C# DevKit) displays notifications.
 **Fix**: `dismissNotifications(driver)` helper clicks notification close buttons before interacting with the webview.
+
+### Issue: Azure Logic Apps ENOENT webview asset notification
+**Symptom**: A notification from "Azure Logic Apps (Standard)" says `ENOENT: no such file or directory, open ... vs-code-react/index.html`, then webview-dependent steps retry until an unrelated timeout.
+**Cause**: The installed extension under `test-resources/test-extensions` is missing the built VS Code React webview bundle. This is a broken test/package setup, not a scenario-specific product behavior.
+**Fix**: Keep detection in shared `helpers.ts` via `throwIfFatalLogicAppsNotification()`. Common cleanup and wait helpers must rethrow `FatalLogicAppsNotificationError` so every E2E fails fast instead of dismissing the notification or waiting through retries.
 
 ### Issue: Label ambiguity — "Function name" matches "Function namespace"
 **Symptom**: Custom code fields filled incorrectly — namespace gets the function name value, function name stays empty.

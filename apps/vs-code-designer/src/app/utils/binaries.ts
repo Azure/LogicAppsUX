@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
+  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dependencyMetadataRequestTimeoutMs,
@@ -320,6 +321,20 @@ const getFunctionCoreToolVersionFromGithub = async (context: IActionContext, maj
   }
 };
 
+const functionCoreToolsGithubReleaseExists = async (context: IActionContext, version: string): Promise<boolean> => {
+  try {
+    await readJsonFromUrl(`https://api.github.com/repos/Azure/azure-functions-core-tools/releases/tags/${version}`, {
+      showUserError: false,
+    });
+    return true;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : isString(error) ? error : 'Unknown error';
+    context.telemetry.properties.invalidLatestFunctionCoreToolsVersion = version;
+    context.telemetry.properties.errorLatestFunctionCoretoolsTag = errorMessage;
+    return false;
+  }
+};
+
 export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
   context.telemetry.properties.funcCoreTools = majorVersion;
 
@@ -336,7 +351,10 @@ export async function getLatestFunctionCoreToolsVersion(context: IActionContext,
       const npmCommand = getNpmCommand();
       const latestVersion = (await executeCommand(undefined, undefined, `${npmCommand}`, 'view', funcPackageName, 'version'))?.trim();
       if (checkMajorVersion(latestVersion, majorVersion)) {
-        return latestVersion;
+        if (await functionCoreToolsGithubReleaseExists(context, latestVersion)) {
+          return latestVersion;
+        }
+        context.telemetry.properties.latestVersionSource = 'github';
       }
     } catch (error) {
       context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error executing npm command to get latest function core tools version: ${error}`;
@@ -778,7 +796,9 @@ export function useBinariesDependenciesSync(): boolean {
     return false;
   }
 
-  return shouldValidateAndInstallRuntimeDependencies();
+  const binariesInstallationEnabled = getGlobalSetting<boolean>(autoRuntimeDependenciesValidationAndInstallationSetting) === true;
+  const binariesLocationConfigured = Boolean(getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey));
+  return binariesInstallationEnabled || binariesLocationConfigured;
 }
 
 function getExpectedBinaryPath(dependencyName: string): string | undefined {
@@ -806,7 +826,7 @@ function binariesExistFromSettings(dependencyName: string, updateMissingExeSetti
   const expectedBinaryPath = binariesExist ? getExpectedBinaryPath(dependencyName) : undefined;
 
   ext.outputChannel.appendLog(`${dependencyName} Binaries: ${binariesPath}`);
-  if (expectedBinaryPath && !fs.existsSync(expectedBinaryPath)) {
+  if (expectedBinaryPath && isPathLikeBinarySetting(expectedBinaryPath) && !fs.existsSync(expectedBinaryPath)) {
     const repairedBinaryPath = getRepairableWindowsBinaryPath(dependencyName, binariesPath, expectedBinaryPath);
     if (repairedBinaryPath) {
       if (updateMissingExeSetting) {
@@ -821,6 +841,10 @@ function binariesExistFromSettings(dependencyName: string, updateMissingExeSetti
   }
 
   return binariesExist;
+}
+
+function isPathLikeBinarySetting(binaryPath: string): boolean {
+  return /[\\/]/.test(binaryPath);
 }
 
 async function updateBinaryPathSetting(dependencyName: string, binaryPath: string): Promise<void> {
