@@ -157,6 +157,7 @@ const BLOCKING_PROMPT_TEXT = 'You must have the Azure Functions Core Tools insta
  * user-visible half of "silent repair" — but see `SOFT` handling below.
  */
 const SUPPRESSED_ERROR_FRAGMENTS = ['Error downloading the', 'Checksum verification failed', 'could not be installed at'];
+const VALIDATE_DEPENDENCIES_COMMAND = 'Azure Logic Apps: Validate and install dependency binaries';
 
 /**
  * Output-channel lines that only the debug-start -> `pickFuncProcessInternal` path can produce.
@@ -446,6 +447,24 @@ async function waitForStableRunnableFunc(funcBinaryPath: string, timeoutMs: numb
   throw new Error(
     `Timed out after ${timeoutMs}ms waiting for a stably runnable managed func. Last reason: ${lastReason}. Binary: ${describeBinary(funcBinaryPath)}`
   );
+}
+
+async function provisionFuncCoreToolsForTest(workbench: Workbench, driver: WebDriver): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      console.log(`${LOG_PREFIX} Invoking product dependency validation command (attempt ${attempt}/2)`);
+      await workbench.executeCommand(VALIDATE_DEPENDENCIES_COMMAND);
+      await waitForDependencyValidation(driver);
+      return;
+    } catch (error) {
+      lastError = error;
+      console.log(`${LOG_PREFIX} Dependency validation setup attempt ${attempt}/2 failed: ${error}`);
+      await sleep(3000);
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }
 
 /**
@@ -1134,7 +1153,7 @@ async function watchForFuncRepair(
   return result;
 }
 
-describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired instead of blocking F5 (E2E)', function () {
+describe('Func self-heal E2E', function () {
   this.timeout(TEST_TIMEOUT);
 
   let driver: WebDriver;
@@ -1193,7 +1212,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     }
   });
 
-  it('repairs a provisioned-but-unrunnable func during the pre-debug gate instead of showing the install modal', async function () {
+  it('repairs unrunnable func', async function () {
     this.timeout(TEST_TIMEOUT);
 
     // This scenario reuses a workspace created by the real Create Workspace wizard in Phase
@@ -1228,7 +1247,7 @@ describe('Func Core Tools pre-debug self-heal — unrunnable binary repaired ins
     // mean the recorder itself is wedged — a genuinely different failure.
     await waitForExtensionReady(workbench, EXTENSION_READY_TIMEOUT_MS);
     console.log(`${LOG_PREFIX} Logic Apps extension commands are registered`);
-    await waitForDependencyValidation(driver);
+    await provisionFuncCoreToolsForTest(workbench, driver);
 
     primaryFuncPath = getFuncCoreToolsPath(funcToolsDir);
     await waitForStableRunnableFunc(primaryFuncPath, BASELINE_TIMEOUT_MS);
