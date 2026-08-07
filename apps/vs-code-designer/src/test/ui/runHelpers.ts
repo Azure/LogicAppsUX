@@ -28,7 +28,32 @@ import * as https from 'https';
 import * as os from 'os';
 import * as path from 'path';
 import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
-import { sleep, captureScreenshot, dismissAllDialogs, clearBlockingUI, focusEditor } from './helpers';
+import {
+  sleep,
+  captureScreenshot,
+  dismissAllDialogs,
+  clearBlockingUI,
+  focusEditor,
+  dismissConnectorQuickPickIfVisible,
+  throwIfFatalLogicAppsNotification,
+} from './helpers';
+
+async function findForbiddenPopupText(driver: WebDriver, patterns: RegExp[] | undefined): Promise<string | undefined> {
+  if (!patterns?.length) {
+    return undefined;
+  }
+
+  const text = await driver
+    .executeScript<string>(`
+      const doc = (window.top && window.top.document) ? window.top.document : document;
+      return Array.from(doc.querySelectorAll('[role="dialog"], .monaco-dialog-box, .notification-toast, .notifications-toasts .notification-list-item'))
+        .map((el) => el.textContent || '')
+        .join('\\n---\\n');
+    `)
+    .catch(() => '');
+
+  return patterns.some((pattern) => pattern.test(text)) ? text : undefined;
+}
 
 // Uses the default dependency path (~/.azurelogicapps/dependencies) since E2E tests
 // always configure autoRuntimeDependenciesPath to this default via run-e2e.js settings injection.
@@ -431,7 +456,7 @@ export async function startDebugging(workbench: Workbench, driver: WebDriver): P
  */
 export async function waitForRuntimeReady(
   driver: WebDriver,
-  opts: { requireHostRunning?: boolean; timeoutMs?: number; workspacePaths?: string[] } = {}
+  opts: { requireHostRunning?: boolean; timeoutMs?: number; workspacePaths?: string[]; forbiddenPopupPatterns?: RegExp[] } = {}
 ): Promise<boolean> {
   const timeoutMs = opts.timeoutMs ?? 300_000;
   const requireHostRunning = opts.requireHostRunning ?? false;
@@ -445,6 +470,13 @@ export async function waitForRuntimeReady(
   let suspiciousDumped = false;
 
   while (Date.now() < deadline) {
+    await throwIfFatalLogicAppsNotification(driver, 'runtime readiness');
+
+    const forbiddenPopupText = await findForbiddenPopupText(driver, opts.forbiddenPopupPatterns);
+    if (forbiddenPopupText) {
+      throw new Error(`Forbidden popup appeared while waiting for runtime readiness: ${forbiddenPopupText}`);
+    }
+
     // Probe VS Code's main workbench DOM via window.top rather than switching
     // the WebDriver to defaultContent. Callers frequently arrive here while
     // parked inside a designer/overview iframe (e.g., switchToOverviewWebview
@@ -458,6 +490,7 @@ export async function waitForRuntimeReady(
 
     try {
       await dismissAllDialogs(driver);
+      await dismissConnectorQuickPickIfVisible(driver);
     } catch {
       /* ignore */
     }
@@ -1241,6 +1274,7 @@ export async function prewarmFunctionsHost(driver: WebDriver, opts?: { timeoutMs
  */
 export async function openOverviewPage(workbench: Workbench, driver: WebDriver, workflowJsonPath: string): Promise<boolean> {
   console.log('[overview] Opening overview via right-click on workflow.json...');
+  const workflowFolderName = path.basename(path.dirname(workflowJsonPath));
 
   console.log('[overview] Switching to Explorer view...');
   try {
@@ -1251,11 +1285,63 @@ export async function openOverviewPage(workbench: Workbench, driver: WebDriver, 
     console.log(`[overview] Could not switch to Explorer: ${e.message}`);
   }
 
-  await VSBrowser.instance.openResources(workflowJsonPath);
-  await sleep(2000);
+  try {
+    await workbench.executeCommand('workbench.files.action.refreshFilesExplorer');
+  } catch {
+    /* ignore */
+  }
+
+  try {
+    await VSBrowser.instance.openResources(workflowJsonPath);
+    await sleep(1500);
+  } catch (e: any) {
+    console.log(`[overview] openResources failed: ${e.message?.split('\n')[0] ?? e}`);
+  }
+
+  const revealCandidates = [
+    'workbench.files.action.showActiveFileInExplorer',
+    'revealInExplorer',
+    'workbench.action.revealActiveEditorInExplorer',
+  ];
+  for (const cmd of revealCandidates) {
+    try {
+      await workbench.executeCommand(cmd);
+      console.log(`[overview] Revealed active file via "${cmd}"`);
+      await sleep(800);
+      break;
+    } catch (revealErr: any) {
+      console.log(`[overview] reveal command "${cmd}" failed: ${revealErr.message?.split('\n')[0] ?? revealErr}`);
+    }
+  }
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
+      await driver
+        .executeScript(
+          `
+          const workflowFolderName = arguments[0];
+          const rows = Array.from(document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+          for (const row of rows) {
+            const text = row.textContent || '';
+            if (!text.includes(workflowFolderName)) {
+              continue;
+            }
+            const expanded = row.getAttribute('aria-expanded');
+            if (expanded === 'false') {
+              const twistie = row.querySelector('.monaco-tl-twistie') || row;
+              if (twistie instanceof HTMLElement) {
+                twistie.click();
+                return true;
+              }
+            }
+          }
+          return false;
+        `,
+          workflowFolderName
+        )
+        .catch(() => false);
+      await sleep(500);
+
       const treeItems =
         (await driver.executeScript<number>(`
         var items = document.querySelectorAll('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row');
@@ -1519,12 +1605,15 @@ export async function waitForOverviewView(
   } catch {
     /* ignore */
   }
+  await clearBlockingUI(driver);
   await sleep(2000);
 
   let lastError: any = null;
   let attempt = 0;
   while (Date.now() < deadline) {
     attempt++;
+    await throwIfFatalLogicAppsNotification(driver, 'overview open');
+
     try {
       const opened = await openOverviewPage(workbench, driver, workflowJsonPath);
       if (!opened) {
@@ -2047,9 +2136,10 @@ async function verifyLatestRunActionRunsSucceeded(workflowName: string): Promise
  */
 export async function verifyAllNodesSucceeded(
   driver: WebDriver,
-  workflowName?: string
+  workflowName?: string,
+  timeoutMs = 60_000
 ): Promise<{ allSucceeded: boolean; details: string }> {
-  const deadline = Date.now() + 60_000;
+  const deadline = Date.now() + timeoutMs;
   let lastDetails = '0 succeeded';
   try {
     while (Date.now() < deadline) {

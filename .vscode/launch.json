@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "0.2.0",
   "configurations": [
     {
       "name": "Run Designer Extension in Dev Mode",
@@ -15,6 +15,281 @@
         "DEBUGTELEMETRY": "v",
         "LSP_SERVER_DEV_PATH": "/Users/carloscastro/Documents/Dev/Agent_C_Sharp_Server/Server/bin/Debug/net8.0/SdkLspServer.dll"
       }
+    },
+    {
+      "name": "E2E: Select mode (run-e2e)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "${input:e2eMode}"
+      }
+    },
+    {
+      "name": "E2E: p49 NuGet debug conversion",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "nugetdebugonly"
+      }
+    },
+    {
+      "name": "E2E: full suite",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "full"
+      }
+    },
+    {
+      "name": "E2E: create workspaces only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "createonly"
+      }
+    },
+    {
+      "name": "E2E: designer lifecycle only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "designeronly"
+      }
+    },
+    {
+      "name": "E2E: new tests only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "newtestsonly"
+      }
+    },
+    {
+      "name": "E2E: conversion only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "conversiononly"
+      }
+    },
+    {
+      "name": "E2E: conversion create only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "conversioncreateonly"
+      }
+    },
+    {
+      "name": "E2E: non-Logic app startup",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "nonlogicappstartup"
+      }
+    },
+    {
+      "name": "E2E: codeful debug only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "codefuldebugonly"
+      }
+    },
+    {
+      "name": "E2E: bundle repair only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "bundlerepaironly"
+      }
+    },
+    {
+      "name": "E2E: bundle integrity only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "bundleintegrityonly"
+      }
+    },
+    {
+      "name": "E2E: LSP EPERM only",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "lspeperm"
+      }
+    },
+    {
+      "name": "E2E: scenarios",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "scenarios"
+      }
+    },
+    {
+      "name": "E2E: scenarios pilot",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "scenarios-pilot"
+      }
+    },
+    {
+      "name": "E2E CI shard: independent",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "independentonly"
+      }
+    },
+    {
+      "name": "E2E CI shard: create + designer",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "createplusdesigner"
+      }
+    },
+    {
+      "name": "E2E CI shard: create + new tests",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "createplusnewtests"
+      }
+    },
+    {
+      "name": "E2E CI shard: create + conversion",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/vs-code-designer",
+      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
+      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_MODE": "createplusconversion"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "e2eMode",
+      "type": "pickString",
+      "description": "E2E_MODE for apps/vs-code-designer/src/test/ui/run-e2e.ts",
+      "default": "nugetdebugonly",
+      "options": [
+        "nugetdebugonly",
+        "full",
+        "createonly",
+        "designeronly",
+        "newtestsonly",
+        "conversiononly",
+        "conversioncreateonly",
+        "nonlogicappstartup",
+        "codefuldebugonly",
+        "bundlerepaironly",
+        "bundleintegrityonly",
+        "lspeperm",
+        "scenarios",
+        "scenarios-pilot",
+        "independentonly",
+        "createplusdesigner",
+        "createplusnewtests",
+        "createplusconversion"
+      ]
     }
   ]
 }

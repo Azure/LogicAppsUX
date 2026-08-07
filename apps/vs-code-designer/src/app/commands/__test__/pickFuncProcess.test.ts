@@ -33,9 +33,12 @@ vi.mock('../../utils/dotnet/dotnet', () => ({
 }));
 
 vi.mock('../../utils/funcCoreTools/funcHostTask', () => ({
+  getRunningFuncTaskForWorkspace: vi.fn(),
   getFuncPortFromTaskOrProject: vi.fn(),
   isFuncHostTask: vi.fn(),
   runningFuncTaskMap: new Map(),
+  scopeMatchesWorkspace: vi.fn(),
+  stopFuncTaskForWorkspace: vi.fn(),
 }));
 
 vi.mock('../../utils/taskUtils', () => ({
@@ -86,9 +89,14 @@ vi.mock('../publishCodefulProject', () => ({
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { preDebugValidate } from '../../debug/validatePreDebug';
 import { getProjFiles } from '../../utils/dotnet/dotnet';
-import { getFuncPortFromTaskOrProject, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
+import {
+  getFuncPortFromTaskOrProject,
+  getRunningFuncTaskForWorkspace,
+  runningFuncTaskMap,
+  scopeMatchesWorkspace,
+  stopFuncTaskForWorkspace,
+} from '../../utils/funcCoreTools/funcHostTask';
 import { executeIfNotActive } from '../../utils/taskUtils';
-import { delay } from '../../utils/delay';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
@@ -96,6 +104,7 @@ import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsP
 import * as pickFuncProcessModule from '../pickFuncProcess';
 import { publishCodefulProject } from '../publishCodefulProject';
 import { refreshConnectionKeys } from '../../utils/appSettings/connectionKeys';
+import { delay } from '../../utils/delay';
 
 let originalPlatform: NodeJS.Platform;
 let originalKill: typeof process.kill;
@@ -121,6 +130,11 @@ describe('pickFuncProcessInternal', () => {
     scope: workspaceFolder,
     definition: { command: 'func host start --port 7071' },
   } as vscode.Task;
+  const debugTask = {
+    name: 'generateDebugSymbols',
+    scope: workspaceFolder,
+    definition: { command: 'dotnet path/to/debugsymbol.dll' },
+  } as vscode.Task;
   const context: any = {
     telemetry: { properties: {}, measurements: {} },
     errorHandling: {},
@@ -137,10 +151,14 @@ describe('pickFuncProcessInternal', () => {
     (hasCodefulWorkflowSetting as any).mockResolvedValue(true);
     (tryBuildCustomCodeFunctionsProject as any).mockResolvedValue(true);
     (publishCodefulProject as any).mockResolvedValue(undefined);
-    (delay as any).mockResolvedValue(undefined);
     (getProjFiles as any).mockResolvedValue(['CodefulLogicApp.csproj']);
     (getWorkspaceSetting as any).mockReturnValue(1);
     (getFuncPortFromTaskOrProject as any).mockResolvedValue('7071');
+    (stopFuncTaskForWorkspace as any).mockResolvedValue(false);
+    (scopeMatchesWorkspace as any).mockImplementation((scope: vscode.WorkspaceFolder | undefined, folder: vscode.WorkspaceFolder) => {
+      return scope === folder || scope?.uri?.fsPath === folder.uri.fsPath;
+    });
+    (getRunningFuncTaskForWorkspace as any).mockImplementation((folder: vscode.WorkspaceFolder) => runningFuncTaskMap.get(folder));
     (sendRequestWithTimeout as any).mockResolvedValue({ parsedBody: { state: 'Running' } });
     (executeIfNotActive as any).mockImplementation(async () => {
       runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 1234 });
@@ -196,13 +214,11 @@ describe('pickFuncProcessInternal', () => {
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
 
-  it('waits for a previous func task to stop before codeful publish', async () => {
+  it('stops a previous func task before codeful publish', async () => {
     const events: string[] = [];
-    runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 5678 });
-    (delay as any).mockImplementationOnce(async () => {
+    (stopFuncTaskForWorkspace as any).mockImplementation(async () => {
       expect(publishCodefulProject).not.toHaveBeenCalled();
-      events.push('waited-for-stop');
-      runningFuncTaskMap.clear();
+      events.push('stop-func');
     });
     (publishCodefulProject as any).mockImplementation(async () => {
       events.push('publish-codeful');
@@ -218,17 +234,16 @@ describe('pickFuncProcessInternal', () => {
       )
     ).rejects.toThrow('Failed to find "func: host start" task.');
 
-    expect(events).toEqual(['waited-for-stop', 'publish-codeful']);
+    expect(stopFuncTaskForWorkspace).toHaveBeenCalledWith(workspaceFolder);
+    expect(events).toEqual(['stop-func', 'publish-codeful']);
   });
 
-  it('waits for a previous func task to stop before custom code build', async () => {
+  it('stops a previous func task before custom code build', async () => {
     const events: string[] = [];
     (hasCodefulWorkflowSetting as any).mockResolvedValue(false);
-    runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 5678 });
-    (delay as any).mockImplementationOnce(async () => {
+    (stopFuncTaskForWorkspace as any).mockImplementation(async () => {
       expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
-      events.push('waited-for-stop');
-      runningFuncTaskMap.clear();
+      events.push('stop-func');
     });
     (tryBuildCustomCodeFunctionsProject as any).mockImplementation(async () => {
       events.push('build-custom-code');
@@ -244,7 +259,8 @@ describe('pickFuncProcessInternal', () => {
       )
     ).rejects.toThrow('Failed to find "func: host start" task.');
 
-    expect(events).toEqual(['waited-for-stop', 'build-custom-code']);
+    expect(stopFuncTaskForWorkspace).toHaveBeenCalledWith(workspaceFolder);
+    expect(events).toEqual(['stop-func', 'build-custom-code']);
   });
 
   it('starts the func task after publishing and returns the tracked workflow process id', async () => {
@@ -269,6 +285,52 @@ describe('pickFuncProcessInternal', () => {
       500,
       undefined
     );
+  });
+
+  it('waits for the func host task process to start before applying the host status timeout', async () => {
+    (executeIfNotActive as any).mockResolvedValue(undefined);
+    let delayCount = 0;
+    (delay as any).mockImplementation(async () => {
+      delayCount += 1;
+      if (delayCount === 2) {
+        runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 5678 });
+      }
+    });
+
+    const result = await pickFuncProcessModule.pickFuncProcessInternal(
+      context,
+      { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+      workspaceFolder,
+      projectPath
+    );
+
+    expect(result).toBe('5678');
+    expect(sendRequestWithTimeout).toHaveBeenCalledWith(
+      context,
+      expect.objectContaining({ url: 'http://localhost:7071/admin/host/status' }),
+      500,
+      undefined
+    );
+  });
+
+  it('starts generateDebugSymbols for codeless NuGet launch configurations', async () => {
+    (vscode.tasks.fetchTasks as any).mockResolvedValue([funcTask, debugTask]);
+    (vscode.tasks.executeTask as any).mockResolvedValue(undefined);
+    (vscode.tasks.onDidEndTaskProcess as any).mockImplementation((callback: (event: any) => void) => {
+      setTimeout(() => callback({ execution: { task: debugTask }, exitCode: 0 }), 0);
+      return { dispose: vi.fn() };
+    });
+
+    const result = await pickFuncProcessModule.pickFuncProcessInternal(
+      context,
+      { type: 'logicapp', isCodeless: true, preLaunchTask: 'func: host start' },
+      workspaceFolder,
+      projectPath
+    );
+
+    expect(result).toBe('1234');
+    expect(vscode.tasks.executeTask).toHaveBeenCalledWith(debugTask);
+    expect(executeIfNotActive).toHaveBeenCalledWith(funcTask);
   });
 
   it('stops before build and publish when pre-debug validation is cancelled', async () => {

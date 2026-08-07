@@ -25,22 +25,35 @@ Use this playbook when adding, fixing, or reviewing tests for the VS Code Logic 
 1. Read `apps/vs-code-designer/src/test/ui/SKILL.md`.
 2. Inspect `apps/vs-code-designer/src/test/ui/run-e2e.js`.
 3. Identify the correct phase or add a documented phase only when necessary.
-4. Reuse existing helpers:
+4. Before running a focused mode/scenario, inspect its `workspaceSpec` and satisfy prerequisites:
+   - `workspaceSpec: { ... }` and `manifest-multi` require the Phase 4.1 `created-workspaces.json` fixture manifest;
+   - run `p41a-fixtures` or a grouped/full mode that runs Phase 4.1 first before scenarios like `p49-nugetdebugconversion`;
+   - Debug-pane/focused modes auto-run `p41a-fixtures` when the manifest is missing/stale, but still verify the log shows prerequisite setup completed before interpreting the scenario result;
+   - if fixture directories were cleaned up or corrupted, rerun the fixture phase instead of debugging a missing-workspace symptom.
+   - when adding a new scenario, update the manifest-backed scenario map in `apps/vs-code-designer/src/test/ui/SKILL.md` and `.squad/knowledge/vscode-e2e-testing.md`.
+5. Reuse existing helpers:
    - `designerHelpers.ts`;
    - `runHelpers.ts`;
    - `workspaceManifest.ts`;
    - shared dialog dismissal, command palette retry, webview switching, and overview helpers.
-5. Prefer semantic assertions and visible UI evidence over implementation details.
-6. Use Selenium Actions API for React clicks inside webviews.
-7. Use detection-based polling instead of static sleeps when possible.
-8. Use active/visible iframe switching when multiple webviews can exist.
-9. Close editors before opening overview webviews.
-10. Prefer built-in operations such as Request and Response for reliable designer tests.
-11. Avoid connector-dependent operations unless dependencies are explicitly provisioned.
-12. For debug-path regressions:
+6. Before opening designer, proactively handle known blocking popups:
+   - ensure `WORKFLOWS_SUBSCRIPTION_ID: ""` is present to avoid the "Use connectors from Azure" QuickPick;
+   - run shared prompt-dismissal helpers for connector parameterization, C# Dev Kit sign-in, auth dialogs, notifications, modals, and stale QuickInputs;
+   - put any newly discovered popup blocker into shared helpers instead of a test-local workaround.
+7. Prefer semantic assertions and visible UI evidence over implementation details.
+8. Use Selenium Actions API for React clicks inside webviews.
+9. Use detection-based polling instead of static sleeps when possible.
+10. Use active/visible iframe switching when multiple webviews can exist.
+11. Close editors before opening overview webviews.
+12. Prefer built-in operations such as Request and Response for reliable designer tests.
+13. Avoid connector-dependent operations unless dependencies are explicitly provisioned.
+14. For debug-path regressions:
     - create workspaces through the VS Code webview, not by hand;
     - reopen the generated `.code-workspace` as the startup resource in a fresh phase/session;
     - verify design-time startup evidence such as `workflow-designtime/`;
+    - use deterministic built-in Request/Response workflows instead of empty workflows or connector-dependent operations;
+    - do not stop at host readiness: prove workflow health, `listCallbackUrl`, Run trigger, run history `Succeeded`, and action-level success;
+    - if the bug is stale product cleanup, preserve that coverage by avoiding harness cleanup on the critical F5;
     - capture terminal/output/log diagnostics on failure;
     - prove the root cause and absence of downstream prompts, not only prompt suppression.
 
@@ -79,11 +92,13 @@ Before final status, the test agent should answer:
 - Which unit tests prove the logic?
 - Which E2E tests prove the user-critical flow?
 - Which `run-e2e.js` phase covers the E2E path?
+- If this was a focused scenario, were its fixture prerequisites satisfied first?
 - What validation commands ran?
 - Are any gaps intentional, blocked, or follow-up work?
 - If this is a debug regression, did the test use the same `run-e2e.js` launch path and `launch.json` shape as users?
 - Did the test prove design-time startup happened before debug assertions?
 - Did the test assert that incorrect fallback prompts did not appear?
+- Did the test proactively handle known designer-opening blockers, especially "Use connectors from Azure", C# Dev Kit sign-in, auth dialogs, and stale QuickInputs?
 
 ## Knowledge Updates
 

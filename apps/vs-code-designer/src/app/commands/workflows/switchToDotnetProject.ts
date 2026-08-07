@@ -38,10 +38,11 @@ import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreToo
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspaceFolder, getWorkspaceFolder } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
+import { stopFuncTaskForWorkspace } from '../../utils/funcCoreTools/funcHostTask';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -50,7 +51,7 @@ import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
 
 export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
-  switchToDotnetProject(context, node);
+  await switchToDotnetProject(context, node);
 }
 
 export async function switchToDotnetProject(context: IActionContext, node?: vscode.Uri, localDotNetMajorVersion = '10', isCodeful = false) {
@@ -137,6 +138,11 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
   const useBinaries = await useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
+  const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspaceFolder(node.fsPath);
+
+  if (workspaceFolder) {
+    await stopFuncTaskForWorkspace(workspaceFolder);
+  }
 
   await deleteBundleProjectFiles(node);
   await renameBundleProjectFiles(node);
@@ -169,19 +175,18 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
     );
   }
 
-  const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspaceFolder(node.fsPath);
-
   const wizardOptions = {
     projectPath,
     workspaceFolder,
     workspacePath: (workspaceFolder && workspaceFolder.uri.fsPath) || node.fsPath,
     language: ProjectLanguage.CSharp,
+    projectPackageType: ProjectPackageType.Nuget,
     version,
   };
   const wizardContext: IProjectWizardContext = Object.assign(context, wizardOptions);
 
   const dotnetInitVSCodeStep = new InitDotnetProjectStep();
-  dotnetInitVSCodeStep.execute(wizardContext);
+  await dotnetInitVSCodeStep.execute(wizardContext);
 
   ext.outputChannel.appendLog(localize('moveToDotnetCompleted', 'Successfully converted to NuGet-based Logic App project.'));
 }
