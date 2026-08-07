@@ -39,6 +39,7 @@ const CONVERSION_TIMEOUT = 90_000;
 const MOVE_BUTTON_LABEL = 'Move to a NuGet-based project';
 const CONVERT_COMMAND_TITLE = 'Convert to NuGet-based logic app project';
 const STALE_FUNC_HOST_FAILURE_PATTERNS = [/Failed to stop previous running Functions host/i, /Failed to detect running Functions host/i];
+const POST_CONVERSION_PROMPT_FAILURE_PATTERNS = [/Detected out of date \.vscode configuration files/i];
 
 interface TasksJson {
   tasks?: Array<{
@@ -664,6 +665,22 @@ async function assertNoFuncHostFailurePopup(driver: WebDriver): Promise<void> {
   }
 }
 
+async function assertNoPostConversionVSCodeRegenerationPrompt(driver: WebDriver): Promise<void> {
+  const text = await driver
+    .executeScript<string>(
+      `
+      return Array.from(document.querySelectorAll('[role="dialog"], .monaco-dialog-box, .notification-toast, .notifications-toasts .notification-list-item'))
+        .map((el) => el.textContent || '')
+        .join('\\n---\\n');
+    `
+    )
+    .catch(() => '');
+
+  for (const pattern of POST_CONVERSION_PROMPT_FAILURE_PATTERNS) {
+    assert.ok(!pattern.test(text), `unexpected post-conversion .vscode consistency prompt: ${text}`);
+  }
+}
+
 async function runAndVerifyWorkflow(
   phase: string,
   workbench: Workbench,
@@ -756,11 +773,16 @@ describe('NuGet conversion debug lifecycle', function () {
     await waitForFilePredicate(csprojPath, () => fs.existsSync(csprojPath), CONVERSION_TIMEOUT, 'NuGet project file');
     await waitForExactNugetDebugFiles(entry, driver);
     assertRunnableWorkflow(entry, 'nuget');
+    await assertNoPostConversionVSCodeRegenerationPrompt(driver);
 
     await startDebuggingWithoutHarnessCleanup(driver);
     await assertNoFuncHostFailurePopup(driver);
-    await runAndVerifyWorkflow('nuget', workbench, driver, entry, STALE_FUNC_HOST_FAILURE_PATTERNS);
+    await runAndVerifyWorkflow('nuget', workbench, driver, entry, [
+      ...STALE_FUNC_HOST_FAILURE_PATTERNS,
+      ...POST_CONVERSION_PROMPT_FAILURE_PATTERNS,
+    ]);
     await assertNoFuncHostFailurePopup(driver);
+    await assertNoPostConversionVSCodeRegenerationPrompt(driver);
     await stopDebuggingForNugetLifecycle(driver, 'nuget');
   });
 });
