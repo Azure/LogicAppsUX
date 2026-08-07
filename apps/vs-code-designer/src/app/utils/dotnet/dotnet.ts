@@ -13,10 +13,8 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../funcCoreTools/cpUtils';
-import { runWithDurationTelemetry } from '../telemetry';
 import { getGlobalSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
-import { findFiles, getWorkspaceLogicAppFolders } from '../workspace';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { findFiles, getWorkspaceLogicAppRoots } from '../workspace';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import { type IWorkerRuntime, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
@@ -44,20 +42,17 @@ export class ProjectFile {
 
 /**
  * Gets .NET files from workspace.
- * @param {IActionContext} context - Command context.
  * @param {ProjectLanguage} projectLanguage - Language from project.
  * @param {string} projectPath - Workspace path.
  * @returns {Promise<ProjectFile[]>} Array of files.
  */
-export async function getProjFiles(context: IActionContext, projectLanguage: ProjectLanguage, projectPath: string): Promise<ProjectFile[]> {
-  return await runWithDurationTelemetry(context, 'getNetProjFiles', async () => {
-    const pattern = projectLanguage === ProjectLanguage.FSharp ? '*.fsproj' : '*.csproj';
-    const uris = await findFiles(projectPath, pattern);
-    return uris
-      .map((uri) => path.basename(uri.fsPath))
-      .filter((f) => f.toLowerCase() !== 'extensions.csproj')
-      .map((f) => new ProjectFile(f, projectPath));
-  });
+export async function getProjFiles(projectLanguage: ProjectLanguage, projectPath: string): Promise<ProjectFile[]> {
+  const pattern = projectLanguage === ProjectLanguage.FSharp ? '*.fsproj' : '*.csproj';
+  const uris = await findFiles(projectPath, pattern);
+  return uris
+    .map((uri) => path.basename(uri.fsPath))
+    .filter((f) => f.toLowerCase() !== 'extensions.csproj')
+    .map((f) => new ProjectFile(f, projectPath));
 }
 
 /**
@@ -150,14 +145,12 @@ export function getDotnetRuntimeFromFunc(funcVersion: FuncVersion): 'coreclr' | 
 
 /**
  * Gets template key from project file or from framework version.
- * @param {IActionContext} context - Command context.
  * @param {string | undefined} projectPath - Project path.
  * @param {FuncVersion} version - Functions core tools version.
  * @param {ProjectLanguage} language - Project language.
  * @returns {Promise<string>} Template key.
  */
 export async function getTemplateKeyFromProjFile(
-  context: IActionContext,
   projectPath: string | undefined,
   version: FuncVersion,
   language: ProjectLanguage
@@ -185,7 +178,7 @@ export async function getTemplateKeyFromProjFile(
   }
 
   if (projectPath && (await AzExtFsExtra.pathExists(projectPath))) {
-    const projFiles = await getProjFiles(context, language, projectPath);
+    const projFiles = await getProjFiles(language, projectPath);
     if (projFiles.length === 1) {
       targetFramework = await getTargetFramework(projFiles[0]);
       isIsolated = await getIsIsolated(projFiles[0]);
@@ -273,8 +266,8 @@ export async function setDotNetCommand(): Promise<void> {
     fs.chmodSync(dotNetBinariesPath, 0o777);
 
     try {
-      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
-      if (workspaceLogicAppFolders.length > 0) {
+      const projectPaths = await getWorkspaceLogicAppRoots();
+      if (projectPaths.length > 0) {
         const pathEnv = {
           PATH: newPath,
         };

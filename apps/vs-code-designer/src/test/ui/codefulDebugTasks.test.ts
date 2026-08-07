@@ -452,7 +452,7 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     // `resources` (which uses `code -r` / CLI IPC) silently fails on headless CI: the VS Code
     // IPC socket isn't wired up when launched via ChromeDriver, so VS Code lands on the empty
     // Welcome screen with NO workspace folder open. With no folder open,
-    // getWorkspaceLogicAppFolders() is empty, codeful design-time auto-start correctly no-ops,
+    // getWorkspaceLogicAppRoots() is empty, codeful design-time auto-start correctly no-ops,
     // and no `workflow-designtime` evidence is ever produced — exactly the failure the CI
     // screenshots showed. Opening via the command palette (the same proven path the codeless
     // designer phases use) makes the workspace load deterministically so codeful onboarding

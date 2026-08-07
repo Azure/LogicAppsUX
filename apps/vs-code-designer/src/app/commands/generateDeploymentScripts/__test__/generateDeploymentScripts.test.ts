@@ -5,7 +5,7 @@ import { IActionContext, UserCancelledError } from '@microsoft/vscode-azext-util
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
-import { convertToWorkspace } from '../../convertToWorkspace';
+import { ensureWorkspace } from '../../ensureWorkspace';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
@@ -26,7 +26,11 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
   nonNullValue: vi.fn(),
   callWithTelemetryAndErrorHandling: (_key: string, callback: Function) => {
     // Simply invoke the callback with a fake telemetry context.
-    return callback({ telemetry: { properties: {} } });
+    return callback({
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { rethrow: false, suppressDisplay: false },
+      valuesToMask: [],
+    });
   },
   parseError: vi.fn(() => {
     return { message: 'error' };
@@ -49,8 +53,8 @@ vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
   addLocalFuncTelemetry: vi.fn(),
 }));
 
-vi.mock('../../convertToWorkspace', () => ({
-  convertToWorkspace: vi.fn(),
+vi.mock('../../ensureWorkspace', () => ({
+  ensureWorkspace: vi.fn(),
 }));
 
 vi.mock('../../../utils/workspace', () => ({
@@ -86,7 +90,7 @@ describe('generateDeploymentScripts', () => {
     (ext.outputChannel.appendLog as Mock).mockClear();
     (ext.outputChannel.show as Mock).mockClear();
     (addLocalFuncTelemetry as Mock).mockClear();
-    (convertToWorkspace as Mock).mockResolvedValue(true);
+    (ensureWorkspace as Mock).mockResolvedValue(true);
     (isMultiRootWorkspace as Mock).mockReturnValue(true);
     (isLogicAppProject as Mock).mockResolvedValue(true);
     (getWorkspaceFolder as Mock).mockResolvedValue({} as vscode.WorkspaceFolder);
@@ -106,7 +110,7 @@ describe('generateDeploymentScripts', () => {
     expect(ext.outputChannel.show).toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting deployment script generation...');
     expect(addLocalFuncTelemetry).toHaveBeenCalledWith(context);
-    expect(convertToWorkspace).toHaveBeenCalledWith(context);
+    expect(ensureWorkspace).toHaveBeenCalledWith(expect.any(Object));
     expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure deployment scripts wizard executed successfully.');
   });
@@ -162,7 +166,7 @@ describe('generateDeploymentScripts', () => {
   });
 
   it('should use workspace folder if node is undefined', async () => {
-    (convertToWorkspace as Mock).mockResolvedValue(true);
+    (ensureWorkspace as Mock).mockResolvedValue(true);
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('workspaceRoot');
 
     await generateDeploymentScripts(context, undefined);
@@ -172,7 +176,7 @@ describe('generateDeploymentScripts', () => {
   });
 
   it('should exit early a valid workspace is not opened', async () => {
-    (convertToWorkspace as Mock).mockResolvedValue(false);
+    (ensureWorkspace as Mock).mockResolvedValue(false);
 
     await generateDeploymentScripts(context, node);
 

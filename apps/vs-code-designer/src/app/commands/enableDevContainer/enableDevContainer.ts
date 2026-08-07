@@ -92,7 +92,7 @@ export async function enableDevContainer(context: IActionContext, workspaceFileP
     }
   } catch (error) {
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = error instanceof Error ? error.message : String(error);
+    context.telemetry.properties.errorMessage = error instanceof Error ? error.message : String(error);
     ext.outputChannel.appendLine(`Error enabling devcontainer: ${error instanceof Error ? error.message : String(error)}`);
     throw error;
   }

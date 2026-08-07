@@ -7,18 +7,18 @@ import { nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import {
   downloadAndExtractDependency,
+  ensureRuntimeDependenciesDir,
   getCpuArchitecture,
   getLatestNodeJsVersion,
   getNodeJsBinariesReleaseUrl,
 } from '../../utils/binaries';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
-import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 export async function installNodeJs(context: IActionContext, majorVersion?: string): Promise<void> {
   ext.outputChannel.show();
   const arch = getCpuArchitecture();
-  const targetDirectory = await ensureRuntimeDependenciesPath();
+  const targetDirectory = await ensureRuntimeDependenciesDir();
   context.telemetry.properties.lastStep = 'getLatestNodeJsVersion';
   const version = await getLatestNodeJsVersion(context, majorVersion);
   let nodeJsReleaseUrl: string;
@@ -38,6 +38,10 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
     case Platform.mac: {
       nodeJsReleaseUrl = getNodeJsBinariesReleaseUrl(version, 'darwin', arch);
       break;
+    }
+
+    default: {
+      throw new Error(`Unsupported platform: ${process.platform}`);
     }
   }
 

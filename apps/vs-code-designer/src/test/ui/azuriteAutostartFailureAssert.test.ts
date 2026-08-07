@@ -30,7 +30,7 @@
  *      This gate applies to BOTH app kinds. A codeful project does produce
  *      `<app>/workflow-designtime`: `isLogicAppProject()` returns true for it via
  *      `hasCodefulSdkReference()` (verifyIsProject.ts:60-67), so it is included in
- *      `getWorkspaceLogicAppFolders()` -> `startAllDesignTimeApis()` ->
+ *      `getWorkspaceLogicAppRoots()` -> `startAllDesignTimeApis()` ->
  *      `startDesignTimeApi()` -> `validateAndRegenerateProjectArtifacts()` ->
  *      `regenerateDesignTimeDirectory()`, which calls `ensureDesignTimeDirectory()`
  *      unconditionally. Phase 4.10B relies on exactly this: it hard-asserts a fresh

@@ -27,7 +27,8 @@ export async function getLocalNodeJsVersion(context: IActionContext): Promise<st
     return null;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : isString(error) ? error : 'Unknown error';
-    context.telemetry.properties.error = errorMessage;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = errorMessage;
     return null;
   }
 }

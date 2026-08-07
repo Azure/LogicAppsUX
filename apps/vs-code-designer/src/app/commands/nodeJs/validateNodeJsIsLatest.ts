@@ -10,59 +10,57 @@ import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { installNodeJs } from './installNodeJs';
-import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as semver from 'semver';
 import { ProgressLocation, window, type MessageItem } from 'vscode';
 
-export async function validateNodeJsIsLatest(majorVersion?: string): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateNodeJsIsLatest', async (context: IActionContext) => {
-    context.errorHandling.suppressDisplay = true;
-    context.telemetry.properties.isActivationEvent = 'true';
-    const showNodeJsWarningKey = 'showNodeJsWarning';
-    const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
-    await setNodeJsCommand();
-    const binaries = await binariesExist(nodeJsDependencyName);
-    context.telemetry.properties.binariesExist = `${binaries}`;
-    // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
-    // install (e.g. a removed file) forces a wipe + reinstall instead of silently failing at runtime.
-    const integrityValid = binaries ? await verifyDependencyIntegrity(context, nodeJsDependencyName) : false;
-    context.telemetry.properties.integrityValid = `${integrityValid}`;
+export async function validateNodeJsIsLatest(context: IActionContext, majorVersion?: string): Promise<void> {
+  context.errorHandling.suppressDisplay = true;
+  context.telemetry.properties.isActivationEvent = 'true';
+  const showNodeJsWarningKey = 'showNodeJsWarning';
+  const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
+  await setNodeJsCommand();
+  const binaries = await binariesExist(nodeJsDependencyName);
+  context.telemetry.properties.binariesExist = `${binaries}`;
+  // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
+  // install (e.g. a removed file) forces a wipe + reinstall instead of silently failing at runtime.
+  const integrityValid = binaries ? await verifyDependencyIntegrity(context, nodeJsDependencyName) : false;
+  context.telemetry.properties.integrityValid = `${integrityValid}`;
 
-    if (!binaries || !integrityValid) {
+  if (!binaries || !integrityValid) {
+    await installNodeJs(context, majorVersion);
+    context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
+  } else if (showNodeJsWarning) {
+    context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
+    const localVersion: string | null = await getLocalNodeJsVersion(context);
+    context.telemetry.properties.localVersion = localVersion;
+    logNodeJsVersionState(localVersion, majorVersion);
+
+    if (localVersion === null) {
+      context.telemetry.properties.nodeJsWarningDecision = 'localMissing';
       await installNodeJs(context, majorVersion);
-      context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
-    } else if (showNodeJsWarning) {
-      context.telemetry.properties.binaryCommand = `${getNodeJsCommand()}`;
-      const localVersion: string | null = await getLocalNodeJsVersion(context);
-      context.telemetry.properties.localVersion = localVersion;
-      logNodeJsVersionState(localVersion, majorVersion);
+      logNodeJsWarningDecision(context);
+    } else if (shouldCheckForDependencyUpdates()) {
+      // Throttle: only re-check the newest published version once per window (see
+      // shouldCheckForDependencyUpdates). A missing/unrunnable Node is still reinstalled above.
+      const newestVersion = await getNewestNodeJsWarningVersion(context, localVersion, majorVersion);
+      context.telemetry.properties.newestVersion = newestVersion;
 
-      if (localVersion === null) {
-        context.telemetry.properties.nodeJsWarningDecision = 'localMissing';
-        await installNodeJs(context, majorVersion);
-        logNodeJsWarningDecision(context);
-      } else if (shouldCheckForDependencyUpdates()) {
-        // Throttle: only re-check the newest published version once per window (see
-        // shouldCheckForDependencyUpdates). A missing/unrunnable Node is still reinstalled above.
-        const newestVersion = await getNewestNodeJsWarningVersion(context, localVersion, majorVersion);
-        context.telemetry.properties.newestVersion = newestVersion;
-
-        if (shouldShowOutdatedNodeJsWarning(localVersion, newestVersion, majorVersion)) {
-          context.telemetry.properties.nodeJsWarningDecision = 'shown';
-          context.telemetry.properties.outOfDateNodeJs = 'true';
-          showOutdatedNodeJsWarning(context, localVersion, newestVersion, majorVersion, showNodeJsWarningKey);
-        }
-        logNodeJsWarningDecision(context);
-      } else {
-        context.telemetry.properties.nodeJsWarningDecision = 'updateCheckThrottled';
-        logNodeJsWarningDecision(context);
+      if (shouldShowOutdatedNodeJsWarning(localVersion, newestVersion, majorVersion)) {
+        context.telemetry.properties.nodeJsWarningDecision = 'shown';
+        context.telemetry.properties.outOfDateNodeJs = 'true';
+        showOutdatedNodeJsWarning(context, localVersion, newestVersion, majorVersion, showNodeJsWarningKey);
       }
+      logNodeJsWarningDecision(context);
     } else {
-      context.telemetry.properties.nodeJsWarningDecision = showNodeJsWarning ? 'binariesMissing' : 'disabled';
+      context.telemetry.properties.nodeJsWarningDecision = 'updateCheckThrottled';
       logNodeJsWarningDecision(context);
     }
-  });
+  } else {
+    context.telemetry.properties.nodeJsWarningDecision = showNodeJsWarning ? 'binariesMissing' : 'disabled';
+    logNodeJsWarningDecision(context);
+  }
 }
 
 function logNodeJsVersionState(localVersion: string | null, dependencyFeedVersion: string | undefined): void {

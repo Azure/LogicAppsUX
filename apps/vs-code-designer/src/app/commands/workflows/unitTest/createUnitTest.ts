@@ -24,158 +24,162 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
-import { convertToWorkspace } from '../../convertToWorkspace';
+import { ensureWorkspace } from '../../ensureWorkspace';
 import { syncCloudSettings } from '../../syncCloudSettings';
-import { extensionCommand } from '../../../../constants';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
+ * @param context - The action context.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
  * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} - A Promise that resolves when the unit test is created.
  */
-export async function createUnitTest(node: vscode.Uri | undefined, nodeOutputOperations: any): Promise<void> {
-  await callWithTelemetryAndErrorHandling(extensionCommand.createUnitTest, async (context: IActionContext) => {
-    const startTime = Date.now();
+export async function createUnitTest(context: IActionContext, node: vscode.Uri | undefined, nodeOutputOperations: any): Promise<void> {
+  const startTime = Date.now();
 
-    // Initialize telemetry properties
-    Object.assign(context.telemetry.properties, {
-      workspaceLocated: 'false',
-      projectRootLocated: 'false',
-      workflowNodeSelected: 'false',
-      multiRootWorkspaceValid: 'false',
-      unitTestNamePrompted: 'false',
-      directoriesEnsured: 'false',
-      csFileCreated: 'false',
-      csprojUpdated: 'false',
-      workspaceUpdated: 'false',
-      unitTestDefinitionParsed: 'false',
-      operationInfoExists: 'false',
-      outputParametersExists: 'false',
-      workflowNodePath: '',
-      workflowTestFolderPathResolved: 'false',
-      mockOutputsFolderPathCreated: 'false',
-      mockableOperationsFound: '0',
-      mockableOperationsProcessed: '0',
-      mockableTriggersProcessed: '0',
-      csFilesGenerated: '0',
-      csFileGenerationFailures: '0',
-      workspaceUpdatedStatus: 'false',
-      workspaceUpdateFailureReason: '',
-      unitTestSaveStatus: 'InProgress',
-      unitTestSaveFailureReason: '',
+  // Initialize telemetry properties
+  Object.assign(context.telemetry.properties, {
+    workspaceLocated: 'false',
+    projectRootLocated: 'false',
+    workflowNodeSelected: 'false',
+    multiRootWorkspaceValid: 'false',
+    unitTestNamePrompted: 'false',
+    directoriesEnsured: 'false',
+    csFileCreated: 'false',
+    csprojUpdated: 'false',
+    workspaceUpdated: 'false',
+    unitTestDefinitionParsed: 'false',
+    operationInfoExists: 'false',
+    outputParametersExists: 'false',
+    workflowNodePath: '',
+    workflowTestFolderPathResolved: 'false',
+    mockOutputsFolderPathCreated: 'false',
+    mockableOperationsFound: '0',
+    mockableOperationsProcessed: '0',
+    mockableTriggersProcessed: '0',
+    csFilesGenerated: '0',
+    csFileGenerationFailures: '0',
+    workspaceUpdatedStatus: 'false',
+    workspaceUpdateFailureReason: '',
+    unitTestSaveStatus: 'InProgress',
+    unitTestSaveFailureReason: '',
+  });
+
+  try {
+    context.telemetry.properties.lastStep = 'ensureWorkspace';
+    const isWorkspaceReady = await callWithTelemetryAndErrorHandling('createUnitTest.ensureWorkspace', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      return await ensureWorkspace(actionContext);
     });
 
-    try {
-      context.telemetry.properties.lastStep = 'convertToWorkspace';
-      if (!(await convertToWorkspace(context))) {
-        context.telemetry.properties.multiRootWorkspaceValid = 'false';
-        ext.outputChannel.appendLog(
-          localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
-        );
-        context.telemetry.properties.result = 'Canceled';
-        return;
-      }
-      Object.assign(context.telemetry.properties, {
-        multiRootWorkspaceValid: 'true',
-        workspaceLocated: 'true',
-        projectRootLocated: 'true',
-      });
-
-      // Get parsed outputs
-      context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
-      const parsedOutputs = await parseUnitTestOutputs(nodeOutputOperations);
-      const operationInfo = parsedOutputs['operationInfo'];
-      const outputParameters = parsedOutputs['outputParameters'];
-      context.telemetry.properties.operationInfoExists = operationInfo ? 'true' : 'false';
-      context.telemetry.properties.outputParametersExists = outputParameters ? 'true' : 'false';
-
-      // Determine workflow node
-      context.telemetry.properties.lastStep = 'getWorkflowNode';
-      let workflowNode = getWorkflowNode(node) as vscode.Uri;
-      let projectPath: string | undefined;
-      if (workflowNode) {
-        context.telemetry.properties.lastStep = 'getProjectRootFromWorkflowNode';
-        const workspaceFolder = getWorkspacePath(workflowNode.fsPath);
-        projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-      } else {
-        context.telemetry.properties.lastStep = 'getProjectRootFromWorkspaceFolder';
-        const workspaceFolder = await getWorkspaceFolder(context);
-        projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-        context.telemetry.properties.lastStep = 'selectWorkflowNode';
-        workflowNode = await selectWorkflowNode(context, projectPath);
-      }
-      context.telemetry.properties.workflowNodeSelected = 'true';
-      context.telemetry.properties.workflowNodePath = workflowNode ? workflowNode.fsPath : '';
-
-      try {
-        context.telemetry.properties.lastStep = 'validateWorkflowPath';
-        validateWorkflowPath(projectPath, workflowNode.fsPath);
-      } catch (error) {
-        vscode.window.showErrorMessage(`Workflow validation failed: ${error.message}`);
-        context.telemetry.properties.result = 'Failed';
-        context.telemetry.properties.errorMessage = error.message;
-        return;
-      }
-      const workflowName = path.basename(path.dirname(workflowNode.fsPath));
-
-      // Prompt for unit test name
-      context.telemetry.properties.lastStep = 'promptForUnitTestName';
-      const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
-      context.telemetry.properties.unitTestNamePrompted = 'true';
-
-      context.telemetry.properties.lastStep = 'getUnitTestPaths';
-      const { unitTestFolderPath, logicAppName, workflowTestFolderPath, logicAppTestFolderPath, testsDirectory } = getUnitTestPaths(
-        projectPath,
-        workflowName,
-        unitTestName
+    if (!isWorkspaceReady) {
+      context.telemetry.properties.multiRootWorkspaceValid = 'false';
+      ext.outputChannel.appendLog(
+        localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
       );
-      context.telemetry.properties.workflowTestFolderPathResolved = workflowTestFolderPath ? 'true' : 'false';
-
-      context.telemetry.properties.lastStep = 'getOperationMockClassContent';
-      const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
-        operationInfo,
-        outputParameters,
-        workflowNode.fsPath,
-        workflowName,
-        logicAppName
-      );
-      if (!foundTriggerMocks || Object.keys(foundTriggerMocks).length === 0) {
-        throw new Error(localize('noTriggersFound', 'No trigger found in the workflow. Unit tests must include a mocked trigger.'));
-      }
-      context.telemetry.properties.workflowName = workflowName;
-      context.telemetry.properties.unitTestName = unitTestName;
-
-      // Save the unit test
-      context.telemetry.properties.lastStep = 'generateUnitTest';
-      await generateUnitTest(context, projectPath, workflowName, unitTestName, mockClassContent, foundActionMocks, foundTriggerMocks);
-      context.telemetry.properties.unitTestSaveStatus = 'Success';
-      context.telemetry.properties.unitTestProcessingTimeMs = (Date.now() - startTime).toString();
-
-      try {
-        const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
-
-        context.telemetry.properties.lastStep = 'updateTestsSln';
-        ext.outputChannel.appendLog(`Updating solution in tests folder: ${unitTestFolderPath}`);
-        await updateTestsSln(testsDirectory, csprojFilePath);
-      } catch (solutionError) {
-        ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
-      }
-
-      context.telemetry.properties.lastStep = 'syncCloudSettings';
-      await syncCloudSettings(context, vscode.Uri.file(projectPath));
-
-      context.telemetry.properties.result = 'Succeeded';
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      context.telemetry.properties.unitTestGenerationStatus = 'Failed';
-      context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.errorMessage = errorMessage;
-      context.telemetry.properties['createUnitTestError'] = errorMessage;
-      vscode.window.showErrorMessage(localize('createUnitTestError', 'An error occurred: {0}', errorMessage));
-      ext.outputChannel.appendLog(localize('createUnitTestLog', 'Error in createUnitTest: {0}', errorMessage));
+      context.telemetry.properties.result = 'Canceled';
+      return;
     }
-  });
+    Object.assign(context.telemetry.properties, {
+      multiRootWorkspaceValid: 'true',
+      workspaceLocated: 'true',
+      projectRootLocated: 'true',
+    });
+
+    // Get parsed outputs
+    context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
+    const parsedOutputs = await parseUnitTestOutputs(nodeOutputOperations);
+    const operationInfo = parsedOutputs['operationInfo'];
+    const outputParameters = parsedOutputs['outputParameters'];
+    context.telemetry.properties.operationInfoExists = operationInfo ? 'true' : 'false';
+    context.telemetry.properties.outputParametersExists = outputParameters ? 'true' : 'false';
+
+    // Determine workflow node
+    context.telemetry.properties.lastStep = 'getWorkflowNode';
+    let workflowNode = getWorkflowNode(node) as vscode.Uri;
+    let projectPath: string | undefined;
+    if (workflowNode) {
+      context.telemetry.properties.lastStep = 'getProjectRootFromWorkflowNode';
+      const workspaceFolder = getWorkspacePath(workflowNode.fsPath);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    } else {
+      context.telemetry.properties.lastStep = 'getProjectRootFromWorkspaceFolder';
+      const workspaceFolder = await getWorkspaceFolder(context);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      context.telemetry.properties.lastStep = 'selectWorkflowNode';
+      workflowNode = await selectWorkflowNode(context, projectPath);
+    }
+    context.telemetry.properties.workflowNodeSelected = 'true';
+    context.telemetry.properties.workflowNodePath = workflowNode ? workflowNode.fsPath : '';
+
+    try {
+      context.telemetry.properties.lastStep = 'validateWorkflowPath';
+      validateWorkflowPath(projectPath, workflowNode.fsPath);
+    } catch (error) {
+      vscode.window.showErrorMessage(`Workflow validation failed: ${error.message}`);
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
+      return;
+    }
+    const workflowName = path.basename(path.dirname(workflowNode.fsPath));
+
+    // Prompt for unit test name
+    context.telemetry.properties.lastStep = 'promptForUnitTestName';
+    const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
+    context.telemetry.properties.unitTestNamePrompted = 'true';
+
+    context.telemetry.properties.lastStep = 'getUnitTestPaths';
+    const { unitTestFolderPath, logicAppName, workflowTestFolderPath, logicAppTestFolderPath, testsDirectory } = getUnitTestPaths(
+      projectPath,
+      workflowName,
+      unitTestName
+    );
+    context.telemetry.properties.workflowTestFolderPathResolved = workflowTestFolderPath ? 'true' : 'false';
+
+    context.telemetry.properties.lastStep = 'getOperationMockClassContent';
+    const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
+      operationInfo,
+      outputParameters,
+      workflowNode.fsPath,
+      workflowName,
+      logicAppName
+    );
+    if (!foundTriggerMocks || Object.keys(foundTriggerMocks).length === 0) {
+      throw new Error(localize('noTriggersFound', 'No trigger found in the workflow. Unit tests must include a mocked trigger.'));
+    }
+    context.telemetry.properties.workflowName = workflowName;
+    context.telemetry.properties.unitTestName = unitTestName;
+
+    // Save the unit test
+    context.telemetry.properties.lastStep = 'generateUnitTest';
+    await generateUnitTest(context, projectPath, workflowName, unitTestName, mockClassContent, foundActionMocks, foundTriggerMocks);
+    context.telemetry.properties.unitTestSaveStatus = 'Success';
+    context.telemetry.properties.unitTestProcessingTimeMs = (Date.now() - startTime).toString();
+
+    try {
+      const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
+
+      context.telemetry.properties.lastStep = 'updateTestsSln';
+      ext.outputChannel.appendLog(`Updating solution in tests folder: ${unitTestFolderPath}`);
+      await updateTestsSln(testsDirectory, csprojFilePath);
+    } catch (solutionError) {
+      ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
+    }
+
+    context.telemetry.properties.lastStep = 'syncCloudSettings';
+    await syncCloudSettings(context, vscode.Uri.file(projectPath));
+
+    context.telemetry.properties.result = 'Succeeded';
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    context.telemetry.properties.unitTestGenerationStatus = 'Failed';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = errorMessage;
+    context.telemetry.properties['createUnitTestError'] = errorMessage;
+    vscode.window.showErrorMessage(localize('createUnitTestError', 'An error occurred: {0}', errorMessage));
+    ext.outputChannel.appendLog(localize('createUnitTestLog', 'Error in createUnitTest: {0}', errorMessage));
+  }
 }
 
 /**
@@ -286,12 +290,7 @@ async function generateUnitTest(
 
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
     ext.outputChannel.appendLog(
-      localize(
-        'generateCodefulUnitTest',
-        'Successfully created unit test "{0}" at "{1}".',
-        unitTestName,
-        unitTestFolderPath
-      )
+      localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}".', unitTestName, unitTestFolderPath)
     );
   } catch (error) {
     context.telemetry.properties.result = 'Failed';

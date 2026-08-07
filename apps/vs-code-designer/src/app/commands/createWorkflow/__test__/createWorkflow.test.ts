@@ -7,6 +7,18 @@ vi.mock('../../../../localize', () => ({
     defaultValue.replace(/{(\d+)}/g, (_match, index) => String(args[Number(index)] ?? '')),
 }));
 
+vi.mock('@microsoft/vscode-azext-utils', () => ({
+  callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+    const context = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: false, rethrow: false, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(context);
+  }),
+}));
+
 vi.mock('../../shared/workspaceWebviewCommandHandler', () => ({
   createWorkspaceWebviewCommandHandler: vi.fn(),
 }));
@@ -167,9 +179,9 @@ describe('createWorkflow', () => {
 
       const webviewOptions = vi.mocked(createWorkspaceWebviewCommandHandler).mock.calls[0][0] as any;
       const data = { workflowName: 'MyWorkflow', logicAppName: 'ProjectA' };
-      await webviewOptions.createHandler(context, data);
+      await webviewOptions.createHandler(data);
 
-      expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, 'D:\\workspace\\ProjectA');
+      expect(createLogicAppWorkflow).toHaveBeenCalledWith(expect.any(Object), data, 'D:\\workspace\\ProjectA');
     });
 
     it('resolves to first matching project when duplicate basenames exist in multi-root workspace', async () => {
@@ -190,9 +202,9 @@ describe('createWorkflow', () => {
 
       const webviewOptions = vi.mocked(createWorkspaceWebviewCommandHandler).mock.calls[0][0] as any;
       const data = { workflowName: 'MyWorkflow', logicAppName: 'SharedProject' };
-      await webviewOptions.createHandler(context, data);
+      await webviewOptions.createHandler(data);
 
-      expect(createLogicAppWorkflow).toHaveBeenCalledWith(context, data, 'D:\\repoA\\SharedProject');
+      expect(createLogicAppWorkflow).toHaveBeenCalledWith(expect.any(Object), data, 'D:\\repoA\\SharedProject');
     });
     it('throws when webview sends unrecognized project name', async () => {
       const folder = { name: 'ProjectA', uri: { fsPath: 'D:\\workspace\\ProjectA' }, index: 0 } as vscode.WorkspaceFolder;
@@ -204,9 +216,7 @@ describe('createWorkflow', () => {
       const webviewOptions = vi.mocked(createWorkspaceWebviewCommandHandler).mock.calls[0][0] as any;
       const data = { workflowName: 'MyWorkflow', logicAppName: 'NonExistentProject' };
 
-      await expect(webviewOptions.createHandler(context, data)).rejects.toThrow(
-        'No project selected. Please select a project and try again.'
-      );
+      await expect(webviewOptions.createHandler(data)).rejects.toThrow('No project selected. Please select a project and try again.');
     });
   });
 

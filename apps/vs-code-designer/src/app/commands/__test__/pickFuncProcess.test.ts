@@ -42,8 +42,21 @@ vi.mock('../../utils/taskUtils', () => ({
   executeIfNotActive: vi.fn(),
 }));
 
-vi.mock('../../utils/telemetry', () => ({
-  runWithDurationTelemetry: vi.fn((_context: unknown, _eventName: string, callback: () => Promise<unknown>) => callback()),
+vi.mock('@microsoft/vscode-azext-utils', () => ({
+  UserCancelledError: class UserCancelledError extends Error {
+    constructor() {
+      super('Operation cancelled');
+    }
+  },
+  callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+    const context = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(context);
+  }),
 }));
 
 vi.mock('../../utils/delay', () => ({
@@ -160,7 +173,7 @@ describe('pickFuncProcessInternal', () => {
 
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
     expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
-    expect(publishCodefulProject).toHaveBeenCalledWith(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
 
@@ -178,7 +191,7 @@ describe('pickFuncProcessInternal', () => {
     ).rejects.toThrow('Failed to find "func: host start" task.');
 
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
-    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalledWith(context, workspaceFolder.uri);
+    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri);
     expect(publishCodefulProject).not.toHaveBeenCalled();
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
@@ -281,7 +294,7 @@ describe('pickFuncProcessInternal', () => {
       )
     ).rejects.toThrow('The setting "pickProcessTimeout" must be a number');
 
-    expect(publishCodefulProject).toHaveBeenCalledWith(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
 });
@@ -404,9 +417,7 @@ describe('pickWorkflowDebugProcess', () => {
       processId: 100,
     };
 
-    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
-      { processId: 444, name: 'node.exe', parentProcessId: 100 },
-    ]);
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([{ processId: 444, name: 'node.exe', parentProcessId: 100 }]);
 
     const result = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo);
 
@@ -541,9 +552,7 @@ describe('findChildProcess', () => {
   });
 
   it('returns the innermost workflow child process', async () => {
-    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([
-      { processId: 111, name: 'func.exe', parentProcessId: 100 },
-    ]);
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockResolvedValue([{ processId: 111, name: 'func.exe', parentProcessId: 100 }]);
 
     const result = await pickFuncProcessModule.findChildProcess(100);
 
