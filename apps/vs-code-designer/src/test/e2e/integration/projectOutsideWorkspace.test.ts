@@ -384,3 +384,4 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
     assert.strictEqual(error.message, errorMessage, 'Error message should match expected text');
   });
 });
+

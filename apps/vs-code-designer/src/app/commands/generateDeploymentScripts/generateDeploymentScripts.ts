@@ -2,7 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workflowLocationKey, workflowResourceGroupNameKey, workflowSubscriptionIdKey, workflowTenantIdKey } from '../../../constants';
+import {
+  extensionCommand,
+  workflowLocationKey,
+  workflowResourceGroupNameKey,
+  workflowSubscriptionIdKey,
+  workflowTenantIdKey,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
@@ -54,15 +60,12 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     addLocalFuncTelemetry(context);
 
     context.telemetry.properties.lastStep = 'ensureWorkspace';
-    const isWorkspaceReady = await callWithTelemetryAndErrorHandling(
-      'generateDeploymentScripts.ensureWorkspace',
-      async (actionContext: IActionContext) => {
-        actionContext.errorHandling.rethrow = true;
-        actionContext.errorHandling.suppressDisplay = true;
-        return await ensureWorkspace(actionContext);
-      }
-    );
-
+    const isWorkspaceReady = await callWithTelemetryAndErrorHandling('generateDeploymentScripts.ensureWorkspace', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      return await ensureWorkspace(actionContext);
+    });
+    
     if (!isWorkspaceReady) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting deployment script generation...'));
       context.telemetry.properties.result = 'Canceled';

@@ -72,16 +72,13 @@ export async function pickFuncProcessInternal(
   projectPath: string
 ): Promise<string | undefined> {
   context.telemetry.properties.lastStep = 'activateAzurite';
-  const isAzuriteStarted = await callWithTelemetryAndErrorHandling(
-    'pickFuncProcess.startAzurite',
-    async (actionContext: IActionContext) => {
-      actionContext.errorHandling.rethrow = true;
-      actionContext.errorHandling.suppressDisplay = true;
-      await activateAzurite(actionContext, projectPath);
-      return true;
-    }
-  );
-
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling('pickFuncProcess.startAzurite', async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    await activateAzurite(actionContext, projectPath);
+    return true;
+  });
+  
   if (!isAzuriteStarted) {
     throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
   }

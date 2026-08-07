@@ -225,3 +225,4 @@ describe('validateAndInstallBinaries', () => {
     );
   });
 });
+

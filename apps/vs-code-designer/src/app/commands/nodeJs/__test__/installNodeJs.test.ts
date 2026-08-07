@@ -56,3 +56,4 @@ describe('installNodeJs', () => {
     expect(downloadAndExtractDependency.mock.invocationCallOrder[0]).toBeLessThan(setNodeJsCommand.mock.invocationCallOrder[0]);
   });
 });
+

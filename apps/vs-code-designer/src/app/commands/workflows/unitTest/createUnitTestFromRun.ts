@@ -41,27 +41,19 @@ import { syncCloudSettings } from '../../syncCloudSettings';
  * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} Resolves when the unit test creation process completes.
  */
-export async function createUnitTestFromRun(
-  context: IActionContext,
-  node: vscode.Uri | undefined,
-  runId?: string,
-  nodeOutputOperations?: any
-): Promise<void> {
+export async function createUnitTestFromRun(context: IActionContext, node: vscode.Uri | undefined, runId?: string, nodeOutputOperations?: any): Promise<void> {
   try {
     // Validate and extract Run ID
     context.telemetry.properties.lastStep = 'extractAndValidateRunId';
     const validatedRunId = await extractAndValidateRunId(runId);
 
     context.telemetry.properties.lastStep = 'ensureWorkspace';
-    const isWorkspaceReady = await callWithTelemetryAndErrorHandling(
-      'createUnitTestFromRun.ensureWorkspace',
-      async (actionContext: IActionContext) => {
-        actionContext.errorHandling.rethrow = true;
-        actionContext.errorHandling.suppressDisplay = true;
-        return await ensureWorkspace(actionContext);
-      }
-    );
-
+    const isWorkspaceReady = await callWithTelemetryAndErrorHandling('createUnitTestFromRun.ensureWorkspace', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      return await ensureWorkspace(actionContext);
+    });
+    
     if (!isWorkspaceReady) {
       ext.outputChannel.appendLog(
         localize('createUnitTestFromRunCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
