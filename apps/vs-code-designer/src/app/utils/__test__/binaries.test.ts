@@ -690,11 +690,30 @@ describe('binaries', () => {
       (isNodeJsInstalled as Mock).mockResolvedValue(true);
       (getNpmCommand as Mock).mockReturnValue('npm');
       (executeCommand as Mock).mockResolvedValue(npmVersion);
+      (axios.get as Mock).mockResolvedValue({ data: { tag_name: `v${npmVersion}` }, status: 200 });
 
       const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
 
       expect(result).toBe(npmVersion);
       expect(context.telemetry.properties.latestVersionSource).toBe('node');
+    });
+
+    it('should fall back to GitHub latest when npm returns an unpublished Function Core Tools release', async () => {
+      const npmVersion = '4.13.0';
+      const githubVersion = '4.12.1';
+      majorVersion = '4';
+      (isNodeJsInstalled as Mock).mockResolvedValue(true);
+      (getNpmCommand as Mock).mockReturnValue('npm');
+      (executeCommand as Mock).mockResolvedValue(npmVersion);
+      (axios.get as Mock)
+        .mockRejectedValueOnce(new Error('Request failed with status code 404'))
+        .mockResolvedValueOnce({ data: { tag_name: `v${githubVersion}` }, status: 200 });
+
+      const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
+
+      expect(result).toBe(githubVersion);
+      expect(context.telemetry.properties.invalidLatestFunctionCoreToolsVersion).toBe(npmVersion);
+      expect(context.telemetry.properties.latestVersionSource).toBe('github');
     });
 
     it('should return the latest Function Core Tools version from GitHub', async () => {
