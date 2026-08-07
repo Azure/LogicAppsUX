@@ -444,21 +444,21 @@ export async function getCustomCodeToUpdate(
   return { customCodeFiles: filteredCustomCodeMapping, appFiles };
 }
 
-export async function saveCustomCodeStandard(filePath: string, allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> {
+export async function saveCustomCodeStandard(context: IActionContext, workflowFilePath: string, allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> {
   const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
   if (!customCode || Object.keys(customCode).length === 0) {
     return;
   }
   try {
-    const projectPath = await getLogicAppProjectRoot(this.context, filePath);
-    const workspaceFolder = path.dirname(filePath);
+    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    const workflowFolderPath = path.dirname(workflowFilePath);
     // to prevent 404's we first check which custom code files are already present before deleting
     Object.entries(customCode).forEach(([fileName, customCodeData]) => {
       const { isModified, isDeleted, fileData } = customCodeData;
       if (isDeleted) {
-        deleteCustomCode(workspaceFolder, fileName);
+        deleteCustomCode(workflowFolderPath, fileName);
       } else if (isModified && fileData) {
-        uploadCustomCode(workspaceFolder, fileName, fileData);
+        uploadCustomCode(workflowFolderPath, fileName, fileData);
       }
     });
     // upload the app files needed for powershell actions
