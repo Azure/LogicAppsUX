@@ -222,7 +222,7 @@ export function createTempDir(): string {
   return tmpBase;
 }
 
-async function typeQuickInputQuery(driver: WebDriver, query: string): Promise<void> {
+export async function typeQuickInputQuery(driver: WebDriver, query: string): Promise<void> {
   const inputEl = await driver.wait(
     until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
     30_000,

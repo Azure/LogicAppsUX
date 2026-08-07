@@ -2597,6 +2597,43 @@ describe('ensureExtensionBundleHealthy session cache', () => {
     expect(vi.mocked(fse.readFile)).toHaveBeenCalledTimes(2);
   });
 
+  it('recomputes when forceRecheck is requested even after a successful session check', async () => {
+    setupHealthyBundle();
+
+    await ensureExtensionBundleHealthy(ctx() as any);
+    await ensureExtensionBundleHealthy(ctx() as any, { forceRecheck: true });
+
+    expect(vi.mocked(fse.readFile)).toHaveBeenCalledTimes(2);
+  });
+
+  it('repairs a missing sidecar on forceRecheck even when the bundle was already cached healthy', async () => {
+    let sidecarExists = true;
+    vi.mocked(fse.readdirSync).mockReturnValue(['1.50.0'] as any);
+    vi.mocked(fse.statSync).mockReturnValue({ isDirectory: () => true } as any);
+    vi.mocked(fse.pathExists).mockImplementation(((p: string) => {
+      if (typeof p === 'string' && p.endsWith('.bundle-source-md5')) {
+        return Promise.resolve(sidecarExists);
+      }
+      return Promise.resolve(true);
+    }) as any);
+    vi.mocked(fse.readdir).mockResolvedValue([] as any);
+    vi.mocked(fse.readFile).mockResolvedValue(modernHealthySidecar() as any);
+    vi.mocked(fse.move).mockImplementation((async () => {
+      sidecarExists = true;
+    }) as any);
+    vi.mocked(feedModule.getJsonFeed).mockResolvedValue(['1.50.0'] as any);
+    const integrityModule = await import('../integrity');
+    vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue('md5');
+    vi.mocked(binariesModule.downloadAndExtractDependency).mockResolvedValue({ actualMd5: 'md5' } as any);
+
+    await ensureExtensionBundleHealthy(ctx() as any);
+    sidecarExists = false;
+
+    await expect(ensureExtensionBundleHealthy(ctx() as any, { forceRecheck: true })).resolves.toBeUndefined();
+
+    expect(vi.mocked(binariesModule.downloadAndExtractDependency)).toHaveBeenCalledTimes(1);
+  });
+
   it('recomputes after resetCachedBundleVersion', async () => {
     setupHealthyBundle();
 

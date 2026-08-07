@@ -185,7 +185,7 @@ describe('validateAndInstallBinaries', () => {
     expect(setNodeJsCommand).toHaveBeenCalled();
     expect(setFunctionsCommand).toHaveBeenCalled();
     expect(setDotNetCommand).toHaveBeenCalledTimes(2);
-    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: false });
+    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: false, forceRecheck: true });
     expect(recordDependencyUpdateCheck).toHaveBeenCalledOnce();
     expect(progress.report).toHaveBeenCalledWith({ increment: 20, message: 'NodeJS' });
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
@@ -216,7 +216,7 @@ describe('validateAndInstallBinaries', () => {
 
     await expect(validateAndInstallBinaries(context)).rejects.toThrow('Bundle sidecar missing');
 
-    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: true });
+    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: true, forceRecheck: true });
     expect(context.telemetry.properties).toMatchObject({
       lastStep: 'ensureExtensionBundleHealthy',
     });
@@ -225,4 +225,3 @@ describe('validateAndInstallBinaries', () => {
     );
   });
 });
-
