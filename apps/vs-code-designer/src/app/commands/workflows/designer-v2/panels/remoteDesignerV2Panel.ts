@@ -184,6 +184,7 @@ export class RemoteDesignerV2Panel extends DesignerV2Panel {
       parametersData: await this.node.getParametersData(),
       localSettings: await this.node.getAppSettings(),
       artifacts: await this.node.getArtifacts(),
+      customCodeData: await this.node.getCustomCodeData(),
       workflowDetails: await this.node.getChildWorkflows(this.context),
       accessToken,
       azureDetails: {

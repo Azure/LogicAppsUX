@@ -19,6 +19,7 @@ export const settingsFileName = 'settings.json';
 export const devContainerFileName = 'devcontainer.json';
 export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
+export const workflowDraftFileName = 'workflow-draft.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
 export const powershellRequirementsFileName = 'requirements.psd1';

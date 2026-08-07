@@ -413,7 +413,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
 
         if (customCodeData) {
           const customCodeToUpdate = await getCustomCodeToUpdate(this.context, filePath, customCodeData);
-          await saveCustomCodeStandard(filePath, customCodeToUpdate);
+          await saveCustomCodeStandard(this.context, filePath, customCodeToUpdate);
         }
 
         if (parametersFromDefinition) {

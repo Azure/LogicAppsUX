@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { connectionsFileName, managementApiPrefix, parametersFileName, workflowAppApiVersion } from '../../../constants';
+import { connectionsFileName, managementApiPrefix, parametersFileName, workflowAppApiVersion, workflowDraftFileName, workflowFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
@@ -85,6 +85,33 @@ export async function getOptionalFileContent(context: IActionContext, node: Slot
     }
     vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
     throw error;
+  }
+}
+
+export async function getCustomCodeFiles(
+  context: IActionContext,
+  node: SlotTreeItem,
+  workflowName: string
+): Promise<Record<string, string>> {
+  try {
+    const folderContent = await getFileOrFolderContent(context, node, `${workflowName}/`);
+    const files: Array<{ name: string; mime: string }> = JSON.parse(folderContent);
+    const customCodeFiles: Record<string, string> = {};
+
+    for (const file of files) {
+      if (file.name !== workflowFileName && file.name !== workflowDraftFileName && file.mime !== 'inode/directory') {
+        try {
+          const content = await getFileOrFolderContent(context, node, `${workflowName}/${file.name}`);
+          customCodeFiles[file.name] = content;
+        } catch {
+          // Skip files that can't be read
+        }
+      }
+    }
+
+    return customCodeFiles;
+  } catch {
+    return {};
   }
 }
 
