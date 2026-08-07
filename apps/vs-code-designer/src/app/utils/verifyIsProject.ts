@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand, workflowFileName, customExtensionContext, extensionContext } from '../../constants';
+import { extensionCommand, workflowFileName, extensionContext } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';

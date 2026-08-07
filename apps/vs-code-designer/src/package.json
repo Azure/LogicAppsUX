@@ -381,6 +381,11 @@
         "command": "azureLogicAppsStandard.enableDevContainer",
         "title": "Enable Dev Container For Project",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.runProjectConsistencyCheck",
+        "title": "Run project consistency check",
+        "category": "Azure Logic Apps"
       }
     ],
     "submenus": [
@@ -806,6 +811,10 @@
         },
         {
           "command": "azureLogicAppsStandard.enableDevContainer",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.runProjectConsistencyCheck",
           "when": "never"
         },
         {
