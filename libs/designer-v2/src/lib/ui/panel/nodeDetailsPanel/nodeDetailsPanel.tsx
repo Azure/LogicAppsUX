@@ -147,7 +147,15 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   );
 
   const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string; message: string } => {
-    const validation = isOperationNameValid(originalId, newId, isTrigger, nodesMetadata, idReplacements, intl);
+    const validation = isOperationNameValid(
+      originalId,
+      newId,
+      selectedNodeData!.displayName,
+      isTrigger,
+      nodesMetadata,
+      idReplacements,
+      intl
+    );
     return { valid: validation.isValid, oldValue: validation.isValid ? newId : originalId, message: validation.message };
   };
 
