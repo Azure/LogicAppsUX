@@ -76,8 +76,7 @@ export async function getExtensionBundleBaseUrl(context: IActionContext): Promis
   let localSettingsUri: string | undefined;
   if (projectPath) {
     try {
-      localSettingsUri = (await getLocalSettingsJson(context, projectPath))?.Values
-        ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+      localSettingsUri = (await getLocalSettingsJson(context, projectPath))?.Values?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
     } catch {
       // Missing/invalid local.settings.json is fine; fall through to other sources.
     }
@@ -1554,6 +1553,7 @@ async function verifyBundleRepublishOffHotPath(context: IActionContext, baseUrl:
  */
 interface EnsureExtensionBundleHealthyOptions {
   requireInstalled?: boolean;
+  forceRecheck?: boolean;
 }
 
 interface DownloadExtensionBundleOptions {
@@ -1584,7 +1584,7 @@ export async function ensureExtensionBundleHealthy(
     return;
   }
 
-  if (healthyBundleVersion) {
+  if (healthyBundleVersion && !options.forceRecheck) {
     ext.outputChannel?.appendLog(
       `Logic Apps extension bundle ${healthyBundleVersion} already verified this session; skipping on-disk integrity re-check.`
     );
@@ -1794,8 +1794,7 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
 
     if (projectPath) {
       try {
-        envVarVer = (await getLocalSettingsJson(context, projectPath))?.Values
-          ?.AzureFunctionsJobHost_extensionBundle_version;
+        envVarVer = (await getLocalSettingsJson(context, projectPath))?.Values?.AzureFunctionsJobHost_extensionBundle_version;
       } catch {
         // ignore
       }
