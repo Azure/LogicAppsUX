@@ -371,7 +371,7 @@ describe('LocalDesignerPanel', () => {
       expect(getConnectionsAndSettingsToUpdate).toHaveBeenCalled();
       expect(saveConnectionReferences).toHaveBeenCalledWith(mockContext, '/test/project', { managedApiConnections: {} });
       expect(getCustomCodeToUpdate).toHaveBeenCalledWith(mockContext, mockUri.fsPath, { codeFile: 'content' });
-      expect(saveCustomCodeStandard).toHaveBeenCalledWith(mockUri.fsPath, { codeFile: 'content' });
+      expect(saveCustomCodeStandard).toHaveBeenCalledWith(mockContext, mockUri.fsPath, { codeFile: 'content' });
       expect(mergeJsonParameters).toHaveBeenCalledWith(mockContext, mockUri.fsPath, expect.any(Object), {});
       expect(saveWorkflowParameter).toHaveBeenCalled();
       expect(writeFileSync).toHaveBeenCalledWith(mockUri.fsPath, expect.stringContaining('Response'));
