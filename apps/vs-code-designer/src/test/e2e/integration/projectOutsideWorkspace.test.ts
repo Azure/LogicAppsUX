@@ -189,7 +189,7 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
   test('Should produce correct "open workspace" message when .code-workspace exists in parent', () => {
     const workspaceFilePath = 'C:\\Users\\dev\\MyWorkspace\\MyWorkspace.code-workspace';
 
-    // This mirrors the localize() call in convertToWorkspace.ts
+    // This mirrors the localize() call in ensureWorkspace.ts
     const expectedMessage = `You must open your workspace to use the full functionality in the Azure Logic Apps (Standard) extension. You can find the workspace with your logic app project at the following location: ${workspaceFilePath}. Do you want to open this workspace now?`;
 
     assert.ok(expectedMessage.includes('full functionality'), 'Message should mention full functionality');
@@ -198,7 +198,7 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
   });
 
   test('Should produce correct "create workspace" message when no .code-workspace exists', () => {
-    // This mirrors the localize() call in convertToWorkspace.ts
+    // This mirrors the localize() call in ensureWorkspace.ts
     const expectedMessage =
       'Your logic app projects must exist inside a workspace to use the full functionality in the Azure Logic Apps ' +
       '(Standard) extension. Visual Studio Code will copy your projects to a new workspace. ' +
@@ -241,7 +241,7 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
   // -------------------------------------------------------
 
   test('Should offer Yes/No buttons for workspace open prompt', () => {
-    // DialogResponses.yes / DialogResponses.no are used in convertToWorkspace.ts
+    // DialogResponses.yes / DialogResponses.no are used in ensureWorkspace.ts
     const yesButton = { title: 'Yes' };
     const noButton = { title: 'No' };
 
@@ -312,7 +312,7 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
     assert.ok(foundWorkspaceFile, 'Should find .code-workspace in parent');
     assert.ok(workspaceReferencesProject, 'Workspace should reference the project');
 
-    // This is the condition in convertToWorkspace.ts that triggers the "open workspace" popup
+    // This is the condition in ensureWorkspace.ts that triggers the "open workspace" popup
     const shouldShowOpenWorkspacePopup = isProject && !isInWorkspace && foundWorkspaceFile && workspaceReferencesProject;
     assert.ok(shouldShowOpenWorkspacePopup, 'Should trigger "open workspace" popup');
   });
@@ -384,3 +384,4 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
     assert.strictEqual(error.message, errorMessage, 'Error message should match expected text');
   });
 });
+

@@ -75,6 +75,7 @@ import { getAzureWebJobsStorage } from '../../appSettings/localSettings';
 import { validateEmulatorIsRunning } from '../../../debug/validatePreDebug';
 import { executeOnAzurite } from '../../../azuriteExtension/executeOnAzuriteExt';
 import { AzuriteExtensionTerminalError } from '../../../azuriteExtension/azuriteErrors';
+import { azuriteCommand } from '../../../../constants';
 import { delay } from '../../delay';
 
 const PROJECT_PATH = '/workspace/logicapp';
@@ -222,7 +223,7 @@ describe('activateAzurite', () => {
 
     expect(updateGlobalSetting).toHaveBeenCalledWith(azuriteLocationSetting, '/ext/azurite/loc', azuriteExtensionPrefix);
     expect(removeSharedSetting).toHaveBeenCalledWith(azuriteLocationSetting, azuriteExtensionPrefix);
-    expect(executeOnAzurite).toHaveBeenCalledWith(context, extensionCommand.azureAzuriteStart);
+    expect(executeOnAzurite).toHaveBeenCalledWith(context, azuriteCommand.start);
     expect(context.telemetry.properties.azuriteStart).toBe('true');
     expect(context.telemetry.properties.azuriteLocation).toBe('/ext/azurite/loc');
   });
@@ -301,7 +302,7 @@ describe('activateAzurite', () => {
 
     await expect(activateAzurite(context, PROJECT_PATH)).resolves.toBeUndefined();
 
-    expect(executeOnAzurite).toHaveBeenCalledWith(context, extensionCommand.azureAzuriteStart);
+    expect(executeOnAzurite).toHaveBeenCalledWith(context, azuriteCommand.start);
     // The probe still ran after the start command blew up: 1 pre-start check + 1 readiness poll.
     expect(validateEmulatorIsRunning).toHaveBeenCalledTimes(2);
     expect(validateEmulatorIsRunning).toHaveBeenNthCalledWith(2, expect.anything(), PROJECT_PATH, {
@@ -419,7 +420,7 @@ describe('activateAzurite', () => {
     expect(updateGlobalSetting).toHaveBeenCalledWith(azuriteLocationSetting, '/custom/azurite/dir', azuriteExtensionPrefix);
     expect(updateGlobalSetting).not.toHaveBeenCalledWith(azuriteLocationSetting, defaultAzuritePathValue, azuriteExtensionPrefix);
     expect(context.telemetry.properties.azuriteLocation).toBe('/custom/azurite/dir');
-    expect(executeOnAzurite).toHaveBeenCalledWith(context, extensionCommand.azureAzuriteStart);
+    expect(executeOnAzurite).toHaveBeenCalledWith(context, azuriteCommand.start);
   });
 
   it('starts azurite at the default path when the directory prompt is cancelled', async () => {

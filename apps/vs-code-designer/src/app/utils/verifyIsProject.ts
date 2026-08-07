@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand, workflowFileName, customExtensionContext } from '../../constants';
+import { extensionCommand, workflowFileName, extensionContext } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -61,7 +61,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   // structurally from the .csproj so the workflow C# file can be named anything.
   const hasCodefulProject = await hasCodefulSdkReference(folderPath);
   if (hasCodefulProject) {
-    vscode.commands.executeCommand('setContext', customExtensionContext.isCodeful, true);
+    vscode.commands.executeCommand('setContext', extensionContext.isCodeful, true);
   }
 
   return hasValidCodelessWorkflow || hasCodefulProject;
@@ -113,40 +113,6 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
     return true;
   }
   return false;
-}
-
-/**
- * Checks root folder and subFolders one level down
- * If any logic app projects are found return the paths.
- * @param workspaceFolder - The workspace folder to check.
- * @returns A promise that resolves to an array of logic app project roots.
- */
-export async function tryGetAllLogicAppProjectRoots(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string[]> {
-  if (isNullOrUndefined(workspaceFolder)) {
-    return [];
-  }
-
-  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!(await fse.pathExists(folderPath))) {
-    return [];
-  }
-
-  if (await isLogicAppProject(folderPath)) {
-    return [folderPath];
-  }
-
-  const logicAppProjectRoots: string[] = [];
-  const subpaths: string[] = await fse.readdir(folderPath);
-  await Promise.all(
-    subpaths.map(async (s) => {
-      const subpath = path.join(folderPath, s);
-      if (await isLogicAppProject(subpath)) {
-        logicAppProjectRoots.push(subpath);
-      }
-    })
-  );
-
-  return logicAppProjectRoots;
 }
 
 /**

@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import { createWorkspaceWebviewCommandHandler } from '../workspaceWebviewCommandHandler';
@@ -13,10 +12,6 @@ vi.mock('vscode', () => ({
     createWebviewPanel: vi.fn(),
     showOpenDialog: vi.fn(),
   },
-}));
-
-vi.mock('@microsoft/vscode-azext-utils', () => ({
-  callWithTelemetryAndErrorHandling: vi.fn(),
 }));
 
 vi.mock('fs', () => ({
@@ -96,13 +91,6 @@ describe('createWorkspaceWebviewCommandHandler', () => {
     vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
     vi.mocked(getWebViewHTML).mockResolvedValue('<html></html>');
     vi.mocked(vscode.window.createWebviewPanel).mockReturnValue(panel as any);
-    vi.mocked(callWithTelemetryAndErrorHandling).mockImplementation(async (_eventName, callback: any) => {
-      try {
-        await callback({ telemetry: { properties: {}, measurements: {} } });
-      } catch {
-        // Match the extension helper behavior: errors are reported through telemetry and not rethrown.
-      }
-    });
   });
 
   async function createHandlerHarness(createHandler = vi.fn().mockResolvedValue(undefined), onResolve = vi.fn()) {
@@ -171,7 +159,11 @@ describe('createWorkspaceWebviewCommandHandler', () => {
     const onResolve = vi.fn();
     const { sendMessage } = await createHandlerHarness(createHandler, onResolve);
 
-    await sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
+    // First call fails — error propagates from the handler since there is no
+    // callWithTelemetryAndErrorHandling wrapper in the test mock.
+    await expect(sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } })).rejects.toThrow(
+      'create failed'
+    );
     await sendMessage({ command: ExtensionCommand.createWorkspaceStructure, data: { workspaceName: 'one' } });
 
     expect(createHandler).toHaveBeenCalledTimes(2);

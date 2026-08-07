@@ -18,7 +18,7 @@ import { sendRequest } from '../../../../utils/requestUtils';
 import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { MonitoringPanel } from './monitoringPanel';
 import { getRunTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FileDetails, DesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { promises, readFileSync } from 'fs';
@@ -144,7 +144,9 @@ export default class LocalMonitoringPanel extends MonitoringPanel {
         break;
       }
       case ExtensionCommand.createUnitTestFromRun: {
-        await createUnitTestFromRun(vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
+        await callWithTelemetryAndErrorHandling('LocalMonitoringPanel.createUnitTestFromRun', async (actionContext: IActionContext) => {
+          await createUnitTestFromRun(actionContext, vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
+        });
         break;
       }
       case ExtensionCommand.fileABug: {

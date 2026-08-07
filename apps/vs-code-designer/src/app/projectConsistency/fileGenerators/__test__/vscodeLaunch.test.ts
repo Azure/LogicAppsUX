@@ -42,7 +42,7 @@ describe('generateLaunchJson', () => {
         name: expect.stringContaining('NugetApp'),
         type: 'coreclr',
         request: 'attach',
-        processId: '${command:azureLogicAppsStandard.pickProcess}',
+        processId: '${command:azureLogicAppsStandard.pickFuncProcess}',
       });
       expect(result.configurations[0]).not.toHaveProperty('funcRuntime');
       expect(result.configurations[0]).not.toHaveProperty('isCodeless');

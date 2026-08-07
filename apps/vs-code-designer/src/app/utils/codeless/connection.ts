@@ -1,7 +1,6 @@
 import {
   azurePublicBaseUrl,
   connectionsFileName,
-  parameterizeConnectionsInProjectLoadSetting,
   workflowAuthenticationMethodKey,
   workflowAuthenticationMethodMIValue,
 } from '../../../constants';
@@ -11,7 +10,7 @@ import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSetting
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { getContainingWorkspace } from '../workspace';
+import { getContainingWorkspaceFolder } from '../workspace';
 import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
@@ -40,7 +39,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
-import { getGlobalSetting } from '../vsCodeConfig/settings';
+import { shouldParameterizeConnections } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
 
@@ -80,7 +79,7 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
   return '';
 }
 
-export async function addConnectionData(
+export async function addConnection(
   context: IActionContext,
   filePath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>
@@ -96,11 +95,11 @@ export async function addConnectionData(
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
   await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
 
-  ext.outputChannel.appendLog(localize('azureFunctions.addConnection', 'Connection added.'));
+  ext.outputChannel.appendLog(localize('connectionAdded', 'Connection added.'));
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  const workspaceFolder = nonNullValue(getContainingWorkspaceFolder(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
 
   const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
@@ -118,7 +117,6 @@ async function addConnectionDataInJson(
   connectionAndAppSetting: ConnectionAndAppSetting<any>,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
@@ -143,14 +141,14 @@ async function addConnectionDataInJson(
     return;
   }
 
-  if (parameterizeConnectionsSetting) {
+  if (shouldParameterizeConnections()) {
     parameterizeConnection(connectionData, connectionKey, parametersData, settings);
   }
 
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
 
-  if (!connectionsFileExists && (await isCSharpProject(context, functionAppPath))) {
+  if (!connectionsFileExists && (await isCSharpProject(functionAppPath))) {
     await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
   }
 }
@@ -215,7 +213,6 @@ async function getConnectionReference(
   workflowBaseManagementUri: string,
   settingsToAdd: Record<string, string>,
   parametersToAdd: any,
-  parameterizeConnectionsSetting: any,
   isMIEnabled: boolean
 ): Promise<ConnectionReferenceModel> {
   const {
@@ -280,7 +277,7 @@ async function getConnectionReference(
         connectionReference.connectionProperties = connectionProperties;
       }
 
-      return parameterizeConnectionsSetting
+      return shouldParameterizeConnections()
         ? (parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd) as ConnectionReferenceModel)
         : connectionReference;
     })
@@ -311,7 +308,6 @@ export async function getConnectionsAndSettingsToUpdate(
     const settingsToAdd: Record<string, string> = {};
     const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
     let accessToken: string | undefined;
-    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
     for (const referenceKey of Object.keys(connectionReferences)) {
       const reference = connectionReferences[referenceKey];
@@ -327,7 +323,6 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
           isMIEnabled
         );
 
@@ -352,7 +347,6 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
           isMIEnabled
         );
 
@@ -377,7 +371,6 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
           isMIEnabled
         );
 
@@ -491,7 +484,7 @@ export async function saveConnectionReferences(
 
   if (connections && Object.keys(connections).length) {
     await writeFormattedJson(connectionsFilePath, connections);
-    if (!connectionsFileExists && (await isCSharpProject(context, projectPath))) {
+    if (!connectionsFileExists && (await isCSharpProject(projectPath))) {
       await addNewFileInCSharpProject(context, connectionsFileName, projectPath);
     }
   }

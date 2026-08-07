@@ -23,7 +23,7 @@ export function generateLaunchJson(config: VSCodeProjectConfig): LaunchJsonConte
  * Generates a single debug configuration based on the project type.
  */
 function generateDebugConfiguration(config: VSCodeProjectConfig, logicAppName: string): DebugConfiguration {
-  const { projectType, projectPackageType, customCodeTargetFramework, funcVersion } = config;
+  const { projectType, customCodeTargetFramework, funcVersion } = config;
   const version = funcVersion ?? FuncVersion.v4;
 
   if (projectType === ProjectType.codeful) {
@@ -51,6 +51,6 @@ function generateDebugConfiguration(config: VSCodeProjectConfig, logicAppName: s
     name: `Run/Debug logic app ${logicAppName}`,
     type: getDotnetRuntimeFromFunc(version),
     request: 'attach',
-    processId: `\${command:${extensionCommand.pickProcess}}`,
+    processId: `\${command:${extensionCommand.pickFuncProcess}}`,
   };
 }

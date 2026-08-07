@@ -43,7 +43,7 @@ export const ReviewCreateStep: React.FC = () => {
   // Determine what sections to show based on flow type
   const shouldShowPackageSection = flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkspaceSection =
-    flowType === 'createWorkspace' || flowType === 'convertToWorkspace' || flowType === 'createWorkspaceFromPackage';
+    flowType === 'createWorkspace' || flowType === 'ensureWorkspace' || flowType === 'createWorkspaceFromPackage';
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkflowSection =

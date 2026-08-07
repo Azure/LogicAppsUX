@@ -48,10 +48,10 @@ interface TasksJson {
     type?: string;
     dependsOn?: string | string[];
     group?: { kind?: string; isDefault?: boolean };
-    options?: { cwd?: string };
-    windows?: { options?: { cwd?: string } };
-    linux?: { options?: { cwd?: string } };
-    osx?: { options?: { cwd?: string } };
+    options?: { cwd?: string; env?: Record<string, string> };
+    windows?: { options?: { cwd?: string; env?: Record<string, string> } };
+    linux?: { options?: { cwd?: string; env?: Record<string, string> } };
+    osx?: { options?: { cwd?: string; env?: Record<string, string> } };
   }>;
   inputs?: Array<{ id?: string; type?: string; command?: string }>;
 }
@@ -79,9 +79,9 @@ interface SettingsJson {
   'azureLogicAppsStandard.deploySubpath'?: string;
   'azureLogicAppsStandard.projectLanguage'?: string;
   'azureLogicAppsStandard.projectRuntime'?: string;
+  'azureLogicAppsStandard.preDeployTask'?: string;
   'debug.internalConsoleOptions'?: string;
   'azureFunctions.suppressProject'?: boolean;
-  'azureFunctions.preDeployTask'?: string;
   [key: string]: unknown;
 }
 
@@ -280,18 +280,23 @@ async function confirmVSCodeRegenerationPrompt(driver: WebDriver): Promise<void>
   throw new Error('Timed out waiting for .vscode regeneration confirmation prompt');
 }
 
-async function waitForNugetDebugTaskChain(entry: WorkspaceManifestEntry, driver: WebDriver): Promise<void> {
-  const tasksPath = path.join(entry.appDir, '.vscode', 'tasks.json');
+async function waitForExactNugetDebugFiles(entry: WorkspaceManifestEntry, driver: WebDriver): Promise<void> {
   const deadline = Date.now() + CONVERSION_TIMEOUT;
+  let lastError: unknown;
   while (Date.now() < deadline) {
-    if (fs.existsSync(tasksPath) && hasNugetDebugTaskChain(entry)) {
+    try {
+      assertNugetDebugFiles(entry);
       return;
+    } catch (error) {
+      lastError = error;
     }
     await confirmVSCodeRegenerationIfVisible(driver);
     await sleep(1000);
   }
 
-  throw new Error(`Timed out waiting for NuGet debug task chain: ${tasksPath}`);
+  throw new Error(
+    `Timed out waiting for exact converted NuGet .vscode files: ${lastError instanceof Error ? lastError.message : String(lastError)}`
+  );
 }
 
 function seedBundleProjectFilesIfNeeded(entry: WorkspaceManifestEntry): void {
@@ -351,7 +356,7 @@ function seedBundleProjectFilesIfNeeded(entry: WorkspaceManifestEntry): void {
             name: `Run/Debug logic app ${entry.appName}`,
             type: 'coreclr',
             request: 'attach',
-            processId: '${command:azureLogicAppsStandard.pickProcess}',
+            processId: '${command:azureLogicAppsStandard.pickFuncProcess}',
           },
         ],
       },
@@ -420,16 +425,149 @@ function assertRunnableWorkflow(entry: WorkspaceManifestEntry, phase: string): v
   assert.strictEqual(actions.Response?.type, 'Response', `${phase}: workflow should use the built-in Response action`);
 }
 
+function getExpectedConvertedNugetTasksJson(): TasksJson {
+  return {
+    version: '2.0.0',
+    tasks: [
+      {
+        label: 'generateDebugSymbols',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        args: ['${input:getDebugSymbolDll}'],
+        type: 'process',
+        problemMatcher: '$msCompile',
+      },
+      {
+        label: 'clean',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        args: ['clean', '/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'],
+        type: 'process',
+        problemMatcher: '$msCompile',
+      },
+      {
+        label: 'build',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        args: ['build', '/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'],
+        type: 'process',
+        dependsOn: 'clean',
+        group: {
+          kind: 'build',
+          isDefault: true,
+        },
+        problemMatcher: '$msCompile',
+      },
+      {
+        label: 'clean release',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        args: ['clean', '--configuration', 'Release', '/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'],
+        type: 'process',
+        problemMatcher: '$msCompile',
+      },
+      {
+        label: 'publish',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        args: ['publish', '--configuration', 'Release', '/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'],
+        type: 'process',
+        dependsOn: 'clean release',
+        problemMatcher: '$msCompile',
+      },
+      {
+        label: 'func: host start',
+        type: 'shell',
+        dependsOn: 'build',
+        options: {
+          cwd: '${workspaceFolder}/bin/Debug/net8.0',
+          env: {
+            PATH: '${env:PATH}',
+          },
+        },
+        windows: {
+          options: {
+            cwd: 'bin/Debug/net8.0',
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;${env:PATH}',
+            },
+          },
+        },
+        linux: {
+          options: {
+            cwd: 'bin/Debug/net8.0',
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/NodeJs:${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/DotNetSDK:${env:PATH}',
+            },
+          },
+        },
+        osx: {
+          options: {
+            cwd: 'bin/Debug/net8.0',
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/NodeJs:${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/DotNetSDK:${env:PATH}',
+            },
+          },
+        },
+        command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
+        args: ['host', 'start'],
+        isBackground: true,
+        problemMatcher: '$func-watch',
+      },
+    ],
+    inputs: [
+      {
+        id: 'getDebugSymbolDll',
+        type: 'command',
+        command: 'azureLogicAppsStandard.getDebugSymbolDll',
+      },
+    ],
+  };
+}
+
+function getExpectedConvertedNugetLaunchJson(entry: WorkspaceManifestEntry): LaunchJson {
+  return {
+    version: '0.2.0',
+    configurations: [
+      {
+        name: `Run/Debug logic app ${entry.appName}`,
+        type: 'coreclr',
+        request: 'attach',
+        processId: '${command:azureLogicAppsStandard.pickFuncProcess}',
+      },
+    ],
+  };
+}
+
+function getExpectedConvertedNugetSettingsJson(): SettingsJson {
+  return {
+    'azureLogicAppsStandard.deploySubpath': 'bin/Release/net8.0/publish',
+    'azureLogicAppsStandard.projectLanguage': 'C#',
+    'azureLogicAppsStandard.projectRuntime': '~4',
+    'debug.internalConsoleOptions': 'neverOpen',
+    'azureFunctions.suppressProject': true,
+    'azureLogicAppsStandard.preDeployTask': 'publish',
+  };
+}
+
+function getExpectedConvertedNugetExtensionsJson(): { recommendations: string[] } {
+  return {
+    recommendations: [
+      'ms-azuretools.vscode-azurelogicapps',
+      'ms-dotnettools.csharp',
+      'ms-azuretools.vscode-azurefunctions',
+      'ms-dotnettools.csdevkit',
+    ],
+  };
+}
+
 function assertNugetDebugFiles(entry: WorkspaceManifestEntry): void {
   const csprojPath = path.join(entry.appDir, `${entry.appName}.csproj`);
   const tasksPath = path.join(entry.appDir, '.vscode', 'tasks.json');
   const launchPath = path.join(entry.appDir, '.vscode', 'launch.json');
   const settingsPath = path.join(entry.appDir, '.vscode', 'settings.json');
+  const extensionsPath = path.join(entry.appDir, '.vscode', 'extensions.json');
 
   assert.ok(fs.existsSync(csprojPath), `NuGet conversion should create ${csprojPath}`);
   assert.ok(fs.existsSync(tasksPath), 'NuGet conversion should regenerate .vscode/tasks.json');
   assert.ok(fs.existsSync(launchPath), 'NuGet conversion should regenerate .vscode/launch.json');
   assert.ok(fs.existsSync(settingsPath), 'NuGet conversion should regenerate .vscode/settings.json');
+  assert.ok(fs.existsSync(extensionsPath), 'NuGet conversion should regenerate .vscode/extensions.json');
   assert.ok(fs.existsSync(path.join(entry.appDir, 'host.json')), 'NuGet conversion should restore host.json');
   assert.ok(fs.existsSync(path.join(entry.appDir, 'local.settings.json')), 'NuGet conversion should restore local.settings.json');
   assert.ok(!fs.existsSync(path.join(entry.appDir, 'host.json-copy')), 'NuGet conversion should not leave host.json-copy behind');
@@ -459,75 +597,32 @@ function assertNugetDebugFiles(entry: WorkspaceManifestEntry): void {
   );
 
   const tasksJson = readJsonFile<TasksJson>(tasksPath);
-  const taskLabels = new Set((tasksJson.tasks ?? []).map((task) => task.label));
-  for (const label of ['generateDebugSymbols', 'clean', 'build', 'clean release', 'publish', 'func: host start']) {
-    assert.ok(taskLabels.has(label), `NuGet tasks.json should include "${label}"`);
-  }
   assert.deepStrictEqual(
-    (tasksJson.tasks ?? []).map((task) => task.label),
-    ['generateDebugSymbols', 'clean', 'build', 'clean release', 'publish', 'func: host start'],
-    'NuGet tasks.json should match the converted-project task order'
+    tasksJson,
+    getExpectedConvertedNugetTasksJson(),
+    'NuGet tasks.json should exactly match converted legacy projects'
   );
-  assert.deepStrictEqual(tasksJson.inputs, [
-    {
-      id: 'getDebugSymbolDll',
-      type: 'command',
-      command: 'azureLogicAppsStandard.getDebugSymbolDll',
-    },
-  ]);
-  const buildTask = (tasksJson.tasks ?? []).find((task) => task.label === 'build');
-  assert.strictEqual(buildTask?.dependsOn, 'clean', 'build should depend on clean');
-  assert.deepStrictEqual(buildTask?.group, { kind: 'build', isDefault: true }, 'build should remain the default build task');
-  const funcTask = (tasksJson.tasks ?? []).find((task) => task.label === 'func: host start');
-  assert.strictEqual(funcTask?.dependsOn, 'build', 'func: host start should depend on the NuGet Debug build task');
-  assert.strictEqual(funcTask?.type, 'shell', 'func: host start should use the configured Func Core Tools binary');
-  assert.strictEqual(funcTask?.command, '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}');
-  assert.deepStrictEqual(funcTask?.args, ['host', 'start']);
-  assert.strictEqual(funcTask?.options?.cwd, '${workspaceFolder}/bin/Debug/net8.0');
-  assert.strictEqual(funcTask?.windows?.options?.cwd, 'bin/Debug/net8.0');
-  assert.strictEqual(funcTask?.linux?.options?.cwd, 'bin/Debug/net8.0');
-  assert.strictEqual(funcTask?.osx?.options?.cwd, 'bin/Debug/net8.0');
 
   const launchJson = readJsonFile<LaunchJson>(launchPath);
-  assert.deepStrictEqual(launchJson, {
-    version: '0.2.0',
-    configurations: [
-      {
-        name: `Run/Debug logic app ${entry.appName}`,
-        type: 'coreclr',
-        request: 'attach',
-        processId: '${command:azureLogicAppsStandard.pickProcess}',
-      },
-    ],
-  });
+  assert.deepStrictEqual(
+    launchJson,
+    getExpectedConvertedNugetLaunchJson(entry),
+    'NuGet launch.json should exactly match converted legacy projects'
+  );
 
   const settingsJson = readJsonFile<SettingsJson>(settingsPath);
-  assert.deepStrictEqual(settingsJson, {
-    'azureLogicAppsStandard.deploySubpath': 'bin/Release/net8.0/publish',
-    'azureLogicAppsStandard.projectLanguage': 'C#',
-    'azureLogicAppsStandard.projectRuntime': '~4',
-    'debug.internalConsoleOptions': 'neverOpen',
-    'azureFunctions.suppressProject': true,
-    'azureFunctions.preDeployTask': 'publish',
-  });
-}
+  assert.deepStrictEqual(
+    settingsJson,
+    getExpectedConvertedNugetSettingsJson(),
+    'NuGet settings.json should exactly match converted legacy projects'
+  );
 
-function hasNugetDebugTaskChain(entry: WorkspaceManifestEntry): boolean {
-  const tasksPath = path.join(entry.appDir, '.vscode', 'tasks.json');
-  if (!fs.existsSync(tasksPath)) {
-    return false;
-  }
-
-  try {
-    const tasksJson = readJsonFile<TasksJson>(tasksPath);
-    const taskLabels = new Set((tasksJson.tasks ?? []).map((task) => task.label));
-    const funcTask = (tasksJson.tasks ?? []).find((task) => task.label === 'func: host start');
-    return (
-      ['clean', 'build', 'clean release', 'func: host start'].every((label) => taskLabels.has(label)) && funcTask?.dependsOn === 'build'
-    );
-  } catch {
-    return false;
-  }
+  const extensionsJson = readJsonFile<{ recommendations: string[] }>(extensionsPath);
+  assert.deepStrictEqual(
+    extensionsJson,
+    getExpectedConvertedNugetExtensionsJson(),
+    'NuGet extensions.json should exactly match converted legacy projects'
+  );
 }
 
 async function startDebuggingWithoutHarnessCleanup(driver: WebDriver): Promise<void> {
@@ -659,8 +754,7 @@ describe('NuGet conversion debug lifecycle', function () {
 
     const csprojPath = path.join(entry.appDir, `${entry.appName}.csproj`);
     await waitForFilePredicate(csprojPath, () => fs.existsSync(csprojPath), CONVERSION_TIMEOUT, 'NuGet project file');
-    await waitForNugetDebugTaskChain(entry, driver);
-    assertNugetDebugFiles(entry);
+    await waitForExactNugetDebugFiles(entry, driver);
     assertRunnableWorkflow(entry, 'nuget');
 
     await startDebuggingWithoutHarnessCleanup(driver);

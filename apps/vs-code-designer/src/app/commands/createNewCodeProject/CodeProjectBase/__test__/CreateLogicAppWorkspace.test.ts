@@ -776,7 +776,7 @@ describe('createLogicAppWorkspace', () => {
   });
 
   it('should create workspace file with correct structure for standard logic app', async () => {
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsLogicApp);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptionsLogicApp);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
@@ -803,7 +803,7 @@ describe('createLogicAppWorkspace', () => {
   it('should include function folder for custom code projects', async () => {
     const customCodeWorkspaceFilePath = path.join('test', 'workspace', 'TestWorkspaceCustomCode', 'TestWorkspaceCustomCode.code-workspace');
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsCustomCode);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptionsCustomCode);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
@@ -834,7 +834,7 @@ describe('createLogicAppWorkspace', () => {
   it('should include function folder for rules engine projects', async () => {
     const rulesEngineWorkspaceFilePath = path.join('test', 'workspace', 'TestWorkspaceRules', 'TestWorkspaceRules.code-workspace');
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsRulesEngine);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptionsRulesEngine);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
@@ -1195,10 +1195,7 @@ describe('updateWorkspaceFile', () => {
   });
 });
 
-describe('createWorkspaceStructure - Testing Actual Implementation', () => {
-  // This suite tests the ACTUAL createWorkspaceStructure function
-  // Only file system operations are mocked, business logic is real
-
+describe('createWorkspaceFiles - Testing Actual Implementation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
@@ -1215,7 +1212,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
       logicAppType: ProjectType.logicApp,
     } as any;
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptions);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptions);
 
     // Verify workspace folder creation - normalize path for cross-platform compatibility
     expect(fse.ensureDir).toHaveBeenCalledWith(actualPath.join('test', 'workspace', 'MyWorkspace'));
@@ -1237,7 +1234,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
       functionFolderName: 'MyFunctions',
     } as any;
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptions);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptions);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     expect(writeCall[1].folders).toHaveLength(2);

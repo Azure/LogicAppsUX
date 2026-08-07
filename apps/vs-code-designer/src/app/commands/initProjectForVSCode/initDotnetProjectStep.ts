@@ -35,7 +35,7 @@ export class InitDotnetProjectStep extends InitProjectStep {
     const language: ProjectLanguage = nonNullProp(context, 'language');
 
     let projFile: ProjectFile;
-    const projFiles = await getProjFiles(context, language, projectPath);
+    const projFiles = await getProjFiles(language, projectPath);
     const fileExt: string = language === ProjectLanguage.FSharp ? 'fsproj' : 'csproj';
 
     if (projFiles.length === 1) {

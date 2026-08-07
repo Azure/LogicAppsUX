@@ -121,7 +121,7 @@ describe('codeless parameter utilities', () => {
 
       expect(mocks.getLogicAppProjectRoot).toHaveBeenCalledWith(context, workflowFilePath);
       expect(mocks.writeFormattedJson).toHaveBeenCalledWith(parametersFilePath, parameters);
-      expect(mocks.isCSharpProject).toHaveBeenCalledWith(context, projectPath);
+      expect(mocks.isCSharpProject).toHaveBeenCalledWith(projectPath);
       expect(mocks.addNewFileInCSharpProject).toHaveBeenCalledWith(context, 'parameters.json', projectPath);
     });
 
