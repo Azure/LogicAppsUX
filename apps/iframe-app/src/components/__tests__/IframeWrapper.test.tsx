@@ -258,6 +258,7 @@ describe('IframeWrapper', () => {
 
   it('should handle chat history from Frame Blade', async () => {
     const { useFrameBlade } = await import('../../lib/hooks/useFrameBlade');
+    const { ChatWidget } = await import('@microsoft/logic-apps-chat');
 
     let capturedHistoryCallback: ((history: any) => void) | undefined;
 
@@ -289,6 +290,12 @@ describe('IframeWrapper', () => {
           content: 'Test message',
           timestamp: '2024-01-01T00:00:00Z',
         },
+        {
+          id: 'msg-2',
+          role: 'assistant',
+          content: 'Test response',
+          timestamp: '2024-01-01T00:00:05Z',
+        },
       ],
     };
 
@@ -299,9 +306,16 @@ describe('IframeWrapper', () => {
       }
     });
 
-    // Verify contextId is handled (not stored in localStorage, but passed as initialContextId prop)
-    // The actual verification happens when the component re-renders with the contextId
-    expect(chatHistory.contextId).toBe('test-context-123');
+    expect(ChatWidget).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        initialContextId: 'test-context-123',
+        initialMessages: [
+          expect.objectContaining({ id: 'msg-1', role: 'user', timestamp: new Date('2024-01-01T00:00:00Z') }),
+          expect.objectContaining({ id: 'msg-2', role: 'assistant', timestamp: new Date('2024-01-01T00:00:05Z') }),
+        ],
+      }),
+      {}
+    );
   });
 
   it('should pass contextId from URL config to ChatWidget', async () => {
