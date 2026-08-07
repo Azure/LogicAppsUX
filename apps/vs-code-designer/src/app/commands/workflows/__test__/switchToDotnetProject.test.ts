@@ -79,7 +79,7 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getContainingWorkspace: vi.fn(),
+  getContainingWorkspaceFolder: vi.fn(),
   getWorkspaceFolder: vi.fn(),
 }));
 
@@ -112,7 +112,7 @@ import { ext } from '../../../../extensionVariables';
 import { switchToDotnetProject, switchToDotnetProjectCommand } from '../switchToDotnetProject';
 import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkspaceFolder, getContainingWorkspace } from '../../../utils/workspace';
+import { getWorkspaceFolder, getContainingWorkspaceFolder } from '../../../utils/workspace';
 import { getProjFiles, getTemplateKeyFromProjFile, getLocalDotNetVersionFromBinaries } from '../../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../../utils/dotnet/executeDotnetTemplateCommand';
 import { tryParseFuncVersion, tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
@@ -177,7 +177,7 @@ describe('switchToDotnetProject', () => {
     vi.mocked(useBinariesDependencies).mockResolvedValue(false);
     vi.mocked(tryGetMajorVersion).mockReturnValue('4');
     vi.mocked(getTemplateKeyFromProjFile).mockResolvedValue('testKey');
-    vi.mocked(getContainingWorkspace).mockReturnValue(undefined);
+    vi.mocked(getContainingWorkspaceFolder).mockReturnValue(undefined);
     (fse.pathExists as unknown as Mock).mockResolvedValue(false);
     (fse.readdir as unknown as Mock).mockResolvedValue([]);
     (fse.stat as unknown as Mock).mockResolvedValue({ isDirectory: () => false });

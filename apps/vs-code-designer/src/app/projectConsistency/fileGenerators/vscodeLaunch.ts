@@ -51,6 +51,6 @@ function generateDebugConfiguration(config: VSCodeProjectConfig, logicAppName: s
     name: `Run/Debug logic app ${logicAppName}`,
     type: getDotnetRuntimeFromFunc(version),
     request: 'attach',
-    processId: `\${command:${extensionCommand.pickProcess}}`,
+    processId: `\${command:${extensionCommand.pickFuncProcess}}`,
   };
 }

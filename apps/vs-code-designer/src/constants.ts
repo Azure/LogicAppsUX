@@ -143,17 +143,16 @@ export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
 
 // Commands
 export const extensionCommand = {
-  openDesigner: 'azureLogicAppsStandard.openDesigner',
   activate: 'azureLogicAppsStandard.activate',
+  openDesigner: 'azureLogicAppsStandard.openDesigner',
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
   createProject: 'azureLogicAppsStandard.createProject',
   createWorkspace: 'azureLogicAppsStandard.createWorkspace',
   cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
   buildCustomCodeFunctionsProject: 'azureLogicAppsStandard.buildCustomCodeFunctionsProject',
-  customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
   createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
-  createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
+  createDataMap: 'azureLogicAppsStandard.dataMap.createDataMap',
   createWorkflow: 'azureLogicAppsStandard.createWorkflow',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
@@ -165,17 +164,12 @@ export const extensionCommand = {
   startLogicApp: 'azureLogicAppsStandard.startLogicApp',
   stopLogicApp: 'azureLogicAppsStandard.stopLogicApp',
   restartLogicApp: 'azureLogicAppsStandard.restartLogicApp',
-  pickProcess: 'azureLogicAppsStandard.pickProcess',
-  pickCustomCodeNetHostProcess: 'azureLogicAppsStandard.pickCustomCodeNetHostProcess',
+  pickFuncProcess: 'azureLogicAppsStandard.pickFuncProcess',
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
   toggleDesignTimeNodeWorker: 'azureLogicAppsStandard.toggleDesignTimeNodeWorker',
   openInPortal: 'azureLogicAppsStandard.openInPortal',
-  azureFunctionsOpenFile: 'azureFunctions.openFile',
-  azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
-  azureFunctionsAppSettingsEncrypt: 'azureFunctions.appSettings.encrypt',
-  azureFunctionsAppSettingsDecrypt: 'azureFunctions.appSettings.decrypt',
   openOverview: 'azureLogicAppsStandard.openOverview',
   exportLogicApp: 'azureLogicAppsStandard.exportLogicApp',
   reviewValidation: 'azureLogicAppsStandard.reviewValidation',
@@ -206,45 +200,66 @@ export const extensionCommand = {
   initProjectForVSCode: 'azureLogicAppsStandard.initProjectForVSCode',
   configureDeploymentSource: 'azureLogicAppsStandard.configureDeploymentSource',
   startRemoteDebug: 'azureLogicAppsStandard.startRemoteDebug',
-  validateLogicAppProjects: 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue: 'azureLogicAppsStandard.reportIssue',
   validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
   resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
   disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
-  azureAzuriteStart: 'azurite.start',
-  parameterizeConnections: 'azureLogicAppsStandard.parameterizeConnections',
+  parameterizeProjectConnections: 'azureLogicAppsStandard.parameterizeProjectConnections',
+  enableLocalManagedIdentityAuth: 'azureLogicAppsStandard.enableLocalManagedIdentityAuth',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
-  dataMapAddSchemaFromFile: 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
-  dataMapAttemptToResolveMissingSchemaFile: 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
-  dataMapSetSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
-  dataMapSetSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
-  dataMapSetSupportedFileExts: 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
-  dataMapSetDmFolders: 'azureLogicAppsStandard.dataMap.setDmFolders',
-  dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
-  dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
-  createUnitTestFromRun: 'azureLogicAppsStandard.createUnitTestFromRun',
-  createUnitTest: 'azureLogicAppsStandard.createUnitTest',
-  vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
   openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
-  sdkLspApplyEdits: 'sdklsp.applyEdits',
+  sdkLspApplyEdits: 'azureLogicAppsStandard.sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
-  logSubscriptions: 'azureLogicAppsStandard.logSubscriptions',
+  runProjectConsistencyCheck: 'azureLogicAppsStandard.runProjectConsistencyCheck',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
-// Extension context
-export const customExtensionContext = {
-  isCodeful: 'azureLogicAppsStandard.isCodeful',
+export const extensionEvent = {
+  onDidStartTask: 'azureLogicAppsStandard.onDidStartTask',
+  onDidEndTask: 'azureLogicAppsStandard.onDidEndTask',
+  onDidTerminateDebugSession: 'azureLogicAppsStandard.onDidTerminateDebugSession',
+  onDidChangeWorkspaceFolders: 'azureLogicAppsStandard.onDidChangeWorkspaceFolders',
 } as const;
-export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
+export type extensionEvent = (typeof extensionEvent)[keyof typeof extensionEvent];
+
+export const extensionContext = {
+  hasProject: 'azureLogicAppsStandard.hasProject',
+  isCodeful: 'azureLogicAppsStandard.isCodeful',
+  customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
+  dataMapSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.supportedDataMapDefinitionFileExts',
+  dataMapSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.supportedSchemaFileExts',
+  dataMapSupportedFileExts: 'azureLogicAppsStandard.dataMap.supportedFileExts',
+  dataMapDmFolders: 'azureLogicAppsStandard.dataMap.dmFolders',
+} as const;
+export type extensionContext = (typeof extensionContext)[keyof typeof extensionContext];
+
+export const functionsCommand = {
+  azureFunctionsOpenFile: 'azureFunctions.openFile',
+  azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
+  azureFunctionsAppSettingsEncrypt: 'azureFunctions.appSettings.encrypt',
+  azureFunctionsAppSettingsDecrypt: 'azureFunctions.appSettings.decrypt',
+} as const;
+export type functionsCommand = (typeof functionsCommand)[keyof typeof functionsCommand];
+
+export const azuriteCommand = {
+  start: 'azurite.start',
+} as const;
+export type azuriteCommand = (typeof azuriteCommand)[keyof typeof azuriteCommand];
+
+export const vscodeCommand = {
+  openFolder: 'vscode.openFolder',
+} as const;
+export type vscodeCommand = (typeof vscodeCommand)[keyof typeof vscodeCommand];
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
 export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
+export const suppressManagedIdentityAuthNotificationState = 'suppressManagedIdentityAuthNotification';
+export const suppressParameterizeConnectionsNotificationState = 'suppressParameterizeConnectionsNotification';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -295,10 +310,8 @@ export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensio
 export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
-export const suppressManagedIdentityAuthNotification = 'suppressManagedIdentityAuthNotification';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
-export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 export const onStartLanguageServer = 'onStartLanguageServer';
 

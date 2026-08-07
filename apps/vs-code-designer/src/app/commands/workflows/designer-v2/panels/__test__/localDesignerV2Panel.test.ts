@@ -48,7 +48,7 @@ vi.mock('../../../../../utils/codeless/connection', () => ({
   getCustomCodeFromFiles: vi.fn().mockResolvedValue({}),
   getLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
   getParametersFromFile: vi.fn().mockResolvedValue({}),
-  addConnectionData: vi.fn(),
+  addConnection: vi.fn(),
   getConnectionsAndSettingsToUpdate: vi.fn(),
   saveConnectionReferences: vi.fn(),
   getCustomCodeToUpdate: vi.fn(),
@@ -64,7 +64,7 @@ vi.mock('../../../../../utils/requestUtils', () => ({
 }));
 
 vi.mock('../../../../dataMapper/dataMapper', () => ({
-  createNewDataMapCmd: vi.fn(),
+  createDataMap: vi.fn(),
 }));
 
 vi.mock('../../../../../utils/codeless/parameter', () => ({
@@ -200,7 +200,7 @@ describe('LocalDesignerV2Panel', () => {
       const instance = new LocalDesignerV2Panel(mockContext, mockUri);
       await instance.create();
 
-      expect(startDesignTimeApi).toHaveBeenCalledWith('/test/project');
+      expect(startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), '/test/project');
       expect((instance as any).panel.webview.html).toBe('<html></html>');
     });
 
@@ -281,7 +281,7 @@ describe('LocalDesignerV2Panel', () => {
         definition: { actions: {} },
       });
 
-      expect(createUnitTestFromRun).toHaveBeenCalledWith(expect.anything(), 'test-run-id', { actions: {} });
+      expect(createUnitTestFromRun).toHaveBeenCalledWith(expect.any(Object), expect.anything(), 'test-run-id', { actions: {} });
     });
 
     it('clears previous interval on repeated initialize', async () => {

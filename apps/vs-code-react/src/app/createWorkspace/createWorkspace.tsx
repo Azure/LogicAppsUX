@@ -21,7 +21,7 @@ const FLOW_TYPES = {
   CREATE_WORKSPACE_FROM_PACKAGE: 'createWorkspaceFromPackage',
   CREATE_LOGIC_APP: 'createLogicApp',
   CREATE_WORKFLOW: 'createWorkflow',
-  CONVERT_TO_WORKSPACE: 'convertToWorkspace',
+  ENSURE_WORKSPACE: 'ensureWorkspace',
   CREATE_WORKSPACE_STRUCTURE: 'createWorkspaceStructure',
 };
 
@@ -74,7 +74,7 @@ const CreateWorkspaceInternal = () => {
     switch (flowType) {
       case FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE:
         return intlText.CREATE_WORKSPACE_FROM_PACKAGE;
-      case FLOW_TYPES.CONVERT_TO_WORKSPACE:
+      case FLOW_TYPES.ENSURE_WORKSPACE:
         return intlText.CREATE_WORKSPACE;
       case FLOW_TYPES.CREATE_LOGIC_APP:
         return intlText.CREATE_PROJECT;
@@ -106,7 +106,7 @@ const CreateWorkspaceInternal = () => {
     switch (flowType) {
       case FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE:
         return intlText.WORKSPACE_PACKAGE_CREATED;
-      case FLOW_TYPES.CONVERT_TO_WORKSPACE:
+      case FLOW_TYPES.ENSURE_WORKSPACE:
       case FLOW_TYPES.CREATE_LOGIC_APP:
         return intlText.LOGIC_APP_CREATED;
       case FLOW_TYPES.CREATE_WORKFLOW:
@@ -120,7 +120,7 @@ const CreateWorkspaceInternal = () => {
     switch (flowType) {
       case FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE:
         return intlText.WORKSPACE_PACKAGE_CREATED_DESCRIPTION;
-      case FLOW_TYPES.CONVERT_TO_WORKSPACE:
+      case FLOW_TYPES.ENSURE_WORKSPACE:
       case FLOW_TYPES.CREATE_LOGIC_APP:
         return intlText.LOGIC_APP_CREATED_DESCRIPTION;
       default:
@@ -129,7 +129,7 @@ const CreateWorkspaceInternal = () => {
   };
 
   const getProjectSetupStepLabel = () => {
-    if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE || flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
+    if (flowType === FLOW_TYPES.ENSURE_WORKSPACE || flowType === FLOW_TYPES.CREATE_LOGIC_APP) {
       return intlText.LOGIC_APP_SETUP;
     }
     return intlText.PROJECT_SETUP_LABEL;
@@ -329,8 +329,8 @@ const CreateWorkspaceInternal = () => {
         // Project Setup step - validate all required fields based on flow type
         const requirements = getValidationRequirements(flowType, logicAppType);
 
-        // For convertToWorkspace, only validate workspace path and name
-        if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
+        // For ensureWorkspace, only validate workspace path and name
+        if (flowType === FLOW_TYPES.ENSURE_WORKSPACE) {
           const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
           const workspaceNameValid = workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable();
           return workspacePathValid && workspaceNameValid;
@@ -507,7 +507,7 @@ const CreateWorkspaceInternal = () => {
         logicAppType,
         logicAppName,
       };
-    } else if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
+    } else if (flowType === FLOW_TYPES.ENSURE_WORKSPACE) {
       data = {
         ...data,
         logicAppType,
@@ -584,7 +584,7 @@ const CreateWorkspaceInternal = () => {
     const command =
       flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE
         ? ExtensionCommand.createWorkspaceFromPackage
-        : flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE
+        : flowType === FLOW_TYPES.ENSURE_WORKSPACE
           ? ExtensionCommand.createWorkspaceStructure
           : flowType === FLOW_TYPES.CREATE_LOGIC_APP
             ? ExtensionCommand.createLogicApp
@@ -632,7 +632,7 @@ const CreateWorkspaceInternal = () => {
         if (flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE) {
           return <PackageSetupStep />;
         }
-        if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
+        if (flowType === FLOW_TYPES.ENSURE_WORKSPACE) {
           return (
             <div className={styles.formSection}>
               <WorkspaceNameStep />
@@ -654,7 +654,7 @@ const CreateWorkspaceInternal = () => {
         if (flowType === FLOW_TYPES.CREATE_WORKSPACE_FROM_PACKAGE) {
           return <PackageSetupStep />;
         }
-        if (flowType === FLOW_TYPES.CONVERT_TO_WORKSPACE) {
+        if (flowType === FLOW_TYPES.ENSURE_WORKSPACE) {
           return (
             <div className={styles.formSection}>
               <WorkspaceNameStep />
@@ -750,7 +750,7 @@ export const CreateWorkspaceStructure = () => {
 
   useEffect(() => {
     dispatch(resetState(undefined));
-    dispatch(setFlowType(FLOW_TYPES.CONVERT_TO_WORKSPACE));
+    dispatch(setFlowType(FLOW_TYPES.ENSURE_WORKSPACE));
   }, [dispatch]);
 
   return <CreateWorkspaceInternal />;

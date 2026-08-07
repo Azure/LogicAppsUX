@@ -22,7 +22,6 @@ import {
   funcIgnoreFileName,
   hostFileName,
   localSettingsFileName,
-  parameterizeConnectionsInProjectLoadSetting,
   parametersFileName,
   vscodeFolderName,
 } from '../../constants';
@@ -30,10 +29,10 @@ import { addNewFileInCSharpProject } from './codeless/updateBuildFile';
 import { writeFormattedJson } from './fs';
 import { Uri, window, workspace } from 'vscode';
 import { unzipLogicAppArtifacts } from './taskUtils';
-import { getGlobalSetting } from './vsCodeConfig/settings';
+import { shouldParameterizeConnections } from './vsCodeConfig/settings';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { getContainingWorkspace } from './workspace';
+import { getContainingWorkspaceFolder } from './workspace';
 import { getExtensionAssetPath } from './extensionAssets';
 import AdmZip from 'adm-zip';
 
@@ -97,7 +96,8 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
 
       return settings;
     } catch (error) {
-      context.telemetry.properties.error = error.message;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
       console.error('Error encountered while extracting connection details:', error);
     }
   }
@@ -115,7 +115,7 @@ export async function getParametersArtifactData(projectRoot: string): Promise<st
   return '';
 }
 
-export async function changeAuthTypeToRaw(context: IFunctionWizardContext, parameterizeConnectionsSetting: any): Promise<any> {
+export async function changeAuthTypeToRaw(context: IFunctionWizardContext): Promise<any> {
   const logicAppPath = path.join(context.workspacePath, context.logicAppName || 'LogicApp');
   const connectionsPath = path.join(logicAppPath, connectionsFileName);
   const parametersPath = path.join(logicAppPath, parametersFileName);
@@ -130,7 +130,7 @@ export async function changeAuthTypeToRaw(context: IFunctionWizardContext, param
       }
       connectionsData = JSON.parse(connectionsJson);
       parametersJson = await getParametersJson(logicAppPath);
-      if (parameterizeConnectionsSetting) {
+      if (shouldParameterizeConnections()) {
         for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
           parametersJson[`${referenceKey}-Authentication`].value = {
             type: 'Raw',
@@ -162,7 +162,8 @@ export async function changeAuthTypeToRaw(context: IFunctionWizardContext, param
         }
       }
     } catch (error) {
-      context.telemetry.properties.error = error.message;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
       console.error(error);
     }
     await writeFormattedJson(connectionsPath, connectionsData);
@@ -206,7 +207,8 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }
@@ -252,7 +254,7 @@ export async function parameterizeConnectionsDuringImport(
 
       if (parametersJson && Object.keys(parametersJson).length) {
         await writeFormattedJson(parametersFilePath, parametersJson);
-        if (!parametersFileExists && (await isCSharpProject(context, logicAppPath))) {
+        if (!parametersFileExists && (await isCSharpProject(logicAppPath))) {
           await addNewFileInCSharpProject(context, parametersFileName, logicAppPath);
         }
       } else if (parametersFileExists) {
@@ -267,7 +269,8 @@ export async function parameterizeConnectionsDuringImport(
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }
@@ -330,14 +333,14 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
     const readMeContent = fse.readFileSync(readMePath, 'utf8');
     fse.writeFileSync(path.join(context.projectPath, 'README.md'), readMeContent);
   } catch (error) {
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message;
     console.error(`Failed to extract contents of package to ${context.projectPath}`, error);
   }
 }
 
 export async function logicAppPackageProcessing(context: IFunctionWizardContext): Promise<void> {
   const localSettingsPath = path.join(context.projectPath, localSettingsFileName);
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
   let appSettings: ILocalSettingsJson = {};
   let zipSettings: ILocalSettingsJson = {};
@@ -368,11 +371,11 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
       appSettings = await getLocalSettingsJson(context, context.projectPath, false);
       await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
-      if (parameterizeConnectionsSetting) {
+      if (shouldParameterizeConnections()) {
         await parameterizeConnectionsDuringImport(context as IFunctionWizardContext, appSettings.Values);
       }
 
-      await changeAuthTypeToRaw(context, parameterizeConnectionsSetting);
+      await changeAuthTypeToRaw(context);
       await updateConnectionKeys(context);
       await cleanLocalSettings(context);
     }
@@ -386,7 +389,8 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     }, 5 * 1000);
     runPostExtractSteps({ projectPath: context.projectPath, textDocumentPath: readMePath });
   } catch (error) {
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message;
   }
 }
 
@@ -410,7 +414,7 @@ function runPostExtractSteps(cache: { projectPath: string; textDocumentPath: str
   callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
-    if (getContainingWorkspace(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
+    if (getContainingWorkspaceFolder(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
       window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
     context.telemetry.properties.result = 'Succeeded';

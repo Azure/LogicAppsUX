@@ -13,7 +13,7 @@ import { RemoteDesignerPanel } from './panels/remoteDesignerPanel';
 import LocalDesignerPanel from './panels/localDesignerPanel';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { openDesignerV2 } from '../designer-v2/openDesignerV2';
 import { defaultDesignerVersion, designerVersionSetting } from '../../../../constants';
 import { shouldAlwaysBuildCustomCode } from '../../../utils/vsCodeConfig/settings';
@@ -41,7 +41,11 @@ async function getDesignerPanel(context: IActionContext, workflowNode: Uri | Rem
 
   const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
   if (shouldAlwaysBuildCustomCode() || !(await customCodeArtifactsExist(logicAppNode.fsPath))) {
-    await tryBuildCustomCodeFunctionsProject(context, logicAppNode);
+    await callWithTelemetryAndErrorHandling('openDesigner.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+    });
   }
 
   return new LocalDesignerPanel(context, workflowNode);

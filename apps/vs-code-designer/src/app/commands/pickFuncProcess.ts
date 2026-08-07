@@ -2,13 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  autoStartAzuriteSetting,
-  verifyConnectionKeysSetting,
-  defaultFuncPort,
-  hostStartTaskName,
-  pickProcessTimeoutSetting,
-} from '../../constants';
+import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
@@ -18,15 +12,14 @@ import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
-import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getChildProcesses } from '../utils/findChildProcess/findChildProcess';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
-import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
@@ -78,43 +71,26 @@ export async function pickFuncProcessInternal(
   workspaceFolder: vscode.WorkspaceFolder,
   projectPath: string
 ): Promise<string | undefined> {
-  // `activateAzurite` prompts the user (autostart opt-in, then the Azurite directory). Dismissing a
-  // prompt throws `UserCancelledError`, and the telemetry wrapper force-swallows cancellations --
-  // it overrides `rethrow` to false regardless of what we set. Left unhandled, a dismissal would
-  // fall straight through to `preDebugValidate` and re-open the modal "Debug anyway" hang this
-  // function exists to prevent, so the cancellation is re-raised outside the wrapper.
-  let azuriteSetupCancelled = false;
-  await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+  context.telemetry.properties.lastStep = 'activateAzurite';
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling('pickFuncProcess.startAzurite', async (actionContext: IActionContext) => {
     actionContext.errorHandling.rethrow = true;
-    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-      try {
-        await activateAzurite(actionContext, projectPath);
-      } catch (error) {
-        if (error instanceof UserCancelledError) {
-          azuriteSetupCancelled = true;
-        }
-        // Rethrown so this scope still records the failure, but displayed by nobody here: this
-        // scope is nested inside one that already shows it -- for this command that is
-        // `registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess)`
-        // in registerCommands.ts. `suppressDisplay` is per-scope, so without it the same message
-        // is shown and logged twice. `rethrow` stays on: it is what makes an Azurite failure
-        // terminal and stops the flow before `preDebugValidate`.
-        actionContext.errorHandling.suppressDisplay = true;
-        throw error instanceof Error ? error : new Error(String(error));
-      }
-    });
+    actionContext.errorHandling.suppressDisplay = true;
+    await activateAzurite(actionContext, projectPath);
+    return true;
   });
-
-  if (azuriteSetupCancelled) {
-    throw new UserCancelledError(autoStartAzuriteSetting);
+  
+  if (!isAzuriteStarted) {
+    throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
   }
 
-  await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
-      await refreshConnectionKeys(context, projectPath);
-    });
+  context.telemetry.properties.lastStep = 'refreshConnectionKeys';
+  await callWithTelemetryAndErrorHandling('pickFuncProcess.refreshConnectionKeys', async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    await refreshConnectionKeys(actionContext, projectPath);
   });
 
+  context.telemetry.properties.lastStep = 'preDebugValidate';
   context.telemetry.properties.debugType = debugConfig.type;
   const shouldContinue: boolean = await preDebugValidate(context, projectPath);
   if (!shouldContinue) {
@@ -123,8 +99,10 @@ export async function pickFuncProcessInternal(
 
   // Stop any previous func process BEFORE building to avoid file lock errors
   // (e.g. GenerateFunctionMetadata failing on obj/Debug/net8/WorkerExtensions)
+  context.telemetry.properties.lastStep = 'waitForPrevFuncTaskToStop';
   await waitForPrevFuncTaskToStop(workspaceFolder);
 
+  context.telemetry.properties.lastStep = 'buildProject';
   if (await hasCodefulWorkflowSetting(projectPath)) {
     // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
     // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
@@ -132,12 +110,21 @@ export async function pickFuncProcessInternal(
     // duplicate the clean+build cycle and its output would be overwritten by the subsequent
     // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
     // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
-    await publishCodefulProject(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    await callWithTelemetryAndErrorHandling('pickFuncProcess.publishCodefulProject', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await publishCodefulProject(actionContext, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    });
   } else {
-    await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
+    await callWithTelemetryAndErrorHandling('pickFuncProcess.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await tryBuildCustomCodeFunctionsProject(actionContext, workspaceFolder.uri);
+    });
   }
 
-  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
+  context.telemetry.properties.lastStep = 'startFuncTask';
+  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, projectPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
