@@ -449,7 +449,15 @@ async function waitForStableRunnableFunc(funcBinaryPath: string, timeoutMs: numb
   );
 }
 
-async function provisionFuncCoreToolsForTest(workbench: Workbench, driver: WebDriver): Promise<void> {
+async function provisionFuncCoreToolsForTest(workbench: Workbench, driver: WebDriver, funcBinaryPath: string): Promise<void> {
+  try {
+    await waitForStableRunnableFunc(funcBinaryPath, 30_000);
+    console.log(`${LOG_PREFIX} Managed func is already runnable; skipping explicit dependency validation`);
+    return;
+  } catch (error) {
+    console.log(`${LOG_PREFIX} Managed func is not ready yet; invoking dependency validation: ${error}`);
+  }
+
   let lastError: unknown;
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
@@ -1230,6 +1238,7 @@ describe('Func self-heal E2E', function () {
     console.log(`${LOG_PREFIX} dependency root=${root} (from ${source})`);
     console.log(`${LOG_PREFIX} managed FuncCoreTools dir=${funcToolsDir}`);
     console.log(`${LOG_PREFIX} ${FUNC_BINARY_PATH_SETTING}=${configuredFuncBinaryPath} (logged only; never used as a write target)`);
+    primaryFuncPath = getFuncCoreToolsPath(funcToolsDir);
 
     // ── Step 1: open the workspace and let the extension settle ──────────────
     // Explicitly open the generated .code-workspace: ExTester's startup `resources` uses
@@ -1247,9 +1256,8 @@ describe('Func self-heal E2E', function () {
     // mean the recorder itself is wedged — a genuinely different failure.
     await waitForExtensionReady(workbench, EXTENSION_READY_TIMEOUT_MS);
     console.log(`${LOG_PREFIX} Logic Apps extension commands are registered`);
-    await provisionFuncCoreToolsForTest(workbench, driver);
+    await provisionFuncCoreToolsForTest(workbench, driver, primaryFuncPath);
 
-    primaryFuncPath = getFuncCoreToolsPath(funcToolsDir);
     await waitForStableRunnableFunc(primaryFuncPath, BASELINE_TIMEOUT_MS);
     console.log(`${LOG_PREFIX} Baseline OK — ${describeBinary(primaryFuncPath)} runs "func --version"`);
 
