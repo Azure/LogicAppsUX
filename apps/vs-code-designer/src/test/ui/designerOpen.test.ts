@@ -1322,7 +1322,7 @@ describe('Designer Open Tests', function () {
         return;
       }
 
-      // The openDesigner command has a when clause: logicApps.hasProject && resourceFilename==workflow.json
+      // The openDesigner command has a when clause: azureLogicAppsStandard.hasProject && resourceFilename==workflow.json
       // We must open a workspace and its workflow.json to make the command visible.
       const entry = manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') || manifest[0];
       try {
@@ -1383,7 +1383,7 @@ describe('Designer Open Tests', function () {
           console.log('[commandCheck] PASSED: openDesigner command found in palette');
         } else {
           console.log(`[commandCheck] Warning: openDesigner not found. Available: ${JSON.stringify(labels)}`);
-          // Don't fail — the command may not be visible without logicApps.hasProject context
+          // Don't fail — the command may not be visible without azureLogicAppsStandard.hasProject context
         }
       } catch (e: any) {
         console.log(`[commandCheck] Error checking command: ${e.message}`);

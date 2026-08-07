@@ -22,7 +22,7 @@ import type { LanguageClient } from 'vscode-languageclient/node';
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 type LogicAppMap = Map<string, Site>;
 type SubscriptionMap = Map<string, LogicAppMap>;
-type FuncInstance = {
+export type FuncInstance = {
   process?: cp.ChildProcess;
   childFuncPid?: string;
   port?: number;

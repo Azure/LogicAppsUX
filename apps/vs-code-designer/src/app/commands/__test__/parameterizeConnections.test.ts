@@ -1,5 +1,5 @@
-import { beforeEach, afterEach, describe, expect, it, vi, test } from 'vitest';
-import { parameterizeConnections } from '../parameterizeConnections';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { parameterizeProjectConnections } from '../parameterizeConnections';
 import { ext } from '../../../extensionVariables';
 import * as localizeUtil from '../../../localize';
 import * as vscode from 'vscode';
@@ -9,7 +9,6 @@ import * as parameterUtil from '../../utils/codeless/parameter';
 import * as localSettingsUtil from '../../utils/appSettings/localSettings';
 import * as parameterizerUtil from '../../utils/codeless/parameterizer';
 import * as workspaceUtil from '../../utils/workspace';
-import { localSettingsFileName } from '../../../constants';
 
 describe('parameterizeConnections', () => {
   const testContext: any = {
@@ -36,7 +35,7 @@ describe('parameterizeConnections', () => {
     (vscode.workspace as any).workspaceFolders = testWorkspaceFolders;
     testContext.telemetry.properties = {};
 
-    vi.spyOn(workspaceUtil, 'getWorkspaceLogicAppFolders').mockResolvedValue(testWorkspaceFolders.map((folder) => folder.uri.fsPath));
+    vi.spyOn(workspaceUtil, 'getWorkspaceLogicAppRoots').mockResolvedValue(testWorkspaceFolders.map((folder) => folder.uri.fsPath));
     vi.spyOn(connectionUtil, 'getConnectionsJson').mockResolvedValue(testConnectionsJson);
     vi.spyOn(parameterUtil, 'getParametersJson').mockResolvedValue(testParametersJson);
     vi.spyOn(localSettingsUtil, 'getLocalSettingsJson').mockResolvedValue(testLocalSettings as any);
@@ -58,14 +57,14 @@ describe('parameterizeConnections', () => {
 
   it('should do nothing if no workspace folders are available', async () => {
     (vscode.workspace as any).workspaceFolders = undefined;
-    const getWorkspaceLogicAppFoldersSpy = vi.spyOn(workspaceUtil, 'getWorkspaceLogicAppFolders');
-    await parameterizeConnections(testContext, testLogicAppProjectPath1);
-    expect(getWorkspaceLogicAppFoldersSpy).not.toHaveBeenCalled();
+    const getWorkspaceLogicAppRootsSpy = vi.spyOn(workspaceUtil, 'getWorkspaceLogicAppRoots');
+    await parameterizeProjectConnections(testContext, testLogicAppProjectPath1);
+    expect(getWorkspaceLogicAppRootsSpy).not.toHaveBeenCalled();
   });
 
   it('should return early if connectionsJson is empty', async () => {
     vi.spyOn(connectionUtil, 'getConnectionsJson').mockResolvedValue('');
-    await parameterizeConnections(testContext, testLogicAppProjectPath1);
+    await parameterizeProjectConnections(testContext, testLogicAppProjectPath1);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(parameterUtil.saveWorkflowParameter).not.toHaveBeenCalled();
     expect(connectionUtil.saveConnectionReferences).not.toHaveBeenCalled();
@@ -73,15 +72,19 @@ describe('parameterizeConnections', () => {
 
   it('should notify if all connections are already parameterized', async () => {
     vi.spyOn(parameterizerUtil, 'areAllConnectionsParameterized').mockReturnValue(true);
-    await parameterizeConnections(testContext, testLogicAppProjectPath1);
+    await parameterizeProjectConnections(testContext, testLogicAppProjectPath1);
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      localizeUtil.localize('connectionsAlreadyParameterized', 'Connections are already parameterized.')
+      localizeUtil.localize(
+        'connectionsAlreadyParameterized',
+        'Connections already parameterized for project "{0}".',
+        testLogicAppProjectPath1
+      )
     );
     expect(parameterUtil.saveWorkflowParameter).not.toHaveBeenCalled();
   });
 
   it('should parameterize connections and save workflow parameters and connection references', async () => {
-    await parameterizeConnections(testContext, testLogicAppProjectPath1);
+    await parameterizeProjectConnections(testContext, testLogicAppProjectPath1);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(parameterUtil.getParametersJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(localSettingsUtil.getLocalSettingsJson).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1);
@@ -89,14 +92,18 @@ describe('parameterizeConnections', () => {
     expect(parameterUtil.saveWorkflowParameter).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, testParametersJson);
     expect(connectionUtil.saveConnectionReferences).toHaveBeenCalledOnce();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      localizeUtil.localize('connectionsParameterized', 'Successfully parameterized connections.')
+      localizeUtil.localize(
+        'connectionsParameterized',
+        'Successfully parameterized connections for project "{0}".',
+        testLogicAppProjectPath1
+      )
     );
   });
 
   it('should parameterize connections for all logic apps in the workspace when no project path is provided', async () => {
     const paramSpy = vi.spyOn(parameterizerUtil, 'areAllConnectionsParameterized').mockReturnValue(false);
-    await parameterizeConnections(testContext);
-    expect(workspaceUtil.getWorkspaceLogicAppFolders).toHaveBeenCalled();
+    await parameterizeProjectConnections(testContext);
+    expect(workspaceUtil.getWorkspaceLogicAppRoots).toHaveBeenCalled();
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledTimes(2);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath2);
@@ -108,7 +115,7 @@ describe('parameterizeConnections', () => {
     const error = new Error('Test error');
     vi.spyOn(connectionUtil, 'getConnectionsJson').mockRejectedValue(error);
 
-    await expect(parameterizeConnections(testContext, testLogicAppProjectPath1)).rejects.toThrow();
+    await expect(parameterizeProjectConnections(testContext, testLogicAppProjectPath1)).rejects.toThrow();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledOnce();
   });
 });

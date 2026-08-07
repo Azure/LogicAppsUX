@@ -20,7 +20,7 @@ import {
 } from '../../../../utils/codeless/common';
 import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
-  addConnectionData,
+  addConnection,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getCustomCodeFromFiles,
@@ -34,7 +34,7 @@ import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizati
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../../utils/requestUtils';
-import { createNewDataMapCmd } from '../../../dataMapper/dataMapper';
+import { createDataMap } from '../../../dataMapper/dataMapper';
 import { DesignerV2Panel } from './designerV2Panel';
 import { getMigrationOptions, migrateWorkflow } from '../../designer/utils/migration';
 import { createFileSystemConnection } from '../../designer/utils/fileSystemConnection';
@@ -95,7 +95,9 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
       throw new Error(localize('projectPathUndefined', 'Unable to determine project root folder.'));
     }
 
-    await startDesignTimeApi(this.projectPath);
+    await callWithTelemetryAndErrorHandling('LocalDesignerV2Panel.create.startDesignTimeApi', async (actionContext: IActionContext) => {
+      await startDesignTimeApi(actionContext, this.projectPath!);
+    });
 
     const designTimeInstance = ext.designTimeInstances.get(this.projectPath);
     if (!designTimeInstance) {
@@ -238,13 +240,13 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
 
       // Designer commands
       case ExtensionCommand.save: {
-        await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling('LocalDesignerV2Panel.saveWorkflow', async (actionContext: IActionContext) => {
           if (!this.panelMetadata) {
             window.showErrorMessage('Failed to save workflow. Panel metadata is not available.');
             return;
           }
           await this.saveWorkflow(
-            activateContext,
+            actionContext,
             this.workflowFilePath,
             this.panelMetadata.workflowContent,
             msg,
@@ -257,13 +259,22 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
       }
 
       case ExtensionCommand.createUnitTest: {
-        await createUnitTest(Uri.file(this.workflowFilePath), msg.definition);
+        await callWithTelemetryAndErrorHandling('LocalDesignerV2Panel.createUnitTest', async (actionContext: IActionContext) => {
+          await createUnitTest(actionContext, Uri.file(this.workflowFilePath), msg.definition);
+        });
+        break;
+      }
+
+      case ExtensionCommand.createUnitTestFromRun: {
+        await callWithTelemetryAndErrorHandling('LocalDesignerV2Panel.createUnitTestFromRun', async (actionContext: IActionContext) => {
+          await createUnitTestFromRun(actionContext, Uri.file(this.workflowFilePath), msg.runId, msg.definition);
+        });
         break;
       }
 
       case ExtensionCommand.addConnection: {
-        await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
-          await addConnectionData(activateContext, this.workflowFilePath, msg.connectionAndSetting);
+        await callWithTelemetryAndErrorHandling('LocalDesignerV2Panel.addConnection', async (actionContext: IActionContext) => {
+          await addConnection(actionContext, this.workflowFilePath, msg.connectionAndSetting);
         });
         break;
       }
@@ -290,7 +301,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
 
       case ExtensionCommand.openRelativeLink: {
         if (msg.content === '/dataMapper') {
-          createNewDataMapCmd(this.context);
+          createDataMap(this.context);
         }
         break;
       }
@@ -303,11 +314,6 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
 
       case ExtensionCommand.resubmitRun: {
         await this.resubmitRun(msg.runId);
-        break;
-      }
-
-      case ExtensionCommand.createUnitTestFromRun: {
-        await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
         break;
       }
 

@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { validateFuncCoreToolsIsLatest } from '../validateFuncCoreToolsIsLatest';
 import {
   useBinariesDependencies,
@@ -42,12 +43,21 @@ vi.mock('../../../utils/funcCoreTools/getNpmDistTag');
 vi.mock('../../../utils/funcCoreTools/getBrewPackageName');
 vi.mock('../../../utils/requestUtils');
 vi.mock('../../../functionsExtension/executeOnFunctionsExt');
-// @microsoft/vscode-azext-utils is already mocked in test-setup.ts with
-// AzureWizardPromptStep, DialogResponses, parseError, callWithTelemetryAndErrorHandling, etc.
+
+const createContext = (): IActionContext =>
+  ({
+    telemetry: { properties: {}, measurements: {}, suppressIfSuccessful: false, suppressAll: false },
+    errorHandling: { suppressDisplay: false, rethrow: false, issueProperties: {} },
+    ui: {} as any,
+    valuesToMask: [],
+  }) as unknown as IActionContext;
 
 describe('validateFuncCoreToolsIsLatest', () => {
+  let context: IActionContext;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    context = createContext();
     // Default to performing update checks; throttled behavior is covered explicitly below.
     vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(true);
   });
@@ -59,7 +69,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(binariesExist).mockResolvedValue(false);
 
       // Should not throw and should call system validation
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       // binariesExist should not be called because useBinariesDependencies returned false
@@ -70,7 +80,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
       vi.mocked(useBinariesDependencies).mockResolvedValue(false);
 
-      await validateFuncCoreToolsIsLatest();
+      await validateFuncCoreToolsIsLatest(context);
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       expect(await useBinariesDependencies()).toBe(false);
@@ -83,7 +93,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(binariesExist).mockResolvedValue(true);
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       expect(binariesExist).toHaveBeenCalled();
@@ -93,7 +103,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(useBinariesDependencies).mockResolvedValue(false);
 
-      await validateFuncCoreToolsIsLatest();
+      await validateFuncCoreToolsIsLatest(context);
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       expect(await useBinariesDependencies()).toBe(false);
@@ -106,7 +116,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(binariesExist).mockResolvedValue(true);
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       expect(binariesExist).toHaveBeenCalledWith('FuncCoreTools');
     });
@@ -115,7 +125,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
       vi.mocked(useBinariesDependencies).mockResolvedValue(false);
 
-      await validateFuncCoreToolsIsLatest();
+      await validateFuncCoreToolsIsLatest(context);
 
       expect(binariesExist).not.toHaveBeenCalled();
     });
@@ -128,9 +138,9 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(binariesExist).mockResolvedValue(true);
       vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
-      expect(verifyDependencyIntegrity).toHaveBeenCalledWith(expect.anything(), 'FuncCoreTools');
+      expect(verifyDependencyIntegrity).toHaveBeenCalledWith(context, 'FuncCoreTools');
       expect(getLocalFuncCoreToolsVersion).not.toHaveBeenCalled();
       expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
       expect(installFuncCoreToolsBinaries).toHaveBeenCalled();
@@ -144,7 +154,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
       vi.mocked(getLatestFunctionCoreToolsVersion).mockResolvedValue('4.0.0');
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
     });
@@ -159,7 +169,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(verifyDependencyIntegrity).mockReturnValue(true);
       vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       // Local presence + integrity still run, but the network version lookup and reinstall are skipped.
       expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
@@ -173,7 +183,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(binariesExist).mockResolvedValue(true);
       vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       // A failed integrity check must force a reinstall regardless of the throttle.
       expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();

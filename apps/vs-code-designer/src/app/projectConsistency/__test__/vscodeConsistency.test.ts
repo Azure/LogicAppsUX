@@ -4,6 +4,7 @@ import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { type Uri, type WorkspaceFolder, workspace } from 'vscode';
+import { getWorkspaceLogicAppRoots } from '../../utils/workspace';
 import {
   enableProjectConsistencyChecksSetting,
   extensionsFileName,
@@ -26,6 +27,10 @@ import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnab
 
 vi.mock('../../utils/verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: vi.fn(),
+}));
+
+vi.mock('../../utils/workspace', () => ({
+  getWorkspaceLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../../utils/vsCodeConfig/settings', () => ({
@@ -90,7 +95,15 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
   nonNullOrEmptyValue: vi.fn((val: unknown) => val),
   openUrl: vi.fn(),
   parseError: vi.fn((e: unknown) => ({ message: String(e) })),
-  callWithTelemetryAndErrorHandling: vi.fn(),
+  callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
+    const context = {
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    };
+    return await callback(context);
+  }),
 }));
 
 // Re-import the mocked module values for use in test assertions
@@ -112,6 +125,7 @@ describe('vscodeConsistency', () => {
     } as unknown as IActionContext;
 
     (workspace as any).workspaceFolders = [createWorkspaceFolder(projectPath, 'logicapp')];
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([projectPath]);
     vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue(projectPath);
     vi.mocked(detectProjectType).mockResolvedValue(ProjectType.logicApp);
     vi.mocked(detectProjectPackageType).mockResolvedValue(ProjectPackageType.Bundle);
@@ -148,7 +162,7 @@ describe('vscodeConsistency', () => {
       DialogResponses.yes,
       DialogResponses.dontWarnAgain
     );
-    expect(initProjectForVSCode).toHaveBeenCalledWith(context, projectPath);
+    expect(initProjectForVSCode).toHaveBeenCalledWith(expect.any(Object), projectPath);
   });
 
   it('suppresses the initialization prompt when the warning setting is disabled', async () => {

@@ -20,11 +20,11 @@ import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { cloudToLocal } from './cloudToLocal/cloudToLocal';
 import { createWorkspace } from './createWorkspace/createWorkspace';
-import { createNewProject } from './createProject/createProject';
+import { createProject } from './createProject/createProject';
 import { createCustomCodeFunction } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
 import { createWorkflow } from './createWorkflow/createWorkflow';
-import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
+import { createDataMap, loadDataMapFile } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
@@ -39,7 +39,7 @@ import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
-import { parameterizeConnections } from './parameterizeConnections';
+import { parameterizeAllConnections, parameterizeProjectConnections } from './parameterizeConnections';
 import { pickFuncProcess } from './pickFuncProcess';
 import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
@@ -69,7 +69,6 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem, IErrorHandlerContext, IParsedError } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { pickCustomCodeNetHostProcess } from './pickCustomCodeWorkerProcess';
 import { debugLogicApp } from './debugLogicApp';
 import { syncCloudSettings } from './syncCloudSettings';
 import { getDebugSymbolDll } from '../utils/debug';
@@ -81,6 +80,8 @@ import { guid } from '@microsoft/logic-apps-shared';
 import { openConnectionView } from './workflows/connectionView/openConnectionView';
 import { enableDevContainer } from './enableDevContainer/enableDevContainer';
 import { toggleDesignTimeNodeWorker } from './toggleDesignTimeNodeWorker';
+import { enableLocalManagedIdentityAuth } from '../utils/managedIdentity';
+import { runProjectConsistencyCheck } from './runProjectConsistencyCheck';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -88,10 +89,10 @@ export function registerCommands(): void {
     executeOnFunctions(openFile, context, context, node)
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
-  registerCommand(extensionCommand.createProject, createNewProject);
+  registerCommand(extensionCommand.createProject, createProject);
   registerCommand(extensionCommand.createWorkspace, createWorkspace);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocal);
-  registerCommand(extensionCommand.createWorkflow, (context: IActionContext, uri: vscode.Uri) => createWorkflow(context, uri));
+  registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
@@ -104,8 +105,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startLogicApp, startLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.stopLogicApp, stopLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.restartLogicApp, restartLogicApp);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcess);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.pickFuncProcess, pickFuncProcess);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
@@ -158,14 +158,16 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
-  registerCommand(extensionCommand.parameterizeConnections, parameterizeConnections);
+  registerCommand(extensionCommand.parameterizeProjectConnections, parameterizeProjectConnections);
+  registerCommand(extensionCommand.enableLocalManagedIdentityAuth, enableLocalManagedIdentityAuth);
+  registerCommand(extensionCommand.runProjectConsistencyCheck, runProjectConsistencyCheck);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
 
   // Data Mapper
-  registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
-  registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: vscode.Uri) => loadDataMapFileCmd(context, uri));
+  registerCommand(extensionCommand.createDataMap, createDataMap);
+  registerCommand(extensionCommand.loadDataMapFile, loadDataMapFile);
 
   // Custom code
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);

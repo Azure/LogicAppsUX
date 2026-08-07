@@ -1,11 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PackageManager, dotnetDependencyName, funcDependencyName, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { downloadAndExtractDependency } from '../../utils/binaries';
+import { downloadAndExtractDependency, ensureRuntimeDependenciesDir } from '../../utils/binaries';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
-import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import { installDotNet } from '../dotnet/installDotNet';
 import {
@@ -25,12 +24,9 @@ vi.mock('../../../extensionVariables', () => ({
   },
 }));
 
-vi.mock('../../utils/runtimeDependenciesPath', () => ({
-  ensureRuntimeDependenciesPath: vi.fn(),
-}));
-
 vi.mock('../../utils/binaries', () => ({
   downloadAndExtractDependency: vi.fn(),
+  ensureRuntimeDependenciesDir: vi.fn(),
   getCpuArchitecture: vi.fn(() => 'x64'),
   getDotNetBinariesReleaseUrl: vi.fn(() => 'https://dot.net/v1/dotnet-install.ps1'),
   getFunctionCoreToolsBinariesReleaseUrl: vi.fn(() => 'https://example.com/func.zip'),
@@ -71,7 +67,7 @@ describe('runtime dependency installers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     Object.defineProperty(process, 'platform', { value: originalPlatform });
-    vi.mocked(ensureRuntimeDependenciesPath).mockResolvedValue('D:\\dependencies');
+    vi.mocked(ensureRuntimeDependenciesDir).mockResolvedValue('D:\\dependencies');
     vi.mocked(downloadAndExtractDependency).mockResolvedValue(undefined);
     vi.mocked(getNpmDistTag).mockResolvedValue({ tag: '4.0.0' } as any);
     vi.mocked(promptForFuncVersion).mockResolvedValue('4' as any);
@@ -80,7 +76,7 @@ describe('runtime dependency installers', () => {
   it('installs .NET into the ensured runtime dependency path', async () => {
     await installDotNet(context, '8');
 
-    expect(ensureRuntimeDependenciesPath).toHaveBeenCalled();
+    expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(downloadAndExtractDependency).toHaveBeenCalledWith(
       context,
       'https://dot.net/v1/dotnet-install.ps1',
@@ -94,7 +90,7 @@ describe('runtime dependency installers', () => {
   it('installs Functions Core Tools binaries into the ensured runtime dependency path', async () => {
     await installFuncCoreToolsBinaries(context, '4');
 
-    expect(ensureRuntimeDependenciesPath).toHaveBeenCalled();
+    expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(downloadAndExtractDependency).toHaveBeenCalledWith(
       context,
       'https://example.com/func.zip',
@@ -119,7 +115,7 @@ describe('runtime dependency installers', () => {
   it('installs Node.js into the ensured runtime dependency path', async () => {
     await installNodeJs(context, '20');
 
-    expect(ensureRuntimeDependenciesPath).toHaveBeenCalled();
+    expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(downloadAndExtractDependency).toHaveBeenCalledWith(
       context,
       'https://example.com/node.zip',

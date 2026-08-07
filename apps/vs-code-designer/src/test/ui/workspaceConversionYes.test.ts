@@ -10,8 +10,8 @@
  *   1. Pre-click filesystem invariants (A1-A7): .code-workspace, host.json,
  *      launch.json with a logic-app debug configuration, tasks.json with
  *      a "func: host start" task, workflow.json all exist & parse.
- *   2. The convertToWorkspace prompt is shown as a **modal** dialog
- *      (convertToWorkspace.ts:119-121 — `{ modal: true }`), so detection
+ *   2. The ensureWorkspace prompt is shown as a **modal** dialog
+ *      (ensureWorkspace.ts:119-121 — `{ modal: true }`), so detection
  *      uses ExTester's ModalDialog only. No notification fallback.
  *   3. Clicking the localized "Yes" button (en-US locale locked via run-e2e.js;
  *      label matches `DialogResponses.yes.title` from `@microsoft/vscode-azext-utils`)
@@ -75,8 +75,8 @@ function readJsonFile<T = unknown>(filePath: string): T {
 }
 
 /**
- * Wait for the convertToWorkspace modal dialog. The prompt is created with
- * `{ modal: true }` (convertToWorkspace.ts:119-121), so we only ever look at
+ * Wait for the ensureWorkspace modal dialog. The prompt is created with
+ * `{ modal: true }` (ensureWorkspace.ts:119-121), so we only ever look at
  * ExTester's ModalDialog page object. Returns the message text or null.
  */
 async function waitForWorkspacePrompt(driver: WebDriver, timeoutMs: number): Promise<string | null> {

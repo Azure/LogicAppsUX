@@ -6,6 +6,7 @@ import { PackageManager, funcDependencyName, funcPackageName } from '../../../co
 import { ext } from '../../../extensionVariables';
 import {
   downloadAndExtractDependency,
+  ensureRuntimeDependenciesDir,
   getCpuArchitecture,
   getFunctionCoreToolsBinariesReleaseUrl,
   getLatestFunctionCoreToolsVersion,
@@ -13,7 +14,6 @@ import {
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
-import { ensureRuntimeDependenciesPath } from '../../utils/runtimeDependenciesPath';
 import { promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type FuncVersion, type INpmDistTag } from '@microsoft/vscode-extension-logic-apps';
@@ -98,7 +98,7 @@ export async function installFuncCoreToolsBinaries(context: IActionContext, majo
 
 async function downloadFuncCoreToolsBinaries(context: IActionContext, majorVersion?: string): Promise<void> {
   const arch = getCpuArchitecture();
-  const targetDirectory = await ensureRuntimeDependenciesPath();
+  const targetDirectory = await ensureRuntimeDependenciesDir();
   context.telemetry.properties.lastStep = 'getLatestFunctionCoreToolsVersion';
   const version = await getLatestFunctionCoreToolsVersion(context, majorVersion);
   let azureFunctionCoreToolsReleasesUrl: string;
@@ -118,6 +118,10 @@ async function downloadFuncCoreToolsBinaries(context: IActionContext, majorVersi
     case Platform.mac: {
       azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'osx', arch);
       break;
+    }
+
+    default: {
+      throw new Error(`Unsupported platform: ${process.platform}`);
     }
   }
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';

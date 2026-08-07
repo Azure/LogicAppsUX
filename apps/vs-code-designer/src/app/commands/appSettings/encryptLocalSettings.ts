@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand } from '../../../constants';
+import { functionsCommand } from '../../../constants';
 import type { Uri } from 'vscode';
 import { commands } from 'vscode';
 
@@ -11,5 +11,5 @@ import { commands } from 'vscode';
  * @param {Uri} uri - Uri of local settings file.
  */
 export async function encryptLocalSettings(uri?: Uri): Promise<void> {
-  await commands.executeCommand(extensionCommand.azureFunctionsAppSettingsEncrypt, uri);
+  await commands.executeCommand(functionsCommand.azureFunctionsAppSettingsEncrypt, uri);
 }

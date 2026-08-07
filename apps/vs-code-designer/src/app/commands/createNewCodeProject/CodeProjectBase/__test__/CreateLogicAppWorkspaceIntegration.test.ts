@@ -23,8 +23,7 @@ vi.mock('../../../../utils/binaries', () => ({
 import * as fse from 'fs-extra';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 
-const { createWorkspaceStructure, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } =
-  CreateLogicAppWorkspaceModule;
+const { createWorkspaceFiles, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } = CreateLogicAppWorkspaceModule;
 
 describe('createLogicAppWorkspace - Integration Tests', () => {
   let tempDir: string;
@@ -72,7 +71,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       // Verify workspace file exists
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
@@ -101,7 +100,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspaceFilePath);
@@ -131,7 +130,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspaceFilePath);
@@ -154,7 +153,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       // Verify workspace root exists
       const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
@@ -483,7 +482,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspacePath);
@@ -505,7 +504,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspacePath);
@@ -523,7 +522,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
 

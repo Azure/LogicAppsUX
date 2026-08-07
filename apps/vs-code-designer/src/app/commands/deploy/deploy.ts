@@ -16,7 +16,6 @@ import {
   kubernetesKind,
   showDeployConfirmationSetting,
   logicAppFilter,
-  parameterizeConnectionsInProjectLoadSetting,
   azureWebJobsStorageKey,
   isZipDeployEnabledSetting,
   useSmbDeployment,
@@ -37,7 +36,7 @@ import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/c
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { getWorkspaceSetting, getGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { getWorkspaceSetting, shouldParameterizeConnections } from '../../utils/vsCodeConfig/settings';
 import { createLogicAppAdvanced, createLogicApp } from '../createLogicApp/createLogicApp';
 import {
   AdvancedIdentityObjectIdStep,
@@ -52,8 +51,16 @@ import type { SiteConfigResource, StringDictionary, Site, ContainerAppSecret } f
 import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
-import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
-import { AzureWizard, DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
+import {
+  AzureWizard,
+  callWithTelemetryAndErrorHandling,
+  DialogResponses,
+  nonNullOrEmptyValue,
+  type AzExtParentTreeItem,
+  type IActionContext,
+  type IAzureQuickPickItem,
+  type ISubscriptionContext,
+} from '@microsoft/vscode-azext-utils';
 import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -85,12 +92,12 @@ export async function deploySlot(
 }
 
 async function deploy(
-  actionContext: IActionContext,
+  context: IActionContext,
   target: Uri | string | SlotTreeItem | undefined,
   functionAppId: string | Record<string, any> | undefined,
   expectedContextValue?: string | RegExp
 ): Promise<void> {
-  addLocalFuncTelemetry(actionContext);
+  addLocalFuncTelemetry(context);
 
   let deployProjectPathForWorkflowApp: string | undefined;
   const settingsToExclude: string[] = [
@@ -104,35 +111,46 @@ async function deploy(
     // which hangs "Execute JavaScript Code" actions in a Running state indefinitely.
     inlineCodeNodeExecutablePathKey,
   ];
-  const deployPaths = await getDeployFsPath(actionContext, target);
-  const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
+
+  context.telemetry.properties.lastStep = 'getDeployFsPath';
+  const deployPaths = await getDeployFsPath(context, target);
+  const deployContext: IDeployContext = Object.assign(context, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;
 
   if (!isNullOrUndefined(workspaceFolder)) {
     const logicAppNode = workspaceFolder.uri;
 
+    deployContext.telemetry.properties.lastStep = 'buildProject';
     const isCodeful = await hasCodefulWorkflowSetting(logicAppNode.fsPath);
     if (isCodeful) {
-      context.telemetry.properties.isCodefulProject = 'true';
+      deployContext.telemetry.properties.isCodefulProject = 'true';
       ext.outputChannel.appendLog(localize('buildingCodefulProject', 'Building and publishing codeful Logic App project...'));
-      await publishCodefulProject(actionContext, logicAppNode);
-      ext.outputChannel.appendLog(localize('codefulProjectPublished', 'Codeful project built and published successfully.'));
+      await callWithTelemetryAndErrorHandling('deploy.publishCodefulProject', async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        await publishCodefulProject(actionContext, logicAppNode);
+      });
     } else {
       const customCodeFolderExists = await fse.pathExists(path.join(logicAppNode.fsPath, libDirectory, customDirectory));
       if (customCodeFolderExists) {
-        await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+        await callWithTelemetryAndErrorHandling('deploy.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
+          actionContext.errorHandling.rethrow = true;
+          actionContext.errorHandling.suppressDisplay = true;
+          await tryBuildCustomCodeFunctionsProject(actionContext, logicAppNode);
+        });
       }
     }
   }
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
+  deployContext.telemetry.properties.lastStep = 'getDeployNode';
   let node: SlotTreeItem;
 
   if (expectedContextValue) {
-    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
+    node = await getDeployNode(deployContext, ext.rgApi.appResourceTree, target, functionAppId, async () =>
       ext.rgApi.pickAppResource(
-        { ...context, suppressCreatePick: false },
+        { ...deployContext, suppressCreatePick: false },
         {
           filter: logicAppFilter,
           expectedChildContextValue: expectedContextValue,
@@ -140,7 +158,7 @@ async function deploy(
       )
     );
   } else {
-    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
+    node = await getDeployNode(deployContext, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(context));
   }
 
   const isHybridLogicApp = !!node.isHybridLogicApp;
@@ -151,22 +169,32 @@ async function deploy(
 
   if (!isProjectInitializedForVSCode(effectiveDeployFsPath)) {
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
-    await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
-    await initProjectForVSCode(context, effectiveDeployFsPath);
+    await deployContext.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
+    await callWithTelemetryAndErrorHandling('deploy.initProjectForVSCode', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await initProjectForVSCode(actionContext, effectiveDeployFsPath);
+    });
   }
 
-  const language = nonNullOrEmptyValue(getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath), projectLanguageSetting) as ProjectLanguage;
-  const version = nonNullOrEmptyValue(tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)), funcVersionSetting) as FuncVersion;
+  const language = nonNullOrEmptyValue(
+    getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath),
+    projectLanguageSetting
+  ) as ProjectLanguage;
+  const version = nonNullOrEmptyValue(
+    tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)),
+    funcVersionSetting
+  ) as FuncVersion;
 
-  context.telemetry.properties.projectLanguage = language;
-  context.telemetry.properties.projectRuntime = version;
+  deployContext.telemetry.properties.projectLanguage = language;
+  deployContext.telemetry.properties.projectRuntime = version;
   const identityWizardContext: IIdentityWizardContext = {
     clientId: undefined,
     clientSecret: undefined,
     objectId: undefined,
     tenantId: undefined,
     useAdvancedIdentity: undefined,
-    ...context,
+    ...deployContext,
   };
 
   if (isDeployingToKubernetes) {
@@ -190,37 +218,38 @@ async function deploy(
   }
 
   if (identityWizardContext?.useAdvancedIdentity) {
-    await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext);
+    await updateAppSettingsWithIdentityDetails(deployContext, node, identityWizardContext);
   }
 
   let isZipDeploy = false;
 
   if (!isHybridLogicApp) {
-    await verifyAppSettings(context, node, version, language, originalDeployFsPath, !context.isNewApp);
-    const client = await node.site.createClient(actionContext);
+    await verifyAppSettings(deployContext, node, version, language, originalDeployFsPath, !deployContext.isNewApp);
+    const client = await node.site.createClient(context);
     const siteConfig: SiteConfigResource = await client.getSiteConfig();
     isZipDeploy = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-    if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
+    if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !deployContext.isNewApp && isZipDeploy) {
       const warning: string = localize(
         'confirmDeploy',
         'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
         client.fullName
       );
-      context.telemetry.properties.cancelStep = 'confirmDestructiveDeployment';
+      deployContext.telemetry.properties.cancelStep = 'confirmDestructiveDeployment';
       const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
-      await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
-      context.telemetry.properties.cancelStep = '';
+      await deployContext.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
+      deployContext.telemetry.properties.cancelStep = '';
     }
 
-    await runPreDeployTask(context, effectiveDeployFsPath, siteConfig.scmType);
+    await runPreDeployTask(deployContext, effectiveDeployFsPath, siteConfig.scmType);
 
     if (isZipDeploy) {
-      validateGlobSettings(context, effectiveDeployFsPath);
+      validateGlobSettings(deployContext, effectiveDeployFsPath);
     }
   }
 
-  await node.runWithTemporaryDescription(context, localize('deploying', 'Deploying...'), async () => {
+  deployContext.telemetry.properties.lastStep = 'deploy';
+  await node.runWithTemporaryDescription(deployContext, localize('deploying', 'Deploying...'), async () => {
     // preDeploy tasks are only required for zipdeploy so subpath may not exist
     let deployFsPath: string = effectiveDeployFsPath;
 
@@ -234,33 +263,33 @@ async function deploy(
     }
 
     if (isWorkflowApp) {
-      await cleanupPublishBinPath(context, effectiveDeployFsPath);
+      await cleanupPublishBinPath(deployContext, effectiveDeployFsPath);
     }
 
     deployProjectPathForWorkflowApp = isWorkflowApp
-      ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext, actionContext)
+      ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext, context)
       : undefined;
 
     try {
       if (isHybridLogicApp) {
         if (canUseZipDeployForHybrid(node) && !getWorkspaceSetting<boolean>(useSmbDeployment)) {
-          await zipDeployHybridLogicApp(context, node, effectiveDeployFsPath);
+          await zipDeployHybridLogicApp(deployContext, node, effectiveDeployFsPath);
         } else {
-          await deployHybridLogicApp(context, node);
+          await deployHybridLogicApp(deployContext, node);
         }
       } else {
         await innerDeploy(
           node.site,
           deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath,
-          context
+          deployContext
         );
       }
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
-        await node.loadAllChildren(context);
+        await node.loadAllChildren(deployContext);
       }
-      await uploadAppSettings(context, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
+      await uploadAppSettings(deployContext, node.resourceTree.appSettingsTreeItem, workspaceFolder, settingsToExclude);
     }
   });
 
@@ -387,7 +416,6 @@ async function getProjectPathToDeploy(
   const connectionsJson = await getConnectionsJson(workspaceFolderPath);
   const parametersJson = await getParametersJson(workspaceFolderPath);
   const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   let resolvedConnections: ConnectionsData;
   let connectionsData: ConnectionsData;
 
@@ -422,7 +450,7 @@ async function getProjectPathToDeploy(
         }
       : { type: 'ManagedServiceIdentity' };
 
-    if (parameterizeConnectionsSetting) {
+    if (shouldParameterizeConnections()) {
       updateAuthenticationParameters(authValue);
     } else {
       updateAuthenticationInConnections(authValue);

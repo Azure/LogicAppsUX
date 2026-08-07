@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   DependencyVersion,
-  autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dependencyMetadataRequestTimeoutMs,
@@ -19,15 +18,20 @@ import {
   funcDependencyName,
   extensionBundleId,
   nodeJsDependencyName,
+  defaultDependencyPathValue,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
-import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { onboardBinaries, useBinariesDependencies } from './runtimeDependencies';
-import { isDevContainerWorkspaceSync } from './devContainerUtils';
+import {
+  getGlobalSetting,
+  getWorkspaceSetting,
+  shouldValidateAndInstallRuntimeDependencies,
+  updateGlobalSetting,
+} from './vsCodeConfig/settings';
+import { isDevContainerWorkspace, isDevContainerWorkspaceSync } from './devContainerUtils';
 import { type DownloadAttemptResult, downloadFileWithVerification as downloadFileWithVerificationCore } from './integrity';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { Platform, type IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
@@ -44,10 +48,6 @@ import AdmZip from 'adm-zip';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { repairFuncCoreToolsExecutablePermissions, setFunctionsCommand } from './funcCoreTools/funcVersion';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from './codeless/startDesignTimeApi';
-
-export { useBinariesDependencies } from './runtimeDependencies';
-export { DownloadIntegrityError } from './integrity';
-export type { DownloadAttemptResult } from './integrity';
 
 /**
  * Download and Extracts dependency zip.
@@ -88,6 +88,7 @@ export async function downloadAndExtractDependency(
     const errorMessage = `Error downloading the ${dependencyName} file: ${error instanceof Error ? error.message : String(error)}`;
     ext.outputChannel.appendLog(errorMessage);
     context.telemetry.properties.error = errorMessage;
+    context.telemetry.properties.errorMessage = errorMessage;
     // Clean up partials before bailing.
     try {
       if (fs.existsSync(tempFolderPath)) {
@@ -118,6 +119,7 @@ export async function downloadAndExtractDependency(
       const errorMessage = `Checksum verification failed for ${dependencyName}: expected SHA256 ${expectedSha256} but got ${actualSha256}.`;
       ext.outputChannel.appendLog(errorMessage);
       context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.errorMessage = errorMessage;
       try {
         if (fs.existsSync(tempFolderPath)) {
           fs.rmSync(tempFolderPath, { recursive: true, force: true });
@@ -754,21 +756,29 @@ export async function binariesExist(dependencyName: string): Promise<boolean> {
   return await binariesExistFromSettings(dependencyName, true);
 }
 
+export async function useBinariesDependencies(): Promise<boolean> {
+  const isDevContainer = await isDevContainerWorkspace();
+  if (isDevContainer) {
+    return false;
+  }
+
+  return shouldValidateAndInstallRuntimeDependencies();
+}
+
 export function binariesExistSync(dependencyName: string): boolean {
-  if (!useBinariesDependenciesFromSettings()) {
+  if (!useBinariesDependenciesSync()) {
     return false;
   }
 
   return binariesExistFromSettings(dependencyName, false);
 }
 
-function useBinariesDependenciesFromSettings(): boolean {
+export function useBinariesDependenciesSync(): boolean {
   if (isDevContainerWorkspaceSync()) {
     return false;
   }
 
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
-  return !!binariesInstallation;
+  return shouldValidateAndInstallRuntimeDependencies();
 }
 
 function getExpectedBinaryPath(dependencyName: string): string | undefined {
@@ -1450,6 +1460,23 @@ function extractContainerFolder(targetFolder: string) {
 }
 
 /**
+ * Ensures that the runtime dependencies path exists and returns it.
+ * If the path is not configured, it uses the default path and updates the global setting accordingly.
+ * @returns {Promise<string>} The path to the runtime dependencies folder.
+ */
+export async function ensureRuntimeDependenciesDir(): Promise<string> {
+  const configuredPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const dependenciesPath = configuredPath || defaultDependencyPathValue;
+
+  if (!configuredPath) {
+    await updateGlobalSetting(autoRuntimeDependenciesPathSettingKey, dependenciesPath);
+  }
+
+  await fs.mkdirSync(dependenciesPath, { recursive: true });
+  return dependenciesPath;
+}
+
+/**
  * Gets dependency timeout setting value from workspace settings.
  * @returns {number} Timeout value in seconds.
  */
@@ -1468,22 +1495,4 @@ export function getDependencyTimeout(): number {
   }
 
   return timeoutInSeconds;
-}
-
-/**
- * Prompts warning message to decide the auto validation/installation of dependency binaries.
- * @param {IActionContext} context - Activation context.
- */
-export async function installBinaries(context: IActionContext) {
-  const useBinaries = await useBinariesDependencies();
-
-  if (useBinaries) {
-    await onboardBinaries(context);
-    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
-  } else {
-    await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-    await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-    await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
-  }
 }
