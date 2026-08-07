@@ -34,16 +34,16 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
       'omnisharp.disableMSBuildDiagnosticWarning': true,
     };
   }
-
+  
   if (projectPackageType === ProjectPackageType.Nuget) {
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     return {
       ...baseSettings,
       [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
-      [`${ext.prefix}.preDeployTask`]: 'publish',
+      'azureFunctions.preDeployTask': 'publish',
     };
   }
-
+  
   if (projectType === ProjectType.logicApp) {
     return {
       ...baseSettings,
