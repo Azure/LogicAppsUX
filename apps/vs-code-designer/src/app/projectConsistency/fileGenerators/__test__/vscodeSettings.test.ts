@@ -76,7 +76,7 @@ describe('generateSettingsJson', () => {
       const result = generateSettingsJson(config);
 
       expect(result).toHaveProperty('azureLogicAppsStandard.deploySubpath');
-      expect(result).toHaveProperty('azureLogicAppsStandard.preDeployTask');
+      expect(result).toHaveProperty('azureFunctions.preDeployTask');
       expect(result).not.toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand');
     });
 
@@ -96,7 +96,7 @@ describe('generateSettingsJson', () => {
         'azureLogicAppsStandard.projectRuntime': '~4',
         'debug.internalConsoleOptions': 'neverOpen',
         'azureFunctions.suppressProject': true,
-        'azureLogicAppsStandard.preDeployTask': 'publish',
+        'azureFunctions.preDeployTask': 'publish',
       });
     });
   });
