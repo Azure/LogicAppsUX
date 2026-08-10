@@ -53,7 +53,7 @@ export abstract class TemplateProviderBase implements Disposable {
   /**
    * Optional method if the provider has project-specific templates
    */
-  protected refreshProjKey?(context: IActionContext): Promise<string>;
+  protected refreshProjKey?(): Promise<string>;
 
   public projKeyMayHaveChanged(): void {
     this._projKeyMayHaveChanged = true;
@@ -62,13 +62,13 @@ export abstract class TemplateProviderBase implements Disposable {
   /**
    * A key used to identify the templates for the current type of project
    */
-  public async getProjKey(context: IActionContext): Promise<string> {
+  public async getProjKey(): Promise<string> {
     if (!this.refreshProjKey) {
       throw new NotImplementedError('refreshProjKey', this);
     }
 
     if (!this._sessionProjKey) {
-      this._sessionProjKey = await this.refreshProjKey(context);
+      this._sessionProjKey = await this.refreshProjKey();
     }
 
     return this._sessionProjKey;
@@ -84,9 +84,9 @@ export abstract class TemplateProviderBase implements Disposable {
 
   public abstract getLatestTemplateVersion(context: IActionContext): Promise<string>;
   public abstract getLatestTemplates(context: IActionContext, latestTemplateVersion: string): Promise<ITemplates>;
-  public abstract getCachedTemplates(context: IActionContext): Promise<ITemplates | undefined>;
+  public abstract getCachedTemplates(): Promise<ITemplates | undefined>;
   public abstract getBackupTemplates(context: IActionContext): Promise<ITemplates>;
-  public abstract cacheTemplates(context: IActionContext): Promise<void>;
+  public abstract cacheTemplates(): Promise<void>;
 
   /**
    * Unless this is overidden, all templates will be included
@@ -165,7 +165,7 @@ export abstract class TemplateProviderBase implements Disposable {
       hasChanged = this._sessionProjKey !== projKey;
       this._sessionProjKey = projKey;
     } else if (this._projKeyMayHaveChanged) {
-      const latestProjKey = await this.refreshProjKey(context);
+      const latestProjKey = await this.refreshProjKey();
       hasChanged = this._sessionProjKey !== latestProjKey;
       this._sessionProjKey = latestProjKey;
     } else {

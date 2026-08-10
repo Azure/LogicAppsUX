@@ -57,7 +57,7 @@ type WorkspaceSpec =
   | {
       appType?: string;
       wfType?: string;
-      use?: 'wsDir' | 'appDir';
+      use?: 'wsDir' | 'appDir' | 'none';
     };
 type ManifestEntry = {
   label?: string;
@@ -1420,6 +1420,7 @@ async function main(): Promise<void> {
   // Wave 2: Tests that involve window reload or different folder open scenarios
   const phase8dFiles = [testFile('workspaceConversionYes.test.js')];
   const phase8eFiles = [testFile('workspaceConversionSubfolder.test.js')];
+  const phase49NugetDebugFiles = [testFile('nugetDebugConversion.test.js')];
 
   const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
   const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
@@ -1623,6 +1624,13 @@ async function main(): Promise<void> {
       testFile: phase8eFiles[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'appDir' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+    {
+      id: 'p49-nugetdebugconversion',
+      testFile: phase49NugetDebugFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'none' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
 
     // Phase 4.12 — On-disk bundle repair / integrity gate (Phase 14 code path).
@@ -2318,6 +2326,105 @@ namespace ${namespaceName}
       return [];
     };
 
+    const fixtureManifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+    const readFixtureManifest = (): { manifest?: ManifestEntry[]; error?: string } => {
+      if (!fs.existsSync(fixtureManifestPath)) {
+        return { error: `manifest not found: ${fixtureManifestPath}` };
+      }
+      try {
+        return { manifest: JSON.parse(fs.readFileSync(fixtureManifestPath, 'utf8')) as ManifestEntry[] };
+      } catch (e) {
+        return { error: `manifest could not be parsed: ${getErrorMessage(e)}` };
+      }
+    };
+
+    const isManifestBackedWorkspaceSpec = (spec: WorkspaceSpec): boolean =>
+      spec === 'manifest-multi' || (typeof spec === 'object' && spec !== null);
+
+    const getManifestResourceIssue = (manifest: ManifestEntry[], spec: WorkspaceSpec): string | undefined => {
+      if (!isManifestBackedWorkspaceSpec(spec)) {
+        return undefined;
+      }
+      if (spec === 'manifest-multi') {
+        const preferred =
+          manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+          manifest.find((e) => e.appType === 'standard') ||
+          manifest[0];
+        if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+          return undefined;
+        }
+        return `missing live manifest-multi startup workspace: ${preferred?.wsFilePath}`;
+      }
+      const { appType, wfType, use } = spec;
+      const entry =
+        manifest.find((e) => (!appType || e.appType === appType) && (!wfType || e.wfType === wfType)) ||
+        (wfType ? undefined : manifest.find((e) => !appType || e.appType === appType)) ||
+        (!appType && !wfType ? manifest[0] : undefined);
+      if (!entry) {
+        return `no manifest entry matched ${JSON.stringify(spec)}`;
+      }
+      if (use === 'none') {
+        for (const requiredPath of [entry.wsFilePath, entry.appDir]) {
+          if (typeof requiredPath !== 'string' || !fs.existsSync(requiredPath)) {
+            return `manifest entry missing live prerequisite path for use:none: ${requiredPath}`;
+          }
+        }
+        return undefined;
+      }
+      const key = use === 'wsDir' ? 'wsDir' : use === 'appDir' ? 'appDir' : 'wsFilePath';
+      const value = entry[key];
+      return typeof value === 'string' && fs.existsSync(value) ? undefined : `manifest entry missing live ${key}: ${value}`;
+    };
+
+    const getFixtureManifestIssues = (scenarioList: Scenario[]): string[] => {
+      const manifestBackedScenarios = scenarioList.filter((scenario) => isManifestBackedWorkspaceSpec(scenario.workspaceSpec));
+      if (manifestBackedScenarios.length === 0) {
+        return [];
+      }
+      const { manifest, error } = readFixtureManifest();
+      if (!manifest) {
+        return manifestBackedScenarios.map((scenario) => `${scenario.id}: ${error}`);
+      }
+      return manifestBackedScenarios.flatMap((scenario) => {
+        const issue = getManifestResourceIssue(manifest, scenario.workspaceSpec);
+        return issue ? [`${scenario.id}: ${issue}`] : [];
+      });
+    };
+
+    const ensureFixtureManifestForScenarios = async (scenarioList: Scenario[], label: string): Promise<number> => {
+      const initialIssues = getFixtureManifestIssues(scenarioList);
+      if (initialIssues.length === 0) {
+        return 0;
+      }
+
+      console.log(`\n=== Phase 4.1 fixture prerequisite required for ${label} ===`);
+      for (const issue of initialIssues) {
+        console.log(`  ${issue}`);
+      }
+      console.log('  Running p41a-fixtures to create a fresh workspace manifest before the focused scenario...');
+
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession(`${label}-p41a-fixtures`);
+      const fixtureExit = await runPhase('Phase 4.1a: createWorkspace fixtures prerequisite', phase1aFiles);
+      if (fixtureExit !== 0) {
+        console.error(`\n⚠ Phase 4.1a fixture setup failed with exit code ${fixtureExit}; focused scenario cannot proceed.`);
+        return fixtureExit;
+      }
+      verifyLogicAppsExtensionBundle('p41a-fixtures');
+
+      const remainingIssues = getFixtureManifestIssues(scenarioList);
+      if (remainingIssues.length === 0) {
+        console.log(`  Phase 4.1 fixture manifest is ready: ${fixtureManifestPath}`);
+        return 0;
+      }
+
+      console.error('\n⚠ Phase 4.1a completed, but required fixture resources are still missing:');
+      for (const issue of remainingIssues) {
+        console.error(`  ${issue}`);
+      }
+      return 1;
+    };
+
     // ------------------------------------------------------------------
     // Phase A — per-scenario workspace resolver.
     //
@@ -2342,6 +2449,9 @@ namespace ${namespaceName}
     //                      matching entry, and returns its wsFilePath
     //                      (default), wsDir (`use: 'wsDir'`), or appDir
     //                      (`use: 'appDir'`) as a single-element array.
+    //                      `use: 'none'` validates the manifest prerequisite
+    //                      but passes no startup resource; use this when the
+    //                      test clones and opens its own workspace.
     //
     // Returns { resources, legacyDir? }. `legacyDir` is set only for
     // 'self-contained' so runScenarioPhases can wire up the env var.
@@ -2390,6 +2500,9 @@ namespace ${namespaceName}
           (!appType && !wfType ? manifest[0] : undefined);
         if (!entry) {
           console.warn(`  [${scenarioId}] No manifest entry matched ${JSON.stringify(spec)}`);
+          return { resources: [] };
+        }
+        if (use === 'none') {
           return { resources: [] };
         }
         const key = use === 'wsDir' ? 'wsDir' : use === 'appDir' ? 'appDir' : 'wsFilePath';
@@ -2577,6 +2690,10 @@ namespace ${namespaceName}
       }
       console.log(`\nRunning ${selectedScenarios.length} scenario(s) (LA_E2E_SCENARIO): ${selectedScenarios.map((s) => s.id).join(', ')}`);
       await downloadExTesterAssets();
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(selectedScenarios, 'selected-scenarios');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       const selectedExit = await runScenarioPhases(selectedScenarios);
       process.exit(selectedExit);
     }
@@ -2635,8 +2752,26 @@ namespace ${namespaceName}
         throw new Error('bundlerepaironly: p412-bundlerepair scenario not found in scenarios[] table');
       }
       await downloadExTesterAssets();
+      const prerequisiteExit = await ensureFixtureManifestForScenarios([bundleRepairScenario], 'bundlerepaironly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
       process.exit(phase12Exit);
+    }
+
+    if (e2eMode === 'nugetdebugonly') {
+      const nugetDebugScenario = scenarios.find((s) => s.id === 'p49-nugetdebugconversion');
+      if (!nugetDebugScenario) {
+        throw new Error('nugetdebugonly: p49-nugetdebugconversion scenario not found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const prerequisiteExit = await ensureFixtureManifestForScenarios([nugetDebugScenario], 'nugetdebugonly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
+      const phase9Exit = await runScenarioPhases([nugetDebugScenario]);
+      process.exit(phase9Exit);
     }
 
     if (e2eMode === 'nonlogicappstartup') {
@@ -2671,6 +2806,13 @@ namespace ${namespaceName}
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
       await downloadExTesterAssets();
+      const designerScenarios = scenarios.filter((scenario) =>
+        ['p42-standard', 'p42-customcode', 'p42-rulesengine', 'p42-connectionprompt'].includes(scenario.id)
+      );
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(designerScenarios, 'designeronly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
 
       await prepareFreshSession('phase2-only');
@@ -2684,6 +2826,20 @@ namespace ${namespaceName}
     if (e2eMode === 'newtestsonly') {
       // Run only the new tests (phases 4.3–4.6) each in their own session
       await downloadExTesterAssets();
+      const newTestScenarios = scenarios.filter((scenario) =>
+        [
+          'p43-inlinejavascript',
+          'p43-customcode',
+          'p43-rulesengine',
+          'p44-statelessvariables',
+          'p45-designerviewextended',
+          'p46-keyboardnav',
+        ].includes(scenario.id)
+      );
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(newTestScenarios, 'newtestsonly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
       const exits: number[] = [];
@@ -2715,6 +2871,13 @@ namespace ${namespaceName}
     if (e2eMode === 'conversiononly') {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
       await downloadExTesterAssets();
+      const conversionScenarios = scenarios.filter((scenario) =>
+        ['p48a-conversionno', 'p48c-multipledesigners', 'p48e-conversionsubfolder'].includes(scenario.id)
+      );
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(conversionScenarios, 'conversiononly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       // ALL conversion tests need validateDependencies ON so the extension
       // fully activates and detects legacy projects / shows conversion dialog.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });

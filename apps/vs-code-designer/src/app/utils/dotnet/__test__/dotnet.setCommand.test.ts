@@ -33,7 +33,7 @@ vi.mock('../../vsCodeConfig/settings', () => ({
 
 vi.mock('../../workspace', () => ({
   findFiles: vi.fn().mockResolvedValue([]),
-  getWorkspaceLogicAppFolders: vi.fn(),
+  getWorkspaceLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../../funcCoreTools/cpUtils', () => ({
@@ -63,7 +63,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import { setDotNetCommand, getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../dotnet';
 import { getGlobalSetting, updateGlobalSetting, removeSharedSetting } from '../../vsCodeConfig/settings';
-import { getWorkspaceLogicAppFolders } from '../../workspace';
+import { getWorkspaceLogicAppRoots } from '../../workspace';
 
 const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
 const DOTNET_DIR = path.join(BIN_ROOT, 'DotNetSDK');
@@ -77,7 +77,7 @@ describe('dotnet command resolution', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue([]);
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -93,7 +93,7 @@ describe('dotnet command resolution', () => {
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', 'dotnet');
-      expect(getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+      expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
       expect(fs.existsSync).not.toHaveBeenCalled();
     });
 
@@ -105,14 +105,14 @@ describe('dotnet command resolution', () => {
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', 'dotnet');
       expect(fs.chmodSync).not.toHaveBeenCalled();
-      expect(getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+      expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
     });
 
     it('writes <dotNetBinariesPath>/dotnet.exe on Windows and updates terminal.integrated.env.windows for each workspace', async () => {
       setPlatform(Platform.windows as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue(['C:/projects/logic-app']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['C:/projects/logic-app']);
 
       await setDotNetCommand();
 
@@ -132,7 +132,7 @@ describe('dotnet command resolution', () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue(['/home/me/logic-app']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/home/me/logic-app']);
 
       await setDotNetCommand();
 
@@ -151,7 +151,7 @@ describe('dotnet command resolution', () => {
       setPlatform(Platform.mac as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue(['/Users/me/logic-app']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/Users/me/logic-app']);
 
       await setDotNetCommand();
 
@@ -166,13 +166,13 @@ describe('dotnet command resolution', () => {
       expect(removeSharedSetting).toHaveBeenCalledWith('dotNetCliPaths', 'omnisharp');
     });
 
-    it('still writes the global setting when getWorkspaceLogicAppFolders throws', async () => {
+    it('still writes the global setting when getWorkspaceLogicAppRoots throws', async () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
       const error = new Error('boom');
-      vi.mocked(getWorkspaceLogicAppFolders).mockRejectedValue(error);
+      vi.mocked(getWorkspaceLogicAppRoots).mockRejectedValue(error);
 
       await setDotNetCommand();
 

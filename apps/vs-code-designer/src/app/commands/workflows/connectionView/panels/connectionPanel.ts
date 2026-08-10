@@ -12,7 +12,7 @@ import { ExtensionCommand, ProjectName, RouteName } from '@microsoft/vscode-exte
 import { DesignerPanel } from '../../designer/panels/designerPanel';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import {
-  addConnectionData,
+  addConnection,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getLogicAppProjectRoot,
@@ -71,6 +71,7 @@ export default class ConnectionPanel extends DesignerPanel {
       return;
     }
 
+    // TODO(aeldridge): this.projectPath should not be nullable, set in ctor (here and designer panels)
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!this.projectPath) {
@@ -93,7 +94,10 @@ export default class ConnectionPanel extends DesignerPanel {
     this.panel.webview.html = this.getLoadingHtml();
 
     // Start design time API and load metadata in parallel
-    const [_, panelMetadata] = await Promise.all([startDesignTimeApi(this.projectPath), this.getConnectionPanelMetadata()]);
+    const startDesignTimePromise = callWithTelemetryAndErrorHandling('ConnectionPanel.create.startDesignTimeApi', async (actionContext: IActionContext) => {
+      await startDesignTimeApi(actionContext, this.projectPath!);
+    });
+    const [_, panelMetadata] = await Promise.all([startDesignTimePromise, this.getConnectionPanelMetadata()]);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
       throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
@@ -230,7 +234,7 @@ export default class ConnectionPanel extends DesignerPanel {
 
           // For local connections, the React side captures the connection data from the writeConnection callback and includes it here.
           if (connectionAndSetting) {
-            await addConnectionData(activateContext, this.workflowFilePath, connectionAndSetting);
+            await addConnection(activateContext, this.workflowFilePath, connectionAndSetting);
           }
 
           await this.saveConnection(

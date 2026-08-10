@@ -62,7 +62,7 @@ vi.mock('../../../../../utils/codeless/connection', () => ({
   getCustomCodeFromFiles: vi.fn().mockResolvedValue({}),
   getLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
   getParametersFromFile: vi.fn().mockResolvedValue({}),
-  addConnectionData: vi.fn(),
+  addConnection: vi.fn(),
   getConnectionsAndSettingsToUpdate: vi.fn(),
   saveConnectionReferences: vi.fn(),
   getCustomCodeToUpdate: vi.fn(),
@@ -78,7 +78,7 @@ vi.mock('../../../../../utils/requestUtils', () => ({
 }));
 
 vi.mock('../../../../dataMapper/dataMapper', () => ({
-  createNewDataMapCmd: vi.fn(),
+  createDataMap: vi.fn(),
 }));
 
 vi.mock('../../../../../utils/codeless/parameter', () => ({
@@ -123,7 +123,7 @@ vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
 }));
 
 import LocalDesignerPanel from '../localDesignerPanel';
-import { createNewDataMapCmd } from '../../../../dataMapper/dataMapper';
+import { createDataMap } from '../../../../dataMapper/dataMapper';
 import { createUnitTest } from '../../../unitTest/createUnitTest';
 import { getMigrationOptions } from '../../utils/migration';
 import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
@@ -131,7 +131,7 @@ import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSett
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
 import {
-  addConnectionData,
+  addConnection,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getCustomCodeFromFiles,
@@ -239,7 +239,7 @@ describe('LocalDesignerPanel', () => {
 
       await instance.create();
 
-      expect(startDesignTimeApi).toHaveBeenCalledWith('/test/project');
+      expect(startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), '/test/project');
       expect(mockContext.telemetry.properties.extensionBundleVersion).toBe('1.0.0');
       expect(getMigrationOptions).toHaveBeenCalled();
       expect((instance as any).panel.webview.html).toBe('<html></html>');
@@ -327,9 +327,9 @@ describe('LocalDesignerPanel', () => {
       );
       expect((instance as any).saveWorkflow).toHaveBeenCalled();
       expect(createUnitTest).toHaveBeenCalled();
-      expect(addConnectionData).toHaveBeenCalledWith(expect.anything(), mockUri.fsPath, { name: 'conn' });
+      expect(addConnection).toHaveBeenCalledWith(expect.anything(), mockUri.fsPath, { name: 'conn' });
       expect(env.openExternal).toHaveBeenCalledWith('https://login.example.com');
-      expect(createNewDataMapCmd).toHaveBeenCalledWith(mockContext);
+      expect(createDataMap).toHaveBeenCalledWith(mockContext);
       expect(ext.telemetryReporter.sendTelemetryEvent).toHaveBeenCalledWith('designerArea', { area: 'designerArea' });
       expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
       expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(

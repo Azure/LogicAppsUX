@@ -10,7 +10,7 @@ import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { detectProjectPackageType } from '../../utils/project';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { getContainingWorkspace } from '../../utils/workspace';
+import { getContainingWorkspaceFolder } from '../../utils/workspace';
 import { InitDotnetProjectStep } from './initDotnetProjectStep';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import {
@@ -38,7 +38,7 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     }
     workspacePath = workspaceFolder.uri.fsPath;
   } else {
-    workspaceFolder = getContainingWorkspace(fsPath);
+    workspaceFolder = getContainingWorkspaceFolder(fsPath);
     workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : fsPath;
   }
 

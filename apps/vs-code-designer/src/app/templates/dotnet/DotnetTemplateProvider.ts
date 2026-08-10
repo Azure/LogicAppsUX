@@ -27,12 +27,12 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     return path.join('dotnet', this.version);
   }
 
-  public async refreshProjKey(context: IActionContext): Promise<string> {
-    return await getTemplateKeyFromProjFile(context, this.projectPath, this.version, ProjectLanguage.FSharp);
+  public async refreshProjKey(): Promise<string> {
+    return await getTemplateKeyFromProjFile(this.projectPath, this.version, ProjectLanguage.FSharp);
   }
 
-  public async getCachedTemplates(context: IActionContext): Promise<ITemplates | undefined> {
-    const projKey = await this.getProjKey(context);
+  public async getCachedTemplates(): Promise<ITemplates | undefined> {
+    const projKey = await this.getProjKey();
     const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
     const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
     if (!(await AzExtFsExtra.pathExists(projectFilePath)) || !(await AzExtFsExtra.pathExists(itemFilePath))) {
@@ -51,7 +51,7 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
   }
 
   public async getLatestTemplates(context: IActionContext, latestTemplateVersion: string): Promise<ITemplates> {
-    const projKey = await this.getProjKey(context);
+    const projKey = await this.getProjKey();
     const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
     const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
     let templates: ITemplates | undefined = undefined;
@@ -81,7 +81,7 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
   }
 
   public async getBackupTemplates(context: IActionContext): Promise<ITemplates> {
-    const projKey = await this.getProjKey(context);
+    const projKey = await this.getProjKey();
     const files: string[] = [getDotnetProjectTemplatePath(this.version, projKey), getDotnetItemTemplatePath(this.version, projKey)];
     for (const file of files) {
       await AzExtFsExtra.copy(this.convertToBackupFilePath(projKey, file), file, { overwrite: true });
@@ -93,8 +93,8 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     return path.join(this.getBackupPath(), projKey, path.basename(file));
   }
 
-  public async cacheTemplates(context: IActionContext): Promise<void> {
-    const projKey = await this.getProjKey(context);
+  public async cacheTemplates(): Promise<void> {
+    const projKey = await this.getProjKey();
     await this.updateCachedValue(projKey, this.rawTemplates);
   }
 

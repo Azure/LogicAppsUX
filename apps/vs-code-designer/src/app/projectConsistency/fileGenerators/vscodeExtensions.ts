@@ -9,6 +9,6 @@ import type { ExtensionsJsonContent } from './types';
  * Generates the canonical extensions.json content for a Logic App project.
  */
 export function generateExtensionsJson(): ExtensionsJsonContent {
-  const recommendations: string[] = [logicAppsStandardExtensionId, functionsExtensionId, dotnetExtensionId, csDevKitExtensionId];
+  const recommendations: string[] = [logicAppsStandardExtensionId, dotnetExtensionId, functionsExtensionId, csDevKitExtensionId];
   return { recommendations };
 }

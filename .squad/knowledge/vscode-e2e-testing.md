@@ -31,6 +31,59 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Applies to: `test`, `vscode-test-specialist`, `vscode`, `ci-sentinel`.
 - Status: verified.
 
+### `run-e2e.ts` registration is not CI coverage
+
+- Learning: Adding a scenario to `run-e2e.ts` or adding a focused `E2E_MODE` only makes the test runnable locally. PR CI runs the grouped scenario matrix in `.github/workflows/vscode-e2e.yml`; a new scenario must be added there with the correct fixture/bundle flags, or explicitly documented as local-only.
+- Why it matters: Issue #7040's `p49-nugetdebugconversion` scenario was present behind `E2E_MODE=nugetdebugonly`, but CI did not run it until it was added to the workflow matrix. That left the regression protected locally but not on pull requests.
+- Pattern:
+  1. Add or update the scenario entry in `run-e2e.ts`.
+  2. Add it to `.github/workflows/vscode-e2e.yml` under an appropriate `vscode-e2e` matrix shard.
+  3. Set `use_workspace_fixtures` and `use_bundle_artifact` to match the scenario's `workspaceSpec` and runtime needs.
+  4. Update `apps/vs-code-designer/src/test/ui/SKILL.md` scenario/mode documentation in the same PR.
+  5. If it is intentionally local-only, document that explicitly near the scenario and in the local run instructions.
+- Source: Issue #7040 PR #9508 review; `p49-nugetdebugconversion` CI wiring gap.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `chief-engineer`.
+- Status: verified.
+
+### Focused scenarios must satisfy their fixture prerequisites first
+
+- Learning: Before running a focused `E2E_MODE` or `LA_E2E_SCENARIO`, inspect the scenario's `workspaceSpec` in `run-e2e.ts`. Any scenario with `workspaceSpec: { ... }` or `workspaceSpec: 'manifest-multi'` consumes the Phase 4.1 fixture manifest at `%TEMP%\la-e2e-test\created-workspaces.json`; object specs may use `use: 'none'` to require the manifest without opening a startup resource. Run `p41a-fixtures` (or a grouped/full mode that runs Phase 4.1 first) before the focused scenario when that manifest is missing, stale, or was cleaned up.
+- Why it matters: Running p49 (`E2E_MODE=nugetdebugonly`) without the p41 fixture setup starts the wrong problem: the scenario has no generated Standard/Stateful `.code-workspace` to open, so agents waste cycles debugging workspace-open/setup failures instead of the NuGet debug lifecycle.
+- Pattern:
+  1. Check `run-e2e.ts` for the target scenario's `workspaceSpec`.
+  2. If it is `self-contained`, `self-creates`, or `plain-folder`, no Phase 4.1 manifest is required.
+  3. If it is an object such as `{ appType: 'standard', wfType: 'Stateful' }` or `manifest-multi`, first run `p41a-fixtures` or an E2E mode that includes Phase 4.1/createWorkspace setup.
+  4. Confirm `%TEMP%\la-e2e-test\created-workspaces.json` exists and points at live workspace directories before running the focused scenario.
+  5. If a prior run's cleanup removed or corrupted fixture directories, rerun the fixture phase instead of patching paths by hand.
+- Current manifest-backed scenarios:
+
+  | Scenario | Required manifest entry / resource |
+  |---|---|
+  | `p42-standard` | Standard Stateful `.code-workspace` |
+  | `p42-customcode` | CustomCode Stateful `.code-workspace` |
+  | `p42-rulesengine` | RulesEngine Stateful `.code-workspace` |
+  | `p42-connectionprompt` | Standard Stateful `.code-workspace` |
+  | `p43-inlinejavascript` | Standard Stateful `.code-workspace` |
+  | `p43-customcode` | CustomCode Stateful `.code-workspace` |
+  | `p43-rulesengine` | RulesEngine Stateful `.code-workspace` |
+  | `p44-statelessvariables` | Standard Stateless `.code-workspace` |
+  | `p45-designerviewextended` | Standard Stateful `.code-workspace` |
+  | `p46-keyboardnav` | Standard Stateful `.code-workspace` |
+  | `p47-suite` | `manifest-multi`; preferred Standard Stateful startup resource, then test reads the manifest |
+  | `p48a-conversionno` | Standard Stateful workspace directory (`use: 'wsDir'`) |
+  | `p48c-multipledesigners` | `manifest-multi`; preferred Standard Stateful startup resource, then test reads the manifest |
+  | `p48e-conversionsubfolder` | Standard Stateful app directory (`use: 'appDir'`) |
+  | `p49-descriptionpersistence` | Standard Stateful `.code-workspace` |
+  | `p49-nugetdebugconversion` | Standard Stateful manifest entry, but no startup resource (`use: 'none'`) because the test clones and opens its own workspace |
+  | `p412-bundlerepair` | Standard Stateful `.code-workspace` |
+
+- Current scenarios that do **not** require the Phase 4.1 fixture manifest: `p40-nonlogicapp` (`plain-folder`), `p41a-fixtures` (`self-creates`), `p41b-createworkspace-behavior` (`self-creates`), `p48b-conversioncreate` (`self-contained`), and standalone `p48d-conversionyes` (`plain-folder`). The grouped `conversiononly` mode still needs the manifest because its p48a/p48c/p48e phases and workspace-dir resource selection are manifest-backed.
+- Debug-pane/focused runner support: `run-e2e.ts` automatically runs `p41a-fixtures` when manifest-backed focused modes or `LA_E2E_SCENARIO` selections detect a missing/stale manifest before continuing to the requested scenario.
+- When adding a new scenario, update this map in the same PR as the `run-e2e.ts` scenario entry.
+- Source: Issue #7040 local p49 iteration; `run-e2e.ts` scenario table (`p41a-fixtures`, `p49-nugetdebugconversion`) and `selectWorkspaceForSpec`.
+- Applies to: `vscode-test-specialist`, `test`, `customer-repro-tester`, `ci-sentinel`.
+- Status: verified.
+
 ### Read `SKILL.md` before VS Code E2E edits
 
 - Learning: `apps/vs-code-designer/src/test/ui/SKILL.md` captures prior session learnings for ExTester setup, phase behavior, selectors, webviews, overview navigation, and CI pitfalls.
@@ -45,6 +98,19 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - Why it matters: Shared helpers encode retries, webview switching, command palette behavior, and overview/run lifecycle rules.
 - Source: `apps/vs-code-designer/src/test/ui/SKILL.md`.
 - Applies to: `test`, `vscode-test-specialist`.
+- Status: verified.
+
+### Opening designer requires proactive popup hygiene
+
+- Learning: Any E2E that opens the designer must proactively account for common blocking UI before and during designer launch:
+  1. Ensure `local.settings.json` contains `WORKFLOWS_SUBSCRIPTION_ID: ""` before opening designer so `getAzureConnectorDetailsForLocalProject()` does not launch the "Enable connectors in Azure for Logic App" / "Use connectors from Azure" QuickPick.
+  2. Call shared prompt-dismissal helpers around workspace open, command-palette actions, designer launch, and webview waits so connector parameterization prompts, C# Dev Kit sign-in prompts, auth dialogs, notifications, and stale QuickInputs are cleared.
+  3. Treat any new modal/QuickPick/notification blocker as suite infrastructure: add it to shared helpers (`helpers.ts` / `designerHelpers.ts`), not to a single test.
+  4. Fatal Azure Logic Apps notifications that indicate a broken extension install, such as `ENOENT: no such file or directory, open ... vs-code-react/index.html`, must fail fast through the shared `helpers.ts` guard instead of being dismissed or handled in a scenario-specific test.
+  5. `.vscode` regeneration prompts can be visible in CI screenshots but appear absent locally because local helper timing may confirm/dismiss the modal before a human sees it. Tests should opportunistically confirm the prompt but assert the durable invariant: exact regenerated `.vscode` file contents.
+- Why it matters: These prompts are environmental blockers, not the behavior under test. Letting them surface burns iteration cycles waiting on a test that is blocked by a known popup instead of exercising the product path.
+- Source: Issue #7040 local E2E iteration; `apps/vs-code-designer/src/test/ui/helpers.ts`; `designerHelpers.ts` `ensureLocalSettingsForDesigner`, `handleDesignerPrompts`, `executeOpenDesignerCommand`.
+- Applies to: `vscode-test-specialist`, `test`, `customer-repro-tester`, `ci-sentinel`.
 - Status: verified.
 
 ### React webview clicks need Selenium Actions
@@ -107,6 +173,38 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
   5. Close unrelated info/sign-in prompts before command-palette or debug actions.
 - Source: Azurite auto-start debug regression session, `apps/vs-code-designer/src/test/ui/run-e2e.js`, `apps/vs-code-designer/src/test/ui/azuriteAutostartFailure*.test.ts`.
 - Applies to: `vscode-test-specialist`, `test`, `customer-repro-tester`, `ci-sentinel`.
+- Status: verified.
+
+### NuGet debug conversion regressions need a two-F5 runnable lifecycle
+
+- Learning: For bundle-to-NuGet debug regressions, use the `p49-nugetdebugconversion` / `E2E_MODE=nugetdebugonly` shape: start from a generated Standard Stateful workspace, seed a deterministic non-empty built-in Request trigger + Response action workflow, F5, run the workflow successfully, stop debugging, convert the same project to NuGet, then F5 again and run the same workflow successfully.
+- Why it matters: Issue #7040 was not proven by host startup alone or by an empty workflow. The regression involved stale pre-conversion runtime/task state and only surfaced when the post-conversion project had to debug and execute the same real workflow.
+- Test contract:
+  1. Seed built-in Request + Response only; avoid connector catalog dependencies.
+  2. Verify bundle debug can run the workflow before conversion.
+  3. Stop debugging.
+  4. Convert to NuGet.
+  5. Verify NuGet `.csproj`, `.vscode/tasks.json`, `.vscode/launch.json`, and the `clean`/`build`/`func: host start` task chain.
+  6. Start the second F5 without harness pre-F5 port cleanup so product cleanup code is exercised.
+  7. Verify the workflow runs successfully again, including run history `Succeeded` and action evidence such as `Response:Succeeded`.
+- Source: Issue #7040 investigation; `apps/vs-code-designer/src/test/ui/nugetDebugConversion.test.ts`; `apps/vs-code-designer/src/test/ui/run-e2e.ts` scenario `p49-nugetdebugconversion`.
+- Applies to: `vscode-test-specialist`, `test`, `vscode`, `ci-sentinel`.
+- Status: verified.
+
+### Do not use harness port cleanup when product cleanup is the regression
+
+- Learning: If the regression is about stale `func` task/process cleanup across debug sessions, the critical F5 must bypass `runHelpers.startDebugging()` / `prepareForFreshFuncHost()` and invoke `Debug: Start Debugging` directly.
+- Why it matters: Harness cleanup masks whether the extension itself stops stale scoped func tasks/processes before rebuilding and starting the post-conversion host.
+- Source: Issue #7040 investigation; `nugetDebugConversion.test.ts` `startDebuggingWithoutHarnessCleanup`.
+- Applies to: `vscode-test-specialist`, `test`, `vscode`.
+- Status: verified.
+
+### Use the root Debug menu for local run-e2e modes
+
+- Learning: Root `.vscode/launch.json` contains Run and Debug entries for `run-e2e.ts` modes, including `E2E: p49 NuGet debug conversion` and `E2E: Select mode (run-e2e)`; root `.vscode/tasks.json` contains prelaunch tasks that build the extension and compile UI E2E tests.
+- Why it matters: Running the same suite from the VS Code Debug menu avoids one-off terminal commands that drift from `run-e2e.ts` and makes focused local repros repeatable across sessions.
+- Source: Issue #7040 investigation; `.vscode/launch.json`; `.vscode/tasks.json`.
+- Applies to: `vscode-test-specialist`, `test`, `customer-repro-tester`.
 - Status: verified.
 
 ### Fill webview wizard inputs by label, not index

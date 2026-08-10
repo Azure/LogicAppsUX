@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 
 // Hoisted mock variables
 const { mockGetCachedTemplates, mockGetLatestTemplateVersion, mockGetLatestTemplates, mockGetBackupTemplates } = vi.hoisted(() => ({
@@ -79,8 +79,12 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getContainingWorkspace: vi.fn(),
+  getContainingWorkspaceFolder: vi.fn(),
   getWorkspaceFolder: vi.fn(),
+}));
+
+vi.mock('../../../utils/funcCoreTools/funcHostTask', () => ({
+  stopFuncTaskForWorkspace: vi.fn(),
 }));
 
 vi.mock('../../initProjectForVSCode/initDotnetProjectStep', () => ({
@@ -112,7 +116,7 @@ import { ext } from '../../../../extensionVariables';
 import { switchToDotnetProject, switchToDotnetProjectCommand } from '../switchToDotnetProject';
 import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkspaceFolder, getContainingWorkspace } from '../../../utils/workspace';
+import { getWorkspaceFolder, getContainingWorkspaceFolder } from '../../../utils/workspace';
 import { getProjFiles, getTemplateKeyFromProjFile, getLocalDotNetVersionFromBinaries } from '../../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../../utils/dotnet/executeDotnetTemplateCommand';
 import { tryParseFuncVersion, tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
@@ -120,6 +124,7 @@ import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import { useBinariesDependencies } from '../../../utils/binaries';
 import { DotnetTemplateProvider } from '../../../templates/dotnet/DotnetTemplateProvider';
 import { InitDotnetProjectStep } from '../../initProjectForVSCode/initDotnetProjectStep';
+import { stopFuncTaskForWorkspace } from '../../../utils/funcCoreTools/funcHostTask';
 import {
   getDotnetBuildFile,
   addNugetPackagesToBuildFile,
@@ -137,6 +142,7 @@ import * as vscode from 'vscode';
 describe('switchToDotnetProject', () => {
   let mockContext: IProjectWizardContext;
   let mockTarget: vscode.Uri;
+  let initDotnetExecute: Mock;
 
   beforeEach(() => {
     mockContext = {
@@ -161,12 +167,8 @@ describe('switchToDotnetProject', () => {
     );
 
     // Re-set the InitDotnetProjectStep constructor mock
-    vi.mocked(InitDotnetProjectStep).mockImplementation(
-      () =>
-        ({
-          execute: vi.fn(),
-        }) as any
-    );
+    initDotnetExecute = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(InitDotnetProjectStep).mockImplementation(() => ({ execute: initDotnetExecute }) as any);
 
     vi.mocked(validateDotNetIsInstalled).mockResolvedValue(true);
     vi.mocked(tryParseFuncVersion).mockReturnValue(FuncVersion.v4);
@@ -175,9 +177,10 @@ describe('switchToDotnetProject', () => {
     vi.mocked(getFramework).mockResolvedValue('net8.0');
     vi.mocked(executeDotnetTemplateCommand).mockResolvedValue(undefined);
     vi.mocked(useBinariesDependencies).mockResolvedValue(false);
+    vi.mocked(stopFuncTaskForWorkspace).mockResolvedValue(false);
     vi.mocked(tryGetMajorVersion).mockReturnValue('4');
     vi.mocked(getTemplateKeyFromProjFile).mockResolvedValue('testKey');
-    vi.mocked(getContainingWorkspace).mockReturnValue(undefined);
+    vi.mocked(getContainingWorkspaceFolder).mockReturnValue(undefined);
     (fse.pathExists as unknown as Mock).mockResolvedValue(false);
     (fse.readdir as unknown as Mock).mockResolvedValue([]);
     (fse.stat as unknown as Mock).mockResolvedValue({ isDirectory: () => false });
@@ -313,6 +316,50 @@ describe('switchToDotnetProject', () => {
       await switchToDotnetProject(mockContext, mockTarget);
 
       expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Successfully converted to NuGet-based'));
+    });
+
+    it('should await VS Code initialization before logging completion', async () => {
+      let resolveInit: (() => void) | undefined;
+      initDotnetExecute.mockImplementation(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveInit = resolve;
+          })
+      );
+
+      const result = switchToDotnetProject(mockContext, mockTarget);
+
+      await vi.waitFor(() => expect(initDotnetExecute).toHaveBeenCalled());
+      expect(ext.outputChannel.appendLog).not.toHaveBeenCalledWith(expect.stringContaining('Successfully converted to NuGet-based'));
+
+      resolveInit?.();
+      await result;
+
+      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Successfully converted to NuGet-based'));
+    });
+
+    it('should initialize VS Code files as a NuGet package project', async () => {
+      await switchToDotnetProject(mockContext, mockTarget);
+
+      expect(initDotnetExecute).toHaveBeenCalledWith(expect.objectContaining({ projectPackageType: ProjectPackageType.Nuget }));
+    });
+
+    it('should stop an active func host before initializing NuGet VS Code files', async () => {
+      const events: string[] = [];
+      const workspaceFolder = { uri: { fsPath: mockTarget.fsPath } } as vscode.WorkspaceFolder;
+      vi.mocked(getContainingWorkspaceFolder).mockReturnValue(workspaceFolder);
+      vi.mocked(stopFuncTaskForWorkspace).mockImplementation(async () => {
+        events.push('stop-func');
+        return true;
+      });
+      initDotnetExecute.mockImplementation(async () => {
+        events.push('init-vscode');
+      });
+
+      await switchToDotnetProject(mockContext, mockTarget);
+
+      expect(stopFuncTaskForWorkspace).toHaveBeenCalledWith(workspaceFolder);
+      expect(events).toEqual(['stop-func', 'init-vscode']);
     });
   });
 

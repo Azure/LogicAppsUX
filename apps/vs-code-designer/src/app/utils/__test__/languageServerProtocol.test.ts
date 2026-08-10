@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, lspDirectory } from '../../../constants';
+import { defaultDependencyPathValue, lspDirectory } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { ensureRuntimeDependenciesDir } from '../binaries';
 import { formatLockedFileError, installLSPSDK } from '../languageServerProtocol';
 import path from 'path';
 import { createHash } from 'crypto';
@@ -45,6 +46,9 @@ vi.mock('../vsCodeConfig/settings', () => ({
   updateGlobalSetting: mocks.updateGlobalSetting,
 }));
 
+vi.mock('../binaries', () => ({
+  ensureRuntimeDependenciesDir: vi.fn(async () => 'D:\\runtime-dependencies'),
+}));
 vi.mock('../../../extensionVariables', () => ({
   ext: {
     languageClient: undefined,
@@ -133,7 +137,7 @@ describe('installLSPSDK', () => {
 
     await installLSPSDK();
 
-    expect(mocks.ensureDir).toHaveBeenCalledWith(targetDirectory);
+    expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(mocks.admZip).toHaveBeenCalledWith(expect.stringContaining('LSPServer.zip'));
     expect(mocks.extractAllTo).toHaveBeenCalledWith(targetDirectory, true, true);
     expect(mocks.ensureDir).toHaveBeenCalledWith(sdkDirectoryPath);
@@ -143,13 +147,13 @@ describe('installLSPSDK', () => {
   });
 
   it('defaults the dependencies path before extracting LSP assets when the setting is unset', async () => {
-    mocks.getGlobalSetting.mockReturnValue(undefined);
+    vi.mocked(ensureRuntimeDependenciesDir).mockResolvedValue(defaultDependencyPathValue);
+    const defaultLspServerPath = path.join(defaultDependencyPathValue, 'LSPServer');
     setExistingPaths([]);
 
     await installLSPSDK();
 
-    expect(mocks.updateGlobalSetting).toHaveBeenCalledWith(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
-    expect(mocks.ensureDir).toHaveBeenCalledWith(defaultDependencyPathValue);
+    expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(mocks.extractAllTo).toHaveBeenCalledWith(defaultDependencyPathValue, true, true);
   });
 
@@ -187,8 +191,7 @@ describe('installLSPSDK', () => {
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
     expect(mocks.copyFile).not.toHaveBeenCalled();
     expect(mocks.writeFile).not.toHaveBeenCalled();
-    expect(mocks.ensureDir).toHaveBeenCalledTimes(1);
-    expect(mocks.ensureDir).toHaveBeenCalledWith(targetDirectory);
+    expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
   });
 
   it('copies the SDK when the marker is current but the installed same-version package is stale', async () => {

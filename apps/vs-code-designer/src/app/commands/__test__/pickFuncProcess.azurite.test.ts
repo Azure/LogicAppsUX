@@ -24,41 +24,29 @@ const { UserCancelledErrorMock } = vi.hoisted(() => ({
 
 vi.mock('@microsoft/vscode-azext-utils', () => {
   return {
+    UserCancelledError: UserCancelledErrorMock,
     callWithTelemetryAndErrorHandling: vi.fn(async (_callbackId: string, callback: (context: any) => Promise<unknown>) => {
       const context = {
         telemetry: {
           properties: {},
           measurements: {},
         },
-        errorHandling: {} as { suppressDisplay?: boolean; rethrow?: boolean },
+        errorHandling: { suppressDisplay: true, rethrow: true, issueProperties: {} } as {
+          suppressDisplay?: boolean;
+          rethrow?: boolean;
+          issueProperties?: Record<string, unknown>;
+        },
         ui: {
           showWarningMessage: vi.fn(async (message: string) => {
             capturedMessages.push(message);
             return undefined;
           }),
         },
+        valuesToMask: [],
       };
       telemetryContexts.push(context);
-      try {
-        return await callback(context);
-      } catch (error) {
-        // Mirror the real library: a cancellation is never displayed AND never rethrown, whatever
-        // the callback asked for -- `handleError` force-sets both knobs. That force-swallow is
-        // exactly why the product must re-raise cancellations outside this scope rather than
-        // relying on `rethrow`.
-        if (error instanceof UserCancelledErrorMock) {
-          return undefined;
-        }
-        if (!context.errorHandling.suppressDisplay) {
-          capturedMessages.push(error instanceof Error ? error.message : String(error));
-        }
-        if (context.errorHandling.rethrow) {
-          throw error;
-        }
-        return undefined;
-      }
+      return await callback(context);
     }),
-    UserCancelledError: UserCancelledErrorMock,
   };
 });
 
@@ -119,7 +107,7 @@ describe('pickFuncProcess Azurite startup', () => {
     // not duplicated -- `errorHandling` is allocated fresh per scope, so dropping it would show and
     // log the same message twice. Asserted separately from the message array so a regression in
     // either knob produces a readable diff instead of a bare "expected [] to equal [...]".
-    expect(telemetryContexts[0].errorHandling).toEqual({ suppressDisplay: true, rethrow: true });
+    expect(telemetryContexts[0].errorHandling).toEqual({ suppressDisplay: true, rethrow: true, issueProperties: {} });
     expect(capturedMessages).toEqual([]);
     expect(capturedMessages).not.toContain(azuriteTimeoutMessage);
     expect(activateAzurite).toHaveBeenCalledWith(telemetryContexts[0], projectPath);
