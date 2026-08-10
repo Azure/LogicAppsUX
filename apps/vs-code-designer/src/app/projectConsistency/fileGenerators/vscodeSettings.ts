@@ -38,16 +38,16 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
   if (projectPackageType === ProjectPackageType.Nuget) {
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     return {
-      ...baseSettings,
       [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
+      ...baseSettings,
       [`${ext.prefix}.${preDeployTaskSetting}`]: 'publish',
     };
   }
 
   if (projectType === ProjectType.logicApp) {
     return {
-      ...baseSettings,
       [`${ext.prefix}.${deploySubpathSetting}`]: '.',
+      ...baseSettings,
     };
   }
 
