@@ -101,14 +101,20 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(writeCall).toBeDefined();
       const settingsData = writeCall![1] as Record<string, any>;
 
-      // Verify settings content
-      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectLanguage', 'JavaScript');
-      expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectRuntime', '~4');
-      expect(settingsData).toHaveProperty('debug.internalConsoleOptions', 'neverOpen');
-      expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
-      expect(settingsData).toHaveProperty('azureLogicAppsStandard.deploySubpath', '.');
-      // Verify exactly 5 properties, no more
-      expect(Object.keys(settingsData)).toHaveLength(5);
+      expect(settingsData).toEqual({
+        'azureLogicAppsStandard.deploySubpath': '.',
+        'azureLogicAppsStandard.projectLanguage': 'JavaScript',
+        'azureLogicAppsStandard.projectRuntime': '~4',
+        'debug.internalConsoleOptions': 'neverOpen',
+        'azureFunctions.suppressProject': true,
+      });
+      expect(Object.keys(settingsData)).toEqual([
+        'azureLogicAppsStandard.deploySubpath',
+        'azureLogicAppsStandard.projectLanguage',
+        'azureLogicAppsStandard.projectRuntime',
+        'debug.internalConsoleOptions',
+        'azureFunctions.suppressProject',
+      ]);
     });
 
     it('should create settings.json without deploySubpath for net8 custom code project', async () => {

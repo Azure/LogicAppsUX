@@ -105,6 +105,9 @@ export async function activate(context: vscode.ExtensionContext) {
       await logSubscriptions(actionContext);
     });
 
+    activateContext.telemetry.properties.lastStep = 'registerCommands';
+    registerCommands();
+
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
       await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
@@ -199,9 +202,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
-
-    activateContext.telemetry.properties.lastStep = 'registerCommands';
-    registerCommands();
 
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();

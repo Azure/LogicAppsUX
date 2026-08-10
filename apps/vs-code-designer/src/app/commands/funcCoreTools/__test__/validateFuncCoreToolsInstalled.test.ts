@@ -4,6 +4,14 @@ import { useBinariesDependencies } from '../../../utils/binaries';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
 import { ensureFuncCoreToolsCommandExecutablePermissions } from '../../../utils/funcCoreTools/funcVersion';
+import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
+import { installFuncCoreToolsBinaries, isFuncCoreToolsInstallInFlight, waitForFuncCoreToolsInstall } from '../installFuncCoreTools';
+import { ext } from '../../../../extensionVariables';
+
+const testState = vi.hoisted(() => ({
+  telemetryContexts: [] as Array<{ callbackId: string; context: any }>,
+  showWarningMessage: vi.fn(),
+}));
 
 vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
@@ -35,21 +43,42 @@ vi.mock('../../../utils/funcCoreTools/getFuncPackageManagers', () => ({
 vi.mock('../installFuncCoreTools', () => ({
   installFuncCoreToolsBinaries: vi.fn(),
   installFuncCoreToolsSystem: vi.fn(),
+  isFuncCoreToolsInstallInFlight: vi.fn(() => false),
+  waitForFuncCoreToolsInstall: vi.fn(() => Promise.resolve()),
+}));
+vi.mock('../../../../extensionVariables', () => ({
+  ext: {
+    outputChannel: {
+      appendLog: vi.fn(),
+      show: vi.fn(),
+    },
+  },
 }));
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   callWithTelemetryAndErrorHandling: vi.fn(async (cmd, callback) => {
-    return await callback({
+    const context = {
       telemetry: { properties: {}, measurements: {} },
-      errorHandling: { suppressDisplay: true },
+      errorHandling: { suppressDisplay: false, rethrow: false },
       ui: {
-        showWarningMessage: vi.fn(() => Promise.resolve({ title: 'Cancel' })),
+        showWarningMessage: (...args: unknown[]) => testState.showWarningMessage(...args),
       },
       valuesToMask: [],
-    });
+    };
+    testState.telemetryContexts.push({ callbackId: cmd, context });
+    try {
+      return await callback(context);
+    } catch (error) {
+      if (context.errorHandling.rethrow) {
+        throw error;
+      }
+      return undefined;
+    }
   }),
   DialogResponses: {
     cancel: { title: 'Cancel' },
+    learnMore: { title: 'Learn more' },
   },
+  openUrl: vi.fn(),
 }));
 
 describe('validateFuncCoreToolsInstalled', () => {
@@ -57,6 +86,8 @@ describe('validateFuncCoreToolsInstalled', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    testState.telemetryContexts.length = 0;
+    testState.showWarningMessage.mockResolvedValue({ title: 'Cancel' });
     mockContext = {
       telemetry: { properties: {}, measurements: {} },
       errorHandling: {},
@@ -67,7 +98,13 @@ describe('validateFuncCoreToolsInstalled', () => {
     };
     vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
     vi.mocked(executeCommand).mockRejectedValue(new Error('not installed'));
+    vi.mocked(isFuncCoreToolsInstallInFlight).mockReturnValue(false);
+    vi.mocked(waitForFuncCoreToolsInstall).mockResolvedValue(undefined);
   });
+
+  function getTelemetryContext(callbackId: string): any {
+    return testState.telemetryContexts.find((entry) => entry.callbackId === callbackId)?.context;
+  }
 
   describe('devContainer workspace', () => {
     it('should skip binaries validation in devContainer workspace', async () => {
@@ -101,7 +138,7 @@ describe('validateFuncCoreToolsInstalled', () => {
 
       await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
 
-      expect(executeCommand).toHaveBeenCalledWith(undefined, undefined, 'func', '--version');
+      expect(executeCommand).toHaveBeenCalledWith(undefined, undefined, 'func', '--version', { timeoutMs: expect.any(Number) });
       expect(ensureFuncCoreToolsCommandExecutablePermissions).toHaveBeenCalledWith('func');
     });
 
@@ -113,6 +150,126 @@ describe('validateFuncCoreToolsInstalled', () => {
       await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
 
       expect(executeCommand).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('managed FuncCoreTools auto-repair', () => {
+    it('reinstalls and returns true when a provisioned-but-unrunnable func self-heals', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      // First `func --version` fails (exists but won't run); after the silent reinstall it runs.
+      vi.mocked(executeCommand).mockRejectedValueOnce(new Error('not runnable')).mockResolvedValue('4.12.0');
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+      const repairContext = getTelemetryContext('azureLogicAppsStandard.repairFuncCoreTools');
+      expect(repairContext.errorHandling.rethrow).toBe(true);
+      expect(repairContext.errorHandling.suppressDisplay).toBe(true);
+      expect(repairContext.telemetry.properties.funcRepairAttempted).toBe('true');
+      expect(repairContext.telemetry.properties.funcRepairSucceeded).toBe('true');
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledWith(repairContext);
+      expect(ext.outputChannel.show).not.toHaveBeenCalled();
+    });
+
+    it('falls back to the install prompt when the repair still cannot run func', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      // func never runs, even after reinstall.
+      vi.mocked(executeCommand).mockRejectedValue(new Error('not runnable'));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows the output channel only when the user chooses the interactive install', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(executeCommand).mockRejectedValue(new Error('not runnable'));
+      vi.mocked(installFuncCoreToolsBinaries)
+        .mockRejectedValueOnce(new Error('repair download failed'))
+        .mockRejectedValueOnce(new Error('interactive install failed'));
+      testState.showWarningMessage
+        .mockImplementationOnce((_message, _options, ...items) => Promise.resolve(items[0]))
+        .mockImplementationOnce((_message, ...items) => Promise.resolve(items[0]));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(2);
+      expect(ext.outputChannel.show).toHaveBeenCalledTimes(1);
+      expect(testState.showWarningMessage).toHaveBeenCalledTimes(2);
+      expect(testState.showWarningMessage.mock.calls[1][0]).toContain('Please try again, or manually install Azure Functions Core Tools');
+    });
+
+    it('falls back to the install prompt when the silent reinstall itself throws', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(executeCommand).mockRejectedValue(new Error('not runnable'));
+      vi.mocked(installFuncCoreToolsBinaries).mockRejectedValueOnce(new Error('download failed'));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+    });
+
+    it('waits for an install that is already running instead of starting a second one', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(isFuncCoreToolsInstallInFlight).mockReturnValue(true);
+      // func can't run while the other install is mid-extract, then works once it finishes.
+      vi.mocked(executeCommand).mockRejectedValueOnce(new Error('not runnable')).mockResolvedValue('4.12.0');
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(waitForFuncCoreToolsInstall).toHaveBeenCalledTimes(1);
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
+    });
+
+    it('falls back to the install prompt when the already-running install leaves func unrunnable', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      vi.mocked(isFuncCoreToolsInstallInFlight).mockReturnValue(true);
+      vi.mocked(executeCommand).mockRejectedValue(new Error('not runnable'));
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(false);
+
+      expect(waitForFuncCoreToolsInstall).toHaveBeenCalledTimes(1);
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
+    });
+    it('repairs when the func probe hangs instead of failing fast', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(ensureFuncCoreToolsCommandExecutablePermissions).mockReturnValue(true);
+      // A corrupt binary can hang rather than exit. The probe is bounded so that surfaces as a
+      // rejection and the repair still runs, instead of stalling F5 with no feedback at all.
+      vi.mocked(executeCommand)
+        .mockRejectedValueOnce(new Error('Command "func --version" did not complete within 60000 ms and was terminated.'))
+        .mockResolvedValue('4.12.0');
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(installFuncCoreToolsBinaries).toHaveBeenCalledTimes(1);
+      const options = vi.mocked(executeCommand).mock.calls[0][4];
+      expect(options).toMatchObject({ timeoutMs: expect.any(Number) });
+    });
+  });
+
+  describe('validateFuncCoreTools setting', () => {
+    it('skips validation entirely when the validateFuncCoreTools setting is disabled', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(getWorkspaceSetting).mockReturnValueOnce(false);
+
+      await expect(validateFuncCoreToolsInstalled(mockContext, 'test message', 'projectPath')).resolves.toBe(true);
+
+      expect(executeCommand).not.toHaveBeenCalled();
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
     });
   });
 

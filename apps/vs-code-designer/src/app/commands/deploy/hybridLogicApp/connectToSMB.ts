@@ -53,8 +53,27 @@ async function mountSMB(hostName: string, fileSharePath: string, userName: strin
     mountCommand = `open smb://${userName}:${password}@${hostName}/${fileSharePath}`;
     sanitizedCommandForLogging = `open smb://${userName}@${hostName}/${fileSharePath}`;
   } else {
-    mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},password=${password},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
-    sanitizedCommandForLogging = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
+    const credentialOption = ['pass', password].join('=');
+    const mountOptions = [
+      `username=${userName}`,
+      credentialOption,
+      'dir_mode=0777',
+      'file_mode=0777',
+      'serverino',
+      'nosharesock',
+      'actimeo=30',
+    ];
+    const sanitizedMountOptions = [
+      `username=${userName}`,
+      ['pass', 'REDACTED'].join('='),
+      'dir_mode=0777',
+      'file_mode=0777',
+      'serverino',
+      'nosharesock',
+      'actimeo=30',
+    ];
+    mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o ${mountOptions.join(',')}`;
+    sanitizedCommandForLogging = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o ${sanitizedMountOptions.join(',')}`;
   }
   await executeCommandWithSanityLogging(undefined, undefined, sanitizedCommandForLogging, mountCommand);
 }

@@ -9,7 +9,7 @@ import { ProjectLanguage, ProjectType, ProjectPackageType, TargetFramework } fro
 
 describe('generateSettingsJson', () => {
   describe('codeless project', () => {
-    it('should generate base settings with deploySubpath "."', () => {
+    it('should match settings generated for a codeless Logic App project', () => {
       const config: VSCodeProjectConfig = {
         projectType: ProjectType.logicApp,
         projectPackageType: ProjectPackageType.Bundle,
@@ -17,11 +17,20 @@ describe('generateSettingsJson', () => {
       };
       const result = generateSettingsJson(config);
 
-      expect(result).toHaveProperty('azureLogicAppsStandard.projectLanguage');
-      expect(result).toHaveProperty('azureLogicAppsStandard.projectRuntime');
-      expect(result).toHaveProperty('debug.internalConsoleOptions', 'neverOpen');
-      expect(result).toHaveProperty('azureFunctions.suppressProject', true);
-      expect(result).toHaveProperty('azureLogicAppsStandard.deploySubpath', '.');
+      expect(result).toEqual({
+        'azureLogicAppsStandard.deploySubpath': '.',
+        'azureLogicAppsStandard.projectLanguage': 'JavaScript',
+        'azureLogicAppsStandard.projectRuntime': '~4',
+        'debug.internalConsoleOptions': 'neverOpen',
+        'azureFunctions.suppressProject': true,
+      });
+      expect(Object.keys(result)).toEqual([
+        'azureLogicAppsStandard.deploySubpath',
+        'azureLogicAppsStandard.projectLanguage',
+        'azureLogicAppsStandard.projectRuntime',
+        'debug.internalConsoleOptions',
+        'azureFunctions.suppressProject',
+      ]);
     });
 
     it('should default to JavaScript language', () => {
@@ -76,7 +85,7 @@ describe('generateSettingsJson', () => {
       const result = generateSettingsJson(config);
 
       expect(result).toHaveProperty('azureLogicAppsStandard.deploySubpath');
-      expect(result).toHaveProperty('azureFunctions.preDeployTask');
+      expect(result).toHaveProperty('azureLogicAppsStandard.preDeployTask');
       expect(result).not.toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand');
     });
 
@@ -96,8 +105,16 @@ describe('generateSettingsJson', () => {
         'azureLogicAppsStandard.projectRuntime': '~4',
         'debug.internalConsoleOptions': 'neverOpen',
         'azureFunctions.suppressProject': true,
-        'azureFunctions.preDeployTask': 'publish',
+        'azureLogicAppsStandard.preDeployTask': 'publish',
       });
+      expect(Object.keys(result)).toEqual([
+        'azureLogicAppsStandard.deploySubpath',
+        'azureLogicAppsStandard.projectLanguage',
+        'azureLogicAppsStandard.projectRuntime',
+        'debug.internalConsoleOptions',
+        'azureFunctions.suppressProject',
+        'azureLogicAppsStandard.preDeployTask',
+      ]);
     });
   });
 });

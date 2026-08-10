@@ -103,14 +103,17 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setDotNetCommand();
           }),
-          callWithTelemetryAndErrorHandling('validateAndInstallBinaries.ensureSdkLanguageServer', async (_actionContext: IActionContext) => {
-            _actionContext.errorHandling.rethrow = true;
-            _actionContext.errorHandling.suppressDisplay = true;
-            progress.report({ increment: 10, message: 'SDK LSP Server' });
-            await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeoutMs);
-            // TODO(aeldridge): Why is setDotNetCommand called here?
-            await setDotNetCommand();
-          }),
+          callWithTelemetryAndErrorHandling(
+            'validateAndInstallBinaries.ensureSdkLanguageServer',
+            async (_actionContext: IActionContext) => {
+              _actionContext.errorHandling.rethrow = true;
+              _actionContext.errorHandling.suppressDisplay = true;
+              progress.report({ increment: 10, message: 'SDK LSP Server' });
+              await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeoutMs);
+              // TODO(aeldridge): Why is setDotNetCommand called here?
+              await setDotNetCommand();
+            }
+          ),
         ];
 
         const results = await Promise.allSettled(ensureDependencyTasks);
@@ -127,7 +130,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         // than let func.exe spawn against a missing/corrupt bundle.
         context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
         progress.report({ increment: 5, message: 'Extension Bundle' });
-        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation });
+        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation, forceRecheck: true });
 
         // Only advance the throttle window when we actually performed the update checks and the
         // whole pass succeeded, so a failed or skipped run still retries on the next activation.
