@@ -17,7 +17,7 @@ vi.mock('../../../../localize', () => ({
 
 import { EventEmitter } from 'events';
 import * as cp from 'child_process';
-import { executeCommandWithTimeout, tryExecuteCommand } from '../cpUtils';
+import { executeCommand, tryExecuteCommand } from '../cpUtils';
 
 class FakeChildProcess extends EventEmitter {
   public stdout = new EventEmitter();
@@ -49,12 +49,12 @@ describe('cpUtils', () => {
     setPlatform(originalPlatform);
   });
 
-  describe('executeCommandWithTimeout', () => {
+  describe('executeCommand options', () => {
     it('rejects and kills the whole tree on Windows when the command never exits', async () => {
       setPlatform('win32');
-      const child = spawnFake();
+      spawnFake();
 
-      const promise = executeCommandWithTimeout(undefined, undefined, 5000, 'func', '--version');
+      const promise = executeCommand(undefined, undefined, 'func', '--version', { timeoutMs: 5000 });
       const rejection = expect(promise).rejects.toThrow(/did not complete within 5000 ms/);
       await vi.advanceTimersByTimeAsync(5000);
       await rejection;
@@ -68,7 +68,7 @@ describe('cpUtils', () => {
       setPlatform('linux');
       const child = spawnFake();
 
-      const promise = executeCommandWithTimeout(undefined, undefined, 5000, 'func', '--version');
+      const promise = executeCommand(undefined, undefined, 'func', '--version', { timeoutMs: 5000 });
       const rejection = expect(promise).rejects.toThrow(/did not complete within 5000 ms/);
       await vi.advanceTimersByTimeAsync(5000);
       await rejection;
@@ -81,7 +81,7 @@ describe('cpUtils', () => {
       setPlatform('linux');
       const child = spawnFake();
 
-      const promise = executeCommandWithTimeout(undefined, undefined, 5000, 'func', '--version');
+      const promise = executeCommand(undefined, undefined, 'func', '--version', { timeoutMs: 5000 });
       child.stdout.emit('data', '4.12.0');
       child.emit('close', 0);
 
@@ -96,11 +96,45 @@ describe('cpUtils', () => {
       setPlatform('linux');
       const child = spawnFake();
 
-      const promise = executeCommandWithTimeout(undefined, undefined, 5000, 'func', '--version');
+      const promise = executeCommand(undefined, undefined, 'func', '--version', { timeoutMs: 5000 });
       child.stderr.emit('data', 'not a valid application');
       child.emit('close', 1);
 
       await expect(promise).rejects.toThrow(/not a valid application/);
+    });
+
+    it('strips command options before spawning the command', async () => {
+      setPlatform('linux');
+      const child = spawnFake();
+
+      const promise = executeCommand(undefined, undefined, 'func', '--version', { timeoutMs: 5000 });
+      child.stdout.emit('data', '4.12.0');
+      child.emit('close', 0);
+
+      await expect(promise).resolves.toContain('4.12.0');
+      expect(cp.spawn).toHaveBeenCalledWith('func', ['--version'], expect.objectContaining({ shell: true }));
+    });
+
+    it('uses sanitized command text when reporting command failures', async () => {
+      setPlatform('linux');
+      const child = spawnFake();
+
+      const promise = executeCommand(undefined, undefined, 'run-secret password', {
+        sanitizedCommandForLogging: 'run-secret ******',
+      });
+      child.stderr.emit('data', 'failed');
+      child.emit('close', 1);
+
+      let error: unknown;
+      try {
+        await promise;
+      } catch (caughtError) {
+        error = caughtError;
+      }
+
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toContain('run-secret ******');
+      expect((error as Error).message).not.toContain('password');
     });
   });
 

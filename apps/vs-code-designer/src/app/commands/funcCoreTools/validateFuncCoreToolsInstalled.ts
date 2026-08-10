@@ -5,7 +5,7 @@
 import { type PackageManager, funcVersionSetting, validateFuncCoreToolsSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { useBinariesDependencies } from '../../utils/binaries';
-import { executeCommandWithTimeout } from '../../utils/funcCoreTools/cpUtils';
+import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import {
   ensureFuncCoreToolsCommandExecutablePermissions,
   getFunctionsCommand,
@@ -76,7 +76,7 @@ async function isFuncToolsInstalled(): Promise<boolean> {
   }
 
   try {
-    await executeCommandWithTimeout(undefined, undefined, funcVersionProbeTimeoutMs, funcCommand, '--version');
+    await executeCommand(undefined, undefined, funcCommand, '--version', { timeoutMs: funcVersionProbeTimeoutMs });
     return true;
   } catch (error) {
     // A binary that hangs is as unusable as one that errors, and both mean the managed copy needs
@@ -207,7 +207,10 @@ async function validateFuncCoreToolsInstalledSystem(
 async function showManualFuncCoreToolsInstallPrompt(context: IActionContext): Promise<void> {
   if (
     (await context.ui.showWarningMessage(
-      localize('failedInstallFuncTools', 'The Azure Functions Core Tools installion has failed and will have to be installed manually.'),
+      localize(
+        'failedInstallFuncTools',
+        'The Azure Functions Core Tools installation failed. Please try again, or manually install Azure Functions Core Tools.'
+      ),
       DialogResponses.learnMore
     )) === DialogResponses.learnMore
   ) {

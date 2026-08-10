@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { executeCommandWithSanityLogging } from '../../../utils/funcCoreTools/cpUtils';
+import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
 import { localize } from '../../../../localize';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../extensionVariables';
@@ -56,7 +56,7 @@ async function mountSMB(hostName: string, fileSharePath: string, userName: strin
     mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},password=${password},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
     sanitizedCommandForLogging = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
   }
-  await executeCommandWithSanityLogging(undefined, undefined, sanitizedCommandForLogging, mountCommand);
+  await executeCommand(undefined, undefined, mountCommand, { sanitizedCommandForLogging });
 }
 
 async function uploadFiles(files: File[], smbFolderPath: string): Promise<void> {

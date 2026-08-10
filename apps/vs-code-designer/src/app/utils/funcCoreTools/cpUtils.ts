@@ -9,58 +9,33 @@ import { Platform, type ICommandResult } from '@microsoft/vscode-extension-logic
 import * as cp from 'child_process';
 import * as os from 'os';
 
+export interface ExecuteCommandOptions {
+  sanitizedCommandForLogging?: string;
+  timeoutMs?: number;
+}
+
+type ExecuteCommandArgument = string | ExecuteCommandOptions;
+
 export async function executeCommand(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
-  ...args: string[]
+  ...args: ExecuteCommandArgument[]
 ): Promise<string> {
-  return executeCommandInternal(outputChannel, workingDirectory, undefined, undefined, command, ...args);
-}
-
-export async function executeCommandWithSanityLogging(
-  outputChannel: IAzExtOutputChannel | undefined,
-  workingDirectory: string | undefined,
-  sanitizedCommandForLogging: string,
-  command: string,
-  ...args: string[]
-): Promise<string> {
-  return executeCommandInternal(outputChannel, workingDirectory, sanitizedCommandForLogging, undefined, command, ...args);
-}
-
-/**
- * Runs a command that must not be allowed to run forever, killing it once it outlives `timeoutMs`.
- * The default execution helpers only settle on 'close'/'error', so a binary that hangs instead of
- * exiting stalls its caller indefinitely and keeps its file handles open. Use this for probes that
- * sit on an interactive path, where a hang is worse than a failure.
- * @param {IAzExtOutputChannel | undefined} outputChannel - Output channel to stream the command output to.
- * @param {string | undefined} workingDirectory - Directory to run the command from.
- * @param {number} timeoutMs - Milliseconds to wait before killing the command.
- * @param {string} command - Command to run.
- * @param {string[]} args - Command arguments.
- * @returns {Promise<string>} The command output, or a rejection when it fails or times out.
- */
-export async function executeCommandWithTimeout(
-  outputChannel: IAzExtOutputChannel | undefined,
-  workingDirectory: string | undefined,
-  timeoutMs: number,
-  command: string,
-  ...args: string[]
-): Promise<string> {
-  return executeCommandInternal(outputChannel, workingDirectory, undefined, timeoutMs, command, ...args);
+  const { commandArgs, options } = parseExecuteCommandArgs(args);
+  return executeCommandInternal(outputChannel, workingDirectory, options, command, ...commandArgs);
 }
 
 async function executeCommandInternal(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
-  sanitizedCommandForLogging: string | undefined,
-  timeoutMs: number | undefined,
+  options: ExecuteCommandOptions,
   command: string,
   ...args: string[]
 ): Promise<string> {
-  const result: ICommandResult = await tryExecuteCommandInternal(outputChannel, workingDirectory, timeoutMs, command, ...args);
+  const result: ICommandResult = await tryExecuteCommandInternal(outputChannel, workingDirectory, options, command, ...args);
 
-  const commandForLogging = sanitizedCommandForLogging ?? `${command} ${result.formattedArgs}`;
+  const commandForLogging = options.sanitizedCommandForLogging ?? `${command} ${result.formattedArgs}`;
   if (result.code !== 0) {
     // We want to make sure the full error message is displayed to the user, not just the error code.
     // If outputChannel is defined, then we simply call 'outputChannel.show()' and throw a generic error telling the user to check the output window
@@ -92,9 +67,30 @@ export async function tryExecuteCommand(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
-  ...args: string[]
+  ...args: ExecuteCommandArgument[]
 ): Promise<ICommandResult> {
-  return await tryExecuteCommandInternal(outputChannel, workingDirectory, undefined, command, ...args);
+  const { commandArgs, options } = parseExecuteCommandArgs(args);
+  return await tryExecuteCommandInternal(outputChannel, workingDirectory, options, command, ...commandArgs);
+}
+
+function parseExecuteCommandArgs(args: ExecuteCommandArgument[]): { commandArgs: string[]; options: ExecuteCommandOptions } {
+  const maybeOptions = args[args.length - 1];
+  const options = isExecuteCommandOptions(maybeOptions) ? maybeOptions : {};
+  const commandArgValues = isExecuteCommandOptions(maybeOptions) ? args.slice(0, -1) : args;
+  const commandArgs: string[] = [];
+
+  for (const arg of commandArgValues) {
+    if (!isString(arg)) {
+      throw new Error(localize('invalidCommandArgument', 'Command arguments must be strings.'));
+    }
+    commandArgs.push(arg);
+  }
+
+  return { commandArgs, options };
+}
+
+function isExecuteCommandOptions(arg: ExecuteCommandArgument | undefined): arg is ExecuteCommandOptions {
+  return typeof arg === 'object' && arg !== null && !Array.isArray(arg);
 }
 
 /**
@@ -118,7 +114,7 @@ function killProcessTree(childProc: cp.ChildProcess): void {
 async function tryExecuteCommandInternal(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
-  timeoutMs: number | undefined,
+  options: ExecuteCommandOptions,
   command: string,
   ...args: string[]
 ): Promise<ICommandResult> {
@@ -126,32 +122,32 @@ async function tryExecuteCommandInternal(
     let cmdOutput = '';
     let cmdOutputIncludingStderr = '';
     const formattedArgs: string = args.join(' ');
+    const commandForLogging = options.sanitizedCommandForLogging ?? `${command} ${formattedArgs}`;
 
     workingDirectory = workingDirectory || os.tmpdir();
-    const options: cp.SpawnOptions = {
+    const spawnOptions: cp.SpawnOptions = {
       cwd: workingDirectory,
       shell: true,
     };
-    const childProc: cp.ChildProcess = cp.spawn(command, args, options);
+    const childProc: cp.ChildProcess = cp.spawn(command, args, spawnOptions);
 
     let timedOut = false;
     let timer: NodeJS.Timeout | undefined;
-    if (timeoutMs !== undefined) {
+    if (options.timeoutMs !== undefined) {
       timer = setTimeout(() => {
         timedOut = true;
         killProcessTree(childProc);
         reject(
           new Error(
             localize(
-              'commandTimedOut',
-              'Command "{0} {1}" did not complete within {2} ms and was terminated.',
-              command,
-              formattedArgs,
-              timeoutMs
+              'commandTimedOutWithOptions',
+              'Command "{0}" did not complete within {1} ms and was terminated.',
+              commandForLogging,
+              options.timeoutMs
             )
           )
         );
-      }, timeoutMs);
+      }, options.timeoutMs);
     }
 
     const settle = (): void => {
@@ -162,7 +158,7 @@ async function tryExecuteCommandInternal(
     };
 
     if (outputChannel && command !== 'echo') {
-      outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
+      outputChannel.appendLog(localize('runningCommandWithOptions', 'Running command: "{0}"...', commandForLogging));
     }
 
     childProc.stdout.on('data', (data: string | Buffer) => {
