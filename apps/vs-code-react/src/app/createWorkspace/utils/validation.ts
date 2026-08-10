@@ -67,10 +67,10 @@ export const getValidationRequirements = (flowType: string, logicAppType: string
     needsPackagePath: flowType === 'createWorkspaceFromPackage',
     needsWorkspacePath: flowType !== 'createLogicApp',
     needsWorkspaceName: flowType !== 'createLogicApp',
-    needsLogicAppType: flowType !== 'convertToWorkspace', // convertToWorkspace doesn't need logic app type
-    needsLogicAppName: flowType !== 'convertToWorkspace', // convertToWorkspace doesn't need logic app name
-    needsWorkflowFields: false, // convertToWorkspace only needs workspace path and name
-    needsFunctionFields: false, // convertToWorkspace doesn't need function fields
+    needsLogicAppType: flowType !== 'ensureWorkspace', // ensureWorkspace doesn't need logic app type
+    needsLogicAppName: flowType !== 'ensureWorkspace', // ensureWorkspace doesn't need logic app name
+    needsWorkflowFields: false, // ensureWorkspace only needs workspace path and name
+    needsFunctionFields: false, // ensureWorkspace doesn't need function fields
   };
 
   // Override for specific flow types that need more fields

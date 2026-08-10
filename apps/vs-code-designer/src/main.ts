@@ -1,30 +1,43 @@
 import './nodeUtilCompatibility';
 import { LogicAppResolver } from './LogicAppResolver';
-import { parameterizeConnectionsIfNeeded } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
+import {
+  promptStartDesignTimeOption,
+  scheduleStartAllDesignTimeApis,
+  stopAllDesignTimeApis,
+} from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
 import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
-import { extensionCommand, logicAppFilter } from './constants';
+import {
+  DependencyDefaultPath,
+  dotNetBinaryPathSettingKey,
+  extensionCommand,
+  extensionEvent,
+  extensionContext,
+  funcCoreToolsBinaryPathSettingKey,
+  logicAppFilter,
+  nodeJsBinaryPathSettingKey,
+  parameterizeConnectionsInProjectLoadSetting,
+} from './constants';
 import { ext } from './extensionVariables';
-import { startOnboarding } from './onboarding';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
+  DialogResponses,
   registerEvent,
   registerUIExtensionVariables,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { convertToWorkspace } from './app/commands/convertToWorkspace';
+import { ensureWorkspace } from './app/commands/ensureWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
@@ -35,13 +48,22 @@ import { startLanguageServer } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import { codefulProjectsExist } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
-import { promptManagedIdentityAuth } from './app/utils/managedIdentity';
+import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
-
-const perfStats = {
-  loadStartTime: Date.now(),
-  loadEndTime: undefined as number | undefined,
-};
+import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
+import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
+import { isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
+import {
+  isManagedIdentityAuthNotificationSuppressed,
+  isParameterizeConnectionsNotificationSuppressed,
+  suppressManagedIdentityAuthNotification,
+  suppressParameterizeConnectionsNotification,
+} from './app/state/notifications';
+import { useBinariesDependencies } from './app/utils/binaries';
+import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
+import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
+import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
+import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
 
 const telemetryString = 'setInGitHubBuild';
 
@@ -69,48 +91,66 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
+    activateContext.telemetry.properties.isActivationEvent = 'true';
     vscode.commands.executeCommand(
       'setContext',
-      extensionCommand.customCodeSetFunctionsFolders,
+      extensionContext.customCodeFunctionsFolders,
       await getAllCustomCodeFunctionsProjects(activateContext)
     );
 
-    activateContext.telemetry.properties.isActivationEvent = 'true';
+    // Workspace setup and consistency checks
     runPostExtractStepsFromCache();
-    callWithTelemetryAndErrorHandling(extensionCommand.logSubscriptions, async (actionContext: IActionContext) => {
+    callWithTelemetryAndErrorHandling('activate.logSubscriptions', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
       await logSubscriptions(actionContext);
     });
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      await convertToWorkspace(activateContext);
-    }
+      activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
+      await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        await ensureWorkspace(actionContext);
+      });
 
-    if (shouldRequireStrictDependencyValidation()) {
-      await downloadExtensionBundle(activateContext);
-    } else {
-      // Intentionally not awaited so activation stays snappy. Downstream code
-      // that depends on the extracted bundle (startDesignTimeApi) calls
-      // waitForExtensionBundleReady() to block on the in-flight work and avoid
-      // racing the re-extract — which on Windows can lock the bundle folder and
-      // leave the design-time host pointing at a half-extracted bundle.
-      downloadExtensionBundle(activateContext).catch((error) => {
-        ext.outputChannel?.appendLog(
-          localize(
-            'bundleDownloadFailed',
-            `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
-          )
-        );
+      activateContext.telemetry.properties.lastStep = 'parameterizeConnections';
+      callWithTelemetryAndErrorHandling('activate.parameterizeAllConnections', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        if (shouldParameterizeConnections() || (await promptShouldParameterizeConnections(actionContext))) {
+          await parameterizeAllConnections(actionContext);
+        }
+      });
+
+      const projectPaths = await getWorkspaceLogicAppRoots();
+
+      activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
+      const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
+        await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
+          actionContext.telemetry.properties.isActivationEvent = 'true';
+          await ensureProjectFiles(actionContext, projectPath);
+        });
+      });
+      await Promise.all(ensureProjectFilesTasks);
+
+      activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
+      callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        await ensureVSCodeFiles(actionContext, projectPaths);
       });
     }
-    parameterizeConnectionsIfNeeded(activateContext, false);
-    await startOnboarding(activateContext);
 
-    const hasCodefulProjects = await codefulProjectsExist();
-    if (hasCodefulProjects) {
-      startLanguageServer();
-    }
+    activateContext.telemetry.properties.lastStep = 'registerProjectConsistencyCheckEvent';
+    registerEvent(
+      extensionEvent.onDidChangeWorkspaceFolders,
+      vscode.workspace.onDidChangeWorkspaceFolders,
+      async (actionContext: IActionContext) => {
+        await runProjectConsistencyCheck(actionContext);
+      }
+    );
 
-    promptManagedIdentityAuth(activateContext).catch((error) => {
+    activateContext.telemetry.properties.lastStep = 'promptEnableManagedIdentityAuth';
+    promptEnableLocalManagedIdentityAuth().catch((error) => {
       ext.outputChannel?.appendLog(
         localize(
           'managedIdentityAuthPromptFailed',
@@ -118,6 +158,27 @@ export async function activate(context: vscode.ExtensionContext) {
         )
       );
     });
+
+    // Dependencies and environment setup
+    activateContext.telemetry.properties.lastStep = 'ensureExtensionBundle';
+    await ensureExtensionBundle();
+
+    activateContext.telemetry.properties.lastStep = 'isDevContainerWorkspace';
+    const isDevContainer = await isDevContainerWorkspace();
+    activateContext.telemetry.properties.isDevContainer = String(isDevContainer);
+
+    activateContext.telemetry.properties.lastStep = 'ensureBinaries';
+    await ensureBinaries(activateContext, isDevContainer);
+
+    // Start background processes (design-time func, codeful language server)
+    activateContext.telemetry.properties.lastStep = 'startDesignTime';
+    await startDesignTime(activateContext, isDevContainer);
+
+    activateContext.telemetry.properties.lastStep = 'startLanguageServer';
+    const hasCodefulProjects = await codefulProjectsExist();
+    if (hasCodefulProjects) {
+      startLanguageServer();
+    }
 
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
@@ -136,20 +197,6 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     }
 
-    activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
-    callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
-      await ensureVSCodeFiles(actionContext);
-    });
-
-    activateContext.telemetry.properties.lastStep = 'registerEvent';
-    registerEvent(
-      extensionCommand.validateLogicAppProjects,
-      vscode.workspace.onDidChangeWorkspaceFolders,
-      async (actionContext: IActionContext) => {
-        await ensureVSCodeFiles(actionContext);
-      }
-    );
-
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
 
@@ -164,11 +211,133 @@ export async function activate(context: vscode.ExtensionContext) {
     ext.rgApiV2 = azureResourcesApi;
 
     vscode.window.registerUriHandler(new UriHandler());
-    perfStats.loadEndTime = Date.now();
-    activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     logExtensionSettings(activateContext);
   });
+}
+
+async function promptShouldParameterizeConnections(context: IActionContext): Promise<boolean> {
+  if (isParameterizeConnectionsNotificationSuppressed()) {
+    return false;
+  }
+
+  const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads?');
+  const result = await vscode.window.showInformationMessage(
+    message,
+    DialogResponses.yes,
+    DialogResponses.no,
+    DialogResponses.dontWarnAgain
+  );
+  if (result === DialogResponses.yes) {
+    await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
+    context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
+    return true;
+  }
+
+  if (result === DialogResponses.dontWarnAgain) {
+    await suppressParameterizeConnectionsNotification();
+    context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'suppressed';
+  }
+
+  return false;
+}
+
+/**
+ * Shows a non-blocking information message on startup prompting the user to enable local managed identity
+ * authentication for local workflows. The notification is suppressed if:
+ * - The user has already enabled the setting.
+ * - The user previously selected "Don't show again".
+ */
+async function promptEnableLocalManagedIdentityAuth(): Promise<void> {
+  if (isManagedIdentityAuthNotificationSuppressed() || isManagedIdentityAuthEnabled()) {
+    return;
+  }
+
+  const enableButton = localize('enable', 'Enable');
+  const closeButton = localize('close', 'Close');
+  const dontShowAgain = localize('dontShowAgain', "Don't show again");
+  const message = localize('managedIdentityAuthAvailable', 'Managed identity authentication for local workflows is now supported.');
+
+  const selection = await vscode.window.showInformationMessage(message, enableButton, closeButton, dontShowAgain);
+
+  if (selection === enableButton) {
+    await callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      await enableLocalManagedIdentityAuth(actionContext);
+    });
+  } else if (selection === dontShowAgain) {
+    await suppressManagedIdentityAuthNotification();
+  }
+}
+
+async function ensureExtensionBundle(): Promise<void> {
+  if (shouldRequireStrictDependencyValidation()) {
+    await callWithTelemetryAndErrorHandling('activate.downloadExtensionBundle', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await downloadExtensionBundle(actionContext);
+    });
+  } else {
+    callWithTelemetryAndErrorHandling('activate.downloadExtensionBundle', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      await downloadExtensionBundle(actionContext).catch((error) => {
+        ext.outputChannel?.appendLog(
+          localize(
+            'bundleDownloadFailed',
+            `Background extension-bundle download failed: ${error instanceof Error ? error.message : String(error)}`
+          )
+        );
+      });
+    });
+  }
+}
+
+async function ensureBinaries(activateContext: IActionContext, isDevContainer: boolean): Promise<void> {
+  if (isDevContainer) {
+    activateContext.telemetry.properties.skippedDependencyOnboarding = 'true';
+    activateContext.telemetry.properties.skippedDependencyOnboardingReason = 'devContainer';
+    ext.outputChannel?.appendLog(
+      localize(
+        'devContainerDetected',
+        'Devcontainer workspace detected. Skipping dependency onboarding and auto-starting design time APIs.'
+      )
+    );
+  } else {
+    const useBinaries = await useBinariesDependencies();
+
+    if (useBinaries) {
+      await callWithTelemetryAndErrorHandling('activate.validateAndInstallBinaries', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        if (shouldRequireStrictDependencyValidation()) {
+          actionContext.errorHandling.rethrow = true;
+          actionContext.errorHandling.suppressDisplay = true;
+        }
+
+        await validateAndInstallBinaries(actionContext);
+      });
+
+      activateContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
+    } else {
+      await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+      await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+      await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+      activateContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
+    }
+  }
+}
+
+async function startDesignTime(activateContext: IActionContext, isDevContainer: boolean): Promise<void> {
+  if (isDevContainer) {
+    activateContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
+    activateContext.telemetry.properties.designTimeStartupState = 'scheduled';
+    ext.outputChannel?.appendLog(
+      localize('schedulingDesignTimeStartup', 'Scheduling background design-time startup for devcontainer workspace.')
+    );
+    scheduleStartAllDesignTimeApis();
+  } else {
+    await promptStartDesignTimeOption(activateContext);
+  }
 }
 
 export async function deactivate(): Promise<void> {

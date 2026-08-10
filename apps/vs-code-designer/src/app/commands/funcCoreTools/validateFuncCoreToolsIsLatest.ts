@@ -18,125 +18,121 @@ import { installFuncCoreToolsBinaries } from './installFuncCoreTools';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';
 import { updateFuncCoreTools } from './updateFuncCoreTools';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { callWithTelemetryAndErrorHandling, DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
-export async function validateFuncCoreToolsIsLatest(majorVersion?: string): Promise<void> {
+export async function validateFuncCoreToolsIsLatest(context: IActionContext, majorVersion?: string): Promise<void> {
   if (await useBinariesDependencies()) {
-    await validateFuncCoreToolsIsLatestBinaries(majorVersion);
+    await validateFuncCoreToolsIsLatestBinaries(context, majorVersion);
   } else {
-    await validateFuncCoreToolsIsLatestSystem();
+    await validateFuncCoreToolsIsLatestSystem(context);
   }
 }
 
-async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
-    context.errorHandling.suppressDisplay = true;
-    context.telemetry.properties.isActivationEvent = 'true';
+async function validateFuncCoreToolsIsLatestBinaries(context: IActionContext, majorVersion?: string): Promise<void> {
+  context.errorHandling.suppressDisplay = true;
+  context.telemetry.properties.isActivationEvent = 'true';
 
-    const binaries = await binariesExist(funcDependencyName);
-    context.telemetry.properties.binariesExist = `${binaries}`;
-    // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
-    // install (e.g. a removed Function Host DLL) forces a wipe + reinstall instead of failing at startup.
-    const integrityValid = binaries ? await verifyDependencyIntegrity(context, funcDependencyName) : false;
-    context.telemetry.properties.integrityValid = `${integrityValid}`;
+  const binaries = await binariesExist(funcDependencyName);
+  context.telemetry.properties.binariesExist = `${binaries}`;
+  // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
+  // install (e.g. a removed Function Host DLL) forces a wipe + reinstall instead of failing at startup.
+  const integrityValid = binaries ? await verifyDependencyIntegrity(context, funcDependencyName) : false;
+  context.telemetry.properties.integrityValid = `${integrityValid}`;
 
-    const hasValidBinaries = binaries && integrityValid;
-    const localVersion: string | null = hasValidBinaries ? await getLocalFuncCoreToolsVersion() : null;
-    context.telemetry.properties.localVersion = localVersion ?? 'null';
+  const hasValidBinaries = binaries && integrityValid;
+  const localVersion: string | null = hasValidBinaries ? await getLocalFuncCoreToolsVersion() : null;
+  context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-    // Throttle: only re-check the newest published version once per window (see
-    // shouldCheckForDependencyUpdates). Missing/corrupt binaries are still reinstalled below.
-    const shouldCheckForUpdate = hasValidBinaries && shouldCheckForDependencyUpdates();
-    const newestVersion: string | undefined = shouldCheckForUpdate
-      ? await getLatestFunctionCoreToolsVersion(context, majorVersion)
-      : undefined;
-    const isOutdated = hasValidBinaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
+  // Throttle: only re-check the newest published version once per window (see
+  // shouldCheckForDependencyUpdates). Missing/corrupt binaries are still reinstalled below.
+  const shouldCheckForUpdate = hasValidBinaries && shouldCheckForDependencyUpdates();
+  const newestVersion: string | undefined = shouldCheckForUpdate
+    ? await getLatestFunctionCoreToolsVersion(context, majorVersion)
+    : undefined;
+  const isOutdated = hasValidBinaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
 
-    const shouldInstall = !binaries || !integrityValid || localVersion === null || isOutdated;
+  const shouldInstall = !binaries || !integrityValid || localVersion === null || isOutdated;
 
-    if (shouldInstall) {
-      if (isOutdated) {
-        context.telemetry.properties.outOfDateFunc = 'true';
-        await stopAllDesignTimeApis();
-      }
-
-      await installFuncCoreToolsBinaries(context, majorVersion);
-      await startAllDesignTimeApis();
+  if (shouldInstall) {
+    if (isOutdated) {
+      context.telemetry.properties.outOfDateFunc = 'true';
+      await stopAllDesignTimeApis();
     }
 
-    context.telemetry.properties.binaryCommand = getFunctionsCommand();
-  });
+    await installFuncCoreToolsBinaries(context, majorVersion);
+    await startAllDesignTimeApis();
+  }
+
+  context.telemetry.properties.binaryCommand = getFunctionsCommand();
 }
 
-async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
-    context.errorHandling.suppressDisplay = true;
-    context.telemetry.properties.isActivationEvent = 'true';
+async function validateFuncCoreToolsIsLatestSystem(context: IActionContext): Promise<void> {
+  context.errorHandling.suppressDisplay = true;
+  context.telemetry.properties.isActivationEvent = 'true';
 
-    const showMultiCoreToolsWarningKey = 'showMultiCoreToolsWarning';
-    const showMultiCoreToolsWarning = !!getWorkspaceSetting<boolean>(showMultiCoreToolsWarningKey);
+  const showMultiCoreToolsWarningKey = 'showMultiCoreToolsWarning';
+  const showMultiCoreToolsWarning = !!getWorkspaceSetting<boolean>(showMultiCoreToolsWarningKey);
 
-    if (showMultiCoreToolsWarning) {
-      const packageManagers: PackageManager[] = await getFuncPackageManagers(true /* isFuncInstalled */);
-      let packageManager: PackageManager;
+  if (showMultiCoreToolsWarning) {
+    const packageManagers: PackageManager[] = await getFuncPackageManagers(true /* isFuncInstalled */);
+    let packageManager: PackageManager;
 
-      if (packageManagers.length === 0) {
-        return;
-      }
-      if (packageManagers.length === 1) {
-        packageManager = packageManagers[0];
-        context.telemetry.properties.packageManager = packageManager;
-      } else {
-        context.telemetry.properties.multiFunc = 'true';
-
-        if (showMultiCoreToolsWarning) {
-          const message: string = localize('multipleInstalls', 'Detected multiple installs of the func cli.');
-          const selectUninstall: MessageItem = { title: localize('selectUninstall', 'Select version to uninstall') };
-          const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
-
-          if (result === selectUninstall) {
-            await executeOnFunctions(uninstallFuncCoreTools, context, packageManagers);
-          } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showMultiCoreToolsWarningKey, false);
-          }
-        }
-
-        return;
-      }
-      const localVersion: string | null = await getLocalFuncCoreToolsVersion();
-      if (!localVersion) {
-        return;
-      }
-      context.telemetry.properties.localVersion = localVersion;
-
-      const versionFromSetting: FuncVersion | undefined = tryParseFuncVersion(localVersion);
-      if (versionFromSetting === undefined) {
-        return;
-      }
-
-      const newestVersion: string | undefined = await getNewestFunctionRuntimeVersion(packageManager, versionFromSetting, context);
-      if (!newestVersion) {
-        return;
-      }
-
-      if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
-        context.telemetry.properties.outOfDateFunc = 'true';
-        await stopAllDesignTimeApis();
-        await updateFuncCoreTools(context, packageManager, versionFromSetting);
-        await startAllDesignTimeApis();
-      }
+    if (packageManagers.length === 0) {
+      return;
     }
-  });
+    if (packageManagers.length === 1) {
+      packageManager = packageManagers[0];
+      context.telemetry.properties.packageManager = packageManager;
+    } else {
+      context.telemetry.properties.multiFunc = 'true';
+
+      if (showMultiCoreToolsWarning) {
+        const message: string = localize('multipleInstalls', 'Detected multiple installs of the func cli.');
+        const selectUninstall: MessageItem = { title: localize('selectUninstall', 'Select version to uninstall') };
+        const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
+
+        if (result === selectUninstall) {
+          await executeOnFunctions(uninstallFuncCoreTools, context, packageManagers);
+        } else if (result === DialogResponses.dontWarnAgain) {
+          await updateGlobalSetting(showMultiCoreToolsWarningKey, false);
+        }
+      }
+
+      return;
+    }
+    const localVersion: string | null = await getLocalFuncCoreToolsVersion();
+    if (!localVersion) {
+      return;
+    }
+    context.telemetry.properties.localVersion = localVersion;
+
+    const versionFromSetting: FuncVersion | undefined = tryParseFuncVersion(localVersion);
+    if (versionFromSetting === undefined) {
+      return;
+    }
+
+    const newestVersion: string | undefined = await getNewestFunctionRuntimeVersion(context, packageManager, versionFromSetting);
+    if (!newestVersion) {
+      return;
+    }
+
+    if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
+      context.telemetry.properties.outOfDateFunc = 'true';
+      await stopAllDesignTimeApis();
+      await updateFuncCoreTools(context, packageManager, versionFromSetting);
+      await startAllDesignTimeApis();
+    }
+  }
 }
 
 async function getNewestFunctionRuntimeVersion(
+  context: IActionContext,
   packageManager: PackageManager | undefined,
-  versionFromSetting: FuncVersion,
-  context: IActionContext
+  versionFromSetting: FuncVersion
 ): Promise<string | undefined> {
   try {
     if (packageManager === PackageManager.brew) {

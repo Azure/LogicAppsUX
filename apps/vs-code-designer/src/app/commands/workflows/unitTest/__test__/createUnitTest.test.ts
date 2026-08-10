@@ -10,7 +10,7 @@ import * as projectRootUtils from '../../../../utils/verifyIsProject';
 import * as unitTestUtils from '../../../../utils/unitTest/unitTest';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
-import * as ConvertWorkspace from '../../../convertToWorkspace';
+import * as EnsureWorkspace from '../../../ensureWorkspace';
 import * as syncCloudSettings from '../../../syncCloudSettings';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { testMockOutputsDirectory, testsDirectoryName } from '../../../../../constants';
@@ -68,7 +68,8 @@ describe('createUnitTest', () => {
 
   beforeEach(() => {
     dummyContext = {
-      telemetry: { properties: {} },
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { rethrow: false, suppressDisplay: false },
     } as IActionContext;
 
     vi.spyOn(workspaceUtils, 'getWorkspacePath').mockResolvedValue(dummyWorkspaceFolder.uri.fsPath);
@@ -85,11 +86,11 @@ describe('createUnitTest', () => {
     vi.spyOn(fs, 'ensureDir').mockResolvedValue();
 
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(true);
-    vi.spyOn(ConvertWorkspace, 'convertToWorkspace').mockResolvedValue(true);
+    vi.spyOn(EnsureWorkspace, 'ensureWorkspace').mockResolvedValue(true);
 
     vi.spyOn(azextUtils, 'callWithTelemetryAndErrorHandling').mockImplementation(async (eventName, callback) => {
-      // Directly call the callback passed in to simulate success
-      await callback(dummyContext);
+      // Directly call the callback passed in and return its result
+      return await callback(dummyContext);
     });
 
     vi.spyOn(unitTestUtils, 'createTestCsFile').mockResolvedValue();
@@ -107,7 +108,7 @@ describe('createUnitTest', () => {
   });
 
   test('should successfully create a unit test', async () => {
-    await createUnitTest(dummyNode, dummyUnitTestDefinition);
+    await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
     expect(dummyContext.telemetry.properties.unitTestSaveStatus).toBe('Success');
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(1);
@@ -121,9 +122,9 @@ describe('createUnitTest', () => {
 
   test('should not continue if not a valid workspace', async () => {
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(false);
-    vi.spyOn(ConvertWorkspace, 'convertToWorkspace').mockResolvedValue(false);
+    vi.spyOn(EnsureWorkspace, 'ensureWorkspace').mockResolvedValue(false);
 
-    await createUnitTest(dummyNode, dummyUnitTestDefinition);
+    await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
     expect(dummyContext.telemetry.properties.multiRootWorkspaceValid).toBe('false');
@@ -135,7 +136,7 @@ describe('createUnitTest', () => {
     const testError = new Error('Test error');
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockRejectedValueOnce(testError);
 
-    await createUnitTest(dummyNode, dummyUnitTestDefinition);
+    await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
     expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
     expect(dummyContext.telemetry.properties.result).toBe('Failed');

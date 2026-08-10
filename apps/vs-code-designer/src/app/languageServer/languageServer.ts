@@ -269,12 +269,12 @@ export default class LogicAppsLanguageServer {
   }
 }
 
-export const startLanguageServer = async () => {
+export async function startLanguageServer(): Promise<void> {
   await callWithTelemetryAndErrorHandling(onStartLanguageServer, async (context: IActionContext) => {
     const languageServer = new LogicAppsLanguageServer(context);
     await languageServer.start();
   });
-};
+}
 
 /**
  * Gets workflow metadata from the LSP server including trigger names.

@@ -201,7 +201,7 @@ describe('CreateLogicAppVSCodeContents', () => {
         name: expect.stringContaining('Run/Debug logic app TestLogicApp'),
         type: 'coreclr',
         request: 'attach',
-        processId: expect.stringContaining('${command:azureLogicAppsStandard.pickProcess}'),
+        processId: expect.stringContaining('${command:azureLogicAppsStandard.pickFuncProcess}'),
       });
     });
 

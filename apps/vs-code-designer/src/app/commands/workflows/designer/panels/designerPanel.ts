@@ -10,7 +10,7 @@ import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Pa
 import { azurePublicBaseUrl, workflowManagementBaseURIKey, designerVersionSetting, defaultDesignerVersion } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
-import { isDesignerVersionNotificationSuppressed, suppressDesignerVersionNotification } from '../../../../state/designer';
+import { isDesignerVersionNotificationSuppressed, suppressDesignerVersionNotification } from '../../../../state/notifications';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 import { workspace, window, ConfigurationTarget } from 'vscode';
 

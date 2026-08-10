@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -151,6 +150,21 @@ describe('ChatWindow', () => {
       onMessage: undefined,
       onConnectionChange: undefined,
     });
+  });
+
+  it('should pass initial messages to the chat widget hook', () => {
+    const initialMessages = [
+      {
+        id: 'message-1',
+        role: 'user' as const,
+        content: 'Hello',
+        timestamp: new Date('2024-01-01T10:00:00Z'),
+      },
+    ];
+
+    render(<ChatWindow {...defaultProps} initialMessages={initialMessages} />);
+
+    expect(vi.mocked(useChatWidget)).toHaveBeenCalledWith(expect.objectContaining({ initialMessages }));
   });
 
   it('should use default agent name when not provided', () => {

@@ -484,7 +484,7 @@ describe('enableDevContainer - Integration Tests', () => {
       } catch (error) {
         // Expected to throw
         expect(mockContext.telemetry.properties.result).toBe('Failed');
-        expect(mockContext.telemetry.properties.error).toBeDefined();
+        expect(mockContext.telemetry.properties.errorMessage).toBeDefined();
       }
     });
   });

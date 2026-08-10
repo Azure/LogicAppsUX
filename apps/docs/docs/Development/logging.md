@@ -13,7 +13,7 @@ We use [ApplicationInsights](https://www.npmjs.com/package/@microsoft/applicatio
 We log VSCode commands with 'callWithTelemetryAndErrorHandling' from [VSCode Azure SDK for Node.js](https://www.npmjs.com/package/@microsoft/vscode-azext-utils).
 This function logs our telemetry and shows errors in VSCode at the same time.
 
-Here we mainly log extension commands. The name is name of the command like this: 'vscode-azurelogicapps/azureLogicAppsStandard.dataMap.createNewDataMap'.
+Here we mainly log extension commands. The name is name of the command like this: 'vscode-azurelogicapps/azureLogicAppsStandard.dataMap.createDataMap'.
 
  This value is copied over to the package.json of vs-code-designer during the github build.  where we read it and initialize App Insights using the library in the file 'apps/vs-code-designer/src/app/commands/logstream/startStreamingLogs.ts', using the library above.
 
