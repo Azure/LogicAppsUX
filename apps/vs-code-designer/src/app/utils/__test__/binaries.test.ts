@@ -509,12 +509,18 @@ describe('binaries', () => {
   });
 
   describe('binariesExistSync', () => {
-    it('should return false when automatic runtime dependencies are disabled', async () => {
+    it('should return false when automatic runtime dependencies are disabled and no dependency path is configured', async () => {
       const devContainerModule = await import('../devContainerUtils');
       vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
-      (getGlobalSetting as Mock).mockImplementation((settingName?: string) =>
-        settingName === autoRuntimeDependenciesValidationAndInstallationSetting ? false : 'binariesLocation'
-      );
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return false;
+        }
+        if (settingName === autoRuntimeDependenciesPathSettingKey) {
+          return undefined;
+        }
+        return 'binariesLocation';
+      });
 
       const result = binariesExistSync(funcDependencyName);
 
@@ -546,6 +552,53 @@ describe('binaries', () => {
         return 'binariesLocation';
       });
       (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder || filePath === funcBinary);
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(true);
+    });
+
+    it('should use configured binaries when validation is disabled but a dependency path is configured', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      const funcFolder = path.join('binariesLocation', funcDependencyName);
+      const funcBinary = path.join(funcFolder, 'func.exe');
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return false;
+        }
+        if (settingName === autoRuntimeDependenciesPathSettingKey) {
+          return 'binariesLocation';
+        }
+        if (settingName === funcCoreToolsBinaryPathSettingKey) {
+          return funcBinary;
+        }
+        return undefined;
+      });
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder || filePath === funcBinary);
+
+      const result = binariesExistSync(funcDependencyName);
+
+      expect(result).toBe(true);
+    });
+
+    it('should use the dependency folder when the configured binary path is a command name', async () => {
+      const devContainerModule = await import('../devContainerUtils');
+      vi.mocked(devContainerModule.isDevContainerWorkspaceSync).mockReturnValue(false);
+      const funcFolder = path.join('binariesLocation', funcDependencyName);
+      (getGlobalSetting as Mock).mockImplementation((settingName?: string) => {
+        if (settingName === autoRuntimeDependenciesValidationAndInstallationSetting) {
+          return false;
+        }
+        if (settingName === autoRuntimeDependenciesPathSettingKey) {
+          return 'binariesLocation';
+        }
+        if (settingName === funcCoreToolsBinaryPathSettingKey) {
+          return 'func';
+        }
+        return undefined;
+      });
+      (fs.existsSync as Mock).mockImplementation((filePath: string) => filePath === funcFolder);
 
       const result = binariesExistSync(funcDependencyName);
 
@@ -637,11 +690,30 @@ describe('binaries', () => {
       (isNodeJsInstalled as Mock).mockResolvedValue(true);
       (getNpmCommand as Mock).mockReturnValue('npm');
       (executeCommand as Mock).mockResolvedValue(npmVersion);
+      (axios.get as Mock).mockResolvedValue({ data: { tag_name: `v${npmVersion}` }, status: 200 });
 
       const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
 
       expect(result).toBe(npmVersion);
       expect(context.telemetry.properties.latestVersionSource).toBe('node');
+    });
+
+    it('should fall back to GitHub latest when npm returns an unpublished Function Core Tools release', async () => {
+      const npmVersion = '4.13.0';
+      const githubVersion = '4.12.1';
+      majorVersion = '4';
+      (isNodeJsInstalled as Mock).mockResolvedValue(true);
+      (getNpmCommand as Mock).mockReturnValue('npm');
+      (executeCommand as Mock).mockResolvedValue(npmVersion);
+      (axios.get as Mock)
+        .mockRejectedValueOnce(new Error('Request failed with status code 404'))
+        .mockResolvedValueOnce({ data: { tag_name: `v${githubVersion}` }, status: 200 });
+
+      const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
+
+      expect(result).toBe(githubVersion);
+      expect(context.telemetry.properties.invalidLatestFunctionCoreToolsVersion).toBe(npmVersion);
+      expect(context.telemetry.properties.latestVersionSource).toBe('github');
     });
 
     it('should return the latest Function Core Tools version from GitHub', async () => {

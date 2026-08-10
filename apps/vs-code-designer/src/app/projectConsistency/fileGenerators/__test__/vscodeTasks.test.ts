@@ -183,7 +183,62 @@ describe('generateTasksJson', () => {
       const result = generateTasksJson(baseConfig);
       const funcTask = result.tasks.find((t) => t.label === 'func: host start');
 
-      expect((funcTask.options as any).cwd).toBe('bin/Debug/net8');
+      expect((funcTask.options as any).cwd).toBe('${workspaceFolder}/bin/Debug/net8');
+    });
+
+    it('should match task shape regenerated for a converted codeless NuGet project', () => {
+      const result = generateTasksJson({
+        ...baseConfig,
+        targetFramework: 'net8.0' as TargetFramework,
+      });
+
+      expect(result.tasks.map((task) => task.label)).toEqual([
+        'generateDebugSymbols',
+        'clean',
+        'build',
+        'clean release',
+        'publish',
+        'func: host start',
+      ]);
+      expect(result.inputs).toEqual([
+        {
+          id: 'getDebugSymbolDll',
+          type: 'command',
+          command: 'azureLogicAppsStandard.getDebugSymbolDll',
+        },
+      ]);
+      const funcTask = result.tasks.find((task) => task.label === 'func: host start');
+      expect(funcTask).toMatchObject({
+        type: 'shell',
+        dependsOn: 'build',
+        command: '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}',
+        args: ['host', 'start'],
+        options: { cwd: '${workspaceFolder}/bin/Debug/net8.0', env: { PATH: '${env:PATH}' } },
+        windows: {
+          options: {
+            cwd: 'bin/Debug/net8.0',
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;${env:PATH}',
+            },
+          },
+        },
+        linux: {
+          options: {
+            cwd: 'bin/Debug/net8.0',
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/NodeJs:${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/DotNetSDK:${env:PATH}',
+            },
+          },
+        },
+        osx: {
+          options: {
+            cwd: 'bin/Debug/net8.0',
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/NodeJs:${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}/DotNetSDK:${env:PATH}',
+            },
+          },
+        },
+      });
     });
 
     it('should include inputs with getDebugSymbolDll', () => {
