@@ -201,7 +201,7 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.switchToDataMapperV2: {
         // Execute the switchToDataMapperV2 VS Code command with telemetry
-        this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.switchToDataMapperV2, () => {
+        this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.switchToDataMapperV2', () => {
           return switchToDataMapperV2();
         });
         break;
@@ -387,7 +387,7 @@ export default class DataMapperPanel {
   }
 
   public addSchemaFromFile(schemaType: SchemaType) {
-    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapAddSchemaFromFile, (context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.addSchemaFromFile', (context: IActionContext) => {
       this.setDataMapperVersionForLogging(context);
       const fileSelectOptions: vscode.OpenDialogOptions = {
         filters: { Schemas: ['xsd', 'json'] },
@@ -427,7 +427,7 @@ export default class DataMapperPanel {
   }
 
   public saveMapDefinition(mapDefinition: string) {
-    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapSaveMapDefinition, (context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.saveMapDefinition', (context: IActionContext) => {
       // Delete *draft* map definition as it's no longer needed
       this.deleteDraftDataMapDefinition();
       this.setDataMapperVersionForLogging(context);
@@ -461,7 +461,7 @@ export default class DataMapperPanel {
   }
 
   public saveMapXslt(mapXslt: string) {
-    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapSaveMapXslt, (context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.saveMapXslt', (context: IActionContext) => {
       this.setDataMapperVersionForLogging(context);
 
       const fileName = `${this.dataMapName}${mapXsltExtension}`;

@@ -16,7 +16,7 @@ import {
 } from '../../../../utils/codeless/common';
 import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
 import {
-  addConnectionData,
+  addConnection,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getCustomCodeFromFiles,
@@ -30,7 +30,7 @@ import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizati
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../../utils/requestUtils';
-import { createNewDataMapCmd } from '../../../dataMapper/dataMapper';
+import { createDataMap } from '../../../dataMapper/dataMapper';
 import { DesignerPanel } from './designerPanel';
 import { getMigrationOptions, migrateWorkflow } from '../utils/migration';
 import { createFileSystemConnection } from '../utils/fileSystemConnection';
@@ -49,7 +49,6 @@ import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
-import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 
@@ -89,7 +88,9 @@ export default class LocalDesignerPanel extends DesignerPanel {
       throw new Error(localize('projectPathUndefined', 'Unable to determine project root folder.'));
     }
 
-    await startDesignTimeApi(this.projectPath);
+    await callWithTelemetryAndErrorHandling('LocalDesignerPanel.create.startDesignTimeApi', async (actionContext: IActionContext) => {
+      await startDesignTimeApi(actionContext, this.projectPath!);
+    });
 
     const designTimeInstance = ext.designTimeInstances.get(this.projectPath);
     if (!designTimeInstance) {
@@ -238,7 +239,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
       }
 
       case ExtensionCommand.save: {
-        await callWithTelemetryAndErrorHandling('SaveWorkflowFromDesigner', async (activateContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling('LocalDesignerPanel.saveWorkflow', async (activateContext: IActionContext) => {
           if (!this.panelMetadata) {
             window.showErrorMessage('Failed to save workflow. Panel metadata is not available.');
             return;
@@ -271,20 +272,15 @@ export default class LocalDesignerPanel extends DesignerPanel {
       }
 
       case ExtensionCommand.createUnitTest: {
-        await createUnitTest(Uri.file(this.workflowFilePath), msg.definition);
-        break;
-      }
-
-      // NOTE(aeldridge): Needed for V2 designer which doesn't use separate monitoring view class.
-      // Remove once V2 designer is moved to its own panel classes.
-      case ExtensionCommand.createUnitTestFromRun: {
-        await createUnitTestFromRun(Uri.file(this.workflowFilePath), msg.runId, msg.definition);
+        await callWithTelemetryAndErrorHandling('LocalDesignerPanel.createUnitTest', async (actionContext: IActionContext) => {
+          await createUnitTest(actionContext, Uri.file(this.workflowFilePath), msg.definition);
+        });
         break;
       }
 
       case ExtensionCommand.addConnection: {
-        await callWithTelemetryAndErrorHandling('AddConnectionFromDesigner', async (activateContext: IActionContext) => {
-          await addConnectionData(activateContext, this.workflowFilePath, msg.connectionAndSetting);
+        await callWithTelemetryAndErrorHandling('LocalDesignerPanel.addConnection', async (actionContext: IActionContext) => {
+          await addConnection(actionContext, this.workflowFilePath, msg.connectionAndSetting);
         });
         break;
       }
@@ -313,7 +309,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
       case ExtensionCommand.openRelativeLink: {
         if (msg.content === '/dataMapper') {
-          createNewDataMapCmd(this.context);
+          createDataMap(this.context);
         }
         break;
       }
@@ -388,7 +384,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
         if (customCodeData) {
           const customCodeToUpdate = await getCustomCodeToUpdate(this.context, filePath, customCodeData);
-          await saveCustomCodeStandard(filePath, customCodeToUpdate);
+          await saveCustomCodeStandard(this.context, filePath, customCodeToUpdate);
         }
 
         if (parametersFromDefinition) {

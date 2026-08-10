@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ── Mocks for connection utilities (must be declared before dynamic import) ──
-const mockAddConnectionData = vi.fn();
+const mockaddConnection = vi.fn();
 const mockGetConnectionsAndSettingsToUpdate = vi.fn();
 const mockSaveConnectionReferences = vi.fn();
 const mockGetConnectionsFromFile = vi.fn();
@@ -15,7 +15,7 @@ vi.mock('../../../../../utils/codeless/common', () => ({
 }));
 
 vi.mock('../../../../../utils/codeless/connection', () => ({
-  addConnectionData: mockAddConnectionData,
+  addConnection: mockaddConnection,
   getConnectionsAndSettingsToUpdate: mockGetConnectionsAndSettingsToUpdate,
   saveConnectionReferences: mockSaveConnectionReferences,
   getConnectionsFromFile: mockGetConnectionsFromFile,
@@ -94,7 +94,7 @@ function handleMsg(instance: any, message: any): Promise<void> {
 describe('ConnectionView – insert_connection handles local and managed connections atomically', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAddConnectionData.mockResolvedValue(undefined);
+    mockaddConnection.mockResolvedValue(undefined);
     mockSaveConnection.mockResolvedValue(undefined);
   });
 
@@ -107,14 +107,14 @@ describe('ConnectionView – insert_connection handles local and managed connect
         connectionAndSetting: { connectionData: {}, connectionKey: 'agent-1', pathLocation: ['agentConnections'], settings: {} },
       });
 
-      expect(mockAddConnectionData).not.toHaveBeenCalled();
+      expect(mockaddConnection).not.toHaveBeenCalled();
       expect(mockSaveConnection).not.toHaveBeenCalled();
       expect(instance.panel.dispose).not.toHaveBeenCalled();
     });
   });
 
   describe('insert_connection handler', () => {
-    it('should write local connection data via addConnectionData when connectionAndSetting is present', async () => {
+    it('should write local connection data via addConnection when connectionAndSetting is present', async () => {
       const instance = createInstance();
       const connectionAndSetting = { connectionData: {}, connectionKey: 'agent-1', pathLocation: ['agentConnections'], settings: {} };
 
@@ -124,7 +124,7 @@ describe('ConnectionView – insert_connection handles local and managed connect
         connectionAndSetting,
       });
 
-      expect(mockAddConnectionData).toHaveBeenCalledOnce();
+      expect(mockaddConnection).toHaveBeenCalledOnce();
       expect(mockSaveConnection).toHaveBeenCalled();
       expect(instance.panel.dispose).toHaveBeenCalled();
     });
@@ -133,8 +133,8 @@ describe('ConnectionView – insert_connection handles local and managed connect
       const instance = createInstance();
       const callOrder: string[] = [];
 
-      mockAddConnectionData.mockImplementation(async () => {
-        callOrder.push('addConnectionData');
+      mockaddConnection.mockImplementation(async () => {
+        callOrder.push('addConnection');
       });
       mockSaveConnection.mockImplementation(async () => {
         callOrder.push('saveConnection');
@@ -146,7 +146,7 @@ describe('ConnectionView – insert_connection handles local and managed connect
         connectionAndSetting: { connectionData: {}, connectionKey: 'sp-1', pathLocation: ['serviceProviderConnections'], settings: {} },
       });
 
-      expect(callOrder).toEqual(['addConnectionData', 'saveConnection']);
+      expect(callOrder).toEqual(['addConnection', 'saveConnection']);
     });
 
     it('should handle managed API connections with connectionReferences and without connectionAndSetting', async () => {
@@ -159,7 +159,7 @@ describe('ConnectionView – insert_connection handles local and managed connect
         connectionReferences,
       });
 
-      expect(mockAddConnectionData).not.toHaveBeenCalled();
+      expect(mockaddConnection).not.toHaveBeenCalled();
       expect(mockSaveConnection).toHaveBeenCalledWith(
         { name: 'azureblob-1', id: '/subscriptions/sub1/connections/azureblob-1' },
         { documentUri: '/test/workflow.cs', range: instance.range },
@@ -178,7 +178,7 @@ describe('ConnectionView – insert_connection handles local and managed connect
         connection: { name: 'existing-sp', id: 'serviceProviderConnections/existing-sp' },
       });
 
-      expect(mockAddConnectionData).not.toHaveBeenCalled();
+      expect(mockaddConnection).not.toHaveBeenCalled();
       expect(mockSaveConnection).toHaveBeenCalled();
       expect(instance.panel.dispose).toHaveBeenCalled();
     });
@@ -187,8 +187,8 @@ describe('ConnectionView – insert_connection handles local and managed connect
       const instance = createInstance();
       const callOrder: string[] = [];
 
-      mockAddConnectionData.mockImplementation(async () => {
-        callOrder.push('addConnectionData');
+      mockaddConnection.mockImplementation(async () => {
+        callOrder.push('addConnection');
       });
       mockSaveConnection.mockImplementation(async () => {
         callOrder.push('saveConnection');
@@ -203,7 +203,7 @@ describe('ConnectionView – insert_connection handles local and managed connect
         connectionAndSetting: { connectionData: {}, connectionKey: 'agent-1', pathLocation: ['agentConnections'], settings: {} },
       });
 
-      expect(callOrder).toEqual(['addConnectionData', 'saveConnection', 'dispose']);
+      expect(callOrder).toEqual(['addConnection', 'saveConnection', 'dispose']);
     });
   });
 });

@@ -67,9 +67,9 @@ const designTimeArtifactPrefix = 'design-time ';
  *
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<Uri>} The design-time directory Uri, ready to be used as the host working directory.
+ * @returns {Promise<void>} A promise that resolves when all project files have been ensured.
  */
-export async function ensureProjectFiles(context: IActionContext, projectPath: string): Promise<Uri> {
+export async function ensureProjectFiles(context: IActionContext, projectPath: string): Promise<void> {
   const projectName = path.basename(projectPath);
   try {
     const hostResult = await ensureHostFile(projectPath);
@@ -91,54 +91,10 @@ export async function ensureProjectFiles(context: IActionContext, projectPath: s
         localize('projectArtifactsRegenerated', 'Project "{0}": regenerated {1}.', projectName, changed.join(', '))
       );
     }
-
-    return designTimeData.uri;
   } catch (error) {
     ext.outputChannel.appendLog(
       localize(
         'projectArtifactsFailed',
-        'Project "{0}": failed to validate/regenerate artifacts — {1}.',
-        projectName,
-        error instanceof Error ? error.message : String(error)
-      )
-    );
-    throw error;
-  }
-}
-
-/**
- * Ensures the project-level host.json and local.settings.json.
- *
- * @param {IActionContext} context - The action context.
- * @param {string} projectPath - The logic app project root.
- * @returns {Promise<void>} Resolves when the root artifacts have been ensured.
- */
-export async function ensureRootProjectFiles(context: IActionContext, projectPath: string): Promise<void> {
-  const projectName = path.basename(projectPath);
-  try {
-    const hostResult = await ensureHostFile(projectPath);
-    const localSettings = await ensureLocalSettingsFile(context, projectPath);
-
-    const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts];
-
-    if (changed.length === 0) {
-      ext.outputChannel.appendLog(
-        localize(
-          'projectRootArtifactsValid',
-          'Project "{0}": host.json and local.settings.json are valid — no regeneration needed.',
-          projectName
-        )
-      );
-      return;
-    }
-
-    ext.outputChannel.appendLog(
-      localize('projectRootArtifactsRegenerated', 'Project "{0}": regenerated {1}.', projectName, changed.join(', '))
-    );
-  } catch (error) {
-    ext.outputChannel.appendLog(
-      localize(
-        'projectRootArtifactsFailed',
         'Project "{0}": failed to validate/regenerate artifacts — {1}.',
         projectName,
         error instanceof Error ? error.message : String(error)
@@ -284,13 +240,12 @@ export function extractAppSettingReferences(content: string): string[] {
  *
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<{ uri: Uri; changedArtifacts: string[] }>} The design-time directory Uri and the human-readable label(s)
- * for the artifact(s) that changed.
+ * @returns {Promise<{ changedArtifacts: string[] }>} The human-readable label(s) for the artifact(s) that changed.
  */
 export async function ensureDesignTimeFiles(
   context: IActionContext,
   projectPath: string
-): Promise<{ uri: Uri; changedArtifacts: string[] }> {
+): Promise<{ changedArtifacts: string[] }> {
   const designTimeDirectory = Uri.file(path.join(projectPath, designTimeDirectoryName));
   if (!(await fse.pathExists(designTimeDirectory.fsPath))) {
     await workspace.fs.createDirectory(designTimeDirectory);
@@ -314,7 +269,7 @@ export async function ensureDesignTimeFiles(
     changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
-  return { uri: designTimeDirectory, changedArtifacts };
+  return { changedArtifacts };
 }
 
 /**

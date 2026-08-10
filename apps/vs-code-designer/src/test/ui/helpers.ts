@@ -17,6 +17,17 @@ import { By, Key, ModalDialog, until, type WebDriver, type WebElement, type Work
 
 type WebDriverElement = Awaited<ReturnType<WebDriver['findElements']>>[number];
 
+export class FatalLogicAppsNotificationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'FatalLogicAppsNotificationError';
+  }
+}
+
+export function isFatalLogicAppsNotificationError(error: unknown): error is FatalLogicAppsNotificationError {
+  return error instanceof FatalLogicAppsNotificationError || (error instanceof Error && error.name === 'FatalLogicAppsNotificationError');
+}
+
 // ===========================================================================
 // General utilities
 // ===========================================================================
@@ -49,6 +60,8 @@ export function sleep(ms: number): Promise<void> {
  * Returns the input WebElement on success; throws after all retries fail.
  */
 export async function waitForQuickInputAndType(driver: WebDriver, text: string, timeoutMs = 15000): Promise<WebElement> {
+  await throwIfFatalLogicAppsNotification(driver, 'quick input');
+
   // Phase 2 F2: bumped default timeoutMs 5000 -> 15000. Phase 1 CI evidence
   // (run 25949973119, smoke + multipleDesigners) showed
   // `Waiting until element is visible / 5140ms` timeouts where the widget DOM
@@ -131,6 +144,9 @@ export async function waitForQuickInputAndType(driver: WebDriver, text: string, 
       await sleep(300);
       return input;
     } catch (e: any) {
+      if (isFatalLogicAppsNotificationError(e)) {
+        throw e;
+      }
       lastErr = e;
       const firstLine = e?.message?.split('\n')[0] ?? e?.message ?? 'unknown';
       console.log(`[waitForQuickInputAndType] attempt ${attempt + 1}/3 failed: ${firstLine}`);
@@ -268,13 +284,84 @@ export async function captureScreenshot(driver: WebDriver, fileName: string, scr
   }
 }
 
+export async function findFatalLogicAppsNotificationText(driver: WebDriver): Promise<string | undefined> {
+  const text = await driver
+    .executeScript<string>(`
+      const doc = (window.top && window.top.document) ? window.top.document : document;
+      const selectors = [
+        '[role="dialog"]',
+        '.monaco-dialog-box',
+        '.notification-toast',
+        '.notifications-toasts .notification-list-item'
+      ];
+      return Array.from(doc.querySelectorAll(selectors.join(',')))
+        .map((el) => el.textContent || '')
+        .join('\\n---\\n');
+    `)
+    .catch(() => '');
+
+  const normalizedText = text.replace(/\s+/g, ' ').trim();
+  if (
+    normalizedText.includes('Azure Logic Apps (Standard)') &&
+    /ENOENT:\s*no such file or directory,\s*open/i.test(normalizedText) &&
+    /vs-code-react[\\/]+index\.html/i.test(normalizedText)
+  ) {
+    return normalizedText;
+  }
+
+  return undefined;
+}
+
+export async function throwIfFatalLogicAppsNotification(driver: WebDriver, context: string): Promise<void> {
+  const text = await findFatalLogicAppsNotificationText(driver);
+  if (!text) {
+    return;
+  }
+
+  const screenshotPath = await captureScreenshot(driver, `fatal-logic-apps-notification-${context}`);
+  const screenshotSuffix = screenshotPath ? ` Screenshot: ${screenshotPath}` : '';
+  throw new FatalLogicAppsNotificationError(
+    `Fatal Azure Logic Apps notification detected during ${context}; installed extension is missing the VS Code React webview asset. ${text.substring(0, 500)}${screenshotSuffix}`
+  );
+}
+
 // ===========================================================================
 // Notification / Dialog dismissal
 // ===========================================================================
 
 /** Dismiss any VS Code notification toasts that may block interactions. */
 export async function dismissNotifications(driver: WebDriver): Promise<void> {
+  await throwIfFatalLogicAppsNotification(driver, 'dismissNotifications');
+
   try {
+    const dismissedManagedIdentityToast = await driver.executeScript<boolean>(`
+      const toasts = Array.from(document.querySelectorAll('.notification-toast, .notifications-toasts .notification-list-item'));
+      for (const toast of toasts) {
+        const text = toast.textContent || '';
+        if (!text.includes('Managed identity authentication for local workflows is now supported')) {
+          continue;
+        }
+        const buttons = Array.from(toast.querySelectorAll('button, .monaco-text-button, .monaco-button, a, .action-label'));
+        const closeButton = buttons.find((button) => {
+          const label = [
+            button.textContent,
+            button.getAttribute('aria-label'),
+            button.getAttribute('title')
+          ].filter(Boolean).join(' ').toLowerCase();
+          return label.includes('close') || label.includes('dismiss') || label.includes("don't show again");
+        });
+        if (closeButton instanceof HTMLElement) {
+          closeButton.click();
+          return true;
+        }
+      }
+      return false;
+    `);
+    if (dismissedManagedIdentityToast) {
+      console.log('[dismissNotifications] Closed managed identity authentication notification');
+      await sleep(500);
+    }
+
     const closeButtons = await driver.findElements(
       By.css('.notifications-toasts .codicon-notifications-clear-all, .notification-toast .action-label.codicon-close')
     );
@@ -302,6 +389,8 @@ export async function dismissNotifications(driver: WebDriver): Promise<void> {
  * Returns true if a dialog was found and dismissed.
  */
 export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
+  await throwIfFatalLogicAppsNotification(driver, 'dismissAllDialogs');
+
   // Strategy 1: ExTester ModalDialog page object
   try {
     const dialog = new ModalDialog();
@@ -328,6 +417,28 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
       }
     }
 
+    if (message.includes('Detected out of date .vscode configuration files')) {
+      try {
+        await dialog.pushButton('Yes');
+        console.log('[dismissAllDialogs] Clicked "Yes" on outdated VS Code configuration dialog');
+        await sleep(1000);
+        return true;
+      } catch {
+        // Button not found — fall through to raw selectors.
+      }
+    }
+
+    if (message.includes('Allow parameterization for connections') || message.includes('Use connectors from Azure')) {
+      try {
+        await dialog.pushButton('No');
+        console.log('[dismissAllDialogs] Clicked "No" on connections parameterization dialog');
+        await sleep(1000);
+        return true;
+      } catch {
+        // Button not found — fall through to raw selectors.
+      }
+    }
+
     // Dismiss GitHub API rate-limit errors (403) that block the UI.
     // These occur when the extension checks for latest versions in CI.
     if (message.includes('Error reading JSON from URL') || message.includes('status code 403')) {
@@ -345,6 +456,17 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
         } catch {
           /* fall through */
         }
+      }
+    }
+
+    if (message.includes('No process with the specified id is currently running')) {
+      try {
+        await dialog.pushButton('Close');
+        console.log('[dismissAllDialogs] Closed stale debug process dialog');
+        await sleep(500);
+        return true;
+      } catch {
+        // Button not found — fall through to raw selectors.
       }
     }
 
@@ -429,6 +551,40 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
         }
       }
 
+      if (messageText.includes('Detected out of date .vscode configuration files')) {
+        try {
+          const buttons = await dialogs[0].findElements(By.css('button, .monaco-text-button, .monaco-button'));
+          for (const btn of buttons) {
+            const label = await btn.getText().catch(() => '');
+            if (label.toLowerCase() === 'yes') {
+              console.log('[dismissAllDialogs] Clicking "Yes" on outdated VS Code configuration dialog');
+              await btn.click();
+              await sleep(1000);
+              return true;
+            }
+          }
+        } catch {
+          /* fall through to other dismiss strategies */
+        }
+      }
+
+      if (messageText.includes('Allow parameterization for connections') || messageText.includes('Use connectors from Azure')) {
+        try {
+          const buttons = await dialogs[0].findElements(By.css('button, .monaco-text-button, .monaco-button'));
+          for (const btn of buttons) {
+            const label = await btn.getText().catch(() => '');
+            if (label.toLowerCase() === 'no') {
+              console.log('[dismissAllDialogs] Clicking "No" on connections parameterization dialog');
+              await btn.click();
+              await sleep(1000);
+              return true;
+            }
+          }
+        } catch {
+          /* fall through to other dismiss strategies */
+        }
+      }
+
       // Dismiss GitHub API rate-limit errors (403) via raw selector
       if (messageText.includes('Error reading JSON from URL') || messageText.includes('status code 403')) {
         try {
@@ -437,6 +593,24 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
           console.log('[dismissAllDialogs] Dismissed GitHub API error via raw selector');
           await sleep(500);
           return true;
+        } catch {
+          /* fall through to other dismiss strategies */
+        }
+      }
+
+      if (messageText.includes('No process with the specified id is currently running')) {
+        try {
+          const buttons = await dialogs[0].findElements(By.css('button, .monaco-text-button, .monaco-button'));
+          for (const btn of buttons) {
+            const label = await btn.getText().catch(() => '');
+            const lower = label.toLowerCase();
+            if (lower.includes('close') || lower.includes('ok')) {
+              console.log('[dismissAllDialogs] Closing stale debug process dialog via raw selector');
+              await btn.click();
+              await sleep(500);
+              return true;
+            }
+          }
         } catch {
           /* fall through to other dismiss strategies */
         }
@@ -452,6 +626,38 @@ export async function dismissAllDialogs(driver: WebDriver): Promise<boolean> {
               await sleep(1000);
               return true;
             }
+          }
+        } catch {
+          /* ignore */
+        }
+
+        try {
+          const dismissed = await driver.executeScript<boolean>(`
+            const buttonText = (el) => [
+              el.textContent,
+              el.getAttribute('aria-label'),
+              el.getAttribute('title')
+            ].filter(Boolean).join(' ').toLowerCase();
+            const buttons = Array.from(document.querySelectorAll('button, .monaco-text-button, .monaco-button, a'));
+            for (const button of buttons) {
+              const text = buttonText(button);
+              if (
+                text.includes('cancel') ||
+                text.includes('not now') ||
+                text.includes('skip') ||
+                text.includes('close') ||
+                text.includes('dismiss')
+              ) {
+                button.click();
+                return true;
+              }
+            }
+            return false;
+          `);
+          if (dismissed) {
+            console.log('[dismissAllDialogs] Dismissed auth dialog via document-wide selector');
+            await sleep(1000);
+            return true;
           }
         } catch {
           /* ignore */
@@ -711,8 +917,13 @@ export async function safeCancelAnyQuickInput(driver: WebDriver): Promise<void> 
  * quick-pick widgets, and workspace trust prompts.
  */
 export async function clearBlockingUI(driver: WebDriver): Promise<void> {
+  await throwIfFatalLogicAppsNotification(driver, 'clearBlockingUI');
+
   for (let i = 0; i < 5; i++) {
-    const dismissed = await dismissAllDialogs(driver);
+    let dismissed = await dismissAllDialogs(driver);
+    if (!dismissed) {
+      dismissed = await jsDismissDialogs(driver);
+    }
     if (!dismissed) {
       break;
     }
@@ -775,6 +986,42 @@ export async function dismissQuickPickIfVisible(driver: WebDriver): Promise<bool
   } catch {
     return false;
   }
+}
+
+/**
+ * Dismiss the connector/Azure QuickPick that can block debug startup by
+ * selecting a safe local option. Unknown QuickPicks are left alone.
+ */
+export async function dismissConnectorQuickPickIfVisible(driver: WebDriver): Promise<boolean> {
+  try {
+    const result = await driver.executeScript<string | null>(`
+      const widget = document.querySelector('.quick-input-widget:not(.hidden)');
+      if (!widget) return null;
+      const widgetText = (widget.textContent || '').toLowerCase();
+      if (!widgetText.includes('connector') && !widgetText.includes('azure') && !widgetText.includes('skip for now')) {
+        return null;
+      }
+
+      const rows = widget.querySelectorAll('.quick-input-list .monaco-list-row');
+      for (const row of rows) {
+        const labelSpan = row.querySelector('.label-name');
+        const text = (labelSpan ? labelSpan.textContent : row.textContent || '').toLowerCase();
+        if (text.includes('skip')) { row.click(); return 'skip'; }
+        if (text.includes('connection key') || text.includes('access key')) { row.click(); return 'connkey'; }
+      }
+      return null;
+    `);
+
+    if (result === 'skip' || result === 'connkey') {
+      console.log(`[dismissConnectorQuickPick] Clicked ${result} option`);
+      await sleep(1000);
+      return true;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  return false;
 }
 
 /**
@@ -841,6 +1088,11 @@ export async function jsDismissDialogs(driver: WebDriver): Promise<boolean> {
       for (const sel of selectors) {
         const buttons = document.querySelectorAll(sel);
         for (const btn of buttons) {
+          const dialog = btn.closest('.monaco-dialog-box, [role="dialog"], .dialog-shadow, .dialog-box');
+          const dialogText = (dialog?.textContent || '').toLowerCase();
+          if (dialogText.includes('validating runtime dependency') || dialogText.includes('successfully installed')) {
+            continue;
+          }
           const text = btn.textContent?.toLowerCase() || '';
           if (text.includes('cancel') || text.includes("don't trust") || text.includes('no') || text.includes('close')) {
             btn.click();
@@ -848,8 +1100,13 @@ export async function jsDismissDialogs(driver: WebDriver): Promise<boolean> {
           }
         }
         if (buttons.length > 0) {
-          buttons[buttons.length - 1].click();
-          return true;
+          const fallbackButton = buttons[buttons.length - 1];
+          const dialog = fallbackButton.closest('.monaco-dialog-box, [role="dialog"], .dialog-shadow, .dialog-box');
+          const dialogText = (dialog?.textContent || '').toLowerCase();
+          if (!dialogText.includes('validating runtime dependency') && !dialogText.includes('successfully installed')) {
+            fallbackButton.click();
+            return true;
+          }
         }
       }
       return false;
@@ -999,13 +1256,17 @@ export async function waitForWorkbenchReady(driver: WebDriver, timeoutMs = 15_00
     try {
       try {
         await dismissAllDialogs(driver);
-      } catch {
-        /* ignore */
+      } catch (error) {
+        if (isFatalLogicAppsNotificationError(error)) {
+          throw error;
+        }
       }
       try {
         await dismissNotifications(driver);
-      } catch {
-        /* ignore */
+      } catch (error) {
+        if (isFatalLogicAppsNotificationError(error)) {
+          throw error;
+        }
       }
 
       const ready = await driver.executeScript<boolean>(`

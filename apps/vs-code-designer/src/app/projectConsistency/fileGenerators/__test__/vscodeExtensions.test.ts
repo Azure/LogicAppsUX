@@ -9,9 +9,11 @@ describe('generateExtensionsJson', () => {
   it('should include all standard recommendations', () => {
     const result = generateExtensionsJson();
 
-    expect(result.recommendations).toContain('ms-azuretools.vscode-azurelogicapps');
-    expect(result.recommendations).toContain('ms-azuretools.vscode-azurefunctions');
-    expect(result.recommendations).toContain('ms-dotnettools.csharp');
-    expect(result.recommendations).toContain('ms-dotnettools.csdevkit');
+    expect(result.recommendations).toEqual([
+      'ms-azuretools.vscode-azurelogicapps',
+      'ms-dotnettools.csharp',
+      'ms-azuretools.vscode-azurefunctions',
+      'ms-dotnettools.csdevkit',
+    ]);
   });
 });

@@ -3,8 +3,6 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { refreshConnectionKeys } from '../connectionKeys';
 import * as vscode from 'vscode';
-import * as workspace from '../../workspace';
-import * as verifyIsProject from '../../verifyIsProject';
 import * as parameter from '../../codeless/parameter';
 import * as azureConnectorDetails from '../../../commands/azureConnectors/azureConnectorDetails';
 import * as connection from '../../codeless/connection';
@@ -12,7 +10,7 @@ import * as path from 'path';
 import { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../workspace', () => ({
-  getWorkspaceLogicAppFolders: vi.fn(),
+  getWorkspaceLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../../../commands/azureConnectors/azureConnectorDetails', () => ({
@@ -131,6 +129,6 @@ describe('refreshConnectionKeys', () => {
     );
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalled();
-    expect(testContext.telemetry.properties.error).toContain('Test error');
+    expect(testContext.telemetry.properties.errorMessage).toContain('Test error');
   });
 });

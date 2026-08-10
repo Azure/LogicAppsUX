@@ -33,7 +33,6 @@ import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../../uti
 import {
   extractAppSettingReferences,
   getReferencedAppSettings,
-  ensureRootProjectFiles,
   ensureLocalSettingsFile,
   ensureHostFile,
   ensureProjectFiles,
@@ -710,9 +709,8 @@ describe('projectFilesConsistency', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const { uri: dir } = await ensureDesignTimeFiles(context, projectPath);
+      await ensureDesignTimeFiles(context, projectPath);
 
-      expect(norm(dir.fsPath)).toContain('workflow-designtime');
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths.some((p) => p.includes('host.json'))).toBe(true);
       expect(writtenPaths.some((p) => p.includes('local.settings.json'))).toBe(true);
@@ -762,10 +760,9 @@ describe('projectFilesConsistency', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const { uri: dir } = await ensureDesignTimeFiles(context, backupPath);
+      await ensureDesignTimeFiles(context, backupPath);
 
       // The design-time directory is nested UNDER the backup folder, not the backup folder itself.
-      expect(norm(dir.fsPath)).toContain('workflow-designtime-backup/workflow-designtime');
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths.some((p) => p.includes('workflow-designtime-backup/workflow-designtime/host.json'))).toBe(true);
     });
@@ -986,7 +983,7 @@ describe('projectFilesConsistency', () => {
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      const dir = await ensureProjectFiles(context, projectPath);
+      await ensureProjectFiles(context, projectPath);
 
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       // Project-root host.json (distinct from the design-time copy).
@@ -996,8 +993,6 @@ describe('projectFilesConsistency', () => {
       expect(writtenPaths).toContain(`${designTimeDir}/local.settings.json`);
       // Root local.settings.json baseline + design-time runtime settings are upserted.
       expect(mockedAddOrUpdate).toHaveBeenCalled();
-      // Returns the design-time directory to be used as the host working directory.
-      expect(norm(dir.fsPath)).toContain('workflow-designtime');
     });
 
     it('preserves everything and writes nothing when all artifacts are already valid', async () => {
@@ -1021,11 +1016,10 @@ describe('projectFilesConsistency', () => {
         },
       });
 
-      const dir = await ensureProjectFiles(context, projectPath);
+      await ensureProjectFiles(context, projectPath);
 
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
-      expect(norm(dir.fsPath)).toContain('workflow-designtime');
     });
 
     it('regenerates only the root host.json when it alone is missing', async () => {
@@ -1170,33 +1164,6 @@ describe('projectFilesConsistency', () => {
       expect(lines).toHaveLength(1);
       expect(lines[0]).toContain('Project "LogicApp": failed to validate/regenerate artifacts');
       expect(lines[0]).toContain('disk full');
-    });
-
-    it('ensureRootProjectFiles logs one "valid" line and never touches the design-time directory', async () => {
-      mockFullyValidProject();
-
-      await ensureRootProjectFiles(context, projectPath);
-
-      const lines = loggedLines();
-      expect(lines).toHaveLength(1);
-      expect(lines[0]).toContain('Project "LogicApp"');
-      expect(lines[0]).toContain('no regeneration needed');
-      // Root-only path must not write the design-time baseline files.
-      const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
-      expect(writtenPaths.some((p) => p.includes('workflow-designtime'))).toBe(false);
-    });
-
-    it('ensureRootProjectFiles logs one line naming the regenerated root artifacts', async () => {
-      mockFiles({});
-      mockedFse.readdir.mockResolvedValue([]);
-      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
-
-      await ensureRootProjectFiles(context, projectPath);
-
-      const lines = loggedLines();
-      expect(lines).toHaveLength(1);
-      expect(lines[0]).toContain('Project "LogicApp": regenerated');
-      expect(lines[0]).toContain('host.json');
     });
   });
 });

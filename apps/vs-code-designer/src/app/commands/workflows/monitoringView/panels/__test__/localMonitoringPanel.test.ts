@@ -227,7 +227,12 @@ describe('LocalMonitoringPanel', () => {
         })
       );
       expect(ext.telemetryReporter.sendTelemetryEvent).toHaveBeenCalledWith('monitoringArea', { area: 'monitoringArea' });
-      expect(createUnitTestFromRun).toHaveBeenCalledWith(expect.objectContaining({ fsPath: mockWorkflowFilePath }), 'run-123', {});
+      expect(createUnitTestFromRun).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({ fsPath: mockWorkflowFilePath }),
+        'run-123',
+        {}
+      );
       expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
       expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ command: ExtensionCommand.getDesignerVersion })
