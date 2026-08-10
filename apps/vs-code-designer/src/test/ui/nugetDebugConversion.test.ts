@@ -82,7 +82,7 @@ interface SettingsJson {
   'azureLogicAppsStandard.projectRuntime'?: string;
   'debug.internalConsoleOptions'?: string;
   'azureFunctions.suppressProject'?: boolean;
-  'azureFunctions.preDeployTask'?: string;
+  'azureLogicAppsStandard.preDeployTask'?: string;
   [key: string]: unknown;
 }
 
@@ -542,7 +542,7 @@ function getExpectedConvertedNugetSettingsJson(): SettingsJson {
     'azureLogicAppsStandard.projectRuntime': '~4',
     'debug.internalConsoleOptions': 'neverOpen',
     'azureFunctions.suppressProject': true,
-    'azureFunctions.preDeployTask': 'publish',
+    'azureLogicAppsStandard.preDeployTask': 'publish',
   };
 }
 
