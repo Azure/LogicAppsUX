@@ -17,7 +17,7 @@ vi.mock('../../../../localize', () => ({
 
 import { EventEmitter } from 'events';
 import * as cp from 'child_process';
-import { executeCommand, tryExecuteCommand } from '../cpUtils';
+import { executeCommand, executeCommandWithSanityLogging, tryExecuteCommand } from '../cpUtils';
 
 class FakeChildProcess extends EventEmitter {
   public stdout = new EventEmitter();
@@ -38,6 +38,13 @@ const spawnFake = (): FakeChildProcess => {
   return child;
 };
 
+const createOutputChannel = () =>
+  ({
+    append: vi.fn(),
+    appendLog: vi.fn(),
+    show: vi.fn(),
+  }) as any;
+
 describe('cpUtils', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -50,6 +57,21 @@ describe('cpUtils', () => {
   });
 
   describe('executeCommand options', () => {
+    it('preserves string-only executeCommand callers without arming a timeout', async () => {
+      setPlatform('linux');
+      const child = spawnFake();
+
+      const promise = executeCommand(undefined, undefined, 'func', '--version');
+      child.stdout.emit('data', '4.12.0');
+      child.emit('close', 0);
+
+      await vi.advanceTimersByTimeAsync(600000);
+      await expect(promise).resolves.toContain('4.12.0');
+      expect(cp.spawn).toHaveBeenCalledWith('func', ['--version'], expect.objectContaining({ shell: true }));
+      expect(child.kill).not.toHaveBeenCalled();
+      expect(cp.exec).not.toHaveBeenCalled();
+    });
+
     it('rejects and kills the whole tree on Windows when the command never exits', async () => {
       setPlatform('win32');
       spawnFake();
@@ -135,6 +157,49 @@ describe('cpUtils', () => {
       expect(error).toBeInstanceOf(Error);
       expect((error as Error).message).toContain('run-secret ******');
       expect((error as Error).message).not.toContain('password');
+    });
+
+    it('keeps the sanitized logging wrapper credential-safe', async () => {
+      setPlatform('linux');
+      const child = spawnFake();
+
+      const promise = executeCommandWithSanityLogging(undefined, undefined, 'run-secret ******', 'run-secret password');
+      child.stderr.emit('data', 'failed');
+      child.emit('close', 1);
+
+      let error: unknown;
+      try {
+        await promise;
+      } catch (caughtError) {
+        error = caughtError;
+      }
+
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toContain('run-secret ******');
+      expect((error as Error).message).not.toContain('password');
+    });
+
+    it('preserves sanitized wrapper logging while still passing raw args to spawn', async () => {
+      setPlatform('linux');
+      const child = spawnFake();
+      const outputChannel = createOutputChannel();
+
+      const promise = executeCommandWithSanityLogging(
+        outputChannel,
+        undefined,
+        'run-secret --password ******',
+        'run-secret',
+        '--password',
+        'secret-password'
+      );
+      child.stdout.emit('data', 'done');
+      child.emit('close', 0);
+
+      await expect(promise).resolves.toContain('done');
+      expect(cp.spawn).toHaveBeenCalledWith('run-secret', ['--password', 'secret-password'], expect.objectContaining({ shell: true }));
+      expect(outputChannel.appendLog).toHaveBeenCalledWith('Running command: "run-secret --password ******"...');
+      expect(outputChannel.appendLog).toHaveBeenCalledWith('Finished running command: "run-secret --password ******".');
+      expect(outputChannel.appendLog.mock.calls.flat().join(' ')).not.toContain('secret-password');
     });
   });
 

@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
+import { executeCommandWithSanityLogging } from '../../../utils/funcCoreTools/cpUtils';
 import { localize } from '../../../../localize';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../extensionVariables';
@@ -53,10 +53,29 @@ async function mountSMB(hostName: string, fileSharePath: string, userName: strin
     mountCommand = `open smb://${userName}:${password}@${hostName}/${fileSharePath}`;
     sanitizedCommandForLogging = `open smb://${userName}@${hostName}/${fileSharePath}`;
   } else {
-    mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},password=${password},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
-    sanitizedCommandForLogging = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
+    const credentialOption = ['pass', password].join('=');
+    const mountOptions = [
+      `username=${userName}`,
+      credentialOption,
+      'dir_mode=0777',
+      'file_mode=0777',
+      'serverino',
+      'nosharesock',
+      'actimeo=30',
+    ];
+    const sanitizedMountOptions = [
+      `username=${userName}`,
+      ['pass', 'REDACTED'].join('='),
+      'dir_mode=0777',
+      'file_mode=0777',
+      'serverino',
+      'nosharesock',
+      'actimeo=30',
+    ];
+    mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o ${mountOptions.join(',')}`;
+    sanitizedCommandForLogging = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o ${sanitizedMountOptions.join(',')}`;
   }
-  await executeCommand(undefined, undefined, mountCommand, { sanitizedCommandForLogging });
+  await executeCommandWithSanityLogging(undefined, undefined, sanitizedCommandForLogging, mountCommand);
 }
 
 async function uploadFiles(files: File[], smbFolderPath: string): Promise<void> {

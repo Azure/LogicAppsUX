@@ -26,6 +26,16 @@ export async function executeCommand(
   return executeCommandInternal(outputChannel, workingDirectory, options, command, ...commandArgs);
 }
 
+export async function executeCommandWithSanityLogging(
+  outputChannel: IAzExtOutputChannel | undefined,
+  workingDirectory: string | undefined,
+  sanitizedCommandForLogging: string,
+  command: string,
+  ...args: string[]
+): Promise<string> {
+  return executeCommand(outputChannel, workingDirectory, command, ...args, { sanitizedCommandForLogging });
+}
+
 async function executeCommandInternal(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
