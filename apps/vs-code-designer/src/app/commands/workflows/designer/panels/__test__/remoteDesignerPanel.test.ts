@@ -56,6 +56,7 @@ const createMockNode = (overrides: Record<string, any> = {}) => ({
   getParametersData: vi.fn().mockResolvedValue({}),
   getAppSettings: vi.fn().mockResolvedValue({}),
   getArtifacts: vi.fn().mockResolvedValue({ maps: {}, schemas: [] }),
+  getCustomCodeData: vi.fn().mockResolvedValue({}),
   getChildWorkflows: vi.fn().mockResolvedValue({}),
 });
 
