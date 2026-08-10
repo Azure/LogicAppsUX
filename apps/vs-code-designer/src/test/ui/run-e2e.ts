@@ -662,8 +662,20 @@ async function main(): Promise<void> {
   }
   console.log('✓ D-001 lint guard passed (no fs.writeFile/outputJson in *.fixtures.test.ts).');
 
-  // Read extension metadata from dist/package.json
-  const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
+  // Determine extension source: 'source' (default) builds from dist/, 'marketplace' installs the published VSIX.
+  const vsixSource = (process.env.LA_E2E_VSIX_SOURCE || 'source').toLowerCase();
+  const useMarketplaceVsix = vsixSource === 'marketplace';
+  if (useMarketplaceVsix) {
+    console.log('\n=== Marketplace VSIX mode: will install published extension from marketplace ===');
+  }
+
+  // Read extension metadata from package.json.
+  // In marketplace mode, dist/ may not exist — fall back to the project-level package.json.
+  const distPkgPath = path.join(distDir, 'package.json');
+  const projectPkgPath = path.join(projectDir, 'package.json');
+  const pkgJsonPath = fs.existsSync(distPkgPath) ? distPkgPath : projectPkgPath;
+  const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
+  console.log(`  Extension metadata read from: ${pkgJsonPath}`);
   const extDeps: string[] = pkgJson.extensionDependencies || [];
   const devContainersDependency = 'ms-vscode-remote.remote-containers';
   if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
@@ -825,108 +837,162 @@ async function main(): Promise<void> {
     console.log('\n=== Step 2: No extension dependencies to install ===');
   }
 
-  // Step 3: Copy our built extension into test-extensions as an "installed" extension
-  // Skip the copy if dist/main.js hasn't changed (compare mtime for a fast-path).
-  console.log('\n=== Step 3: Install our extension from dist/ ===');
+  // Step 3: Install our extension into test-extensions
   const pkgId = `${pkgJson.publisher}.${pkgJson.name}`.toLowerCase();
+  const marketplaceExtensionId = `${pkgJson.publisher}.${pkgJson.name}`;
 
-  const srcMainJs = path.join(distDir, 'main.js');
-  const destMainJs = path.join(ourExtTarget, 'main.js');
-  let needsCopy = true;
+  if (useMarketplaceVsix) {
+    // Marketplace mode: install the published extension using the VS Code CLI
+    console.log('\n=== Step 3: Install extension from marketplace ===');
+    console.log(`  Extension ID: ${marketplaceExtensionId}`);
 
-  if (fs.existsSync(destMainJs) && fs.existsSync(srcMainJs)) {
-    const srcMtime = fs.statSync(srcMainJs).mtimeMs;
-    const destMtime = fs.statSync(destMainJs).mtimeMs;
-    if (srcMtime === destMtime) {
-      console.log('  ✓ dist/main.js unchanged (mtime match), skipping copy');
-      needsCopy = false;
-    } else {
-      console.log(`  dist/main.js changed (src=${new Date(srcMtime).toISOString()}, dest=${new Date(destMtime).toISOString()})`);
-    }
-  }
-
-  if (needsCopy) {
-    // Remove old copies of our extension
+    // Remove any previously copied source-built extension
     if (fs.existsSync(extDir)) {
       for (const entry of fs.readdirSync(extDir)) {
         if (entry.toLowerCase().startsWith(pkgId)) {
           const fullPath = path.join(extDir, entry);
-          console.log(`  Removing old copy: ${entry}`);
+          console.log(`  Removing old source-built copy: ${entry}`);
           fs.rmSync(fullPath, { recursive: true, force: true });
         }
       }
     }
 
-    // Copy dist/ → test-extensions/<publisher>.<name>-<version>/
-    // Skip the test-extensions dir itself to avoid infinite recursion
-    console.log(`  Copying dist/ → ${extDirName}/`);
-    copyDirSync(distDir, ourExtTarget, extDir);
-
-    // Preserve source mtime on main.js so subsequent runs can detect changes
-    if (fs.existsSync(srcMainJs) && fs.existsSync(destMainJs)) {
-      const srcStat = fs.statSync(srcMainJs);
-      fs.utimesSync(destMainJs, srcStat.atime, srcStat.mtime);
+    // Install from marketplace using the VS Code CLI
+    const cliBase = extest.code.getCliInitCommand();
+    const installResult = await installExtensionWithCli(cliBase, marketplaceExtensionId, 'marketplace extension');
+    if (!installResult.success) {
+      // Retry once
+      console.log('  Retrying marketplace extension install...');
+      const retry = await installExtensionWithCli(cliBase, marketplaceExtensionId, 'marketplace extension retry');
+      if (!retry.success) {
+        throw new Error(`Failed to install marketplace extension: ${marketplaceExtensionId}`);
+      }
     }
 
-    console.log('  ✓ Extension installed in test-extensions');
-  }
-
-  // Verify the copied extension has the necessary files
-  const copiedPkg = path.join(ourExtTarget, 'package.json');
-  const copiedMain = path.join(ourExtTarget, 'main.js');
-  if (!fs.existsSync(copiedPkg)) {
-    console.error(`  ✗ ERROR: package.json not found at ${copiedPkg}`);
-    process.exit(1);
-  }
-  if (!fs.existsSync(copiedMain)) {
-    console.error(`  ✗ ERROR: main.js not found at ${copiedMain}`);
-    process.exit(1);
-  }
-  console.log('  ✓ Verified: package.json and main.js present');
-
-  // CRITICAL: Remove .obsolete file — VS Code uses this to skip loading extensions.
-  // Previous test runs or ExTester's cleanup step may have marked our extension
-  // as obsolete, causing VS Code to refuse to load it even though the directory exists.
-  const obsoleteFile = path.join(extDir, '.obsolete');
-  if (fs.existsSync(obsoleteFile)) {
-    console.log('  Removing .obsolete file (was blocking extension loading)');
-    fs.rmSync(obsoleteFile);
-  }
-
-  // CRITICAL: Register our extension in extensions.json so VS Code recognizes it.
-  // Marketplace-installed extensions get entries automatically, but our manually
-  // copied extension needs to be added explicitly.
-  const extensionsJsonPath = path.join(extDir, 'extensions.json');
-  let extensionsJson: ExtensionJsonEntry[] = [];
-  if (fs.existsSync(extensionsJsonPath)) {
-    try {
-      extensionsJson = JSON.parse(fs.readFileSync(extensionsJsonPath, 'utf8'));
-    } catch {
-      extensionsJson = [];
+    // Find the installed extension directory to read its package.json for verification
+    const installedEntry = fs.readdirSync(extDir).find((entry) => entry.toLowerCase().startsWith(pkgId));
+    if (!installedEntry) {
+      throw new Error(`Marketplace extension not found in ${extDir} after install`);
     }
-  }
-  // Remove any existing entry for our extension
-  extensionsJson = extensionsJson.filter(
-    (entry) => entry.identifier?.id?.toLowerCase() !== `${pkgJson.publisher}.${pkgJson.name}`.toLowerCase()
-  );
-  // Add our extension entry
-  const ourExtPath = ourExtTarget.replace(/\\/g, '/');
-  extensionsJson.push({
-    identifier: { id: `${pkgJson.publisher}.${pkgJson.name}` },
-    version: pkgJson.version,
-    location: {
-      $mid: 1,
-      path: `/${ourExtPath}`.replace(/^\/([A-Za-z]):/, (_, d) => `/${d.toLowerCase()}:`),
-      scheme: 'file',
-    },
-    relativeLocation: extDirName,
-    metadata: {
-      installedTimestamp: Date.now(),
-      source: 'gallery',
-    },
-  });
-  fs.writeFileSync(extensionsJsonPath, JSON.stringify(extensionsJson));
-  console.log('  ✓ Registered in extensions.json');
+    const installedPkgPath = path.join(extDir, installedEntry, 'package.json');
+    if (!fs.existsSync(installedPkgPath)) {
+      throw new Error(`package.json not found in installed marketplace extension: ${installedPkgPath}`);
+    }
+    const installedPkg = JSON.parse(fs.readFileSync(installedPkgPath, 'utf8'));
+    console.log(`  ✓ Marketplace extension installed: ${installedEntry} (v${installedPkg.version})`);
+
+    // Remove .obsolete file if present
+    const obsoleteFile = path.join(extDir, '.obsolete');
+    if (fs.existsSync(obsoleteFile)) {
+      console.log('  Removing .obsolete file (was blocking extension loading)');
+      fs.rmSync(obsoleteFile);
+    }
+
+    // Rebuild extensions.json to include the marketplace-installed extension
+    rebuildExtensionsJson(extDir);
+    console.log('  ✓ extensions.json rebuilt');
+  } else {
+    // Source mode: copy dist/ into test-extensions (existing behavior)
+    console.log('\n=== Step 3: Install our extension from dist/ ===');
+
+    const srcMainJs = path.join(distDir, 'main.js');
+    const destMainJs = path.join(ourExtTarget, 'main.js');
+    let needsCopy = true;
+
+    if (fs.existsSync(destMainJs) && fs.existsSync(srcMainJs)) {
+      const srcMtime = fs.statSync(srcMainJs).mtimeMs;
+      const destMtime = fs.statSync(destMainJs).mtimeMs;
+      if (srcMtime === destMtime) {
+        console.log('  ✓ dist/main.js unchanged (mtime match), skipping copy');
+        needsCopy = false;
+      } else {
+        console.log(`  dist/main.js changed (src=${new Date(srcMtime).toISOString()}, dest=${new Date(destMtime).toISOString()})`);
+      }
+    }
+
+    if (needsCopy) {
+      // Remove old copies of our extension
+      if (fs.existsSync(extDir)) {
+        for (const entry of fs.readdirSync(extDir)) {
+          if (entry.toLowerCase().startsWith(pkgId)) {
+            const fullPath = path.join(extDir, entry);
+            console.log(`  Removing old copy: ${entry}`);
+            fs.rmSync(fullPath, { recursive: true, force: true });
+          }
+        }
+      }
+
+      // Copy dist/ → test-extensions/<publisher>.<name>-<version>/
+      // Skip the test-extensions dir itself to avoid infinite recursion
+      console.log(`  Copying dist/ → ${extDirName}/`);
+      copyDirSync(distDir, ourExtTarget, extDir);
+
+      // Preserve source mtime on main.js so subsequent runs can detect changes
+      if (fs.existsSync(srcMainJs) && fs.existsSync(destMainJs)) {
+        const srcStat = fs.statSync(srcMainJs);
+        fs.utimesSync(destMainJs, srcStat.atime, srcStat.mtime);
+      }
+
+      console.log('  ✓ Extension installed in test-extensions');
+    }
+
+    // Verify the copied extension has the necessary files
+    const copiedPkg = path.join(ourExtTarget, 'package.json');
+    const copiedMain = path.join(ourExtTarget, 'main.js');
+    if (!fs.existsSync(copiedPkg)) {
+      console.error(`  ✗ ERROR: package.json not found at ${copiedPkg}`);
+      process.exit(1);
+    }
+    if (!fs.existsSync(copiedMain)) {
+      console.error(`  ✗ ERROR: main.js not found at ${copiedMain}`);
+      process.exit(1);
+    }
+    console.log('  ✓ Verified: package.json and main.js present');
+
+    // CRITICAL: Remove .obsolete file — VS Code uses this to skip loading extensions.
+    // Previous test runs or ExTester's cleanup step may have marked our extension
+    // as obsolete, causing VS Code to refuse to load it even though the directory exists.
+    const obsoleteFile = path.join(extDir, '.obsolete');
+    if (fs.existsSync(obsoleteFile)) {
+      console.log('  Removing .obsolete file (was blocking extension loading)');
+      fs.rmSync(obsoleteFile);
+    }
+
+    // CRITICAL: Register our extension in extensions.json so VS Code recognizes it.
+    // Marketplace-installed extensions get entries automatically, but our manually
+    // copied extension needs to be added explicitly.
+    const extensionsJsonPath = path.join(extDir, 'extensions.json');
+    let extensionsJson: ExtensionJsonEntry[] = [];
+    if (fs.existsSync(extensionsJsonPath)) {
+      try {
+        extensionsJson = JSON.parse(fs.readFileSync(extensionsJsonPath, 'utf8'));
+      } catch {
+        extensionsJson = [];
+      }
+    }
+    // Remove any existing entry for our extension
+    extensionsJson = extensionsJson.filter(
+      (entry) => entry.identifier?.id?.toLowerCase() !== `${pkgJson.publisher}.${pkgJson.name}`.toLowerCase()
+    );
+    // Add our extension entry
+    const ourExtPath = ourExtTarget.replace(/\\/g, '/');
+    extensionsJson.push({
+      identifier: { id: `${pkgJson.publisher}.${pkgJson.name}` },
+      version: pkgJson.version,
+      location: {
+        $mid: 1,
+        path: `/${ourExtPath}`.replace(/^\/([A-Za-z]):/, (_, d) => `/${d.toLowerCase()}:`),
+        scheme: 'file',
+      },
+      relativeLocation: extDirName,
+      metadata: {
+        installedTimestamp: Date.now(),
+        source: 'gallery',
+      },
+    });
+    fs.writeFileSync(extensionsJsonPath, JSON.stringify(extensionsJson));
+    console.log('  ✓ Registered in extensions.json');
+  } // end of source mode (else branch)
 
   // List all extensions that will be loaded
   console.log('\n=== Extensions in test-extensions/ ===');
@@ -943,14 +1009,17 @@ async function main(): Promise<void> {
   // Remove any OTHER versions of our extension that VS Code may have
   // auto-downloaded from the marketplace in a previous run.
   // Only keep our exact version. Also clean up duplicate dependency versions.
-  for (const entry of fs.readdirSync(extDir)) {
-    if (entry === 'extensions.json' || entry === '.obsolete') {
-      continue;
-    }
-    if (entry.toLowerCase().startsWith(pkgId) && entry !== extDirName) {
-      const fullPath = path.join(extDir, entry);
-      console.log(`  Removing stale auto-updated version: ${entry}`);
-      fs.rmSync(fullPath, { recursive: true, force: true });
+  // Skip in marketplace mode — the marketplace-installed version IS the correct one.
+  if (!useMarketplaceVsix) {
+    for (const entry of fs.readdirSync(extDir)) {
+      if (entry === 'extensions.json' || entry === '.obsolete') {
+        continue;
+      }
+      if (entry.toLowerCase().startsWith(pkgId) && entry !== extDirName) {
+        const fullPath = path.join(extDir, entry);
+        console.log(`  Removing stale auto-updated version: ${entry}`);
+        fs.rmSync(fullPath, { recursive: true, force: true });
+      }
     }
   }
 
