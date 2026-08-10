@@ -384,7 +384,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
         if (customCodeData) {
           const customCodeToUpdate = await getCustomCodeToUpdate(this.context, filePath, customCodeData);
-          await saveCustomCodeStandard(filePath, customCodeToUpdate);
+          await saveCustomCodeStandard(this.context, filePath, customCodeToUpdate);
         }
 
         if (parametersFromDefinition) {
