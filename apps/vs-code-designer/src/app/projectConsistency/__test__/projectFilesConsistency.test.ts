@@ -266,6 +266,27 @@ describe('projectFilesConsistency', () => {
       expect(changed).toBe(false);
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
     });
+
+    it('updates ProjectDirectoryPath when it points to a stale path', async () => {
+      mockFiles({ [`${projectPath}/local.settings.json`]: '{}' });
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: '/old/stale/path',
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        },
+      });
+
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded[ProjectDirectoryPathKey]).toBe(projectPath);
+    });
   });
 
   // Behavior by logic app type: regeneration builds the root local.settings.json from the same shared
@@ -660,6 +681,26 @@ describe('projectFilesConsistency', () => {
         [designTimeDir]: '',
         [hostPath]: validHost,
         [settingsPath]: validSettings,
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('reports invalid settings when ProjectDirectoryPath points to a stale path', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+            FUNCTIONS_INPROC_NET8_ENABLED: '1',
+            ProjectDirectoryPath: '/old/moved/path',
+          },
+        }),
       });
 
       const result = await validateDesignTimeDirectory(projectPath);

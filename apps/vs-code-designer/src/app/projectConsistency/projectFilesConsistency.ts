@@ -164,6 +164,10 @@ export async function ensureLocalSettingsFile(
     settingsToAdd[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
 
+  if (currentValues[ProjectDirectoryPathKey] !== undefined && !arePathsEqual(currentValues[ProjectDirectoryPathKey], projectPath)) {
+    settingsToAdd[ProjectDirectoryPathKey] = projectPath;
+  }
+
   if (!fileExisted || Object.keys(settingsToAdd).length > 0) {
     await addOrUpdateLocalAppSettings(context, projectPath, settingsToAdd);
     const addedSettings = Object.keys(settingsToAdd);
@@ -301,7 +305,12 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
 
   const localSettingsPath = path.join(designTimeDirectoryPath, localSettingsFileName);
   const projectType = await detectProjectType(projectPath);
-  const settingsFileValid = await isDesignTimeSettingsFileValid(localSettingsPath, projectType, useNodeDesignTimeWorker(projectPath));
+  const settingsFileValid = await isDesignTimeSettingsFileValid(
+    localSettingsPath,
+    projectPath,
+    projectType,
+    useNodeDesignTimeWorker(projectPath)
+  );
 
   return {
     directoryExists: true,
@@ -353,11 +362,17 @@ async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Pro
  * Validates the local.settings.json file content in the design-time directory.
  *
  * @param {string} settingsFilePath - Absolute path to the design-time local.settings.json file.
+ * @param {string} projectPath - The expected project directory path value.
  * @param {ProjectType} projectType - The logic app project type.
  * @param {boolean} useNodeWorker - Whether the design-time host is expected to run with the Node worker.
- * @returns {Promise<boolean>} True when the file is present and contains the required keys.
+ * @returns {Promise<boolean>} True when the file is present and contains the required keys with correct values.
  */
-async function isDesignTimeSettingsFileValid(settingsFilePath: string, projectType: ProjectType, useNodeWorker: boolean): Promise<boolean> {
+async function isDesignTimeSettingsFileValid(
+  settingsFilePath: string,
+  projectPath: string,
+  projectType: ProjectType,
+  useNodeWorker: boolean
+): Promise<boolean> {
   const content = await readFileTextSafe(settingsFilePath);
   if (!content) {
     return false;
@@ -368,6 +383,10 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string, projectTy
     const values = parsed?.Values ?? {};
     const allRequiredKeysPresent = baseRequiredDesignTimeSettingKeys.every((key) => values[key] !== undefined && values[key] !== '');
     if (!allRequiredKeysPresent) {
+      return false;
+    }
+
+    if (!arePathsEqual(values[ProjectDirectoryPathKey], projectPath)) {
       return false;
     }
 
@@ -427,7 +446,10 @@ async function ensureArtifactsSymlink(artifactsLink: string, artifactsTarget: st
   }
 }
 
-function arePathsEqual(path1: string, path2: string): boolean {
+function arePathsEqual(path1?: string, path2?: string): boolean {
+  if (typeof path1 !== 'string' || typeof path2 !== 'string' || !path1 || !path2) {
+    return false;
+  }
   const resolved1 = path.resolve(path1);
   const resolved2 = path.resolve(path2);
   return process.platform === 'win32' ? resolved1.toLowerCase() === resolved2.toLowerCase() : resolved1 === resolved2;
