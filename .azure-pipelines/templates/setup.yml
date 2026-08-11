@@ -1,3 +1,8 @@
+parameters:
+  - name: feedBaseUrl
+    type: string
+    default: ''
+
 steps:
   - task: NodeTool@0
     displayName: "Using Node.js"
@@ -5,8 +10,56 @@ steps:
       versionSpec: '24.x'
     condition: succeeded()
 
-  - script: npm install -g pnpm
-    displayName: "Install pnpm"
+  - pwsh: |
+      $feedBaseUrl = "${{ parameters.feedBaseUrl }}".TrimEnd("/")
+      if ([string]::IsNullOrWhiteSpace($feedBaseUrl)) {
+        Write-Error "feedBaseUrl is required so npm and pnpm restore through CFS."
+        exit 1
+      }
+
+      $npmrcPath = Join-Path "$(Build.SourcesDirectory)" ".npmrc"
+      $registry = "$feedBaseUrl/npm/registry/"
+      $lines = @()
+      if (Test-Path $npmrcPath) {
+        $lines = Get-Content $npmrcPath | Where-Object {
+          $_ -notmatch '^\s*registry\s*=' -and $_ -notmatch '^\s*always-auth\s*='
+        }
+      }
+
+      $lines += "registry=$registry"
+      $lines += "always-auth=true"
+      Set-Content -Path $npmrcPath -Value $lines
+      Write-Host "Configured npm/pnpm registry: $registry"
+      Write-Host "##vso[task.setvariable variable=npmrcFile]$npmrcPath"
+      Write-Host "##vso[task.setvariable variable=npmRegistry]$registry"
+    displayName: "Configure CFS npm registry"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+
+  - task: npmAuthenticate@0
+    displayName: "Authenticate CFS npm registry"
+    inputs:
+      workingFile: $(npmrcFile)
+    condition: succeeded()
+
+  - pwsh: |
+      $packageManager = (Get-Content "package.json" -Raw | ConvertFrom-Json).packageManager
+      if (-not $packageManager -or -not $packageManager.StartsWith("pnpm@")) {
+        Write-Error "package.json 'packageManager' must specify pnpm@<version>."
+        exit 1
+      }
+
+      $pnpmVersion = ($packageManager -replace '^pnpm@', '') -replace '\+.*$', ''
+      corepack disable pnpm 2>$null
+      npm install -g "pnpm@$pnpmVersion" --registry="$(npmRegistry)" --userconfig="$(npmrcFile)"
+      if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+      }
+
+      node --version
+      pnpm --version
+    displayName: "Install pinned pnpm from CFS"
+    workingDirectory: $(working_directory)
     condition: succeeded()
 
   - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
