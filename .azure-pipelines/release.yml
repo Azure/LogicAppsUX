@@ -21,6 +21,7 @@ resources:
       endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
 
 variables:
+  - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
   # Required by MicroBuild template
   - name: TeamName
     value: "Azure Tools for VS Code"
@@ -34,3 +35,4 @@ extends:
     publishVersion: ${{ parameters.publishVersion }}
     dryRun: ${{ parameters.dryRun }}
     environmentName: VSCodeDeployLAUX
+    npmFeed: ${{ variables.npmFeed }}
