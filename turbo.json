@@ -20,6 +20,7 @@
     },
     "vscode-designer#build:extension": {
       "cache": false,
+      "env": ["NPM_CONFIG_USERCONFIG"],
       "dependsOn": ["build"]
     },
     "vscode-react#build:extension": {
@@ -48,6 +49,7 @@
     },
     "vscode:designer:pack": {
       "cache": false,
+      "env": ["NPM_CONFIG_USERCONFIG"],
       "dependsOn": ["vscode-react#build:extension"]
     },
     "vscode:designer:e2e:ui": {

@@ -85,6 +85,16 @@ type Scenario = {
   settings?: ScenarioSettings;
   monolithic?: boolean;
   env?: Record<string, string>;
+  /**
+   * Install the codeful task recorder extension and point it at a freshly truncated
+   * events/trigger pair for this scenario.
+   *
+   * Opt in for any scenario that has to start a debug session. Driving F5 through the command
+   * palette depends on which editor happens to have focus, which is not something a headless
+   * CI session settles reliably (see SKILL.md rule 18); the recorder's marker-file trigger
+   * calls `vscode.debug.startDebugging(folder, config)` with an explicit folder instead.
+   */
+  recorder?: boolean;
 };
 type PhaseRunOptions = {
   vscodeVersion: string;
@@ -1326,6 +1336,13 @@ async function main(): Promise<void> {
     };
     if (includeRuntimeDependencyPaths) {
       const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths(runtimeDependenciesPathOverride);
+      // Publish the resolved root to the ExTester child process (same mechanism as
+      // LA_E2E_LSP_EPERM_DEPS_ROOT). Tests that have to touch the extension-managed
+      // dependency copy on disk — funcRepair.test.ts overwrites the managed func
+      // executable — must never guess a path and risk clobbering a developer's global
+      // install. Set here rather than once in main() so it always reflects the settings
+      // actually written, including runtimeDependenciesPathOverride.
+      process.env.LA_E2E_RUNTIME_DEPS_ROOT = depsRoot;
       Object.assign(settings, {
         // Point to auto-downloaded runtime binaries so the extension can start
         // the design-time API process (func host start) without relying on PATH.
@@ -1445,6 +1462,17 @@ async function main(): Promise<void> {
   // synchronously, and the sidecar is rewritten so the cached hash matches
   // disk). See bundleRepair.test.ts for the full scenario.
   const phaseBundleRepairFiles = [testFile('bundleRepair.test.js')];
+
+  // Phase 4.14 — Func Core Tools pre-debug self-heal E2E. Real ExTester / VS
+  // Code session. Corrupts the extension-managed func executable in place so it
+  // still EXISTS but no longer RUNS, then presses F5 and proves the pre-debug
+  // gate silently reinstalls it instead of dead-ending on the blocking "You must
+  // have the Azure Functions Core Tools installed" modal. See funcRepair.test.ts.
+  //
+  // 4.14, not 4.13: 4.13 is already the Azurite readiness guard above
+  // (phase413CreateFiles / phase413AssertFiles), so this phase takes the next
+  // free number and is named phaseFuncRepair* rather than phase414*.
+  const phaseFuncRepairFiles = [testFile('funcRepair.test.js')];
 
   // ------------------------------------------------------------------
   // Per-scenario inventory (Phase A scaffold).
@@ -1646,6 +1674,39 @@ async function main(): Promise<void> {
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
+
+    // Phase 4.14 — Func Core Tools pre-debug self-heal.
+    // Reuses a Standard/Stateful workspace from the fixtures manifest, waits for
+    // the managed func binaries to install and run, overwrites them in place so
+    // they still exist but no longer execute, starts debugging, and asserts the
+    // pre-debug gate silently reinstalls them instead of showing the blocking
+    // "You must have the Azure Functions Core Tools installed" modal.
+    //
+    // Both settings are load-bearing:
+    //   validateDependencies: true  — writes
+    //     autoRuntimeDependenciesValidationAndInstallation, which IS
+    //     useBinariesDependencies() (binaries.ts:793). With it off,
+    //     validateFuncCoreToolsInstalled never reaches the managed-binaries
+    //     repair path and the test would assert nothing.
+    //     It also provisions the managed func binaries this test corrupts.
+    //   autoStartDesignTime: false  — a running design-time `func host start`
+    //     holds func.exe open, and a running .exe cannot be overwritten on
+    //     Windows. Debugging itself does not need design time: the generated
+    //     launch.json attaches via azureLogicAppsStandard.pickProcess, whose
+    //     pre-debug gate (validatePreDebug.ts:58) is exactly the code under
+    //     test, and it runs before anything design-time related.
+    //
+    // recorder: true — the palette F5 path is focus-dependent and does not
+    // survive a headless CI session (run 30549543233 debugged a markdown
+    // preview; run 30554041131 debugged settings.json). The recorder calls
+    // vscode.debug.startDebugging(folder, config) with an explicit folder.
+    {
+      id: 'p414-funcrepair',
+      testFile: phaseFuncRepairFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+      recorder: true,
+    },
   ];
 
   const e2eMode = (process.env.E2E_MODE || 'full').toLowerCase();
@@ -1662,6 +1723,64 @@ async function main(): Promise<void> {
     cleanup: false,
     offline: false,
     resources: [],
+  };
+
+  /**
+   * Windows-only: confirms the `func` processes killed by prepareFreshSession() have actually
+   * exited before the next scenario starts.
+   *
+   * Detection-based rather than another fixed sleep, because on Windows this is a correctness
+   * gate, not a tidiness one: a running .exe holds its own image file open, so a surviving func
+   * host makes any in-place write to `func.exe` fail with EPERM/EBUSY. `funcRepair.test.ts`
+   * (p414-funcrepair) overwrites the managed func binaries in place, and it can run directly
+   * after a scenario that leaves a design-time host alive (`p41a-fixtures` runs with
+   * autoStartDesignTime: true). Linux cannot reproduce this at all — there, overwriting a
+   * running executable simply succeeds.
+   *
+   * Log-only by design: a stray func on a developer box must not fail a run that would
+   * otherwise pass, and the corrupting test already fails loudly with its own diagnostic. What
+   * this buys is that the CI log says WHY, instead of leaving an EPERM to be guessed at.
+   */
+  const waitForWindowsFuncProcessesToExit = async (label: string, timeoutMs = 15000): Promise<void> => {
+    if (process.platform !== 'win32') {
+      return;
+    }
+    const { execFileSync } = require('child_process');
+    // execFileSync (not execSync) so the PowerShell argument never round-trips through cmd.exe
+    // quoting. Returns -1 when the probe itself failed, so "could not tell" is never reported
+    // as "all clear".
+    const countFuncProcesses = (): number => {
+      try {
+        const out = execFileSync(
+          'powershell',
+          ['-NoProfile', '-Command', '@(Get-Process -Name func -ErrorAction SilentlyContinue).Count'],
+          {
+            timeout: 10000,
+            encoding: 'utf8',
+          }
+        );
+        const parsed = Number.parseInt(String(out).trim(), 10);
+        return Number.isNaN(parsed) ? -1 : parsed;
+      } catch {
+        return -1;
+      }
+    };
+
+    const deadline = Date.now() + timeoutMs;
+    let remaining = countFuncProcesses();
+    while (remaining > 0 && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 1000));
+      remaining = countFuncProcesses();
+    }
+    if (remaining > 0) {
+      console.log(
+        `  [${label}] ⚠ ${remaining} func process(es) still running after ${timeoutMs}ms — an in-place overwrite of func.exe will fail with EPERM/EBUSY`
+      );
+    } else if (remaining < 0) {
+      console.log(`  [${label}] Could not probe for leftover func processes (PowerShell probe failed)`);
+    } else {
+      console.log(`  [${label}] ✓ No func processes remain`);
+    }
   };
 
   const prepareFreshSession = async (label: string): Promise<void> => {
@@ -1715,11 +1834,21 @@ async function main(): Promise<void> {
         // processes. Only kill dotnet processes that are children of func (covered
         // by the "func.*host.*start" pkill above which terminates the process group).
       } else {
-        // Windows: use PowerShell
-        execSync(
-          'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
-          { stdio: 'ignore', timeout: 10000 }
-        );
+        // Windows: use PowerShell. Every kill is guarded INDIVIDUALLY, matching the pkill
+        // chain above. The VS Code kill used to run unguarded, so a PowerShell start-up
+        // hiccup or the 10s timeout threw straight past the func kill into the outer catch,
+        // which only logs "kill failed — continuing". That asymmetry is invisible on Linux
+        // (a running executable is freely overwritable there) but load-bearing on Windows:
+        // a surviving func.exe holds its own image open, and p414-funcrepair overwrites the
+        // managed func binaries in place right after p41a-fixtures has run a design-time host.
+        try {
+          execSync(
+            'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
+            { stdio: 'ignore', timeout: 10000 }
+          );
+        } catch {
+          /* no matching VS Code process, or the probe timed out — fall through to the func kill */
+        }
         // Kill orphan Functions runtime / vsdbg processes on Windows
         try {
           execSync(
@@ -1729,6 +1858,8 @@ async function main(): Promise<void> {
         } catch {
           /* OK */
         }
+        // Stop-Process only SIGNALS termination; confirm the handles are actually gone.
+        await waitForWindowsFuncProcessesToExit(label);
       }
       console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver/func/vsdbg processes`);
       // Wait for processes to fully exit and release IPC sockets.
@@ -2547,7 +2678,7 @@ namespace ${namespaceName}
       }
       const exits: number[] = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv, recorder } = scenario;
         const resolvedSettings: ScenarioSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
@@ -2570,6 +2701,20 @@ namespace ${namespaceName}
           }
         }
 
+        // Scenarios that start a debug session drive it through the recorder extension's
+        // marker-file trigger rather than the command palette, so the trigger does not depend
+        // on which editor has focus. Install once per scenario (prepareFreshSession does not
+        // touch extDir); the events/trigger files are reset per attempt below so a retry never
+        // reads the previous attempt's events. The env keys are captured here, once, so the
+        // restore loop below cannot double-restore them across retries.
+        if (recorder) {
+          installCodefulTaskRecorderExtension(extDir);
+          rebuildExtensionsJson(extDir);
+          for (const key of ['LA_E2E_TASK_EVENTS_JSONL', 'CODEFUL_TASK_EVENTS_JSONL', 'LA_E2E_TRIGGER_DIR']) {
+            envOverridesApplied.push({ key, prev: process.env[key] });
+          }
+        }
+
         const fileList = Array.isArray(files) ? files : [files];
         if (!monolithic && fileList.length !== 1) {
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
@@ -2586,6 +2731,11 @@ namespace ${namespaceName}
 
           try {
             await prepareFreshSession(id);
+            if (recorder) {
+              // Truncates the JSONL and clears stale markers — must run per attempt, after
+              // prepareFreshSession, so the test never sees a previous attempt's debugStarted.
+              configureCodefulRecorderEnvironment();
+            }
             if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
               pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
               pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
@@ -2758,6 +2908,16 @@ namespace ${namespaceName}
       }
       const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
       process.exit(phase12Exit);
+    }
+
+    if (e2eMode === 'funcrepaironly') {
+      const funcRepairScenario = scenarios.find((s) => s.id === 'p414-funcrepair');
+      if (!funcRepairScenario) {
+        throw new Error('funcrepaironly: p414-funcrepair scenario not found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const funcRepairExit = await runScenarioPhases([funcRepairScenario]);
+      process.exit(funcRepairExit);
     }
 
     if (e2eMode === 'nugetdebugonly') {

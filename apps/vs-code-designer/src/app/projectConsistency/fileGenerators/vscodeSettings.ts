@@ -26,26 +26,26 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
   if (projectType === ProjectType.codeful) {
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     return {
-      ...baseSettings,
       [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
+      ...baseSettings,
       'omnisharp.enableMsBuildLoadProjectsOnDemand': false,
       'omnisharp.disableMSBuildDiagnosticWarning': true,
     };
   }
-  
+
   if (projectPackageType === ProjectPackageType.Nuget) {
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     return {
-      ...baseSettings,
       [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
       [`${ext.prefix}.${preDeployTaskSetting}`]: 'publish',
+      ...baseSettings,
     };
   }
-  
+
   if (projectType === ProjectType.logicApp) {
     return {
-      ...baseSettings,
       [`${ext.prefix}.${deploySubpathSetting}`]: '.',
+      ...baseSettings,
     };
   }
 
