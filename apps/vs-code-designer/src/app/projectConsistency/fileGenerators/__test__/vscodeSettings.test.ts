@@ -46,9 +46,8 @@ describe('generateSettingsJson', () => {
       };
       const result = generateSettingsJson(config);
 
-      expect(result).toHaveProperty('azureFunctions.deploySubpath');
-      expect(result).toHaveProperty('azureFunctions.preDeployTask', 'publish');
-      expect(result).toHaveProperty('azureFunctions.projectSubpath');
+      expect(result).toHaveProperty('azureLogicAppsStandard.deploySubpath');
+      expect(result).not.toHaveProperty('azureLogicAppsStandard.preDeployTask');
       expect(result).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
       expect(result).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
     });
@@ -76,7 +75,7 @@ describe('generateSettingsJson', () => {
       const result = generateSettingsJson(config);
 
       expect(result).toHaveProperty('azureLogicAppsStandard.deploySubpath');
-      expect(result).toHaveProperty('azureFunctions.preDeployTask');
+      expect(result).toHaveProperty('azureLogicAppsStandard.preDeployTask');
       expect(result).not.toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand');
     });
 
@@ -96,7 +95,7 @@ describe('generateSettingsJson', () => {
         'azureLogicAppsStandard.projectRuntime': '~4',
         'debug.internalConsoleOptions': 'neverOpen',
         'azureFunctions.suppressProject': true,
-        'azureFunctions.preDeployTask': 'publish',
+        'azureLogicAppsStandard.preDeployTask': 'publish',
       });
     });
   });

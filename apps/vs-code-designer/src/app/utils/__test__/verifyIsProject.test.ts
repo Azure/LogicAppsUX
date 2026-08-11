@@ -4,6 +4,13 @@ import * as path from 'path';
 import * as verifyIsProject from '../verifyIsProject';
 import { hostFileName, localSettingsFileName, workflowFileName } from '../../../constants';
 
+vi.mock('../../utils/vsCodeConfig/settings', () => ({
+  getWorkspaceSetting: vi.fn(),
+  updateWorkspaceSetting: vi.fn(),
+}));
+
+import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+
 describe('isLogicAppProject', () => {
   const projectPath = path.join('test', 'LogicApp');
 
@@ -139,5 +146,77 @@ describe('isLogicAppProject', () => {
     );
 
     expect(await verifyIsProject.isLogicAppProject(projectPath)).toBe(false);
+  });
+});
+
+describe('tryGetLogicAppProjectRoot', () => {
+  const workspacePath = path.join('test', 'workspace');
+  const subprojectPath = path.join(workspacePath, 'MyLogicApp');
+  const workflowJsonPath = path.join(subprojectPath, 'stateful1', workflowFileName);
+  const mockContext = { telemetry: { properties: {} }, ui: {} } as any;
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  function mockLogicAppProjectAt(validProjectPath: string): void {
+    const wfPath = path.join(validProjectPath, 'stateful1', workflowFileName);
+    vi.spyOn(fse, 'pathExists').mockImplementation(async (p: fse.PathLike) => {
+      const s = String(p);
+      return s === workspacePath || s === validProjectPath || s === wfPath;
+    });
+    vi.spyOn(fse, 'readdir').mockImplementation(async (p: fse.PathLike) => {
+      const s = String(p);
+      if (s === validProjectPath) {
+        return ['stateful1'];
+      }
+      if (s === workspacePath) {
+        return [path.basename(validProjectPath)];
+      }
+      return [];
+    });
+    vi.spyOn(fse, 'readFile').mockImplementation(async (p: fse.PathLike) => {
+      if (String(p) === wfPath) {
+        return JSON.stringify({
+          definition: {
+            $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          },
+        });
+      }
+      return '';
+    });
+  }
+
+  it('returns configured projectSubpath when it points to a valid project', async () => {
+    vi.mocked(getWorkspaceSetting).mockReturnValue('MyLogicApp');
+    mockLogicAppProjectAt(subprojectPath);
+
+    const result = await verifyIsProject.tryGetLogicAppProjectRoot(mockContext, workspacePath);
+    expect(result).toBe(subprojectPath);
+  });
+
+  it('falls through to scanning when projectSubpath points to an invalid location', async () => {
+    vi.mocked(getWorkspaceSetting).mockReturnValue('NonExistent');
+    mockLogicAppProjectAt(subprojectPath);
+
+    const result = await verifyIsProject.tryGetLogicAppProjectRoot(mockContext, workspacePath, true);
+    expect(result).toBe(subprojectPath);
+  });
+
+  it('falls through to scanning when no projectSubpath is configured', async () => {
+    vi.mocked(getWorkspaceSetting).mockReturnValue(undefined);
+    mockLogicAppProjectAt(subprojectPath);
+
+    const result = await verifyIsProject.tryGetLogicAppProjectRoot(mockContext, workspacePath, true);
+    expect(result).toBe(subprojectPath);
+  });
+
+  it('returns undefined when no projects are found', async () => {
+    vi.mocked(getWorkspaceSetting).mockReturnValue(undefined);
+    vi.spyOn(fse, 'pathExists').mockImplementation(async (p: fse.PathLike) => String(p) === workspacePath);
+    vi.spyOn(fse, 'readdir').mockResolvedValue([]);
+
+    const result = await verifyIsProject.tryGetLogicAppProjectRoot(mockContext, workspacePath);
+    expect(result).toBeUndefined();
   });
 });

@@ -71,10 +71,10 @@ import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { getAppSettingsFromNode } from '../../utils/tree/slotTreeUtils';
 import { isNullOrUndefined, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
-import { publishCodefulProject } from '../publishCodefulProject';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { isProjectInitializedForVSCode } from '../../projectConsistency/vscodeConsistency';
 import { initProjectForVSCode } from '../initProjectForVSCode/initProjectForVSCode';
+import { publishCodefulProject } from '../publishCodefulProject';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -168,22 +168,22 @@ async function deploy(
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
 
-  if (!isProjectInitializedForVSCode(effectiveDeployFsPath)) {
+  if (!isProjectInitializedForVSCode(originalDeployFsPath)) {
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await deployContext.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
     await callWithTelemetryAndErrorHandling('deploy.initProjectForVSCode', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
-      await initProjectForVSCode(actionContext, effectiveDeployFsPath);
+      await initProjectForVSCode(actionContext, originalDeployFsPath);
     });
   }
 
   const language = nonNullOrEmptyValue(
-    getWorkspaceSetting(projectLanguageSetting, effectiveDeployFsPath),
+    getWorkspaceSetting(projectLanguageSetting, originalDeployFsPath),
     projectLanguageSetting
   ) as ProjectLanguage;
   const version = nonNullOrEmptyValue(
-    tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, effectiveDeployFsPath)),
+    tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, originalDeployFsPath)),
     funcVersionSetting
   ) as FuncVersion;
 

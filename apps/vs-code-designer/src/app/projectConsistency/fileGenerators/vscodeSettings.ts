@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { VSCodeProjectConfig } from './types';
-import { deploySubpathSetting, funcVersionSetting, projectLanguageSetting } from '../../../constants';
+import { deploySubpathSetting, funcVersionSetting, preDeployTaskSetting, projectLanguageSetting } from '../../../constants';
 import { latestGAVersion, ProjectLanguage, ProjectPackageType, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import { ext } from '../../../extensionVariables';
@@ -27,9 +27,7 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     return {
       ...baseSettings,
-      'azureFunctions.deploySubpath': deploySubPathValue,
-      'azureFunctions.preDeployTask': 'publish',
-      'azureFunctions.projectSubpath': deploySubPathValue,
+      [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
       'omnisharp.enableMsBuildLoadProjectsOnDemand': false,
       'omnisharp.disableMSBuildDiagnosticWarning': true,
     };
@@ -40,7 +38,7 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
     return {
       ...baseSettings,
       [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
-      'azureFunctions.preDeployTask': 'publish',
+      [`${ext.prefix}.${preDeployTaskSetting}`]: 'publish',
     };
   }
   
