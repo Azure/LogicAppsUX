@@ -7,6 +7,7 @@ import {
   CustomCodeFunctionsProjectMetadata,
   getCustomCodeFunctionsProjectMetadata,
   getAllCustomCodeFunctionsProjects,
+  getEligibleLogicAppFoldersForCustomCode,
   isCustomCodeFunctionsProject,
   isCustomCodeFunctionsProjectInRoot,
   tryGetCustomCodeFunctionsProjects,

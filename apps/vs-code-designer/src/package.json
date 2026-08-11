@@ -68,6 +68,11 @@
         }
       },
       {
+        "command": "azureLogicAppsStandard.addCustomCode",
+        "title": "Add .NET custom code",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.createWorkspace",
         "title": "Create new logic app workspace...",
         "category": "Azure Logic Apps",
@@ -703,6 +708,11 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.addCustomCode",
+          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.createCustomCodeFunction",
           "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.functionsFolders",
           "group": "navigation@1"
@@ -815,6 +825,10 @@
         },
         {
           "command": "azureLogicAppsStandard.runProjectConsistencyCheck",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.addCustomCode",
           "when": "never"
         },
         {

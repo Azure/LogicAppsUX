@@ -39,7 +39,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ensureWorkspace } from './app/commands/ensureWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
+import { getAllCustomCodeFunctionsProjects, getEligibleLogicAppFoldersForCustomCode } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
@@ -96,6 +96,11 @@ export async function activate(context: vscode.ExtensionContext) {
       'setContext',
       extensionContext.customCodeFunctionsFolders,
       await getAllCustomCodeFunctionsProjects(activateContext)
+    );
+    vscode.commands.executeCommand(
+      'setContext',
+      extensionContext.customCodeEligibleLogicAppFolders,
+      await getEligibleLogicAppFoldersForCustomCode()
     );
 
     // Workspace setup and consistency checks

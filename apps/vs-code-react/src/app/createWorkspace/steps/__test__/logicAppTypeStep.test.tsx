@@ -44,9 +44,9 @@ vi.mock('@fluentui/react-components', async () => {
   const RadioGroupContext = React.createContext<((value: string) => void) | undefined>(undefined);
 
   return {
-    Combobox: ({ children, onChange, onOptionSelect, placeholder, value }: any) => (
+    Combobox: ({ children, onChange, onOptionSelect, placeholder, value, disabled }: any) => (
       <div>
-        <input aria-label={placeholder} onChange={onChange} placeholder={placeholder} value={value} />
+        <input aria-label={placeholder} onChange={onChange} placeholder={placeholder} value={value} disabled={disabled} />
         <div>{children}</div>
         <button onClick={() => onOptionSelect?.(undefined, { optionValue: 'ExistingApp' })} type="button">
           Choose ExistingApp
@@ -60,8 +60,8 @@ vi.mock('@fluentui/react-components', async () => {
         {validationMessage ? <span role="alert">{validationMessage}</span> : null}
       </label>
     ),
-    Input: ({ onChange, placeholder, value }: any) => (
-      <input aria-label={placeholder} onChange={onChange} placeholder={placeholder} value={value} />
+    Input: ({ onChange, placeholder, value, disabled }: any) => (
+      <input aria-label={placeholder} onChange={onChange} placeholder={placeholder} value={value} disabled={disabled} />
     ),
     Option: ({ children, value }: any) => <div data-value={value}>{children}</div>,
     Radio: ({ label, value }: any) => {
@@ -112,6 +112,7 @@ function createState(overrides: Partial<CreateWorkspaceState> = {}): CreateWorks
     workspaceName: 'Workspace',
     workspaceProjectPath: { fsPath: '/tmp/projects', path: '/tmp/projects' },
     availableProjects: [],
+    isAddCustomCodeFlow: false,
     ...overrides,
   };
 }
@@ -196,5 +197,30 @@ describe('LogicAppTypeStep', () => {
     fireEvent.change(screen.getByPlaceholderText('Enter logic app name'), { target: { value: 'csharpproject' } });
 
     expect(screen.getByRole('alert')).toHaveTextContent('Project already exists');
+  });
+
+  it('disables the logic app name input when isAddCustomCodeFlow is true', () => {
+    renderLogicAppType({
+      isAddCustomCodeFlow: true,
+      logicAppType: ProjectType.customCode,
+      logicAppName: 'PreselectedApp',
+    });
+
+    const input = screen.getByPlaceholderText('Enter logic app name');
+    expect(input).toBeDisabled();
+    expect(input).toHaveValue('PreselectedApp');
+  });
+
+  it('hides radio group when isAddCustomCodeFlow is true even in createLogicApp flow', () => {
+    renderLogicAppType({
+      isAddCustomCodeFlow: true,
+      flowType: 'createLogicApp',
+      logicAppType: ProjectType.customCode,
+      logicAppName: 'PreselectedApp',
+    });
+
+    // Radio buttons should not be rendered because shouldShowLogicAppSection is false
+    expect(screen.queryByRole('button', { name: 'Standard' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Custom code' })).not.toBeInTheDocument();
   });
 });

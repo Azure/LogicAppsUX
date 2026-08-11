@@ -46,6 +46,7 @@ export interface CreateWorkspaceState {
   platform: Platform | null;
   isDevContainerProject: boolean;
   availableProjects: AvailableProject[];
+  isAddCustomCodeFlow: boolean;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -84,6 +85,7 @@ const initialState: CreateWorkspaceState = {
   platform: null,
   isDevContainerProject: false,
   availableProjects: [],
+  isAddCustomCodeFlow: false,
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -91,7 +93,16 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
   initialState,
   reducers: {
     initializeProject: (state, action: PayloadAction<any>) => {
-      const { workspaceFileJson, logicAppsWithoutCustomCode, existingFolders, platform, separator } = action.payload;
+      const {
+        workspaceFileJson,
+        logicAppsWithoutCustomCode,
+        existingFolders,
+        platform,
+        separator,
+        isAddCustomCodeFlow,
+        preselectedLogicAppName,
+        preselectedLogicAppType,
+      } = action.payload;
       state.workspaceFileJson = workspaceFileJson;
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
       state.existingFolders = existingFolders || [];
@@ -104,6 +115,12 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       }
       if (separator !== undefined) {
         state.separator = separator;
+      }
+      // Support "Add .NET custom code" flow with pre-selected type and name
+      if (isAddCustomCodeFlow) {
+        state.isAddCustomCodeFlow = true;
+        state.logicAppType = preselectedLogicAppType || '';
+        state.logicAppName = preselectedLogicAppName || '';
       }
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {

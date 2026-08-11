@@ -4,8 +4,9 @@ import { parseString } from 'xml2js';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import type { WorkspaceFolder } from 'vscode';
 import { isLogicAppProject } from './verifyIsProject';
+import { hasCodefulSdkReference } from './codeful';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceRoot } from './workspace';
+import { getWorkspaceLogicAppRoots, getWorkspaceRoot } from './workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { customDirectory, libDirectory } from '../../constants';
@@ -64,6 +65,27 @@ export async function getAllCustomCodeFunctionsProjects(context: IActionContext)
 }
 
 /**
+ * Gets the paths of codeless Logic App workspace roots that do NOT already have an associated custom-code functions project.
+ */
+export async function getEligibleLogicAppFoldersForCustomCode(): Promise<string[]> {
+  const projectPaths = await getWorkspaceLogicAppRoots();
+
+  const eligiblePathTasks = projectPaths.map(async (projectPath) => {
+    if ((await hasCodefulSdkReference(projectPath))) {
+      return undefined;
+    }
+    const existingCustomCode = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
+    if (existingCustomCode && existingCustomCode.length > 0) {
+      return undefined;
+    }
+    return projectPath;
+  });
+  const eligibleProjectPaths = (await Promise.all(eligiblePathTasks)).filter((p?: string) => p !== undefined);
+
+  return eligibleProjectPaths;
+}
+
+/**
  * Checks if the folder is a custom code functions project.
  * @param {string} folderPath - The folder path.
  * @returns {Promise<boolean>} Returns true if the folder is a custom code functions project, otherwise false.
@@ -93,7 +115,7 @@ export async function detectCustomCodeTargetFramework(projectPath: string): Prom
     const metadata = await getCustomCodeFunctionsProjectMetadata(customCodeProjects[0]);
     return metadata?.targetFramework;
   }
-  
+
   return undefined;
 }
 

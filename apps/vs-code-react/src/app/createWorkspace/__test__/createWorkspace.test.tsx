@@ -78,6 +78,7 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     platform: null,
     isDevContainerProject: false,
     availableProjects: [],
+    isAddCustomCodeFlow: false,
     ...overrides,
   };
 };
