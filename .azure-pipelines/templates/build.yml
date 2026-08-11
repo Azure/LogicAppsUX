@@ -2,4 +2,6 @@ steps:
   - script: pnpm run build:extension
     displayName: "Build with pnpm"
     workingDirectory: $(working_directory)
+    env:
+      NPM_CONFIG_USERCONFIG: $(npmrcFile)
     condition: succeeded()
