@@ -63,6 +63,36 @@ describe('createWorkspaceSlice', () => {
       expect(result.platform).toBe(Platform.windows);
       expect(result.separator).toBe('\\');
     });
+
+    it('sets isAddCustomCodeFlow, logicAppType, and logicAppName when pre-selection data is provided', () => {
+      const result = createWorkspaceReducer(
+        getState(),
+        initializeProject({
+          workspaceFileJson: {},
+          logicAppsWithoutCustomCode: [{ label: 'MyApp' }],
+          isAddCustomCodeFlow: true,
+          preselectedLogicAppName: 'MyApp',
+          preselectedLogicAppType: 'customCode',
+        })
+      );
+      expect(result.isAddCustomCodeFlow).toBe(true);
+      expect(result.logicAppType).toBe('customCode');
+      expect(result.logicAppName).toBe('MyApp');
+      expect(result.logicAppsWithoutCustomCode).toEqual([{ label: 'MyApp' }]);
+    });
+
+    it('does not set isAddCustomCodeFlow when not provided', () => {
+      const result = createWorkspaceReducer(
+        getState(),
+        initializeProject({
+          workspaceFileJson: {},
+          logicAppsWithoutCustomCode: undefined,
+        })
+      );
+      expect(result.isAddCustomCodeFlow).toBe(false);
+      expect(result.logicAppType).toBe('');
+      expect(result.logicAppName).toBe('');
+    });
   });
 
   describe('resetState', () => {

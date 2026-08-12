@@ -152,7 +152,6 @@ describe('isLogicAppProject', () => {
 describe('tryGetLogicAppProjectRoot', () => {
   const workspacePath = path.join('test', 'workspace');
   const subprojectPath = path.join(workspacePath, 'MyLogicApp');
-  const workflowJsonPath = path.join(subprojectPath, 'stateful1', workflowFileName);
   const mockContext = { telemetry: { properties: {} }, ui: {} } as any;
 
   afterEach(() => {
