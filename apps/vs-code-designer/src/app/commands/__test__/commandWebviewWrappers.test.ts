@@ -4,7 +4,8 @@ import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
-import { getLogicAppWithoutCustomCode, getWorkspaceRoot } from '../../utils/workspace';
+import { getWorkspaceRoot } from '../../utils/workspace';
+import { getEligibleLogicAppFoldersForCustomCode } from '../../utils/customCodeUtils';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { cloudToLocal } from '../cloudToLocal/cloudToLocal';
 import { ensureWorkspace } from '../ensureWorkspace';
@@ -54,8 +55,11 @@ vi.mock('../createWorkflow/createLogicAppWorkflow', () => ({
 }));
 
 vi.mock('../../utils/workspace', () => ({
-  getLogicAppWithoutCustomCode: vi.fn(),
   getWorkspaceRoot: vi.fn(),
+}));
+
+vi.mock('../../utils/customCodeUtils', () => ({
+  getEligibleLogicAppFoldersForCustomCode: vi.fn(),
 }));
 
 vi.mock('../../utils/codeful', () => ({
@@ -73,7 +77,7 @@ function getLastWebviewConfig(): WorkspaceWebviewCommandConfig {
 
 describe('workspace webview command wrappers', () => {
   const context = { telemetry: { properties: {}, measurements: {} } } as any;
-  const workspaceRoot = 'D:\\workspace';
+  const workspaceRoot = path.resolve(path.sep, 'workspace');
   const logicAppRoot = path.join(workspaceRoot, 'LogicApp');
 
   beforeEach(() => {
@@ -83,7 +87,7 @@ describe('workspace webview command wrappers', () => {
     (getWorkspaceRoot as Mock).mockResolvedValue(workspaceRoot);
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(logicAppRoot);
     (hasCodefulWorkflowSetting as Mock).mockResolvedValue(false);
-    (getLogicAppWithoutCustomCode as Mock).mockResolvedValue([]);
+    (getEligibleLogicAppFoldersForCustomCode as Mock).mockResolvedValue([]);
   });
 
   it('createWorkspace passes workspace config and invokes createLogicAppWorkspace', async () => {
@@ -126,9 +130,9 @@ describe('workspace webview command wrappers', () => {
   });
 
   it('createProject opens the project webview when a workspace is present', async () => {
-    const workspaceFile = { fsPath: 'D:\\workspace\\MyWorkspace.code-workspace' };
+    const workspaceFile = { fsPath: path.join(workspaceRoot, 'MyWorkspace.code-workspace') };
     const workspaceFileJson = { folders: [{ path: './LogicApp' }] };
-    const logicAppsWithoutCustomCode = ['LogicApp'];
+    const eligiblePaths = [path.join(workspaceRoot, 'LogicApp')];
     (vscode.workspace as any).workspaceFile = workspaceFile;
     (vscode.workspace.fs.readFile as Mock).mockResolvedValue(Buffer.from(JSON.stringify(workspaceFileJson)));
     (vscode.workspace.fs.readDirectory as Mock).mockResolvedValue([
@@ -136,7 +140,7 @@ describe('workspace webview command wrappers', () => {
       ['CSharpProject', 'directory'],
       ['MyWorkspace.code-workspace', 'file'],
     ]);
-    (getLogicAppWithoutCustomCode as Mock).mockResolvedValue(logicAppsWithoutCustomCode);
+    (getEligibleLogicAppFoldersForCustomCode as Mock).mockResolvedValue(eligiblePaths);
 
     await createProject(context);
 
@@ -147,10 +151,12 @@ describe('workspace webview command wrappers', () => {
       projectName: ProjectName.createLogicApp,
       createCommand: ExtensionCommand.createLogicApp,
     });
+    const expectedLogicAppPath = path.join(workspaceRoot, 'LogicApp');
     expect(config.extraInitializeData).toEqual({
       workspaceFileJson,
-      logicAppsWithoutCustomCode,
+      logicAppsWithoutCustomCode: [{ label: 'LogicApp', description: expectedLogicAppPath, data: expectedLogicAppPath }],
       existingFolders: ['LogicApp', 'CSharpProject'],
+      workspaceRootFolder: workspaceRoot,
     });
     expect(config.dialogOptions?.workspace).toMatchObject({
       canSelectMany: false,
@@ -166,7 +172,7 @@ describe('workspace webview command wrappers', () => {
   });
 
   it('getExistingFoldersOnDisk filters out non-directory entries using FileType mock', async () => {
-    const workspaceFile = { fsPath: 'D:\\workspace\\MyWorkspace.code-workspace' };
+    const workspaceFile = { fsPath: path.join(workspaceRoot, 'MyWorkspace.code-workspace') };
     const workspaceFileJson = { folders: [{ path: './LogicApp' }] };
     (vscode.workspace as any).workspaceFile = workspaceFile;
     (vscode.workspace.fs.readFile as Mock).mockResolvedValue(Buffer.from(JSON.stringify(workspaceFileJson)));
@@ -185,6 +191,7 @@ describe('workspace webview command wrappers', () => {
       workspaceFileJson,
       logicAppsWithoutCustomCode: [],
       existingFolders: ['LogicApp', 'AnotherProject'],
+      workspaceRootFolder: workspaceRoot,
     });
   });
 

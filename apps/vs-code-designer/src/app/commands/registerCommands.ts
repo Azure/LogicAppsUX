@@ -39,7 +39,7 @@ import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
-import { parameterizeAllConnections, parameterizeProjectConnections } from './parameterizeConnections';
+import { parameterizeProjectConnections } from './parameterizeConnections';
 import { pickFuncProcess } from './pickFuncProcess';
 import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
@@ -82,6 +82,7 @@ import { enableDevContainer } from './enableDevContainer/enableDevContainer';
 import { toggleDesignTimeNodeWorker } from './toggleDesignTimeNodeWorker';
 import { enableLocalManagedIdentityAuth } from '../utils/managedIdentity';
 import { runProjectConsistencyCheck } from './runProjectConsistencyCheck';
+import { addCustomCode } from './addCustomCode/addCustomCode';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -172,6 +173,7 @@ export function registerCommands(): void {
   // Custom code
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
+  registerCommand(extensionCommand.addCustomCode, addCustomCode);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);
   registerCommand(extensionCommand.switchToDataMapperV2, switchToDataMapperV2);
   registerCommand(extensionCommand.enableDevContainer, enableDevContainer);

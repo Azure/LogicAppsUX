@@ -59,6 +59,8 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     platform: null,
     isDevContainerProject: false,
     availableProjects: [],
+    isAddCustomCodeFlow: false,
+    workspaceRootFolder: '',
     ...overrides,
   };
 

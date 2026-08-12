@@ -46,6 +46,8 @@ export interface CreateWorkspaceState {
   platform: Platform | null;
   isDevContainerProject: boolean;
   availableProjects: AvailableProject[];
+  isAddCustomCodeFlow: boolean;
+  workspaceRootFolder: string;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -84,6 +86,8 @@ const initialState: CreateWorkspaceState = {
   platform: null,
   isDevContainerProject: false,
   availableProjects: [],
+  isAddCustomCodeFlow: false,
+  workspaceRootFolder: '',
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -91,10 +95,23 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
   initialState,
   reducers: {
     initializeProject: (state, action: PayloadAction<any>) => {
-      const { workspaceFileJson, logicAppsWithoutCustomCode, existingFolders, platform, separator } = action.payload;
+      const {
+        workspaceFileJson,
+        logicAppsWithoutCustomCode,
+        existingFolders,
+        platform,
+        separator,
+        workspaceRootFolder,
+        isAddCustomCodeFlow,
+        preselectedLogicAppName,
+        preselectedLogicAppType,
+      } = action.payload;
       state.workspaceFileJson = workspaceFileJson;
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
       state.existingFolders = existingFolders || [];
+      if (workspaceRootFolder) {
+        state.workspaceRootFolder = workspaceRootFolder;
+      }
       // platform and separator are host-environment values sent by the extension host in the
       // initialize_frame payload. The createProject (createLogicApp) webview flow only dispatches
       // initializeProject, so they must be captured here for platform-gated options (e.g. the
@@ -104,6 +121,12 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       }
       if (separator !== undefined) {
         state.separator = separator;
+      }
+      // Support "Add .NET custom code" flow with pre-selected type and name
+      if (isAddCustomCodeFlow) {
+        state.isAddCustomCodeFlow = true;
+        state.logicAppType = preselectedLogicAppType || '';
+        state.logicAppName = preselectedLogicAppName || '';
       }
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {

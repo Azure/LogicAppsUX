@@ -12,9 +12,9 @@ import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebview
 import * as vscode from 'vscode';
 import path from 'path';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
-import { getLogicAppWithoutCustomCode } from '../../utils/workspace';
+import { getEligibleLogicAppFoldersForCustomCode } from '../../utils/customCodeUtils';
 
-export async function createProject(context: IActionContext): Promise<void> {
+export async function createProject(_context: IActionContext): Promise<void> {
   // Determine if in workspace, if not in workspace but there is a logic app project found,
   // prompt to see if they want to move the project over to a logic app workspace
   let workspaceRootFolder = '';
@@ -35,7 +35,12 @@ export async function createProject(context: IActionContext): Promise<void> {
   // Get workspace data for the webview
   const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.workspace.workspaceFile);
   const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
-  const logicAppsWithoutCustomCode = await getLogicAppWithoutCustomCode(context);
+  const customCodeEligibleProjectPaths = await getEligibleLogicAppFoldersForCustomCode();
+  const logicAppsWithoutCustomCode = customCodeEligibleProjectPaths.map((projectPath) => ({
+    label: path.basename(projectPath),
+    description: projectPath,
+    data: projectPath,
+  }));
 
   // Enumerate all existing directories on disk (includes C# project folders, etc.)
   const existingFolders = await getExistingFoldersOnDisk(workspaceRootFolder);
@@ -63,6 +68,7 @@ export async function createProject(context: IActionContext): Promise<void> {
       workspaceFileJson,
       logicAppsWithoutCustomCode,
       existingFolders,
+      workspaceRootFolder,
     },
   });
 }
