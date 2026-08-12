@@ -1,7 +1,9 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as verifyProjectUtils from '../verifyIsProject';
-import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { hasCodefulSdkReference } from '../codeful';
+import { getWorkspaceLogicAppRoots } from '../workspace';
+import { describe, it, expect, vi, beforeEach, beforeAll, type Mock } from 'vitest';
 import {
   CustomCodeFunctionsProjectMetadata,
   getCustomCodeFunctionsProjectMetadata,
@@ -32,6 +34,14 @@ vi.mock('../../../extensionVariables', () => ({
       appendLog: vi.fn(),
     },
   },
+}));
+
+vi.mock('../codeful', () => ({
+  hasCodefulSdkReference: vi.fn(),
+}));
+
+vi.mock('../workspace', () => ({
+  getWorkspaceLogicAppRoots: vi.fn(),
 }));
 
 describe('customCodeUtils', () => {
@@ -392,6 +402,89 @@ describe('customCodeUtils', () => {
 
       const result = await tryGetLogicAppCustomCodeFunctionsProjects(testLogicAppFolder);
       expect(result).toEqual([path.join(testBaseFolder, testPeerProject)]);
+    });
+  });
+
+  describe('getEligibleLogicAppFoldersForCustomCode', () => {
+    const codelessApp = path.join(path.sep, 'workspace', 'CodelessApp');
+    const codefulApp = path.join(path.sep, 'workspace', 'CodefulApp');
+    const appWithCustomCode = path.join(path.sep, 'workspace', 'AppWithCustomCode');
+
+    beforeEach(() => {
+      (getWorkspaceLogicAppRoots as Mock).mockResolvedValue([]);
+      (hasCodefulSdkReference as Mock).mockResolvedValue(false);
+    });
+
+    it('should include codeless Logic App projects without existing custom code', async () => {
+      (getWorkspaceLogicAppRoots as Mock).mockResolvedValue([codelessApp]);
+      (hasCodefulSdkReference as Mock).mockResolvedValue(false);
+      vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockResolvedValue([]);
+
+      const result = await getEligibleLogicAppFoldersForCustomCode();
+      expect(result).toEqual([codelessApp]);
+    });
+
+    it('should exclude codeful projects', async () => {
+      (getWorkspaceLogicAppRoots as Mock).mockResolvedValue([codefulApp]);
+      (hasCodefulSdkReference as Mock).mockImplementation(async (p: string) => p === codefulApp);
+
+      const result = await getEligibleLogicAppFoldersForCustomCode();
+      expect(result).toEqual([]);
+    });
+
+    it('should exclude projects that already have an associated custom code project', async () => {
+      const logicAppName = 'AppWithCustomCode';
+      // Build csproj content that references the Logic App by name
+      const csprojWithReference = validNet8CsprojContent.replace(
+        /<LogicAppFolderToPublish>[^<]*<\/LogicAppFolderToPublish>/,
+        `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${logicAppName}</LogicAppFolderToPublish>`
+      );
+      const parentDir = path.dirname(appWithCustomCode);
+      const functionsPath = path.join(parentDir, 'ExistingFunctions');
+
+      (getWorkspaceLogicAppRoots as Mock).mockResolvedValue([appWithCustomCode]);
+      (hasCodefulSdkReference as Mock).mockResolvedValue(false);
+      vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === parentDir) {
+          return [logicAppName, 'ExistingFunctions'];
+        }
+        if (p === functionsPath) {
+          return ['Functions.csproj'];
+        }
+        return [];
+      });
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (String(p).endsWith('.csproj')) {
+          return csprojWithReference;
+        }
+        return '';
+      });
+
+      const result = await getEligibleLogicAppFoldersForCustomCode();
+      expect(result).toEqual([]);
+    });
+
+    it('should return empty array when no workspace projects exist', async () => {
+      (getWorkspaceLogicAppRoots as Mock).mockResolvedValue([]);
+
+      const result = await getEligibleLogicAppFoldersForCustomCode();
+      expect(result).toEqual([]);
+    });
+
+    it('should filter correctly with a mix of eligible and ineligible projects', async () => {
+      (getWorkspaceLogicAppRoots as Mock).mockResolvedValue([codelessApp, codefulApp]);
+      (hasCodefulSdkReference as Mock).mockImplementation(async (p: string) => p === codefulApp);
+      vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockResolvedValue([]);
+
+      const result = await getEligibleLogicAppFoldersForCustomCode();
+      expect(result).toEqual([codelessApp]);
     });
   });
 });
