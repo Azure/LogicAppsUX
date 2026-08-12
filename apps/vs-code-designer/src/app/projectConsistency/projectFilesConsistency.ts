@@ -422,7 +422,7 @@ async function readFileTextSafe(filePath: string): Promise<string> {
   return '';
 }
 
-function arePathsEqual(path1: unknown, path2: unknown): boolean {
+function arePathsEqual(path1?: string, path2?: string): boolean {
   if (typeof path1 !== 'string' || typeof path2 !== 'string' || !path1 || !path2) {
     return false;
   }
