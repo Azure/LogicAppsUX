@@ -90,7 +90,6 @@ export class CreateFunctionAppFiles {
       'azureFunctions.preDeployTask': 'publish (functions)',
       'azureFunctions.templateFilter': 'Core',
       'azureFunctions.showTargetFrameworkWarning': false,
-      'azureFunctions.projectSubpath': `bin\\Release\\${targetFramework ?? TargetFramework.NetFx}\\publish`,
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
   }

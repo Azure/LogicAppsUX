@@ -86,6 +86,29 @@ describe('binaries', () => {
         downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion)
       ).rejects.toThrowError();
     });
+
+    describe('download failure reporting', () => {
+      const downloadUrl = 'https://example.com/dependency.zip';
+
+      function mockNonRetryableDownloadFailure() {
+        // A 4xx is treated as non-retryable, so the download fails on the first attempt.
+        (axios.get as Mock).mockRejectedValue(
+          Object.assign(new Error('Request failed with status code 404'), { response: { status: 404 } })
+        );
+      }
+
+      it('logs and records telemetry without owning user notification UI', async () => {
+        const showErrorMessage = vi.fn();
+        vscode.window.showErrorMessage = showErrorMessage;
+        mockNonRetryableDownloadFailure();
+
+        await expect(downloadAndExtractDependency(context, downloadUrl, 'targetFolder', 'dependency')).rejects.toThrowError();
+
+        expect(showErrorMessage).not.toHaveBeenCalled();
+        expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Error downloading the dependency file'));
+        expect(context.telemetry.properties.error).toContain('Error downloading the dependency file');
+      });
+    });
   });
 
   describe('downloadFileWithTransportVerification', () => {

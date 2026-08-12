@@ -21,7 +21,7 @@ steps:
     name: package
     displayName: "\U0001F449 Get extension info from package.json"
 
-  - script: cd apps/vs-code-designer/dist && npx @vscode/vsce generate-manifest -i vscode-azurelogicapps-$(package.version).vsix -o $(Build.SourcesDirectory)/extension.manifest
+  - script: pnpm --dir apps/vs-code-designer exec vsce generate-manifest -i dist/vscode-azurelogicapps-$(package.version).vsix -o $(Build.SourcesDirectory)/extension.manifest
     condition: eq(variables['signprojExists'], True)
     displayName: "\U0001F449 Generate extension manifest"
 
@@ -45,4 +45,3 @@ steps:
       exit 0
     displayName: "\U0001F449 Verify extension.signature.p7s file was created"
     condition: eq(variables['signprojExists'], True)
-    

@@ -80,9 +80,9 @@ interface SettingsJson {
   'azureLogicAppsStandard.deploySubpath'?: string;
   'azureLogicAppsStandard.projectLanguage'?: string;
   'azureLogicAppsStandard.projectRuntime'?: string;
-  'azureLogicAppsStandard.preDeployTask'?: string;
   'debug.internalConsoleOptions'?: string;
   'azureFunctions.suppressProject'?: boolean;
+  'azureLogicAppsStandard.preDeployTask'?: string;
   [key: string]: unknown;
 }
 

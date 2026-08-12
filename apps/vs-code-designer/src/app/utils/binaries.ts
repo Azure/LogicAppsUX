@@ -87,7 +87,8 @@ export async function downloadAndExtractDependency(
     integrityResult = await downloadFileWithTransportVerification(context, downloadUrl, dependencyFilePath, dependencyName);
   } catch (error) {
     const errorMessage = `Error downloading the ${dependencyName} file: ${error instanceof Error ? error.message : String(error)}`;
-    vscode.window.showErrorMessage(errorMessage);
+    ext.outputChannel.appendLog(errorMessage);
+    context.telemetry.properties.error = errorMessage;
     context.telemetry.properties.errorMessage = errorMessage;
     // Clean up partials before bailing.
     try {
@@ -117,7 +118,8 @@ export async function downloadAndExtractDependency(
     context.telemetry.properties.actualSha256 = actualSha256;
     if (actualSha256.toLowerCase() !== expectedSha256.toLowerCase()) {
       const errorMessage = `Checksum verification failed for ${dependencyName}: expected SHA256 ${expectedSha256} but got ${actualSha256}.`;
-      vscode.window.showErrorMessage(errorMessage);
+      ext.outputChannel.appendLog(errorMessage);
+      context.telemetry.properties.error = errorMessage;
       context.telemetry.properties.errorMessage = errorMessage;
       try {
         if (fs.existsSync(tempFolderPath)) {
@@ -225,14 +227,6 @@ export async function downloadAndExtractDependency(
             error instanceof Error ? error.message : String(error)
           }.${lockHint}`;
     ext.outputChannel.appendLog(baseMessage);
-    vscode.window.showErrorMessage(
-      localize(
-        'bundleInstallFailed',
-        'Logic Apps extension bundle {0} could not be installed at {1}. Another process may be holding the folder. Close other VS Code windows and any running func.exe processes, then reload this window to retry.',
-        dependencyName,
-        targetFolder
-      )
-    );
     context.telemetry.properties.extractError = error instanceof Error ? error.message : String(error);
     throw error;
   } finally {
