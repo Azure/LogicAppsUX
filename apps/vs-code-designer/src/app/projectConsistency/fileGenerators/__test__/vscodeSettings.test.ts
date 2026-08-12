@@ -57,10 +57,7 @@ describe('generateSettingsJson', () => {
 
       expect(result).toHaveProperty('azureLogicAppsStandard.deploySubpath', '.');
       expect(result).not.toHaveProperty('azureLogicAppsStandard.preDeployTask');
-      expect(result).toHaveProperty('azureLogicAppsStandard.zipIgnorePattern');
-      expect(result['azureLogicAppsStandard.zipIgnorePattern']).toContain('.nuget/**');
-      expect(result['azureLogicAppsStandard.zipIgnorePattern']).toContain('obj/**');
-      expect(result['azureLogicAppsStandard.zipIgnorePattern']).toContain('bin/**');
+      expect(result).not.toHaveProperty('azureLogicAppsStandard.zipIgnorePattern');
       expect(result).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
       expect(result).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
     });

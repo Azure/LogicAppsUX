@@ -171,14 +171,17 @@ export async function createLocalConfigurationFiles(
     '.git*',
     vscodeFolderName,
     localSettingsFileName,
-    'test',
     '.debug',
-    'workflow-designtime/',
+    'workflow-designtime',
   ];
   const localSettingsJson = generateLocalSettingsJson(logicAppFolderPath, logicAppType);
 
   if (logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');
+  }
+
+  if (logicAppType === ProjectType.codeful) {
+    funcignore.push('.nuget', 'obj', 'bin');
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);

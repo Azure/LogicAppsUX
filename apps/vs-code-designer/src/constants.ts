@@ -287,7 +287,6 @@ export const validateNodeJsSetting = 'validateNodeJs';
 export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
-export const zipIgnorePatternSetting = 'zipIgnorePattern';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const enableProjectConsistencyChecksSetting = 'enableProjectConsistencyChecks';

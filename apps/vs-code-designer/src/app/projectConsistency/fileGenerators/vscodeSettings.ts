@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { VSCodeProjectConfig } from './types';
-import { deploySubpathSetting, funcVersionSetting, preDeployTaskSetting, projectLanguageSetting, zipIgnorePatternSetting } from '../../../constants';
+import { deploySubpathSetting, funcVersionSetting, preDeployTaskSetting, projectLanguageSetting } from '../../../constants';
 import { latestGAVersion, ProjectLanguage, ProjectPackageType, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import { ext } from '../../../extensionVariables';
@@ -26,7 +26,6 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
   if (projectType === ProjectType.codeful) {
     return {
       [`${ext.prefix}.${deploySubpathSetting}`]: '.',
-      [`${ext.prefix}.${zipIgnorePatternSetting}`]: ['.nuget/**', 'obj/**', 'bin/**', '*.cs', '*.csproj', '*.sln', '*.user'],
       ...baseSettings,
       'omnisharp.enableMsBuildLoadProjectsOnDemand': false,
       'omnisharp.disableMSBuildDiagnosticWarning': true,

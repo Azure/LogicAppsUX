@@ -1331,9 +1331,8 @@ describe('createLocalConfigurationFiles', () => {
     expect(funcIgnoreContent).toContain('.git*');
     expect(funcIgnoreContent).toContain('.vscode');
     expect(funcIgnoreContent).toContain('local.settings.json');
-    expect(funcIgnoreContent).toContain('test');
     expect(funcIgnoreContent).toContain('.debug');
-    expect(funcIgnoreContent).toContain('workflow-designtime/');
+    expect(funcIgnoreContent).toContain('workflow-designtime');
   });
 
   it('should NOT include global.json in .funcignore for standard logic app projects', async () => {

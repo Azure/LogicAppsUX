@@ -301,8 +301,7 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
       expect(settingsData).toHaveProperty('azureLogicAppsStandard.deploySubpath', '.');
       expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.preDeployTask');
-      expect(settingsData).toHaveProperty('azureLogicAppsStandard.zipIgnorePattern');
-      expect(settingsData['azureLogicAppsStandard.zipIgnorePattern']).toContain('bin/**');
+      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.zipIgnorePattern');
       expect(settingsData).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
       expect(settingsData).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
       expect(settingsData).not.toHaveProperty('azureFunctions.deploySubpath');
