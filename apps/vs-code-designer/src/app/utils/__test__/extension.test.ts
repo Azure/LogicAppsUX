@@ -1,20 +1,21 @@
 import { extensionContext, logicAppsStandardExtensionId } from '../../../constants';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  getExtensionVersion,
-  initializeCustomExtensionContext,
-  updateLogicAppsContext,
-} from '../extension';
+import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from '../extension';
 import { getWorkspaceFolderWithoutPrompting } from '../workspace';
 import { isLogicAppProjectInRoot } from '../verifyIsProject';
 
 vi.mock('../workspace', () => ({
   getWorkspaceFolderWithoutPrompting: vi.fn(),
+  getWorkspaceCustomCodeFunctionsProjectRoots: vi.fn().mockResolvedValue([]),
 }));
 
 vi.mock('../verifyIsProject', () => ({
   isLogicAppProjectInRoot: vi.fn(),
+}));
+
+vi.mock('../customCodeUtils', () => ({
+  getEligibleLogicAppFoldersForCustomCode: vi.fn().mockResolvedValue([]),
 }));
 
 describe('extension utilities', () => {
@@ -44,11 +45,7 @@ describe('extension utilities', () => {
       extensionContext.dataMapSupportedDataMapDefinitionFileExts,
       expect.any(Array)
     );
-    expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
-      'setContext',
-      extensionContext.dataMapSupportedFileExts,
-      expect.any(Array)
-    );
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', extensionContext.dataMapSupportedFileExts, expect.any(Array));
   });
 
   it('updates project context when a Logic Apps project is present', async () => {

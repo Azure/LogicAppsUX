@@ -6,8 +6,7 @@ import type { WorkspaceFolder } from 'vscode';
 import { isLogicAppProject } from './verifyIsProject';
 import { hasCodefulSdkReference } from './codeful';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceLogicAppRoots, getWorkspaceRoot } from './workspace';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { getWorkspaceLogicAppRoots } from './workspace';
 import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { customDirectory, libDirectory } from '../../constants';
 
@@ -43,27 +42,6 @@ export async function customCodeArtifactsExist(projectPath: string): Promise<boo
   return false;
 }
 
-export async function getAllCustomCodeFunctionsProjects(context: IActionContext): Promise<string[]> {
-  const workspaceRoot: string | undefined = await getWorkspaceRoot(context);
-
-  if (isNullOrUndefined(workspaceRoot)) {
-    return [];
-  }
-
-  const subpaths: string[] = await fse.readdir(workspaceRoot);
-  const customCodeProjectPaths: string[] = [];
-  await Promise.all(
-    subpaths.map(async (s) => {
-      const currPath = path.join(workspaceRoot, s);
-      if (await isCustomCodeFunctionsProject(currPath)) {
-        customCodeProjectPaths.push(currPath);
-      }
-    })
-  );
-
-  return customCodeProjectPaths;
-}
-
 /**
  * Gets the paths of codeless Logic App workspace roots that do NOT already have an associated custom-code functions project.
  */
@@ -71,7 +49,7 @@ export async function getEligibleLogicAppFoldersForCustomCode(): Promise<string[
   const projectPaths = await getWorkspaceLogicAppRoots();
 
   const eligiblePathTasks = projectPaths.map(async (projectPath) => {
-    if ((await hasCodefulSdkReference(projectPath))) {
+    if (await hasCodefulSdkReference(projectPath)) {
       return undefined;
     }
     const existingCustomCode = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);

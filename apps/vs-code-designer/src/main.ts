@@ -20,7 +20,6 @@ import {
   dotNetBinaryPathSettingKey,
   extensionCommand,
   extensionEvent,
-  extensionContext,
   funcCoreToolsBinaryPathSettingKey,
   logicAppFilter,
   nodeJsBinaryPathSettingKey,
@@ -39,7 +38,6 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ensureWorkspace } from './app/commands/ensureWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { getAllCustomCodeFunctionsProjects, getEligibleLogicAppFoldersForCustomCode } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
@@ -71,11 +69,6 @@ export async function activate(context: vscode.ExtensionContext) {
   initializeCustomExtensionContext();
   await updateLogicAppsContext();
 
-  const workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders(() => {
-    updateLogicAppsContext();
-  });
-  context.subscriptions.push(workspaceWatcher);
-
   vscode.debug.registerDebugConfigurationProvider('logicapp', logicAppDebugConfigProvider);
 
   ext.context = context;
@@ -92,16 +85,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
     activateContext.telemetry.properties.isActivationEvent = 'true';
-    vscode.commands.executeCommand(
-      'setContext',
-      extensionContext.customCodeFunctionsFolders,
-      await getAllCustomCodeFunctionsProjects(activateContext)
-    );
-    vscode.commands.executeCommand(
-      'setContext',
-      extensionContext.customCodeEligibleLogicAppFolders,
-      await getEligibleLogicAppFoldersForCustomCode()
-    );
 
     // Workspace setup and consistency checks
     runPostExtractStepsFromCache();
@@ -145,11 +128,12 @@ export async function activate(context: vscode.ExtensionContext) {
       });
     }
 
-    activateContext.telemetry.properties.lastStep = 'registerProjectConsistencyCheckEvent';
+    activateContext.telemetry.properties.lastStep = 'registerWorkspaceFolderChangeEvent';
     registerEvent(
       extensionEvent.onDidChangeWorkspaceFolders,
       vscode.workspace.onDidChangeWorkspaceFolders,
       async (actionContext: IActionContext) => {
+        await updateLogicAppsContext();
         await runProjectConsistencyCheck(actionContext);
       }
     );

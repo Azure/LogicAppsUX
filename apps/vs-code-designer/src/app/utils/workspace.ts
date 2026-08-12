@@ -16,6 +16,7 @@ import * as vscode from 'vscode';
 import { FileManagement } from '../commands/generateDeploymentScripts/iacGestureHelperFunctions';
 import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
+import { isCustomCodeFunctionsProject } from './customCodeUtils';
 
 /**
  * Checks if the current workspace has a Logic App project.
@@ -170,6 +171,54 @@ export async function tryGetWorkspaceFolderLogicApps(workspaceFolder: vscode.Wor
 
   const logicAppProjectRoots = (await Promise.all(logicAppProjectRootTasks)).filter((p) => p !== undefined);
   return logicAppProjectRoots;
+}
+
+/**
+ * Gets all custom code functions projects in the workspace.
+ */
+export async function getWorkspaceCustomCodeFunctionsProjectRoots(): Promise<string[]> {
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    return [];
+  }
+
+  const logicAppRootTasks = vscode.workspace.workspaceFolders.map(async (folder) => {
+    const projectRoots = await tryGetWorkspaceFolderCustomCodeFunctionsProjects(folder);
+    return projectRoots ? projectRoots : [];
+  });
+
+  const logicAppRoots = (await Promise.all(logicAppRootTasks)).flat();
+  return logicAppRoots;
+}
+
+/**
+ * Gets custom code projects from given workspace folder and subFolders one level down.
+ * @param {vscode.WorkspaceFolder | string | undefined} workspaceFolder - The workspace folder to check.
+ * @returns {Promise<string[]>} A promise that resolves to an array of custom code project roots.
+ */
+async function tryGetWorkspaceFolderCustomCodeFunctionsProjects(workspaceFolder: vscode.WorkspaceFolder | string | undefined): Promise<string[] | undefined> {
+  if (isNullOrUndefined(workspaceFolder)) {
+    return [];
+  }
+
+  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
+  if (!(await fse.pathExists(folderPath))) {
+    return [];
+  }
+
+  if (await isCustomCodeFunctionsProject(folderPath)) {
+    return [folderPath];
+  }
+
+  const subpaths: string[] = await fse.readdir(folderPath);
+  const customCodeProjectRootTasks = subpaths.map(async (s) => {
+    const subpath = path.join(folderPath, s);
+    if (await isCustomCodeFunctionsProject(subpath)) {
+      return subpath;
+    }
+  });
+
+  const customCodeProjectRoots = (await Promise.all(customCodeProjectRootTasks)).filter((p) => p !== undefined);
+  return customCodeProjectRoots;
 }
 
 /**

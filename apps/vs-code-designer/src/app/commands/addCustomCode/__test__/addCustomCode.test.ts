@@ -51,8 +51,6 @@ vi.mock('../../../utils/codeful', () => ({
 
 vi.mock('../../../utils/customCodeUtils', () => ({
   tryGetLogicAppCustomCodeFunctionsProjects: mockTryGetLogicAppCustomCodeFunctionsProjects,
-  getAllCustomCodeFunctionsProjects: vi.fn().mockResolvedValue([]),
-  getEligibleLogicAppFoldersForCustomCode: vi.fn().mockResolvedValue([]),
 }));
 
 vi.mock('../../shared/workspaceWebviewCommandHandler', () => ({

@@ -7,16 +7,11 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import { ExtensionCommand, ProjectName, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import { extensionContext } from '../../../constants';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
 import { isLogicAppProject } from '../../utils/verifyIsProject';
 import { hasCodefulSdkReference } from '../../utils/codeful';
-import {
-  tryGetLogicAppCustomCodeFunctionsProjects,
-  getAllCustomCodeFunctionsProjects,
-  getEligibleLogicAppFoldersForCustomCode,
-} from '../../utils/customCodeUtils';
+import { tryGetLogicAppCustomCodeFunctionsProjects } from '../../utils/customCodeUtils';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
@@ -27,7 +22,9 @@ import * as path from 'path';
 export async function addCustomCode(context: IActionContext, node?: vscode.Uri): Promise<void> {
   if (!node) {
     context.telemetry.properties.result = 'Failed';
-    vscode.window.showErrorMessage(localize('addCustomCodeNoUri', 'This command must be invoked from the Explorer context menu on a Logic App project folder.'));
+    vscode.window.showErrorMessage(
+      localize('addCustomCodeNoUri', 'This command must be invoked from the Explorer context menu on a Logic App project folder.')
+    );
     return;
   }
 
@@ -41,7 +38,9 @@ export async function addCustomCode(context: IActionContext, node?: vscode.Uri):
 
   if (await hasCodefulSdkReference(projectPath)) {
     context.telemetry.properties.result = 'Failed';
-    vscode.window.showErrorMessage(localize('addCustomCodeIsCodeful', 'This Logic App already uses a .NET SDK project. Custom code is not applicable.'));
+    vscode.window.showErrorMessage(
+      localize('addCustomCodeIsCodeful', 'This Logic App already uses a .NET SDK project. Custom code is not applicable.')
+    );
     return;
   }
 
@@ -61,7 +60,9 @@ export async function addCustomCode(context: IActionContext, node?: vscode.Uri):
 
   if (!vscode.workspace.workspaceFile) {
     context.telemetry.properties.result = 'Failed';
-    vscode.window.showErrorMessage(localize('addCustomCodeNoWorkspace', 'Please open a Logic App workspace (.code-workspace) before adding custom code.'));
+    vscode.window.showErrorMessage(
+      localize('addCustomCodeNoWorkspace', 'Please open a Logic App workspace (.code-workspace) before adding custom code.')
+    );
     return;
   }
 
@@ -85,19 +86,6 @@ export async function addCustomCode(context: IActionContext, node?: vscode.Uri):
     createHandler: async (data: any) => {
       await callWithTelemetryAndErrorHandling('addCustomCode.createHandler', async (actionContext: IActionContext) => {
         await createLogicAppProject(actionContext, data, workspaceRootFolder);
-      });
-      // Refresh context keys after successful creation
-      await callWithTelemetryAndErrorHandling('addCustomCode.refreshContext', async (actionContext: IActionContext) => {
-        vscode.commands.executeCommand(
-          'setContext',
-          extensionContext.customCodeFunctionsFolders,
-          await getAllCustomCodeFunctionsProjects(actionContext)
-        );
-        vscode.commands.executeCommand(
-          'setContext',
-          extensionContext.customCodeEligibleLogicAppFolders,
-          await getEligibleLogicAppFoldersForCustomCode()
-        );
       });
     },
     dialogOptions: {
