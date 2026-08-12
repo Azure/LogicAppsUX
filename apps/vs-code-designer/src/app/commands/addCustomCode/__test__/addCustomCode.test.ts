@@ -83,7 +83,7 @@ vi.mock('../../../../extensionVariables', () => ({
 vi.mock('../../../../constants', () => ({
   extensionContext: {
     customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
-    eligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',
+    customCodeEligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',
   },
 }));
 
