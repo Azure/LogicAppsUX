@@ -26,10 +26,8 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
   if (projectType === ProjectType.codeful) {
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     return {
+      [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
       ...baseSettings,
-      'azureFunctions.deploySubpath': deploySubPathValue,
-      'azureFunctions.preDeployTask': 'publish',
-      'azureFunctions.projectSubpath': deploySubPathValue,
       'omnisharp.enableMsBuildLoadProjectsOnDemand': false,
       'omnisharp.disableMSBuildDiagnosticWarning': true,
     };
@@ -39,8 +37,8 @@ export function generateSettingsJson(config: VSCodeProjectConfig): Record<string
     const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
     return {
       [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
-      ...baseSettings,
       [`${ext.prefix}.${preDeployTaskSetting}`]: 'publish',
+      ...baseSettings,
     };
   }
 
