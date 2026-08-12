@@ -25,6 +25,19 @@ steps:
     condition: eq(variables['signprojExists'], True)
     displayName: "\U0001F449 Generate extension manifest"
 
+  - task: NuGetAuthenticate@1
+    condition: eq(variables['signprojExists'], True)
+    displayName: "\U0001F449 Authenticate CFS NuGet feed"
+
+  - task: DotNetCoreCLI@2
+    condition: eq(variables['signprojExists'], True)
+    displayName: "\U0001F449 Restore signing dependencies from CFS"
+    inputs:
+      command: 'restore'
+      projects: $(Build.SourcesDirectory)/.azure-pipelines/SignExtension.signproj
+      feedsToUse: 'config'
+      nugetConfigPath: $(nugetConfigFile)
+
   # this task will pass even if signing fails, so we follow it up with a check to see if the signature file was created
   - task: DotNetCoreCLI@2
     condition: eq(variables['signprojExists'], True)
@@ -32,6 +45,7 @@ steps:
     inputs:
       command: 'build'
       projects: $(Build.SourcesDirectory)/.azure-pipelines/SignExtension.signproj
+      arguments: '--no-restore'
 
   - pwsh: |
       $filePath = "extension.signature.p7s"

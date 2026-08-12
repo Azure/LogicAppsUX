@@ -13,7 +13,7 @@ steps:
   - pwsh: |
       $feedBaseUrl = "${{ parameters.feedBaseUrl }}".TrimEnd("/")
       if ([string]::IsNullOrWhiteSpace($feedBaseUrl)) {
-        Write-Error "feedBaseUrl is required so npm and pnpm restore through CFS."
+        Write-Error "feedBaseUrl is required so package restores use CFS."
         exit 1
       }
 
@@ -32,7 +32,21 @@ steps:
       Write-Host "Configured npm/pnpm registry: $registry"
       Write-Host "##vso[task.setvariable variable=npmrcFile]$npmrcPath"
       Write-Host "##vso[task.setvariable variable=npmRegistry]$registry"
-    displayName: "Configure CFS npm registry"
+
+      $nugetConfigPath = Join-Path "$(Build.SourcesDirectory)" "NuGet.config"
+      $nugetSource = "$feedBaseUrl/nuget/v3/index.json"
+      @(
+        '<?xml version="1.0" encoding="utf-8"?>'
+        '<configuration>'
+        '  <packageSources>'
+        '    <clear />'
+        "    <add key=`"azcode`" value=`"$nugetSource`" />"
+        '  </packageSources>'
+        '</configuration>'
+      ) | Set-Content -Path $nugetConfigPath
+      Write-Host "Configured NuGet source: $nugetSource"
+      Write-Host "##vso[task.setvariable variable=nugetConfigFile]$nugetConfigPath"
+    displayName: "Configure CFS package registries"
     workingDirectory: $(working_directory)
     condition: succeeded()
 
