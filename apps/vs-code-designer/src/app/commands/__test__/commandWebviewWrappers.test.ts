@@ -156,6 +156,7 @@ describe('workspace webview command wrappers', () => {
       workspaceFileJson,
       logicAppsWithoutCustomCode: [{ label: 'LogicApp', description: expectedLogicAppPath, data: expectedLogicAppPath }],
       existingFolders: ['LogicApp', 'CSharpProject'],
+      workspaceRootFolder: workspaceRoot,
     });
     expect(config.dialogOptions?.workspace).toMatchObject({
       canSelectMany: false,
@@ -190,6 +191,7 @@ describe('workspace webview command wrappers', () => {
       workspaceFileJson,
       logicAppsWithoutCustomCode: [],
       existingFolders: ['LogicApp', 'AnotherProject'],
+      workspaceRootFolder: workspaceRoot,
     });
   });
 

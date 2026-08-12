@@ -95,6 +95,7 @@ function createState(overrides: Partial<CreateWorkspaceState> = {}): CreateWorks
     logicAppsWithoutCustomCode: undefined,
     availableProjects: [],
     isAddCustomCodeFlow: false,
+    workspaceRootFolder: '',
     ...overrides,
   };
 }

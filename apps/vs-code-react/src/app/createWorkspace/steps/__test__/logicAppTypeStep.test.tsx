@@ -113,6 +113,7 @@ function createState(overrides: Partial<CreateWorkspaceState> = {}): CreateWorks
     workspaceProjectPath: { fsPath: '/tmp/projects', path: '/tmp/projects' },
     availableProjects: [],
     isAddCustomCodeFlow: false,
+    workspaceRootFolder: '',
     ...overrides,
   };
 }

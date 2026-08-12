@@ -47,6 +47,7 @@ export interface CreateWorkspaceState {
   isDevContainerProject: boolean;
   availableProjects: AvailableProject[];
   isAddCustomCodeFlow: boolean;
+  workspaceRootFolder: string;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -86,6 +87,7 @@ const initialState: CreateWorkspaceState = {
   isDevContainerProject: false,
   availableProjects: [],
   isAddCustomCodeFlow: false,
+  workspaceRootFolder: '',
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -99,6 +101,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
         existingFolders,
         platform,
         separator,
+        workspaceRootFolder,
         isAddCustomCodeFlow,
         preselectedLogicAppName,
         preselectedLogicAppType,
@@ -106,6 +109,9 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       state.workspaceFileJson = workspaceFileJson;
       state.logicAppsWithoutCustomCode = logicAppsWithoutCustomCode;
       state.existingFolders = existingFolders || [];
+      if (workspaceRootFolder) {
+        state.workspaceRootFolder = workspaceRootFolder;
+      }
       // platform and separator are host-environment values sent by the extension host in the
       // initialize_frame payload. The createProject (createLogicApp) webview flow only dispatches
       // initializeProject, so they must be captured here for platform-gated options (e.g. the

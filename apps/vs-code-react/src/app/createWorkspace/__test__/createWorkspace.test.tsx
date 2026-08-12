@@ -79,6 +79,7 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     isDevContainerProject: false,
     availableProjects: [],
     isAddCustomCodeFlow: false,
+    workspaceRootFolder: '',
     ...overrides,
   };
 };

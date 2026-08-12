@@ -100,6 +100,7 @@ export async function addCustomCode(context: IActionContext, node?: vscode.Uri):
       workspaceFileJson,
       logicAppsWithoutCustomCode: [{ label: logicAppName, description: projectPath, data: projectPath }],
       existingFolders,
+      workspaceRootFolder,
       isAddCustomCodeFlow: true,
       preselectedLogicAppName: logicAppName,
       preselectedLogicAppType: ProjectType.customCode,

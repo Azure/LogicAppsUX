@@ -68,6 +68,7 @@ export async function createProject(_context: IActionContext): Promise<void> {
       workspaceFileJson,
       logicAppsWithoutCustomCode,
       existingFolders,
+      workspaceRootFolder,
     },
   });
 }

@@ -30,6 +30,7 @@ export const ReviewCreateStep: React.FC = () => {
     flowType,
     logicAppsWithoutCustomCode,
     separator,
+    workspaceRootFolder,
   } = createWorkspaceState;
 
   const needsDotNetFrameworkStep = logicAppType === ProjectType.customCode;
@@ -51,9 +52,10 @@ export const ReviewCreateStep: React.FC = () => {
 
   const workspaceBasePath =
     workspaceProjectPath.fsPath && workspaceName ? `${workspaceProjectPath.fsPath}${separator}${workspaceName}` : '';
+  const effectiveBasePath = workspaceBasePath || workspaceRootFolder;
   const workspaceFilePath = workspaceBasePath ? `${workspaceBasePath}${separator}${workspaceName}.code-workspace` : '';
-  const logicAppLocationPath = workspaceBasePath && logicAppName ? `${workspaceBasePath}${separator}${logicAppName}` : '';
-  const functionLocationPath = workspaceBasePath && functionFolderName ? `${workspaceBasePath}${separator}${functionFolderName}` : '';
+  const logicAppLocationPath = effectiveBasePath && logicAppName ? `${effectiveBasePath}${separator}${logicAppName}` : '';
+  const functionLocationPath = effectiveBasePath && functionFolderName ? `${effectiveBasePath}${separator}${functionFolderName}` : '';
 
   const getDotNetFrameworkDisplay = (framework: string) => {
     const frameworkDisplayMap: Record<string, string> = {
