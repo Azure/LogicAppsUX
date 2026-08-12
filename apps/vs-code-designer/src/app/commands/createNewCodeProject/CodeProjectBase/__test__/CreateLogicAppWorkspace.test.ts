@@ -1500,6 +1500,31 @@ describe('createLocalConfigurationFiles', () => {
     expect(Object.keys(localSettingsData.Values)).toHaveLength(8);
   });
 
+  it('should include codeful-specific build artifact patterns in .funcignore for codeful projects', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContextCodeful, logicAppFolderPath);
+
+    const funcIgnoreCall = vi.mocked(fse.writeFile).mock.calls.find((call) => call[0].toString().includes('.funcignore'));
+    expect(funcIgnoreCall).toBeDefined();
+    const funcIgnoreContent = funcIgnoreCall![1] as string;
+
+    expect(funcIgnoreContent).toContain('.nuget');
+    expect(funcIgnoreContent).toContain('obj');
+    expect(funcIgnoreContent).toContain('bin');
+  });
+
+  it('should NOT include codeful-specific build artifact patterns in .funcignore for standard logic app', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContext, logicAppFolderPath);
+
+    const funcIgnoreCall = vi.mocked(fse.writeFile).mock.calls.find((call) => call[0].toString().includes('.funcignore'));
+    expect(funcIgnoreCall).toBeDefined();
+    const funcIgnoreContent = funcIgnoreCall![1] as string;
+    const lines = funcIgnoreContent.split(/\r?\n/);
+
+    expect(funcIgnoreContent).not.toContain('.nuget');
+    expect(lines).not.toContain('obj');
+    expect(lines).not.toContain('bin');
+  });
+
   it('should include extension bundle configuration in host.json', async () => {
     await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContext, logicAppFolderPath);
 
