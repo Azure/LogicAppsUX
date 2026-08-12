@@ -55,9 +55,8 @@ describe('generateSettingsJson', () => {
       };
       const result = generateSettingsJson(config);
 
-      expect(result).toHaveProperty('azureFunctions.deploySubpath');
-      expect(result).toHaveProperty('azureFunctions.preDeployTask', 'publish');
-      expect(result).toHaveProperty('azureFunctions.projectSubpath');
+      expect(result).toHaveProperty('azureLogicAppsStandard.deploySubpath');
+      expect(result).not.toHaveProperty('azureLogicAppsStandard.preDeployTask');
       expect(result).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
       expect(result).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
     });
@@ -109,11 +108,11 @@ describe('generateSettingsJson', () => {
       });
       expect(Object.keys(result)).toEqual([
         'azureLogicAppsStandard.deploySubpath',
+        'azureLogicAppsStandard.preDeployTask',
         'azureLogicAppsStandard.projectLanguage',
         'azureLogicAppsStandard.projectRuntime',
         'debug.internalConsoleOptions',
         'azureFunctions.suppressProject',
-        'azureLogicAppsStandard.preDeployTask',
       ]);
     });
   });

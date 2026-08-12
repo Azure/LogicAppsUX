@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand, workflowFileName, extensionContext } from '../../constants';
+import { extensionCommand, workflowFileName, extensionContext, projectSubpathSetting } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -13,8 +13,6 @@ import type { MessageItem, WorkspaceFolder } from 'vscode';
 import { NoWorkspaceError } from './errors';
 import * as vscode from 'vscode';
 import { hasCodefulSdkReference } from './codeful';
-
-const projectSubpathKey = 'projectSubpath';
 
 /**
  * Determines whether the given folder is a Logic Apps project.
@@ -119,7 +117,6 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
  * Checks root folder and subFolders one level down
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
- * TODO - this is checking every root folder and subfolders of non-logic app projects in the workspace, can we optimize this?
  */
 export async function tryGetLogicAppProjectRoot(
   context: IActionContext,
@@ -129,14 +126,22 @@ export async function tryGetLogicAppProjectRoot(
   if (isNullOrUndefined(workspaceFolder)) {
     return undefined;
   }
-  let subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
+
   const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
   if (!(await fse.pathExists(folderPath))) {
     return undefined;
   }
+
   if (await isLogicAppProject(folderPath)) {
     return folderPath;
   }
+
+  const configuredSubpath: string | undefined = getWorkspaceSetting(projectSubpathSetting, workspaceFolder);
+  const configuredProjectPath = configuredSubpath ? path.join(folderPath, configuredSubpath) : undefined;
+  if (configuredProjectPath && await isLogicAppProject(configuredProjectPath)) {
+    return configuredProjectPath;
+  }
+
   const subpaths: string[] = await fse.readdir(folderPath);
   const matchingSubpaths: string[] = [];
   await Promise.all(
@@ -148,14 +153,13 @@ export async function tryGetLogicAppProjectRoot(
   );
 
   if (matchingSubpaths.length === 1 || (matchingSubpaths.length !== 0 && suppressPrompt)) {
-    subpath = matchingSubpaths[0];
+    return path.join(folderPath, matchingSubpaths[0]);
   } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
-    subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
-  } else {
-    return undefined;
+    const subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
+    return path.join(folderPath, subpath);
   }
-
-  return path.join(folderPath, subpath);
+  
+  return undefined;
 }
 
 /**
@@ -202,7 +206,7 @@ async function promptForProjectSubpath(context: IActionContext, workspacePath: s
   });
   const placeHolder: string = localize('selectProject', 'Select the default project subpath');
   const subpath: string = (await context.ui.showQuickPick(picks, { placeHolder })).data;
-  await updateWorkspaceSetting(projectSubpathKey, subpath, workspacePath);
+  await updateWorkspaceSetting(projectSubpathSetting, subpath, workspacePath);
 
   return subpath;
 }
