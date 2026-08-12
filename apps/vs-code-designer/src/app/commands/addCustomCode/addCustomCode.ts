@@ -79,7 +79,7 @@ export async function addCustomCode(context: IActionContext, node?: vscode.Uri):
 
   context.telemetry.properties.lastStep = 'openWizard';
   await createWorkspaceWebviewCommandHandler({
-    panelName: localize('addCustomCodeProject', 'Add .NET custom code'),
+    panelName: localize('addCustomCodeProject', 'Add .NET custom code - {0}', logicAppName),
     panelGroupKey: ext.webViewKey.createLogicApp,
     projectName: ProjectName.createLogicApp,
     createCommand: ExtensionCommand.createLogicApp,
