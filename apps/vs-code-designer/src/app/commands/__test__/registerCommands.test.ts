@@ -96,6 +96,7 @@ vi.mock('../cloudToLocal/cloudToLocal', () => ({ cloudToLocal: vi.fn() }));
 vi.mock('../createProject/createProject', () => ({ createProject: vi.fn() }));
 vi.mock('../createWorkspace/createWorkspace', () => ({ createWorkspace: vi.fn() }));
 vi.mock('../createCustomCodeFunction/createCustomCodeFunction', () => ({ createCustomCodeFunction: vi.fn() }));
+vi.mock('../addCustomCode/addCustomCode', () => ({ addCustomCode: vi.fn() }));
 vi.mock('../createSlot', () => ({ createSlot: vi.fn() }));
 vi.mock('../createWorkflow/createWorkflow', () => ({ createWorkflow: vi.fn() }));
 vi.mock('../dataMapper/dataMapper', () => ({ createDataMap: vi.fn(), loadDataMapFile: vi.fn() }));
@@ -193,6 +194,12 @@ describe('registerCommands', () => {
       mockRegisterSiteCommand.mock.calls.length;
     // There should be many commands registered (at least 40+)
     expect(totalRegistrations).toBeGreaterThan(40);
+  });
+
+  it('should register the addCustomCode command', () => {
+    registerCommands();
+    const registeredCommands = mockRegisterCommand.mock.calls.map((call: any[]) => call[0]);
+    expect(registeredCommands).toContain('azureLogicAppsStandard.addCustomCode');
   });
 
   describe('error handler', () => {

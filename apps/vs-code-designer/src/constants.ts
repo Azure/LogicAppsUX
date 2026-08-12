@@ -213,6 +213,7 @@ export const extensionCommand = {
   sdkLspApplyEdits: 'azureLogicAppsStandard.sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
   runProjectConsistencyCheck: 'azureLogicAppsStandard.runProjectConsistencyCheck',
+  addCustomCode: 'azureLogicAppsStandard.addCustomCode',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
@@ -228,6 +229,7 @@ export const extensionContext = {
   hasProject: 'azureLogicAppsStandard.hasProject',
   isCodeful: 'azureLogicAppsStandard.isCodeful',
   customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
+  customCodeEligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',
   dataMapSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.supportedDataMapDefinitionFileExts',
   dataMapSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.supportedSchemaFileExts',
   dataMapSupportedFileExts: 'azureLogicAppsStandard.dataMap.supportedFileExts',

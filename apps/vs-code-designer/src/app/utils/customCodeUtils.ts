@@ -4,9 +4,9 @@ import { parseString } from 'xml2js';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import type { WorkspaceFolder } from 'vscode';
 import { isLogicAppProject } from './verifyIsProject';
+import { hasCodefulSdkReference } from './codeful';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceRoot } from './workspace';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { getWorkspaceLogicAppRoots } from './workspace';
 import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { customDirectory, libDirectory } from '../../constants';
 
@@ -42,25 +42,25 @@ export async function customCodeArtifactsExist(projectPath: string): Promise<boo
   return false;
 }
 
-export async function getAllCustomCodeFunctionsProjects(context: IActionContext): Promise<string[]> {
-  const workspaceRoot: string | undefined = await getWorkspaceRoot(context);
+/**
+ * Gets the paths of codeless Logic App workspace roots that do NOT already have an associated custom-code functions project.
+ */
+export async function getEligibleLogicAppFoldersForCustomCode(): Promise<string[]> {
+  const projectPaths = await getWorkspaceLogicAppRoots();
 
-  if (isNullOrUndefined(workspaceRoot)) {
-    return [];
-  }
+  const eligiblePathTasks = projectPaths.map(async (projectPath) => {
+    if (await hasCodefulSdkReference(projectPath)) {
+      return undefined;
+    }
+    const existingCustomCode = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
+    if (existingCustomCode && existingCustomCode.length > 0) {
+      return undefined;
+    }
+    return projectPath;
+  });
+  const eligibleProjectPaths = (await Promise.all(eligiblePathTasks)).filter((p?: string) => p !== undefined);
 
-  const subpaths: string[] = await fse.readdir(workspaceRoot);
-  const customCodeProjectPaths: string[] = [];
-  await Promise.all(
-    subpaths.map(async (s) => {
-      const currPath = path.join(workspaceRoot, s);
-      if (await isCustomCodeFunctionsProject(currPath)) {
-        customCodeProjectPaths.push(currPath);
-      }
-    })
-  );
-
-  return customCodeProjectPaths;
+  return eligibleProjectPaths;
 }
 
 /**
@@ -93,7 +93,7 @@ export async function detectCustomCodeTargetFramework(projectPath: string): Prom
     const metadata = await getCustomCodeFunctionsProjectMetadata(customCodeProjects[0]);
     return metadata?.targetFramework;
   }
-  
+
   return undefined;
 }
 

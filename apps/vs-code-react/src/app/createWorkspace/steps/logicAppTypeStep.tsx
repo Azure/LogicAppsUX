@@ -29,9 +29,10 @@ export const LogicAppTypeStep: React.FC = () => {
     existingFolders,
     flowType,
     separator,
+    isAddCustomCodeFlow,
   } = createWorkspaceState;
 
-  const shouldShowLogicAppSection = flowType === 'createWorkspace' || flowType === 'createLogicApp';
+  const shouldShowLogicAppSection = !isAddCustomCodeFlow && (flowType === 'createWorkspace' || flowType === 'createLogicApp');
 
   // Validation state
   const [logicAppNameError, setLogicAppNameError] = useState<string | undefined>(undefined);
@@ -139,6 +140,7 @@ export const LogicAppTypeStep: React.FC = () => {
               placeholder={intlText.ENTER_LOGIC_APP_NAME}
               className={styles.inputControl}
               freeform
+              disabled={isAddCustomCodeFlow}
             >
               {logicAppsWithoutCustomCode.map((app: { label: string }) => (
                 <Option key={app.label} value={app.label}>
@@ -152,6 +154,7 @@ export const LogicAppTypeStep: React.FC = () => {
               onChange={handleLogicAppNameChange}
               placeholder={intlText.ENTER_LOGIC_APP_NAME}
               className={styles.inputControl}
+              disabled={isAddCustomCodeFlow}
             />
           )}
           {logicAppName && workspaceName && workspaceProjectPath.fsPath && (
