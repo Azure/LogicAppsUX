@@ -5,7 +5,6 @@
 import {
   ProjectDirectoryPathKey,
   appKindSetting,
-  artifactsDirectory,
   connectionsFileName,
   designTimeDirectoryName,
   extensionBundleId,
@@ -270,10 +269,6 @@ export async function ensureDesignTimeFiles(
     changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
-  const artifactsTarget = path.join(projectPath, artifactsDirectory);
-  const artifactsLink = path.join(designTimeDirectory.fsPath, artifactsDirectory);
-  await ensureArtifactsSymlink(artifactsLink, artifactsTarget);
-
   return { changedArtifacts };
 }
 
@@ -427,26 +422,7 @@ async function readFileTextSafe(filePath: string): Promise<string> {
   return '';
 }
 
-async function ensureArtifactsSymlink(artifactsLink: string, artifactsTarget: string): Promise<void> {
-  if (await fse.pathExists(artifactsTarget)) {
-    try {
-      const linkStat = await fse.lstat(artifactsLink).catch(() => null);
-      if (linkStat && linkStat.isSymbolicLink()) {
-        const currentTarget = await fse.readlink(artifactsLink);
-        if (!arePathsEqual(currentTarget, artifactsTarget)) {
-          await fse.remove(artifactsLink);
-          await fse.symlink(artifactsTarget, artifactsLink, 'junction');
-        }
-      } else if (!linkStat) {
-        await fse.symlink(artifactsTarget, artifactsLink, 'junction');
-      }
-    } catch {
-      ext.outputChannel.appendLog(localize('artifactsJunctionFailed', 'Failed to create Artifacts junction in design-time directory.'));
-    }
-  }
-}
-
-function arePathsEqual(path1?: string, path2?: string): boolean {
+function arePathsEqual(path1: unknown, path2: unknown): boolean {
   if (typeof path1 !== 'string' || typeof path2 !== 'string' || !path1 || !path2) {
     return false;
   }
