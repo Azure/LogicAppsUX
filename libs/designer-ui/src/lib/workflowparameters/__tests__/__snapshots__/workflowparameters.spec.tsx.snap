@@ -13,7 +13,7 @@ exports[`ui/workflowparameters/workflowparameters > should construct. 1`] = `
     <Button
       appearance="subtle"
       aria-label="Close panel"
-      icon={<CompoundIcon />}
+      icon={<ForwardRef />}
       onClick={[Function]}
     />
   </div>
@@ -22,7 +22,7 @@ exports[`ui/workflowparameters/workflowparameters > should construct. 1`] = `
     className="___1xjmln6_0000000 f1asdtw4"
   >
     <Button
-      icon={<CompoundIcon />}
+      icon={<ForwardRef />}
       onClick={[Function]}
     >
       Create parameter

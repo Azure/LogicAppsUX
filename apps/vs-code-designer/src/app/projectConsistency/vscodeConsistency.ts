@@ -20,7 +20,6 @@ import { detectCustomCodeTargetFramework } from '../utils/customCodeUtils';
 import { tryGetTargetFramework } from '../utils/dotnet/dotnet';
 import { writeFormattedJson } from '../utils/fs';
 import { detectProjectPackageType, detectProjectType } from '../utils/project';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import {
   generateExtensionsJson,
   generateLaunchJson,
@@ -30,59 +29,59 @@ import {
   type VSCodeProjectConfig,
 } from './fileGenerators';
 import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../utils/vsCodeConfig/settings';
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
-import { workspace } from 'vscode';
+import { getWorkspaceLogicAppRoots } from '../utils/workspace';
 
 /**
  * Ensures that the VS Code configuration files for all Logic App projects in the workspace are present and up-to-date.
  * @param {IActionContext} context - The action context.
+ * @param {string[]} [projectPaths] - The paths to the Logic App projects in the workspace. If not provided, will search for logic app projects.
  * @returns {Promise<void>} A promise that resolves when the check is complete.
  */
-export async function ensureVSCodeFiles(context: IActionContext): Promise<void> {
-  context.telemetry.suppressIfSuccessful = true;
-  context.telemetry.properties.isActivationEvent = 'true';
+export async function ensureVSCodeFiles(context: IActionContext, projectPaths?: string[]): Promise<void> {
+  projectPaths ??= await getWorkspaceLogicAppRoots();
 
-  const folders = workspace.workspaceFolders;
-  if (!folders || folders.length === 0 || !isProjectConsistencyCheckEnabled()) {
+  if (!projectPaths || projectPaths.length === 0 || !isProjectConsistencyCheckEnabled()) {
     return;
   }
 
-  for (const folder of folders) {
-    const projectPath = await tryGetLogicAppProjectRoot(context, folder, true);
-    if (!projectPath) {
-      continue;
-    }
-
-    if (isProjectInitializedForVSCode(projectPath)) {
-      // Project is initialized, check if the VS Code configuration files are valid and up-to-date
-      const expectedConfig = await getExpectedVSCodeConfigJson(projectPath);
-      const isValidConfig = await isValidVSCodeConfig(projectPath, expectedConfig);
-      if (isValidConfig) {
-        continue;
-      }
-
-      const shouldContinue = await promptToRegenerateVSCodeFiles(context, projectPath, expectedConfig);
-      if (!shouldContinue) {
-        break;
-      }
-    } else {
-      // Project is not initialized for VS Code, prompt the user to initialize it
-      const shouldContinue = await promptToInitializeProject(context, projectPath);
-      if (!shouldContinue) {
-        break;
-      }
+  for (const projectPath of projectPaths) {
+    const shouldContinue = await ensureProjectVSCodeFiles(context, projectPath);
+    if (!shouldContinue) {
+      break;
     }
   }
 }
 
 /**
+ * Ensures that the VS Code configuration files for a specific Logic App project are present and up-to-date.
+ * If the project is not initialized for VS Code, it will prompt the user to initialize it.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The path to the Logic App project.
+ * @returns {Promise<boolean>} A promise that resolves to `true` if should continue prompting, `false` otherwise (user disabled warning).
+ */
+export async function ensureProjectVSCodeFiles(context: IActionContext, projectPath: string): Promise<boolean> {
+  if (isProjectInitializedForVSCode(projectPath)) {
+    const expectedConfig = await getExpectedVSCodeConfigJson(projectPath);
+    const isValidConfig = await isValidVSCodeConfig(projectPath, expectedConfig);
+    if (isValidConfig) {
+      return true;
+    }
+
+    return await promptToRegenerateVSCodeFiles(context, projectPath, expectedConfig);
+  }
+
+  return await promptToInitializeProject(context, projectPath);
+}
+
+/**
  * Checks if a Logic App project is initialized for VS Code by verifying the presence of required configuration files and settings.
  * @param {string} projectPath - The path to the Logic App project.
- * @returns {boolean} `true` if the project is initialized for VS Code, `false` otherwise.
+ * @returns {boolean} `true` if the project is initialized for VS Code, `false` otherwise (user disabled warning).
  */
 export function isProjectInitializedForVSCode(projectPath: string): boolean {
   const hasAllVSCodeFiles = getVSCodeFilePaths(projectPath).every((filePath) => fse.existsSync(filePath));
@@ -96,7 +95,7 @@ export function isProjectInitializedForVSCode(projectPath: string): boolean {
  * Prompts the user to initialize a Logic App project for VS Code if it is not already initialized.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The project path to initialize.
- * @returns {Promise<boolean>} A promise that resolves to `true` if should continue prompting, `false` otherwise.
+ * @returns {Promise<boolean>} A promise that resolves to `true` if should continue prompting, `false` otherwise (user disabled warning).
  */
 async function promptToInitializeProject(context: IActionContext, projectPath: string): Promise<boolean> {
   const message = localize(
@@ -112,7 +111,11 @@ async function promptToInitializeProject(context: IActionContext, projectPath: s
   );
 
   if (result === DialogResponses.yes) {
-    await initProjectForVSCode(context, projectPath);
+    await callWithTelemetryAndErrorHandling('ensureVSCodeFiles.initProjectForVSCode', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await initProjectForVSCode(actionContext, projectPath);
+    });
   } else if (result === DialogResponses.dontWarnAgain) {
     await updateGlobalSetting(enableProjectConsistencyChecksSetting, false);
     return false;

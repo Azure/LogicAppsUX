@@ -1,7 +1,7 @@
 parameters:
   - name: publishVersion
     type: string
-    
+
 steps:
   - script: node scripts/update-versions.js ${{ parameters.publishVersion }}
     displayName: "Update Version in Package Files"
@@ -14,7 +14,7 @@ steps:
     workingDirectory: $(working_directory)
     condition: succeeded()
 
-  - script: npx replace-in-file setInGitHubBuild $(AI_KEY) apps/vs-code-designer/src/main.ts
+  - script: pnpm exec replace-in-file setInGitHubBuild $(AI_KEY) apps/vs-code-designer/src/main.ts
     displayName: "Replace Placeholder with Telemetry Key"
     workingDirectory: $(working_directory)
     condition: succeeded()
@@ -22,5 +22,6 @@ steps:
   - script: pnpm run vscode:designer:pack
     displayName: "Package with pnpm"
     workingDirectory: $(working_directory)
+    env:
+      NPM_CONFIG_USERCONFIG: $(npmrcFile)
     condition: succeeded()
-    

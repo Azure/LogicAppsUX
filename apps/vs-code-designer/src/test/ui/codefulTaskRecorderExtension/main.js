@@ -113,6 +113,60 @@ async function waitForLogicAppsExtension(timeoutMs = 360_000) {
   return false;
 }
 
+/** Reads and JSONC-parses `<folder>/.vscode/launch.json`, returning its configurations. */
+function readLaunchConfigs(folderFsPath) {
+  try {
+    const launchPath = path.join(folderFsPath, '.vscode', 'launch.json');
+    const raw = fs.readFileSync(launchPath, 'utf8');
+    // Strip simple // comments before parsing — launch.json is JSONC.
+    const cleaned = raw.replace(/^\s*\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+    const launch = JSON.parse(cleaned);
+    return Array.isArray(launch?.configurations) ? launch.configurations : [];
+  } catch (err) {
+    if (err && err.code !== 'ENOENT') {
+      console.log(`[la-e2e-recorder] launch.json read failed for ${folderFsPath}: ${err && err.message}`);
+    }
+    return [];
+  }
+}
+
+/**
+ * True for the codeless/Standard debug configuration, whose `processId` is the
+ * `${command:azureLogicAppsStandard.pickProcess}` substitution. Resolving that variable is what
+ * runs `pickFuncProcessInternal -> preDebugValidate`, i.e. the pre-debug gate.
+ */
+function isPickProcessConfig(config) {
+  return !!(config && typeof config.processId === 'string' && config.processId.includes('azureLogicAppsStandard.pickProcess'));
+}
+
+/**
+ * Chooses the workspace folder and launch configuration to debug.
+ *
+ * A `.code-workspace` can contain several folders (custom-code adds the functions project, and a
+ * `tests` folder may be appended), so `workspaceFolders[0]` is not reliably the Logic App. We
+ * therefore pick the folder by what its launch.json actually contains.
+ *
+ * Preference order, folder then config:
+ *   (a) a `${command:azureLogicAppsStandard.pickProcess}` config — the generated Standard
+ *       (codeless) shape, `type: coreclr, request: attach` (vscodeLaunch.ts:50-55);
+ *   (b) `type: 'logicapp'` — the generated codeful / custom-code shape, `request: launch`;
+ *   (c) the first configuration.
+ *
+ * (a) cannot change what Phase 4.10 selects: `generateLaunchJson` emits exactly ONE configuration,
+ * and the codeful/custom-code shapes have no `processId` at all, so for them (a) never matches and
+ * the result is the same `type: 'logicapp'` config as before. Likewise the folder preference only
+ * differs from the old `folders[0]` when folders[0] has no launch.json — a case in which the old
+ * code found no config name and bailed out entirely.
+ */
+function pickDebugTarget(folders) {
+  const scanned = folders.map((folder) => ({ folder, configs: readLaunchConfigs(folder.uri.fsPath) }));
+  const chosen =
+    scanned.find((entry) => entry.configs.some(isPickProcessConfig)) || scanned.find((entry) => entry.configs.length > 0) || scanned[0];
+  const config = chosen.configs.find(isPickProcessConfig) || chosen.configs.find((c) => c && c.type === 'logicapp') || chosen.configs[0];
+  const reason = isPickProcessConfig(config) ? 'pickProcess' : config && config.type === 'logicapp' ? 'logicapp' : 'first';
+  return { folder: chosen.folder, config, reason };
+}
+
 async function startDebugCommand(eventsFile) {
   try {
     const folders = vscode.workspace.workspaceFolders || [];
@@ -120,22 +174,14 @@ async function startDebugCommand(eventsFile) {
       console.log('[la-e2e-recorder] startDebug: no workspace folder');
       return false;
     }
-    const folder = folders[0];
 
-    // Read the launch.json from disk so we don't depend on VS Code's launch-config cache.
-    let configName;
-    try {
-      const launchPath = path.join(folder.uri.fsPath, '.vscode', 'launch.json');
-      const raw = fs.readFileSync(launchPath, 'utf8');
-      // Strip simple // comments before parsing — launch.json is JSONC.
-      const cleaned = raw.replace(/^\s*\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-      const launch = JSON.parse(cleaned);
-      const configs = Array.isArray(launch?.configurations) ? launch.configurations : [];
-      const picked = configs.find((c) => c && c.type === 'logicapp') || configs[0];
-      configName = picked && picked.name;
-    } catch (err) {
-      console.log(`[la-e2e-recorder] startDebug: launch.json read failed: ${err && err.message}`);
-    }
+    // Read launch.json from disk so we don't depend on VS Code's launch-config cache.
+    const { folder, config, reason } = pickDebugTarget(folders);
+    const configName = config && config.name;
+
+    console.log(
+      `[la-e2e-recorder] startDebug: workspace folders = ${JSON.stringify(folders.map((f) => f.uri.fsPath))}; chose folder ${folder && folder.uri.fsPath}`
+    );
 
     if (!configName) {
       console.log('[la-e2e-recorder] startDebug: no debug configuration name found');
@@ -154,7 +200,9 @@ async function startDebugCommand(eventsFile) {
       return false;
     }
 
-    console.log(`[la-e2e-recorder] startDebug: starting "${configName}" in ${folder.uri.fsPath}`);
+    console.log(
+      `[la-e2e-recorder] startDebug: starting "${configName}" (type=${config.type}, request=${config.request}, matched by ${reason}) in ${folder.uri.fsPath}`
+    );
 
     // Anchor for the test-side hang guard (`DEBUG_INVOKE_HANG_TIMEOUT_MS` in
     // codefulDebugTasks.test.ts). Written AFTER `waitForLogicAppsExtension()` resolved and
@@ -166,8 +214,8 @@ async function startDebugCommand(eventsFile) {
     // `waitForLogicAppsExtension()` await.
     appendEvent(eventsFile, {
       phase: 'debugInvoke',
-      taskName: '',
-      scopeFsPath: null,
+      taskName: configName,
+      scopeFsPath: folder.uri.fsPath,
       processId: null,
       exitCode: null,
       timestamp: new Date().toISOString(),

@@ -78,6 +78,8 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     platform: null,
     isDevContainerProject: false,
     availableProjects: [],
+    isAddCustomCodeFlow: false,
+    workspaceRootFolder: '',
     ...overrides,
   };
 };
@@ -136,8 +138,8 @@ describe('CreateWorkspace', () => {
       expect(screen.getByTestId('package-setup-step')).toBeInTheDocument();
     });
 
-    it('should render WorkspaceNameStep for convertToWorkspace flow at step 0', () => {
-      const store = createTestStore({ flowType: 'convertToWorkspace', currentStep: 0 });
+    it('should render WorkspaceNameStep for ensureWorkspace flow at step 0', () => {
+      const store = createTestStore({ flowType: 'ensureWorkspace', currentStep: 0 });
       render(
         <Provider store={store}>
           <CreateWorkspaceStructure />
@@ -323,10 +325,10 @@ describe('CreateWorkspace', () => {
       expect(nextButton).not.toBeDisabled();
     });
 
-    it('should enable Next for convertToWorkspace with just workspace path and name', () => {
+    it('should enable Next for ensureWorkspace with just workspace path and name', () => {
       renderWithStore(
         {
-          flowType: 'convertToWorkspace',
+          flowType: 'ensureWorkspace',
           workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
           pathValidationResults: { '/valid/path': true },
           workspaceName: 'valid-name',
@@ -405,10 +407,10 @@ describe('CreateWorkspace', () => {
       });
     });
 
-    it('should send createWorkspaceStructure command and enter loading state for convertToWorkspace flow', async () => {
+    it('should send createWorkspaceStructure command and enter loading state for ensureWorkspace flow', async () => {
       const { store } = renderWithStore(
         {
-          flowType: 'convertToWorkspace',
+          flowType: 'ensureWorkspace',
           currentStep: 1,
           workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
           pathValidationResults: { '/valid/path': true },
@@ -442,7 +444,7 @@ describe('CreateWorkspace', () => {
     it('should not post a duplicate create message while loading', async () => {
       const { store } = renderWithStore(
         {
-          flowType: 'convertToWorkspace',
+          flowType: 'ensureWorkspace',
           currentStep: 1,
           workspaceProjectPath: { fsPath: '/valid/path', path: '/valid/path' },
           pathValidationResults: { '/valid/path': true },
@@ -623,7 +625,7 @@ describe('Flow type wrapper components', () => {
     expect(state.flowType).toBe('createWorkspaceFromPackage');
   });
 
-  it('CreateWorkspaceStructure sets flowType to convertToWorkspace', () => {
+  it('CreateWorkspaceStructure sets flowType to ensureWorkspace', () => {
     const store = configureStore({
       reducer: { createWorkspace: createWorkspaceSlice.reducer },
     });
@@ -635,7 +637,7 @@ describe('Flow type wrapper components', () => {
     );
 
     const state = store.getState().createWorkspace;
-    expect(state.flowType).toBe('convertToWorkspace');
+    expect(state.flowType).toBe('ensureWorkspace');
   });
 
   it('CreateLogicApp sets flowType to createLogicApp', () => {

@@ -4,7 +4,6 @@ import {
   autoRuntimeDependenciesPathSettingKey,
   devContainerFolderName,
   builtinOperationSdksFolderName,
-  extensionCommand,
   funcIgnoreFileName,
   gitignoreFileName,
   hostFileName,
@@ -15,6 +14,7 @@ import {
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
+  vscodeCommand,
   vscodeFolderName,
   workflowFileName,
 } from '../../../../constants';
@@ -198,12 +198,12 @@ export async function createLocalConfigurationFiles(
   await fse.writeFile(funcIgnorePath, funcignore.sort().join(os.EOL));
 }
 
-export async function createWorkspaceStructure(webviewProjectContext: IWebviewProjectContext): Promise<void> {
+export async function createWorkspaceFiles(webviewProjectContext: IWebviewProjectContext): Promise<void> {
   const { workspaceProjectPath, workspaceName, logicAppName, functionFolderName, logicAppType } = webviewProjectContext;
 
   // Validate that workspaceProjectPath exists and has required properties
   if (!workspaceProjectPath || !workspaceProjectPath.fsPath) {
-    const errorMessage = `[CreateWorkspaceStructure] Invalid workspaceProjectPath: ${JSON.stringify(
+    const errorMessage = `[CreateWorkspaceFiles] Invalid workspaceProjectPath: ${JSON.stringify(
       {
         hasWorkspaceProjectPath: !!workspaceProjectPath,
         workspaceProjectPathType: typeof workspaceProjectPath,
@@ -301,7 +301,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     );
   }
 
-  await createWorkspaceStructure(webviewProjectContext);
+  await createWorkspaceFiles(webviewProjectContext);
 
   // Create the workspace folder
   const workspaceFolder = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
@@ -356,5 +356,5 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }
 
-  await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
+  await vscode.commands.executeCommand(vscodeCommand.openFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
 }
