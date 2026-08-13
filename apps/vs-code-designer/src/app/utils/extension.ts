@@ -9,7 +9,7 @@ import {
   supportedDataMapperFolders,
   supportedSchemaFileExts,
 } from '../commands/dataMapper/extensionConfig';
-import { getWorkspaceCustomCodeFunctionsProjectRoots, getWorkspaceFolderWithoutPrompting } from './workspace';
+import { getWorkspaceCustomCodeProjectRoots, getWorkspaceFolderWithoutPrompting } from './workspace';
 import { isLogicAppProjectInRoot } from './verifyIsProject';
 import { getEligibleLogicAppFoldersForCustomCode } from './customCodeUtils';
 
@@ -47,7 +47,7 @@ export async function updateLogicAppsContext() {
     const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
     const logicAppOpened = await isLogicAppProjectInRoot(workspaceFolder);
     await vscode.commands.executeCommand('setContext', extensionContext.hasProject, logicAppOpened);
-    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getWorkspaceCustomCodeFunctionsProjectRoots());
+    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getWorkspaceCustomCodeProjectRoots());
     await vscode.commands.executeCommand('setContext', extensionContext.customCodeEligibleLogicAppFolders, await getEligibleLogicAppFoldersForCustomCode());
   }
 }

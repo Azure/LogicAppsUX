@@ -5,7 +5,6 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceRoot } from '../utils/workspace';
 import { isCustomCodeFunctionsProject, tryGetLogicAppCustomCodeFunctionsProjects } from '../utils/customCodeUtils';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -17,9 +16,7 @@ import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
  * @returns {Promise<boolean>} - A promise that resolves to true if a custom code functions project was built, otherwise false.
  */
 export async function tryBuildCustomCodeFunctionsProject(context: IActionContext, node?: vscode.Uri): Promise<boolean> {
-  const workspaceFolderPath = await getWorkspaceRoot(context);
-  const nodePath = node?.fsPath || workspaceFolderPath;
-
+  const nodePath = node?.fsPath;
   if (isNullOrUndefined(nodePath)) {
     return false;
   }

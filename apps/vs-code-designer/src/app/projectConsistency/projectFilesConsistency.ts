@@ -29,7 +29,7 @@ import {
   generateDesignTimeLocalSettingsJson,
 } from './fileGenerators';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../utils/appSettings/localSettings';
-import { writeFormattedJson } from '../utils/fs';
+import { isPathEqual, writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { type ILocalSettingsJson, ProjectType } from '@microsoft/vscode-extension-logic-apps';
@@ -163,7 +163,7 @@ export async function ensureLocalSettingsFile(
     settingsToAdd[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
   }
 
-  if (currentValues[ProjectDirectoryPathKey] !== undefined && !arePathsEqual(currentValues[ProjectDirectoryPathKey], projectPath)) {
+  if (currentValues[ProjectDirectoryPathKey] !== undefined && !isPathEqual(currentValues[ProjectDirectoryPathKey], projectPath)) {
     settingsToAdd[ProjectDirectoryPathKey] = projectPath;
   }
 
@@ -381,7 +381,7 @@ async function isDesignTimeSettingsFileValid(
       return false;
     }
 
-    if (!arePathsEqual(values[ProjectDirectoryPathKey], projectPath)) {
+    if (!values[ProjectDirectoryPathKey] || !isPathEqual(values[ProjectDirectoryPathKey], projectPath)) {
       return false;
     }
 
@@ -420,13 +420,4 @@ async function readFileTextSafe(filePath: string): Promise<string> {
     // Ignore read errors and treat the file as empty.
   }
   return '';
-}
-
-function arePathsEqual(path1?: string, path2?: string): boolean {
-  if (typeof path1 !== 'string' || typeof path2 !== 'string' || !path1 || !path2) {
-    return false;
-  }
-  const resolved1 = path.resolve(path1);
-  const resolved2 = path.resolve(path2);
-  return process.platform === 'win32' ? resolved1.toLowerCase() === resolved2.toLowerCase() : resolved1 === resolved2;
 }

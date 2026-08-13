@@ -81,8 +81,7 @@ describe('ensureWorkspace', () => {
   it('should return true when a valid workspace is already opened', async () => {
     vi.spyOn(workspaceUtils, 'getWorkspaceFolderWithoutPrompting').mockResolvedValue(testWorkspaceFolder);
     vi.spyOn(verifyProject, 'isLogicAppProjectInRoot').mockResolvedValue(true);
-    vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(path.dirname(testWorkspaceFile));
-
+    vi.spyOn(workspaceUtils, 'getWorkspaceFilePath').mockResolvedValue(testWorkspaceFile);
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
 
@@ -97,8 +96,8 @@ describe('ensureWorkspace', () => {
   it('should prompt to create a workspace when no workspace is opened', async () => {
     vi.spyOn(workspaceUtils, 'getWorkspaceFolderWithoutPrompting').mockResolvedValue(testWorkspaceFolder);
     vi.spyOn(verifyProject, 'isLogicAppProjectInRoot').mockResolvedValue(true);
-    vi.spyOn(workspaceUtils, 'getWorkspaceFile').mockResolvedValue(undefined);
-    vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFilePath').mockResolvedValue(undefined);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFilePathInParent').mockResolvedValue(undefined);
     const workspaceWebviewCommandHandlerSpy = vi
       .spyOn(workspaceWebviewCommandHandler, 'createWorkspaceWebviewCommandHandler')
       .mockImplementation(async (config: WorkspaceWebviewCommandConfig) => {
@@ -147,9 +146,9 @@ describe('ensureWorkspace', () => {
       .mockImplementation(async (f: vscode.WorkspaceFolder | string | undefined) => {
         return f === testWorkspaceFolder || f === testLogicAppChildFolder;
       });
-    // TODO - ideally we don't want to mock getWorkspaceFile/getWorkspaceRoot here
-    vi.spyOn(workspaceUtils, 'getWorkspaceFile').mockResolvedValue(testWorkspaceFile);
-    vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
+    // TODO - ideally we don't want to mock getWorkspaceFilePathInParent here
+    vi.spyOn(workspaceUtils, 'getWorkspaceFilePath').mockResolvedValue(undefined);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFilePathInParent').mockResolvedValue(testWorkspaceFile);
 
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
@@ -187,8 +186,8 @@ describe('ensureWorkspace', () => {
       .mockImplementation(async (f: vscode.WorkspaceFolder | string | undefined) => {
         return f === testWorkspaceFolder || f === testLogicAppWorkspaceFolder;
       });
-    vi.spyOn(workspaceUtils, 'getWorkspaceFile').mockResolvedValue(testWorkspaceFile);
-    vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFilePath').mockResolvedValue(undefined);
+    vi.spyOn(workspaceUtils, 'getWorkspaceFilePathInParent').mockResolvedValue(testWorkspaceFile);
 
     const showInfoSpy = vi.spyOn(vscode.window, 'showInformationMessage').mockResolvedValue(DialogResponses.yes);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);

@@ -7,7 +7,7 @@ import { isLogicAppProjectInRoot } from '../verifyIsProject';
 
 vi.mock('../workspace', () => ({
   getWorkspaceFolderWithoutPrompting: vi.fn(),
-  getWorkspaceCustomCodeFunctionsProjectRoots: vi.fn().mockResolvedValue([]),
+  getWorkspaceCustomCodeProjectRoots: vi.fn().mockResolvedValue([]),
 }));
 
 vi.mock('../verifyIsProject', () => ({

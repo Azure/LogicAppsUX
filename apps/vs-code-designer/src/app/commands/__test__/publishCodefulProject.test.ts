@@ -2,16 +2,11 @@ import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
-import { getWorkspaceRoot } from '../../utils/workspace';
 import { publishCodefulProject } from '../publishCodefulProject';
 
 vi.mock('../../../localize', () => ({
   localize: (_key: string, defaultValue: string, ...args: unknown[]) =>
     defaultValue.replace(/{(\d+)}/g, (_match, index) => String(args[Number(index)] ?? '')),
-}));
-
-vi.mock('../../utils/workspace', () => ({
-  getWorkspaceRoot: vi.fn(),
 }));
 
 vi.mock('../../utils/codeful', () => ({
@@ -43,7 +38,6 @@ describe('publishCodefulProject', () => {
         endTaskProcessHandler?.({ execution: { task }, exitCode: 0 });
       }),
     };
-    (getWorkspaceRoot as Mock).mockResolvedValue(projectPath);
     (hasCodefulWorkflowSetting as Mock).mockResolvedValue(true);
     (invalidateCodefulSdkCacheIfNeeded as Mock).mockResolvedValue(false);
     (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue({
@@ -54,15 +48,13 @@ describe('publishCodefulProject', () => {
   });
 
   it('records telemetry and exits when no project path is available', async () => {
-    (getWorkspaceRoot as Mock).mockResolvedValue(undefined);
-
     await publishCodefulProject(context, undefined as any);
 
     expect(context.telemetry.properties).toMatchObject({
       result: 'Failed',
-      errorMessage: 'No project path found to publish custom code functions project.',
+      errorMessage: 'No project path found to publish codeful project.',
     });
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No project path found to publish custom code functions project.');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No project path found to publish codeful project.');
     expect(hasCodefulWorkflowSetting).not.toHaveBeenCalled();
   });
 

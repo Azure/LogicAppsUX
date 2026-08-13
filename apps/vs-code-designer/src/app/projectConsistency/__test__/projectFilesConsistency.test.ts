@@ -57,7 +57,8 @@ vi.mock('../../utils/appSettings/localSettings', async (importActual) => {
   };
 });
 
-vi.mock('../../utils/fs', () => ({
+vi.mock('../../utils/fs', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../utils/fs')>()),
   writeFormattedJson: vi.fn(),
 }));
 

@@ -85,6 +85,7 @@ async function isValidCodelessWorkflowFolder(workflowJsonPath: string): Promise<
 /**
  * Checks root folder and subFolders one level down
  * If any logic app projects are found return true.
+ * TODO(aeldridge): Replace usages with hasLogicAppInWorkspace
  */
 export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder | string | undefined): Promise<boolean | undefined> {
   if (isNullOrUndefined(workspaceFolder)) {

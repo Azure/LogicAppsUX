@@ -5,7 +5,7 @@ import type { WorkspaceFolder } from 'vscode';
 import * as workspaceUtils from '../workspace';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { tryGetWorkspaceFolderLogicApps } from '../workspace';
+import { getWorkspaceFolderLogicApps } from '../workspace';
 import { hostFileName, workflowFileName } from '../../../constants';
 import * as verifyIsProject from '../verifyIsProject';
 
@@ -272,13 +272,13 @@ describe('tryGetWorkspaceFolderLogicApps', () => {
   });
 
   it('should return an empty array if workspaceFolder is undefined', async () => {
-    const result = await tryGetWorkspaceFolderLogicApps(undefined);
+    const result = await getWorkspaceFolderLogicApps(undefined);
     expect(result).toEqual([]);
   });
 
   it('should return an empty array if folderPath does not exist', async () => {
     vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
-    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
     expect(result).toEqual([]);
   });
 
@@ -303,7 +303,7 @@ describe('tryGetWorkspaceFolderLogicApps', () => {
       return '';
     });
 
-    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
     expect(result).toEqual([testWorkspaceFolderPath]);
   });
 
@@ -344,7 +344,7 @@ describe('tryGetWorkspaceFolderLogicApps', () => {
       return '';
     });
 
-    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
     expect(result).toEqual([testLogicAppProjectPath1, testLogicAppProjectPath2]);
   });
 
@@ -363,7 +363,7 @@ describe('tryGetWorkspaceFolderLogicApps', () => {
       return '';
     });
 
-    const result = await tryGetWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
     expect(result).toEqual([]);
   });
 });
