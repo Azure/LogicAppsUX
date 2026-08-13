@@ -1331,9 +1331,8 @@ describe('createLocalConfigurationFiles', () => {
     expect(funcIgnoreContent).toContain('.git*');
     expect(funcIgnoreContent).toContain('.vscode');
     expect(funcIgnoreContent).toContain('local.settings.json');
-    expect(funcIgnoreContent).toContain('test');
     expect(funcIgnoreContent).toContain('.debug');
-    expect(funcIgnoreContent).toContain('workflow-designtime/');
+    expect(funcIgnoreContent).toContain('workflow-designtime');
   });
 
   it('should NOT include global.json in .funcignore for standard logic app projects', async () => {
@@ -1499,6 +1498,31 @@ describe('createLocalConfigurationFiles', () => {
 
     // Verify exactly 8 properties exist (5 standard + auth method + feature flag + codeful-enabled).
     expect(Object.keys(localSettingsData.Values)).toHaveLength(8);
+  });
+
+  it('should include codeful-specific build artifact patterns in .funcignore for codeful projects', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContextCodeful, logicAppFolderPath);
+
+    const funcIgnoreCall = vi.mocked(fse.writeFile).mock.calls.find((call) => call[0].toString().includes('.funcignore'));
+    expect(funcIgnoreCall).toBeDefined();
+    const funcIgnoreContent = funcIgnoreCall![1] as string;
+
+    expect(funcIgnoreContent).toContain('.nuget');
+    expect(funcIgnoreContent).toContain('obj');
+    expect(funcIgnoreContent).toContain('bin');
+  });
+
+  it('should NOT include codeful-specific build artifact patterns in .funcignore for standard logic app', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContext, logicAppFolderPath);
+
+    const funcIgnoreCall = vi.mocked(fse.writeFile).mock.calls.find((call) => call[0].toString().includes('.funcignore'));
+    expect(funcIgnoreCall).toBeDefined();
+    const funcIgnoreContent = funcIgnoreCall![1] as string;
+    const lines = funcIgnoreContent.split(/\r?\n/);
+
+    expect(funcIgnoreContent).not.toContain('.nuget');
+    expect(lines).not.toContain('obj');
+    expect(lines).not.toContain('bin');
   });
 
   it('should include extension bundle configuration in host.json', async () => {

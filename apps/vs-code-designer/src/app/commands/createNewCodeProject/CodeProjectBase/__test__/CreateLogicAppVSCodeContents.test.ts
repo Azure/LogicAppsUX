@@ -299,12 +299,13 @@ describe('CreateLogicAppVSCodeContents', () => {
       expect(settingsData).toHaveProperty('azureLogicAppsStandard.projectRuntime', '~4');
       expect(settingsData).toHaveProperty('debug.internalConsoleOptions', 'neverOpen');
       expect(settingsData).toHaveProperty('azureFunctions.suppressProject', true);
-      expect(settingsData).toHaveProperty('azureFunctions.deploySubpath');
-      expect(settingsData).toHaveProperty('azureFunctions.preDeployTask', 'publish');
-      expect(settingsData).toHaveProperty('azureFunctions.projectSubpath');
+      expect(settingsData).toHaveProperty('azureLogicAppsStandard.deploySubpath', '.');
+      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.preDeployTask');
+      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.zipIgnorePattern');
       expect(settingsData).toHaveProperty('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
       expect(settingsData).toHaveProperty('omnisharp.disableMSBuildDiagnosticWarning', true);
-      expect(settingsData).not.toHaveProperty('azureLogicAppsStandard.deploySubpath');
+      expect(settingsData).not.toHaveProperty('azureFunctions.deploySubpath');
+      expect(settingsData).not.toHaveProperty('azureFunctions.preDeployTask');
     });
 
     it('should create launch.json with logicapp configuration for codeful projects', async () => {
