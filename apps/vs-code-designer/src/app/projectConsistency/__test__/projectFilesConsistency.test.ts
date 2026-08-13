@@ -73,8 +73,8 @@ vi.mock('../../utils/customCodeUtils', () => ({
   tryGetLogicAppCustomCodeFunctionsProjects: vi.fn(() => Promise.resolve(undefined)),
 }));
 
-// Keep the real (pure) mergeMultiLanguageWorkerFlag but stub JAR detection so tests control whether the
-// project has JDBC driver JARs without depending on the shared fse.readdir mock's path behavior.
+// Stub JAR detection so tests control whether the project has JDBC driver JARs without depending
+// on the shared fse.readdir mock's path behavior.
 vi.mock('../../utils/java/jdbcConnector', async (importActual) => {
   const actual = await importActual<typeof import('../../utils/java/jdbcConnector')>();
   return {
@@ -277,7 +277,8 @@ describe('projectFilesConsistency', () => {
   // Self-heal for issue #8597: the JDBC built-in connector needs the Functions multi-language (Java)
   // worker, which is only enabled by AzureWebJobsFeatureFlags=EnableMultiLanguageWorker. A plain codeless
   // logic app does not get that flag, so when the user drops driver JAR(s) into lib/builtinOperationSdks/JAR
-  // regeneration adds/merges the flag automatically.
+  // the generator adds it to the baseline. The general feature-flag merge in the repair path ensures
+  // existing user-defined flags are never clobbered.
   describe('ensureLocalSettingsFile — JDBC multi-language worker self-heal', () => {
     const fullCodelessValues = {
       APP_KIND: 'workflowapp',

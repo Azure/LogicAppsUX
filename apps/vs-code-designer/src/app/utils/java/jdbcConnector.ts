@@ -2,13 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  builtinOperationSdksFolderName,
-  jarFolderName,
-  jdbcConnectorDocsUrl,
-  libDirectory,
-  multiLanguageWorkerSetting,
-} from '../../../constants';
+import { builtinOperationSdksFolderName, jarFolderName, jdbcConnectorDocsUrl, libDirectory } from '../../../constants';
 import { localize } from '../../../localize';
 import { tryExecuteCommand } from '../funcCoreTools/cpUtils';
 import { DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
@@ -46,30 +40,6 @@ export async function hasJdbcDriverJars(projectPath: string): Promise<boolean> {
     // Folder does not exist or cannot be read — treat as "no JDBC drivers present".
     return false;
   }
-}
-
-/**
- * Merges {@link multiLanguageWorkerSetting} into an existing `AzureWebJobsFeatureFlags` value without
- * dropping any flags the user already configured.
- *
- * `AzureWebJobsFeatureFlags` is a comma-separated list. This normalizes whitespace, drops empty tokens,
- * and appends `EnableMultiLanguageWorker` only when it is not already present (case-insensitive), so the
- * result is idempotent.
- * @param {string | undefined} existingValue - The current comma-separated feature flags value, if any.
- * @returns {string} The feature flags value guaranteed to contain the multi-language worker flag.
- */
-export function mergeMultiLanguageWorkerFlag(existingValue: string | undefined): string {
-  const tokens = (existingValue ?? '')
-    .split(',')
-    .map((token) => token.trim())
-    .filter((token) => token.length > 0);
-
-  const alreadyPresent = tokens.some((token) => token.toLowerCase() === multiLanguageWorkerSetting.toLowerCase());
-  if (!alreadyPresent) {
-    tokens.push(multiLanguageWorkerSetting);
-  }
-
-  return tokens.join(',');
 }
 
 /**

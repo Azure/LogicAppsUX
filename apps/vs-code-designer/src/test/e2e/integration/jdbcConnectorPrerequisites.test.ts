@@ -44,14 +44,20 @@ function hasJdbcDriverJars(projectPath: string): boolean {
   }
 }
 
-/** Mirror of mergeMultiLanguageWorkerFlag. */
-function mergeMultiLanguageWorkerFlag(existingValue: string | undefined): string {
-  const tokens = (existingValue ?? '')
-    .split(',')
-    .map((token) => token.trim())
-    .filter((token) => token.length > 0);
-  if (!tokens.some((token) => token.toLowerCase() === MULTI_LANGUAGE_WORKER_SETTING.toLowerCase())) {
-    tokens.push(MULTI_LANGUAGE_WORKER_SETTING);
+/** Mirror of mergeFeatureFlags from projectFilesConsistency. */
+function mergeFeatureFlags(existing: string, incoming: string): string {
+  const seen = new Set<string>();
+  const tokens: string[] = [];
+  for (const raw of `${existing},${incoming}`.split(',')) {
+    const token = raw.trim();
+    if (token.length === 0) {
+      continue;
+    }
+    const key = token.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      tokens.push(token);
+    }
   }
   return tokens.join(',');
 }
@@ -70,8 +76,9 @@ function selfHealJdbcMultiLanguageWorker(projectPath: string): boolean {
     return false;
   }
 
-  const merged = mergeMultiLanguageWorkerFlag(settings.Values[FEATURE_FLAGS_KEY]);
-  if (merged === settings.Values[FEATURE_FLAGS_KEY]) {
+  const currentFlags = settings.Values[FEATURE_FLAGS_KEY];
+  const merged = currentFlags ? mergeFeatureFlags(currentFlags, MULTI_LANGUAGE_WORKER_SETTING) : MULTI_LANGUAGE_WORKER_SETTING;
+  if (merged === currentFlags) {
     return false;
   }
 

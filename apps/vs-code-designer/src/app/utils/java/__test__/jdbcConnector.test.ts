@@ -19,7 +19,6 @@ import {
   getJdbcDriverJarFolder,
   hasJdbcDriverJars,
   isJavaRuntimeInstalled,
-  mergeMultiLanguageWorkerFlag,
   warnIfJdbcJavaRuntimeMissing,
 } from '../jdbcConnector';
 
@@ -91,32 +90,6 @@ describe('jdbcConnector', () => {
     it('returns false when the folder does not exist (readdir throws)', async () => {
       mockedReaddir.mockRejectedValue(new Error('ENOENT'));
       expect(await hasJdbcDriverJars(projectPath)).toBe(false);
-    });
-  });
-
-  describe('mergeMultiLanguageWorkerFlag', () => {
-    it('returns the flag when the current value is undefined or empty', () => {
-      expect(mergeMultiLanguageWorkerFlag(undefined)).toBe(multiLanguageWorkerSetting);
-      expect(mergeMultiLanguageWorkerFlag('')).toBe(multiLanguageWorkerSetting);
-      expect(mergeMultiLanguageWorkerFlag('   ')).toBe(multiLanguageWorkerSetting);
-    });
-
-    it('is idempotent when the flag is already the only value', () => {
-      expect(mergeMultiLanguageWorkerFlag(multiLanguageWorkerSetting)).toBe(multiLanguageWorkerSetting);
-    });
-
-    it('appends the flag while preserving existing flags', () => {
-      expect(mergeMultiLanguageWorkerFlag('SomeOtherFlag')).toBe(`SomeOtherFlag,${multiLanguageWorkerSetting}`);
-      expect(mergeMultiLanguageWorkerFlag('FlagA,FlagB')).toBe(`FlagA,FlagB,${multiLanguageWorkerSetting}`);
-    });
-
-    it('does not duplicate the flag when already present (case-insensitive)', () => {
-      expect(mergeMultiLanguageWorkerFlag(`FlagA,${multiLanguageWorkerSetting}`)).toBe(`FlagA,${multiLanguageWorkerSetting}`);
-      expect(mergeMultiLanguageWorkerFlag('enablemultilanguageworker')).toBe('enablemultilanguageworker');
-    });
-
-    it('normalizes surrounding whitespace and drops empty tokens', () => {
-      expect(mergeMultiLanguageWorkerFlag(' FlagA , , FlagB ')).toBe(`FlagA,FlagB,${multiLanguageWorkerSetting}`);
     });
   });
 
