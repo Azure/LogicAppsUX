@@ -54,6 +54,7 @@ import {
   waitForExtensionBundleReady,
 } from '../bundleFeed';
 import { releaseReservedPort, reserveFreePort } from '../portReservation';
+import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
 
 const maxDesignTimeValidationRestarts = 1;
 
@@ -253,6 +254,8 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
       ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
 
       await ensureProjectFiles(context, projectPath);
+
+      warnIfJdbcJavaRuntimeMissing(context, projectPath).catch(() => undefined);
 
       const designTimeDirectory = path.join(projectPath, designTimeDirectoryName);
       const portArgs = `--port ${designTimeInst.port}`;
