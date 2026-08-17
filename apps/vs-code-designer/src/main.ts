@@ -25,7 +25,6 @@ import {
   logicAppFilter,
   nodeJsBinaryPathSettingKey,
   parameterizeConnectionsInProjectLoadSetting,
-  showStartDesignTimeMessageSetting,
 } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
@@ -54,8 +53,10 @@ import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
 import { getWorkspaceSetting, isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import {
+  isAutoStartDesignTimeNotificationSuppressed,
   isManagedIdentityAuthNotificationSuppressed,
   isParameterizeConnectionsNotificationSuppressed,
+  suppressAutoStartDesignTimeNotification,
   suppressManagedIdentityAuthNotification,
   suppressParameterizeConnectionsNotification,
 } from './app/state/notifications';
@@ -362,8 +363,7 @@ async function promptShouldAutoStartDesignTime(projectPaths: string[]): Promise<
     )
   );
 
-  const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
-  if (!showStartDesignTimeMessage) {
+  if (isAutoStartDesignTimeNotificationSuppressed()) {
     return false;
   }
 
@@ -378,7 +378,7 @@ async function promptShouldAutoStartDesignTime(projectPaths: string[]): Promise<
     await updateGlobalSetting(autoStartDesignTimeSetting, true);
     return true;
   } else if (result === dontWarnAgain) {
-    await updateGlobalSetting(showStartDesignTimeMessageSetting, false);
+    await suppressAutoStartDesignTimeNotification();
   }
 
   return false;

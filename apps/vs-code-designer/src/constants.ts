@@ -263,6 +263,7 @@ export type vscodeCommand = (typeof vscodeCommand)[keyof typeof vscodeCommand];
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
+export const suppressAutoStartDesignTimeNotificationState = 'suppressAutoStartDesignTimeNotification';
 export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 export const suppressManagedIdentityAuthNotificationState = 'suppressManagedIdentityAuthNotification';
 export const suppressParameterizeConnectionsNotificationState = 'suppressParameterizeConnectionsNotification';

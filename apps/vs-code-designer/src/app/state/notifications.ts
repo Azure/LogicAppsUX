@@ -4,10 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../extensionVariables';
 import {
+  suppressAutoStartDesignTimeNotificationState,
   suppressDesignerVersionNotificationState,
   suppressManagedIdentityAuthNotificationState,
   suppressParameterizeConnectionsNotificationState,
 } from '../../constants';
+
+/**
+ * Whether the user has permanently dismissed the auto-start design-time startup prompt.
+ */
+export function isAutoStartDesignTimeNotificationSuppressed(): boolean {
+  return ext.context.globalState.get<boolean>(suppressAutoStartDesignTimeNotificationState) === true;
+}
+
+/**
+ * Permanently suppresses the auto-start design-time startup prompt.
+ */
+export async function suppressAutoStartDesignTimeNotification(): Promise<void> {
+  await ext.context.globalState.update(suppressAutoStartDesignTimeNotificationState, true);
+}
 
 /**
  * Whether the user has permanently dismissed the parameterize-connections startup prompt.
