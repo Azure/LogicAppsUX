@@ -66,20 +66,7 @@ export async function parameterizeProjectConnections(context: IActionContext, pr
     }
 
     context.telemetry.properties.projectPath = projectPath;
-    try {
-      await parameterizeProjectConnectionsInternal(context, projectPath);
-    } catch (error) {
-      const errorMessage = localize(
-        'errorParameterizeProjectConnections',
-        'Error while parameterizing existing connections for project "{0}": "{1}".',
-        projectPath,
-        error instanceof Error ? error.message : String(error)
-      );
-      ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.errorMessage = errorMessage;
-      throw new Error(errorMessage);
-    }
+    await parameterizeProjectConnectionsInternal(context, projectPath);
   }
 }
 

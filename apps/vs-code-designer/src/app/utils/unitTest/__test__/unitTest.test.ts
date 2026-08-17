@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import axios, { isAxiosError } from 'axios';
+import axios from 'axios';
 import * as childProcess from 'child_process';
 import * as fse from 'fs-extra';
 import * as util from 'util';
@@ -53,9 +53,6 @@ import {
 // ============================================================================
 // Global Constants and Test Hooks
 // ============================================================================
-
-// Use TextEncoder for encoding/decoding JSON responses
-const encoder = new TextEncoder();
 
 // Fixture path for tests that require a project folder
 const projectPath = path.join(__dirname, '../../../__mocks__');
