@@ -199,19 +199,6 @@ function stopTrackedDesignTimeProcess(projectPath: string): void {
   }
 }
 
-export async function tryStartDesignTimeApi(context: IActionContext, projectPath: string): Promise<void> {
-  return startDesignTimeApi(context, projectPath).catch((error) => {
-    ext.outputChannel.appendLog(
-      localize(
-        'scheduleDesignTimeApiFailed',
-        'Background design-time startup failed for project "{0}". Error: {1}',
-        projectPath,
-        getErrorMessage(error)
-      )
-    );
-  });
-}
-
 export async function startDesignTimeApi(context: IActionContext, projectPath: string): Promise<void> {
   context.telemetry.properties.projectPath = projectPath;
   const designTimeInst = getDesignTimeInstance(projectPath);
@@ -318,6 +305,7 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
       designTimeInst.startupError = errorMessage;
       designTimeInst.validationRetryCount = 0;
       stopTrackedDesignTimeProcess(projectPath);
+      context.telemetry.properties.result = 'Failed';
       context.telemetry.properties.errorMessage = errorMessage;
       ext.outputChannel.appendLog(
         localize('designTimeApiFailed', 'Design-time startup failed for project "{0}". Error: {1}', projectPath, errorMessage)
@@ -583,7 +571,7 @@ export function startDesignTimeProcess(
         })
         .finally(() => {
           callWithTelemetryAndErrorHandling('designTimeError.languageWorkerFailed.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await tryStartDesignTimeApi(actionContext, projectPath);
+            await startDesignTimeApi(actionContext, projectPath);
           });
         });
     }
@@ -608,7 +596,7 @@ export function startDesignTimeProcess(
         })
         .finally(() => {
           callWithTelemetryAndErrorHandling('designTimeError.portUnavailable.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await tryStartDesignTimeApi(actionContext, projectPath);
+            await startDesignTimeApi(actionContext, projectPath);
           });
         });
     }

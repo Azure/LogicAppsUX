@@ -7,7 +7,7 @@ import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import {
   scheduleStartAllDesignTimeApis,
   stopAllDesignTimeApis,
-  tryStartDesignTimeApi,
+  startDesignTimeApi,
 } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
@@ -332,7 +332,7 @@ async function startDesignTime(activateContext: IActionContext, isDevContainer: 
     if (await promptShouldAutoStartDesignTime(projectPaths)) {
       for (const projectPath of projectPaths) {
         callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (actionContext: IActionContext) => {
-          await tryStartDesignTimeApi(actionContext, projectPath);
+          await startDesignTimeApi(actionContext, projectPath);
         });
       }
     }
