@@ -16,13 +16,15 @@ interface PortalValidationResult {
   trustedParentOrigin?: string;
 }
 
-const ALLOWED_PORTAL_AUTHORITIES = [
-  'df.onecloud.azure-test.net',
-  'portal.azure.com',
-  'ms.portal.azure.com',
-  'rc.portal.azure.com',
-  'localhost:55555', // For local development
-];
+const ALLOWED_PORTAL_AUTHORITIES = ['df.onecloud.azure-test.net', 'portal.azure.com', 'ms.portal.azure.com', 'rc.portal.azure.com'];
+
+function isIframeRunningLocally(): boolean {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+}
+
+function isLocalhostHostname(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1';
+}
 
 function validatePortalSecurity(params: URLSearchParams): PortalValidationResult {
   const trustedAuthority = params.get('trustedAuthority') || '';
@@ -30,23 +32,45 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
     return {};
   }
 
-  const parentTrustedAuthority = (trustedAuthority.split('//')[1] || '').toLowerCase();
+  // Canonicalize the query-supplied authority so downstream trust decisions operate on a
+  // parsed origin instead of raw, attacker-controllable text.
+  let parsedAuthority: URL;
+  try {
+    parsedAuthority = new URL(trustedAuthority);
+  } catch {
+    throw new Error(`The origin '${trustedAuthority}' is not trusted for Frame Blade.`);
+  }
+
+  const parentHost = parsedAuthority.host.toLowerCase();
+  const parentHostname = parsedAuthority.hostname.toLowerCase();
+
+  // Localhost parents are only honored when the iframe itself is running locally, so a
+  // production iframe can never be embedded and driven by a localhost origin.
+  if (isLocalhostHostname(parentHostname)) {
+    if (!isIframeRunningLocally() || (parsedAuthority.protocol !== 'http:' && parsedAuthority.protocol !== 'https:')) {
+      throw new Error(`The origin '${parentHost}' is not trusted for Frame Blade.`);
+    }
+    return { trustedParentOrigin: parsedAuthority.origin };
+  }
+
+  // Non-localhost portal hosts must use HTTPS; any other scheme is rejected.
+  if (parsedAuthority.protocol !== 'https:') {
+    throw new Error(`The origin '${parentHost}' is not trusted for Frame Blade.`);
+  }
 
   const isTrustedOrigin = ALLOWED_PORTAL_AUTHORITIES.some((allowedOrigin) => {
-    if (allowedOrigin === parentTrustedAuthority) {
+    if (allowedOrigin === parentHost) {
       return true;
     }
     const subdomainSuffix = `.${allowedOrigin}`;
-    return (
-      parentTrustedAuthority.length > subdomainSuffix.length && parentTrustedAuthority.slice(-subdomainSuffix.length) === subdomainSuffix
-    );
+    return parentHost.length > subdomainSuffix.length && parentHost.slice(-subdomainSuffix.length) === subdomainSuffix;
   });
 
-  if (!isTrustedOrigin && !parentTrustedAuthority.startsWith('localhost:')) {
-    throw new Error(`The origin '${parentTrustedAuthority}' is not trusted for Frame Blade.`);
+  if (!isTrustedOrigin) {
+    throw new Error(`The origin '${parentHost}' is not trusted for Frame Blade.`);
   }
 
-  return { trustedParentOrigin: trustedAuthority };
+  return { trustedParentOrigin: parsedAuthority.origin };
 }
 
 const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];

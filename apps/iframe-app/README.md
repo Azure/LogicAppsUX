@@ -293,13 +293,14 @@ All messages use this format:
 
 ### Trusted Origins
 
-The iframe validates portal messages from these origins:
+The iframe validates the portal `trustedAuthority` value against these hosts (HTTPS only):
 
 - `df.onecloud.azure-test.net`
 - `portal.azure.com`
 - `ms.portal.azure.com`
 - `rc.portal.azure.com`
-- `localhost:55555` (development)
+
+A `localhost` (or `127.0.0.1`) parent authority is honored only when the iframe itself is served from localhost, so a production iframe can never be embedded and driven by a localhost origin.
 
 ## Security
 
@@ -323,11 +324,23 @@ credentialed fetches occur.
 
 ### Configuration Example
 
-```html
-<!-- Configure this in the served iframe.html, not on the embedding page's iframe element. -->
-<html lang="en" data-allowed-origins="https://app.example.com,*.trusted.example.com">
+Inbound trust is configured on the **served `iframe.html`** document, not on the host page that embeds it.
 
-<!-- The embedding page can then request postMessage configuration. -->
+**Served `iframe.html`** — sets the origins allowed to send `postMessage` configuration:
+
+```html
+<!-- Rendered by the server that hosts the iframe. The data-allowed-origins attribute on
+     this document's <html> element is what authorizes inbound postMessage senders. -->
+<html lang="en" data-allowed-origins="https://app.example.com,*.trusted.example.com">
+  <!-- ... iframe app ... -->
+</html>
+```
+
+**Host page** — embeds the iframe; it must NOT carry `data-allowed-origins`:
+
+```html
+<!-- Rendered by the embedding application. It only references the iframe URL; the
+     data-allowed-origins attribute belongs on the iframe document shown above. -->
 <iframe src="https://your-domain.com/iframe.html?expectPostMessage=true"></iframe>
 ```
 

@@ -351,6 +351,15 @@ describe('parseIframeConfig', () => {
       expect(config.trustedParentOrigin).toBe('https://subdomain.portal.azure.com');
     });
 
+    it('normalizes the trusted authority to its canonical origin', () => {
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=https://portal.azure.com/tenant/resource';
+
+      const config = parseIframeConfig();
+
+      expect(config.trustedParentOrigin).toBe('https://portal.azure.com');
+    });
+
     it('throws error for untrusted authority', () => {
       document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
       window.location.search = '?inPortal=true&trustedAuthority=https://evil.com';
@@ -358,14 +367,70 @@ describe('parseIframeConfig', () => {
       expect(() => parseIframeConfig()).toThrow("The origin 'evil.com' is not trusted for Frame Blade");
     });
 
-    it('allows localhost for development', () => {
+    it('rejects a trustedAuthority that is not a valid URL', () => {
       document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
-      window.location.search = '?inPortal=true&trustedAuthority=https://localhost:3000';
+      window.location.search = '?inPortal=true&trustedAuthority=not-a-valid-url';
+
+      expect(() => parseIframeConfig()).toThrow('is not trusted for Frame Blade');
+    });
+
+    it('rejects a non-https scheme for a trusted portal host', () => {
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=http://portal.azure.com';
+
+      expect(() => parseIframeConfig()).toThrow("The origin 'portal.azure.com' is not trusted for Frame Blade");
+    });
+
+    it('rejects a javascript: scheme masquerading as a portal host', () => {
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=javascript:alert(document.domain)';
+
+      expect(() => parseIframeConfig()).toThrow('is not trusted for Frame Blade');
+    });
+
+    it('allows a localhost parent only when the iframe itself runs locally', () => {
+      (window as any).location.hostname = 'localhost';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=http://localhost:4200';
 
       const config = parseIframeConfig();
 
       expect(config.inPortal).toBe(true);
-      expect(config.trustedParentOrigin).toBe('https://localhost:3000');
+      expect(config.trustedParentOrigin).toBe('http://localhost:4200');
+    });
+
+    it('allows a 127.0.0.1 parent when the iframe itself runs locally', () => {
+      (window as any).location.hostname = '127.0.0.1';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=https://127.0.0.1:3000';
+
+      const config = parseIframeConfig();
+
+      expect(config.trustedParentOrigin).toBe('https://127.0.0.1:3000');
+    });
+
+    it('rejects non-http localhost authorities during local development', () => {
+      (window as any).location.hostname = 'localhost';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=ftp://localhost:21';
+
+      expect(() => parseIframeConfig()).toThrow("The origin 'localhost' is not trusted for Frame Blade");
+    });
+
+    it('rejects an http localhost parent when the iframe runs in production', () => {
+      (window as any).location.hostname = 'iframe.logic.azure.com';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=http://localhost:3000';
+
+      expect(() => parseIframeConfig()).toThrow("The origin 'localhost:3000' is not trusted for Frame Blade");
+    });
+
+    it('rejects an https localhost parent when the iframe runs in production', () => {
+      (window as any).location.hostname = 'iframe.logic.azure.com';
+      document.documentElement.dataset.agentCard = 'https://test.logic.azure.com/agent-card.json';
+      window.location.search = '?inPortal=true&trustedAuthority=https://localhost:3000';
+
+      expect(() => parseIframeConfig()).toThrow("The origin 'localhost:3000' is not trusted for Frame Blade");
     });
   });
 });
