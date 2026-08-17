@@ -5,8 +5,26 @@
 import type { FileSystemConnectionInfo } from '@microsoft/vscode-extension-logic-apps';
 import { spawn } from 'child_process';
 import { win32 as path } from 'path';
+import { localize } from '../../../../../localize';
 
-const FILE_SYSTEM_CONNECTION_ERROR = 'Unable to connect to the file system. Verify the connection details and try again.';
+const getFileSystemConnectionError = (): string =>
+  localize('fileSystemConnectionFailed', 'Unable to connect to the file system. Verify the connection details and try again.');
+
+const hasSharedObjects = (report: object): report is { sharedObjects: string[] } =>
+  'sharedObjects' in report &&
+  Array.isArray(report.sharedObjects) &&
+  report.sharedObjects.every((sharedObjectPath) => typeof sharedObjectPath === 'string');
+
+const getWindowsPowerShellPath = (): string | undefined => {
+  const report = process.report?.getReport();
+  if (!report || !hasSharedObjects(report)) {
+    return undefined;
+  }
+
+  const kernel32Path = report.sharedObjects.find((sharedObjectPath) => path.basename(sharedObjectPath).toLowerCase() === 'kernel32.dll');
+
+  return kernel32Path ? path.join(path.dirname(kernel32Path), 'WindowsPowerShell', 'v1.0', 'powershell.exe') : undefined;
+};
 
 const CONNECT_FILE_SYSTEM_SCRIPT = `
 $ErrorActionPreference = 'Stop'
@@ -72,22 +90,15 @@ export function createFileSystemConnection(connectionInfo: FileSystemConnectionI
   const rootFolder = connectionInfo.connectionParameters?.['rootFolder'];
   const username = connectionInfo.connectionParameters?.['username'];
   const password = connectionInfo.connectionParameters?.['password'];
-  const systemRoot = process.env['SystemRoot'];
+  const powershellPath = getWindowsPowerShellPath();
 
-  if (
-    typeof rootFolder !== 'string' ||
-    typeof username !== 'string' ||
-    typeof password !== 'string' ||
-    typeof systemRoot !== 'string' ||
-    !/^[A-Za-z]:\\/.test(systemRoot) ||
-    !path.isAbsolute(systemRoot)
-  ) {
-    return Promise.resolve({ errorMessage: FILE_SYSTEM_CONNECTION_ERROR });
+  if (typeof rootFolder !== 'string' || typeof username !== 'string' || typeof password !== 'string' || powershellPath === undefined) {
+    return Promise.resolve({ errorMessage: getFileSystemConnectionError() });
   }
 
   return new Promise((resolve) => {
     const childProcess = spawn(
-      path.join(systemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe'),
+      powershellPath,
       ['-NoLogo', '-NoProfile', '-NonInteractive', '-EncodedCommand', ENCODED_CONNECT_FILE_SYSTEM_SCRIPT],
       {
         shell: false,
@@ -111,7 +122,7 @@ export function createFileSystemConnection(connectionInfo: FileSystemConnectionI
           },
         });
       } else {
-        resolve({ errorMessage: FILE_SYSTEM_CONNECTION_ERROR });
+        resolve({ errorMessage: getFileSystemConnectionError() });
       }
     };
 

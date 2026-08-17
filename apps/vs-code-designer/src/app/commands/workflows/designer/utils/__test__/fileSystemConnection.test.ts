@@ -12,7 +12,12 @@ vi.mock('child_process', () => ({
   spawn: vi.fn(),
 }));
 
+vi.mock('../../../../../../localize', () => ({
+  localize: vi.fn((_key: string, defaultValue: string) => defaultValue),
+}));
+
 import { createFileSystemConnection } from '../fileSystemConnection';
+import { localize } from '../../../../../../localize';
 
 class FakeChildProcess extends EventEmitter {
   public readonly stdin = new Writable({
@@ -46,10 +51,13 @@ const getSpawnArguments = (): string[] => vi.mocked(childProcess.spawn).mock.cal
 describe('createFileSystemConnection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubEnv('SystemRoot', String.raw`C:\Windows`);
+    vi.spyOn(process.report, 'getReport').mockReturnValue({
+      sharedObjects: [String.raw`D:\Windows\System32\KERNEL32.DLL`],
+    } as ReturnType<typeof process.report.getReport>);
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllEnvs();
   });
 
@@ -66,7 +74,7 @@ describe('createFileSystemConnection', () => {
     const decodedCommand = Buffer.from(encodedCommand ?? '', 'base64').toString('utf16le');
 
     expect(childProcess.spawn).toHaveBeenCalledWith(
-      String.raw`C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`,
+      String.raw`D:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`,
       ['-NoLogo', '-NoProfile', '-NonInteractive', '-EncodedCommand', expect.any(String)],
       {
         shell: false,
@@ -158,8 +166,25 @@ describe('createFileSystemConnection', () => {
     expect(childProcess.spawn).not.toHaveBeenCalled();
   });
 
-  it('does not spawn an executable from an invalid system root', async () => {
-    vi.stubEnv('SystemRoot', String.raw`\\attacker\share`);
+  it('ignores an overridden system root when selecting PowerShell', async () => {
+    vi.stubEnv('SystemRoot', String.raw`C:\Users\attacker\..\redirected`);
+    const child = spawnFake();
+
+    const resultPromise = createFileSystemConnection(createConnectionInfo());
+    child.emit('close', 0);
+
+    await expect(resultPromise).resolves.toHaveProperty('connection');
+    expect(childProcess.spawn).toHaveBeenCalledWith(
+      String.raw`D:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`,
+      expect.any(Array),
+      expect.any(Object)
+    );
+  });
+
+  it('does not spawn a process when the OS system directory cannot be resolved', async () => {
+    vi.mocked(process.report.getReport).mockReturnValue({
+      sharedObjects: [],
+    } as ReturnType<typeof process.report.getReport>);
 
     const result = await createFileSystemConnection(createConnectionInfo());
 
@@ -167,5 +192,15 @@ describe('createFileSystemConnection', () => {
       errorMessage: 'Unable to connect to the file system. Verify the connection details and try again.',
     });
     expect(childProcess.spawn).not.toHaveBeenCalled();
+  });
+
+  it('localizes sanitized errors', async () => {
+    const result = await createFileSystemConnection({ connectionParameters: {} });
+
+    expect(localize).toHaveBeenCalledWith(
+      'fileSystemConnectionFailed',
+      'Unable to connect to the file system. Verify the connection details and try again.'
+    );
+    expect(result.errorMessage).toBe('Unable to connect to the file system. Verify the connection details and try again.');
   });
 });
