@@ -21,7 +21,6 @@ vi.mock('axios', async () => {
 import {
   extractAndValidateRunId,
   removeInvalidCharacters,
-  parseErrorBeforeTelemetry,
   generateCSharpClasses,
   generateMockOutputsClassContent,
   getOperationMockClassContent,
@@ -180,69 +179,6 @@ describe('unitTest', () => {
       const input = '';
       const result = removeInvalidCharacters(input);
       expect(result).toBe('');
-    });
-  });
-
-  describe('parseErrorBeforeTelemetry', () => {
-    let isAxiosErrorSpy: ReturnType<typeof vi.spyOn>;
-    let appendLogSpy: ReturnType<typeof vi.spyOn>;
-    let localizeSpy: ReturnType<typeof vi.spyOn>;
-
-    beforeEach(() => {
-      isAxiosErrorSpy = vi.mocked(isAxiosError);
-      appendLogSpy = vi.spyOn(ext.outputChannel, 'appendLog');
-      // Create a proper spy on the localize function with type casting to any
-      localizeSpy = vi.spyOn(localizeModule, 'localize' as any);
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    it('should return formatted API error message for Axios error with valid JSON response data', () => {
-      const responseData = {
-        error: {
-          message: 'Not Found',
-          code: '404',
-        },
-      };
-      const encodedData = encoder.encode(JSON.stringify(responseData));
-      const error: any = {
-        message: 'Original error message',
-        response: { data: encodedData },
-      };
-      isAxiosErrorSpy.mockReturnValue(true);
-      const result = parseErrorBeforeTelemetry(error);
-      const expectedMessage = 'API Error: 404 - Not Found';
-      expect(result).toBe(expectedMessage);
-      expect(localizeSpy).toHaveBeenCalledWith('apiError', `API Error: 404 - Not Found`);
-      expect(appendLogSpy).toHaveBeenCalledWith(expectedMessage);
-    });
-
-    it('should return fallback error message when JSON parsing fails in Axios error', () => {
-      const invalidData = encoder.encode('invalid json');
-      const error: any = {
-        message: 'Parsing failed',
-        response: { data: invalidData },
-      };
-      isAxiosErrorSpy.mockReturnValue(true);
-      const result = parseErrorBeforeTelemetry(error);
-      expect(result).toBe('Parsing failed');
-      expect(localizeSpy).not.toHaveBeenCalled();
-      expect(appendLogSpy).not.toHaveBeenCalled();
-    });
-
-    it('should return error message for non-Axios Error instance', () => {
-      const error = new Error('Regular error');
-      isAxiosErrorSpy.mockReturnValue(false);
-      const result = parseErrorBeforeTelemetry(error);
-      expect(result).toBe('Regular error');
-    });
-
-    it('should return string conversion for non-error types', () => {
-      const error = 42;
-      const result = parseErrorBeforeTelemetry(error);
-      expect(result).toBe('42');
     });
   });
 
