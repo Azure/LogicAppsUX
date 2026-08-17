@@ -3,13 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  autoStartDesignTimeSetting,
   defaultVersionRange,
   designTimeDirectoryName,
   designerStartApi,
   extensionBundleId,
   hostFileName,
-  showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
   type hostFileContent,
 } from '../../../constants';
@@ -24,13 +22,10 @@ import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
-import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppRoots } from '../workspace';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
 import {
-  DialogResponses,
-  openUrl,
   type IActionContext,
   type IAzExtOutputChannel,
   callWithTelemetryAndErrorHandling,
@@ -204,7 +199,7 @@ function stopTrackedDesignTimeProcess(projectPath: string): void {
   }
 }
 
-async function tryStartDesignTimeApi(context: IActionContext, projectPath: string): Promise<void> {
+export async function tryStartDesignTimeApi(context: IActionContext, projectPath: string): Promise<void> {
   return startDesignTimeApi(context, projectPath).catch((error) => {
     ext.outputChannel.appendLog(
       localize(
@@ -705,73 +700,6 @@ export async function startAllDesignTimeApis(): Promise<void> {
     }));
   } else {
     ext.outputChannel.appendLog(localize('noWorkspaceFoldersForDesignTime', 'No workspace folders found. Skipping design-time startup.'));
-  }
-}
-
-/**
- * Optionally prompts the user to automatically start the design-time process at launch. If auto start is enabled, start the design-time API for all Logic Apps in the workspace.
- * TODO(aeldridge): Should be in main.ts for consistency
- * @param {IActionContext} context - The action context.
- * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state or the user rejects auto start.
- */
-export async function promptStartDesignTimeOption(context: IActionContext) {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const projectPaths = await getWorkspaceLogicAppRoots();
-    const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
-    let autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
-
-    ext.outputChannel.appendLog(
-      localize(
-        'detectedLogicAppFolders',
-        'Detected {0} logic app project folder(s) for artifact regeneration: {1}.',
-        projectPaths.length,
-        projectPaths.join(', ') || '(none)'
-      )
-    );
-
-    if (projectPaths && projectPaths.length > 0) {
-      if (!autoStartDesignTime && showStartDesignTimeMessage) {
-        const message = localize(
-          'startDesignTimeApi',
-          'Always start the background design-time process at launch? The workflow designer will open faster.'
-        );
-        const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
-        let result: MessageItem;
-        do {
-          result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
-          if (result === confirm) {
-            await updateGlobalSetting(autoStartDesignTimeSetting, true);
-            autoStartDesignTime = true;
-          } else if (result === DialogResponses.learnMore) {
-            await openUrl('https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local');
-          } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showStartDesignTimeMessageSetting, false);
-          }
-        } while (result === DialogResponses.learnMore);
-      }
-
-      for (const projectPath of projectPaths) {
-        if (autoStartDesignTime) {
-          callWithTelemetryAndErrorHandling('promptStartDesignTime.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await tryStartDesignTimeApi(actionContext, projectPath);
-          });
-        }
-      }
-    } else {
-      // A folder is only recognized as a logic app project when its host.json is present. If host.json
-      // itself is missing the folder is not detected here, so host.json and local.settings.json cannot
-      // be regenerated on this path. Log this so the situation is diagnosable from the output channel.
-      ext.outputChannel.appendLog(
-        localize(
-          'noLogicAppFoldersForRegen',
-          'No logic app project folders were detected in the open workspace, so host.json and local.settings.json were not regenerated. A folder is only recognized as a logic app when its host.json exists; if host.json is missing, restore it (it is normally committed to source control) and reload the window.'
-        )
-      );
-    }
-  } else {
-    ext.outputChannel.appendLog(
-      localize('noWorkspaceFoldersForRegen', 'No workspace folders are open. Skipping host.json and local.settings.json regeneration.')
-    );
   }
 }
 

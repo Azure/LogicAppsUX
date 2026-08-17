@@ -16,7 +16,6 @@ vi.mock('../app/utils/vsCodeConfig/settings', () => ({
 
 // Mock transitive dependencies of binaries.ts to prevent real module loading.
 vi.mock('../app/utils/codeless/startDesignTimeApi', () => ({
-  promptStartDesignTimeOption: vi.fn(),
   startAllDesignTimeApis: vi.fn(),
   stopAllDesignTimeApis: vi.fn(),
   scheduleStartAllDesignTimeApis: vi.fn(),

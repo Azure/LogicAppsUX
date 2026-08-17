@@ -5,9 +5,9 @@ import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import {
-  promptStartDesignTimeOption,
   scheduleStartAllDesignTimeApis,
   stopAllDesignTimeApis,
+  tryStartDesignTimeApi,
 } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from './app/utils/extension';
@@ -16,6 +16,7 @@ import { shouldRequireStrictDependencyValidation } from './app/utils/strictDepen
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
 import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
+  autoStartDesignTimeSetting,
   DependencyDefaultPath,
   dotNetBinaryPathSettingKey,
   extensionCommand,
@@ -24,6 +25,7 @@ import {
   logicAppFilter,
   nodeJsBinaryPathSettingKey,
   parameterizeConnectionsInProjectLoadSetting,
+  showStartDesignTimeMessageSetting,
 } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
@@ -50,7 +52,7 @@ import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
 import { isDevContainerWorkspace } from './app/utils/devContainerUtils';
 import { parameterizeAllConnections } from './app/commands/parameterizeConnections';
-import { isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
+import { getWorkspaceSetting, isManagedIdentityAuthEnabled, shouldParameterizeConnections, updateGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import {
   isManagedIdentityAuthNotificationSuppressed,
   isParameterizeConnectionsNotificationSuppressed,
@@ -109,6 +111,7 @@ export async function activate(context: vscode.ExtensionContext) {
       callWithTelemetryAndErrorHandling('activate.parameterizeAllConnections', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
         if (shouldParameterizeConnections() || (await promptShouldParameterizeConnections(actionContext))) {
+          actionContext.telemetry.properties.actionTaken = 'true';
           await parameterizeAllConnections(actionContext);
         }
       });
@@ -142,13 +145,12 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     activateContext.telemetry.properties.lastStep = 'promptEnableManagedIdentityAuth';
-    promptEnableLocalManagedIdentityAuth().catch((error) => {
-      ext.outputChannel?.appendLog(
-        localize(
-          'managedIdentityAuthPromptFailed',
-          `Managed identity auth startup prompt failed: ${error instanceof Error ? error.message : String(error)}`
-        )
-      );
+    callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      if (await promptShouldEnableLocalManagedIdentityAuth()) {
+        actionContext.telemetry.properties.actionTaken = 'true';
+        await enableLocalManagedIdentityAuth(actionContext);
+      }
     });
 
     // Dependencies and environment setup
@@ -237,9 +239,9 @@ async function promptShouldParameterizeConnections(context: IActionContext): Pro
  * - The user has already enabled the setting.
  * - The user previously selected "Don't show again".
  */
-async function promptEnableLocalManagedIdentityAuth(): Promise<void> {
+async function promptShouldEnableLocalManagedIdentityAuth(): Promise<boolean> {
   if (isManagedIdentityAuthNotificationSuppressed() || isManagedIdentityAuthEnabled()) {
-    return;
+    return false;
   }
 
   const enableButton = localize('enable', 'Enable');
@@ -250,13 +252,13 @@ async function promptEnableLocalManagedIdentityAuth(): Promise<void> {
   const selection = await vscode.window.showInformationMessage(message, enableButton, closeButton, dontShowAgain);
 
   if (selection === enableButton) {
-    await callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {
-      actionContext.telemetry.properties.isActivationEvent = 'true';
-      await enableLocalManagedIdentityAuth(actionContext);
-    });
+    return true;
   } else if (selection === dontShowAgain) {
     await suppressManagedIdentityAuthNotification();
+    return false;
   }
+
+  return false;
 }
 
 async function ensureExtensionBundle(): Promise<void> {
@@ -325,8 +327,61 @@ async function startDesignTime(activateContext: IActionContext, isDevContainer: 
     );
     scheduleStartAllDesignTimeApis();
   } else {
-    await promptStartDesignTimeOption(activateContext);
+    const projectPaths = await getWorkspaceLogicAppRoots();
+    if (await promptShouldAutoStartDesignTime(projectPaths)) {
+      for (const projectPath of projectPaths) {
+        callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (actionContext: IActionContext) => {
+          await tryStartDesignTimeApi(actionContext, projectPath);
+        });
+      }
+    }
   }
+}
+
+/**
+ * Prompts the user to automatically start the design-time process at launch. If auto start is enabled, start the design-time API for all Logic Apps in the workspace.
+ * @param {string[]} projectPaths - The Logic App project paths in the workspace.
+ * @returns {Promise<boolean>} A promise that resolves to a value indicating whether the design-time API should be automatically started.
+ */
+async function promptShouldAutoStartDesignTime(projectPaths: string[]): Promise<boolean> {
+  if (!projectPaths || projectPaths.length === 0) {
+    return false;
+  }
+
+  const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
+  if (autoStartDesignTime) {
+    return true;
+  }
+
+  ext.outputChannel.appendLog(
+    localize(
+      'detectedLogicAppFolders',
+      'Detected {0} logic app project folder(s) for artifact regeneration: {1}.',
+      projectPaths.length,
+      projectPaths.join(', ') || '(none)'
+    )
+  );
+
+  const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
+  if (!showStartDesignTimeMessage) {
+    return false;
+  }
+
+  const message = localize(
+    'startDesignTimeApi',
+    'Always start the background design-time process at launch? The workflow designer will open faster.'
+  );
+  const confirm: vscode.MessageItem = { title: localize('yesRecommended', 'Yes (Recommended)') };
+  const dontWarnAgain: vscode.MessageItem = { title: localize('dontWarnAgain', "Don't warn again") };
+  const result = await vscode.window.showWarningMessage(message, confirm, dontWarnAgain);
+  if (result === confirm) {
+    await updateGlobalSetting(autoStartDesignTimeSetting, true);
+    return true;
+  } else if (result === dontWarnAgain) {
+    await updateGlobalSetting(showStartDesignTimeMessageSetting, false);
+  }
+
+  return false;
 }
 
 export async function deactivate(): Promise<void> {

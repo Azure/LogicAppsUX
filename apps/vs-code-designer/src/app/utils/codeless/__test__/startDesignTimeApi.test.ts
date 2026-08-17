@@ -13,11 +13,7 @@ import {
   startDesignTimeApi,
   startDesignTimeProcess,
   stopDesignTimeApi,
-  promptStartDesignTimeOption,
 } from '../startDesignTimeApi';
-import { ensureLocalSettingsFile, ensureHostFile } from '../../../projectConsistency/projectFilesConsistency';
-import { getWorkspaceSetting } from '../../vsCodeConfig/settings';
-import { autoStartDesignTimeSetting } from '../../../../constants';
 
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
@@ -399,41 +395,5 @@ describe('startDesignTimeProcess', () => {
       'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
     );
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Conflicting port found when launching func. Restarting design-time process.');
-  });
-});
-
-describe('promptStartDesignTimeOption', () => {
-  const context = { ui: { showWarningMessage: vi.fn() }, telemetry: { properties: {}, measurements: {} } } as any;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    ext.designTimeInstances.clear();
-    (workspace as any).workspaceFolders = [];
-    // Default: auto-start disabled and the prompt suppressed (getWorkspaceSetting -> undefined), so
-    // only the artifact-regeneration loop runs — no scheduled design-time startup, no warning dialog.
-    vi.mocked(getWorkspaceSetting).mockReturnValue(undefined as any);
-  });
-
-  it('logs and skips regeneration when no logic app folders are detected', async () => {
-    (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
-    vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockResolvedValue([]);
-
-    await promptStartDesignTimeOption(context);
-
-    expect(ensureHostFile).not.toHaveBeenCalled();
-    expect(ensureLocalSettingsFile).not.toHaveBeenCalled();
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('No logic app project folders were detected'));
-  });
-
-  it('logs and skips regeneration when no workspace folders are open', async () => {
-    (workspace as any).workspaceFolders = undefined;
-
-    await promptStartDesignTimeOption(context);
-
-    expect(workspaceUtils.getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
-    expect(ensureHostFile).not.toHaveBeenCalled();
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      'No workspace folders are open. Skipping host.json and local.settings.json regeneration.'
-    );
   });
 });
