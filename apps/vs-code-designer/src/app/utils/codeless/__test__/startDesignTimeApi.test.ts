@@ -102,10 +102,14 @@ describe('startAllDesignTimeApis', () => {
   });
 
   it('logs and exits when no workspace folders are available', async () => {
+    vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockResolvedValue([]);
+
     await startAllDesignTimeApis();
 
-    expect(workspaceUtils.getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No workspace folders found. Skipping design-time startup.');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'No Logic App projects found in the current workspace, skipping design-time startup.'
+    );
+    expect(reserveFreePort).not.toHaveBeenCalled();
   });
 
   it('logs zero-project startup when the workspace contains no Logic App folders', async () => {
@@ -115,7 +119,7 @@ describe('startAllDesignTimeApis', () => {
     await startAllDesignTimeApis();
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      'Starting design-time APIs for 0 Logic App project(s) in the current workspace.'
+      'No Logic App projects found in the current workspace, skipping design-time startup.'
     );
     expect(reserveFreePort).not.toHaveBeenCalled();
   });
@@ -124,17 +128,16 @@ describe('startAllDesignTimeApis', () => {
     (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
     vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
 
-    await startAllDesignTimeApis();
+    // startDesignTimeApi will throw due to the beforeEach createDirectory mock rejecting,
+    // but startAllDesignTimeApis wraps each call in callWithTelemetryAndErrorHandling which
+    // (in production) catches errors. The test mock is a passthrough, so we catch here.
+    await startAllDesignTimeApis().catch(() => {});
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      'Starting design-time APIs for 2 Logic App project(s) in the current workspace.'
+      'Starting design-time processes for 2 Logic App project(s) in the current workspace.'
     );
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-one');
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting Design Time Api for project: D:/workspace/app-two');
     expect(reserveFreePort).toHaveBeenCalledTimes(2);
 
-    // Each concurrently started project must receive its own reserved port so
-    // sibling design-time hosts never collide on the same "free" port.
     const portOne = ext.designTimeInstances.get('D:/workspace/app-one')?.port;
     const portTwo = ext.designTimeInstances.get('D:/workspace/app-two')?.port;
     expect(portOne).toBeDefined();
@@ -150,7 +153,7 @@ describe('startAllDesignTimeApis', () => {
   });
 
   it('cleans up startup state after a startup failure', async () => {
-    await startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
+    await expect(startDesignTimeApi(createMockContext(), 'D:/workspace/app-one')).rejects.toThrow();
 
     const designTimeInstance = ext.designTimeInstances.get('D:/workspace/app-one');
 
@@ -161,6 +164,21 @@ describe('startAllDesignTimeApis', () => {
       })
     );
     expect(designTimeInstance?.startupPromise).toBeUndefined();
+  });
+
+  it('terminates process validation restart loop after max retries when an orphan responds on the port', async () => {
+    // Simulate an orphan process responding on every port (isDesignTimeUp always true)
+    // but no tracked process (checkFuncProcessId returns false).
+    // This previously caused an infinite loop because stopDesignTimeApi deleted the instance,
+    // resetting the retry counter. The fix tracks retry counts in a separate map by projectPath.
+    vi.mocked(axios.get).mockResolvedValue({} as any);
+
+    await startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
+
+    // maxDesignTimeValidationRestarts = 1, so it should attempt one restart then give up.
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      expect.stringContaining('Unable to validate the func child process PID')
+    );
   });
 
   it('reuses the in-flight startup promise for concurrent calls on the same project', async () => {
@@ -176,7 +194,8 @@ describe('startAllDesignTimeApis', () => {
     expect(reserveFreePort).toHaveBeenCalledTimes(1);
 
     rejectCreateDirectory?.(new Error('startup still failed'));
-    await Promise.all([firstStart, secondStart]);
+    await expect(firstStart).rejects.toThrow('startup still failed');
+    await expect(secondStart).rejects.toThrow('startup still failed');
 
     const designTimeInstance = ext.designTimeInstances.get('D:/workspace/app-one');
     expect(designTimeInstance?.startupPromise).toBeUndefined();

@@ -52,6 +52,7 @@ import { releaseReservedPort, reserveFreePort } from '../portReservation';
 import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
 
 const maxDesignTimeValidationRestarts = 1;
+const validationRestartCounts = new Map<string, number>();
 
 function isFailingHealthCheckLogLine(line: string): boolean {
   const normalizedLine = line.toLowerCase();
@@ -175,10 +176,6 @@ function getDesignTimeInstance(projectPath: string): FuncInstance {
   return designTimeInst;
 }
 
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
-
 function stopTrackedDesignTimeProcess(projectPath: string): void {
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst?.process) {
@@ -205,6 +202,7 @@ export async function startDesignTimeApi(context: IActionContext, projectPath: s
 
   if (designTimeInst.startupPromise) {
     context.telemetry.properties.skippingAlreadyInProgress = 'true';
+    context.errorHandling.suppressDisplay = true;
     await designTimeInst.startupPromise;
     return;
   }
@@ -295,27 +293,15 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
         }
       }
       designTimeInst.startupError = undefined;
-      designTimeInst.validationRetryCount = 0;
+      validationRestartCounts.delete(projectPath);
       context.telemetry.properties.didStartDesignTime = 'true';
       updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
     } catch (error) {
-      const errorMessage = getErrorMessage(error);
-      const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
-      const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
+      const errorMessage = error instanceof Error ? error.message : String(error);
       designTimeInst.startupError = errorMessage;
-      designTimeInst.validationRetryCount = 0;
+      validationRestartCounts.delete(projectPath);
       stopTrackedDesignTimeProcess(projectPath);
-      context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.errorMessage = errorMessage;
-      ext.outputChannel.appendLog(
-        localize('designTimeApiFailed', 'Design-time startup failed for project "{0}". Error: {1}', projectPath, errorMessage)
-      );
-
-      window.showErrorMessage(message, viewOutput).then(async (result) => {
-        if (result === viewOutput) {
-          ext.outputChannel.show();
-        }
-      });
+      throw error;
     } finally {
       designTimeInst.isStarting = false;
     }
@@ -355,13 +341,13 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
 
   if (correctFuncProcess) {
     processValidationCache.set(projectPath, { timestamp: now, isValid: true });
-    designTimeInst.validationRetryCount = 0;
+    validationRestartCounts.delete(projectPath);
     return;
   }
 
-  const retryCount = designTimeInst.validationRetryCount ?? 0;
+  const retryCount = validationRestartCounts.get(projectPath) ?? 0;
   if (retryCount >= maxDesignTimeValidationRestarts) {
-    designTimeInst.validationRetryCount = 0;
+    validationRestartCounts.delete(projectPath);
     ext.outputChannel.appendLog(
       localize(
         'invalidChildFuncPidSkipRestart',
@@ -373,7 +359,7 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
     return;
   }
 
-  designTimeInst.validationRetryCount = retryCount + 1;
+  validationRestartCounts.set(projectPath, retryCount + 1);
   ext.outputChannel.appendLog(
     localize(
       'invalidChildFuncPid',
@@ -662,7 +648,7 @@ export function scheduleStartAllDesignTimeApis(): void {
   );
   startAllDesignTimeApis().catch((error) => {
     ext.outputChannel.appendLog(
-      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', getErrorMessage(error))
+      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', error instanceof Error ? error.message : String(error))
     );
   });
 }
@@ -672,23 +658,25 @@ export function scheduleStartAllDesignTimeApis(): void {
  * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state.
  */
 export async function startAllDesignTimeApis(): Promise<void> {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const projectPaths = await getWorkspaceLogicAppRoots();
-    ext.outputChannel.appendLog(
-      localize(
-        'startingAllDesignTimeApis',
-        'Starting design-time APIs for {0} Logic App project(s) in the current workspace.',
-        projectPaths.length
-      )
-    );
-    await Promise.all(projectPaths.map(async (projectPath) => {
-      await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
-        await startDesignTimeApi(actionContext, projectPath);
-      });
-    }));
-  } else {
-    ext.outputChannel.appendLog(localize('noWorkspaceFoldersForDesignTime', 'No workspace folders found. Skipping design-time startup.'));
+  const projectPaths = await getWorkspaceLogicAppRoots();
+  if (projectPaths.length === 0) {
+    ext.outputChannel.appendLog(localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.'));
+    return;
   }
+
+  ext.outputChannel.appendLog(
+    localize(
+      'startingAllDesignTimeApis',
+      'Starting design-time processes for {0} Logic App project(s) in the current workspace.',
+      projectPaths.length
+    )
+  );
+
+  await Promise.all(projectPaths.map(async (projectPath) => {
+    await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
+      await startDesignTimeApi(actionContext, projectPath);
+    });
+  }));
 }
 
 /**
