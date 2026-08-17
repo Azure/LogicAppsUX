@@ -91,7 +91,9 @@ The iframe supports configuration via **URL parameters** or **data attributes**.
 | `expectPostMessage` | boolean | Wait for postMessage configuration            | false     |
 | `inPortal`          | boolean | Azure Portal context mode                     | false     |
 | `trustedAuthority`  | string  | Portal's origin for auth                      | -         |
-| `allowedOrigins`    | string  | Comma-separated allowed postMessage origins   | -         |
+
+For non-Portal cross-origin postMessage embedding, configure `data-allowed-origins` on the `<html>` element in the served iframe
+document. An `allowedOrigins` query parameter is not trusted and is ignored.
 
 ### Preset Themes
 
@@ -196,7 +198,7 @@ The iframe supports dynamic configuration and bi-directional communication with 
           type: 'SET_AGENT_CARD',
           agentCard: {
             name: 'Support Bot',
-            url: 'https://api.example.com/rpc',
+            url: 'https://support-agent.logic.azure.com/rpc',
             capabilities: { streaming: true },
           },
         },
@@ -216,6 +218,9 @@ The iframe supports dynamic configuration and bi-directional communication with 
 #### Parent → Iframe
 
 **SET_AGENT_CARD** - Send agent configuration:
+
+The payload may be a Microsoft HTTPS agent-card URL string or an object with a `url` on a `logic.azure.com` or
+`logic-apps.azure.com` host.
 
 ```javascript
 {
@@ -300,28 +305,30 @@ The iframe validates portal messages from these origins:
 
 ### Origin Validation
 
-The iframe implements three-tier origin validation for postMessage:
+The iframe requires `SET_AGENT_CARD` messages to come from `window.parent` and an independently trusted origin.
 
-1. **Explicit Configuration** (highest priority)
-   - Via `allowedOrigins` URL parameter
-   - Via `data-allowed-origins` attribute
+1. **Explicit Configuration**
+   - Via a server-rendered `data-allowed-origins` attribute on the iframe document's `<html>` element
+   - Via the validated Azure Portal `trustedAuthority` configuration
    - Supports wildcard subdomains: `*.example.com`
 
-2. **Default Allowed Origins** (medium priority)
+2. **Default Allowed Origins**
    - Current iframe's own origin
-   - Document referrer origin
-   - Development origins (localhost)
+   - Fixed localhost development origins when the iframe itself runs on localhost
 
-3. **Wildcard Matching**
-   - Patterns like `*.example.com` match all subdomains
-   - Patterns like `https://*.azure.com` match all Azure subdomains
+The `allowedOrigins` query parameter and `document.referrer` do not authorize inbound messages.
+
+Every accepted agent-card URL is also restricted to HTTPS Microsoft Logic Apps hosts before state changes, acknowledgment, or
+credentialed fetches occur.
 
 ### Configuration Example
 
 ```html
-<iframe
-  src="https://your-domain.com/iframe.html?allowedOrigins=https://app.example.com,https://*.example.com,https://*.azure.com"
-></iframe>
+<!-- Configure this in the served iframe.html, not on the embedding page's iframe element. -->
+<html lang="en" data-allowed-origins="https://app.example.com,*.trusted.example.com">
+
+<!-- The embedding page can then request postMessage configuration. -->
+<iframe src="https://your-domain.com/iframe.html?expectPostMessage=true"></iframe>
 ```
 
 ### CORS Requirements
@@ -585,7 +592,7 @@ pnpm format
 
 ```javascript
 // Debug mode - add to URL
-?agentCard=https://api.example.com&debug=true
+?agentCard=https://support-agent.logic.azure.com&debug=true
 ```
 
 ### PostMessage Not Working
@@ -601,8 +608,8 @@ pnpm format
 
 ```javascript
 // Check console for origin validation warnings
-// Add explicit allowed origins
-?allowedOrigins=https://app.example.com
+// Configure the served iframe document:
+// <html data-allowed-origins="https://app.example.com">
 ```
 
 ### Authentication Errors
@@ -754,7 +761,7 @@ data-theme-primary="#0066cc" data-theme-background="#ffffff"
               type: 'SET_AGENT_CARD',
               agentCard: {
                 name: `${user.name}'s Assistant`,
-                url: 'https://api.example.com/rpc',
+                url: 'https://support-agent.logic.azure.com/rpc',
                 capabilities: { streaming: true },
               },
             },

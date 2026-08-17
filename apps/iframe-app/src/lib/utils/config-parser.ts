@@ -51,11 +51,17 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
 
 const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];
 
+export type AgentCardPayload = ChatWidgetProps['agentCard'];
+
+function isAgentCardObject(value: unknown): value is Exclude<AgentCardPayload, string> {
+  return typeof value === 'object' && value !== null && 'url' in value && typeof value.url === 'string';
+}
+
 /**
  * Validates that an agent card URL uses HTTPS and points to a trusted Microsoft domain.
  * Blocks arbitrary external URLs to prevent chat hijacking via agentCard parameter injection.
  */
-function validateAgentCardUrl(url: string): string {
+export function validateAgentCardUrl(url: string): string {
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -66,7 +72,7 @@ function validateAgentCardUrl(url: string): string {
   // Allow localhost only when the iframe itself is running locally (development)
   const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
-    if (isLocalDevelopment) {
+    if (isLocalDevelopment && (parsed.protocol === 'http:' || parsed.protocol === 'https:')) {
       return url;
     }
     throw new Error('Agent card URLs pointing to localhost are only allowed during local development.');
@@ -85,6 +91,24 @@ function validateAgentCardUrl(url: string): string {
   }
 
   return url;
+}
+
+/**
+ * Validates the URL carried by either supported agent-card payload shape.
+ * The original payload is returned so object-based agent cards retain their metadata.
+ */
+export function validateAgentCardPayload(agentCard: unknown): AgentCardPayload {
+  if (typeof agentCard === 'string') {
+    validateAgentCardUrl(agentCard);
+    return agentCard;
+  }
+
+  if (isAgentCardObject(agentCard)) {
+    validateAgentCardUrl(agentCard.url);
+    return agentCard;
+  }
+
+  throw new Error('Agent card must be a URL string or an object with a URL string.');
 }
 
 function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): string {
