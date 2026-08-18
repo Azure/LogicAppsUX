@@ -9,7 +9,6 @@ import {
   azuriteExtensionPrefix,
   azuriteLocationSetting,
   defaultAzuritePathValue,
-  extensionCommand,
   showAutoStartAzuriteWarning,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';

@@ -841,11 +841,6 @@
       {
         "title": "Azure Logic Apps (Standard)",
         "properties": {
-          "azureLogicAppsStandard.showExplorer": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show or hide the Azure Functions Explorer"
-          },
           "azureLogicAppsStandard.projectRuntime": {
             "scope": "resource",
             "type": "string",
@@ -968,11 +963,6 @@
             "description": "Enable remote debugging for Node.js Logic Apps running on Linux App Service plans. Consumption plans are not supported. (experimental)",
             "default": false
           },
-          "azureLogicAppsStandard.enableOutputTimestamps": {
-            "type": "boolean",
-            "description": "Prepends each line displayed in the output channel with a timestamp.",
-            "default": true
-          },
           "azureLogicAppsStandard.preDeployTask": {
             "scope": "resource",
             "type": "string",
@@ -988,19 +978,9 @@
             "description": "Show a warning to install a 64-bit version of the Azure Functions Core Tools when you create a .NET Framework project.",
             "default": true
           },
-          "azureLogicAppsStandard.showDeploySubpathWarning": {
-            "type": "boolean",
-            "description": "Show a warning when the \"deploySubpath\" setting does not match the selected folder for deploying.",
-            "default": true
-          },
           "azureLogicAppsStandard.enableProjectConsistencyChecks": {
             "type": "boolean",
             "description": "Run consistency check on project files and .vscode configuration on startup and prompt to regenerate when files missing or out of date.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showTargetFrameworkWarning": {
-            "type": "boolean",
-            "description": "Show a warning after detecting an Azure Functions .NET project with mismatched target frameworks.",
             "default": true
           },
           "azureLogicAppsStandard.autoStartDesignTime": {

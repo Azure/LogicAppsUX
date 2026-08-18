@@ -297,7 +297,6 @@ export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const enableProjectConsistencyChecksSetting = 'enableProjectConsistencyChecks';
-export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const useNodeDesignTimeWorkerSetting = 'useNodeDesignTimeWorker';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
