@@ -1314,8 +1314,6 @@ async function main(): Promise<void> {
       // Design-time auto-start: ON for tests that need the runtime (designer, run),
       // OFF for tests that only check UI/conversion to save startup time.
       'azureLogicAppsStandard.autoStartDesignTime': autoStartDesignTime,
-      // Suppress the "Start design time?" prompt dialog on project load.
-      'azureLogicAppsStandard.showStartDesignTimeMessage': false,
       // Suppress "wants to sign in" auth dialog — uses silent auth that
       // returns undefined instead of prompting when no cached token exists.
       'azureLogicAppsStandard.silentAuth': true,

@@ -29,7 +29,6 @@ export type FuncInstance = {
   isStarting?: boolean;
   startupError?: string;
   startupPromise?: Promise<void>;
-  validationRetryCount?: number;
 };
 
 // biome-ignore lint/style/noNamespace:

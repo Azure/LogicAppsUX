@@ -1003,11 +1003,6 @@
             "description": "Show a warning after detecting an Azure Functions .NET project with mismatched target frameworks.",
             "default": true
           },
-          "azureLogicAppsStandard.showStartDesignTimeMessage": {
-            "type": "boolean",
-            "description": "Show a message asking customers if they want to start the background design-time process at project load time.",
-            "default": true
-          },
           "azureLogicAppsStandard.autoStartDesignTime": {
             "type": "boolean",
             "description": "Start background design-time process at project load time.",

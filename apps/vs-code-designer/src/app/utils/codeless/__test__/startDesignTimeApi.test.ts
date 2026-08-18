@@ -101,17 +101,6 @@ describe('startAllDesignTimeApis', () => {
     vi.mocked(reserveFreePort).mockImplementation(async () => nextPort++);
   });
 
-  it('logs and exits when no workspace folders are available', async () => {
-    vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockResolvedValue([]);
-
-    await startAllDesignTimeApis();
-
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      'No Logic App projects found in the current workspace, skipping design-time startup.'
-    );
-    expect(reserveFreePort).not.toHaveBeenCalled();
-  });
-
   it('logs zero-project startup when the workspace contains no Logic App folders', async () => {
     (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
     vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockResolvedValue([]);
@@ -166,16 +155,31 @@ describe('startAllDesignTimeApis', () => {
     expect(designTimeInstance?.startupPromise).toBeUndefined();
   });
 
-  it('terminates process validation restart loop after max retries when an orphan responds on the port', async () => {
-    // Simulate an orphan process responding on every port (isDesignTimeUp always true)
-    // but no tracked process (checkFuncProcessId returns false).
-    // This previously caused an infinite loop because stopDesignTimeApi deleted the instance,
-    // resetting the retry counter. The fix tracks retry counts in a separate map by projectPath.
+  it('restarts design-time when process validation detects an invalid func process', async () => {
+    // Simulate: first port has an orphan responding (isDesignTimeUp true, but no tracked process),
+    // after restart the new port has nothing responding so full startup path runs (and fails due
+    // to the default createDirectory rejection mock). This verifies the restart logic works without
+    // entering an infinite loop.
+    vi.mocked(axios.get)
+      .mockResolvedValueOnce({} as any)  // first port: orphan responds
+      .mockRejectedValue(new Error('API not ready'));  // new port: nothing responding
+
+    await expect(startDesignTimeApi(createMockContext(), 'D:/workspace/app-one')).rejects.toThrow();
+
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
+      'Invalid func child process PID set for project at "D:/workspace/app-one". Restarting workflow design-time API.'
+    );
+    // reserveFreePort called twice: once for first attempt, once for restart
+    expect(reserveFreePort).toHaveBeenCalledTimes(2);
+  });
+
+  it('stops retrying process validation after exceeding max retry limit', async () => {
+    // Simulate: orphan responds on every port (pathological case).
+    // The retry limit prevents infinite recursion.
     vi.mocked(axios.get).mockResolvedValue({} as any);
 
     await startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
 
-    // maxDesignTimeValidationRestarts = 1, so it should attempt one restart then give up.
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       expect.stringContaining('Unable to validate the func child process PID')
     );

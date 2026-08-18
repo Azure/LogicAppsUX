@@ -37,8 +37,7 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as vscode from 'vscode';
-import { Uri, window, workspace, type MessageItem } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcesses } from '../findChildProcess/findChildProcess';
@@ -51,8 +50,7 @@ import {
 import { releaseReservedPort, reserveFreePort } from '../portReservation';
 import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
 
-const maxDesignTimeValidationRestarts = 1;
-const validationRestartCounts = new Map<string, number>();
+const maxValidationRestarts = 3;
 
 function isFailingHealthCheckLogLine(line: string): boolean {
   const normalizedLine = line.toLowerCase();
@@ -196,7 +194,13 @@ function stopTrackedDesignTimeProcess(projectPath: string): void {
   }
 }
 
-export async function startDesignTimeApi(context: IActionContext, projectPath: string): Promise<void> {
+/**
+ * Starts the design-time API for the given project path.
+ * @param context - The action context for telemetry.
+ * @param projectPath - The Logic App project path.
+ * @param currRetry - Current retry depth from process-validation restarts. Defaults to 0.
+ */
+export async function startDesignTimeApi(context: IActionContext, projectPath: string, currRetry = 0): Promise<void> {
   context.telemetry.properties.projectPath = projectPath;
   const designTimeInst = getDesignTimeInstance(projectPath);
 
@@ -207,11 +211,11 @@ export async function startDesignTimeApi(context: IActionContext, projectPath: s
     return;
   }
 
-  designTimeInst.startupPromise = startDesignTimeApiInternal(context, designTimeInst, projectPath);
+  designTimeInst.startupPromise = startDesignTimeApiInternal(context, designTimeInst, projectPath, currRetry);
   await designTimeInst.startupPromise;
 }
 
-async function startDesignTimeApiInternal(context: IActionContext, designTimeInst: FuncInstance, projectPath: string): Promise<void> {
+async function startDesignTimeApiInternal(context: IActionContext, designTimeInst: FuncInstance, projectPath: string, currRetry: number): Promise<void> {
   try {
     context.telemetry.properties.didStartDesignTime = 'false';
 
@@ -226,7 +230,7 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
     if (await isDesignTimeUp(url)) {
       designTimeInst.isStarting = false;
       context.telemetry.properties.isDesignTimeUp = 'true';
-      await validateRunningFuncProcess(projectPath);
+      await validateRunningFuncProcess(projectPath, currRetry);
       return;
     }
 
@@ -293,13 +297,11 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
         }
       }
       designTimeInst.startupError = undefined;
-      validationRestartCounts.delete(projectPath);
       context.telemetry.properties.didStartDesignTime = 'true';
       updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       designTimeInst.startupError = errorMessage;
-      validationRestartCounts.delete(projectPath);
       stopTrackedDesignTimeProcess(projectPath);
       throw error;
     } finally {
@@ -325,7 +327,7 @@ function extractPinnedVersion(input: string): string | null {
   return null;
 }
 
-async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+async function validateRunningFuncProcess(projectPath: string, currRetry: number): Promise<void> {
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
     return;
@@ -341,25 +343,21 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
 
   if (correctFuncProcess) {
     processValidationCache.set(projectPath, { timestamp: now, isValid: true });
-    validationRestartCounts.delete(projectPath);
     return;
   }
 
-  const retryCount = validationRestartCounts.get(projectPath) ?? 0;
-  if (retryCount >= maxDesignTimeValidationRestarts) {
-    validationRestartCounts.delete(projectPath);
+  if (currRetry >= maxValidationRestarts) {
     ext.outputChannel.appendLog(
       localize(
         'invalidChildFuncPidSkipRestart',
         'Unable to validate the func child process PID for project at "{0}" after {1} restart attempt(s). Keeping the current design-time host running.',
         projectPath,
-        retryCount
+        currRetry
       )
     );
     return;
   }
 
-  validationRestartCounts.set(projectPath, retryCount + 1);
   ext.outputChannel.appendLog(
     localize(
       'invalidChildFuncPid',
@@ -370,7 +368,7 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
   processValidationCache.delete(projectPath);
   await stopDesignTimeApi(projectPath);
   await callWithTelemetryAndErrorHandling('validateRunningFuncProcess.startDesignTimeApi', async (actionContext: IActionContext) => {
-    await startDesignTimeApi(actionContext, projectPath);
+    await startDesignTimeApi(actionContext, projectPath, currRetry + 1);
   });
 }
 
