@@ -263,9 +263,12 @@ export type vscodeCommand = (typeof vscodeCommand)[keyof typeof vscodeCommand];
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
+export const suppressAutoStartAzuriteNotificationState = 'suppressAutoStartAzuriteNotification';
 export const suppressAutoStartDesignTimeNotificationState = 'suppressAutoStartDesignTimeNotification';
 export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 export const suppressManagedIdentityAuthNotificationState = 'suppressManagedIdentityAuthNotification';
+export const suppressMultiCoreToolsWarningState = 'suppressMultiCoreToolsWarning';
+export const suppressNodeJsWarningState = 'suppressNodeJsWarning';
 export const suppressParameterizeConnectionsNotificationState = 'suppressParameterizeConnectionsNotification';
 
 // API
@@ -303,7 +306,6 @@ export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRunt
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
-export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
 export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';

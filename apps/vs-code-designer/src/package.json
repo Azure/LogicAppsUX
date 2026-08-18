@@ -943,16 +943,6 @@
             "description": "Ask to confirm before deploying to a function app in Azure. Deployment overwrites any previous deployment and can't be undone.",
             "default": true
           },
-          "azureLogicAppsStandard.showNodeJsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of Node JS is outdated.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showMultiCoreToolsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when multiple installations of the Azure Functions Core Tools are found.",
-            "default": true
-          },
           "azureLogicAppsStandard.requestTimeout": {
             "type": "number",
             "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
@@ -1002,11 +992,6 @@
           "azureLogicAppsStandard.e2eStrictDependencyValidation": {
             "type": "boolean",
             "description": "Fail dependency and extension-bundle validation instead of showing success-shaped UI fallbacks. Intended for automated VS Code E2E setup only.",
-            "default": false
-          },
-          "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
-            "type": "boolean",
-            "description": "Show a warning asking if user's would like to configure Azurite auto start.",
             "default": false
           },
           "azureLogicAppsStandard.autoStartAzurite": {

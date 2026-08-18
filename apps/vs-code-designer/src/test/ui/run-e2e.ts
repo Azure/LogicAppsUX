@@ -1322,8 +1322,6 @@ async function main(): Promise<void> {
       // the generated task chain has started instead of waiting the default
       // 60 s. Other phases never reach pickProcess so this is harmless.
       'azureLogicAppsStandard.pickProcessTimeout': 15,
-      // Keep dependency validation non-interactive in explicit command tests.
-      'azureLogicAppsStandard.showNodeJsWarning': false,
       // Experimental-bundle opt-ins. Off by default for every phase so the
       // standard CDN flow continues to be tested. The bundleintegrityonly
       // phase or any future phase that wants to test a private bundle can

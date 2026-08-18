@@ -13,7 +13,8 @@ import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
 import { sendRequestWithExtTimeout } from '../../utils/requestUtils';
-import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { isMultiCoreToolsWarningSuppressed, suppressMultiCoreToolsWarning } from '../../state/notifications';
 import { installFuncCoreToolsBinaries } from './installFuncCoreTools';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';
 import { updateFuncCoreTools } from './updateFuncCoreTools';
@@ -74,8 +75,7 @@ async function validateFuncCoreToolsIsLatestSystem(context: IActionContext): Pro
   context.errorHandling.suppressDisplay = true;
   context.telemetry.properties.isActivationEvent = 'true';
 
-  const showMultiCoreToolsWarningKey = 'showMultiCoreToolsWarning';
-  const showMultiCoreToolsWarning = !!getWorkspaceSetting<boolean>(showMultiCoreToolsWarningKey);
+  const showMultiCoreToolsWarning = !isMultiCoreToolsWarningSuppressed();
 
   if (showMultiCoreToolsWarning) {
     const packageManagers: PackageManager[] = await getFuncPackageManagers(true /* isFuncInstalled */);
@@ -98,7 +98,7 @@ async function validateFuncCoreToolsIsLatestSystem(context: IActionContext): Pro
         if (result === selectUninstall) {
           await executeOnFunctions(uninstallFuncCoreTools, context, packageManagers);
         } else if (result === DialogResponses.dontWarnAgain) {
-          await updateGlobalSetting(showMultiCoreToolsWarningKey, false);
+          await suppressMultiCoreToolsWarning();
         }
       }
 

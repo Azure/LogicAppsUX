@@ -7,6 +7,7 @@ import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from
 import { shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../../utils/nodeJs/nodeJsVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../../utils/vsCodeConfig/settings';
+import { suppressNodeJsWarning, isNodeJsWarningSuppressed } from '../../../state/notifications';
 import { installNodeJs } from '../installNodeJs';
 import { validateNodeJsIsLatest } from '../validateNodeJsIsLatest';
 
@@ -53,6 +54,11 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
   updateGlobalSetting: vi.fn(),
 }));
 
+vi.mock('../../../state/notifications', () => ({
+  isNodeJsWarningSuppressed: vi.fn(() => true),
+  suppressNodeJsWarning: vi.fn(),
+}));
+
 vi.mock('../installNodeJs', () => ({
   installNodeJs: vi.fn(),
 }));
@@ -76,7 +82,7 @@ describe('validateNodeJsIsLatest', () => {
     vi.clearAllMocks();
     context = createContext();
     vi.mocked(vscode.window.showWarningMessage).mockResolvedValue(undefined);
-    vi.mocked(getWorkspaceSetting).mockReturnValue(false);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(true);
     vi.mocked(getNodeJsCommand).mockReturnValue('node');
     vi.mocked(setNodeJsCommand).mockResolvedValue(undefined);
     vi.mocked(installNodeJs).mockResolvedValue(undefined);
@@ -101,7 +107,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('does not reinstall when binaries exist and the on-disk integrity check passes', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(verifyDependencyIntegrity).mockReturnValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
@@ -147,7 +153,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('checks latest version only when binaries are present and warnings are enabled', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.0.0');
@@ -166,7 +172,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('does not block validation when the outdated Node.js warning is unanswered', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.1.0');
@@ -184,7 +190,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('shows the outdated Node.js warning when the target version includes minor and patch', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.20.8');
@@ -200,7 +206,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('uses the dependency feed target for a newer same-major minor Node.js warning', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('20.18.3');
 
@@ -221,7 +227,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('shows the outdated Node.js warning for a newer target major version', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.20.8');
 
@@ -237,7 +243,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('does not show the outdated Node.js warning when fallback latest version does not match the requested target major', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('20.18.3');
@@ -248,7 +254,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('updates the warning setting from the nonblocking outdated Node.js prompt callback', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.1.0');
@@ -257,11 +263,11 @@ describe('validateNodeJsIsLatest', () => {
     await validateNodeJsIsLatest(context, '18');
     await flushPromises();
 
-    expect(updateGlobalSetting).toHaveBeenCalledWith('showNodeJsWarning', false);
+    expect(suppressNodeJsWarning).toHaveBeenCalled();
   });
 
   it('updates Node.js and refreshes the command from the nonblocking outdated prompt callback only after Update is selected', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.1.0');
@@ -291,7 +297,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('opens learn more from the nonblocking outdated Node.js prompt callback', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.1.0');
@@ -305,7 +311,7 @@ describe('validateNodeJsIsLatest', () => {
   });
 
   it('surfaces update failures from the nonblocking outdated Node.js prompt callback', async () => {
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
     vi.mocked(getLatestNodeJsVersion).mockResolvedValue('18.1.0');
@@ -327,7 +333,7 @@ describe('validateNodeJsIsLatest', () => {
 
   it('skips the newest-version lookup and warning when the update check is throttled', async () => {
     vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue('18.0.0');
 
@@ -342,7 +348,7 @@ describe('validateNodeJsIsLatest', () => {
 
   it('still reinstalls a missing local Node.js version when the update check is throttled', async () => {
     vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
-    vi.mocked(getWorkspaceSetting).mockReturnValue(true);
+    vi.mocked(isNodeJsWarningSuppressed).mockReturnValue(false);
     vi.mocked(binariesExist).mockResolvedValue(true);
     vi.mocked(getLocalNodeJsVersion).mockResolvedValue(null);
 
