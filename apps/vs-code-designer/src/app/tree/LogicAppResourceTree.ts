@@ -212,7 +212,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   }
 
   public async getApplicationSettings(context: IDeployContext): Promise<ApplicationSettings> {
-    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, context.effectiveDeployFsPath);
+    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, context.originalDeployFsPath);
     return localSettings.Values || {};
   }
 

@@ -49,7 +49,20 @@
   margin: 8px auto;
   position: absolute;
   width: 100%;
-  pointer-events: auto;
+}
+
+// The drop zone container is only a positioning wrapper and spans the full node width. Leaving it
+// interactive makes it swallow hover/click for anything rendered just below the card (e.g. the card
+// indicator badges), so pointer events are re-enabled on the drop zone itself, which is narrower and
+// centered. `.react-flow__node > div { pointer-events: initial; }` in designer-ui out-specifies a
+// bare class selector, so the direct-child form is spelled out here too.
+.edge-drop-zone-container,
+.react-flow__node > div.edge-drop-zone-container {
+  pointer-events: none;
+
+  .msla-drop-zone-viewmanager {
+    pointer-events: auto;
+  }
 }
 
 .msla-graph-container-wrapper {

@@ -57,7 +57,7 @@ type WorkspaceSpec =
   | {
       appType?: string;
       wfType?: string;
-      use?: 'wsDir' | 'appDir';
+      use?: 'wsDir' | 'appDir' | 'none';
     };
 type ManifestEntry = {
   label?: string;
@@ -85,6 +85,16 @@ type Scenario = {
   settings?: ScenarioSettings;
   monolithic?: boolean;
   env?: Record<string, string>;
+  /**
+   * Install the codeful task recorder extension and point it at a freshly truncated
+   * events/trigger pair for this scenario.
+   *
+   * Opt in for any scenario that has to start a debug session. Driving F5 through the command
+   * palette depends on which editor happens to have focus, which is not something a headless
+   * CI session settles reliably (see SKILL.md rule 18); the recorder's marker-file trigger
+   * calls `vscode.debug.startDebugging(folder, config)` with an explicit folder instead.
+   */
+  recorder?: boolean;
 };
 type PhaseRunOptions = {
   vscodeVersion: string;
@@ -1326,6 +1336,13 @@ async function main(): Promise<void> {
     };
     if (includeRuntimeDependencyPaths) {
       const { depsRoot, funcBinary, dotnetBinary, nodeBinary } = getRuntimeDependencyPaths(runtimeDependenciesPathOverride);
+      // Publish the resolved root to the ExTester child process (same mechanism as
+      // LA_E2E_LSP_EPERM_DEPS_ROOT). Tests that have to touch the extension-managed
+      // dependency copy on disk — funcRepair.test.ts overwrites the managed func
+      // executable — must never guess a path and risk clobbering a developer's global
+      // install. Set here rather than once in main() so it always reflects the settings
+      // actually written, including runtimeDependenciesPathOverride.
+      process.env.LA_E2E_RUNTIME_DEPS_ROOT = depsRoot;
       Object.assign(settings, {
         // Point to auto-downloaded runtime binaries so the extension can start
         // the design-time API process (func host start) without relying on PATH.
@@ -1420,6 +1437,7 @@ async function main(): Promise<void> {
   // Wave 2: Tests that involve window reload or different folder open scenarios
   const phase8dFiles = [testFile('workspaceConversionYes.test.js')];
   const phase8eFiles = [testFile('workspaceConversionSubfolder.test.js')];
+  const phase49NugetDebugFiles = [testFile('nugetDebugConversion.test.js')];
 
   const phase10ModernFiles = [testFile('codefulDebugTasksModern.test.js')];
   const phase10LegacyFiles = [testFile('codefulDebugTasksLegacy.test.js')];
@@ -1444,6 +1462,17 @@ async function main(): Promise<void> {
   // synchronously, and the sidecar is rewritten so the cached hash matches
   // disk). See bundleRepair.test.ts for the full scenario.
   const phaseBundleRepairFiles = [testFile('bundleRepair.test.js')];
+
+  // Phase 4.14 — Func Core Tools pre-debug self-heal E2E. Real ExTester / VS
+  // Code session. Corrupts the extension-managed func executable in place so it
+  // still EXISTS but no longer RUNS, then presses F5 and proves the pre-debug
+  // gate silently reinstalls it instead of dead-ending on the blocking "You must
+  // have the Azure Functions Core Tools installed" modal. See funcRepair.test.ts.
+  //
+  // 4.14, not 4.13: 4.13 is already the Azurite readiness guard above
+  // (phase413CreateFiles / phase413AssertFiles), so this phase takes the next
+  // free number and is named phaseFuncRepair* rather than phase414*.
+  const phaseFuncRepairFiles = [testFile('funcRepair.test.js')];
 
   // ------------------------------------------------------------------
   // Per-scenario inventory (Phase A scaffold).
@@ -1624,6 +1653,13 @@ async function main(): Promise<void> {
       workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'appDir' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
+    {
+      id: 'p49-nugetdebugconversion',
+      testFile: phase49NugetDebugFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'none' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: false },
+      env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
 
     // Phase 4.12 — On-disk bundle repair / integrity gate (Phase 14 code path).
     // Reuses a Standard/Stateful workspace from the fixtures manifest, lets the
@@ -1637,6 +1673,39 @@ async function main(): Promise<void> {
       testFile: phaseBundleRepairFiles[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
+    },
+
+    // Phase 4.14 — Func Core Tools pre-debug self-heal.
+    // Reuses a Standard/Stateful workspace from the fixtures manifest, waits for
+    // the managed func binaries to install and run, overwrites them in place so
+    // they still exist but no longer execute, starts debugging, and asserts the
+    // pre-debug gate silently reinstalls them instead of showing the blocking
+    // "You must have the Azure Functions Core Tools installed" modal.
+    //
+    // Both settings are load-bearing:
+    //   validateDependencies: true  — writes
+    //     autoRuntimeDependenciesValidationAndInstallation, which IS
+    //     useBinariesDependencies() (binaries.ts:793). With it off,
+    //     validateFuncCoreToolsInstalled never reaches the managed-binaries
+    //     repair path and the test would assert nothing.
+    //     It also provisions the managed func binaries this test corrupts.
+    //   autoStartDesignTime: false  — a running design-time `func host start`
+    //     holds func.exe open, and a running .exe cannot be overwritten on
+    //     Windows. Debugging itself does not need design time: the generated
+    //     launch.json attaches via azureLogicAppsStandard.pickProcess, whose
+    //     pre-debug gate (validatePreDebug.ts:58) is exactly the code under
+    //     test, and it runs before anything design-time related.
+    //
+    // recorder: true — the palette F5 path is focus-dependent and does not
+    // survive a headless CI session (run 30549543233 debugged a markdown
+    // preview; run 30554041131 debugged settings.json). The recorder calls
+    // vscode.debug.startDebugging(folder, config) with an explicit folder.
+    {
+      id: 'p414-funcrepair',
+      testFile: phaseFuncRepairFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: true, autoStartDesignTime: false },
+      recorder: true,
     },
   ];
 
@@ -1654,6 +1723,64 @@ async function main(): Promise<void> {
     cleanup: false,
     offline: false,
     resources: [],
+  };
+
+  /**
+   * Windows-only: confirms the `func` processes killed by prepareFreshSession() have actually
+   * exited before the next scenario starts.
+   *
+   * Detection-based rather than another fixed sleep, because on Windows this is a correctness
+   * gate, not a tidiness one: a running .exe holds its own image file open, so a surviving func
+   * host makes any in-place write to `func.exe` fail with EPERM/EBUSY. `funcRepair.test.ts`
+   * (p414-funcrepair) overwrites the managed func binaries in place, and it can run directly
+   * after a scenario that leaves a design-time host alive (`p41a-fixtures` runs with
+   * autoStartDesignTime: true). Linux cannot reproduce this at all — there, overwriting a
+   * running executable simply succeeds.
+   *
+   * Log-only by design: a stray func on a developer box must not fail a run that would
+   * otherwise pass, and the corrupting test already fails loudly with its own diagnostic. What
+   * this buys is that the CI log says WHY, instead of leaving an EPERM to be guessed at.
+   */
+  const waitForWindowsFuncProcessesToExit = async (label: string, timeoutMs = 15000): Promise<void> => {
+    if (process.platform !== 'win32') {
+      return;
+    }
+    const { execFileSync } = require('child_process');
+    // execFileSync (not execSync) so the PowerShell argument never round-trips through cmd.exe
+    // quoting. Returns -1 when the probe itself failed, so "could not tell" is never reported
+    // as "all clear".
+    const countFuncProcesses = (): number => {
+      try {
+        const out = execFileSync(
+          'powershell',
+          ['-NoProfile', '-Command', '@(Get-Process -Name func -ErrorAction SilentlyContinue).Count'],
+          {
+            timeout: 10000,
+            encoding: 'utf8',
+          }
+        );
+        const parsed = Number.parseInt(String(out).trim(), 10);
+        return Number.isNaN(parsed) ? -1 : parsed;
+      } catch {
+        return -1;
+      }
+    };
+
+    const deadline = Date.now() + timeoutMs;
+    let remaining = countFuncProcesses();
+    while (remaining > 0 && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 1000));
+      remaining = countFuncProcesses();
+    }
+    if (remaining > 0) {
+      console.log(
+        `  [${label}] ⚠ ${remaining} func process(es) still running after ${timeoutMs}ms — an in-place overwrite of func.exe will fail with EPERM/EBUSY`
+      );
+    } else if (remaining < 0) {
+      console.log(`  [${label}] Could not probe for leftover func processes (PowerShell probe failed)`);
+    } else {
+      console.log(`  [${label}] ✓ No func processes remain`);
+    }
   };
 
   const prepareFreshSession = async (label: string): Promise<void> => {
@@ -1707,11 +1834,21 @@ async function main(): Promise<void> {
         // processes. Only kill dotnet processes that are children of func (covered
         // by the "func.*host.*start" pkill above which terminates the process group).
       } else {
-        // Windows: use PowerShell
-        execSync(
-          'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
-          { stdio: 'ignore', timeout: 10000 }
-        );
+        // Windows: use PowerShell. Every kill is guarded INDIVIDUALLY, matching the pkill
+        // chain above. The VS Code kill used to run unguarded, so a PowerShell start-up
+        // hiccup or the 10s timeout threw straight past the func kill into the outer catch,
+        // which only logs "kill failed — continuing". That asymmetry is invisible on Linux
+        // (a running executable is freely overwritable there) but load-bearing on Windows:
+        // a surviving func.exe holds its own image open, and p414-funcrepair overwrites the
+        // managed func binaries in place right after p41a-fixtures has run a design-time host.
+        try {
+          execSync(
+            'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
+            { stdio: 'ignore', timeout: 10000 }
+          );
+        } catch {
+          /* no matching VS Code process, or the probe timed out — fall through to the func kill */
+        }
         // Kill orphan Functions runtime / vsdbg processes on Windows
         try {
           execSync(
@@ -1721,6 +1858,8 @@ async function main(): Promise<void> {
         } catch {
           /* OK */
         }
+        // Stop-Process only SIGNALS termination; confirm the handles are actually gone.
+        await waitForWindowsFuncProcessesToExit(label);
       }
       console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver/func/vsdbg processes`);
       // Wait for processes to fully exit and release IPC sockets.
@@ -2318,6 +2457,105 @@ namespace ${namespaceName}
       return [];
     };
 
+    const fixtureManifestPath = path.join(require('os').tmpdir(), 'la-e2e-test', 'created-workspaces.json');
+    const readFixtureManifest = (): { manifest?: ManifestEntry[]; error?: string } => {
+      if (!fs.existsSync(fixtureManifestPath)) {
+        return { error: `manifest not found: ${fixtureManifestPath}` };
+      }
+      try {
+        return { manifest: JSON.parse(fs.readFileSync(fixtureManifestPath, 'utf8')) as ManifestEntry[] };
+      } catch (e) {
+        return { error: `manifest could not be parsed: ${getErrorMessage(e)}` };
+      }
+    };
+
+    const isManifestBackedWorkspaceSpec = (spec: WorkspaceSpec): boolean =>
+      spec === 'manifest-multi' || (typeof spec === 'object' && spec !== null);
+
+    const getManifestResourceIssue = (manifest: ManifestEntry[], spec: WorkspaceSpec): string | undefined => {
+      if (!isManifestBackedWorkspaceSpec(spec)) {
+        return undefined;
+      }
+      if (spec === 'manifest-multi') {
+        const preferred =
+          manifest.find((e) => e.appType === 'standard' && e.wfType === 'Stateful') ||
+          manifest.find((e) => e.appType === 'standard') ||
+          manifest[0];
+        if (preferred?.wsFilePath && fs.existsSync(preferred.wsFilePath)) {
+          return undefined;
+        }
+        return `missing live manifest-multi startup workspace: ${preferred?.wsFilePath}`;
+      }
+      const { appType, wfType, use } = spec;
+      const entry =
+        manifest.find((e) => (!appType || e.appType === appType) && (!wfType || e.wfType === wfType)) ||
+        (wfType ? undefined : manifest.find((e) => !appType || e.appType === appType)) ||
+        (!appType && !wfType ? manifest[0] : undefined);
+      if (!entry) {
+        return `no manifest entry matched ${JSON.stringify(spec)}`;
+      }
+      if (use === 'none') {
+        for (const requiredPath of [entry.wsFilePath, entry.appDir]) {
+          if (typeof requiredPath !== 'string' || !fs.existsSync(requiredPath)) {
+            return `manifest entry missing live prerequisite path for use:none: ${requiredPath}`;
+          }
+        }
+        return undefined;
+      }
+      const key = use === 'wsDir' ? 'wsDir' : use === 'appDir' ? 'appDir' : 'wsFilePath';
+      const value = entry[key];
+      return typeof value === 'string' && fs.existsSync(value) ? undefined : `manifest entry missing live ${key}: ${value}`;
+    };
+
+    const getFixtureManifestIssues = (scenarioList: Scenario[]): string[] => {
+      const manifestBackedScenarios = scenarioList.filter((scenario) => isManifestBackedWorkspaceSpec(scenario.workspaceSpec));
+      if (manifestBackedScenarios.length === 0) {
+        return [];
+      }
+      const { manifest, error } = readFixtureManifest();
+      if (!manifest) {
+        return manifestBackedScenarios.map((scenario) => `${scenario.id}: ${error}`);
+      }
+      return manifestBackedScenarios.flatMap((scenario) => {
+        const issue = getManifestResourceIssue(manifest, scenario.workspaceSpec);
+        return issue ? [`${scenario.id}: ${issue}`] : [];
+      });
+    };
+
+    const ensureFixtureManifestForScenarios = async (scenarioList: Scenario[], label: string): Promise<number> => {
+      const initialIssues = getFixtureManifestIssues(scenarioList);
+      if (initialIssues.length === 0) {
+        return 0;
+      }
+
+      console.log(`\n=== Phase 4.1 fixture prerequisite required for ${label} ===`);
+      for (const issue of initialIssues) {
+        console.log(`  ${issue}`);
+      }
+      console.log('  Running p41a-fixtures to create a fresh workspace manifest before the focused scenario...');
+
+      writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+      await prepareFreshSession(`${label}-p41a-fixtures`);
+      const fixtureExit = await runPhase('Phase 4.1a: createWorkspace fixtures prerequisite', phase1aFiles);
+      if (fixtureExit !== 0) {
+        console.error(`\n⚠ Phase 4.1a fixture setup failed with exit code ${fixtureExit}; focused scenario cannot proceed.`);
+        return fixtureExit;
+      }
+      verifyLogicAppsExtensionBundle('p41a-fixtures');
+
+      const remainingIssues = getFixtureManifestIssues(scenarioList);
+      if (remainingIssues.length === 0) {
+        console.log(`  Phase 4.1 fixture manifest is ready: ${fixtureManifestPath}`);
+        return 0;
+      }
+
+      console.error('\n⚠ Phase 4.1a completed, but required fixture resources are still missing:');
+      for (const issue of remainingIssues) {
+        console.error(`  ${issue}`);
+      }
+      return 1;
+    };
+
     // ------------------------------------------------------------------
     // Phase A — per-scenario workspace resolver.
     //
@@ -2342,6 +2580,9 @@ namespace ${namespaceName}
     //                      matching entry, and returns its wsFilePath
     //                      (default), wsDir (`use: 'wsDir'`), or appDir
     //                      (`use: 'appDir'`) as a single-element array.
+    //                      `use: 'none'` validates the manifest prerequisite
+    //                      but passes no startup resource; use this when the
+    //                      test clones and opens its own workspace.
     //
     // Returns { resources, legacyDir? }. `legacyDir` is set only for
     // 'self-contained' so runScenarioPhases can wire up the env var.
@@ -2392,6 +2633,9 @@ namespace ${namespaceName}
           console.warn(`  [${scenarioId}] No manifest entry matched ${JSON.stringify(spec)}`);
           return { resources: [] };
         }
+        if (use === 'none') {
+          return { resources: [] };
+        }
         const key = use === 'wsDir' ? 'wsDir' : use === 'appDir' ? 'appDir' : 'wsFilePath';
         const value = entry[key];
         if (value && fs.existsSync(value)) {
@@ -2434,7 +2678,7 @@ namespace ${namespaceName}
       }
       const exits: number[] = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv, recorder } = scenario;
         const resolvedSettings: ScenarioSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
@@ -2457,6 +2701,20 @@ namespace ${namespaceName}
           }
         }
 
+        // Scenarios that start a debug session drive it through the recorder extension's
+        // marker-file trigger rather than the command palette, so the trigger does not depend
+        // on which editor has focus. Install once per scenario (prepareFreshSession does not
+        // touch extDir); the events/trigger files are reset per attempt below so a retry never
+        // reads the previous attempt's events. The env keys are captured here, once, so the
+        // restore loop below cannot double-restore them across retries.
+        if (recorder) {
+          installCodefulTaskRecorderExtension(extDir);
+          rebuildExtensionsJson(extDir);
+          for (const key of ['LA_E2E_TASK_EVENTS_JSONL', 'CODEFUL_TASK_EVENTS_JSONL', 'LA_E2E_TRIGGER_DIR']) {
+            envOverridesApplied.push({ key, prev: process.env[key] });
+          }
+        }
+
         const fileList = Array.isArray(files) ? files : [files];
         if (!monolithic && fileList.length !== 1) {
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
@@ -2473,6 +2731,11 @@ namespace ${namespaceName}
 
           try {
             await prepareFreshSession(id);
+            if (recorder) {
+              // Truncates the JSONL and clears stale markers — must run per attempt, after
+              // prepareFreshSession, so the test never sees a previous attempt's debugStarted.
+              configureCodefulRecorderEnvironment();
+            }
             if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
               pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
               pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
@@ -2577,6 +2840,10 @@ namespace ${namespaceName}
       }
       console.log(`\nRunning ${selectedScenarios.length} scenario(s) (LA_E2E_SCENARIO): ${selectedScenarios.map((s) => s.id).join(', ')}`);
       await downloadExTesterAssets();
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(selectedScenarios, 'selected-scenarios');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       const selectedExit = await runScenarioPhases(selectedScenarios);
       process.exit(selectedExit);
     }
@@ -2635,8 +2902,36 @@ namespace ${namespaceName}
         throw new Error('bundlerepaironly: p412-bundlerepair scenario not found in scenarios[] table');
       }
       await downloadExTesterAssets();
+      const prerequisiteExit = await ensureFixtureManifestForScenarios([bundleRepairScenario], 'bundlerepaironly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
       process.exit(phase12Exit);
+    }
+
+    if (e2eMode === 'funcrepaironly') {
+      const funcRepairScenario = scenarios.find((s) => s.id === 'p414-funcrepair');
+      if (!funcRepairScenario) {
+        throw new Error('funcrepaironly: p414-funcrepair scenario not found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const funcRepairExit = await runScenarioPhases([funcRepairScenario]);
+      process.exit(funcRepairExit);
+    }
+
+    if (e2eMode === 'nugetdebugonly') {
+      const nugetDebugScenario = scenarios.find((s) => s.id === 'p49-nugetdebugconversion');
+      if (!nugetDebugScenario) {
+        throw new Error('nugetdebugonly: p49-nugetdebugconversion scenario not found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const prerequisiteExit = await ensureFixtureManifestForScenarios([nugetDebugScenario], 'nugetdebugonly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
+      const phase9Exit = await runScenarioPhases([nugetDebugScenario]);
+      process.exit(phase9Exit);
     }
 
     if (e2eMode === 'nonlogicappstartup') {
@@ -2671,6 +2966,13 @@ namespace ${namespaceName}
     if (e2eMode === 'designeronly') {
       // Ensure VS Code and ChromeDriver are downloaded
       await downloadExTesterAssets();
+      const designerScenarios = scenarios.filter((scenario) =>
+        ['p42-standard', 'p42-customcode', 'p42-rulesengine', 'p42-connectionprompt'].includes(scenario.id)
+      );
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(designerScenarios, 'designeronly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
 
       await prepareFreshSession('phase2-only');
@@ -2684,6 +2986,20 @@ namespace ${namespaceName}
     if (e2eMode === 'newtestsonly') {
       // Run only the new tests (phases 4.3–4.6) each in their own session
       await downloadExTesterAssets();
+      const newTestScenarios = scenarios.filter((scenario) =>
+        [
+          'p43-inlinejavascript',
+          'p43-customcode',
+          'p43-rulesengine',
+          'p44-statelessvariables',
+          'p45-designerviewextended',
+          'p46-keyboardnav',
+        ].includes(scenario.id)
+      );
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(newTestScenarios, 'newtestsonly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       writeTestSettings({ validateDependencies: shouldValidateRuntimeDependencies(), autoStartDesignTime: true });
       const wsResources = getPhase2Resources();
       const exits: number[] = [];
@@ -2715,6 +3031,13 @@ namespace ${namespaceName}
     if (e2eMode === 'conversiononly') {
       // Run only the workspace conversion tests (phases 4.8a–4.8d)
       await downloadExTesterAssets();
+      const conversionScenarios = scenarios.filter((scenario) =>
+        ['p48a-conversionno', 'p48c-multipledesigners', 'p48e-conversionsubfolder'].includes(scenario.id)
+      );
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(conversionScenarios, 'conversiononly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
       // ALL conversion tests need validateDependencies ON so the extension
       // fully activates and detects legacy projects / shows conversion dialog.
       writeTestSettings({ validateDependencies: true, autoStartDesignTime: false });

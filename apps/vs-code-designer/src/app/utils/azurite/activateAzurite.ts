@@ -5,6 +5,7 @@
 import {
   autoStartAzuriteSetting,
   azuriteBinariesLocationSetting,
+  azuriteCommand,
   azuriteExtensionPrefix,
   azuriteLocationSetting,
   defaultAzuritePathValue,
@@ -120,7 +121,7 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         await removeSharedSetting(azuriteLocationSetting, azuriteExtensionPrefix);
         let terminalStartError: Error | undefined;
         try {
-          await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
+          await executeOnAzurite(context, azuriteCommand.start);
           context.telemetry.properties.azuriteStart = 'true';
         } catch (error) {
           // A rejection here is NOT authoritative. The third-party Azurite extension

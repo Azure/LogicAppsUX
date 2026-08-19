@@ -5,9 +5,9 @@
 import { ExistingWorkspaceStep } from '../createProject/createProjectSteps/existingWorkspaceStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import { type IFunctionWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { convertToWorkspace } from '../convertToWorkspace';
+import { ensureWorkspace } from '../ensureWorkspace';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
 import { type Uri, window } from 'vscode';
 import { FunctionNameStep } from './createCustomCodeFunctionSteps/functionNameStep';
@@ -21,7 +21,13 @@ import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } f
  * @returns
  */
 export async function createCustomCodeFunction(context: IActionContext, folderPath?: Uri | string | undefined): Promise<void> {
-  if (await convertToWorkspace(context)) {
+  const isWorkspaceReady = await callWithTelemetryAndErrorHandling('createCustomCodeFunction.ensureWorkspace', async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    return await ensureWorkspace(actionContext);
+  });
+
+  if (isWorkspaceReady) {
     addLocalFuncTelemetry(context);
 
     const options = {
@@ -40,7 +46,7 @@ export async function createCustomCodeFunction(context: IActionContext, folderPa
       const errorMessage = 'The target folder "{0}" is not a valid custom code functions project.';
       window.showErrorMessage(localize('azureLogicAppsStandard.invalidCustomCodeFunctionsProject', errorMessage, options.folderPath));
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
+      context.telemetry.properties.errorMessage = errorMessage.replace('{0}', options.folderPath);
       return;
     }
 
@@ -52,7 +58,7 @@ export async function createCustomCodeFunction(context: IActionContext, folderPa
       const errorMessage = 'Could not resolve the function app name for the target folder "{0}".';
       window.showErrorMessage(localize('azureLogicAppsStandard.invalidFunctionAppName', errorMessage, options.folderPath));
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
+      context.telemetry.properties.errorMessage = errorMessage.replace('{0}', options.folderPath);
       return;
     }
     wizardContext.logicAppName = functionsProjectMetadata?.logicAppName;
@@ -60,7 +66,7 @@ export async function createCustomCodeFunction(context: IActionContext, folderPa
       const errorMessage = 'Could not find a valid logic app reference in the target folder "{0}".';
       window.showErrorMessage(localize('azureLogicAppsStandard.invalidLogicAppReference', errorMessage, options.folderPath));
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
+      context.telemetry.properties.errorMessage = errorMessage.replace('{0}', options.folderPath);
       return;
     }
     wizardContext.targetFramework = functionsProjectMetadata?.targetFramework;
@@ -68,7 +74,7 @@ export async function createCustomCodeFunction(context: IActionContext, folderPa
       const errorMessage = 'Could not find a valid target framework in the target folder "{0}".';
       window.showErrorMessage(localize('azureLogicAppsStandard.invalidTargetFramework', errorMessage, options.folderPath));
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
+      context.telemetry.properties.errorMessage = errorMessage.replace('{0}', options.folderPath);
       return;
     }
     wizardContext.functionAppNamespace = functionsProjectMetadata?.namespace;
@@ -76,7 +82,7 @@ export async function createCustomCodeFunction(context: IActionContext, folderPa
       const errorMessage = 'Could not find a valid function app namespace in the target folder "{0}".';
       window.showErrorMessage(localize('azureLogicAppsStandard.invalidFunctionAppNamespace', errorMessage, options.folderPath));
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
+      context.telemetry.properties.errorMessage = errorMessage.replace('{0}', options.folderPath);
       return;
     }
 
@@ -98,7 +104,7 @@ export async function createCustomCodeFunction(context: IActionContext, folderPa
         return;
       }
       context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.error = err.message;
+      context.telemetry.properties.errorMessage = err.message;
       throw err;
     }
     context.telemetry.properties.result = 'Succeeded';

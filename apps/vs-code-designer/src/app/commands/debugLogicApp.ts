@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { pickFuncProcessInternal } from './pickFuncProcess';
@@ -10,6 +10,7 @@ import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from './pickCustomCodeWorkerProcess';
+import { extensionCommand } from '../../constants';
 
 export async function debugLogicApp(
   context: IActionContext,
@@ -46,7 +47,12 @@ export async function debugLogicApp(
     )
   );
 
-  const funcProcessId = await pickFuncProcessInternal(context, debugConfig, resolvedWorkspaceFolder, projectPath);
+  context.telemetry.properties.lastStep = 'pickFuncProcess';
+  const funcProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickFuncProcess', async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    return await pickFuncProcessInternal(actionContext, debugConfig, resolvedWorkspaceFolder, projectPath);
+  });
   const logicAppLaunchConfig = {
     name: localize('attachToNetFunc', `Debug logic app ${logicAppName}`),
     type: debugConfig.funcRuntime,
@@ -62,6 +68,7 @@ export async function debugLogicApp(
       String(logicAppLaunchConfig.processId)
     )
   );
+  context.telemetry.properties.lastStep = 'startDebugging';
   const workflowAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, logicAppLaunchConfig);
   ext.outputChannel.appendLog(
     localize(
@@ -74,13 +81,13 @@ export async function debugLogicApp(
 
   let functionLaunchConfig: vscode.DebugConfiguration | undefined;
   if (debugConfig.customCodeRuntime) {
+    context.telemetry.properties.lastStep = 'pickCustomCodeProcess';
     if (debugConfig.customCodeRuntime === 'coreclr') {
-      const customCodeNetHostProcessId = await pickCustomCodeNetHostProcessInternal(
-        context,
-        resolvedWorkspaceFolder,
-        projectPath,
-        debugConfig.isCodeless
-      );
+      const customCodeNetHostProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickCustomCodeNetHostProcess', async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        return await pickCustomCodeNetHostProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath, debugConfig.isCodeless);
+      });
       functionLaunchConfig = {
         name: localize('attachToCustomCodeFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,
@@ -88,7 +95,11 @@ export async function debugLogicApp(
         processId: customCodeNetHostProcessId,
       };
     } else if (debugConfig.customCodeRuntime === 'clr') {
-      const customCodeNetFxWorkerProcessId = await pickCustomCodeNetFxWorkerProcessInternal(context, resolvedWorkspaceFolder, projectPath);
+      const customCodeNetFxWorkerProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickCustomCodeNetFxWorkerProcess', async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        return await pickCustomCodeNetFxWorkerProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath);
+      });
       functionLaunchConfig = {
         name: localize('attachToFunc', 'Debug local function'),
         type: debugConfig.customCodeRuntime,

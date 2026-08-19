@@ -32,8 +32,6 @@ export class InitProjectStep extends AzureWizardExecuteStep<IProjectWizardContex
     // Default implementation does nothing
   }
 
-  protected getRecommendedExtensions?(language: ProjectLanguage): string[];
-
   public shouldExecute(): boolean {
     return true;
   }

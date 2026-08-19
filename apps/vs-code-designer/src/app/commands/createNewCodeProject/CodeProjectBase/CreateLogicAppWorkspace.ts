@@ -3,16 +3,18 @@ import {
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   devContainerFolderName,
-  extensionCommand,
+  builtinOperationSdksFolderName,
   funcIgnoreFileName,
   gitignoreFileName,
   hostFileName,
+  jarFolderName,
   libDirectory,
   localSettingsFileName,
   lspDirectory,
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
+  vscodeCommand,
   vscodeFolderName,
   workflowFileName,
 } from '../../../../constants';
@@ -55,8 +57,8 @@ export async function createRulesFiles(context: IFunctionWizardContext): Promise
 }
 
 export async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'JAR'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, builtinOperationSdksFolderName, jarFolderName), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, builtinOperationSdksFolderName, 'net472'), { recursive: true });
 }
 
 export async function createLogicAppAndWorkflow(
@@ -171,14 +173,17 @@ export async function createLocalConfigurationFiles(
     '.git*',
     vscodeFolderName,
     localSettingsFileName,
-    'test',
     '.debug',
-    'workflow-designtime/',
+    'workflow-designtime',
   ];
   const localSettingsJson = generateLocalSettingsJson(logicAppFolderPath, logicAppType);
 
   if (logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');
+  }
+
+  if (logicAppType === ProjectType.codeful) {
+    funcignore.push('.nuget', 'obj', 'bin');
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);
@@ -196,12 +201,12 @@ export async function createLocalConfigurationFiles(
   await fse.writeFile(funcIgnorePath, funcignore.sort().join(os.EOL));
 }
 
-export async function createWorkspaceStructure(webviewProjectContext: IWebviewProjectContext): Promise<void> {
+export async function createWorkspaceFiles(webviewProjectContext: IWebviewProjectContext): Promise<void> {
   const { workspaceProjectPath, workspaceName, logicAppName, functionFolderName, logicAppType } = webviewProjectContext;
 
   // Validate that workspaceProjectPath exists and has required properties
   if (!workspaceProjectPath || !workspaceProjectPath.fsPath) {
-    const errorMessage = `[CreateWorkspaceStructure] Invalid workspaceProjectPath: ${JSON.stringify(
+    const errorMessage = `[CreateWorkspaceFiles] Invalid workspaceProjectPath: ${JSON.stringify(
       {
         hasWorkspaceProjectPath: !!workspaceProjectPath,
         workspaceProjectPathType: typeof workspaceProjectPath,
@@ -299,7 +304,7 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     );
   }
 
-  await createWorkspaceStructure(webviewProjectContext);
+  await createWorkspaceFiles(webviewProjectContext);
 
   // Create the workspace folder
   const workspaceFolder = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
@@ -354,5 +359,5 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }
 
-  await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
+  await vscode.commands.executeCommand(vscodeCommand.openFolder, vscode.Uri.file(workspaceFilePath), true /* forceNewWindow */);
 }

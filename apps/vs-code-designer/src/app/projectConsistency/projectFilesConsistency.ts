@@ -5,6 +5,7 @@
 import {
   ProjectDirectoryPathKey,
   appKindSetting,
+  azureWebJobsFeatureFlagsKey,
   connectionsFileName,
   designTimeDirectoryName,
   extensionBundleId,
@@ -29,6 +30,7 @@ import {
   generateDesignTimeLocalSettingsJson,
 } from './fileGenerators';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../utils/appSettings/localSettings';
+import { hasJdbcDriverJars } from '../utils/java/jdbcConnector';
 import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
@@ -67,9 +69,9 @@ const designTimeArtifactPrefix = 'design-time ';
  *
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<Uri>} The design-time directory Uri, ready to be used as the host working directory.
+ * @returns {Promise<void>} A promise that resolves when all project files have been ensured.
  */
-export async function ensureProjectFiles(context: IActionContext, projectPath: string): Promise<Uri> {
+export async function ensureProjectFiles(context: IActionContext, projectPath: string): Promise<void> {
   const projectName = path.basename(projectPath);
   try {
     const hostResult = await ensureHostFile(projectPath);
@@ -91,8 +93,6 @@ export async function ensureProjectFiles(context: IActionContext, projectPath: s
         localize('projectArtifactsRegenerated', 'Project "{0}": regenerated {1}.', projectName, changed.join(', '))
       );
     }
-
-    return designTimeData.uri;
   } catch (error) {
     ext.outputChannel.appendLog(
       localize(
@@ -107,50 +107,8 @@ export async function ensureProjectFiles(context: IActionContext, projectPath: s
 }
 
 /**
- * Ensures the project-level host.json and local.settings.json.
- * 
- * @param {IActionContext} context - The action context.
- * @param {string} projectPath - The logic app project root.
- * @returns {Promise<void>} Resolves when the root artifacts have been ensured.
- */
-export async function ensureRootProjectFiles(context: IActionContext, projectPath: string): Promise<void> {
-  const projectName = path.basename(projectPath);
-  try {
-    const hostResult = await ensureHostFile(projectPath);
-    const localSettings = await ensureLocalSettingsFile(context, projectPath);
-
-    const changed = [...hostResult.changedArtifacts, ...localSettings.changedArtifacts];
-
-    if (changed.length === 0) {
-      ext.outputChannel.appendLog(
-        localize(
-          'projectRootArtifactsValid',
-          'Project "{0}": host.json and local.settings.json are valid — no regeneration needed.',
-          projectName
-        )
-      );
-      return;
-    }
-
-    ext.outputChannel.appendLog(
-      localize('projectRootArtifactsRegenerated', 'Project "{0}": regenerated {1}.', projectName, changed.join(', '))
-    );
-  } catch (error) {
-    ext.outputChannel.appendLog(
-      localize(
-        'projectRootArtifactsFailed',
-        'Project "{0}": failed to validate/regenerate artifacts — {1}.',
-        projectName,
-        error instanceof Error ? error.message : String(error)
-      )
-    );
-    throw error;
-  }
-}
-
-/**
  * Ensures the project-level host.json exists and is valid.
- * 
+ *
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<{ changed: boolean; changedArtifacts: string[] }>} Whether the file was written
  * (created or repaired), and the human-readable label for the artifact when it changed.
@@ -183,7 +141,8 @@ export async function ensureLocalSettingsFile(
   const fileExisted = await fse.pathExists(localSettingsPath);
 
   const logicAppType = await detectProjectType(projectPath);
-  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
+  const hasJdbcDrivers = await hasJdbcDriverJars(projectPath);
+  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType, { hasJdbcDriverJars: hasJdbcDrivers }).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
@@ -203,8 +162,22 @@ export async function ensureLocalSettingsFile(
     }
   }
 
+  // When the baseline requires feature flags and the user already has their own flags, merge the values
+  const baselineFlags = baselineValues[azureWebJobsFeatureFlagsKey];
+  const currentFlags = currentValues[azureWebJobsFeatureFlagsKey];
+  if (baselineFlags && currentFlags) {
+    const merged = mergeFeatureFlags(currentFlags, baselineFlags);
+    if (merged !== currentFlags) {
+      settingsToAdd[azureWebJobsFeatureFlagsKey] = merged;
+    }
+  }
+
   if (isManagedIdentityAuthEnabled() && currentValues[workflowAuthenticationMethodKey] !== workflowAuthenticationMethodMIValue) {
     settingsToAdd[workflowAuthenticationMethodKey] = workflowAuthenticationMethodMIValue;
+  }
+
+  if (currentValues[ProjectDirectoryPathKey] !== undefined && !arePathsEqual(currentValues[ProjectDirectoryPathKey], projectPath)) {
+    settingsToAdd[ProjectDirectoryPathKey] = projectPath;
   }
 
   if (!fileExisted || Object.keys(settingsToAdd).length > 0) {
@@ -220,7 +193,7 @@ export async function ensureLocalSettingsFile(
 /**
  * Collects all app settings referenced by the logic app project. Scans connections.json,
  * parameters.json, and every workflow.json in the project for `@appsetting('name')` references.
- * 
+ *
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<string[]>} Unique app setting names referenced anywhere in the project.
  */
@@ -254,7 +227,7 @@ export async function getReferencedAppSettings(projectPath: string): Promise<str
 /**
  * Extracts the unique set of app setting names referenced through `@appsetting('name')` /
  * `@{appsetting('name')}` expressions in the provided content.
- * 
+ *
  * @param {string} content - Raw file content to scan.
  * @returns {string[]} Unique app setting names referenced in the content.
  */
@@ -276,17 +249,43 @@ export function extractAppSettingReferences(content: string): string[] {
 }
 
 /**
+ * Merges two comma-separated feature flag strings into a single de-duplicated (case-insensitive),
+ * comma-separated string. Whitespace is normalized and empty tokens are dropped.
+ *
+ * @param {string} existing - The current comma-separated feature flags value.
+ * @param {string} incoming - The new comma-separated feature flags to merge in.
+ * @returns {string} The merged feature flags string.
+ */
+export function mergeFeatureFlags(existing: string, incoming: string): string {
+  const seen = new Set<string>();
+  const tokens: string[] = [];
+
+  for (const raw of `${existing},${incoming}`.split(',')) {
+    const token = raw.trim();
+    if (token.length === 0) {
+      continue;
+    }
+    const key = token.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      tokens.push(token);
+    }
+  }
+
+  return tokens.join(',');
+}
+
+/**
  * Ensures the workflow-designtime local.settings.json and host.json files.
- * 
+ *
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The logic app project root.
- * @returns {Promise<{ uri: Uri; changedArtifacts: string[] }>} The design-time directory Uri and the human-readable label(s)
- * for the artifact(s) that changed.
+ * @returns {Promise<{ changedArtifacts: string[] }>} The human-readable label(s) for the artifact(s) that changed.
  */
 export async function ensureDesignTimeFiles(
   context: IActionContext,
   projectPath: string
-): Promise<{ uri: Uri; changedArtifacts: string[] }> {
+): Promise<{ changedArtifacts: string[] }> {
   const designTimeDirectory = Uri.file(path.join(projectPath, designTimeDirectoryName));
   if (!(await fse.pathExists(designTimeDirectory.fsPath))) {
     await workspace.fs.createDirectory(designTimeDirectory);
@@ -310,7 +309,7 @@ export async function ensureDesignTimeFiles(
     changedArtifacts.push(`${designTimeArtifactPrefix}${localSettingsFileName}`);
   }
 
-  return { uri: designTimeDirectory, changedArtifacts };
+  return { changedArtifacts };
 }
 
 /**
@@ -325,7 +324,7 @@ export interface DesignTimeDirectoryValidation {
 
 /**
  * Validates the workflow-designtime contents (host.json and local.settings.json with the required settings).
- * 
+ *
  * @param {string} projectPath - The logic app project root.
  * @returns {Promise<DesignTimeDirectoryValidation>} The validation result.
  */
@@ -343,6 +342,7 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
   const projectType = await detectProjectType(projectPath);
   const settingsFileValid = await isDesignTimeSettingsFileValid(
     localSettingsPath,
+    projectPath,
     projectType,
     useNodeDesignTimeWorker(projectPath)
   );
@@ -360,7 +360,7 @@ export async function validateDesignTimeDirectory(projectPath: string): Promise<
  * host.json: both require a version and the workflows extension bundle (id + version). The design-time
  * host.json additionally must enable workflow operation discovery host mode so the design-time API can
  * enumerate operations.
- * 
+ *
  * @param {string} hostFilePath - Absolute path to the host.json file.
  * @param {boolean} isDesignTime - Whether the file is the design-time host.json (stricter validation).
  * @returns {Promise<boolean>} True when host.json exists and is valid.
@@ -395,13 +395,19 @@ async function isHostFileValid(hostFilePath: string, isDesignTime: boolean): Pro
 
 /**
  * Validates the local.settings.json file content in the design-time directory.
- * 
+ *
  * @param {string} settingsFilePath - Absolute path to the design-time local.settings.json file.
+ * @param {string} projectPath - The expected project directory path value.
  * @param {ProjectType} projectType - The logic app project type.
  * @param {boolean} useNodeWorker - Whether the design-time host is expected to run with the Node worker.
- * @returns {Promise<boolean>} True when the file is present and contains the required keys.
+ * @returns {Promise<boolean>} True when the file is present and contains the required keys with correct values.
  */
-async function isDesignTimeSettingsFileValid(settingsFilePath: string, projectType: ProjectType, useNodeWorker: boolean): Promise<boolean> {
+async function isDesignTimeSettingsFileValid(
+  settingsFilePath: string,
+  projectPath: string,
+  projectType: ProjectType,
+  useNodeWorker: boolean
+): Promise<boolean> {
   const content = await readFileTextSafe(settingsFilePath);
   if (!content) {
     return false;
@@ -412,6 +418,10 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string, projectTy
     const values = parsed?.Values ?? {};
     const allRequiredKeysPresent = baseRequiredDesignTimeSettingKeys.every((key) => values[key] !== undefined && values[key] !== '');
     if (!allRequiredKeysPresent) {
+      return false;
+    }
+
+    if (!arePathsEqual(values[ProjectDirectoryPathKey], projectPath)) {
       return false;
     }
 
@@ -437,7 +447,7 @@ async function isDesignTimeSettingsFileValid(settingsFilePath: string, projectTy
 
 /**
  * Reads the text content of a file, returning an empty string when the file does not exist or cannot be read.
- * 
+ *
  * @param {string} filePath - Absolute path to the file.
  * @returns {Promise<string>} The file content, or an empty string.
  */
@@ -450,4 +460,13 @@ async function readFileTextSafe(filePath: string): Promise<string> {
     // Ignore read errors and treat the file as empty.
   }
   return '';
+}
+
+function arePathsEqual(path1?: string, path2?: string): boolean {
+  if (typeof path1 !== 'string' || typeof path2 !== 'string' || !path1 || !path2) {
+    return false;
+  }
+  const resolved1 = path.resolve(path1);
+  const resolved2 = path.resolve(path2);
+  return process.platform === 'win32' ? resolved1.toLowerCase() === resolved2.toLowerCase() : resolved1 === resolved2;
 }

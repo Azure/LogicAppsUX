@@ -52,6 +52,7 @@ import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding, fetchBuiltInToolRunData } from '../../actions/bjsworkflow/monitoring';
 import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 import { isA2AWorkflow, shouldClearNodeRunData } from './helper';
+import { UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -175,6 +176,7 @@ export const initialWorkflowState: WorkflowState = {
   timelineRepetitionArray: [],
   flowErrors: {},
   copilotModifiedNodeIds: {},
+  hasUnsupportedMultipleTriggers: false,
 };
 
 export const workflowSlice = createSlice({
@@ -189,6 +191,9 @@ export const workflowSlice = createSlice({
     },
     setRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
       state.runInstance = action.payload;
+    },
+    setHasUnsupportedMultipleTriggers: (state: WorkflowState, action: PayloadAction<boolean>) => {
+      state.hasUnsupportedMultipleTriggers = action.payload;
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
       const { nodeId, description } = action.payload;
@@ -1076,11 +1081,26 @@ export const workflowSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
+      // If the workflow was switched to a multi-trigger definition while this thunk was still in
+      // flight (e.g. code view <-> designer view without a workflowId change), the effect that
+      // dispatched it has already reset state and marked the workflow unsupported. Drop this now-stale
+      // result instead of repopulating graph/operations/nodesMetadata for the previous workflow.
+      if (state.hasUnsupportedMultipleTriggers) {
+        return;
+      }
       const { deserializedWorkflow, originalDefinition } = action.payload;
       state.originalDefinition = originalDefinition;
       state.graph = deserializedWorkflow.graph;
       state.operations = deserializedWorkflow.actionData;
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
+    });
+    // Defense-in-depth: BJSWorkflowProvider checks for multiple triggers before dispatching this thunk,
+    // so this should be unreachable in the normal designer flow. Kept as a safety net for any other
+    // caller of initializeGraphState that has not yet added the same pre-check.
+    builder.addCase(initializeGraphState.rejected, (state, action) => {
+      if ((action.error as { code?: string } | undefined)?.code === UnsupportedExceptionCode.RENDER_MULTIPLE_TRIGGERS) {
+        state.hasUnsupportedMultipleTriggers = true;
+      }
     });
     builder.addCase(updateNodeParameters, (state, action) => {
       if (action.payload.isUserAction) {
@@ -1178,6 +1198,7 @@ export const {
   initWorkflowSpec,
   setWorkflowKind,
   setRunInstance,
+  setHasUnsupportedMultipleTriggers,
   addNode,
   addImplicitForeachNode,
   wrapNodesInScope,

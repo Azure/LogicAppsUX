@@ -29,11 +29,11 @@ import * as localSettings from '../../utils/appSettings/localSettings';
 import { writeFormattedJson } from '../../utils/fs';
 import { hasCodefulSdkReference, hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { isCustomCodeFunctionsProjectInRoot, tryGetLogicAppCustomCodeFunctionsProjects } from '../../utils/customCodeUtils';
+import { hasJdbcDriverJars } from '../../utils/java/jdbcConnector';
 import { isManagedIdentityAuthEnabled, useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
 import {
   extractAppSettingReferences,
   getReferencedAppSettings,
-  ensureRootProjectFiles,
   ensureLocalSettingsFile,
   ensureHostFile,
   ensureProjectFiles,
@@ -72,6 +72,16 @@ vi.mock('../../utils/customCodeUtils', () => ({
   tryGetLogicAppCustomCodeFunctionsProjects: vi.fn(() => Promise.resolve(undefined)),
 }));
 
+// Stub JAR detection so tests control whether the project has JDBC driver JARs without depending
+// on the shared fse.readdir mock's path behavior.
+vi.mock('../../utils/java/jdbcConnector', async (importActual) => {
+  const actual = await importActual<typeof import('../../utils/java/jdbcConnector')>();
+  return {
+    ...actual,
+    hasJdbcDriverJars: vi.fn(() => Promise.resolve(false)),
+  };
+});
+
 vi.mock('../../utils/vsCodeConfig/settings', async (importActual) => {
   const actual = await importActual<typeof import('../../utils/vsCodeConfig/settings')>();
   return {
@@ -98,6 +108,7 @@ const mockedIsCodeful = hasCodefulSdkReference as unknown as ReturnType<typeof v
 const mockedIsCustomCodeInRoot = isCustomCodeFunctionsProjectInRoot as unknown as ReturnType<typeof vi.fn>;
 const mockedHasCodefulWorkflowSetting = hasCodefulWorkflowSetting as unknown as ReturnType<typeof vi.fn>;
 const mockedTryGetCustomCodeProjects = tryGetLogicAppCustomCodeFunctionsProjects as unknown as ReturnType<typeof vi.fn>;
+const mockedHasJdbcJars = hasJdbcDriverJars as unknown as ReturnType<typeof vi.fn>;
 const mockedAppendLog = ext.outputChannel.appendLog as unknown as ReturnType<typeof vi.fn>;
 
 /** Returns every line written to the output channel via appendLog. */
@@ -129,6 +140,7 @@ describe('projectFilesConsistency', () => {
     vi.clearAllMocks();
     mockedIsCodeful.mockResolvedValue(false);
     mockedIsCustomCodeInRoot.mockResolvedValue(false);
+    mockedHasJdbcJars.mockResolvedValue(false);
     mockedFse.readdir.mockResolvedValue([]);
     vi.mocked(useNodeDesignTimeWorker).mockReturnValue(false);
     (workspace as any).fs = { createDirectory: vi.fn(() => Promise.resolve()) };
@@ -253,6 +265,95 @@ describe('projectFilesConsistency', () => {
           WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
         },
       });
+
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
+
+      expect(changed).toBe(false);
+      expect(mockedAddOrUpdate).not.toHaveBeenCalled();
+    });
+
+    it('updates ProjectDirectoryPath when it points to a stale path', async () => {
+      mockFiles({ [`${projectPath}/local.settings.json`]: '{}' });
+      mockedFse.readdir.mockResolvedValue([]);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: {
+          APP_KIND: 'workflowapp',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+          ProjectDirectoryPath: '/old/stale/path',
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_INPROC_NET8_ENABLED: '1',
+        },
+      });
+
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded[ProjectDirectoryPathKey]).toBe(projectPath);
+    });
+  });
+
+  // Self-heal for issue #8597: the JDBC built-in connector needs the Functions multi-language (Java)
+  // worker, which is only enabled by AzureWebJobsFeatureFlags=EnableMultiLanguageWorker. A plain codeless
+  // logic app does not get that flag, so when the user drops driver JAR(s) into lib/builtinOperationSdks/JAR
+  // the generator adds it to the baseline. The general feature-flag merge in the repair path ensures
+  // existing user-defined flags are never clobbered.
+  describe('ensureLocalSettingsFile — JDBC multi-language worker self-heal', () => {
+    const fullCodelessValues = {
+      APP_KIND: 'workflowapp',
+      FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+      ProjectDirectoryPath: projectPath,
+      AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+      FUNCTIONS_INPROC_NET8_ENABLED: '1',
+    };
+
+    beforeEach(() => {
+      mockFiles({ [`${projectPath}/local.settings.json`]: '{}' });
+      mockedFse.readdir.mockResolvedValue([]);
+    });
+
+    it('adds AzureWebJobsFeatureFlags=EnableMultiLanguageWorker for a codeless logic app when JDBC JARs are present', async () => {
+      mockedHasJdbcJars.mockResolvedValue(true);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: { ...fullCodelessValues } });
+
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual({ [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting });
+    });
+
+    it('merges the flag with existing AzureWebJobsFeatureFlags without clobbering other flags', async () => {
+      mockedHasJdbcJars.mockResolvedValue(true);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: { ...fullCodelessValues, [azureWebJobsFeatureFlagsKey]: 'SomeOtherFlag' },
+      });
+
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
+
+      expect(changed).toBe(true);
+      const settingsAdded = mockedAddOrUpdate.mock.calls[0][2];
+      expect(settingsAdded).toEqual({ [azureWebJobsFeatureFlagsKey]: `SomeOtherFlag,${multiLanguageWorkerSetting}` });
+    });
+
+    it('does not change anything when the flag is already present and nothing else is missing', async () => {
+      mockedHasJdbcJars.mockResolvedValue(true);
+      mockedGetLocalSettingsJson.mockResolvedValue({
+        IsEncrypted: false,
+        Values: { ...fullCodelessValues, [azureWebJobsFeatureFlagsKey]: multiLanguageWorkerSetting },
+      });
+
+      const { changed } = await ensureLocalSettingsFile(context, projectPath);
+
+      expect(changed).toBe(false);
+      expect(mockedAddOrUpdate).not.toHaveBeenCalled();
+    });
+
+    it('does not add the flag for a codeless logic app when no JDBC JARs are present', async () => {
+      mockedHasJdbcJars.mockResolvedValue(false);
+      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: { ...fullCodelessValues } });
 
       const { changed } = await ensureLocalSettingsFile(context, projectPath);
 
@@ -660,6 +761,26 @@ describe('projectFilesConsistency', () => {
       expect(result.settingsFileValid).toBe(false);
       expect(result.isValid).toBe(false);
     });
+
+    it('reports invalid settings when ProjectDirectoryPath points to a stale path', async () => {
+      mockFiles({
+        [designTimeDir]: '',
+        [hostPath]: validHost,
+        [settingsPath]: JSON.stringify({
+          Values: {
+            APP_KIND: 'workflowapp',
+            FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+            FUNCTIONS_INPROC_NET8_ENABLED: '1',
+            ProjectDirectoryPath: '/old/moved/path',
+          },
+        }),
+      });
+
+      const result = await validateDesignTimeDirectory(projectPath);
+      expect(result.hostFileValid).toBe(true);
+      expect(result.settingsFileValid).toBe(false);
+      expect(result.isValid).toBe(false);
+    });
   });
 
   describe('ensureDesignTimeFiles', () => {
@@ -669,9 +790,8 @@ describe('projectFilesConsistency', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const { uri: dir } = await ensureDesignTimeFiles(context, projectPath);
+      await ensureDesignTimeFiles(context, projectPath);
 
-      expect(norm(dir.fsPath)).toContain('workflow-designtime');
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths.some((p) => p.includes('host.json'))).toBe(true);
       expect(writtenPaths.some((p) => p.includes('local.settings.json'))).toBe(true);
@@ -721,10 +841,9 @@ describe('projectFilesConsistency', () => {
       mockFiles({});
       mockedFse.readdir.mockResolvedValue([]);
 
-      const { uri: dir } = await ensureDesignTimeFiles(context, backupPath);
+      await ensureDesignTimeFiles(context, backupPath);
 
       // The design-time directory is nested UNDER the backup folder, not the backup folder itself.
-      expect(norm(dir.fsPath)).toContain('workflow-designtime-backup/workflow-designtime');
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       expect(writtenPaths.some((p) => p.includes('workflow-designtime-backup/workflow-designtime/host.json'))).toBe(true);
     });
@@ -945,7 +1064,7 @@ describe('projectFilesConsistency', () => {
       mockedFse.readdir.mockResolvedValue([]);
       mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
 
-      const dir = await ensureProjectFiles(context, projectPath);
+      await ensureProjectFiles(context, projectPath);
 
       const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
       // Project-root host.json (distinct from the design-time copy).
@@ -955,8 +1074,6 @@ describe('projectFilesConsistency', () => {
       expect(writtenPaths).toContain(`${designTimeDir}/local.settings.json`);
       // Root local.settings.json baseline + design-time runtime settings are upserted.
       expect(mockedAddOrUpdate).toHaveBeenCalled();
-      // Returns the design-time directory to be used as the host working directory.
-      expect(norm(dir.fsPath)).toContain('workflow-designtime');
     });
 
     it('preserves everything and writes nothing when all artifacts are already valid', async () => {
@@ -980,11 +1097,10 @@ describe('projectFilesConsistency', () => {
         },
       });
 
-      const dir = await ensureProjectFiles(context, projectPath);
+      await ensureProjectFiles(context, projectPath);
 
       expect(mockedWriteFormattedJson).not.toHaveBeenCalled();
       expect(mockedAddOrUpdate).not.toHaveBeenCalled();
-      expect(norm(dir.fsPath)).toContain('workflow-designtime');
     });
 
     it('regenerates only the root host.json when it alone is missing', async () => {
@@ -1129,33 +1245,6 @@ describe('projectFilesConsistency', () => {
       expect(lines).toHaveLength(1);
       expect(lines[0]).toContain('Project "LogicApp": failed to validate/regenerate artifacts');
       expect(lines[0]).toContain('disk full');
-    });
-
-    it('ensureRootProjectFiles logs one "valid" line and never touches the design-time directory', async () => {
-      mockFullyValidProject();
-
-      await ensureRootProjectFiles(context, projectPath);
-
-      const lines = loggedLines();
-      expect(lines).toHaveLength(1);
-      expect(lines[0]).toContain('Project "LogicApp"');
-      expect(lines[0]).toContain('no regeneration needed');
-      // Root-only path must not write the design-time baseline files.
-      const writtenPaths = mockedWriteFormattedJson.mock.calls.map((c) => norm(c[0] as string));
-      expect(writtenPaths.some((p) => p.includes('workflow-designtime'))).toBe(false);
-    });
-
-    it('ensureRootProjectFiles logs one line naming the regenerated root artifacts', async () => {
-      mockFiles({});
-      mockedFse.readdir.mockResolvedValue([]);
-      mockedGetLocalSettingsJson.mockResolvedValue({ IsEncrypted: false, Values: {} });
-
-      await ensureRootProjectFiles(context, projectPath);
-
-      const lines = loggedLines();
-      expect(lines).toHaveLength(1);
-      expect(lines[0]).toContain('Project "LogicApp": regenerated');
-      expect(lines[0]).toContain('host.json');
     });
   });
 });

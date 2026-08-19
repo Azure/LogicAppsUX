@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
@@ -19,7 +18,7 @@ export interface WorkspaceWebviewCommandConfig {
   panelGroupKey: string;
   projectName: string;
   createCommand: ExtensionCommand;
-  createHandler: (context: IActionContext, data: any, ...args: any[]) => Promise<void>;
+  createHandler: (data: any) => Promise<void>;
   dialogOptions?: {
     workspace?: vscode.OpenDialogOptions;
     package?: vscode.OpenDialogOptions;
@@ -95,16 +94,16 @@ export async function createWorkspaceWebviewCommandHandler(config: WorkspaceWebv
 
       isCreateInProgress = true;
       let createSucceeded = false;
-      await callWithTelemetryAndErrorHandling(panelName.replace(/\s+/g, ''), async (activateContext: IActionContext) => {
-        try {
-          await createHandler(activateContext, message.data);
-          createSucceeded = true;
-        } finally {
-          if (!createSucceeded) {
-            isCreateInProgress = false;
-          }
+
+      try {
+        await createHandler(message.data);
+        createSucceeded = true;
+      } finally {
+        if (!createSucceeded) {
+          isCreateInProgress = false;
         }
-      });
+      }
+
       if (!createSucceeded) {
         isCreateInProgress = false;
         return;

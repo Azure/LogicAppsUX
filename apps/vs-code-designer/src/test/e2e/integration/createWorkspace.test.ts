@@ -228,9 +228,9 @@ suite('Create Logic App Workspace Tests', () => {
       path.join(vscodePath, 'settings.json'),
       JSON.stringify(
         {
-          'azureFunctions.deploySubpath': '.',
-          'azureFunctions.projectLanguage': 'JavaScript',
-          'azureFunctions.projectRuntime': '~4',
+          'azureLogicAppsStandard.deploySubpath': '.',
+          'azureLogicAppsStandard.projectLanguage': 'JavaScript',
+          'azureLogicAppsStandard.projectRuntime': '~4',
           'debug.internalConsoleOptions': 'neverOpen',
           'azureFunctions.suppressProject': true,
         },

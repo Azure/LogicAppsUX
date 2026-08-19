@@ -22,7 +22,7 @@ import * as fs from 'fs';
 import * as crypto from 'crypto';
 import * as os from 'os';
 import * as path from 'path';
-import { By, EditorView, type WebDriver, Workbench } from 'vscode-extension-tester';
+import { By, EditorView, type InputBox, type QuickOpenBox, type WebDriver, Workbench } from 'vscode-extension-tester';
 import {
   appendToWorkspaceManifest,
   buildManifestEntry,
@@ -40,8 +40,10 @@ import {
   selectCreateWorkspaceCommand,
   selectDropdownOption,
   selectRadioOption,
+  safeCancelQuickInput,
   sleep,
   switchToWebviewFrame,
+  typeQuickInputQuery,
   uniqueName,
   waitForExtensionReady,
   waitForNextButton,
@@ -274,11 +276,55 @@ async function waitForWorkflowsBundleSidecarReady(timeoutMs = 300_000): Promise<
   throw lastError ?? new Error('[fixtures:setup] Timed out waiting for Logic Apps extension bundle sidecar');
 }
 
+async function waitForDependencyValidationCommand(workbench: Workbench, timeoutMs = 60_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  const driver = workbench.getDriver();
+  let lastPickLabels: string[] = [];
+  let lastError = '';
+
+  while (Date.now() < deadline) {
+    let input: InputBox | QuickOpenBox | undefined;
+    try {
+      await dismissNotifications(driver);
+      input = await workbench.openCommandPrompt();
+      await sleep(500);
+      await typeQuickInputQuery(driver, '> Validate and install dependency binaries');
+      await sleep(1500);
+
+      const picks = await input.getQuickPicks();
+      lastPickLabels = [];
+      for (const pick of picks) {
+        const label = await pick.getLabel();
+        lastPickLabels.push(label);
+        if (label === VALIDATE_DEPENDENCIES_COMMAND) {
+          console.log(`[fixtures:setup] Found product dependency validation command: "${label}"`);
+          await safeCancelQuickInput(input, 'waitForDependencyValidationCommand:found');
+          return;
+        }
+      }
+
+      console.log(`[fixtures:setup] Dependency validation command not found yet. Picks: [${lastPickLabels.join(', ')}]`);
+      await safeCancelQuickInput(input, 'waitForDependencyValidationCommand:not-found');
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+      console.log(`[fixtures:setup] Dependency validation command lookup failed: ${lastError}`);
+      await safeCancelQuickInput(input, 'waitForDependencyValidationCommand:error');
+    }
+
+    await sleep(3000);
+  }
+
+  throw new Error(
+    `[fixtures:setup] Timed out waiting for product dependency validation command. Last picks: [${lastPickLabels.join(', ')}]. Last error: ${lastError}`
+  );
+}
+
 async function validateDependenciesThroughProductCommand(workbench: Workbench, driver: WebDriver): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       console.log(`[fixtures:setup] Invoking product dependency validation command (attempt ${attempt}/3)...`);
+      await waitForDependencyValidationCommand(workbench);
       await workbench.executeCommand(VALIDATE_DEPENDENCIES_COMMAND);
       console.log('[fixtures:setup] Product dependency validation command completed');
       return;

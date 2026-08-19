@@ -1676,6 +1676,10 @@ importers:
       react:
         specifier: 18.3.1
         version: 18.3.1
+    devDependencies:
+      '@fluentui/react-icons':
+        specifier: ^2.0.224
+        version: 2.0.315(react@18.3.1)
 
   libs/vscode-extension:
     dependencies:

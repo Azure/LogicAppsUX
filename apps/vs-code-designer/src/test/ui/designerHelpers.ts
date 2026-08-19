@@ -145,9 +145,21 @@ function ensureRuntimeDependencyExecutablePermissions(): void {
 
 // isExecutableFile is imported from ./runtimeBinaryCheck (shared with run-e2e.ts)
 
-function getFuncCoreToolsCandidatePaths(): string[] {
+/**
+ * Directory that holds the extension-managed Azure Functions Core Tools binaries.
+ *
+ * The default mirrors `getRuntimeDependencyPaths()` in run-e2e.ts, which is what
+ * `writeTestSettings({ includeRuntimeDependencyPaths: true })` writes into
+ * `azureLogicAppsStandard.autoRuntimeDependenciesPath`. Tests that must follow a harness
+ * override of that setting (see funcRepair.test.ts) pass the configured root explicitly
+ * instead of re-deriving the layout.
+ */
+export function getManagedFuncCoreToolsDir(dependenciesRoot?: string): string {
+  return path.join(dependenciesRoot ?? path.join(os.homedir(), '.azurelogicapps', 'dependencies'), 'FuncCoreTools');
+}
+
+export function getFuncCoreToolsCandidatePaths(funcToolsRoot: string = getManagedFuncCoreToolsDir()): string[] {
   const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
-  const funcToolsRoot = path.join(os.homedir(), '.azurelogicapps', 'dependencies', 'FuncCoreTools');
   const candidates = [
     path.join(funcToolsRoot, executableName),
     path.join(funcToolsRoot, 'in-proc8', executableName),
@@ -173,8 +185,8 @@ function getFuncCoreToolsCandidatePaths(): string[] {
   return [...new Set(candidates)];
 }
 
-function getFuncCoreToolsPath(): string {
-  const candidates = getFuncCoreToolsCandidatePaths();
+export function getFuncCoreToolsPath(funcToolsRoot: string = getManagedFuncCoreToolsDir()): string {
+  const candidates = getFuncCoreToolsCandidatePaths(funcToolsRoot);
   // All candidates are already func binaries (getFuncCoreToolsCandidatePaths only matches executableNames)
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
@@ -528,6 +540,18 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
   try {
     await driver.switchTo().defaultContent();
     await clearBlockingUI(driver);
+    await jsDismissDialogs(driver);
+    for (let dismissAttempt = 0; dismissAttempt < 3; dismissAttempt++) {
+      await dismissAllDialogs(driver);
+      await driver.actions().sendKeys(Key.ESCAPE).perform();
+      await sleep(500);
+    }
+    try {
+      await new EditorView().closeAllEditors();
+      await sleep(1000);
+    } catch (closeErr: any) {
+      console.log(`[openWorkspaceFileInSession] Could not close existing editors before opening workspace: ${closeErr.message}`);
+    }
     const title = await driver.getTitle();
     if (title.toLowerCase().includes(expectedWorkspaceName)) {
       console.log('[openWorkspaceFileInSession] Expected workspace already open');
@@ -559,6 +583,8 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
         }
       }
       await clearBlockingUI(driver);
+      await jsDismissDialogs(driver);
+      await dismissAllDialogs(driver);
       try {
         const body = await driver.findElement(By.css('body'));
         await body.sendKeys(Key.ESCAPE);
@@ -704,6 +730,29 @@ export async function openWorkspaceFileInSession(workbench: Workbench, wsFilePat
         }
       }
       await sleep(2000);
+    }
+  }
+
+  if (!opened && process.platform === 'win32') {
+    try {
+      console.log('[openWorkspaceFileInSession] Simple dialog open did not switch workspaces; trying VSBrowser.openResources fallback');
+      await VSBrowser.instance.openResources(wsFilePath);
+      await sleep(5000);
+
+      const titleAfterFallback = await driver.getTitle();
+      console.log(`[openWorkspaceFileInSession] VS Code title AFTER fallback: "${titleAfterFallback}"`);
+      if (titleAfterFallback.toLowerCase().includes(expectedWorkspaceName)) {
+        console.log('[openWorkspaceFileInSession] Workspace opened successfully (openResources fallback)');
+        opened = true;
+      } else {
+        lastOpenError = `workspace title stayed "${titleAfterFallback}" after openResources fallback`;
+      }
+    } catch (e: any) {
+      if (isInvalidSessionError(e)) {
+        throw e;
+      }
+      console.log(`[openWorkspaceFileInSession] openResources fallback failed: ${e.message}`);
+      lastOpenError = e.message;
     }
   }
 

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetPublishTaskLabel, dotnetExtensionId, show64BitWarningSetting } from '../../../constants';
+import { show64BitWarningSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles, getTargetFramework, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
@@ -16,16 +16,6 @@ import * as path from 'path';
 import type { MessageItem } from 'vscode';
 
 export class InitDotnetProjectStep extends InitProjectStep {
-  protected preDeployTask: string = dotnetPublishTaskLabel;
-
-  protected getRecommendedExtensions(language: ProjectLanguage): string[] {
-    const recs: string[] = [dotnetExtensionId];
-    if (language === ProjectLanguage.FSharp) {
-      recs.push('ionide.ionide-fsharp');
-    }
-    return recs;
-  }
-
   /**
    * Detects the version based on the targetFramework from the proj file
    * Also performs a few validations and sets a few properties based on that targetFramework
@@ -35,7 +25,7 @@ export class InitDotnetProjectStep extends InitProjectStep {
     const language: ProjectLanguage = nonNullProp(context, 'language');
 
     let projFile: ProjectFile;
-    const projFiles = await getProjFiles(context, language, projectPath);
+    const projFiles = await getProjFiles(language, projectPath);
     const fileExt: string = language === ProjectLanguage.FSharp ? 'fsproj' : 'csproj';
 
     if (projFiles.length === 1) {

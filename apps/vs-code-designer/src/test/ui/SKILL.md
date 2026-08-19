@@ -41,21 +41,85 @@ For any test that touches debug, the design-time API, the language server, the o
 
 Tests sharing a Phase 4.x session fail due to lingering func.exe, language-server file locks, and webview iframes still in the DOM after a workspace switch. Every new test owns its own phase via `prepareFreshSession()`.
 
-### Rule 3. Use Selenium Actions API for clicks inside webview iframes
+### Rule 3. Check focused-scenario prerequisites before running
+
+Before running a focused `E2E_MODE` or `LA_E2E_SCENARIO`, inspect the scenario's `workspaceSpec` in `run-e2e.ts`:
+
+1. `workspaceSpec: { ... }` and `workspaceSpec: 'manifest-multi'` require the Phase 4.1 fixture manifest at `%TEMP%\la-e2e-test\created-workspaces.json`.
+2. Run `p41a-fixtures` or a grouped/full mode that runs Phase 4.1 first before scenarios such as `p49-nugetdebugconversion` / `E2E_MODE=nugetdebugonly`.
+3. If the manifest exists but directories are missing or stale, rerun the fixture phase instead of debugging the focused scenario.
+4. `self-contained`, `self-creates`, and `plain-folder` scenarios create or select their own resources and do not need the Phase 4.1 manifest.
+
+Do not spend iteration cycles on a focused scenario until its prerequisite fixture setup is present.
+
+Current manifest-backed scenarios:
+
+| Scenario | Required manifest entry / resource |
+|----------|------------------------------------|
+| `p42-standard` | Standard Stateful `.code-workspace` |
+| `p42-customcode` | CustomCode Stateful `.code-workspace` |
+| `p42-rulesengine` | RulesEngine Stateful `.code-workspace` |
+| `p42-connectionprompt` | Standard Stateful `.code-workspace` |
+| `p43-inlinejavascript` | Standard Stateful `.code-workspace` |
+| `p43-customcode` | CustomCode Stateful `.code-workspace` |
+| `p43-rulesengine` | RulesEngine Stateful `.code-workspace` |
+| `p44-statelessvariables` | Standard Stateless `.code-workspace` |
+| `p45-designerviewextended` | Standard Stateful `.code-workspace` |
+| `p46-keyboardnav` | Standard Stateful `.code-workspace` |
+| `p47-suite` | `manifest-multi`; preferred Standard Stateful startup resource, then test reads the manifest |
+| `p48a-conversionno` | Standard Stateful workspace directory (`use: 'wsDir'`) |
+| `p48c-multipledesigners` | `manifest-multi`; preferred Standard Stateful startup resource, then test reads the manifest |
+| `p48e-conversionsubfolder` | Standard Stateful app directory (`use: 'appDir'`) |
+| `p49-descriptionpersistence` | Standard Stateful `.code-workspace` |
+| `p49-nugetdebugconversion` | Standard Stateful manifest entry, but no startup resource (`use: 'none'`) because the test clones and opens its own workspace |
+| `p412-bundlerepair` | Standard Stateful `.code-workspace` |
+
+No Phase 4.1 fixture manifest required: `p40-nonlogicapp`, `p41a-fixtures`, `p41b-createworkspace-behavior`, `p48b-conversioncreate`, and standalone `p48d-conversionyes`. The grouped `conversiononly` mode still needs the manifest because its p48a/p48c/p48e phases and workspace-dir resource selection are manifest-backed.
+
+When adding a new scenario, update this map in the same PR as the `run-e2e.ts` scenario entry.
+
+### Rule 4. Use Selenium Actions API for clicks inside webview iframes
 
 Direct `element.click()` does not dispatch native events that React's synthetic event system captures. Use `driver.actions().move({ origin: element }).click().perform()`.
 
-### Rule 4. Find inputs by label, not by DOM index
+### Rule 5. Find inputs by label, not by DOM index
 
 `findInputByLabel('Workspace name')` survives re-renders; index-based lookups silently write into the wrong field when the wizard reorders inputs.
 
-### Rule 5. Gate Next/Create clicks on validation success, not on button visibility
+### Rule 6. Gate Next/Create clicks on validation success, not on button visibility
 
 Webview validators are async. Wait for the button to be enabled and for error decorators to clear, not just for it to appear.
 
-### Rule 6. Lint and rebuild after every test edit
+### Rule 7. Lint and rebuild after every test edit
 
 Run `npx biome check --write <files>` and `npx tsup --config tsup.e2e.test.config.ts` before claiming the test passes. Biome failures break CI; an un-rebuilt test runs the stale compiled JS.
+
+### Rule 8. Wire new `run-e2e.ts` scenarios into CI
+
+Adding a scenario to `run-e2e.ts` or a focused `E2E_MODE` is not enough. If the scenario is intended to protect PRs, add it to `.github/workflows/vscode-e2e.yml` in the grouped `vscode-e2e` matrix, or explicitly document it as local-only.
+
+**Why this matters**: `p49-nugetdebugconversion` was available locally through `E2E_MODE=nugetdebugonly`, but until it was added to the workflow matrix, CI never ran the NuGet debug lifecycle regression.
+
+When adding a scenario:
+
+1. Add the scenario entry in `run-e2e.ts`.
+2. Add the scenario to an appropriate `.github/workflows/vscode-e2e.yml` matrix shard with the correct `use_workspace_fixtures` and `use_bundle_artifact` flags.
+3. Update this file's scenario map and mode table.
+4. If the scenario is deliberately local-only, document that explicitly next to the scenario entry and in the local run instructions.
+
+### Rule 9. Opening designer requires popup hygiene
+
+Before any test opens the designer, account for known blocking prompts:
+
+1. Patch `local.settings.json` with `WORKFLOWS_SUBSCRIPTION_ID: ""` via `ensureLocalSettingsForDesigner()` so the "Enable connectors in Azure for Logic App" / "Use connectors from Azure" QuickPick does not appear.
+2. Use shared helpers such as `handleDesignerPrompts()`, `dismissNotifications()`, command-palette retries, and modal/QuickInput cleanup around workspace open, designer launch, and webview waits.
+3. If a new C# Dev Kit sign-in, auth, connector parameterization, notification, modal, or QuickPick blocker is found, fix it in shared helpers instead of adding a one-off sleep or test-local dismissal.
+
+These popups are suite infrastructure blockers. Do not spend product-debug iteration cycles waiting on them unless the popup itself is the behavior under test.
+
+### Rule 10. Debug lifecycle regressions must run a real workflow, not just start the host
+
+For debug lifecycle regressions, especially bundle → NuGet conversion, seed a deterministic built-in Request trigger + Response action workflow and verify callback URL, Run trigger, run history `Succeeded`, and action-level evidence such as `Response:Succeeded`. `admin/host/status` is not enough.
 
 ---
 
@@ -65,6 +129,7 @@ Run `npx biome check --write <files>` and `npx tsup --config tsup.e2e.test.confi
 |------|---------|
 | `src/test/ui/nonLogicAppStartup.test.ts` | Plain-folder startup regression test. Phase 4.0 |
 | `src/test/ui/bundleCdnHealth.test.ts` | CDN integrity probe (`Content-Length` + `Content-MD5` on Microsoft.Azure.Functions.ExtensionBundle.Workflows). Pure Mocha — runs without VS Code. Phase 4.11 / `E2E_MODE=bundleintegrityonly`. |
+| `src/test/ui/funcRepair.test.ts` | Func Core Tools pre-debug self-heal. Corrupts the extension-managed func executable in place (exists but won't execute), presses F5, asserts the gate silently reinstalls it instead of showing the blocking "must have Azure Functions Core Tools installed" modal. Phase 4.14 / `E2E_MODE=funcrepaironly`. Mutates the runtime-dependency cache — it restores the original bytes in `afterEach`, and resolves its target from `LA_E2E_RUNTIME_DEPS_ROOT` so it can never touch a global func install. |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
@@ -111,6 +176,12 @@ node out/test/run-e2e.js
 powershell -ExecutionPolicy Bypass -File src/test/ui/run-clean.ps1
 ```
 
+You can also use the root VS Code Run and Debug menu:
+
+- `E2E: p49 NuGet debug conversion` runs `E2E_MODE=nugetdebugonly`.
+- `E2E: Select mode (run-e2e)` opens a picker for supported `E2E_MODE` values.
+- Manifest-backed Debug menu modes (`designeronly`, `newtestsonly`, `conversiononly`, `nugetdebugonly`, `bundlerepaironly`, and selected `LA_E2E_SCENARIO` runs) detect a missing/stale Phase 4.1 fixture manifest and run `p41a-fixtures` automatically before the focused scenario.
+
 ### Build Scripts
 
 ```bash
@@ -125,9 +196,13 @@ pnpm run test:ui        # Runs node out/test/run-e2e.js
 | (unset) | Runs Phase 4.0 (non-Logic-App startup), Phase 4.1 (createWorkspace), then later designer/conversion phases |
 | `nonlogicappstartup` | Runs only Phase 4.0 with minimal settings and no runtime dependency paths |
 | `designeronly` | Skips Phase 4.1, runs Phase 4.2 using workspaces from a previous Phase 4.1 run |
+| `nugetdebugonly` | Runs `p49-nugetdebugconversion`: bundle debug → run Request/Response workflow → stop → convert to NuGet → debug again without harness port cleanup → run workflow again. Requires the Phase 4.1 fixture manifest from `p41a-fixtures` / createWorkspace setup. |
 | `bundleintegrityonly` | Runs Phase 4.11 (`bundleCdnHealth.test.ts`) — pure-Mocha probe of `cdn.functions.azure.com` integrity headers. No VS Code session, no compiled extension required (only `npx tsup --config tsup.e2e.test.config.ts`). Bundled into the `independentonly` shard for CI. |
+| `funcrepaironly` | Runs Phase 4.14 (`funcRepair.test.ts`) only — the Func Core Tools pre-debug self-heal. Requires a manifest from a previous `p41a-fixtures` run. In CI this scenario runs as the ubuntu `func-selfheal` shard and as the `vscode-e2e-funcselfheal-windows` job (which creates its own fixtures first — see section 19). |
 
-**IMPORTANT**: `E2E_MODE=designeronly` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. If the previous run's `after()` hook cleaned up workspaces, Phase 4.2 tests will fail with "Missing workspace directories" errors.
+**IMPORTANT**: Any focused mode whose scenario uses a manifest-backed `workspaceSpec` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. This includes `designeronly` and `nugetdebugonly`. If the manifest is missing, stale, or a previous run's cleanup removed workspace directories, rerun the fixture/createWorkspace phase before the focused mode.
+
+**NOTE**: On Windows, `openWorkspaceFileInSession()` may fail to switch workspaces through the simple dialog even when no exception is thrown. The helper falls back to `VSBrowser.instance.openResources()` on Windows and requires a positive title/Explorer postcondition before continuing.
 
 **NOTE**: When running from a background terminal, run from `apps/vs-code-designer`:
 ```bash
@@ -296,6 +371,11 @@ await input.setText('logic app workspace');    // ❌ switches to file search
 **Symptom**: `ElementClickInterceptedError` when trying to interact with webview. A notification toast covers the element.
 **Cause**: Extension activation (especially dependency extensions like C# DevKit) displays notifications.
 **Fix**: `dismissNotifications(driver)` helper clicks notification close buttons before interacting with the webview.
+
+### Issue: Azure Logic Apps ENOENT webview asset notification
+**Symptom**: A notification from "Azure Logic Apps (Standard)" says `ENOENT: no such file or directory, open ... vs-code-react/index.html`, then webview-dependent steps retry until an unrelated timeout.
+**Cause**: The installed extension under `test-resources/test-extensions` is missing the built VS Code React webview bundle. This is a broken test/package setup, not a scenario-specific product behavior.
+**Fix**: Keep detection in shared `helpers.ts` via `throwIfFatalLogicAppsNotification()`. Common cleanup and wait helpers must rethrow `FatalLogicAppsNotificationError` so every E2E fails fast instead of dismissing the notification or waiting through retries.
 
 ### Issue: Label ambiguity — "Function name" matches "Function namespace"
 **Symptom**: Custom code fields filled incorrectly — namespace gets the function name value, function name stays empty.
@@ -752,6 +832,29 @@ Remove-Item -Recurse -Force out/test -ErrorAction SilentlyContinue
 
 17. **Built-in operations (Request, Response) are always available; connectors (Compose) may not be.** When the design-time API hasn't fully loaded the connector catalog, the search results may not include connector-level operations like Compose. Use only built-in operations (Request, Response) in tests that need reliability. The connector catalog loads asynchronously from the func host, which may not be running in all test scenarios.
 
+18. **Never trigger F5 / debug from the command palette in a test that is not already inside the designer (CRITICAL).** `> Debug: Start Debugging` resolves `launch.json` from the *active editor's* workspace folder. In a multi-root `.code-workspace` opened headlessly on Linux CI, the active editor at F5 time is whatever VS Code decided to restore — a markdown preview, `settings.json`, an empty group — and none of those resolve the Logic App folder. `runHelpers.startDebugging()` **does not throw** in that case: it logs `[debug] Selecting: "Debug: Start Debugging"` and returns normally, so the test then waits out its full timeout on a product path that never executed. Anchoring the active editor first does not fix it — Quick Open depends on VS Code's file index being warm, which it is not right after a workspace open.
+
+    Instead, **install the codeful task recorder extension (§ 16) and trigger the debug session through it**: set `recorder: true` on the scenario in `run-e2e.ts` (which installs the extension into the scenario's ext dir and sets `LA_E2E_TASK_EVENTS_JSONL` / `CODEFUL_TASK_EVENTS_JSONL` / `LA_E2E_TRIGGER_DIR`), then drop a `start-debug` marker into `${LA_E2E_TRIGGER_DIR}` and wait for a `debugInvoke` line in the JSONL. The recorder waits for `azureLogicAppsStandard.debugLogicApp` to register, reads `<folder>/.vscode/launch.json` itself, and calls `vscode.debug.startDebugging(folder, configName)` with an **explicit folder** — zero dependence on editor focus, Quick Open, or the palette. It runs the identical resolution pipeline as F5, including `${command:azureLogicAppsStandard.pickProcess}` substitution, so `pickFuncProcessInternal -> preDebugValidate -> validateFuncCoreToolsInstalled` still executes: only the trigger changes, not the product path under test.
+
+    Failure signatures that mean you have hit this (all from real CI runs of `p414-funcrepair`):
+    - `[depValidation] VS Code title at start: "Preview WBD-hybrid announcement.md - testws_xxx (Workspace) - Visual Studio Code"` — a restored markdown preview held focus (run 30549543233).
+    - `[openFileInEditor] Active tab is "settings.json", expected "workflow.json" — retrying` ×3, then `Warning: could not confirm active tab`, and a window title stuck on a non-project file (run 30554041131). Deterministic, not flaky — it reproduced on both outer attempts and on the scenario retry.
+    - Symptomatically: **no repair AND no blocking modal**, and grepping the whole job log for `pickProcess` / `preDebugValidate` / `launch.json` / `No configuration` returns zero hits from the extension side. Absence of *both* outcomes means the gate never ran.
+
+    Two corollaries: (a) gate the recorder's `debugInvoke` event, **not** `debugStarted` — for a `request: attach` config `startDebugging()` only resolves *after* `${command:pickProcess}` finishes, i.e. after the very repair you are waiting on, so `debugStarted` cannot be a fast-fail signal; (b) always add an explicit fast-fail that distinguishes "the product failed" from "the harness never triggered the product." A 300 s silent timeout costs a whole shard to learn "F5 did nothing."
+
+19. **The debug path prompts BEFORE the thing you are testing — poll for QuickPicks for the whole wait, don't pre-dismiss once (CRITICAL).** `pickFuncProcessInternal` runs `activateAzurite` (`pickFuncProcess.ts:87-106`), then `refreshConnectionKeys` (`:112-116`), and only then `preDebugValidate` (`:119`). With no Azure account, `refreshConnectionKeys` raises `GetSubscriptionDetailsStep.prompt` (`azureConnectorWizard.ts:50-68`) — a `showQuickPick` with placeholder `Enable connectors in Azure for Logic App <name>` and rows `Use connectors from Azure` / `Skip for now`. It parks the entire debug flow until answered, so **anything downstream of `:116` never executes**. Answering it with `Skip for now` (or Escape — `azureConnectorWizard.ts:59-62` catches `isUserCancelledError` and returns the same `{ data: 'no' }`) lets it through.
+
+    This is **not** a one-off: `prepareFreshSession()` deletes the settings `User` dir every attempt and the choice is cached in `ext.context.globalState` (`app/state/connectors.ts:13-22`), so it appears on every run. It also arrives several seconds *after* the debug start, so a single pre-emptive dismissal races it — call `dismissQuickPickIfVisible(driver)` (`helpers.ts:740`) on **every iteration of every polling wait** that spans the debug start.
+
+    Failure signature (`p414-funcrepair`, run 30557613214): the fast-fail liveness gate reported *reached* on the `Azurite is setup to auto start` line, then the repair wait timed out at 300 s with **no repair and no blocking modal**, the output channel frozen at that same Azurite line, and the screenshot showing the connectors QuickPick still open with the debug session live in the status bar.
+
+    Two lessons beyond the dismissal itself:
+    - **A liveness marker from step 1 does not prove you reached step 3.** `Azurite is setup to auto start` is written by `pickFuncProcessInternal`'s *first* statement, so a gate keyed on it reports "the product reacted" while execution is parked two steps short of what you are testing. Track a *separate* set of markers that prove you got past the last step before your target — here `Azure connectors are disabled. Skipping connection key refresh.` / `No connection keys found.` (`connectionKeys.ts:22`/`:29`) — so a timeout can say **stall-before-the-gate** vs **genuine product failure**.
+    - **A prompt-dismisser must not be able to answer the prompt you are asserting on.** `showQuickPick` renders `.quick-input-widget`; `showWarningMessage(msg, { modal: true }, ...)` renders `.monaco-dialog-box`. `dismissQuickPickIfVisible` only queries the former, so it cannot click a dialog button — but its Escape fallback fires on `body` and *can* cancel a modal. Read the widget text first and act only on a match for the specific prompt you mean to answer, refuse to run once the asserted-on prompt has been observed, and log both the dismissals and any QuickPick you deliberately left alone.
+
+20. **Watermarked log dumps must be pinned to the watermarked file path.** A "find the newest `*Azure Logic Apps*.log` by mtime" helper is fine for taking a watermark but wrong for reading back against it: the newest file can change identity between the two calls, at which point you dump an unrelated file in full and call it "new output". In run 30557613214 this printed a node tarball listing on the failure path and hid a `refreshConnectionKeys` stall for an entire CI cycle. Resolve the path once, store it in the watermark, and read *that* file for every subsequent diff — treating a shorter file as rotated. Bound the dump (~8 KB) and, when the new region is empty, say so explicitly: "the extension wrote nothing after the trigger" is itself the diagnosis.
+
 ### Architecture Decisions That Paid Off
 
 - **Phase separation (4.1 / 4.2)**: Allows re-running designer tests without re-creating workspaces
@@ -831,6 +934,7 @@ Ship a **tiny test-only "recorder" extension** alongside the product extension a
   - `patchLegacyCodefulCsproj(entry)` minimally changes only the generated legacy control `.csproj`, replacing `CopyToCodefulFolder AfterTargets="Build;Publish"` with `AfterTargets="Publish"`.
   - `installCodefulTaskRecorderExtension(extDir)` copies the recorder source dir to `${extDir}/la-e2e.la-e2e-codeful-task-recorder-0.0.1/` and refreshes `extensions.json`.
   - `e2eMode === 'codefuldebugonly'` branch runs Phase 4.10 standalone.
+  - **`recorder: true` on any `scenarios[]` entry** opts that scenario into the same recorder: `runScenarioPhases()` installs it into the scenario's ext dir and calls `configureCodefulRecorderEnvironment()` after each `prepareFreshSession()`, so the test file can read `LA_E2E_TASK_EVENTS_JSONL` and write markers into `LA_E2E_TRIGGER_DIR`. Phase 4.14 (`p414-funcrepair`) uses this purely as a **deterministic debug trigger** — see rule 18.
 
 ### Wire-up checklist
 
@@ -845,6 +949,8 @@ Ship a **tiny test-only "recorder" extension** alongside the product extension a
 9. **Allow 10-15 minutes for the LA extension's cold-start activation per variant.** `vscode.tasks.fetchTasks()` activates every task-type provider (grunt, gulp, jake, npm) and waits for all of them. Combined with the LA extension's own awaits, the first `taskStart` event can arrive 4-10 minutes after `vscode.debug.startDebugging` is called.
 10. **Sleep ≥ 30 s after `stopDebug()` before reading events.** The task chain may finish writing `processEnd` entries after the wait deadline. The post-stop sleep gives the recorder time to flush remaining events to disk.
 11. **Assert on the JSONL summary, not the wait result.** The wall-clock wait is an upper-bound optimization. The actual signal is what's in the JSONL after `stopDebug` + sleep + readEvents.
+12. **The recorder picks its own folder and config — do not assume `folders[0]`.** `pickDebugTarget()` selects, in order: the workspace folder whose `.vscode/launch.json` contains a config with `processId` referencing `azureLogicAppsStandard.pickProcess`, else the first folder with any config, else `folders[0]`. Within that folder it prefers (a) the `pickProcess` config, (b) `type === 'logicapp'`, (c) `configs[0]`. This matters because `vscodeLaunch.ts` generates the **Standard codeless** config as `type: 'coreclr', request: 'attach', processId: '${command:azureLogicAppsStandard.pickProcess}'` — *not* `type: 'logicapp'` — so without preference (a) it would only be found by the `configs[0]` fallback. Codeful/custom-code configs have no `processId`, so (a) never matches them and Phase 4.10's selection is unchanged.
+13. **Rules 9 and 10 are Phase-4.10-specific.** They exist because Phase 4.10 asserts on *task* events, and `vscode.tasks.fetchTasks()` is what makes the first `taskStart` take minutes. A test that only needs a debug session started (e.g. Phase 4.14) should gate on `debugInvoke` and skip those long waits entirely.
 
 ### Reusing this pattern
 
@@ -940,3 +1046,109 @@ before F5 so the check is not vacuous:
 - Do **not** assert on `obj/` — a C# Dev Kit design-time evaluation legitimately writes it.
 - Treat a locked `bin`/`lib` at clear-time as a hard failure, not a skip: it means a build
   is already running, which invalidates the premise.
+
+---
+
+## 18. Rule: Start debug sessions from the recorder extension, never from the command palette
+
+Referenced as "SKILL.md rule 18" by `funcRepair.test.ts` and by the `recorder` flag in
+`run-e2e.ts`'s scenario table.
+
+`workbench.executeCommand('Debug: Start Debugging')` resolves the launch configuration from
+**whatever editor happens to be active**, and a headless CI session does not settle focus
+reliably. Two CI runs proved it: run 30549543233 debugged an auto-opened markdown preview, and
+run 30554041131 debugged `settings.json` even after closing all editors and opening
+`workflow.json` via Quick Open three times. Both produced the same useless outcome — VS Code
+never resolved the Logic App folder's `launch.json`, `pickProcess` never ran, and the test
+timed out blaming the product.
+
+Use the bundled task-recorder extension instead (see section 16). It calls
+`vscode.debug.startDebugging(folder, configName)` with an **explicit** folder, so the trigger
+has no dependency on focus at all.
+
+Wire-up: set `recorder: true` on the scenario in `run-e2e.ts`. That installs the extension
+once per scenario and resets the events/trigger files per attempt via
+`configureCodefulRecorderEnvironment()`. Drop a marker file into `LA_E2E_TRIGGER_DIR` to start
+or stop the session, and always gate on the recorder reporting `activate`/`ping` first, so a
+wedged recorder is distinguishable from a product failure.
+
+---
+
+## 19. Porting an existing scenario to a Windows CI leg
+
+Everything below was learned wiring `p414-funcrepair` (Phase 4.14) onto `windows-latest` in
+`.github/workflows/vscode-e2e.yml`. Read it before adding any further Windows job.
+
+### The `workspace-fixtures-<sha>` artifact is ubuntu-bound — do NOT consume it on Windows
+
+`created-workspaces.json` records **absolute** paths (`wsDir` / `wsFilePath` / `appDir`, see
+`workspaceManifest.ts`), written under the ubuntu runner's `RUNNER_TEMP`
+(`/home/runner/work/_temp/...`). Extracting that tarball on `windows-latest` puts the tree
+under `D:\a\_temp\la-e2e-test` while every path inside the manifest still points at a
+directory that does not exist there. Nothing rebases them, so `selectWorkspaceForSpec()`
+falls through to `resources: []` and the test opens a nonexistent `.code-workspace`. This is
+why no Windows job in the workflow consumes it.
+
+A Windows leg that needs fixtures must **create them on that runner** by running
+`p41a-fixtures` first (which is Rule 1 compliant — real Create Workspace wizard). The
+`logic-apps-extension-bundle-<sha>` artifact is unnecessary too, because that run downloads
+and verifies the bundle itself. Net effect: a Windows leg consumes only the cross-platform JS
+`extension-build` artifact, exactly like `vscode-e2e-codeful-windows`.
+
+### A running `.exe` is unwritable on Windows — Linux cannot reproduce it
+
+Any test that overwrites a runtime binary **in place** (`funcRepair.test.ts` corrupts
+`func.exe`) is a no-op risk on Linux and a hard failure on Windows. Three things must hold:
+
+1. The scenario runs with `autoStartDesignTime: false`, so the session under test never
+   spawns a design-time `func host start`.
+2. `prepareFreshSession()` actually killed leftover func hosts from the PREVIOUS scenario.
+   `p41a-fixtures` runs with `autoStartDesignTime: true`, so a Windows job that runs it
+   before the corrupting scenario depends on that kill landing. Each PowerShell kill is now
+   guarded individually and followed by a bounded poll (`waitForWindowsFuncProcessesToExit`)
+   that confirms the processes are actually gone — `Stop-Process` only *signals*.
+3. The runtime-dependency cache is WARM. A cold cache means activation performs a real
+   install, and `installFuncCoreToolsBinaries` ends in `startAllDesignTimeApis()`
+   (`binaries.ts:213`), which does **not** honour `autoStartDesignTime`. The resulting live
+   `func.exe` makes the corruption fail with EPERM/EBUSY. Hence
+   `needs: setup-runtime-deps-windows` plus the local `p41a-fixtures` step as a second line
+   of defence.
+
+### A job that corrupts runtime dependencies must be cache RESTORE-ONLY
+
+Never pair a corrupting scenario with `actions/cache/save`. `afterEach` restores the pristine
+bytes, but a crashed session can leave a corrupted or partly-restored tree, and saving that
+onto `la-runtime-deps-Windows-v1` is unrecoverable: later runs restore it as an EXACT-key HIT
+and the hydrating jobs' `cache-hit != 'true'` guard suppresses the repair. The `deps-check`
+guard used elsewhere is not enough — it probes only the FIRST func it finds via
+`find -maxdepth 2`, so a still-corrupted `in-proc6/func.exe` slips past it.
+
+### Close the `this.skip()` hole with a manifest guard step
+
+Tests that `this.skip()` when the manifest is missing report a **passing** job with zero
+coverage. On a brand-new platform leg that is the most likely silent failure. Add an explicit
+guard step between fixture creation and the scenario that asserts the manifest exists, has the
+entry the test looks for, and that the entry's `wsFilePath` exists on disk. Resolve the path
+with `node` + `os.tmpdir()` rather than `$RUNNER_TEMP`, so it checks the exact path the test
+will read.
+
+### `shell: bash` on `windows-latest` — env var gotchas
+
+- `RUNNER_TEMP` contains **backslashes** (`D:\a\_temp`). Do not feed it to bash path tests;
+  `$HOME` is POSIX (`/c/Users/runneradmin`) and is what the existing steps use.
+- Set `TEMP`, `TMP` **and** `TMPDIR` — `os.tmpdir()` reads `TEMP`/`TMP` on Windows, and the
+  screenshot/backup/manifest paths all derive from it.
+- `LA_E2E_STRICT_DEPENDENCY_VALIDATION` is read by the **product** inside the VS Code process
+  (`strictDependencyValidation.ts`), not just by the harness. Scope it to the step that needs
+  it; leaking it into a corrupting scenario can force a reinstall during activation, which
+  ends in `startAllDesignTimeApis()` and a live `func.exe`.
+
+### Sizing the timeout
+
+Follow the policy documented on `setup-extension-build`: a backstop against a wedged runner,
+~2x the worst HEALTHY observation, sized to absorb one `LA_E2E_SCENARIO_RETRIES` retry and a
+cold cache. Prefer borrowing a real observation from a job that already runs the same scenario
+on the same OS (`setup-runtime-deps-windows` runs `p41a-fixtures` on Windows and is the only
+existing datapoint for it) over copying a neighbour's number. Remember the in-test
+`TEST_TIMEOUT` already hard-bounds a single attempt, so the fast-failure signal lives there,
+not in `timeout-minutes`.

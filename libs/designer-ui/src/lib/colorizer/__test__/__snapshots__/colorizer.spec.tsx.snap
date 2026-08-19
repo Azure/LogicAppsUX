@@ -18,7 +18,7 @@ exports[`lib/colorizer > should render 1`] = `
       <Button
         appearance="subtle"
         aria-label="Copy the value of 'start time' to the clipboard"
-        icon={<CompoundIcon />}
+        icon={<ForwardRef />}
         onClick={[Function]}
       />
     </Tooltip>
@@ -154,7 +154,7 @@ exports[`lib/colorizer > should render when utc time format props are given 1`] 
       <Button
         appearance="subtle"
         aria-label="Switch 'start time' to the local time"
-        icon={<CompoundIcon />}
+        icon={<ForwardRef />}
         onClick={[Function]}
       />
     </Tooltip>
@@ -165,7 +165,7 @@ exports[`lib/colorizer > should render when utc time format props are given 1`] 
       <Button
         appearance="subtle"
         aria-label="Copy the value of 'start time' to the clipboard"
-        icon={<CompoundIcon />}
+        icon={<ForwardRef />}
         onClick={[Function]}
       />
     </Tooltip>
