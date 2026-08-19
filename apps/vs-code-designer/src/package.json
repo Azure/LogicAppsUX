@@ -948,6 +948,16 @@
             "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
             "default": 15
           },
+          "azureLogicAppsStandard.enableOutputTimestamps": {
+            "type": "boolean",
+            "description": "Prepend a timestamp to log entries in the extension's output channel.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showDeploySubpathWarning": {
+            "type": "boolean",
+            "description": "Show a warning when the deployed folder differs from the selected folder due to the deploySubpath setting.",
+            "default": true
+          },
           "azureLogicAppsStandard.enableRemoteDebugging": {
             "type": "boolean",
             "description": "Enable remote debugging for Node.js Logic Apps running on Linux App Service plans. Consumption plans are not supported. (experimental)",
