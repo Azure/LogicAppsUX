@@ -132,16 +132,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       }
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const {
-        separator,
-        platform,
-        logicAppType,
-        logicAppName,
-        availableProjects,
-        currentFolderPath,
-        defaultWorkspaceProjectPath,
-        defaultWorkspaceName,
-      } = action.payload;
+      const { separator, platform, logicAppType, logicAppName, availableProjects, currentFolderPath } = action.payload;
       state.separator = separator;
       state.platform = platform;
       state.logicAppType = logicAppType || '';
@@ -149,12 +140,6 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       state.availableProjects = availableProjects || [];
       if (currentFolderPath) {
         state.currentFolderPath = currentFolderPath;
-      }
-      if (defaultWorkspaceProjectPath) {
-        state.workspaceProjectPath = { fsPath: defaultWorkspaceProjectPath, path: defaultWorkspaceProjectPath };
-      }
-      if (defaultWorkspaceName) {
-        state.workspaceName = defaultWorkspaceName;
       }
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {

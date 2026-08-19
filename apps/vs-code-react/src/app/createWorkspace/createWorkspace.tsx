@@ -7,7 +7,7 @@ import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
-import { nextStep, previousStep, setCurrentStep, setFlowType, setLoading, resetState } from '../../state/createWorkspaceSlice';
+import { nextStep, previousStep, setCurrentStep, setFlowType, setLoading, resetState, setProjectPath, setWorkspaceName } from '../../state/createWorkspaceSlice';
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
@@ -763,11 +763,24 @@ export const CreateWorkspaceFromPackage = () => {
 
 export const CreateWorkspaceStructure = () => {
   const dispatch = useDispatch();
+  const { currentFolderPath, separator } = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
 
   useEffect(() => {
     dispatch(resetState(undefined));
     dispatch(setFlowType(FLOW_TYPES.ENSURE_WORKSPACE));
-  }, [dispatch]);
+
+    // Auto-populate defaults from the current folder path (preserved across resetState).
+    // Default: workspaceProjectPath = parent of current folder, workspaceName = folder name.
+    if (currentFolderPath) {
+      const lastSep = currentFolderPath.lastIndexOf(separator);
+      if (lastSep > 0) {
+        const parentPath = currentFolderPath.substring(0, lastSep);
+        const folderName = currentFolderPath.substring(lastSep + 1);
+        dispatch(setProjectPath(parentPath));
+        dispatch(setWorkspaceName(folderName));
+      }
+    }
+  }, [dispatch, currentFolderPath, separator]);
 
   return <CreateWorkspaceInternal />;
 };

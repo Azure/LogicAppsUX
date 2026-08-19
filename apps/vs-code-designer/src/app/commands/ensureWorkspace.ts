@@ -87,8 +87,6 @@ export async function ensureWorkspace(context: IActionContext): Promise<boolean>
 async function createWorkspaceStructureWebview(): Promise<boolean> {
   const currentFolder = vscode.workspace.workspaceFolders?.[0];
   const currentFolderPath = currentFolder?.uri.fsPath ?? '';
-  const defaultWorkspaceProjectPath = currentFolderPath ? path.dirname(currentFolderPath) : '';
-  const defaultWorkspaceName = currentFolderPath ? path.basename(currentFolderPath) : '';
 
   return new Promise<boolean>((resolve) => {
     createWorkspaceWebviewCommandHandler({
@@ -103,8 +101,6 @@ async function createWorkspaceStructureWebview(): Promise<boolean> {
       },
       extraInitializeData: {
         currentFolderPath,
-        defaultWorkspaceProjectPath,
-        defaultWorkspaceName,
       },
       onResolve: resolve,
     });
