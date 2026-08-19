@@ -7,7 +7,16 @@ import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
-import { nextStep, previousStep, setCurrentStep, setFlowType, setLoading, resetState, setProjectPath, setWorkspaceName } from '../../state/createWorkspaceSlice';
+import {
+  nextStep,
+  previousStep,
+  setCurrentStep,
+  setFlowType,
+  setLoading,
+  resetState,
+  setProjectPath,
+  setWorkspaceName,
+} from '../../state/createWorkspaceSlice';
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
@@ -18,6 +27,7 @@ import {
   isWorkspaceDescendantOfCurrentFolder,
   nameValidation,
   namespaceValidation,
+  pathsEqual,
 } from './utils/validation';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 import { CreateWorkflowSetup } from '../createWorkflow/createWorkflowSetup';
@@ -66,6 +76,7 @@ const CreateWorkspaceInternal = () => {
     logicAppsWithoutCustomCode,
     existingFolders,
     separator,
+    platform,
     isDevContainerProject,
     availableProjects,
     currentFolderPath,
@@ -176,7 +187,7 @@ const CreateWorkspaceInternal = () => {
   const isWorkspaceNameAvailable = () => {
     const { workspaceFolder, workspaceFile } = getWorkspaceExistencePaths();
     // In the in-place case the folder already exists by definition — only block on .code-workspace file
-    const isInPlace = currentFolderPath && workspaceFolder.toLowerCase() === currentFolderPath.toLowerCase();
+    const isInPlace = currentFolderPath && pathsEqual(workspaceFolder, currentFolderPath, platform);
     const folderAvailable = isInPlace || workspaceExistenceResults[workspaceFolder] === false;
     return folderAvailable && workspaceExistenceResults[workspaceFile] === false;
   };
@@ -347,7 +358,8 @@ const CreateWorkspaceInternal = () => {
             workspaceProjectPath.fsPath,
             workspaceName.trim(),
             currentFolderPath,
-            separator
+            separator,
+            platform
           );
           return workspacePathValid && workspaceNameValid && workspaceLocationValid;
         }

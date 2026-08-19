@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { nameValidation, isWorkspaceDescendantOfCurrentFolder } from '../utils/validation';
+import { nameValidation, isWorkspaceDescendantOfCurrentFolder, pathsEqual } from '../utils/validation';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -30,6 +30,7 @@ export const WorkspaceNameStep: React.FC = () => {
     isValidatingWorkspace,
     separator,
     currentFolderPath,
+    platform,
   } = createWorkspaceState;
   const projectPathInputId = useId();
   const workspaceNameId = useId();
@@ -66,7 +67,7 @@ export const WorkspaceNameStep: React.FC = () => {
       }
 
       // Block workspace locations that are descendants of the currently open folder
-      if (isWorkspaceDescendantOfCurrentFolder(workspaceProjectPath.fsPath, name, currentFolderPath, separator)) {
+      if (isWorkspaceDescendantOfCurrentFolder(workspaceProjectPath.fsPath, name, currentFolderPath, separator, platform)) {
         return intlText.WORKSPACE_LOCATION_INSIDE_PROJECT;
       }
 
@@ -74,7 +75,7 @@ export const WorkspaceNameStep: React.FC = () => {
       if (workspaceProjectPath.fsPath && name) {
         const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${name}`;
         const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
-        const isInPlace = currentFolderPath && workspaceFolder.toLowerCase() === currentFolderPath.toLowerCase();
+        const isInPlace = currentFolderPath && pathsEqual(workspaceFolder, currentFolderPath, platform);
 
         if (!isInPlace && workspaceExistenceResults[workspaceFolder] === true) {
           return format.FOLDER_EXISTS_MESSAGE({ name });
@@ -93,6 +94,7 @@ export const WorkspaceNameStep: React.FC = () => {
       intlText.WORKSPACE_LOCATION_INSIDE_PROJECT,
       separator,
       currentFolderPath,
+      platform,
       workspaceExistenceResults,
       format,
     ]
