@@ -25,6 +25,7 @@ import {
   functionNameValidation,
   getValidationRequirements,
   isWorkspaceDescendantOfCurrentFolder,
+  joinPath,
   nameValidation,
   namespaceValidation,
   pathsEqual,
@@ -179,7 +180,7 @@ const CreateWorkspaceInternal = () => {
   };
 
   const getWorkspaceExistencePaths = () => {
-    const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+    const workspaceFolder = joinPath(workspaceProjectPath.fsPath, workspaceName, separator);
     const workspaceFile = `${workspaceFolder}${separator}${workspaceName}.code-workspace`;
     return { workspaceFolder, workspaceFile };
   };

@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { nameValidation, isWorkspaceDescendantOfCurrentFolder, pathsEqual } from '../utils/validation';
+import { nameValidation, isWorkspaceDescendantOfCurrentFolder, pathsEqual, joinPath } from '../utils/validation';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ export const WorkspaceNameStep: React.FC = () => {
 
       // Check if workspace folder or file already exists (skip folder check for in-place case)
       if (workspaceProjectPath.fsPath && name) {
-        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${name}`;
+        const workspaceFolder = joinPath(workspaceProjectPath.fsPath, name, separator);
         const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
         const isInPlace = currentFolderPath && pathsEqual(workspaceFolder, currentFolderPath, platform);
 

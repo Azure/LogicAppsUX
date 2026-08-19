@@ -119,7 +119,7 @@ export function getValidationRequirements(flowType: string, logicAppType: string
  * Joins a parent path and a name with the given separator,
  * handling trailing separators on the parent to avoid doubling.
  */
-function joinPath(parentPath: string, name: string, separator: string): string {
+export function joinPath(parentPath: string, name: string, separator: string): string {
   return `${stripTrailingSeparator(parentPath, separator)}${separator}${name}`;
 }
 
