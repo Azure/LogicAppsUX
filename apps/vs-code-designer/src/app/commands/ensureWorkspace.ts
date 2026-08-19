@@ -21,7 +21,7 @@ import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { createWorkspaceWebviewCommandHandler } from './shared/workspaceWebviewCommandHandler';
-import { isPathEqual } from '../utils/fs';
+import { isPathEqual, isSubpath } from '../utils/fs';
 
 /**
  * Ensures that the current workspace is properly set up for Azure Logic Apps (Standard) projects.
@@ -118,6 +118,18 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
   const workspaceFolderPath = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
   const currentFolder = vscode.workspace.workspaceFolders?.[0];
   const currentFolderPath = currentFolder?.uri.fsPath;
+
+  if (currentFolderPath && isSubpath(currentFolderPath, workspaceFolderPath)) {
+    throw new Error(
+      localize(
+        'workspaceLocationInsideCurrentFolder',
+        'Workspace location "{0}" is inside the currently open folder "{1}". Choose the current folder (in-place) or a location outside it.',
+        workspaceFolderPath,
+        currentFolderPath
+      )
+    );
+  }
+
   const isInPlace = currentFolderPath !== undefined && isPathEqual(workspaceFolderPath, currentFolderPath);
 
   context.telemetry.properties.isInPlace = String(isInPlace);
@@ -201,7 +213,11 @@ function validateWorkspaceProjectPath(options: any): IWebviewProjectContext {
     });
     ext.outputChannel.appendLog(`[EnsureWorkspace] Invalid workspaceProjectPath: ${detail}`);
     throw new Error(
-      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(ctx.workspaceProjectPath)}`
+      localize(
+        'invalidWorkspaceProjectPath',
+        'Invalid workspaceProjectPath: {0}.',
+        detail
+      )
     );
   }
   return ctx;
