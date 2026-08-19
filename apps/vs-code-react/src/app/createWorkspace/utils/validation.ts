@@ -61,6 +61,24 @@ export const validateFunctionName = (name: string, intlText: any) => {
   return undefined;
 };
 
+/**
+ * Checks whether the workspace path (parentPath + separator + name) is a strict
+ * descendant of the currently open folder. Equal paths are allowed (in-place case).
+ */
+export const isWorkspaceDescendantOfCurrentFolder = (
+  parentPath: string,
+  name: string,
+  currentFolderPath: string,
+  separator: string
+): boolean => {
+  if (!currentFolderPath || !parentPath || !name) {
+    return false;
+  }
+  const workspacePath = `${parentPath}${separator}${name}`.toLowerCase();
+  const current = currentFolderPath.toLowerCase();
+  return workspacePath !== current && workspacePath.startsWith(`${current}${separator}`);
+};
+
 // Get validation requirements based on flow type
 export const getValidationRequirements = (flowType: string, logicAppType: string) => {
   const requirements = {

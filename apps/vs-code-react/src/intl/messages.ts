@@ -245,6 +245,12 @@ export const workspaceMessages = defineMessages({
     id: 'RRuHNc',
     description: 'Workspace name validation message text',
   },
+  WORKSPACE_LOCATION_INSIDE_PROJECT: {
+    defaultMessage:
+      'Workspace location cannot be inside the currently open project folder. Choose the current folder or a location outside it.',
+    id: 'Karw2Q',
+    description: 'Workspace location is a descendant of the currently open folder error text',
+  },
   USE_DEV_CONTAINER_LABEL: {
     defaultMessage: 'Use Dev Container',
     id: '0Va6gs',

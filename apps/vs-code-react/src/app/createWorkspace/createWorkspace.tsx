@@ -12,7 +12,13 @@ import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { functionNameValidation, getValidationRequirements, nameValidation, namespaceValidation } from './utils/validation';
+import {
+  functionNameValidation,
+  getValidationRequirements,
+  isWorkspaceDescendantOfCurrentFolder,
+  nameValidation,
+  namespaceValidation,
+} from './utils/validation';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 import { CreateWorkflowSetup } from '../createWorkflow/createWorkflowSetup';
 
@@ -62,6 +68,7 @@ const CreateWorkspaceInternal = () => {
     separator,
     isDevContainerProject,
     availableProjects,
+    currentFolderPath,
   } = createWorkspaceState;
 
   // Calculate total steps - always 2: Setup and Review + Create
@@ -168,7 +175,10 @@ const CreateWorkspaceInternal = () => {
 
   const isWorkspaceNameAvailable = () => {
     const { workspaceFolder, workspaceFile } = getWorkspaceExistencePaths();
-    return workspaceExistenceResults[workspaceFolder] === false && workspaceExistenceResults[workspaceFile] === false;
+    // In the in-place case the folder already exists by definition — only block on .code-workspace file
+    const isInPlace = currentFolderPath && workspaceFolder.toLowerCase() === currentFolderPath.toLowerCase();
+    const folderAvailable = isInPlace || workspaceExistenceResults[workspaceFolder] === false;
+    return folderAvailable && workspaceExistenceResults[workspaceFile] === false;
   };
 
   // Helper function to validate logic app name with support for existing logic apps
@@ -333,7 +343,13 @@ const CreateWorkspaceInternal = () => {
         if (flowType === FLOW_TYPES.ENSURE_WORKSPACE) {
           const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
           const workspaceNameValid = workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable();
-          return workspacePathValid && workspaceNameValid;
+          const workspaceLocationValid = !isWorkspaceDescendantOfCurrentFolder(
+            workspaceProjectPath.fsPath,
+            workspaceName.trim(),
+            currentFolderPath,
+            separator
+          );
+          return workspacePathValid && workspaceNameValid && workspaceLocationValid;
         }
 
         // For other flow types, use the full validation

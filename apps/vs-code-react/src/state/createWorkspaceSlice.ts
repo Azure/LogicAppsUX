@@ -48,6 +48,7 @@ export interface CreateWorkspaceState {
   availableProjects: AvailableProject[];
   isAddCustomCodeFlow: boolean;
   workspaceRootFolder: string;
+  currentFolderPath: string;
 }
 
 const initialState: CreateWorkspaceState = {
@@ -88,6 +89,7 @@ const initialState: CreateWorkspaceState = {
   availableProjects: [],
   isAddCustomCodeFlow: false,
   workspaceRootFolder: '',
+  currentFolderPath: '',
 };
 
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
@@ -130,12 +132,30 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       }
     },
     initializeWorkspace: (state, action: PayloadAction<any>) => {
-      const { separator, platform, logicAppType, logicAppName, availableProjects } = action.payload;
+      const {
+        separator,
+        platform,
+        logicAppType,
+        logicAppName,
+        availableProjects,
+        currentFolderPath,
+        defaultWorkspaceProjectPath,
+        defaultWorkspaceName,
+      } = action.payload;
       state.separator = separator;
       state.platform = platform;
       state.logicAppType = logicAppType || '';
       state.logicAppName = logicAppName || '';
       state.availableProjects = availableProjects || [];
+      if (currentFolderPath) {
+        state.currentFolderPath = currentFolderPath;
+      }
+      if (defaultWorkspaceProjectPath) {
+        state.workspaceProjectPath = { fsPath: defaultWorkspaceProjectPath, path: defaultWorkspaceProjectPath };
+      }
+      if (defaultWorkspaceName) {
+        state.workspaceName = defaultWorkspaceName;
+      }
     },
     setCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
@@ -248,6 +268,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
       const preserved: Partial<CreateWorkspaceState> = {
         platform: state.platform,
         separator: state.separator,
+        currentFolderPath: state.currentFolderPath,
         ...(preserveLogicAppData
           ? {
               logicAppType: state.logicAppType,

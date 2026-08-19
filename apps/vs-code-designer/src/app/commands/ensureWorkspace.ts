@@ -21,6 +21,7 @@ import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { createWorkspaceWebviewCommandHandler } from './shared/workspaceWebviewCommandHandler';
+import { isPathEqual } from '../utils/fs';
 
 /**
  * Ensures that the current workspace is properly set up for Azure Logic Apps (Standard) projects.
@@ -84,6 +85,11 @@ export async function ensureWorkspace(context: IActionContext): Promise<boolean>
 }
 
 async function createWorkspaceStructureWebview(): Promise<boolean> {
+  const currentFolder = vscode.workspace.workspaceFolders?.[0];
+  const currentFolderPath = currentFolder?.uri.fsPath ?? '';
+  const defaultWorkspaceProjectPath = currentFolderPath ? path.dirname(currentFolderPath) : '';
+  const defaultWorkspaceName = currentFolderPath ? path.basename(currentFolderPath) : '';
+
   return new Promise<boolean>((resolve) => {
     createWorkspaceWebviewCommandHandler({
       panelName: localize('createWorkspaceStructure', 'Create workspace structure'),
@@ -95,6 +101,11 @@ async function createWorkspaceStructureWebview(): Promise<boolean> {
           await createWorkspaceFile(actionContext, data);
         });
       },
+      extraInitializeData: {
+        currentFolderPath,
+        defaultWorkspaceProjectPath,
+        defaultWorkspaceName,
+      },
       onResolve: resolve,
     });
   });
@@ -103,65 +114,99 @@ async function createWorkspaceStructureWebview(): Promise<boolean> {
 export async function createWorkspaceFile(context: IActionContext, options: any): Promise<void> {
   addLocalFuncTelemetry(context);
 
-  const webviewProjectContext: IWebviewProjectContext = options;
+  const webviewProjectContext = validateWorkspaceProjectPath(options);
 
-  // Add telemetry properties for debugging
-  context.telemetry.properties.hasWorkspaceProjectPath = String(!!webviewProjectContext.workspaceProjectPath);
-  context.telemetry.properties.workspaceProjectPathType = typeof webviewProjectContext.workspaceProjectPath;
+  context.telemetry.properties.hasWorkspaceProjectPath = 'true';
   context.telemetry.properties.receivedOptionsKeys = Object.keys(options || {}).join(',');
 
-  // Validate that workspaceProjectPath exists and has required properties
-  if (!webviewProjectContext.workspaceProjectPath || !webviewProjectContext.workspaceProjectPath.fsPath) {
-    const errorMessage = `[EnsureWorkspace] Invalid workspaceProjectPath: ${JSON.stringify(
-      {
-        hasWorkspaceProjectPath: !!webviewProjectContext.workspaceProjectPath,
-        workspaceProjectPathType: typeof webviewProjectContext.workspaceProjectPath,
-        workspaceProjectPathValue: webviewProjectContext.workspaceProjectPath,
-        contextKeys: Object.keys(options || {}),
-      },
-      null,
-      2
-    )}`;
-    ext.outputChannel.appendLog(errorMessage);
-    throw new Error(
-      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(webviewProjectContext.workspaceProjectPath)}`
-    );
+  const workspaceFolderPath = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
+  const currentFolder = vscode.workspace.workspaceFolders?.[0];
+  const currentFolderPath = currentFolder?.uri.fsPath;
+  const isInPlace = currentFolderPath !== undefined && isPathEqual(workspaceFolderPath, currentFolderPath);
+
+  context.telemetry.properties.isInPlace = String(isInPlace);
+
+  if (isInPlace) {
+    // In-place: the workspace folder IS the current project folder.
+    // Just write the .code-workspace file — no copying needed.
+    const workspaceFolders = await buildInPlaceWorkspaceFolders(currentFolderPath);
+    const workspaceFilePath = path.join(workspaceFolderPath, `${webviewProjectContext.workspaceName}.code-workspace`);
+    await fse.writeJson(workspaceFilePath, { folders: workspaceFolders }, { spaces: 2 });
+    await vscode.commands.executeCommand(vscodeCommand.openFolder, vscode.Uri.file(workspaceFilePath), true);
+  } else {
+    // Different location: copy project files into the new workspace folder.
+    await fse.ensureDir(workspaceFolderPath);
+    const workspaceFolders = await copyWorkspaceFolders(workspaceFolderPath);
+    const workspaceFilePath = path.join(workspaceFolderPath, `${webviewProjectContext.workspaceName}.code-workspace`);
+    await fse.writeJson(workspaceFilePath, { folders: workspaceFolders }, { spaces: 2 });
+    await vscode.commands.executeCommand(vscodeCommand.openFolder, vscode.Uri.file(workspaceFilePath), true);
+  }
+}
+
+/**
+ * Builds workspace folder descriptors for the in-place case (no copying).
+ * If the current folder is a Logic App project, it becomes a single entry referencing ".".
+ * Otherwise, each child directory becomes a workspace entry.
+ */
+async function buildInPlaceWorkspaceFolders(currentFolderPath: string): Promise<Array<{ name: string; path: string }>> {
+  if (await isLogicAppProject(currentFolderPath)) {
+    return [{ name: path.basename(currentFolderPath), path: '.' }];
   }
 
-  const workspaceFolderPath = path.join(webviewProjectContext.workspaceProjectPath.fsPath, webviewProjectContext.workspaceName);
-
-  await fse.ensureDir(workspaceFolderPath);
-  const workspaceFilePath = path.join(workspaceFolderPath, `${webviewProjectContext.workspaceName}.code-workspace`);
-
-  // Start with an empty folders array
-  const workspaceFolders = [];
-  const foldersToAdd = vscode.workspace.workspaceFolders;
-
-  if (foldersToAdd && foldersToAdd.length === 1) {
-    const folder = foldersToAdd[0];
-    const folderPath = folder.uri.fsPath;
-    if (await isLogicAppProject(folderPath)) {
-      const destinationPath = path.join(workspaceFolderPath, folder.name);
-      await fse.copy(folderPath, destinationPath);
-      workspaceFolders.push({ name: folder.name, path: `./${folder.name}` });
-    } else {
-      const subpaths: string[] = await fse.readdir(folderPath);
-      for (const subpath of subpaths) {
-        const fullPath = path.join(folderPath, subpath);
-        const destinationPath = path.join(workspaceFolderPath, subpath);
-        await fse.copy(fullPath, destinationPath);
-        workspaceFolders.push({ name: subpath, path: `./${subpath}` });
-      }
+  // Each child is a separate workspace entry
+  const entries: Array<{ name: string; path: string }> = [];
+  const children = await fse.readdir(currentFolderPath, { withFileTypes: true });
+  for (const child of children) {
+    if (child.isDirectory()) {
+      entries.push({ name: child.name, path: `./${child.name}` });
     }
   }
+  return entries;
+}
 
-  const workspaceData = {
-    folders: workspaceFolders,
-  };
+/**
+ * Copies workspace folders from the current VS Code workspace into a new location
+ * and returns workspace folder descriptors.
+ */
+async function copyWorkspaceFolders(workspaceFolderPath: string): Promise<Array<{ name: string; path: string }>> {
+  const foldersToAdd = vscode.workspace.workspaceFolders;
+  if (!foldersToAdd || foldersToAdd.length !== 1) {
+    return [];
+  }
 
-  await fse.writeJson(workspaceFilePath, workspaceData, { spaces: 2 });
+  const folder = foldersToAdd[0];
+  const sourcePath = folder.uri.fsPath;
 
-  const uri = vscode.Uri.file(workspaceFilePath);
+  if (await isLogicAppProject(sourcePath)) {
+    const destPath = path.join(workspaceFolderPath, folder.name);
+    await fse.copy(sourcePath, destPath);
+    return [{ name: folder.name, path: `./${folder.name}` }];
+  }
 
-  await vscode.commands.executeCommand(vscodeCommand.openFolder, uri, true /* forceNewWindow */);
+  // Each child becomes a separate workspace entry
+  const entries: Array<{ name: string; path: string }> = [];
+  const children = await fse.readdir(sourcePath);
+  for (const child of children) {
+    const fullPath = path.join(sourcePath, child);
+    await fse.copy(fullPath, path.join(workspaceFolderPath, child));
+    entries.push({ name: child, path: `./${child}` });
+  }
+  return entries;
+}
+
+function validateWorkspaceProjectPath(options: any): IWebviewProjectContext {
+  const ctx: IWebviewProjectContext = options;
+  if (!ctx.workspaceProjectPath?.fsPath) {
+    const detail = JSON.stringify({
+      hasWorkspaceProjectPath: !!ctx.workspaceProjectPath,
+      type: typeof ctx.workspaceProjectPath,
+      value: ctx.workspaceProjectPath,
+      keys: Object.keys(options || {}),
+    });
+    ext.outputChannel.appendLog(`[EnsureWorkspace] Invalid workspaceProjectPath: ${detail}`);
+    throw new Error(
+      `workspaceProjectPath is required and must have an fsPath property. Received: ${JSON.stringify(ctx.workspaceProjectPath)}`
+    );
+  }
+  return ctx;
 }
