@@ -34,6 +34,10 @@ vi.mock('../../../utils/codeless/startDesignTimeApi', () => ({
 // Without these, the real code runs and hits unmocked vscode APIs (e.g. workspace.getConfiguration).
 vi.mock('../../../utils/devContainerUtils');
 vi.mock('../../../utils/vsCodeConfig/settings');
+vi.mock('../../../state/notifications', () => ({
+  isMultiCoreToolsWarningSuppressed: vi.fn(() => true),
+  suppressMultiCoreToolsWarning: vi.fn(),
+}));
 vi.mock('../../../utils/funcCoreTools/funcVersion');
 vi.mock('../installFuncCoreTools');
 vi.mock('../uninstallFuncCoreTools');

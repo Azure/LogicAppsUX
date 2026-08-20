@@ -263,8 +263,12 @@ export type vscodeCommand = (typeof vscodeCommand)[keyof typeof vscodeCommand];
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
+export const suppressAutoStartAzuriteNotificationState = 'suppressAutoStartAzuriteNotification';
+export const suppressAutoStartDesignTimeNotificationState = 'suppressAutoStartDesignTimeNotification';
 export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 export const suppressManagedIdentityAuthNotificationState = 'suppressManagedIdentityAuthNotification';
+export const suppressMultiCoreToolsWarningState = 'suppressMultiCoreToolsWarning';
+export const suppressNodeJsWarningState = 'suppressNodeJsWarning';
 export const suppressParameterizeConnectionsNotificationState = 'suppressParameterizeConnectionsNotification';
 
 // API
@@ -296,15 +300,12 @@ export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const enableProjectConsistencyChecksSetting = 'enableProjectConsistencyChecks';
-export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
-export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const useNodeDesignTimeWorkerSetting = 'useNodeDesignTimeWorker';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
-export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
 export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';

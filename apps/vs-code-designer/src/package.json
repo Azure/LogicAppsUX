@@ -841,11 +841,6 @@
       {
         "title": "Azure Logic Apps (Standard)",
         "properties": {
-          "azureLogicAppsStandard.showExplorer": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show or hide the Azure Functions Explorer"
-          },
           "azureLogicAppsStandard.projectRuntime": {
             "scope": "resource",
             "type": "string",
@@ -948,30 +943,25 @@
             "description": "Ask to confirm before deploying to a function app in Azure. Deployment overwrites any previous deployment and can't be undone.",
             "default": true
           },
-          "azureLogicAppsStandard.showNodeJsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of Node JS is outdated.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showMultiCoreToolsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when multiple installations of the Azure Functions Core Tools are found.",
-            "default": true
-          },
           "azureLogicAppsStandard.requestTimeout": {
             "type": "number",
             "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
             "default": 15
           },
+          "azureLogicAppsStandard.enableOutputTimestamps": {
+            "type": "boolean",
+            "description": "Prepend a timestamp to log entries in the extension's output channel.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showDeploySubpathWarning": {
+            "type": "boolean",
+            "description": "Show a warning when the deployed folder differs from the selected folder due to the deploySubpath setting.",
+            "default": true
+          },
           "azureLogicAppsStandard.enableRemoteDebugging": {
             "type": "boolean",
             "description": "Enable remote debugging for Node.js Logic Apps running on Linux App Service plans. Consumption plans are not supported. (experimental)",
             "default": false
-          },
-          "azureLogicAppsStandard.enableOutputTimestamps": {
-            "type": "boolean",
-            "description": "Prepends each line displayed in the output channel with a timestamp.",
-            "default": true
           },
           "azureLogicAppsStandard.preDeployTask": {
             "scope": "resource",
@@ -988,24 +978,9 @@
             "description": "Show a warning to install a 64-bit version of the Azure Functions Core Tools when you create a .NET Framework project.",
             "default": true
           },
-          "azureLogicAppsStandard.showDeploySubpathWarning": {
-            "type": "boolean",
-            "description": "Show a warning when the \"deploySubpath\" setting does not match the selected folder for deploying.",
-            "default": true
-          },
           "azureLogicAppsStandard.enableProjectConsistencyChecks": {
             "type": "boolean",
             "description": "Run consistency check on project files and .vscode configuration on startup and prompt to regenerate when files missing or out of date.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showTargetFrameworkWarning": {
-            "type": "boolean",
-            "description": "Show a warning after detecting an Azure Functions .NET project with mismatched target frameworks.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showStartDesignTimeMessage": {
-            "type": "boolean",
-            "description": "Show a message asking customers if they want to start the background design-time process at project load time.",
             "default": true
           },
           "azureLogicAppsStandard.autoStartDesignTime": {
@@ -1027,11 +1002,6 @@
           "azureLogicAppsStandard.e2eStrictDependencyValidation": {
             "type": "boolean",
             "description": "Fail dependency and extension-bundle validation instead of showing success-shaped UI fallbacks. Intended for automated VS Code E2E setup only.",
-            "default": false
-          },
-          "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
-            "type": "boolean",
-            "description": "Show a warning asking if user's would like to configure Azurite auto start.",
             "default": false
           },
           "azureLogicAppsStandard.autoStartAzurite": {
