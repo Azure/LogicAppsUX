@@ -391,6 +391,8 @@ export const DependencyVersion = {
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
 
+export const defaultDotnetMajorVersion = '8';
+
 export const hostFileContent = {
   version: '2.0',
   extensionBundle: {

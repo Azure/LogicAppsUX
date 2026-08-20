@@ -13,7 +13,6 @@ import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
 import { sendRequestWithExtTimeout } from '../../utils/requestUtils';
-import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { isMultiCoreToolsWarningSuppressed, suppressMultiCoreToolsWarning } from '../../state/notifications';
 import { installFuncCoreToolsBinaries } from './installFuncCoreTools';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { dotnetDependencyName } from '../../../constants';
+import { defaultDotnetMajorVersion, dotnetDependencyName } from '../../../constants';
 import { binariesExist, getLatestDotNetVersion } from '../../utils/binaries';
 import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../../utils/dotnet/dotnet';
@@ -14,6 +14,12 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 export async function validateDotNetIsLatest(context: IActionContext, majorVersion?: string): Promise<void> {
   context.errorHandling.suppressDisplay = true;
   context.telemetry.properties.isActivationEvent = 'true';
+
+  if (!majorVersion) {
+    context.telemetry.properties.dotnetVersionSource = 'fallback';
+    majorVersion = defaultDotnetMajorVersion;
+  }
+
   const majorVersions = majorVersion.split(',');
 
   const binaries = await binariesExist(dotnetDependencyName);

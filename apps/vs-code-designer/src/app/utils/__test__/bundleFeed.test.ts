@@ -1,6 +1,6 @@
 import {
   getBundleVersionNumber,
-  getDependenciesVersion,
+  getBundleDependencyFeed,
   getExtensionBundleFolder,
   getLatestVersionRange,
   addDefaultBundle,
@@ -582,7 +582,7 @@ describe('getLatestVersionRange', () => {
   });
 });
 
-describe('getDependenciesVersion', () => {
+describe('getBundleDependencyFeed', () => {
   it('loads dependency feed using a local settings source URI override', async () => {
     const verifyIsProjectMod = await import('../verifyIsProject');
     vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
@@ -595,7 +595,7 @@ describe('getDependenciesVersion', () => {
     vi.mocked(feedModule.getJsonFeed).mockResolvedValue({ id: extensionBundleId } as any);
     const context = { telemetry: { properties: {}, measurements: {} } };
 
-    await expect(getDependenciesVersion(context as any)).resolves.toEqual({ id: extensionBundleId });
+    await expect(getBundleDependencyFeed(context as any)).resolves.toEqual({ id: extensionBundleId });
 
     expect(feedModule.getJsonFeed).toHaveBeenCalledWith(
       context,
