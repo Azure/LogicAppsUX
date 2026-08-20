@@ -10,7 +10,6 @@ import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from './pickCustomCodeWorkerProcess';
-import { extensionCommand } from '../../constants';
 
 export async function debugLogicApp(
   context: IActionContext,
