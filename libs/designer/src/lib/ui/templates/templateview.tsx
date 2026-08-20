@@ -65,6 +65,7 @@ const SingleTemplateView = ({
   const { workflows } = useSelector((state: RootState) => ({
     workflows: state.template.workflows,
   }));
+  const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
 
   useEffect(() => {
     if (showSummary) {
@@ -79,21 +80,26 @@ const SingleTemplateView = ({
   return (
     <div>
       <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
-        <QuickViewPanel
-          mountNode={containerRef?.current}
-          showCreate={true}
-          showCloseButton={showCloseButton}
-          onClose={onClose}
-          workflowId={Object.keys(workflows)[0]}
-          panelWidth={panelWidth}
-        />
-        <CreateWorkflowPanel
-          mountNode={containerRef?.current}
-          showCloseButton={showCloseButton}
-          createWorkflow={createWorkflow}
-          panelWidth={panelWidth}
-          onClose={onClose}
-        />
+        {/* Only one panel is mounted at a time, otherwise the two modal drawers race when switching
+        between them and the newly opened drawer can be left with aria-hidden set on it. */}
+        {currentPanelView === TemplatePanelView.CreateWorkflow ? (
+          <CreateWorkflowPanel
+            mountNode={containerRef?.current}
+            showCloseButton={showCloseButton}
+            createWorkflow={createWorkflow}
+            panelWidth={panelWidth}
+            onClose={onClose}
+          />
+        ) : (
+          <QuickViewPanel
+            mountNode={containerRef?.current}
+            showCreate={true}
+            showCloseButton={showCloseButton}
+            onClose={onClose}
+            workflowId={Object.keys(workflows)[0]}
+            panelWidth={panelWidth}
+          />
+        )}
       </div>
       <div
         id={'msla-layer-host'}

@@ -50,11 +50,17 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
 
 const WorkflowView = ({ createWorkflowCall }: { createWorkflowCall: CreateWorkflowHandler }) => {
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
+  const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
 
+  // Only one panel is mounted at a time, otherwise the two modal drawers race when switching
+  // between them and the newly opened drawer can be left with aria-hidden set on it.
   return templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
     <>
-      <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
-      <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
+      {currentPanelView === TemplatePanelView.CreateWorkflow ? (
+        <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
+      ) : (
+        <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
+      )}
     </>
   );
 };
