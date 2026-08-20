@@ -74,8 +74,6 @@ export async function enableDevContainer(context: IActionContext, workspaceFileP
     await addDevContainerToWorkspace(workspaceFile, devContainerFolderName);
     context.telemetry.properties.step = 'devcontainerAddedToWorkspace';
 
-    context.telemetry.properties.result = 'Succeeded';
-
     const message = localize(
       'devContainerEnabled',
       'Devcontainer support has been enabled for this workspace. The .devcontainer folder has been created and tasks.json files have been updated to use devcontainer-compatible paths.'

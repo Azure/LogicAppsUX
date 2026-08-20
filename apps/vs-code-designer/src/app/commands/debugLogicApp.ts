@@ -141,5 +141,4 @@ export async function debugLogicApp(
       )
     );
   }
-  context.telemetry.properties.result = 'Succeeded';
 }

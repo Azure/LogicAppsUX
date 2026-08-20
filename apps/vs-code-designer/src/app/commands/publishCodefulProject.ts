@@ -85,7 +85,6 @@ export async function publishCodefulProject(
   try {
     context.telemetry.properties.lastStep = 'publishCodefulProject';
     await runPublishCommand(nodePath);
-    context.telemetry.properties.result = 'Succeeded';
   } catch (error) {
     context.telemetry.properties.result = 'Failed';
     context.telemetry.properties.errorMessage = (error as Error).message ?? String(error);
