@@ -215,12 +215,6 @@ suite('Logic App Project Outside Workspace - Popup Tests', () => {
     assert.ok(expectedMessage.includes('not a logic app project'), 'Message should indicate folder is not a logic app');
   });
 
-  test('Should produce correct "no workspace open" error message', () => {
-    // This mirrors the localize() call in workspace.ts / getWorkspaceFolderWithoutPrompting()
-    const expectedMessage = 'Please open an existing logic app workspace before trying to add a new logic app project.';
-    assert.ok(expectedMessage.includes('open an existing logic app workspace'), 'Message should ask to open workspace');
-  });
-
   test('Should produce correct "no workspace" action message', () => {
     // This mirrors the localize() call in workspace.ts / getWorkspaceFolder()
     const expectedMessage = 'You must have a workspace open to perform this action.';

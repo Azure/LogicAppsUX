@@ -6,7 +6,7 @@ import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { isLogicAppProject, promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot, getFirstLogicAppProjectRoot } from './verifyIsProject';
+import { isLogicAppProject, promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
@@ -18,6 +18,10 @@ import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
 import { isCustomCodeFunctionsProject } from './customCodeUtils';
 
+/**
+ * Checks if there is a logic app project in the workspace.
+ * @returns {Promise<boolean>} True if there is a logic app project in the workspace.
+ */
 export async function hasLogicAppInWorkspace(): Promise<boolean> {
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     return false;
@@ -240,54 +244,6 @@ export async function getWorkspaceFolder(
   }
 
   return await getLogicAppWorkspaceFolder(context, null, skipPromptOnMultipleFolders);
-}
-
-/**
- * Gets workspace folder of project.
- * @returns {Promise<WorkspaceFolder | string | undefined>} Returns either the new project workspace, the already open workspace or the selected workspace.
- */
-export async function getWorkspaceFolderWithoutPrompting(): Promise<vscode.WorkspaceFolder | undefined> {
-  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-    // there is nothing open so give a warning message
-    vscode.window.showErrorMessage(
-      localize('notInWorkspace', 'Please open an existing logic app workspace before trying to add a new logic app project.')
-    );
-    return undefined;
-  }
-
-  if (vscode.workspace.workspaceFolders.length === 1) {
-    const workspaceFolder = vscode.workspace.workspaceFolders[0];
-    if (vscode.workspace.workspaceFile) {
-      return workspaceFolder;
-    }
-
-    const workspaceFolderPath = workspaceFolder.uri.fsPath;
-    if (await isLogicAppProject(workspaceFolderPath)) {
-      return workspaceFolder;
-    }
-    const folderContents = await fse.readdir(workspaceFolderPath, { withFileTypes: true });
-    const subFolders = folderContents.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(workspaceFolderPath, dirent.name));
-
-    return await logicAppFoundInFolders(subFolders);
-  }
-
-  return await logicAppFoundInFolders(null);
-}
-
-async function logicAppFoundInFolders(subFolders: string[]): Promise<vscode.WorkspaceFolder> {
-  const logicAppProjectRoots: string[] = [];
-  for (const folder of subFolders ?? vscode.workspace.workspaceFolders) {
-    const projectRoot = await getFirstLogicAppProjectRoot(folder);
-    if (projectRoot) {
-      logicAppProjectRoots.push(projectRoot);
-    }
-  }
-
-  if (logicAppProjectRoots.length === 0) {
-    return undefined;
-  }
-
-  return getContainingWorkspaceFolder(logicAppProjectRoots[0]);
 }
 
 async function getLogicAppWorkspaceFolder(

@@ -13,9 +13,9 @@ import * as vscode from 'vscode';
 import {
   getWorkspaceFilePath,
   getWorkspaceFilePathInParent,
-  getWorkspaceFolderWithoutPrompting,
+  hasLogicAppInWorkspace,
 } from '../utils/workspace';
-import { isLogicAppProject, isLogicAppProjectInRoot } from '../utils/verifyIsProject';
+import { isLogicAppProject } from '../utils/verifyIsProject';
 import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -29,8 +29,7 @@ import { isPathEqual, isSubpath } from '../utils/fs';
  * @returns {Promise<boolean>} - A promise that resolves to true if the workspace is correctly set up, false otherwise.
  */
 export async function ensureWorkspace(context: IActionContext): Promise<boolean> {
-  const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
-  if (!(await isLogicAppProjectInRoot(workspaceFolder))) {
+  if (!await hasLogicAppInWorkspace()) {
     return false;
   }
 

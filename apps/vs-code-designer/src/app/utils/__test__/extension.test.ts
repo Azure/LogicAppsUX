@@ -2,16 +2,11 @@ import { extensionContext, logicAppsStandardExtensionId } from '../../../constan
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from '../extension';
-import { getWorkspaceFolderWithoutPrompting } from '../workspace';
-import { isLogicAppProjectInRoot } from '../verifyIsProject';
+import { hasLogicAppInWorkspace } from '../workspace';
 
 vi.mock('../workspace', () => ({
-  getWorkspaceFolderWithoutPrompting: vi.fn(),
   getWorkspaceCustomCodeProjectRoots: vi.fn().mockResolvedValue([]),
-}));
-
-vi.mock('../verifyIsProject', () => ({
-  isLogicAppProjectInRoot: vi.fn(),
+  hasLogicAppInWorkspace: vi.fn().mockResolvedValue(false),
 }));
 
 vi.mock('../customCodeUtils', () => ({
@@ -51,12 +46,11 @@ describe('extension utilities', () => {
   it('updates project context when a Logic Apps project is present', async () => {
     const workspaceFolder = { uri: { fsPath: 'D:\\workspace' } };
     (vscode.workspace as any).workspaceFolders = [workspaceFolder];
-    (getWorkspaceFolderWithoutPrompting as any).mockResolvedValue(workspaceFolder);
-    (isLogicAppProjectInRoot as any).mockResolvedValue(true);
+    (hasLogicAppInWorkspace as any).mockResolvedValue(true);
 
     await updateLogicAppsContext();
 
-    expect(isLogicAppProjectInRoot).toHaveBeenCalledWith(workspaceFolder);
+    expect(hasLogicAppInWorkspace).toHaveBeenCalled();
     expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', 'azureLogicAppsStandard.hasProject', true);
   });
 });

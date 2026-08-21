@@ -84,38 +84,6 @@ async function isValidCodelessWorkflowFolder(workflowJsonPath: string): Promise<
 
 /**
  * Checks root folder and subFolders one level down
- * If any logic app projects are found return true.
- * TODO(aeldridge): Replace usages with hasLogicAppInWorkspace
- */
-export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder | string | undefined): Promise<boolean | undefined> {
-  if (isNullOrUndefined(workspaceFolder)) {
-    return false;
-  }
-  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!(await fse.pathExists(folderPath))) {
-    return undefined;
-  }
-  if (await isLogicAppProject(folderPath)) {
-    return true;
-  }
-  const subpaths: string[] = await fse.readdir(folderPath);
-  const matchingSubpaths: string[] = [];
-  await Promise.all(
-    subpaths.map(async (s) => {
-      if (await isLogicAppProject(path.join(folderPath, s))) {
-        matchingSubpaths.push(s);
-      }
-    })
-  );
-
-  if (matchingSubpaths.length !== 0) {
-    return true;
-  }
-  return false;
-}
-
-/**
- * Checks root folder and subFolders one level down
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
  */
@@ -160,35 +128,6 @@ export async function tryGetLogicAppProjectRoot(
     return path.join(folderPath, subpath);
   }
   
-  return undefined;
-}
-
-/**
- * Checks root folder and subFolders one level down
- * Gets the folder of the first logic app found.
- */
-export async function getFirstLogicAppProjectRoot(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string | undefined> {
-  if (isNullOrUndefined(workspaceFolder)) {
-    return undefined;
-  }
-
-  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!(await fse.pathExists(folderPath))) {
-    return undefined;
-  }
-
-  if (await isLogicAppProject(folderPath)) {
-    return folderPath;
-  }
-
-  const subpaths: string[] = await fse.readdir(folderPath);
-  for (const subpath of subpaths) {
-    const fullPath = path.join(folderPath, subpath);
-    if (await isLogicAppProject(fullPath)) {
-      return fullPath;
-    }
-  }
-
   return undefined;
 }
 
