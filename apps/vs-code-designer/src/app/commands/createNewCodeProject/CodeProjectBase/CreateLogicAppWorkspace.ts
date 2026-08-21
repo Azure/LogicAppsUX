@@ -3,9 +3,11 @@ import {
   assetsFolderName,
   autoRuntimeDependenciesPathSettingKey,
   devContainerFolderName,
+  builtinOperationSdksFolderName,
   funcIgnoreFileName,
   gitignoreFileName,
   hostFileName,
+  jarFolderName,
   libDirectory,
   localSettingsFileName,
   lspDirectory,
@@ -55,8 +57,8 @@ export async function createRulesFiles(context: IFunctionWizardContext): Promise
 }
 
 export async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'JAR'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, libDirectory, 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, builtinOperationSdksFolderName, jarFolderName), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, libDirectory, builtinOperationSdksFolderName, 'net472'), { recursive: true });
 }
 
 export async function createLogicAppAndWorkflow(
@@ -171,14 +173,17 @@ export async function createLocalConfigurationFiles(
     '.git*',
     vscodeFolderName,
     localSettingsFileName,
-    'test',
     '.debug',
-    'workflow-designtime/',
+    'workflow-designtime',
   ];
   const localSettingsJson = generateLocalSettingsJson(logicAppFolderPath, logicAppType);
 
   if (logicAppType !== ProjectType.logicApp) {
     funcignore.push('global.json');
+  }
+
+  if (logicAppType === ProjectType.codeful) {
+    funcignore.push('.nuget', 'obj', 'bin');
   }
 
   const hostJsonPath: string = path.join(logicAppFolderPath, hostFileName);

@@ -319,9 +319,7 @@ function configureGeneratedWorkspaceForAzuriteFailure(): void {
   workspaceJson.settings = {
     ...(workspaceJson.settings ?? {}),
     'azureLogicAppsStandard.autoStartAzurite': true,
-    'azureLogicAppsStandard.showAutoStartAzuriteWarning': false,
     'azureLogicAppsStandard.autoStartDesignTime': true,
-    'azureLogicAppsStandard.showStartDesignTimeMessage': false,
     'azureLogicAppsStandard.showProjectWarning': false,
     'azureLogicAppsStandard.verifyConnectionKeys': false,
     'azureFunctions.suppressProject': true,
@@ -334,9 +332,7 @@ function configureGeneratedWorkspaceForAzuriteFailure(): void {
   writeJson(settingsPath, {
     ...settingsJson,
     'azureLogicAppsStandard.autoStartAzurite': true,
-    'azureLogicAppsStandard.showAutoStartAzuriteWarning': false,
     'azureLogicAppsStandard.autoStartDesignTime': true,
-    'azureLogicAppsStandard.showStartDesignTimeMessage': false,
     'azureLogicAppsStandard.showProjectWarning': false,
     'azureLogicAppsStandard.verifyConnectionKeys': false,
     'azureFunctions.suppressProject': true,

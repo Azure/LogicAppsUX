@@ -417,7 +417,6 @@ function runPostExtractSteps(cache: { projectPath: string; textDocumentPath: str
     if (getContainingWorkspaceFolder(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
       window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
-    context.telemetry.properties.result = 'Succeeded';
     ext.outputChannel.appendLog(localize('finishedImporting', 'Successfully imported project.'));
   });
 }

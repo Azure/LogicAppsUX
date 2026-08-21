@@ -1314,8 +1314,6 @@ async function main(): Promise<void> {
       // Design-time auto-start: ON for tests that need the runtime (designer, run),
       // OFF for tests that only check UI/conversion to save startup time.
       'azureLogicAppsStandard.autoStartDesignTime': autoStartDesignTime,
-      // Suppress the "Start design time?" prompt dialog on project load.
-      'azureLogicAppsStandard.showStartDesignTimeMessage': false,
       // Suppress "wants to sign in" auth dialog — uses silent auth that
       // returns undefined instead of prompting when no cached token exists.
       'azureLogicAppsStandard.silentAuth': true,
@@ -1324,8 +1322,6 @@ async function main(): Promise<void> {
       // the generated task chain has started instead of waiting the default
       // 60 s. Other phases never reach pickProcess so this is harmless.
       'azureLogicAppsStandard.pickProcessTimeout': 15,
-      // Keep dependency validation non-interactive in explicit command tests.
-      'azureLogicAppsStandard.showNodeJsWarning': false,
       // Experimental-bundle opt-ins. Off by default for every phase so the
       // standard CDN flow continues to be tested. The bundleintegrityonly
       // phase or any future phase that wants to test a private bundle can

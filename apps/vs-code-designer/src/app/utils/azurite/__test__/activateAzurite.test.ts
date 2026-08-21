@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
+  autoStartAzuriteSetting,
   azuriteBinariesLocationSetting,
   azuriteExtensionPrefix,
   azuriteLocationSetting,
   defaultAzuritePathValue,
   extensionCommand,
   localEmulatorConnectionString,
-  showAutoStartAzuriteWarning,
 } from '../../../../constants';
 
 // Distinct sentinels so the function's `result === DialogResponses.*` comparisons are meaningful.
@@ -42,6 +42,11 @@ vi.mock('../../vsCodeConfig/settings', () => ({
   removeSharedSetting: vi.fn(),
 }));
 
+vi.mock('../../../state/notifications', () => ({
+  isAutoStartAzuriteNotificationSuppressed: vi.fn(() => false),
+  suppressAutoStartAzuriteNotification: vi.fn(),
+}));
+
 vi.mock('../../workspace', () => ({
   getWorkspaceFolder: vi.fn(),
 }));
@@ -69,6 +74,7 @@ vi.mock('../../delay', () => ({
 import * as vscode from 'vscode';
 import { activateAzurite, azuriteStartupRetryCount, azuriteStartupRetryDelayMs } from '../activateAzurite';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../../vsCodeConfig/settings';
+import { isAutoStartAzuriteNotificationSuppressed, suppressAutoStartAzuriteNotification } from '../../../state/notifications';
 import { getWorkspaceFolder } from '../../workspace';
 import { tryGetLogicAppProjectRoot } from '../../verifyIsProject';
 import { getAzureWebJobsStorage } from '../../appSettings/localSettings';
@@ -105,7 +111,6 @@ const MISSING_EXTENSION_FAILURE = 'Azurite extension is not installed or is unav
 function mockSettings(values: {
   globalAzuriteLocation?: string;
   binariesLocation?: string;
-  showWarning?: boolean;
   autoStart?: boolean;
 }) {
   (getWorkspaceSetting as any).mockImplementation((section: string) => {
@@ -114,8 +119,6 @@ function mockSettings(values: {
         return values.globalAzuriteLocation;
       case azuriteBinariesLocationSetting:
         return values.binariesLocation;
-      case showAutoStartAzuriteWarning:
-        return values.showWarning;
       default:
         return values.autoStart;
     }
@@ -170,18 +173,18 @@ describe('activateAzurite', () => {
   });
 
   it('only disables the warning when the user selects "Don\'t warn again"', async () => {
-    mockSettings({ showWarning: true, autoStart: false });
+    mockSettings({ autoStart: false });
     const showWarningMessage = vi.fn().mockResolvedValue(dialogDontWarnAgain);
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
 
     await activateAzurite(createContext({ showWarningMessage }), PROJECT_PATH);
 
-    expect(updateGlobalSetting).toHaveBeenCalledWith(showAutoStartAzuriteWarning, false);
+    expect(suppressAutoStartAzuriteNotification).toHaveBeenCalled();
     expect(executeOnAzurite).not.toHaveBeenCalled();
   });
 
   it('enables autostart and stores the user-provided azurite directory', async () => {
-    mockSettings({ showWarning: true, autoStart: false, binariesLocation: undefined });
+    mockSettings({ autoStart: false, binariesLocation: undefined });
     // showWarningMessage returns the first passed item (enableMessage) so result === enableMessage.
     const showWarningMessage = vi.fn().mockImplementation((_title, enableMessage) => Promise.resolve(enableMessage));
     const showInputBox = vi.fn().mockResolvedValue('/custom/azurite/dir');
@@ -193,7 +196,7 @@ describe('activateAzurite', () => {
   });
 
   it('enables autostart and falls back to the default path when input is cancelled', async () => {
-    mockSettings({ showWarning: true, autoStart: false, binariesLocation: undefined });
+    mockSettings({ autoStart: false, binariesLocation: undefined });
     const showWarningMessage = vi.fn().mockImplementation((_title, enableMessage) => Promise.resolve(enableMessage));
     const showInputBox = vi.fn().mockResolvedValue(undefined);
     (validateEmulatorIsRunning as any).mockResolvedValue(true);
@@ -204,7 +207,8 @@ describe('activateAzurite', () => {
   });
 
   it('sets the default binaries location when the warning is off and autostart is on', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: undefined });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: undefined });
     (validateEmulatorIsRunning as any).mockResolvedValue(true);
 
     await activateAzurite(createContext(), PROJECT_PATH);
@@ -214,7 +218,8 @@ describe('activateAzurite', () => {
   });
 
   it('writes azurite.location to global settings, strips shared copies, and starts azurite (key path)', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     // Not running initially (triggers start), then ready on the readiness poll so waitForAzuriteReady resolves.
     (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
     const context = createContext();
@@ -229,7 +234,8 @@ describe('activateAzurite', () => {
   });
 
   it('defaults the started azurite location when no ext location is configured', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: undefined });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: undefined });
     // Not running initially (triggers start), then ready on the readiness poll so waitForAzuriteReady resolves.
     (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
 
@@ -241,7 +247,8 @@ describe('activateAzurite', () => {
   });
 
   it('throws when azurite never becomes ready after being started (race-condition guard)', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     // Never ready: first check triggers start, every readiness poll stays false -> waitForAzuriteReady rejects.
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
     const context = createContext();
@@ -267,7 +274,8 @@ describe('activateAzurite', () => {
   });
 
   it('resolves when azurite becomes ready on the final allowed attempt (off-by-one guard)', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     // 1 pre-start check + (azuriteStartupRetryCount - 1) failing polls, then ready on the last
     // allowed poll. A slip from `attempt <= count` to `attempt < count` would never run that poll
     // and would reject instead.
@@ -290,7 +298,8 @@ describe('activateAzurite', () => {
   });
 
   it('resolves when azurite.start rejects but the emulator is actually reachable (concurrent debug session)', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     // The realistic concurrent-session shape: a healthy Azurite is already serving another project,
     // so the port is bound and the third-party extension rejects azurite.start. The start command is
     // NOT authoritative -- the readiness probe is. Failing the debug here would be the regression.
@@ -318,7 +327,8 @@ describe('activateAzurite', () => {
   });
 
   it('still reports the bounded readiness error, not the raw start error, when azurite.start rejects and the emulator never comes up', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     (executeOnAzurite as any).mockRejectedValue(new Error(START_COMMAND_FAILURE));
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
     const context = createContext();
@@ -340,7 +350,8 @@ describe('activateAzurite', () => {
   });
 
   it('reads AzureWebJobsStorage once while rechecking emulator readiness on each poll', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     (validateEmulatorIsRunning as any)
       .mockResolvedValueOnce(false)
       .mockResolvedValueOnce(false)
@@ -370,7 +381,7 @@ describe('activateAzurite', () => {
   });
 
   it('enables autostart without prompting for a directory when an ext location already exists', async () => {
-    mockSettings({ showWarning: true, autoStart: false, binariesLocation: '/ext/azurite/loc' });
+    mockSettings({ autoStart: false, binariesLocation: '/ext/azurite/loc' });
     const showWarningMessage = vi.fn().mockImplementation((_title, enableMessage) => Promise.resolve(enableMessage));
     const showInputBox = vi.fn();
     (validateEmulatorIsRunning as any).mockResolvedValue(true);
@@ -379,11 +390,11 @@ describe('activateAzurite', () => {
 
     // The input box is skipped because a binaries location is already configured.
     expect(showInputBox).not.toHaveBeenCalled();
-    expect(updateGlobalSetting).toHaveBeenCalledWith(showAutoStartAzuriteWarning, false);
+    expect(updateGlobalSetting).toHaveBeenCalledWith(autoStartAzuriteSetting, true);
   });
 
   it('does nothing to warning/autostart settings when the user dismisses the prompt', async () => {
-    mockSettings({ showWarning: true, autoStart: false });
+    mockSettings({ autoStart: false });
     const showWarningMessage = vi.fn().mockResolvedValue(dialogNo);
     (validateEmulatorIsRunning as any).mockResolvedValue(true);
 
@@ -394,7 +405,8 @@ describe('activateAzurite', () => {
   });
 
   it('does not start azurite when it is already running', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     (validateEmulatorIsRunning as any).mockResolvedValue(true);
 
     await activateAzurite(createContext(), PROJECT_PATH);
@@ -408,7 +420,7 @@ describe('activateAzurite', () => {
     // a directory and reaches the start block below. The binaries location was read into a local
     // before that prompt, so re-using it here would write defaultAzuritePathValue to
     // azurite.location and silently discard the directory the user just entered.
-    mockSettings({ showWarning: true, autoStart: false, binariesLocation: undefined });
+    mockSettings({ autoStart: false, binariesLocation: undefined });
     const showWarningMessage = vi.fn().mockImplementation((_title, enableMessage) => Promise.resolve(enableMessage));
     const showInputBox = vi.fn().mockResolvedValue('/custom/azurite/dir');
     // Not running, so the start block is entered; ready on the first poll so the call resolves.
@@ -424,7 +436,7 @@ describe('activateAzurite', () => {
   });
 
   it('starts azurite at the default path when the directory prompt is cancelled', async () => {
-    mockSettings({ showWarning: true, autoStart: false, binariesLocation: undefined });
+    mockSettings({ autoStart: false, binariesLocation: undefined });
     const showWarningMessage = vi.fn().mockImplementation((_title, enableMessage) => Promise.resolve(enableMessage));
     const showInputBox = vi.fn().mockResolvedValue(undefined);
     (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
@@ -437,7 +449,8 @@ describe('activateAzurite', () => {
   });
 
   it('names the terminal extension failure as the cause when the probe also never succeeds', async () => {
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     (executeOnAzurite as any).mockRejectedValue(new AzuriteExtensionTerminalError(MISSING_EXTENSION_FAILURE));
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
     const context = createContext();
@@ -458,7 +471,8 @@ describe('activateAzurite', () => {
     // Docker or `npm -g azurite` with the VS Code extension disabled: getExtension() returns
     // undefined so the start command fails terminally, yet the emulator IS serving. Failing fast on
     // the terminal tag would regress exactly this user, so the probe must still run and be believed.
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     (executeOnAzurite as any).mockRejectedValue(new AzuriteExtensionTerminalError(MISSING_EXTENSION_FAILURE));
     (validateEmulatorIsRunning as any).mockResolvedValueOnce(false).mockResolvedValue(true);
     const context = createContext();
@@ -471,7 +485,8 @@ describe('activateAzurite', () => {
 
   it('leaves the generic message alone when the start rejection is not a terminal extension failure', async () => {
     // Fail-open guard: an unrecognised rejection must not be promoted to a cause.
-    mockSettings({ showWarning: false, autoStart: true, binariesLocation: '/ext/azurite/loc' });
+    vi.mocked(isAutoStartAzuriteNotificationSuppressed).mockReturnValue(true);
+    mockSettings({ autoStart: true, binariesLocation: '/ext/azurite/loc' });
     (executeOnAzurite as any).mockRejectedValue(new Error(START_COMMAND_FAILURE));
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
     const context = createContext();

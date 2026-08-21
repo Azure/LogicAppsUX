@@ -5,7 +5,7 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ensureRuntimeDependenciesDir, getDependencyTimeout } from '../../utils/binaries';
-import { getDependenciesVersion, ensureExtensionBundleHealthy } from '../../utils/bundleFeed';
+import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../utils/bundleFeed';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
@@ -17,7 +17,7 @@ import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
+import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
@@ -50,11 +50,11 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       const performedUpdateCheck = shouldCheckForDependencyUpdates();
       context.telemetry.properties.performedDependencyUpdateCheck = `${performedUpdateCheck}`;
 
-      context.telemetry.properties.lastStep = 'getDependenciesVersion';
+      context.telemetry.properties.lastStep = 'getBundleDependencyFeed';
       progress.report({ increment: 10, message: 'Get dependency version from CDN' });
-      let dependenciesVersions: IBundleDependencyFeed;
+      let dependenciesVersions: IRuntimeDependencyVersions;
       try {
-        dependenciesVersions = await getDependenciesVersion(context);
+        dependenciesVersions = await getBundleDependencyFeed(context);
         context.telemetry.properties.dependenciesVersions = JSON.stringify(dependenciesVersions);
       } catch (error) {
         // Unable to get dependency.json, will default to fallback versions

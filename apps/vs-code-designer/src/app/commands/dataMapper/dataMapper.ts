@@ -138,8 +138,6 @@ export async function loadDataMapFile(context: IActionContext, uri: Uri): Promis
           if (fileUris && fileUris.length > 0) {
             // Copy the schema file they selected to the Schemas folder (can safely continue map definition loading)
             await fs.copyFile(fileUris[0].fsPath, schemaPath);
-            context.telemetry.properties.result = 'Succeeded';
-
             return true;
           }
         }

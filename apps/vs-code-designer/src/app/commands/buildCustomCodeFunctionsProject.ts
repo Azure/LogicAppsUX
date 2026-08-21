@@ -8,6 +8,7 @@ import { ext } from '../../extensionVariables';
 import { isCustomCodeFunctionsProject, tryGetLogicAppCustomCodeFunctionsProjects } from '../utils/customCodeUtils';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isPathEqual } from '../utils/fs';
 
 /**
  * Builds a custom code functions project if exists.
@@ -62,7 +63,7 @@ async function buildCustomCodeProject(functionsProjectPath: string): Promise<voi
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const buildTask = tasks.find((task) => {
     const currTaskPath = (task.scope as vscode.WorkspaceFolder)?.uri.fsPath;
-    return task.name === 'build' && currTaskPath === functionsProjectPath;
+    return task.name === 'build' && !!currTaskPath && isPathEqual(currTaskPath, functionsProjectPath);
   });
 
   if (!buildTask) {
@@ -72,7 +73,8 @@ async function buildCustomCodeProject(functionsProjectPath: string): Promise<voi
   return new Promise<void>((resolve, reject) => {
     const disposable: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e) => {
       const isMatchingTask =
-        (e.execution.task.scope as vscode.WorkspaceFolder)?.uri.fsPath === functionsProjectPath && e.execution.task.name === buildTask.name;
+        isPathEqual((e.execution.task.scope as vscode.WorkspaceFolder)?.uri.fsPath ?? '', functionsProjectPath) &&
+        e.execution.task.name === buildTask.name;
 
       if (isMatchingTask) {
         disposable.dispose();

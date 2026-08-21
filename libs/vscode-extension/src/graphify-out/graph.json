@@ -124,14 +124,14 @@
       "norm_label": "ibundlefeed"
     },
     {
-      "label": "IBundleDependencyFeed",
+      "label": "IRuntimeDependencyVersions",
       "file_type": "code",
       "source_file": "lib/models/bundleFeed.ts",
       "source_location": "L17",
       "_origin": "ast",
-      "id": "models_bundlefeed_ibundledependencyfeed",
+      "id": "models_bundlefeed_IRuntimeDependencyVersions",
       "community": 3,
-      "norm_label": "ibundledependencyfeed"
+      "norm_label": "IRuntimeDependencyVersions"
     },
     {
       "label": "cliFeed.ts",
@@ -1894,7 +1894,7 @@
       "source_location": "L17",
       "weight": 1.0,
       "source": "models_bundlefeed",
-      "target": "models_bundlefeed_ibundledependencyfeed",
+      "target": "models_bundlefeed_IRuntimeDependencyVersions",
       "confidence_score": 1.0
     },
     {

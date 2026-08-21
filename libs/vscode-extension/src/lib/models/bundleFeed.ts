@@ -14,7 +14,7 @@ export interface IBundleFeed {
   };
 }
 
-export interface IBundleDependencyFeed {
+export interface IRuntimeDependencyVersions {
   dotnet?: string;
   funcCoreTools?: string;
   nodejs?: string;

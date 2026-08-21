@@ -95,7 +95,6 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     await wizard.prompt();
     await wizard.execute();
 
-    context.telemetry.properties.result = 'Succeeded';
     ext.outputChannel.appendLog(localize('completeAzureDeploymentScriptsWizard', 'Azure deployment scripts wizard executed successfully.'));
   } catch (error) {
     context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)

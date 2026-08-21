@@ -101,16 +101,16 @@ async function deploy(
   addLocalFuncTelemetry(context);
 
   let deployProjectPathForWorkflowApp: string | undefined;
-  const settingsToExclude: string[] = [
+  const settingsToExclude: (RegExp | string)[] = [
     webhookRedirectHostUri,
     azureWebJobsStorageKey,
     ProjectDirectoryPathKey,
     workflowAuthenticationMethodKey,
     'REMOTEDEBUGGINGVERSION',
-    // Local-debug-only: absolute path to the local Node.js binary used by the inline-code
-    // language worker. Deploying it points the cloud worker at a non-existent local path,
-    // which hangs "Execute JavaScript Code" actions in a Running state indefinitely.
     inlineCodeNodeExecutablePathKey,
+    /^WEBSITE_/,
+    /^FUNCTIONS_RUNTIME/,
+    'ScmType',
   ];
 
   context.telemetry.properties.lastStep = 'getDeployFsPath';
@@ -410,7 +410,7 @@ async function managedApiConnectionsExists(workspaceFolder: WorkspaceFolder): Pr
 async function getProjectPathToDeploy(
   node: SlotTreeItem,
   workspaceFolder: WorkspaceFolder,
-  settingsToExclude: string[],
+  settingsToExclude: (RegExp | string)[],
   originalDeployFsPath: string,
   identityWizardContext: IIdentityWizardContext,
   actionContext: IActionContext

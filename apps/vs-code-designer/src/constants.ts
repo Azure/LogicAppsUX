@@ -32,6 +32,10 @@ export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
 export const artifactsDirectory = 'Artifacts';
 export const libDirectory = 'lib';
+// Folder (under lib/) that holds the client SDK assemblies for Java/.NET built-in operations.
+export const builtinOperationSdksFolderName = 'builtinOperationSdks';
+// Folder (under lib/builtinOperationSdks/) where JDBC driver JAR files are placed.
+export const jarFolderName = 'JAR';
 export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
@@ -259,8 +263,12 @@ export type vscodeCommand = (typeof vscodeCommand)[keyof typeof vscodeCommand];
 export const contextValuePrefix = 'azLogicApps';
 
 // Global state
+export const suppressAutoStartAzuriteNotificationState = 'suppressAutoStartAzuriteNotification';
+export const suppressAutoStartDesignTimeNotificationState = 'suppressAutoStartDesignTimeNotification';
 export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
 export const suppressManagedIdentityAuthNotificationState = 'suppressManagedIdentityAuthNotification';
+export const suppressMultiCoreToolsWarningState = 'suppressMultiCoreToolsWarning';
+export const suppressNodeJsWarningState = 'suppressNodeJsWarning';
 export const suppressParameterizeConnectionsNotificationState = 'suppressParameterizeConnectionsNotification';
 
 // API
@@ -292,15 +300,12 @@ export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const enableProjectConsistencyChecksSetting = 'enableProjectConsistencyChecks';
-export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
-export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const useNodeDesignTimeWorkerSetting = 'useNodeDesignTimeWorker';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
-export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
 export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
@@ -343,6 +348,8 @@ export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 export const azureWebJobsFeatureFlagsKey = 'AzureWebJobsFeatureFlags';
 export const multiLanguageWorkerSetting = 'EnableMultiLanguageWorker';
+// Documentation for the JDBC built-in connector prerequisites (multi-language worker + JDK + driver JARs).
+export const jdbcConnectorDocsUrl = 'https://learn.microsoft.com/azure/logic-apps/connectors/built-in/reference/jdbc/';
 // Azure Functions runtime setting (passed as env var via local.settings.json
 // Values) that pins the absolute path of the `node` binary used by the
 // in-proc8 InlineCodeDependencyGenerator. Keeps inline-JS workflows working
@@ -383,6 +390,8 @@ export const DependencyVersion = {
   nodeJs: '24.15.0',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
+
+export const defaultDotnetMajorVersion = '8';
 
 export const hostFileContent = {
   version: '2.0',

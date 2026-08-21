@@ -9,8 +9,6 @@ import {
   azuriteExtensionPrefix,
   azuriteLocationSetting,
   defaultAzuritePathValue,
-  extensionCommand,
-  showAutoStartAzuriteWarning,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -21,6 +19,7 @@ import { getAzureWebJobsStorage } from '../appSettings/localSettings';
 import { delay } from '../delay';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
+import { isAutoStartAzuriteNotificationSuppressed, suppressAutoStartAzuriteNotification } from '../../state/notifications';
 import { getWorkspaceFolder } from '../workspace';
 import { DialogResponses, parseError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -60,12 +59,10 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
       // written -- reading a stale copy would silently discard the directory the user just typed.
       let azuriteLocationExtSetting: string = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
 
-      const showAutoStartAzuriteWarningSetting = !!getWorkspaceSetting<boolean>(showAutoStartAzuriteWarning);
-
       let autoStartAzurite = !!getWorkspaceSetting<boolean>(autoStartAzuriteSetting);
       context.telemetry.properties.autoStartAzurite = `${autoStartAzurite}`;
 
-      if (showAutoStartAzuriteWarningSetting) {
+      if (!autoStartAzurite && !isAutoStartAzuriteNotificationSuppressed()) {
         const enableMessage: MessageItem = { title: localize('enableAutoStart', 'Enable AutoStart') };
 
         const result = await context.ui.showWarningMessage(
@@ -76,9 +73,8 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
         );
 
         if (result === DialogResponses.dontWarnAgain) {
-          await updateGlobalSetting(showAutoStartAzuriteWarning, false);
+          await suppressAutoStartAzuriteNotification();
         } else if (result === enableMessage) {
-          await updateGlobalSetting(showAutoStartAzuriteWarning, false);
           await updateGlobalSetting(autoStartAzuriteSetting, true);
           autoStartAzurite = true;
           context.telemetry.properties.autoStartAzurite = 'true';

@@ -61,8 +61,30 @@ export const validateFunctionName = (name: string, intlText: any) => {
   return undefined;
 };
 
+/**
+ * Checks whether the workspace path (parentPath + separator + name) is a strict
+ * descendant of the currently open folder. Equal paths are allowed (in-place case).
+ * Uses platform-aware comparison for case sensitivity and normalizes trailing separators.
+ */
+export function isWorkspaceDescendantOfCurrentFolder(
+  parentPath: string,
+  name: string,
+  currentFolderPath: string,
+  separator: string,
+  platform: string | null = null
+): boolean {
+  if (!currentFolderPath || !parentPath || !name) {
+    return false;
+  }
+  const workspacePath = joinPath(parentPath, name, separator);
+  if (pathsEqual(workspacePath, currentFolderPath, platform)) {
+    return false;
+  }
+  return pathStartsWith(workspacePath, currentFolderPath, separator, platform);
+}
+
 // Get validation requirements based on flow type
-export const getValidationRequirements = (flowType: string, logicAppType: string) => {
+export function getValidationRequirements(flowType: string, logicAppType: string) {
   const requirements = {
     needsPackagePath: flowType === 'createWorkspaceFromPackage',
     needsWorkspacePath: flowType !== 'createLogicApp',
@@ -91,4 +113,45 @@ export const getValidationRequirements = (flowType: string, logicAppType: string
   }
 
   return requirements;
-};
+}
+
+/**
+ * Joins a parent path and a name with the given separator,
+ * handling trailing separators on the parent to avoid doubling.
+ */
+export function joinPath(parentPath: string, name: string, separator: string): string {
+  return `${stripTrailingSeparator(parentPath, separator)}${separator}${name}`;
+}
+
+/**
+ * Compares two path strings with platform-aware case sensitivity.
+ * Windows/macOS are case-insensitive; Linux is case-sensitive.
+ */
+export function pathsEqual(a: string, b: string, platform: string | null): boolean {
+  if (platform === 'linux') {
+    return a === b;
+  }
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/**
+ * Checks whether `child` starts with `parent` + separator, using platform-aware comparison.
+ */
+function pathStartsWith(child: string, parent: string, separator: string, platform: string | null): boolean {
+  const prefix = `${stripTrailingSeparator(parent, separator)}${separator}`;
+  if (platform === 'linux') {
+    return child.startsWith(prefix);
+  }
+  return child.toLowerCase().startsWith(prefix.toLowerCase());
+}
+
+/**
+ * Strips trailing separator(s) from a path string.
+ * Preserves root paths like "/" or "C:\".
+ */
+function stripTrailingSeparator(p: string, sep: string): string {
+  while (p.length > 1 && p.endsWith(sep)) {
+    p = p.slice(0, -sep.length);
+  }
+  return p;
+}

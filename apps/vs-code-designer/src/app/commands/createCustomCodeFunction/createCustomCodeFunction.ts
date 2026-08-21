@@ -107,6 +107,5 @@ export async function createCustomCodeFunction(context: IActionContext, folderPa
       context.telemetry.properties.errorMessage = err.message;
       throw err;
     }
-    context.telemetry.properties.result = 'Succeeded';
   }
 }

@@ -5,6 +5,7 @@
 import {
   ProjectDirectoryPathKey,
   appKindSetting,
+  azureWebJobsFeatureFlagsKey,
   connectionsFileName,
   designTimeDirectoryName,
   extensionBundleId,
@@ -29,6 +30,7 @@ import {
   generateDesignTimeLocalSettingsJson,
 } from './fileGenerators';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../utils/appSettings/localSettings';
+import { hasJdbcDriverJars } from '../utils/java/jdbcConnector';
 import { isPathEqual, writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
@@ -139,7 +141,8 @@ export async function ensureLocalSettingsFile(
   const fileExisted = await fse.pathExists(localSettingsPath);
 
   const logicAppType = await detectProjectType(projectPath);
-  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType).Values ?? {};
+  const hasJdbcDrivers = await hasJdbcDriverJars(projectPath);
+  const baselineValues = generateLocalSettingsJson(projectPath, logicAppType, { hasJdbcDriverJars: hasJdbcDrivers }).Values ?? {};
   const referencedSettings = await getReferencedAppSettings(projectPath);
 
   const currentSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
@@ -156,6 +159,16 @@ export async function ensureLocalSettingsFile(
   for (const key of referencedSettings) {
     if (currentValues[key] === undefined && settingsToAdd[key] === undefined) {
       settingsToAdd[key] = '';
+    }
+  }
+
+  // When the baseline requires feature flags and the user already has their own flags, merge the values
+  const baselineFlags = baselineValues[azureWebJobsFeatureFlagsKey];
+  const currentFlags = currentValues[azureWebJobsFeatureFlagsKey];
+  if (baselineFlags && currentFlags) {
+    const merged = mergeFeatureFlags(currentFlags, baselineFlags);
+    if (merged !== currentFlags) {
+      settingsToAdd[azureWebJobsFeatureFlagsKey] = merged;
     }
   }
 
@@ -233,6 +246,33 @@ export function extractAppSettingReferences(content: string): string[] {
   }
 
   return Array.from(keys);
+}
+
+/**
+ * Merges two comma-separated feature flag strings into a single de-duplicated (case-insensitive),
+ * comma-separated string. Whitespace is normalized and empty tokens are dropped.
+ *
+ * @param {string} existing - The current comma-separated feature flags value.
+ * @param {string} incoming - The new comma-separated feature flags to merge in.
+ * @returns {string} The merged feature flags string.
+ */
+export function mergeFeatureFlags(existing: string, incoming: string): string {
+  const seen = new Set<string>();
+  const tokens: string[] = [];
+
+  for (const raw of `${existing},${incoming}`.split(',')) {
+    const token = raw.trim();
+    if (token.length === 0) {
+      continue;
+    }
+    const key = token.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      tokens.push(token);
+    }
+  }
+
+  return tokens.join(',');
 }
 
 /**

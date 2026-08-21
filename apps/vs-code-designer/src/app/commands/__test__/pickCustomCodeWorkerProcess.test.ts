@@ -1,9 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
-import {
-  pickCustomCodeNetHostProcessInternal,
-  pickCustomCodeWorkerChildProcess,
-} from '../pickCustomCodeWorkerProcess';
+import { pickCustomCodeNetHostProcessInternal, pickCustomCodeWorkerChildProcess } from '../pickCustomCodeWorkerProcess';
 import * as validatePreDebug from '../../debug/validatePreDebug';
 import { IRunningFuncTask, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
 import * as pickFuncProcessModule from '../pickFuncProcess';
@@ -21,6 +18,14 @@ vi.mock('vscode', () => ({
   },
 }));
 
+vi.mock('../../utils/delay', () => ({
+  delay: vi.fn((ms: number) => {
+    // Advance fake timers so the polling loop's Date.now() check terminates
+    vi.advanceTimersByTime(ms);
+    return Promise.resolve();
+  }),
+}));
+
 describe('pickCustomCodeNetHostProcessInternal', () => {
   const testLogicAppName = 'LogicApp';
   const testLogicAppPath = path.join('path', 'to', testLogicAppName);
@@ -31,15 +36,17 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
     name: testLogicAppName,
     index: 0,
   };
-  const testActionContext = {
-    telemetry: { properties: {} },
-  } as IActionContext;
+  let testActionContext: IActionContext;
   const testFuncTask: IRunningFuncTask = {
     startTime: Date.now(),
     processId: Number(testFuncPid),
   };
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    testActionContext = {
+      telemetry: { properties: {}, measurements: {} },
+    } as IActionContext;
     (vscode.workspace as any).workspaceFolders = [testLogicAppWorkspaceFolder];
 
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
@@ -49,15 +56,17 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
     runningFuncTaskMap.clear();
   });
 
-  it('should return undefined when no child dotnet process exists on the logic app functions host', async () => {
+  it('should throw when no child dotnet process exists on the logic app functions host after polling', async () => {
     runningFuncTaskMap.set(testLogicAppWorkspaceFolder, testFuncTask);
-    await expect(
-      pickCustomCodeNetHostProcessInternal(testActionContext, testLogicAppWorkspaceFolder, testLogicAppPath)
-    ).resolves.toBeUndefined();
+    await expect(pickCustomCodeNetHostProcessInternal(testActionContext, testLogicAppWorkspaceFolder, testLogicAppPath)).rejects.toThrow(
+      /Failed to find the .NET host child process/
+    );
+    expect(testActionContext.telemetry.properties.result).toBe('Failed');
     expect(testActionContext.telemetry.properties.lastStep).toBe('pickNetHostChildProcess');
   });
 
