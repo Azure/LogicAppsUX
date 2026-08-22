@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import DataMapperExt from './DataMapperExt';
@@ -14,7 +13,7 @@ import { existsSync as fileExistsSync, promises as fs } from 'fs';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
 import { getWorkspaceFolder } from '../../utils/workspace';
-import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
 export async function createDataMap(context: IActionContext): Promise<void> {
   if (isNullOrUndefined(ext.defaultLogicAppPath)) {
@@ -22,10 +21,9 @@ export async function createDataMap(context: IActionContext): Promise<void> {
       context,
       localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
     );
-    const projectPath: string | undefined =
-      !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
+    const projectPath = !isNullOrUndefined(workspaceFolder) && (await tryGetLogicAppProjectRoot(context, workspaceFolder?.uri?.fsPath));
     if (!projectPath) {
-      return;
+      throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
     }
     ext.defaultLogicAppPath = projectPath;
   }
@@ -40,10 +38,9 @@ export async function loadDataMapFile(context: IActionContext, uri: Uri): Promis
       context,
       localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
     );
-    const projectPath: string | undefined =
-      !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
+    const projectPath = !isNullOrUndefined(workspaceFolder) && (await tryGetLogicAppProjectRoot(context, workspaceFolder?.uri?.fsPath));
     if (!projectPath) {
-      return;
+      throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
     }
     ext.defaultLogicAppPath = projectPath;
   }

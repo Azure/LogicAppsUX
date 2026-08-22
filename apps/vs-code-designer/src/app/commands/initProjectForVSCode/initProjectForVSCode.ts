@@ -8,7 +8,7 @@ import { localize } from '../../../localize';
 import { NoWorkspaceError } from '../../utils/errors';
 import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { detectProjectPackageType } from '../../utils/project';
-import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspaceFolder } from '../../utils/workspace';
 import { InitDotnetProjectStep } from './initDotnetProjectStep';
@@ -25,7 +25,7 @@ import { InitProjectStep } from './initProjectStep';
 
 export async function initProjectForVSCode(context: IActionContext, fsPath?: string, language?: ProjectLanguage): Promise<void> {
   let workspaceFolder: WorkspaceFolder | undefined;
-  let workspacePath: string;
+  let workspaceFolderPath: string;
 
   if (fsPath === undefined) {
     if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
@@ -36,15 +36,15 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     if (!workspaceFolder) {
       throw new UserCancelledError();
     }
-    workspacePath = workspaceFolder.uri.fsPath;
+    workspaceFolderPath = workspaceFolder.uri.fsPath;
   } else {
     workspaceFolder = getContainingWorkspaceFolder(fsPath);
-    workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : fsPath;
+    workspaceFolderPath = workspaceFolder ? workspaceFolder.uri.fsPath : fsPath;
   }
 
-  const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspacePath);
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolderPath);
   if (!projectPath) {
-    return;
+    throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
   }
 
   const projectPackageType = await detectProjectPackageType(projectPath);
@@ -57,7 +57,7 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
 
   const wizardContext: IProjectWizardContext = Object.assign(context, {
     projectPath,
-    workspacePath,
+    workspacePath: workspaceFolderPath,
     language,
     version,
     workspaceFolder,

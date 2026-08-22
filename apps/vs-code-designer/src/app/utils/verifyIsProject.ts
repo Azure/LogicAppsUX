@@ -55,8 +55,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   );
   const hasValidCodelessWorkflow = validCodelessWorkflowChecks.some(Boolean);
 
-  // Codeful projects are .NET 8 projects that reference the Logic Apps SDK. Detect them
-  // structurally from the .csproj so the workflow C# file can be named anything.
+  // Codeful projects are .NET 8 projects that reference the Logic Apps SDK.
   const hasCodefulProject = await hasCodefulSdkReference(folderPath);
   if (hasCodefulProject) {
     vscode.commands.executeCommand('setContext', extensionContext.isCodeful, true);
@@ -149,21 +148,6 @@ async function promptForProjectSubpath(context: IActionContext, workspacePath: s
   await updateWorkspaceSetting(projectSubpathSetting, subpath, workspacePath);
 
   return subpath;
-}
-
-/**
- * Checks if the path is already a logic app project. If not, it will prompt to create a new project.
- * @param {IActionContext} fsPath - Command context.
- * @param {string} fsPath - Workflow file path.
- * @returns {Promise<string | undefined>} Returns project path if exists, otherwise returns undefined.
- */
-export async function verifyAndPromptToCreateProject(context: IActionContext, fsPath: string): Promise<string | undefined> {
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, fsPath);
-  if (!projectPath) {
-    const message: string = localize('notLogicApp', 'The selected folder is not a logic app project.');
-    await promptOpenProjectOrWorkspace(context, message);
-  }
-  return projectPath;
 }
 
 /**
