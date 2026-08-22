@@ -16,8 +16,8 @@ vi.mock('../vsCodeConfig/settings', () => ({
   updateGlobalSetting: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock('../verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
+vi.mock('../workspace', () => ({
+  getWorkspaceLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../appSettings/localSettings', () => ({
@@ -29,13 +29,14 @@ vi.mock('fs-extra', () => ({
 }));
 
 vi.mock('../../../localize', () => ({
-  localize: (_key: string, defaultValue: string) => defaultValue,
+  localize: (_key: string, defaultValue: string, ...args: string[]) =>
+    defaultValue.replace(/\{(\d+)\}/g, (_match, index) => args[Number(index)] ?? ''),
 }));
 
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import { updateGlobalSetting } from '../vsCodeConfig/settings';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
+import { getWorkspaceLogicAppRoots } from '../workspace';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { enableLocalManagedIdentityAuth } from '../managedIdentity';
 
@@ -49,6 +50,7 @@ describe('managedIdentity', () => {
     (ext as any).outputChannel = { appendLog };
     mockContext = { telemetry: { properties: {} }, errorHandling: {} } as any;
     (vscode.workspace as any).workspaceFolders = undefined;
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([]);
     (fse.pathExists as Mock).mockResolvedValue(false);
   });
 
@@ -64,7 +66,7 @@ describe('managedIdentity', () => {
 
     it('updates local settings for multiple workspace folders', async () => {
       (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/project1' } }, { uri: { fsPath: '/project2' } }];
-      (tryGetLogicAppProjectRoot as Mock).mockResolvedValueOnce('/project1').mockResolvedValueOnce('/project2');
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/project1', '/project2']);
 
       await enableLocalManagedIdentityAuth(mockContext);
 
@@ -79,7 +81,7 @@ describe('managedIdentity', () => {
 
     it('skips folders that are not Logic App projects', async () => {
       (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/project1' } }, { uri: { fsPath: '/not-logic-app' } }];
-      (tryGetLogicAppProjectRoot as Mock).mockResolvedValueOnce('/project1').mockResolvedValueOnce(undefined);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/project1']);
 
       await enableLocalManagedIdentityAuth(mockContext);
 
@@ -97,7 +99,13 @@ describe('managedIdentity', () => {
 
     it('logs error and continues when updating a project fails', async () => {
       (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/project1' } }, { uri: { fsPath: '/project2' } }];
-      (tryGetLogicAppProjectRoot as Mock).mockRejectedValueOnce(new Error('Permission denied')).mockResolvedValueOnce('/project2');
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/project1', '/project2']);
+      (addOrUpdateLocalAppSettings as Mock).mockImplementation((_: unknown, projectPath: string) => {
+        if (projectPath === '/project1') {
+          return Promise.reject(new Error('Permission denied'));
+        }
+        return Promise.resolve(undefined);
+      });
 
       await enableLocalManagedIdentityAuth(mockContext);
 
@@ -110,7 +118,7 @@ describe('managedIdentity', () => {
 
     it('also updates the design-time directory when it exists', async () => {
       (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/project1' } }];
-      (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/project1');
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/project1']);
       (fse.pathExists as Mock).mockResolvedValue(true);
 
       await enableLocalManagedIdentityAuth(mockContext);
@@ -129,7 +137,7 @@ describe('managedIdentity', () => {
 
     it('skips design-time directory update when it does not exist', async () => {
       (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/project1' } }];
-      (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/project1');
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/project1']);
       (fse.pathExists as Mock).mockResolvedValue(false);
 
       await enableLocalManagedIdentityAuth(mockContext);

@@ -8,7 +8,7 @@ import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteW
 import { isPathEqual, isSubpath } from './fs';
 import { isLogicAppProject, promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { nonNullValue, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import globby from 'globby';
 import * as path from 'path';
@@ -129,6 +129,43 @@ export async function getWorkspaceLogicAppRoots(): Promise<string[]> {
 
   const logicAppRoots = (await Promise.all(logicAppRootTasks)).flat();
   return logicAppRoots;
+}
+
+/**
+ * Gets a Logic App project root from the workspace. If multiple projects exist, prompts the user to select one.
+ * @param {IActionContext} context - The action context.
+ * @param {boolean} suppressPrompt - If true, returns the first project found without prompting.
+ * @returns {Promise<string | undefined>} The selected Logic App project root path, or undefined if none found.
+ */
+export async function getLogicAppProjectRoot(context: IActionContext, suppressPrompt = false): Promise<string | undefined> {
+  const projectPaths = await getWorkspaceLogicAppRoots();
+  if (projectPaths.length === 0) {
+    return undefined;
+  }
+
+  if (projectPaths.length === 1 || suppressPrompt) {
+    return projectPaths[0];
+  }
+
+  const placeHolder = localize('selectProjectFolder', 'Select the folder containing your logic app project');
+  const folderPicks: IAzureQuickPickItem<string>[] = projectPaths.map((projectRoot) => ({
+    label: path.basename(projectRoot),
+    description: projectRoot,
+    data: projectRoot,
+  }));
+
+  const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
+  return selectedItem?.data;
+}
+
+export async function getWorkflowLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
+  const workspaceFolder = nonNullValue(getContainingWorkspaceFolder(workflowFilePath), 'workspaceFolder');
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  if (!projectPath) {
+    throw new Error(localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath));
+  }
+
+  return projectPath;
 }
 
 /**

@@ -7,7 +7,7 @@ import {
   workflowTenantIdKey,
 } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
+import { getLogicAppProjectRoot } from '../../../utils/workspace';
 import { uploadAppSettings } from '../uploadAppSettings';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 
@@ -29,8 +29,8 @@ vi.mock('vscode', () => ({
   Uri: { file: (p: string) => ({ fsPath: p }) },
 }));
 
-vi.mock('../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project'),
+vi.mock('../../../utils/workspace', () => ({
+  getLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project'),
 }));
 
 vi.mock('../../../utils/appSettings/localSettings', () => ({
@@ -58,7 +58,7 @@ describe('uploadAppSettings', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
-    (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/mock/project');
+    (getLogicAppProjectRoot as Mock).mockResolvedValue('/mock/project');
     const vscode = await import('vscode');
     (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/mock/workspace' } }];
 

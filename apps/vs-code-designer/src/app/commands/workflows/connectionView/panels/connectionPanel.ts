@@ -15,7 +15,6 @@ import {
   addConnection,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
-  getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
 } from '../../../../utils/codeless/connection';
@@ -30,6 +29,7 @@ import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
+import { getWorkflowLogicAppProjectRoot } from '../../../../utils/workspace';
 
 export default class ConnectionPanel extends DesignerPanel {
   private readonly workflowFilePath: string;
@@ -71,9 +71,7 @@ export default class ConnectionPanel extends DesignerPanel {
       return;
     }
 
-    // TODO(aeldridge): this.projectPath should not be nullable, set in ctor (here and designer panels)
-    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-
+    this.projectPath = await getWorkflowLogicAppProjectRoot(this.context, this.workflowFilePath);
     if (!this.projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
@@ -272,7 +270,7 @@ export default class ConnectionPanel extends DesignerPanel {
     azureTenantId?: string,
     workflowBaseManagementUri?: string
   ) {
-    const projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    const projectPath = await getWorkflowLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     // Process connection references FIRST so connections.json is written
     const parametersFromDefinition = {} as any;
@@ -323,7 +321,7 @@ export default class ConnectionPanel extends DesignerPanel {
   }
 
   private async getConnectionPanelMetadata(): Promise<ConnectionPanelMetadata> {
-    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    const projectPath: string | undefined = await getWorkflowLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));

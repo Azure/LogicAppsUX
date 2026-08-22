@@ -7,7 +7,7 @@ import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
 import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
-import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/codeless/connection';
+import { getConnectionsJson } from '../../../../utils/codeless/connection';
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../../../utils/startRuntimeApi';
 import {
@@ -25,6 +25,7 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
+import { getWorkflowLogicAppProjectRoot } from '../../../../utils/workspace';
 
 export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
   private codefulWorkflowFileContent = '';
@@ -41,7 +42,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
   }
 
   protected async initializeOverviewData(): Promise<void> {
-    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getWorkflowLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!isNullOrUndefined(this.projectPath) && !(await isRuntimeUp(ext.workflowRuntimePort))) {
       await launchProjectDebugger(this.context, this.projectPath);

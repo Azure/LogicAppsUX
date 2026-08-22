@@ -104,6 +104,7 @@ export async function tryGetLogicAppProjectRoot(
     return folderPath;
   }
 
+  // TODO(aeldridge): May need to remove projectSubpathSetting to support multiple projects per workspace folder
   const configuredSubpath: string | undefined = getWorkspaceSetting(projectSubpathSetting, workspaceFolder);
   const configuredProjectPath = configuredSubpath ? path.join(folderPath, configuredSubpath) : undefined;
   if (configuredProjectPath && await isLogicAppProject(configuredProjectPath)) {

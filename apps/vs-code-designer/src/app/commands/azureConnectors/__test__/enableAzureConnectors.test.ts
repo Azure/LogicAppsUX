@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { workflowSubscriptionIdKey } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { createAzureWizard } from '../azureConnectorWizard';
-import { getLogicAppProjectRoot } from '../../../utils/codeless/connection';
+import { getWorkflowLogicAppProjectRoot } from '../../../utils/workspace';
 import { getWorkspaceFolder } from '../../../utils/workspace';
 import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../azureConnectorDetails';
 import { clearConnectorSetupSkipped } from '../../../state/connectors';
@@ -20,11 +20,8 @@ vi.mock('../../../utils/appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn(),
 }));
 
-vi.mock('../../../utils/codeless/connection', () => ({
-  getLogicAppProjectRoot: vi.fn(),
-}));
-
 vi.mock('../../../utils/workspace', () => ({
+  getWorkflowLogicAppProjectRoot: vi.fn(),
   getWorkspaceFolder: vi.fn(),
 }));
 
@@ -49,7 +46,7 @@ describe('enableAzureConnectors', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
-    (getLogicAppProjectRoot as Mock).mockResolvedValue(projectPath);
+    (getWorkflowLogicAppProjectRoot as Mock).mockResolvedValue(projectPath);
     (getWorkspaceFolder as Mock).mockResolvedValue({ uri: { fsPath: projectPath } });
     (getAzureConnectorDetailsForLocalProject as Mock).mockResolvedValue({});
   });
@@ -64,7 +61,7 @@ describe('enableAzureConnectors', () => {
 
     await enableAzureConnectors(context, { fsPath: workflowFilePath } as vscode.Uri);
 
-    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context, workflowFilePath);
+    expect(getWorkflowLogicAppProjectRoot).toHaveBeenCalledWith(context, workflowFilePath);
     expect(getLocalSettingsJson).toHaveBeenCalledWith(context, projectPath);
     expect(createAzureWizard).toHaveBeenCalledWith(context, projectPath);
     expect(prompt).toHaveBeenCalled();

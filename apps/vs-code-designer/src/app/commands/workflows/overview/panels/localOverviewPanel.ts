@@ -8,7 +8,7 @@ import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
 import { getAzureConnectorDetailsForLocalProject } from '../../../azureConnectors/azureConnectorDetails';
-import { getConnectionsJson, getLogicAppProjectRoot } from '../../../../utils/codeless/connection';
+import { getConnectionsJson } from '../../../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 import { launchProjectDebugger } from '../../../../utils/vsCodeConfig/launch';
 import { isRuntimeUp } from '../../../../utils/startRuntimeApi';
@@ -20,6 +20,7 @@ import { readFileSync } from 'fs';
 import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
 import { sendRequest } from '../../../../utils/requestUtils';
+import { getWorkflowLogicAppProjectRoot } from '../../../../utils/workspace';
 
 export default class LocalOverviewPanel extends OverviewPanel {
   protected readonly workflowFilePath: string;
@@ -42,7 +43,7 @@ export default class LocalOverviewPanel extends OverviewPanel {
   }
 
   protected async initializeOverviewData(): Promise<void> {
-    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getWorkflowLogicAppProjectRoot(this.context, this.workflowFilePath);
 
     if (!isNullOrUndefined(this.projectPath) && !(await isRuntimeUp(ext.workflowRuntimePort))) {
       await launchProjectDebugger(this.context, this.projectPath);

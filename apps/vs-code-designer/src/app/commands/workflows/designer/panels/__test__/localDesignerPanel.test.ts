@@ -60,13 +60,16 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 vi.mock('../../../../../utils/codeless/connection', () => ({
   getConnectionsFromFile: vi.fn().mockResolvedValue('{}'),
   getCustomCodeFromFiles: vi.fn().mockResolvedValue({}),
-  getLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
   getParametersFromFile: vi.fn().mockResolvedValue({}),
   addConnection: vi.fn(),
   getConnectionsAndSettingsToUpdate: vi.fn(),
   saveConnectionReferences: vi.fn(),
   getCustomCodeToUpdate: vi.fn(),
   saveCustomCodeStandard: vi.fn(),
+}));
+
+vi.mock('../../../../../utils/workspace', () => ({
+  getWorkflowLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
 }));
 
 vi.mock('../../../../../utils/codeless/startDesignTimeApi', () => ({
@@ -136,11 +139,11 @@ import {
   getConnectionsFromFile,
   getCustomCodeFromFiles,
   getCustomCodeToUpdate,
-  getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
   saveCustomCodeStandard,
 } from '../../../../../utils/codeless/connection';
+import { getWorkflowLogicAppProjectRoot } from '../../../../../utils/workspace';
 import { getManualWorkflowsInLocalProject } from '../../../../../utils/codeless/common';
 import { getAzureConnectorDetailsForLocalProject } from '../../../../azureConnectors/azureConnectorDetails';
 import { startDesignTimeApi } from '../../../../../utils/codeless/startDesignTimeApi';
@@ -161,7 +164,7 @@ describe('LocalDesignerPanel', () => {
     (ext as any).telemetryReporter = { sendTelemetryEvent: vi.fn() };
     (ext as any).extensionVersion = '1.0.0';
     (ext as any).workflowRuntimePort = 8080;
-    vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+    vi.mocked(getWorkflowLogicAppProjectRoot).mockResolvedValue('/test/project');
     vi.mocked(getConnectionsFromFile).mockResolvedValue('{}');
     vi.mocked(getParametersFromFile).mockResolvedValue({});
     vi.mocked(getCustomCodeFromFiles).mockResolvedValue({});
@@ -206,10 +209,10 @@ describe('LocalDesignerPanel', () => {
 
     it('should fail before creating a panel when design-time startup failed', async () => {
       const { tryGetWebviewPanel } = await import('../../../../../utils/codeless/common');
-      const { getLogicAppProjectRoot } = await import('../../../../../utils/codeless/connection');
+      const { getWorkflowLogicAppProjectRoot } = await import('../../../../../utils/workspace');
 
       vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
-      vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+      vi.mocked(getWorkflowLogicAppProjectRoot).mockResolvedValue('/test/project');
       ext.designTimeInstances.set('/test/project', {
         port: 7071,
         isStarting: false,
@@ -223,10 +226,10 @@ describe('LocalDesignerPanel', () => {
 
     it('should fail when no design-time instance is available for the project', async () => {
       const { tryGetWebviewPanel } = await import('../../../../../utils/codeless/common');
-      const { getLogicAppProjectRoot } = await import('../../../../../utils/codeless/connection');
+      const { getWorkflowLogicAppProjectRoot } = await import('../../../../../utils/workspace');
 
       vi.mocked(tryGetWebviewPanel).mockReturnValue(undefined);
-      vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+      vi.mocked(getWorkflowLogicAppProjectRoot).mockResolvedValue('/test/project');
 
       const instance = new LocalDesignerPanel(mockContext, mockUri);
 
@@ -379,7 +382,7 @@ describe('LocalDesignerPanel', () => {
     });
 
     it('reports and rethrows save failures', async () => {
-      vi.mocked(getLogicAppProjectRoot).mockRejectedValueOnce(new Error('project lookup failed'));
+      vi.mocked(getWorkflowLogicAppProjectRoot).mockRejectedValueOnce(new Error('project lookup failed'));
       const instance = new LocalDesignerPanel(mockContext, mockUri);
 
       await expect((instance as any).saveWorkflow(mockContext, mockUri.fsPath, {}, { definition: {} }, {})).rejects.toThrow(

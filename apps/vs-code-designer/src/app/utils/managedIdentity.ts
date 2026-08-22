@@ -12,12 +12,12 @@ import {
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { updateGlobalSetting } from './vsCodeConfig/settings';
-import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { addOrUpdateLocalAppSettings } from './appSettings/localSettings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { getWorkspaceLogicAppRoots } from './workspace';
 
 /**
  * Enables local managed identity authentication by updating the relevant settings and local project configurations.
@@ -31,7 +31,7 @@ export async function enableLocalManagedIdentityAuth(context: IActionContext): P
 }
 
 /**
- * Iterates over all workspace folders and adds/updates `WORKFLOWS_AUTHENTICATION_METHOD` to
+ * Iterates over all logic app projects and adds/updates `WORKFLOWS_AUTHENTICATION_METHOD` to
  * `managedServiceIdentity` in each Logic Apps project's `local.settings.json` and its
  * `workflow-designtime/local.settings.json` (when the design-time directory exists).
  */
@@ -45,21 +45,25 @@ async function updateLocalSettingsForAllProjects(context: IActionContext): Promi
     [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
   };
 
-  for (const folder of folders) {
+  const projectPaths = await getWorkspaceLogicAppRoots();
+  const updateAppSettingsTasks = projectPaths.map(async (projectPath) => {
     try {
-      const projectPath = await tryGetLogicAppProjectRoot(context, folder);
-      if (projectPath) {
-        await addOrUpdateLocalAppSettings(context, projectPath, miSettings);
+      await addOrUpdateLocalAppSettings(context, projectPath, miSettings);
 
-        const designTimePath = path.join(projectPath, designTimeDirectoryName);
-        if (await fse.pathExists(designTimePath)) {
-          await addOrUpdateLocalAppSettings(context, designTimePath, miSettings, true);
-        }
+      const designTimePath = path.join(projectPath, designTimeDirectoryName);
+      if (await fse.pathExists(designTimePath)) {
+        await addOrUpdateLocalAppSettings(context, designTimePath, miSettings, true);
       }
     } catch (error) {
-      ext.outputChannel.appendLog(
-        `Failed to update ${localSettingsFileName} in ${folder.uri.fsPath}: ${error instanceof Error ? error.message : String(error)}`
-      );
+      ext.outputChannel.appendLog(localize(
+        'failedToUpdateLocalSettings',
+        'Failed to update {0} in {1}: {2}',
+        localSettingsFileName,
+        projectPath,
+        error instanceof Error ? error.message : String(error)
+      ));
     }
-  }
+  });
+
+  await Promise.all(updateAppSettingsTasks);
 }

@@ -205,15 +205,15 @@ async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vsco
 
 /**
  * Gets functions port from the task, local.settings.json or the defaultPort.
- * @param {string} context - Command context.
- * @param {string} fsPath - Workflow file path.
- * @param {string} fsPath - Workflow file path.\
+ * @param {IActionContext} context - Command context.
+ * @param {vscode.Task | undefined} funcTask - Function task.
+ * @param {vscode.WorkspaceFolder} workspaceFolder - The workspace folder containing the Logic App project.
  * @returns {vscode.WorkspaceFolder | undefined} Workflow folder.
  */
 export async function getFuncPortFromTaskOrProject(
   context: IActionContext,
   funcTask: vscode.Task | undefined,
-  projectPathOrTaskScope: string | vscode.WorkspaceFolder | vscode.TaskScope
+  workspaceFolder: vscode.WorkspaceFolder
 ): Promise<string> {
   try {
     // First, check the task itself
@@ -224,14 +224,7 @@ export async function getFuncPortFromTaskOrProject(
       }
     }
 
-    // Second, check local.settings.json
-    let projectPath: string | undefined;
-    if (isString(projectPathOrTaskScope)) {
-      projectPath = projectPathOrTaskScope;
-    } else if (typeof projectPathOrTaskScope === 'object') {
-      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope, true);
-    }
-
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, true);
     if (projectPath) {
       const localSettings = await getLocalSettingsJson(context, projectPath);
       if (localSettings.Host) {
