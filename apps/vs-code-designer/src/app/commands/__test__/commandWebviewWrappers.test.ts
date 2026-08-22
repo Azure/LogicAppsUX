@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
-import { getWorkspaceRoot } from '../../utils/workspace';
 import { getEligibleLogicAppFoldersForCustomCode } from '../../utils/customCodeUtils';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { cloudToLocal } from '../cloudToLocal/cloudToLocal';
@@ -54,10 +53,6 @@ vi.mock('../createWorkflow/createLogicAppWorkflow', () => ({
   createLogicAppWorkflow: vi.fn(),
 }));
 
-vi.mock('../../utils/workspace', () => ({
-  getWorkspaceRoot: vi.fn(),
-}));
-
 vi.mock('../../utils/customCodeUtils', () => ({
   getEligibleLogicAppFoldersForCustomCode: vi.fn(),
 }));
@@ -84,7 +79,6 @@ describe('workspace webview command wrappers', () => {
     vi.clearAllMocks();
     (vscode.workspace as any).workspaceFile = undefined;
     (vscode.workspace.fs.readFile as Mock).mockReset();
-    (getWorkspaceRoot as Mock).mockResolvedValue(workspaceRoot);
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(logicAppRoot);
     (hasCodefulWorkflowSetting as Mock).mockResolvedValue(false);
     (getEligibleLogicAppFoldersForCustomCode as Mock).mockResolvedValue([]);

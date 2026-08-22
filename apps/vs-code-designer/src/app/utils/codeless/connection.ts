@@ -10,7 +10,7 @@ import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSetting
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { getContainingWorkspaceFolder } from '../workspace';
+import { getContainingWorkspaceFolder, getWorkflowLogicAppProjectRoot } from '../workspace';
 import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
@@ -44,12 +44,12 @@ import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
+  const projectRoot: string = await getWorkflowLogicAppProjectRoot(context, workflowFilePath);
   return getConnectionsJson(projectRoot);
 }
 
 export async function getParametersFromFile(context: IActionContext, workflowFilePath: string): Promise<Record<string, Parameter>> {
-  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
+  const projectRoot: string = await getWorkflowLogicAppProjectRoot(context, workflowFilePath);
   return getParametersJson(projectRoot);
 }
 
@@ -58,7 +58,7 @@ async function getCustomCodeAppFiles(
   workflowFilePath: string,
   customCode: CustomCodeFileNameMapping
 ): Promise<Record<string, string>> {
-  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
+  const projectRoot: string = await getWorkflowLogicAppProjectRoot(context, workflowFilePath);
   return getCustomCodeAppFilesToUpdate(projectRoot, customCode);
 }
 
@@ -81,11 +81,11 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
 
 export async function addConnection(
   context: IActionContext,
-  filePath: string,
+  workflowFilePath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>
 ): Promise<void> {
-  const jsonParameters = await getParametersFromFile(context, filePath);
-  const projectPath = await getLogicAppProjectRoot(context, filePath);
+  const jsonParameters = await getParametersFromFile(context, workflowFilePath);
+  const projectPath = await getWorkflowLogicAppProjectRoot(context, workflowFilePath);
 
   await addConnectionDataInJson(context, projectPath ?? '', connectionAndAppSetting, jsonParameters);
 
@@ -93,7 +93,7 @@ export async function addConnection(
   const workflowParameterRecords = getWorkflowParameters(jsonParameters);
 
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
-  await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
+  await saveWorkflowParameterRecords(context, workflowFilePath, workflowParameterRecords);
 
   ext.outputChannel.appendLog(localize('connectionAdded', 'Connection added.'));
 }
@@ -450,7 +450,7 @@ export async function saveCustomCodeStandard(context: IActionContext, workflowFi
     return;
   }
   try {
-    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    const projectPath = await getWorkflowLogicAppProjectRoot(context, workflowFilePath);
     const workflowFolderPath = path.dirname(workflowFilePath);
     const customCodePromises = Object.entries(customCode).map(([fileName, customCodeData]) => {
       const { isModified, isDeleted, fileData } = customCodeData;

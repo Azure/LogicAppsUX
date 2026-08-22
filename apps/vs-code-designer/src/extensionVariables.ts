@@ -38,6 +38,7 @@ export namespace ext {
   export const runtimeInstances: Map<string, FuncInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
+  // TODO(aeldridge): Remove defaultLogicAppPath
   export let defaultLogicAppPath: string;
   export let outputChannel: IAzExtOutputChannel;
   // TODO(aeldridge): Multiple runtime processes are supported with runningFuncTaskMap, but only a single runtime port is tracked.

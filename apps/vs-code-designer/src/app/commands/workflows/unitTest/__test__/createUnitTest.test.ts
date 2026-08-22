@@ -72,7 +72,7 @@ describe('createUnitTest', () => {
       errorHandling: { rethrow: false, suppressDisplay: false },
     } as IActionContext;
 
-    vi.spyOn(workspaceUtils, 'getWorkspacePath').mockResolvedValue(dummyWorkspaceFolder.uri.fsPath);
+    vi.spyOn(workspaceUtils, 'getContainingWorkspaceFolder').mockReturnValue(dummyWorkspaceFolder);
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(dummyWorkspaceFolder);
     vi.spyOn(projectRootUtils, 'tryGetLogicAppProjectRoot').mockResolvedValue(dummyProjectPath);
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockResolvedValue({} as any);

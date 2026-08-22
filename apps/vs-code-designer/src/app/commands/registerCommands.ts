@@ -171,7 +171,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.loadDataMapFile, loadDataMapFile);
 
   // Custom code
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
+  registerCommand(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.addCustomCode, addCustomCode);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);

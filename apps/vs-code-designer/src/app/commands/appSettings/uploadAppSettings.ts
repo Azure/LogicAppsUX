@@ -20,6 +20,7 @@ import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
+import { getLogicAppProjectRoot } from '../../utils/workspace';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
 /**
@@ -36,9 +37,7 @@ export async function uploadAppSettings(
   workspaceFolder?: vscode.WorkspaceFolder,
   exclude?: (RegExp | string)[]
 ): Promise<void> {
-  // TODO(aeldridge): Defaults to the first workspace folder. Should prompt to select logic app across all workspace folders.
-  workspaceFolder = workspaceFolder || vscode.workspace.workspaceFolders?.[0];
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, false /* suppressPrompt */);
+  const projectPath = workspaceFolder ? await tryGetLogicAppProjectRoot(context, workspaceFolder) : await getLogicAppProjectRoot(context);
   if (!projectPath) {
     throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
   }

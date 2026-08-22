@@ -11,12 +11,11 @@ import {
 } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import {
-  getWorkspaceFile,
-  getWorkspaceFileInParentDirectory,
-  getWorkspaceFolderWithoutPrompting,
-  getWorkspaceRoot,
+  getWorkspaceFilePath,
+  getWorkspaceFilePathInParent,
+  hasLogicAppInWorkspace,
 } from '../utils/workspace';
-import { isLogicAppProject, isLogicAppProjectInRoot } from '../utils/verifyIsProject';
+import { isLogicAppProject } from '../utils/verifyIsProject';
 import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -30,8 +29,7 @@ import { isPathEqual, isSubpath } from '../utils/fs';
  * @returns {Promise<boolean>} - A promise that resolves to true if the workspace is correctly set up, false otherwise.
  */
 export async function ensureWorkspace(context: IActionContext): Promise<boolean> {
-  const workspaceFolder = await getWorkspaceFolderWithoutPrompting();
-  if (!(await isLogicAppProjectInRoot(workspaceFolder))) {
+  if (!await hasLogicAppInWorkspace()) {
     return false;
   }
 
@@ -39,10 +37,12 @@ export async function ensureWorkspace(context: IActionContext): Promise<boolean>
 
   const wizardContext = context as Partial<IFunctionWizardContext> & IActionContext;
   context.telemetry.properties.isWorkspace = 'false';
-  wizardContext.workspaceFilePath = (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));
-  // save uri variable for open project folder command
-  wizardContext.workspacePath = await getWorkspaceRoot(wizardContext);
-  if (wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
+  const openedWorkspaceFilePath = await getWorkspaceFilePath();
+  const workspaceFilePath = openedWorkspaceFilePath ?? (await getWorkspaceFilePathInParent());
+  wizardContext.workspaceFilePath = workspaceFilePath;
+  wizardContext.workspacePath = workspaceFilePath ? path.dirname(workspaceFilePath) : undefined;
+
+  if (workspaceFilePath && !openedWorkspaceFilePath) {
     const openWorkspaceMessage = localize(
       'openContainingWorkspace',
       `You must open your workspace to use the full functionality in the Azure Logic Apps (Standard) extension. You can find the workspace with your logic app project at the following location: ${wizardContext.workspaceFilePath}. Do you want to open this workspace now?`
@@ -62,7 +62,7 @@ export async function ensureWorkspace(context: IActionContext): Promise<boolean>
     return false;
   }
 
-  if (!wizardContext.workspaceFilePath && !wizardContext.workspacePath) {
+  if (!workspaceFilePath) {
     const createWorkspaceMessage = localize(
       'createContainingWorkspace',
       'Your logic app projects must exist inside a workspace to use the full functionality in the Azure Logic Apps (Standard) extension. Visual Studio Code will copy your projects to a new workspace. Do you want to create the workspace now?'

@@ -55,8 +55,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   );
   const hasValidCodelessWorkflow = validCodelessWorkflowChecks.some(Boolean);
 
-  // Codeful projects are .NET 8 projects that reference the Logic Apps SDK. Detect them
-  // structurally from the .csproj so the workflow C# file can be named anything.
+  // Codeful projects are .NET 8 projects that reference the Logic Apps SDK.
   const hasCodefulProject = await hasCodefulSdkReference(folderPath);
   if (hasCodefulProject) {
     vscode.commands.executeCommand('setContext', extensionContext.isCodeful, true);
@@ -84,37 +83,6 @@ async function isValidCodelessWorkflowFolder(workflowJsonPath: string): Promise<
 
 /**
  * Checks root folder and subFolders one level down
- * If any logic app projects are found return true.
- */
-export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder | string | undefined): Promise<boolean | undefined> {
-  if (isNullOrUndefined(workspaceFolder)) {
-    return false;
-  }
-  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!(await fse.pathExists(folderPath))) {
-    return undefined;
-  }
-  if (await isLogicAppProject(folderPath)) {
-    return true;
-  }
-  const subpaths: string[] = await fse.readdir(folderPath);
-  const matchingSubpaths: string[] = [];
-  await Promise.all(
-    subpaths.map(async (s) => {
-      if (await isLogicAppProject(path.join(folderPath, s))) {
-        matchingSubpaths.push(s);
-      }
-    })
-  );
-
-  if (matchingSubpaths.length !== 0) {
-    return true;
-  }
-  return false;
-}
-
-/**
- * Checks root folder and subFolders one level down
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
  */
@@ -136,6 +104,7 @@ export async function tryGetLogicAppProjectRoot(
     return folderPath;
   }
 
+  // TODO(aeldridge): May need to remove projectSubpathSetting to support multiple projects per workspace folder
   const configuredSubpath: string | undefined = getWorkspaceSetting(projectSubpathSetting, workspaceFolder);
   const configuredProjectPath = configuredSubpath ? path.join(folderPath, configuredSubpath) : undefined;
   if (configuredProjectPath && await isLogicAppProject(configuredProjectPath)) {
@@ -162,35 +131,6 @@ export async function tryGetLogicAppProjectRoot(
   return undefined;
 }
 
-/**
- * Checks root folder and subFolders one level down
- * Gets the folder of the first logic app found.
- */
-export async function getFirstLogicAppProjectRoot(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string | undefined> {
-  if (isNullOrUndefined(workspaceFolder)) {
-    return undefined;
-  }
-
-  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!(await fse.pathExists(folderPath))) {
-    return undefined;
-  }
-
-  if (await isLogicAppProject(folderPath)) {
-    return folderPath;
-  }
-
-  const subpaths: string[] = await fse.readdir(folderPath);
-  for (const subpath of subpaths) {
-    const fullPath = path.join(folderPath, subpath);
-    if (await isLogicAppProject(fullPath)) {
-      return fullPath;
-    }
-  }
-
-  return undefined;
-}
-
 async function promptForProjectSubpath(context: IActionContext, workspacePath: string, matchingSubpaths: string[]): Promise<string> {
   const message: string = localize(
     'detectedMultipleProject',
@@ -209,21 +149,6 @@ async function promptForProjectSubpath(context: IActionContext, workspacePath: s
   await updateWorkspaceSetting(projectSubpathSetting, subpath, workspacePath);
 
   return subpath;
-}
-
-/**
- * Checks if the path is already a logic app project. If not, it will prompt to create a new project.
- * @param {IActionContext} fsPath - Command context.
- * @param {string} fsPath - Workflow file path.
- * @returns {Promise<string | undefined>} Returns project path if exists, otherwise returns undefined.
- */
-export async function verifyAndPromptToCreateProject(context: IActionContext, fsPath: string): Promise<string | undefined> {
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, fsPath);
-  if (!projectPath) {
-    const message: string = localize('notLogicApp', 'The selected folder is not a logic app project.');
-    await promptOpenProjectOrWorkspace(context, message);
-  }
-  return projectPath;
 }
 
 /**

@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { window, tasks, Uri } from 'vscode';
-import * as workspaceUtils from '../../utils/workspace';
 import * as customCodeUtils from '../../utils/customCodeUtils';
 import { ext } from '../../../extensionVariables';
 import path from 'path';
@@ -59,7 +58,6 @@ describe('tryBuildCustomCodeFunctionsProject', () => {
     } as unknown as IActionContext;
     vi.restoreAllMocks();
 
-    vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(testWorkspaceFolder);
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
     vi.spyOn(window, 'showWarningMessage').mockImplementation(() => undefined);
     vi.spyOn(window, 'showInformationMessage').mockImplementation(() => undefined);
@@ -72,8 +70,6 @@ describe('tryBuildCustomCodeFunctionsProject', () => {
   });
 
   it('should return false when nodePath is null', async () => {
-    vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
-
     const result = await tryBuildCustomCodeFunctionsProject(context, undefined);
 
     expect(result).toBe(false);

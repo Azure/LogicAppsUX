@@ -5,7 +5,6 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceRoot } from '../utils/workspace';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded, hasCodefulWorkflowSetting } from '../utils/codeful';
@@ -19,12 +18,7 @@ export interface PublishCodefulProjectOptions {
    * `publish` task if the modern template hooks `CopyToCodefulFolder` /
    * `ReplaceLanguageNetCore` to `AfterTargets="Build;Publish"`. In that case
    * the Debug `Build` step that `func: host start` chains via `dependsOn` is
-   * sufficient to populate `lib/codeful/`, and running `publish` first only
-   * results in a duplicated clean+build cycle whose output is overwritten by
-   * the subsequent Debug build.
-   *
-   * Used by the debug (F5) pipeline. Deploy paths must leave this `false` so
-   * `bin/Release/<tfm>/publish/` is always produced for `azureFunctions.deploySubpath`.
+   * sufficient to populate `lib/codeful/`
    */
   skipIfBuildPopulatesCodeful?: boolean;
 }
@@ -32,8 +26,8 @@ export interface PublishCodefulProjectOptions {
 /**
  * Builds a custom code functions project.
  * @param {IActionContext} context - The action context.
- * @param {vscode.Uri} node - The URI of the project to build or the corresponding logic app project.
- * @param {PublishCodefulProjectOptions} [options] - Optional behaviors. See {@link PublishCodefulProjectOptions}.
+ * @param {vscode.Uri} node - The URI of the codeful logic app project to build.
+ * @param {PublishCodefulProjectOptions} [options] - Optional behaviors.
  * @returns {Promise<void>} - A promise that resolves when the build process is complete.
  */
 export async function publishCodefulProject(
@@ -41,11 +35,9 @@ export async function publishCodefulProject(
   node: vscode.Uri,
   options?: PublishCodefulProjectOptions
 ): Promise<void> {
-  const workspaceFolderPath = await getWorkspaceRoot(context);
-  const nodePath = node?.fsPath || workspaceFolderPath;
-
+  const nodePath = node?.fsPath;
   if (isNullOrUndefined(nodePath)) {
-    const errorMessage = 'No project path found to publish custom code functions project.';
+    const errorMessage = 'No project path found to publish codeful project.';
     context.telemetry.properties.result = 'Failed';
     context.telemetry.properties.errorMessage = errorMessage;
     ext.outputChannel.appendLog(localize('noProjectPathPublishCodeful', errorMessage));

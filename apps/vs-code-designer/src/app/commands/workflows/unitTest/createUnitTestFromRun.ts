@@ -21,7 +21,7 @@ import {
   selectWorkflowNode,
 } from '../../../utils/unitTest/unitTest';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
+import { ensureDirectoryInWorkspace, getContainingWorkspaceFolder, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -65,7 +65,7 @@ export async function createUnitTestFromRun(context: IActionContext, node: vscod
   let projectPath: string | undefined;
   if (workflowNode) {
     context.telemetry.properties.lastStep = 'getProjectRootFromWorkflowNode';
-    const workspaceFolder = getWorkspacePath(workflowNode.fsPath);
+    const workspaceFolder = getContainingWorkspaceFolder(workflowNode.fsPath);
     projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
   } else {
     context.telemetry.properties.lastStep = 'getProjectRootFromWorkspaceFolder';
