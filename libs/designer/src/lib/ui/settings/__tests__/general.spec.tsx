@@ -61,6 +61,7 @@ vi.mock('../settingsection', () => ({
       <button
         type="button"
         aria-pressed={concurrencyToggle.settingProp.checked ? 'true' : 'false'}
+        disabled={!!concurrencyToggle.settingProp.readOnly}
         onClick={() => concurrencyToggle.settingProp.onToggleInputChange(undefined, !concurrencyToggle.settingProp.checked)}
       >
         {concurrencyToggle.settingProp.ariaLabel}
@@ -70,7 +71,8 @@ vi.mock('../settingsection', () => ({
 }));
 
 const concurrencyDialogTitle = 'Enable concurrency control?';
-const concurrencyDialogMessage = "After you turn on concurrency control, this setting can't be changed.";
+const concurrencyDialogMessage =
+  "After you save, concurrency control can't be turned off. You can change it while the workflow is in draft.";
 const concurrencyToggleName = 'Limit';
 const enableButtonName = 'Enable';
 
@@ -79,6 +81,7 @@ const createProps = (overrides: Partial<GeneralSectionProps> = {}): GeneralSecti
     nodeId: 'node-1',
     readOnly: false,
     expanded: true,
+    lockTriggerConcurrency: false,
     splitOn: { isSupported: false, value: { enabled: false, value: '' } },
     splitOnConfiguration: { correlation: { clientTrackingId: '' } },
     timeout: { isSupported: false, value: '' },
@@ -175,13 +178,57 @@ describe('ui/settings/sections/general', () => {
     expect(props.onConcurrencyToggle).toHaveBeenCalledWith(true);
   });
 
-  it('should disable trigger concurrency immediately without a confirmation dialog', async () => {
+  it('should lock the trigger concurrency toggle once the enabled setting has been saved', async () => {
     const user = userEvent.setup();
     const { props } = renderGeneral({
       concurrency: { isSupported: true, value: { enabled: true, runs: 25, maximumWaitingRuns: 10 } } as any,
+      lockTriggerConcurrency: true,
     });
 
-    await user.click(getConcurrencyToggle());
+    const toggle = getConcurrencyToggle();
+    expect(toggle).toBeDisabled();
+
+    await user.click(toggle);
+
+    expect(screen.queryByRole('alertdialog', { name: concurrencyDialogTitle })).not.toBeInTheDocument();
+    expect(props.onConcurrencyToggle).not.toHaveBeenCalled();
+  });
+
+  it('should keep trigger concurrency reversible while it is enabled only in draft', async () => {
+    const user = userEvent.setup();
+    const { props } = renderGeneral({
+      concurrency: { isSupported: true, value: { enabled: true, runs: 25, maximumWaitingRuns: 10 } } as any,
+      lockTriggerConcurrency: false,
+    });
+
+    const toggle = getConcurrencyToggle();
+    expect(toggle).toBeEnabled();
+
+    await user.click(toggle);
+
+    expect(screen.queryByRole('alertdialog', { name: concurrencyDialogTitle })).not.toBeInTheDocument();
+    expect(props.onConcurrencyToggle).toHaveBeenCalledTimes(1);
+    expect(props.onConcurrencyToggle).toHaveBeenCalledWith(false);
+  });
+
+  it('should keep the trigger concurrency toggle enabled while it is off', () => {
+    renderGeneral();
+
+    expect(getConcurrencyToggle()).toBeEnabled();
+  });
+
+  it('should still allow action concurrency to be disabled', async () => {
+    const user = userEvent.setup();
+    mocks.isTrigger = false;
+    const { props } = renderGeneral({
+      concurrency: { isSupported: true, value: { enabled: true, runs: 25, maximumWaitingRuns: 10 } } as any,
+      lockTriggerConcurrency: true,
+    });
+
+    const toggle = getConcurrencyToggle();
+    expect(toggle).toBeEnabled();
+
+    await user.click(toggle);
 
     expect(screen.queryByRole('alertdialog', { name: concurrencyDialogTitle })).not.toBeInTheDocument();
     expect(props.onConcurrencyToggle).toHaveBeenCalledTimes(1);
