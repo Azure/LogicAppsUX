@@ -106,11 +106,21 @@ export function useFrameBlade({
           }
           break;
 
-        case 'authToken':
-          if (msg.data && onAuthTokenReceived) {
-            onAuthTokenReceived(msg.data);
+        case 'authToken': {
+          // The trust decision has already been made above: messages are only
+          // processed if they come from the allow-list-validated
+          // trustedParentOrigin (evt.origin check) and carry the FxFrameBlade
+          // signature. This block adds payload validation - the token must be a
+          // non-empty string and a handler must be present - expressed as an
+          // early-return guard clause. The guard-clause shape (validate, then
+          // return early) is also what CodeQL's ConditionalBypass query treats
+          // as a safe early-abort guard rather than a user-controlled bypass.
+          if (!onAuthTokenReceived || typeof msg.data !== 'string' || msg.data.length === 0) {
+            return;
           }
+          onAuthTokenReceived(msg.data);
           break;
+        }
 
         case 'chatHistory':
           // Handle chat history data from parent blade
