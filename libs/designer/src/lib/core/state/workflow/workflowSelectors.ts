@@ -32,6 +32,27 @@ export const useNodeReplacedId = (id?: string) =>
 
 export const useReplacedIds = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.idReplacements));
 
+/**
+ * Resolves a node id to the original (persisted) id that keys state.workflow.operations.
+ * idReplacements maps the original id -> current (renamed) id, and operations keep their original
+ * keys after a rename. Resolving back to the original id keeps persisted-definition lookups correct
+ * whether the caller passes the original id or the renamed id.
+ */
+export const getOriginalNodeId = (idReplacements: Record<string, string> = {}, nodeId: string): string => {
+  const originalId = Object.keys(idReplacements).find((id) => getRecordEntry(idReplacements, id) === nodeId);
+  return originalId ?? nodeId;
+};
+
+/**
+ * Reads the persisted operation definition for a node, preferring a direct id match and only falling
+ * back to the original (pre-rename) id. Direct-first is required because initializeGraphState can rekey
+ * state.workflow.operations to the current/renamed id after a same-session save/reinitialize while
+ * idReplacements still maps old -> new; always reverse-mapping would then miss the persisted operation.
+ * The fallback still covers an in-session rename where operations remain keyed by the original id.
+ */
+export const getPersistedNodeOperation = (state: WorkflowState, nodeId: string): LogicAppsV2.OperationDefinition | undefined =>
+  getRecordEntry(state.operations, nodeId) ?? getRecordEntry(state.operations, getOriginalNodeId(state.idReplacements, nodeId));
+
 export const useNodeMetadata = (id?: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)));
 
@@ -324,7 +345,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       let caseId = baseId;
       let caseCount = 1;
       const idList = Object.keys(state.nodesMetadata);
-      // eslint-disable-next-line no-loop-func
+
       while (idList.some((id) => id === caseId)) {
         caseCount++;
         caseId = `${baseId}_${caseCount}`;

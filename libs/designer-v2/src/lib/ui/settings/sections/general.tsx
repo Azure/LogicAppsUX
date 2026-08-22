@@ -7,12 +7,13 @@ import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { OperationManifestService } from '@microsoft/logic-apps-shared';
-import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
+import { Confirm, getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
-import type { FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 
 export interface GeneralSectionProps extends SectionProps {
   maximumWaitingRunsMetadata: MaximumWaitingRunsMetadata;
+  lockTriggerConcurrency?: boolean;
   onConcurrencyToggle: ToggleHandler;
   onConcurrencyRunValueChange: NumberChangeHandler;
   onConcurrencyMaxWaitRunChange: NumberChangeHandler;
@@ -38,6 +39,7 @@ export const General = ({
   conditionExpressions,
   invokerConnection,
   maximumWaitingRunsMetadata,
+  lockTriggerConcurrency,
   onConcurrencyToggle,
   onConcurrencyRunValueChange,
   onConcurrencyMaxWaitRunChange,
@@ -204,6 +206,41 @@ export const General = ({
     id: 'DYbiZw',
     description: 'Fail operation when limits are reached',
   });
+  const enableConcurrencyConfirmationTitle = intl.formatMessage({
+    defaultMessage: 'Enable concurrency control?',
+    id: 'O4af69',
+    description: 'Title for the confirmation dialog before enabling trigger concurrency control',
+  });
+  const enableConcurrencyConfirmationMessage = intl.formatMessage({
+    defaultMessage: `After you publish, concurrency control can't be turned off. You can change it while the workflow is in draft.`,
+    id: 'VoK8c6',
+    description: 'Message for the confirmation dialog before enabling trigger concurrency control',
+  });
+  const enableMessage = intl.formatMessage({
+    defaultMessage: 'Enable',
+    id: 'nI4d0V',
+    description: 'Primary button label for enabling trigger concurrency control',
+  });
+  const [isEnableConcurrencyConfirmationOpen, setIsEnableConcurrencyConfirmationOpen] = useState(false);
+
+  useEffect(() => {
+    setIsEnableConcurrencyConfirmationOpen(false);
+  }, [nodeId]);
+
+  const onConcurrencyToggleInputChange = (_: unknown, checked?: boolean) => {
+    const shouldEnableConcurrency = !!checked;
+    if (isTrigger && shouldEnableConcurrency && !concurrency?.value?.enabled) {
+      setIsEnableConcurrencyConfirmationOpen(true);
+      return;
+    }
+
+    onConcurrencyToggle(shouldEnableConcurrency);
+  };
+
+  // Enabling trigger concurrency control is irreversible, so once it has been published the toggle
+  // becomes read-only. This is driven by the persisted definition (via lockTriggerConcurrency), so
+  // draft enablement remains reversible until the workflow is published and reloaded.
+  const isTriggerConcurrencyLocked = isTrigger && !!lockTriggerConcurrency;
 
   const generalSectionProps: SettingsSectionProps = {
     id: 'general',
@@ -293,9 +330,9 @@ export const General = ({
       {
         settingType: 'SettingToggle',
         settingProp: {
-          readOnly,
+          readOnly: readOnly || isTriggerConcurrencyLocked,
           checked: concurrency?.value?.enabled,
-          onToggleInputChange: (_, checked) => onConcurrencyToggle(!!checked),
+          onToggleInputChange: onConcurrencyToggleInputChange,
           customLabel: getSettingLabel(
             concurrencyTitle,
             concurrencyTooltipText,
@@ -364,5 +401,20 @@ export const General = ({
     validationErrors,
   };
 
-  return <SettingsSection {...generalSectionProps} />;
+  return (
+    <>
+      <SettingsSection {...generalSectionProps} />
+      <Confirm
+        hidden={!isEnableConcurrencyConfirmationOpen}
+        title={enableConcurrencyConfirmationTitle}
+        message={enableConcurrencyConfirmationMessage}
+        confirmText={enableMessage}
+        onConfirm={() => {
+          setIsEnableConcurrencyConfirmationOpen(false);
+          onConcurrencyToggle(true);
+        }}
+        onDismiss={() => setIsEnableConcurrencyConfirmationOpen(false)}
+      />
+    </>
+  );
 };
