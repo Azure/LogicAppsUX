@@ -334,6 +334,89 @@ describe('authHandler', () => {
       expect(onFailed).toHaveBeenCalled();
     });
 
+    it('should allow login popup for a trusted Logic Apps domain on a different origin', () => {
+      const mockPopup = { closed: false, close: vi.fn(), location: { href: '' } };
+      mockWindowOpen.mockReturnValueOnce(mockPopup);
+
+      openLoginPopup({
+        baseUrl: 'https://contoso.logic.azure.com',
+        signInEndpoint: '/.auth/login/aad',
+      });
+
+      expect(mockWindowOpen).toHaveBeenCalledWith(
+        'https://contoso.logic.azure.com/.auth/login/aad',
+        'auth-login',
+        'width=600,height=700,popup=true'
+      );
+    });
+
+    it('should block login popup that redirects to an untrusted origin', () => {
+      const onFailed = vi.fn();
+
+      openLoginPopup({
+        baseUrl: 'https://evil.example.net',
+        signInEndpoint: '/.auth/login/aad',
+        onFailed,
+      });
+
+      expect(mockWindowOpen).not.toHaveBeenCalled();
+      expect(onFailed).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    it('should block a sign-in endpoint that escapes the base origin via userinfo', () => {
+      const onFailed = vi.fn();
+
+      // `${baseUrl}${signInEndpoint}` => https://example.com@evil.example.net/... (origin becomes evil.example.net)
+      openLoginPopup({
+        baseUrl: 'https://example.com',
+        signInEndpoint: '@evil.example.net/.auth/login/aad',
+        onFailed,
+      });
+
+      expect(mockWindowOpen).not.toHaveBeenCalled();
+      expect(onFailed).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    it('should block a login popup URL that embeds userinfo even on a trusted host', () => {
+      const onFailed = vi.fn();
+
+      // Trusted host, but the embedded userinfo is a spoofing vector and must be rejected.
+      openLoginPopup({
+        baseUrl: 'https://user:pass@contoso.logic.azure.com',
+        signInEndpoint: '/.auth/login/aad',
+        onFailed,
+      });
+
+      expect(mockWindowOpen).not.toHaveBeenCalled();
+      expect(onFailed).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    it('should block a non-https login popup URL on a non-localhost host', () => {
+      const onFailed = vi.fn();
+
+      openLoginPopup({
+        baseUrl: 'http://contoso.logic.azure.com',
+        signInEndpoint: '/.auth/login/aad',
+        onFailed,
+      });
+
+      expect(mockWindowOpen).not.toHaveBeenCalled();
+      expect(onFailed).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    it('should block a malformed login popup URL', () => {
+      const onFailed = vi.fn();
+
+      openLoginPopup({
+        baseUrl: 'not-a-valid-url',
+        signInEndpoint: '/.auth/login/aad',
+        onFailed,
+      });
+
+      expect(mockWindowOpen).not.toHaveBeenCalled();
+      expect(onFailed).toHaveBeenCalledWith(expect.any(Error));
+    });
+
     it('should call onSuccess when login succeeds and popup closes', async () => {
       vi.useFakeTimers();
 
