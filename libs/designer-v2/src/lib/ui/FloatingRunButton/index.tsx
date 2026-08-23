@@ -417,7 +417,6 @@ export const FloatingRunButton = ({
             menuButton={{
               icon: runIsLoading && runHasPayload ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
               'aria-label': strings.RUN_PAYLOAD_TOOLTIP,
-              title: strings.RUN_PAYLOAD_TOOLTIP,
               onClick: () => setPopoverOpen(true),
               onFocus: () => setIsPayloadButtonActive(true),
               onBlur: () => setIsPayloadButtonActive(false),
