@@ -14,7 +14,7 @@ export default {
         agentUrl: {
           type: 'string',
           title: 'Agent URL',
-          description: 'URL will be generated after save',
+          description: 'URL will be generated after publish',
           'x-ms-editor': 'copyable',
           'x-ms-serialization': {
             skip: true,
