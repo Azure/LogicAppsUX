@@ -324,6 +324,15 @@ describe('FloatingRunButton', () => {
       expect(buttons.length).toBeGreaterThan(1);
     });
 
+    it('should identify the payload action with a distinct tooltip', () => {
+      (LogicAppsShared.canRunBeInvokedWithPayload as Mock).mockReturnValue(true);
+
+      renderWithProviders(defaultProps);
+
+      const payloadButton = screen.getByRole('button', { name: 'Run with payload' });
+      expect(payloadButton).toHaveAttribute('title', 'Run with payload');
+    });
+
     it('should render split button in draft mode even when canRunBeInvokedWithPayload returns false', () => {
       (LogicAppsShared.canRunBeInvokedWithPayload as Mock).mockReturnValue(false);
 
