@@ -13,7 +13,6 @@ import { useEffect, useState, type FormEvent } from 'react';
 
 export interface GeneralSectionProps extends SectionProps {
   maximumWaitingRunsMetadata: MaximumWaitingRunsMetadata;
-  lockTriggerConcurrency?: boolean;
   onConcurrencyToggle: ToggleHandler;
   onConcurrencyRunValueChange: NumberChangeHandler;
   onConcurrencyMaxWaitRunChange: NumberChangeHandler;
@@ -39,7 +38,6 @@ export const General = ({
   conditionExpressions,
   invokerConnection,
   maximumWaitingRunsMetadata,
-  lockTriggerConcurrency,
   onConcurrencyToggle,
   onConcurrencyRunValueChange,
   onConcurrencyMaxWaitRunChange,
@@ -212,8 +210,8 @@ export const General = ({
     description: 'Title for the confirmation dialog before enabling trigger concurrency control',
   });
   const enableConcurrencyConfirmationMessage = intl.formatMessage({
-    defaultMessage: `After you publish, concurrency control can't be turned off. You can change it while the workflow is in draft.`,
-    id: 'VoK8c6',
+    defaultMessage: `After you turn on concurrency control, this setting can't be changed.`,
+    id: 'oQ916T',
     description: 'Message for the confirmation dialog before enabling trigger concurrency control',
   });
   const enableMessage = intl.formatMessage({
@@ -236,11 +234,6 @@ export const General = ({
 
     onConcurrencyToggle(shouldEnableConcurrency);
   };
-
-  // Enabling trigger concurrency control is irreversible, so once it has been published the toggle
-  // becomes read-only. This is driven by the persisted definition (via lockTriggerConcurrency), so
-  // draft enablement remains reversible until the workflow is published and reloaded.
-  const isTriggerConcurrencyLocked = isTrigger && !!lockTriggerConcurrency;
 
   const generalSectionProps: SettingsSectionProps = {
     id: 'general',
@@ -330,7 +323,7 @@ export const General = ({
       {
         settingType: 'SettingToggle',
         settingProp: {
-          readOnly: readOnly || isTriggerConcurrencyLocked,
+          readOnly,
           checked: concurrency?.value?.enabled,
           onToggleInputChange: onConcurrencyToggleInputChange,
           customLabel: getSettingLabel(

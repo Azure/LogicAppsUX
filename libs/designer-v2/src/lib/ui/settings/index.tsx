@@ -3,7 +3,6 @@ import constants from '../../common/constants';
 import { useOperationInfo } from '../../core';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
-import { isTriggerConcurrencyEnabledInDefinition } from '../../core/actions/bjsworkflow/settings';
 import { useHostOptions, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useRawInputParameters } from '../../core/state/operation/operationSelector';
@@ -12,7 +11,7 @@ import { SettingSectionName } from '../../core/state/setting/settingInterface';
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
-import { getPersistedNodeOperation, useRootTriggerId } from '../../core/state/workflow/workflowSelectors';
+import { useRootTriggerId } from '../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../core/store';
 import { isTriggerNode } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
@@ -248,14 +247,6 @@ function GeneralSettings({
   const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection, count, shouldFailOperation } =
     useSelector((state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {});
 
-  // Trigger concurrency control is irreversible once published: lock the toggle when it is enabled in the
-  // persisted (last-loaded) workflow definition. Draft enablement stays reversible because
-  // state.workflow.operations reflects the published definition, not in-session setting edits. The lookup
-  // prefers the current id and falls back to the original id so a renamed trigger stays resolved both
-  // before and after a same-session publish/reinitialize.
-  const persistedOperationDefinition = useSelector((state: RootState) => getPersistedNodeOperation(state.workflow, nodeId));
-  const lockTriggerConcurrency = isTrigger && isTriggerConcurrencyEnabledInDefinition(persistedOperationDefinition);
-
   const onConcurrencyToggle = (checked: boolean): void => {
     const value = checked ? (concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT) : undefined;
     updateSettings({
@@ -389,7 +380,6 @@ function GeneralSettings({
         count={count}
         timeout={timeout}
         concurrency={concurrency}
-        lockTriggerConcurrency={lockTriggerConcurrency}
         shouldFailOperation={shouldFailOperation}
         invokerConnection={invokerConnection}
         conditionExpressions={conditionExpressions}

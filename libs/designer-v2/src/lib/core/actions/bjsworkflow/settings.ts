@@ -476,29 +476,6 @@ const getConcurrency = (
   return typeof concurrencyRuns === 'number' ? { enabled: true, runs: concurrencyRuns, maximumWaitingRuns } : { enabled: false };
 };
 
-/**
- * Determines whether trigger concurrency control is enabled in the persisted (published) operation definition.
- * This reads the last-loaded workflow definition (not in-session edits), so it is only true once the
- * setting has been published and reloaded. It is used to lock the trigger concurrency toggle while
- * still allowing unpublished (draft) changes to be reversed.
- */
-export const isTriggerConcurrencyEnabledInDefinition = (definition?: LogicAppsV2.OperationDefinition): boolean => {
-  if (!definition) {
-    return false;
-  }
-
-  if (isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, definition.operationOptions)) {
-    return true;
-  }
-
-  const concurrencyRuns = getObjectPropertyValue(getRuntimeConfiguration(definition), [
-    Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY,
-    Constants.SETTINGS.PROPERTY_NAMES.RUNS,
-  ]);
-
-  return typeof concurrencyRuns === 'number';
-};
-
 const isConcurrencySupported = (
   isTrigger: boolean,
   nodeType: string,
