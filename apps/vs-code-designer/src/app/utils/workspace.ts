@@ -6,9 +6,8 @@ import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { isLogicAppProject, promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
+import { isLogicAppProject } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { nonNullValue, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import globby from 'globby';
 import * as path from 'path';
@@ -102,11 +101,35 @@ async function findParentWorkspaceFile(projectRoot: string): Promise<string | un
 }
 
 /**
+ * Gets the logic app project root that contains the given path.
+ * @param {string} childPath - A path to a file or folder within a logic app project.
+ * @returns {Promise<string | undefined>} The logic app project root, or undefined if the path is not within a logic app.
+ */
+export async function getParentLogicAppRoot(childPath: string): Promise<string | undefined> {
+  const workspaceFolder = getParentWorkspaceFolder(childPath);
+  if (!workspaceFolder) {
+    return undefined;
+  }
+
+  const workspaceRoot = workspaceFolder.uri.fsPath;
+  let currentPath = childPath;
+
+  while (isPathEqual(workspaceRoot, currentPath) || isSubpath(workspaceRoot, currentPath)) {
+    if (await isLogicAppProject(currentPath)) {
+      return currentPath;
+    }
+    currentPath = path.dirname(currentPath);
+  }
+
+  return undefined;
+}
+
+/**
  * Gets workspace folder from path of any file in the workspace folder.
  * @param {string} childPath - The path of the file in the workspace folder.
  * @returns {vscode.WorkspaceFolder | undefined} - The workspace folder.
  */
-export function getContainingWorkspaceFolder(childPath: string): vscode.WorkspaceFolder | undefined {
+export function getParentWorkspaceFolder(childPath: string): vscode.WorkspaceFolder | undefined {
   const folders = vscode.workspace.workspaceFolders || [];
   return folders.find((folder: vscode.WorkspaceFolder): boolean => {
     return isPathEqual(folder.uri.fsPath, childPath) || isSubpath(folder.uri.fsPath, childPath);
@@ -156,16 +179,6 @@ export async function getLogicAppProjectRoot(context: IActionContext, suppressPr
 
   const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
   return selectedItem?.data;
-}
-
-export async function getWorkflowLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const workspaceFolder = nonNullValue(getContainingWorkspaceFolder(workflowFilePath), 'workspaceFolder');
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  if (!projectPath) {
-    throw new Error(localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath));
-  }
-
-  return projectPath;
 }
 
 /**
@@ -220,7 +233,9 @@ export async function getWorkspaceCustomCodeProjectRoots(): Promise<string[]> {
  * @param {vscode.WorkspaceFolder | string | undefined} workspaceFolder - The workspace folder to check.
  * @returns {Promise<string[]>} A promise that resolves to an array of custom code project roots.
  */
-async function getWorkspaceFolderCustomCodeProjectRoots(workspaceFolder: vscode.WorkspaceFolder | string | undefined): Promise<string[] | undefined> {
+async function getWorkspaceFolderCustomCodeProjectRoots(
+  workspaceFolder: vscode.WorkspaceFolder | string | undefined
+): Promise<string[] | undefined> {
   if (isNullOrUndefined(workspaceFolder)) {
     return [];
   }
@@ -247,82 +262,6 @@ async function getWorkspaceFolderCustomCodeProjectRoots(workspaceFolder: vscode.
 }
 
 /**
- * Gets workspace folder of project.
- * @param {IActionContext} context - Command context.
- * @param {string} message - The message to display to the user if workspace is not open.
- * @param {string} skipPromptOnMultipleFolders - The boolean to skip prompt to select logic app folder if there are multiple.
- * @returns {Promise<WorkspaceFolder | string | undefined>} Returns either the new project workspace, the already open workspace or the selected workspace.
- */
-export async function getWorkspaceFolder(
-  context: IActionContext,
-  message?: string,
-  skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder | undefined> {
-  const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
-
-  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-    await promptOpenProjectOrWorkspace(context, promptMessage);
-  }
-
-  if (vscode.workspace.workspaceFolders.length === 1) {
-    const workspaceFolder = vscode.workspace.workspaceFolders[0];
-    if (vscode.workspace.workspaceFile) {
-      return workspaceFolder;
-    }
-
-    const workspaceFolderPath = workspaceFolder.uri.fsPath;
-    if (await isLogicAppProject(workspaceFolderPath)) {
-      return workspaceFolder;
-    }
-    const folderContents = await fse.readdir(workspaceFolderPath, { withFileTypes: true });
-    const subFolders = folderContents.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(workspaceFolderPath, dirent.name));
-
-    return await getLogicAppWorkspaceFolder(context, subFolders, skipPromptOnMultipleFolders);
-  }
-
-  return await getLogicAppWorkspaceFolder(context, null, skipPromptOnMultipleFolders);
-}
-
-async function getLogicAppWorkspaceFolder(
-  context: IActionContext,
-  subFolders: string[],
-  skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder> {
-  const logicAppProjectRoots: string[] = [];
-  for (const folder of subFolders ?? vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(context, folder, true);
-    if (projectRoot) {
-      logicAppProjectRoots.push(projectRoot);
-    }
-  }
-  if (logicAppProjectRoots.length === 0) {
-    return undefined;
-  }
-
-  if (logicAppProjectRoots.length === 1 || skipPromptOnMultipleFolders) {
-    return getContainingWorkspaceFolder(logicAppProjectRoots[0]);
-  }
-
-  const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
-  const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppProjectRoots.map((projectRoot) => {
-    const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
-    return {
-      label: path.basename(projectRoot),
-      description: projectRoot,
-      data: workspaceFolder ?? getContainingWorkspaceFolder(projectRoot),
-    };
-  });
-
-  const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
-  const selectedFolder: vscode.WorkspaceFolder = selectedItem?.data;
-  if (!selectedFolder) {
-    throw new UserCancelledError();
-  }
-
-  return selectedFolder;
-}
-
-/**
  * Gets workflow node structure of JSON file if needed.
  * @param {vscode.Uri | undefined} node - Workflow node.
  * @returns {vscode.Uri | undefined} Workflow node.
@@ -336,70 +275,6 @@ export function getWorkflowNode(node: vscode.Uri | RemoteWorkflowTreeItem | unde
   }
 
   return node;
-}
-
-/**
- * Opens a dialog and gets item from workspace.
- * @param {IActionContext} context - Command context.
- * @param {string} placeHolder - Placeholder for input.
- * @param {vscode.OpenDialogOptions} options - Options configuration for the dialog.
- * @param {Function} getSubPath - Function to get subpath inside workspace folder.
- * @returns {Promise<string>} Workspace folder path.
- */
-export async function selectWorkspaceItem(
-  context: IActionContext,
-  placeHolder: string,
-  options: vscode.OpenDialogOptions,
-  getSubPath?: (f: vscode.WorkspaceFolder) => string | undefined | Promise<string | undefined>
-): Promise<string> {
-  let folder: IAzureQuickPickItem<string | undefined> | undefined;
-  if (vscode.workspace.workspaceFolders) {
-    const folderPicks: IAzureQuickPickItem<string | undefined>[] = await Promise.all(
-      vscode.workspace.workspaceFolders.map(async (f: vscode.WorkspaceFolder) => {
-        let subpath: string | undefined;
-        if (getSubPath) {
-          subpath = await getSubPath(f);
-        }
-
-        const fsPath: string = subpath ? path.join(f.uri.fsPath, subpath) : f.uri.fsPath;
-        return { label: path.basename(fsPath), description: fsPath, data: fsPath };
-      })
-    );
-
-    folderPicks.push({ label: localize('browse', '$(file-directory) Browse...'), description: '', data: undefined });
-    folder = await context.ui.showQuickPick(folderPicks, { placeHolder });
-  }
-
-  return folder && folder.data ? folder.data : (await context.ui.showOpenDialog(options))[0].fsPath;
-}
-
-/**
- * Gets workspace folder path from dialog.
- * @param {IActionContext} context - Command context.
- * @param {string} placeHolder - Placeholder for input.
- * @param {Function} getSubPath - Function to get subpath inside workspace folder.
- * @returns {Promise<string>} Workspace folder path.
- */
-export async function selectWorkspaceFolder(
-  context: IActionContext,
-  placeHolder: string,
-  getSubPath?: (f: vscode.WorkspaceFolder) => string | undefined | Promise<string | undefined>
-): Promise<string> {
-  return await selectWorkspaceItem(
-    context,
-    placeHolder,
-    {
-      canSelectFiles: false,
-      canSelectFolders: true,
-      canSelectMany: false,
-      defaultUri:
-        vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
-          ? vscode.workspace.workspaceFolders[0].uri
-          : undefined,
-      openLabel: localize('select', 'Select'),
-    },
-    getSubPath
-  );
 }
 
 /**
@@ -427,41 +302,6 @@ export async function findFiles(base: vscode.WorkspaceFolder | string, pattern: 
 
 function escapeCharacters(nonPattern: string): string {
   return nonPattern.replace(/[$^*+?()[\\]]/g, '\\$&');
-}
-
-/**
- * Opens a dialog and gets file from workspace.
- * @param {IActionContext} context - Command context.
- * @param {string} placeHolder - Placeholder for input.
- * @param {Function} getSubPath - Function to get subpath inside workspace folder.
- * @returns {Promise<string>} Workspace file path.
- */
-export async function selectWorkspaceFile(
-  context: IActionContext,
-  placeHolder: string,
-  getSubPath?: (f: vscode.WorkspaceFolder) => string | undefined | Promise<string | undefined>
-): Promise<string> {
-  let defaultUri: vscode.Uri | undefined;
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0 && getSubPath) {
-    const firstFolder: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
-    const subPath: string | undefined = await getSubPath(firstFolder);
-    if (subPath) {
-      defaultUri = vscode.Uri.file(path.join(firstFolder.uri.fsPath, subPath));
-    }
-  }
-
-  return await selectWorkspaceItem(
-    context,
-    placeHolder,
-    {
-      canSelectFiles: true,
-      canSelectFolders: false,
-      canSelectMany: false,
-      defaultUri: defaultUri,
-      openLabel: localize('select', 'Select'),
-    },
-    getSubPath
-  );
 }
 
 /**

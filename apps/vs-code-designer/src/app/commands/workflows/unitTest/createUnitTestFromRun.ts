@@ -20,8 +20,7 @@ import {
   validateWorkflowPath,
   selectWorkflowNode,
 } from '../../../utils/unitTest/unitTest';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getContainingWorkspaceFolder, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
+import { ensureDirectoryInWorkspace, getLogicAppProjectRoot, getParentLogicAppRoot, getWorkflowNode } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -40,17 +39,25 @@ import { syncCloudSettings } from '../../syncCloudSettings';
  * @param {any} nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns {Promise<void>} Resolves when the unit test creation process completes.
  */
-export async function createUnitTestFromRun(context: IActionContext, node: vscode.Uri | undefined, runId?: string, nodeOutputOperations?: any): Promise<void> {
+export async function createUnitTestFromRun(
+  context: IActionContext,
+  node: vscode.Uri | undefined,
+  runId?: string,
+  nodeOutputOperations?: any
+): Promise<void> {
   context.telemetry.properties.lastStep = 'extractAndValidateRunId';
   const validatedRunId = await extractAndValidateRunId(runId);
 
   context.telemetry.properties.lastStep = 'ensureWorkspace';
-  const isWorkspaceReady = await callWithTelemetryAndErrorHandling('createUnitTestFromRun.ensureWorkspace', async (actionContext: IActionContext) => {
-    actionContext.errorHandling.rethrow = true;
-    actionContext.errorHandling.suppressDisplay = true;
-    return await ensureWorkspace(actionContext);
-  });
-  
+  const isWorkspaceReady = await callWithTelemetryAndErrorHandling(
+    'createUnitTestFromRun.ensureWorkspace',
+    async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      return await ensureWorkspace(actionContext);
+    }
+  );
+
   if (!isWorkspaceReady) {
     ext.outputChannel.appendLog(
       localize('createUnitTestFromRunCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
@@ -59,22 +66,21 @@ export async function createUnitTestFromRun(context: IActionContext, node: vscod
     return;
   }
 
-  // Determine workflow node
   context.telemetry.properties.lastStep = 'getWorkflowNode';
   let workflowNode = getWorkflowNode(node) as vscode.Uri;
-  let projectPath: string | undefined;
-  if (workflowNode) {
-    context.telemetry.properties.lastStep = 'getProjectRootFromWorkflowNode';
-    const workspaceFolder = getContainingWorkspaceFolder(workflowNode.fsPath);
-    projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  } else {
-    context.telemetry.properties.lastStep = 'getProjectRootFromWorkspaceFolder';
-    const workspaceFolder = await getWorkspaceFolder(context);
-    projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    
+
+  context.telemetry.properties.lastStep = 'getLogicAppProjectRoot';
+  const projectPath = workflowNode ? await getParentLogicAppRoot(workflowNode.fsPath) : await getLogicAppProjectRoot(context);
+
+  if (!projectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root folder.'));
+  }
+
+  if (!workflowNode) {
     context.telemetry.properties.lastStep = 'selectWorkflowNode';
     workflowNode = await selectWorkflowNode(context, projectPath);
   }
+  context.telemetry.properties.workflowNodePath = workflowNode.fsPath;
 
   context.telemetry.properties.lastStep = 'validateWorkflowPath';
   validateWorkflowPath(projectPath, workflowNode.fsPath);
@@ -122,13 +128,7 @@ async function generateUnitTestFromRun(
   }
 
   ext.outputChannel.appendLog(
-    localize(
-      'operationalContext',
-      'Creating unit test "{0}" for workflow "{1}", runId "{2}".',
-      unitTestName,
-      workflowName,
-      runId
-    )
+    localize('operationalContext', 'Creating unit test "{0}" for workflow "{1}", runId "{2}".', unitTestName, workflowName, runId)
   );
 
   context.telemetry.properties.lastStep = 'parseUnitTestOutputs';
@@ -146,8 +146,7 @@ async function generateUnitTestFromRun(
   ext.outputChannel.appendLog(localize('initiatingApiCall', 'Fetching unit test details from run...'));
 
   context.telemetry.properties.lastStep = 'postGenerateUnitTest';
-  let response: any;
-  response = await axios.post(
+  const response: any = await axios.post(
     apiUrl,
     { UnitTestName: unitTestName },
     {
@@ -250,7 +249,13 @@ async function generateUnitTestFromRun(
     ext.outputChannel.appendLog(`Updating solution in tests folder: ${paths.testsDirectory}`);
     await updateTestsSln(paths.testsDirectory, csprojFilePath);
   } catch (error) {
-    ext.outputChannel.appendLog(localize('updateTestsSlnError', 'Failed to update solution in tests folder. Error: "{0}".', error instanceof Error ? error.message : String(error)));
+    ext.outputChannel.appendLog(
+      localize(
+        'updateTestsSlnError',
+        'Failed to update solution in tests folder. Error: "{0}".',
+        error instanceof Error ? error.message : String(error)
+      )
+    );
   }
 
   context.telemetry.properties.lastStep = 'syncCloudSettings';

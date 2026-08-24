@@ -47,7 +47,7 @@ vi.mock('../../../../../utils/codeless/connection', () => ({
 }));
 
 vi.mock('../../../../../utils/workspace', () => ({
-  getWorkflowLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
+  getParentLogicAppRoot: vi.fn().mockResolvedValue('/test/project'),
 }));
 
 vi.mock('../../../../../utils/appSettings/localSettings', () => ({
@@ -82,7 +82,7 @@ import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifa
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
 import { getAzureConnectorDetailsForLocalProject } from '../../../../azureConnectors/azureConnectorDetails';
 import { getConnectionsFromFile, getCustomCodeFromFiles, getParametersFromFile } from '../../../../../utils/codeless/connection';
-import { getWorkflowLogicAppProjectRoot } from '../../../../../utils/workspace';
+import { getParentLogicAppRoot } from '../../../../../utils/workspace';
 import { createUnitTestFromRun } from '../../../unitTest/createUnitTestFromRun';
 import { sendRequest } from '../../../../../utils/requestUtils';
 
@@ -97,7 +97,7 @@ describe('LocalMonitoringPanel', () => {
     (ext as any).telemetryReporter = { sendTelemetryEvent: vi.fn() };
     (ext as any).extensionVersion = '1.0.0';
     (ext as any).workflowRuntimePort = 8080;
-    vi.mocked(getWorkflowLogicAppProjectRoot).mockResolvedValue('/test/project');
+    vi.mocked(getParentLogicAppRoot).mockResolvedValue('/test/project');
     vi.mocked(getConnectionsFromFile).mockResolvedValue('{}');
     vi.mocked(getParametersFromFile).mockResolvedValue({});
     vi.mocked(getCustomCodeFromFiles).mockResolvedValue({});

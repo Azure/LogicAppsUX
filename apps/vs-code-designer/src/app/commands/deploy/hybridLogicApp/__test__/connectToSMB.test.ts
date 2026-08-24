@@ -24,12 +24,8 @@ vi.mock('../../../../../extensionVariables', () => ({
   },
 }));
 
-vi.mock('../../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(() => Promise.resolve('project')),
-}));
-
-vi.mock('../../../workflows/switchDebugMode/switchDebugMode', () => ({
-  getWorkspaceFolderPath: vi.fn(() => Promise.resolve('workspace')),
+vi.mock('../../../../utils/workspace', () => ({
+  getLogicAppProjectRoot: vi.fn(() => Promise.resolve('project')),
 }));
 
 vi.mock('../../../../utils/codeless/common', () => ({
@@ -46,7 +42,7 @@ vi.mock('../../../../utils/codeless/common', () => ({
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { executeCommandWithSanityLogging } from '../../../../utils/funcCoreTools/cpUtils';
-import { tryGetLogicAppProjectRoot } from '../../../../utils/verifyIsProject';
+import { getLogicAppProjectRoot } from '../../../../utils/workspace';
 import { ext } from '../../../../../extensionVariables';
 import { connectToSMB } from '../connectToSMB';
 
@@ -136,7 +132,7 @@ describe('connectToSMB', () => {
 
     await expect(connectToSMB({} as any, node as any, 'site/wwwroot', 'Z:')).rejects.toThrow('Error uploading files to SMB: mount denied');
 
-    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(fse.ensureDir).not.toHaveBeenCalled();
   });
 });

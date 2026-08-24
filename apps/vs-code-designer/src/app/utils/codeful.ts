@@ -29,6 +29,7 @@ export async function codefulProjectsExist(): Promise<boolean> {
 
 /**
  * Checks if the codeful agent is enabled for a given folder by examining the local settings file.
+ * TODO(aeldridge): This assumes that codeful logic app is located at workspace folder root, should support nested project structures similar to codeless.
  * @param folderPath - The path to the folder containing the local settings file
  * @returns A promise that resolves to true if the codeful agent is enabled, false otherwise
  */

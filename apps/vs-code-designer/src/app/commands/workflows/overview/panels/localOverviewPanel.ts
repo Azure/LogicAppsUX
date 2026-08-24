@@ -20,7 +20,7 @@ import { readFileSync } from 'fs';
 import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
 import { sendRequest } from '../../../../utils/requestUtils';
-import { getWorkflowLogicAppProjectRoot } from '../../../../utils/workspace';
+import { getParentLogicAppRoot } from '../../../../utils/workspace';
 
 export default class LocalOverviewPanel extends OverviewPanel {
   protected readonly workflowFilePath: string;
@@ -43,7 +43,7 @@ export default class LocalOverviewPanel extends OverviewPanel {
   }
 
   protected async initializeOverviewData(): Promise<void> {
-    this.projectPath = await getWorkflowLogicAppProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getParentLogicAppRoot(this.workflowFilePath);
 
     if (!isNullOrUndefined(this.projectPath) && !(await isRuntimeUp(ext.workflowRuntimePort))) {
       await launchProjectDebugger(this.context, this.projectPath);
@@ -59,9 +59,7 @@ export default class LocalOverviewPanel extends OverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
-      : {};
+    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
 
     this.workflowContent = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this.triggerName = getTriggerName(this.workflowContent.definition);

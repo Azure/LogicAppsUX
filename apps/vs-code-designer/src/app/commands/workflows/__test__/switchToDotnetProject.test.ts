@@ -79,8 +79,8 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getContainingWorkspaceFolder: vi.fn(),
-  getWorkspaceFolder: vi.fn(),
+  getLogicAppProjectRoot: vi.fn(),
+  getParentWorkspaceFolder: vi.fn(),
 }));
 
 vi.mock('../../../utils/funcCoreTools/funcHostTask', () => ({
@@ -93,10 +93,6 @@ vi.mock('../../initProjectForVSCode/initDotnetProjectStep', () => ({
 
 vi.mock('../../dotnet/validateDotNetInstalled', () => ({
   validateDotNetIsInstalled: vi.fn(),
-}));
-
-vi.mock('../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
 }));
 
 vi.mock('../../../../extensionVariables', () => ({
@@ -115,8 +111,7 @@ vi.mock('path', async () => {
 import { ext } from '../../../../extensionVariables';
 import { switchToDotnetProject, switchToDotnetProjectCommand } from '../switchToDotnetProject';
 import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkspaceFolder, getContainingWorkspaceFolder } from '../../../utils/workspace';
+import { getLogicAppProjectRoot, getParentWorkspaceFolder } from '../../../utils/workspace';
 import { getProjFiles, getTemplateKeyFromProjFile, getLocalDotNetVersionFromBinaries } from '../../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../../utils/dotnet/executeDotnetTemplateCommand';
 import { tryParseFuncVersion, tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
@@ -180,7 +175,8 @@ describe('switchToDotnetProject', () => {
     vi.mocked(stopFuncTaskForWorkspace).mockResolvedValue(false);
     vi.mocked(tryGetMajorVersion).mockReturnValue('4');
     vi.mocked(getTemplateKeyFromProjFile).mockResolvedValue('testKey');
-    vi.mocked(getContainingWorkspaceFolder).mockReturnValue(undefined);
+    vi.mocked(getParentWorkspaceFolder).mockReturnValue(undefined);
+    vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/workspace/project');
     (fse.pathExists as unknown as Mock).mockResolvedValue(false);
     (fse.readdir as unknown as Mock).mockResolvedValue([]);
     (fse.stat as unknown as Mock).mockResolvedValue({ isDirectory: () => false });
@@ -204,24 +200,17 @@ describe('switchToDotnetProject', () => {
 
   describe('target resolution', () => {
     it('should resolve target from workspace when target is undefined', async () => {
-      const workspaceFolder = { uri: { fsPath: '/workspace' } };
-      vi.mocked(getWorkspaceFolder).mockResolvedValue(workspaceFolder as any);
-      vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('/workspace/project');
-
       await switchToDotnetProject(mockContext, undefined as unknown as vscode.Uri);
 
-      expect(getWorkspaceFolder).toHaveBeenCalledWith(mockContext);
-      expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(mockContext, workspaceFolder);
+      expect(getLogicAppProjectRoot).toHaveBeenCalledWith(mockContext);
+      expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/workspace/project');
     });
 
     it('should resolve target from workspace when target is empty object', async () => {
-      const workspaceFolder = { uri: { fsPath: '/workspace' } };
-      vi.mocked(getWorkspaceFolder).mockResolvedValue(workspaceFolder as any);
-      vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('/workspace/project');
-
       await switchToDotnetProject(mockContext, {} as vscode.Uri);
 
-      expect(getWorkspaceFolder).toHaveBeenCalled();
+      expect(getLogicAppProjectRoot).toHaveBeenCalledWith(mockContext);
+      expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/workspace/project');
     });
   });
 
@@ -347,7 +336,7 @@ describe('switchToDotnetProject', () => {
     it('should stop an active func host before initializing NuGet VS Code files', async () => {
       const events: string[] = [];
       const workspaceFolder = { uri: { fsPath: mockTarget.fsPath } } as vscode.WorkspaceFolder;
-      vi.mocked(getContainingWorkspaceFolder).mockReturnValue(workspaceFolder);
+      vi.mocked(getParentWorkspaceFolder).mockReturnValue(workspaceFolder);
       vi.mocked(stopFuncTaskForWorkspace).mockImplementation(async () => {
         events.push('stop-func');
         return true;

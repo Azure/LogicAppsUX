@@ -1,18 +1,10 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import {
-  autoRuntimeDependenciesPathSettingKey,
-  connectionsFileName,
-  lspDirectory,
-  onStartLanguageServer,
-  workflowAppApiVersion,
-} from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, connectionsFileName, lspDirectory, workflowAppApiVersion } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceFolderPath } from '../commands/workflows/switchDebugMode/switchDebugMode';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import path from 'path';
 import * as fse from 'fs-extra';
 import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
@@ -22,6 +14,7 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { localize } from '../../localize';
+import { getLogicAppProjectRoot } from '../utils/workspace';
 
 export default class LogicAppsLanguageServer {
   protected lspServerPath: string | undefined;
@@ -35,13 +28,8 @@ export default class LogicAppsLanguageServer {
   }
 
   public async start(): Promise<void> {
-    if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
-      return;
-    }
-
-    const workspaceFolder = await getWorkspaceFolderPath(this.context);
-    this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
-
+    // TODO(aeldridge): Should only allow selecting codeful projects here. Also language server should be automatically started for all codeful projects and not require prompting.
+    this.projectPath = await getLogicAppProjectRoot(this.context);
     if (!this.projectPath) {
       return;
     }
@@ -270,7 +258,7 @@ export default class LogicAppsLanguageServer {
 }
 
 export async function startLanguageServer(): Promise<void> {
-  await callWithTelemetryAndErrorHandling(onStartLanguageServer, async (context: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('LogicAppsLanguageServer.startLanguageServer', async (context: IActionContext) => {
     const languageServer = new LogicAppsLanguageServer(context);
     await languageServer.start();
   });

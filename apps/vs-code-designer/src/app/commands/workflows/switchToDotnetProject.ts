@@ -36,7 +36,7 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getContainingWorkspaceFolder, getWorkspaceFolder } from '../../utils/workspace';
+import { getParentWorkspaceFolder, getLogicAppProjectRoot } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { stopFuncTaskForWorkspace } from '../../utils/funcCoreTools/funcHostTask';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
@@ -47,7 +47,6 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
 
 export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
@@ -56,8 +55,7 @@ export async function switchToDotnetProjectCommand(context: IActionContext, node
 
 export async function switchToDotnetProject(context: IActionContext, node?: vscode.Uri, localDotNetMajorVersion = '10', isCodeful = false) {
   if (node === undefined || Object.keys(node).length === 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    const projectPath = await getLogicAppProjectRoot(context);
     if (!projectPath) {
       throw new Error(localize('logicAppProjectNotFound', 'Logic App project could not be found.'));
     }
@@ -138,7 +136,7 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
   const useBinaries = await useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
-  const workspaceFolder: vscode.WorkspaceFolder | undefined = getContainingWorkspaceFolder(node.fsPath);
+  const workspaceFolder: vscode.WorkspaceFolder | undefined = getParentWorkspaceFolder(node.fsPath);
 
   if (workspaceFolder) {
     await stopFuncTaskForWorkspace(workspaceFolder);

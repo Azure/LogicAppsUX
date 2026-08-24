@@ -14,7 +14,7 @@ import {
 const mocks = vi.hoisted(() => ({
   addNewFileInCSharpProject: vi.fn(),
   createJsonFileIfDoesNotExist: vi.fn(),
-  getWorkflowLogicAppProjectRoot: vi.fn(),
+  getParentLogicAppRoot: vi.fn(),
   isCSharpProject: vi.fn(),
   parseError: vi.fn(),
   pathExists: vi.fn(),
@@ -51,7 +51,7 @@ vi.mock('../common', () => ({
 }));
 
 vi.mock('../../workspace', () => ({
-  getWorkflowLogicAppProjectRoot: mocks.getWorkflowLogicAppProjectRoot,
+  getParentLogicAppRoot: mocks.getParentLogicAppRoot,
 }));
 
 vi.mock('../updateBuildFile', () => ({
@@ -68,7 +68,7 @@ describe('codeless parameter utilities', () => {
     vi.clearAllMocks();
     mocks.addNewFileInCSharpProject.mockResolvedValue(undefined);
     mocks.createJsonFileIfDoesNotExist.mockResolvedValue(undefined);
-    mocks.getWorkflowLogicAppProjectRoot.mockResolvedValue(projectPath);
+    mocks.getParentLogicAppRoot.mockResolvedValue(projectPath);
     mocks.isCSharpProject.mockResolvedValue(false);
     mocks.parseError.mockReturnValue({ message: 'parse failed' });
     mocks.pathExists.mockResolvedValue(false);
@@ -119,7 +119,7 @@ describe('codeless parameter utilities', () => {
 
       await saveWorkflowParameter(context, workflowFilePath, parameters);
 
-      expect(mocks.getWorkflowLogicAppProjectRoot).toHaveBeenCalledWith(context, workflowFilePath);
+      expect(mocks.getParentLogicAppRoot).toHaveBeenCalledWith(workflowFilePath);
       expect(mocks.writeFormattedJson).toHaveBeenCalledWith(parametersFilePath, parameters);
       expect(mocks.isCSharpProject).toHaveBeenCalledWith(projectPath);
       expect(mocks.addNewFileInCSharpProject).toHaveBeenCalledWith(context, 'parameters.json', projectPath);

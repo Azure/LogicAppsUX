@@ -5,7 +5,7 @@ const mockaddConnection = vi.fn();
 const mockGetConnectionsAndSettingsToUpdate = vi.fn();
 const mockSaveConnectionReferences = vi.fn();
 const mockGetConnectionsFromFile = vi.fn();
-const mockGetWorkflowLogicAppProjectRoot = vi.fn();
+const mockgetParentLogicAppRoot = vi.fn();
 const mockGetParametersFromFile = vi.fn();
 const mockSaveWorkflowParameter = vi.fn();
 
@@ -23,7 +23,7 @@ vi.mock('../../../../../utils/codeless/connection', () => ({
 }));
 
 vi.mock('../../../../../utils/workspace', () => ({
-  getWorkflowLogicAppProjectRoot: mockGetWorkflowLogicAppProjectRoot,
+  getParentLogicAppRoot: mockgetParentLogicAppRoot,
 }));
 
 vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
@@ -214,7 +214,7 @@ describe('ConnectionView – insert_connection handles local and managed connect
 describe('ConnectionPanel – getConnectionPanelMetadata reads localSettings after azureConnectorDetails', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetWorkflowLogicAppProjectRoot.mockResolvedValue('/test/project');
+    mockgetParentLogicAppRoot.mockResolvedValue('/test/project');
     mockGetConnectionsFromFile.mockResolvedValue('{}');
     mockGetParametersFromFile.mockResolvedValue({});
   });

@@ -1,5 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
-import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from '../verifyIsProject';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import type { WorkspaceFolder } from 'vscode';
 import * as workspaceUtils from '../workspace';
@@ -9,197 +8,125 @@ import { getWorkspaceFolderLogicApps } from '../workspace';
 import { hostFileName, workflowFileName } from '../../../constants';
 import * as verifyIsProject from '../verifyIsProject';
 
-vi.mock('../verifyIsProject', async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    promptOpenProjectOrWorkspace: vi.fn(),
-    tryGetLogicAppProjectRoot: vi.fn(),
-  };
-});
-
-describe('getWorkspaceFolder', () => {
-  const originalWorkspace = { ...vscode.workspace };
-
+describe('getLogicAppProjectRoot', () => {
   const mockContext: any = {
     telemetry: { properties: {}, measurements: {} },
     errorHandling: { issueProperties: {} },
     ui: {
       showQuickPick: vi.fn(),
-      showOpenDialog: vi.fn(),
-      onDidFinishPrompt: vi.fn(),
-      showInputBox: vi.fn(),
-      showWarningMessage: vi.fn(),
     },
   };
 
-  const mockWorkspaceFolder = (fsPath: string): vscode.WorkspaceFolder => ({ uri: { fsPath } }) as vscode.WorkspaceFolder;
+  const workspacePath = path.join('test', 'workspace');
+  const workspaceFolder = {
+    uri: { fsPath: workspacePath },
+    name: 'workspace',
+    index: 0,
+  } as WorkspaceFolder;
 
   beforeEach(() => {
-    // Reset workspace state and mocks before each test
-    vi.restoreAllMocks();
-    (vscode.workspace as any).workspaceFolders = undefined;
-    (vscode.workspace as any).workspaceFile = undefined;
+    vi.clearAllMocks();
+    (vscode.workspace as any).workspaceFolders = [workspaceFolder];
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue([]);
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockResolvedValue(false);
   });
 
   afterEach(() => {
-    // Restore original workspace
-    Object.assign(vscode, { workspace: originalWorkspace });
-  });
-
-  it('should prompt to open project if no workspace folders are open', async () => {
-    const workspaceFolder = mockWorkspaceFolder(path.join('path', 'one'));
+    vi.restoreAllMocks();
     (vscode.workspace as any).workspaceFolders = [];
-
-    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {
-      (vscode.workspace as any).workspaceFolders = [workspaceFolder];
-    });
-
-    (fse.readdir as unknown as Mock).mockReturnValue([
-      { name: 'dir1', isDirectory: () => true },
-      { name: 'dir2', isDirectory: () => true },
-    ]);
-
-    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
-
-    await workspaceUtils.getWorkspaceFolder(mockContext);
-
-    expect(promptOpenProjectOrWorkspaceSpy).toHaveBeenCalled();
   });
 
-  it('should prompt to open project if workspace folders are undefined', async () => {
-    const workspaceFolder = mockWorkspaceFolder(path.join('path', 'one'));
-    (vscode.workspace as any).workspaceFolders = undefined;
+  it('returns undefined when no Logic App projects exist', async () => {
+    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext)).resolves.toBeUndefined();
 
-    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {
-      (vscode.workspace as any).workspaceFolders = [workspaceFolder];
-    });
-
-    (fse.readdir as unknown as Mock).mockReturnValue([
-      { name: 'dir1', isDirectory: () => true },
-      { name: 'dir2', isDirectory: () => true },
-    ]);
-
-    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
-
-    await workspaceUtils.getWorkspaceFolder(mockContext);
-
-    expect(promptOpenProjectOrWorkspaceSpy).toHaveBeenCalled();
+    expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
   });
 
-  it('should return the only workspace folder if there is only one (nested project folder)', async () => {
-    const workspaceFolder = mockWorkspaceFolder(path.join('path', 'one'));
-    const childLogicAppFolder = path.join(workspaceFolder.uri.fsPath, 'LogicApp1');
+  it('returns the only Logic App project without prompting', async () => {
+    const projectPath = path.join(workspacePath, 'LogicApp1');
+    vi.mocked(fse.readdir).mockResolvedValue(['LogicApp1']);
+    vi.mocked(verifyIsProject.isLogicAppProject).mockImplementation(async (candidatePath) => candidatePath === projectPath);
 
-    (vscode.workspace as any).workspaceFolders = [workspaceFolder];
-    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {});
-    const tryGetLogicAppProjectRootSpy = vi.fn(() => childLogicAppFolder);
+    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext)).resolves.toBe(projectPath);
 
-    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
-    (fse.readdir as unknown as Mock).mockReturnValue([{ name: 'LogicApp1', isDirectory: () => true }]);
-    (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
-
-    const result = await workspaceUtils.getWorkspaceFolder(mockContext);
-
-    expect(promptOpenProjectOrWorkspaceSpy).not.toHaveBeenCalled();
-    expect(result).toEqual(workspaceFolder);
+    expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
   });
 
-  it('should return the only workspace folder if there is only one after prompting (nested project folder)', async () => {
-    const workspaceFolder = mockWorkspaceFolder(path.join('path', 'one'));
-    const childLogicAppFolder = path.join(workspaceFolder.uri.fsPath, 'LogicApp1');
+  it('prompts for multiple Logic App projects and returns the selection', async () => {
+    const projectPath1 = path.join(workspacePath, 'LogicApp1');
+    const projectPath2 = path.join(workspacePath, 'LogicApp2');
+    vi.mocked(fse.readdir).mockResolvedValue(['LogicApp1', 'LogicApp2']);
+    vi.mocked(verifyIsProject.isLogicAppProject).mockImplementation(
+      async (candidatePath) => candidatePath === projectPath1 || candidatePath === projectPath2
+    );
+    mockContext.ui.showQuickPick.mockResolvedValue({ data: projectPath2 });
 
-    (vscode.workspace as any).workspaceFolders = undefined;
-    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {
-      (vscode.workspace as any).workspaceFolders = [workspaceFolder];
-    });
-    const tryGetLogicAppProjectRootSpy = vi.fn(() => childLogicAppFolder);
+    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext)).resolves.toBe(projectPath2);
 
-    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
-    (fse.readdir as unknown as Mock).mockResolvedValue([{ name: 'LogicApp1', isDirectory: () => true }]);
-    (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
-
-    const result = await workspaceUtils.getWorkspaceFolder(mockContext);
-
-    expect(promptOpenProjectOrWorkspaceSpy).toHaveBeenCalled();
-    expect(result).toEqual(workspaceFolder);
+    expect(mockContext.ui.showQuickPick).toHaveBeenCalledWith(
+      [
+        { label: 'LogicApp1', description: projectPath1, data: projectPath1 },
+        { label: 'LogicApp2', description: projectPath2, data: projectPath2 },
+      ],
+      { placeHolder: 'Select the folder containing your logic app project' }
+    );
   });
 
-  it('should return undefined if no logic app project is found among multiple folders', async () => {
-    const workspaceFolderNonlogic1 = mockWorkspaceFolder(path.join('path', 'one'));
-    const workspaceFolderNonlogic2 = mockWorkspaceFolder(path.join('path', 'two'));
+  it('returns the first project without prompting when suppressPrompt is true', async () => {
+    const projectPath1 = path.join(workspacePath, 'LogicApp1');
+    const projectPath2 = path.join(workspacePath, 'LogicApp2');
+    vi.mocked(fse.readdir).mockResolvedValue(['LogicApp1', 'LogicApp2']);
+    vi.mocked(verifyIsProject.isLogicAppProject).mockImplementation(
+      async (candidatePath) => candidatePath === projectPath1 || candidatePath === projectPath2
+    );
 
-    (vscode.workspace as any).workspaceFolders = [workspaceFolderNonlogic1, workspaceFolderNonlogic2];
-    const tryGetLogicAppProjectRootSpy = vi.fn(() => undefined);
-    (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
+    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext, true)).resolves.toBe(projectPath1);
 
-    const result = await workspaceUtils.getWorkspaceFolder(mockContext);
+    expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
+  });
+});
 
-    expect(tryGetLogicAppProjectRootSpy).toHaveBeenCalledTimes(2);
-    expect(result).toBeUndefined();
+describe('getParentLogicAppRoot', () => {
+  const workspacePath = path.join('test', 'workspace');
+  const projectPath = path.join(workspacePath, 'projects', 'LogicApp1');
+
+  beforeEach(() => {
+    (vscode.workspace as any).workspaceFolders = [
+      {
+        uri: { fsPath: workspacePath },
+        name: 'workspace',
+        index: 0,
+      },
+    ];
   });
 
-  it('should return the only logic app project if there is only one', async () => {
-    const workspaceFolderLogicPath = path.join('logic', 'path');
-    const workspaceFolderNonlogicPath = path.join('nonlogic', 'path');
-    const workspaceFolderLogic = mockWorkspaceFolder(workspaceFolderLogicPath);
-    const workspaceFolderNonlogic = mockWorkspaceFolder(workspaceFolderNonlogicPath);
-
-    (vscode.workspace as any).workspaceFolders = [workspaceFolderLogic, workspaceFolderNonlogic];
-    const tryGetLogicAppProjectRootSpy = vi.fn(async (_context, folder) => {
-      return folder.uri.fsPath === workspaceFolderLogicPath ? folder.uri.fsPath : undefined;
-    });
-    (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
-
-    const result = await workspaceUtils.getWorkspaceFolder(mockContext);
-
-    expect(result).toBe(workspaceFolderLogic);
-    expect(tryGetLogicAppProjectRootSpy).toHaveBeenCalledTimes(2);
+  afterEach(() => {
+    vi.restoreAllMocks();
+    (vscode.workspace as any).workspaceFolders = [];
   });
 
-  it('should return the first logic app project if skipPromptOnMultipleFolders is true', async () => {
-    const workspaceFolderLogicPath1 = path.join('logic', 'path1');
-    const workspaceFolderLogicPath2 = path.join('logic', 'path2');
-    const workspaceFolderLogic1 = mockWorkspaceFolder(workspaceFolderLogicPath1);
-    const workspaceFolderLogic2 = mockWorkspaceFolder(workspaceFolderLogicPath2);
+  it('finds the Logic App project root from a nested workflow file path', async () => {
+    const workflowFilePath = path.join(projectPath, 'workflows', 'workflow1', workflowFileName);
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockImplementation(async (candidatePath) => candidatePath === projectPath);
 
-    (vscode.workspace as any).workspaceFolders = [workspaceFolderLogic1, workspaceFolderLogic2];
-    const tryGetLogicAppProjectRootSpy = vi.fn(async (_context, folder) => folder.uri.fsPath);
-    (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
-
-    const result = await workspaceUtils.getWorkspaceFolder(mockContext, undefined, true);
-
-    expect(result).toBe(workspaceFolderLogic1);
-    expect(tryGetLogicAppProjectRootSpy).toHaveBeenCalledTimes(2);
+    await expect(workspaceUtils.getParentLogicAppRoot(workflowFilePath)).resolves.toBe(projectPath);
   });
 
-  it('should prompt the user to select a logic app project if there are multiple', async () => {
-    const workspaceFolderLogicPath1 = path.join('logic', 'path1');
-    const workspaceFolderLogicPath2 = path.join('logic', 'path2');
-    const workspaceFolderLogic1 = mockWorkspaceFolder(workspaceFolderLogicPath1);
-    const workspaceFolderLogic2 = mockWorkspaceFolder(workspaceFolderLogicPath2);
+  it('returns undefined for a path outside the workspace', async () => {
+    const isLogicAppProject = vi.spyOn(verifyIsProject, 'isLogicAppProject');
 
-    (vscode.workspace as any).workspaceFolders = [workspaceFolderLogic1, workspaceFolderLogic2];
-    const tryGetLogicAppProjectRootSpy = vi.fn(async (_context, folder) => folder.uri.fsPath);
-    (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
-    const quickPickSpy = vi.spyOn(mockContext.ui, 'showQuickPick').mockResolvedValue({ data: workspaceFolderLogic2 });
+    await expect(workspaceUtils.getParentLogicAppRoot(path.join('outside', 'workflow.json'))).resolves.toBeUndefined();
 
-    const result = await workspaceUtils.getWorkspaceFolder(mockContext);
-
-    expect(quickPickSpy).toHaveBeenCalled();
-    expect(result).toBe(workspaceFolderLogic2);
+    expect(isLogicAppProject).not.toHaveBeenCalled();
   });
 
-  it('should throw UserCancelledError if user cancels the prompt', async () => {
-    const folder1 = mockWorkspaceFolder(path.join('logic', 'path1'));
-    const folder2 = mockWorkspaceFolder(path.join('logic', 'path2'));
+  it('returns undefined when no ancestor is a Logic App project', async () => {
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockResolvedValue(false);
 
-    (vscode.workspace as any).workspaceFolders = [folder1, folder2];
-    const tryGetLogicAppProjectRootSpy = vi.fn(async (_context, folder) => folder.uri.fsPath);
-    (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
-    vi.spyOn(mockContext.ui, 'showQuickPick').mockResolvedValue(undefined);
-
-    await expect(workspaceUtils.getWorkspaceFolder(mockContext)).rejects.toThrowError();
+    await expect(
+      workspaceUtils.getParentLogicAppRoot(path.join(workspacePath, 'projects', 'not-a-logic-app', 'workflow.json'))
+    ).resolves.toBeUndefined();
   });
 });
 
@@ -259,7 +186,7 @@ describe('getWorkspaceLogicAppRoots', () => {
   });
 });
 
-describe('tryGetWorkspaceFolderLogicApps', () => {
+describe('getWorkspaceFolderLogicApps', () => {
   const testWorkspaceFolderPath = path.join('test', 'workspace', 'LogicApp1');
   const testWorkspaceFolder = {
     uri: { fsPath: testWorkspaceFolderPath },

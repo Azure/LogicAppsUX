@@ -320,7 +320,6 @@ export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
-export const onStartLanguageServer = 'onStartLanguageServer';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';

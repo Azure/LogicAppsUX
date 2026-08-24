@@ -4,20 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { selectWorkspaceFile } from '../../../utils/workspace';
+import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../utils/workspace';
 import { StatelessWorkflowsListStep } from './switchDebugModeSteps/StatelessWorkflowsListStep';
 import { UpdateDebugModeStep } from './switchDebugModeSteps/UpdateDebugModeStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 
-export async function switchDebugMode(context: IActionContext): Promise<void> {
-  const workspacePath = await getWorkspaceFolderPath(context);
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath, true /* suppressPrompt */);
+export async function switchDebugMode(context: IActionContext, node?: vscode.Uri): Promise<void> {
+  const projectPath = node?.fsPath
+    ? await getParentLogicAppRoot(node.fsPath)
+    : await getLogicAppProjectRoot(context);
+
   if (!projectPath) {
-    vscode.window.showErrorMessage(localize('debugMode.projectNotFound', 'No project found for the workspace'));
-    return;
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
 
   const wizardContext = { ...context, projectPath, workflowName: '' };
@@ -29,19 +29,7 @@ export async function switchDebugMode(context: IActionContext): Promise<void> {
   await wizard.prompt();
   await wizard.execute();
 
-  ext.outputChannel.appendLog(localize('debugMode.debugModeUpdated', `Successfully updated debug mode for workflow ${wizardContext.workflowName}`));
-}
-
-/**
- * Gets project folder path if it is open, otherwise will prompt selection
- * @param {IActionContext} context - Command context
- * @returns {Promise<string>} Workspace path.
- */
-export async function getWorkspaceFolderPath(context: IActionContext): Promise<string> {
-  const folders = vscode.workspace.workspaceFolders || [];
-  if (folders.length === 1) {
-    return folders[0].uri.fsPath;
-  }
-
-  return await selectWorkspaceFile(context, localize('logicapp.pickWorkspaceFolder', 'Select your workspace folder.'));
+  ext.outputChannel.appendLog(
+    localize('debugMode.debugModeUpdated', `Successfully updated debug mode for workflow ${wizardContext.workflowName}`)
+  );
 }

@@ -5,30 +5,26 @@
 import { sqlStorageConnectionStringKey } from '../../../constants';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
-import { getWorkflowLogicAppProjectRoot, getWorkspaceFolder } from '../../utils/workspace';
+import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../utils/workspace';
 import { validateSQLConnectionString } from '../../utils/sql';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { ext } from '../../../extensionVariables';
 
-export async function useSQLStorage(context: IActionContext, target: vscode.Uri) {
-  if (target === undefined || Object.keys(target).length === 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    target = vscode.Uri.file(projectPath);
+export async function useSQLStorage(context: IActionContext, target?: vscode.Uri) {
+  const projectPath = target?.fsPath
+    ? await getParentLogicAppRoot(target.fsPath)
+    : await getLogicAppProjectRoot(context);
+
+  if (!projectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root folder.'));
   }
+
   const sqlConnectionString = await context.ui.showInputBox({
     placeHolder: localize('sqlConnectionStringPlaceholder', 'SQL connection string'),
     prompt: localize('sqlConnectionStringPrompt', 'Provide your SQL connection string'),
     validateInput: async (connectionString: string): Promise<string | undefined> => await validateSQLConnectionString(connectionString),
   });
-
-  const projectPath = await getWorkflowLogicAppProjectRoot(context, target.fsPath);
-
-  if (!projectPath) {
-    throw new Error(localize('FunctionRootFolderError', 'Unable to determine logic app project root folder.'));
-  }
 
   const valuesToUpdateInSettings: Record<string, string> = {};
   valuesToUpdateInSettings[sqlStorageConnectionStringKey] = sqlConnectionString;

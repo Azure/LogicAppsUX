@@ -14,7 +14,6 @@ vi.mock('vscode', () => ({
   },
   workspace: {
     workspaceFolders: [],
-    getWorkspaceFolder: vi.fn(),
   },
 }));
 

@@ -3,31 +3,27 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { webhookRedirectHostUri } from '../../../../constants';
+import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getContainingWorkspaceFolder, getWorkspaceFolder } from '../../../utils/workspace';
+import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../utils/workspace';
 import { ConfigureRedirectEndpointStep } from './configureWebhookRedirectEndpointSteps/ConfigureRedirectEndpointStep';
 import { SaveWebhookContextStep } from './configureWebhookRedirectEndpointSteps/SaveWebhookContextStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { AzureWizard, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
-import type { Uri, WorkspaceFolder } from 'vscode';
+import type { Uri } from 'vscode';
 
 export interface IWebhookContext extends IActionContext {
   redirectEndpoint: string;
 }
 
-export async function configureWebhookRedirectEndpoint(context: IActionContext, data: Uri): Promise<void> {
-  let workspaceFolder: WorkspaceFolder;
+export async function configureWebhookRedirectEndpoint(context: IActionContext, node?: Uri): Promise<void> {
+  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await getLogicAppProjectRoot(context);
 
-  if (data?.fsPath) {
-    workspaceFolder = nonNullValue(getContainingWorkspaceFolder(data.fsPath), 'workspaceFolder');
-  } else {
-    workspaceFolder = await getWorkspaceFolder(context);
+  if (!projectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
 
-  const workspacePath = workspaceFolder?.uri?.fsPath;
-  const projectPath = (await tryGetLogicAppProjectRoot(context, workspacePath)) || workspacePath;
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
   const redirectEndpoint: string = localSettings.Values[webhookRedirectHostUri] || '';
   const wizardContext = {

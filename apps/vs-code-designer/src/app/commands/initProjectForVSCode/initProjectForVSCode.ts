@@ -10,7 +10,7 @@ import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { detectProjectPackageType } from '../../utils/project';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { getContainingWorkspaceFolder } from '../../utils/workspace';
+import { getParentWorkspaceFolder } from '../../utils/workspace';
 import { InitDotnetProjectStep } from './initDotnetProjectStep';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import {
@@ -38,7 +38,7 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     }
     workspaceFolderPath = workspaceFolder.uri.fsPath;
   } else {
-    workspaceFolder = getContainingWorkspaceFolder(fsPath);
+    workspaceFolder = getParentWorkspaceFolder(fsPath);
     workspaceFolderPath = workspaceFolder ? workspaceFolder.uri.fsPath : fsPath;
   }
 
@@ -65,9 +65,7 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
     projectPackageType,
   });
 
-  const executeSteps = projectPackageType === ProjectPackageType.Nuget
-    ? [new InitDotnetProjectStep()]
-    : [new InitProjectStep()];
+  const executeSteps = projectPackageType === ProjectPackageType.Nuget ? [new InitDotnetProjectStep()] : [new InitProjectStep()];
 
   const wizard: AzureWizard<IProjectWizardContext> = new AzureWizard(wizardContext, { executeSteps });
   await wizard.execute();

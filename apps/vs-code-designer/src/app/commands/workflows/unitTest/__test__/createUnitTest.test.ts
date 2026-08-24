@@ -6,7 +6,6 @@ import * as util from 'util';
 import * as childProcess from 'child_process';
 import { createUnitTest } from '../createUnitTest';
 import * as workspaceUtils from '../../../../utils/workspace';
-import * as projectRootUtils from '../../../../utils/verifyIsProject';
 import * as unitTestUtils from '../../../../utils/unitTest/unitTest';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
@@ -29,11 +28,6 @@ describe('createUnitTest', () => {
   const dummyUnitTestDefinition = {
     operationInfo: { some: 'info' },
     outputParameters: { param: 'value' },
-  };
-  const dummyWorkspaceFolder: vscode.WorkspaceFolder = {
-    uri: vscode.Uri.file('/fake/workspace'),
-    name: 'fakeWorkspace',
-    index: 0,
   };
   const dummyProjectPath = '/dummy/project';
   const dummyWorkflowNodeUri = vscode.Uri.file('/dummy/workflow/node.json');
@@ -72,9 +66,8 @@ describe('createUnitTest', () => {
       errorHandling: { rethrow: false, suppressDisplay: false },
     } as IActionContext;
 
-    vi.spyOn(workspaceUtils, 'getContainingWorkspaceFolder').mockReturnValue(dummyWorkspaceFolder);
-    vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(dummyWorkspaceFolder);
-    vi.spyOn(projectRootUtils, 'tryGetLogicAppProjectRoot').mockResolvedValue(dummyProjectPath);
+    vi.spyOn(workspaceUtils, 'getParentLogicAppRoot').mockResolvedValue(dummyProjectPath);
+    vi.spyOn(workspaceUtils, 'getLogicAppProjectRoot').mockResolvedValue(dummyProjectPath);
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockResolvedValue({} as any);
     vi.spyOn(unitTestUtils, 'selectWorkflowNode').mockResolvedValue(dummyWorkflowNodeUri);
     vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockResolvedValue(dummyUnitTestName);

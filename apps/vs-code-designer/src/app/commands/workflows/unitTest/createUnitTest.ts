@@ -17,8 +17,7 @@ import {
   validateWorkflowPath,
   selectWorkflowNode,
 } from '../../../utils/unitTest/unitTest';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getContainingWorkspaceFolder, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
+import { ensureDirectoryInWorkspace, getLogicAppProjectRoot, getParentLogicAppRoot, getWorkflowNode } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -36,11 +35,14 @@ import { syncCloudSettings } from '../../syncCloudSettings';
  */
 export async function createUnitTest(context: IActionContext, node: vscode.Uri | undefined, nodeOutputOperations: any): Promise<void> {
   context.telemetry.properties.lastStep = 'ensureWorkspace';
-  const isWorkspaceReady = await callWithTelemetryAndErrorHandling('createUnitTest.ensureWorkspace', async (actionContext: IActionContext) => {
-    actionContext.errorHandling.rethrow = true;
-    actionContext.errorHandling.suppressDisplay = true;
-    return await ensureWorkspace(actionContext);
-  });
+  const isWorkspaceReady = await callWithTelemetryAndErrorHandling(
+    'createUnitTest.ensureWorkspace',
+    async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      return await ensureWorkspace(actionContext);
+    }
+  );
 
   if (!isWorkspaceReady) {
     context.telemetry.properties.multiRootWorkspaceValid = 'false';
@@ -59,23 +61,21 @@ export async function createUnitTest(context: IActionContext, node: vscode.Uri |
   context.telemetry.properties.operationInfoExists = operationInfo ? 'true' : 'false';
   context.telemetry.properties.outputParametersExists = outputParameters ? 'true' : 'false';
 
-  // Determine workflow node
   context.telemetry.properties.lastStep = 'getWorkflowNode';
   let workflowNode = getWorkflowNode(node) as vscode.Uri;
-  let projectPath: string | undefined;
-  if (workflowNode) {
-    context.telemetry.properties.lastStep = 'getProjectRootFromWorkflowNode';
-    const workspaceFolder = getContainingWorkspaceFolder(workflowNode.fsPath);
-    projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  } else {
-    context.telemetry.properties.lastStep = 'getProjectRootFromWorkspaceFolder';
-    const workspaceFolder = await getWorkspaceFolder(context);
-    projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
+  context.telemetry.properties.lastStep = 'getLogicAppProjectRoot';
+  const projectPath = workflowNode ? await getParentLogicAppRoot(workflowNode.fsPath) : await getLogicAppProjectRoot(context);
+
+  if (!projectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root folder.'));
+  }
+
+  if (!workflowNode) {
     context.telemetry.properties.lastStep = 'selectWorkflowNode';
     workflowNode = await selectWorkflowNode(context, projectPath);
   }
-  context.telemetry.properties.workflowNodePath = workflowNode ? workflowNode.fsPath : '';
+  context.telemetry.properties.workflowNodePath = workflowNode.fsPath;
 
   context.telemetry.properties.lastStep = 'validateWorkflowPath';
   validateWorkflowPath(projectPath, workflowNode.fsPath);
@@ -116,7 +116,13 @@ export async function createUnitTest(context: IActionContext, node: vscode.Uri |
     ext.outputChannel.appendLog(`Updating solution in tests folder: ${unitTestFolderPath}`);
     await updateTestsSln(testsDirectory, csprojFilePath);
   } catch (error) {
-    ext.outputChannel.appendLog(localize('updateTestsSlnError', 'Failed to update solution in tests folder. Error: "{0}".', error instanceof Error ? error.message : String(error)));
+    ext.outputChannel.appendLog(
+      localize(
+        'updateTestsSlnError',
+        'Failed to update solution in tests folder. Error: "{0}".',
+        error instanceof Error ? error.message : String(error)
+      )
+    );
   }
 
   context.telemetry.properties.lastStep = 'syncCloudSettings';

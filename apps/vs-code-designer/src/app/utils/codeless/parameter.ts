@@ -7,7 +7,7 @@ import { localize } from '../../../localize';
 import { isCSharpProject } from '../detectProjectLanguage';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
-import { getWorkflowLogicAppProjectRoot } from '../workspace';
+import { getParentLogicAppRoot } from '../workspace';
 import { createJsonFileIfDoesNotExist } from './common';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -43,7 +43,13 @@ export async function saveWorkflowParameter(
   workflowFilePath: string,
   parameters: Record<string, Parameter>
 ): Promise<void> {
-  const projectPath = await getWorkflowLogicAppProjectRoot(context, workflowFilePath);
+  const projectPath = await getParentLogicAppRoot(workflowFilePath);
+  if (!projectPath) {
+    throw new Error(
+      localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath)
+    );
+  }
+
   const parametersFilePath = path.join(projectPath, parametersFileName);
   const parametersFileExists = fse.pathExistsSync(parametersFilePath);
 

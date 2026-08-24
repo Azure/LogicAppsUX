@@ -11,9 +11,7 @@ vi.mock('vscode', () => ({
   debug: {
     startDebugging: vi.fn(),
   },
-  workspace: {
-    getWorkspaceFolder: vi.fn(),
-  },
+  workspace: {},
   Uri: {
     file: (fsPath: string) => ({ fsPath }),
   },

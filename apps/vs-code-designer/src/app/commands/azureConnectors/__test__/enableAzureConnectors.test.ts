@@ -3,8 +3,7 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { workflowSubscriptionIdKey } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { createAzureWizard } from '../azureConnectorWizard';
-import { getWorkflowLogicAppProjectRoot } from '../../../utils/workspace';
-import { getWorkspaceFolder } from '../../../utils/workspace';
+import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../utils/workspace';
 import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../azureConnectorDetails';
 import { clearConnectorSetupSkipped } from '../../../state/connectors';
 import { enableAzureConnectors } from '../enableAzureConnectors';
@@ -21,8 +20,8 @@ vi.mock('../../../utils/appSettings/localSettings', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getWorkflowLogicAppProjectRoot: vi.fn(),
-  getWorkspaceFolder: vi.fn(),
+  getLogicAppProjectRoot: vi.fn(),
+  getParentLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../azureConnectorWizard', () => ({
@@ -46,8 +45,8 @@ describe('enableAzureConnectors', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
-    (getWorkflowLogicAppProjectRoot as Mock).mockResolvedValue(projectPath);
-    (getWorkspaceFolder as Mock).mockResolvedValue({ uri: { fsPath: projectPath } });
+    (getParentLogicAppRoot as Mock).mockResolvedValue(projectPath);
+    (getLogicAppProjectRoot as Mock).mockResolvedValue(projectPath);
     (getAzureConnectorDetailsForLocalProject as Mock).mockResolvedValue({});
   });
 
@@ -61,7 +60,7 @@ describe('enableAzureConnectors', () => {
 
     await enableAzureConnectors(context, { fsPath: workflowFilePath } as vscode.Uri);
 
-    expect(getWorkflowLogicAppProjectRoot).toHaveBeenCalledWith(context, workflowFilePath);
+    expect(getParentLogicAppRoot).toHaveBeenCalledWith(workflowFilePath);
     expect(getLocalSettingsJson).toHaveBeenCalledWith(context, projectPath);
     expect(createAzureWizard).toHaveBeenCalledWith(context, projectPath);
     expect(prompt).toHaveBeenCalled();
@@ -81,7 +80,7 @@ describe('enableAzureConnectors', () => {
 
     await enableAzureConnectors(context, undefined);
 
-    expect(getWorkspaceFolder).toHaveBeenCalledWith(context);
+    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
     expect(createAzureWizard).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure connectors are enabled for the workflow.');
   });

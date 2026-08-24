@@ -25,7 +25,7 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
-import { getWorkflowLogicAppProjectRoot } from '../../../../utils/workspace';
+import { getParentLogicAppRoot } from '../../../../utils/workspace';
 
 export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
   private codefulWorkflowFileContent = '';
@@ -42,7 +42,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
   }
 
   protected async initializeOverviewData(): Promise<void> {
-    this.projectPath = await getWorkflowLogicAppProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getParentLogicAppRoot(this.workflowFilePath);
 
     if (!isNullOrUndefined(this.projectPath) && !(await isRuntimeUp(ext.workflowRuntimePort))) {
       await launchProjectDebugger(this.context, this.projectPath);
@@ -58,9 +58,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
-      : {};
+    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
 
     const fileContent = readFileSync(this.workflowFilePath, 'utf8');
     this.codefulWorkflowFileContent = fileContent;
