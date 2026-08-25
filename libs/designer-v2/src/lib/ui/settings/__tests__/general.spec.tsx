@@ -70,7 +70,7 @@ vi.mock('../settingsection', () => ({
 }));
 
 const concurrencyDialogTitle = 'Enable concurrency control?';
-const concurrencyDialogMessage = "After you turn on concurrency control, this setting can't be changed.";
+const concurrencyDialogMessage = "After you turn on concurrency control and publish the workflow, this setting can't be changed.";
 const concurrencyToggleName = 'Limit';
 const enableButtonName = 'Enable';
 

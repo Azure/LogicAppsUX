@@ -210,8 +210,8 @@ export const General = ({
     description: 'Title for the confirmation dialog before enabling trigger concurrency control',
   });
   const enableConcurrencyConfirmationMessage = intl.formatMessage({
-    defaultMessage: `After you turn on concurrency control, this setting can't be changed.`,
-    id: 'oQ916T',
+    defaultMessage: `After you turn on concurrency control and publish the workflow, this setting can't be changed.`,
+    id: '7tPvNK',
     description: 'Message for the confirmation dialog before enabling trigger concurrency control',
   });
   const enableMessage = intl.formatMessage({
