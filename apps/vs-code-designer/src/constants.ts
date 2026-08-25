@@ -231,6 +231,7 @@ export type extensionEvent = (typeof extensionEvent)[keyof typeof extensionEvent
 
 export const extensionContext = {
   hasProject: 'azureLogicAppsStandard.hasProject',
+  logicAppProjectPaths: 'azureLogicAppsStandard.logicAppProjectPaths',
   isCodeful: 'azureLogicAppsStandard.isCodeful',
   customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
   customCodeEligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',

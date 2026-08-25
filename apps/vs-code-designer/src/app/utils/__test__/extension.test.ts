@@ -2,10 +2,11 @@ import { extensionContext, logicAppsStandardExtensionId } from '../../../constan
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsContext } from '../extension';
-import { hasLogicAppInWorkspace } from '../workspace';
+import { getWorkspaceLogicAppRoots, hasLogicAppInWorkspace } from '../workspace';
 
 vi.mock('../workspace', () => ({
   getWorkspaceCustomCodeProjectRoots: vi.fn().mockResolvedValue([]),
+  getWorkspaceLogicAppRoots: vi.fn().mockResolvedValue([]),
   hasLogicAppInWorkspace: vi.fn().mockResolvedValue(false),
 }));
 
@@ -44,13 +45,37 @@ describe('extension utilities', () => {
   });
 
   it('updates project context when a Logic Apps project is present', async () => {
+    const projectPaths = ['D:\\workspace\\LogicApp1', 'D:\\workspace\\nested\\LogicApp2'];
     const workspaceFolder = { uri: { fsPath: 'D:\\workspace' } };
     (vscode.workspace as any).workspaceFolders = [workspaceFolder];
-    (hasLogicAppInWorkspace as any).mockResolvedValue(true);
+    vi.mocked(hasLogicAppInWorkspace).mockResolvedValue(true);
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(projectPaths);
 
     await updateLogicAppsContext();
 
-    expect(hasLogicAppInWorkspace).toHaveBeenCalled();
-    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', 'azureLogicAppsStandard.hasProject', true);
+    expect(hasLogicAppInWorkspace).toHaveBeenCalledOnce();
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', extensionContext.hasProject, true);
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', extensionContext.logicAppProjectPaths, projectPaths);
+  });
+
+  it('sets an empty project path context when an open workspace has no Logic App projects', async () => {
+    (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:\\workspace' } }];
+    vi.mocked(hasLogicAppInWorkspace).mockResolvedValue(false);
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([]);
+
+    await updateLogicAppsContext();
+
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', extensionContext.hasProject, false);
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', extensionContext.logicAppProjectPaths, []);
+  });
+
+  it('clears project-related contexts when no workspace is open', async () => {
+    (vscode.workspace as any).workspaceFolders = [];
+
+    await updateLogicAppsContext();
+
+    expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', extensionContext.hasProject, false);
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('setContext', extensionContext.logicAppProjectPaths, []);
   });
 });

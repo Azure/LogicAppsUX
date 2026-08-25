@@ -5,7 +5,6 @@ import { sqlStorageConnectionStringKey } from '../../../../constants';
 import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSettings';
 import { validateSQLConnectionString } from '../../../utils/sql';
 import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../utils/workspace';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { useSQLStorage } from '../useSQLStorage';
 
 vi.mock('../../../../localize', () => ({
@@ -33,10 +32,6 @@ vi.mock('../../../utils/workspace', () => ({
   getParentLogicAppRoot: vi.fn(),
 }));
 
-vi.mock('../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
-}));
-
 describe('useSQLStorage project resolution', () => {
   const sqlConnectionString = 'Server=tcp:example;Database=logicapps';
   const context = {
@@ -51,7 +46,6 @@ describe('useSQLStorage project resolution', () => {
     vi.mocked(context.ui.showInputBox).mockResolvedValue(sqlConnectionString);
     vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/workspace/project');
     vi.mocked(getParentLogicAppRoot).mockResolvedValue(undefined);
-    vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue(undefined);
     vi.mocked(validateSQLConnectionString).mockResolvedValue(undefined);
     vi.mocked(addOrUpdateLocalAppSettings).mockResolvedValue(undefined);
   });
@@ -64,23 +58,19 @@ describe('useSQLStorage project resolution', () => {
 
     expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
     expect(getParentLogicAppRoot).not.toHaveBeenCalled();
-    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, '/workspace/project', {
       [sqlStorageConnectionStringKey]: sqlConnectionString,
     });
   });
 
-  it('resolves a nested project from a workspace-root ancestor URI', async () => {
-    vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('/workspace/projects/logic-app');
-
-    await useSQLStorage(context, { fsPath: '/workspace' } as vscode.Uri);
+  it('rejects a workspace-root URI that is not itself a Logic App project', async () => {
+    await expect(useSQLStorage(context, { fsPath: '/workspace' } as vscode.Uri)).rejects.toThrow(
+      'Unable to determine logic app project root folder.'
+    );
 
     expect(getParentLogicAppRoot).toHaveBeenCalledWith('/workspace');
-    expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, '/workspace');
     expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
-    expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, '/workspace/projects/logic-app', {
-      [sqlStorageConnectionStringKey]: sqlConnectionString,
-    });
+    expect(addOrUpdateLocalAppSettings).not.toHaveBeenCalled();
   });
 
   it('resolves a project descendant through its parent Logic App root', async () => {
@@ -90,7 +80,6 @@ describe('useSQLStorage project resolution', () => {
     await useSQLStorage(context, { fsPath: workflowFilePath } as vscode.Uri);
 
     expect(getParentLogicAppRoot).toHaveBeenCalledWith(workflowFilePath);
-    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(addOrUpdateLocalAppSettings).toHaveBeenCalledWith(context, '/workspace/projects/logic-app', {
       [sqlStorageConnectionStringKey]: sqlConnectionString,

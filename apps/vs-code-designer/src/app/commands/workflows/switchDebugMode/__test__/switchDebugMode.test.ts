@@ -3,7 +3,6 @@ import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../../utils/workspace';
-import { tryGetLogicAppProjectRoot } from '../../../../utils/verifyIsProject';
 import { switchDebugMode } from '../switchDebugMode';
 
 const mocks = vi.hoisted(() => ({
@@ -32,10 +31,6 @@ vi.mock('../../../../utils/workspace', () => ({
   getParentLogicAppRoot: vi.fn(),
 }));
 
-vi.mock('../../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
-}));
-
 vi.mock('../switchDebugModeSteps/StatelessWorkflowsListStep', () => ({
   StatelessWorkflowsListStep: vi.fn(),
 }));
@@ -61,7 +56,6 @@ describe('switchDebugMode project resolution', () => {
     );
     vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/workspace/project');
     vi.mocked(getParentLogicAppRoot).mockResolvedValue(undefined);
-    vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue(undefined);
     mocks.execute.mockResolvedValue(undefined);
     mocks.prompt.mockResolvedValue(undefined);
   });
@@ -74,19 +68,17 @@ describe('switchDebugMode project resolution', () => {
 
     expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
     expect(getParentLogicAppRoot).not.toHaveBeenCalled();
-    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(AzureWizard).toHaveBeenCalledWith(expect.objectContaining({ projectPath: '/workspace/project' }), expect.any(Object));
   });
 
-  it('resolves a nested project from a workspace-root ancestor URI', async () => {
-    vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('/workspace/projects/logic-app');
-
-    await switchDebugMode(context, { fsPath: '/workspace' } as vscode.Uri);
+  it('rejects a workspace-root URI that is not itself a Logic App project', async () => {
+    await expect(switchDebugMode(context, { fsPath: '/workspace' } as vscode.Uri)).rejects.toThrow(
+      'Unable to determine logic app project root.'
+    );
 
     expect(getParentLogicAppRoot).toHaveBeenCalledWith('/workspace');
-    expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, '/workspace', true);
     expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
-    expect(AzureWizard).toHaveBeenCalledWith(expect.objectContaining({ projectPath: '/workspace/projects/logic-app' }), expect.any(Object));
+    expect(AzureWizard).not.toHaveBeenCalled();
   });
 
   it('resolves a project descendant through its parent Logic App root', async () => {
@@ -96,7 +88,6 @@ describe('switchDebugMode project resolution', () => {
     await switchDebugMode(context, { fsPath: workflowFilePath } as vscode.Uri);
 
     expect(getParentLogicAppRoot).toHaveBeenCalledWith(workflowFilePath);
-    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(AzureWizard).toHaveBeenCalledWith(expect.objectContaining({ projectPath: '/workspace/projects/logic-app' }), expect.any(Object));
   });

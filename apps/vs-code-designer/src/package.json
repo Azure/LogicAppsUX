@@ -689,12 +689,12 @@
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsFolder == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@1"
         },
         {
@@ -704,12 +704,12 @@
         },
         {
           "command": "azureLogicAppsStandard.createWorkflow",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.addCustomCode",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
           "group": "zzz_LogicApptools@1"
         },
         {
@@ -739,7 +739,7 @@
         },
         {
           "command": "azureLogicAppsStandard.switchToDotnetProject",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@3"
         },
         {
@@ -749,12 +749,12 @@
         },
         {
           "command": "azureLogicAppsStandard.switchDebugMode",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@2"
         },
         {
           "command": "azureLogicAppsStandard.useSQLStorage",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@3"
         },
         {
