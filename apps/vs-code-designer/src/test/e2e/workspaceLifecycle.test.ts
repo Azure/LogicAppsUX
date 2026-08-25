@@ -11,12 +11,28 @@ import {
   waitForCreateWorkspaceFrameContext,
   waitForWebviewFrameContext,
 } from './cdpClient';
+import {
+  assertNextButtonEnabled,
+  clickPoint,
+  type CdpEvaluator,
+  enterFieldValue,
+  getFieldState,
+  getLabels,
+  getPageText,
+  isDropdownValueSelected,
+  isRadioOptionChecked,
+  selectDropdownOption,
+  selectRadioOption,
+  waitForAsyncValidationToSettle,
+  waitForFieldVisible,
+} from './cdpFormHelpers';
 import type { FieldLabels } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { captureCdpScreenshot } from './screenshot';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
+import { hasCsproj, requiredValue } from './workspaceArtifacts';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const createWorkspaceCommand = 'azureLogicAppsStandard.createWorkspace';
@@ -35,10 +51,6 @@ const requestTriggerTitle = 'When a HTTP request is received';
 const responseActionTitle = 'Response';
 const azuritePorts = [10000, 10001, 10002];
 
-type CdpEvaluator = {
-  evaluate<T>(contextId: number | undefined, expression: string): Promise<T>;
-  send(method: string, params?: Record<string, unknown>): Promise<unknown>;
-};
 type WorkspaceAppType = 'standard' | 'customCode' | 'rulesEngine';
 
 interface WorkspaceCreationCase {
@@ -1062,10 +1074,6 @@ function getCustomCodeProjectPaths(createdWorkspace: CreatedWorkspace): string[]
   return createdWorkspace.folderPaths.filter((folderPath) => folderPath !== createdWorkspace.appDir && hasCsproj(folderPath));
 }
 
-function hasCsproj(folderPath: string): boolean {
-  return fs.existsSync(folderPath) && fs.readdirSync(folderPath).some((entry) => entry.endsWith('.csproj'));
-}
-
 function getCustomCodeDiagnosticFiles(appDir: string): string[] {
   const customCodePath = path.join(appDir, 'lib', 'custom');
   if (!fs.existsSync(customCodePath)) {
@@ -1866,227 +1874,6 @@ function verifyCreatedWorkspace(parentPath: string, creationCase: WorkspaceCreat
   };
 }
 
-function requiredValue(value: string | undefined): string {
-  assert.ok(value, 'Expected required workspace creation value to be defined');
-  return value;
-}
-
-async function enterFieldValue(cdp: CdpEvaluator, contextId: number, labels: FieldLabels, value: string): Promise<void> {
-  await waitForFieldVisible(cdp, contextId, labels);
-  const focusResult = await cdp.evaluate<{ ok: boolean; reason?: string; text?: string }>(
-    contextId,
-    withField(
-      labels,
-      `input.focus();
-      input.select();
-      return { ok: true };`
-    )
-  );
-
-  assert.strictEqual(
-    focusResult.ok,
-    true,
-    `Failed to focus ${getLabels(labels).join('/')} field. ${focusResult.reason ?? ''} Text: ${focusResult.text ?? ''}`
-  );
-
-  try {
-    await replaceFocusedInputText(cdp, value);
-  } catch {
-    await cdp.evaluate(
-      contextId,
-      withField(
-        labels,
-        `setInputValue(input, ${JSON.stringify(value)});
-        return { ok: true };`
-      )
-    );
-  }
-
-  await waitUntil(
-    async () => (await getFieldState(cdp, contextId, labels)).value === value,
-    5000,
-    `${getLabels(labels).join('/')} to equal ${value}`
-  );
-}
-
-async function waitForFieldVisible(cdp: CdpEvaluator, contextId: number, labels: FieldLabels): Promise<void> {
-  await waitUntil(
-    async () => {
-      const result = await getFieldState(cdp, contextId, labels).catch(() => undefined);
-      return !!result?.ok;
-    },
-    10000,
-    `field "${getLabels(labels).join('/')}" to be visible`
-  );
-}
-
-async function waitForAsyncValidationToSettle(cdp: CdpEvaluator, contextId: number): Promise<void> {
-  const pendingMessages = ['Validating path', 'Checking workspace availability'];
-  await waitUntil(
-    async () => {
-      const pageText = await getPageText(cdp, contextId);
-      return !pendingMessages.some((message) => containsIgnoreCase(pageText, message));
-    },
-    15000,
-    'Create Workspace async validation to settle'
-  );
-}
-
-async function assertNextButtonEnabled(cdp: CdpEvaluator, contextId: number, context: string): Promise<void> {
-  let lastState: { found: boolean; disabled?: boolean; text?: string } | undefined;
-  let lastError: unknown;
-  for (let attempt = 0; attempt < 60; attempt++) {
-    try {
-      lastState = await getNextButtonState(cdp, contextId);
-      if (lastState.found && !lastState.disabled) {
-        return;
-      }
-    } catch (error) {
-      lastError = error;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-
-  assert.fail(
-    `Timed out waiting for Next button to be enabled for ${context}. Last state: ${JSON.stringify(lastState)}${
-      lastError ? `. Last error: ${String(lastError)}` : ''
-    }`
-  );
-}
-
-async function selectRadioOption(cdp: CdpEvaluator, contextId: number, labelText: string): Promise<void> {
-  const focusResult = await cdp.evaluate<{ ok: boolean; reason?: string; text?: string }>(
-    contextId,
-    `(() => {
-      const expected = ${JSON.stringify(labelText)};
-      const normalize = (value) => (value || '').replace(/\\*/g, '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const label = Array.from(document.querySelectorAll('label, span, div'))
-        .filter(isVisible)
-        .filter((candidate) => {
-          const text = normalize(candidate.textContent);
-          return text.length > 0 && text.length < 180 && text.includes(expected);
-        })
-        .sort((a, b) => normalize(a.textContent).length - normalize(b.textContent).length)[0];
-      if (!label) {
-        return { ok: false, reason: 'Radio label not found', text: document.body?.innerText || '' };
-      }
-
-      const radioRoot = label.closest('[role="radio"], .fui-Radio') || label;
-      const input = radioRoot.querySelector('input[type="radio"]');
-      if (!(input instanceof HTMLInputElement)) {
-        return { ok: false, reason: 'Radio input not found', text: radioRoot.outerHTML };
-      }
-
-      input.focus();
-      return { ok: document.activeElement === input, reason: document.activeElement === input ? undefined : 'Radio input did not receive focus', text: radioRoot.outerHTML };
-    })()`
-  );
-
-  assert.strictEqual(
-    focusResult.ok,
-    true,
-    focusResult.reason ?? `Failed to focus radio option "${labelText}". Text: ${focusResult.text ?? ''}`
-  );
-  await pressKey(cdp, 'Space', ' ', 32);
-  await waitUntil(() => isRadioOptionChecked(cdp, contextId, labelText), 5000, `radio option "${labelText}" to be checked`);
-}
-
-async function selectDropdownOption(cdp: CdpEvaluator, contextId: number, labelText: string, optionText: string): Promise<void> {
-  if (await isDropdownValueSelected(cdp, contextId, labelText, optionText)) {
-    return;
-  }
-
-  const focusResult = await cdp.evaluate<{ ok: boolean; reason?: string; text?: string; point?: { x: number; y: number } }>(
-    contextId,
-    `(() => {
-      const normalize = (value) => (value || '').replace(/\\*/g, '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const label = Array.from(document.querySelectorAll('label, span, div'))
-        .filter(isVisible)
-        .filter((candidate) => {
-          const text = normalize(candidate.textContent).toLowerCase();
-          return text.length > 0 && text.length < 160 && text.includes(${JSON.stringify(labelText.toLowerCase())});
-        })
-        .sort((a, b) => normalize(a.textContent).length - normalize(b.textContent).length)[0];
-      if (!label) {
-        return { ok: false, reason: 'Dropdown label not found', text: document.body?.innerText || '' };
-      }
-
-      const dropdownId = label.getAttribute('for');
-      const field = label.closest('[class*="fui-Field"]') || label.parentElement;
-      const dropdown = (dropdownId ? document.getElementById(dropdownId) : null) || field?.querySelector('button[role="combobox"]');
-      if (!(dropdown instanceof HTMLButtonElement)) {
-        return { ok: false, reason: 'Dropdown button not found', text: document.body?.innerText || '' };
-      }
-
-      dropdown.scrollIntoView({ block: 'center', inline: 'center' });
-      dropdown.focus();
-      const rect = dropdown.getBoundingClientRect();
-      return { ok: true, point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } };
-    })()`
-  );
-
-  assert.strictEqual(
-    focusResult.ok,
-    true,
-    focusResult.reason ?? `Failed to focus "${labelText}" dropdown. Text: ${focusResult.text ?? ''}`
-  );
-  assert.ok(focusResult.point, `Failed to locate "${labelText}" dropdown click point.`);
-  await clickPoint(cdp, focusResult.point);
-  if (!(await waitForDropdownOptions(cdp, contextId, 1000))) {
-    await pressKey(cdp, 'Enter', undefined, 13);
-  }
-  if (!(await waitForDropdownOptions(cdp, contextId, 1000))) {
-    await pressKey(cdp, 'Space', ' ', 32);
-  }
-  if (!(await waitForDropdownOptions(cdp, contextId, 1000))) {
-    await pressKey(cdp, 'ArrowDown', 'ArrowDown', 40);
-    await pressKey(cdp, 'Enter', undefined, 13);
-    if (await isDropdownValueSelected(cdp, contextId, labelText, optionText)) {
-      return;
-    }
-  }
-
-  const optionResult = await cdp.evaluate<{ ok: boolean; reason?: string; text?: string; options?: string[]; optionIndex?: number }>(
-    contextId,
-    `(() => {
-      const normalize = (value) => (value || '').replace(/\\*/g, '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const options = Array.from(document.querySelectorAll('[role="option"]')).filter(isVisible);
-      const option = options.find((candidate) => normalize(candidate.textContent) === ${JSON.stringify(optionText)});
-      if (!(option instanceof HTMLElement)) {
-        return {
-          ok: false,
-          reason: 'Dropdown option not found',
-          options: options.map((candidate) => normalize(candidate.textContent)),
-          text: document.body?.innerText || '',
-        };
-      }
-
-      return { ok: true, optionIndex: options.indexOf(option) };
-    })()`
-  );
-
-  assert.strictEqual(
-    optionResult.ok,
-    true,
-    `Failed to select "${optionText}" from "${labelText}". Reason: ${optionResult.reason ?? 'unknown'}. Options: ${JSON.stringify(
-      optionResult.options
-    )}. Text: ${optionResult.text ?? ''}`
-  );
-  for (let index = 0; index < (optionResult.optionIndex ?? 0); index++) {
-    await pressKey(cdp, 'ArrowDown', 'ArrowDown', 40);
-  }
-  await pressKey(cdp, 'Enter', undefined, 13);
-  await waitUntil(
-    () => isDropdownValueSelected(cdp, contextId, labelText, optionText),
-    5000,
-    `"${labelText}" dropdown to select "${optionText}"`
-  );
-}
-
 async function handleDesignerQuickPickPrompts(timeoutMs = 20000): Promise<void> {
   await handleWorkbenchPrompts(
     [
@@ -2269,287 +2056,6 @@ async function captureLifecycleScreenshot(name: string): Promise<void> {
   } finally {
     cdp.dispose();
   }
-}
-
-async function hasDropdownOptions(cdp: CdpEvaluator, contextId: number): Promise<boolean> {
-  return cdp.evaluate<boolean>(
-    contextId,
-    `(() => {
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      return Array.from(document.querySelectorAll('[role="option"]')).some(isVisible);
-    })()`
-  );
-}
-
-async function waitForDropdownOptions(cdp: CdpEvaluator, contextId: number, timeoutMs: number): Promise<boolean> {
-  try {
-    await waitUntil(() => hasDropdownOptions(cdp, contextId), timeoutMs, 'dropdown options to become visible');
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function isRadioOptionChecked(cdp: CdpEvaluator, contextId: number, labelText: string): Promise<boolean> {
-  const result = await cdp.evaluate<{ checked: boolean }>(
-    contextId,
-    `(() => {
-      const expected = ${JSON.stringify(labelText)};
-      const normalize = (value) => (value || '').replace(/\\*/g, '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const label = Array.from(document.querySelectorAll('label, span, div'))
-        .filter(isVisible)
-        .filter((candidate) => {
-          const text = normalize(candidate.textContent);
-          return text.length > 0 && text.length < 180 && text.includes(expected);
-        })
-        .sort((a, b) => normalize(a.textContent).length - normalize(b.textContent).length)[0];
-      const radioRoot = label?.closest('[role="radio"], .fui-Radio') || label;
-      const input = radioRoot?.querySelector('input[type="radio"]');
-      return { checked: input instanceof HTMLInputElement ? input.checked : false };
-    })()`
-  );
-  return result.checked;
-}
-
-async function isDropdownValueSelected(cdp: CdpEvaluator, contextId: number, labelText: string, optionText: string): Promise<boolean> {
-  const result = await cdp.evaluate<{ selected: boolean }>(
-    contextId,
-    `(() => {
-      const normalize = (value) => (value || '').replace(/\\*/g, '').replace(/\\s+/g, ' ').trim();
-      const label = Array.from(document.querySelectorAll('label, span, div'))
-        .filter((candidate) => {
-          const text = normalize(candidate.textContent).toLowerCase();
-          return text.length > 0 && text.length < 160 && text.includes(${JSON.stringify(labelText.toLowerCase())});
-        })
-        .sort((a, b) => normalize(a.textContent).length - normalize(b.textContent).length)[0];
-      const dropdownId = label?.getAttribute('for');
-      const field = label?.closest('[class*="fui-Field"]') || label?.parentElement;
-      const dropdown = (dropdownId ? document.getElementById(dropdownId) : null) || field?.querySelector('button[role="combobox"]');
-      const text = dropdown?.textContent || '';
-      return { selected: normalize(text).includes(${JSON.stringify(optionText)}) };
-    })()`
-  );
-  return result.selected;
-}
-
-async function pressKey(cdp: CdpEvaluator, code: string, key?: string, windowsVirtualKeyCode?: number): Promise<void> {
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: key ?? code,
-    code,
-    windowsVirtualKeyCode,
-    nativeVirtualKeyCode: windowsVirtualKeyCode,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: key ?? code,
-    code,
-    windowsVirtualKeyCode,
-    nativeVirtualKeyCode: windowsVirtualKeyCode,
-  });
-}
-
-async function clickPoint(cdp: CdpEvaluator, point: { x: number; y: number }): Promise<void> {
-  await cdp.send('Input.dispatchMouseEvent', {
-    type: 'mouseMoved',
-    x: point.x,
-    y: point.y,
-    button: 'none',
-  });
-  await cdp.send('Input.dispatchMouseEvent', {
-    type: 'mousePressed',
-    x: point.x,
-    y: point.y,
-    button: 'left',
-    buttons: 1,
-    clickCount: 1,
-  });
-  await cdp.send('Input.dispatchMouseEvent', {
-    type: 'mouseReleased',
-    x: point.x,
-    y: point.y,
-    button: 'left',
-    buttons: 0,
-    clickCount: 1,
-  });
-}
-
-async function replaceFocusedInputText(cdp: CdpEvaluator, value: string): Promise<void> {
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Control',
-    code: 'ControlLeft',
-    windowsVirtualKeyCode: 17,
-    nativeVirtualKeyCode: 17,
-    modifiers: 2,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'a',
-    code: 'KeyA',
-    windowsVirtualKeyCode: 65,
-    nativeVirtualKeyCode: 65,
-    modifiers: 2,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'a',
-    code: 'KeyA',
-    windowsVirtualKeyCode: 65,
-    nativeVirtualKeyCode: 65,
-    modifiers: 2,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Control',
-    code: 'ControlLeft',
-    windowsVirtualKeyCode: 17,
-    nativeVirtualKeyCode: 17,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Backspace',
-    code: 'Backspace',
-    windowsVirtualKeyCode: 8,
-    nativeVirtualKeyCode: 8,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Backspace',
-    code: 'Backspace',
-    windowsVirtualKeyCode: 8,
-    nativeVirtualKeyCode: 8,
-  });
-
-  if (value) {
-    await cdp.send('Input.insertText', { text: value });
-  }
-}
-
-async function getFieldState(
-  cdp: CdpEvaluator,
-  contextId: number,
-  labels: FieldLabels
-): Promise<{ ok: boolean; reason?: string; value?: string; text?: string }> {
-  return cdp.evaluate(
-    contextId,
-    withField(
-      labels,
-      `return {
-      ok: true,
-      value: input.value,
-      text: document.body?.innerText || '',
-    };`
-    )
-  );
-}
-
-async function getNextButtonState(cdp: CdpEvaluator, contextId: number): Promise<{ found: boolean; disabled?: boolean; text?: string }> {
-  return cdp.evaluate(
-    contextId,
-    `(() => {
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const buttons = Array.from(document.querySelectorAll('button')).filter(isVisible);
-      const button = buttons.find((candidate) => (candidate.textContent || '').includes('Next'));
-      const pageText = document.body?.innerText || '';
-      if (!button) {
-        return { found: false, text: pageText };
-      }
-
-      const disabled = button.hasAttribute('disabled') || button.getAttribute('aria-disabled') === 'true';
-      return { found: true, disabled, text: pageText };
-    })()`
-  );
-}
-
-async function getPageText(cdp: CdpEvaluator, contextId: number): Promise<string> {
-  return cdp.evaluate<string>(contextId, 'document.body?.innerText || ""').catch((error) => String(error));
-}
-
-function withField(labels: FieldLabels, action: string): string {
-  return `(() => {
-      const labelsToFind = ${JSON.stringify(getLabels(labels))};
-      const normalize = (value) => (value || '').replace(/\\*/g, '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const visibleInputs = Array.from(document.querySelectorAll('input')).filter(isVisible);
-      const inputByAttribute = visibleInputs
-        .filter((candidate) => {
-          const searchableText = [
-            candidate.getAttribute('aria-label'),
-            candidate.getAttribute('placeholder'),
-            candidate.getAttribute('name'),
-            candidate.id,
-          ].map(normalize).join(' ').toLowerCase();
-          return labelsToFind.some((expected) => searchableText.includes(expected.toLowerCase()));
-        })
-        .sort((a, b) => normalize(a.getAttribute('placeholder') || a.getAttribute('aria-label') || a.id).length - normalize(b.getAttribute('placeholder') || b.getAttribute('aria-label') || b.id).length)[0];
-      const visibleTextElements = Array.from(document.querySelectorAll('label, span, div, p'))
-        .filter(isVisible)
-        .filter((candidate) => {
-          const text = normalize(candidate.textContent);
-          return text.length > 0 && text.length < 160;
-        });
-      const exactLabel = visibleTextElements
-        .filter((candidate) => labelsToFind.some((expected) => normalize(candidate.textContent).toLowerCase() === expected.toLowerCase()))
-        .sort((a, b) => normalize(a.textContent).length - normalize(b.textContent).length)[0];
-      const partialLabel = visibleTextElements
-        .filter((candidate) =>
-          labelsToFind.some((expected) => normalize(candidate.textContent).toLowerCase().includes(expected.toLowerCase()))
-        )
-        .sort((a, b) => normalize(a.textContent).length - normalize(b.textContent).length)[0];
-      const label = exactLabel || partialLabel;
-      if (!label && !inputByAttribute) {
-        return { ok: false, reason: 'Field label not found', text: document.body?.innerText || '' };
-      }
-
-      const inputId = label?.getAttribute('for');
-      const field = label?.closest('[class*="fui-Field"]') || label?.parentElement?.parentElement || label?.parentElement;
-      const labelRect = label?.getBoundingClientRect();
-      const nearestInput = labelRect
-        ? visibleInputs
-            .map((candidate) => ({ candidate, rect: candidate.getBoundingClientRect() }))
-            .filter(({ rect }) => rect.bottom >= labelRect.top - 5)
-            .sort((a, b) => {
-              const scoreA = a.rect.top >= labelRect.bottom - 5 ? a.rect.top - labelRect.bottom : 0;
-              const scoreB = b.rect.top >= labelRect.bottom - 5 ? b.rect.top - labelRect.bottom : 0;
-              return scoreA - scoreB || a.rect.top - b.rect.top;
-            })[0]?.candidate
-        : undefined;
-      const fieldInputs = field ? Array.from(field.querySelectorAll('input')).filter(isVisible) : [];
-      const fieldInput =
-        fieldInputs.length === 1
-          ? fieldInputs[0]
-          : labelRect
-            ? fieldInputs
-                .map((candidate) => ({ candidate, rect: candidate.getBoundingClientRect() }))
-                .filter(({ rect }) => rect.bottom >= labelRect.top - 5)
-                .sort((a, b) => {
-                  const scoreA = a.rect.top >= labelRect.bottom - 5 ? a.rect.top - labelRect.bottom : 0;
-                  const scoreB = b.rect.top >= labelRect.bottom - 5 ? b.rect.top - labelRect.bottom : 0;
-                  return scoreA - scoreB || a.rect.top - b.rect.top;
-                })[0]?.candidate
-            : undefined;
-      const input = inputByAttribute || (inputId ? document.getElementById(inputId) : null) || fieldInput || nearestInput;
-      if (!(input instanceof HTMLInputElement)) {
-        return { ok: false, reason: 'Field input not found', text: document.body?.innerText || '', labelHtml: label?.outerHTML };
-      }
-
-      const setInputValue = (inputElement, value) => {
-        inputElement.focus();
-        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
-        setter?.call(inputElement, value);
-        inputElement.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: value ? 'insertText' : 'deleteContentBackward', data: value }));
-        inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-        inputElement.blur();
-      };
-
-      ${action}
-    })()`;
-}
-
-function getLabels(labels: FieldLabels): string[] {
-  return Array.isArray(labels) ? labels : [labels];
 }
 
 async function waitUntil(predicate: () => boolean | Promise<boolean>, timeoutMs: number, description: string): Promise<void> {
