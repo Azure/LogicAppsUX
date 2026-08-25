@@ -337,25 +337,6 @@ export async function waitForWebviewFrameContext(
   );
 }
 
-export async function captureCdpScreenshot(cdp: CdpConnection, name: string): Promise<string | undefined> {
-  const fs = await import('fs');
-  const path = await import('path');
-  const screenshotRoot =
-    process.env.LA_E2E_CLI_SCREENSHOT_DIR ?? path.resolve(__dirname, '..', '..', '..', '.vscode-test', 'screenshots', 'cli');
-
-  fs.mkdirSync(screenshotRoot, { recursive: true });
-  const screenshotPath = path.join(screenshotRoot, `${sanitizeFileSegment(name)}.png`);
-  const response = await cdp.send('Page.captureScreenshot', { format: 'png', fromSurface: true });
-  const data = response.result?.data;
-  if (typeof data !== 'string') {
-    return undefined;
-  }
-
-  fs.writeFileSync(screenshotPath, data, 'base64');
-  console.log(`[screenshot] Saved: ${screenshotPath}`);
-  return screenshotPath;
-}
-
 async function fetchJson(url: string): Promise<unknown> {
   const response = await fetch(url);
   if (!response.ok) {
@@ -461,10 +442,6 @@ function tryDecodeServerFrame(buffer: Buffer): { opcode: number; payload: Buffer
   }
 
   return { opcode: firstByte & 0x0f, payload, consumed: offset + length };
-}
-
-function sanitizeFileSegment(value: string): string {
-  return value.replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '') || 'screenshot';
 }
 
 function delay(ms: number): Promise<void> {

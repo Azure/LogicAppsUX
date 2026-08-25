@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { captureCliScreenshot } from './screenshot';
+import { normalizeFsPath } from './testUtils';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const activationChannelName = 'Logic Apps @vscode/test-cli Smoke';
@@ -107,10 +108,5 @@ suite('Extension Activation Tests', () => {
 
     assert.ok(Array.isArray(extensionDependencies), `${logicAppsExtensionId} should declare extensionDependencies`);
     return extensionDependencies;
-  }
-
-  function normalizeFsPath(fsPath: string): string {
-    const normalizedPath = path.normalize(fsPath);
-    return process.platform === 'win32' ? normalizedPath.toLowerCase() : normalizedPath;
   }
 });

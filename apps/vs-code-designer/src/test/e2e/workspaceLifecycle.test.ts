@@ -11,9 +11,12 @@ import {
   waitForCreateWorkspaceFrameContext,
   waitForWebviewFrameContext,
 } from './cdpClient';
+import type { FieldLabels } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { captureCdpScreenshot } from './screenshot';
+import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
+import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const createWorkspaceCommand = 'azureLogicAppsStandard.createWorkspace';
@@ -36,7 +39,6 @@ type CdpEvaluator = {
   evaluate<T>(contextId: number | undefined, expression: string): Promise<T>;
   send(method: string, params?: Record<string, unknown>): Promise<unknown>;
 };
-type FieldLabels = string | string[];
 type WorkspaceAppType = 'standard' | 'customCode' | 'rulesEngine';
 
 interface WorkspaceCreationCase {
@@ -2550,65 +2552,6 @@ function getLabels(labels: FieldLabels): string[] {
   return Array.isArray(labels) ? labels : [labels];
 }
 
-function getWebviewTabs(viewType: string): vscode.Tab[] {
-  return vscode.window.tabGroups.all.flatMap((group) =>
-    group.tabs.filter((tab) => {
-      return getTabViewType(tab) === `mainThreadWebview-${viewType}`;
-    })
-  );
-}
-
-function getTabViewType(tab: vscode.Tab): string | undefined {
-  const input = tab.input as { viewType?: unknown };
-  return typeof input.viewType === 'string' ? input.viewType : undefined;
-}
-
-async function waitForWebviewTab(viewType: string, previousCount: number, timeoutMs = 10000): Promise<vscode.Tab> {
-  const startedAt = Date.now();
-
-  while (Date.now() - startedAt < timeoutMs) {
-    const tabs = getWebviewTabs(viewType);
-    if (tabs.length > previousCount) {
-      return tabs[tabs.length - 1];
-    }
-
-    if (tabs.length > 0 && previousCount === 0) {
-      return tabs[tabs.length - 1];
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
-
-  assert.fail(`Timed out waiting for ${viewType} webview tab to open. Open tabs: ${describeOpenTabs()}`);
-}
-
-async function closeWebviewTabs(viewType: string): Promise<void> {
-  const tabs = getWebviewTabs(viewType);
-  if (tabs.length > 0) {
-    await vscode.window.tabGroups.close(tabs);
-  }
-}
-
-async function closeAllTabs(): Promise<void> {
-  const tabs = vscode.window.tabGroups.all.flatMap((group) => group.tabs);
-  if (tabs.length > 0) {
-    await vscode.window.tabGroups.close(tabs);
-  }
-}
-
-function describeOpenTabs(): string {
-  return JSON.stringify(
-    vscode.window.tabGroups.all.flatMap((group) =>
-      group.tabs.map((tab) => ({
-        label: tab.label,
-        isActive: tab.isActive,
-        inputType: tab.input?.constructor?.name,
-        viewType: getTabViewType(tab),
-      }))
-    )
-  );
-}
-
 async function waitUntil(predicate: () => boolean | Promise<boolean>, timeoutMs: number, description: string): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   let lastError: unknown;
@@ -2641,17 +2584,4 @@ async function withTimeout<T>(promise: Thenable<T>, timeoutMs: number, descripti
       clearTimeout(timeout);
     }
   }
-}
-
-function containsIgnoreCase(value: string, expected: string): boolean {
-  return value.toLowerCase().includes(expected.toLowerCase());
-}
-
-function uniqueName(prefix: string): string {
-  return `${prefix}${Date.now().toString(36).slice(-5)}`;
-}
-
-function normalizeFsPath(fsPath: string): string {
-  const normalizedPath = path.normalize(fsPath);
-  return process.platform === 'win32' ? normalizedPath.toLowerCase() : normalizedPath;
 }

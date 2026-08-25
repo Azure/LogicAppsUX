@@ -173,6 +173,8 @@ The config builds from `dist/`, sets `VSCODE_RUNNING_TESTS=1` and `DEBUGTELEMETR
 
 The legacy files under `src/test/e2e/integration/` are not part of this baseline. Some of them open designer webviews or exercise workspace-conversion UI without the ExTester harness, which can produce errors such as missing `dist/vs-code-react/index.html` or refused dialogs in extension-host tests.
 
+For a detailed traceability view from the ExTester Create Workspace behavior and fixture suites to these CLI labels, see [createWorkspaceParityMap.md](./createWorkspaceParityMap.md).
+
 ## Test Development
 
 ### Using VS Code Extension Test Runner

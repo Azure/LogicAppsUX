@@ -4,9 +4,12 @@ import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { connectToVsCodeCdp, waitForCreateWorkspaceFrameContext } from './cdpClient';
+import type { FieldLabels, WorkspaceAppType, WorkspaceCreationCase, WorkflowType } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { captureCliScreenshot } from './screenshot';
+import { containsIgnoreCase, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
+import { closeWebviewTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const createWorkspaceCommand = 'azureLogicAppsStandard.createWorkspace';
@@ -35,10 +38,6 @@ type CdpEvaluator = {
   evaluate<T>(contextId: number, expression: string): Promise<T>;
   send(method: string, params?: Record<string, unknown>): Promise<unknown>;
 };
-type FieldLabels = string | string[];
-type WorkspaceAppType = 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
-type CodefulControlVariant = 'modern-control' | 'legacy-control';
-type WorkflowType = 'Stateful' | 'Stateless' | 'Autonomous agents (Preview)' | 'Conversational agents (Preview)';
 type CreateWorkspaceGroup = 'default' | 'behavior' | 'core-matrix' | 'preview-matrix' | 'codeful' | 'fixtures-manifest' | 'full';
 
 interface FieldValidationCase {
@@ -47,20 +46,6 @@ interface FieldValidationCase {
   invalidValue: string;
   expectedMessage: string;
   validValue: string;
-}
-
-interface WorkspaceCreationCase {
-  label: string;
-  appType: WorkspaceAppType;
-  radioLabel: string;
-  wsName: string;
-  appName: string;
-  wfName: string;
-  workflowType: WorkflowType;
-  functionFolderName?: string;
-  functionNamespace?: string;
-  functionName?: string;
-  codefulControlVariant?: CodefulControlVariant;
 }
 
 /**
@@ -2976,66 +2961,4 @@ function withField(labels: FieldLabels, action: string): string {
 
 function getLabels(labels: FieldLabels): string[] {
   return Array.isArray(labels) ? labels : [labels];
-}
-
-function containsIgnoreCase(value: string, expected: string): boolean {
-  return value.toLowerCase().includes(expected.toLowerCase());
-}
-
-function uniqueName(prefix: string): string {
-  return `${prefix}${Date.now().toString(36).slice(-5)}`;
-}
-
-async function waitForWebviewTab(viewType: string, previousCount: number): Promise<vscode.Tab> {
-  const timeoutMs = 10000;
-  const pollMs = 250;
-  const startedAt = Date.now();
-
-  while (Date.now() - startedAt < timeoutMs) {
-    const tabs = getWebviewTabs(viewType);
-    if (tabs.length > previousCount) {
-      return tabs[tabs.length - 1];
-    }
-
-    if (tabs.length > 0 && previousCount === 0) {
-      return tabs[tabs.length - 1];
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, pollMs));
-  }
-
-  assert.fail(`Timed out waiting for ${viewType} webview tab to open. Open tabs: ${describeOpenTabs()}`);
-}
-
-function getWebviewTabs(viewType: string): vscode.Tab[] {
-  return vscode.window.tabGroups.all.flatMap((group) =>
-    group.tabs.filter((tab) => {
-      return getTabViewType(tab) === `mainThreadWebview-${viewType}`;
-    })
-  );
-}
-
-function getTabViewType(tab: vscode.Tab): string | undefined {
-  const input = tab.input as { viewType?: unknown };
-  return typeof input.viewType === 'string' ? input.viewType : undefined;
-}
-
-async function closeWebviewTabs(viewType: string): Promise<void> {
-  const tabs = getWebviewTabs(viewType);
-  if (tabs.length > 0) {
-    await vscode.window.tabGroups.close(tabs);
-  }
-}
-
-function describeOpenTabs(): string {
-  return JSON.stringify(
-    vscode.window.tabGroups.all.flatMap((group) =>
-      group.tabs.map((tab) => ({
-        label: tab.label,
-        isActive: tab.isActive,
-        inputType: tab.input?.constructor?.name,
-        viewType: getTabViewType(tab),
-      }))
-    )
-  );
 }
