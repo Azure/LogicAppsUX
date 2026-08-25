@@ -138,9 +138,13 @@ jobs:
       - name: Build extension
         run: pnpm turbo run build:extension --cache-dir=.turbo
 
-      - name: Compile E2E tests
+      - name: Compile ExTester E2E tests
         working-directory: apps/vs-code-designer
         run: npx tsup --config tsup.e2e.test.config.ts
+
+      - name: Compile @vscode/test-cli E2E tests
+        working-directory: apps/vs-code-designer
+        run: pnpm run test:e2e-cli:compile
 
       - name: Tar build artifacts
         # Tar preserves symlinks/permissions and dramatically speeds upload
@@ -675,6 +679,96 @@ jobs:
           path: |
             ${{ runner.temp }}/test-resources/screenshots/
             test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # @vscode/test-cli Create Workspace parity visibility.
+  #
+  # This is additive to the ExTester matrix above: ExTester remains the owner for
+  # full designer/wizard DOM coverage and the VS Code 1.108.0 compatibility pin
+  # below remains unchanged. These matrix legs exercise the official
+  # @vscode/test-cli baseline against focused Create Workspace labels so PR CI
+  # can see latest-stable VS Code extension-host parity without serializing the
+  # whole suite into one hard-to-diagnose run.
+  #
+  # Intentionally excluded from PR CI for now: workspaceLifecycle. That target
+  # creates workspaces, reopens generated app folders, opens designer webviews,
+  # builds .NET projects, starts Azurite/runtime, runs triggers, and validates
+  # Overview results. Keep it as an explicit/manual script until its runtime cost
+  # and flake profile justify becoming a PR gate.
+  vscode-e2e-cli-create-workspace:
+    name: vscode-e2e-cli-create-workspace (${{ matrix.label }})
+    needs: setup-extension-build
+    timeout-minutes: 25
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: createWorkspaceBehavior
+          - label: createWorkspaceCoreMatrix
+          - label: createWorkspacePreviewMatrix
+          - label: createWorkspaceCodeful
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Cache pnpm store
+        uses: actions/cache@v5
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      - name: Run @vscode/test-cli Create Workspace label (${{ matrix.label }})
+        working-directory: apps/vs-code-designer
+        run: |
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          echo "PATH=$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            pnpm exec node scripts/run-e2e-cli.js --label "${{ matrix.label }}"
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      - name: Upload CLI screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-cli-screenshots-${{ matrix.label }}
+          path: apps/vs-code-designer/.vscode-test/screenshots/cli/
           if-no-files-found: ignore
           retention-days: 30
 
@@ -1855,7 +1949,7 @@ jobs:
   # ("vscode-e2e-summary") regardless of how many scenarios we add later.
   vscode-e2e-summary:
     name: vscode-e2e-summary
-    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-funcselfheal-windows, vscode-e2e-compat, setup-runtime-deps-windows]
+    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-cli-create-workspace, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-funcselfheal-windows, vscode-e2e-compat, setup-runtime-deps-windows]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -1870,6 +1964,7 @@ jobs:
           echo "setup-fixtures:             ${{ needs.setup-fixtures.result }}"
           echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"
           echo "vscode-e2e-windows:         ${{ needs.vscode-e2e-windows.result }}"
+          echo "vscode-e2e-cli-create-workspace: ${{ needs.vscode-e2e-cli-create-workspace.result }}"
           echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }}"
           echo "vscode-e2e-codeful-windows: ${{ needs.vscode-e2e-codeful-windows.result }}"
           echo "vscode-e2e-azurite:         ${{ needs.vscode-e2e-azurite.result }}"
@@ -1881,6 +1976,7 @@ jobs:
              [ "${{ needs.setup-fixtures.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-windows.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-cli-create-workspace.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-codeful-ubuntu.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-codeful-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-azurite.result }}" != "success" ] || \

@@ -1,39 +1,116 @@
 import * as assert from 'assert';
+import * as path from 'path';
 import * as vscode from 'vscode';
+import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
+import { captureCliScreenshot } from './screenshot';
+
+const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+const activationChannelName = 'Logic Apps @vscode/test-cli Smoke';
+const expectedExtensionDevelopmentPath = path.resolve(__dirname, '..', '..', '..', 'dist');
+
+installDialogGuard();
 
 suite('Extension Activation Tests', () => {
-  vscode.window.showInformationMessage('Starting Extension Activation Tests');
+  let extension: vscode.Extension<unknown> | undefined;
+  let activationChannel: vscode.OutputChannel | undefined;
+
+  suiteSetup(() => {
+    extension = vscode.extensions.getExtension(logicAppsExtensionId);
+    activationChannel = vscode.window.createOutputChannel(activationChannelName);
+  });
 
   test('VS Code is running', () => {
     assert.ok(vscode.version, 'VS Code version should be defined');
-    console.log(`VS Code version: ${vscode.version}`);
+    console.log(`[activation-smoke] VS Code version: ${vscode.version}`);
   });
 
-  test('Extension is present', async () => {
-    // The extension should be available in the extensions list
-    const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurelogicapps');
+  test('Test runner environment is configured', () => {
+    assert.strictEqual(process.env.VSCODE_RUNNING_TESTS, '1');
+    assert.strictEqual(process.env.DEBUGTELEMETRY, '1');
+  });
 
-    // In test environment, the extension might be loaded differently
-    // Check if we can at least query extensions
-    const allExtensions = vscode.extensions.all;
-    assert.ok(allExtensions.length > 0, 'Should have at least one extension loaded');
-    console.log(`Total extensions loaded: ${allExtensions.length}`);
+  test('Logic Apps extension is present with package metadata', () => {
+    assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
+    assert.strictEqual(extension.packageJSON.name, 'vscode-azurelogicapps');
+    assert.strictEqual(extension.packageJSON.publisher, 'ms-azuretools');
+    assert.strictEqual(extension.packageJSON.engines.vscode, '^1.104.0');
+  });
 
-    // Log if our extension is found
-    if (extension) {
-      console.log('Logic Apps extension found!');
-    } else {
-      console.log('Logic Apps extension not found in list - this may be expected in test environment');
+  test('Logic Apps extension is loaded from the development dist folder', () => {
+    assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
+
+    assert.strictEqual(
+      normalizeFsPath(extension.extensionUri.fsPath),
+      normalizeFsPath(expectedExtensionDevelopmentPath),
+      `Expected ${logicAppsExtensionId} to load from ${expectedExtensionDevelopmentPath}`
+    );
+    assert.strictEqual(extension.packageJSON.main, 'main.js');
+    logActivationEvidence(`Loaded ${logicAppsExtensionId} from ${extension.extensionUri.fsPath}`);
+  });
+
+  test('Logic Apps extension dependencies are installed and visible to VS Code', () => {
+    assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
+
+    const extensionDependencies = getExtensionDependencies(extension);
+    assert.ok(extensionDependencies.length, `${logicAppsExtensionId} should declare extensionDependencies`);
+
+    const missingDependencies = extensionDependencies.filter((extensionId) => !vscode.extensions.getExtension(extensionId));
+    assert.deepStrictEqual(missingDependencies, [], `Missing extension dependencies: ${missingDependencies.join(', ')}`);
+
+    for (const extensionId of extensionDependencies) {
+      const dependency = vscode.extensions.getExtension(extensionId);
+      assert.ok(dependency, `Expected dependency ${extensionId} to be installed`);
+      logActivationEvidence(
+        `Dependency available: ${extensionId}@${dependency.packageJSON.version ?? 'unknown'} from ${dependency.extensionUri.fsPath}`
+      );
     }
   });
 
-  test('Workspace is available', () => {
-    // Check if workspace folders are available
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    console.log(`Workspace folders: ${workspaceFolders?.length ?? 0}`);
+  test('Logic Apps extension activates successfully', async () => {
+    assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
 
-    // In some test configurations, workspace might be empty
-    // This is not necessarily an error
-    assert.ok(true, 'Workspace access should be available');
+    logActivationEvidence(`Activating ${logicAppsExtensionId}`);
+    logActivationEvidence(`Extension path: ${extension.extensionUri.fsPath}`);
+    logActivationEvidence(`VS Code version: ${vscode.version}`);
+
+    const activationStartedAt = Date.now();
+    await extension.activate();
+    const activationDurationMs = Date.now() - activationStartedAt;
+
+    assert.strictEqual(extension.isActive, true, 'Extension should be active after activate() resolves');
+
+    logActivationEvidence(`Activated ${logicAppsExtensionId} in ${activationDurationMs}ms`);
   });
+
+  test('Logic Apps extension activation does not attempt startup dialogs', async () => {
+    await assertNoDialogAttempts('Logic Apps extension activation');
+  });
+
+  test('VS Code starts without a folder or saved workspace loaded', async () => {
+    assert.ok(
+      !vscode.workspace.workspaceFile || vscode.workspace.workspaceFile.scheme === 'untitled',
+      `No saved .code-workspace file should be loaded at startup. Actual: ${vscode.workspace.workspaceFile?.toString()}`
+    );
+    assert.deepStrictEqual(vscode.workspace.workspaceFolders ?? [], [], 'No folders should be loaded at startup');
+    await captureCliScreenshot('empty-window-startup');
+  });
+
+  function logActivationEvidence(message: string): void {
+    const line = `[activation-smoke] ${message}`;
+    console.log(line);
+    activationChannel?.appendLine(line);
+    activationChannel?.show(true);
+  }
+
+  function getExtensionDependencies(logicAppsExtension: vscode.Extension<unknown>): string[] {
+    const extensionDependencies = logicAppsExtension.packageJSON.extensionDependencies;
+
+    assert.ok(Array.isArray(extensionDependencies), `${logicAppsExtensionId} should declare extensionDependencies`);
+    return extensionDependencies;
+  }
+
+  function normalizeFsPath(fsPath: string): string {
+    const normalizedPath = path.normalize(fsPath);
+    return process.platform === 'win32' ? normalizedPath.toLowerCase() : normalizedPath;
+  }
 });
