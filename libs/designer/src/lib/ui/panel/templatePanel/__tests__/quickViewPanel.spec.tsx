@@ -3,13 +3,12 @@ import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
 import { StandardTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getReactQueryClient } from '../../../../core';
-// biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
 import { QuickViewPanel } from '../quickViewPanel/quickViewPanel';
 import constants from '../../../../common/constants';
@@ -44,6 +43,19 @@ describe('panel/templatePanel/quickViewPanel', () => {
       },
     })
   );
+
+  const renderPanel = () => {
+    const queryClient = getReactQueryClient();
+    const ref = React.createRef<HTMLDivElement>();
+    renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <div ref={ref}>
+          <QuickViewPanel showCreate={true} workflowId={defaultWorkflowId} mountNode={ref.current} />
+        </div>
+      </QueryClientProvider>,
+      { store }
+    );
+  };
 
   beforeAll(() => {
     param1DefaultValue = 'default value for param 1';
@@ -201,16 +213,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
   });
 
   beforeEach(() => {
-    const queryClient = getReactQueryClient();
-    const ref = React.createRef<HTMLDivElement>();
-    renderWithProviders(
-      <QueryClientProvider client={queryClient}>
-        <div ref={ref}>
-          <QuickViewPanel showCreate={true} workflowId={defaultWorkflowId} mountNode={ref.current} />
-        </div>
-      </QueryClientProvider>,
-      { store }
-    );
+    renderPanel();
   });
 
   it('Ensure template state for showing information is correct', async () => {
@@ -241,10 +244,17 @@ describe('panel/templatePanel/quickViewPanel', () => {
   });
 
   it('Ensures the quickView panel is open without connections section', async () => {
-    const newState = store.getState();
-    newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
-    newState.workflow.isConsumption = false;
+    const currentState = store.getState();
+    const newState = {
+      ...currentState,
+      workflow: {
+        ...currentState.workflow,
+        isConsumption: false,
+      },
+    };
     store = setupStore(newState);
+    cleanup();
+    renderPanel();
     expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
     expect(screen.queryByText('No connections are needed in this template')).toBeNull();
   });
