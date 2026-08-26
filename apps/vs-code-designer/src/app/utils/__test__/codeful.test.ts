@@ -1,7 +1,13 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { codefulProjectsExist, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
+import {
+  codefulProjectsExist,
+  detectAgentCodefulWorkflow,
+  detectCodefulWorkflow,
+  invalidateCodefulSdkCacheIfNeeded,
+  parseCsprojCopyToCodefulInfo,
+} from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
@@ -202,6 +208,71 @@ describe('parseCsprojCopyToCodefulInfo', () => {
       replaceLangAfterTargets: 'Build;Publish',
       runsOnBuild: false,
     });
+  });
+});
+
+describe('detectAgentCodefulWorkflow', () => {
+  it('detects a conversational agent workflow that uses the current built-in Agent API', () => {
+    const workflowName = detectAgentCodefulWorkflow(`
+namespace TestProject
+{
+    using Microsoft.Azure.Workflows.Sdk;
+
+    public class TestWorkflow : IWorkflowProvider
+    {
+        public FlowDefinition[] GetWorkflows()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
+            var agent = WorkflowActions.BuiltIn.Agent(
+                agentModelType: AgentModelType.AzureOpenAI,
+                deploymentId: "gpt-4.1",
+                messages: () => new AgentPromptMessage[]
+                {
+                    new AgentPromptMessage { Role = MessageRole.System, Content = "Help the user" }
+                }
+            ).WithName("WeatherAgent");
+
+            var workflow = trigger.Then(agent);
+            return new[] { WorkflowFactory.CreateAgentWorkflow("TestWorkflow", workflow) };
+        }
+    }
+}`);
+
+    expect(workflowName).toBe('TestWorkflow');
+  });
+
+  it('detects new agent workflow source without relying on legacy builder APIs', () => {
+    const workflow = detectCodefulWorkflow(`
+namespace TestProject
+{
+    using Microsoft.Azure.Workflows.Sdk;
+
+    public class MultilineWorkflow : IWorkflowProvider
+    {
+        public FlowDefinition[] GetWorkflows()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
+            var agent =
+                WorkflowActions
+                    .BuiltIn
+                    .Agent(
+                        agentModelType: AgentModelType.AzureOpenAI,
+                        deploymentId: "gpt-4.1",
+                        messages: () => Array.Empty<AgentPromptMessage>())
+                    .WithName("WeatherAgent");
+
+            var workflow = trigger.Then(agent);
+            return new[]
+            {
+                WorkflowFactory.CreateAgentWorkflow(
+                    "MultilineWorkflow",
+                    workflow)
+            };
+        }
+    }
+}`);
+
+    expect(workflow).toEqual({ workflowName: 'MultilineWorkflow', workflowType: 'agent' });
   });
 });
 
