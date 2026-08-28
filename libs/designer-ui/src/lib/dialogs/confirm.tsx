@@ -5,11 +5,12 @@ export interface ConfirmProps {
   hidden: boolean;
   message: string;
   title: string;
+  confirmText?: string;
   onConfirm(): void;
   onDismiss(): void;
 }
 
-export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, onConfirm, onDismiss }) => {
+export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, confirmText, onConfirm, onDismiss }) => {
   const intl = useIntl();
 
   const okMessage = intl.formatMessage({
@@ -22,6 +23,7 @@ export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, onConf
     id: 'iUs7pv',
     description: 'Cancel message appearing on a confirmation dialog.',
   });
+  const primaryButtonText = confirmText ?? okMessage;
   return (
     <Dialog
       modalType="alert"
@@ -39,7 +41,7 @@ export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, onConf
           <DialogActions>
             <Button onClick={onDismiss}>{cancelMessage}</Button>
             <Button appearance="primary" onClick={onConfirm}>
-              {okMessage}
+              {primaryButtonText}
             </Button>
           </DialogActions>
         </DialogBody>
