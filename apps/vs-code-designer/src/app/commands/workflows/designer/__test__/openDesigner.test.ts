@@ -8,6 +8,7 @@ vi.mock('../../../../../localize', () => ({
 
 vi.mock('../../../../utils/workspace', () => ({
   getWorkflowNode: vi.fn((node: any) => node),
+  getParentLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../../../../utils/customCodeUtils', () => ({
@@ -15,7 +16,7 @@ vi.mock('../../../../utils/customCodeUtils', () => ({
 }));
 
 vi.mock('../../../buildCustomCodeFunctionsProject', () => ({
-  tryBuildCustomCodeFunctionsProject: vi.fn(),
+  tryBuildCustomCodeFunctionsProjectInternal: vi.fn(),
 }));
 
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
@@ -40,17 +41,20 @@ vi.mock('../../designer-v2/openDesignerV2', () => ({
 
 import { openDesigner } from '../openDesigner';
 import { openDesignerV2 } from '../../designer-v2/openDesignerV2';
-import { tryBuildCustomCodeFunctionsProject } from '../../../buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProjectInternal } from '../../../buildCustomCodeFunctionsProject';
 import { customCodeArtifactsExist } from '../../../../utils/customCodeUtils';
 import { shouldAlwaysBuildCustomCode } from '../../../../utils/vsCodeConfig/settings';
+import { getParentLogicAppRoot } from '../../../../utils/workspace';
 
 describe('openDesigner', () => {
   const mockContext = { telemetry: { properties: {} } } as any;
+  const projectPath = 'D:\\test\\project';
 
   beforeEach(() => {
     vi.clearAllMocks();
     (ext as any).outputChannel = { appendLog: vi.fn() };
     vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 1) } as any);
+    vi.mocked(getParentLogicAppRoot).mockResolvedValue(projectPath);
   });
 
   it('routes to openDesignerV2 when designer version is 2', async () => {
@@ -69,7 +73,7 @@ describe('openDesigner', () => {
 
     await openDesigner(mockContext, mockUri);
 
-    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).toHaveBeenCalledWith(expect.any(Object), projectPath);
   });
 
   it('builds custom code when artifacts do not exist', async () => {
@@ -78,7 +82,7 @@ describe('openDesigner', () => {
 
     await openDesigner(mockContext, mockUri);
 
-    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).toHaveBeenCalledWith(expect.any(Object), projectPath);
   });
 
   it('does not build custom code when artifacts exist and alwaysBuildCustomCode is false', async () => {
@@ -88,7 +92,8 @@ describe('openDesigner', () => {
 
     await openDesigner(mockContext, mockUri);
 
-    expect(customCodeArtifactsExist).toHaveBeenCalled();
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(getParentLogicAppRoot).toHaveBeenCalledWith(mockUri.fsPath);
+    expect(customCodeArtifactsExist).toHaveBeenCalledWith(projectPath);
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
   });
 });

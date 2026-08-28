@@ -8,7 +8,7 @@ import { ext } from '../../extensionVariables';
 import { isCustomCodeFunctionsProject, tryGetLogicAppCustomCodeFunctionsProjects } from '../utils/customCodeUtils';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { isPathEqual } from '../utils/fs';
+import { isPathEqual, isSubpath } from '../utils/fs';
 
 /**
  * Builds a custom code functions project if exists.
@@ -22,11 +22,15 @@ export async function tryBuildCustomCodeFunctionsProject(context: IActionContext
     return false;
   }
 
+  return await tryBuildCustomCodeFunctionsProjectInternal(context, nodePath);
+}
+
+export async function tryBuildCustomCodeFunctionsProjectInternal(context: IActionContext, projectPath: string): Promise<boolean> {
   context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
-  if (await isCustomCodeFunctionsProject(nodePath)) {
+  if (await isCustomCodeFunctionsProject(projectPath)) {
     try {
       context.telemetry.properties.lastStep = 'buildCustomCodeProject';
-      await buildCustomCodeProject(nodePath);
+      await buildCustomCodeProject(projectPath);
     } catch (error) {
       context.telemetry.properties.result = 'Failed';
       context.telemetry.properties.errorMessage = error.message ?? error;
@@ -36,7 +40,7 @@ export async function tryBuildCustomCodeFunctionsProject(context: IActionContext
   }
 
   context.telemetry.properties.lastStep = 'tryGetLogicAppCustomCodeFunctionsProjects';
-  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(nodePath);
+  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
   if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
     return false;
   }
@@ -63,7 +67,8 @@ async function buildCustomCodeProject(functionsProjectPath: string): Promise<voi
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const buildTask = tasks.find((task) => {
     const currTaskPath = (task.scope as vscode.WorkspaceFolder)?.uri.fsPath;
-    return task.name === 'build' && !!currTaskPath && isPathEqual(currTaskPath, functionsProjectPath);
+    // TODO(aeldridge): For nested projects, this will select any matching build task in the workspace folder. Need to scope tasks to individual projects.
+    return task.name === 'build' && !!currTaskPath && (isPathEqual(currTaskPath, functionsProjectPath) || isSubpath(currTaskPath, functionsProjectPath));
   });
 
   if (!buildTask) {
@@ -72,8 +77,10 @@ async function buildCustomCodeProject(functionsProjectPath: string): Promise<voi
 
   return new Promise<void>((resolve, reject) => {
     const disposable: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e) => {
+      const taskPath = (e.execution.task.scope as vscode.WorkspaceFolder)?.uri.fsPath;
       const isMatchingTask =
-        isPathEqual((e.execution.task.scope as vscode.WorkspaceFolder)?.uri.fsPath ?? '', functionsProjectPath) &&
+        !!taskPath &&
+        (isPathEqual(taskPath, functionsProjectPath) || isSubpath(taskPath, functionsProjectPath)) &&
         e.execution.task.name === buildTask.name;
 
       if (isMatchingTask) {

@@ -365,12 +365,12 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
   }
 
   /**
-   * Retrieves the ref names s of connections from a connections JSON file.
-   * @param projectRoot The root directory of the project.
+   * Retrieves the ref names of connections from a connections JSON file.
+   * @param projectPath The root directory of the project.
    * @returns A promise that resolves to an array of objects, each containing a reference name and the last parameter in the connection id.
    */
-  private static async getConnectionNames(projectRoot: string): Promise<{ refEndPoint: string; originalKey: string }[]> {
-    const data: string = await getConnectionsJson(projectRoot);
+  private static async getConnectionNames(projectPath: string): Promise<{ refEndPoint: string; originalKey: string }[]> {
+    const data: string = await getConnectionsJson(projectPath);
     const managedConnections: { refEndPoint: string; originalKey: string }[] = [];
 
     if (data) {

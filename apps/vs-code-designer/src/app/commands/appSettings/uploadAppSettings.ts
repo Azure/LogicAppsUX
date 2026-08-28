@@ -21,24 +21,23 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import { getLogicAppProjectRoot } from '../../utils/workspace';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
 /**
  * Uploads local settings file to the portal.
  * @param {IActionContext} context - Command context.
  * @param {AppSettingsTreeItem} node - App settings node structure.
- * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace folder.
+ * @param {string} [projectPath] - Logic App project path. If omitted, the user selects a project from the workspace.
  * @param {(RegExp | string)[]} exclude - Array of settings to exclude from uploading.
- * @returns {Promise<string>} Workspace file path.
+ * @returns {Promise<void>} A promise that resolves when the settings are uploaded.
  */
 export async function uploadAppSettings(
   context: IActionContext,
   node?: AppSettingsTreeItem,
-  workspaceFolder?: vscode.WorkspaceFolder,
+  projectPath?: string,
   exclude?: (RegExp | string)[]
 ): Promise<void> {
-  const projectPath = workspaceFolder ? await tryGetLogicAppProjectRoot(context, workspaceFolder) : await getLogicAppProjectRoot(context);
-  if (!projectPath) {
+  const resolvedProjectPath = projectPath ?? (await getLogicAppProjectRoot(context));
+  if (!resolvedProjectPath) {
     throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
   }
 
@@ -52,7 +51,7 @@ export async function uploadAppSettings(
   const client: IAppSettingsClient = await node.clientProvider.createClient(context);
 
   ext.outputChannel.show(true);
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, resolvedProjectPath);
 
   if (localSettings.Values) {
     const remoteSettings: StringDictionary = await client.listApplicationSettings();

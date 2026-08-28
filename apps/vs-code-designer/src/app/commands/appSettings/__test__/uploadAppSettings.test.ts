@@ -74,6 +74,33 @@ describe('uploadAppSettings', () => {
 
   const getUploadedProperties = (): Record<string, string> => updateApplicationSettings.mock.calls[0][0].properties;
 
+  it('uses an explicit nested project path without discovering a project', async () => {
+    const nestedProjectPath = '/mock/workspace/apps/nested-logic-app';
+    (getLocalSettingsJson as Mock).mockResolvedValue({
+      Values: {
+        FUNCTIONS_WORKER_RUNTIME: 'node',
+      },
+    });
+
+    await uploadAppSettings(context, node, nestedProjectPath, []);
+
+    expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, nestedProjectPath);
+  });
+
+  it('discovers the project when an explicit project path is omitted', async () => {
+    (getLocalSettingsJson as Mock).mockResolvedValue({
+      Values: {
+        FUNCTIONS_WORKER_RUNTIME: 'node',
+      },
+    });
+
+    await uploadAppSettings(context, node, undefined, []);
+
+    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
+    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, '/mock/project');
+  });
+
   it('excludes name-matched settings like the inline-code node executable path', async () => {
     (getLocalSettingsJson as Mock).mockResolvedValue({
       Values: {

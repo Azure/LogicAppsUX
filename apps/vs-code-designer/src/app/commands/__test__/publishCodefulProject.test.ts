@@ -61,7 +61,7 @@ describe('publishCodefulProject', () => {
   it('skips publishing when the selected path is not codeful', async () => {
     (hasCodefulWorkflowSetting as Mock).mockResolvedValue(false);
 
-    await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri);
+    await publishCodefulProject(context, projectPath);
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`Skipping publish: Path "${projectPath}" is not a codeful project.`);
     expect((vscode as any).tasks.fetchTasks).not.toHaveBeenCalled();
@@ -70,9 +70,7 @@ describe('publishCodefulProject', () => {
   it('fails when no publish task exists for the codeful project', async () => {
     ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([]);
 
-    await expect(publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri)).rejects.toThrow(
-      `Publish task not found for project at "${projectPath}".`
-    );
+    await expect(publishCodefulProject(context, projectPath)).rejects.toThrow(`Publish task not found for project at "${projectPath}".`);
 
     expect(context.telemetry.properties).toMatchObject({
       lastStep: 'publishCodefulProject',
@@ -85,7 +83,7 @@ describe('publishCodefulProject', () => {
     const publishTask = { name: 'publish', scope: { uri: { fsPath: projectPath } } } as vscode.Task;
     ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([publishTask]);
 
-    await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri);
+    await publishCodefulProject(context, projectPath);
 
     expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
     expect(invalidateCodefulSdkCacheIfNeeded).toHaveBeenCalledWith(projectPath);
@@ -101,9 +99,7 @@ describe('publishCodefulProject', () => {
       endTaskProcessHandler?.({ execution: { task }, exitCode: 1 });
     });
 
-    await expect(publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri)).rejects.toThrow(
-      `Error publishing codeful project at "${projectPath}": 1`
-    );
+    await expect(publishCodefulProject(context, projectPath)).rejects.toThrow(`Error publishing codeful project at "${projectPath}": 1`);
 
     expect(vscode.window.showWarningMessage).toHaveBeenCalledWith(`Error publishing codeful project at "${projectPath}": 1`);
     expect(context.telemetry.properties).toMatchObject({
@@ -122,7 +118,7 @@ describe('publishCodefulProject', () => {
         runsOnBuild: true,
       });
 
-      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri, { skipIfBuildPopulatesCodeful: true });
+      await publishCodefulProject(context, projectPath, { skipIfBuildPopulatesCodeful: true });
 
       expect((vscode as any).tasks.executeTask).not.toHaveBeenCalled();
       expect((vscode as any).tasks.fetchTasks).not.toHaveBeenCalled();
@@ -146,7 +142,7 @@ describe('publishCodefulProject', () => {
         runsOnBuild: false,
       });
 
-      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri, { skipIfBuildPopulatesCodeful: true });
+      await publishCodefulProject(context, projectPath, { skipIfBuildPopulatesCodeful: true });
 
       expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
       expect(context.telemetry.properties).toMatchObject({
@@ -162,7 +158,7 @@ describe('publishCodefulProject', () => {
       ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([publishTask]);
       (inspectCodefulCsprojBuildHooks as Mock).mockResolvedValue(null);
 
-      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri, { skipIfBuildPopulatesCodeful: true });
+      await publishCodefulProject(context, projectPath, { skipIfBuildPopulatesCodeful: true });
 
       expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);
       expect(context.telemetry.properties.publishSkipped).toBe('false');
@@ -173,7 +169,7 @@ describe('publishCodefulProject', () => {
       const publishTask = { name: 'publish', scope: { uri: { fsPath: projectPath } } } as vscode.Task;
       ((vscode as any).tasks.fetchTasks as Mock).mockResolvedValue([publishTask]);
 
-      await publishCodefulProject(context, { fsPath: projectPath } as vscode.Uri);
+      await publishCodefulProject(context, projectPath);
 
       expect(inspectCodefulCsprojBuildHooks).not.toHaveBeenCalled();
       expect((vscode as any).tasks.executeTask).toHaveBeenCalledWith(publishTask);

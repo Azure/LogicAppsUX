@@ -114,14 +114,14 @@ export async function addConnection(
 
 async function addConnectionDataInJson(
   context: IActionContext,
-  functionAppPath: string,
+  projectPath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
-  const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
+  const connectionsFilePath = path.join(projectPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
-  const connectionsJsonString = await getConnectionsJson(functionAppPath);
+  const connectionsJsonString = await getConnectionsJson(projectPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
   const { connectionData, connectionKey, pathLocation, settings } = connectionAndAppSetting;
@@ -149,8 +149,8 @@ async function addConnectionDataInJson(
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
 
-  if (!connectionsFileExists && (await isCSharpProject(functionAppPath))) {
-    await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
+  if (!connectionsFileExists && (await isCSharpProject(projectPath))) {
+    await addNewFileInCSharpProject(context, connectionsFileName, projectPath);
   }
 }
 

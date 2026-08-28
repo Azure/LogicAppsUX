@@ -30,7 +30,7 @@ import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-app
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
-import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProjectInternal } from './buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from './publishCodefulProject';
 
 const funcTaskStartupTimeoutSeconds = 10 * 60;
@@ -124,13 +124,13 @@ export async function pickFuncProcessInternal(
     await callWithTelemetryAndErrorHandling('pickFuncProcess.publishCodefulProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
-      await publishCodefulProject(actionContext, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+      await publishCodefulProject(actionContext, projectPath, { skipIfBuildPopulatesCodeful: true });
     });
   } else {
     await callWithTelemetryAndErrorHandling('pickFuncProcess.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
-      await tryBuildCustomCodeFunctionsProject(actionContext, workspaceFolder.uri);
+      await tryBuildCustomCodeFunctionsProjectInternal(actionContext, projectPath);
     });
   }
 

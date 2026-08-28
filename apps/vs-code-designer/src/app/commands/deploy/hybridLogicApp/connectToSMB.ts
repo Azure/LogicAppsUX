@@ -20,19 +20,20 @@ import {
 } from '../../../../constants';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
-import { getLogicAppProjectRoot } from '../../../utils/workspace';
 
-export async function connectToSMB(context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive: string): Promise<void> {
+export async function connectToSMB(
+  context: IActionContext,
+  node: SlotTreeItem,
+  projectPath: string,
+  smbFolderName: string,
+  mountDrive: string
+): Promise<void> {
   const message: string = localize('connectingToMSB', 'Connecting to logic app SMB storage...');
   ext.outputChannel.appendLog(message);
 
   try {
     const { hostName, path: fileSharePath, userName, password } = node.fileShare || {};
     await mountSMB(hostName, fileSharePath, userName, password, mountDrive);
-    const projectPath = await getLogicAppProjectRoot(context);
-    if (!projectPath) {
-      throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
-    }
 
     const smbFolderPath = path.join(mountDrive, smbFolderName);
     await fse.ensureDir(smbFolderPath);

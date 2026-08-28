@@ -18,6 +18,24 @@ import * as fse from 'fs-extra';
 import { isCustomCodeFunctionsProject } from './customCodeUtils';
 
 /**
+ * Gets the resource URI from the given path.
+ * NOTE(aeldridge): This is needed to keep scheme and authority intact when converting a file system path to a URI.
+ */
+export function resolveUri(fsPath?: string): vscode.Uri | undefined {
+  if (!fsPath) {
+    return undefined;
+  }
+
+  const workspaceFolder = getParentWorkspaceFolder(fsPath);
+  if (!workspaceFolder) {
+    return vscode.Uri.file(fsPath);
+  }
+
+  const relativeProjectPath = path.relative(workspaceFolder.uri.fsPath, fsPath);
+  return relativeProjectPath ? vscode.Uri.joinPath(workspaceFolder.uri, ...relativeProjectPath.split(path.sep)) : workspaceFolder.uri;
+}
+
+/**
  * Checks if there is a logic app project in the workspace.
  * @returns {Promise<boolean>} True if there is a logic app project in the workspace.
  */
