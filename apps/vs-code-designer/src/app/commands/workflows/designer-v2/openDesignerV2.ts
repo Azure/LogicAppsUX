@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import { getParentLogicAppRoot, getWorkflowNode } from '../../../utils/workspace';
+import { getParentLogicAppRoot, getActiveWorkflowNode } from '../../../utils/workspace';
 import type { Uri } from 'vscode';
 import { tryBuildCustomCodeFunctionsProjectInternal } from '../../buildCustomCodeFunctionsProject';
 import { customCodeArtifactsExist } from '../../../utils/customCodeUtils';
@@ -24,7 +24,7 @@ export async function openDesignerV2(
   node: Uri | RemoteWorkflowTreeItem | undefined,
   runId?: string
 ): Promise<void> {
-  const workflowNode = getWorkflowNode(node);
+  const workflowNode = node ?? getActiveWorkflowNode();
   if (!workflowNode) {
     ext.outputChannel.appendLog(localize('workflowNodeNotFound', 'Failed to open designer. Unable to find the workflow node.'));
     return;

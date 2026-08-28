@@ -5,7 +5,7 @@
 import { sqlStorageConnectionStringKey } from '../../../constants';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../utils/workspace';
+import { selectLogicAppRoot, getParentLogicAppRoot } from '../../utils/workspace';
 import { validateSQLConnectionString } from '../../utils/sql';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type * as vscode from 'vscode';
@@ -14,7 +14,7 @@ import { ext } from '../../../extensionVariables';
 export async function useSQLStorage(context: IActionContext, target?: vscode.Uri) {
   const projectPath = target?.fsPath
     ? await getParentLogicAppRoot(target.fsPath)
-    : await getLogicAppProjectRoot(context);
+    : await selectLogicAppRoot(context);
 
   if (!projectPath) {
     throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root folder.'));

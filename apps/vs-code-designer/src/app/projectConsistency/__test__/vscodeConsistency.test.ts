@@ -4,7 +4,7 @@ import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { type Uri, type WorkspaceFolder, workspace } from 'vscode';
-import { getWorkspaceLogicAppRoots } from '../../utils/workspace';
+import { getLogicAppRoots } from '../../utils/workspace';
 import {
   enableProjectConsistencyChecksSetting,
   extensionsFileName,
@@ -30,7 +30,7 @@ vi.mock('../../utils/verifyIsProject', () => ({
 }));
 
 vi.mock('../../utils/workspace', () => ({
-  getWorkspaceLogicAppRoots: vi.fn(),
+  getLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../../utils/vsCodeConfig/settings', () => ({
@@ -125,7 +125,7 @@ describe('vscodeConsistency', () => {
     } as unknown as IActionContext;
 
     (workspace as any).workspaceFolders = [createWorkspaceFolder(projectPath, 'logicapp')];
-    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([projectPath]);
+    vi.mocked(getLogicAppRoots).mockResolvedValue([projectPath]);
     vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue(projectPath);
     vi.mocked(detectProjectType).mockResolvedValue(ProjectType.logicApp);
     vi.mocked(detectProjectPackageType).mockResolvedValue(ProjectPackageType.Bundle);

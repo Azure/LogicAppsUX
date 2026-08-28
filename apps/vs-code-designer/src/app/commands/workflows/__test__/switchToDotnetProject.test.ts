@@ -79,7 +79,7 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getLogicAppProjectRoot: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
   getParentWorkspaceFolder: vi.fn(),
 }));
 
@@ -111,7 +111,7 @@ vi.mock('path', async () => {
 import { ext } from '../../../../extensionVariables';
 import { switchToDotnetProject, switchToDotnetProjectCommand } from '../switchToDotnetProject';
 import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
-import { getLogicAppProjectRoot, getParentWorkspaceFolder } from '../../../utils/workspace';
+import { getParentWorkspaceFolder, selectLogicAppRoot } from '../../../utils/workspace';
 import { getProjFiles, getTemplateKeyFromProjFile, getLocalDotNetVersionFromBinaries } from '../../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../../utils/dotnet/executeDotnetTemplateCommand';
 import { tryParseFuncVersion, tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
@@ -176,7 +176,7 @@ describe('switchToDotnetProject', () => {
     vi.mocked(tryGetMajorVersion).mockReturnValue('4');
     vi.mocked(getTemplateKeyFromProjFile).mockResolvedValue('testKey');
     vi.mocked(getParentWorkspaceFolder).mockReturnValue(undefined);
-    vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/workspace/project');
+    vi.mocked(selectLogicAppRoot).mockResolvedValue('/workspace/project');
     (fse.pathExists as unknown as Mock).mockResolvedValue(false);
     (fse.readdir as unknown as Mock).mockResolvedValue([]);
     (fse.stat as unknown as Mock).mockResolvedValue({ isDirectory: () => false });
@@ -202,14 +202,14 @@ describe('switchToDotnetProject', () => {
     it('should resolve target from workspace when target is undefined', async () => {
       await switchToDotnetProject(mockContext, undefined as unknown as vscode.Uri);
 
-      expect(getLogicAppProjectRoot).toHaveBeenCalledWith(mockContext);
+      expect(selectLogicAppRoot).toHaveBeenCalledWith(mockContext);
       expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/workspace/project');
     });
 
     it('should resolve target from workspace when target is empty object', async () => {
       await switchToDotnetProject(mockContext, {} as vscode.Uri);
 
-      expect(getLogicAppProjectRoot).toHaveBeenCalledWith(mockContext);
+      expect(selectLogicAppRoot).toHaveBeenCalledWith(mockContext);
       expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/workspace/project');
     });
   });

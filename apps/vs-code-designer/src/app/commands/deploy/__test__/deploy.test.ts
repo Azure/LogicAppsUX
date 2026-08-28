@@ -23,7 +23,7 @@ import { notifyDeployComplete } from '../notifyDeployComplete';
 import { deploy as innerDeploy, getDeployFsPath, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import { resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import { hasCodefulWorkflowSetting } from '../../../utils/codeful';
-import { getLogicAppProjectRoot, resolveUri } from '../../../utils/workspace';
+import { resolveUri, selectLogicAppRoot } from '../../../utils/workspace';
 
 vi.mock('vscode', () => {
   class MockUri {
@@ -197,7 +197,7 @@ vi.mock('../../../utils/codeful', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getLogicAppProjectRoot: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
   resolveUri: vi.fn(),
 }));
 
@@ -254,7 +254,7 @@ describe('deployProductionSlot nested projects', () => {
       effectiveDeployFsPath: deployPayloadPath,
       originalDeployFsPath: nestedProjectPath,
     } as any);
-    vi.mocked(getLogicAppProjectRoot).mockResolvedValue(nestedProjectPath);
+    vi.mocked(selectLogicAppRoot).mockResolvedValue(nestedProjectPath);
     vi.mocked(resolveUri).mockImplementation((fsPath) => (fsPath ? Uri.file(fsPath) : undefined));
     vi.mocked(getDeployNode).mockResolvedValue(node);
     vi.mocked(hasCodefulWorkflowSetting).mockResolvedValue(false);
@@ -282,7 +282,7 @@ describe('deployProductionSlot nested projects', () => {
 
     await deployProductionSlot(context, projectTarget);
 
-    expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(selectLogicAppRoot).not.toHaveBeenCalled();
     expect(getDeployFsPath).toHaveBeenCalledWith(context, expect.objectContaining({ fsPath: nestedProjectPath }));
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(nestedProjectPath);
     expect(publishCodefulProject).toHaveBeenCalledWith(expect.anything(), nestedProjectPath);
@@ -339,7 +339,7 @@ describe('deployProductionSlot nested projects', () => {
   it('selects a Logic App project before resolving deploy paths when no local target is supplied', async () => {
     await deployProductionSlot(context);
 
-    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
+    expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
     expect(getDeployFsPath).toHaveBeenCalledWith(context, expect.objectContaining({ fsPath: nestedProjectPath }));
   });
 

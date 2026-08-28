@@ -17,7 +17,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { getWorkspaceLogicAppRoots } from './workspace';
+import { getLogicAppRoots } from './workspace';
 
 /**
  * Enables local managed identity authentication by updating the relevant settings and local project configurations.
@@ -45,7 +45,7 @@ async function updateLocalSettingsForAllProjects(context: IActionContext): Promi
     [workflowAuthenticationMethodKey]: workflowAuthenticationMethodMIValue,
   };
 
-  const projectPaths = await getWorkspaceLogicAppRoots();
+  const projectPaths = await getLogicAppRoots();
   const updateAppSettingsTasks = projectPaths.map(async (projectPath) => {
     try {
       await addOrUpdateLocalAppSettings(context, projectPath, miSettings);

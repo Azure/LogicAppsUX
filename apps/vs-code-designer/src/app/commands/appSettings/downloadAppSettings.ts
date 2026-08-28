@@ -16,7 +16,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-azext-azureappsettings';
 import { AzExtFsExtra, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { getLogicAppProjectRoot } from '../../utils/workspace';
+import { selectLogicAppRoot } from '../../utils/workspace';
 
 export async function downloadAppSettings(context: IActionContext, node?: AppSettingsTreeItem): Promise<void> {
   if (!node) {
@@ -34,7 +34,7 @@ export async function downloadAppSettings(context: IActionContext, node?: AppSet
 }
 
 async function downloadAppSettingsInternal(context: IActionContext, client: IAppSettingsClient): Promise<void> {
-  const projectPath = await getLogicAppProjectRoot(context);
+  const projectPath = await selectLogicAppRoot(context);
   if (!projectPath) {
     throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
   }

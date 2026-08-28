@@ -19,7 +19,7 @@ import {
   workflowAppAADTenantId,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { getLogicAppProjectRoot } from '../../workspace';
+import { selectLogicAppRoot } from '../../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ConnectedEnvironment, ContainerApp, EnvironmentVar } from '@azure/arm-appcontainers';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
@@ -43,7 +43,7 @@ interface createHybridAppOptions {
 
 const getAppSettingsFromLocal = async (context: IActionContext): Promise<EnvironmentVar[]> => {
   const appSettingsToskip = [azureWebJobsStorageKey, ProjectDirectoryPathKey, workerRuntimeKey];
-  const projectPath = await getLogicAppProjectRoot(context, true);
+  const projectPath = await selectLogicAppRoot(context, true);
   if (!projectPath) {
     return [];
   }

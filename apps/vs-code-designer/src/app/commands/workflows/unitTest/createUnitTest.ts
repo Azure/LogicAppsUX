@@ -17,7 +17,7 @@ import {
   validateWorkflowPath,
   selectWorkflowNode,
 } from '../../../utils/unitTest/unitTest';
-import { ensureDirectoryInWorkspace, getLogicAppProjectRoot, getParentLogicAppRoot, getWorkflowNode } from '../../../utils/workspace';
+import { selectLogicAppRoot, getParentLogicAppRoot, getActiveWorkflowNode } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -25,6 +25,7 @@ import * as fse from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
 import { ensureWorkspace } from '../../ensureWorkspace';
 import { syncCloudSettings } from '../../syncCloudSettings';
+import { FileManagement } from '../../../utils/fileManagement';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
@@ -62,10 +63,10 @@ export async function createUnitTest(context: IActionContext, node: vscode.Uri |
   context.telemetry.properties.outputParametersExists = outputParameters ? 'true' : 'false';
 
   context.telemetry.properties.lastStep = 'getWorkflowNode';
-  let workflowNode = getWorkflowNode(node) as vscode.Uri;
+  let workflowNode = node ?? getActiveWorkflowNode() as vscode.Uri;
 
   context.telemetry.properties.lastStep = 'getLogicAppProjectRoot';
-  const projectPath = workflowNode ? await getParentLogicAppRoot(workflowNode.fsPath) : await getLogicAppProjectRoot(context);
+  const projectPath = workflowNode ? await getParentLogicAppRoot(workflowNode.fsPath) : await selectLogicAppRoot(context);
 
   if (!projectPath) {
     throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root folder.'));
@@ -220,7 +221,7 @@ async function generateUnitTest(
   // Add testsDirectory to workspace if not already included
   context.telemetry.properties.lastStep = 'ensureTestsDirectoryInWorkspace';
   ext.outputChannel.appendLog(localize('ensureTestsDirectory', 'Ensuring tests directory exists in workspace...'));
-  await ensureDirectoryInWorkspace(testsDirectory);
+  FileManagement.ensureWorkspaceFolder(testsDirectory);
 
   context.telemetry.properties.unitTestGenerationStatus = 'Success';
   ext.outputChannel.appendLog(

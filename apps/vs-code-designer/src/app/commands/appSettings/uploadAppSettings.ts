@@ -20,7 +20,7 @@ import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-import { getLogicAppProjectRoot } from '../../utils/workspace';
+import { selectLogicAppRoot } from '../../utils/workspace';
 
 /**
  * Uploads local settings file to the portal.
@@ -36,7 +36,7 @@ export async function uploadAppSettings(
   projectPath?: string,
   exclude?: (RegExp | string)[]
 ): Promise<void> {
-  const resolvedProjectPath = projectPath ?? (await getLogicAppProjectRoot(context));
+  const resolvedProjectPath = projectPath ?? (await selectLogicAppRoot(context));
   if (!resolvedProjectPath) {
     throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
   }

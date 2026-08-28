@@ -14,7 +14,7 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { localize } from '../../localize';
-import { getLogicAppProjectRoot } from '../utils/workspace';
+import { selectLogicAppRoot } from '../utils/workspace';
 
 export default class LogicAppsLanguageServer {
   protected lspServerPath: string | undefined;
@@ -29,7 +29,7 @@ export default class LogicAppsLanguageServer {
 
   public async start(): Promise<void> {
     // TODO(aeldridge): Should only allow selecting codeful projects here. Also language server should be automatically started for all codeful projects and not require prompting.
-    this.projectPath = await getLogicAppProjectRoot(this.context);
+    this.projectPath = await selectLogicAppRoot(this.context);
     if (!this.projectPath) {
       return;
     }

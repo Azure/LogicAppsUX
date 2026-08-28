@@ -4,11 +4,11 @@ import type { WorkspaceFolder } from 'vscode';
 import * as workspaceUtils from '../workspace';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { getWorkspaceFolderLogicApps } from '../workspace';
+import { getWorkspaceFolderLogicAppRoots } from '../workspace';
 import { hostFileName, workflowFileName } from '../../../constants';
 import * as verifyIsProject from '../verifyIsProject';
 
-describe('getLogicAppProjectRoot', () => {
+describe('selectLogicAppRoot', () => {
   const mockContext: any = {
     telemetry: { properties: {}, measurements: {} },
     errorHandling: { issueProperties: {} },
@@ -38,7 +38,7 @@ describe('getLogicAppProjectRoot', () => {
   });
 
   it('returns undefined when no Logic App projects exist', async () => {
-    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext)).resolves.toBeUndefined();
+    await expect(workspaceUtils.selectLogicAppRoot(mockContext)).resolves.toBeUndefined();
 
     expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
   });
@@ -48,7 +48,7 @@ describe('getLogicAppProjectRoot', () => {
     vi.mocked(fse.readdir).mockResolvedValue(['LogicApp1']);
     vi.mocked(verifyIsProject.isLogicAppProject).mockImplementation(async (candidatePath) => candidatePath === projectPath);
 
-    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext)).resolves.toBe(projectPath);
+    await expect(workspaceUtils.selectLogicAppRoot(mockContext)).resolves.toBe(projectPath);
 
     expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
   });
@@ -62,7 +62,7 @@ describe('getLogicAppProjectRoot', () => {
     );
     mockContext.ui.showQuickPick.mockResolvedValue({ data: projectPath2 });
 
-    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext)).resolves.toBe(projectPath2);
+    await expect(workspaceUtils.selectLogicAppRoot(mockContext)).resolves.toBe(projectPath2);
 
     expect(mockContext.ui.showQuickPick).toHaveBeenCalledWith(
       [
@@ -81,7 +81,7 @@ describe('getLogicAppProjectRoot', () => {
       async (candidatePath) => candidatePath === projectPath1 || candidatePath === projectPath2
     );
 
-    await expect(workspaceUtils.getLogicAppProjectRoot(mockContext, true)).resolves.toBe(projectPath1);
+    await expect(workspaceUtils.selectLogicAppRoot(mockContext, true)).resolves.toBe(projectPath1);
 
     expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
   });
@@ -130,7 +130,7 @@ describe('getParentLogicAppRoot', () => {
   });
 });
 
-describe('getWorkspaceLogicAppRoots', () => {
+describe('getLogicAppRoots', () => {
   const testLogicAppProjectPath1 = path.join('test', 'project', 'LogicApp1');
   const testLogicAppProjectPath2 = path.join('test', 'project', 'LogicApp2');
   const testWorkspaceFolders = [
@@ -148,7 +148,7 @@ describe('getWorkspaceLogicAppRoots', () => {
 
   it('should return an empty array if no workspace folders are open', async () => {
     (vscode.workspace as any).workspaceFolders = [];
-    const tryGetWorkspaceFolderLogicAppsSpy = vi.fn(async (folder: vscode.WorkspaceFolder) => {
+    const getWorkspaceFolderLogicAppRootsSpy = vi.fn(async (folder: vscode.WorkspaceFolder) => {
       if (folder.uri.fsPath === testLogicAppProjectPath1) {
         return [folder.uri.fsPath];
       } else if (folder.uri.fsPath === testLogicAppProjectPath2) {
@@ -157,9 +157,9 @@ describe('getWorkspaceLogicAppRoots', () => {
       return [];
     });
 
-    const result = await workspaceUtils.getWorkspaceLogicAppRoots();
+    const result = await workspaceUtils.getLogicAppRoots();
 
-    expect(tryGetWorkspaceFolderLogicAppsSpy).not.toHaveBeenCalled();
+    expect(getWorkspaceFolderLogicAppRootsSpy).not.toHaveBeenCalled();
     expect(result).toEqual([]);
   });
 
@@ -170,7 +170,7 @@ describe('getWorkspaceLogicAppRoots', () => {
     });
     vi.spyOn(fse, 'readdir').mockResolvedValue([]);
 
-    const result = await workspaceUtils.getWorkspaceLogicAppRoots();
+    const result = await workspaceUtils.getLogicAppRoots();
 
     expect(result).toEqual([testLogicAppProjectPath1, testLogicAppProjectPath2]);
   });
@@ -180,13 +180,13 @@ describe('getWorkspaceLogicAppRoots', () => {
     vi.spyOn(verifyIsProject, 'isLogicAppProject').mockResolvedValue(false);
     vi.spyOn(fse, 'readdir').mockResolvedValue([]);
 
-    const result = await workspaceUtils.getWorkspaceLogicAppRoots();
+    const result = await workspaceUtils.getLogicAppRoots();
 
     expect(result).toEqual([]);
   });
 });
 
-describe('getWorkspaceFolderLogicApps', () => {
+describe('getWorkspaceFolderLogicAppRoots', () => {
   const testWorkspaceFolderPath = path.join('test', 'workspace', 'LogicApp1');
   const testWorkspaceFolder = {
     uri: { fsPath: testWorkspaceFolderPath },
@@ -199,13 +199,13 @@ describe('getWorkspaceFolderLogicApps', () => {
   });
 
   it('should return an empty array if workspaceFolder is undefined', async () => {
-    const result = await getWorkspaceFolderLogicApps(undefined);
+    const result = await getWorkspaceFolderLogicAppRoots(undefined);
     expect(result).toEqual([]);
   });
 
   it('should return an empty array if folderPath does not exist', async () => {
     vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
-    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicAppRoots(testWorkspaceFolder);
     expect(result).toEqual([]);
   });
 
@@ -230,7 +230,7 @@ describe('getWorkspaceFolderLogicApps', () => {
       return '';
     });
 
-    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicAppRoots(testWorkspaceFolder);
     expect(result).toEqual([testWorkspaceFolderPath]);
   });
 
@@ -271,7 +271,7 @@ describe('getWorkspaceFolderLogicApps', () => {
       return '';
     });
 
-    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicAppRoots(testWorkspaceFolder);
     expect(result).toEqual([testLogicAppProjectPath1, testLogicAppProjectPath2]);
   });
 
@@ -290,7 +290,7 @@ describe('getWorkspaceFolderLogicApps', () => {
       return '';
     });
 
-    const result = await getWorkspaceFolderLogicApps(testWorkspaceFolder);
+    const result = await getWorkspaceFolderLogicAppRoots(testWorkspaceFolder);
     expect(result).toEqual([]);
   });
 });

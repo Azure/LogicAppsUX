@@ -2,7 +2,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../../utils/workspace';
+import { selectLogicAppRoot, getParentLogicAppRoot } from '../../../../utils/workspace';
 import { switchDebugMode } from '../switchDebugMode';
 
 const mocks = vi.hoisted(() => ({
@@ -27,7 +27,7 @@ vi.mock('../../../../../extensionVariables', () => ({
 }));
 
 vi.mock('../../../../utils/workspace', () => ({
-  getLogicAppProjectRoot: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
   getParentLogicAppRoot: vi.fn(),
 }));
 
@@ -54,7 +54,7 @@ describe('switchDebugMode project resolution', () => {
           prompt: mocks.prompt,
         }) as any
     );
-    vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/workspace/project');
+    vi.mocked(selectLogicAppRoot).mockResolvedValue('/workspace/project');
     vi.mocked(getParentLogicAppRoot).mockResolvedValue(undefined);
     mocks.execute.mockResolvedValue(undefined);
     mocks.prompt.mockResolvedValue(undefined);
@@ -66,7 +66,7 @@ describe('switchDebugMode project resolution', () => {
   ])('falls back to workspace project selection for %s', async (_label, node) => {
     await switchDebugMode(context, node);
 
-    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
+    expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
     expect(getParentLogicAppRoot).not.toHaveBeenCalled();
     expect(AzureWizard).toHaveBeenCalledWith(expect.objectContaining({ projectPath: '/workspace/project' }), expect.any(Object));
   });
@@ -77,7 +77,7 @@ describe('switchDebugMode project resolution', () => {
     );
 
     expect(getParentLogicAppRoot).toHaveBeenCalledWith('/workspace');
-    expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(selectLogicAppRoot).not.toHaveBeenCalled();
     expect(AzureWizard).not.toHaveBeenCalled();
   });
 
@@ -88,7 +88,7 @@ describe('switchDebugMode project resolution', () => {
     await switchDebugMode(context, { fsPath: workflowFilePath } as vscode.Uri);
 
     expect(getParentLogicAppRoot).toHaveBeenCalledWith(workflowFilePath);
-    expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(selectLogicAppRoot).not.toHaveBeenCalled();
     expect(AzureWizard).toHaveBeenCalledWith(expect.objectContaining({ projectPath: '/workspace/projects/logic-app' }), expect.any(Object));
   });
 });

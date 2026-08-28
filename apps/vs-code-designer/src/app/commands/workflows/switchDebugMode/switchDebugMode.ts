@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../utils/workspace';
+import { selectLogicAppRoot, getParentLogicAppRoot } from '../../../utils/workspace';
 import { StatelessWorkflowsListStep } from './switchDebugModeSteps/StatelessWorkflowsListStep';
 import { UpdateDebugModeStep } from './switchDebugModeSteps/UpdateDebugModeStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -14,7 +14,7 @@ import type * as vscode from 'vscode';
 export async function switchDebugMode(context: IActionContext, node?: vscode.Uri): Promise<void> {
   const projectPath = node?.fsPath
     ? await getParentLogicAppRoot(node.fsPath)
-    : await getLogicAppProjectRoot(context);
+    : await selectLogicAppRoot(context);
 
   if (!projectPath) {
     throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));

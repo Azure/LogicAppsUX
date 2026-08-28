@@ -12,11 +12,11 @@ import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
-import { getLogicAppProjectRoot } from '../../utils/workspace';
+import { selectLogicAppRoot } from '../../utils/workspace';
 
 export async function createDataMap(context: IActionContext): Promise<void> {
   if (isNullOrUndefined(ext.defaultLogicAppPath)) {
-    const projectPath = await getLogicAppProjectRoot(context);
+    const projectPath = await selectLogicAppRoot(context);
     if (!projectPath) {
       throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
     }
@@ -29,7 +29,7 @@ export async function loadDataMapFile(context: IActionContext, uri: Uri): Promis
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
   if (isNullOrUndefined(ext.defaultLogicAppPath)) {
-    const projectPath = await getLogicAppProjectRoot(context);
+    const projectPath = await selectLogicAppRoot(context);
     if (!projectPath) {
       throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
     }

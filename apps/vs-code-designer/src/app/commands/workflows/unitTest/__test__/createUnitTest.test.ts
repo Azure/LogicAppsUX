@@ -13,6 +13,7 @@ import * as EnsureWorkspace from '../../../ensureWorkspace';
 import * as syncCloudSettings from '../../../syncCloudSettings';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { testMockOutputsDirectory, testsDirectoryName } from '../../../../../constants';
+import { FileManagement } from '../../../../utils/fileManagement';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {
@@ -67,7 +68,8 @@ describe('createUnitTest', () => {
     } as IActionContext;
 
     vi.spyOn(workspaceUtils, 'getParentLogicAppRoot').mockResolvedValue(dummyProjectPath);
-    vi.spyOn(workspaceUtils, 'getLogicAppProjectRoot').mockResolvedValue(dummyProjectPath);
+    vi.spyOn(workspaceUtils, 'selectLogicAppRoot').mockResolvedValue(dummyProjectPath);
+    vi.spyOn(workspaceUtils, 'getActiveWorkflowNode').mockReturnValue(undefined);
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockResolvedValue({} as any);
     vi.spyOn(unitTestUtils, 'selectWorkflowNode').mockResolvedValue(dummyWorkflowNodeUri);
     vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockResolvedValue(dummyUnitTestName);
@@ -91,7 +93,7 @@ describe('createUnitTest', () => {
     vi.spyOn(unitTestUtils, 'createTestExecutorFile').mockResolvedValue();
     vi.spyOn(unitTestUtils, 'ensureCsproj').mockResolvedValue();
     vi.spyOn(unitTestUtils, 'updateCsprojFile').mockResolvedValue(true);
-    vi.spyOn(workspaceUtils, 'ensureDirectoryInWorkspace').mockResolvedValue();
+    vi.spyOn(FileManagement, 'ensureWorkspaceFolder').mockImplementation(() => {});
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
 
     updateSolutionWithProjectSpy = vi.spyOn(unitTestUtils, 'updateTestsSln');
@@ -106,13 +108,35 @@ describe('createUnitTest', () => {
   test('should successfully create a unit test', async () => {
     await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
+    expect(workspaceUtils.getActiveWorkflowNode).not.toHaveBeenCalled();
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(1);
     expect(fs.ensureDir).toHaveBeenCalled();
+    expect(FileManagement.ensureWorkspaceFolder).toHaveBeenCalledWith(dummyPaths.testsDirectory);
 
     expect(updateSolutionWithProjectSpy).toHaveBeenCalledOnce();
     expect(updateSolutionWithProjectSpy).not.toThrowError();
     expect(dummyContext.telemetry.properties.lastStep).toBe('syncCloudSettings');
     expect(dummyContext.telemetry.properties.unitTestGenerationStatus).toBe('Success');
+  });
+
+  test('falls back to the active workflow when no node is supplied', async () => {
+    vi.mocked(workspaceUtils.getActiveWorkflowNode).mockReturnValue(dummyWorkflowNodeUri);
+
+    await createUnitTest(dummyContext, undefined, dummyUnitTestDefinition);
+
+    expect(workspaceUtils.getActiveWorkflowNode).toHaveBeenCalledOnce();
+    expect(workspaceUtils.getParentLogicAppRoot).toHaveBeenCalledWith(dummyWorkflowNodeUri.fsPath);
+    expect(workspaceUtils.selectLogicAppRoot).not.toHaveBeenCalled();
+    expect(unitTestUtils.selectWorkflowNode).not.toHaveBeenCalled();
+  });
+
+  test('selects a project and workflow when no explicit or active workflow exists', async () => {
+    await createUnitTest(dummyContext, undefined, dummyUnitTestDefinition);
+
+    expect(workspaceUtils.getActiveWorkflowNode).toHaveBeenCalledOnce();
+    expect(workspaceUtils.selectLogicAppRoot).toHaveBeenCalledWith(dummyContext);
+    expect(workspaceUtils.getParentLogicAppRoot).not.toHaveBeenCalled();
+    expect(unitTestUtils.selectWorkflowNode).toHaveBeenCalledWith(dummyContext, dummyProjectPath);
   });
 
   test('should not continue if not a valid workspace', async () => {

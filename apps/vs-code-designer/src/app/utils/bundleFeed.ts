@@ -31,7 +31,7 @@ import { createHash } from 'crypto';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
-import { getLogicAppProjectRoot } from './workspace';
+import { selectLogicAppRoot } from './workspace';
 
 const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
 
@@ -70,7 +70,7 @@ interface ExtensionBundleBaseUrlResult {
  *   4. Default public CDN.
  */
 export async function getExtensionBundleBaseUrl(context: IActionContext): Promise<ExtensionBundleBaseUrlResult> {
-  const projectPath = await getLogicAppProjectRoot(context, true);
+  const projectPath = await selectLogicAppRoot(context, true);
 
   let localSettingsUri: string | undefined;
   if (projectPath) {
@@ -1779,7 +1779,7 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
     // TODO(aeldridge): Should check all projects for pinned bundles, not just the first
-    const projectPath = await getLogicAppProjectRoot(context, true);
+    const projectPath = await selectLogicAppRoot(context, true);
 
     if (projectPath) {
       try {

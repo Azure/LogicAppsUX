@@ -36,7 +36,7 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getParentWorkspaceFolder, getLogicAppProjectRoot } from '../../utils/workspace';
+import { getParentWorkspaceFolder, selectLogicAppRoot } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { stopFuncTaskForWorkspace } from '../../utils/funcCoreTools/funcHostTask';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
@@ -55,7 +55,7 @@ export async function switchToDotnetProjectCommand(context: IActionContext, node
 
 export async function switchToDotnetProject(context: IActionContext, node?: vscode.Uri, localDotNetMajorVersion = '10', isCodeful = false) {
   if (node === undefined || Object.keys(node).length === 0) {
-    const projectPath = await getLogicAppProjectRoot(context);
+    const projectPath = await selectLogicAppRoot(context);
     if (!projectPath) {
       throw new Error(localize('logicAppProjectNotFound', 'Logic App project could not be found.'));
     }

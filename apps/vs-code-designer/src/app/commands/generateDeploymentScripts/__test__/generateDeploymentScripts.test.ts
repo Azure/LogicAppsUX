@@ -6,7 +6,7 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import { ensureWorkspace } from '../../ensureWorkspace';
-import { getLogicAppProjectRoot, isMultiRootWorkspace } from '../../../utils/workspace';
+import { isMultiRootWorkspace, selectLogicAppRoot } from '../../../utils/workspace';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import { COMMON_ERRORS } from '../../../../constants';
@@ -58,7 +58,7 @@ vi.mock('../../ensureWorkspace', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getLogicAppProjectRoot: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
   isMultiRootWorkspace: vi.fn(),
 }));
 
@@ -92,7 +92,7 @@ describe('generateDeploymentScripts', () => {
     (ensureWorkspace as Mock).mockResolvedValue(true);
     (isMultiRootWorkspace as Mock).mockReturnValue(true);
     (isLogicAppProject as Mock).mockResolvedValue(true);
-    (getLogicAppProjectRoot as Mock).mockResolvedValue('projectRoot');
+    (selectLogicAppRoot as Mock).mockResolvedValue('projectRoot');
     const localSettingsMod = await import('../../../utils/appSettings/localSettings');
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     (AzureWizard as Mock).mockImplementation(() => ({
@@ -109,13 +109,13 @@ describe('generateDeploymentScripts', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Starting deployment script generation...');
     expect(addLocalFuncTelemetry).toHaveBeenCalledWith(context);
     expect(ensureWorkspace).toHaveBeenCalledWith(expect.any(Object));
-    expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(selectLogicAppRoot).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure deployment scripts wizard executed successfully.');
   });
 
   it('should throw an error when project path is undefined', async () => {
     (isLogicAppProject as Mock).mockResolvedValue(false);
-    (getLogicAppProjectRoot as Mock).mockResolvedValue(undefined);
+    (selectLogicAppRoot as Mock).mockResolvedValue(undefined);
 
     await expect(generateDeploymentScripts(context, node)).rejects.toThrow('Unable to determine logic app project root.');
 
@@ -165,11 +165,11 @@ describe('generateDeploymentScripts', () => {
 
   it('should use workspace folder if node is undefined', async () => {
     (ensureWorkspace as Mock).mockResolvedValue(true);
-    (getLogicAppProjectRoot as Mock).mockResolvedValue('workspaceRoot');
+    (selectLogicAppRoot as Mock).mockResolvedValue('workspaceRoot');
 
     await generateDeploymentScripts(context, undefined);
 
-    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
+    expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
   });
 
   it('should exit early a valid workspace is not opened', async () => {

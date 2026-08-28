@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { workflowSubscriptionIdKey } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import { createAzureWizard } from '../azureConnectorWizard';
-import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../utils/workspace';
+import { getParentLogicAppRoot, selectLogicAppRoot } from '../../../utils/workspace';
 import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from '../azureConnectorDetails';
 import { clearConnectorSetupSkipped } from '../../../state/connectors';
 import { enableAzureConnectors } from '../enableAzureConnectors';
@@ -20,7 +20,7 @@ vi.mock('../../../utils/appSettings/localSettings', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getLogicAppProjectRoot: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
   getParentLogicAppRoot: vi.fn(),
 }));
 
@@ -46,7 +46,7 @@ describe('enableAzureConnectors', () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
     (getParentLogicAppRoot as Mock).mockResolvedValue(projectPath);
-    (getLogicAppProjectRoot as Mock).mockResolvedValue(projectPath);
+    (selectLogicAppRoot as Mock).mockResolvedValue(projectPath);
     (getAzureConnectorDetailsForLocalProject as Mock).mockResolvedValue({});
   });
 
@@ -80,7 +80,7 @@ describe('enableAzureConnectors', () => {
 
     await enableAzureConnectors(context, undefined);
 
-    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
+    expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
     expect(createAzureWizard).not.toHaveBeenCalled();
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Azure connectors are enabled for the workflow.');
   });

@@ -22,7 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { parameterizeProjectConnections } from '../../../parameterizeConnections';
-import { FileManagement } from '../../iacGestureHelperFunctions';
+import { FileManagement } from '../../../../utils/fileManagement';
 import { deploymentDirectory, managementApiPrefix, workflowFileName } from '../../../../../constants';
 import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';

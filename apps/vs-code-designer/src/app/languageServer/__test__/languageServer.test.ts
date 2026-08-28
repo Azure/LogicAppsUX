@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
   createFileSystemWatcher: vi.fn(),
   getAzureConnectorDetailsForLocalProject: vi.fn(),
   getGlobalSetting: vi.fn(),
-  getLogicAppProjectRoot: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
   languageClient: vi.fn(),
   pathExists: vi.fn(),
   readFile: vi.fn(),
@@ -43,7 +43,7 @@ vi.mock('vscode-languageclient/node', () => ({
 }));
 
 vi.mock('../../utils/workspace', () => ({
-  getLogicAppProjectRoot: mocks.getLogicAppProjectRoot,
+  selectLogicAppRoot: mocks.selectLogicAppRoot,
 }));
 
 vi.mock('../../utils/dotnet/dotnet', () => ({
@@ -90,7 +90,7 @@ describe('LogicAppsLanguageServer', () => {
     mocks.pathExists.mockResolvedValue(false);
     mocks.readFile.mockResolvedValue('{}');
     mocks.readdir.mockResolvedValue([]);
-    mocks.getLogicAppProjectRoot.mockResolvedValue(projectPath);
+    mocks.selectLogicAppRoot.mockResolvedValue(projectPath);
     mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
     mocks.getAzureConnectorDetailsForLocalProject.mockResolvedValue({
       accessToken: 'Bearer token',
@@ -100,7 +100,7 @@ describe('LogicAppsLanguageServer', () => {
   });
 
   it('does not start or read metadata when no Logic App project root is found', async () => {
-    mocks.getLogicAppProjectRoot.mockResolvedValue(undefined);
+    mocks.selectLogicAppRoot.mockResolvedValue(undefined);
 
     await new LogicAppsLanguageServer({} as any).start();
 

@@ -64,7 +64,7 @@ import { useBinariesDependencies } from './app/utils/binaries';
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
 import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
 import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
-import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
+import { getLogicAppRoots } from './app/utils/workspace';
 
 const telemetryString = 'setInGitHubBuild';
 
@@ -117,7 +117,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       });
 
-      const projectPaths = await getWorkspaceLogicAppRoots();
+      const projectPaths = await getLogicAppRoots();
 
       activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
       const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
@@ -328,7 +328,7 @@ async function startDesignTime(activateContext: IActionContext, isDevContainer: 
     );
     scheduleStartAllDesignTimeApis();
   } else {
-    const projectPaths = await getWorkspaceLogicAppRoots();
+    const projectPaths = await getLogicAppRoots();
     if (await promptShouldAutoStartDesignTime(projectPaths)) {
       for (const projectPath of projectPaths) {
         callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (actionContext: IActionContext) => {

@@ -11,7 +11,7 @@ import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
 import type * as vscode from 'vscode';
-import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../utils/workspace';
+import { selectLogicAppRoot, getParentLogicAppRoot } from '../../utils/workspace';
 import { ext } from '../../../extensionVariables';
 import { clearConnectorSetupSkipped } from '../../state/connectors';
 
@@ -21,7 +21,7 @@ import { clearConnectorSetupSkipped } from '../../state/connectors';
  * @param {vscode.Uri | undefined} node - The URI of the workflow node.
  */
 export async function enableAzureConnectors(context: IActionContext, node: vscode.Uri | undefined): Promise<void> {
-  const projectPath = node !== undefined ? await getParentLogicAppRoot(node.fsPath) : await getLogicAppProjectRoot(context);
+  const projectPath = node !== undefined ? await getParentLogicAppRoot(node.fsPath) : await selectLogicAppRoot(context);
 
   if (!projectPath) {
     throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));

@@ -5,7 +5,7 @@
 import { webhookRedirectHostUri } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
-import { getLogicAppProjectRoot, getParentLogicAppRoot } from '../../../utils/workspace';
+import { selectLogicAppRoot, getParentLogicAppRoot } from '../../../utils/workspace';
 import { ConfigureRedirectEndpointStep } from './configureWebhookRedirectEndpointSteps/ConfigureRedirectEndpointStep';
 import { SaveWebhookContextStep } from './configureWebhookRedirectEndpointSteps/SaveWebhookContextStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -18,7 +18,7 @@ export interface IWebhookContext extends IActionContext {
 }
 
 export async function configureWebhookRedirectEndpoint(context: IActionContext, node?: Uri): Promise<void> {
-  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await getLogicAppProjectRoot(context);
+  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await selectLogicAppRoot(context);
 
   if (!projectPath) {
     throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));

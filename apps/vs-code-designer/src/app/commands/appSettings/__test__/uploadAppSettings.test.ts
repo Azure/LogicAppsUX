@@ -7,7 +7,7 @@ import {
   workflowTenantIdKey,
 } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
-import { getLogicAppProjectRoot } from '../../../utils/workspace';
+import { selectLogicAppRoot } from '../../../utils/workspace';
 import { uploadAppSettings } from '../uploadAppSettings';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 
@@ -30,7 +30,7 @@ vi.mock('vscode', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
-  getLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project'),
+  selectLogicAppRoot: vi.fn().mockResolvedValue('/mock/project'),
 }));
 
 vi.mock('../../../utils/appSettings/localSettings', () => ({
@@ -58,7 +58,7 @@ describe('uploadAppSettings', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
-    (getLogicAppProjectRoot as Mock).mockResolvedValue('/mock/project');
+    (selectLogicAppRoot as Mock).mockResolvedValue('/mock/project');
     const vscode = await import('vscode');
     (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/mock/workspace' } }];
 
@@ -84,7 +84,7 @@ describe('uploadAppSettings', () => {
 
     await uploadAppSettings(context, node, nestedProjectPath, []);
 
-    expect(getLogicAppProjectRoot).not.toHaveBeenCalled();
+    expect(selectLogicAppRoot).not.toHaveBeenCalled();
     expect(getLocalSettingsJson).toHaveBeenCalledWith(context, nestedProjectPath);
   });
 
@@ -97,7 +97,7 @@ describe('uploadAppSettings', () => {
 
     await uploadAppSettings(context, node, undefined, []);
 
-    expect(getLogicAppProjectRoot).toHaveBeenCalledWith(context);
+    expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
     expect(getLocalSettingsJson).toHaveBeenCalledWith(context, '/mock/project');
   });
 

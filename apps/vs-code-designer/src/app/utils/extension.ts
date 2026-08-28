@@ -9,7 +9,7 @@ import {
   supportedDataMapperFolders,
   supportedSchemaFileExts,
 } from '../commands/dataMapper/extensionConfig';
-import { getWorkspaceCustomCodeProjectRoots, getWorkspaceLogicAppRoots, hasLogicAppInWorkspace } from './workspace';
+import { getWorkspaceCustomCodeRoots, getLogicAppRoots, hasLogicAppInWorkspace } from './workspace';
 import { getEligibleLogicAppFoldersForCustomCode } from './customCodeUtils';
 
 /**
@@ -44,11 +44,11 @@ export async function updateLogicAppsContext() {
     await vscode.commands.executeCommand('setContext', extensionContext.hasProject, false);
     await vscode.commands.executeCommand('setContext', extensionContext.logicAppProjectPaths, []);
   } else {
-    const projectPaths = await getWorkspaceLogicAppRoots();
+    const projectPaths = await getLogicAppRoots();
     const hasLogicApp = projectPaths.length > 0;
     await vscode.commands.executeCommand('setContext', extensionContext.hasProject, hasLogicApp);
     await vscode.commands.executeCommand('setContext', extensionContext.logicAppProjectPaths, projectPaths);
-    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getWorkspaceCustomCodeProjectRoots());
+    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getWorkspaceCustomCodeRoots());
     await vscode.commands.executeCommand('setContext', extensionContext.customCodeEligibleLogicAppFolders, await getEligibleLogicAppFoldersForCustomCode());
   }
 }

@@ -75,7 +75,7 @@ import { hasCodefulWorkflowSetting } from '../../utils/codeful';
 import { isProjectInitializedForVSCode } from '../../projectConsistency/vscodeConsistency';
 import { initProjectForVSCode } from '../initProjectForVSCode/initProjectForVSCode';
 import { publishCodefulProject } from '../publishCodefulProject';
-import { getLogicAppProjectRoot, resolveUri } from '../../utils/workspace';
+import { selectLogicAppRoot, resolveUri } from '../../utils/workspace';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -118,7 +118,7 @@ async function deploy(
   const selectedProjectUri =
     target instanceof Uri
       ? target
-      : resolveUri(typeof target === 'string' ? target : await getLogicAppProjectRoot(context));
+      : resolveUri(typeof target === 'string' ? target : await selectLogicAppRoot(context));
 
   const projectPath = selectedProjectUri?.fsPath;
   if (!projectPath) {

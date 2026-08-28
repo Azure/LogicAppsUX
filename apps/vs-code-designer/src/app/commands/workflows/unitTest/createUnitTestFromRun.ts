@@ -20,7 +20,7 @@ import {
   validateWorkflowPath,
   selectWorkflowNode,
 } from '../../../utils/unitTest/unitTest';
-import { ensureDirectoryInWorkspace, getLogicAppProjectRoot, getParentLogicAppRoot, getWorkflowNode } from '../../../utils/workspace';
+import { selectLogicAppRoot, getParentLogicAppRoot, getActiveWorkflowNode } from '../../../utils/workspace';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -29,6 +29,7 @@ import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 import { syncCloudSettings } from '../../syncCloudSettings';
+import { FileManagement } from '../../../utils/fileManagement';
 
 /**
  * Handles the creation of a unit test for a Logic App workflow.
@@ -67,10 +68,10 @@ export async function createUnitTestFromRun(
   }
 
   context.telemetry.properties.lastStep = 'getWorkflowNode';
-  let workflowNode = getWorkflowNode(node) as vscode.Uri;
+  let workflowNode = node ?? getActiveWorkflowNode() as vscode.Uri;
 
   context.telemetry.properties.lastStep = 'getLogicAppProjectRoot';
-  const projectPath = workflowNode ? await getParentLogicAppRoot(workflowNode.fsPath) : await getLogicAppProjectRoot(context);
+  const projectPath = workflowNode ? await getParentLogicAppRoot(workflowNode.fsPath) : await selectLogicAppRoot(context);
 
   if (!projectPath) {
     throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root folder.'));
@@ -238,7 +239,7 @@ async function generateUnitTestFromRun(
 
   context.telemetry.properties.lastStep = 'ensureTestsDirectoryInWorkspace';
   ext.outputChannel.appendLog(localize('ensureTestsDirectory', 'Ensuring tests directory exists in workspace...'));
-  await ensureDirectoryInWorkspace(paths.testsDirectory);
+  FileManagement.ensureWorkspaceFolder(paths.testsDirectory);
 
   ext.outputChannel.appendLog(
     localize('generateCodefulUnitTest', 'Successfully created unit test "{0}" at "{1}".', unitTestName, paths.unitTestFolderPath)
