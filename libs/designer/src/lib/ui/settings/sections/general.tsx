@@ -7,9 +7,9 @@ import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { OperationManifestService } from '@microsoft/logic-apps-shared';
-import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
+import { Confirm, getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
-import type { FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 
 export interface GeneralSectionProps extends SectionProps {
   maximumWaitingRunsMetadata: MaximumWaitingRunsMetadata;
@@ -125,7 +125,8 @@ export const General = ({
   });
   const concurrencyDescription = isTrigger
     ? intl.formatMessage({
-        defaultMessage: `By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit.`,
+        defaultMessage:
+          "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit.",
         id: 'bWBMhe',
         description: 'description of concurrency setting',
       })
@@ -185,7 +186,7 @@ export const General = ({
     description: 'Title for array dropdown input setting',
   });
   const invokerConnectionTitle = intl.formatMessage({
-    defaultMessage: `Use Invoker's Connection`,
+    defaultMessage: "Use Invoker's Connection",
     id: 'bWOsvo',
     description: 'Title for invoker connection',
   });
@@ -204,6 +205,36 @@ export const General = ({
     id: 'DYbiZw',
     description: 'Fail operation when limits are reached',
   });
+  const enableConcurrencyConfirmationTitle = intl.formatMessage({
+    defaultMessage: 'Enable concurrency control?',
+    id: 'O4af69',
+    description: 'Title for the confirmation dialog before enabling trigger concurrency control',
+  });
+  const enableConcurrencyConfirmationMessage = intl.formatMessage({
+    defaultMessage: "After you turn on concurrency control, this setting can't be changed.",
+    id: 'oQ916T',
+    description: 'Message for the confirmation dialog before enabling trigger concurrency control',
+  });
+  const enableMessage = intl.formatMessage({
+    defaultMessage: 'Enable',
+    id: 'nI4d0V',
+    description: 'Primary button label for enabling trigger concurrency control',
+  });
+  const [isEnableConcurrencyConfirmationOpen, setIsEnableConcurrencyConfirmationOpen] = useState(false);
+
+  useEffect(() => {
+    setIsEnableConcurrencyConfirmationOpen(false);
+  }, [nodeId]);
+
+  const onConcurrencyToggleInputChange = (_: unknown, checked?: boolean) => {
+    const shouldEnableConcurrency = !!checked;
+    if (isTrigger && shouldEnableConcurrency && !concurrency?.value?.enabled) {
+      setIsEnableConcurrencyConfirmationOpen(true);
+      return;
+    }
+
+    onConcurrencyToggle(shouldEnableConcurrency);
+  };
 
   const generalSectionProps: SettingsSectionProps = {
     id: 'general',
@@ -295,7 +326,7 @@ export const General = ({
         settingProp: {
           readOnly,
           checked: concurrency?.value?.enabled,
-          onToggleInputChange: (_, checked) => onConcurrencyToggle(!!checked),
+          onToggleInputChange: onConcurrencyToggleInputChange,
           customLabel: getSettingLabel(
             concurrencyTitle,
             concurrencyTooltipText,
@@ -364,5 +395,20 @@ export const General = ({
     validationErrors,
   };
 
-  return <SettingsSection {...generalSectionProps} />;
+  return (
+    <>
+      <SettingsSection {...generalSectionProps} />
+      <Confirm
+        hidden={!isEnableConcurrencyConfirmationOpen}
+        title={enableConcurrencyConfirmationTitle}
+        message={enableConcurrencyConfirmationMessage}
+        confirmText={enableMessage}
+        onConfirm={() => {
+          setIsEnableConcurrencyConfirmationOpen(false);
+          onConcurrencyToggle(true);
+        }}
+        onDismiss={() => setIsEnableConcurrencyConfirmationOpen(false)}
+      />
+    </>
+  );
 };
