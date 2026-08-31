@@ -6,8 +6,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as workspaceUtils from '../workspace';
 
 const mocks = vi.hoisted(() => ({
+  appendLog: vi.fn(),
+  globby: vi.fn(),
   isCodelessLogicApp: vi.fn(),
   isCodefulLogicApp: vi.fn(),
+}));
+
+vi.mock('globby', () => ({
+  default: mocks.globby,
 }));
 
 vi.mock('../codeless', () => ({
@@ -16,6 +22,14 @@ vi.mock('../codeless', () => ({
 
 vi.mock('../codeful', () => ({
   isCodefulLogicApp: mocks.isCodefulLogicApp,
+}));
+
+vi.mock('../../../extensionVariables', () => ({
+  ext: {
+    outputChannel: {
+      appendLog: mocks.appendLog,
+    },
+  },
 }));
 
 function mockDirectoryPaths(): void {
@@ -96,6 +110,62 @@ describe('selectLogicAppRoot', () => {
     await expect(workspaceUtils.selectLogicAppRoot(mockContext, true)).resolves.toBe(projectPath1);
 
     expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
+  });
+});
+
+describe('getWorkspaceFilePathInParent', () => {
+  const projectPath = path.join('test', 'workspace', 'LogicApp');
+  const parentPath = path.dirname(projectPath);
+  const validWorkspaceFile = 'valid.code-workspace';
+  const validWorkspaceFilePath = path.join(parentPath, validWorkspaceFile);
+  const validWorkspaceContent = Buffer.from(JSON.stringify({ folders: [{ path: './LogicApp' }] }));
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDirectoryPaths();
+    mocks.isCodelessLogicApp.mockImplementation(async (candidatePath) => candidatePath === projectPath);
+    mocks.globby.mockResolvedValue([]);
+    (vscode.workspace as any).workspaceFolders = [
+      {
+        uri: { fsPath: projectPath },
+        name: 'LogicApp',
+        index: 0,
+      },
+    ];
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    (vscode.workspace as any).workspaceFolders = [];
+  });
+
+  it('skips malformed JSON and returns a later valid workspace file', async () => {
+    mocks.globby.mockResolvedValueOnce(['malformed.code-workspace', validWorkspaceFile]);
+    vi.mocked(vscode.workspace.fs.readFile).mockResolvedValueOnce(Buffer.from('{')).mockResolvedValueOnce(validWorkspaceContent);
+
+    await expect(workspaceUtils.getWorkspaceFilePathInParent()).resolves.toBe(validWorkspaceFilePath);
+
+    expect(mocks.appendLog).toHaveBeenCalledOnce();
+  });
+
+  it('skips an unreadable candidate and returns a later valid workspace file', async () => {
+    mocks.globby.mockResolvedValueOnce(['unreadable.code-workspace', validWorkspaceFile]);
+    vi.mocked(vscode.workspace.fs.readFile).mockRejectedValueOnce(new Error('EACCES')).mockResolvedValueOnce(validWorkspaceContent);
+
+    await expect(workspaceUtils.getWorkspaceFilePathInParent()).resolves.toBe(validWorkspaceFilePath);
+
+    expect(mocks.appendLog).toHaveBeenCalledOnce();
+  });
+
+  it('skips workspace files whose folders property is not an array', async () => {
+    mocks.globby.mockResolvedValueOnce(['invalid-shape.code-workspace', validWorkspaceFile]);
+    vi.mocked(vscode.workspace.fs.readFile)
+      .mockResolvedValueOnce(Buffer.from(JSON.stringify({ folders: 'LogicApp' })))
+      .mockResolvedValueOnce(validWorkspaceContent);
+
+    await expect(workspaceUtils.getWorkspaceFilePathInParent()).resolves.toBe(validWorkspaceFilePath);
+
+    expect(mocks.appendLog).not.toHaveBeenCalled();
   });
 });
 

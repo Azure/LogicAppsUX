@@ -125,7 +125,7 @@ async function deploy(
     throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
 
-  // NOTE(aeldridge): getDeployFsPath resolves deploySubpath relative to the containing workspace folder, need to update deploySubpath for nested project structure
+  // TODO(aeldridge): getDeployFsPath resolves deploySubpath relative to the containing workspace folder, need to update deploySubpath for nested project structure
   const deployPaths = await getDeployFsPath(context, selectedProjectUri);
   const deployContext: IDeployContext = Object.assign(context, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { effectiveDeployFsPath } = deployPaths;

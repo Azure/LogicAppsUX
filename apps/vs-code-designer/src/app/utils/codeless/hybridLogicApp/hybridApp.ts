@@ -43,7 +43,7 @@ interface createHybridAppOptions {
 
 const getAppSettingsFromLocal = async (context: IActionContext): Promise<EnvironmentVar[]> => {
   const appSettingsToskip = [azureWebJobsStorageKey, ProjectDirectoryPathKey, workerRuntimeKey];
-  const projectPath = await selectLogicAppRoot(context, true);
+  const projectPath = await selectLogicAppRoot(context);
   if (!projectPath) {
     return [];
   }

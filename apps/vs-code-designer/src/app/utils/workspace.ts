@@ -99,17 +99,33 @@ async function findParentWorkspaceFile(projectRoot: string): Promise<string | un
     const workspaceFiles = await globby('*.code-workspace', { cwd: currentDir });
     for (const wsFile of workspaceFiles) {
       const workspaceFilePath = path.join(currentDir, wsFile);
-      const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(workspaceFilePath));
-      const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
+      try {
+        const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(workspaceFilePath));
+        const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
+        if (!Array.isArray(workspaceFileJson.folders)) {
+          continue;
+        }
 
-      if (workspaceFileJson.folders) {
-        const referencesProject = workspaceFileJson.folders.some((folder: { path: string }) => {
+        const referencesProject = workspaceFileJson.folders.some((folder: unknown) => {
+          if (!folder || typeof folder !== 'object' || !('path' in folder) || typeof folder.path !== 'string') {
+            return false;
+          }
+
           const resolvedFolderPath = path.resolve(currentDir, folder.path);
           return isPathEqual(resolvedFolderPath, projectRoot) || isSubpath(resolvedFolderPath, projectRoot);
         });
         if (referencesProject) {
           return workspaceFilePath;
         }
+      } catch (error) {
+        ext.outputChannel.appendLog(
+          localize(
+            'inspectWorkspaceFileError',
+            'Unable to inspect workspace file "{0}": "{1}".',
+            workspaceFilePath,
+            error instanceof Error ? error.message : String(error)
+          )
+        );
       }
     }
     currentDir = path.dirname(currentDir);
@@ -178,7 +194,7 @@ export async function getLogicAppRoots(): Promise<string[]> {
  * @param {boolean} suppressPrompt - If true, returns the first project found without prompting.
  * @returns {Promise<string | undefined>} The selected Logic App project root path, or undefined if none found.
  */
-export async function selectLogicAppRoot(context: IActionContext, suppressPrompt: boolean = false): Promise<string | undefined> {
+export async function selectLogicAppRoot(context: IActionContext, suppressPrompt = false): Promise<string | undefined> {
   const projectPaths = await getLogicAppRoots();
   if (projectPaths.length === 0) {
     return undefined;
@@ -230,7 +246,14 @@ export async function getWorkspaceFolderLogicAppRoots(workspaceFolder: vscode.Wo
     const logicAppProjectRoots = (await Promise.all(logicAppProjectRootTasks)).filter((p) => p !== undefined);
     return logicAppProjectRoots;
   } catch (error) {
-    ext.outputChannel.appendLog(localize('workspaceFolderLogicAppRootsError', 'Error resolving workspace folder "{0}" logic app roots: "{1}".', workspaceFolderPath, error instanceof Error ? error.message : String(error)));
+    ext.outputChannel.appendLog(
+      localize(
+        'workspaceFolderLogicAppRootsError',
+        'Error resolving workspace folder "{0}" logic app roots: "{1}".',
+        workspaceFolderPath,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
     return [];
   }
 }
@@ -244,7 +267,7 @@ export async function getWorkspaceFolderLogicAppRoots(workspaceFolder: vscode.Wo
 export async function selectWorkspaceFolderLogicAppRoot(
   context: IActionContext,
   workspaceFolder: vscode.WorkspaceFolder | string,
-  suppressPrompt: boolean = false
+  suppressPrompt = false
 ): Promise<string | undefined> {
   if (!workspaceFolder) {
     return undefined;
@@ -286,15 +309,22 @@ export async function selectWorkspaceFolderLogicAppRoot(
  */
 export async function isLogicApp(fsPath: string): Promise<boolean> {
   try {
-    if (!(await fse.pathExists(fsPath)) || !(fse.statSync(fsPath).isDirectory())) {
+    if (!(await fse.pathExists(fsPath)) || !fse.statSync(fsPath).isDirectory()) {
       return false;
     }
   } catch (error) {
-    ext.outputChannel.appendLog(localize('isLogicAppError', 'Error checking if path "{0}" is a Logic App: "{1}".', fsPath, error instanceof Error ? error.message : String(error)));
+    ext.outputChannel.appendLog(
+      localize(
+        'isLogicAppError',
+        'Error checking if path "{0}" is a Logic App: "{1}".',
+        fsPath,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
     return false;
   }
 
-  return await isCodelessLogicApp(fsPath) || await isCodefulLogicApp(fsPath);
+  return (await isCodelessLogicApp(fsPath)) || (await isCodefulLogicApp(fsPath));
 }
 
 /**
@@ -314,9 +344,7 @@ export async function getCustomCodeRoots(): Promise<string[]> {
  * @param {vscode.WorkspaceFolder | string | undefined} workspaceFolder - The workspace folder to check.
  * @returns {Promise<string[]>} A promise that resolves to an array of custom code project roots.
  */
-async function getWorkspaceFolderCustomCodeRoots(
-  workspaceFolder: vscode.WorkspaceFolder | string | undefined
-): Promise<string[]> {
+async function getWorkspaceFolderCustomCodeRoots(workspaceFolder: vscode.WorkspaceFolder | string | undefined): Promise<string[]> {
   if (isNullOrUndefined(workspaceFolder)) {
     return [];
   }
@@ -342,7 +370,14 @@ async function getWorkspaceFolderCustomCodeRoots(
     const customCodeProjectRoots = (await Promise.all(customCodeProjectRootTasks)).filter((p) => p !== undefined);
     return customCodeProjectRoots;
   } catch (error) {
-    ext.outputChannel.appendLog(localize('getWorkspaceFolderCustomCodeRootsError', 'Error getting custom code roots for workspace folder "{0}": "{1}".', workspaceFolderPath, error instanceof Error ? error.message : String(error)));
+    ext.outputChannel.appendLog(
+      localize(
+        'getWorkspaceFolderCustomCodeRootsError',
+        'Error getting custom code roots for workspace folder "{0}": "{1}".',
+        workspaceFolderPath,
+        error instanceof Error ? error.message : String(error)
+      )
+    );
     return [];
   }
 }
