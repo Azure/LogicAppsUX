@@ -5,7 +5,7 @@ import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsC
 import { getLogicAppRoots } from '../workspace';
 
 vi.mock('../workspace', () => ({
-  getWorkspaceCustomCodeRoots: vi.fn().mockResolvedValue([]),
+  getCustomCodeRoots: vi.fn().mockResolvedValue([]),
   getLogicAppRoots: vi.fn().mockResolvedValue([]),
 }));
 

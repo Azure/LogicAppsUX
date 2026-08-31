@@ -1,26 +1,18 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { codefulProjectsExist, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
+import { codefulProjectExists, hasCodefulSdkReference, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
+  getLogicAppRoots: vi.fn(),
   getGlobalSetting: vi.fn(),
   pathExists: vi.fn(),
   readdir: vi.fn(),
   readFile: vi.fn(),
   remove: vi.fn(),
   statSync: vi.fn(),
-  workspaceFolders: undefined as { uri: { fsPath: string } }[] | undefined,
   writeFile: vi.fn(),
-}));
-
-vi.mock('vscode', () => ({
-  workspace: {
-    get workspaceFolders() {
-      return mocks.workspaceFolders;
-    },
-  },
 }));
 
 vi.mock('fs-extra', () => ({
@@ -35,6 +27,10 @@ vi.mock('fs-extra', () => ({
 
 vi.mock('../vsCodeConfig/settings', () => ({
   getGlobalSetting: mocks.getGlobalSetting,
+}));
+
+vi.mock('../workspace', () => ({
+  getLogicAppRoots: mocks.getLogicAppRoots,
 }));
 
 vi.mock('../../../extensionVariables', () => ({
@@ -205,7 +201,36 @@ describe('parseCsprojCopyToCodefulInfo', () => {
   });
 });
 
-describe('codefulProjectsExist', () => {
+describe('hasCodefulSdkReference', () => {
+  const projectPath = 'D:\\workspace\\CodefulLogicApp';
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.statSync.mockReturnValue({ isDirectory: () => true });
+  });
+
+  it('returns true for a .NET 8 project that references the Logic Apps SDK', async () => {
+    mocks.readdir.mockResolvedValue(['CodefulLogicApp.csproj', 'MyWorkflow.cs']);
+    mocks.readFile.mockResolvedValue(`
+      <Project Sdk="Microsoft.NET.Sdk">
+        <PropertyGroup><TargetFramework>net8</TargetFramework></PropertyGroup>
+        <ItemGroup>
+          <PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview.1" />
+        </ItemGroup>
+      </Project>
+    `);
+
+    await expect(hasCodefulSdkReference(projectPath)).resolves.toBe(true);
+  });
+
+  it('returns false when the folder does not contain a .csproj', async () => {
+    mocks.readdir.mockResolvedValue(['Program.cs']);
+
+    await expect(hasCodefulSdkReference(projectPath)).resolves.toBe(false);
+  });
+});
+
+describe('codefulProjectExists', () => {
   const codefulSettingsJson = JSON.stringify({
     IsEncrypted: false,
     Values: { WORKFLOW_CODEFUL_ENABLED: 'true' },
@@ -217,64 +242,58 @@ describe('codefulProjectsExist', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.workspaceFolders = undefined;
+    mocks.getLogicAppRoots.mockResolvedValue([]);
+    mocks.statSync.mockReturnValue({ isDirectory: () => true });
   });
 
-  it('returns false when there are no workspace folders', async () => {
-    mocks.workspaceFolders = undefined;
-
-    const result = await codefulProjectsExist();
+  it('returns false when there are no Logic App project roots', async () => {
+    const result = await codefulProjectExists();
 
     expect(result).toBe(false);
   });
 
-  it('returns false when workspace folders array is empty', async () => {
-    mocks.workspaceFolders = [];
-
-    const result = await codefulProjectsExist();
-
-    expect(result).toBe(false);
-  });
-
-  it('returns true when a workspace folder has WORKFLOW_CODEFUL_ENABLED', async () => {
+  it('returns true when a Logic App project has WORKFLOW_CODEFUL_ENABLED', async () => {
     const folderPath = 'D:\\workspace\\codeful-project';
-    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.getLogicAppRoots.mockResolvedValue([folderPath]);
     mocks.pathExists.mockResolvedValue(true);
     mocks.readFile.mockResolvedValue(codefulSettingsJson);
 
-    const result = await codefulProjectsExist();
+    const result = await codefulProjectExists();
 
     expect(result).toBe(true);
     expect(mocks.pathExists).toHaveBeenCalledWith(path.join(folderPath, 'local.settings.json'));
   });
 
-  it('returns false when workspace folder does not have WORKFLOW_CODEFUL_ENABLED', async () => {
+  it('returns false when a project does not have WORKFLOW_CODEFUL_ENABLED or an SDK reference', async () => {
     const folderPath = 'D:\\workspace\\standard-project';
-    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.getLogicAppRoots.mockResolvedValue([folderPath]);
     mocks.pathExists.mockResolvedValue(true);
+    mocks.readdir.mockResolvedValue([]);
     mocks.readFile.mockResolvedValue(nonCodefulSettingsJson);
 
-    const result = await codefulProjectsExist();
+    const result = await codefulProjectExists();
 
     expect(result).toBe(false);
   });
 
   it('returns false when WORKFLOW_CODEFUL_ENABLED is set to "false"', async () => {
     const folderPath = 'D:\\workspace\\disabled-codeful-project';
-    mocks.workspaceFolders = [{ uri: { fsPath: folderPath } }];
+    mocks.getLogicAppRoots.mockResolvedValue([folderPath]);
     mocks.pathExists.mockResolvedValue(true);
+    mocks.readdir.mockResolvedValue([]);
     mocks.readFile.mockResolvedValue(JSON.stringify({ IsEncrypted: false, Values: { WORKFLOW_CODEFUL_ENABLED: 'false' } }));
 
-    const result = await codefulProjectsExist();
+    const result = await codefulProjectExists();
 
     expect(result).toBe(false);
   });
 
-  it('returns true when at least one of multiple folders is codeful', async () => {
+  it('returns true when at least one of multiple Logic App projects is codeful', async () => {
     const standardPath = 'D:\\workspace\\standard-project';
     const codefulPath = 'D:\\workspace\\codeful-project';
-    mocks.workspaceFolders = [{ uri: { fsPath: standardPath } }, { uri: { fsPath: codefulPath } }];
+    mocks.getLogicAppRoots.mockResolvedValue([standardPath, codefulPath]);
     mocks.pathExists.mockResolvedValue(true);
+    mocks.readdir.mockResolvedValue([]);
     mocks.readFile.mockImplementation(async (filePath: string) => {
       if (filePath === path.join(codefulPath, 'local.settings.json')) {
         return codefulSettingsJson;
@@ -282,26 +301,28 @@ describe('codefulProjectsExist', () => {
       return nonCodefulSettingsJson;
     });
 
-    const result = await codefulProjectsExist();
+    const result = await codefulProjectExists();
 
     expect(result).toBe(true);
   });
 
   it('returns false when local.settings.json does not exist', async () => {
-    mocks.workspaceFolders = [{ uri: { fsPath: 'D:\\workspace\\empty-project' } }];
+    mocks.getLogicAppRoots.mockResolvedValue(['D:\\workspace\\empty-project']);
     mocks.pathExists.mockResolvedValue(false);
+    mocks.readdir.mockResolvedValue([]);
 
-    const result = await codefulProjectsExist();
+    const result = await codefulProjectExists();
 
     expect(result).toBe(false);
   });
 
   it('returns false when local.settings.json contains invalid JSON', async () => {
-    mocks.workspaceFolders = [{ uri: { fsPath: 'D:\\workspace\\broken-project' } }];
+    mocks.getLogicAppRoots.mockResolvedValue(['D:\\workspace\\broken-project']);
     mocks.pathExists.mockResolvedValue(true);
+    mocks.readdir.mockResolvedValue([]);
     mocks.readFile.mockResolvedValue('not valid json');
 
-    const result = await codefulProjectsExist();
+    const result = await codefulProjectExists();
 
     expect(result).toBe(false);
   });

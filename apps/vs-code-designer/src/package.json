@@ -326,11 +326,6 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.initProjectForVSCode",
-        "title": "Initialize project for use with VS Code...",
-        "category": "Azure Logic Apps"
-      },
-      {
         "command": "azureLogicAppsStandard.configureDeploymentSource",
         "title": "Configure deployment source...",
         "category": "Azure Logic Apps"
@@ -902,11 +897,6 @@
             "type": "string",
             "description": "The path for Azure Logic Apps extension Azure Function Core Tools dependency binary.",
             "default": "func"
-          },
-          "azureLogicAppsStandard.projectSubpath": {
-            "scope": "resource",
-            "type": "string",
-            "description": "The default subpath of a workspace folder to use for project operations. This is only necessary if you have multiple projects in one workspace. See https://aka.ms/AA4nmfy for more information."
           },
           "azureLogicAppsStandard.pickProcessTimeout": {
             "type": "integer",

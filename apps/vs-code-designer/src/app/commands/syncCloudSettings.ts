@@ -5,7 +5,6 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import {
   azureWebJobsStorageKey,
@@ -16,11 +15,11 @@ import {
 import { isString } from '@microsoft/logic-apps-shared';
 import { writeFormattedJson } from '../utils/fs';
 import * as path from 'path';
-import * as fse from 'fs-extra';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { getConnectionsJson } from '../utils/codeless/connection';
 import type { ConnectionsData } from '@microsoft/logic-apps-shared';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import { getParentLogicAppRoot, selectLogicAppRoot } from '../utils/workspace';
 
 /**
  * Syncs the cloud.settings.json file with local.settings.json.
@@ -28,19 +27,10 @@ import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps'
  * @param {vscode.Uri} node - The URI of the cloud.settings.json file or the logic app project to sync.
  * @returns {Promise<void>} - A promise that resolves when the sync is complete.
  */
-export async function syncCloudSettings(context: IActionContext, node: vscode.Uri): Promise<void> {
-  if (!node || !node.fsPath) {
-    throw new Error(localize('noProjectSelected', 'No project selected.'));
-  }
-
-  if (!(await fse.stat(node.fsPath)).isDirectory()) {
-    // The node may be a cloud.settings.json file, so we check the parent node for a project
-    node = vscode.Uri.file(path.dirname(node.fsPath));
-  }
-
-  const projectPath = await tryGetLogicAppProjectRoot(context, node.fsPath);
+export async function syncCloudSettings(context: IActionContext, node?: vscode.Uri): Promise<void> {
+  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await selectLogicAppRoot(context);
   if (!projectPath) {
-    throw new Error(localize('noProjectSelected', 'Could not find a Logic App project at "{0}".', node.fsPath));
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
 
   const localSettings = await getLocalSettingsJson(context, projectPath, false);

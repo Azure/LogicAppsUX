@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { ext } from '../../../extensionVariables';
 import { debugLogicApp } from '../debugLogicApp';
 import { pickFuncProcessInternal } from '../pickFuncProcess';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { selectLogicAppRoot, selectWorkspaceFolderLogicAppRoot } from '../../utils/workspace';
 import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from '../pickCustomCodeWorkerProcess';
 
 vi.mock('vscode', () => ({
@@ -21,8 +21,10 @@ vi.mock('../pickFuncProcess', () => ({
   pickFuncProcessInternal: vi.fn(),
 }));
 
-vi.mock('../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
+vi.mock('../../utils/workspace', () => ({
+  getParentWorkspaceFolder: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
+  selectWorkspaceFolderLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../pickCustomCodeWorkerProcess', () => ({
@@ -45,7 +47,8 @@ describe('debugLogicApp', () => {
       ui: {},
       valuesToMask: [],
     } as any;
-    vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('D:/workspace/MyLogicApp');
+    vi.mocked(selectLogicAppRoot).mockResolvedValue('D:/workspace/MyLogicApp');
+    vi.mocked(selectWorkspaceFolderLogicAppRoot).mockResolvedValue('D:/workspace/MyLogicApp');
     vi.mocked(pickFuncProcessInternal).mockResolvedValue('1234');
     vi.mocked(vscode.debug.startDebugging).mockResolvedValue(true);
     vi.mocked(ext.outputChannel.appendLog).mockClear();

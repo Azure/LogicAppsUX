@@ -201,7 +201,6 @@ export const extensionCommand = {
   enableAzureConnectors: 'azureLogicAppsStandard.enableAzureConnectors',
   syncCloudSettings: 'azureLogicAppsStandard.syncCloudSettings',
   configureWebhookRedirectEndpoint: 'azureLogicAppsStandard.configureWebhookRedirectEndpoint',
-  initProjectForVSCode: 'azureLogicAppsStandard.initProjectForVSCode',
   configureDeploymentSource: 'azureLogicAppsStandard.configureDeploymentSource',
   startRemoteDebug: 'azureLogicAppsStandard.startRemoteDebug',
   reportIssue: 'azureLogicAppsStandard.reportIssue',
@@ -232,6 +231,7 @@ export type extensionEvent = (typeof extensionEvent)[keyof typeof extensionEvent
 export const extensionContext = {
   hasProject: 'azureLogicAppsStandard.hasProject',
   logicAppProjectPaths: 'azureLogicAppsStandard.logicAppProjectPaths',
+  // TODO(aeldridge): Assumes no mix of codeful/codeless projects in a workspace
   isCodeful: 'azureLogicAppsStandard.isCodeful',
   customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
   customCodeEligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',
@@ -287,7 +287,6 @@ export const projectLanguageSetting = 'projectLanguage';
 export const dataMapperVersionSetting = 'dataMapperVersion';
 export const designerVersionSetting = 'designerVersion';
 export const funcVersionSetting = 'projectRuntime';
-export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';

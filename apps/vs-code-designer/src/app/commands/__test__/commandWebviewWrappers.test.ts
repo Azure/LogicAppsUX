@@ -3,9 +3,10 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
-import { hasCodefulWorkflowSetting } from '../../utils/codeful';
+import { isCodefulLogicApp } from '../../utils/codeful';
+import { getWorkflowsInLocalProject } from '../../utils/codeless/common';
 import { getEligibleLogicAppFoldersForCustomCode } from '../../utils/customCodeUtils';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { getLogicAppRoots, selectLogicAppRoot } from '../../utils/workspace';
 import { cloudToLocal } from '../cloudToLocal/cloudToLocal';
 import { ensureWorkspace } from '../ensureWorkspace';
 import { createLogicAppWorkspace } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
@@ -58,11 +59,16 @@ vi.mock('../../utils/customCodeUtils', () => ({
 }));
 
 vi.mock('../../utils/codeful', () => ({
-  hasCodefulWorkflowSetting: vi.fn(),
+  isCodefulLogicApp: vi.fn(),
 }));
 
-vi.mock('../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
+vi.mock('../../utils/codeless/common', () => ({
+  getWorkflowsInLocalProject: vi.fn(),
+}));
+
+vi.mock('../../utils/workspace', () => ({
+  getLogicAppRoots: vi.fn(),
+  selectLogicAppRoot: vi.fn(),
 }));
 
 function getLastWebviewConfig(): WorkspaceWebviewCommandConfig {
@@ -79,8 +85,10 @@ describe('workspace webview command wrappers', () => {
     vi.clearAllMocks();
     (vscode.workspace as any).workspaceFile = undefined;
     (vscode.workspace.fs.readFile as Mock).mockReset();
-    (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(logicAppRoot);
-    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(false);
+    (selectLogicAppRoot as Mock).mockResolvedValue(logicAppRoot);
+    (getLogicAppRoots as Mock).mockResolvedValue([logicAppRoot]);
+    (isCodefulLogicApp as Mock).mockResolvedValue(false);
+    (getWorkflowsInLocalProject as Mock).mockResolvedValue({});
     (getEligibleLogicAppFoldersForCustomCode as Mock).mockResolvedValue([]);
   });
 
@@ -204,13 +212,15 @@ describe('workspace webview command wrappers', () => {
       index: 0,
     } as vscode.WorkspaceFolder;
     (vscode.workspace as any).workspaceFolders = [folder];
-    (tryGetLogicAppProjectRoot as Mock).mockResolvedValue(projectRoot);
-    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(true);
+    (selectLogicAppRoot as Mock).mockResolvedValue(projectRoot);
+    (getLogicAppRoots as Mock).mockResolvedValue([projectRoot]);
+    (isCodefulLogicApp as Mock).mockResolvedValue(true);
 
     await createWorkflow(context);
 
-    expect(tryGetLogicAppProjectRoot).toHaveBeenCalledWith(context, workspaceRoot, true);
-    expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectRoot);
+    expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
+    expect(getLogicAppRoots).toHaveBeenCalled();
+    expect(isCodefulLogicApp).toHaveBeenCalledWith(projectRoot);
 
     const config = getLastWebviewConfig();
     expect(config).toMatchObject({
@@ -221,7 +231,7 @@ describe('workspace webview command wrappers', () => {
       extraInitializeData: {
         logicAppType: ProjectType.codeful,
         logicAppName: 'CodefulLogicApp',
-        availableProjects: [{ name: 'CodefulLogicApp', path: projectRoot, isCodeful: true }],
+        availableProjects: [{ name: 'CodefulLogicApp', path: projectRoot, isCodeful: true, existingWorkflows: [] }],
       },
     });
 

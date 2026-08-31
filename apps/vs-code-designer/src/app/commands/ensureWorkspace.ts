@@ -14,8 +14,8 @@ import {
   getWorkspaceFilePath,
   getWorkspaceFilePathInParent,
   hasLogicAppInWorkspace,
+  isLogicApp,
 } from '../utils/workspace';
-import { isLogicAppProject } from '../utils/verifyIsProject';
 import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -157,7 +157,7 @@ export async function createWorkspaceFile(context: IActionContext, options: any)
  * Otherwise, each child directory becomes a workspace entry.
  */
 async function buildInPlaceWorkspaceFolders(currentFolderPath: string): Promise<Array<{ name: string; path: string }>> {
-  if (await isLogicAppProject(currentFolderPath)) {
+  if (await isLogicApp(currentFolderPath)) {
     return [{ name: path.basename(currentFolderPath), path: '.' }];
   }
 
@@ -185,7 +185,7 @@ async function copyWorkspaceFolders(workspaceFolderPath: string): Promise<Array<
   const folder = foldersToAdd[0];
   const sourcePath = folder.uri.fsPath;
 
-  if (await isLogicAppProject(sourcePath)) {
+  if (await isLogicApp(sourcePath)) {
     const destPath = path.join(workspaceFolderPath, folder.name);
     await fse.copy(sourcePath, destPath);
     return [{ name: folder.name, path: `./${folder.name}` }];

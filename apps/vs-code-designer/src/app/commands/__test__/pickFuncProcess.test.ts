@@ -66,8 +66,8 @@ vi.mock('../../utils/delay', () => ({
   delay: vi.fn(),
 }));
 
-vi.mock('../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
+vi.mock('../../utils/workspace', () => ({
+  selectWorkspaceFolderLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../../utils/vsCodeConfig/settings', () => ({
@@ -98,7 +98,7 @@ import {
 } from '../../utils/funcCoreTools/funcHostTask';
 import { executeIfNotActive } from '../../utils/taskUtils';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { selectWorkspaceFolderLogicAppRoot } from '../../utils/workspace';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { tryBuildCustomCodeFunctionsProjectInternal } from '../buildCustomCodeFunctionsProject';
 import * as pickFuncProcessModule from '../pickFuncProcess';
@@ -367,7 +367,7 @@ describe('pickFuncProcess', () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
-    (tryGetLogicAppProjectRoot as any).mockResolvedValue(undefined);
+    vi.mocked(selectWorkspaceFolderLogicAppRoot).mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -381,6 +381,7 @@ describe('pickFuncProcess', () => {
     await expect(pickFuncProcessModule.pickFuncProcess({ telemetry: { properties: {} } } as any, { type: 'logicapp' })).rejects.toThrow(
       'Unable to find the project root.'
     );
+    expect(selectWorkspaceFolderLogicAppRoot).toHaveBeenCalledWith(expect.any(Object), workspaceFolder);
   });
 });
 

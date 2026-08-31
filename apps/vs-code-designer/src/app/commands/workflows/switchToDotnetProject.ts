@@ -36,7 +36,7 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getParentWorkspaceFolder, selectLogicAppRoot } from '../../utils/workspace';
+import { getParentWorkspaceFolder, isLogicApp, selectLogicAppRoot } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { stopFuncTaskForWorkspace } from '../../utils/funcCoreTools/funcHostTask';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
@@ -45,34 +45,31 @@ import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extens
 import { FuncVersion, ProjectLanguage, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { ext } from '../../../extensionVariables';
 
 export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
-  await switchToDotnetProject(context, node);
-}
-
-export async function switchToDotnetProject(context: IActionContext, node?: vscode.Uri, localDotNetMajorVersion = '10', isCodeful = false) {
-  if (node === undefined || Object.keys(node).length === 0) {
-    const projectPath = await selectLogicAppRoot(context);
-    if (!projectPath) {
-      throw new Error(localize('logicAppProjectNotFound', 'Logic App project could not be found.'));
-    }
-    node = vscode.Uri.file(projectPath);
+  const projectPath = node && (await isLogicApp(node.fsPath)) ? node.fsPath : await selectLogicAppRoot(context);
+  if (!projectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
 
-  const isDotNetInstalled = await validateDotNetIsInstalled(context, node.fsPath);
+  await switchToDotnetProject(context, projectPath);
+}
+
+export async function switchToDotnetProject(context: IActionContext, projectPath: string, localDotNetMajorVersion = '10', isCodeful = false) {
+  const isDotNetInstalled = await validateDotNetIsInstalled(context, projectPath);
   if (!isDotNetInstalled) {
     return;
   }
 
-  let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, node.fsPath));
+  let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, projectPath));
   if (isCodeful) {
     version = FuncVersion.v4;
   }
 
-  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, node.fsPath);
+  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, projectPath);
   if (projectFiles.length > 0) {
     ext.outputChannel.appendLog(localize('projectAlreadyDotnet', 'The Logic App project is already a NuGet-based project.'));
     return;
@@ -84,16 +81,16 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
     await callWithTelemetryAndErrorHandling('switchToDotnetProject.initProjectForVSCode', async (actionContext: IActionContext) => {
       actionContext.errorHandling.rethrow = true;
       actionContext.errorHandling.suppressDisplay = true;
-      await initProjectForVSCode(actionContext, node.fsPath);
+      await initProjectForVSCode(actionContext, projectPath);
     });
 
     version = nonNullOrEmptyValue(
-      tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, node.fsPath)),
+      tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, projectPath)),
       funcVersionSetting
     ) as FuncVersion;
   }
 
-  const dotnetTemplateProvider = new DotnetTemplateProvider(version, node.fsPath);
+  const dotnetTemplateProvider = new DotnetTemplateProvider(version, projectPath);
 
   // We need to get the templates first to ensure that the we can create the dotnet project
   // 1. try to get cached templates
@@ -117,7 +114,7 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
   if (!templates) {
     throw new Error(localize('dotnetTemplateError', `Can't find dotnet templates.`));
   }
-  const logicAppFolderName = path.basename(node.fsPath);
+  const logicAppFolderName = path.basename(projectPath);
   const warning: string = localize(
     'confirmMoveToDotnet',
     `This action moves your logic app project, ${logicAppFolderName}, to a NuGet-based project. Confirm that you want to move to a NuGet-based project?`
@@ -126,30 +123,29 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
   const moveButton: vscode.MessageItem = { title: localize('move', 'Move to a NuGet-based project') };
   await context.ui.showWarningMessage(warning, { modal: true }, moveButton, DialogResponses.cancel);
 
-  const projectName: string = path.basename(node.fsPath);
+  const projectName: string = path.basename(projectPath);
   const templateLanguage = 'CSharp';
   const majorVersion: string = tryGetMajorVersion(version);
   const identity = `Microsoft.AzureFunctions.ProjectTemplate.${templateLanguage}.${Number.parseInt(majorVersion) < 4 ? majorVersion : 3}.x`;
   const functionsVersion: string = `v${majorVersion}`;
-  const projectPath: string = node.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath, isCodeful);
   const useBinaries = await useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(localDotNetMajorVersion) : '';
-  const workspaceFolder: vscode.WorkspaceFolder | undefined = getParentWorkspaceFolder(node.fsPath);
+  const workspaceFolder: vscode.WorkspaceFolder | undefined = getParentWorkspaceFolder(projectPath);
 
   if (workspaceFolder) {
     await stopFuncTaskForWorkspace(workspaceFolder);
   }
 
-  await deleteBundleProjectFiles(node);
-  await renameBundleProjectFiles(node);
+  await deleteBundleProjectFiles(projectPath);
+  await renameBundleProjectFiles(projectPath);
 
   await executeDotnetTemplateCommand(
     context,
     version,
     projTemplateKey,
-    node.fsPath,
+    projectPath,
     'create',
     '--identity',
     identity,
@@ -159,10 +155,10 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
     functionsVersion
   );
 
-  await copyBundleProjectFiles(node);
-  await updateBuildFile(context, node, dotnetVersion, isCodeful);
+  await copyBundleProjectFiles(projectPath);
+  await updateBuildFile(context, projectPath, dotnetVersion, isCodeful);
   if (useBinaries && dotnetLocalVersion) {
-    await createGlobalJsonFile(dotnetLocalVersion, node.fsPath);
+    await createGlobalJsonFile(dotnetLocalVersion, projectPath);
   } else if (useBinaries) {
     ext.outputChannel.appendLog(
       localize(
@@ -176,7 +172,7 @@ export async function switchToDotnetProject(context: IActionContext, node?: vsco
   const wizardOptions = {
     projectPath,
     workspaceFolder,
-    workspacePath: (workspaceFolder && workspaceFolder.uri.fsPath) || node.fsPath,
+    workspacePath: (workspaceFolder && workspaceFolder.uri.fsPath) || projectPath,
     language: ProjectLanguage.CSharp,
     projectPackageType: ProjectPackageType.Nuget,
     version,
@@ -201,9 +197,9 @@ async function createGlobalJsonFile(sdkVersion: string, projectRoot: string) {
   fse.writeFileSync(globalJsonPath, contentString, 'utf8');
 }
 
-async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotnetVersion: string, isCodeful: boolean) {
-  const projectArtifacts = await getArtifactNamesFromProject(target);
-  let xmlBuildFile: any = await getDotnetBuildFile(context, target.fsPath);
+async function updateBuildFile(context: IActionContext, projectPath: string, dotnetVersion: string, isCodeful: boolean) {
+  const projectArtifacts = await getArtifactNamesFromProject(projectPath);
+  let xmlBuildFile: any = await getDotnetBuildFile(context, projectPath);
   xmlBuildFile = JSON.parse(xmlBuildFile);
   if (isCodeful) {
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.DurableTask, CodefulSdkVersions[CodefulSDKs.DurableTask]);
@@ -243,14 +239,14 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
 
   xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
 
-  await writeBuildFileToDisk(context, xmlBuildFile, target.fsPath);
+  await writeBuildFileToDisk(context, xmlBuildFile, projectPath);
 }
 
-async function deleteBundleProjectFiles(target: vscode.Uri): Promise<void> {
-  const filesTobeDeleted: string[] = [funcIgnoreFileName];
-  for (const fileName of filesTobeDeleted) {
-    if (await fse.pathExists(path.join(target.fsPath, fileName))) {
-      await deleteFile(path.join(target.fsPath, fileName));
+async function deleteBundleProjectFiles(projectPath: string): Promise<void> {
+  const filesToDelete: string[] = [funcIgnoreFileName];
+  for (const fileName of filesToDelete) {
+    if (await fse.pathExists(path.join(projectPath, fileName))) {
+      await deleteFile(path.join(projectPath, fileName));
     }
   }
 }
@@ -259,11 +255,11 @@ async function deleteFile(file: string): Promise<void> {
   await fse.unlink(file);
 }
 
-async function renameBundleProjectFiles(target: vscode.Uri): Promise<void> {
+async function renameBundleProjectFiles(projectPath: string): Promise<void> {
   const filesToBeRenamed: string[] = [hostFileName, localSettingsFileName];
   for (const fileName of filesToBeRenamed) {
-    if (await fse.pathExists(path.join(target.fsPath, fileName))) {
-      await renameFile(path.join(target.fsPath, fileName), path.join(target.fsPath, `${fileName}-copy`));
+    if (await fse.pathExists(path.join(projectPath, fileName))) {
+      await renameFile(path.join(projectPath, fileName), path.join(projectPath, `${fileName}-copy`));
     }
   }
 }
@@ -272,20 +268,20 @@ async function renameFile(fileName: string, newFileName: string): Promise<void> 
   await fse.rename(fileName, newFileName);
 }
 
-async function copyBundleProjectFiles(target: vscode.Uri): Promise<void> {
+async function copyBundleProjectFiles(projectPath: string): Promise<void> {
   const filesToBeCopied: string[] = [hostFileName, localSettingsFileName];
   for (const fileName of filesToBeCopied) {
     if (
-      (await fse.pathExists(path.join(target.fsPath, fileName))) &&
-      (await fse.pathExists(path.join(target.fsPath, `${fileName}-copy`)))
+      (await fse.pathExists(path.join(projectPath, fileName))) &&
+      (await fse.pathExists(path.join(projectPath, `${fileName}-copy`)))
     ) {
-      await deleteFile(path.join(target.fsPath, fileName));
-      await renameFile(path.join(target.fsPath, `${fileName}-copy`), path.join(target.fsPath, fileName));
+      await deleteFile(path.join(projectPath, fileName));
+      await renameFile(path.join(projectPath, `${fileName}-copy`), path.join(projectPath, fileName));
     }
   }
 }
 
-async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<string, string[]>> {
+async function getArtifactNamesFromProject(projectPath: string): Promise<Record<string, string[]>> {
   const artifactDict: Record<string, string[]> = {
     workflows: [],
     connections: [],
@@ -293,7 +289,7 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
     artifacts: [],
     lib: [],
   };
-  const files = await fse.readdir(target.fsPath);
+  const files = await fse.readdir(projectPath);
   for (const file of files) {
     if (file === connectionsFileName) {
       artifactDict['connections'].push(connectionsFileName);
@@ -314,7 +310,7 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
       continue;
     }
 
-    const filePath: string = path.join(target.fsPath, file);
+    const filePath: string = path.join(projectPath, file);
     if (await (await fse.stat(filePath)).isDirectory()) {
       const workflowFiles: string[] = await fse.readdir(filePath);
       if (workflowFiles.length === 1 && workflowFiles[0] === workflowFileName) {

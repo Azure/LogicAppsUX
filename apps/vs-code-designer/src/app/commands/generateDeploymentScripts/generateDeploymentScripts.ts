@@ -6,8 +6,7 @@ import { workflowLocationKey, workflowResourceGroupNameKey, workflowSubscription
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { isLogicAppProject } from '../../utils/verifyIsProject';
-import { selectLogicAppRoot, isMultiRootWorkspace } from '../../utils/workspace';
+import { selectLogicAppRoot, isMultiRootWorkspace, isLogicApp } from '../../utils/workspace';
 import { AzureWizard, callWithTelemetryAndErrorHandling, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, DeploymentTargetType } from '@microsoft/vscode-extension-logic-apps';
 import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
@@ -68,7 +67,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     }
 
     context.telemetry.properties.lastStep = 'getLogicAppProjectRoot';
-    const projectPath = node && (await isLogicAppProject(node.fsPath)) ? node.fsPath : await selectLogicAppRoot(context);
+    const projectPath = node && (await isLogicApp(node.fsPath)) ? node.fsPath : await selectLogicAppRoot(context);
 
     if (!projectPath) {
       throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));

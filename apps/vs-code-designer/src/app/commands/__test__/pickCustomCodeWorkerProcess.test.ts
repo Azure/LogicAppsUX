@@ -4,7 +4,6 @@ import { pickCustomCodeNetHostProcessInternal, pickCustomCodeWorkerChildProcess 
 import * as validatePreDebug from '../../debug/validatePreDebug';
 import { IRunningFuncTask, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
 import * as pickFuncProcessModule from '../pickFuncProcess';
-import * as verifyIsProject from '../../utils/verifyIsProject';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 
@@ -51,7 +50,6 @@ describe('pickCustomCodeNetHostProcessInternal', () => {
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid);
     vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([]);
-    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
   afterEach(() => {
@@ -101,7 +99,6 @@ describe('pickCustomCodeWorkerChildProcess', async () => {
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid.toString());
     vi.spyOn(pickFuncProcessModule, 'getWindowsChildren').mockResolvedValue([]);
-    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
   afterEach(() => {

@@ -14,7 +14,6 @@ import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsC
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
-import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
   autoStartDesignTimeSetting,
   DependencyDefaultPath,
@@ -45,7 +44,7 @@ import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-az
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import { startLanguageServer } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
-import { codefulProjectsExist } from './app/utils/codeful';
+import { codefulProjectExists } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
 import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
@@ -64,13 +63,12 @@ import { useBinariesDependencies } from './app/utils/binaries';
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
 import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
 import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
-import { getLogicAppRoots } from './app/utils/workspace';
+import { getLogicAppRoots, selectLogicAppRoot } from './app/utils/workspace';
 
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
   initializeCustomExtensionContext();
-  await updateLogicAppsContext();
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', logicAppDebugConfigProvider);
 
@@ -118,6 +116,7 @@ export async function activate(context: vscode.ExtensionContext) {
       });
 
       const projectPaths = await getLogicAppRoots();
+      await updateLogicAppsContext(projectPaths);
 
       activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
       const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
@@ -170,7 +169,7 @@ export async function activate(context: vscode.ExtensionContext) {
     await startDesignTime(activateContext, isDevContainer);
 
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
-    const hasCodefulProjects = await codefulProjectsExist();
+    const hasCodefulProjects = await codefulProjectExists();
     if (hasCodefulProjects) {
       startLanguageServer();
     }
@@ -182,14 +181,9 @@ export async function activate(context: vscode.ExtensionContext) {
     // TODO(aeldridge): This was added to avoid behavior change after modifying .vscode config validation to not set
     // ext.defaultLogicAppPath. This should be revisited - a default logic app shouldn't be needed in ext context.
     activateContext.telemetry.properties.lastStep = 'setDefaultLogicAppPath';
-    if (vscode.workspace.workspaceFolders) {
-      for (const folder of vscode.workspace.workspaceFolders) {
-        const projectPath = await tryGetLogicAppProjectRoot(activateContext, folder, true);
-        if (projectPath) {
-          ext.defaultLogicAppPath = projectPath;
-          break;
-        }
-      }
+    const defaultLogicAppPath = await selectLogicAppRoot(activateContext, true);
+    if (defaultLogicAppPath) {
+      ext.defaultLogicAppPath = defaultLogicAppPath;
     }
 
     context.subscriptions.push(ext.outputChannel);

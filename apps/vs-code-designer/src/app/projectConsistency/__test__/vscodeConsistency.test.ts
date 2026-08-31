@@ -20,14 +20,9 @@ import { binariesExistSync } from '../../utils/binaries';
 import { detectCustomCodeTargetFramework } from '../../utils/customCodeUtils';
 import { writeFormattedJson } from '../../utils/fs';
 import { detectProjectPackageType, detectProjectType } from '../../utils/project';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import { ensureVSCodeFiles } from '../vscodeConsistency';
 import { getWorkspaceSetting, updateGlobalSetting, isProjectConsistencyCheckEnabled } from '../../utils/vsCodeConfig/settings';
-
-vi.mock('../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
-}));
 
 vi.mock('../../utils/workspace', () => ({
   getLogicAppRoots: vi.fn(),
@@ -126,7 +121,6 @@ describe('vscodeConsistency', () => {
 
     (workspace as any).workspaceFolders = [createWorkspaceFolder(projectPath, 'logicapp')];
     vi.mocked(getLogicAppRoots).mockResolvedValue([projectPath]);
-    vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue(projectPath);
     vi.mocked(detectProjectType).mockResolvedValue(ProjectType.logicApp);
     vi.mocked(detectProjectPackageType).mockResolvedValue(ProjectPackageType.Bundle);
     vi.mocked(detectCustomCodeTargetFramework).mockResolvedValue(undefined);
@@ -136,8 +130,6 @@ describe('vscodeConsistency', () => {
     vi.mocked(fse.ensureDir).mockResolvedValue(undefined);
     vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => {
       switch (key) {
-        case enableProjectConsistencyChecksSetting:
-          return true;
         case enableProjectConsistencyChecksSetting:
           return true;
         case funcVersionSetting:

@@ -9,8 +9,9 @@ import {
   supportedDataMapperFolders,
   supportedSchemaFileExts,
 } from '../commands/dataMapper/extensionConfig';
-import { getWorkspaceCustomCodeRoots, getLogicAppRoots, hasLogicAppInWorkspace } from './workspace';
+import { getCustomCodeRoots, getLogicAppRoots } from './workspace';
 import { getEligibleLogicAppFoldersForCustomCode } from './customCodeUtils';
+import { isCodefulLogicApp } from './codeful';
 
 /**
  * Gets extension version from the package.json version.
@@ -39,16 +40,19 @@ export const initializeCustomExtensionContext = () => {
   vscode.commands.executeCommand('setContext', extensionContext.dataMapDmFolders, supportedDataMapperFolders);
 };
 
-export async function updateLogicAppsContext() {
+export async function updateLogicAppsContext(projectPaths?: string[]) {
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     await vscode.commands.executeCommand('setContext', extensionContext.hasProject, false);
     await vscode.commands.executeCommand('setContext', extensionContext.logicAppProjectPaths, []);
   } else {
-    const projectPaths = await getLogicAppRoots();
+    projectPaths ??= await getLogicAppRoots();
     const hasLogicApp = projectPaths.length > 0;
+    const isCodefulPromises = projectPaths.map(isCodefulLogicApp);
+    const isCodeful = (await Promise.all(isCodefulPromises)).some(Boolean);
     await vscode.commands.executeCommand('setContext', extensionContext.hasProject, hasLogicApp);
+    await vscode.commands.executeCommand('setContext', extensionContext.isCodeful, isCodeful);
     await vscode.commands.executeCommand('setContext', extensionContext.logicAppProjectPaths, projectPaths);
-    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getWorkspaceCustomCodeRoots());
+    await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getCustomCodeRoots());
     await vscode.commands.executeCommand('setContext', extensionContext.customCodeEligibleLogicAppFolders, await getEligibleLogicAppFoldersForCustomCode());
   }
 }

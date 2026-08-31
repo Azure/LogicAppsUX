@@ -6,8 +6,7 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import { ensureWorkspace } from '../../ensureWorkspace';
-import { isMultiRootWorkspace, selectLogicAppRoot } from '../../../utils/workspace';
-import { isLogicAppProject } from '../../../utils/verifyIsProject';
+import { isLogicApp, isMultiRootWorkspace, selectLogicAppRoot } from '../../../utils/workspace';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import { COMMON_ERRORS } from '../../../../constants';
 
@@ -58,12 +57,9 @@ vi.mock('../../ensureWorkspace', () => ({
 }));
 
 vi.mock('../../../utils/workspace', () => ({
+  isLogicApp: vi.fn(),
   selectLogicAppRoot: vi.fn(),
   isMultiRootWorkspace: vi.fn(),
-}));
-
-vi.mock('../../../utils/verifyIsProject', () => ({
-  isLogicAppProject: vi.fn(),
 }));
 
 vi.mock('../../../utils/appSettings/localSettings', () => ({
@@ -91,7 +87,7 @@ describe('generateDeploymentScripts', () => {
     (addLocalFuncTelemetry as Mock).mockClear();
     (ensureWorkspace as Mock).mockResolvedValue(true);
     (isMultiRootWorkspace as Mock).mockReturnValue(true);
-    (isLogicAppProject as Mock).mockResolvedValue(true);
+    (isLogicApp as Mock).mockResolvedValue(true);
     (selectLogicAppRoot as Mock).mockResolvedValue('projectRoot');
     const localSettingsMod = await import('../../../utils/appSettings/localSettings');
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
@@ -114,7 +110,7 @@ describe('generateDeploymentScripts', () => {
   });
 
   it('should throw an error when project path is undefined', async () => {
-    (isLogicAppProject as Mock).mockResolvedValue(false);
+    (isLogicApp as Mock).mockResolvedValue(false);
     (selectLogicAppRoot as Mock).mockResolvedValue(undefined);
 
     await expect(generateDeploymentScripts(context, node)).rejects.toThrow('Unable to determine logic app project root.');

@@ -10,7 +10,6 @@ import { CreateFunctionAppFiles } from './CreateFunctionAppFiles';
 import type { IFunctionWizardContext, IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
-import { isLogicAppProject } from '../../../utils/verifyIsProject';
 import {
   createLibFolder,
   createLocalConfigurationFiles,
@@ -20,6 +19,7 @@ import {
 } from './CreateLogicAppWorkspace';
 import { devContainerFolderName, devContainerFileName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
+import { isLogicApp } from '../../../utils/workspace';
 
 export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
   addLocalFuncTelemetry(context);
@@ -35,7 +35,7 @@ export async function createLogicAppProject(context: IActionContext, options: an
   let doesLogicAppExist = false;
   if (logicAppExists) {
     // Check if it's actually a Logic App project
-    doesLogicAppExist = await isLogicAppProject(logicAppFolderPath);
+    doesLogicAppExist = await isLogicApp(logicAppFolderPath);
   }
 
   // Check if we're in a workspace and get the workspace folder

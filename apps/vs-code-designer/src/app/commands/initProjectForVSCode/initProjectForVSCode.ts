@@ -5,14 +5,12 @@
 import { projectLanguageSetting, funcVersionSetting, projectTemplateKeySetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { NoWorkspaceError } from '../../utils/errors';
 import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { detectProjectPackageType } from '../../utils/project';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { getParentWorkspaceFolder } from '../../utils/workspace';
+import { getParentWorkspaceFolder, selectLogicAppRoot } from '../../utils/workspace';
 import { InitDotnetProjectStep } from './initDotnetProjectStep';
-import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { type IActionContext, AzureWizard } from '@microsoft/vscode-azext-utils';
 import {
   latestGAVersion,
   ProjectLanguage,
@@ -20,34 +18,20 @@ import {
   type FuncVersion,
   type IProjectWizardContext,
 } from '@microsoft/vscode-extension-logic-apps';
-import { window, workspace, type WorkspaceFolder } from 'vscode';
 import { InitProjectStep } from './initProjectStep';
 
-export async function initProjectForVSCode(context: IActionContext, fsPath?: string, language?: ProjectLanguage): Promise<void> {
-  let workspaceFolder: WorkspaceFolder | undefined;
-  let workspaceFolderPath: string;
-
-  if (fsPath === undefined) {
-    if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
-      throw new NoWorkspaceError();
-    }
-    const placeHolder: string = localize('selectFunctionAppFolderNew', 'Select the folder to initialize for use with VS Code');
-    workspaceFolder = await window.showWorkspaceFolderPick({ placeHolder });
-    if (!workspaceFolder) {
-      throw new UserCancelledError();
-    }
-    workspaceFolderPath = workspaceFolder.uri.fsPath;
-  } else {
-    workspaceFolder = getParentWorkspaceFolder(fsPath);
-    workspaceFolderPath = workspaceFolder ? workspaceFolder.uri.fsPath : fsPath;
+export async function initProjectForVSCode(context: IActionContext, projectPath?: string, language?: ProjectLanguage): Promise<void> {
+  const resolvedProjectPath = projectPath ?? await selectLogicAppRoot(context);
+  if (!resolvedProjectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
 
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolderPath);
-  if (!projectPath) {
-    throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
+  const workspaceFolder = await getParentWorkspaceFolder(resolvedProjectPath);
+  if (!workspaceFolder) {
+    throw new Error(localize('WorkspaceFolderError', 'Unable to determine workspace folder for the logic app project.'));
   }
 
-  const projectPackageType = await detectProjectPackageType(projectPath);
+  const projectPackageType = await detectProjectPackageType(resolvedProjectPath);
   language =
     language ||
     getGlobalSetting(projectLanguageSetting) ||
@@ -56,8 +40,8 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
 
   const wizardContext: IProjectWizardContext = Object.assign(context, {
-    projectPath,
-    workspacePath: workspaceFolderPath,
+    projectPath: resolvedProjectPath,
+    workspacePath: workspaceFolder.uri.fsPath,
     language,
     version,
     workspaceFolder,

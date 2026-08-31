@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ensureWorkspace, createWorkspaceFile } from '../ensureWorkspace';
 import * as vscode from 'vscode';
 import * as workspaceUtils from '../../utils/workspace';
-import * as verifyProject from '../../utils/verifyIsProject';
 import * as funcCoreTools from '../../utils/funcCoreTools/funcVersion';
 import * as settingsUtils from '../../utils/vsCodeConfig/settings';
 import * as path from 'path';
@@ -23,11 +22,6 @@ class MockDirent {
     return this._isDirectory;
   }
 }
-
-vi.mock('../../utils/verifyIsProject', () => ({
-  isLogicAppProject: vi.fn(),
-  tryGetLogicAppProjectRoot: vi.fn(),
-}));
 
 vi.mock('../shared/workspaceWebviewCommandHandler', () => ({
   createWorkspaceWebviewCommandHandler: vi.fn(),
@@ -157,9 +151,6 @@ describe('ensureWorkspace', () => {
     (vscode.workspace as any).workspaceFolders = [testLogicAppWorkspaceFolder];
     (vscode.workspace as any).workspaceFile = undefined;
 
-    vi.spyOn(verifyProject, 'isLogicAppProject').mockImplementation(async (p: string) => {
-      return p === testLogicAppWorkspaceFolder.uri.fsPath;
-    });
     vi.spyOn(workspaceUtils, 'hasLogicAppInWorkspace').mockResolvedValue(true);
     vi.spyOn(workspaceUtils, 'getWorkspaceFilePath').mockResolvedValue(undefined);
     vi.spyOn(workspaceUtils, 'getWorkspaceFilePathInParent').mockResolvedValue(testWorkspaceFile);
@@ -206,7 +197,7 @@ describe('createWorkspaceFile', () => {
   it('in-place Logic App root: writes .code-workspace without copying', async () => {
     const projectPath = path.resolve('/users/dev/MyLogicApp');
     (vscode.workspace as any).workspaceFolders = [{ name: 'MyLogicApp', uri: { fsPath: projectPath } as vscode.Uri, index: 0 }];
-    vi.spyOn(verifyProject, 'isLogicAppProject').mockResolvedValue(true);
+    vi.spyOn(workspaceUtils, 'isLogicApp').mockResolvedValue(true);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
 
     await createWorkspaceFile(context, {
@@ -230,7 +221,7 @@ describe('createWorkspaceFile', () => {
   it('in-place container with child directories: lists children without copying', async () => {
     const containerPath = path.resolve('/users/dev/workspace-root');
     (vscode.workspace as any).workspaceFolders = [{ name: 'workspace-root', uri: { fsPath: containerPath } as vscode.Uri, index: 0 }];
-    vi.spyOn(verifyProject, 'isLogicAppProject').mockResolvedValue(false);
+    vi.spyOn(workspaceUtils, 'isLogicApp').mockResolvedValue(false);
     vi.mocked(fse.readdir).mockResolvedValue([
       new MockDirent('app1', true),
       new MockDirent('app2', true),
@@ -263,7 +254,7 @@ describe('createWorkspaceFile', () => {
     const externalDest = path.join(externalParent, 'NewWorkspace');
 
     (vscode.workspace as any).workspaceFolders = [{ name: 'MyLogicApp', uri: { fsPath: currentPath } as vscode.Uri, index: 0 }];
-    vi.spyOn(verifyProject, 'isLogicAppProject').mockResolvedValue(true);
+    vi.spyOn(workspaceUtils, 'isLogicApp').mockResolvedValue(true);
     const executeCommandSpy = vi.spyOn(vscode.commands, 'executeCommand').mockResolvedValue(undefined);
 
     await createWorkspaceFile(context, {
