@@ -15,6 +15,10 @@ import { parse } from 'yaml';
 import { localize } from '../../../localize';
 import { assetsFolderName, dataMapNameValidation } from '../../../constants';
 
+export function getDataMapPanelKey(projectPath: string, dataMapName: string): string {
+  return `${projectPath}::${dataMapName}`;
+}
+
 export default class DataMapperExt {
   public static async openDataMapperPanel(
     context: IActionContext,
@@ -72,12 +76,14 @@ export default class DataMapperExt {
   }
 
   private static createOrShow(dataMapName: string, projectPath: string, mapDefinitionData?: MapDefinitionData) {
+    const panelKey = getDataMapPanelKey(projectPath, dataMapName);
+
     // If a panel has already been created, re-show it
-    if (ext.dataMapPanelManagers[dataMapName]) {
+    if (ext.dataMapPanelManagers[panelKey]) {
       // NOTE: Shouldn't need to re-send runtime port if webview has already been loaded/set up
 
       window.showInformationMessage(`A Data Mapper panel is already open for this data map (${dataMapName}).`);
-      ext.dataMapPanelManagers[dataMapName].panel.reveal(ViewColumn.Active);
+      ext.dataMapPanelManagers[panelKey].panel.reveal(ViewColumn.Active);
       return;
     }
 
@@ -93,13 +99,13 @@ export default class DataMapperExt {
       }
     );
 
-    ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName, projectPath);
-    ext.dataMapPanelManagers[dataMapName].panel.iconPath = {
+    ext.dataMapPanelManagers[panelKey] = new DataMapperPanel(panel, dataMapName, panelKey, projectPath);
+    ext.dataMapPanelManagers[panelKey].panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'wand.png')),
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'wand.png')),
     };
-    ext.dataMapPanelManagers[dataMapName].updateWebviewPanelTitle();
-    ext.dataMapPanelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
+    ext.dataMapPanelManagers[panelKey].updateWebviewPanelTitle();
+    ext.dataMapPanelManagers[panelKey].mapDefinitionData = mapDefinitionData;
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }

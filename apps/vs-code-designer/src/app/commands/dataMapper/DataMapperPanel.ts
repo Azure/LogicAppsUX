@@ -45,16 +45,18 @@ export default class DataMapperPanel {
   public panel: WebviewPanel;
   public dataMapVersion: number;
   public dataMapName: string;
+  public panelKey: string;
   public projectPath: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
 
   private telemetryPrefix = 'data-mapper-vscode-extension';
 
-  constructor(panel: WebviewPanel, dataMapName: string, projectPath: string) {
+  constructor(panel: WebviewPanel, dataMapName: string, panelKey: string, projectPath: string) {
     this.panel = panel;
     this.dataMapVersion = this.getDataMapperVersion();
     this.dataMapName = dataMapName;
+    this.panelKey = panelKey;
     this.projectPath = projectPath;
     this.dataMapStateIsDirty = false;
     this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
@@ -82,7 +84,7 @@ export default class DataMapperPanel {
 
     this.panel.onDidDispose(
       () => {
-        delete ext.dataMapPanelManagers[this.dataMapName];
+        delete ext.dataMapPanelManagers[this.panelKey];
         if (schemaFolderWatcher) {
           schemaFolderWatcher.dispose();
         }

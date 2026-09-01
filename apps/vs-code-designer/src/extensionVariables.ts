@@ -19,7 +19,7 @@ import type { LanguageClient } from 'vscode-languageclient/node';
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
  */
 
-type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
+type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == projectPath::dataMapName
 type LogicAppMap = Map<string, Site>;
 type SubscriptionMap = Map<string, LogicAppMap>;
 export type FuncInstance = {
