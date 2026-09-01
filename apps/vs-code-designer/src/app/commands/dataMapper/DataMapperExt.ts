@@ -18,10 +18,11 @@ import { assetsFolderName, dataMapNameValidation } from '../../../constants';
 export default class DataMapperExt {
   public static async openDataMapperPanel(
     context: IActionContext,
+    projectPath: string,
     dataMapName?: string,
     mapDefinitionData?: MapDefinitionData
   ): Promise<void> {
-    await startBackendRuntime(context, ext.defaultLogicAppPath);
+    await startBackendRuntime(context, projectPath);
     const name =
       dataMapName ??
       (await context.ui.showInputBox({
@@ -29,7 +30,7 @@ export default class DataMapperExt {
         prompt: localize('dataMapNamePrompt', 'Enter a name for your Data Map'),
         validateInput: async (input: string): Promise<string | undefined> => await DataMapperExt.validateDataMapName(input),
       }));
-    DataMapperExt.createOrShow(name, mapDefinitionData);
+    DataMapperExt.createOrShow(name, projectPath, mapDefinitionData);
   }
 
   /*
@@ -70,7 +71,7 @@ export default class DataMapperExt {
     return undefined;
   }
 
-  private static createOrShow(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
+  private static createOrShow(dataMapName: string, projectPath: string, mapDefinitionData?: MapDefinitionData) {
     // If a panel has already been created, re-show it
     if (ext.dataMapPanelManagers[dataMapName]) {
       // NOTE: Shouldn't need to re-send runtime port if webview has already been loaded/set up
@@ -92,7 +93,7 @@ export default class DataMapperExt {
       }
     );
 
-    ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName);
+    ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName, projectPath);
     ext.dataMapPanelManagers[dataMapName].panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'wand.png')),
       dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'wand.png')),

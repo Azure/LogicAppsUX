@@ -179,19 +179,6 @@ export async function activate(context: vscode.ExtensionContext) {
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
-    // TODO(aeldridge): This was added to avoid behavior change after modifying .vscode config validation to not set
-    // ext.defaultLogicAppPath. This should be revisited - a default logic app shouldn't be needed in ext context.
-    activateContext.telemetry.properties.lastStep = 'setDefaultLogicAppPath';
-    if (vscode.workspace.workspaceFolders) {
-      for (const folder of vscode.workspace.workspaceFolders) {
-        const projectPath = await tryGetLogicAppProjectRoot(activateContext, folder, true);
-        if (projectPath) {
-          ext.defaultLogicAppPath = projectPath;
-          break;
-        }
-      }
-    }
-
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
 
