@@ -166,7 +166,25 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Start background processes (design-time func, codeful language server)
     activateContext.telemetry.properties.lastStep = 'startDesignTime';
-    await startDesignTime(activateContext, isDevContainer);
+    callWithTelemetryAndErrorHandling('activate.startDesignTime', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      if (isDevContainer) {
+        actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
+        actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
+        scheduleStartAllDesignTimeApis();
+      } else {
+        const projectPaths = await getLogicAppRoots();
+        if (await promptShouldAutoStartDesignTime(projectPaths)) {
+          const startDesignTimePromises = projectPaths.map(async (projectPath) => 
+            callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
+              innerActionContext.telemetry.properties.isActivationEvent = 'true';
+              await startDesignTimeApi(innerActionContext, projectPath);
+            })
+          );
+          await Promise.all(startDesignTimePromises);
+        }
+      }
+    });
 
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
     const hasCodefulProjects = await codefulProjectExists();
@@ -309,26 +327,6 @@ async function ensureBinaries(activateContext: IActionContext, isDevContainer: b
       await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
       await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
       activateContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
-    }
-  }
-}
-
-async function startDesignTime(activateContext: IActionContext, isDevContainer: boolean): Promise<void> {
-  if (isDevContainer) {
-    activateContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
-    activateContext.telemetry.properties.designTimeStartupState = 'scheduled';
-    ext.outputChannel?.appendLog(
-      localize('schedulingDesignTimeStartup', 'Scheduling background design-time startup for devcontainer workspace.')
-    );
-    scheduleStartAllDesignTimeApis();
-  } else {
-    const projectPaths = await getLogicAppRoots();
-    if (await promptShouldAutoStartDesignTime(projectPaths)) {
-      for (const projectPath of projectPaths) {
-        callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (actionContext: IActionContext) => {
-          await startDesignTimeApi(actionContext, projectPath);
-        });
-      }
     }
   }
 }
