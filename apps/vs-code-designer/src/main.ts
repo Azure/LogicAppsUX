@@ -167,7 +167,25 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Start background processes (design-time func, codeful language server)
     activateContext.telemetry.properties.lastStep = 'startDesignTime';
-    await startDesignTime(activateContext, isDevContainer);
+    callWithTelemetryAndErrorHandling('activate.startDesignTime', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      if (isDevContainer) {
+        actionContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
+        actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
+        scheduleStartAllDesignTimeApis();
+      } else {
+        const projectPaths = await getWorkspaceLogicAppRoots();
+        if (await promptShouldAutoStartDesignTime(projectPaths)) {
+          const startDesignTimePromises = projectPaths.map(async (projectPath) => 
+            callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
+              innerActionContext.telemetry.properties.isActivationEvent = 'true';
+              await startDesignTimeApi(innerActionContext, projectPath);
+            })
+          );
+          await Promise.all(startDesignTimePromises);
+        }
+      }
+    });
 
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
     const hasCodefulProjects = await codefulProjectsExist();
@@ -178,19 +196,6 @@ export async function activate(context: vscode.ExtensionContext) {
     ext.rgApi = await getResourceGroupsApi();
     // @ts-expect-error _rootTreeItem does not exist on type AzExtTreeDataProvider
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
-
-    // TODO(aeldridge): This was added to avoid behavior change after modifying .vscode config validation to not set
-    // ext.defaultLogicAppPath. This should be revisited - a default logic app shouldn't be needed in ext context.
-    activateContext.telemetry.properties.lastStep = 'setDefaultLogicAppPath';
-    if (vscode.workspace.workspaceFolders) {
-      for (const folder of vscode.workspace.workspaceFolders) {
-        const projectPath = await tryGetLogicAppProjectRoot(activateContext, folder, true);
-        if (projectPath) {
-          ext.defaultLogicAppPath = projectPath;
-          break;
-        }
-      }
-    }
 
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
@@ -315,26 +320,6 @@ async function ensureBinaries(activateContext: IActionContext, isDevContainer: b
       await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
       await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
       activateContext.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
-    }
-  }
-}
-
-async function startDesignTime(activateContext: IActionContext, isDevContainer: boolean): Promise<void> {
-  if (isDevContainer) {
-    activateContext.telemetry.properties.designTimeStartupMode = 'devContainerAutoStart';
-    activateContext.telemetry.properties.designTimeStartupState = 'scheduled';
-    ext.outputChannel?.appendLog(
-      localize('schedulingDesignTimeStartup', 'Scheduling background design-time startup for devcontainer workspace.')
-    );
-    scheduleStartAllDesignTimeApis();
-  } else {
-    const projectPaths = await getWorkspaceLogicAppRoots();
-    if (await promptShouldAutoStartDesignTime(projectPaths)) {
-      for (const projectPath of projectPaths) {
-        callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (actionContext: IActionContext) => {
-          await startDesignTimeApi(actionContext, projectPath);
-        });
-      }
     }
   }
 }
