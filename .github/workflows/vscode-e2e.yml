@@ -752,16 +752,52 @@ jobs:
           sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
 
       - name: Run @vscode/test-cli Create Workspace label (${{ matrix.label }})
+        id: run_cli_create_workspace_label
         working-directory: apps/vs-code-designer
         run: |
           export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
           echo "PATH=$PATH"
+          mkdir -p .vscode-test/results
+          set +e
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-            pnpm exec node scripts/run-e2e-cli.js --label "${{ matrix.label }}"
+            pnpm exec node scripts/run-e2e-cli.js --label "${{ matrix.label }}" 2>&1 | tee ".vscode-test/results/${{ matrix.label }}.log"
+          status=${PIPESTATUS[0]}
+          set -e
+          outcome="success"
+          if [ "$status" -ne 0 ]; then
+            outcome="failure"
+          fi
+          node scripts/summarize-e2e-cli-results.js \
+            --label "${{ matrix.label }}" \
+            --log ".vscode-test/results/${{ matrix.label }}.log" \
+            --out-dir ".vscode-test/results" \
+            --outcome "$outcome"
+          exit "$status"
         env:
           NODE_OPTIONS: --max-old-space-size=4096
           TEMP: ${{ runner.temp }}
           TMPDIR: ${{ runner.temp }}
+
+      - name: Summarize @vscode/test-cli Create Workspace result
+        if: always()
+        working-directory: apps/vs-code-designer
+        run: |
+          node scripts/summarize-e2e-cli-results.js \
+            --append-summary \
+            --json ".vscode-test/results/${{ matrix.label }}.json" \
+            --github-summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload CLI structured results (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-cli-test-results-${{ matrix.label }}
+          path: |
+            apps/vs-code-designer/.vscode-test/results/${{ matrix.label }}.json
+            apps/vs-code-designer/.vscode-test/results/${{ matrix.label }}.junit.xml
+            apps/vs-code-designer/.vscode-test/results/${{ matrix.label }}.summary.md
+          if-no-files-found: ignore
+          retention-days: 30
 
       - name: Upload CLI screenshots (always)
         uses: actions/upload-artifact@v6
@@ -769,6 +805,49 @@ jobs:
         with:
           name: vscode-e2e-cli-screenshots-${{ matrix.label }}
           path: apps/vs-code-designer/.vscode-test/screenshots/cli/
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload CLI test log (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-cli-log-${{ matrix.label }}
+          path: apps/vs-code-designer/.vscode-test/results/${{ matrix.label }}.log
+          if-no-files-found: ignore
+          retention-days: 30
+
+  vscode-e2e-cli-create-workspace-report:
+    name: vscode-e2e-cli-create-workspace-report
+    needs: vscode-e2e-cli-create-workspace
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download structured CLI results
+        uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          pattern: vscode-e2e-cli-test-results-*
+          path: apps/vs-code-designer/.vscode-test/results/aggregate-input
+          merge-multiple: true
+
+      - name: Summarize aggregate @vscode/test-cli Create Workspace results
+        run: |
+          node apps/vs-code-designer/scripts/summarize-e2e-cli-results.js \
+            --aggregate \
+            --results-dir apps/vs-code-designer/.vscode-test/results/aggregate-input \
+            --out-dir apps/vs-code-designer/.vscode-test/results/aggregate \
+            --github-summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload aggregate CLI result dashboard
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-cli-test-results-summary
+          path: apps/vs-code-designer/.vscode-test/results/aggregate/
           if-no-files-found: ignore
           retention-days: 30
 

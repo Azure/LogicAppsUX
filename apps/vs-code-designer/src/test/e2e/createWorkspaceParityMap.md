@@ -4,6 +4,8 @@ This map tracks how the latest-stable `@vscode/test-cli` Create Workspace covera
 
 ## CLI labels
 
+Single-host labels can be run directly with `pnpm run test:e2e-cli --label <label>` or their package-script aliases. Runtime-heavy lifecycle labels should be run through their package scripts because those scripts create workspaces in one VS Code host, write a manifest, then reopen the generated project in fresh hosts with the correct startup resource and environment variables.
+
 | CLI label | Script | Purpose |
 |---|---|---|
 | `unitTests` | `pnpm run test:e2e-cli:smoke` | Activation, dependency hydration, command registration, empty-window startup. |
@@ -14,6 +16,8 @@ This map tracks how the latest-stable `@vscode/test-cli` Create Workspace covera
 | `createWorkspaceCodeful` | `pnpm run test:e2e-cli:create-workspace:codeful` | Current codeful project creation plus legacy-control `.csproj` shape simulation. |
 | `createWorkspaceFixturesManifest` | `pnpm run test:e2e-cli:create-workspace:fixtures` | CLI-generated manifest compatible with `src/test/ui/workspaceManifest.ts`; focused/manual, not the ExTester fixture owner. |
 | `workspaceLifecycle` | `pnpm run test:e2e-cli:workspace-lifecycle` | Generated Standard/custom-code/rules-engine Stateful debug/run smoke. |
+| `nugetConversionLifecycle` | `pnpm run test:e2e-cli:nuget-conversion-lifecycle` | Standard Stateful bundle debug/run, conversion to NuGet, regenerated NuGet artifact checks, and post-conversion debug/run without harness port cleanup. |
+| `codefulDebugTasks` | `pnpm run test:e2e-cli:codeful-debug-tasks` | Product-created codeful modern-vs-legacy F5 task-event parity: modern skips publish, legacy runs publish, and latest-stable F5 reaches a running Functions host. |
 
 ## ExTester behavior suite correlation
 
@@ -68,6 +72,5 @@ ExTester `p41a-fixtures` remains the canonical producer for downstream `run-e2e.
 | Standard generated workspace can open designer, add Request/Response, debug, run trigger, and succeed | `workspaceLifecycle` Standard case | ExTester Phase 4.2 remains the deeper Selenium designer lifecycle owner. |
 | Custom-code generated workspace can debug and run successfully | `workspaceLifecycle` custom-code case | ExTester still owns broader webview DOM/debug coverage and task-event semantics. |
 | Rules-engine generated workspace can debug and run successfully | `workspaceLifecycle` rules-engine case | ExTester still owns broader webview DOM/debug coverage. |
-| NuGet conversion can debug and run successfully | Not in CLI Create Workspace baseline | ExTester conversion/NuGet scenarios remain owner. |
-| Codeful modern-vs-legacy debug task behavior | Not in CLI Create Workspace baseline | ExTester Phase 4.10 remains owner. |
-
+| NuGet conversion can debug and run successfully | `nugetConversionLifecycle` | ExTester `nugetDebugConversion.test.ts` remains the Selenium command-palette/UI owner; CLI now owns latest-stable extension-host runtime parity, including a run-id-specific post-conversion Overview assertion so the pre-conversion run cannot satisfy the NuGet run check. |
+| Codeful modern-vs-legacy debug task behavior | `codefulDebugTasks` | ExTester Phase 4.10 remains the Selenium/recorder-extension owner for the pre-F5 design-time auto-start side-effect; CLI now owns latest-stable VS Code task-event parity, generated source compatibility, and F5 host-running evidence with in-test task recording. |

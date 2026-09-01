@@ -20,6 +20,7 @@ import {
   type Point,
   selectDropdownOption,
   selectRadioOption,
+  scrollFieldIntoView,
   waitForAsyncValidationToSettle,
   waitForFieldHidden,
   waitForFieldValidationMessage,
@@ -41,7 +42,7 @@ import { captureCliScreenshot } from './screenshot';
 import { containsIgnoreCase, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeWebviewTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
-import { requiredValue, waitForPathExists } from './workspaceArtifacts';
+import { applyCodefulControlVariantToProject, requiredValue, waitForPathExists } from './workspaceArtifacts';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const createWorkspaceCommand = 'azureLogicAppsStandard.createWorkspace';
@@ -65,6 +66,7 @@ const funcCoreToolsBinaryPathSetting = '${config:azureLogicAppsStandard.funcCore
 const dotnetBinaryPathSetting = '${config:azureLogicAppsStandard.dotnetBinaryPath}';
 const funcHostStartTaskLabel = 'func: host start';
 const funcWatchProblemMatcher = '$func-watch';
+const capturedValidationFields = new Set<string>();
 
 type CreateWorkspaceGroup = 'default' | 'behavior' | 'core-matrix' | 'preview-matrix' | 'codeful' | 'fixtures-manifest' | 'full';
 
@@ -199,6 +201,11 @@ suite('Create Workspace Experience Tests', () => {
   });
 
   suiteTeardown(() => {
+    if (process.env.LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP === '1') {
+      console.log(`[create-workspace-smoke] Deferring temp workspace cleanup to runner: ${tempWorkspaceParentPath}`);
+      return;
+    }
+
     if (createWorkspaceGroup === 'fixtures-manifest' || process.env.LA_E2E_CLI_PRESERVE_WORKSPACES === '1') {
       console.log(`[create-workspace-smoke] Preserving fixture workspace parent ${tempWorkspaceParentPath}`);
       return;
@@ -239,6 +246,7 @@ suite('Create Workspace Experience Tests', () => {
         await captureCliScreenshot('create-workspace-rules-engine-fields-valid');
       } finally {
         cdp.dispose();
+        await closeWebviewTabs(createWorkspaceViewType);
       }
 
       await assertNoDialogAttempts('Create Workspace command execution');
@@ -259,6 +267,7 @@ suite('Create Workspace Experience Tests', () => {
           await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase.label, 'review-back');
         } finally {
           cdp.dispose();
+          await closeWebviewTabs(createWorkspaceViewType);
         }
       }
 
@@ -350,6 +359,12 @@ function getCreateWorkspaceGroup(): CreateWorkspaceGroup {
 }
 
 function createWorkspaceParentPath(group: CreateWorkspaceGroup): string {
+  const envParentPath = process.env.LA_E2E_CLI_CREATE_WORKSPACE_PARENT;
+  if (envParentPath) {
+    fs.mkdirSync(envParentPath, { recursive: true });
+    return envParentPath;
+  }
+
   if (group !== 'fixtures-manifest') {
     return fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-create-workspace-'));
   }
@@ -596,6 +611,7 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
       console.warn(`[create-workspace-smoke] Retrying ${creationCase.label} creation after pre-submit webview failure: ${String(error)}`);
     } finally {
       cdp.dispose();
+      await closeWebviewTabs(createWorkspaceViewType);
     }
   }
 
@@ -612,8 +628,8 @@ async function openCreateWorkspaceContext(): Promise<{ cdp: CdpEvaluator & { dis
   assert.strictEqual(getTabViewType(tab), createWorkspaceTabViewType);
   assert.strictEqual(tab.label, createWorkspaceTitle);
 
-  const cdp = await connectToVsCodeCdp();
-  const contextId = await waitForCreateWorkspaceFrameContext(cdp);
+  const cdp = await connectToVsCodeCdp({ targetName: 'Create Workspace webview' });
+  const contextId = await waitForCreateWorkspaceFrameContext(cdp, 60000);
   return { cdp, contextId };
 }
 
@@ -853,6 +869,7 @@ async function verifyAppTypeCleanup(parentPath: string): Promise<void> {
     await captureCliScreenshot('create-workspace-app-type-cleanup');
   } finally {
     cdp.dispose();
+    await closeWebviewTabs(createWorkspaceViewType);
   }
 }
 
@@ -896,6 +913,7 @@ async function verifyWorkflowTypeDescriptionAndReview(parentPath: string): Promi
       await captureCliScreenshot(`create-workspace-${workflowTypeCase.label}-review`);
     } finally {
       cdp.dispose();
+      await closeWebviewTabs(createWorkspaceViewType);
     }
   }
 }
@@ -1685,29 +1703,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function applyCodefulControlVariant(parentPath: string, creationCase: WorkspaceCreationCase): void {
-  if (creationCase.appType !== 'codeful' || creationCase.codefulControlVariant !== 'legacy-control') {
+  if (creationCase.appType !== 'codeful') {
     return;
   }
 
   const appDir = path.join(parentPath, creationCase.wsName, creationCase.appName);
-  const csprojPath = getCodefulCsprojPath(appDir);
-  let csprojContent = fs.readFileSync(csprojPath, 'utf-8');
-
-  for (const targetName of ['CopyToCodefulFolder', 'ReplaceLanguageNetCore']) {
-    const targetMatch = csprojContent.match(new RegExp(`<Target\\b[^>]*Name=["']${targetName}["'][^>]*>`));
-    assert.ok(targetMatch, `Legacy-control codeful case should find ${targetName} target in ${csprojPath}`);
-
-    const targetTag = targetMatch[0];
-    const updatedTargetTag = targetTag.replace(/(AfterTargets=["'])Build;Publish(["'])/, '$1Publish$2');
-    assert.notStrictEqual(
-      updatedTargetTag,
-      targetTag,
-      `Legacy-control codeful case should patch ${targetName} AfterTargets in ${csprojPath}`
-    );
-    csprojContent = csprojContent.replace(targetTag, updatedTargetTag);
-  }
-
-  fs.writeFileSync(csprojPath, csprojContent, 'utf-8');
+  applyCodefulControlVariantToProject(appDir, creationCase.codefulControlVariant);
 }
 
 function verifyCodefulProject(appDir: string, creationCase: WorkspaceCreationCase): void {
@@ -1947,10 +1948,21 @@ async function runNameFieldCases(
 }
 
 async function runInvalidThenValidCase(cdp: CdpEvaluator, contextId: number, testCase: FieldValidationCase): Promise<void> {
+  console.log(
+    `[create-workspace-validation] ${testCase.name}: invalid="${testCase.invalidValue}" expected="${testCase.expectedMessage}" field="${getLabels(
+      testCase.labels
+    ).join('/')}"`
+  );
+  await scrollFieldIntoView(cdp, contextId, testCase.labels);
   await enterFieldValue(cdp, contextId, testCase.labels, testCase.invalidValue);
   await waitForFieldValidationMessage(cdp, contextId, testCase.labels, testCase.expectedMessage);
+  await scrollFieldIntoView(cdp, contextId, testCase.labels);
+  await captureFieldValidationScreenshot(testCase.labels, testCase.name, 'invalid');
+
+  console.log(`[create-workspace-validation] ${testCase.name}: valid="${testCase.validValue}"`);
   await enterFieldValue(cdp, contextId, testCase.labels, testCase.validValue);
   await waitForFieldValidationMessageToClear(cdp, contextId, testCase.labels, testCase.expectedMessage);
+  await scrollFieldIntoView(cdp, contextId, testCase.labels);
 }
 
 async function runEmptyThenValidCase(
@@ -1960,12 +1972,21 @@ async function runEmptyThenValidCase(
   labels: FieldLabels,
   validValue: string
 ): Promise<void> {
+  console.log(
+    `[create-workspace-validation] ${name}: invalid="" expected="${emptyValidationMessage}" field="${getLabels(labels).join('/')}"`
+  );
+  await scrollFieldIntoView(cdp, contextId, labels);
   await enterFieldValue(cdp, contextId, labels, validValue);
   await enterFieldValue(cdp, contextId, labels, '');
   await waitForFieldValidationMessage(cdp, contextId, labels, emptyValidationMessage);
+  await scrollFieldIntoView(cdp, contextId, labels);
+  await captureFieldValidationScreenshot(labels, name, 'empty');
   await assertNextButtonDisabled(cdp, contextId, name);
+
+  console.log(`[create-workspace-validation] ${name}: valid="${validValue}"`);
   await enterFieldValue(cdp, contextId, labels, validValue);
   await waitForFieldValidationMessageToClear(cdp, contextId, labels, emptyValidationMessage);
+  await scrollFieldIntoView(cdp, contextId, labels);
 }
 
 async function runThreeRequiredFieldGatingCases(
@@ -2012,4 +2033,26 @@ async function runThreeRequiredFieldGatingCases(
   await enterFieldValue(cdp, contextId, fields.second.labels, fields.second.validValue);
   await enterFieldValue(cdp, contextId, fields.third.labels, uniqueName(fields.third.validValue));
   await assertNextButtonEnabled(cdp, contextId, `${name}: all valid`);
+}
+
+async function captureFieldValidationScreenshot(labels: FieldLabels, caseName: string, stage: string): Promise<void> {
+  if (process.env.LA_E2E_CLI_CAPTURE_FIELD_VALIDATION_SCREENSHOTS === '0') {
+    return;
+  }
+
+  const fieldKey = getValidationScreenshotKey(labels, caseName, stage);
+  if (capturedValidationFields.has(fieldKey)) {
+    return;
+  }
+
+  capturedValidationFields.add(fieldKey);
+  await captureCliScreenshot(`create-workspace-validation-${caseName}-${stage}`);
+}
+
+function getValidationScreenshotKey(labels: FieldLabels, caseName: string, stage: string): string {
+  const areaName = caseName
+    .replace(/\b(starts|contains|is|matches|rejects)\b.*$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return `${stage}:${areaName || getLabels(labels).join('/')}`;
 }

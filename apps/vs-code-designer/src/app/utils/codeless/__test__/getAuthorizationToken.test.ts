@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getAuthorizationToken, getAuthorizationTokenFromNode, getCloudHost } from '../getAuthorizationToken';
+import { getAuthData, getAuthorizationToken, getAuthorizationTokenFromNode, getCloudHost } from '../getAuthorizationToken';
 
 // The module-level mock for '@microsoft/vscode-azext-azureauth/out/src/getSessionFromVSCode'
 // is aliased via vitest.config.ts to '__mocks__/vscode-azext-azureauth.ts'.
@@ -16,6 +16,9 @@ vi.mock('@microsoft/vscode-azext-azureauth', () => ({
 describe('getAuthorizationToken', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    delete process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN;
+    delete process.env.LA_E2E_CLI_AZURE_TENANT_ID;
+    delete process.env.VSCODE_RUNNING_TESTS;
     // Mock vscode.workspace.getConfiguration to return a config with get()
     vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({
       get: vi.fn(() => false),
@@ -64,6 +67,32 @@ describe('getAuthorizationToken', () => {
 
     await getAuthorizationToken('specific-tenant-id');
     expect(spy).toHaveBeenCalledWith(undefined, 'specific-tenant-id', expect.any(Object));
+  });
+
+  it('uses a test-gated Azure CLI token fallback when silent auth has no cached session', async () => {
+    vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({
+      get: vi.fn(() => true),
+    } as any);
+    vi.spyOn(azureAuth, 'getSessionFromVSCode').mockResolvedValue(undefined as any);
+    process.env.VSCODE_RUNNING_TESTS = '1';
+    process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN = 'azure-cli-token';
+
+    const authData = await getAuthData('tenant-1');
+
+    expect(authData?.accessToken).toBe('azure-cli-token');
+    expect(authData?.account.id).toBe('e2e-cli.tenant-1');
+  });
+
+  it('does not use the Azure CLI token fallback outside extension tests', async () => {
+    vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({
+      get: vi.fn(() => true),
+    } as any);
+    vi.spyOn(azureAuth, 'getSessionFromVSCode').mockResolvedValue(undefined as any);
+    process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN = 'azure-cli-token';
+
+    const authData = await getAuthData('tenant-1');
+
+    expect(authData).toBeUndefined();
   });
 });
 

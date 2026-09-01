@@ -23,12 +23,16 @@ export async function captureCliScreenshot(name: string): Promise<string | undef
 
 export async function captureCdpScreenshot(
   cdp: { send(method: string, params?: Record<string, unknown>): Promise<unknown> },
-  name: string
+  name: string,
+  options: { captureBeyondViewport?: boolean } = {}
 ): Promise<string | undefined> {
   fs.mkdirSync(screenshotRoot, { recursive: true });
 
   const screenshotPath = path.join(screenshotRoot, `${sanitizeFileSegment(name)}.png`);
-  const response = (await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true })) as {
+  const response = (await cdp.send('Page.captureScreenshot', {
+    format: 'png',
+    captureBeyondViewport: options.captureBeyondViewport ?? true,
+  })) as {
     result?: { data?: string };
   };
   const data = response.result?.data;

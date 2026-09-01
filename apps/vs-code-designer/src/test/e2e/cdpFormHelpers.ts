@@ -32,7 +32,7 @@ type WizardButtonState = {
 };
 
 export async function enterFieldValue(cdp: CdpEvaluator, contextId: number, labels: FieldLabels, value: string): Promise<void> {
-  await waitForFieldVisible(cdp, contextId, labels);
+  await scrollFieldIntoView(cdp, contextId, labels);
   const focusResult = await cdp.evaluate<{ ok: boolean; reason?: string; text?: string; value?: string }>(
     contextId,
     withField(
@@ -68,6 +68,23 @@ export async function enterFieldValue(cdp: CdpEvaluator, contextId: number, labe
     value,
     `Expected field "${getLabels(labels).join('/')}" to equal "${value}". State: ${JSON.stringify(result)}`
   );
+}
+
+export async function scrollFieldIntoView(cdp: CdpEvaluator, contextId: number, labels: FieldLabels): Promise<void> {
+  await waitForFieldVisible(cdp, contextId, labels);
+  const result = await cdp.evaluate<{ ok: boolean; reason?: string; text?: string }>(
+    contextId,
+    withField(
+      labels,
+      `const target = field || input;
+      target.scrollIntoView({ block: 'center', inline: 'center' });
+      input.focus();
+      return { ok: true, text: field?.innerText || input.value || '' };`
+    )
+  );
+
+  assert.strictEqual(result.ok, true, result.reason ?? `Failed to scroll ${getLabels(labels).join('/')} field into view`);
+  await delay(150);
 }
 
 export async function waitForFieldVisible(cdp: CdpEvaluator, contextId: number, labels: FieldLabels): Promise<void> {

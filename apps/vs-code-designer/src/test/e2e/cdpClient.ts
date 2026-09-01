@@ -185,6 +185,62 @@ export async function connectToVsCodeCdp(
   assert.fail(`Unable to find ${targetName} CDP target. Targets: ${JSON.stringify(targets)}`);
 }
 
+export async function connectToVsCodeCdpByText(options: {
+  targetName?: string;
+  urlIncludes?: string;
+  allTextIncludes: string[];
+  timeoutMs?: number;
+}): Promise<{ cdp: CdpConnection; contextId: number }> {
+  const port = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
+  assert.ok(port, 'LA_E2E_CLI_REMOTE_DEBUGGING_PORT must be set for webview DOM smoke tests');
+
+  const targetName = options.targetName ?? 'Logic Apps webview';
+  const urlIncludes = options.urlIncludes ?? 'extensionId=ms-azuretools.vscode-azurelogicapps';
+  const deadline = Date.now() + (options.timeoutMs ?? 15000);
+  let targets: CdpTarget[] = [];
+  let lastError = '';
+
+  while (Date.now() < deadline) {
+    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`)) as CdpTarget[];
+    const webviewTargets = [...targets].reverse().filter((target) => {
+      return (
+        target.type === 'iframe' &&
+        target.webSocketDebuggerUrl &&
+        target.url?.startsWith('vscode-webview://') &&
+        target.url.includes(urlIncludes)
+      );
+    });
+
+    for (const target of webviewTargets) {
+      if (!target.webSocketDebuggerUrl) {
+        continue;
+      }
+
+      const cdp = await CdpConnection.connect(target.webSocketDebuggerUrl);
+      try {
+        const contextId = await waitForWebviewFrameContext(cdp, {
+          allTextIncludes: options.allTextIncludes,
+          description: `${targetName} candidate`,
+          timeoutMs: 1000,
+        });
+
+        if (target.id) {
+          await fetch(`http://127.0.0.1:${port}/json/activate/${target.id}`).catch(() => undefined);
+        }
+
+        return { cdp, contextId };
+      } catch (error) {
+        lastError = error instanceof Error ? error.message : String(error);
+        cdp.dispose();
+      }
+    }
+
+    await delay(250);
+  }
+
+  assert.fail(`Unable to find ${targetName} CDP target by text. Last error: ${lastError}. Targets: ${JSON.stringify(targets)}`);
+}
+
 export async function connectToVsCodeWorkbenchCdp(): Promise<CdpConnection> {
   const port = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
   assert.ok(port, 'LA_E2E_CLI_REMOTE_DEBUGGING_PORT must be set for workbench DOM smoke tests');
