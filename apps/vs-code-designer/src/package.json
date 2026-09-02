@@ -729,7 +729,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true",
+          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && resourceDirname in azureLogicAppsStandard.codefulProjectPaths",
           "group": "navigation@3"
         },
         {
@@ -792,7 +792,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true"
+          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && resourceDirname in azureLogicAppsStandard.codefulProjectPaths"
         },
         {
           "command": "azureLogicAppsStandard.toggleAppSettingVisibility",

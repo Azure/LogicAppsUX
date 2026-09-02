@@ -46,10 +46,12 @@ export async function updateLogicAppsContext(projectPaths?: string[]) {
   } else {
     projectPaths ??= await getLogicAppRoots();
     const hasLogicApp = projectPaths.length > 0;
-    const isCodefulPromises = projectPaths.map(isCodefulLogicApp);
-    const isCodeful = (await Promise.all(isCodefulPromises)).some(Boolean);
+    const codefulProjectPathPromises = projectPaths.map(async (projectPath) => {
+      return await isCodefulLogicApp(projectPath) ? projectPath : undefined;
+    });
+    const codefulProjectPaths = (await Promise.all(codefulProjectPathPromises)).filter((path) => path !== undefined);
     await vscode.commands.executeCommand('setContext', extensionContext.hasProject, hasLogicApp);
-    await vscode.commands.executeCommand('setContext', extensionContext.isCodeful, isCodeful);
+    await vscode.commands.executeCommand('setContext', extensionContext.codefulProjectPaths, codefulProjectPaths);
     await vscode.commands.executeCommand('setContext', extensionContext.logicAppProjectPaths, projectPaths);
     await vscode.commands.executeCommand('setContext', extensionContext.customCodeFunctionsFolders, await getCustomCodeRoots());
     await vscode.commands.executeCommand('setContext', extensionContext.customCodeEligibleLogicAppFolders, await getEligibleLogicAppFoldersForCustomCode());

@@ -231,8 +231,7 @@ export type extensionEvent = (typeof extensionEvent)[keyof typeof extensionEvent
 export const extensionContext = {
   hasProject: 'azureLogicAppsStandard.hasProject',
   logicAppProjectPaths: 'azureLogicAppsStandard.logicAppProjectPaths',
-  // TODO(aeldridge): Assumes no mix of codeful/codeless projects in a workspace
-  isCodeful: 'azureLogicAppsStandard.isCodeful',
+  codefulProjectPaths: 'azureLogicAppsStandard.codefulProjectPaths',
   customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
   customCodeEligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',
   dataMapSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.supportedDataMapDefinitionFileExts',
