@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { buildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProjectInternal } from '../buildCustomCodeFunctionsProject';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { window, tasks, Uri } from 'vscode';
 import * as customCodeUtils from '../../utils/customCodeUtils';
+import { selectCustomCodeRoot } from '../../utils/workspace';
 import { ext } from '../../../extensionVariables';
 import path from 'path';
 
@@ -43,6 +44,10 @@ vi.mock('../../../extensionVariables', () => ({
   },
 }));
 
+vi.mock('../../utils/workspace', () => ({
+  selectCustomCodeRoot: vi.fn(),
+}));
+
 describe('buildCustomCodeFunctionsProject', () => {
   let context: IActionContext;
   const testWorkspaceFolder = path.join('test', 'workspace', 'folder');
@@ -50,6 +55,7 @@ describe('buildCustomCodeFunctionsProject', () => {
   let onDidEndTaskProcessEmitter: MockEventEmitter<any>;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     context = {
       telemetry: { properties: {}, measurements: {} },
       errorHandling: { suppressDisplay: false, rethrow: false, issueProperties: {} },
@@ -57,6 +63,7 @@ describe('buildCustomCodeFunctionsProject', () => {
       valuesToMask: [],
     } as unknown as IActionContext;
     vi.restoreAllMocks();
+    vi.mocked(selectCustomCodeRoot).mockResolvedValue(undefined);
 
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
     vi.spyOn(window, 'showWarningMessage').mockImplementation(() => undefined);
@@ -69,20 +76,31 @@ describe('buildCustomCodeFunctionsProject', () => {
     });
   });
 
-  it('should return false when nodePath is null', async () => {
-    const result = await buildCustomCodeFunctionsProject(context, undefined);
+  it('should throw when no custom code project can be selected', async () => {
+    await expect(buildCustomCodeFunctionsProject(context, undefined)).rejects.toThrow(
+      'Unable to determine custom code functions project root.'
+    );
 
-    expect(result).toBe(false);
+    expect(selectCustomCodeRoot).toHaveBeenCalledWith(context);
   });
 
-  it('should return false when not a custom code project and no logic app projects found', async () => {
+  it('should select and build a custom code project when the provided node is not one', async () => {
+    const selectedProjectPath = path.join('test', 'selected-project');
+    const mockTask = { name: 'build', scope: { uri: { fsPath: selectedProjectPath } } };
     vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(false);
-    vi.spyOn(customCodeUtils, 'tryGetLogicAppCustomCodeFunctionsProjects').mockResolvedValue([]);
+    vi.mocked(selectCustomCodeRoot).mockResolvedValue(selectedProjectPath);
+    vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
 
-    const result = await buildCustomCodeFunctionsProject(context, Uri.file(testWorkspaceFolder));
+    const buildPromise = buildCustomCodeFunctionsProject(context, Uri.file(testWorkspaceFolder));
 
-    expect(result).toBe(false);
-    expect(context.telemetry.properties.lastStep).toBe('tryGetLogicAppCustomCodeFunctionsProjects');
+    setTimeout(() => {
+      onDidEndTaskProcessEmitter.fire({ exitCode: 0, execution: { task: mockTask } });
+    }, 50);
+
+    await expect(buildPromise).resolves.toBe(true);
+
+    expect(selectCustomCodeRoot).toHaveBeenCalledWith(context);
+    expect(context.telemetry.properties.lastStep).toBe('buildCustomCodeProject');
   });
 
   it('should build a custom code functions project successfully', async () => {
@@ -132,7 +150,7 @@ describe('buildCustomCodeFunctionsProject', () => {
     vi.spyOn(customCodeUtils, 'tryGetLogicAppCustomCodeFunctionsProjects').mockResolvedValue([functionsPath]);
     vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
 
-    const buildPromise = buildCustomCodeFunctionsProject(context, Uri.file(logicAppPath));
+    const buildPromise = tryBuildCustomCodeFunctionsProjectInternal(context, logicAppPath);
 
     setTimeout(() => {
       onDidEndTaskProcessEmitter.fire({ exitCode: 0, execution: { task: mockTask } });
