@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import LogicAppsLanguageServer from '../languageServer';
+import LogicAppsLanguageServer, { startLanguageServers } from '../languageServer';
 import path from 'path';
 
 const mocks = vi.hoisted(() => ({
   createFileSystemWatcher: vi.fn(),
   getAzureConnectorDetailsForLocalProject: vi.fn(),
   getGlobalSetting: vi.fn(),
-  selectLogicAppRoot: vi.fn(),
+  getLogicAppRoots: vi.fn(),
   languageClient: vi.fn(),
   pathExists: vi.fn(),
   readFile: vi.fn(),
@@ -43,7 +43,7 @@ vi.mock('vscode-languageclient/node', () => ({
 }));
 
 vi.mock('../../utils/workspace', () => ({
-  selectLogicAppRoot: mocks.selectLogicAppRoot,
+  getLogicAppRoots: mocks.getLogicAppRoots,
 }));
 
 vi.mock('../../utils/dotnet/dotnet', () => ({
@@ -90,7 +90,7 @@ describe('LogicAppsLanguageServer', () => {
     mocks.pathExists.mockResolvedValue(false);
     mocks.readFile.mockResolvedValue('{}');
     mocks.readdir.mockResolvedValue([]);
-    mocks.selectLogicAppRoot.mockResolvedValue(projectPath);
+    mocks.getLogicAppRoots.mockResolvedValue([projectPath]);
     mocks.getDotNetCommand.mockReturnValue('D:\\dependencies\\DotNetSDK\\dotnet.exe');
     mocks.getAzureConnectorDetailsForLocalProject.mockResolvedValue({
       accessToken: 'Bearer token',
@@ -100,10 +100,11 @@ describe('LogicAppsLanguageServer', () => {
   });
 
   it('does not start or read metadata when no Logic App project root is found', async () => {
-    mocks.selectLogicAppRoot.mockResolvedValue(undefined);
+    mocks.getLogicAppRoots.mockResolvedValue([]);
 
-    await new LogicAppsLanguageServer({} as any).start();
+    await startLanguageServers({} as any);
 
+    expect(mocks.getLogicAppRoots).toHaveBeenCalledWith({ isCodeful: true });
     expect(mocks.readdir).not.toHaveBeenCalled();
     expect(mocks.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
     expect(mocks.languageClient).not.toHaveBeenCalled();
@@ -113,7 +114,7 @@ describe('LogicAppsLanguageServer', () => {
   it('does not scan a missing SDK directory', async () => {
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath);
 
-    await new LogicAppsLanguageServer({} as any).start();
+    await new LogicAppsLanguageServer({} as any, projectPath).start();
 
     expect(mocks.pathExists).toHaveBeenCalledWith(sdkFolderPath);
     expect(mocks.readdir).not.toHaveBeenCalled();
@@ -128,7 +129,7 @@ describe('LogicAppsLanguageServer', () => {
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath);
     mocks.readdir.mockResolvedValue(['readme.txt']);
 
-    await new LogicAppsLanguageServer({} as any).start();
+    await new LogicAppsLanguageServer({} as any, projectPath).start();
 
     expect(mocks.readdir).toHaveBeenCalledWith(sdkFolderPath);
     expect(mocks.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
@@ -144,7 +145,7 @@ describe('LogicAppsLanguageServer', () => {
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath);
     mocks.readdir.mockResolvedValue(['Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg']);
 
-    await new LogicAppsLanguageServer({} as any).start();
+    await new LogicAppsLanguageServer({} as any, projectPath).start();
 
     expect(mocks.getAzureConnectorDetailsForLocalProject).toHaveBeenCalledWith(expect.any(Object), projectPath);
     expect(mocks.languageClient).toHaveBeenCalledWith(
