@@ -19,7 +19,7 @@ import type { LanguageClient } from 'vscode-languageclient/node';
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
  */
 
-type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
+type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == projectPath::dataMapName
 type LogicAppMap = Map<string, Site>;
 type SubscriptionMap = Map<string, LogicAppMap>;
 export type FuncInstance = {
@@ -38,8 +38,6 @@ export namespace ext {
   export const runtimeInstances: Map<string, FuncInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
-  // TODO(aeldridge): Remove defaultLogicAppPath
-  export let defaultLogicAppPath: string;
   export let outputChannel: IAzExtOutputChannel;
   // TODO(aeldridge): Multiple runtime processes are supported with runningFuncTaskMap, but only a single runtime port is tracked.
   // This will cause issues if multiple runtime processes are started on different ports. Currently we use the default port (7071)

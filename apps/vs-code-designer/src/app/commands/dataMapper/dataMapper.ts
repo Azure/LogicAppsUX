@@ -6,41 +6,36 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import DataMapperExt from './DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
-import { isNullOrUndefined, type MapDefinitionEntry } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
-import { selectLogicAppRoot } from '../../utils/workspace';
+import { getParentLogicAppRoot, selectLogicAppRoot } from '../../utils/workspace';
 
-export async function createDataMap(context: IActionContext): Promise<void> {
-  if (isNullOrUndefined(ext.defaultLogicAppPath)) {
-    const projectPath = await selectLogicAppRoot(context);
-    if (!projectPath) {
-      throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
-    }
-    ext.defaultLogicAppPath = projectPath;
+export async function createDataMap(context: IActionContext, node?: Uri): Promise<void> {
+  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await selectLogicAppRoot(context);
+  if (!projectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
-  DataMapperExt.openDataMapperPanel(context);
+  DataMapperExt.openDataMapperPanel(context, projectPath);
 }
 
-export async function loadDataMapFile(context: IActionContext, uri: Uri): Promise<void> {
-  let mapDefinitionPath: string | undefined = uri?.fsPath;
-  let draftFileIsFoundAndShouldBeUsed = false;
-  if (isNullOrUndefined(ext.defaultLogicAppPath)) {
-    const projectPath = await selectLogicAppRoot(context);
-    if (!projectPath) {
-      throw new Error(localize('projectNotFound', 'No Logic Apps project found in the selected folder.'));
-    }
-    ext.defaultLogicAppPath = projectPath;
+export async function loadDataMapFile(context: IActionContext, node?: Uri): Promise<void> {
+  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await selectLogicAppRoot(context);
+  if (!projectPath) {
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
+  
+  let mapDefinitionPath: string | undefined = node?.fsPath;
+  let draftFileIsFoundAndShouldBeUsed = false;
 
   // Handle if Uri isn't provided/defined (cmd pallette or btn)
   if (!mapDefinitionPath) {
     const fileUris = await window.showOpenDialog({
       title: 'Select a data map definition to load',
-      defaultUri: Uri.file(path.join(ext.defaultLogicAppPath, dataMapDefinitionsPath)),
+      defaultUri: Uri.file(path.join(projectPath, dataMapDefinitionsPath)),
       canSelectMany: false,
       canSelectFiles: true,
       canSelectFolders: false,
@@ -100,7 +95,7 @@ export async function loadDataMapFile(context: IActionContext, uri: Uri): Promis
   }
 
   // Attempt to load schema files if specified
-  const schemasFolder = path.join(ext.defaultLogicAppPath, schemasPath);
+  const schemasFolder = path.join(projectPath, schemasPath);
   const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
@@ -167,7 +162,7 @@ export async function loadDataMapFile(context: IActionContext, uri: Uri): Promis
   const dataMapName = path.basename(mapDefinitionPath, path.extname(mapDefinitionPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
   // Set map definition data to be loaded once webview sends webviewLoaded msg
-  DataMapperExt.openDataMapperPanel(context, dataMapName, {
+  DataMapperExt.openDataMapperPanel(context, projectPath, dataMapName, {
     mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),

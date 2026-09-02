@@ -17,7 +17,7 @@ import { isCodefulLogicApp } from './codeful';
  * Gets extension version from the package.json version.
  * @returns {string} Extension version.
  */
-export const getExtensionVersion = (): string => {
+export function getExtensionVersion(): string {
   const extension = vscode.extensions.getExtension(logicAppsStandardExtensionId);
 
   if (extension) {
@@ -30,15 +30,14 @@ export const getExtensionVersion = (): string => {
   }
 
   return '';
-};
+}
 
-export const initializeCustomExtensionContext = () => {
-  // Data Mapper context
+export function initializeCustomExtensionContext() {
   vscode.commands.executeCommand('setContext', extensionContext.dataMapSupportedDataMapDefinitionFileExts, supportedDataMapDefinitionFileExts);
   vscode.commands.executeCommand('setContext', extensionContext.dataMapSupportedSchemaFileExts, supportedSchemaFileExts);
   vscode.commands.executeCommand('setContext', extensionContext.dataMapSupportedFileExts, [...supportedDataMapDefinitionFileExts, ...supportedSchemaFileExts]);
   vscode.commands.executeCommand('setContext', extensionContext.dataMapDmFolders, supportedDataMapperFolders);
-};
+}
 
 export async function updateLogicAppsContext(projectPaths?: string[]) {
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
