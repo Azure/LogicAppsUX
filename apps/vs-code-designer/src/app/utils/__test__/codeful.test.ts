@@ -1,7 +1,13 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { codefulProjectExists, hasCodefulSdkReference, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
+import {
+  codefulProjectExists,
+  detectAgentCodefulWorkflow,
+  detectCodefulWorkflow,
+  invalidateCodefulSdkCacheIfNeeded,
+  parseCsprojCopyToCodefulInfo,
+} from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
@@ -201,32 +207,68 @@ describe('parseCsprojCopyToCodefulInfo', () => {
   });
 });
 
-describe('hasCodefulSdkReference', () => {
-  const projectPath = 'D:\\workspace\\CodefulLogicApp';
+describe('detectAgentCodefulWorkflow', () => {
+  it('detects a conversational agent workflow that uses the current built-in Agent API', () => {
+    const workflowName = detectAgentCodefulWorkflow(`
+namespace TestProject
+{
+    using Microsoft.Azure.Workflows.Sdk;
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.statSync.mockReturnValue({ isDirectory: () => true });
+    public class TestWorkflow : IWorkflowProvider
+    {
+        public FlowDefinition[] GetWorkflows()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
+            var agent = WorkflowActions.BuiltIn.Agent(
+                agentModelType: AgentModelType.AzureOpenAI,
+                deploymentId: "gpt-4.1",
+                messages: () => new AgentPromptMessage[]
+                {
+                    new AgentPromptMessage { Role = MessageRole.System, Content = "Help the user" }
+                }
+            ).WithName("WeatherAgent");
+
+            var workflow = trigger.Then(agent);
+            return new[] { WorkflowFactory.CreateAgentWorkflow("TestWorkflow", workflow) };
+        }
+    }
+}`);
+
+    expect(workflowName).toBe('TestWorkflow');
   });
 
-  it('returns true for a .NET 8 project that references the Logic Apps SDK', async () => {
-    mocks.readdir.mockResolvedValue(['CodefulLogicApp.csproj', 'MyWorkflow.cs']);
-    mocks.readFile.mockResolvedValue(`
-      <Project Sdk="Microsoft.NET.Sdk">
-        <PropertyGroup><TargetFramework>net8</TargetFramework></PropertyGroup>
-        <ItemGroup>
-          <PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview.1" />
-        </ItemGroup>
-      </Project>
-    `);
+  it('detects new agent workflow source without relying on legacy builder APIs', () => {
+    const workflow = detectCodefulWorkflow(`
+namespace TestProject
+{
+    using Microsoft.Azure.Workflows.Sdk;
 
-    await expect(hasCodefulSdkReference(projectPath)).resolves.toBe(true);
-  });
+    public class MultilineWorkflow : IWorkflowProvider
+    {
+        public FlowDefinition[] GetWorkflows()
+        {
+            var trigger = WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger();
+            var agent =
+                WorkflowActions
+                    .BuiltIn
+                    .Agent(
+                        agentModelType: AgentModelType.AzureOpenAI,
+                        deploymentId: "gpt-4.1",
+                        messages: () => Array.Empty<AgentPromptMessage>())
+                    .WithName("WeatherAgent");
 
-  it('returns false when the folder does not contain a .csproj', async () => {
-    mocks.readdir.mockResolvedValue(['Program.cs']);
+            var workflow = trigger.Then(agent);
+            return new[]
+            {
+                WorkflowFactory.CreateAgentWorkflow(
+                    "MultilineWorkflow",
+                    workflow)
+            };
+        }
+    }
+}`);
 
-    await expect(hasCodefulSdkReference(projectPath)).resolves.toBe(false);
+    expect(workflow).toEqual({ workflowName: 'MultilineWorkflow', workflowType: 'agent' });
   });
 });
 
