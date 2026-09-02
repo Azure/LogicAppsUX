@@ -7,8 +7,8 @@ import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { isCustomCodeFunctionsProject, tryGetLogicAppCustomCodeFunctionsProjects } from '../utils/customCodeUtils';
 import * as vscode from 'vscode';
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { isPathEqual, isSubpath } from '../utils/fs';
+import { selectCustomCodeRoot } from '../utils/workspace';
 
 /**
  * Builds a custom code functions project if exists.
@@ -16,18 +16,29 @@ import { isPathEqual, isSubpath } from '../utils/fs';
  * @param {vscode.Uri} [node] - The URI of the project to build or the corresponding logic app project.
  * @returns {Promise<boolean>} - A promise that resolves to true if a custom code functions project was built, otherwise false.
  */
-export async function tryBuildCustomCodeFunctionsProject(context: IActionContext, node?: vscode.Uri): Promise<boolean> {
-  const nodePath = node?.fsPath;
-  if (isNullOrUndefined(nodePath)) {
-    return false;
+export async function buildCustomCodeFunctionsProject(context: IActionContext, node?: vscode.Uri): Promise<boolean> {
+  const customCodePath = node && (await isCustomCodeFunctionsProject(node.fsPath)) ? node.fsPath : await selectCustomCodeRoot(context);
+  if (!customCodePath) {
+    throw new Error(localize('CustomCodeRootError', 'Unable to determine custom code functions project root.'));
   }
 
-  return await tryBuildCustomCodeFunctionsProjectInternal(context, nodePath);
+  return await tryBuildCustomCodeFunctionsProjectInternal(context, customCodePath, true);
 }
 
-export async function tryBuildCustomCodeFunctionsProjectInternal(context: IActionContext, projectPath: string): Promise<boolean> {
+/**
+ * Builds the given custom code functions projects or the custom code projects corresponding to the given logic app project.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The path to the custom code functions project or the corresponding logic app project.
+ * @param {boolean} [isCustomCodeProject] - If true, indicates that the given projectPath is a custom code functions project.
+ * @returns {Promise<boolean>} - A promise that resolves to true if a custom code functions project was built, otherwise false.
+ */
+export async function tryBuildCustomCodeFunctionsProjectInternal(
+  context: IActionContext,
+  projectPath: string,
+  isCustomCodeProject?: boolean
+): Promise<boolean> {
   context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
-  if (await isCustomCodeFunctionsProject(projectPath)) {
+  if (isCustomCodeProject || await isCustomCodeFunctionsProject(projectPath)) {
     try {
       context.telemetry.properties.lastStep = 'buildCustomCodeProject';
       await buildCustomCodeProject(projectPath);

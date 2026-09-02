@@ -88,7 +88,7 @@ vi.mock('../binaries/resetValidateAndInstallBinaries', () => ({
 }));
 vi.mock('../binaries/validateAndInstallBinaries', () => ({ validateAndInstallBinaries: vi.fn() }));
 vi.mock('../browseWebsite', () => ({ browseWebsite: vi.fn() }));
-vi.mock('../buildCustomCodeFunctionsProject', () => ({ tryBuildCustomCodeFunctionsProject: vi.fn() }));
+vi.mock('../buildCustomCodeFunctionsProject', () => ({ buildCustomCodeFunctionsProject: vi.fn() }));
 vi.mock('../configureDeploymentSource', () => ({ configureDeploymentSource: vi.fn() }));
 vi.mock('../createChildNode', () => ({ createChildNode: vi.fn() }));
 vi.mock('../createLogicApp/createLogicApp', () => ({ createLogicApp: vi.fn(), createLogicAppAdvanced: vi.fn() }));

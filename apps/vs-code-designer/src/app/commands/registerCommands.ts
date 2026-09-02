@@ -14,7 +14,7 @@ import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { disableValidateAndInstallBinaries, resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
 import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
-import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
@@ -169,7 +169,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.loadDataMapFile, loadDataMapFile);
 
   // Custom code
-  registerCommand(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
+  registerCommand(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.addCustomCode, addCustomCode);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);

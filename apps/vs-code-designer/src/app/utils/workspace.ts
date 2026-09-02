@@ -383,6 +383,33 @@ async function getWorkspaceFolderCustomCodeRoots(workspaceFolder: vscode.Workspa
 }
 
 /**
+ * Gets a Custom Code project root from the workspace. If multiple projects exist, prompts the user to select one.
+ * @param {IActionContext} context - The action context.
+ * @param {boolean} suppressPrompt - If true, returns the first project found without prompting.
+ * @returns {Promise<string | undefined>} The selected Custom Code project root path, or undefined if none found.
+ */
+export async function selectCustomCodeRoot(context: IActionContext, suppressPrompt = false): Promise<string | undefined> {
+  const customCodePaths = await getCustomCodeRoots();
+  if (customCodePaths.length === 0) {
+    return undefined;
+  }
+
+  if (customCodePaths.length === 1 || suppressPrompt) {
+    return customCodePaths[0];
+  }
+
+  const placeHolder = localize('selectProject', 'Select a custom code project');
+  const projectPicks: IAzureQuickPickItem<string>[] = customCodePaths.map((customCodeRoot) => ({
+    label: path.basename(customCodeRoot),
+    description: customCodeRoot,
+    data: customCodeRoot,
+  }));
+
+  const selectedItem = await context.ui.showQuickPick(projectPicks, { placeHolder });
+  return selectedItem?.data;
+}
+
+/**
  * Gets the active workflow node.
  * @returns {vscode.Uri | undefined} The active text editor workflow node.
  */

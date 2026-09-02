@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { buildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { window, tasks, Uri } from 'vscode';
 import * as customCodeUtils from '../../utils/customCodeUtils';
@@ -43,7 +43,7 @@ vi.mock('../../../extensionVariables', () => ({
   },
 }));
 
-describe('tryBuildCustomCodeFunctionsProject', () => {
+describe('buildCustomCodeFunctionsProject', () => {
   let context: IActionContext;
   const testWorkspaceFolder = path.join('test', 'workspace', 'folder');
   let executeTaskSpy: any;
@@ -70,7 +70,7 @@ describe('tryBuildCustomCodeFunctionsProject', () => {
   });
 
   it('should return false when nodePath is null', async () => {
-    const result = await tryBuildCustomCodeFunctionsProject(context, undefined);
+    const result = await buildCustomCodeFunctionsProject(context, undefined);
 
     expect(result).toBe(false);
   });
@@ -79,7 +79,7 @@ describe('tryBuildCustomCodeFunctionsProject', () => {
     vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(false);
     vi.spyOn(customCodeUtils, 'tryGetLogicAppCustomCodeFunctionsProjects').mockResolvedValue([]);
 
-    const result = await tryBuildCustomCodeFunctionsProject(context, Uri.file(testWorkspaceFolder));
+    const result = await buildCustomCodeFunctionsProject(context, Uri.file(testWorkspaceFolder));
 
     expect(result).toBe(false);
     expect(context.telemetry.properties.lastStep).toBe('tryGetLogicAppCustomCodeFunctionsProjects');
@@ -91,7 +91,7 @@ describe('tryBuildCustomCodeFunctionsProject', () => {
     vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(true);
     vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
 
-    const buildPromise = tryBuildCustomCodeFunctionsProject(context, Uri.file(projectPath));
+    const buildPromise = buildCustomCodeFunctionsProject(context, Uri.file(projectPath));
 
     setTimeout(() => {
       onDidEndTaskProcessEmitter.fire({ exitCode: 0, execution: { task: mockTask } });
@@ -111,7 +111,7 @@ describe('tryBuildCustomCodeFunctionsProject', () => {
     vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(true);
     vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
 
-    const buildPromise = tryBuildCustomCodeFunctionsProject(context, Uri.file(projectPath));
+    const buildPromise = buildCustomCodeFunctionsProject(context, Uri.file(projectPath));
 
     setTimeout(() => {
       onDidEndTaskProcessEmitter.fire({ exitCode: 1, execution: { task: mockTask } });
@@ -132,7 +132,7 @@ describe('tryBuildCustomCodeFunctionsProject', () => {
     vi.spyOn(customCodeUtils, 'tryGetLogicAppCustomCodeFunctionsProjects').mockResolvedValue([functionsPath]);
     vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
 
-    const buildPromise = tryBuildCustomCodeFunctionsProject(context, Uri.file(logicAppPath));
+    const buildPromise = buildCustomCodeFunctionsProject(context, Uri.file(logicAppPath));
 
     setTimeout(() => {
       onDidEndTaskProcessEmitter.fire({ exitCode: 0, execution: { task: mockTask } });
