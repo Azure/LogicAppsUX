@@ -9,12 +9,12 @@ import { activate } from '../main';
 
 const mocks = vi.hoisted(() => ({
   callWithTelemetryAndErrorHandling: vi.fn(),
-  codefulProjectsExist: vi.fn(),
+  codefulProjectExists: vi.fn(),
   createAzExtOutputChannel: vi.fn(),
   downloadExtensionBundle: vi.fn(),
   getAzureResourcesExtensionApi: vi.fn(),
   getResourceGroupsApi: vi.fn(),
-  getWorkspaceLogicAppRoots: vi.fn(),
+  getLogicAppRoots: vi.fn(),
   isAutoStartDesignTimeNotificationSuppressed: vi.fn(),
   isManagedIdentityAuthNotificationSuppressed: vi.fn(),
   scheduleStartAllDesignTimeApis: vi.fn(),
@@ -133,7 +133,7 @@ vi.mock('../app/utils/codeless/urihandler', () => ({
 }));
 
 vi.mock('../app/utils/codeful', () => ({
-  codefulProjectsExist: mocks.codefulProjectsExist,
+  codefulProjectExists: mocks.codefulProjectExists,
 }));
 
 vi.mock('../app/utils/debug', () => ({
@@ -172,7 +172,8 @@ vi.mock('../app/utils/verifyIsProject', () => ({
 }));
 
 vi.mock('../app/utils/workspace', () => ({
-  getWorkspaceLogicAppRoots: mocks.getWorkspaceLogicAppRoots,
+  getLogicAppRoots: mocks.getLogicAppRoots,
+  selectLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../localize', () => ({
@@ -263,10 +264,10 @@ describe('activate design-time startup', () => {
       },
       registerApplicationResourceResolver: vi.fn(),
     });
-    mocks.getWorkspaceLogicAppRoots.mockResolvedValue([]);
+    mocks.getLogicAppRoots.mockResolvedValue([]);
     mocks.isAutoStartDesignTimeNotificationSuppressed.mockReturnValue(false);
     mocks.isManagedIdentityAuthNotificationSuppressed.mockReturnValue(true);
-    mocks.codefulProjectsExist.mockResolvedValue(false);
+    mocks.codefulProjectExists.mockResolvedValue(false);
     mocks.startDesignTimeApi.mockResolvedValue(undefined);
     vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
     vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(false);
@@ -282,7 +283,7 @@ describe('activate design-time startup', () => {
       resolvePrompt = resolve;
     });
     vi.mocked(vscode.window.showWarningMessage).mockReturnValue(promptPromise);
-    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one']);
+    mocks.getLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one']);
 
     await activate(createExtensionContext());
 
@@ -308,7 +309,7 @@ describe('activate design-time startup', () => {
     const secondStartup = new Promise<void>((resolve) => {
       resolveSecondStartup = resolve;
     });
-    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one', 'D:\\workspace\\app-two']);
+    mocks.getLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one', 'D:\\workspace\\app-two']);
     vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => key === autoStartDesignTimeSetting);
     mocks.startDesignTimeApi.mockImplementation((_context, projectPath: string) => {
       return projectPath.endsWith('app-one') ? firstStartup : secondStartup;
@@ -327,7 +328,7 @@ describe('activate design-time startup', () => {
   });
 
   it('attempts every project and keeps activation successful when one startup fails', async () => {
-    mocks.getWorkspaceLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one', 'D:\\workspace\\app-two']);
+    mocks.getLogicAppRoots.mockResolvedValue(['D:\\workspace\\app-one', 'D:\\workspace\\app-two']);
     vi.mocked(getWorkspaceSetting).mockImplementation((key: string) => key === autoStartDesignTimeSetting);
     mocks.startDesignTimeApi.mockImplementation((_context, projectPath: string) => {
       return projectPath.endsWith('app-one') ? Promise.reject(new Error('startup failed')) : Promise.resolve();
