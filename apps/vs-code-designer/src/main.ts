@@ -42,7 +42,7 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { startLanguageServer } from './app/languageServer/languageServer';
+import { startLanguageServers } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
 import { codefulProjectExists } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
@@ -189,7 +189,9 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
     const hasCodefulProjects = await codefulProjectExists();
     if (hasCodefulProjects) {
-      startLanguageServer();
+      callWithTelemetryAndErrorHandling('activate.startLanguageServers', async (actionContext: IActionContext) => {
+        await startLanguageServers(actionContext);
+      });
     }
 
     ext.rgApi = await getResourceGroupsApi();
