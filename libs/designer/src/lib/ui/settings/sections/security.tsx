@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl';
 export interface SecuritySectionProps extends SectionProps {
   onSecureInputsChange: ToggleHandler;
   onSecureOutputsChange: ToggleHandler;
+  onSecureErrorResponseChange: ToggleHandler;
 }
 
 export const Security = ({
@@ -18,8 +19,10 @@ export const Security = ({
   readOnly,
   secureInputs,
   secureOutputs,
+  secureErrorResponse,
   onSecureInputsChange,
   onSecureOutputsChange,
+  onSecureErrorResponseChange,
   onHeaderClick,
 }: SecuritySectionProps): JSX.Element | null => {
   const intl = useIntl();
@@ -58,6 +61,16 @@ export const Security = ({
     defaultMessage: 'Secure outputs of the operation and references of output properties',
     id: 'iSiVB0',
     description: 'description of secure outputs setting',
+  });
+  const secureErrorResponseTitle = intl.formatMessage({
+    defaultMessage: 'Secure Error Response',
+    id: 'CPin5Q',
+    description: 'title for the secure error response setting',
+  });
+  const secureErrorResponseDescription = intl.formatMessage({
+    defaultMessage: 'Hide failed response details in request history.',
+    id: 'V6WQLU',
+    description: 'description of the secure error response setting',
   });
   const securityTitle = intl.formatMessage({
     defaultMessage: 'Security',
@@ -103,6 +116,19 @@ export const Security = ({
           ariaLabel: secureOutputsTitle,
         },
         visible: secureOutputs?.isSupported,
+      },
+      {
+        settingType: 'SettingToggle',
+        settingProp: {
+          readOnly,
+          checked: secureErrorResponse?.value,
+          onToggleInputChange: (_, checked) => onSecureErrorResponseChange(!!checked),
+          customLabel: getSettingLabel(secureErrorResponseTitle, secureErrorResponseDescription),
+          onText,
+          offText,
+          ariaLabel: secureErrorResponseTitle,
+        },
+        visible: secureErrorResponse?.isSupported,
       },
     ],
   };

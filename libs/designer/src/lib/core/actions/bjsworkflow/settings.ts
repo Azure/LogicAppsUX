@@ -96,6 +96,7 @@ export interface Settings {
   correlation?: SettingData<CorrelationSettings>;
   secureInputs?: SettingData<boolean>;
   secureOutputs?: SettingData<boolean>;
+  secureErrorResponse?: SettingData<boolean>;
   disableAsyncPattern?: SettingData<boolean>;
   disableAutomaticDecompression?: SettingData<boolean>;
   splitOn?: SettingData<SimpleSetting<string>>;
@@ -155,6 +156,10 @@ export const getOperationSettings = (
     secureOutputs: {
       isSupported: isOutputsPropertySupportedInSecureDataSetting(nodeType, manifest),
       value: getSecureOutputsSetting(operation),
+    },
+    secureErrorResponse: {
+      isSupported: isErrorResponsePropertySupportedInSecureDataSetting(isTrigger, nodeType),
+      value: getSecureErrorResponseSetting(operation),
     },
     disableAsyncPattern: {
       isSupported: isDisableAsyncPatternSupported(isTrigger, nodeType, manifest),
@@ -878,12 +883,7 @@ const areTrackedPropertiesSupported = (isTrigger: boolean, manifest?: OperationM
 };
 
 const getSecureInputsSetting = (definition?: LogicAppsV2.OperationDefinition): boolean => {
-  if (definition) {
-    const secureData = getObjectPropertyValue(getRuntimeConfiguration(definition), [Constants.SETTINGS.PROPERTY_NAMES.SECURE_DATA]);
-    return secureData && secureData.properties.indexOf(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS) > -1;
-  }
-
-  return false;
+  return hasSecureDataProperty(definition, Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS);
 };
 
 const isInputsPropertySupportedInSecureDataSetting = (nodeType: string, manifest?: OperationManifest): boolean => {
@@ -929,12 +929,27 @@ const isOutputsPropertySupportedInSecureDataSetting = (nodeType: string, manifes
 };
 
 const getSecureOutputsSetting = (definition?: LogicAppsV2.OperationDefinition): boolean => {
-  if (definition) {
-    const secureData = getObjectPropertyValue(getRuntimeConfiguration(definition), [Constants.SETTINGS.PROPERTY_NAMES.SECURE_DATA]);
-    return secureData && secureData.properties.indexOf(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS) > -1;
-  }
+  return hasSecureDataProperty(definition, Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS);
+};
 
-  return false;
+const getSecureErrorResponseSetting = (definition?: LogicAppsV2.OperationDefinition): boolean => {
+  return hasSecureDataProperty(definition, Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.ERROR_RESPONSE);
+};
+
+const hasSecureDataProperty = (definition: LogicAppsV2.OperationDefinition | undefined, propertyName: string): boolean => {
+  const secureData = definition
+    ? getObjectPropertyValue(getRuntimeConfiguration(definition), [Constants.SETTINGS.PROPERTY_NAMES.SECURE_DATA])
+    : undefined;
+  return secureData?.properties?.some((property: string) => equals(property, propertyName)) ?? false;
+};
+
+const isErrorResponsePropertySupportedInSecureDataSetting = (isTrigger: boolean, nodeType: string): boolean => {
+  const supportedActionTypes = [
+    Constants.SERIALIZED_TYPE.HTTP_WEBHOOK,
+    Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK,
+    Constants.SERIALIZED_TYPE.OPEN_API_CONNECTION_WEBHOOK,
+  ];
+  return !isTrigger && supportedActionTypes.some((type) => equals(nodeType, type));
 };
 
 const isConditionExpressionSupported = (isTrigger: boolean, operation?: LogicAppsV2.OperationDefinition): boolean => {

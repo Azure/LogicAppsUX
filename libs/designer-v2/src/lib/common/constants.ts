@@ -959,6 +959,7 @@ export default {
     SECURE_DATA_PROPERTY_NAMES: {
       INPUTS: 'inputs',
       OUTPUTS: 'outputs',
+      ERROR_RESPONSE: 'errorResponse',
     },
     SPLITON: {
       AUTOLOAD: '@autoload()',

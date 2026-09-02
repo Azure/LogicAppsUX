@@ -1290,7 +1290,7 @@ export const serializeSettings = (
     ...optional('conditions', conditions),
     ...optional('limit', limit),
     ...optional('operationOptions', getSerializedOperationOptions(settings, originalDefinition)),
-    ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(settings, nodeStaticResults, isTrigger)),
+    ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(settings, nodeStaticResults, isTrigger, originalDefinition)),
     ...optional('trackedProperties', trackedProperties),
     ...(getSplitOn(isTrigger, settings) ?? {}),
   };
@@ -1299,7 +1299,8 @@ export const serializeSettings = (
 const getSerializedRuntimeConfiguration = (
   settings: Settings,
   nodeStaticResults: NodeStaticResults,
-  isTrigger: boolean
+  isTrigger: boolean,
+  originalDefinition?: LogicAppsV2.OperationDefinition
 ): LogicAppsV2.RuntimeConfiguration | undefined => {
   const runtimeConfiguration: LogicAppsV2.RuntimeConfiguration = {};
 
@@ -1376,13 +1377,28 @@ const getSerializedRuntimeConfiguration = (
 
   const isSecureInputsSet = settings.secureInputs?.value;
   const isSecureOutputsSet = settings.secureOutputs?.value;
+  const originalSecureData = originalDefinition?.runtimeConfiguration?.secureData;
+  const properties = [...(originalSecureData?.properties ?? [])].filter(
+    (property) =>
+      !equals(property, Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS) &&
+      !equals(property, Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS) &&
+      (!settings.secureErrorResponse?.isSupported || !equals(property, Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.ERROR_RESPONSE))
+  );
 
-  if (isSecureInputsSet || isSecureOutputsSet) {
+  if (isSecureInputsSet) {
+    properties.push(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS);
+  }
+  if (isSecureOutputsSet) {
+    properties.push(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS);
+  }
+  if (settings.secureErrorResponse?.isSupported && settings.secureErrorResponse.value) {
+    properties.push(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.ERROR_RESPONSE);
+  }
+
+  if (properties.length > 0) {
     const secureData: LogicAppsV2.SecureData = {
-      properties: [
-        ...(isSecureInputsSet ? [Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS] : []),
-        ...(isSecureOutputsSet ? [Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS] : []),
-      ],
+      ...originalSecureData,
+      properties,
     };
 
     safeSetObjectPropertyValue(runtimeConfiguration, [Constants.SETTINGS.PROPERTY_NAMES.SECURE_DATA], secureData);
