@@ -57,12 +57,12 @@ describe('ui/settings/sections/security', () => {
     vi.clearAllMocks();
   });
 
-  it('renders and changes Secure error response independently', async () => {
+  it('renders and changes Secure error responses independently', async () => {
     const user = userEvent.setup();
     const props = createProps();
     render(<Security {...props} />);
 
-    const toggle = screen.getByRole('button', { name: 'Secure Error Response' });
+    const toggle = screen.getByRole('button', { name: 'Secure error responses' });
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
 
     await user.click(toggle);
@@ -72,9 +72,9 @@ describe('ui/settings/sections/security', () => {
     expect(props.onSecureOutputsChange).not.toHaveBeenCalled();
   });
 
-  it('does not render Secure error response when it is unsupported', () => {
+  it('does not render Secure error responses when it is unsupported', () => {
     render(<Security {...createProps({ secureErrorResponse: { isSupported: false, value: true } })} />);
 
-    expect(screen.queryByRole('button', { name: 'Secure Error Response' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Secure error responses' })).not.toBeInTheDocument();
   });
 });

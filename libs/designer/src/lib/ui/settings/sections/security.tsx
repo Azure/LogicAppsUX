@@ -63,14 +63,14 @@ export const Security = ({
     description: 'description of secure outputs setting',
   });
   const secureErrorResponseTitle = intl.formatMessage({
-    defaultMessage: 'Secure Error Response',
-    id: 'CPin5Q',
-    description: 'title for the secure error response setting',
+    defaultMessage: 'Secure error responses',
+    id: 'LTFBKx',
+    description: 'title for secure error responses setting',
   });
-  const secureErrorResponseDescription = intl.formatMessage({
-    defaultMessage: 'Hide failed response details in request history.',
-    id: 'V6WQLU',
-    description: 'description of the secure error response setting',
+  const secureErrorResponseTooltipText = intl.formatMessage({
+    defaultMessage: 'Secure error response details for failed requests',
+    id: 'BFWp39',
+    description: 'description of secure error responses setting',
   });
   const securityTitle = intl.formatMessage({
     defaultMessage: 'Security',
@@ -123,7 +123,7 @@ export const Security = ({
           readOnly,
           checked: secureErrorResponse?.value,
           onToggleInputChange: (_, checked) => onSecureErrorResponseChange(!!checked),
-          customLabel: getSettingLabel(secureErrorResponseTitle, secureErrorResponseDescription),
+          customLabel: getSettingLabel(secureErrorResponseTitle, secureErrorResponseTooltipText),
           onText,
           offText,
           ariaLabel: secureErrorResponseTitle,
