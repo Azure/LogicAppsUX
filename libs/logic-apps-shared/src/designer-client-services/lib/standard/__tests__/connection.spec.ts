@@ -96,6 +96,37 @@ describe('StandardConnectionService', () => {
       expect(mcpConnection).toBeDefined();
       expect(mcpConnection?.properties.connectionParameters?.authentication).toBeUndefined();
     });
+
+    it('should load legacy Knowledge Hub connections without a Cosmos DB resource ID', async () => {
+      const legacyConnection = {
+        displayName: 'Legacy Knowledge Hub',
+        completionsOpenAI: {
+          completionsModel: 'gpt-4o',
+          openAI: { endpoint: 'https://openai.openai.azure.com', authentication: { type: 'ManagedServiceIdentity' } },
+        },
+        embeddingsOpenAI: {
+          embeddingsModel: 'text-embedding-3-small',
+          openAI: { endpoint: 'https://openai.openai.azure.com', authentication: { type: 'ManagedServiceIdentity' } },
+        },
+        cosmosDB: {
+          endpoint: 'https://cosmos.documents.azure.com',
+          authentication: { type: 'ManagedServiceIdentity' },
+        },
+      };
+      const service = new StandardConnectionService({
+        ...createMockOptions({
+          knowledgeHubConnections: {
+            HubConnection: legacyConnection,
+          },
+        }),
+      });
+
+      const connections = await service.getConnections();
+      const connection = connections.find((item) => item.name === 'HubConnection');
+
+      expect(connection?.properties.displayName).toBe('Legacy Knowledge Hub');
+      expect(connection?.properties.connectionParameters?.data?.metadata?.value.cosmosDB).toEqual(legacyConnection.cosmosDB);
+    });
   });
 
   describe('createConnection - Knowledge Hub', () => {
@@ -119,6 +150,7 @@ describe('StandardConnectionService', () => {
       const resourceId = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/cosmos';
       const connectionInfo = {
         displayName: 'Knowledge Hub',
+        isUpdate: true,
         connectionParameters: {
           displayName: 'Knowledge Hub',
           cosmosDbServiceAccountId: resourceId,
@@ -161,6 +193,7 @@ describe('StandardConnectionService', () => {
 
       expect(writeConnection).toHaveBeenCalledOnce();
       expect(capturedConnectionData.pathLocation).toEqual(['knowledgeHubConnections']);
+      expect(capturedConnectionData.isUpdate).toBe(true);
       expect(capturedConnectionData.connectionData.cosmosDB).toEqual({
         endpoint: 'https://cosmos.documents.azure.com',
         resourceId,

@@ -183,7 +183,16 @@ describe('knowledge connection utils', () => {
       expect(connector).toEqual({ id: '/dummy/knowledgehub' });
       expect(connectionInfo.displayName).toBe('My Connection');
       expect(connectionInfo.connectionParameters).toBe(parameterValues);
+      expect(connectionInfo.isUpdate).toBe(false);
       expect(options.connectionMetadata).toEqual({ required: true, type: 'KnowledgeHub' });
+    });
+
+    it('marks an edited knowledge connection as an update', async () => {
+      mockCreateConnection.mockResolvedValue({ id: '/connections/knowledgeHub' });
+
+      await createOrUpdateConnection({ displayName: 'My Connection' }, false);
+
+      expect(mockCreateConnection.mock.calls[0][2].isUpdate).toBe(true);
     });
 
     it('updates query cache after successful connection creation', async () => {
