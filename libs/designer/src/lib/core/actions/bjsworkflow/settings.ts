@@ -945,6 +945,7 @@ const hasSecureDataProperty = (definition: LogicAppsV2.OperationDefinition | und
 
 const isErrorResponsePropertySupportedInSecureDataSetting = (isTrigger: boolean, nodeType: string): boolean => {
   const supportedActionTypes = [
+    Constants.SERIALIZED_TYPE.HTTP,
     Constants.SERIALIZED_TYPE.HTTP_WEBHOOK,
     Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK,
     Constants.SERIALIZED_TYPE.OPEN_API_CONNECTION_WEBHOOK,

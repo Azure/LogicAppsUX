@@ -27,6 +27,9 @@ describe('secure error response setting', () => {
   });
 
   it.each([
+    ['Http', undefined],
+    ['Http', 'stateful'],
+    ['Http', 'stateless'],
     ['HttpWebhook', undefined],
     ['HttpWebhook', 'stateful'],
     ['HttpWebhook', 'stateless'],
@@ -42,13 +45,13 @@ describe('secure error response setting', () => {
     expect(settings.secureErrorResponse).toEqual({ isSupported: true, value: false });
   });
 
-  it.each(['HttpWebhook', 'ApiConnectionWebhook', 'OpenApiConnectionWebhook'])('does not support %s triggers', (type) => {
+  it.each(['Http', 'HttpWebhook', 'ApiConnectionWebhook', 'OpenApiConnectionWebhook'])('does not support %s triggers', (type) => {
     const settings = getOperationSettings(true, operationInfo(type));
 
     expect(settings.secureErrorResponse?.isSupported).toBe(false);
   });
 
-  it.each(['Http', 'ApiConnection', 'OpenApiConnection', 'Foreach'])('does not support %s actions', (type) => {
+  it.each(['ApiConnection', 'OpenApiConnection', 'Foreach'])('does not support %s actions', (type) => {
     const settings = getOperationSettings(false, operationInfo(type));
 
     expect(settings.secureErrorResponse?.isSupported).toBe(false);
