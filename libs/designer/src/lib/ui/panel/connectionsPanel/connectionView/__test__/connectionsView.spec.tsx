@@ -17,11 +17,17 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('@fluentui/react-components', () => ({
-  Button: ({ icon, onClick, 'aria-label': ariaLabel }: any) => (
+  Button: ({ children, icon, onClick, 'aria-label': ariaLabel }: any) => (
     <button aria-label={ariaLabel} onClick={onClick} type="button">
       {icon}
+      {children}
     </button>
   ),
+  MessageBar: ({ children }: any) => <div>{children}</div>,
+  MessageBarBody: ({ children }: any) => <div>{children}</div>,
+  MessageBarTitle: ({ children }: any) => <strong>{children}</strong>,
+  Spinner: ({ label }: any) => <div>{label}</div>,
+  Text: ({ children }: any) => <span>{children}</span>,
   makeStyles: () => () => ({ appActionHeader: 'app-action-header' }),
   tokens: {
     colorNeutralBackground1: '#fff',
@@ -197,5 +203,46 @@ describe('ConnectionsView', () => {
     autoCreateProps.onManualConnectionCreation();
     expect(setIsCreatingConnection).toHaveBeenCalledWith(true);
     expect(mocks.dispatch).toHaveBeenCalledWith({ payload: true, type: 'panel/setIsCreatingConnection' });
+  });
+
+  it('shows connector loading without rendering connection controls or auto creating', () => {
+    (ConnectionSelectors.useConnector as Mock).mockReturnValue({ data: undefined, isError: false, isLoading: true });
+
+    render(<ConnectionsView {...defaultProps} />);
+
+    expect(screen.getByText('Loading connector data...')).toBeInTheDocument();
+    expect(screen.queryByTestId('select-connection-wrapper')).not.toBeInTheDocument();
+    expect(autoCreateConnectionIfPossible).not.toHaveBeenCalled();
+  });
+
+  it('shows connector errors without rendering connection controls or auto creating', () => {
+    const refetch = vi.fn();
+    (ConnectionSelectors.useConnector as Mock).mockReturnValue({
+      data: undefined,
+      error: new Error('Connector request failed'),
+      isError: true,
+      isLoading: false,
+      refetch,
+    });
+
+    render(<ConnectionsView {...defaultProps} />);
+
+    expect(screen.getByText('Error loading connector')).toBeInTheDocument();
+    expect(screen.getByText('Connector request failed')).toBeInTheDocument();
+    expect(screen.queryByTestId('select-connection-wrapper')).not.toBeInTheDocument();
+    expect(autoCreateConnectionIfPossible).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    expect(refetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows a terminal error when connector metadata settles without data', () => {
+    (ConnectionSelectors.useConnector as Mock).mockReturnValue({ data: undefined, isError: false, isLoading: false, refetch: vi.fn() });
+
+    render(<ConnectionsView {...defaultProps} />);
+
+    expect(screen.getByText('The connector could not be found.')).toBeInTheDocument();
+    expect(screen.queryByTestId('select-connection-wrapper')).not.toBeInTheDocument();
+    expect(autoCreateConnectionIfPossible).not.toHaveBeenCalled();
   });
 });

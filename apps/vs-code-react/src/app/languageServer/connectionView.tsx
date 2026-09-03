@@ -19,6 +19,51 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ExtensionCommand, type FileSystemConnectionInfo } from '@microsoft/vscode-extension-logic-apps';
 import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 import { useConnectionViewStyles } from './connectionViewStyles';
+import { Button, Text, Title3 } from '@fluentui/react-components';
+import { useIntl } from 'react-intl';
+
+const managedConnectorTypes = new Set(['apiconnection', 'apiconnectionwebhook', 'openapiconnection', 'openapiconnectionwebhook']);
+
+const isManagedConnector = (connectorType: string): boolean => managedConnectorTypes.has(connectorType.toLowerCase());
+
+const AzureConnectorsNotConfigured = () => {
+  const vscode = useContext(VSCodeContext);
+  const intl = useIntl();
+  const styles = useConnectionViewStyles();
+  const title = intl.formatMessage({
+    defaultMessage: 'Azure connector setup has not been completed',
+    id: 'gkckoj',
+    description: 'Title shown when a managed connection cannot be opened because Azure connector setup was skipped',
+  });
+  const description = intl.formatMessage({
+    defaultMessage: 'Set up Azure connectors to manage this connection.',
+    id: 'aRrWLB',
+    description: 'Description shown when Azure connector setup is required to manage a connection',
+  });
+  const setupButtonText = intl.formatMessage({
+    defaultMessage: 'Set up now',
+    id: '1OIW6v',
+    description: 'Button text to start Azure connector setup',
+  });
+  const cancelButtonText = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    id: 'dQMghX',
+    description: 'Button text to close the connection view without setting up Azure connectors',
+  });
+
+  return (
+    <div className={styles.notConfigured} role="status">
+      <Title3>{title}</Title3>
+      <Text>{description}</Text>
+      <div className={styles.notConfiguredActions}>
+        <Button appearance="primary" onClick={() => vscode.postMessage({ command: ExtensionCommand.configureAzureConnectors })}>
+          {setupButtonText}
+        </Button>
+        <Button onClick={() => vscode.postMessage({ command: ExtensionCommand.close_panel })}>{cancelButtonText}</Button>
+      </div>
+    </div>
+  );
+};
 
 const ConnectionView = ({
   connectorName,
@@ -81,11 +126,9 @@ const ConnectionView = ({
   );
 };
 
-export const LanguageServerConnectionView = () => {
+const ConfiguredLanguageServerConnectionView = ({ vscodeDesigner }: { vscodeDesigner: RootState['languageServer'] }) => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
-  const vscodeDesigner = useSelector((state: RootState) => state.languageServer);
-  const styles = useConnectionViewStyles();
   const {
     panelMetaData,
     connectionData,
@@ -189,34 +232,49 @@ export const LanguageServerConnectionView = () => {
   }, [connectionData]);
 
   return (
-    <div className={styles.connectionViewContainer}>
-      <DesignerProvider
-        locale="en-US"
-        options={{
-          isDarkMode: theme === Theme.Dark,
-          isVSCode: true,
-          services: services,
-          hostOptions: {
-            displayRuntimeInfo: true,
-          },
+    <DesignerProvider
+      locale="en-US"
+      options={{
+        isDarkMode: theme === Theme.Dark,
+        isVSCode: true,
+        services: services,
+        hostOptions: {
+          displayRuntimeInfo: true,
+        },
+      }}
+    >
+      <BJSWorkflowProvider
+        workflow={{
+          definition: {} as any,
+          connectionReferences,
+          parameters: panelMetaData?.parametersData,
         }}
+        appSettings={panelMetaData?.localSettings}
       >
-        <BJSWorkflowProvider
-          workflow={{
-            definition: {} as any,
-            connectionReferences,
-            parameters: panelMetaData?.parametersData,
-          }}
-          appSettings={panelMetaData?.localSettings}
-        >
-          <ConnectionView
-            connectorName={connectorName}
-            connectorType={connectorType}
-            currentConnectionId={currentConnectionId}
-            pendingLocalConnectionDataRef={pendingLocalConnectionDataRef}
-          />
-        </BJSWorkflowProvider>
-      </DesignerProvider>
+        <ConnectionView
+          connectorName={connectorName}
+          connectorType={connectorType}
+          currentConnectionId={currentConnectionId}
+          pendingLocalConnectionDataRef={pendingLocalConnectionDataRef}
+        />
+      </BJSWorkflowProvider>
+    </DesignerProvider>
+  );
+};
+
+export const LanguageServerConnectionView = () => {
+  const vscodeDesigner = useSelector((state: RootState) => state.languageServer);
+  const styles = useConnectionViewStyles();
+  const azureConnectorsNotConfigured =
+    isManagedConnector(vscodeDesigner.connector.type) && vscodeDesigner.panelMetaData?.azureDetails?.enabled === false;
+
+  return (
+    <div className={styles.connectionViewContainer}>
+      {azureConnectorsNotConfigured ? (
+        <AzureConnectorsNotConfigured />
+      ) : (
+        <ConfiguredLanguageServerConnectionView vscodeDesigner={vscodeDesigner} />
+      )}
     </div>
   );
 };
