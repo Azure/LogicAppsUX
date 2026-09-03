@@ -98,6 +98,77 @@ describe('StandardConnectionService', () => {
     });
   });
 
+  describe('createConnection - Knowledge Hub', () => {
+    it('should store the selected Cosmos DB account resource ID', async () => {
+      InitLoggerService([
+        {
+          log: vi.fn(),
+          startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+          endTrace: vi.fn(),
+          logErrorWithFormatting: vi.fn(),
+        },
+      ]);
+      let capturedConnectionData: any;
+      const writeConnection = vi.fn().mockImplementation((data: any) => {
+        capturedConnectionData = data;
+        return Promise.resolve();
+      });
+      const options = createMockOptions({});
+      options.writeConnection = writeConnection;
+      const service = new StandardConnectionService(options);
+      const resourceId = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/cosmos';
+      const connectionInfo = {
+        displayName: 'Knowledge Hub',
+        connectionParameters: {
+          displayName: 'Knowledge Hub',
+          cosmosDbServiceAccountId: resourceId,
+          cosmosDBEndpoint: 'https://cosmos.documents.azure.com',
+          cosmosDBAuthenticationType: 'ManagedServiceIdentity',
+          openAIEndpoint: 'https://openai.openai.azure.com',
+          openAIAuthenticationType: 'ManagedServiceIdentity',
+          openAICompletionsModel: 'gpt-4o',
+          openAIEmbeddingsModel: 'text-embedding-3-small',
+        },
+      };
+      const parametersMetadata = {
+        connectionMetadata: { type: ConnectionType.KnowledgeHub },
+        connectionParameters: {
+          cosmosDbServiceAccountId: {
+            uiDefinition: { constraints: { serializationPath: ['cosmosDB', 'resourceId'] } },
+          },
+          cosmosDBEndpoint: {
+            uiDefinition: { constraints: { serializationPath: ['cosmosDB', 'endpoint'] } },
+          },
+          cosmosDBAuthenticationType: {
+            uiDefinition: { constraints: { serializationPath: ['cosmosDB', 'authentication', 'type'] } },
+          },
+          openAIEndpoint: {
+            uiDefinition: { constraints: { serializationPath: ['openAI', 'endpoint'] } },
+          },
+          openAIAuthenticationType: {
+            uiDefinition: { constraints: { serializationPath: ['openAI', 'authentication', 'type'] } },
+          },
+          openAICompletionsModel: {
+            uiDefinition: { constraints: { serializationPath: ['completionsOpenAI', 'completionsModel'] } },
+          },
+          openAIEmbeddingsModel: {
+            uiDefinition: { constraints: { serializationPath: ['embeddingsOpenAI', 'embeddingsModel'] } },
+          },
+        },
+      };
+
+      await service.createConnection('HubConnection', { id: '/dummy/knowledgehub' } as any, connectionInfo, parametersMetadata as any);
+
+      expect(writeConnection).toHaveBeenCalledOnce();
+      expect(capturedConnectionData.pathLocation).toEqual(['knowledgeHubConnections']);
+      expect(capturedConnectionData.connectionData.cosmosDB).toEqual({
+        endpoint: 'https://cosmos.documents.azure.com',
+        resourceId,
+        authentication: { type: 'ManagedServiceIdentity' },
+      });
+    });
+  });
+
   describe('createConnection - MCP with ManagedServiceIdentity', () => {
     const mockLoggerService = {
       log: vi.fn(),

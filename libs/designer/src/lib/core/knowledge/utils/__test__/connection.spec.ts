@@ -114,6 +114,10 @@ describe('knowledge connection utils', () => {
       expect(result.values[0].parameters).toHaveProperty('cosmosDBKey');
       expect(result.values[0].parameters).toHaveProperty('cosmosDbServiceAccountId');
       expect(result.values[0].parameters).toHaveProperty('cosmosDBEndpoint');
+      expect(result.values[0].parameters.cosmosDbServiceAccountId.uiDefinition.constraints.serializationPath).toEqual([
+        'cosmosDB',
+        'resourceId',
+      ]);
     });
 
     it('excludes cosmosDBKey parameter from ManagedServiceIdentity authentication', () => {
@@ -251,8 +255,7 @@ describe('knowledge connection utils', () => {
     it('returns connection parameters excluding non-serializable ones', () => {
       const result = getConnectionParametersForEdit(intl, undefined);
 
-      // cosmosDbServiceAccountId and cognitiveServiceAccountId have serialize: false
-      expect(result.connectionParameters).not.toHaveProperty('cosmosDbServiceAccountId');
+      expect(result.connectionParameters).toHaveProperty('cosmosDbServiceAccountId');
       expect(result.connectionParameters).not.toHaveProperty('cognitiveServiceAccountId');
 
       // These should be present as they are serializable
@@ -272,6 +275,7 @@ describe('knowledge connection utils', () => {
                 value: {
                   cosmosDB: {
                     endpoint: 'https://cosmos.test.com',
+                    resourceId: '/subscriptions/1/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/db',
                     authentication: {
                       type: 'Key',
                       key: 'cosmos-secret-key',
@@ -300,6 +304,9 @@ describe('knowledge connection utils', () => {
       const result = getConnectionParametersForEdit(intl, connection);
 
       expect(result.parameterValues.cosmosDBEndpoint).toBe('https://cosmos.test.com');
+      expect(result.parameterValues.cosmosDbServiceAccountId).toBe(
+        '/subscriptions/1/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/db'
+      );
       expect(result.parameterValues.cosmosDBKey).toBe('cosmos-secret-key');
       expect(result.parameterValues.cosmosDBAuthenticationType).toBe('Key');
       expect(result.parameterValues.openAIEndpoint).toBe('https://openai.test.com');

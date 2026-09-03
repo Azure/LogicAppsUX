@@ -111,6 +111,7 @@ export interface KnowledgeHubConnectionModel {
       key?: string;
     };
     endpoint: string;
+    resourceId: string;
   };
   displayName: string;
 }
