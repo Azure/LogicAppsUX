@@ -15,7 +15,7 @@ export default {
         agentUrl: {
           type: 'string',
           title: 'Agent URL',
-          description: 'URL will be generated after save',
+          description: 'Publish the workflow to generate the URL.',
           'x-ms-editor': 'copyable',
           'x-ms-serialization': {
             skip: true,
