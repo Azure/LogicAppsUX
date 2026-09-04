@@ -111,6 +111,7 @@ export interface KnowledgeHubConnectionModel {
       key?: string;
     };
     endpoint: string;
+    resourceId?: string;
   };
   displayName: string;
 }
@@ -120,6 +121,7 @@ export interface ConnectionAndAppSetting<T> {
   connectionData: T;
   settings: Record<string, string>;
   pathLocation: string[];
+  isUpdate?: boolean;
 }
 
 export interface AgentMcpConnectionModel {
@@ -997,6 +999,7 @@ function convertToKnowledgeHubConnectionsData(
     connectionData: connectionParameterValues,
     settings,
     pathLocation: [knowledgeHubLocation],
+    isUpdate: connectionInfo.isUpdate,
   };
   const rawConnection = createCopy(connectionsData.connectionData);
   rawConnection.parameterValues = rawParameterValues;
