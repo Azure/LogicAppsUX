@@ -112,6 +112,9 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
+      expect(templateContent).not.toContain('AgentBuilder');
+      expect(templateContent).not.toContain('.Builder');
+      expect(templateContent).not.toContain('CreateAgentTrigger');
       expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
@@ -130,6 +133,10 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).toContain('MessageRole.User');
       expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
+      expect(templateContent).not.toContain('AgentBuilder');
+      expect(templateContent).not.toContain('.Builder');
+      expect(templateContent).not.toContain('CreateAgentTrigger');
+      expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
   });
@@ -198,7 +205,12 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgentCodefulWorkflow'), 'utf-8');
       const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
       expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateAgentWorkflow("${testWorkflowName}", workflow)`);
+      expect(workflowWriteCall?.[1]).not.toContain('AgentBuilder');
+      expect(workflowWriteCall?.[1]).not.toContain('.Builder');
+      expect(workflowWriteCall?.[1]).not.toContain('CreateAgentTrigger');
+      expect(workflowWriteCall?.[1]).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
 
       const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
       expect(programWriteCall?.[1]).toContain(`namespace ${testProjectName}`);
@@ -240,7 +252,12 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgenticCodefulWorkflow'), 'utf-8');
       const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
       expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateStatefulWorkflow("${testWorkflowName}", workflow)`);
+      expect(workflowWriteCall?.[1]).not.toContain('AgentBuilder');
+      expect(workflowWriteCall?.[1]).not.toContain('.Builder');
+      expect(workflowWriteCall?.[1]).not.toContain('CreateAgentTrigger');
+      expect(workflowWriteCall?.[1]).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
 
       const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
       expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
