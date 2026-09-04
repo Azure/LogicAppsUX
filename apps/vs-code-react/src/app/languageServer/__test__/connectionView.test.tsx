@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { designerSlice, updateFileSystemConnection } from '../../../state/DesignerSlice';
 import { LanguageServerConnectionView } from '../connectionView';
 import { initializeLanguageServer, languageServerSlice } from '../../../state/LanguageServerSlice';
+import { IntlProvider } from 'react-intl';
 
 const mocks = vi.hoisted(() => ({
   getDesignerServices: vi.fn(),
@@ -87,7 +88,7 @@ vi.mock('@microsoft/logic-apps-designer', () => ({
   useThemeObserver: vi.fn(),
 }));
 
-function createStore() {
+function createStore({ connectorType = 'serviceProvider', azureConnectorsEnabled = true } = {}) {
   const store = configureStore({
     reducer: {
       designer: designerSlice.reducer,
@@ -104,11 +105,12 @@ function createStore() {
       connector: {
         currentConnectionId: 'current',
         name: 'filesystem',
-        type: 'serviceProvider',
+        type: connectorType,
       },
       hostVersion: '4.0',
       oauthRedirectUrl: 'https://redirect',
       panelMetadata: {
+        azureDetails: { enabled: azureConnectorsEnabled },
         localSettings: {},
         parametersData: {},
       },
@@ -119,14 +121,16 @@ function createStore() {
   return store;
 }
 
-function renderConnectionView() {
+function renderConnectionView(options = {}) {
   const postMessage = vi.fn();
-  const store = createStore();
+  const store = createStore(options);
 
   render(
     <VSCodeContext.Provider value={{ postMessage }}>
       <Provider store={store}>
-        <LanguageServerConnectionView />
+        <IntlProvider locale="en">
+          <LanguageServerConnectionView />
+        </IntlProvider>
       </Provider>
     </VSCodeContext.Provider>
   );
@@ -192,5 +196,29 @@ describe('LanguageServerConnectionView', () => {
     store.dispatch(updateFileSystemConnection({ connectionName: 'share', connection: { id: 'share' }, error: '' }));
 
     await expect(pendingConnection).resolves.toEqual({ id: 'share' });
+  });
+
+  it.each(['ApiConnection', 'ApiConnectionWebhook', 'OpenApiConnection', 'OpenApiConnectionWebhook'])(
+    'shows a terminal setup state for %s when Azure connector setup was skipped',
+    (connectorType) => {
+      const { postMessage } = renderConnectionView({ connectorType, azureConnectorsEnabled: false });
+
+      expect(screen.getByText('Azure connector setup has not been completed')).toBeInTheDocument();
+      expect(screen.getByText('Set up Azure connectors to manage this connection.')).toBeInTheDocument();
+      expect(mocks.getDesignerServices).not.toHaveBeenCalled();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Set up now' }));
+      expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.configureAzureConnectors });
+
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.close_panel });
+    }
+  );
+
+  it('continues to load local connectors when Azure connector setup was skipped', () => {
+    renderConnectionView({ connectorType: 'serviceProvider', azureConnectorsEnabled: false });
+
+    expect(screen.getByTestId('designer-provider')).toBeInTheDocument();
+    expect(mocks.getDesignerServices).toHaveBeenCalledTimes(1);
   });
 });

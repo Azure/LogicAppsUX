@@ -6,13 +6,13 @@ import { useIsCreatingConnection } from '../../../../core/state/panel/panelSelec
 import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { CreateConnectionWrapper } from '../createConnection/createConnectionWrapperFromConnector';
 import { SelectConnectionWrapper } from '../selectConnection/selectConnectionFromConnector';
-import { Button } from '@fluentui/react-components';
+import { Button, MessageBar, MessageBarBody, MessageBarTitle, Spinner, Text } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { autoCreateConnectionIfPossible } from '../../../../core/actions/bjsworkflow/connections';
-import { ConnectionService, type Connection, type Connector } from '@microsoft/logic-apps-shared';
+import { ConnectionService, parseErrorMessage, type Connection, type Connector } from '@microsoft/logic-apps-shared';
 import { useConnectionViewStyles } from './styles';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -35,7 +35,8 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
     connectorName === 'agent'
       ? '/connectionProviders/agent'
       : `${ConnectionService()?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
-  const { data: connector } = useConnector(connectorId);
+  const connectorQuery = useConnector(connectorId);
+  const connector = connectorQuery.data;
   const references = useConnectionRefs();
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);
@@ -76,6 +77,26 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
     id: 'uzj2d3',
     description: 'Aria label for the close button in the connections panel',
   });
+  const loadingConnectorText = intl.formatMessage({
+    defaultMessage: 'Loading connector data...',
+    id: 'i+FZxg',
+    description: 'Message shown while loading connector metadata for the connection view',
+  });
+  const connectorLoadErrorTitle = intl.formatMessage({
+    defaultMessage: 'Error loading connector',
+    id: 'S6TcFA',
+    description: 'Title shown when connector metadata cannot be loaded in the connection view',
+  });
+  const connectorNotFoundText = intl.formatMessage({
+    defaultMessage: 'The connector could not be found.',
+    id: 'ImBIsD',
+    description: 'Error shown when no connector metadata is returned for the connection view',
+  });
+  const retryButtonText = intl.formatMessage({
+    defaultMessage: 'Retry',
+    id: 'ensbBh',
+    description: 'Button text to retry loading connector metadata',
+  });
 
   const panelHeaderText = useMemo(() => {
     switch (panelStatus) {
@@ -87,6 +108,29 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
   }, [createConnectionPanelHeader, panelStatus, selectConnectionPanelHeader]);
 
   const renderContent = useCallback(() => {
+    if (connectorQuery.isLoading) {
+      return (
+        <div className="msla-loading-container">
+          <Spinner size="large" label={loadingConnectorText} />
+        </div>
+      );
+    }
+
+    if (connectorQuery.isError || !connector) {
+      const errorMessage = connectorQuery.isError ? parseErrorMessage(connectorQuery.error) : connectorNotFoundText;
+      return (
+        <MessageBar intent="error">
+          <MessageBarBody>
+            <MessageBarTitle>{connectorLoadErrorTitle}</MessageBarTitle>
+            <Text>{errorMessage}</Text>
+            <Button appearance="transparent" onClick={() => connectorQuery.refetch()}>
+              {retryButtonText}
+            </Button>
+          </MessageBarBody>
+        </MessageBar>
+      );
+    }
+
     switch (panelStatus) {
       case 'select':
         return (
@@ -107,7 +151,23 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
           />
         );
     }
-  }, [connectorId, panelStatus, connectorName, currentConnectionId, connectorType, props.closeView, props.onConnectionSuccessful]);
+  }, [
+    connector,
+    connectorId,
+    connectorLoadErrorTitle,
+    connectorName,
+    connectorNotFoundText,
+    connectorQuery.error,
+    connectorQuery.isError,
+    connectorQuery.isLoading,
+    connectorType,
+    currentConnectionId,
+    loadingConnectorText,
+    panelStatus,
+    props.closeView,
+    props.onConnectionSuccessful,
+    retryButtonText,
+  ]);
 
   return (
     <div style={{ padding: '0 10px', overflowY: 'auto' }}>
