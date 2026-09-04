@@ -31,6 +31,7 @@ import {
   useWorkflowApp,
   validateWorkflowStandard,
   deployArtifacts,
+  uploadFileToKnowledgeHub,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -58,6 +59,7 @@ import {
   isArmResourceId,
   optional,
   BaseCognitiveServiceService,
+  BaseResourceService,
   AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   normalizeAgentConnectionResourceIdForRoleAssignment,
@@ -1102,6 +1104,7 @@ const getDesignerServices = (
     getAgentUrl: (isDraftMode?: boolean) =>
       fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? '', isDraftMode),
     getAppIdentity: () => workflowApp?.identity,
+    getLogicAppId: () => siteResourceId,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
@@ -1131,6 +1134,8 @@ const getDesignerServices = (
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
+    uploadFileArtifact: uploadFileToKnowledgeHub,
+    isKnowledgeHubEnabled: () => true,
   };
 
   const hostService: IHostService = {
@@ -1203,6 +1208,7 @@ const getDesignerServices = (
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
 
   return {
     appService,
@@ -1226,6 +1232,7 @@ const getDesignerServices = (
     cognitiveServiceService,
     connectionParameterEditorService,
     editorService,
+    resourceService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };
