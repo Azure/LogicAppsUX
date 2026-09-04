@@ -2,6 +2,20 @@
 
 This directory contains utility scripts for the LogicAppsUX project and their corresponding tests.
 
+## Test local packages in Azure Portal
+
+`portal-local.js` builds the LogicAppsUX library packages consumed by an AzureUX-LogicAppsPortal checkout, packs and extracts them directly into that Portal checkout without accessing a package registry or changing its manifests, and runs the Portal hybrid development build and server.
+
+Pass either the Portal repository/worktree root or its `src\Extension\Client\React` directory:
+
+```powershell
+pnpm portal:local --portal-root D:\dev\AzureUX-LogicAppsPortal
+```
+
+Use `--no-serve` to build without starting the Portal server, or `--dry-run` to validate paths and print the commands without making changes. `LOGIC_APPS_PORTAL_ROOT` can provide the default Portal path.
+
+The helper discovers the intersection of Portal dependencies and publishable LogicAppsUX libraries, includes their local workspace dependencies, and installs the generated tarballs directly. This ensures Portal resolves the package contents built from the active LogicAppsUX worktree even when the package version matches a published version.
+
 ## Shared Utilities
 
 ### version-utils.ts
