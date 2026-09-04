@@ -4,7 +4,7 @@
 import '@testing-library/jest-dom/vitest';
 import type { ComponentProps } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
@@ -322,6 +322,17 @@ describe('FloatingRunButton', () => {
       // Split button should have multiple button elements
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBeGreaterThan(1);
+    });
+
+    it('should identify the payload action with a distinct tooltip', async () => {
+      (LogicAppsShared.canRunBeInvokedWithPayload as Mock).mockReturnValue(true);
+
+      renderWithProviders(defaultProps);
+
+      const payloadButton = screen.getByRole('button', { name: 'Run with payload' });
+      fireEvent.focus(payloadButton);
+
+      expect(await screen.findByRole('tooltip')).toHaveTextContent('Run with payload');
     });
 
     it('should render split button in draft mode even when canRunBeInvokedWithPayload returns false', () => {
