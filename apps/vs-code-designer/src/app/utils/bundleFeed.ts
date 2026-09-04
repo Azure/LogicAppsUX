@@ -31,7 +31,7 @@ import { createHash } from 'crypto';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
-import { tryGetLogicAppProjectRoot } from './verifyIsProject';
+import { selectLogicAppRoot } from './workspace';
 
 const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
 
@@ -70,8 +70,7 @@ interface ExtensionBundleBaseUrlResult {
  *   4. Default public CDN.
  */
 export async function getExtensionBundleBaseUrl(context: IActionContext): Promise<ExtensionBundleBaseUrlResult> {
-  const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  const projectPath = await selectLogicAppRoot(context, true);
 
   let localSettingsUri: string | undefined;
   if (projectPath) {
@@ -1779,8 +1778,8 @@ async function downloadExtensionBundleCore(context: IActionContext, options: Dow
   const downloadExtensionBundleStartTime = Date.now();
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
-    const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    // TODO(aeldridge): Should check all projects for pinned bundles, not just the first
+    const projectPath = await selectLogicAppRoot(context, true);
 
     if (projectPath) {
       try {

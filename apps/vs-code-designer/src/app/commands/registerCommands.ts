@@ -14,7 +14,7 @@ import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { disableValidateAndInstallBinaries, resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
 import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
-import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
+import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
@@ -34,7 +34,6 @@ import { redeployDeployment } from './deployments/redeployDeployment';
 import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
 import { generateDeploymentScripts } from './generateDeploymentScripts/generateDeploymentScripts';
-import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
@@ -156,7 +155,6 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disconnectRepo, disconnectRepo);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.enableAzureConnectors, enableAzureConnectors);
-  registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
   registerCommand(extensionCommand.parameterizeProjectConnections, parameterizeProjectConnections);
@@ -171,7 +169,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.loadDataMapFile, loadDataMapFile);
 
   // Custom code
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, tryBuildCustomCodeFunctionsProject);
+  registerCommand(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunction);
   registerCommand(extensionCommand.addCustomCode, addCustomCode);
   registerCommand(extensionCommand.debugLogicApp, debugLogicApp);

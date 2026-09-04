@@ -9,8 +9,7 @@ import { isCSharpProject } from '../detectProjectLanguage';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { getContainingWorkspaceFolder } from '../workspace';
+import { getParentLogicAppRoot } from '../workspace';
 import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
@@ -19,7 +18,6 @@ import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { ConnectionAndAppSetting } from '@microsoft/logic-apps-shared';
 import { HTTP_METHODS, isString, resolveConnectionsReferences } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
-import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   ILocalSettingsJson,
@@ -43,23 +41,34 @@ import { shouldParameterizeConnections } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
 
-export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
-  return getConnectionsJson(projectRoot);
+export async function getConnectionsFromFile(workflowFilePath: string): Promise<string> {
+  const projectPath = await getParentLogicAppRoot(workflowFilePath);
+  if (!projectPath) {
+    throw new Error(
+      localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath)
+    );
+  }
+  return getConnectionsJson(projectPath);
 }
 
-export async function getParametersFromFile(context: IActionContext, workflowFilePath: string): Promise<Record<string, Parameter>> {
-  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
-  return getParametersJson(projectRoot);
+export async function getParametersFromFile(workflowFilePath: string): Promise<Record<string, Parameter>> {
+  const projectPath = await getParentLogicAppRoot(workflowFilePath);
+  if (!projectPath) {
+    throw new Error(
+      localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath)
+    );
+  }
+  return getParametersJson(projectPath);
 }
 
-async function getCustomCodeAppFiles(
-  context: IActionContext,
-  workflowFilePath: string,
-  customCode: CustomCodeFileNameMapping
-): Promise<Record<string, string>> {
-  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
-  return getCustomCodeAppFilesToUpdate(projectRoot, customCode);
+async function getCustomCodeAppFiles(workflowFilePath: string, customCode: CustomCodeFileNameMapping): Promise<Record<string, string>> {
+  const projectPath = await getParentLogicAppRoot(workflowFilePath);
+  if (!projectPath) {
+    throw new Error(
+      localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath)
+    );
+  }
+  return getCustomCodeAppFilesToUpdate(projectPath, customCode);
 }
 
 export async function getCustomCodeFromFiles(workflowFilePath: string): Promise<Record<string, string>> {
@@ -81,46 +90,38 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
 
 export async function addConnection(
   context: IActionContext,
-  filePath: string,
+  workflowFilePath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>
 ): Promise<void> {
-  const jsonParameters = await getParametersFromFile(context, filePath);
-  const projectPath = await getLogicAppProjectRoot(context, filePath);
+  const jsonParameters = await getParametersFromFile(workflowFilePath);
+  const projectPath = await getParentLogicAppRoot(workflowFilePath);
+  if (!projectPath) {
+    throw new Error(
+      localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath)
+    );
+  }
 
-  await addConnectionDataInJson(context, projectPath ?? '', connectionAndAppSetting, jsonParameters);
+  await addConnectionDataInJson(context, projectPath, connectionAndAppSetting, jsonParameters);
 
   const { settings } = connectionAndAppSetting;
   const workflowParameterRecords = getWorkflowParameters(jsonParameters);
 
-  await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
-  await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
+  await addOrUpdateLocalAppSettings(context, projectPath, settings);
+  await saveWorkflowParameterRecords(context, workflowFilePath, workflowParameterRecords);
 
   ext.outputChannel.appendLog(localize('connectionAdded', 'Connection added.'));
 }
 
-export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const workspaceFolder = nonNullValue(getContainingWorkspaceFolder(workflowFilePath), 'workspaceFolder');
-  const workspacePath: string = workspaceFolder.uri.fsPath;
-
-  const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
-
-  if (projectRoot === undefined) {
-    throw new Error('Error in determining project root. Please confirm project structure is correct.');
-  }
-
-  return projectRoot;
-}
-
 async function addConnectionDataInJson(
   context: IActionContext,
-  functionAppPath: string,
+  projectPath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
-  const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
+  const connectionsFilePath = path.join(projectPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
-  const connectionsJsonString = await getConnectionsJson(functionAppPath);
+  const connectionsJsonString = await getConnectionsJson(projectPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
   const { connectionData, connectionKey, pathLocation, settings } = connectionAndAppSetting;
@@ -148,8 +149,8 @@ async function addConnectionDataInJson(
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
 
-  if (!connectionsFileExists && (await isCSharpProject(functionAppPath))) {
-    await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
+  if (!connectionsFileExists && (await isCSharpProject(projectPath))) {
+    await addNewFileInCSharpProject(context, connectionsFileName, projectPath);
   }
 }
 
@@ -434,7 +435,7 @@ export async function getCustomCodeToUpdate(
     return;
   }
 
-  const appFiles = await getCustomCodeAppFiles(context, filePath, customCode);
+  const appFiles = await getCustomCodeAppFiles(filePath, customCode);
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
     const { isModified, isDeleted } = customCodeData;
     if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
@@ -444,27 +445,32 @@ export async function getCustomCodeToUpdate(
   return { customCodeFiles: filteredCustomCodeMapping, appFiles };
 }
 
-export async function saveCustomCodeStandard(context: IActionContext, workflowFilePath: string, allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> {
+export async function saveCustomCodeStandard(workflowFilePath: string, allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> {
   const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
   if (!customCode || Object.keys(customCode).length === 0) {
     return;
   }
   try {
-    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    const projectPath = await getParentLogicAppRoot(workflowFilePath);
+    if (!projectPath) {
+      throw new Error(
+        localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath)
+      );
+    }
+
     const workflowFolderPath = path.dirname(workflowFilePath);
     const customCodePromises = Object.entries(customCode).map(([fileName, customCodeData]) => {
       const { isModified, isDeleted, fileData } = customCodeData;
       if (isDeleted) {
         return deleteCustomCode(workflowFolderPath, fileName);
-      } else if (isModified && fileData) {
+      }
+      if (isModified && fileData) {
         return uploadCustomCode(workflowFolderPath, fileName, fileData);
       }
       return Promise.resolve();
     });
     // upload the app files needed for powershell actions
-    const appFilePromises = Object.entries(appFiles ?? {}).map(([fileName, fileData]) =>
-      uploadCustomCode(projectPath, fileName, fileData)
-    );
+    const appFilePromises = Object.entries(appFiles ?? {}).map(([fileName, fileData]) => uploadCustomCode(projectPath, fileName, fileData));
     await Promise.all([...customCodePromises, ...appFilePromises]);
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
@@ -991,7 +997,7 @@ async function isMISettingEnabled(context: IActionContext, projectPath: string):
   try {
     const localSettings = await getLocalSettingsJson(context, projectPath);
     const authMethod = localSettings.Values?.[workflowAuthenticationMethodKey];
-    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase()
+    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase();
   } catch {
     return false;
   }

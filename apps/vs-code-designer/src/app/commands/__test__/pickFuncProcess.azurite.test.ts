@@ -4,7 +4,7 @@ import { preDebugValidate } from '../../debug/validatePreDebug';
 import { refreshConnectionKeys } from '../../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../../utils/azurite/activateAzurite';
 import { getProjFiles } from '../../utils/dotnet/dotnet';
-import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProjectInternal } from '../buildCustomCodeFunctionsProject';
 import { pickFuncProcessInternal } from '../pickFuncProcess';
 
 const capturedMessages: string[] = [];
@@ -72,7 +72,7 @@ vi.mock('../../utils/dotnet/dotnet', () => ({
 }));
 
 vi.mock('../buildCustomCodeFunctionsProject', () => ({
-  tryBuildCustomCodeFunctionsProject: vi.fn(),
+  tryBuildCustomCodeFunctionsProjectInternal: vi.fn(),
 }));
 
 describe('pickFuncProcess Azurite startup', () => {
@@ -93,7 +93,7 @@ describe('pickFuncProcess Azurite startup', () => {
     vi.mocked(activateAzurite).mockRejectedValue(new Error(azuriteTimeoutMessage));
     vi.mocked(refreshConnectionKeys).mockResolvedValue(undefined);
     vi.mocked(getProjFiles).mockResolvedValue([]);
-    vi.mocked(tryBuildCustomCodeFunctionsProject).mockResolvedValue(undefined);
+    vi.mocked(tryBuildCustomCodeFunctionsProjectInternal).mockResolvedValue(undefined);
   });
 
   it('stops debug startup after Azurite auto-start fails without showing AzureWebJobsStorage warning', async () => {
@@ -116,7 +116,7 @@ describe('pickFuncProcess Azurite startup', () => {
     );
     expect(refreshConnectionKeys).not.toHaveBeenCalled();
     expect(preDebugValidate).not.toHaveBeenCalled();
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
   });
 
   it('aborts debug startup silently when the user dismisses an Azurite prompt', async () => {
@@ -134,6 +134,6 @@ describe('pickFuncProcess Azurite startup', () => {
     expect(capturedMessages).toEqual([]);
     expect(refreshConnectionKeys).not.toHaveBeenCalled();
     expect(preDebugValidate).not.toHaveBeenCalled();
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
   });
 });

@@ -4,8 +4,6 @@ import { executeCommandWithSanityLogging } from '../../../utils/funcCoreTools/cp
 import { localize } from '../../../../localize';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../extensionVariables';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkspaceFolderPath } from '../../workflows/switchDebugMode/switchDebugMode';
 import type { File } from '../../../utils/codeless/common';
 import { getArtifactsPathInLocalProject, getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
 import {
@@ -23,15 +21,20 @@ import {
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
-export async function connectToSMB(context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive: string): Promise<void> {
+export async function connectToSMB(
+  context: IActionContext,
+  node: SlotTreeItem,
+  projectPath: string,
+  smbFolderName: string,
+  mountDrive: string
+): Promise<void> {
   const message: string = localize('connectingToMSB', 'Connecting to logic app SMB storage...');
   ext.outputChannel.appendLog(message);
 
   try {
-    const workspaceFolder = await getWorkspaceFolderPath(context);
     const { hostName, path: fileSharePath, userName, password } = node.fileShare || {};
     await mountSMB(hostName, fileSharePath, userName, password, mountDrive);
-    const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+
     const smbFolderPath = path.join(mountDrive, smbFolderName);
     await fse.ensureDir(smbFolderPath);
     await uploadRootFiles(projectPath, smbFolderPath);

@@ -20,26 +20,24 @@ import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { selectLogicAppRoot } from '../../utils/workspace';
 
 /**
  * Uploads local settings file to the portal.
  * @param {IActionContext} context - Command context.
  * @param {AppSettingsTreeItem} node - App settings node structure.
- * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace folder.
+ * @param {string} [projectPath] - Logic App project path. If omitted, the user selects a project from the workspace.
  * @param {(RegExp | string)[]} exclude - Array of settings to exclude from uploading.
- * @returns {Promise<string>} Workspace file path.
+ * @returns {Promise<void>} A promise that resolves when the settings are uploaded.
  */
 export async function uploadAppSettings(
   context: IActionContext,
   node?: AppSettingsTreeItem,
-  workspaceFolder?: vscode.WorkspaceFolder,
+  projectPath?: string,
   exclude?: (RegExp | string)[]
 ): Promise<void> {
-  // TODO(aeldridge): Defaults to the first workspace folder. Should prompt to select logic app across all workspace folders.
-  workspaceFolder = workspaceFolder || vscode.workspace.workspaceFolders?.[0];
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, false /* suppressPrompt */);
-  if (!projectPath) {
+  const resolvedProjectPath = projectPath ?? (await selectLogicAppRoot(context));
+  if (!resolvedProjectPath) {
     throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
   }
 
@@ -53,7 +51,7 @@ export async function uploadAppSettings(
   const client: IAppSettingsClient = await node.clientProvider.createClient(context);
 
   ext.outputChannel.show(true);
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, resolvedProjectPath);
 
   if (localSettings.Values) {
     const remoteSettings: StringDictionary = await client.listApplicationSettings();

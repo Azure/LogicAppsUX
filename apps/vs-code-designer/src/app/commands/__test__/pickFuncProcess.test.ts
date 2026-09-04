@@ -66,8 +66,8 @@ vi.mock('../../utils/delay', () => ({
   delay: vi.fn(),
 }));
 
-vi.mock('../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
+vi.mock('../../utils/workspace', () => ({
+  selectWorkspaceFolderLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../../utils/vsCodeConfig/settings', () => ({
@@ -79,7 +79,7 @@ vi.mock('../../utils/codeful', () => ({
 }));
 
 vi.mock('../buildCustomCodeFunctionsProject', () => ({
-  tryBuildCustomCodeFunctionsProject: vi.fn(),
+  tryBuildCustomCodeFunctionsProjectInternal: vi.fn(),
 }));
 
 vi.mock('../publishCodefulProject', () => ({
@@ -98,9 +98,9 @@ import {
 } from '../../utils/funcCoreTools/funcHostTask';
 import { executeIfNotActive } from '../../utils/taskUtils';
 import { hasCodefulWorkflowSetting } from '../../utils/codeful';
-import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { selectWorkspaceFolderLogicAppRoot } from '../../utils/workspace';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProjectInternal } from '../buildCustomCodeFunctionsProject';
 import * as pickFuncProcessModule from '../pickFuncProcess';
 import { publishCodefulProject } from '../publishCodefulProject';
 import { refreshConnectionKeys } from '../../utils/appSettings/connectionKeys';
@@ -149,7 +149,7 @@ describe('pickFuncProcessInternal', () => {
     runningFuncTaskMap.clear();
     (preDebugValidate as any).mockResolvedValue(true);
     (hasCodefulWorkflowSetting as any).mockResolvedValue(true);
-    (tryBuildCustomCodeFunctionsProject as any).mockResolvedValue(true);
+    (tryBuildCustomCodeFunctionsProjectInternal as any).mockResolvedValue(true);
     (publishCodefulProject as any).mockResolvedValue(undefined);
     (getProjFiles as any).mockResolvedValue(['CodefulLogicApp.csproj']);
     (getWorkspaceSetting as any).mockReturnValue(1);
@@ -190,8 +190,8 @@ describe('pickFuncProcessInternal', () => {
     ).rejects.toThrow('Failed to find "func: host start" task.');
 
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
-    expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
+    expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), projectPath, { skipIfBuildPopulatesCodeful: true });
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
 
@@ -209,7 +209,7 @@ describe('pickFuncProcessInternal', () => {
     ).rejects.toThrow('Failed to find "func: host start" task.');
 
     expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(projectPath);
-    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri);
+    expect(tryBuildCustomCodeFunctionsProjectInternal).toHaveBeenCalledWith(expect.any(Object), projectPath);
     expect(publishCodefulProject).not.toHaveBeenCalled();
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
@@ -242,10 +242,10 @@ describe('pickFuncProcessInternal', () => {
     const events: string[] = [];
     (hasCodefulWorkflowSetting as any).mockResolvedValue(false);
     (stopFuncTaskForWorkspace as any).mockImplementation(async () => {
-      expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+      expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
       events.push('stop-func');
     });
-    (tryBuildCustomCodeFunctionsProject as any).mockImplementation(async () => {
+    (tryBuildCustomCodeFunctionsProjectInternal as any).mockImplementation(async () => {
       events.push('build-custom-code');
     });
     (vscode.tasks.fetchTasks as any).mockResolvedValue([]);
@@ -340,7 +340,7 @@ describe('pickFuncProcessInternal', () => {
       pickFuncProcessModule.pickFuncProcessInternal(context, { type: 'logicapp' }, workspaceFolder, projectPath)
     ).rejects.toThrow('Operation cancelled');
 
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
     expect(publishCodefulProject).not.toHaveBeenCalled();
   });
 
@@ -356,7 +356,7 @@ describe('pickFuncProcessInternal', () => {
       )
     ).rejects.toThrow('The setting "pickProcessTimeout" must be a number');
 
-    expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    expect(publishCodefulProject).toHaveBeenCalledWith(expect.any(Object), projectPath, { skipIfBuildPopulatesCodeful: true });
     expect(executeIfNotActive).not.toHaveBeenCalled();
   });
 });
@@ -367,7 +367,7 @@ describe('pickFuncProcess', () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
-    (tryGetLogicAppProjectRoot as any).mockResolvedValue(undefined);
+    vi.mocked(selectWorkspaceFolderLogicAppRoot).mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -381,6 +381,7 @@ describe('pickFuncProcess', () => {
     await expect(pickFuncProcessModule.pickFuncProcess({ telemetry: { properties: {} } } as any, { type: 'logicapp' })).rejects.toThrow(
       'Unable to find the project root.'
     );
+    expect(selectWorkspaceFolderLogicAppRoot).toHaveBeenCalledWith(expect.any(Object), workspaceFolder);
   });
 });
 

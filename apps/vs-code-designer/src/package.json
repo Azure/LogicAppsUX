@@ -326,11 +326,6 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.initProjectForVSCode",
-        "title": "Initialize project for use with VS Code...",
-        "category": "Azure Logic Apps"
-      },
-      {
         "command": "azureLogicAppsStandard.configureDeploymentSource",
         "title": "Configure deployment source...",
         "category": "Azure Logic Apps"
@@ -689,12 +684,12 @@
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsFolder == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@1"
         },
         {
@@ -704,12 +699,12 @@
         },
         {
           "command": "azureLogicAppsStandard.createWorkflow",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.addCustomCode",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths && resourcePath in azureLogicAppsStandard.customCode.eligibleLogicAppFolders",
           "group": "zzz_LogicApptools@1"
         },
         {
@@ -734,12 +729,12 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true",
+          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && resourceDirname in azureLogicAppsStandard.codefulProjectPaths",
           "group": "navigation@3"
         },
         {
           "command": "azureLogicAppsStandard.switchToDotnetProject",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@3"
         },
         {
@@ -749,12 +744,12 @@
         },
         {
           "command": "azureLogicAppsStandard.switchDebugMode",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@2"
         },
         {
           "command": "azureLogicAppsStandard.useSQLStorage",
-          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "when": "azureLogicAppsStandard.hasProject && resourcePath in azureLogicAppsStandard.logicAppProjectPaths",
           "group": "zzz_LogicApptools@3"
         },
         {
@@ -797,7 +792,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && azureLogicAppsStandard.isCodeful == true"
+          "when": "azureLogicAppsStandard.hasProject && resourceFilename==Program.cs && resourceDirname in azureLogicAppsStandard.codefulProjectPaths"
         },
         {
           "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
@@ -902,11 +897,6 @@
             "type": "string",
             "description": "The path for Azure Logic Apps extension Azure Function Core Tools dependency binary.",
             "default": "func"
-          },
-          "azureLogicAppsStandard.projectSubpath": {
-            "scope": "resource",
-            "type": "string",
-            "description": "The default subpath of a workspace folder to use for project operations. This is only necessary if you have multiple projects in one workspace. See https://aka.ms/AA4nmfy for more information."
           },
           "azureLogicAppsStandard.pickProcessTimeout": {
             "type": "integer",

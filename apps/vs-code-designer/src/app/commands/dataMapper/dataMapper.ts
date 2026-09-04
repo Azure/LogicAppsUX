@@ -6,38 +6,30 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import DataMapperExt from './DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
-import { isNullOrUndefined, type MapDefinitionEntry } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
-import { getWorkspaceFolder } from '../../utils/workspace';
-import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
+import { getParentLogicAppRoot, selectLogicAppRoot } from '../../utils/workspace';
 
-export async function createDataMap(context: IActionContext): Promise<void> {
-  const workspaceFolder = await getWorkspaceFolder(
-    context,
-    localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
-  );
-  const projectPath = !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
+export async function createDataMap(context: IActionContext, node?: Uri): Promise<void> {
+  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await selectLogicAppRoot(context);
   if (!projectPath) {
-    return;
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
   DataMapperExt.openDataMapperPanel(context, projectPath);
 }
 
-export async function loadDataMapFile(context: IActionContext, uri: Uri): Promise<void> {
-  let mapDefinitionPath: string | undefined = uri?.fsPath;
-  let draftFileIsFoundAndShouldBeUsed = false;
-  const workspaceFolder = await getWorkspaceFolder(
-    context,
-    localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
-  );
-  const projectPath = !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
+export async function loadDataMapFile(context: IActionContext, node?: Uri): Promise<void> {
+  const projectPath = node?.fsPath ? await getParentLogicAppRoot(node.fsPath) : await selectLogicAppRoot(context);
   if (!projectPath) {
-    return;
+    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
   }
+  
+  let mapDefinitionPath: string | undefined = node?.fsPath;
+  let draftFileIsFoundAndShouldBeUsed = false;
 
   // Handle if Uri isn't provided/defined (cmd pallette or btn)
   if (!mapDefinitionPath) {

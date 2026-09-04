@@ -32,7 +32,7 @@ import { unzipLogicAppArtifacts } from './taskUtils';
 import { shouldParameterizeConnections } from './vsCodeConfig/settings';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { getContainingWorkspaceFolder } from './workspace';
+import { getParentWorkspaceFolder } from './workspace';
 import { getExtensionAssetPath } from './extensionAssets';
 import AdmZip from 'adm-zip';
 
@@ -414,7 +414,7 @@ function runPostExtractSteps(cache: { projectPath: string; textDocumentPath: str
   callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
-    if (getContainingWorkspaceFolder(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
+    if (getParentWorkspaceFolder(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
       window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
     ext.outputChannel.appendLog(localize('finishedImporting', 'Successfully imported project.'));

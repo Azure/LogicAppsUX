@@ -7,7 +7,7 @@ import {
   workflowTenantIdKey,
 } from '../../../../constants';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
+import { selectLogicAppRoot } from '../../../utils/workspace';
 import { uploadAppSettings } from '../uploadAppSettings';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 
@@ -29,8 +29,8 @@ vi.mock('vscode', () => ({
   Uri: { file: (p: string) => ({ fsPath: p }) },
 }));
 
-vi.mock('../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project'),
+vi.mock('../../../utils/workspace', () => ({
+  selectLogicAppRoot: vi.fn().mockResolvedValue('/mock/project'),
 }));
 
 vi.mock('../../../utils/appSettings/localSettings', () => ({
@@ -58,7 +58,7 @@ describe('uploadAppSettings', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
-    (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('/mock/project');
+    (selectLogicAppRoot as Mock).mockResolvedValue('/mock/project');
     const vscode = await import('vscode');
     (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: '/mock/workspace' } }];
 
@@ -73,6 +73,33 @@ describe('uploadAppSettings', () => {
   });
 
   const getUploadedProperties = (): Record<string, string> => updateApplicationSettings.mock.calls[0][0].properties;
+
+  it('uses an explicit nested project path without discovering a project', async () => {
+    const nestedProjectPath = '/mock/workspace/apps/nested-logic-app';
+    (getLocalSettingsJson as Mock).mockResolvedValue({
+      Values: {
+        FUNCTIONS_WORKER_RUNTIME: 'node',
+      },
+    });
+
+    await uploadAppSettings(context, node, nestedProjectPath, []);
+
+    expect(selectLogicAppRoot).not.toHaveBeenCalled();
+    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, nestedProjectPath);
+  });
+
+  it('discovers the project when an explicit project path is omitted', async () => {
+    (getLocalSettingsJson as Mock).mockResolvedValue({
+      Values: {
+        FUNCTIONS_WORKER_RUNTIME: 'node',
+      },
+    });
+
+    await uploadAppSettings(context, node, undefined, []);
+
+    expect(selectLogicAppRoot).toHaveBeenCalledWith(context);
+    expect(getLocalSettingsJson).toHaveBeenCalledWith(context, '/mock/project');
+  });
 
   it('excludes name-matched settings like the inline-code node executable path', async () => {
     (getLocalSettingsJson as Mock).mockResolvedValue({

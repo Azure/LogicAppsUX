@@ -5,10 +5,10 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceRoot } from '../utils/workspace';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { inspectCodefulCsprojBuildHooks, invalidateCodefulSdkCacheIfNeeded, hasCodefulWorkflowSetting } from '../utils/codeful';
+import { isPathEqual, isSubpath } from '../utils/fs';
 
 /**
  * Optional behaviors for {@link publishCodefulProject}.
@@ -19,12 +19,7 @@ export interface PublishCodefulProjectOptions {
    * `publish` task if the modern template hooks `CopyToCodefulFolder` /
    * `ReplaceLanguageNetCore` to `AfterTargets="Build;Publish"`. In that case
    * the Debug `Build` step that `func: host start` chains via `dependsOn` is
-   * sufficient to populate `lib/codeful/`, and running `publish` first only
-   * results in a duplicated clean+build cycle whose output is overwritten by
-   * the subsequent Debug build.
-   *
-   * Used by the debug (F5) pipeline. Deploy paths must leave this `false` so
-   * `bin/Release/<tfm>/publish/` is always produced for `azureFunctions.deploySubpath`.
+   * sufficient to populate `lib/codeful/`
    */
   skipIfBuildPopulatesCodeful?: boolean;
 }
@@ -32,37 +27,34 @@ export interface PublishCodefulProjectOptions {
 /**
  * Builds a custom code functions project.
  * @param {IActionContext} context - The action context.
- * @param {vscode.Uri} node - The URI of the project to build or the corresponding logic app project.
- * @param {PublishCodefulProjectOptions} [options] - Optional behaviors. See {@link PublishCodefulProjectOptions}.
+ * @param {string} projectPath - The codeful logic app project path.
+ * @param {PublishCodefulProjectOptions} [options] - Optional behaviors.
  * @returns {Promise<void>} - A promise that resolves when the build process is complete.
  */
 export async function publishCodefulProject(
   context: IActionContext,
-  node: vscode.Uri,
+  projectPath: string,
   options?: PublishCodefulProjectOptions
 ): Promise<void> {
-  const workspaceFolderPath = await getWorkspaceRoot(context);
-  const nodePath = node?.fsPath || workspaceFolderPath;
-
-  if (isNullOrUndefined(nodePath)) {
-    const errorMessage = 'No project path found to publish custom code functions project.';
+  if (isNullOrUndefined(projectPath)) {
+    const errorMessage = 'No project path found to publish codeful project.';
     context.telemetry.properties.result = 'Failed';
     context.telemetry.properties.errorMessage = errorMessage;
     ext.outputChannel.appendLog(localize('noProjectPathPublishCodeful', errorMessage));
     return;
   }
 
-  const isCodeful = await hasCodefulWorkflowSetting(nodePath);
+  const isCodeful = await hasCodefulWorkflowSetting(projectPath);
   if (!isCodeful) {
-    const message = `Skipping publish: Path "${nodePath}" is not a codeful project.`;
+    const message = `Skipping publish: Path "${projectPath}" is not a codeful project.`;
     ext.outputChannel.appendLog(message);
     return;
   }
 
-  await invalidateCodefulSdkCacheIfNeeded(nodePath);
+  await invalidateCodefulSdkCacheIfNeeded(projectPath);
 
   if (options?.skipIfBuildPopulatesCodeful) {
-    const buildHooks = await inspectCodefulCsprojBuildHooks(nodePath);
+    const buildHooks = await inspectCodefulCsprojBuildHooks(projectPath);
     if (buildHooks) {
       context.telemetry.properties.csprojCopyAfterTargets = buildHooks.copyAfterTargets ?? '';
       context.telemetry.properties.csprojReplaceLangAfterTargets = buildHooks.replaceLangAfterTargets ?? '';
@@ -74,7 +66,7 @@ export async function publishCodefulProject(
         localize(
           'skipPublishCodefulBuildHooks',
           'Skipping publishCodefulProject for "{0}": codeful project .csproj runs CopyToCodefulFolder/ReplaceLanguageNetCore on Build (AfterTargets="Build;Publish"). The local debug build will populate lib/codeful.',
-          nodePath
+          projectPath
         )
       );
       return;
@@ -84,7 +76,7 @@ export async function publishCodefulProject(
 
   try {
     context.telemetry.properties.lastStep = 'publishCodefulProject';
-    await runPublishCommand(nodePath);
+    await runPublishCommand(projectPath);
     context.telemetry.properties.result = 'Succeeded';
   } catch (error) {
     context.telemetry.properties.result = 'Failed';
@@ -108,7 +100,8 @@ async function runPublishCommand(projectPath: string): Promise<void> {
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const publishTask = tasks.find((task) => {
     const currTaskPath = (task.scope as vscode.WorkspaceFolder)?.uri.fsPath;
-    return task.name === 'publish' && currTaskPath === projectPath;
+    // TODO(aeldridge): For nested projects, this will select any matching build task in the workspace folder. Need to scope tasks to individual projects.
+    return task.name === 'publish' && !!currTaskPath && (isPathEqual(currTaskPath, projectPath) || isSubpath(currTaskPath, projectPath));
   });
 
   if (!publishTask) {
@@ -117,8 +110,11 @@ async function runPublishCommand(projectPath: string): Promise<void> {
 
   return new Promise<void>((resolve, reject) => {
     const disposable: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e) => {
+      const taskPath = (e.execution.task.scope as vscode.WorkspaceFolder)?.uri.fsPath;
       const isMatchingTask =
-        (e.execution.task.scope as vscode.WorkspaceFolder)?.uri.fsPath === projectPath && e.execution.task.name === publishTask.name;
+        !!taskPath &&
+        (isPathEqual(taskPath, projectPath) || isSubpath(taskPath, projectPath)) &&
+        e.execution.task.name === publishTask.name;
 
       if (isMatchingTask) {
         disposable.dispose();

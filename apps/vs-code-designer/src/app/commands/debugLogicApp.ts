@@ -8,8 +8,8 @@ import * as path from 'path';
 import { pickFuncProcessInternal } from './pickFuncProcess';
 import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from './pickCustomCodeWorkerProcess';
+import { getParentWorkspaceFolder, selectLogicAppRoot, selectWorkspaceFolderLogicAppRoot } from '../utils/workspace';
 
 export async function debugLogicApp(
   context: IActionContext,
@@ -17,16 +17,16 @@ export async function debugLogicApp(
   workspaceFolder: vscode.WorkspaceFolder | undefined
 ): Promise<void> {
   const workspacePath = workspaceFolder?.uri?.fsPath ?? 'unknown workspace';
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  const projectPath = workspaceFolder ? await selectWorkspaceFolderLogicAppRoot(context, workspaceFolder) : await selectLogicAppRoot(context);
   if (!projectPath) {
     const errorMessage = 'Failed to find a logic app project in the workspace folder "{0}".';
     context.telemetry.properties.result = 'Failed';
     context.telemetry.properties.errorMessage = errorMessage.replace('{0}', workspacePath);
     throw new Error(localize('noLogicAppProject', errorMessage, workspacePath));
   }
-  const logicAppName = path.basename(projectPath);
-  const resolvedWorkspaceFolder = workspaceFolder ?? vscode.workspace.getWorkspaceFolder(vscode.Uri.file(projectPath));
 
+  const logicAppName = path.basename(projectPath);
+  const resolvedWorkspaceFolder = workspaceFolder ?? getParentWorkspaceFolder(projectPath);
   if (!resolvedWorkspaceFolder) {
     const errorMessage = 'Failed to find a workspace folder for the logic app project "{0}".';
     context.telemetry.properties.result = 'Failed';

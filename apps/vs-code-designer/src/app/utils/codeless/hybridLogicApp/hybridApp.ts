@@ -1,7 +1,6 @@
 import { isSuccessResponse, type ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import { getLocalSettingsJson } from '../../appSettings/localSettings';
-import { tryGetLogicAppProjectRoot } from '../../verifyIsProject';
 import {
   appKindSetting,
   azurePublicBaseUrl,
@@ -20,7 +19,7 @@ import {
   workflowAppAADTenantId,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { getWorkspaceFolder } from '../../workspace';
+import { selectLogicAppRoot } from '../../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ConnectedEnvironment, ContainerApp, EnvironmentVar } from '@azure/arm-appcontainers';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
@@ -42,10 +41,9 @@ interface createHybridAppOptions {
   };
 }
 
-const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
+const getAppSettingsFromLocal = async (context: IActionContext): Promise<EnvironmentVar[]> => {
   const appSettingsToskip = [azureWebJobsStorageKey, ProjectDirectoryPathKey, workerRuntimeKey];
-  const workspaceFolder = await getWorkspaceFolder(context);
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+  const projectPath = await selectLogicAppRoot(context);
   if (!projectPath) {
     return [];
   }
@@ -94,7 +92,7 @@ const getAadAppSettings = (aad: createHybridAppOptions['aad'], hybridApp): Envir
   return aadSettings;
 };
 
-const getAppSettings = async (options: createHybridAppOptions, context): Promise<EnvironmentVar[]> => {
+const getAppSettings = async (options: createHybridAppOptions, context: IActionContext): Promise<EnvironmentVar[]> => {
   const { hybridApp, aad } = options;
 
   const sqlConnectionappSetting = hybridApp
