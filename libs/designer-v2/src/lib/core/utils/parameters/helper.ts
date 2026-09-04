@@ -169,6 +169,7 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
+import { KnowledgeHubEditor } from '../../../ui/knowledge/editor';
 
 export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
@@ -332,9 +333,10 @@ export function toParameterInfoMap(
   shouldEncodeBasedOnMetadata = true
 ): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
+  const isKnowledgeHubEnabled = WorkflowService()?.isKnowledgeHubEnabled ? WorkflowService()?.isKnowledgeHubEnabled?.() : true;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
-    if (!inputParameter.dynamicSchema && !equals(inputParameter.editor, 'knowledgebase')) {
+    if (!inputParameter.dynamicSchema && !(!isKnowledgeHubEnabled && equals(inputParameter.editor, constants.EDITOR.KNOWLEDGE_BASE))) {
       const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }
@@ -521,6 +523,14 @@ export function getParameterEditorProps(
     }
   } else if (editor === constants.EDITOR.INITIALIZE_VARIABLE) {
     editorViewModel = { hideParameterErrors: true };
+  } else if (editor === constants.EDITOR.KNOWLEDGE_BASE) {
+    editorOptions = {
+      ...editorOptions,
+      hideLabel: true,
+      hubName: parameterValue.length === 1 && isLiteralValueSegment(parameterValue[0]) ? parameterValue[0].value : undefined,
+      logicAppId: WorkflowService().getLogicAppId?.() ?? '',
+      EditorComponent: KnowledgeHubEditor,
+    };
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
