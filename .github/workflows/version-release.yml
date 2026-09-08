@@ -90,7 +90,7 @@ jobs:
           git push origin ${{ steps.version.outputs.tag_name }}
 
       - name: 'Create and Push Hotfix Branch'
-        if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
+        if: github.ref_name == 'main'
         run: |
           TAG_NAME="${{ steps.version.outputs.tag_name }}"
           HOTFIX_BRANCH="hotfix/${TAG_NAME%.0}"
