@@ -29,7 +29,7 @@ This repository has been migrated from `standard-version` to a custom tag-based 
 2. **Version updates during build**: The `scripts/update-versions.js` script updates package.json versions during CI/CD build time only
 3. **GitHub releases**: Created with auto-generated release notes
 4. **NPM publishing**: Uses the version from the git tag, not from package.json
-5. **Hotfix branch creation**: Major and minor releases atomically create `hotfix/v<major>.<minor>` from the new `v<major>.<minor>.0` tag
+5. **Hotfix branch creation**: Major and minor releases create `hotfix/v<major>.<minor>` from the new `v<major>.<minor>.0` tag
 
 ## Triggering Releases
 
@@ -48,7 +48,7 @@ Can also be triggered via:
 
 1. **Validation**: Ensures patch releases only on hotfix branches, major/minor only on main
 2. **Version Calculation**: Increments version based on selected type
-3. **Release Ref Creation**: Major/minor releases atomically push the git tag and `hotfix/v<major>.<minor>` branch; patch releases push only the new tag
+3. **Release Ref Creation**: Major/minor releases push the git tag and then the `hotfix/v<major>.<minor>` branch; patch releases push only the new tag
 4. **GitHub Release**: Creates release with auto-generated notes
 5. **Build & Publish**: Builds extension and publishes to NPM
 
