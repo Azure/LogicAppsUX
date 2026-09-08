@@ -12,7 +12,7 @@ This repository has been migrated from `standard-version` to a custom tag-based 
 
 ### 2. Release Process
 - **Before**: Manual trigger with explicit version type (major/minor/patch) that commits to main
-- **After**: Manual trigger with explicit version type that only creates tags
+- **After**: Manual trigger with explicit version type that creates release tags and the corresponding hotfix branch for major/minor releases
 
 ### 3. Workflow Changes
 - **Old workflow**: `production-build.yml` (can be deprecated)
@@ -29,6 +29,7 @@ This repository has been migrated from `standard-version` to a custom tag-based 
 2. **Version updates during build**: The `scripts/update-versions.js` script updates package.json versions during CI/CD build time only
 3. **GitHub releases**: Created with auto-generated release notes
 4. **NPM publishing**: Uses the version from the git tag, not from package.json
+5. **Hotfix branch creation**: Major and minor releases atomically create `hotfix/v<major>.<minor>` from the new `v<major>.<minor>.0` tag
 
 ## Triggering Releases
 
@@ -47,7 +48,7 @@ Can also be triggered via:
 
 1. **Validation**: Ensures patch releases only on hotfix branches, major/minor only on main
 2. **Version Calculation**: Increments version based on selected type
-3. **Tag Creation**: Creates and pushes git tag
+3. **Release Ref Creation**: Major/minor releases atomically push the git tag and `hotfix/v<major>.<minor>` branch; patch releases push only the new tag
 4. **GitHub Release**: Creates release with auto-generated notes
 5. **Build & Publish**: Builds extension and publishes to NPM
 
@@ -63,7 +64,7 @@ Can also be triggered via:
 - [x] Remove `.versionrc` file
 - [x] Remove semantic-release dependencies
 - [ ] Deprecate old `production-build.yml` workflow
-- [ ] Update team documentation
+- [x] Update team documentation
 
 ## Rollback Plan
 
