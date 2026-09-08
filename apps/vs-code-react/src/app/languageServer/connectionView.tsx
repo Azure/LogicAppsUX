@@ -22,7 +22,14 @@ import { useConnectionViewStyles } from './connectionViewStyles';
 import { Button, Text, Title3 } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
-const managedConnectorTypes = new Set(['apiconnection', 'apiconnectionwebhook', 'openapiconnection', 'openapiconnectionwebhook']);
+const managedConnectorTypes = new Set([
+  'apiconnection',
+  'apiconnectionnotification',
+  'apiconnectionwebhook',
+  'openapiconnection',
+  'openapiconnectionnotification',
+  'openapiconnectionwebhook',
+]);
 
 const isManagedConnector = (connectorType: string): boolean => managedConnectorTypes.has(connectorType.toLowerCase());
 

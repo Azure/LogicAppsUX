@@ -45,7 +45,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
   const isCreatingConnection = useIsCreatingConnection();
 
   useEffect(() => {
-    if (connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+    if (connector && !connectorQuery.isError && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
       autoCreateConnectionIfPossible({
         connector: connector as Connector,
         referenceKeys: Object.keys(references),
@@ -56,7 +56,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
         onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
       });
     }
-  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, props, references]);
+  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, connectorQuery.isError, dispatch, props, references]);
 
   const panelStatus = useMemo(() => {
     return isCreatingConnection ? 'create' : 'select';

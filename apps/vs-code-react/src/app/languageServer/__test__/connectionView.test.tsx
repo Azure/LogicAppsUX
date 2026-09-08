@@ -198,22 +198,26 @@ describe('LanguageServerConnectionView', () => {
     await expect(pendingConnection).resolves.toEqual({ id: 'share' });
   });
 
-  it.each(['ApiConnection', 'ApiConnectionWebhook', 'OpenApiConnection', 'OpenApiConnectionWebhook'])(
-    'shows a terminal setup state for %s when Azure connector setup was skipped',
-    (connectorType) => {
-      const { postMessage } = renderConnectionView({ connectorType, azureConnectorsEnabled: false });
+  it.each([
+    'ApiConnection',
+    'ApiConnectionNotification',
+    'ApiConnectionWebhook',
+    'OpenApiConnection',
+    'OpenApiConnectionNotification',
+    'OpenApiConnectionWebhook',
+  ])('shows a terminal setup state for %s when Azure connector setup was skipped', (connectorType) => {
+    const { postMessage } = renderConnectionView({ connectorType, azureConnectorsEnabled: false });
 
-      expect(screen.getByText('Azure connector setup has not been completed')).toBeInTheDocument();
-      expect(screen.getByText('Set up Azure connectors to manage this connection.')).toBeInTheDocument();
-      expect(mocks.getDesignerServices).not.toHaveBeenCalled();
+    expect(screen.getByText('Azure connector setup has not been completed')).toBeInTheDocument();
+    expect(screen.getByText('Set up Azure connectors to manage this connection.')).toBeInTheDocument();
+    expect(mocks.getDesignerServices).not.toHaveBeenCalled();
 
-      fireEvent.click(screen.getByRole('button', { name: 'Set up now' }));
-      expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.configureAzureConnectors });
+    fireEvent.click(screen.getByRole('button', { name: 'Set up now' }));
+    expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.configureAzureConnectors });
 
-      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-      expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.close_panel });
-    }
-  );
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(postMessage).toHaveBeenCalledWith({ command: ExtensionCommand.close_panel });
+  });
 
   it('continues to load local connectors when Azure connector setup was skipped', () => {
     renderConnectionView({ connectorType: 'serviceProvider', azureConnectorsEnabled: false });

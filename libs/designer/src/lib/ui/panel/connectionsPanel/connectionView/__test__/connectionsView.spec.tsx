@@ -218,7 +218,7 @@ describe('ConnectionsView', () => {
   it('shows connector errors without rendering connection controls or auto creating', () => {
     const refetch = vi.fn();
     (ConnectionSelectors.useConnector as Mock).mockReturnValue({
-      data: undefined,
+      data: mockConnector,
       error: new Error('Connector request failed'),
       isError: true,
       isLoading: false,
