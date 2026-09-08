@@ -19,7 +19,7 @@ Please note, this documentation applies solely to version 2.16.0 and subsequent 
 
 A standard release procedure is initiated against the main branch, accomplishing several tasks:
 
-1. It increments the Minor Version of the package (Major.Minor.Patch), creates a tag, and creates the corresponding `hotfix/v<major>.<minor>` branch from that tag. This process also generates a change log detailing the variations from the previous release.
+1. It increments the Minor Version of the package (Major.Minor.Patch), creates a tag, and, when manually dispatched, creates the corresponding `hotfix/v<major>.<minor>` branch from that tag. This process also generates a change log detailing the variations from the previous release.
 2. It creates NPM packages and forwards these packages to the production package repository.
 3. It constructs both VSCode Extensions: Logic Apps Standard and Logic Apps Data Mapper.
 4. It prepares a GitHub release inclusive of a change log and all artifacts intended for submission.
