@@ -32,16 +32,12 @@ export async function createLogicApp(
 
   context.newResourceGroupName = newResourceGroupName;
 
-  try {
-    const logicAppNode: SlotTreeItem = await SubscriptionTreeItem.createChild(
-      context as ICreateLogicAppContext,
-      node as SubscriptionTreeItem
-    );
-    await notifyCreateLogicAppComplete(logicAppNode);
-    return logicAppNode;
-  } catch (error) {
-    throw new Error(`Error in creating logic app. ${error}`);
-  }
+  const logicAppNode: SlotTreeItem = await SubscriptionTreeItem.createChild(
+    context as ICreateLogicAppContext,
+    node as SubscriptionTreeItem
+  );
+  await notifyCreateLogicAppComplete(logicAppNode);
+  return logicAppNode;
 }
 
 export async function createLogicAppAdvanced(

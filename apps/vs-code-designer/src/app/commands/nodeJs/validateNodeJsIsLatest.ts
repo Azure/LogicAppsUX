@@ -8,7 +8,7 @@ import { localize } from '../../../localize';
 import { binariesExist, getLatestNodeJsVersion, verifyDependencyIntegrity } from '../../utils/binaries';
 import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { getLocalNodeJsVersion, getNodeJsCommand, setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
-import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { isNodeJsWarningSuppressed, suppressNodeJsWarning } from '../../state/notifications';
 import { installNodeJs } from './installNodeJs';
 import { DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -18,8 +18,7 @@ import { ProgressLocation, window, type MessageItem } from 'vscode';
 export async function validateNodeJsIsLatest(context: IActionContext, majorVersion?: string): Promise<void> {
   context.errorHandling.suppressDisplay = true;
   context.telemetry.properties.isActivationEvent = 'true';
-  const showNodeJsWarningKey = 'showNodeJsWarning';
-  const showNodeJsWarning = !!getWorkspaceSetting<boolean>(showNodeJsWarningKey);
+  const showNodeJsWarning = !isNodeJsWarningSuppressed();
   await setNodeJsCommand();
   const binaries = await binariesExist(nodeJsDependencyName);
   context.telemetry.properties.binariesExist = `${binaries}`;
@@ -50,7 +49,7 @@ export async function validateNodeJsIsLatest(context: IActionContext, majorVersi
       if (shouldShowOutdatedNodeJsWarning(localVersion, newestVersion, majorVersion)) {
         context.telemetry.properties.nodeJsWarningDecision = 'shown';
         context.telemetry.properties.outOfDateNodeJs = 'true';
-        showOutdatedNodeJsWarning(context, localVersion, newestVersion, majorVersion, showNodeJsWarningKey);
+        showOutdatedNodeJsWarning(context, localVersion, newestVersion, majorVersion);
       }
       logNodeJsWarningDecision(context);
     } else {
@@ -145,8 +144,7 @@ function showOutdatedNodeJsWarning(
   context: IActionContext,
   localVersion: string,
   newestVersion: string,
-  majorVersion: string | undefined,
-  showNodeJsWarningKey: string
+  majorVersion: string | undefined
 ): void {
   const message: string = localize(
     'outdatedNodeJsRuntime',
@@ -164,7 +162,7 @@ function showOutdatedNodeJsWarning(
       } else if (result === update) {
         await updateNodeJsFromWarning(context, majorVersion);
       } else if (result === DialogResponses.dontWarnAgain) {
-        await updateGlobalSetting(showNodeJsWarningKey, false);
+        await suppressNodeJsWarning();
       }
     })
     .catch((error) => {

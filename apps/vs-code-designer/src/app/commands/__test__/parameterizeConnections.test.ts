@@ -111,11 +111,10 @@ describe('parameterizeConnections', () => {
     expect(connectionUtil.saveConnectionReferences).toHaveBeenCalledTimes(2);
   });
 
-  it('should handle errors and log them', async () => {
+  it('should rethrow errors', async () => {
     const error = new Error('Test error');
     vi.spyOn(connectionUtil, 'getConnectionsJson').mockRejectedValue(error);
 
     await expect(parameterizeProjectConnections(testContext, testLogicAppProjectPath1)).rejects.toThrow();
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledOnce();
   });
 });

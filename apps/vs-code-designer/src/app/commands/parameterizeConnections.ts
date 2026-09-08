@@ -10,7 +10,7 @@ import { getConnectionsJson, saveConnectionReferences } from '../utils/codeless/
 import { getParametersJson, saveWorkflowParameter } from '../utils/codeless/parameter';
 import { areAllConnectionsParameterized, parameterizeConnection } from '../utils/codeless/parameterizer';
 import { getWorkspaceLogicAppRoots } from '../utils/workspace';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import { UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { workspace } from 'vscode';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
@@ -30,6 +30,9 @@ export async function parameterizeAllConnections(context: IActionContext): Promi
       try {
         await parameterizeProjectConnectionsInternal(context, projectPath);
       } catch (error) {
+        if (error instanceof UserCancelledError) {
+          throw error;
+        }
         failedProjectPaths.push(projectPath);
         errorMessages.push(error instanceof Error ? error.message : String(error));
       }
@@ -63,20 +66,7 @@ export async function parameterizeProjectConnections(context: IActionContext, pr
     }
 
     context.telemetry.properties.projectPath = projectPath;
-    try {
-      await parameterizeProjectConnectionsInternal(context, projectPath);
-    } catch (error) {
-      const errorMessage = localize(
-        'errorParameterizeProjectConnections',
-        'Error while parameterizing existing connections for project "{0}": "{1}".',
-        projectPath,
-        error instanceof Error ? error.message : String(error)
-      );
-      ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.errorMessage = errorMessage;
-      throw new Error(errorMessage);
-    }
+    await parameterizeProjectConnectionsInternal(context, projectPath);
   }
 }
 

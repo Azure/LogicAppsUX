@@ -395,34 +395,6 @@ export const getTestsDirectory = (projectPath: string) => {
 };
 
 /**
- * Parses an error (particularly from Axios) before setting a final errorMessage.
- * @param error - The error to parse.
- * @returns {string} - A user-friendly error string.
- */
-export function parseErrorBeforeTelemetry(error: any): string {
-  let errorMessage = '';
-
-  if (isAxiosError(error) && error.response?.data) {
-    try {
-      const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
-      const { message = '', code = '' } = responseData?.error ?? {};
-      errorMessage = localize('apiError', `API Error: ${code} - ${message}`);
-      ext.outputChannel.appendLog(errorMessage);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (parseError) {
-      // If we fail to parse, fall back to the original error
-      errorMessage = error.message;
-    }
-  } else if (error instanceof Error) {
-    errorMessage = error.message;
-  } else {
-    // Fallback for non-Error types
-    errorMessage = String(error);
-  }
-  return errorMessage;
-}
-
-/**
  * Parses and transforms raw output parameters from a unit test definition into a structured format.
  * @param nodeOutputOperations - The operation info and output parameters of the workflow node.
  * @returns A Promise resolving to an object containing operationInfo and outputParameters.
@@ -1063,23 +1035,18 @@ export async function updateTestsSln(testsDirectory: string, logicAppCsprojPath:
   const solutionFile = path.join(testsDirectory, `${solutionName}.sln`);
   const dotnetBinaryPath = getGlobalSetting(dotNetBinaryPathSettingKey);
 
-  try {
-    // Create a new solution file if it doesn't already exist.
-    if (await fse.pathExists(solutionFile)) {
-      ext.outputChannel.appendLog(`Solution file already exists at ${solutionFile}.`);
-    } else {
-      ext.outputChannel.appendLog(`Creating new solution file at ${solutionFile}...`);
-      await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} new sln -n ${solutionName}`);
-      ext.outputChannel.appendLog(`Solution file created: ${solutionFile}`);
-    }
-
-    // Compute the relative path from the tests directory to the Logic App .csproj.
-    const relativeProjectPath = path.relative(testsDirectory, logicAppCsprojPath);
-    ext.outputChannel.appendLog(`Adding project '${relativeProjectPath}' to solution '${solutionFile}'...`);
-    await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} sln "${solutionFile}" add "${relativeProjectPath}"`);
-    ext.outputChannel.appendLog('Project added to solution successfully.');
-  } catch (err) {
-    ext.outputChannel.appendLog(`Error updating solution: ${err}`);
-    vscode.window.showErrorMessage(`Error updating solution: ${err}`);
+  // Create a new solution file if it doesn't already exist.
+  if (await fse.pathExists(solutionFile)) {
+    ext.outputChannel.appendLog(`Solution file already exists at ${solutionFile}.`);
+  } else {
+    ext.outputChannel.appendLog(`Creating new solution file at ${solutionFile}...`);
+    await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} new sln -n ${solutionName}`);
+    ext.outputChannel.appendLog(`Solution file created: ${solutionFile}`);
   }
+
+  // Compute the relative path from the tests directory to the Logic App .csproj.
+  const relativeProjectPath = path.relative(testsDirectory, logicAppCsprojPath);
+  ext.outputChannel.appendLog(`Adding project '${relativeProjectPath}' to solution '${solutionFile}'...`);
+  await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} sln "${solutionFile}" add "${relativeProjectPath}"`);
+  ext.outputChannel.appendLog('Project added to solution successfully.');
 }

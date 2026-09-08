@@ -659,7 +659,7 @@ const addActionsInstanceMetaData = (
 
   Object.entries(updatedNodesData).forEach(([key, node]) => {
     const nodeRunData = runInstanceActions?.[key];
-    const isAgent = allActions[key]?.type.toLowerCase() === constants.NODE.TYPE.AGENT;
+    const isAgent = allActions[key]?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
     const isRunning = nodeRunData?.status === 'Running';
     const runIndex = isAgent && isRunning ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
 

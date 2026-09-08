@@ -80,6 +80,7 @@ const createDefaultState = (overrides: Partial<CreateWorkspaceState> = {}): Crea
     availableProjects: [],
     isAddCustomCodeFlow: false,
     workspaceRootFolder: '',
+    currentFolderPath: '',
     ...overrides,
   };
 };

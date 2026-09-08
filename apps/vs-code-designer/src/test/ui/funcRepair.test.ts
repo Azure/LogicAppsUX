@@ -75,7 +75,7 @@ import * as fs from 'fs';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
-import { VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
+import { By, Key, VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
 import { waitForExtensionReady } from './createWorkspaceShared';
 import {
   getFuncCoreToolsCandidatePaths,
@@ -1256,6 +1256,11 @@ describe('Func self-heal E2E', function () {
     // mean the recorder itself is wedged — a genuinely different failure.
     await waitForExtensionReady(workbench, EXTENSION_READY_TIMEOUT_MS);
     console.log(`${LOG_PREFIX} Logic Apps extension commands are registered`);
+    // The readiness probe opens the command palette to find the command. On Linux CI,
+    // cancelling the ExTester input can leave the palette visible and block debug startup.
+    await driver.switchTo().defaultContent();
+    await driver.findElement(By.css('body')).sendKeys(Key.ESCAPE);
+    await sleep(500);
     await provisionFuncCoreToolsForTest(workbench, driver, primaryFuncPath);
 
     await waitForStableRunnableFunc(primaryFuncPath, BASELINE_TIMEOUT_MS);

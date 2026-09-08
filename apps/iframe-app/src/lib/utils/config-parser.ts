@@ -16,13 +16,15 @@ interface PortalValidationResult {
   trustedParentOrigin?: string;
 }
 
-const ALLOWED_PORTAL_AUTHORITIES = [
-  'df.onecloud.azure-test.net',
-  'portal.azure.com',
-  'ms.portal.azure.com',
-  'rc.portal.azure.com',
-  'localhost:55555', // For local development
-];
+const ALLOWED_PORTAL_AUTHORITIES = ['df.onecloud.azure-test.net', 'portal.azure.com', 'ms.portal.azure.com', 'rc.portal.azure.com'];
+
+function isIframeRunningLocally(): boolean {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+}
+
+function isLocalhostHostname(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1';
+}
 
 function validatePortalSecurity(params: URLSearchParams): PortalValidationResult {
   const trustedAuthority = params.get('trustedAuthority') || '';
@@ -30,32 +32,60 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
     return {};
   }
 
-  const parentTrustedAuthority = (trustedAuthority.split('//')[1] || '').toLowerCase();
+  // Canonicalize the query-supplied authority so downstream trust decisions operate on a
+  // parsed origin instead of raw, attacker-controllable text.
+  let parsedAuthority: URL;
+  try {
+    parsedAuthority = new URL(trustedAuthority);
+  } catch {
+    throw new Error(`The origin '${trustedAuthority}' is not trusted for Frame Blade.`);
+  }
+
+  const parentHost = parsedAuthority.host.toLowerCase();
+  const parentHostname = parsedAuthority.hostname.toLowerCase();
+
+  // Localhost parents are only honored when the iframe itself is running locally, so a
+  // production iframe can never be embedded and driven by a localhost origin.
+  if (isLocalhostHostname(parentHostname)) {
+    if (!isIframeRunningLocally() || (parsedAuthority.protocol !== 'http:' && parsedAuthority.protocol !== 'https:')) {
+      throw new Error(`The origin '${parentHost}' is not trusted for Frame Blade.`);
+    }
+    return { trustedParentOrigin: parsedAuthority.origin };
+  }
+
+  // Non-localhost portal hosts must use HTTPS; any other scheme is rejected.
+  if (parsedAuthority.protocol !== 'https:') {
+    throw new Error(`The origin '${parentHost}' is not trusted for Frame Blade.`);
+  }
 
   const isTrustedOrigin = ALLOWED_PORTAL_AUTHORITIES.some((allowedOrigin) => {
-    if (allowedOrigin === parentTrustedAuthority) {
+    if (allowedOrigin === parentHost) {
       return true;
     }
     const subdomainSuffix = `.${allowedOrigin}`;
-    return (
-      parentTrustedAuthority.length > subdomainSuffix.length && parentTrustedAuthority.slice(-subdomainSuffix.length) === subdomainSuffix
-    );
+    return parentHost.length > subdomainSuffix.length && parentHost.slice(-subdomainSuffix.length) === subdomainSuffix;
   });
 
-  if (!isTrustedOrigin && !parentTrustedAuthority.startsWith('localhost:')) {
-    throw new Error(`The origin '${parentTrustedAuthority}' is not trusted for Frame Blade.`);
+  if (!isTrustedOrigin) {
+    throw new Error(`The origin '${parentHost}' is not trusted for Frame Blade.`);
   }
 
-  return { trustedParentOrigin: trustedAuthority };
+  return { trustedParentOrigin: parsedAuthority.origin };
 }
 
 const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];
+
+export type AgentCardPayload = ChatWidgetProps['agentCard'];
+
+function isAgentCardObject(value: unknown): value is Exclude<AgentCardPayload, string> {
+  return typeof value === 'object' && value !== null && 'url' in value && typeof value.url === 'string';
+}
 
 /**
  * Validates that an agent card URL uses HTTPS and points to a trusted Microsoft domain.
  * Blocks arbitrary external URLs to prevent chat hijacking via agentCard parameter injection.
  */
-function validateAgentCardUrl(url: string): string {
+export function validateAgentCardUrl(url: string): string {
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -66,7 +96,7 @@ function validateAgentCardUrl(url: string): string {
   // Allow localhost only when the iframe itself is running locally (development)
   const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
-    if (isLocalDevelopment) {
+    if (isLocalDevelopment && (parsed.protocol === 'http:' || parsed.protocol === 'https:')) {
       return url;
     }
     throw new Error('Agent card URLs pointing to localhost are only allowed during local development.');
@@ -85,6 +115,24 @@ function validateAgentCardUrl(url: string): string {
   }
 
   return url;
+}
+
+/**
+ * Validates the URL carried by either supported agent-card payload shape.
+ * The original payload is returned so object-based agent cards retain their metadata.
+ */
+export function validateAgentCardPayload(agentCard: unknown): AgentCardPayload {
+  if (typeof agentCard === 'string') {
+    validateAgentCardUrl(agentCard);
+    return agentCard;
+  }
+
+  if (isAgentCardObject(agentCard)) {
+    validateAgentCardUrl(agentCard.url);
+    return agentCard;
+  }
+
+  throw new Error('Agent card must be a URL string or an object with a URL string.');
 }
 
 function extractAgentCardUrl(params: URLSearchParams, dataset: DOMStringMap): string {

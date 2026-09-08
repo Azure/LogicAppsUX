@@ -9,17 +9,17 @@ import type * as vscode from 'vscode';
 import * as path from 'path';
 import { getUnixChildren, getWindowsChildren, pickChildProcess } from './pickFuncProcess';
 import { localize } from '../../localize';
-import { ext } from '../../extensionVariables';
+import { delay } from '../utils/delay';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 
+const WORKER_POLL_INTERVAL_MS = 2000;
+const WORKER_POLL_TIMEOUT_MS = 30000;
+
 /**
  * Picks the .NET host child process of the running function task for the custom code project.
- * @param context The action context.
- * @param workspaceFolder The workspace folder containing the logic app.
- * @param projectPath The path to the logic app project root.
- * @returns A promise that resolves to the .NET host child process ID or undefined if not found.
+ * Polls with a timeout because the worker is spawned lazily by the Functions host.
  */
 export async function pickCustomCodeNetHostProcessInternal(
   context: IActionContext,
@@ -40,22 +40,22 @@ export async function pickCustomCodeNetHostProcessInternal(
   }
 
   context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
-  const customCodeNetHostProcess = await pickCustomCodeWorkerChildProcess(taskInfo, false, isCodeless);
+  const customCodeNetHostProcess = await pollForWorkerProcess(context, taskInfo, false, isCodeless);
   if (!customCodeNetHostProcess) {
+    const errorMessage =
+      'Failed to find the .NET host child process for the functions project for logic app "{0}". This may be due to the logic app not having a custom code action.';
     context.telemetry.properties.result = 'Failed';
-    ext.outputChannel.appendLog(
-      localize(
-        'customCodeNet8ChildProcessNotFound',
-        `Failed to find the .NET host child process for the functions project for logic app "${logicAppName}". This may be due to the logic app not having a custom code action.`
-      )
-    );
-    return undefined;
+    context.telemetry.properties.errorMessage = errorMessage.replace('{0}', logicAppName);
+    throw new Error(localize('customCodeNet8ChildProcessNotFound', errorMessage, logicAppName));
   }
 
-  context.telemetry.properties.result = 'Succeeded';
   return customCodeNetHostProcess;
 }
 
+/**
+ * Picks the CustomCodeNetFxWorker child process of the running function task.
+ * Polls with a timeout because the worker is spawned lazily by the Functions host.
+ */
 export async function pickCustomCodeNetFxWorkerProcessInternal(
   context: IActionContext,
   workspaceFolder: vscode.WorkspaceFolder,
@@ -74,20 +74,42 @@ export async function pickCustomCodeNetFxWorkerProcessInternal(
   }
 
   context.telemetry.properties.lastStep = 'pickNetFxWorkerChildProcess';
-  const customCodeNetFxWorkerProcess = await pickCustomCodeWorkerChildProcess(taskInfo, true);
+  const customCodeNetFxWorkerProcess = await pollForWorkerProcess(context, taskInfo, true, true);
   if (!customCodeNetFxWorkerProcess) {
+    const errorMessage =
+      'Failed to find the CustomCodeNetFxWorker process for logic app "{0}". This may be due to the logic app not having a custom code action.';
     context.telemetry.properties.result = 'Failed';
-    ext.outputChannel.appendLog(
-      localize(
-        'customCodeNetFxChildProcessNotFound',
-        `Failed to find the CustomCodeNetFxWorker process for logic app "${logicAppName}". This may be due to the logic app not having a custom code action.`
-      )
-    );
-    return undefined;
+    context.telemetry.properties.errorMessage = errorMessage.replace('{0}', logicAppName);
+    throw new Error(localize('customCodeNetFxChildProcessNotFound', errorMessage, logicAppName));
   }
 
-  context.telemetry.properties.result = 'Succeeded';
   return customCodeNetFxWorkerProcess;
+}
+
+/**
+ * Polls for a custom code worker child process until it appears or the timeout elapses.
+ * Worker processes are spawned lazily by the Functions host, so a single snapshot may
+ * miss them if they haven't started yet.
+ */
+async function pollForWorkerProcess(
+  context: IActionContext,
+  taskInfo: IRunningFuncTask,
+  isNetFxWorker: boolean,
+  isCodeless: boolean
+): Promise<string | undefined> {
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < WORKER_POLL_TIMEOUT_MS) {
+    const pid = await pickCustomCodeWorkerChildProcess(taskInfo, isNetFxWorker, isCodeless);
+    if (pid) {
+      context.telemetry.measurements.workerWaitDuration = (Date.now() - startTime) / 1000;
+      return pid;
+    }
+    await delay(WORKER_POLL_INTERVAL_MS);
+  }
+
+  context.telemetry.measurements.workerWaitDuration = (Date.now() - startTime) / 1000;
+  return undefined;
 }
 
 export async function pickCustomCodeWorkerChildProcess(

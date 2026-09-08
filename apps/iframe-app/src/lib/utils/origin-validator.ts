@@ -2,39 +2,32 @@
  * Security utilities for validating message origins
  */
 
-export function getAllowedOrigins(): string[] {
-  const params = new URLSearchParams(window.location.search);
+function isLocalDevelopment(): boolean {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+}
+
+export function getAllowedOrigins(trustedParentOrigin?: string): string[] {
   const dataset = document.documentElement.dataset;
-
-  // Check for explicitly configured allowed origins
-  const allowedOriginsStr = dataset.allowedOrigins || params.get('allowedOrigins');
-
-  if (allowedOriginsStr) {
-    return allowedOriginsStr.split(',').map((origin) => origin.trim());
-  }
-
-  // Default allowed origins
   const currentOrigin = window.location.origin;
   const allowedOrigins = [currentOrigin];
 
-  // Add development origins if in dev environment
-  if (currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1')) {
+  // These origins are fixed development defaults, not iframe query data.
+  if (isLocalDevelopment()) {
     allowedOrigins.push('http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000');
   }
 
-  // Add document referrer if it exists
-  if (document.referrer) {
-    try {
-      const referrerOrigin = new URL(document.referrer).origin;
-      if (!allowedOrigins.includes(referrerOrigin)) {
-        allowedOrigins.push(referrerOrigin);
-      }
-    } catch (_e) {
-      // Invalid referrer URL, ignore
-    }
+  // Only configuration rendered inside the iframe document may extend inbound trust.
+  const configuredOrigins = dataset.allowedOrigins;
+  if (configuredOrigins) {
+    allowedOrigins.push(...configuredOrigins.split(',').map((origin) => origin.trim()));
   }
 
-  return allowedOrigins;
+  // trustedParentOrigin has already been allowlisted by config-parser.
+  if (trustedParentOrigin) {
+    allowedOrigins.push(trustedParentOrigin);
+  }
+
+  return [...new Set(allowedOrigins.filter(Boolean))];
 }
 
 export function isOriginAllowed(origin: string, allowedOrigins: string[]): boolean {
@@ -62,11 +55,19 @@ export function isOriginAllowed(origin: string, allowedOrigins: string[]): boole
   return false;
 }
 
-export function getParentOrigin(): string {
-  // Try to get parent origin from referrer
+export function getParentOrigin(trustedParentOrigin?: string): string {
+  if (trustedParentOrigin) {
+    return trustedParentOrigin;
+  }
+
+  // A referrer may target the non-sensitive ready signal only when independently
+  // authorized by same-origin, local-development, or document configuration.
   if (document.referrer) {
     try {
-      return new URL(document.referrer).origin;
+      const referrerOrigin = new URL(document.referrer).origin;
+      if (isOriginAllowed(referrerOrigin, getAllowedOrigins())) {
+        return referrerOrigin;
+      }
     } catch (_e) {
       // Invalid referrer URL
     }

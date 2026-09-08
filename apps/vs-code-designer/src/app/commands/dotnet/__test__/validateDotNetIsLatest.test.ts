@@ -93,4 +93,14 @@ describe('validateDotNetIsLatest', () => {
     expect(installDotNet).toHaveBeenCalledWith(context, '8');
     expect(getLatestDotNetVersion).not.toHaveBeenCalled();
   });
+
+  it('does not throw when majorVersion is undefined (CDN feed unavailable)', async () => {
+    vi.mocked(binariesExist).mockResolvedValue(true);
+    vi.mocked(getLocalDotNetVersionFromBinaries).mockResolvedValue('8.0.318');
+    vi.mocked(getLatestDotNetVersion).mockResolvedValue('8.0.318');
+
+    await expect(validateDotNetIsLatest(context, undefined)).resolves.not.toThrow();
+    expect(getLocalDotNetVersionFromBinaries).toHaveBeenCalledWith('8');
+    expect(context.telemetry.properties.dotnetVersionSource).toBe('fallback');
+  });
 });

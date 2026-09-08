@@ -3,13 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  autoStartDesignTimeSetting,
   defaultVersionRange,
   designTimeDirectoryName,
   designerStartApi,
   extensionBundleId,
   hostFileName,
-  showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
   type hostFileContent,
 } from '../../../constants';
@@ -24,13 +22,10 @@ import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
-import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceLogicAppRoots } from '../workspace';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
 import {
-  DialogResponses,
-  openUrl,
   type IActionContext,
   type IAzExtOutputChannel,
   callWithTelemetryAndErrorHandling,
@@ -42,8 +37,7 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as vscode from 'vscode';
-import { Uri, window, workspace, type MessageItem } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
 import { getChildProcesses } from '../findChildProcess/findChildProcess';
@@ -56,7 +50,7 @@ import {
 import { releaseReservedPort, reserveFreePort } from '../portReservation';
 import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
 
-const maxDesignTimeValidationRestarts = 1;
+const maxValidationRestarts = 3;
 
 function isFailingHealthCheckLogLine(line: string): boolean {
   const normalizedLine = line.toLowerCase();
@@ -180,10 +174,6 @@ function getDesignTimeInstance(projectPath: string): FuncInstance {
   return designTimeInst;
 }
 
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
-
 function stopTrackedDesignTimeProcess(projectPath: string): void {
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst?.process) {
@@ -204,34 +194,28 @@ function stopTrackedDesignTimeProcess(projectPath: string): void {
   }
 }
 
-async function tryStartDesignTimeApi(context: IActionContext, projectPath: string): Promise<void> {
-  return startDesignTimeApi(context, projectPath).catch((error) => {
-    ext.outputChannel.appendLog(
-      localize(
-        'scheduleDesignTimeApiFailed',
-        'Background design-time startup failed for project "{0}". Error: {1}',
-        projectPath,
-        getErrorMessage(error)
-      )
-    );
-  });
-}
-
-export async function startDesignTimeApi(context: IActionContext, projectPath: string): Promise<void> {
+/**
+ * Starts the design-time API for the given project path.
+ * @param context - The action context for telemetry.
+ * @param projectPath - The Logic App project path.
+ * @param currRetry - Current retry depth from process-validation restarts. Defaults to 0.
+ */
+export async function startDesignTimeApi(context: IActionContext, projectPath: string, currRetry = 0): Promise<void> {
   context.telemetry.properties.projectPath = projectPath;
   const designTimeInst = getDesignTimeInstance(projectPath);
 
   if (designTimeInst.startupPromise) {
     context.telemetry.properties.skippingAlreadyInProgress = 'true';
+    context.errorHandling.suppressDisplay = true;
     await designTimeInst.startupPromise;
     return;
   }
 
-  designTimeInst.startupPromise = startDesignTimeApiInternal(context, designTimeInst, projectPath);
+  designTimeInst.startupPromise = startDesignTimeApiInternal(context, designTimeInst, projectPath, currRetry);
   await designTimeInst.startupPromise;
 }
 
-async function startDesignTimeApiInternal(context: IActionContext, designTimeInst: FuncInstance, projectPath: string): Promise<void> {
+async function startDesignTimeApiInternal(context: IActionContext, designTimeInst: FuncInstance, projectPath: string, currRetry: number): Promise<void> {
   try {
     context.telemetry.properties.didStartDesignTime = 'false';
 
@@ -246,7 +230,7 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
     if (await isDesignTimeUp(url)) {
       designTimeInst.isStarting = false;
       context.telemetry.properties.isDesignTimeUp = 'true';
-      await validateRunningFuncProcess(projectPath);
+      await validateRunningFuncProcess(projectPath, currRetry);
       return;
     }
 
@@ -313,26 +297,13 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
         }
       }
       designTimeInst.startupError = undefined;
-      designTimeInst.validationRetryCount = 0;
       context.telemetry.properties.didStartDesignTime = 'true';
       updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
     } catch (error) {
-      const errorMessage = getErrorMessage(error);
-      const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
-      const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
+      const errorMessage = error instanceof Error ? error.message : String(error);
       designTimeInst.startupError = errorMessage;
-      designTimeInst.validationRetryCount = 0;
       stopTrackedDesignTimeProcess(projectPath);
-      context.telemetry.properties.errorMessage = errorMessage;
-      ext.outputChannel.appendLog(
-        localize('designTimeApiFailed', 'Design-time startup failed for project "{0}". Error: {1}', projectPath, errorMessage)
-      );
-
-      window.showErrorMessage(message, viewOutput).then(async (result) => {
-        if (result === viewOutput) {
-          ext.outputChannel.show();
-        }
-      });
+      throw error;
     } finally {
       designTimeInst.isStarting = false;
     }
@@ -356,7 +327,7 @@ function extractPinnedVersion(input: string): string | null {
   return null;
 }
 
-async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+async function validateRunningFuncProcess(projectPath: string, currRetry: number): Promise<void> {
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
     return;
@@ -372,25 +343,21 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
 
   if (correctFuncProcess) {
     processValidationCache.set(projectPath, { timestamp: now, isValid: true });
-    designTimeInst.validationRetryCount = 0;
     return;
   }
 
-  const retryCount = designTimeInst.validationRetryCount ?? 0;
-  if (retryCount >= maxDesignTimeValidationRestarts) {
-    designTimeInst.validationRetryCount = 0;
+  if (currRetry >= maxValidationRestarts) {
     ext.outputChannel.appendLog(
       localize(
         'invalidChildFuncPidSkipRestart',
         'Unable to validate the func child process PID for project at "{0}" after {1} restart attempt(s). Keeping the current design-time host running.',
         projectPath,
-        retryCount
+        currRetry
       )
     );
     return;
   }
 
-  designTimeInst.validationRetryCount = retryCount + 1;
   ext.outputChannel.appendLog(
     localize(
       'invalidChildFuncPid',
@@ -401,7 +368,7 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
   processValidationCache.delete(projectPath);
   await stopDesignTimeApi(projectPath);
   await callWithTelemetryAndErrorHandling('validateRunningFuncProcess.startDesignTimeApi', async (actionContext: IActionContext) => {
-    await startDesignTimeApi(actionContext, projectPath);
+    await startDesignTimeApi(actionContext, projectPath, currRetry + 1);
   });
 }
 
@@ -588,7 +555,7 @@ export function startDesignTimeProcess(
         })
         .finally(() => {
           callWithTelemetryAndErrorHandling('designTimeError.languageWorkerFailed.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await tryStartDesignTimeApi(actionContext, projectPath);
+            await startDesignTimeApi(actionContext, projectPath);
           });
         });
     }
@@ -613,7 +580,7 @@ export function startDesignTimeProcess(
         })
         .finally(() => {
           callWithTelemetryAndErrorHandling('designTimeError.portUnavailable.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await tryStartDesignTimeApi(actionContext, projectPath);
+            await startDesignTimeApi(actionContext, projectPath);
           });
         });
     }
@@ -679,7 +646,7 @@ export function scheduleStartAllDesignTimeApis(): void {
   );
   startAllDesignTimeApis().catch((error) => {
     ext.outputChannel.appendLog(
-      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', getErrorMessage(error))
+      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', error instanceof Error ? error.message : String(error))
     );
   });
 }
@@ -689,90 +656,25 @@ export function scheduleStartAllDesignTimeApis(): void {
  * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state.
  */
 export async function startAllDesignTimeApis(): Promise<void> {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const projectPaths = await getWorkspaceLogicAppRoots();
-    ext.outputChannel.appendLog(
-      localize(
-        'startingAllDesignTimeApis',
-        'Starting design-time APIs for {0} Logic App project(s) in the current workspace.',
-        projectPaths.length
-      )
-    );
-    await Promise.all(projectPaths.map(async (projectPath) => {
-      await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
-        await startDesignTimeApi(actionContext, projectPath);
-      });
-    }));
-  } else {
-    ext.outputChannel.appendLog(localize('noWorkspaceFoldersForDesignTime', 'No workspace folders found. Skipping design-time startup.'));
+  const projectPaths = await getWorkspaceLogicAppRoots();
+  if (projectPaths.length === 0) {
+    ext.outputChannel.appendLog(localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.'));
+    return;
   }
-}
 
-/**
- * Optionally prompts the user to automatically start the design-time process at launch. If auto start is enabled, start the design-time API for all Logic Apps in the workspace.
- * TODO(aeldridge): Should be in main.ts for consistency
- * @param {IActionContext} context - The action context.
- * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state or the user rejects auto start.
- */
-export async function promptStartDesignTimeOption(context: IActionContext) {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const projectPaths = await getWorkspaceLogicAppRoots();
-    const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
-    let autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
+  ext.outputChannel.appendLog(
+    localize(
+      'startingAllDesignTimeApis',
+      'Starting design-time processes for {0} Logic App project(s) in the current workspace.',
+      projectPaths.length
+    )
+  );
 
-    ext.outputChannel.appendLog(
-      localize(
-        'detectedLogicAppFolders',
-        'Detected {0} logic app project folder(s) for artifact regeneration: {1}.',
-        projectPaths.length,
-        projectPaths.join(', ') || '(none)'
-      )
-    );
-
-    if (projectPaths && projectPaths.length > 0) {
-      if (!autoStartDesignTime && showStartDesignTimeMessage) {
-        const message = localize(
-          'startDesignTimeApi',
-          'Always start the background design-time process at launch? The workflow designer will open faster.'
-        );
-        const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
-        let result: MessageItem;
-        do {
-          result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
-          if (result === confirm) {
-            await updateGlobalSetting(autoStartDesignTimeSetting, true);
-            autoStartDesignTime = true;
-          } else if (result === DialogResponses.learnMore) {
-            await openUrl('https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local');
-          } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showStartDesignTimeMessageSetting, false);
-          }
-        } while (result === DialogResponses.learnMore);
-      }
-
-      for (const projectPath of projectPaths) {
-        if (autoStartDesignTime) {
-          callWithTelemetryAndErrorHandling('promptStartDesignTime.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await tryStartDesignTimeApi(actionContext, projectPath);
-          });
-        }
-      }
-    } else {
-      // A folder is only recognized as a logic app project when its host.json is present. If host.json
-      // itself is missing the folder is not detected here, so host.json and local.settings.json cannot
-      // be regenerated on this path. Log this so the situation is diagnosable from the output channel.
-      ext.outputChannel.appendLog(
-        localize(
-          'noLogicAppFoldersForRegen',
-          'No logic app project folders were detected in the open workspace, so host.json and local.settings.json were not regenerated. A folder is only recognized as a logic app when its host.json exists; if host.json is missing, restore it (it is normally committed to source control) and reload the window.'
-        )
-      );
-    }
-  } else {
-    ext.outputChannel.appendLog(
-      localize('noWorkspaceFoldersForRegen', 'No workspace folders are open. Skipping host.json and local.settings.json regeneration.')
-    );
-  }
+  await Promise.all(projectPaths.map(async (projectPath) => {
+    await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
+      await startDesignTimeApi(actionContext, projectPath);
+    });
+  }));
 }
 
 /**

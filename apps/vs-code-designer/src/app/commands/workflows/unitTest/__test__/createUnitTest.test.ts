@@ -94,7 +94,10 @@ describe('createUnitTest', () => {
     });
 
     vi.spyOn(unitTestUtils, 'createTestCsFile').mockResolvedValue();
+    vi.spyOn(unitTestUtils, 'createTestSettingsConfigFile').mockResolvedValue();
+    vi.spyOn(unitTestUtils, 'createTestExecutorFile').mockResolvedValue();
     vi.spyOn(unitTestUtils, 'ensureCsproj').mockResolvedValue();
+    vi.spyOn(unitTestUtils, 'updateCsprojFile').mockResolvedValue(true);
     vi.spyOn(workspaceUtils, 'ensureDirectoryInWorkspace').mockResolvedValue();
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
 
@@ -110,14 +113,13 @@ describe('createUnitTest', () => {
   test('should successfully create a unit test', async () => {
     await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
-    expect(dummyContext.telemetry.properties.unitTestSaveStatus).toBe('Success');
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(1);
     expect(fs.ensureDir).toHaveBeenCalled();
 
     expect(updateSolutionWithProjectSpy).toHaveBeenCalledOnce();
     expect(updateSolutionWithProjectSpy).not.toThrowError();
-    expect(dummyContext.telemetry.properties.result).toBe('Succeeded');
     expect(dummyContext.telemetry.properties.lastStep).toBe('syncCloudSettings');
+    expect(dummyContext.telemetry.properties.unitTestGenerationStatus).toBe('Success');
   });
 
   test('should not continue if not a valid workspace', async () => {
@@ -132,14 +134,11 @@ describe('createUnitTest', () => {
     expect(dummyContext.telemetry.properties.result).toBe('Canceled');
   });
 
-  test('should log an error and call handleError when an exception occurs', async () => {
+  test('should throw when an exception occurs', async () => {
     const testError = new Error('Test error');
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockRejectedValueOnce(testError);
 
-    await createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
-
+    await expect(createUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition)).rejects.toThrow('Test error');
     expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
-    expect(dummyContext.telemetry.properties.result).toBe('Failed');
-    expect(dummyContext.telemetry.properties.errorMessage).toBeDefined();
   });
 });

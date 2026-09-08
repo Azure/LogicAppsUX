@@ -42,7 +42,6 @@ export const logExtensionSettings = (context: IActionContext) => {
     'autoStartAzurite',
     'autoStartDesignTime',
     'parameterizeConnectionsInProjectLoad',
-    'showStartDesignTimeMessage',
     'validateDotNetSDK',
     'stopFuncTaskPostDebug',
   ];

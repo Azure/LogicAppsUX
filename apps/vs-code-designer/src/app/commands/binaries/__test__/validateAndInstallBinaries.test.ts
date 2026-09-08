@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { defaultDependencyPathValue } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { getDependencyTimeout, ensureRuntimeDependenciesDir } from '../../../utils/binaries';
-import { ensureExtensionBundleHealthy, getDependenciesVersion } from '../../../utils/bundleFeed';
+import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../../utils/bundleFeed';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { setDotNetCommand } from '../../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../../utils/funcCoreTools/funcVersion';
@@ -28,7 +28,7 @@ vi.mock('../../../utils/binaries', () => ({
 }));
 
 vi.mock('../../../utils/bundleFeed', () => ({
-  getDependenciesVersion: vi.fn(),
+  getBundleDependencyFeed: vi.fn(),
   ensureExtensionBundleHealthy: vi.fn().mockResolvedValue(undefined),
 }));
 
@@ -106,7 +106,7 @@ describe('validateAndInstallBinaries', () => {
     (shouldRequireStrictDependencyValidation as Mock).mockReturnValue(false);
     (shouldCheckForDependencyUpdates as Mock).mockReturnValue(true);
     (recordDependencyUpdateCheck as Mock).mockResolvedValue(undefined);
-    (getDependenciesVersion as Mock).mockResolvedValue({
+    (getBundleDependencyFeed as Mock).mockResolvedValue({
       nodejs: '18.0.0',
       funcCoreTools: '4.0.0',
       dotnetVersions: '8.0.100',

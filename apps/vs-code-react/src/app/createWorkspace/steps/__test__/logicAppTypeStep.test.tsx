@@ -114,6 +114,7 @@ function createState(overrides: Partial<CreateWorkspaceState> = {}): CreateWorks
     availableProjects: [],
     isAddCustomCodeFlow: false,
     workspaceRootFolder: '',
+    currentFolderPath: '',
     ...overrides,
   };
 }

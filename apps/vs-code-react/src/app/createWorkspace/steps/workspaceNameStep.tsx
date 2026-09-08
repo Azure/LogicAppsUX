@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { nameValidation } from '../utils/validation';
+import { nameValidation, isWorkspaceDescendantOfCurrentFolder, pathsEqual, joinPath } from '../utils/validation';
 
 export const WorkspaceNameStep: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,8 +22,16 @@ export const WorkspaceNameStep: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const styles = useCreateWorkspaceStyles();
   const createWorkspaceState = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
-  const { workspaceName, workspaceProjectPath, pathValidationResults, workspaceExistenceResults, isValidatingWorkspace, separator } =
-    createWorkspaceState;
+  const {
+    workspaceName,
+    workspaceProjectPath,
+    pathValidationResults,
+    workspaceExistenceResults,
+    isValidatingWorkspace,
+    separator,
+    currentFolderPath,
+    platform,
+  } = createWorkspaceState;
   const projectPathInputId = useId();
   const workspaceNameId = useId();
 
@@ -58,12 +66,18 @@ export const WorkspaceNameStep: React.FC = () => {
         return intlText.WORKSPACE_NAME_VALIDATION;
       }
 
-      // Check if workspace folder or file already exists
-      if (workspaceProjectPath.fsPath && name) {
-        const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${name}`;
-        const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
+      // Block workspace locations that are descendants of the currently open folder
+      if (isWorkspaceDescendantOfCurrentFolder(workspaceProjectPath.fsPath, name, currentFolderPath, separator, platform)) {
+        return intlText.WORKSPACE_LOCATION_INSIDE_PROJECT;
+      }
 
-        if (workspaceExistenceResults[workspaceFolder] === true) {
+      // Check if workspace folder or file already exists (skip folder check for in-place case)
+      if (workspaceProjectPath.fsPath && name) {
+        const workspaceFolder = joinPath(workspaceProjectPath.fsPath, name, separator);
+        const workspaceFile = `${workspaceFolder}${separator}${name}.code-workspace`;
+        const isInPlace = currentFolderPath && pathsEqual(workspaceFolder, currentFolderPath, platform);
+
+        if (!isInPlace && workspaceExistenceResults[workspaceFolder] === true) {
           return format.FOLDER_EXISTS_MESSAGE({ name });
         }
         if (workspaceExistenceResults[workspaceFile] === true) {
@@ -77,7 +91,10 @@ export const WorkspaceNameStep: React.FC = () => {
       workspaceProjectPath.fsPath,
       intlText.WORKSPACE_NAME_EMPTY,
       intlText.WORKSPACE_NAME_VALIDATION,
+      intlText.WORKSPACE_LOCATION_INSIDE_PROJECT,
       separator,
+      currentFolderPath,
+      platform,
       workspaceExistenceResults,
       format,
     ]

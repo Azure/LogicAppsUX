@@ -20,7 +20,7 @@ import { getJsonFeed } from './feed';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../state/dependencies';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IBundleDependencyFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
+import type { IRuntimeDependencyVersions, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import * as path from 'path';
 import * as semver from 'semver';
@@ -124,12 +124,12 @@ async function getWorkflowBundleFeed(context: IActionContext): Promise<string[]>
  * Gets extension bundle dependency feed.
  * @param {IActionContext} context - Command context.
  * @param {IBundleMetadata | undefined} bundleMetadata - Bundle meta data.
- * @returns {Promise<IBundleDependencyFeed>} Returns bundle extension object.
+ * @returns {Promise<IRuntimeDependencyVersions>} Returns bundle extension object.
  */
-async function getBundleDependencyFeed(
+export async function getBundleDependencyFeed(
   context: IActionContext,
-  bundleMetadata: IBundleMetadata | undefined
-): Promise<IBundleDependencyFeed> {
+  bundleMetadata?: IBundleMetadata
+): Promise<IRuntimeDependencyVersions> {
   const bundleId: string = (bundleMetadata && bundleMetadata?.id) || extensionBundleId;
   const { baseUrl } = await getExtensionBundleBaseUrl(context);
   const url = `${baseUrl}/ExtensionBundles/${bundleId}/dependency.json`;
@@ -142,16 +142,6 @@ async function getBundleDependencyFeed(
  */
 export function getLatestVersionRange(): string {
   return defaultVersionRange;
-}
-
-/**
- * Gets latest bundle extension dependencies versions.
- * @param {IActionContext} context - Command context.
- * @returns {Promise<any>} Returns dependency versions.
- */
-export async function getDependenciesVersion(context: IActionContext): Promise<IBundleDependencyFeed> {
-  const feed: IBundleDependencyFeed = await getBundleDependencyFeed(context, undefined);
-  return feed;
 }
 
 /**

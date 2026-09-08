@@ -1,4 +1,5 @@
 import { useConnectionById } from '../../../../core/queries/connections';
+import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
 import { css } from '@fluentui/react';
@@ -27,6 +28,7 @@ interface ConnectionEntryProps {
 
 export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconUri, disconnectedNodeIds = [] }: ConnectionEntryProps) => {
   const dispatch = useDispatch();
+  const readOnly = useReadOnly();
   const styles = useConnectionContainerStyles();
   const connectionId = cleanResourceId(connectionReference?.connection?.id);
   const connection = useConnectionById(connectionId, connectorId);
@@ -144,8 +146,9 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
               appearance="subtle"
               size="small"
               icon={<ArrowSwap24Filled />}
-              onClick={onReassignButtonClick}
-              style={{ color: 'var(--colorBrandForeground1)' }}
+              disabled={readOnly}
+              onClick={readOnly ? undefined : onReassignButtonClick}
+              style={readOnly ? undefined : { color: 'var(--colorBrandForeground1)' }}
             >
               {reassignButtonText}
             </Button>

@@ -68,7 +68,7 @@ Nodes (18): Artifacts, FileDetails, IArtifactFile, IGitHubReleaseInfo, IParamete
 
 ### Community 3 - "Community 3"
 Cohesion: 0.15
-Nodes (16): IBundleDependencyFeed, IBundleFeed, BindingSettingValue, IBindingSetting, IBindingTemplate, IEnumValue, ResourceType, ValueType (+8 more)
+Nodes (16): IRuntimeDependencyVersions, IBundleFeed, BindingSettingValue, IBindingSetting, IBindingTemplate, IEnumValue, ResourceType, ValueType (+8 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.11
@@ -91,13 +91,13 @@ Cohesion: 0.20
 Nodes (9): FetchSchemaData, InitializeData, MapDefinitionData, MessageToVsix, MessageToWebview, SchemaPathData, XsltData, ExtensionCommand (+1 more)
 
 ## Knowledge Gaps
-- **91 isolated node(s):** `IArtifactFile`, `IGitHubReleaseInfo`, `IBundleDependencyFeed`, `ICliFeed`, `IRelease` (+86 more)
+- **91 isolated node(s):** `IArtifactFile`, `IGitHubReleaseInfo`, `IRuntimeDependencyVersions`, `ICliFeed`, `IRelease` (+86 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **What connects `IArtifactFile`, `IGitHubReleaseInfo`, `IBundleDependencyFeed` to the rest of the system?**
+- **What connects `IArtifactFile`, `IGitHubReleaseInfo`, `IRuntimeDependencyVersions` to the rest of the system?**
   _91 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.07881773399014778 - nodes in this community are weakly interconnected._

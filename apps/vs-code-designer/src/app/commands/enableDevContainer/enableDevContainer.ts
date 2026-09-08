@@ -73,7 +73,6 @@ export async function enableDevContainer(context: IActionContext, workspaceFileP
     // Add .devcontainer folder to workspace file
     await addDevContainerToWorkspace(workspaceFile, devContainerFolderName);
     context.telemetry.properties.step = 'devcontainerAddedToWorkspace';
-
     context.telemetry.properties.result = 'Succeeded';
 
     const message = localize(

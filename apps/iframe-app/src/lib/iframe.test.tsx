@@ -1,123 +1,191 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createRoot } from 'react-dom/client';
+import { act, cleanup, screen, waitFor } from '@testing-library/react';
+import type * as TestingLibraryReact from '@testing-library/react';
+import type * as ReactDomClient from 'react-dom/client';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { IframeConfig } from './utils/config-parser';
 
-// Mock dependencies
-vi.mock('react-dom/client');
-vi.mock('@microsoft/logic-apps-chat', () => ({
-  ChatWidget: vi.fn(() => null),
+const { createdRoots, errorDisplayMock, iframeWrapperMock, parseIframeConfigMock } = vi.hoisted(() => ({
+  createdRoots: [] as Array<{ unmount: () => void }>,
+  errorDisplayMock: vi.fn(
+    ({ details, message, title }: { details?: { parameters?: string; url?: string }; message: string; title: string }) => (
+      <div data-testid="error-display">
+        <span>{title}</span>
+        <span>{message}</span>
+        <span>{details?.url}</span>
+        <span>{details?.parameters}</span>
+      </div>
+    )
+  ),
+  iframeWrapperMock: vi.fn(({ config }: { config: IframeConfig }) => (
+    <div data-testid="iframe-wrapper">
+      {typeof config.props.agentCard === 'string' ? config.props.agentCard : config.props.agentCard.url}
+    </div>
+  )),
+  parseIframeConfigMock: vi.fn(),
 }));
-vi.mock('../styles/base.css', () => ({}));
-vi.mock('./hooks/useIframeConfig', () => ({
-  useIframeConfig: vi.fn(() => ({
-    apiUrl: 'http://localhost:3000',
-    allowedOrigins: ['*'],
-    contextId: 'test-context',
-  })),
-}));
-vi.mock('../components/IframeWrapper', () => ({
-  IframeWrapper: vi.fn(() => null),
-}));
+
+vi.mock('react-dom/client', async () => {
+  const { act: rtlAct } = await vi.importActual<typeof TestingLibraryReact>('@testing-library/react');
+  const actual = await vi.importActual<typeof ReactDomClient>('react-dom/client');
+
+  return {
+    ...actual,
+    createRoot: (container: Parameters<typeof actual.createRoot>[0], options?: Parameters<typeof actual.createRoot>[1]) => {
+      const root = actual.createRoot(container, options);
+      const wrappedRoot = {
+        render: (node: Parameters<typeof root.render>[0]) => {
+          rtlAct(() => {
+            root.render(node);
+          });
+        },
+        unmount: () => {
+          root.unmount();
+        },
+      };
+
+      createdRoots.push(wrappedRoot);
+      return wrappedRoot;
+    },
+  };
+});
+
 vi.mock('../components/ErrorDisplay', () => ({
-  ErrorDisplay: vi.fn(() => null),
+  ErrorDisplay: errorDisplayMock,
 }));
+
+vi.mock('../components/IframeWrapper', () => ({
+  IframeWrapper: iframeWrapperMock,
+}));
+
+vi.mock('./utils/config-parser', () => ({
+  parseIframeConfig: parseIframeConfigMock,
+}));
+
+vi.mock('../styles/base.css', () => ({}));
 
 describe('iframe initialization', () => {
-  let mockCreateRoot: ReturnType<typeof vi.fn>;
-  let mockRoot: { render: ReturnType<typeof vi.fn> };
-  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+  const validAgentCardUrl = 'https://api.example.com/agent-card.json';
+  const validConfig: IframeConfig = {
+    inPortal: false,
+    mode: 'light',
+    multiSession: false,
+    props: {
+      agentCard: validAgentCardUrl,
+    },
+  };
+
+  const importIframe = async () => {
+    await act(async () => {
+      await import('./iframe');
+    });
+  };
 
   beforeEach(() => {
-    // Clear module cache to allow re-importing
     vi.resetModules();
-
-    // Mock createRoot
-    mockRoot = { render: vi.fn() };
-    mockCreateRoot = vi.fn().mockReturnValue(mockRoot);
-    vi.mocked(createRoot).mockImplementation(mockCreateRoot);
-
-    // Mock console.error
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    // Create chat-root element
+    vi.clearAllMocks();
+    createdRoots.length = 0;
     document.body.innerHTML = '<div id="chat-root"></div>';
+    window.history.replaceState({}, '', '/iframe?foo=bar');
 
-    // Mock document.readyState
     Object.defineProperty(document, 'readyState', {
+      configurable: true,
       value: 'complete',
       writable: true,
-      configurable: true,
     });
   });
 
   afterEach(() => {
-    consoleErrorSpy?.mockRestore();
-    vi.clearAllMocks();
+    cleanup();
+
+    while (createdRoots.length > 0) {
+      const root = createdRoots.pop();
+      root?.unmount();
+    }
+
     document.body.innerHTML = '';
   });
 
-  it('initializes successfully when chat-root element exists', async () => {
-    await import('./iframe');
+  it('renders the iframe wrapper when configuration parses successfully', async () => {
+    parseIframeConfigMock.mockReturnValue(validConfig);
 
-    // Wait a bit for initialization to complete
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await importIframe();
 
-    expect(mockCreateRoot).toHaveBeenCalledWith(document.getElementById('chat-root'));
-    expect(mockRoot.render).toHaveBeenCalled();
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
-  }, 10000);
-
-  it('displays error when chat-root element is missing', async () => {
-    document.body.innerHTML = '';
-
-    await import('./iframe');
-
-    // The code renders ErrorDisplay to document.body when chat-root is missing
-    expect(mockCreateRoot).toHaveBeenCalledWith(document.body);
-    expect(mockRoot.render).toHaveBeenCalled();
+    expect(await screen.findByTestId('iframe-wrapper')).toHaveTextContent(validAgentCardUrl);
+    expect(parseIframeConfigMock).toHaveBeenCalledTimes(1);
+    expect(errorDisplayMock).not.toHaveBeenCalled();
+    expect(iframeWrapperMock.mock.calls[0][0]).toMatchObject({ config: validConfig });
   });
 
-  it.skip('handles non-error objects gracefully', async () => {
-    document.body.innerHTML = '';
-
-    let callCount = 0;
-    // Mock createRoot to throw on first call, succeed on second
-    vi.mocked(createRoot).mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        throw 'String error';
-      }
-      // Return a mock root for the error display
-      return mockRoot;
+  it('renders a configuration error when parsing throws', async () => {
+    parseIframeConfigMock.mockImplementation(() => {
+      throw new Error('Invalid iframe configuration');
     });
 
-    await import('./iframe');
+    await importIframe();
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to initialize chat widget:', 'String error');
+    const errorDisplay = await screen.findByTestId('error-display');
 
-    // Should render error display
-    expect(mockRoot.render).toHaveBeenCalled();
+    expect(errorDisplay).toHaveTextContent('Configuration error');
+    expect(errorDisplay).toHaveTextContent('Invalid iframe configuration');
+    expect(errorDisplay).toHaveTextContent('http://localhost:3000/iframe?foo=bar');
+    expect(errorDisplay).toHaveTextContent('?foo=bar');
+    expect(parseIframeConfigMock).toHaveBeenCalledTimes(1);
+    expect(iframeWrapperMock).not.toHaveBeenCalled();
   });
 
-  it('waits for DOMContentLoaded when document is still loading', async () => {
+  it('renders nothing when parsing returns null without throwing', async () => {
+    parseIframeConfigMock.mockReturnValue(null);
+
+    await importIframe();
+
+    await waitFor(() => {
+      expect(parseIframeConfigMock).toHaveBeenCalledTimes(1);
+    });
+
+    expect(document.getElementById('chat-root')?.innerHTML).toBe('');
+    expect(screen.queryByTestId('iframe-wrapper')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('error-display')).not.toBeInTheDocument();
+  });
+
+  it('renders a load error when the chat root element is missing', async () => {
+    document.body.innerHTML = '';
+
+    await importIframe();
+
+    const errorDisplay = await screen.findByTestId('error-display');
+
+    expect(errorDisplay).toHaveTextContent('Failed to load chat widget');
+    expect(errorDisplay).toHaveTextContent('Chat root element not found');
+    expect(errorDisplay).toHaveTextContent('http://localhost:3000/iframe?foo=bar');
+    expect(errorDisplay).toHaveTextContent('?foo=bar');
+    expect(parseIframeConfigMock).not.toHaveBeenCalled();
+  });
+
+  it('waits for DOMContentLoaded when the document is still loading', async () => {
+    parseIframeConfigMock.mockReturnValue(validConfig);
+
     Object.defineProperty(document, 'readyState', {
+      configurable: true,
       value: 'loading',
       writable: true,
-      configurable: true,
     });
 
     const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
 
-    await import('./iframe');
+    await importIframe();
 
-    expect(addEventListenerSpy).toHaveBeenCalledWith('DOMContentLoaded', expect.any(Function));
-    expect(mockCreateRoot).not.toHaveBeenCalled();
+    const domContentLoadedHandler = addEventListenerSpy.mock.calls.find(
+      ([eventName]) => eventName === 'DOMContentLoaded'
+    )?.[1] as EventListener;
 
-    // Simulate DOMContentLoaded
-    const handler = addEventListenerSpy.mock.calls[0][1] as EventListener;
-    handler(new Event('DOMContentLoaded'));
+    expect(domContentLoadedHandler).toBeTypeOf('function');
+    expect(screen.queryByTestId('iframe-wrapper')).not.toBeInTheDocument();
 
-    expect(mockCreateRoot).toHaveBeenCalled();
-    expect(mockRoot.render).toHaveBeenCalled();
+    act(() => {
+      domContentLoadedHandler(new Event('DOMContentLoaded'));
+    });
+
+    expect(await screen.findByTestId('iframe-wrapper')).toHaveTextContent(validAgentCardUrl);
 
     addEventListenerSpy.mockRestore();
   });

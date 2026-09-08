@@ -7,12 +7,29 @@ import { Button, Spinner, Text } from '@fluentui/react-components';
 import { VSCodeContext } from '../../webviewCommunication';
 import type { RootState } from '../../state/store';
 import type { CreateWorkspaceState } from '../../state/createWorkspaceSlice';
-import { nextStep, previousStep, setCurrentStep, setFlowType, setLoading, resetState } from '../../state/createWorkspaceSlice';
+import {
+  nextStep,
+  previousStep,
+  setCurrentStep,
+  setFlowType,
+  setLoading,
+  resetState,
+  setProjectPath,
+  setWorkspaceName,
+} from '../../state/createWorkspaceSlice';
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // Import validation patterns and functions for navigation blocking
 import { ExtensionCommand, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { functionNameValidation, getValidationRequirements, nameValidation, namespaceValidation } from './utils/validation';
+import {
+  functionNameValidation,
+  getValidationRequirements,
+  isWorkspaceDescendantOfCurrentFolder,
+  joinPath,
+  nameValidation,
+  namespaceValidation,
+  pathsEqual,
+} from './utils/validation';
 import { useIntlMessages, useIntlFormatters, workspaceMessages } from '../../intl';
 import { CreateWorkflowSetup } from '../createWorkflow/createWorkflowSetup';
 
@@ -60,8 +77,10 @@ const CreateWorkspaceInternal = () => {
     logicAppsWithoutCustomCode,
     existingFolders,
     separator,
+    platform,
     isDevContainerProject,
     availableProjects,
+    currentFolderPath,
   } = createWorkspaceState;
 
   // Calculate total steps - always 2: Setup and Review + Create
@@ -161,14 +180,17 @@ const CreateWorkspaceInternal = () => {
   };
 
   const getWorkspaceExistencePaths = () => {
-    const workspaceFolder = `${workspaceProjectPath.fsPath}${separator}${workspaceName}`;
+    const workspaceFolder = joinPath(workspaceProjectPath.fsPath, workspaceName, separator);
     const workspaceFile = `${workspaceFolder}${separator}${workspaceName}.code-workspace`;
     return { workspaceFolder, workspaceFile };
   };
 
   const isWorkspaceNameAvailable = () => {
     const { workspaceFolder, workspaceFile } = getWorkspaceExistencePaths();
-    return workspaceExistenceResults[workspaceFolder] === false && workspaceExistenceResults[workspaceFile] === false;
+    // In the in-place case the folder already exists by definition — only block on .code-workspace file
+    const isInPlace = currentFolderPath && pathsEqual(workspaceFolder, currentFolderPath, platform);
+    const folderAvailable = isInPlace || workspaceExistenceResults[workspaceFolder] === false;
+    return folderAvailable && workspaceExistenceResults[workspaceFile] === false;
   };
 
   // Helper function to validate logic app name with support for existing logic apps
@@ -333,7 +355,14 @@ const CreateWorkspaceInternal = () => {
         if (flowType === FLOW_TYPES.ENSURE_WORKSPACE) {
           const workspacePathValid = workspaceProjectPath.fsPath !== '' && pathValidationResults[workspaceProjectPath.fsPath] === true;
           const workspaceNameValid = workspaceName.trim() !== '' && nameValidation.test(workspaceName.trim()) && isWorkspaceNameAvailable();
-          return workspacePathValid && workspaceNameValid;
+          const workspaceLocationValid = !isWorkspaceDescendantOfCurrentFolder(
+            workspaceProjectPath.fsPath,
+            workspaceName.trim(),
+            currentFolderPath,
+            separator,
+            platform
+          );
+          return workspacePathValid && workspaceNameValid && workspaceLocationValid;
         }
 
         // For other flow types, use the full validation
@@ -747,11 +776,24 @@ export const CreateWorkspaceFromPackage = () => {
 
 export const CreateWorkspaceStructure = () => {
   const dispatch = useDispatch();
+  const { currentFolderPath, separator } = useSelector((state: RootState) => state.createWorkspace) as CreateWorkspaceState;
 
   useEffect(() => {
     dispatch(resetState(undefined));
     dispatch(setFlowType(FLOW_TYPES.ENSURE_WORKSPACE));
-  }, [dispatch]);
+
+    // Auto-populate defaults from the current folder path (preserved across resetState).
+    // Default: workspaceProjectPath = parent of current folder, workspaceName = folder name.
+    if (currentFolderPath) {
+      const lastSep = currentFolderPath.lastIndexOf(separator);
+      if (lastSep > 0) {
+        const parentPath = currentFolderPath.substring(0, lastSep);
+        const folderName = currentFolderPath.substring(lastSep + 1);
+        dispatch(setProjectPath(parentPath));
+        dispatch(setWorkspaceName(folderName));
+      }
+    }
+  }, [dispatch, currentFolderPath, separator]);
 
   return <CreateWorkspaceInternal />;
 };

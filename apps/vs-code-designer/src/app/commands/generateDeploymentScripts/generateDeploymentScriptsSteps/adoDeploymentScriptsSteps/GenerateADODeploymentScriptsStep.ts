@@ -23,7 +23,7 @@ import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { parameterizeProjectConnections } from '../../../parameterizeConnections';
 import { FileManagement } from '../../iacGestureHelperFunctions';
-import { deploymentDirectory, extensionCommand, managementApiPrefix, workflowFileName } from '../../../../../constants';
+import { deploymentDirectory, managementApiPrefix, workflowFileName } from '../../../../../constants';
 import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
 import { startDesignTimeApi } from '../../../../utils/codeless/startDesignTimeApi';
 import { getAuthorizationToken, getCloudHost } from '../../../../utils/codeless/getAuthorizationToken';

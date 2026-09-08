@@ -753,12 +753,12 @@ describe('NuGet conversion debug lifecycle', function () {
     const workbench = new Workbench();
     const driver = workbench.getDriver();
 
+    seedBundleProjectFilesIfNeeded(entry);
+    seedRunnableWorkflow(entry);
     await openWorkspaceFileInSession(workbench, entry.wsFilePath);
     if (process.env.LA_E2E_SKIP_VALIDATION_WAIT !== '1') {
       await waitForDependencyValidation(driver);
     }
-    seedBundleProjectFilesIfNeeded(entry);
-    seedRunnableWorkflow(entry);
 
     await startDebugging(workbench, driver);
     await runAndVerifyWorkflow('bundle', workbench, driver, entry);

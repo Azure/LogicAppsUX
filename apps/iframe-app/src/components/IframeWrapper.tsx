@@ -19,7 +19,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const { props, multiSession, apiKey, oboUserToken, mode: initialMode = 'light', inPortal, trustedParentOrigin, contextId } = config;
 
   // State
-  const [agentCard, setAgentCard] = useState<any>(null);
+  const [agentCard, setAgentCard] = useState<ChatWidgetProps['agentCard'] | null>(null);
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(initialMode);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [needsLogin, setNeedsLogin] = useState(true);
@@ -144,6 +144,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   // Parent communication
   const { isWaitingForAgentCard } = useParentCommunication({
     enabled: expectPostMessage,
+    trustedParentOrigin,
     onAgentCardReceived: setAgentCard,
   });
 
