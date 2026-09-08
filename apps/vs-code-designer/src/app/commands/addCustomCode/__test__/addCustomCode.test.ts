@@ -4,14 +4,14 @@ import * as vscode from 'vscode';
 
 // Hoisted mocks
 const {
-  mockIsLogicAppProject,
+  mockIsLogicApp,
   mockHasCodefulSdkReference,
   mockTryGetLogicAppCustomCodeFunctionsProjects,
   mockCreateWorkspaceWebviewCommandHandler,
   mockShowErrorMessage,
   mockCallWithTelemetryAndErrorHandling,
 } = vi.hoisted(() => ({
-  mockIsLogicAppProject: vi.fn(),
+  mockIsLogicApp: vi.fn(),
   mockHasCodefulSdkReference: vi.fn(),
   mockTryGetLogicAppCustomCodeFunctionsProjects: vi.fn(),
   mockCreateWorkspaceWebviewCommandHandler: vi.fn(),
@@ -41,8 +41,8 @@ vi.mock('vscode', () => ({
   FileType: { Directory: 2 },
 }));
 
-vi.mock('../../../utils/verifyIsProject', () => ({
-  isLogicAppProject: mockIsLogicAppProject,
+vi.mock('../../../utils/workspace', () => ({
+  isLogicApp: mockIsLogicApp,
 }));
 
 vi.mock('../../../utils/codeful', () => ({
@@ -124,7 +124,7 @@ describe('addCustomCode', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockIsLogicAppProject.mockResolvedValue(false);
+    mockIsLogicApp.mockResolvedValue(false);
     mockHasCodefulSdkReference.mockResolvedValue(false);
     mockTryGetLogicAppCustomCodeFunctionsProjects.mockResolvedValue(undefined);
   });
@@ -136,7 +136,7 @@ describe('addCustomCode', () => {
   });
 
   it('should show error when folder is not a Logic App project', async () => {
-    mockIsLogicAppProject.mockResolvedValue(false);
+    mockIsLogicApp.mockResolvedValue(false);
     const uri = vscode.Uri.file('/workspace/notALogicApp');
     await addCustomCode(createContext(), uri);
     expect(mockShowErrorMessage).toHaveBeenCalledWith(expect.stringContaining('not a Logic App project'));
@@ -144,7 +144,7 @@ describe('addCustomCode', () => {
   });
 
   it('should show error when folder is a codeful project', async () => {
-    mockIsLogicAppProject.mockResolvedValue(true);
+    mockIsLogicApp.mockResolvedValue(true);
     mockHasCodefulSdkReference.mockResolvedValue(true);
     const uri = vscode.Uri.file('/workspace/codefulApp');
     await addCustomCode(createContext(), uri);
@@ -153,7 +153,7 @@ describe('addCustomCode', () => {
   });
 
   it('should show error when custom code already exists', async () => {
-    mockIsLogicAppProject.mockResolvedValue(true);
+    mockIsLogicApp.mockResolvedValue(true);
     mockHasCodefulSdkReference.mockResolvedValue(false);
     mockTryGetLogicAppCustomCodeFunctionsProjects.mockResolvedValue(['/workspace/MyFunctions']);
     const uri = vscode.Uri.file('/workspace/myLogicApp');
@@ -163,7 +163,7 @@ describe('addCustomCode', () => {
   });
 
   it('should show error when no workspace file is open', async () => {
-    mockIsLogicAppProject.mockResolvedValue(true);
+    mockIsLogicApp.mockResolvedValue(true);
     mockHasCodefulSdkReference.mockResolvedValue(false);
     mockTryGetLogicAppCustomCodeFunctionsProjects.mockResolvedValue([]);
     (vscode.workspace as any).workspaceFile = undefined;
@@ -174,7 +174,7 @@ describe('addCustomCode', () => {
   });
 
   it('should open wizard with pre-configured custom code data when all validations pass', async () => {
-    mockIsLogicAppProject.mockResolvedValue(true);
+    mockIsLogicApp.mockResolvedValue(true);
     mockHasCodefulSdkReference.mockResolvedValue(false);
     mockTryGetLogicAppCustomCodeFunctionsProjects.mockResolvedValue([]);
     const workspaceUri = vscode.Uri.file('/workspace/myWorkspace.code-workspace');

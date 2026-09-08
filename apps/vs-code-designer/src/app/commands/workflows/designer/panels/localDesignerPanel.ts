@@ -1,9 +1,4 @@
-import {
-  assetsFolderName,
-  logicAppsStandardExtensionId,
-  managementApiPrefix,
-  workflowAppApiVersion,
-} from '../../../../../constants';
+import { assetsFolderName, logicAppsStandardExtensionId, managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
@@ -21,7 +16,6 @@ import {
   getConnectionsFromFile,
   getCustomCodeFromFiles,
   getCustomCodeToUpdate,
-  getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
   saveCustomCodeStandard,
@@ -51,6 +45,7 @@ import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
 import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { getParentLogicAppRoot } from '../../../../utils/workspace';
 
 export default class LocalDesignerPanel extends DesignerPanel {
   private readonly workflowFilePath: string;
@@ -83,7 +78,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
       return;
     }
 
-    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getParentLogicAppRoot(this.workflowFilePath);
     if (!this.projectPath) {
       throw new Error(localize('projectPathUndefined', 'Unable to determine project root folder.'));
     }
@@ -340,7 +335,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
   /**
    * Saves workflow locally in the workflow.json.
-   * @param {string} filePath - File path of file to save the workflow.
+   * @param {string} workflowFilePath - File path of file to save the workflow.
    * @param {any} workflow - Local workflow schema before changes .
    * @param {any} workflowToSave - Workflow schema to save.
    * @param {string} azureTenantId - Tenant id from azure.
@@ -348,7 +343,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
    */
   private async saveWorkflow(
     context: IActionContext,
-    filePath: string,
+    workflowFilePath: string,
     workflow: any,
     workflowToSave: any,
     panelParameterRecord: Record<string, Parameter>,
@@ -365,7 +360,12 @@ export default class LocalDesignerPanel extends DesignerPanel {
         const { definition, connectionReferences, parameters, customCodeData } = workflowToSave;
         const definitionToSave: any = definition;
         const parametersFromDefinition = parameters;
-        const projectPath = await getLogicAppProjectRoot(this.context, filePath);
+        const projectPath = await getParentLogicAppRoot(workflowFilePath);
+        if (!projectPath) {
+          throw new Error(
+            localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', workflowFilePath)
+          );
+        }
 
         workflow.definition = definitionToSave;
 
@@ -383,8 +383,8 @@ export default class LocalDesignerPanel extends DesignerPanel {
         }
 
         if (customCodeData) {
-          const customCodeToUpdate = await getCustomCodeToUpdate(this.context, filePath, customCodeData);
-          await saveCustomCodeStandard(this.context, filePath, customCodeToUpdate);
+          const customCodeToUpdate = await getCustomCodeToUpdate(this.context, workflowFilePath, customCodeData);
+          await saveCustomCodeStandard(workflowFilePath, customCodeToUpdate);
         }
 
         if (parametersFromDefinition) {
@@ -394,11 +394,11 @@ export default class LocalDesignerPanel extends DesignerPanel {
             parameter.value = parameter.value ?? parameter.defaultValue;
             delete parameter.defaultValue;
           }
-          await mergeJsonParameters(this.context, filePath, parametersFromDefinition, panelParameterRecord);
-          await saveWorkflowParameter(this.context, filePath, parametersFromDefinition);
+          await mergeJsonParameters(this.context, workflowFilePath, parametersFromDefinition, panelParameterRecord);
+          await saveWorkflowParameter(this.context, workflowFilePath, parametersFromDefinition);
         }
 
-        writeFileSync(filePath, JSON.stringify(workflow, null, 4));
+        writeFileSync(workflowFilePath, JSON.stringify(workflow, null, 4));
         this.panel?.webview.postMessage({
           command: ExtensionCommand.resetDesignerDirtyState,
         });
@@ -463,9 +463,9 @@ export default class LocalDesignerPanel extends DesignerPanel {
   }
 
   private async getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<DesignerPanelMetadata> {
-    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    const projectPath: string | undefined = await getParentLogicAppRoot(this.workflowFilePath);
     if (!projectPath) {
-      throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
+      throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
     }
 
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
@@ -473,8 +473,8 @@ export default class LocalDesignerPanel extends DesignerPanel {
 
     const [connectionsData, parametersData, customCodeData, workflowDetails, artifacts, bundleVersionNumber, azureDetails] =
       await Promise.all([
-        getConnectionsFromFile(this.context, this.workflowFilePath),
-        getParametersFromFile(this.context, this.workflowFilePath),
+        getConnectionsFromFile(this.workflowFilePath),
+        getParametersFromFile(this.workflowFilePath),
         getCustomCodeFromFiles(this.workflowFilePath),
         getManualWorkflowsInLocalProject(projectPath, this.workflowName),
         getArtifactsInLocalProject(projectPath),

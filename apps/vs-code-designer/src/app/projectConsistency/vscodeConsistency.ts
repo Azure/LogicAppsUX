@@ -34,7 +34,7 @@ import { ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-log
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
-import { getWorkspaceLogicAppRoots } from '../utils/workspace';
+import { getLogicAppRoots } from '../utils/workspace';
 
 /**
  * Ensures that the VS Code configuration files for all Logic App projects in the workspace are present and up-to-date.
@@ -43,7 +43,7 @@ import { getWorkspaceLogicAppRoots } from '../utils/workspace';
  * @returns {Promise<void>} A promise that resolves when the check is complete.
  */
 export async function ensureVSCodeFiles(context: IActionContext, projectPaths?: string[]): Promise<void> {
-  projectPaths ??= await getWorkspaceLogicAppRoots();
+  projectPaths ??= await getLogicAppRoots();
 
   if (!projectPaths || projectPaths.length === 0 || !isProjectConsistencyCheckEnabled()) {
     return;

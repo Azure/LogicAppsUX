@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   autoStartAzuriteSetting,
   azuriteBinariesLocationSetting,
@@ -47,14 +47,6 @@ vi.mock('../../../state/notifications', () => ({
   suppressAutoStartAzuriteNotification: vi.fn(),
 }));
 
-vi.mock('../../workspace', () => ({
-  getWorkspaceFolder: vi.fn(),
-}));
-
-vi.mock('../../verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(),
-}));
-
 vi.mock('../../../debug/validatePreDebug', () => ({
   validateEmulatorIsRunning: vi.fn(),
 }));
@@ -71,12 +63,9 @@ vi.mock('../../delay', () => ({
   delay: vi.fn(),
 }));
 
-import * as vscode from 'vscode';
 import { activateAzurite, azuriteStartupRetryCount, azuriteStartupRetryDelayMs } from '../activateAzurite';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../../vsCodeConfig/settings';
 import { isAutoStartAzuriteNotificationSuppressed, suppressAutoStartAzuriteNotification } from '../../../state/notifications';
-import { getWorkspaceFolder } from '../../workspace';
-import { tryGetLogicAppProjectRoot } from '../../verifyIsProject';
 import { getAzureWebJobsStorage } from '../../appSettings/localSettings';
 import { validateEmulatorIsRunning } from '../../../debug/validatePreDebug';
 import { executeOnAzurite } from '../../../azuriteExtension/executeOnAzuriteExt';
@@ -138,38 +127,11 @@ function createContext(overrides?: { showWarningMessage?: any; showInputBox?: an
 describe('activateAzurite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (vscode.workspace as any).workspaceFolders = [{ uri: { fsPath: PROJECT_PATH } }];
     (getAzureWebJobsStorage as any).mockResolvedValue(localEmulatorConnectionString);
     (validateEmulatorIsRunning as any).mockResolvedValue(false);
     // Default: the start command succeeds. Set explicitly so a rejected implementation from one
     // test cannot leak into the next (clearAllMocks resets calls, not implementations).
     (executeOnAzurite as any).mockResolvedValue(undefined);
-  });
-
-  afterEach(() => {
-    (vscode.workspace as any).workspaceFolders = [];
-  });
-
-  it('returns early and touches no settings when there are no workspace folders', async () => {
-    (vscode.workspace as any).workspaceFolders = [];
-    await activateAzurite(createContext(), PROJECT_PATH);
-    expect(getWorkspaceSetting).not.toHaveBeenCalled();
-    expect(updateGlobalSetting).not.toHaveBeenCalled();
-    expect(executeOnAzurite).not.toHaveBeenCalled();
-  });
-
-  it('resolves the project root when no projectPath is provided and returns early when none is found', async () => {
-    (getWorkspaceFolder as any).mockResolvedValue({ uri: { fsPath: PROJECT_PATH } });
-    (tryGetLogicAppProjectRoot as any).mockResolvedValue(undefined);
-    const ctx = createContext();
-
-    await activateAzurite(ctx);
-
-    // With no resolvable project root the function returns before reading/writing any settings.
-    expect(tryGetLogicAppProjectRoot).toHaveBeenCalled();
-    expect(getWorkspaceSetting).not.toHaveBeenCalled();
-    expect(updateGlobalSetting).not.toHaveBeenCalled();
-    expect(executeOnAzurite).not.toHaveBeenCalled();
   });
 
   it('only disables the warning when the user selects "Don\'t warn again"', async () => {

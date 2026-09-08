@@ -1,6 +1,7 @@
 import AdmZip from 'adm-zip';
 import type { ChildProcessWithoutNullStreams } from 'child_process';
 import { mkdtemp, rm } from 'fs/promises';
+import { tmpdir } from 'os';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -20,6 +21,8 @@ interface CodeLensResult {
     arguments?: unknown[];
   };
 }
+
+const lspAssetsDirectory = path.resolve(__dirname, '..', '..', '..', 'assets', 'LSPServer');
 
 class LspProcess {
   private nextId = 1;
@@ -93,6 +96,8 @@ class LspProcess {
     if (!this.child.killed) {
       this.child.kill();
     }
+
+    await this.waitForExit();
   }
 
   private write(message: JsonRpcMessage & { jsonrpc: '2.0' }): void {
@@ -136,6 +141,24 @@ class LspProcess {
       }
     }
   }
+
+  private async waitForExit(): Promise<void> {
+    if (this.child.exitCode !== null || this.child.signalCode !== null) {
+      return;
+    }
+
+    await new Promise<void>((resolve) => {
+      const onExit = () => {
+        clearTimeout(timeout);
+        resolve();
+      };
+      const timeout = setTimeout(() => {
+        this.child.off('exit', onExit);
+        resolve();
+      }, 10_000);
+      this.child.once('exit', onExit);
+    });
+  }
 }
 
 describe('bundled LSP server CodeLens', () => {
@@ -146,7 +169,7 @@ describe('bundled LSP server CodeLens', () => {
     await lspProcess?.dispose();
     lspProcess = undefined;
 
-    await Promise.all(tempDirectories.map((directory) => rm(directory, { recursive: true, force: true })));
+    await Promise.all(tempDirectories.map((directory) => rm(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })));
     tempDirectories = [];
   });
 
@@ -204,11 +227,11 @@ describe('bundled LSP server CodeLens', () => {
 
   async function startBundledLspServer(initializationOptions?: Record<string, unknown>): Promise<LspProcess> {
     const extractDirectory = await createTempDirectory();
-    const zipPath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'LSPServer.zip');
+    const zipPath = path.join(lspAssetsDirectory, 'LSPServer.zip');
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
     const serverDllPath = path.join(extractDirectory, 'SdkLspServer.dll');
-    const sdkPackagePath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const sdkPackagePath = path.join(lspAssetsDirectory, 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -234,7 +257,7 @@ describe('bundled LSP server CodeLens', () => {
   }
 
   async function createTempDirectory(): Promise<string> {
-    const directory = await mkdtemp(path.join(process.cwd(), 'logicapps-lsp-codelens-'));
+    const directory = await mkdtemp(path.join(tmpdir(), 'logicapps-lsp-codelens-'));
     tempDirectories.push(directory);
     return directory;
   }

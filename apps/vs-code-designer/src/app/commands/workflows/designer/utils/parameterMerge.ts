@@ -18,7 +18,7 @@ export async function mergeJsonParameters(
   definitionParameters: any,
   panelParameterRecord: Record<string, Parameter>
 ): Promise<void> {
-  const jsonParameters = await getParametersFromFile(context, filePath);
+  const jsonParameters = await getParametersFromFile(filePath);
 
   Object.entries(jsonParameters).forEach(([key, parameter]) => {
     if (!definitionParameters[key] && !panelParameterRecord[key]) {

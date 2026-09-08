@@ -15,7 +15,6 @@ import {
   addConnection,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
-  getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
 } from '../../../../utils/codeless/connection';
@@ -30,6 +29,7 @@ import * as vscode from 'vscode';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
 import { saveWorkflowParameter } from '../../../../utils/codeless/parameter';
+import { getParentLogicAppRoot } from '../../../../utils/workspace';
 
 export default class ConnectionPanel extends DesignerPanel {
   private readonly workflowFilePath: string;
@@ -71,11 +71,9 @@ export default class ConnectionPanel extends DesignerPanel {
       return;
     }
 
-    // TODO(aeldridge): this.projectPath should not be nullable, set in ctor (here and designer panels)
-    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-
+    this.projectPath = await getParentLogicAppRoot(this.workflowFilePath);
     if (!this.projectPath) {
-      throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
+      throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
     }
 
     // Create webview panel first for immediate visual feedback
@@ -94,9 +92,12 @@ export default class ConnectionPanel extends DesignerPanel {
     this.panel.webview.html = this.getLoadingHtml();
 
     // Start design time API and load metadata in parallel
-    const startDesignTimePromise = callWithTelemetryAndErrorHandling('ConnectionPanel.create.startDesignTimeApi', async (actionContext: IActionContext) => {
-      await startDesignTimeApi(actionContext, this.projectPath!);
-    });
+    const startDesignTimePromise = callWithTelemetryAndErrorHandling(
+      'ConnectionPanel.create.startDesignTimeApi',
+      async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, this.projectPath!);
+      }
+    );
     const [_, panelMetadata] = await Promise.all([startDesignTimePromise, this.getConnectionPanelMetadata()]);
 
     if (!ext.designTimeInstances.has(this.projectPath)) {
@@ -229,12 +230,12 @@ export default class ConnectionPanel extends DesignerPanel {
         break;
       }
       case ExtensionCommand.insert_connection: {
-        await callWithTelemetryAndErrorHandling('InsertConnectionView', async (activateContext: IActionContext) => {
+        await callWithTelemetryAndErrorHandling('ConnectionPanel.insertConnection', async (actionContext: IActionContext) => {
           const { connection, connectionReferences, connectionAndSetting } = message;
 
           // For local connections, the React side captures the connection data from the writeConnection callback and includes it here.
           if (connectionAndSetting) {
-            await addConnection(activateContext, this.workflowFilePath, connectionAndSetting);
+            await addConnection(actionContext, this.workflowFilePath, connectionAndSetting);
           }
 
           await this.saveConnection(
@@ -272,7 +273,12 @@ export default class ConnectionPanel extends DesignerPanel {
     azureTenantId?: string,
     workflowBaseManagementUri?: string
   ) {
-    const projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    const projectPath = await getParentLogicAppRoot(this.workflowFilePath);
+    if (!projectPath) {
+      throw new Error(
+        localize('noProjectFoundForWorkflow', 'No Logic App project found in the workspace for workflow file: {0}', this.workflowFilePath)
+      );
+    }
 
     // Process connection references FIRST so connections.json is written
     const parametersFromDefinition = {} as any;
@@ -313,7 +319,7 @@ export default class ConnectionPanel extends DesignerPanel {
    * Merges parameters from JSON.
    */
   private async mergeJsonParameters(filePath: string, definitionParameters: any): Promise<void> {
-    const jsonParameters = await getParametersFromFile(this.context, filePath);
+    const jsonParameters = await getParametersFromFile(filePath);
 
     Object.entries(jsonParameters).forEach(([key, parameter]) => {
       if (!definitionParameters[key]) {
@@ -323,15 +329,14 @@ export default class ConnectionPanel extends DesignerPanel {
   }
 
   private async getConnectionPanelMetadata(): Promise<ConnectionPanelMetadata> {
-    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
-
+    const projectPath: string | undefined = await getParentLogicAppRoot(this.workflowFilePath);
     if (!projectPath) {
-      throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
+      throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
     }
 
     const [connectionsData, parametersData, artifacts, bundleVersionNumber, azureDetails] = await Promise.all([
-      getConnectionsFromFile(this.context, this.workflowFilePath),
-      getParametersFromFile(this.context, this.workflowFilePath),
+      getConnectionsFromFile(this.workflowFilePath),
+      getParametersFromFile(this.workflowFilePath),
       getArtifactsInLocalProject(projectPath),
       getBundleVersionNumber(),
       getAzureConnectorDetailsForLocalProject(this.context, projectPath),
@@ -365,7 +370,7 @@ export default class ConnectionPanel extends DesignerPanel {
     }
 
     try {
-      const connectionsJsonString = await getConnectionsFromFile(this.context, this.workflowFilePath);
+      const connectionsJsonString = await getConnectionsFromFile(this.workflowFilePath);
       if (!connectionsJsonString) {
         return connectionName;
       }

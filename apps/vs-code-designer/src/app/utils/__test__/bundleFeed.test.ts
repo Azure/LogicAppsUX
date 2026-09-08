@@ -154,8 +154,8 @@ vi.mock('../appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn().mockResolvedValue({}),
 }));
 
-vi.mock('../verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project/path'),
+vi.mock('../workspace', () => ({
+  selectLogicAppRoot: vi.fn().mockResolvedValue('/mock/project/path'),
 }));
 
 // Mock the design-time launcher so we can observe the deferred post-install
@@ -584,8 +584,8 @@ describe('getLatestVersionRange', () => {
 
 describe('getBundleDependencyFeed', () => {
   it('loads dependency feed using a local settings source URI override', async () => {
-    const verifyIsProjectMod = await import('../verifyIsProject');
-    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
+    const workspaceModule = await import('../workspace');
+    vi.mocked(workspaceModule.selectLogicAppRoot).mockResolvedValue('/mock/project/path');
     const mockedGetLocalSettingsJson = await import('../appSettings/localSettings');
     vi.mocked(mockedGetLocalSettingsJson.getLocalSettingsJson).mockResolvedValue({
       Values: {
@@ -601,6 +601,7 @@ describe('getBundleDependencyFeed', () => {
       context,
       `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
     );
+    expect(workspaceModule.selectLogicAppRoot).toHaveBeenCalledWith(context, true);
   });
 });
 
@@ -906,9 +907,9 @@ describe('downloadExtensionBundle', () => {
     // Default: HEAD request returns nothing — keeps tests that don't care about sidecar simple.
     const integrityModule = await import('../integrity');
     vi.mocked(integrityModule.fetchExpectedMd5).mockResolvedValue(undefined);
-    // Re-establish tryGetLogicAppProjectRoot mock after clearAllMocks
-    const verifyIsProjectMod = await import('../verifyIsProject');
-    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
+    // Re-establish selectLogicAppRoot mock after clearAllMocks
+    const workspaceModule = await import('../workspace');
+    vi.mocked(workspaceModule.selectLogicAppRoot).mockResolvedValue('/mock/project/path');
     // Default: the daily update-check throttle reports "due" so the feed-backed
     // flow runs. `vi.clearAllMocks()` keeps mock implementations, so a prior
     // throttle test that forced `false` would otherwise leak into this one.
@@ -1940,10 +1941,10 @@ describe('getExtensionBundleBaseUrl', () => {
     ({ getExtensionBundleBaseUrl } = await import('../bundleFeed'));
     settingsModule = await import('../vsCodeConfig/settings');
     localSettingsMod = await import('../appSettings/localSettings');
-    const verifyIsProjectMod = await import('../verifyIsProject');
+    const workspaceModule = await import('../workspace');
     vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(undefined);
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({} as any);
-    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
+    vi.mocked(workspaceModule.selectLogicAppRoot).mockResolvedValue('/mock/project/path');
   });
 
   const ctx = () => ({
@@ -2858,8 +2859,8 @@ describe('short-circuit verification (envVar / experimental pins)', () => {
     vi.mocked(settingsMod.getGlobalSetting).mockReturnValue(undefined);
     const localSettingsMod = await import('../appSettings/localSettings');
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({} as any);
-    const verifyIsProjectMod = await import('../verifyIsProject');
-    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
+    const workspaceModule = await import('../workspace');
+    vi.mocked(workspaceModule.selectLogicAppRoot).mockResolvedValue('/mock/project/path');
     vi.mocked(fse.readFile).mockReset();
     vi.mocked(fse.outputFile).mockResolvedValue(undefined as any);
   });

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcVersionSetting, projectLanguageSetting, projectSubpathSetting } from '../../constants';
+import { funcVersionSetting, projectLanguageSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { isLocalProjectCV, isProjectCV, isRemoteProjectCV } from '../utils/tree/projectContextValues';
@@ -38,7 +38,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
           async (context: IActionContext) => {
             context.errorHandling.suppressDisplay = true;
             context.telemetry.suppressIfSuccessful = true;
-            const settings: string[] = [projectLanguageSetting, funcVersionSetting, projectSubpathSetting];
+            const settings: string[] = [projectLanguageSetting, funcVersionSetting];
             if (settings.some((s) => e.affectsConfiguration(`${ext.prefix}.${s}`))) {
               await this.refresh(context);
             }

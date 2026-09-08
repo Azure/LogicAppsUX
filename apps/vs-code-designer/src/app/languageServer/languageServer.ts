@@ -1,18 +1,10 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import {
-  autoRuntimeDependenciesPathSettingKey,
-  connectionsFileName,
-  lspDirectory,
-  onStartLanguageServer,
-  workflowAppApiVersion,
-} from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, connectionsFileName, lspDirectory, workflowAppApiVersion } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceFolderPath } from '../commands/workflows/switchDebugMode/switchDebugMode';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import path from 'path';
 import * as fse from 'fs-extra';
 import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
@@ -22,30 +14,21 @@ import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
 import { localize } from '../../localize';
+import { getLogicAppRoots } from '../utils/workspace';
 
 export default class LogicAppsLanguageServer {
   protected lspServerPath: string | undefined;
   protected sdkNupkgPath: string | undefined;
   protected apiVersion = workflowAppApiVersion;
-  private projectPath: string | undefined;
+  private projectPath: string;
   protected readonly context: IActionContext;
 
-  constructor(context: IActionContext) {
+  constructor(context: IActionContext, projectPath: string) {
     this.context = context;
+    this.projectPath = projectPath;
   }
 
   public async start(): Promise<void> {
-    if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
-      return;
-    }
-
-    const workspaceFolder = await getWorkspaceFolderPath(this.context);
-    this.projectPath = await tryGetLogicAppProjectRoot(this.context, workspaceFolder, true /* suppressPrompt */);
-
-    if (!this.projectPath) {
-      return;
-    }
-
     const { lspServerPath, sdkNupkgPath } = await this.getSDKPaths();
 
     this.lspServerPath = lspServerPath;
@@ -213,10 +196,6 @@ export default class LogicAppsLanguageServer {
   }
 
   private async getMetadata() {
-    if (!this.projectPath) {
-      throw new Error('Logic Apps language server cannot start without a Logic App project path.');
-    }
-
     const azureDetails: AzureConnectorDetails = await getAzureConnectorDetailsForLocalProject(this.context, this.projectPath);
     const connectionFilePath: string = path.join(this.projectPath, connectionsFileName);
 
@@ -269,11 +248,13 @@ export default class LogicAppsLanguageServer {
   }
 }
 
-export async function startLanguageServer(): Promise<void> {
-  await callWithTelemetryAndErrorHandling(onStartLanguageServer, async (context: IActionContext) => {
-    const languageServer = new LogicAppsLanguageServer(context);
+export async function startLanguageServers(context: IActionContext): Promise<void> {
+  const projectPaths = await getLogicAppRoots({ isCodeful: true });
+  const startLanguageServerPromises = projectPaths.map(async (projectPath) => {
+    const languageServer = new LogicAppsLanguageServer(context, projectPath);
     await languageServer.start();
   });
+  await Promise.all(startLanguageServerPromises);
 }
 
 /**

@@ -31,7 +31,7 @@ import * as yazl from 'yazl';
 import * as os from 'os';
 import { createContainerClient } from '../../../utils/azureClients';
 
-export async function deployHybridLogicApp(context: IActionContext, node: SlotTreeItem): Promise<void> {
+export async function deployHybridLogicApp(context: IActionContext, node: SlotTreeItem, projectPath: string): Promise<void> {
   const mountDrive: string = getWorkspaceSetting<string>(driveLetterSMBSetting);
 
   try {
@@ -58,7 +58,7 @@ export async function deployHybridLogicApp(context: IActionContext, node: SlotTr
         const currentSmbFolder = smbPathParts.length === 2 ? smbPathParts[1] : null;
         node.fileShare.path = smbPathParts[0];
 
-        await connectToSMB(context, node, newSmbFolderName, mountDrive);
+        await connectToSMB(context, node, projectPath, newSmbFolderName, mountDrive);
 
         progress.report({
           increment: 16,

@@ -6,7 +6,7 @@ import type { DebugConfiguration, WorkspaceConfiguration, WorkspaceFolder } from
 import { workspace } from 'vscode';
 import { localize } from '../../../localize';
 import { UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { getContainingWorkspaceFolder } from '../workspace';
+import { getParentWorkspaceFolder } from '../workspace';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import * as vscode from 'vscode';
 
@@ -21,7 +21,7 @@ const versionKey = 'version';
  * @returns {Promise<void>} - A promise that resolves when the debugger has started.
  */
 export async function launchProjectDebugger(context: IActionContext, projectPath: string): Promise<void> {
-  const workspaceFolder = getContainingWorkspaceFolder(projectPath);
+  const workspaceFolder = getParentWorkspaceFolder(projectPath);
   const debugConfig = await getDebugConfig(context, workspaceFolder);
   if (!isNullOrUndefined(debugConfig)) {
     await vscode.debug.startDebugging(workspaceFolder, debugConfig);

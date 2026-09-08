@@ -2,18 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  extensionCommand,
-  workflowLocationKey,
-  workflowResourceGroupNameKey,
-  workflowSubscriptionIdKey,
-  workflowTenantIdKey,
-} from '../../../constants';
+import { workflowLocationKey, workflowResourceGroupNameKey, workflowSubscriptionIdKey, workflowTenantIdKey } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
-import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
+import { selectLogicAppRoot, isMultiRootWorkspace, isLogicApp } from '../../utils/workspace';
 import { AzureWizard, callWithTelemetryAndErrorHandling, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, DeploymentTargetType } from '@microsoft/vscode-extension-logic-apps';
 import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
@@ -52,36 +45,41 @@ export interface IAzureDeploymentScriptsContext extends IProjectWizardContext, I
  * @returns {Promise<void>} - A promise that resolves when the deployment scripts are generated.
  */
 export async function generateDeploymentScripts(context: IActionContext, node?: vscode.Uri): Promise<void> {
-  let projectPath: string;
-
   try {
     ext.outputChannel.show();
     ext.outputChannel.appendLog(localize('initScriptGen', 'Starting deployment script generation...'));
     addLocalFuncTelemetry(context);
 
     context.telemetry.properties.lastStep = 'ensureWorkspace';
-    const isWorkspaceReady = await callWithTelemetryAndErrorHandling('generateDeploymentScripts.ensureWorkspace', async (actionContext: IActionContext) => {
-      actionContext.errorHandling.rethrow = true;
-      actionContext.errorHandling.suppressDisplay = true;
-      return await ensureWorkspace(actionContext);
-    });
-    
+    const isWorkspaceReady = await callWithTelemetryAndErrorHandling(
+      'generateDeploymentScripts.ensureWorkspace',
+      async (actionContext: IActionContext) => {
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        return await ensureWorkspace(actionContext);
+      }
+    );
+
     if (!isWorkspaceReady) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting deployment script generation...'));
       context.telemetry.properties.result = 'Canceled';
       return;
     }
 
-    context.telemetry.properties.lastStep = 'isLogicAppProject';
-    if (node && node.fsPath && (await isLogicAppProject(node.fsPath))) {
-      projectPath = node.fsPath;
-    } else {
-      const workspaceFolder = await getWorkspaceFolder(context);
-      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    }
+    context.telemetry.properties.lastStep = 'getLogicAppProjectRoot';
+    const projectPath = node && (await isLogicApp(node.fsPath)) ? node.fsPath : await selectLogicAppRoot(context);
+
     if (!projectPath) {
-      throw new Error('No Logic App project found.');
+      throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
     }
+
+    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)
+      ? ext.pinnedBundleVersion.get(projectPath)!.toString()
+      : 'false';
+
+    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion.has(projectPath)
+      ? ext.currentBundleVersion.get(projectPath)
+      : ext.defaultBundleVersion;
 
     context.telemetry.properties.lastStep = 'getDeploymentScriptsWizardContext';
     const wizardContext = await getDeploymentScriptsWizardContext(context, projectPath);
@@ -97,13 +95,6 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
 
     ext.outputChannel.appendLog(localize('completeAzureDeploymentScriptsWizard', 'Azure deployment scripts wizard executed successfully.'));
   } catch (error) {
-    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)
-      ? ext.pinnedBundleVersion.get(projectPath).toString()
-      : 'false';
-    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion.has(projectPath)
-      ? ext.currentBundleVersion.get(projectPath)
-      : ext.defaultBundleVersion;
-
     if (error instanceof UserCancelledError) {
       context.telemetry.properties.result = 'Canceled';
       return;

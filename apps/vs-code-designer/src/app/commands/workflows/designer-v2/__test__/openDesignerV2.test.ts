@@ -7,7 +7,8 @@ vi.mock('../../../../../localize', () => ({
 }));
 
 vi.mock('../../../../utils/workspace', () => ({
-  getWorkflowNode: vi.fn((node: any) => node),
+  getActiveWorkflowNode: vi.fn(),
+  getParentLogicAppRoot: vi.fn(),
 }));
 
 vi.mock('../../../../utils/customCodeUtils', () => ({
@@ -15,7 +16,7 @@ vi.mock('../../../../utils/customCodeUtils', () => ({
 }));
 
 vi.mock('../../../buildCustomCodeFunctionsProject', () => ({
-  tryBuildCustomCodeFunctionsProject: vi.fn().mockResolvedValue(undefined),
+  tryBuildCustomCodeFunctionsProjectInternal: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
@@ -35,17 +36,21 @@ vi.mock('../panels/remoteDesignerV2Panel', () => ({
 }));
 
 import { openDesignerV2 } from '../openDesignerV2';
-import { tryBuildCustomCodeFunctionsProject } from '../../../buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProjectInternal } from '../../../buildCustomCodeFunctionsProject';
 import { customCodeArtifactsExist } from '../../../../utils/customCodeUtils';
 import { shouldAlwaysBuildCustomCode } from '../../../../utils/vsCodeConfig/settings';
+import { getActiveWorkflowNode, getParentLogicAppRoot } from '../../../../utils/workspace';
 
 describe('openDesignerV2', () => {
   const mockContext = { telemetry: { properties: {} } } as any;
+  const projectPath = '/test/project';
 
   beforeEach(() => {
     vi.clearAllMocks();
     (ext as any).outputChannel = { appendLog: vi.fn() };
     vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 2) } as any);
+    vi.mocked(getActiveWorkflowNode).mockReturnValue(undefined);
+    vi.mocked(getParentLogicAppRoot).mockResolvedValue(projectPath);
   });
 
   it('skips custom code build when opened with runId (monitoring mode)', async () => {
@@ -53,7 +58,7 @@ describe('openDesignerV2', () => {
 
     await openDesignerV2(mockContext, mockUri, 'workflows/myWorkflow/runs/run-1');
 
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
     expect(customCodeArtifactsExist).not.toHaveBeenCalled();
   });
 
@@ -63,8 +68,10 @@ describe('openDesignerV2', () => {
 
     await openDesignerV2(mockContext, mockUri);
 
-    expect(customCodeArtifactsExist).toHaveBeenCalled();
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(getActiveWorkflowNode).not.toHaveBeenCalled();
+    expect(getParentLogicAppRoot).toHaveBeenCalledWith(mockUri.fsPath);
+    expect(customCodeArtifactsExist).toHaveBeenCalledWith(projectPath);
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
   });
 
   it('builds custom code when artifacts do not exist', async () => {
@@ -73,7 +80,7 @@ describe('openDesignerV2', () => {
 
     await openDesignerV2(mockContext, mockUri);
 
-    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).toHaveBeenCalledWith(expect.any(Object), projectPath);
   });
 
   it('builds custom code when alwaysBuildCustomCode setting is enabled', async () => {
@@ -83,7 +90,7 @@ describe('openDesignerV2', () => {
 
     await openDesignerV2(mockContext, mockUri);
 
-    expect(tryBuildCustomCodeFunctionsProject).toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).toHaveBeenCalledWith(expect.any(Object), projectPath);
   });
 
   it('does not build custom code in monitoring mode even with alwaysBuild enabled', async () => {
@@ -92,16 +99,25 @@ describe('openDesignerV2', () => {
 
     await openDesignerV2(mockContext, mockUri, 'workflows/myWorkflow/runs/run-1');
 
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
   });
 
   it('logs and returns early when node is undefined', async () => {
-    const { getWorkflowNode } = await import('../../../../utils/workspace');
-    vi.mocked(getWorkflowNode).mockReturnValue(undefined);
+    await openDesignerV2(mockContext, undefined);
+
+    expect(getActiveWorkflowNode).toHaveBeenCalledOnce();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProjectInternal).not.toHaveBeenCalled();
+  });
+
+  it('falls back to the active workflow when no node is supplied', async () => {
+    const activeWorkflow = { fsPath: '/test/project/activeWorkflow/workflow.json' } as any;
+    vi.mocked(getActiveWorkflowNode).mockReturnValue(activeWorkflow);
 
     await openDesignerV2(mockContext, undefined);
 
-    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
-    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(getActiveWorkflowNode).toHaveBeenCalledOnce();
+    expect(getParentLogicAppRoot).toHaveBeenCalledWith(activeWorkflow.fsPath);
+    expect(mockCreate).toHaveBeenCalled();
   });
 });

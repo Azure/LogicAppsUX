@@ -146,10 +146,10 @@ export function getFunctionsWorkerRuntime(language: string | undefined): WorkerR
 export async function updateWorkspaceSetting<T = string>(
   section: string,
   value: T,
-  fsPath: string,
+  fsPath?: string,
   prefix: string = ext.prefix
 ): Promise<void> {
-  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, Uri.file(fsPath));
+  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, fsPath ? Uri.file(fsPath) : undefined);
   await projectConfiguration.update(section, value);
 }
 

@@ -14,7 +14,6 @@ import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsC
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
-import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
   autoStartDesignTimeSetting,
   DependencyDefaultPath,
@@ -43,9 +42,9 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { startLanguageServer } from './app/languageServer/languageServer';
+import { startLanguageServers } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
-import { codefulProjectsExist } from './app/utils/codeful';
+import { codefulProjectExists } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
 import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
@@ -64,13 +63,12 @@ import { useBinariesDependencies } from './app/utils/binaries';
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
 import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
 import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
-import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
+import { getLogicAppRoots, selectLogicAppRoot } from './app/utils/workspace';
 
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
   initializeCustomExtensionContext();
-  await updateLogicAppsContext();
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', logicAppDebugConfigProvider);
 
@@ -117,7 +115,8 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       });
 
-      const projectPaths = await getWorkspaceLogicAppRoots();
+      const projectPaths = await getLogicAppRoots();
+      await updateLogicAppsContext(projectPaths);
 
       activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
       const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
@@ -174,7 +173,7 @@ export async function activate(context: vscode.ExtensionContext) {
         actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
         scheduleStartAllDesignTimeApis();
       } else {
-        const projectPaths = await getWorkspaceLogicAppRoots();
+        const projectPaths = await getLogicAppRoots();
         if (await promptShouldAutoStartDesignTime(projectPaths)) {
           const startDesignTimePromises = projectPaths.map(async (projectPath) => 
             callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
@@ -188,9 +187,11 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
-    const hasCodefulProjects = await codefulProjectsExist();
+    const hasCodefulProjects = await codefulProjectExists();
     if (hasCodefulProjects) {
-      startLanguageServer();
+      callWithTelemetryAndErrorHandling('activate.startLanguageServers', async (actionContext: IActionContext) => {
+        await startLanguageServers(actionContext);
+      });
     }
 
     ext.rgApi = await getResourceGroupsApi();

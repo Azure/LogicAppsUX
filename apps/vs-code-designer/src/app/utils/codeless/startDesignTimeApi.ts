@@ -22,7 +22,7 @@ import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
-import { getWorkspaceLogicAppRoots } from '../workspace';
+import { getLogicAppRoots } from '../workspace';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
 import {
@@ -656,7 +656,7 @@ export function scheduleStartAllDesignTimeApis(): void {
  * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state.
  */
 export async function startAllDesignTimeApis(): Promise<void> {
-  const projectPaths = await getWorkspaceLogicAppRoots();
+  const projectPaths = await getLogicAppRoots();
   if (projectPaths.length === 0) {
     ext.outputChannel.appendLog(localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.'));
     return;

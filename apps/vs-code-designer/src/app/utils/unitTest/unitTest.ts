@@ -349,7 +349,6 @@ export async function promptForUnitTestName(context: IActionContext, projectPath
 
 /**
  * Validates the unit test name.
- * TODO(aeldridge): Should not be exporting implementation details for testing only
  * @param {string} projectPath - The path of the project.
  * @param {string} workflowName - The name of the workflow.
  * @param {string | undefined} name - The unit test name to validate.

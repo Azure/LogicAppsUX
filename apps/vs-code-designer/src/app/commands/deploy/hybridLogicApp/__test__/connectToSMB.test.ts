@@ -24,14 +24,6 @@ vi.mock('../../../../../extensionVariables', () => ({
   },
 }));
 
-vi.mock('../../../../utils/verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn(() => Promise.resolve('project')),
-}));
-
-vi.mock('../../../workflows/switchDebugMode/switchDebugMode', () => ({
-  getWorkspaceFolderPath: vi.fn(() => Promise.resolve('workspace')),
-}));
-
 vi.mock('../../../../utils/codeless/common', () => ({
   getArtifactsPathInLocalProject: vi.fn(() =>
     Promise.resolve({
@@ -46,7 +38,6 @@ vi.mock('../../../../utils/codeless/common', () => ({
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { executeCommandWithSanityLogging } from '../../../../utils/funcCoreTools/cpUtils';
-import { tryGetLogicAppProjectRoot } from '../../../../utils/verifyIsProject';
 import { ext } from '../../../../../extensionVariables';
 import { connectToSMB } from '../connectToSMB';
 
@@ -80,7 +71,7 @@ describe('connectToSMB', () => {
   it('mounts Windows SMB shares with sanitized logging and uploads project files', async () => {
     setPlatform('win32');
 
-    await connectToSMB({} as any, node as any, 'site/wwwroot', 'Z:');
+    await connectToSMB({} as any, node as any, 'project', 'site/wwwroot', 'Z:');
 
     expect(executeCommandWithSanityLogging).toHaveBeenCalledWith(
       undefined,
@@ -105,7 +96,7 @@ describe('connectToSMB', () => {
   it('sanitizes macOS SMB mount commands', async () => {
     setPlatform('darwin');
 
-    await connectToSMB({} as any, node as any, 'site/wwwroot', '/Volumes/logicapp');
+    await connectToSMB({} as any, node as any, 'project', 'site/wwwroot', '/Volumes/logicapp');
 
     expect(executeCommandWithSanityLogging).toHaveBeenCalledWith(
       undefined,
@@ -118,7 +109,7 @@ describe('connectToSMB', () => {
   it('sanitizes Linux CIFS mount command logging', async () => {
     setPlatform('linux');
 
-    await connectToSMB({} as any, node as any, 'site/wwwroot', '/mnt/logicapp');
+    await connectToSMB({} as any, node as any, 'project', 'site/wwwroot', '/mnt/logicapp');
 
     const [, , sanitizedCommand, rawCommand] = vi.mocked(executeCommandWithSanityLogging).mock.calls[0];
     expect(sanitizedCommand).toContain('mount -t cifs //storage/share /mnt/test -o username=storage-user');
@@ -130,13 +121,14 @@ describe('connectToSMB', () => {
     expect(rawCommand).toContain(`pass=${credential}`);
   });
 
-  it('wraps mount failures with upload context and skips project discovery', async () => {
+  it('wraps mount failures with upload context', async () => {
     setPlatform('win32');
     vi.mocked(executeCommandWithSanityLogging).mockRejectedValue(new Error('mount denied'));
 
-    await expect(connectToSMB({} as any, node as any, 'site/wwwroot', 'Z:')).rejects.toThrow('Error uploading files to SMB: mount denied');
+    await expect(connectToSMB({} as any, node as any, 'project', 'site/wwwroot', 'Z:')).rejects.toThrow(
+      'Error uploading files to SMB: mount denied'
+    );
 
-    expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
     expect(fse.ensureDir).not.toHaveBeenCalled();
   });
 });

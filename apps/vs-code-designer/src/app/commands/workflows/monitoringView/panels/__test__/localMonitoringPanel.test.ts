@@ -43,8 +43,11 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 vi.mock('../../../../../utils/codeless/connection', () => ({
   getConnectionsFromFile: vi.fn().mockResolvedValue('{}'),
   getCustomCodeFromFiles: vi.fn().mockResolvedValue({}),
-  getLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
   getParametersFromFile: vi.fn().mockResolvedValue({}),
+}));
+
+vi.mock('../../../../../utils/workspace', () => ({
+  getParentLogicAppRoot: vi.fn().mockResolvedValue('/test/project'),
 }));
 
 vi.mock('../../../../../utils/appSettings/localSettings', () => ({
@@ -78,12 +81,8 @@ import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSett
 import { getArtifactsInLocalProject } from '../../../../../utils/codeless/artifacts';
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
 import { getAzureConnectorDetailsForLocalProject } from '../../../../azureConnectors/azureConnectorDetails';
-import {
-  getConnectionsFromFile,
-  getCustomCodeFromFiles,
-  getLogicAppProjectRoot,
-  getParametersFromFile,
-} from '../../../../../utils/codeless/connection';
+import { getConnectionsFromFile, getCustomCodeFromFiles, getParametersFromFile } from '../../../../../utils/codeless/connection';
+import { getParentLogicAppRoot } from '../../../../../utils/workspace';
 import { createUnitTestFromRun } from '../../../unitTest/createUnitTestFromRun';
 import { sendRequest } from '../../../../../utils/requestUtils';
 
@@ -98,7 +97,7 @@ describe('LocalMonitoringPanel', () => {
     (ext as any).telemetryReporter = { sendTelemetryEvent: vi.fn() };
     (ext as any).extensionVersion = '1.0.0';
     (ext as any).workflowRuntimePort = 8080;
-    vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+    vi.mocked(getParentLogicAppRoot).mockResolvedValue('/test/project');
     vi.mocked(getConnectionsFromFile).mockResolvedValue('{}');
     vi.mocked(getParametersFromFile).mockResolvedValue({});
     vi.mocked(getCustomCodeFromFiles).mockResolvedValue({});
