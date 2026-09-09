@@ -143,7 +143,7 @@ describe('WorkflowTypeStep', () => {
       workflowType: WorkflowType.statelessCodeful,
     });
 
-    expect(screen.getByText('Stateless').closest('[data-value]')).toHaveAttribute('data-value', WorkflowType.statelessCodeful);
+    expect(screen.getByText('Stateless', { selector: '[data-value]' })).toHaveAttribute('data-value', WorkflowType.statelessCodeful);
 
     fireEvent.click(screen.getByText('Choose stateless'));
 

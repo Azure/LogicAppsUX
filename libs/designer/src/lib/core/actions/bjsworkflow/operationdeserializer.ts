@@ -80,6 +80,7 @@ import {
   removeConnectionPrefix,
   getBrandColorFromConnector,
   getIconUriFromConnector,
+  isNullOrUndefined,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -135,6 +136,15 @@ export const initializeOperationMetadata = async (
     if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
       continue;
     }
+
+    // Guard against an undefined operation in the deserialized workflow data. Accessing
+    // operation.type below on an undefined value throws "Cannot read properties of undefined
+    // (reading 'type')" during load, which the portal error boundary surfaces as the generic
+    // "renderComponentIntoRoot" error and blanks the entire Designer/Run History/Code view.
+    if (isNullOrUndefined(operation)) {
+      continue;
+    }
+
     const isTrigger = isTriggerNode(operationId, nodesMetadata);
 
     if (isTrigger) {

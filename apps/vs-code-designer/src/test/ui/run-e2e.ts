@@ -2088,6 +2088,7 @@ async function main(): Promise<void> {
   const patchGeneratedCodefulProjectForDebugGuard = (entry: CodefulWorkspaceEntry, variant: string): void => {
     const workflowFile = path.join(entry.appDir, `${entry.wfName}.cs`);
     const programFile = path.join(entry.appDir, 'Program.cs');
+    const nugetConfigFile = path.join(entry.appDir, 'nuget.config');
 
     for (const requiredPath of [workflowFile, programFile]) {
       if (!fs.existsSync(requiredPath)) {
@@ -2153,6 +2154,28 @@ namespace ${namespaceName}
     }
     fs.writeFileSync(programFile, patchedProgram, 'utf8');
 
+    const { depsRoot } = getRuntimeDependencyPaths();
+    const lspDirectoryPath = path.join(depsRoot, lspDirectory);
+    const sdkPackageSource = path.join(projectDir, 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const sdkPackageDestination = path.join(lspDirectoryPath, path.basename(sdkPackageSource));
+    if (!fs.existsSync(sdkPackageSource)) {
+      throw new Error(`Missing SDK package asset required by ${variant} codeful debug project: ${sdkPackageSource}`);
+    }
+    fs.mkdirSync(lspDirectoryPath, { recursive: true });
+    fs.copyFileSync(sdkPackageSource, sdkPackageDestination);
+
+    if (fs.existsSync(nugetConfigFile)) {
+      const originalNugetConfig = fs.readFileSync(nugetConfigFile, 'utf8');
+      const patchedNugetConfig = originalNugetConfig.replace(
+        /(<add\s+key=["']current["']\s+value=)(["']).*?\2(\s*\/>)/,
+        `$1"${lspDirectoryPath}"$3`
+      );
+      if (patchedNugetConfig === originalNugetConfig && !originalNugetConfig.includes(lspDirectoryPath)) {
+        throw new Error(`Could not update current package source in ${nugetConfigFile}`);
+      }
+      fs.writeFileSync(nugetConfigFile, patchedNugetConfig, 'utf8');
+    }
+
     for (const connectionArtifact of ['connections.json', 'parameters.json']) {
       const artifactPath = path.join(entry.appDir, connectionArtifact);
       if (fs.existsSync(artifactPath)) {
@@ -2162,6 +2185,7 @@ namespace ${namespaceName}
     }
 
     console.log(`  Patched ${variant} generated codeful workflow to built-in HTTP trigger + Response: ${workflowFile}`);
+    console.log(`  Seeded ${variant} codeful SDK package source: ${sdkPackageDestination}`);
   };
 
   const removeDesignTimeEvidence = async (entry: CodefulWorkspaceEntry, variant: string): Promise<void> => {
