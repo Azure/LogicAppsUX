@@ -336,6 +336,24 @@ export const detectStatelessCodefulWorkflow = (fileContent: string): string | un
   detectWorkflowName(fileContent, /Workflow(?:Builder)?Factory\s*\.CreateStatelessWorkflow\s*\(\s*([^,)]+)/);
 
 /**
+ * Detects all stateless codeful workflows declared with literal workflow names in a C# file.
+ * @param fileContent - The content of the C# file
+ * @returns The unique workflow names found in the file
+ */
+export const detectStatelessCodefulWorkflows = (fileContent: string): string[] => {
+  const uncommentedContent = fileContent.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*/g, '');
+  const pattern = /Workflow(?:Builder)?Factory\s*\.CreateStatelessWorkflow\s*\(\s*["']([^"']+)["']/g;
+  const workflowNames = new Set<string>();
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(uncommentedContent)) !== null) {
+    workflowNames.add(match[1]);
+  }
+
+  return [...workflowNames];
+};
+
+/**
  * Detects if a C# file contains a CreateConversationalAgent call and extracts the workflow name.
  * @param fileContent - The content of the C# file
  * @returns The workflow name if detected, undefined otherwise
