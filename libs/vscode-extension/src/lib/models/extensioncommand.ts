@@ -57,6 +57,7 @@ export const ExtensionCommand = {
   resetDesignerDirtyState: 'resetDesignerDirtyState',
   switchToDataMapperV2: 'switchToDataMapperV2',
   close_panel: 'close-panel',
+  configureAzureConnectors: 'configure-azure-connectors',
   insert_connection: 'insert-connection',
   pickProcess: 'pickProcess',
   createWorkspace: 'createWorkspace',
