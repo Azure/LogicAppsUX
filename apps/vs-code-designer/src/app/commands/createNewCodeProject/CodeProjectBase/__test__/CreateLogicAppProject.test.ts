@@ -373,6 +373,15 @@ describe('createLogicAppProject', () => {
         setup: mockSetup,
       }));
 
+      // Simulate the Logic App's local.settings.json already existing on disk (as it would after
+      // the real createLocalConfigurationFiles ran), so the LOGIC_APPS_CUSTOMCODE_DOTNETVERSION
+      // write merges into it instead of falling back to full settings generation.
+      await fse.ensureDir(logicAppFolderPath);
+      await fse.writeJson(path.join(logicAppFolderPath, 'local.settings.json'), {
+        IsEncrypted: false,
+        Values: { SomeExistingSetting: 'keepMe' },
+      });
+
       await createLogicAppProject(mockContext, customCodeOptions, workspaceRootFolder);
 
       expect(mockSetup).toHaveBeenCalledWith(
@@ -381,6 +390,12 @@ describe('createLogicAppProject', () => {
           targetFramework: 'net8',
         })
       );
+
+      // Verify the setting is written to the authoritative Logic App project path (context.projectPath),
+      // not a derived function-project path, and that unrelated existing settings are preserved.
+      const localSettings = await fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net8');
+      expect(localSettings.Values.SomeExistingSetting).toBe('keepMe');
     });
 
     it('should create custom code project with Net10 target framework', async () => {
@@ -395,6 +410,12 @@ describe('createLogicAppProject', () => {
         setup: mockSetup,
       }));
 
+      await fse.ensureDir(logicAppFolderPath);
+      await fse.writeJson(path.join(logicAppFolderPath, 'local.settings.json'), {
+        IsEncrypted: false,
+        Values: { SomeExistingSetting: 'keepMe' },
+      });
+
       await createLogicAppProject(mockContext, customCodeOptions, workspaceRootFolder);
 
       expect(mockSetup).toHaveBeenCalledWith(
@@ -403,6 +424,35 @@ describe('createLogicAppProject', () => {
           targetFramework: 'net10.0',
         })
       );
+
+      const localSettings = await fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net10.0');
+      expect(localSettings.Values.SomeExistingSetting).toBe('keepMe');
+    });
+
+    it('should not add the LOGIC_APPS_CUSTOMCODE_DOTNETVERSION setting for NetFx target framework', async () => {
+      const customCodeOptions = {
+        ...mockOptions,
+        logicAppType: ProjectType.customCode,
+        targetFramework: 'net472',
+      };
+
+      const mockSetup = vi.fn().mockResolvedValue(undefined);
+      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
+        setup: mockSetup,
+      }));
+
+      await fse.ensureDir(logicAppFolderPath);
+      await fse.writeJson(path.join(logicAppFolderPath, 'local.settings.json'), {
+        IsEncrypted: false,
+        Values: { SomeExistingSetting: 'keepMe' },
+      });
+
+      await createLogicAppProject(mockContext, customCodeOptions, workspaceRootFolder);
+
+      const localSettings = await fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBeUndefined();
+      expect(localSettings.Values.SomeExistingSetting).toBe('keepMe');
     });
 
     it('should pass correct function parameters to custom code project', async () => {
@@ -1387,6 +1437,63 @@ local.settings.json`
     });
   });
 
+  describe('Custom Code DotNet Version Local Setting', () => {
+    const runCreateLogicAppProject = async (targetFramework: string) => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName: 'TestWorkspace',
+        logicAppName: 'TestLogicApp',
+        logicAppType: ProjectType.customCode,
+        workflowName: 'MyWorkflow',
+        workflowType: 'Stateful',
+        functionFolderName: 'Functions',
+        functionName: 'MyFunction',
+        functionNamespace: 'MyNamespace',
+        targetFramework,
+      } as any;
+
+      const functionAppFiles = createTestFunctionAppFiles();
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(
+        () =>
+          ({
+            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+            hideStepCount: true,
+          }) as any
+      );
+
+      await createLogicAppProject(mockContext, options, workspaceRootFolder);
+
+      return fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+    };
+
+    it('should write LOGIC_APPS_CUSTOMCODE_DOTNETVERSION="net8" to the Logic App root local.settings.json for Net8', async () => {
+      const localSettings = await runCreateLogicAppProject('net8');
+
+      // Authoritative path: written to the Logic App's own folder, not the Functions sub-folder.
+      const functionsLocalSettingsPath = path.join(workspaceRootFolder, 'Functions', 'local.settings.json');
+      expect(await fse.pathExists(functionsLocalSettingsPath)).toBe(false);
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net8');
+      // Unrelated settings written by createLocalConfigurationFiles must be preserved.
+      expect(localSettings.Values.AzureWebJobsStorage).toBe('UseDevelopmentStorage=true');
+      expect(localSettings.Values.FUNCTIONS_WORKER_RUNTIME).toBe('node');
+    });
+
+    it('should write LOGIC_APPS_CUSTOMCODE_DOTNETVERSION="net10.0" to the Logic App root local.settings.json for Net10', async () => {
+      const localSettings = await runCreateLogicAppProject('net10.0');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net10.0');
+      expect(localSettings.Values.AzureWebJobsStorage).toBe('UseDevelopmentStorage=true');
+      expect(localSettings.Values.FUNCTIONS_WORKER_RUNTIME).toBe('node');
+    });
+
+    it('should not write LOGIC_APPS_CUSTOMCODE_DOTNETVERSION for NetFx custom code projects', async () => {
+      const localSettings = await runCreateLogicAppProject('net472');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBeUndefined();
+    });
+  });
+
   describe('Rules Engine Project Integration', () => {
     it('should create rules folder structure', async () => {
       const options: IWebviewProjectContext = {
@@ -1454,6 +1561,10 @@ local.settings.json`
       const csContent = await fse.readFile(csFilePath, 'utf-8');
       expect(csContent).toContain('namespace Rules.Namespace');
       expect(csContent).toContain('class RulesFunction');
+
+      // rulesEngine projects must never receive the customCode-only setting, even with Net8.
+      const localSettings = await fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBeUndefined();
     });
 
     it('should create ContosoPurchase.cs file for rules engine', async () => {

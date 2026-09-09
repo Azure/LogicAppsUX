@@ -1019,6 +1019,118 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+  vscode-e2e-customcode-dotnet:
+    name: vscode-e2e-customcode-dotnet (ubuntu-latest, ${{ matrix.version }})
+    needs: setup-extension-build
+    # The net8 leg creates a real workspace and proves the full debug/run
+    # lifecycle. The net10 leg opens the real wizard and verifies the option is
+    # hidden. 60 min leaves room for one full net8 retry and a cold restore.
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    # Sharded by dotnet target rather than looping both in one job, same
+    # reasoning as vscode-e2e-azurite's app-kind sharding: keeps wall-clock at
+    # the single-target baseline and names the target that broke. Matrix legs
+    # roll up into a single `needs.<job>.result`, so the summary gate needs no
+    # extra entries.
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [net8, net10]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20.x
+          package-manager-cache: false
+
+      - name: Symlink node to system path (for func host child processes)
+        run: |
+          NODE_BIN="$(which node)"
+          NPM_BIN="$(which npm)"
+          NPX_BIN="$(which npx)"
+          for dir in /usr/local/bin /usr/bin; do
+            sudo ln -sf "$NODE_BIN" "$dir/node"
+            sudo ln -sf "$NPM_BIN"  "$dir/npm"
+            sudo ln -sf "$NPX_BIN"  "$dir/npx"
+          done
+
+      # The net8 leg creates, debugs, and runs a custom-code project. The net10
+      # leg only verifies that the option is hidden from the real wizard.
+      - name: Setup .NET SDK 8
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Download extension build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: extension-build-${{ github.sha }}
+          path: .
+
+      - name: Extract build artifacts
+        run: tar -xzf extension-build.tar.gz
+
+      - name: Install system dependencies for virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+
+      - name: Restore Logic Apps runtime dependencies
+        id: la-deps-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.azurelogicapps/dependencies
+          key: la-runtime-deps-${{ runner.os }}-v1
+          restore-keys: |
+            la-runtime-deps-${{ runner.os }}-
+
+      - name: Report runtime dependency cache state
+        run: |
+          echo "cache-hit:         ${{ steps.la-deps-cache.outputs.cache-hit }}"
+          echo "cache-matched-key: ${{ steps.la-deps-cache.outputs.cache-matched-key }}"
+
+      - name: Run custom-code .NET version create/assert + debug lifecycle E2E
+        run: |
+          export CUSTOMCODE_DOTNET_BINARY_PATH="$(command -v dotnet)"
+          export CUSTOMCODE_DOTNET_ROOT="$(dirname "$CUSTOMCODE_DOTNET_BINARY_PATH")"
+          "$CUSTOMCODE_DOTNET_BINARY_PATH" --list-sdks
+          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        env:
+          E2E_MODE: customcodedotnetonly
+          CUSTOMCODE_DOTNET_E2E_VERSIONS: ${{ matrix.version }}
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: ${{ runner.temp }}
+          TMPDIR: ${{ runner.temp }}
+
+      - name: Upload test screenshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-screenshots-customcode-dotnet-${{ matrix.version }}
+          path: |
+            ${{ runner.temp }}/test-resources/screenshots/
+            test-resources/screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
   # ---------------------------------------------------------------------------
   # Windows runtime-dependency bootstrap.
   #
@@ -1855,7 +1967,7 @@ jobs:
   # ("vscode-e2e-summary") regardless of how many scenarios we add later.
   vscode-e2e-summary:
     name: vscode-e2e-summary
-    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-funcselfheal-windows, vscode-e2e-compat, setup-runtime-deps-windows]
+    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-funcselfheal-windows, vscode-e2e-customcode-dotnet, vscode-e2e-compat, setup-runtime-deps-windows]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -1875,6 +1987,7 @@ jobs:
           echo "vscode-e2e-azurite:         ${{ needs.vscode-e2e-azurite.result }}"
           echo "vscode-e2e-azurite-windows: ${{ needs.vscode-e2e-azurite-windows.result }}"
           echo "vscode-e2e-funcselfheal-windows: ${{ needs.vscode-e2e-funcselfheal-windows.result }}"
+          echo "vscode-e2e-customcode-dotnet: ${{ needs.vscode-e2e-customcode-dotnet.result }}"
           echo "setup-runtime-deps-windows: ${{ needs.setup-runtime-deps-windows.result }} (advisory, not gated: seeds la-runtime-deps-Windows-v1)"
           echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
@@ -1886,6 +1999,7 @@ jobs:
              [ "${{ needs.vscode-e2e-azurite.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-azurite-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-funcselfheal-windows.result }}" != "success" ] || \
+             [ "${{ needs.vscode-e2e-customcode-dotnet.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-compat.result }}" != "success" ]; then
             echo "::error::One or more required vscode-e2e jobs failed"
             exit 1
