@@ -1,7 +1,7 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lspDirectory } from '../../../constants';
-import { codefulProjectsExist, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
+import { codefulProjectsExist, detectCodefulWorkflow, invalidateCodefulSdkCacheIfNeeded, parseCsprojCopyToCodefulInfo } from '../codeful';
 
 const mocks = vi.hoisted(() => ({
   ensureDir: vi.fn(),
@@ -304,5 +304,21 @@ describe('codefulProjectsExist', () => {
     const result = await codefulProjectsExist();
 
     expect(result).toBe(false);
+  });
+});
+
+describe('detectCodefulWorkflow', () => {
+  it('detects stateless provider workflows', () => {
+    const fileContent = `
+      return new[]
+      {
+        WorkflowFactory.CreateStatelessWorkflow("stateless-workflow", workflow)
+      };
+    `;
+
+    expect(detectCodefulWorkflow(fileContent)).toEqual({
+      workflowName: 'stateless-workflow',
+      workflowType: 'stateless',
+    });
   });
 });

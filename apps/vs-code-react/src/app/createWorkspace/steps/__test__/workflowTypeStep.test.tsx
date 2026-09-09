@@ -44,6 +44,9 @@ vi.mock('@fluentui/react-components', async () => {
         <button onClick={() => onOptionSelect?.(undefined, { optionValue: 'Agentic-Codeful' })} type="button">
           Choose autonomous
         </button>
+        <button onClick={() => onOptionSelect?.(undefined, { optionValue: 'Stateless-Codeful' })} type="button">
+          Choose stateless
+        </button>
         <div>{children}</div>
       </div>
     ),
@@ -132,6 +135,19 @@ describe('WorkflowTypeStep', () => {
     fireEvent.click(screen.getByText('Choose autonomous'));
 
     expect(store.getState().createWorkspace.workflowType).toBe(WorkflowType.agenticCodeful);
+  });
+
+  it('shows stateless as a codeful workflow type and stores its value', () => {
+    const store = renderWorkflowTypeStep({
+      logicAppType: ProjectType.codeful,
+      workflowType: WorkflowType.statelessCodeful,
+    });
+
+    expect(screen.getByText('Stateless').closest('[data-value]')).toHaveAttribute('data-value', WorkflowType.statelessCodeful);
+
+    fireEvent.click(screen.getByText('Choose stateless'));
+
+    expect(store.getState().createWorkspace.workflowType).toBe(WorkflowType.statelessCodeful);
   });
 
   it('clears validation for a valid workflow name', () => {
