@@ -6,7 +6,7 @@ import { autoCreateConnectionIfPossible, closeConnectionsFlow } from '../../../.
 import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId } from '../../../../core';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useConnectionRefs, useConnectorByNodeId, useNodeConnectionMapping } from '../../../../core/state/connection/connectionSelector';
-import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useConnectionPanelSelectedNodeIds, useIsCreatingConnection } from '../../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { useConnectionExpressionEnabled } from '../selectConnection/connectionExpression';
@@ -77,6 +77,7 @@ vi.mock('../../../../core/state/connection/connectionSelector', () => ({
 
 vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: vi.fn(),
+  useMonitoringView: vi.fn(),
 }));
 
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
@@ -147,6 +148,7 @@ describe('ConnectionPanel (designer-v2)', () => {
     (useNodeConnectionMapping as Mock).mockReturnValue(null);
     (useConnectionExpressionEnabled as Mock).mockReturnValue(false);
     (useReadOnly as Mock).mockReturnValue(false);
+    (useMonitoringView as Mock).mockReturnValue(false);
     (useConnectorByNodeId as Mock).mockReturnValue(mockConnector);
     (useOperationInfo as Mock).mockReturnValue({ connectorId: 'connector-id', operationId: 'op-id' });
     (useConnectionRefs as Mock).mockReturnValue({ referenceOne: {}, referenceTwo: {} });
@@ -185,7 +187,7 @@ describe('ConnectionPanel (designer-v2)', () => {
       expectSelectionWithoutMutation();
     });
 
-    it('preserves an imported expression with authoring disabled using the connection-panel selection', () => {
+    it('preserves an imported expression in an unsupported context using the connection-panel selection', () => {
       const expressionMapping = { kind: 'expression', expression: "@outputs('Resolve_Connection')" };
       (useConnectionPanelSelectedNodeIds as Mock).mockReturnValue(['runtime-node']);
       (useNodeConnectionMapping as Mock).mockImplementation((id: string) => (id === 'runtime-node' ? expressionMapping : 'static-ref'));
@@ -203,25 +205,27 @@ describe('ConnectionPanel (designer-v2)', () => {
       expectSelectionWithoutMutation();
     });
 
-    it.each([null, 'static-ref'])(
-      'does not mutate read-only connections when the mapping is %s and expression authoring is disabled',
-      (mapping) => {
-        (useReadOnly as Mock).mockReturnValue(true);
-        (useNodeConnectionMapping as Mock).mockReturnValue(mapping);
-        (autoCreateConnectionIfPossible as Mock).mockImplementation(({ onManualConnectionCreation }) => {
-          onManualConnectionCreation();
-          return Promise.resolve();
-        });
+    it.each([
+      ['read-only', null],
+      ['read-only', 'static-ref'],
+      ['monitoring', null],
+      ['monitoring', 'static-ref'],
+    ] as const)('does not mutate connections in %s mode when the mapping is %s', (mode, mapping) => {
+      ((mode === 'monitoring' ? useMonitoringView : useReadOnly) as Mock).mockReturnValue(true);
+      (useNodeConnectionMapping as Mock).mockReturnValue(mapping);
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ onManualConnectionCreation }) => {
+        onManualConnectionCreation();
+        return Promise.resolve();
+      });
 
-        render(<ConnectionPanel {...panelProps} />);
+      render(<ConnectionPanel {...panelProps} />);
 
-        expectSelectionWithoutMutation();
-      }
-    );
+      expectSelectionWithoutMutation();
+    });
 
     it.each([
       ['unsupported connector', 'connector-id'],
-      ['disabled provider authoring', '/serviceProviders/sql'],
+      ['Consumption ServiceProvider', '/serviceProviders/sql'],
     ])('retains static auto-create for %s when no runtime expression is mapped', (_case, connectorId) => {
       const connector = { ...mockConnector, id: connectorId };
       (useConnectorByNodeId as Mock).mockReturnValue(connector);

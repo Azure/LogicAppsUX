@@ -5,7 +5,8 @@ import { vi } from 'vitest';
 export { $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 
 // Keep this helper in designer-ui so pnpm resolves the same Lexical dependency
-// and conditional ESM entry points as the real editor.
+// and conditional ESM entry points as the real editor, but outside src so its
+// test-only mocks are not instrumented as production code.
 const connectionExpressionEditor = vi.hoisted(() => ({
   current: undefined as LexicalEditor | undefined,
 }));

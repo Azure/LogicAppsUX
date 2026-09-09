@@ -101,9 +101,6 @@ export async function getDynamicValues(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<ListDynamicValue[]> {
-  if (!canInvokeDynamicConnection(operationInfo, connectionReference)) {
-    return [];
-  }
   const { definition } = dependencyInfo;
   const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
   if (isDynamicListExtension(definition)) {
@@ -169,9 +166,6 @@ export async function getDynamicSchema(
   idReplacements: Record<string, string> = {},
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<OpenAPIV2.SchemaObject | null> {
-  if (!canInvokeDynamicConnection(operationInfo, connectionReference)) {
-    return null;
-  }
   const { parameter, definition } = dependencyInfo;
   const emptySchema = {
     title: parameter?.schema?.title,
@@ -378,9 +372,6 @@ export async function getFolderItems(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<TreeDynamicValue[]> {
-  if (!canInvokeDynamicConnection(operationInfo, connectionReference)) {
-    return [];
-  }
   const { definition, filePickerInfo } = dependencyInfo;
   const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
 
@@ -623,18 +614,6 @@ async function getManagedIdentityRequestProperties(
   return managedIdentityRequestProperties;
 }
 
-export function canInvokeDynamicConnection(operationInfo: OperationInfo, reference: ConnectionReference | undefined): boolean {
-  if (!/(^|\/)serviceProviders\//i.test(operationInfo.connectorId)) {
-    return true;
-  }
-  return (
-    !!reference?.connection.id &&
-    equals(reference.api.id, operationInfo.connectorId) &&
-    !reference.connection.id.startsWith('__MOCK') &&
-    !isTemplateExpression(reference.connection.id)
-  );
-}
-
 export function getManifestBasedInputParameters(
   dynamicInputs: InputParameter[],
   dynamicParameter: InputParameter,
@@ -858,7 +837,7 @@ function getSwaggerBasedInputParameters(
 }
 
 // We should remove any reference to dynamic schema if parameter containing dynamic schema is used directly as an input.
-export function getDynamicInputParameterFromDynamicParameter(dynamicParameter: InputParameter): InputParameter {
+function getDynamicInputParameterFromDynamicParameter(dynamicParameter: InputParameter): InputParameter {
   const result = {
     ...dynamicParameter,
     isDynamic: true,

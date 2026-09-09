@@ -204,8 +204,9 @@ export const getInputParametersFromManifest = (
     typeof connectionName === 'string' &&
     isExpressionConnectionMapping(getServiceProviderConnectionMapping(connectionName))
   ) {
+    // schema.required lists child properties; it must not make an optional manual root required.
     primaryInputParametersInArray = primaryInputParametersInArray.map((parameter) =>
-      parameter.dynamicSchema ? getDynamicInputParameterFromDynamicParameter(parameter) : parameter
+      parameter.dynamicSchema ? { ...getDynamicInputParameterFromDynamicParameter(parameter), required: parameter.required } : parameter
     );
   }
   const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);

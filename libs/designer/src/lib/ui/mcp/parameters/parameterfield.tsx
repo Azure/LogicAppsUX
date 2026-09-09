@@ -56,15 +56,12 @@ export const ParameterField = ({
   const dispatch = useDispatch<AppDispatch>();
   const styles = useEditOperationStyles();
 
-  const { operationInfo, reference, nodeInputs, dependencies } = useSelector((state: RootState) => {
-    const referenceKey = state.connection.connectionsMapping[operationId];
-    return {
-      operationInfo: state.operations.operationInfo[operationId],
-      reference: typeof referenceKey === 'string' ? state.connection.connectionReferences[referenceKey] : undefined,
-      nodeInputs: state.operations.inputParameters[operationId],
-      dependencies: state.operations.dependencies[operationId],
-    };
-  });
+  const { operationInfo, reference, nodeInputs, dependencies } = useSelector((state: RootState) => ({
+    operationInfo: state.operations.operationInfo[operationId],
+    reference: state.connection.connectionReferences[state.connection.connectionsMapping[operationId] ?? ''],
+    nodeInputs: state.operations.inputParameters[operationId],
+    dependencies: state.operations.dependencies[operationId],
+  }));
 
   const INTL_TEXT = {
     removeParamText: intl.formatMessage({

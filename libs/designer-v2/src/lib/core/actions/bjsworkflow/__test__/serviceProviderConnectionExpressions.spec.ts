@@ -8,7 +8,7 @@ import {
   $createTextNode,
   $getRoot,
   connectionExpressionEditor,
-} from '../../../../../../../designer-ui/src/lib/editor/__test__/connection-expression-editor-helper';
+} from '../../../../../../../designer-ui/__test__/connection-expression-editor-helper';
 import { SettingTokenField, type ChangeState } from '@microsoft/designer-ui';
 import {
   ConnectionReferenceKeyFormat,
@@ -127,7 +127,7 @@ afterAll(() => {
   }
 });
 
-const buildState = async (connectionName = "@outputs('Resolve_Connection')", enableExpressionEditing = false): Promise<RootState> => {
+const buildState = async (connectionName = "@outputs('Resolve_Connection')"): Promise<RootState> => {
   const base = getMockedInitialRootState();
   const action = {
     type: 'ServiceProvider',
@@ -144,7 +144,7 @@ const buildState = async (connectionName = "@outputs('Resolve_Connection')", ena
     ...base,
     designerOptions: {
       ...base.designerOptions,
-      hostOptions: { ...base.designerOptions.hostOptions, enableServiceProviderConnectionExpressions: enableExpressionEditing },
+      hostOptions: { ...base.designerOptions.hostOptions },
     },
     workflow: {
       ...base.workflow,
@@ -218,7 +218,7 @@ const makeStore = (initial: RootState) =>
 const initializeDynamicBodyStore = async (source: 'imported' | 'authored' = 'imported') => {
   vi.spyOn(OperationManifestService(), 'getOperationManifest').mockResolvedValue(dynamicBodyManifest);
   const expression = "@outputs('Resolve_Connection')";
-  const state = await buildState(source === 'authored' ? 'Sql' : expression, true);
+  const state = await buildState(source === 'authored' ? 'Sql' : expression);
   const store = makeStore(state);
   const nodes = await initializeOperationDetailsForManifest(nodeId, state.workflow.operations.Query, {}, false, 'stateful', store.dispatch);
   store.dispatch(initializeNodes({ nodes: nodes! }));
@@ -325,6 +325,166 @@ beforeEach(() => {
 });
 
 describe('ServiceProvider runtime connection expressions', () => {
+  describe.each(['imported', 'authored'] as const)('%s manual root requiredness', (source) => {
+    const initializeRequirednessStore = async (rootRequired: boolean, childRequired: string[], body?: Record<string, unknown>) => {
+      const requirednessManifest: OperationManifest = {
+        ...dynamicBodyManifest,
+        properties: {
+          ...dynamicBodyManifest.properties,
+          inputs: {
+            type: 'object',
+            properties: {
+              query: { type: 'string' },
+              body: {
+                type: 'object',
+                title: 'Payload',
+                required: childRequired,
+                'x-ms-dynamic-properties': { operationId: 'getPayloadSchema', parameters: {}, itemValuePath: 'schema' },
+              },
+            },
+            required: rootRequired ? ['body'] : [],
+          },
+        },
+      };
+      vi.spyOn(OperationManifestService(), 'getOperationManifest').mockResolvedValue(requirednessManifest);
+      const expression = "@outputs('Resolve_Connection')";
+      const state = await buildState(source === 'authored' ? 'Sql' : expression);
+      const operation = state.workflow.operations.Query as LogicAppsV2.ServiceProvider;
+      operation.inputs.parameters = { query: 'original', ...(body === undefined ? {} : { body }) };
+      state.workflow.originalDefinition.actions.Query = operation;
+      const store = makeStore(state);
+      const nodes = await initializeOperationDetailsForManifest(nodeId, operation, {}, false, 'stateful', store.dispatch);
+      store.dispatch(initializeNodes({ nodes: nodes! }));
+      if (source === 'authored') {
+        expect(
+          store
+            .getState()
+            .operations.inputParameters.Query.parameterGroups.default.parameters.some(
+              (parameter) => parameter.parameterKey === 'inputs.$.body'
+            )
+        ).toBe(false);
+        await store.dispatch(updateNodeConnectionExpression({ nodeId, expression })).unwrap();
+      }
+      await initializeDynamicDataInNodes(store.getState, store.dispatch, [nodeId]);
+      return store;
+    };
+
+    it.each([
+      { rootRequired: false, childRequired: ['message'] },
+      { rootRequired: false, childRequired: [] },
+      { rootRequired: true, childRequired: ['message'] },
+      { rootRequired: true, childRequired: [] },
+    ])(
+      'keeps root required=$rootRequired independent of child requirements $childRequired when omitted',
+      async ({ rootRequired, childRequired }) => {
+        const schemaRequest = vi.spyOn(dynamicQueries, 'getDynamicSchemaProperties');
+        const connectionRequest = vi.spyOn(connectionQueries, 'getConnection');
+        const store = await initializeRequirednessStore(rootRequired, childRequired);
+        const group = store.getState().operations.inputParameters.Query.parameterGroups.default;
+        const root = group.parameters.find((parameter) => parameter.parameterKey === 'inputs.$.body')!;
+        expect(root.required).toBe(rootRequired);
+        expect(root.schema.required).toEqual(childRequired);
+        expect(group.rawInputs.find((parameter) => parameter.key === 'inputs.$.body')?.required).toBe(rootRequired);
+        expect(getConnectionReference(store.getState().connections, nodeId)).toBeUndefined();
+        await store
+          .dispatch(
+            updateParameterAndDependencies({
+              nodeId,
+              groupId: 'default',
+              parameterId: root.id,
+              properties: { value: root.value, preservedValue: undefined },
+              isTrigger: false,
+              operationInfo,
+              connectionReference: undefined,
+              nodeInputs: store.getState().operations.inputParameters.Query,
+              dependencies: store.getState().operations.dependencies.Query,
+            })
+          )
+          .unwrap();
+
+        const updated = store
+          .getState()
+          .operations.inputParameters.Query.parameterGroups.default.parameters.find((parameter) => parameter.id === root.id)!;
+        if (rootRequired) {
+          expect(updated.validationErrors?.length).toBeGreaterThan(0);
+          await expect(serializeWorkflow(store.getState())).rejects.toMatchObject({ code: 'InvalidParameters' });
+        } else {
+          expect(updated.validationErrors).toEqual([]);
+          const saved = (await serializeWorkflow(store.getState())).definition.actions.Query as LogicAppsV2.ServiceProvider;
+          expect(saved.inputs.parameters).toEqual({ query: 'original' });
+          expect(saved.inputs.serviceProviderConfiguration.connectionName).toBe("@outputs('Resolve_Connection')");
+        }
+        expect(schemaRequest).not.toHaveBeenCalled();
+        expect(connectionRequest).not.toHaveBeenCalled();
+      }
+    );
+
+    it('retains required and type validation for children when a present optional object is expanded', async () => {
+      const schema: OpenAPIV2.SchemaObject = {
+        type: 'object',
+        properties: { message: { type: 'string' }, count: { type: 'integer' } },
+        required: ['message'],
+      };
+      const schemaRequest = vi.spyOn(dynamicQueries, 'getDynamicSchemaProperties').mockResolvedValue(schema);
+      vi.spyOn(connectionQueries, 'getConnection').mockResolvedValue({ id: reference.connection.id, properties: {} } as Connection);
+      const store = await initializeRequirednessStore(false, ['message'], { message: 'present', count: 7 });
+      const root = store
+        .getState()
+        .operations.inputParameters.Query.parameterGroups.default.parameters.find(
+          (parameter) => parameter.parameterKey === 'inputs.$.body'
+        )!;
+      expect(root.required).toBe(false);
+      expect(root.schema.required).toEqual(['message']);
+      expect(validateParameter(root, root.value)).toEqual([]);
+      expect(schemaRequest).not.toHaveBeenCalled();
+      await store
+        .dispatch(
+          updateNodeConnectionExpression({
+            nodeId,
+            expression: "@outputs('Resolve_Connection')",
+            designTimeReferenceKey: 'Sql',
+          })
+        )
+        .unwrap();
+      expect(schemaRequest).toHaveBeenCalled();
+      const updateChild = async (key: string, value: string | undefined) => {
+        const inputs = store.getState().operations.inputParameters.Query;
+        const child = inputs.parameterGroups.default.parameters.find((parameter) => parameter.parameterKey === key)!;
+        await store
+          .dispatch(
+            updateParameterAndDependencies({
+              nodeId,
+              groupId: 'default',
+              parameterId: child.id,
+              properties: { value: value === undefined ? [] : [{ id: 'edited-child', type: 'literal', value }], preservedValue: undefined },
+              isTrigger: false,
+              operationInfo,
+              connectionReference: getConnectionReference(store.getState().connections, nodeId),
+              nodeInputs: inputs,
+              dependencies: store.getState().operations.dependencies.Query,
+            })
+          )
+          .unwrap();
+        return store
+          .getState()
+          .operations.inputParameters.Query.parameterGroups.default.parameters.find((parameter) => parameter.id === child.id)!;
+      };
+
+      const missingChild = await updateChild('inputs.$.body.message', undefined);
+      expect(missingChild.required).toBe(true);
+      expect(missingChild.validationErrors?.length).toBeGreaterThan(0);
+      await expect(serializeWorkflow(store.getState())).rejects.toMatchObject({ code: 'InvalidParameters' });
+      await updateChild('inputs.$.body.message', 'updated');
+      const invalidChild = await updateChild('inputs.$.body.count', 'not-a-number');
+      expect(invalidChild.validationErrors?.length).toBeGreaterThan(0);
+      await expect(serializeWorkflow(store.getState())).rejects.toMatchObject({ code: 'InvalidParameters' });
+      const validChild = await updateChild('inputs.$.body.count', '42');
+      expect(validChild.validationErrors).toEqual([]);
+      const saved = (await serializeWorkflow(store.getState())).definition.actions.Query as LogicAppsV2.ServiceProvider;
+      expect(saved.inputs.parameters.body).toEqual({ message: 'updated', count: 42 });
+    });
+  });
+
   it('keeps a declared dynamic-schema object visible and manually editable without a design-time connection, then saves it', async () => {
     const dynamicManifest: OperationManifest = {
       ...manifest,
@@ -720,44 +880,49 @@ describe('ServiceProvider runtime connection expressions', () => {
     await expect(serializeWorkflow(state)).rejects.toThrow();
   });
 
-  it('applies expression authoring, preserves inputs, and supports real undo/redo', async () => {
-    const state = await buildState('Sql', true);
-    const store = makeStore(state);
-    const originalInputs = store.getState().operations.inputParameters.Query;
-    await store.dispatch(updateNodeConnectionExpression({ nodeId, expression: "@parameters('defaultConnection')" })).unwrap();
-    expect(store.getState().operations.inputParameters.Query).toBe(originalInputs);
-    expect(store.getState().workflow.isDirty).toBe(true);
-    await store.dispatch(onUndoClick());
-    expect(store.getState().connections.connectionsMapping.Query).toBe('Sql');
-    await store.dispatch(onRedoClick());
-    expect(store.getState().connections.connectionsMapping.Query).toEqual({
-      kind: 'expression',
-      expression: "@parameters('defaultConnection')",
-    });
-    await store
-      .dispatch(
-        updateNodeConnection({
-          nodeId,
-          connector: { id: connectorId, properties: {} } as Connector,
-          connection: { id: reference.connection.id, properties: {} } as Connection,
-        })
-      )
-      .unwrap();
-    expect(store.getState().connections.connectionsMapping.Query).toBe('Sql');
-    expect(store.getState().operations.inputParameters.Query.parameterGroups.default.parameters[0].value).toEqual(
-      originalInputs.parameterGroups.default.parameters[0].value
-    );
-    await store.dispatch(onUndoClick()).unwrap();
-    expect(store.getState().connections.connectionsMapping.Query).toEqual({
-      kind: 'expression',
-      expression: "@parameters('defaultConnection')",
-    });
-    await store.dispatch(onRedoClick()).unwrap();
-    expect(store.getState().connections.connectionsMapping.Query).toBe('Sql');
-  });
+  it.each(['stateful', 'stateless'] as const)(
+    'authors expressions for Standard %s with default host options and supports real undo/redo',
+    async (workflowKind) => {
+      const state = await buildState('Sql');
+      state.workflow.workflowKind = workflowKind;
+      expect(state.designerOptions.hostOptions).toEqual(getMockedInitialRootState().designerOptions.hostOptions);
+      const store = makeStore(state);
+      const originalInputs = store.getState().operations.inputParameters.Query;
+      await store.dispatch(updateNodeConnectionExpression({ nodeId, expression: "@parameters('defaultConnection')" })).unwrap();
+      expect(store.getState().operations.inputParameters.Query).toBe(originalInputs);
+      expect(store.getState().workflow.isDirty).toBe(true);
+      await store.dispatch(onUndoClick());
+      expect(store.getState().connections.connectionsMapping.Query).toBe('Sql');
+      await store.dispatch(onRedoClick());
+      expect(store.getState().connections.connectionsMapping.Query).toEqual({
+        kind: 'expression',
+        expression: "@parameters('defaultConnection')",
+      });
+      await store
+        .dispatch(
+          updateNodeConnection({
+            nodeId,
+            connector: { id: connectorId, properties: {} } as Connector,
+            connection: { id: reference.connection.id, properties: {} } as Connection,
+          })
+        )
+        .unwrap();
+      expect(store.getState().connections.connectionsMapping.Query).toBe('Sql');
+      expect(store.getState().operations.inputParameters.Query.parameterGroups.default.parameters[0].value).toEqual(
+        originalInputs.parameterGroups.default.parameters[0].value
+      );
+      await store.dispatch(onUndoClick()).unwrap();
+      expect(store.getState().connections.connectionsMapping.Query).toEqual({
+        kind: 'expression',
+        expression: "@parameters('defaultConnection')",
+      });
+      await store.dispatch(onRedoClick()).unwrap();
+      expect(store.getState().connections.connectionsMapping.Query).toBe('Sql');
+    }
+  );
 
   it('rejects invalid authoring and nonexistent or incorrectly cased design-time keys without replacing the mapping', async () => {
-    const store = makeStore(await buildState('Sql', true));
+    const store = makeStore(await buildState('Sql'));
     await expect(store.dispatch(updateNodeConnectionExpression({ nodeId, expression: '@if(' })).unwrap()).rejects.toThrow();
     await expect(
       store.dispatch(updateNodeConnectionExpression({ nodeId, expression: '@triggerBody()', designTimeReferenceKey: 'SQL' })).unwrap()
@@ -767,15 +932,27 @@ describe('ServiceProvider runtime connection expressions', () => {
 
   it.each<[string, (state: RootState) => void]>([
     [
-      'disabled capability',
+      'Consumption workflow',
       (state) => {
-        state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions = false;
+        state.workflow.workflowKind = undefined;
       },
     ],
     [
-      'absent capability',
+      'trigger',
       (state) => {
-        delete state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions;
+        state.workflow.nodesMetadata.Query.isTrigger = true;
+      },
+    ],
+    [
+      'managed API action',
+      (state) => {
+        state.operations.operationInfo.Query = { ...operationInfo, type: 'ApiConnection', connectorId: '/managedApis/sql' };
+      },
+    ],
+    [
+      'missing operation metadata',
+      (state) => {
+        delete state.operations.operationInfo.Query;
       },
     ],
     [
@@ -791,13 +968,15 @@ describe('ServiceProvider runtime connection expressions', () => {
       },
     ],
   ])('rejects direct expression authoring with %s without changing the operation', async (_mode, configure) => {
-    const state = await buildState('Sql', true);
+    const state = await buildState('Sql');
     configure(state);
     const store = makeStore(state);
     const originalState = store.getState();
 
     await expect(store.dispatch(updateNodeConnectionExpression({ nodeId, expression: '@triggerBody()' })).unwrap()).rejects.toThrow(
-      'Connection expression editing is not enabled.'
+      _mode === 'read-only mode' || _mode === 'monitoring mode'
+        ? 'Connection expression editing is not enabled.'
+        : 'Connection expressions are only supported on Standard service provider actions.'
     );
 
     expect(store.getState().connections).toBe(originalState.connections);
@@ -938,7 +1117,7 @@ describe('ServiceProvider runtime connection expressions', () => {
     'preserves %s validation for a %s parameter with an %s runtime connection expression',
     async (_validation, parameterKind, source, type, value) => {
       const expression = "@outputs('Resolve_Connection')";
-      const state = await buildState(source === 'authored' ? 'Sql' : expression, source === 'authored');
+      const state = await buildState(source === 'authored' ? 'Sql' : expression);
       const parameter = state.operations.inputParameters.Query.parameterGroups.default.parameters[0];
       parameter.info.isDynamic = parameterKind === 'dynamic';
       parameter.type = type;

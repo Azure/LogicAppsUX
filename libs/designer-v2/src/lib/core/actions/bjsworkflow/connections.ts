@@ -291,11 +291,7 @@ export const updateNodeConnectionExpression = createAsyncThunk(
     { dispatch, getState }
   ): Promise<void> => {
     const state = getState() as RootState;
-    if (
-      !state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions ||
-      state.designerOptions.readOnly ||
-      state.designerOptions.isMonitoringView
-    ) {
+    if (state.designerOptions.readOnly || state.designerOptions.isMonitoringView) {
       throw new Error('Connection expression editing is not enabled.');
     }
     const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);

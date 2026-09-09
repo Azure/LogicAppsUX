@@ -8,7 +8,6 @@ export { mcpStore } from './state/mcp/store';
 export { templateStore } from './state/templates/store';
 export {
   useConnectionMapping,
-  useNodeConnectionMapping,
   useConnectionRefs,
   useIsOperationMissingConnection,
 } from './state/connection/connectionSelector';
@@ -107,7 +106,7 @@ export {
 } from './utils/card';
 export { addOperation } from './actions/bjsworkflow/add';
 export { addConnectorAsOperation } from './actions/bjsworkflow/agent';
-export { updateNodeConnection, updateNodeConnectionExpression } from './actions/bjsworkflow/connections';
+export { updateNodeConnection } from './actions/bjsworkflow/connections';
 export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
 export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
 export { resetDesignerView } from './state/designerView/designerViewSlice';

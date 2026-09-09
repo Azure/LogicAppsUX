@@ -13,7 +13,11 @@ import {
   useNodeConnectionId,
   useNodeConnectionMapping,
 } from '../../../../core/state/connection/connectionSelector';
-import { useIsXrmConnectionReferenceMode, useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import {
+  useIsXrmConnectionReferenceMode,
+  useMonitoringView,
+  useReadOnly,
+} from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useConnectionPanelSelectedNodeIds,
   useOperationPanelSelectedNodeId,
@@ -47,7 +51,9 @@ export const SelectConnectionWrapper = () => {
 
   const intl = useIntl();
   const selectedNodeIds = useConnectionPanelSelectedNodeIds();
-  const readOnly = useReadOnly();
+  const isReadOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
+  const readOnly = isReadOnly || isMonitoringView;
   const expressionEnabled = useConnectionExpressionEnabled(selectedNodeIds);
   const mapping = useNodeConnectionMapping(selectedNodeIds?.[0]);
   const runtimeConnection = isExpressionConnectionMapping(mapping);

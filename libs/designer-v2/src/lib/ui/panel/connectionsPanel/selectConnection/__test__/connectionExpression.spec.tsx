@@ -7,7 +7,7 @@ import {
   $createTextNode,
   $getRoot,
   connectionExpressionEditor,
-} from '../../../../../../../../designer-ui/src/lib/editor/__test__/connection-expression-editor-helper';
+} from '../../../../../../../../designer-ui/__test__/connection-expression-editor-helper';
 import { SelectConnectionWrapper } from '../selectConnection';
 import { AllConnections } from '../../allConnections/allConnections';
 import { ConnectionDisplay } from '../../../nodeDetailsPanel/tabs/parametersTab/connectionDisplay';
@@ -170,7 +170,7 @@ beforeEach(() => {
   mocks.pickerProps = undefined;
   mocks.query = { data: [], isLoading: false, isError: false };
   mocks.state = {
-    designerOptions: { readOnly: false, hostOptions: { enableServiceProviderConnectionExpressions: true } },
+    designerOptions: { readOnly: false, isMonitoringView: false, hostOptions: {} },
     workflow: { workflowKind: 'stateful', nodesMetadata: { action: { isTrigger: false } }, idReplacements: {} },
     operations: { operationInfo: { action: { type: 'ServiceProvider', connectorId: '/serviceProviders/sql' } } },
     connections: {
@@ -191,9 +191,21 @@ afterEach(cleanup);
 describe('connection expression selection', () => {
   it.each<[string, () => void]>([
     [
-      'disabled flag',
+      'read-only mode',
       () => {
-        mocks.state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions = false;
+        mocks.state.designerOptions.readOnly = true;
+      },
+    ],
+    [
+      'monitoring mode',
+      () => {
+        mocks.state.designerOptions.isMonitoringView = true;
+      },
+    ],
+    [
+      'missing operation metadata',
+      () => {
+        delete mocks.state.operations.operationInfo.action;
       },
     ],
     [
@@ -234,11 +246,17 @@ describe('connection expression selection', () => {
     expect(screen.queryByRole('radio', { name: 'Use expression' })).not.toBeInTheDocument();
   });
 
-  it('does not auto-create when expression authoring is available and no connections exist', () => {
-    renderPanel();
-    expect(screen.getByRole('radio', { name: 'Existing connection' })).toBeChecked();
-    expect(mocks.autoCreate).not.toHaveBeenCalled();
-  });
+  it.each(['stateful', 'stateless'])(
+    'offers expression authoring by default for Standard %s with ordinary host options and no connections',
+    (workflowKind) => {
+      mocks.state.workflow.workflowKind = workflowKind;
+      renderPanel();
+      expect(mocks.state.designerOptions.hostOptions).toEqual({});
+      expect(screen.getByRole('radio', { name: 'Use expression' })).toBeEnabled();
+      expect(screen.getByRole('radio', { name: 'Existing connection' })).toBeChecked();
+      expect(mocks.autoCreate).not.toHaveBeenCalled();
+    }
+  );
 
   it('does not apply an imported expression to multiple selected actions', () => {
     mocks.selectedNodeIds = ['action', 'second'];
@@ -351,24 +369,62 @@ describe('connection expression selection', () => {
     expect(mocks.staticUpdate).not.toHaveBeenCalled();
   });
 
-  it('preserves imported expressions when the flag is off without auto-creating a connection', () => {
-    mocks.state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions = false;
+  it.each<[string, () => void]>([
+    [
+      'Consumption',
+      () => {
+        mocks.state.workflow.workflowKind = undefined;
+      },
+    ],
+    [
+      'trigger',
+      () => {
+        mocks.state.workflow.nodesMetadata.action.isTrigger = true;
+      },
+    ],
+    [
+      'managed API',
+      () => {
+        mocks.state.operations.operationInfo.action.type = 'ApiConnection';
+      },
+    ],
+  ])('preserves imported expressions in unsupported %s context without auto-creating a connection', (_context, configure) => {
+    configure();
     mocks.state.connections.connectionsMapping.action = { kind: 'expression', expression };
     renderPanel();
     expect(screen.getByRole('textbox', { name: 'Connection expression' })).toHaveTextContent(expression);
     expect(screen.getByRole('button', { name: 'Apply' })).toBeDisabled();
     expect(mocks.autoCreate).not.toHaveBeenCalled();
+    expect(mocks.dispatch).not.toHaveBeenCalled();
+    expect(mocks.expressionUpdate).not.toHaveBeenCalled();
   });
 
-  it('respects read-only mode without auto-creating connections', async () => {
-    mocks.state.designerOptions.readOnly = true;
+  it.each(['readOnly', 'isMonitoringView'] as const)('respects %s without auto-creating or mutating connections', (mode) => {
+    mocks.state.designerOptions[mode] = true;
     mocks.state.connections.connectionsMapping.action = { kind: 'expression', expression };
     renderPanel();
     expect(screen.getByRole('radio', { name: 'Existing connection' })).toBeDisabled();
     expect(screen.getByRole('textbox', { name: 'Connection expression' })).toHaveAttribute('contenteditable', 'false');
     expect(screen.getByRole('button', { name: 'Apply' })).toBeDisabled();
     expect(mocks.autoCreate).not.toHaveBeenCalled();
+    expect(mocks.staticUpdate).not.toHaveBeenCalled();
+    expect(mocks.expressionUpdate).not.toHaveBeenCalled();
+    expect(mocks.dispatch).not.toHaveBeenCalled();
   });
+
+  it.each(['readOnly', 'isMonitoringView'] as const)(
+    'blocks static selection and auto-create in %s even without an imported expression',
+    (mode) => {
+      mocks.state.designerOptions[mode] = true;
+      renderPanel();
+      expect(screen.queryByRole('radio', { name: 'Use expression' })).not.toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Select SqlDesign' }));
+      expect(mocks.staticUpdate).not.toHaveBeenCalled();
+      expect(mocks.setupConnection).not.toHaveBeenCalled();
+      expect(mocks.autoCreate).not.toHaveBeenCalled();
+      expect(mocks.dispatch).not.toHaveBeenCalled();
+    }
+  );
 
   it('can intentionally replace an expression with an existing concrete connection', () => {
     mocks.state.connections.connectionsMapping.action = { kind: 'expression', expression, designTimeReferenceKey: 'SqlDesign' };
@@ -426,7 +482,6 @@ describe('runtime connection display', () => {
     ['malformed imported expression', '@if(', undefined, false],
     ['selected design-time connection error', '@triggerBody()', 'SqlDesign', true],
   ] as const)('shows an error for a %s without hiding the runtime expression', (_case, value, designTimeReferenceKey, hasError) => {
-    mocks.state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions = false;
     mocks.state.connections.connectionsMapping.action = { kind: 'expression', expression: value, designTimeReferenceKey };
     render(
       <IntlProvider locale="en">
@@ -441,7 +496,6 @@ describe('runtime connection display', () => {
   });
 
   it('lists runtime-only connections instead of empty state and opens the original action ID', () => {
-    mocks.state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions = false;
     mocks.state.connections.connectionReferences = {};
     mocks.state.connections.connectionsMapping = {
       action: { kind: 'expression', expression },
@@ -481,7 +535,6 @@ describe('runtime connection display', () => {
   });
 
   it('shows the imported expression instead of invalid/missing/loading state without opening the panel', () => {
-    mocks.state.designerOptions.hostOptions.enableServiceProviderConnectionExpressions = false;
     mocks.state.connections.connectionsMapping.action = { kind: 'expression', expression };
     render(
       <IntlProvider locale="en">

@@ -698,7 +698,6 @@ const DesignerEditor = () => {
           isDraft: isDraftMode,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
-            enableServiceProviderConnectionExpressions: true,
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },

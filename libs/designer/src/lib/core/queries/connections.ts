@@ -1,5 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { ConnectionService, SwaggerParser, equals, cleanResourceId, isTemplateExpression } from '@microsoft/logic-apps-shared';
+import { ConnectionService, SwaggerParser, equals, cleanResourceId } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -8,7 +8,6 @@ import { getConnector, getSwagger } from './operation';
 
 const connectionKey = 'connections';
 const allConnectionsKey = 'allConnections';
-export const getConnectionQueryKey = (id = ''): string => (/(^|\/)serviceProviders\//i.test(id) ? id : id.toLowerCase());
 
 export interface ConnectorWithParsedSwagger {
   connector: Connector;
@@ -80,9 +79,7 @@ export const useConnectionById = (connectionId: string, connectorId: string) => 
       };
     }
 
-    const foundConnection = (connections ?? []).find(
-      (connection) => getConnectionQueryKey(connection.id) === getConnectionQueryKey(connectionId)
-    );
+    const foundConnection = (connections ?? []).find((connection: any) => equals(connection.id, connectionId));
     return {
       isLoading,
       result: foundConnection ?? connection,
@@ -115,17 +112,11 @@ export const getConnectionsForConnector = async (connectorId: string) => {
 };
 
 export const getConnection = async (_connectionId: string, _connectorId: string, fetchResourceIfNeeded = false) => {
-  if (!_connectionId || isTemplateExpression(_connectionId)) {
-    return null;
-  }
   const connectionId = cleanResourceId(_connectionId);
   const connectorId = cleanResourceId(_connectorId);
   const connections = await getConnectionsForConnector(connectorId);
-  const isServiceProvider = /(^|\/)serviceProviders\//i.test(connectorId);
-  const connection = connections?.find((connection) =>
-    isServiceProvider ? connection.id === connectionId : equals(connection.id, connectionId)
-  );
-  return (!connection && fetchResourceIfNeeded && !isServiceProvider ? getConnectionFromResource(connectionId) : connection) ?? null;
+  const connection = connections?.find((connection) => equals(connection.id, connectionId));
+  return (!connection && fetchResourceIfNeeded ? getConnectionFromResource(connectionId) : connection) ?? null;
 };
 
 export const getUniqueConnectionName = async (connectorId: string, existingKeys: string[] = []): Promise<string> => {
@@ -135,7 +126,7 @@ export const getUniqueConnectionName = async (connectorId: string, existingKeys:
 };
 
 export const useConnectionResource = (_connectionId: string) => {
-  const connectionId = !_connectionId || isTemplateExpression(_connectionId) ? '' : getConnectionQueryKey(cleanResourceId(_connectionId));
+  const connectionId = cleanResourceId(_connectionId)?.toLowerCase();
   return useQuery(
     ['connection', connectionId],
     async () => {
@@ -143,7 +134,7 @@ export const useConnectionResource = (_connectionId: string) => {
       return result ?? null;
     },
     {
-      enabled: !!connectionId,
+      enabled: !!_connectionId,
       refetchOnMount: false,
     }
   );
@@ -151,7 +142,7 @@ export const useConnectionResource = (_connectionId: string) => {
 
 const getConnectionFromResource = async (connectionId: string) => {
   const queryClient = getReactQueryClient();
-  return queryClient.fetchQuery(['connection', getConnectionQueryKey(connectionId)], async () => {
+  return queryClient.fetchQuery(['connection', connectionId?.toLowerCase()], async () => {
     const result = await ConnectionService().getConnection(connectionId);
     return result ?? null;
   });

@@ -39,21 +39,7 @@ export type ReferenceKey = string;
 export type ConnectionReferences = Record<ReferenceKey, ConnectionReference>;
 
 export type NodeId = string;
-export interface ExpressionConnectionMapping {
-  kind: 'expression';
-  expression: string;
-  designTimeReferenceKey?: ReferenceKey;
-}
-
-export type ConnectionMapping = Record<NodeId, ReferenceKey | null | ExpressionConnectionMapping>;
-
-export const isExpressionConnectionMapping = (mapping: unknown): mapping is ExpressionConnectionMapping =>
-  typeof mapping === 'object' &&
-  mapping !== null &&
-  'kind' in mapping &&
-  mapping.kind === 'expression' &&
-  'expression' in mapping &&
-  typeof mapping.expression === 'string';
+export type ConnectionMapping = Record<NodeId, ReferenceKey | null>;
 
 export interface WorkflowParameter {
   name?: string;

@@ -61,15 +61,15 @@ interface DesignerProps {
 }
 ```
 
-### Runtime Connection Selection (Standard)
+### Runtime Connection Selection (Designer V2, Standard)
 
-Both Designer packages support expressions in a Standard `ServiceProvider` action's
-`inputs.serviceProviderConfiguration.connectionName`. Hosts can enable the
-**Change connection > Use expression** editor with
-`options.hostOptions.enableServiceProviderConnectionExpressions: true`.
-The option defaults to disabled; imported expressions are preserved even when
-expression authoring is disabled. Managed API connections, Consumption workflows,
-and triggers do not expose expression authoring.
+Designer V2 supports expressions in a Standard `ServiceProvider` action's
+`inputs.serviceProviderConfiguration.connectionName`. The
+**Change connection > Use expression** editor is enabled by default for supported
+actions; no host option is required. Managed API connections, Consumption
+workflows, and triggers do not expose expression authoring. Imported expressions
+are preserved when their context does not support authoring. Designer V1 is
+unchanged and does not offer this editor.
 
 Expression editing is per action, not bulk connection reassignment. The token
 picker does not insert implicit loops. For per-item selection within an existing

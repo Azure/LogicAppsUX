@@ -65,8 +65,7 @@ export const serializeMcpWorkflows = async (
   const logicAppId = getStandardLogicAppId(subscriptionId, resourceGroup, logicAppName);
   const workflows: Record<string, { definition: LogicAppsV2.WorkflowDefinition; kind: string }> = {};
   const promises = Object.keys(operationInfo).map(async (nodeId) => {
-    const mapping = connectionState.connectionsMapping[nodeId];
-    const referenceName = typeof mapping === 'string' ? mapping : '';
+    const referenceName = connectionState.connectionsMapping[nodeId] as string;
     return getOperationDefinitionAndTriggerInputs(referenceName, operationInfo[nodeId], inputParameters[nodeId], settings[nodeId]);
   });
 
@@ -250,8 +249,8 @@ const getConnectionsDataToSerialize = async (
 ): Promise<{ connectionsData: ConnectionsData | undefined; references: string[] }> => {
   const { connectionReferences, connectionsMapping } = connectionState;
   const queryClient = getReactQueryClient();
-  const referencesToSerialize = Object.values(connectionsMapping).reduce((result: string[], referenceKey) => {
-    if (typeof referenceKey === 'string' && referenceKey && !result.includes(referenceKey)) {
+  const referencesToSerialize = Object.values(connectionsMapping).reduce((result: string[], referenceKey: string | null) => {
+    if (referenceKey && !result.includes(referenceKey)) {
       result.push(referenceKey);
     }
     return result;

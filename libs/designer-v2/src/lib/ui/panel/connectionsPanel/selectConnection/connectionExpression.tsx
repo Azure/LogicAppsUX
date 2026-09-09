@@ -1,4 +1,4 @@
-import { useHostOptions, useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { isTriggerNode } from '../../../../core/utils/graph';
 import { isConnectionExpressionValid } from '../../../../core/utils/connectors/connectionExpression';
@@ -18,11 +18,11 @@ const useStyles = makeStyles({
   actions: { display: 'flex', gap: tokens.spacingHorizontalS },
 });
 
-export const useConnectionExpressionEnabled = (nodeIds: string[]) => {
-  const hostOptions = useHostOptions();
-  return useSelector(
+export const useConnectionExpressionEnabled = (nodeIds: string[]) =>
+  useSelector(
     (state: RootState) =>
-      !!hostOptions?.enableServiceProviderConnectionExpressions &&
+      !state.designerOptions.readOnly &&
+      !state.designerOptions.isMonitoringView &&
       !!state.workflow.workflowKind &&
       nodeIds.length === 1 &&
       nodeIds.every(
@@ -31,7 +31,6 @@ export const useConnectionExpressionEnabled = (nodeIds: string[]) => {
           !isTriggerNode(nodeId, state.workflow.nodesMetadata)
       )
   );
-};
 
 interface ConnectionExpressionSelectionProps {
   nodeId: string;
@@ -56,7 +55,9 @@ export const ConnectionExpressionSelection = ({
 }: ConnectionExpressionSelectionProps) => {
   const intl = useIntl();
   const styles = useStyles();
-  const readOnly = useReadOnly();
+  const isReadOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
+  const readOnly = isReadOnly || isMonitoringView;
   const expressionMapping = isExpressionConnectionMapping(mapping) ? mapping : undefined;
   const [mode, setMode] = useState(expressionMapping ? 'expression' : 'existing');
   const [value, setValue] = useState<ValueSegment[]>(() => [createLiteralValueSegment(expressionMapping?.expression ?? '')]);

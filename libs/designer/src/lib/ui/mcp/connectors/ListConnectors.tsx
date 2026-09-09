@@ -116,7 +116,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
 
     if (allOperations.length === 0 && disableConnectorSelection && connectorId) {
       const referenceKey = connectionsMapping[MCP_ConnectionKey];
-      const reference = typeof referenceKey === 'string' ? connectionReferences[referenceKey] : null;
+      const reference = referenceKey ? connectionReferences[referenceKey] : null;
 
       const isConnected = !!reference;
       return [
@@ -143,7 +143,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
       seen.add(connectorId);
 
       const referenceKey = connectionsMapping[info.operationId];
-      const reference = typeof referenceKey === 'string' ? connectionReferences[referenceKey] : null;
+      const reference = referenceKey ? connectionReferences[referenceKey] : null;
 
       const isConnected = !!reference;
 

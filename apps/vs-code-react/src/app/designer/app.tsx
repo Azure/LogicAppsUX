@@ -264,7 +264,6 @@ const DesignerAppV1 = () => {
           services: services,
           hostOptions: {
             displayRuntimeInfo: true,
-            enableServiceProviderConnectionExpressions: true,
             enableMultiVariable: isMultiVariableSupportEnabled,
             enableNestedAgentLoops: isNestedAgentLoopsSupportEnabled,
           },

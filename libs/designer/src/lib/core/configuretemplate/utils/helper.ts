@@ -85,10 +85,7 @@ export const getConnectionMappingInDefinition = async (
     const workflow = Deserialize(definition, /* runInstance */ null);
     const mapping = await getConnectionsMappingForNodes(workflow);
     return Object.keys(mapping).reduce((result: Record<string, string>, operationId: string) => {
-      const referenceKey = mapping[operationId];
-      if (typeof referenceKey === 'string') {
-        result[`${workflowId}${delimiter}${operationId}`] = referenceKey;
-      }
+      result[`${workflowId}${delimiter}${operationId}`] = mapping[operationId];
       return result;
     }, {});
   } catch (error: any) {

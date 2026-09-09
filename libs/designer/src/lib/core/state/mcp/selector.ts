@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-import type { ConnectionMapping } from '../../../common/models/workflow';
 import type { RootState } from './store';
 import { equals, type ConnectionReference, type ConnectionReferences } from '@microsoft/logic-apps-shared';
 
@@ -21,7 +20,7 @@ export const useConnectionReferences = (): ConnectionReferences => {
 
 export const useConnectionReference = (): ConnectionReference | undefined => {
   const state = useSelector((state: RootState) => state.connection);
-  const operationsGroupedByReferences = getOperationsGroupedByReferences(state.connectionsMapping);
+  const operationsGroupedByReferences = getOperationsGroupedByReferences(state.connectionsMapping as Record<string, string>);
 
   // There should be only one reference per connector, and in first release it is only one connector so defaulting to the first one.
   const firstReferenceKey = Object.keys(operationsGroupedByReferences)[0] as string;
@@ -30,7 +29,7 @@ export const useConnectionReference = (): ConnectionReference | undefined => {
 
 export const useOperationNodeIds = (connectorId: string): string[] => {
   const state = useSelector((state: RootState) => state.connection);
-  const operationsGroupedByReferences = getOperationsGroupedByReferences(state.connectionsMapping);
+  const operationsGroupedByReferences = getOperationsGroupedByReferences(state.connectionsMapping as Record<string, string>);
 
   for (const [referenceKey, nodeIds] of Object.entries(operationsGroupedByReferences)) {
     const connectionReference = state.connectionReferences[referenceKey];
@@ -42,11 +41,8 @@ export const useOperationNodeIds = (connectorId: string): string[] => {
   return [];
 };
 
-const getOperationsGroupedByReferences = (mapping: ConnectionMapping): Record<string, string[]> => {
+const getOperationsGroupedByReferences = (mapping: Record<string, string>): Record<string, string[]> => {
   return Object.entries(mapping).reduce((result: Record<string, string[]>, [nodeId, referenceKey]) => {
-    if (typeof referenceKey !== 'string') {
-      return result;
-    }
     if (!result[referenceKey]) {
       result[referenceKey] = [];
     }

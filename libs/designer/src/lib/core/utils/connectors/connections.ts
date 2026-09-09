@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import { isExpressionConnectionMapping, type ConnectionReference, type ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
@@ -19,7 +19,6 @@ import {
   getRecordEntry,
   getPropertyValue,
   deepCompareObjects,
-  isTemplateExpression,
 } from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
@@ -36,25 +35,13 @@ export function getConnectionId(state: ConnectionsStoreState, nodeId: string): s
   return getConnectionReference(state, nodeId)?.connection?.id ?? '';
 }
 
-export function getConnectionReference(
-  state: Pick<ConnectionsStoreState, 'connectionsMapping' | 'connectionReferences'>,
-  nodeId: string
-): ConnectionReference | undefined {
+export function getConnectionReference(state: ConnectionsStoreState, nodeId: string): ConnectionReference {
   const { connectionsMapping, connectionReferences } = state;
   const mappedConnectionReference = getRecordEntry(connectionsMapping, nodeId);
-  if (isExpressionConnectionMapping(mappedConnectionReference)) {
-    const referenceKey = mappedConnectionReference.designTimeReferenceKey;
-    const reference = referenceKey && Object.hasOwn(connectionReferences, referenceKey) ? connectionReferences[referenceKey] : undefined;
-    return reference?.connection.id && !isTemplateExpression(reference.connection.id) && !reference.connection.id.startsWith('__MOCK')
-      ? reference
-      : undefined;
-  }
   if (!mappedConnectionReference) {
     return mockEmptyConnectionReference;
   }
-  const connectionReference = Object.hasOwn(connectionReferences, mappedConnectionReference)
-    ? connectionReferences[mappedConnectionReference]
-    : undefined;
+  const connectionReference = getRecordEntry(connectionReferences, mappedConnectionReference);
   if (!connectionReference) {
     return mockInvalidConnectionReference;
   }
@@ -91,12 +78,7 @@ export async function isConnectionReferenceValid(
       return !!reference && !reference.connection.id.startsWith('__MOCK');
     }
   }
-  if (
-    !reference ||
-    !reference.connection.id ||
-    reference.connection.id.startsWith('__MOCK') ||
-    isTemplateExpression(reference.connection.id)
-  ) {
+  if (!reference) {
     return false;
   }
 
@@ -117,9 +99,7 @@ export function getExistingReferenceKey(
     const reference = allReferences[referenceKey];
     return (
       equals(reference.api.id, connectorId) &&
-      (/(^|\/)serviceProviders\//i.test(connectorId)
-        ? reference.connection.id === connectionId
-        : equals(reference.connection.id, connectionId)) &&
+      equals(reference.connection.id, connectionId) &&
       equals(reference.connectionRuntimeUrl ?? '', connectionRuntimeUrl ?? '') &&
       deepCompareObjects(reference.connectionProperties, connectionProperties)
     );

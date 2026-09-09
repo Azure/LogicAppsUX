@@ -472,7 +472,6 @@ const DesignerEditor = () => {
           isMonitoringView,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
-            enableServiceProviderConnectionExpressions: true,
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
