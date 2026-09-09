@@ -5,9 +5,11 @@ import { ConnectionPanel } from '../connectionsPanel';
 import { autoCreateConnectionIfPossible, closeConnectionsFlow } from '../../../../core/actions/bjsworkflow/connections';
 import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId } from '../../../../core';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useConnectionRefs, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
-import { useIsCreatingConnection } from '../../../../core/state/panel/panelSelectors';
+import { useConnectionRefs, useConnectorByNodeId, useNodeConnectionMapping } from '../../../../core/state/connection/connectionSelector';
+import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useConnectionPanelSelectedNodeIds, useIsCreatingConnection } from '../../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { useConnectionExpressionEnabled } from '../selectConnection/connectionExpression';
 
 const mocks = vi.hoisted(() => ({
   dispatch: vi.fn(),
@@ -70,10 +72,20 @@ vi.mock('../../../../core/queries/connections', () => ({
 vi.mock('../../../../core/state/connection/connectionSelector', () => ({
   useConnectionRefs: vi.fn(),
   useConnectorByNodeId: vi.fn(),
+  useNodeConnectionMapping: vi.fn(),
+}));
+
+vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+  useReadOnly: vi.fn(),
 }));
 
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
+  useConnectionPanelSelectedNodeIds: vi.fn(),
   useIsCreatingConnection: vi.fn(),
+}));
+
+vi.mock('../selectConnection/connectionExpression', () => ({
+  useConnectionExpressionEnabled: vi.fn(),
 }));
 
 vi.mock('../../../../core/state/panel/panelSlice', () => ({
@@ -131,12 +143,124 @@ describe('ConnectionPanel (designer-v2)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useOperationPanelSelectedNodeId as Mock).mockReturnValue('node-id');
+    (useConnectionPanelSelectedNodeIds as Mock).mockReturnValue(['node-id']);
+    (useNodeConnectionMapping as Mock).mockReturnValue(null);
+    (useConnectionExpressionEnabled as Mock).mockReturnValue(false);
+    (useReadOnly as Mock).mockReturnValue(false);
     (useConnectorByNodeId as Mock).mockReturnValue(mockConnector);
     (useOperationInfo as Mock).mockReturnValue({ connectorId: 'connector-id', operationId: 'op-id' });
     (useConnectionRefs as Mock).mockReturnValue({ referenceOne: {}, referenceTwo: {} });
     (useIsCreatingConnection as Mock).mockReturnValue(false);
     (autoCreateConnectionIfPossible as Mock).mockResolvedValue(undefined);
     setConnectionsQuery();
+  });
+
+  describe('runtime-expression auto-create gate', () => {
+    const expectSelectionWithoutMutation = () => {
+      expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+      expect(screen.getByTestId('select-connection-wrapper')).toBeInTheDocument();
+      expect(screen.queryByTestId('create-connection-wrapper')).not.toBeInTheDocument();
+      expect(autoCreateConnectionIfPossible).not.toHaveBeenCalled();
+      expect(updateNodeConnection).not.toHaveBeenCalled();
+      expect(closeConnectionsFlow).not.toHaveBeenCalled();
+      expect(setIsCreatingConnection).not.toHaveBeenCalled();
+      expect(mocks.dispatch).not.toHaveBeenCalled();
+    };
+
+    it('does not auto-create or force Create connection when new runtime authoring is eligible and no connections exist', () => {
+      (useConnectorByNodeId as Mock).mockReturnValue({ ...mockConnector, id: '/serviceProviders/sql' });
+      (useOperationInfo as Mock).mockReturnValue({
+        type: 'ServiceProvider',
+        connectorId: '/serviceProviders/sql',
+        operationId: 'executeQuery',
+      });
+      (useConnectionExpressionEnabled as Mock).mockReturnValue(true);
+      setConnectionsQuery({ isLoading: true });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+
+      setConnectionsQuery({ data: [], isLoading: false });
+      rerender(<ConnectionPanel {...panelProps} />);
+
+      expect(useConnectionExpressionEnabled).toHaveBeenCalledWith(['node-id']);
+      expectSelectionWithoutMutation();
+    });
+
+    it('preserves an imported expression with authoring disabled using the connection-panel selection', () => {
+      const expressionMapping = { kind: 'expression', expression: "@outputs('Resolve_Connection')" };
+      (useConnectionPanelSelectedNodeIds as Mock).mockReturnValue(['runtime-node']);
+      (useNodeConnectionMapping as Mock).mockImplementation((id: string) => (id === 'runtime-node' ? expressionMapping : 'static-ref'));
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ applyNewConnection, onSuccess }) => {
+        applyNewConnection(newConnection);
+        onSuccess();
+        return Promise.resolve();
+      });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      setConnectionsQuery({ data: [] });
+      rerender(<ConnectionPanel {...panelProps} />);
+
+      expect(useConnectionExpressionEnabled).toHaveBeenCalledWith(['runtime-node']);
+      expect(useNodeConnectionMapping).toHaveBeenCalledWith('runtime-node');
+      expectSelectionWithoutMutation();
+    });
+
+    it.each([null, 'static-ref'])(
+      'does not mutate read-only connections when the mapping is %s and expression authoring is disabled',
+      (mapping) => {
+        (useReadOnly as Mock).mockReturnValue(true);
+        (useNodeConnectionMapping as Mock).mockReturnValue(mapping);
+        (autoCreateConnectionIfPossible as Mock).mockImplementation(({ onManualConnectionCreation }) => {
+          onManualConnectionCreation();
+          return Promise.resolve();
+        });
+
+        render(<ConnectionPanel {...panelProps} />);
+
+        expectSelectionWithoutMutation();
+      }
+    );
+
+    it.each([
+      ['unsupported connector', 'connector-id'],
+      ['disabled provider authoring', '/serviceProviders/sql'],
+    ])('retains static auto-create for %s when no runtime expression is mapped', (_case, connectorId) => {
+      const connector = { ...mockConnector, id: connectorId };
+      (useConnectorByNodeId as Mock).mockReturnValue(connector);
+      (useOperationInfo as Mock).mockReturnValue({
+        connectorId,
+        operationId: 'op-id',
+        type: connectorId.startsWith('/serviceProviders') ? 'ServiceProvider' : 'ApiConnection',
+      });
+      (useNodeConnectionMapping as Mock).mockReturnValue('static-ref');
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ applyNewConnection, onSuccess }) => {
+        applyNewConnection(newConnection);
+        onSuccess();
+        return Promise.resolve();
+      });
+
+      render(<ConnectionPanel {...panelProps} />);
+
+      expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+      expect(updateNodeConnection).toHaveBeenCalledWith({ nodeId: 'node-id', connection: newConnection, connector });
+      expect(mocks.dispatch).toHaveBeenCalledWith({
+        type: 'connections/updateNodeConnection',
+        payload: { nodeId: 'node-id', connection: newConnection, connector },
+      });
+      expect(closeConnectionsFlow).toHaveBeenCalledWith({ nodeId: 'node-id' });
+    });
+
+    it('does not latch the reentry guard while expression selection blocks auto-create', async () => {
+      (useConnectionExpressionEnabled as Mock).mockReturnValue(true);
+      (autoCreateConnectionIfPossible as Mock).mockReturnValue(new Promise(() => {}));
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      expectSelectionWithoutMutation();
+
+      (useConnectionExpressionEnabled as Mock).mockReturnValue(false);
+      rerender(<ConnectionPanel {...panelProps} />);
+      await waitFor(() => expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1));
+      setConnectionsQuery({ data: [] });
+      rerender(<ConnectionPanel {...panelProps} />);
+      expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('panel rendering', () => {

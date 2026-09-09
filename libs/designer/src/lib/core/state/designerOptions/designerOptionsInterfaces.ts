@@ -51,6 +51,9 @@ export interface DesignerOptionsState {
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
+    // Opt-in authoring for Standard ServiceProvider action connectionName expressions.
+    // Imported expressions are preserved regardless. Design-time selections are session-only, never runtime fallbacks.
+    enableServiceProviderConnectionExpressions?: boolean;
     enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
     integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };

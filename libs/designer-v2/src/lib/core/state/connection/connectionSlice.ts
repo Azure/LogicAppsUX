@@ -1,5 +1,13 @@
 import { getExistingReferenceKey } from '../../utils/connectors/connections';
-import type { ConnectionMapping, ConnectionReference, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
+import {
+  isExpressionConnectionMapping,
+  type ConnectionMapping,
+  type ConnectionReference,
+  type ConnectionReferences,
+  type NodeId,
+  type ExpressionConnectionMapping,
+} from '../../../common/models/workflow';
+import { remapConnectionExpression } from '../../utils/connectors/connectionExpression';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, getResourceNameFromId, getUniqueName } from '@microsoft/logic-apps-shared';
@@ -24,7 +32,11 @@ export const initialConnectionsState: ConnectionsStoreState = {
   },
 };
 
-type ConnectionReferenceMap = Record<string, ReferenceKey>;
+export interface CopiedConnectionData {
+  connectionReference?: ConnectionReference;
+  referenceKey?: string;
+  mapping?: ExpressionConnectionMapping;
+}
 
 export const connectionSlice = createSlice({
   name: 'connections',
@@ -35,6 +47,17 @@ export const connectionSlice = createSlice({
     },
     initializeConnectionsMappings: (state, action: PayloadAction<ConnectionMapping>) => {
       state.connectionsMapping = action.payload;
+    },
+    setNodeConnectionMapping: (state, action: PayloadAction<{ nodeId: string; mapping: ConnectionMapping[string] }>) => {
+      state.connectionsMapping[action.payload.nodeId] = action.payload.mapping;
+    },
+    renameConnectionExpressionParameter: (state, action: PayloadAction<{ oldName: string; newName: string }>) => {
+      const { oldName, newName } = action.payload;
+      for (const mapping of Object.values(state.connectionsMapping)) {
+        if (isExpressionConnectionMapping(mapping)) {
+          mapping.expression = remapConnectionExpression(mapping.expression, {}, { [oldName]: newName });
+        }
+      }
     },
     changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload>) => {
       const { key, reference } = getReferenceForConnection(state.connectionReferences, action.payload);
@@ -76,23 +99,36 @@ export const connectionSlice = createSlice({
         state.connectionsMapping[nodeId] = null;
       }
     },
-    initCopiedConnectionMap: (state, action: PayloadAction<{ connectionReferences: ConnectionReferenceMap }>) => {
+    initCopiedConnectionMap: (state, action: PayloadAction<{ connectionReferences: ConnectionMapping }>) => {
       const { connectionReferences } = action.payload;
       Object.entries(connectionReferences).forEach(([nodeId, referenceKey]) => {
-        if (referenceKey && state.connectionReferences[referenceKey]) {
+        if (isExpressionConnectionMapping(referenceKey)) {
+          const { designTimeReferenceKey, ...mapping } = referenceKey;
+          state.connectionsMapping[nodeId] = {
+            ...mapping,
+            ...(designTimeReferenceKey && state.connectionReferences[designTimeReferenceKey] ? { designTimeReferenceKey } : {}),
+          };
+        } else if (referenceKey && state.connectionReferences[referenceKey]) {
           state.connectionsMapping[nodeId] = referenceKey;
         }
       });
     },
-    initScopeCopiedConnections: (
-      state,
-      action: PayloadAction<Record<string, { connectionReference: ConnectionReference; referenceKey: string }>>
-    ) => {
+    initScopeCopiedConnections: (state, action: PayloadAction<Record<string, CopiedConnectionData>>) => {
       const copiedConnections = action.payload;
-      Object.entries(copiedConnections).forEach(([nodeId, { connectionReference, referenceKey }]) => {
+      Object.entries(copiedConnections).forEach(([nodeId, { connectionReference, referenceKey, mapping }]) => {
+        if (mapping) {
+          if (referenceKey && connectionReference && !state.connectionReferences[referenceKey]) {
+            state.connectionReferences[referenceKey] = connectionReference;
+          }
+          state.connectionsMapping[nodeId] = mapping;
+          return;
+        }
+        if (!referenceKey) {
+          return;
+        }
         if (referenceKey && state.connectionReferences[referenceKey]) {
           state.connectionsMapping[nodeId] = referenceKey;
-        } else {
+        } else if (connectionReference) {
           state.connectionReferences[referenceKey] = connectionReference;
           state.connectionsMapping[nodeId] = referenceKey;
         }
@@ -134,7 +170,10 @@ const getReferenceForConnection = (
     return { key: existingReferenceKey };
   }
 
-  const { name: newReferenceKey } = getUniqueName(Object.keys(references), connectorId.split('/').at(-1) as string);
+  // Service provider expressions address the connections.json key directly.
+  const newReferenceKey = /(^|\/)serviceProviders\//i.test(connectorId)
+    ? getResourceNameFromId(connectionId)
+    : getUniqueName(Object.keys(references), connectorId.split('/').at(-1) as string).name;
   return {
     key: newReferenceKey,
     reference: {
@@ -152,6 +191,8 @@ const getReferenceForConnection = (
 export const {
   initializeConnectionReferences,
   initializeConnectionsMappings,
+  setNodeConnectionMapping,
+  renameConnectionExpressionParameter,
   changeConnectionMapping,
   initEmptyConnectionMap,
   initCopiedConnectionMap,

@@ -1,14 +1,19 @@
 import { useIsA2AWorkflow } from '../../../../core/state/designerView/designerViewSelectors';
 import { useOperationInfo, type AppDispatch } from '../../../../core';
-import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
+import {
+  autoCreateConnectionIfPossible,
+  updateNodeConnection,
+  updateNodeConnectionExpression,
+} from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import {
   useConnectionRefs,
   useConnectionRefsByConnectorId,
   useConnectorByNodeId,
   useNodeConnectionId,
+  useNodeConnectionMapping,
 } from '../../../../core/state/connection/connectionSelector';
-import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsXrmConnectionReferenceMode, useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useConnectionPanelSelectedNodeIds,
   useOperationPanelSelectedNodeId,
@@ -34,12 +39,19 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { AgentUtils, isDynamicConnection } from '../../../../common/utilities/Utils';
 import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
+import { isExpressionConnectionMapping } from '../../../../common/models/workflow';
+import { ConnectionExpressionSelection, useConnectionExpressionEnabled } from './connectionExpression';
 
 export const SelectConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
   const selectedNodeIds = useConnectionPanelSelectedNodeIds();
+  const readOnly = useReadOnly();
+  const expressionEnabled = useConnectionExpressionEnabled(selectedNodeIds);
+  const mapping = useNodeConnectionMapping(selectedNodeIds?.[0]);
+  const runtimeConnection = isExpressionConnectionMapping(mapping);
+  const showExpressionSelection = expressionEnabled || runtimeConnection;
   const isA2A = useIsA2AWorkflow();
   const nodeId: string = useOperationPanelSelectedNodeId();
   const isAgentSubgraph = useIsAgentSubGraph(nodeId);
@@ -110,7 +122,7 @@ export const SelectConnectionWrapper = () => {
 
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
-      if (!connection) {
+      if (!connection || readOnly) {
         return;
       }
       for (const nodeId of selectedNodeIds) {
@@ -125,10 +137,13 @@ export const SelectConnectionWrapper = () => {
       }
       closeConnectionsFlow();
     },
-    [dispatch, selectedNodeIds, connector, closeConnectionsFlow]
+    [dispatch, selectedNodeIds, connector, closeConnectionsFlow, readOnly]
   );
 
   const createConnectionCallback = useCallback(() => {
+    if (readOnly) {
+      return;
+    }
     setIsInlineCreatingConnection(true);
     autoCreateConnectionIfPossible({
       connector: connector as Connector,
@@ -142,13 +157,21 @@ export const SelectConnectionWrapper = () => {
         dispatch(setIsCreatingConnection(true));
       },
     });
-  }, [closeConnectionsFlow, connector, dispatch, operationInfo, references, saveSelectionCallback]);
+  }, [closeConnectionsFlow, connector, dispatch, operationInfo, references, saveSelectionCallback, readOnly]);
 
   useEffect(() => {
-    if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+    if (!readOnly && !showExpressionSelection && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
       createConnectionCallback();
     }
-  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, createConnectionCallback]);
+  }, [
+    connectionQuery.isError,
+    connectionQuery.isLoading,
+    connections,
+    connector,
+    createConnectionCallback,
+    readOnly,
+    showExpressionSelection,
+  ]);
 
   const actionBar = useMemo(() => {
     return (
@@ -176,7 +199,7 @@ export const SelectConnectionWrapper = () => {
     description: 'Button text for adding a new connection',
   });
 
-  if (connectionQuery.isLoading) {
+  if (connectionQuery.isLoading && !showExpressionSelection) {
     return (
       <div className="msla-loading-container">
         <Spinner size={'large'} label={loadingText} />
@@ -184,23 +207,52 @@ export const SelectConnectionWrapper = () => {
     );
   }
 
-  return (
+  const existingConnections = (
     <SelectConnection
       connections={connections}
-      currentConnectionId={currentConnectionId}
+      currentConnectionId={runtimeConnection ? undefined : currentConnectionId}
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={closeConnectionsFlow}
       isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
       connectionReferences={references}
       addButton={{
         text: isInlineCreatingConnection ? buttonAddingText : buttonAddText,
-        disabled: isInlineCreatingConnection,
+        disabled: isInlineCreatingConnection || readOnly,
         onAdd: createConnectionCallback,
       }}
       cancelButton={{ onCancel: closeConnectionsFlow }}
-      actionBar={actionBar}
+      actionBar={showExpressionSelection ? undefined : actionBar}
       errorMessage={connectionQuery.isError ? parseErrorMessage(connectionQuery.error) : undefined}
     />
+  );
+
+  if (!showExpressionSelection) {
+    return existingConnections;
+  }
+
+  return (
+    <>
+      {actionBar}
+      <ConnectionExpressionSelection
+        key={selectedNodeIds.join(',')}
+        nodeId={selectedNodeIds[0]}
+        mapping={mapping}
+        connectorId={connector?.id ?? ''}
+        references={references}
+        enabled={expressionEnabled}
+        existingConnections={connectionQuery.isLoading ? <Spinner label={loadingText} /> : existingConnections}
+        onApply={async (expression, designTimeReferenceKey) => {
+          if (readOnly || !expressionEnabled || selectedNodeIds.length !== 1) {
+            return;
+          }
+          for (const nodeId of selectedNodeIds) {
+            await dispatch(updateNodeConnectionExpression({ nodeId, expression, designTimeReferenceKey })).unwrap();
+          }
+          closeConnectionsFlow();
+        }}
+        onCancel={closeConnectionsFlow}
+      />
+    </>
   );
 };
 

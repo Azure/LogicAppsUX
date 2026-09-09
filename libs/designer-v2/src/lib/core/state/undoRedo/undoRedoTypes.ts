@@ -9,7 +9,6 @@ import {
   addSwitchCase,
   moveNode,
   pasteNode,
-  pasteScopeNode,
   removeRunAfter,
   replaceId,
   updateRunAfter,
@@ -60,7 +59,6 @@ export const undoableWorkflowActionTypes = [
   addAgentTool,
   addForeachToNode.pending,
   pasteNode,
-  pasteScopeNode,
   updateRunAfter,
   removeRunAfter,
   addRunAfter,
@@ -82,4 +80,8 @@ export const undoablePanelActionTypes = [
    */
 ].map((action) => action.type);
 
-export const undoableActionTypes = undoableWorkflowActionTypes.concat(undoablePanelActionTypes);
+export const undoableActionTypes = undoableWorkflowActionTypes.concat(undoablePanelActionTypes, [
+  'updateNodeConnectionExpression/pending',
+  'updateNodeConnection/pending',
+  'pasteScopeOperation/pending',
+]);

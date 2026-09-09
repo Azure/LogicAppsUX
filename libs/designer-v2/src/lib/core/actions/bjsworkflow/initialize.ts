@@ -1,7 +1,9 @@
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
 import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
-import { ImpersonationSource } from '../../../common/models/workflow';
+import { ImpersonationSource, isExpressionConnectionMapping } from '../../../common/models/workflow';
+import { getServiceProviderConnectionMapping } from '../../utils/connectors/connectionExpression';
+import { getDynamicInputParameterFromDynamicParameter } from '../../utils/parameters/dynamicdata';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -102,6 +104,7 @@ import {
   AssertionErrorCode,
   getIntl,
   isObject,
+  isServiceProviderOperation,
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -195,6 +198,16 @@ export const getInputParametersFromManifest = (
     }
   }
 
+  const connectionName = stepDefinition?.inputs?.serviceProviderConfiguration?.connectionName;
+  if (
+    isServiceProviderOperation(operationInfo.type) &&
+    typeof connectionName === 'string' &&
+    isExpressionConnectionMapping(getServiceProviderConnectionMapping(connectionName))
+  ) {
+    primaryInputParametersInArray = primaryInputParametersInArray.map((parameter) =>
+      parameter.dynamicSchema ? getDynamicInputParameterFromDynamicParameter(parameter) : parameter
+    );
+  }
   const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, shouldEncodeBasedOnMetadata);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);

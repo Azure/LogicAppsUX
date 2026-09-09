@@ -1,4 +1,9 @@
-import type { ConnectionMapping, ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
+import {
+  isExpressionConnectionMapping,
+  type ConnectionMapping,
+  type ConnectionReference,
+  type ConnectionReferences,
+} from '../../../common/models/workflow';
 import { useConnectionResource, useConnectionsForConnector } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
@@ -18,7 +23,7 @@ import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import type { ConnectionsStoreState } from './connectionSlice';
+import type { ConnectionsStoreState, CopiedConnectionData } from './connectionSlice';
 import Constants from '../../../common/constants';
 
 export const useConnector = (connectorId?: string, enabled = true, useCachedData = false): UseQueryResult<Connector | undefined, unknown> =>
@@ -98,8 +103,10 @@ export const useNodeConnectionId = (nodeId: string): string => {
   const connectionsMapping = useConnectionMapping();
   const connectionReferences = useConnectionRefs();
   return useMemo(() => {
-    const mapping = getRecordEntry(connectionsMapping, nodeId) ?? '';
-    const reference = getRecordEntry(connectionReferences, mapping);
+    const reference = getConnectionReference({ connectionsMapping, connectionReferences }, nodeId);
+    if (reference?.connection?.id.startsWith('__MOCK')) {
+      return '';
+    }
     return reference?.connection?.id ?? '';
   }, [connectionsMapping, connectionReferences, nodeId]);
 };
@@ -109,6 +116,9 @@ export const useConnectionMapping = (): ConnectionMapping => {
     return state.connections.connectionsMapping;
   });
 };
+
+export const useNodeConnectionMapping = (nodeId: string): ConnectionMapping[string] | undefined =>
+  useSelector((state: RootState) => getRecordEntry(state.connections.connectionsMapping, nodeId));
 
 export const useConnectionRefs = (): ConnectionReferences => {
   return useSelector((state: RootState) => {
@@ -149,9 +159,17 @@ export const useShowIdentitySelectorQuery = (nodeId: string) => {
 export const getConnectionReferenceForNodeId = (
   connectionState: ConnectionsStoreState,
   nodeId: string
-): { connectionReference: ConnectionReference; referenceKey: string } | undefined => {
+): CopiedConnectionData | undefined => {
   const { connectionReferences, connectionsMapping } = connectionState;
   const referenceKey = connectionsMapping[nodeId];
+  if (isExpressionConnectionMapping(referenceKey)) {
+    const designTimeReferenceKey = referenceKey.designTimeReferenceKey;
+    return {
+      mapping: referenceKey,
+      referenceKey: designTimeReferenceKey,
+      connectionReference: designTimeReferenceKey ? connectionReferences[designTimeReferenceKey] : undefined,
+    };
+  }
   return referenceKey ? { connectionReference: connectionReferences[referenceKey], referenceKey } : undefined;
 };
 

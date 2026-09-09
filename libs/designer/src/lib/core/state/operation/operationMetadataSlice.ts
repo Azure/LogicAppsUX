@@ -60,6 +60,7 @@ export const DynamicLoadStatus = {
 export type DynamicLoadStatus = (typeof DynamicLoadStatus)[keyof typeof DynamicLoadStatus];
 
 export interface NodeInputs {
+  preservedConnectionInputs?: Record<string, any>;
   dynamicLoadStatus?: DynamicLoadStatus;
   parameterGroups: Record<string, ParameterGroup>;
 }
@@ -547,12 +548,16 @@ export const operationMetadataSlice = createSlice({
       action: PayloadAction<{
         nodeId: string;
         parameterGroups: Record<string, ParameterGroup>;
+        preservedConnectionInputs?: Record<string, any>;
       }>
     ) => {
-      const { nodeId, parameterGroups } = action.payload;
+      const { nodeId, parameterGroups, preservedConnectionInputs } = action.payload;
       const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
       if (nodeInputs) {
         nodeInputs.parameterGroups = parameterGroups;
+        if (preservedConnectionInputs !== undefined) {
+          nodeInputs.preservedConnectionInputs = preservedConnectionInputs;
+        }
       }
     },
     updateParameterConditionalVisibility: (

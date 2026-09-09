@@ -1,6 +1,8 @@
 import { default as CONSTANTS } from '../../common/constants';
+import { isExpressionConnectionMapping } from '../../common/models/workflow';
 import { saveStateToHistory } from '../state/undoRedo/undoRedoSlice';
 import { undoableActionTypes } from '../state/undoRedo/undoRedoTypes';
+import { renameConnectionExpressionParameter } from '../state/connection/connectionSlice';
 import { setIsWorkflowDirty } from '../state/workflow/workflowSlice';
 import { setIsWorkflowParametersDirty } from '../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../store';
@@ -12,6 +14,19 @@ export const storeStateHistoryMiddleware: Middleware =
   ({ dispatch, getState }) =>
   (next) =>
   (action: any) => {
+    if (
+      action.type === 'updateNodeConnection/pending' &&
+      !isExpressionConnectionMapping((getState() as RootState).connections.connectionsMapping[action.meta.arg.nodeId])
+    ) {
+      return next(action);
+    }
+    if (action.type === 'workflowParameters/updateParameter') {
+      const oldName = (getState() as RootState).workflowParameters.definitions[action.payload.id]?.name;
+      const newName = action.payload.newDefinition.name;
+      if (oldName && newName && oldName !== newName) {
+        dispatch(renameConnectionExpressionParameter({ oldName, newName }));
+      }
+    }
     if (!undoableActionTypes.includes(action.type)) {
       return next(action);
     }

@@ -1,6 +1,7 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
+import { getServiceProviderConnectionMapping } from '../../utils/connectors/connectionExpression';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -429,6 +430,15 @@ export const initializeOperationDetailsForManifest = async (
       operation
     );
 
+    const serviceProviderInputs = (operation as LogicAppsV2.ServiceProvider).inputs;
+    if (
+      operation.type.toLowerCase() === 'serviceprovider' &&
+      typeof serviceProviderInputs?.serviceProviderConfiguration?.connectionName === 'string' &&
+      typeof getServiceProviderConnectionMapping(serviceProviderInputs.serviceProviderConfiguration.connectionName) === 'object'
+    ) {
+      nodeInputs.preservedConnectionInputs = serviceProviderInputs;
+    }
+
     if (isTrigger) {
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
       await updateAgentUrlInInputs(nodeOperationInfo, nodeInputs);
@@ -818,6 +828,13 @@ const updateDynamicDataForValidConnection = async (
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isFreshCreatedAgent: boolean
 ): Promise<void> => {
+  const mapping = getState().connections.connectionsMapping[nodeId];
+  if (mapping && typeof mapping !== 'string') {
+    // Runtime selection does not require a design-time connection. Keep raw inputs intact.
+    if (!reference) {
+      return;
+    }
+  }
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
 
   if (isValidConnection) {
@@ -838,7 +855,7 @@ const updateDynamicDataForValidConnection = async (
       true /* updateTokenMetadata */,
       operation
     );
-  } else if (!isFreshCreatedAgent) {
+  } else if (!isFreshCreatedAgent && (!mapping || typeof mapping === 'string')) {
     LoggerService().log({
       level: LogEntryLevel.Warning,
       area: 'OperationDeserializer:UpdateDynamicData',

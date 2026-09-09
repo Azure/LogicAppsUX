@@ -312,6 +312,7 @@ export const DesignerApp = () => {
           services: services,
           hostOptions: {
             displayRuntimeInfo: true,
+            enableServiceProviderConnectionExpressions: true,
             enableMultiVariable: isMultiVariableSupportEnabled,
             enableNestedAgentLoops: isNestedAgentLoopsSupportEnabled,
           },

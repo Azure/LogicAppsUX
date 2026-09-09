@@ -15,14 +15,14 @@ export const useValidMcpConnection = () => {
   const hasValidConnection = useMemo(() => {
     if (operations.length === 0 && disableConnectorSelection && connectorId) {
       const referenceKey = connectionsMapping[MCP_ConnectionKey];
-      const reference = referenceKey ? references[referenceKey] : null;
+      const reference = typeof referenceKey === 'string' ? references[referenceKey] : null;
 
       return !!reference;
     }
 
     return operations.every((operation) => {
       const referenceKey = connectionsMapping[operation.operationId];
-      const reference = referenceKey ? references[referenceKey] : null;
+      const reference = typeof referenceKey === 'string' ? references[referenceKey] : null;
 
       return !!reference;
     });

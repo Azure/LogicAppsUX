@@ -235,7 +235,7 @@ export const LocalDesigner = () => {
     useLegacyWorkflowParameters: isConsumption,
     showEdgeDrawing,
     suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
-    hostOptions,
+    hostOptions: { enableServiceProviderConnectionExpressions: !isConsumption, ...hostOptions },
   };
 
   return (

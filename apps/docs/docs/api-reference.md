@@ -61,6 +61,37 @@ interface DesignerProps {
 }
 ```
 
+### Runtime Connection Selection (Standard)
+
+Both Designer packages support expressions in a Standard `ServiceProvider` action's
+`inputs.serviceProviderConfiguration.connectionName`. Hosts can enable the
+**Change connection > Use expression** editor with
+`options.hostOptions.enableServiceProviderConnectionExpressions: true`.
+The option defaults to disabled; imported expressions are preserved even when
+expression authoring is disabled. Managed API connections, Consumption workflows,
+and triggers do not expose expression authoring.
+
+Expression editing is per action, not bulk connection reassignment. The token
+picker does not insert implicit loops. For per-item selection within an existing
+loop, enter an explicit expression such as `@items('For_each')?['connectionName']`.
+
+An expression such as `@parameters('connectionName')` must resolve at runtime to
+an existing, case-sensitive key in `connections.json`, for the action's service
+provider. Display names are not connection keys. The Designer does not create
+connections at runtime or change their credentials.
+
+The optional **Design-time connection** supplies resource browsing and schema
+discovery while editing. This selection is session-only and is not serialized as
+a runtime fallback. Without a design-time connection, enter parameter values
+manually; connection-dependent browsing is unavailable. Existing values are
+preserved. A schema discovered using one connection does not guarantee the same
+schema for every runtime target.
+
+Hosts must keep connection keys stable and preserve connections that may be
+selected dynamically, even if no action references them statically. For
+multi-tenant workflows, map authorized tenant context to permitted connection
+keys rather than accepting an arbitrary caller-supplied key as authorization.
+
 ### Service Configuration
 
 The designer requires several services to be configured:

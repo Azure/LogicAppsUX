@@ -2,12 +2,15 @@ import { XLargeText } from '@microsoft/designer-ui';
 import type { AppDispatch } from '../../../core';
 import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId } from '../../../core';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
-import { useConnectionRefs, useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
+import { useConnectionRefs, useConnectorByNodeId, useNodeConnectionMapping } from '../../../core/state/connection/connectionSelector';
+import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useConnectionPanelSelectedNodeIds, useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
 import { CreateConnectionWrapper } from './createConnection/createConnectionWrapper';
 import { SelectConnectionWrapper } from './selectConnection/selectConnection';
+import { useConnectionExpressionEnabled } from './selectConnection/connectionExpression';
+import { isExpressionConnectionMapping } from '../../../common/models/workflow';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
@@ -22,6 +25,11 @@ const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 export const ConnectionPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const selectedNodeId = useOperationPanelSelectedNodeId();
+  const selectedNodeIds = useConnectionPanelSelectedNodeIds();
+  const readOnly = useReadOnly();
+  const expressionEnabled = useConnectionExpressionEnabled(selectedNodeIds);
+  const mapping = useNodeConnectionMapping(selectedNodeIds?.[0]);
+  const showExpressionSelection = expressionEnabled || isExpressionConnectionMapping(mapping);
   const connector = useConnectorByNodeId(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const references = useConnectionRefs();
@@ -31,7 +39,15 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   const isCreatingConnection = useIsCreatingConnection();
 
   useEffect(() => {
-    if (selectedNodeId && connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+    if (
+      !readOnly &&
+      !showExpressionSelection &&
+      selectedNodeId &&
+      connector &&
+      !connectionQuery.isLoading &&
+      !connectionQuery.isError &&
+      connections.length === 0
+    ) {
       autoCreateConnectionIfPossible({
         connector: connector as Connector,
         referenceKeys: Object.keys(references),
@@ -43,7 +59,18 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
         onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
       });
     }
-  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, operationInfo, references, selectedNodeId]);
+  }, [
+    connectionQuery.isError,
+    connectionQuery.isLoading,
+    connections,
+    connector,
+    dispatch,
+    operationInfo,
+    readOnly,
+    references,
+    selectedNodeId,
+    showExpressionSelection,
+  ]);
 
   const panelStatus = useMemo(() => {
     if (!selectedNodeId) {
