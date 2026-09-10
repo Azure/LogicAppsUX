@@ -55,6 +55,7 @@ export interface DesignerOptionsState {
     disableMcpClientTools?: boolean; // hide MCP client tools from browse panel
     disableNativeMcpClientTools?: boolean; // hide native (built-in) MCP client tools tab from browse panel
     enableEditableCodeView?: boolean; // allow editing an action's JSON inline from the node code view tab (opt-in per host)
+    supportedExpressionFunctions?: string[]; // allow-list of expression function names shown in the token picker; when omitted, all functions are shown
     integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
