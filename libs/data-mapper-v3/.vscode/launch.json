@@ -1,0 +1,67 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Data Mapper Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "sourceMaps": true,
+            "debugWebviews": true,
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "npm: debug:prepare"
+        },
+        {
+            "name": "Run Data Mapper + Pause Compiler Host",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "sourceMaps": true,
+            "debugWebviews": true,
+            "webRoot": "${workspaceFolder}",
+            "env": {
+                "BIZTALK_DATAMAPPER_COMPILER_INSPECT_PORT": "9230"
+            },
+            "preLaunchTask": "npm: debug:prepare"
+        },
+        {
+            "name": "Attach to TypeScript Compiler Host",
+            "type": "pwa-node",
+            "request": "attach",
+            "address": "127.0.0.1",
+            "port": 9230,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/out/compilerHost.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
+        },
+        {
+            "name": "Attach to Compiler Worker",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
+}

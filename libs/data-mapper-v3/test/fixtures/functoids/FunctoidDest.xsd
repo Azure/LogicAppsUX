@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://Test.FunctoidDest" xmlns:b="http://schemas.microsoft.com/BizTalk/2003" targetNamespace="http://Test.FunctoidDest" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Root">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Sum" type="xs:string" />
+        <xs:element minOccurs="0" name="Diff" type="xs:string" />
+        <xs:element minOccurs="0" name="Product" type="xs:string" />
+        <xs:element minOccurs="0" name="Quotient" type="xs:string" />
+        <xs:element minOccurs="0" name="Remainder" type="xs:string" />
+        <xs:element minOccurs="0" name="IsGreater" type="xs:string" />
+        <xs:element minOccurs="0" name="AreEqual" type="xs:string" />
+        <xs:element minOccurs="0" name="BothPositive" type="xs:string" />
+        <xs:element minOccurs="0" name="Picked" type="xs:string" />
+        <xs:element minOccurs="0" name="Concat" type="xs:string" />
+        <xs:element minOccurs="0" name="Upper" type="xs:string" />
+        <xs:element minOccurs="0" name="Total" type="xs:string" />
+        <xs:element minOccurs="0" name="Average" type="xs:string" />
+        <xs:element minOccurs="0" name="SineVal" type="xs:string" />
+        <xs:element minOccurs="0" name="PowXY" type="xs:string" />
+        <xs:element minOccurs="0" name="LogN" type="xs:string" />
+        <xs:element minOccurs="0" name="CharOut" type="xs:string" />
+        <xs:element minOccurs="0" name="AscOut" type="xs:string" />
+        <xs:element minOccurs="0" name="HexOut" type="xs:string" />
+        <xs:element minOccurs="0" name="OctOut" type="xs:string" />
+        <xs:element minOccurs="0" name="FutureDate" type="xs:string" />
+        <xs:element minOccurs="0" name="Count" type="xs:string" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="Line">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs="0" name="V" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Looping Functoids Sample" Version="2" OmitXmlDeclaration="Yes"
+           PreserveSequenceOrder="Yes" TreatElementsAsRecords="Yes">
+  <SrcTree>
+    <Reference Location=".\LoopingSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\LoopingTarget.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Looping and Iteration">
+      <Links>
+        <Link LinkID="loop-input" SourceID="/Root/Items" SourcePath="/Root/Items"
+              TargetID="loop" SourceType="schemaNode" TargetType="functoid"/>
+        <Link LinkID="loop-target" SourceID="loop" TargetID="/Root/LoopLine"
+              TargetPath="/Root/LoopLine" SourceType="functoid" TargetType="schemaNode"/>
+        <Link LinkID="iteration-input" SourceID="/Root/Items" SourcePath="/Root/Items"
+              TargetID="iteration" SourceType="schemaNode" TargetType="functoid"/>
+        <Link LinkID="iteration-target" SourceID="iteration" TargetID="/Root/LoopLine/Position"
+              TargetPath="/Root/LoopLine/Position" SourceType="functoid" TargetType="schemaNode"/>
+        <Link LinkID="loop-value" SourceID="/Root/Items/Value" SourcePath="/Root/Items/Value"
+              TargetID="/Root/LoopLine/Value" TargetPath="/Root/LoopLine/Value"
+              SourceType="schemaNode" TargetType="schemaNode"/>
+      </Links>
+      <Functoids>
+        <Functoid FunctoidID="loop" TypeID="424" Category="Advanced" Name="Looping" X="250" Y="100">
+          <Parameter Index="0" Value="loop-input" Type="link"/>
+        </Functoid>
+        <Functoid FunctoidID="iteration" TypeID="474" Category="Advanced" Name="Iteration" X="420" Y="180">
+          <Parameter Index="0" Value="iteration-input" Type="link"/>
+        </Functoid>
+      </Functoids>
+    </Page>
+    <Page Name="Existence Looping">
+      <Links>
+        <Link LinkID="existence-input" SourceID="/Root/OptionalItems" SourcePath="/Root/OptionalItems"
+              TargetID="existence-loop" SourceType="schemaNode" TargetType="functoid"/>
+        <Link LinkID="existence-target" SourceID="existence-loop" TargetID="/Root/ExistingLine"
+              TargetPath="/Root/ExistingLine" SourceType="functoid" TargetType="schemaNode"/>
+        <Link LinkID="existence-value" SourceID="/Root/OptionalItems/Value"
+              SourcePath="/Root/OptionalItems/Value" TargetID="/Root/ExistingLine/Value"
+              TargetPath="/Root/ExistingLine/Value" SourceType="schemaNode" TargetType="schemaNode"/>
+      </Links>
+      <Functoids>
+        <Functoid FunctoidID="existence-loop" TypeID="801" Category="Advanced"
+                  Name="Existence Looping" X="300" Y="140">
+          <Parameter Index="0" Value="existence-input" Type="link"/>
+        </Functoid>
+      </Functoids>
+    </Page>
+    <Page Name="Table Looping and Extractor">
+      <Links>
+        <Link LinkID="table-loop-input" SourceID="/Root/Items" SourcePath="/Root/Items"
+              TargetID="table-loop" SourceType="schemaNode" TargetType="functoid"/>
+        <Link LinkID="table-value-input" SourceID="/Root/Items/Value" SourcePath="/Root/Items/Value"
+              TargetID="table-loop" SourceType="schemaNode" TargetType="functoid"/>
+        <Link LinkID="table-target" SourceID="table-loop" TargetID="/Root/TableLine"
+              TargetPath="/Root/TableLine" SourceType="functoid" TargetType="schemaNode"/>
+        <Link LinkID="extractor-input" SourceID="table-loop" TargetID="table-extractor"
+              SourceType="functoid" TargetType="functoid"/>
+        <Link LinkID="extractor-target" SourceID="table-extractor" TargetID="/Root/TableLine/Value"
+              TargetPath="/Root/TableLine/Value" SourceType="functoid" TargetType="schemaNode"/>
+      </Links>
+      <Functoids>
+        <Functoid FunctoidID="table-loop" TypeID="703" Category="Advanced"
+                  Name="Table Looping" X="260" Y="120">
+          <Parameter Index="0" Value="table-loop-input" Type="link" Guid="{11111111-1111-1111-1111-111111111111}"/>
+          <Parameter Index="1" Value="1" Type="constant" Guid="{22222222-2222-2222-2222-222222222222}"/>
+          <Parameter Index="2" Value="table-value-input" Type="link" Guid="{33333333-3333-3333-3333-333333333333}"/>
+          <Parameter Index="3" Value="Fixed table row" Type="constant" Guid="{44444444-4444-4444-4444-444444444444}"/>
+          <TableLoopingData Rows="2" Columns="1" Gated="No">
+            <Row>
+              <Column Value="{33333333-3333-3333-3333-333333333333}"/>
+            </Row>
+            <Row>
+              <Column Value="{44444444-4444-4444-4444-444444444444}"/>
+            </Row>
+          </TableLoopingData>
+        </Functoid>
+        <Functoid FunctoidID="table-extractor" TypeID="704" Category="Advanced"
+                  Name="Table Extractor" X="440" Y="180">
+          <Parameter Index="0" Value="extractor-input" Type="link"/>
+          <Parameter Index="1" Value="1" Type="constant"/>
+        </Functoid>
+      </Functoids>
+    </Page>
+  </Pages>
+</mapsource>

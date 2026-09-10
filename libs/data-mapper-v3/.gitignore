@@ -1,0 +1,8 @@
+node_modules/
+out/
+*.vsix
+.vscode-test/
+tools/compiler-worker/publish/
+tools/compiler-worker/runtime/
+tools/compiler-worker/**/bin/
+tools/compiler-worker/**/obj/

@@ -1,0 +1,17 @@
+.vscode/**
+.vscode-test/**
+src/**
+webview/**
+node_modules/**
+test/**
+.gitignore
+tsconfig.json
+webpack.*.js
+jest.config.js
+**/*.map
+**/*.ts
+!out/**
+tools/**/obj/**
+tools/**/bin/**
+tools/compiler-worker/**
+!tools/compiler-worker/runtime/**

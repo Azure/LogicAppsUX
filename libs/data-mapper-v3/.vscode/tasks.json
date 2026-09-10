@@ -1,0 +1,12 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "npm: debug:prepare",
+            "type": "npm",
+            "script": "debug:prepare",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}

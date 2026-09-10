@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid Advanced Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <!-- 1: Record Count(Items) -> Count -->
+      <Link LinkID="10" SourceID="/Root/Items" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Items"/>
+      <Link LinkID="20" SourceID="1" TargetID="/Root/Count" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/Count"/>
+      <!-- Looping: Items/Value -> Line/V (repeating target) -->
+      <Link LinkID="30" SourceID="/Root/Items/Value" TargetID="/Root/Line/V" SourceType="schemaNode" TargetType="schemaNode" SourcePath="/Root/Items/Value" TargetPath="/Root/Line/V"/>
+      <Functoid FunctoidID="1" TypeID="322" Name="Record Count" X="240" Y="240"/>
+    </Page>
+  </Pages>
+</mapsource>
