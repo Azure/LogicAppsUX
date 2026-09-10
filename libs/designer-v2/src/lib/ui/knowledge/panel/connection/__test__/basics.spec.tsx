@@ -66,8 +66,8 @@ vi.mock('../../../../panel/connectionsPanel/createConnection/formInputs/connecti
 
 // Mock UniversalConnectionParameter
 vi.mock('../../../../panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter', () => ({
-  UniversalConnectionParameter: ({ parameterKey, parameter, value, setValue }: any) => (
-    <div data-testid={`param-${parameterKey}`}>
+  UniversalConnectionParameter: ({ parameterKey, parameter, value, setValue, selectedSubscriptionId }: any) => (
+    <div data-testid={`param-${parameterKey}`} data-subscription-id={selectedSubscriptionId}>
       <label>{parameter?.uiDefinition?.displayName || parameterKey}</label>
       <input data-testid={`param-input-${parameterKey}`} value={value || ''} onChange={(e) => setValue(e.target.value)} />
     </div>
@@ -435,6 +435,28 @@ describe('basicsTab', () => {
       renderBasicsTab();
 
       expect(screen.getByTestId('param-endpoint')).toBeInTheDocument();
+    });
+
+    it('forwards the selected subscription to connection parameters', () => {
+      const tab = basicsTab(
+        mockIntl,
+        mockClose,
+        mockConnectionParameterSets,
+        defaultConnectionParams,
+        mockSetConnectionParameterValues,
+        false,
+        {
+          isPrimaryButtonDisabled: false,
+          tabStatusIcon: undefined,
+          onPrimaryButtonClick: mockOnPrimaryButtonClick,
+          selectedSubscriptionId: 'subscription-1',
+          selectSubscriptionCallback: vi.fn(),
+        }
+      );
+
+      render(<IntlProvider locale="en">{tab.content}</IntlProvider>);
+
+      expect(screen.getByTestId('param-endpoint')).toHaveAttribute('data-subscription-id', 'subscription-1');
     });
 
     it('displays name input with placeholder', () => {

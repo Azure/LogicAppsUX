@@ -17,7 +17,7 @@ import {
   type ConnectionParameterProps,
   UniversalConnectionParameter,
 } from '../../../../panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter';
-import { getSelectedAuthIndex } from './basics';
+import { comboboxStyles, dropdownStyles, getSelectedAuthIndex, secretFieldStyles } from './basics';
 
 export const modelTab = (
   intl: IntlShape,
@@ -168,6 +168,14 @@ const Model = ({
     [handleParametersChange, selectedParamSetIndex]
   );
 
+  const styleOverrides = useMemo(
+    () => ({
+      combobox: comboboxStyles,
+      dropdown: dropdownStyles,
+      secretField: secretFieldStyles,
+    }),
+    []
+  );
   const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter) => {
     const connectionParameterProps: ConnectionParameterProps = {
       parameterKey: key,
@@ -179,6 +187,13 @@ const Model = ({
       setKeyValue: (customKey: string, val: any) =>
         handleParametersChange((values: Record<string, any>) => ({ ...values, [customKey]: val })),
       parameterValues: parameterValues,
+      cssOverrides: {
+        field: styles.paramField,
+        label: styles.paramLabel,
+        combobox: styles.combobox,
+        disabledField: styles.disabledField,
+      },
+      styleOverrides,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
@@ -203,6 +218,8 @@ const Model = ({
           value={selectedParamSetIndex}
           onChange={onAuthDropdownChange}
           connectionParameterSets={connectionParameterSets}
+          cssOverrides={{ field: styles.paramField, label: styles.paramLabel, dropdown: styles.dropdown }}
+          styleOverrides={styleOverrides}
         />
         {Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter]) => {
           return renderConnectionParameter(key, parameter);

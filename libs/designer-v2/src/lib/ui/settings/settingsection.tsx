@@ -7,7 +7,7 @@ import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
-import { Button, Divider, type MessageBarIntent, Tooltip, Badge } from '@fluentui/react-components';
+import { Badge, Button, Divider, type MessageBarIntent, Tooltip } from '@fluentui/react-components';
 import {
   bundleIcon,
   ChevronDown24Filled,

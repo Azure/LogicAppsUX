@@ -32,7 +32,16 @@ export const basicsTab = (
   connectionParameterValues: Record<string, any>,
   setConnectionParameterValues: (values: Record<string, any>) => void,
   isCreating: boolean,
-  { isPrimaryButtonDisabled, tabStatusIcon, onPrimaryButtonClick }: KnowledgeConnectionTabProps
+  {
+    isPrimaryButtonDisabled,
+    tabStatusIcon,
+    onPrimaryButtonClick,
+    selectedSubscriptionId,
+    selectSubscriptionCallback,
+  }: KnowledgeConnectionTabProps & {
+    selectedSubscriptionId?: string;
+    selectSubscriptionCallback?: (subscriptionId: string) => void;
+  }
 ): KnowledgeTabProps => ({
   id: Constants.KNOWLEDGE_PANEL_TAB_NAMES.BASICS,
   title: intl.formatMessage({
@@ -47,6 +56,8 @@ export const basicsTab = (
       connectionParameterValues={connectionParameterValues}
       setConnectionParameterValues={setConnectionParameterValues}
       connectionParameterSets={connectionParameters}
+      selectedSubscriptionId={selectedSubscriptionId}
+      selectSubscriptionCallback={selectSubscriptionCallback}
     />
   ),
   disabled: isCreating,
@@ -128,11 +139,15 @@ const Basics = ({
   connectionParameterSets,
   connectionParameterValues,
   setConnectionParameterValues,
+  selectedSubscriptionId,
+  selectSubscriptionCallback,
 }: {
   intl: IntlShape;
   connectionParameterSets: ConnectionParameterSets;
   connectionParameterValues: Record<string, any>;
   setConnectionParameterValues: (values: Record<string, any>) => void;
+  selectedSubscriptionId?: string;
+  selectSubscriptionCallback?: (subscriptionId: string) => void;
 }) => {
   const styles = useCreatePanelStyles();
   const INTL_TEXT = useMemo(
@@ -243,6 +258,14 @@ const Basics = ({
     [handleParametersChange, name, selectedParamSetIndex]
   );
 
+  const styleOverrides = useMemo(
+    () => ({
+      combobox: comboboxStyles,
+      dropdown: dropdownStyles,
+      secretField: secretFieldStyles,
+    }),
+    []
+  );
   const renderConnectionParameter = useCallback(
     (key: string, parameter: ConnectionParameterSetParameter) => {
       const connectionParameterProps: ConnectionParameterProps = {
@@ -254,7 +277,11 @@ const Basics = ({
         setKeyValue: (customKey: string, val: any) =>
           handleParametersChange((values: Record<string, any>) => ({ ...values, [customKey]: val })),
         parameterValues: parameterValues,
+        selectedSubscriptionId,
+        selectSubscriptionCallback,
         operationParameterValues,
+        cssOverrides: { field: styles.paramField, label: styles.paramLabel },
+        styleOverrides,
       };
 
       const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
@@ -268,7 +295,18 @@ const Basics = ({
 
       return <UniversalConnectionParameter key={key} data-testId={key} {...connectionParameterProps} />;
     },
-    [parameterValues, connectionParameterSets?.values, selectedParamSetIndex, operationParameterValues, handleParametersChange]
+    [
+      parameterValues,
+      selectedSubscriptionId,
+      selectSubscriptionCallback,
+      connectionParameterSets?.values,
+      selectedParamSetIndex,
+      operationParameterValues,
+      styles.paramField,
+      styles.paramLabel,
+      styleOverrides,
+      handleParametersChange,
+    ]
   );
 
   const handleNameChange = useCallback(
@@ -313,6 +351,8 @@ const Basics = ({
             value={selectedParamSetIndex}
             onChange={onAuthDropdownChange}
             connectionParameterSets={connectionParameterSets}
+            cssOverrides={{ field: styles.paramField, label: styles.paramLabel, dropdown: styles.dropdown }}
+            styleOverrides={styleOverrides}
           />
           {Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter]) => {
             return renderConnectionParameter(key, parameter);

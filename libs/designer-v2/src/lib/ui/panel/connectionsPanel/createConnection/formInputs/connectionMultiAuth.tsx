@@ -1,17 +1,27 @@
-import { Dropdown } from '@fluentui/react';
+import { Dropdown, type IComboBoxStyles, type IDropdownStyles } from '@fluentui/react';
 import type { ConnectionParameterSets } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { Label } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+import { mergeClasses } from '@fluentui/react-components';
 
 export interface ConnectionMultiAuthInputProps {
   isLoading: boolean;
   value: number;
   onChange: (_event: FormEvent<HTMLDivElement>, item: any) => void;
   connectionParameterSets: ConnectionParameterSets | undefined;
+  cssOverrides?: Record<string, string>;
+  styleOverrides?: Record<string, IDropdownStyles | IComboBoxStyles | any>;
 }
 
-const ConnectionMultiAuthInput = ({ isLoading, value, onChange, connectionParameterSets }: ConnectionMultiAuthInputProps) => {
+const ConnectionMultiAuthInput = ({
+  isLoading,
+  value,
+  onChange,
+  connectionParameterSets,
+  cssOverrides,
+  styleOverrides,
+}: ConnectionMultiAuthInputProps) => {
   const intl = useIntl();
   const authType = intl.formatMessage({
     id: 'ClowJ/',
@@ -19,9 +29,9 @@ const ConnectionMultiAuthInput = ({ isLoading, value, onChange, connectionParame
     description: 'Label for multi auth options',
   });
   return (
-    <div className="param-row">
+    <div className={mergeClasses('param-row', cssOverrides?.field)}>
       <Label
-        className="label"
+        className={mergeClasses('label', cssOverrides?.label)}
         isRequiredField={true}
         text={connectionParameterSets?.uiDefinition?.displayName ?? authType}
         htmlFor={'connection-param-set-select'}
@@ -41,6 +51,7 @@ const ConnectionMultiAuthInput = ({ isLoading, value, onChange, connectionParame
             text: paramSet?.uiDefinition?.displayName ?? paramSet?.name,
           })) ?? []
         }
+        styles={styleOverrides?.dropdown}
       />
     </div>
   );

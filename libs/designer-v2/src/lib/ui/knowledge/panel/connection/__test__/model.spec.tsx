@@ -46,8 +46,8 @@ vi.mock('../../../../panel/connectionsPanel/createConnection/formInputs/connecti
 
 // Mock UniversalConnectionParameter
 vi.mock('../../../../panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter', () => ({
-  UniversalConnectionParameter: ({ parameterKey, parameter, value, setValue }: any) => (
-    <div data-testid={`param-${parameterKey}`}>
+  UniversalConnectionParameter: ({ parameterKey, parameter, value, setValue, cssOverrides }: any) => (
+    <div data-testid={`param-${parameterKey}`} data-field-class={cssOverrides?.field}>
       <label>{parameter?.uiDefinition?.displayName || parameterKey}</label>
       <input data-testid={`param-input-${parameterKey}`} value={value || ''} onChange={(e) => setValue(e.target.value)} />
     </div>

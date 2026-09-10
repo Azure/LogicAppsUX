@@ -189,6 +189,22 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     expect(mockSelectTab).toHaveBeenCalledWith('MODEL');
   });
 
+  it('preserves the Cosmos DB subscription when navigating between tabs', () => {
+    renderUseCreateConnectionPanelTabs();
+
+    const initialBasicsTabProps = mockBasicsTab.mock.calls[0][6];
+    act(() => {
+      initialBasicsTabProps.selectSubscriptionCallback('subscription-1');
+      initialBasicsTabProps.onPrimaryButtonClick();
+    });
+
+    const modelTabSelectTab = mockModelTab.mock.calls[mockModelTab.mock.calls.length - 1][1];
+    modelTabSelectTab('BASICS');
+
+    const restoredBasicsTabProps = mockBasicsTab.mock.calls[mockBasicsTab.mock.calls.length - 1][6];
+    expect(restoredBasicsTabProps.selectedSubscriptionId).toBe('subscription-1');
+  });
+
   it('handleCreate calls createOrUpdateConnection', async () => {
     renderUseCreateConnectionPanelTabs();
 

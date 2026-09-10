@@ -25,6 +25,7 @@ export const useCreateConnectionPanelTabs = ({
   const intl = useIntl();
   const cosmosDbConnectionParameters = getCosmosDbConnectionParameters(intl);
   const [cosmosDbConnectionParametersValues, setCosmosDbConnectionParametersValues] = useState<Record<string, any>>({});
+  const [selectedCosmosDbSubscriptionId, setSelectedCosmosDbSubscriptionId] = useState('');
   const [basicsError, setBasicsError] = useState<'error' | undefined>(undefined);
 
   const openAIConnectionParameters = getOpenAIConnectionParameters(intl);
@@ -74,9 +75,20 @@ export const useCreateConnectionPanelTabs = ({
           isPrimaryButtonDisabled: isCreating,
           onPrimaryButtonClick: handleMoveToModel,
           tabStatusIcon: basicsError,
+          selectedSubscriptionId: selectedCosmosDbSubscriptionId,
+          selectSubscriptionCallback: setSelectedCosmosDbSubscriptionId,
         }
       ),
-    [intl, close, cosmosDbConnectionParameters, cosmosDbConnectionParametersValues, isCreating, handleMoveToModel, basicsError]
+    [
+      intl,
+      close,
+      cosmosDbConnectionParameters,
+      cosmosDbConnectionParametersValues,
+      isCreating,
+      handleMoveToModel,
+      basicsError,
+      selectedCosmosDbSubscriptionId,
+    ]
   );
 
   const modelTabItem = useMemo(
