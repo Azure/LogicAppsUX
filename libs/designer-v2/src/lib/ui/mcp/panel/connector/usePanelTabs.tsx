@@ -51,7 +51,7 @@ export const useMcpConnectorPanelTabs = (): McpPanelTabProps[] => {
     return selectedOperations.some((operationId) => {
       const nodeId = operationId;
       const referenceKey = connectionsMapping[nodeId];
-      return referenceKey && connectionReferences[referenceKey];
+      return typeof referenceKey === 'string' && connectionReferences[referenceKey];
     });
   }, [selectedOperations, connectionsMapping, connectionReferences]);
 

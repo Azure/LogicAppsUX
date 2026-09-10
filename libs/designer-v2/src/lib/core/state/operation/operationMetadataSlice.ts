@@ -60,6 +60,7 @@ export const DynamicLoadStatus = {
 export type DynamicLoadStatus = (typeof DynamicLoadStatus)[keyof typeof DynamicLoadStatus];
 
 export interface NodeInputs {
+  preservedConnectionInputs?: Record<string, any>;
   dynamicLoadStatus?: DynamicLoadStatus;
   parameterGroups: Record<string, ParameterGroup>;
   /**
@@ -352,7 +353,14 @@ export const operationMetadataSlice = createSlice({
       // but keep entries for other dynamic refs that haven't loaded yet.
       if (inputParameters?.stashedDynamicParameterValues?.length) {
         const loadedKeys = new Set(inputs.map((p) => p.parameterKey));
-        const remaining = inputParameters.stashedDynamicParameterValues.filter((p) => !loadedKeys.has(p.parameterKey));
+        const expandedReferences = new Set(
+          inputs.filter((p) => p.parameterKey !== p.info.dynamicParameterReference).map((p) => p.info.dynamicParameterReference)
+        );
+        const remaining = inputParameters.stashedDynamicParameterValues.filter(
+          (p) =>
+            !loadedKeys.has(p.parameterKey) &&
+            !(p.parameterKey === p.info.dynamicParameterReference && expandedReferences.has(p.parameterKey))
+        );
         if (remaining.length > 0) {
           inputParameters.stashedDynamicParameterValues = remaining;
         } else {
@@ -597,12 +605,16 @@ export const operationMetadataSlice = createSlice({
       action: PayloadAction<{
         nodeId: string;
         parameterGroups: Record<string, ParameterGroup>;
+        preservedConnectionInputs?: Record<string, any>;
       }>
     ) => {
-      const { nodeId, parameterGroups } = action.payload;
+      const { nodeId, parameterGroups, preservedConnectionInputs } = action.payload;
       const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
       if (nodeInputs) {
         nodeInputs.parameterGroups = parameterGroups;
+        if (preservedConnectionInputs !== undefined) {
+          nodeInputs.preservedConnectionInputs = preservedConnectionInputs;
+        }
       }
     },
     updateParameterConditionalVisibility: (
