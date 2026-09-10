@@ -83,7 +83,6 @@ describe('TimelineHeader', () => {
       isExpanded: false,
     });
 
-    // Should only find the icon, not any text elements
     const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

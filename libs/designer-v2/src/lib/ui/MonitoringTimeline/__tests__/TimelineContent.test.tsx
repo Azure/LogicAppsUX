@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import { IntlProvider } from 'react-intl';
 import TimelineContent from '../TimelineContent';
 import type { TimelineRepetitionWithActions } from '../helpers';
@@ -95,6 +95,14 @@ describe('TimelineContent', () => {
     );
   };
 
+  const renderForInteraction = (props: TimelineContentProps) => {
+    let component: renderer.ReactTestRenderer;
+    act(() => {
+      component = renderWithIntl(props);
+    });
+    return component!;
+  };
+
   it('should render with default props', () => {
     const tree = renderWithIntl(defaultProps).toJSON();
     expect(tree).toMatchSnapshot();
@@ -167,7 +175,7 @@ describe('TimelineContent', () => {
   });
 
   it('should render slider with correct values when expanded', () => {
-    const component = renderWithIntl(defaultProps);
+    const component = renderForInteraction(defaultProps);
     const sliders = component.root.findAllByType('input');
 
     expect(sliders).toHaveLength(1);
@@ -178,14 +186,16 @@ describe('TimelineContent', () => {
   });
 
   it('should call handleSelectRepetition when slider changes', () => {
-    const component = renderWithIntl(defaultProps);
+    const component = renderForInteraction(defaultProps);
     const sliders = component.root.findAllByType('input');
     const slider = sliders[0];
 
     // Simulate slider change with proper event structure
     const mockEvent = { target: { value: '1' } };
     const mockData = { value: 1 };
-    slider.props.onChange(mockEvent, mockData);
+    act(() => {
+      slider.props.onChange(mockEvent, mockData);
+    });
 
     expect(mockHandleSelectRepetition).toHaveBeenCalledWith(1, 0);
   });
