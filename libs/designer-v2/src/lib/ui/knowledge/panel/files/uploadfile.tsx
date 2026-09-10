@@ -10,7 +10,7 @@ import { type UploadFile, equals } from '@microsoft/logic-apps-shared';
 import { FileList } from './filelist';
 import { CreateGroup } from '../../modals/creategroup';
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../../core/state/knowledge/store';
+import type { AppDispatch } from '../../../../core/store';
 import { setNotification } from '../../../../core/state/knowledge/optionsSlice';
 
 const UploadSizeLimit = 16 * 1024 * 1024; // 16MB

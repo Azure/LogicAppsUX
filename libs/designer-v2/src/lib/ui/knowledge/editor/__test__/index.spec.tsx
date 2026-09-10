@@ -58,6 +58,14 @@ vi.mock('../files', () => ({
   ),
 }));
 
+vi.mock('../../notification', () => ({
+  ToasterNotification: ({ title, content }: { title: string; content: string }) => (
+    <div data-testid="knowledge-notification">
+      {title}: {content}
+    </div>
+  ),
+}));
+
 // Mock openKnowledgeConnectionModal
 const mockOpenKnowledgeConnectionModal = vi.fn(() => ({ type: 'modal/openKnowledgeConnectionModal' }));
 vi.mock('../../../../core/state/modal/modalSlice', () => ({
@@ -85,6 +93,7 @@ describe('KnowledgeHubEditor', () => {
     return configureStore({
       reducer: {
         modal: () => ({}),
+        knowledgeHubOptions: () => ({ notification: undefined }),
       },
     });
   };
@@ -116,6 +125,25 @@ describe('KnowledgeHubEditor', () => {
   });
 
   describe('Rendering', () => {
+    it('renders a notification from the main designer store', () => {
+      mockUseAllKnowledgeHubs.mockReturnValue({ data: [], isLoading: false, refetch: mockRefetch });
+      mockUseConnection.mockReturnValue({ data: { name: 'test-connection' }, isLoading: false });
+      const store = configureStore({
+        reducer: {
+          modal: () => ({}),
+          knowledgeHubOptions: () => ({
+            notification: { title: 'Successfully created the group.', content: 'Group NewGroup has been created and selected.' },
+          }),
+        },
+      });
+
+      renderComponent(defaultProps, store);
+
+      expect(screen.getByTestId('knowledge-notification')).toHaveTextContent(
+        'Successfully created the group.: Group NewGroup has been created and selected.'
+      );
+    });
+
     it('renders the title and description', () => {
       mockUseAllKnowledgeHubs.mockReturnValue({
         data: [],
@@ -505,6 +533,7 @@ describe('HubOption Component', () => {
     return configureStore({
       reducer: {
         modal: () => ({}),
+        knowledgeHubOptions: () => ({ notification: undefined }),
       },
     });
   };

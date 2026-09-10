@@ -21,10 +21,12 @@ import { useIntl } from 'react-intl';
 import { useAllKnowledgeHubs, useConnection } from '../../../core/knowledge/utils/queries';
 import { createLiteralValueSegment, NavigateIcon } from '@microsoft/designer-ui';
 import { AddFilesModal } from './files';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../core/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/store';
 import { openKnowledgeConnectionModal } from '../../../core/state/modal/modalSlice';
 import { isLiteralValueSegment } from '../../../core/utils/parameters/segment';
+import { clearNotification } from '../../../core/state/knowledge/optionsSlice';
+import { ToasterNotification } from '../notification';
 
 interface KnowledgeHubEditorOptions {
   logicAppId: string;
@@ -34,6 +36,7 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEdi
   const styles = useKnowledgeStyles();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const notification = useSelector((state: RootState) => state.knowledgeHubOptions.notification);
   const { logicAppId } = editorOptions as KnowledgeHubEditorOptions;
   const hubName = useMemo(() => (value.length === 1 && isLiteralValueSegment(value[0]) ? value[0].value : undefined), [value]);
   const { data: connection, isLoading: isConnectionLoading } = useConnection();
@@ -119,6 +122,8 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEdi
     setIsFileUploadModalOpen(false);
   }, []);
 
+  const handleClearNotification = useCallback(() => dispatch(clearNotification()), [dispatch]);
+
   const handleUploadArtifact = useCallback(
     async (
       resourceId: string,
@@ -126,12 +131,13 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEdi
       content: { file: UploadFile; name: string; description?: string },
       setIsLoading: (isLoading: boolean) => void
     ) => {
-      if (WorkflowService().uploadFileArtifact) {
-        await WorkflowService().uploadFileArtifact?.(resourceId, hubName, content, setIsLoading);
-        await refetch();
-      } else {
-        console.warn('uploadFileArtifact method is not implemented in WorkflowService');
+      const uploadFileArtifact = WorkflowService().uploadFileArtifact;
+      if (!uploadFileArtifact) {
+        throw new Error('File upload is not supported by the current host.');
       }
+
+      await uploadFileArtifact(resourceId, hubName, content, setIsLoading);
+      await refetch();
     },
     [refetch]
   );
@@ -150,6 +156,9 @@ export const KnowledgeHubEditor = ({ editorOptions, onValueChange, value }: IEdi
 
   return (
     <div className={styles.container}>
+      {notification ? (
+        <ToasterNotification title={notification.title} content={notification.content} onClear={handleClearNotification} />
+      ) : null}
       <div className={styles.header}>
         <Text size={200} weight="semibold">
           {INTL_TEXT.title}

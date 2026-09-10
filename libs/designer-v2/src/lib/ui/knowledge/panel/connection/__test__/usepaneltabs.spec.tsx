@@ -15,6 +15,10 @@ const mockModelTab = vi.fn();
 
 vi.mock('../tabs/basics', () => ({
   basicsTab: (...args: any[]) => mockBasicsTab(...args),
+  getSelectedAuthIndex: (connectionParameterSets: typeof mockCosmosDbParams, authType?: string) => {
+    const index = connectionParameterSets.values.findIndex((parameterSet) => parameterSet.name === authType);
+    return index >= 0 ? index : 0;
+  },
 }));
 
 vi.mock('../tabs/model', () => ({
@@ -25,7 +29,16 @@ vi.mock('../tabs/model', () => ({
 const mockCreateOrUpdateConnection = vi.fn().mockResolvedValue({});
 const mockCosmosDbParams = {
   uiDefinition: { displayName: 'Cosmos DB', description: '' },
-  values: [{ name: 'managedIdentity', uiDefinition: { displayName: '', description: '' }, parameters: {} }],
+  values: [
+    {
+      name: 'managedIdentity',
+      uiDefinition: { displayName: '', description: '' },
+      parameters: {
+        cosmosDbServiceAccountId: { type: 'string', uiDefinition: { constraints: { required: 'true' } } },
+        cosmosDBEndpoint: { type: 'string', uiDefinition: { constraints: { required: 'true' } } },
+      },
+    },
+  ],
 };
 const mockOpenAIParams = {
   uiDefinition: { displayName: 'OpenAI', description: '' },
@@ -122,7 +135,7 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     const props = basicsTabCall[6];
     expect(props).toMatchObject({
       isTabDisabled: false,
-      isPrimaryButtonDisabled: false,
+      isPrimaryButtonDisabled: true,
     });
     expect(typeof props.onPrimaryButtonClick).toBe('function');
   });
@@ -176,14 +189,20 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     expect(result.current[1].title).toBe('Model');
   });
 
-  it('handleMoveToModel calls selectTab with MODEL', () => {
+  it('handleMoveToModel calls selectTab with MODEL when required values are present', () => {
     renderUseCreateConnectionPanelTabs();
 
-    // Get the onPrimaryButtonClick from basicsTab call
-    const basicsTabCall = mockBasicsTab.mock.calls[0];
-    const basicsTabProps = basicsTabCall[6]; // 7th argument is the props object
+    act(() => {
+      mockBasicsTab.mock.calls[0][4]({
+        displayName: 'Knowledge Hub',
+        cosmosDBAuthenticationType: 'managedIdentity',
+        cosmosDbServiceAccountId: '/subscriptions/subscription-1/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/db',
+        cosmosDBEndpoint: 'https://db.documents.azure.com',
+      });
+    });
+    const basicsTabProps = mockBasicsTab.mock.calls[mockBasicsTab.mock.calls.length - 1][6];
 
-    // Call the onPrimaryButtonClick (handleMoveToModel)
+    expect(basicsTabProps.isPrimaryButtonDisabled).toBe(false);
     basicsTabProps.onPrimaryButtonClick();
 
     expect(mockSelectTab).toHaveBeenCalledWith('MODEL');
@@ -243,19 +262,33 @@ describe('useCreateConnectionPanelTabs Hook', () => {
     expect(firstResult).toBe(secondResult);
   });
 
-  it('sets basicsError when moving to model tab with empty values', () => {
+  it('sets basicsError and blocks navigation when required values are empty', () => {
     renderUseCreateConnectionPanelTabs();
 
     // Get the onPrimaryButtonClick from basicsTab call
     const basicsTabCall = mockBasicsTab.mock.calls[0];
     const basicsTabProps = basicsTabCall[6];
 
-    // Call handleMoveToModel - since values are empty, it should set error
-    basicsTabProps.onPrimaryButtonClick();
+    act(() => {
+      basicsTabProps.onPrimaryButtonClick();
+    });
 
-    // The subsequent render should pass error to basicsTab
-    // Check that selectTab was called
-    expect(mockSelectTab).toHaveBeenCalledWith('MODEL');
+    const updatedBasicsTabProps = mockBasicsTab.mock.calls[mockBasicsTab.mock.calls.length - 1][6];
+    expect(mockSelectTab).not.toHaveBeenCalled();
+    expect(updatedBasicsTabProps.tabStatusIcon).toBe('error');
+  });
+
+  it('keeps the Basics step disabled when required parameter keys are absent', () => {
+    renderUseCreateConnectionPanelTabs();
+
+    act(() => {
+      mockBasicsTab.mock.calls[0][4]({ displayName: 'Knowledge Hub', cosmosDBAuthenticationType: 'managedIdentity' });
+    });
+    const basicsTabProps = mockBasicsTab.mock.calls[mockBasicsTab.mock.calls.length - 1][6];
+
+    expect(basicsTabProps.isPrimaryButtonDisabled).toBe(true);
+    basicsTabProps.onPrimaryButtonClick();
+    expect(mockSelectTab).not.toHaveBeenCalled();
   });
 
   it('handles create error gracefully', async () => {

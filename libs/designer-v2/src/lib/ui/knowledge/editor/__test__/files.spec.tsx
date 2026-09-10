@@ -263,7 +263,7 @@ describe('AddFilesModal', () => {
       expect(mockOnDismiss).toHaveBeenCalled();
     });
 
-    it('keeps Cancel button enabled while uploading so user can abort', async () => {
+    it('disables Cancel and prevents dialog dismissal while uploading', async () => {
       let resolvePromise: () => void;
       const uploadPromise = new Promise<void>((resolve) => {
         resolvePromise = resolve;
@@ -283,11 +283,13 @@ describe('AddFilesModal', () => {
       const addButton = screen.getByText('Add');
       fireEvent.click(addButton);
 
-      // Cancel should remain enabled so user can abort the upload
       await waitFor(() => {
         const cancelButton = screen.getByText('Cancel');
-        expect(cancelButton).not.toBeDisabled();
+        expect(cancelButton).toBeDisabled();
       });
+
+      fireEvent.keyDown(document, { key: 'Escape' });
+      expect(mockOnDismiss).not.toHaveBeenCalled();
 
       // Resolve the upload
       resolvePromise!();

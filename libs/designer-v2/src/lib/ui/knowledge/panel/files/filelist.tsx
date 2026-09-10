@@ -113,9 +113,7 @@ export const FileList = ({
       ]);
       setFileNames((prevFileNames) => ({ ...prevFileNames, [file.uuid.toString()]: { name, error: errorMessage } }));
 
-      if (!errorMessage) {
-        onUpdate(file, { name });
-      }
+      onUpdate(file, { name: errorMessage ? '' : name });
     },
     [existingNames, fileNames, onUpdate]
   );

@@ -74,14 +74,21 @@ export const AddFilesModal = ({
     [intl]
   );
 
-  const { footerContent, handleSetFileDetails, groupName, uploadError } = useFileHooks(
+  const { footerContent, handleSetFileDetails, groupName, isUploading, uploadError } = useFileHooks(
     resourceId,
     selectedHub,
     onDismiss,
     onUploadArtifact
   );
   return (
-    <Dialog open={true} onOpenChange={onDismiss}>
+    <Dialog
+      open={true}
+      onOpenChange={(_event, data) => {
+        if (!data.open && !isUploading) {
+          onDismiss();
+        }
+      }}
+    >
       <DialogSurface>
         <DialogBody>
           <DialogTitle>{INTL_TEXT.title}</DialogTitle>

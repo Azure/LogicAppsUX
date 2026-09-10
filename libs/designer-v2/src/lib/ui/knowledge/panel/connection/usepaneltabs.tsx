@@ -2,7 +2,7 @@ import { useMemo, useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { KnowledgeTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../common/constants';
-import { basicsTab } from './tabs/basics';
+import { basicsTab, getSelectedAuthIndex } from './tabs/basics';
 import { modelTab } from './tabs/model';
 import {
   createOrUpdateConnection,
@@ -33,12 +33,34 @@ export const useCreateConnectionPanelTabs = ({
 
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  const handleMoveToModel = useCallback(() => {
-    selectTab(constants.KNOWLEDGE_PANEL_TAB_NAMES.MODEL);
-    setBasicsError(
-      Object.values(cosmosDbConnectionParametersValues).some((value) => value === undefined || value === '') ? 'error' : undefined
+  const isBasicsValid = useMemo(() => {
+    const displayName = cosmosDbConnectionParametersValues.displayName;
+    if (typeof displayName !== 'string' || displayName.trim() === '') {
+      return false;
+    }
+
+    const selectedParameterSetIndex = getSelectedAuthIndex(
+      cosmosDbConnectionParameters,
+      cosmosDbConnectionParametersValues.cosmosDBAuthenticationType
     );
-  }, [cosmosDbConnectionParametersValues, selectTab]);
+    const selectedParameters = cosmosDbConnectionParameters.values[selectedParameterSetIndex]?.parameters ?? {};
+
+    return Object.entries(selectedParameters).every(
+      ([key, parameter]) =>
+        parameter.uiDefinition?.constraints?.required !== 'true' ||
+        (cosmosDbConnectionParametersValues[key] !== undefined && cosmosDbConnectionParametersValues[key] !== '')
+    );
+  }, [cosmosDbConnectionParameters, cosmosDbConnectionParametersValues]);
+
+  const handleMoveToModel = useCallback(() => {
+    if (!isBasicsValid) {
+      setBasicsError('error');
+      return;
+    }
+
+    setBasicsError(undefined);
+    selectTab(constants.KNOWLEDGE_PANEL_TAB_NAMES.MODEL);
+  }, [isBasicsValid, selectTab]);
 
   const handleCreate = useCallback(async () => {
     try {
@@ -72,7 +94,7 @@ export const useCreateConnectionPanelTabs = ({
         isCreating,
         {
           isTabDisabled: isCreating,
-          isPrimaryButtonDisabled: isCreating,
+          isPrimaryButtonDisabled: isCreating || !isBasicsValid,
           onPrimaryButtonClick: handleMoveToModel,
           tabStatusIcon: basicsError,
           selectedSubscriptionId: selectedCosmosDbSubscriptionId,
@@ -85,6 +107,7 @@ export const useCreateConnectionPanelTabs = ({
       cosmosDbConnectionParameters,
       cosmosDbConnectionParametersValues,
       isCreating,
+      isBasicsValid,
       handleMoveToModel,
       basicsError,
       selectedCosmosDbSubscriptionId,

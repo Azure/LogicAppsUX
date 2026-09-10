@@ -68,6 +68,7 @@ export const useFileHooks = (
 
   const handleAdd = useCallback(async () => {
     setUploadError(undefined);
+    setIsUploading(true);
 
     try {
       await onUploadArtifact(
@@ -128,6 +129,7 @@ export const useFileHooks = (
         {
           type: 'action',
           text: INTL_TEXT.cancelButton,
+          disabled: isUploading,
           onClick: closePanel,
         },
       ],
@@ -177,6 +179,7 @@ export const useFileHooks = (
     footerContent,
     handleSetFileDetails,
     groupName,
+    isUploading,
     uploadError,
   };
 };
