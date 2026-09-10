@@ -46,7 +46,10 @@ vi.mock('react-redux', () => ({
   // which we special-case here since it isn't backed by a named/mockable selector hook.
   useSelector: vi.fn((selector: (state: any) => unknown) => {
     try {
-      return selector({ workflow: { workflowKind: mockWorkflowKind } });
+      return selector({
+        workflow: { workflowKind: mockWorkflowKind },
+        modal: { isKnowledgeConnectionOpen: false },
+      });
     } catch {
       return undefined;
     }
