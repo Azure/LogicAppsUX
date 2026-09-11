@@ -2,19 +2,22 @@
 // Licensed under the MIT License.
 
 /**
- * Custom-code .NET version E2E — workspace creation (create phase).
+ * Custom-code .NET version E2E — net8 workspace creation and net10 picker
+ * exclusion (create phase).
  *
- * Drives the REAL Create Workspace webview to create a `Logic app with custom
- * code` + Stateful workspace, targeting either `.NET 8` or `.NET 10`, selected
- * via `CUSTOMCODE_DOTNET_E2E_VERSION` ('net8' | 'net10', default 'net8').
+ * The `net8` target drives the REAL Create Workspace webview to create a
+ * `Logic app with custom code` + Stateful workspace and provides the fixture
+ * used by the assert phase. The `net10` target only proves that `.NET 10` is
+ * absent from the custom-code framework picker; it does not create a workspace
+ * and has no runtime/assert phase.
  *
  * This is a create/assert pair, the same shape as
  * azuriteAutostartFailure.test.ts / azuriteAutostartFailureAssert.test.ts and
  * codefulDebugTasksModern/Legacy.test.ts: this file (Phase 4.15A) creates the
- * workspace through the wizard in one fresh VS Code session, and
+ * net8 workspace through the wizard in one fresh VS Code session, and
  * customCodeDotNetVersionAssert.test.ts (Phase 4.15B) reopens the generated
  * `.code-workspace` in a SEPARATE fresh session and asserts the
- * dotnet-version-dependent settings plus a full debug/run lifecycle.
+ * .NET 8 settings plus a full debug/run lifecycle.
  *
  * DELIBERATELY not manifest-backed: the shared `created-workspaces.json`
  * manifest (workspaceManifest.ts / createWorkspaceShared.ts) already holds a
@@ -31,7 +34,6 @@
 
 import * as fs from 'fs';
 import * as os from 'os';
-import * as path from 'path';
 import { strict as assert } from 'assert';
 import { By, EditorView, type WebDriver, Workbench } from 'vscode-extension-tester';
 import {
@@ -55,40 +57,24 @@ import {
   waitForNextButton,
   waitForPathValidation,
 } from './createWorkspaceShared';
+import { deriveCustomCodeDotNetLayout, parseCustomCodeDotNetTarget } from './customCodeDotNetVersionShared';
 
-/**
- * dotnet target under test. Read at module scope exactly like
- * AZURITE_E2E_APP_KIND: `runPhase()` clears `require.cache` for the compiled
- * test file before each phase, so re-evaluating module scope is what makes
- * the env gate select a different layout on the next phase.
- */
-const DOTNET_TARGETS = ['net8', 'net10'] as const;
-type DotNetTarget = (typeof DOTNET_TARGETS)[number];
-const RAW_TARGET = (process.env.CUSTOMCODE_DOTNET_E2E_VERSION || 'net8').toLowerCase();
-if (!(DOTNET_TARGETS as readonly string[]).includes(RAW_TARGET)) {
-  throw new Error(
-    `CUSTOMCODE_DOTNET_E2E_VERSION must be one of ${DOTNET_TARGETS.join(' | ')}; got "${process.env.CUSTOMCODE_DOTNET_E2E_VERSION}"`
-  );
-}
-const TARGET = RAW_TARGET as DotNetTarget;
-
-/** Wizard dropdown option label (apps/vs-code-react/src/intl/messages.ts). */
-const DOTNET_VERSION_LABEL = TARGET === 'net10' ? '.NET 10' : '.NET 8';
-
-/**
- * Per-version fixed layout. Byte-for-byte identical to the constants block in
- * customCodeDotNetVersionAssert.test.ts — keep the two files' tables in sync.
- * Disjoint in BOTH the parent directory and every generated name so the two
- * targets can never collide on disk or inside a `.code-workspace`, and so a
- * stale directory from a previous local run cannot leak into either target.
- */
-const WORKSPACE_PARENT_DIR = path.join(os.tmpdir(), 'la-e2e-test', `customcode-dotnet-${TARGET}-parent`);
-const WORKSPACE_NAME = `cc${TARGET}ws`;
-const APP_NAME = `cc${TARGET}app`;
-const WORKFLOW_NAME = `cc${TARGET}wf`;
-const CC_FOLDER_NAME = `cc${TARGET}folder`;
-const FN_NAME = `cc${TARGET}fn`;
-const FN_NAMESPACE = 'MyCompany.Functions';
+// runPhase() clears the compiled test module from require.cache before each
+// phase, so the raw target is intentionally read when this consumer loads.
+const TARGET = parseCustomCodeDotNetTarget(process.env.CUSTOMCODE_DOTNET_E2E_VERSION);
+const layout = deriveCustomCodeDotNetLayout(TARGET, os.tmpdir());
+const {
+  appName: APP_NAME,
+  customCodeFolderName: CC_FOLDER_NAME,
+  dotNetVersionLabel: DOTNET_VERSION_LABEL,
+  expectedTargetFramework: EXPECTED_TARGET_FRAMEWORK,
+  functionName: FN_NAME,
+  functionNamespace: FN_NAMESPACE,
+  functionProjectPath: FUNCTION_PROJECT_PATH,
+  workflowName: WORKFLOW_NAME,
+  workspaceName: WORKSPACE_NAME,
+  workspaceParentDir: WORKSPACE_PARENT_DIR,
+} = layout;
 
 const LOG_PREFIX = `[customcode-dotnet-e2e][4.15A][${TARGET}]`;
 function log(message: string): void {
@@ -261,11 +247,9 @@ describe(`Create Workspace: CustomCode dotnet version (${TARGET})`, function () 
       throw new Error(`[customcode-dotnet-e2e] Timed out waiting for workspace shape: ${message}`);
     }
 
-    const csprojPath = path.join(entry.wsDir, CC_FOLDER_NAME, `${FN_NAME}.csproj`);
-    const csprojContent = fs.readFileSync(csprojPath, 'utf8');
-    const expectedTargetFramework = TARGET === 'net10' ? 'net10.0' : 'net8';
-    if (!csprojContent.includes(`<TargetFramework>${expectedTargetFramework}</TargetFramework>`)) {
-      throw new Error(`Expected ${csprojPath} to target ${expectedTargetFramework}`);
+    const csprojContent = fs.readFileSync(FUNCTION_PROJECT_PATH, 'utf8');
+    if (!csprojContent.includes(`<TargetFramework>${EXPECTED_TARGET_FRAMEWORK}</TargetFramework>`)) {
+      throw new Error(`Expected ${FUNCTION_PROJECT_PATH} to target ${EXPECTED_TARGET_FRAMEWORK}`);
     }
 
     log(`Workspace created at ${entry.wsFilePath}`);

@@ -2,21 +2,15 @@
 // Licensed under the MIT License.
 
 /**
- * Custom-code .NET version E2E — assertion + full debug/run lifecycle (assert
- * phase).
+ * Custom-code .NET 8 E2E — assertion + full debug/run lifecycle (assert phase).
  *
  * Phase 4.15B. Reopens the `.code-workspace` created by
  * customCodeDotNetVersionCreate.test.ts (Phase 4.15A) in a fresh VS Code
- * session, selected via the same `CUSTOMCODE_DOTNET_E2E_VERSION` env var
- * ('net8' | 'net10', default 'net8'), and asserts:
+ * session for the `net8` target and asserts:
  *
  *   1. The Logic App root `local.settings.json` has
- *      `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` set to the exact value the
- *      product writes for this target ('net8' | 'net10.0' — see
- *      TargetFramework in libs/vscode-extension/src/lib/models/workflow.ts).
- *   2. For net10 only: the generated function project's `.csproj` pins
- *      `Microsoft.ApplicationInsights.WorkerService` to `Version="2.21.0"`.
- *   3. A full debug/run lifecycle, not merely host-start: build succeeds,
+ *      `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` set to `net8`.
+ *   2. A full debug/run lifecycle, not merely host-start: build succeeds,
  *      the workflow reaches Healthy, a callback URL becomes available, the
  *      Request trigger is invoked, run history reaches Succeeded, and
  *      action-level evidence shows the generated InvokeFunction
@@ -29,6 +23,9 @@
  * getCodelessWorkflowTemplate, ProjectType.customCode branch), so no manual
  * designer interaction is needed to produce action-level evidence — the
  * as-created workflow already exercises the generated local function.
+ *
+ * The `net10` target is intentionally picker-negative-only in Phase 4.15A and
+ * never creates or reopens a workspace.
  */
 
 import * as assert from 'assert';
@@ -51,6 +48,7 @@ import {
   waitForRunStatusInList,
   waitForRuntimeReady,
 } from './runHelpers';
+import { deriveCustomCodeDotNetLayout, parseCustomCodeDotNetTarget } from './customCodeDotNetVersionShared';
 
 const TEST_TIMEOUT = 900_000;
 const RUNTIME_READY_TIMEOUT = 420_000;
@@ -58,35 +56,22 @@ const RUNTIME_READY_TIMEOUT = 420_000;
 /** Name of the InvokeFunction action baked into the default CustomCode wizard workflow. */
 const INVOKE_FUNCTION_ACTION_NAME = 'Call_a_local_function_in_this_logic_app';
 
-const DOTNET_TARGETS = ['net8', 'net10'] as const;
-type DotNetTarget = (typeof DOTNET_TARGETS)[number];
-const RAW_TARGET = (process.env.CUSTOMCODE_DOTNET_E2E_VERSION || 'net8').toLowerCase();
-if (!(DOTNET_TARGETS as readonly string[]).includes(RAW_TARGET)) {
-  throw new Error(
-    `CUSTOMCODE_DOTNET_E2E_VERSION must be one of ${DOTNET_TARGETS.join(' | ')}; got "${process.env.CUSTOMCODE_DOTNET_E2E_VERSION}"`
-  );
+const TARGET = parseCustomCodeDotNetTarget(process.env.CUSTOMCODE_DOTNET_E2E_VERSION);
+if (TARGET !== 'net8') {
+  throw new Error(`customCodeDotNetVersionAssert.test.ts only supports the net8 runtime target; got "${TARGET}"`);
 }
-const TARGET = RAW_TARGET as DotNetTarget;
-
-/**
- * Exact LOGIC_APPS_CUSTOMCODE_DOTNETVERSION value the product writes for this
- * target — TargetFramework.Net8 = 'net8', TargetFramework.Net10 = 'net10.0'
- * (libs/vscode-extension/src/lib/models/workflow.ts). NOT 'net10' — the
- * enum's Net10 value carries the trailing '.0'.
- */
-const EXPECTED_DOTNET_SETTING = TARGET === 'net10' ? 'net10.0' : 'net8';
-
-/**
- * Per-version fixed layout. Byte-for-byte identical to the constants block in
- * customCodeDotNetVersionCreate.test.ts — keep the two files' tables in sync.
- */
-const WORKSPACE_PARENT_DIR = path.join(os.tmpdir(), 'la-e2e-test', `customcode-dotnet-${TARGET}-parent`);
-const WORKSPACE_NAME = `cc${TARGET}ws`;
-const APP_NAME = `cc${TARGET}app`;
-const WORKFLOW_NAME = `cc${TARGET}wf`;
-const CC_FOLDER_NAME = `cc${TARGET}folder`;
-const FN_NAME = `cc${TARGET}fn`;
-const FN_NAMESPACE = 'MyCompany.Functions';
+const layout = deriveCustomCodeDotNetLayout(TARGET, os.tmpdir());
+const {
+  appName: APP_NAME,
+  customCodeFolderName: CC_FOLDER_NAME,
+  expectedDotNetSetting: EXPECTED_DOTNET_SETTING,
+  functionName: FN_NAME,
+  functionNamespace: FN_NAMESPACE,
+  localSettingsPath: LOCAL_SETTINGS_PATH,
+  workflowName: WORKFLOW_NAME,
+  workspaceName: WORKSPACE_NAME,
+  workspaceParentDir: WORKSPACE_PARENT_DIR,
+} = layout;
 
 const entry = buildManifestEntry(`CustomCode + Stateful (${TARGET})`, WORKSPACE_PARENT_DIR, {
   wsName: WORKSPACE_NAME,
@@ -124,13 +109,12 @@ function readJsonFile<T>(filePath: string): T {
  * settled — the poll only guards against a slow disk flush on cold CI runners.
  */
 async function assertCustomCodeDotNetVersionSetting(): Promise<void> {
-  const localSettingsPath = path.join(entry.appDir, 'local.settings.json');
   const deadline = Date.now() + 30_000;
   let lastError: unknown;
   while (Date.now() < deadline) {
     try {
-      assert.ok(fs.existsSync(localSettingsPath), `local.settings.json should exist at ${localSettingsPath}`);
-      const settings = readJsonFile<LocalSettingsJson>(localSettingsPath);
+      assert.ok(fs.existsSync(LOCAL_SETTINGS_PATH), `local.settings.json should exist at ${LOCAL_SETTINGS_PATH}`);
+      const settings = readJsonFile<LocalSettingsJson>(LOCAL_SETTINGS_PATH);
       const actual = settings.Values?.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION;
       assert.strictEqual(
         actual,
@@ -145,23 +129,6 @@ async function assertCustomCodeDotNetVersionSetting(): Promise<void> {
     }
   }
   throw lastError instanceof Error ? lastError : new Error(String(lastError));
-}
-
-/**
- * net10-only: assert the generated function project's .csproj pins
- * Microsoft.ApplicationInsights.WorkerService to Version="2.21.0" (reverted
- * from 2.23.0 — see apps/vs-code-designer/src/assets/FunctionProjectTemplate/
- * net10's FunctionsProjNet10 template).
- */
-function assertApplicationInsightsWorkerServiceVersion(): void {
-  const csprojPath = path.join(entry.wsDir, CC_FOLDER_NAME, `${FN_NAME}.csproj`);
-  assert.ok(fs.existsSync(csprojPath), `Function project .csproj should exist at ${csprojPath}`);
-  const csprojContent = fs.readFileSync(csprojPath, 'utf-8');
-  const pattern = /<PackageReference\s+Include="Microsoft\.ApplicationInsights\.WorkerService"\s+Version="([^"]+)"/;
-  const match = csprojContent.match(pattern);
-  assert.ok(match, `.csproj should reference Microsoft.ApplicationInsights.WorkerService. Content:\n${csprojContent}`);
-  assert.strictEqual(match![1], '2.21.0', `Microsoft.ApplicationInsights.WorkerService Version should be "2.21.0", got "${match![1]}"`);
-  log(`.csproj Microsoft.ApplicationInsights.WorkerService Version="${match![1]}" ✔`);
 }
 
 interface WorkflowJson {
@@ -199,7 +166,7 @@ function assertRunnableCustomCodeWorkflow(): void {
   );
 }
 
-describe(`Assert Workspace: CustomCode dotnet version (${TARGET})`, function () {
+describe('Assert Workspace: CustomCode .NET 8 runtime', function () {
   this.timeout(TEST_TIMEOUT);
 
   it(`reopens the ${TARGET} workspace, asserts dotnet-version settings, and runs the workflow to Succeeded`, async () => {
@@ -219,9 +186,6 @@ describe(`Assert Workspace: CustomCode dotnet version (${TARGET})`, function () 
     // --- Assertions that do not require a running host ---
     assertRunnableCustomCodeWorkflow();
     await assertCustomCodeDotNetVersionSetting();
-    if (TARGET === 'net10') {
-      assertApplicationInsightsWorkerServiceVersion();
-    }
 
     // --- Full debug/run lifecycle ---
     await startDebugging(workbench, driver);

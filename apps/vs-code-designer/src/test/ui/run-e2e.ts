@@ -20,6 +20,12 @@ import * as crypto from 'crypto';
 import { exec, execFileSync, execSync } from 'child_process';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
+import {
+  type CustomCodeDotNetTarget,
+  canonicalizeDotNetBinary,
+  deriveCustomCodeDotNetLayout,
+  parseCustomCodeDotNetTargets,
+} from './customCodeDotNetVersionShared';
 import { lspDirectory } from '../../constants';
 import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
 
@@ -1371,17 +1377,19 @@ async function main(): Promise<void> {
   const systemDotnetBinary = (() => {
     const configuredPath = process.env.CUSTOMCODE_DOTNET_BINARY_PATH?.trim();
     if (configuredPath) {
-      return configuredPath;
+      return canonicalizeDotNetBinary(configuredPath, 'CUSTOMCODE_DOTNET_BINARY_PATH');
     }
+    let discoveredPath: string | undefined;
     try {
       const command = process.platform === 'win32' ? 'where.exe dotnet' : 'command -v dotnet';
-      return execSync(command, { encoding: 'utf8' })
+      discoveredPath = execSync(command, { encoding: 'utf8' })
         .split(/\r?\n/)
         .map((line) => line.trim())
         .find(Boolean);
     } catch {
       return undefined;
     }
+    return discoveredPath ? canonicalizeDotNetBinary(discoveredPath, 'PATH discovery') : undefined;
   })();
   console.log(`  Created test settings file: ${settingsFile}`);
   console.log(`  funcCoreToolsBinaryPath: ${funcBinary}`);
@@ -2437,47 +2445,13 @@ namespace ${namespaceName}
   //   4.15B net8 — reopens it and proves settings plus the full debug/run lifecycle.
   //   4.15A net10 — asserts .NET 10 is absent from the real wizard picker.
   //
-  // Both test files read CUSTOMCODE_DOTNET_E2E_VERSION at module scope and derive
-  // their paths from fixed, disjoint-per-version constants (no shared manifest
-  // hand-off — see the file-header comment in customCodeDotNetVersionCreate.test.ts
-  // for why this scenario deliberately avoids created-workspaces.json).
-  type CustomCodeDotNetTarget = 'net8' | 'net10';
-  const customCodeDotNetLayouts: Record<CustomCodeDotNetTarget, { parent: string; wsName: string }> = {
-    net8: {
-      parent: path.join(os.tmpdir(), 'la-e2e-test', 'customcode-dotnet-net8-parent'),
-      wsName: 'ccnet8ws',
-    },
-    net10: {
-      parent: path.join(os.tmpdir(), 'la-e2e-test', 'customcode-dotnet-net10-parent'),
-      wsName: 'ccnet10ws',
-    },
-  };
-
-  /**
-   * `CUSTOMCODE_DOTNET_E2E_VERSIONS` (plural) shards the mode in CI, mirroring
-   * `AZURITE_E2E_APP_KINDS`; unset runs both targets, which is what a local full
-   * run wants. Unknown values are fatal rather than silently dropped.
-   */
-  const parseCustomCodeDotNetTargets = (): CustomCodeDotNetTarget[] => {
-    const allTargets: CustomCodeDotNetTarget[] = ['net8', 'net10'];
-    const raw = (process.env.CUSTOMCODE_DOTNET_E2E_VERSIONS ?? '').trim();
-    if (!raw) {
-      return allTargets;
-    }
-    const requested = raw
-      .split(',')
-      .map((value) => value.trim().toLowerCase())
-      .filter(Boolean);
-    const unknown = requested.filter((value) => !allTargets.includes(value as CustomCodeDotNetTarget));
-    if (unknown.length > 0 || requested.length === 0) {
-      throw new Error(`CUSTOMCODE_DOTNET_E2E_VERSIONS must be a comma-separated list of ${allTargets.join('|')} (received "${raw}")`);
-    }
-    return requested as CustomCodeDotNetTarget[];
-  };
+  // The target consumers read CUSTOMCODE_DOTNET_E2E_VERSION when their modules
+  // load. Target parsing and fixed, disjoint layout derivation are shared and
+  // pure; no shared module captures process.env.
 
   const runCustomCodeDotNetPhasesForTarget = async (labelPrefix: string, target: CustomCodeDotNetTarget): Promise<number> => {
-    const layout = customCodeDotNetLayouts[target];
-    const workspaceFile = path.join(layout.parent, layout.wsName, `${layout.wsName}.code-workspace`);
+    const layout = deriveCustomCodeDotNetLayout(target, os.tmpdir());
+    const workspaceFile = layout.workspaceFilePath;
     process.env.CUSTOMCODE_DOTNET_E2E_VERSION = target;
 
     if (target === 'net10') {
@@ -2505,7 +2479,7 @@ namespace ${namespaceName}
 
     const originalDotnetRoot = process.env.DOTNET_ROOT;
     const originalPath = process.env.PATH;
-    const systemDotnetRoot = process.env.CUSTOMCODE_DOTNET_ROOT?.trim() || path.dirname(systemDotnetBinary);
+    const systemDotnetRoot = path.dirname(systemDotnetBinary);
 
     process.env.DOTNET_ROOT = systemDotnetRoot;
     process.env.PATH = `${systemDotnetRoot}${path.delimiter}${originalPath || ''}`;
@@ -2563,12 +2537,13 @@ namespace ${namespaceName}
   };
 
   /**
-   * Runs 4.15A+4.15B once per dotnet target. `withPhaseGroupRetries` wraps EACH
-   * target rather than the whole sweep, so a net10 flake retries only the net10
-   * pair instead of re-running an already-green net8 pair.
+   * Runs the target-specific Phase 4.15 group: 4.15A+4.15B for net8 and only
+   * the 4.15A picker-negative check for net10. `withPhaseGroupRetries` wraps
+   * EACH target rather than the whole sweep, so a net10 flake does not rerun
+   * an already-green net8 create/runtime pair.
    */
   const runCustomCodeDotNetPhases = async (labelPrefix: string): Promise<number> => {
-    const targets = parseCustomCodeDotNetTargets();
+    const targets = parseCustomCodeDotNetTargets(process.env.CUSTOMCODE_DOTNET_E2E_VERSIONS);
     console.log(`\n  Custom-code dotnet targets: ${targets.join(', ')}`);
     let worstExit = 0;
     for (const target of targets) {

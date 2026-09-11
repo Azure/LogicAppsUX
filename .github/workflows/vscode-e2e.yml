@@ -1104,12 +1104,17 @@ jobs:
           echo "cache-hit:         ${{ steps.la-deps-cache.outputs.cache-hit }}"
           echo "cache-matched-key: ${{ steps.la-deps-cache.outputs.cache-matched-key }}"
 
+      - name: Run custom-code .NET shared helper tests
+        working-directory: apps/vs-code-designer
+        run: pnpm exec mocha out/test/customCodeDotNetVersionShared.test.js
+
       - name: Run custom-code .NET version create/assert + debug lifecycle E2E
         run: |
-          export CUSTOMCODE_DOTNET_BINARY_PATH="$(command -v dotnet)"
-          export CUSTOMCODE_DOTNET_ROOT="$(dirname "$CUSTOMCODE_DOTNET_BINARY_PATH")"
+          dotnet_binary="$(command -v dotnet)"
+          canonical_dotnet_binary="$(readlink -f -- "$dotnet_binary")"
+          export CUSTOMCODE_DOTNET_BINARY_PATH="$canonical_dotnet_binary"
           "$CUSTOMCODE_DOTNET_BINARY_PATH" --list-sdks
-          export PATH="$(dirname $(which node)):/usr/local/bin:/usr/bin:/bin:$PATH"
+          export PATH="$(dirname -- "$(command -v node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
             node apps/vs-code-designer/out/test/run-e2e.js
         env:
