@@ -23,8 +23,7 @@ vi.mock('../../../../utils/binaries', () => ({
 import * as fse from 'fs-extra';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 
-const { createWorkspaceFiles, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } =
-  CreateLogicAppWorkspaceModule;
+const { createWorkspaceFiles, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } = CreateLogicAppWorkspaceModule;
 
 describe('createLogicAppWorkspace - Integration Tests', () => {
   let tempDir: string;
@@ -468,6 +467,54 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         const exists = await fse.pathExists(dir);
         expect(exists).toBe(true);
       }
+    });
+  });
+
+  describe('Custom Code DotNet Version Local Setting', () => {
+    const runWorkspaceCreation = async (workspaceName: string, logicAppName: string, targetFramework: string) => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName,
+        logicAppName,
+        logicAppType: ProjectType.customCode,
+        workflowName: 'MyWorkflow',
+        workflowType: 'Stateful',
+        functionFolderName: 'Functions',
+        targetFramework,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      const logicAppFolderPath = getLogicAppFolderPath(workspaceName, logicAppName);
+      return fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+    };
+
+    it('writes LOGIC_APPS_CUSTOMCODE_DOTNETVERSION="net8" to the Logic App root local.settings.json when creating a Net8 custom code workspace', async () => {
+      const localSettings = await runWorkspaceCreation('Net8WorkspaceSetting', 'Net8WorkspaceApp', 'net8');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net8');
+    });
+
+    it('writes LOGIC_APPS_CUSTOMCODE_DOTNETVERSION="net10.0" to the Logic App root local.settings.json when creating a Net10 custom code workspace', async () => {
+      const localSettings = await runWorkspaceCreation('Net10WorkspaceSetting', 'Net10WorkspaceApp', 'net10.0');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net10.0');
+    });
+
+    it('does not write LOGIC_APPS_CUSTOMCODE_DOTNETVERSION for a NetFx custom code workspace', async () => {
+      const localSettings = await runWorkspaceCreation('NetFxWorkspaceSetting', 'NetFxWorkspaceApp', 'net472');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBeUndefined();
+    });
+
+    it('writes the setting to the Logic App folder (authoritative path), not the workspace root or function folder', async () => {
+      const workspaceName = 'AuthoritativePathWorkspace';
+      const logicAppName = 'AuthoritativePathApp';
+      await runWorkspaceCreation(workspaceName, logicAppName, 'net8');
+
+      const workspaceRootFolder = getWorkspaceRootFolder(workspaceName);
+      expect(await fse.pathExists(path.join(workspaceRootFolder, 'local.settings.json'))).toBe(false);
+      expect(await fse.pathExists(path.join(workspaceRootFolder, 'Functions', 'local.settings.json'))).toBe(false);
     });
   });
 
@@ -1125,4 +1172,3 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
     });
   });
 });
-
