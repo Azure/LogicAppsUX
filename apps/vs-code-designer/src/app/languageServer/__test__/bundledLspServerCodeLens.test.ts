@@ -207,7 +207,7 @@ describe('bundled LSP server CodeLens', () => {
     const zipPath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'LSPServer.zip');
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
-    const serverDllPath = path.join(extractDirectory, 'SdkLspServer.dll');
+    const serverDllPath = path.join(extractDirectory, 'LSPServer', 'SdkLspServer.dll');
     const sdkPackagePath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
