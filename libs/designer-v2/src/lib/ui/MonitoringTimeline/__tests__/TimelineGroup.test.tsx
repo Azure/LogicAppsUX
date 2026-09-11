@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import renderer, { act } from 'react-test-renderer';
+import renderer from 'react-test-renderer';
 import { IntlProvider } from 'react-intl';
 import TimelineGroup from '../TimelineGroup';
 import type { TimelineRepetitionWithActions } from '../helpers';
@@ -72,14 +72,6 @@ describe('TimelineGroup', () => {
     );
   };
 
-  const renderForInteraction = (props: TimelineGroupProps) => {
-    let component: renderer.ReactTestRenderer;
-    act(() => {
-      component = renderWithIntl(props);
-    });
-    return component!;
-  };
-
   it('should render with default props when timeline is expanded', () => {
     const tree = renderWithIntl(defaultProps).toJSON();
     expect(tree).toMatchSnapshot();
@@ -142,7 +134,7 @@ describe('TimelineGroup', () => {
   });
 
   it('should call handleSelectRepetition when expand button is clicked', () => {
-    const component = renderForInteraction({
+    const component = renderWithIntl({
       ...defaultProps,
       transitionIndex: 1, // different from taskId to start collapsed
     });
@@ -151,16 +143,14 @@ describe('TimelineGroup', () => {
     expect(buttons).toHaveLength(1);
 
     // Click expand button
-    act(() => {
-      buttons[0].props.onClick();
-    });
+    buttons[0].props.onClick();
 
     // Should not call handleSelectRepetition for expand action
     expect(mockHandleSelectRepetition).not.toHaveBeenCalled();
   });
 
   it('should call handleSelectRepetition when timeline node is selected', () => {
-    const component = renderForInteraction({
+    const component = renderWithIntl({
       ...defaultProps,
       transitionIndex: 0, // same as taskId to start expanded
     });
@@ -168,19 +158,15 @@ describe('TimelineGroup', () => {
     // First need to expand the group manually
     const buttons = component.root.findAllByType('button');
     if (buttons.length > 0) {
-      act(() => {
-        buttons[0].props.onClick(); // Expand the group
-      });
+      buttons[0].props.onClick(); // Expand the group
     }
 
     // Re-render to get the updated state
-    act(() => {
-      component.update(
-        <IntlProvider locale="en" defaultLocale="en">
-          <TimelineGroup {...defaultProps} transitionIndex={0} />
-        </IntlProvider>
-      );
-    });
+    component.update(
+      <IntlProvider locale="en" defaultLocale="en">
+        <TimelineGroup {...defaultProps} transitionIndex={0} />
+      </IntlProvider>
+    );
 
     // Find TimelineNode components by their mock implementation
     const timelineNodes = component.root.findAllByProps({ 'data-testid': 'timeline-node' });
@@ -189,9 +175,7 @@ describe('TimelineGroup', () => {
       // The onClick handler is actually on the wrapping div
       const nodeContainer = timelineNodes[0].parent;
       if (nodeContainer?.props.onClick) {
-        act(() => {
-          nodeContainer.props.onClick();
-        });
+        nodeContainer.props.onClick();
         expect(mockHandleSelectRepetition).toHaveBeenCalledWith(0, 0); // taskId, index
       }
     }
@@ -199,7 +183,7 @@ describe('TimelineGroup', () => {
 
   it('should show selected repetition correctly', () => {
     const selectedRep = createMockRepetition(1, 0);
-    const component = renderForInteraction({
+    const component = renderWithIntl({
       ...defaultProps,
       selectedRepetition: selectedRep,
       transitionIndex: 0, // same as taskId to start expanded
@@ -208,19 +192,15 @@ describe('TimelineGroup', () => {
     // First need to expand the group manually since useEffect doesn't trigger in tests the same way
     const buttons = component.root.findAllByType('button');
     if (buttons.length > 0) {
-      act(() => {
-        buttons[0].props.onClick(); // Expand the group
-      });
+      buttons[0].props.onClick(); // Expand the group
     }
 
     // Re-render to apply state changes
-    act(() => {
-      component.update(
-        <IntlProvider locale="en" defaultLocale="en">
-          <TimelineGroup {...defaultProps} selectedRepetition={selectedRep} transitionIndex={0} />
-        </IntlProvider>
-      );
-    });
+    component.update(
+      <IntlProvider locale="en" defaultLocale="en">
+        <TimelineGroup {...defaultProps} selectedRepetition={selectedRep} transitionIndex={0} />
+      </IntlProvider>
+    );
 
     const timelineNodes = component.root.findAllByProps({ 'data-testid': 'timeline-node' });
 

@@ -5,16 +5,6 @@ import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 
 import * as PanelSelectors from '../../../core/state/panel/panelSelectors';
 
-vi.mock('react-intl', async () => {
-  const actualIntl = await vi.importActual('react-intl');
-  return {
-    ...actualIntl,
-    useIntl: () => ({
-      formatMessage: ({ defaultMessage }: { defaultMessage: string }) => defaultMessage,
-    }),
-  };
-});
-
 describe('ui/settings/settingsection', () => {
   let minimal: SettingsSectionProps;
   let renderer: ReactShallowRenderer.ShallowRenderer;

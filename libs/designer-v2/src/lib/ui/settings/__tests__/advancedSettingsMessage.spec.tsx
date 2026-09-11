@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
 import { render } from '@testing-library/react';

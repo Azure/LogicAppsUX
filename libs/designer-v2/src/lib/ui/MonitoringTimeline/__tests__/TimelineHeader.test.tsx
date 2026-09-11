@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import renderer, { act } from 'react-test-renderer';
+import renderer from 'react-test-renderer';
 import { IntlProvider } from 'react-intl';
 import TimelineHeader from '../TimelineHeader';
 
@@ -26,15 +26,11 @@ describe('TimelineHeader', () => {
   });
 
   const renderWithIntl = (props: TimelineHeaderProps) => {
-    let component: renderer.ReactTestRenderer;
-    act(() => {
-      component = renderer.create(
-        <IntlProvider locale="en" defaultLocale="en">
-          <TimelineHeader {...props} />
-        </IntlProvider>
-      );
-    });
-    return component!;
+    return renderer.create(
+      <IntlProvider locale="en" defaultLocale="en">
+        <TimelineHeader {...props} />
+      </IntlProvider>
+    );
   };
 
   it('should render with default props when expanded', () => {
@@ -60,9 +56,7 @@ describe('TimelineHeader', () => {
     const refreshButton = buttons[0];
 
     // Click the refresh button
-    act(() => {
-      refreshButton.props.onClick();
-    });
+    refreshButton.props.onClick();
 
     expect(mockRefetchTimelineRepetitions).toHaveBeenCalledTimes(1);
   });
@@ -83,23 +77,29 @@ describe('TimelineHeader', () => {
       isExpanded: false,
     });
 
+    // Should only find the icon, not any text elements
     const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it('should render timeline icon in both expanded and collapsed states', () => {
+    // Only count rendered host elements (e.g. the icon's <span>/<svg>), not the wrapping
+    // component instance, which also carries the same className prop and would otherwise
+    // be double-counted by findAllByProps.
+    const isHostElement = (instance: { type: unknown }) => typeof instance.type === 'string';
+
     // Test expanded
     const expandedComponent = renderWithIntl(defaultProps);
-    const expandedIcons = expandedComponent.root.findAllByProps({ className: 'timeline-icon' });
-    expect(expandedIcons.length).toBeGreaterThan(0);
+    const expandedIcons = expandedComponent.root.findAllByProps({ className: 'timeline-icon' }).filter(isHostElement);
+    expect(expandedIcons).toHaveLength(1);
 
     // Test collapsed
     const collapsedComponent = renderWithIntl({
       ...defaultProps,
       isExpanded: false,
     });
-    const collapsedIcons = collapsedComponent.root.findAllByProps({ className: 'timeline-icon' });
-    expect(collapsedIcons.length).toBeGreaterThan(0);
+    const collapsedIcons = collapsedComponent.root.findAllByProps({ className: 'timeline-icon' }).filter(isHostElement);
+    expect(collapsedIcons).toHaveLength(1);
   });
 
   it('should have correct minimum width when expanded', () => {
