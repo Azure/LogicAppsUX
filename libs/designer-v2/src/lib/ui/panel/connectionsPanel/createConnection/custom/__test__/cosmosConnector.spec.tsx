@@ -14,8 +14,8 @@ const executeResourceAction = vi.fn();
 const log = vi.fn();
 
 vi.mock('@fluentui/react-components', () => ({
-  Button: ({ onClick, disabled }: any) => (
-    <button type="button" onClick={onClick} disabled={disabled}>
+  Button: ({ onClick, disabled, 'aria-label': ariaLabel }: any) => (
+    <button type="button" onClick={onClick} disabled={disabled} aria-label={ariaLabel}>
       Refresh
     </button>
   ),

@@ -1,13 +1,27 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, vi, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, vi, expect, it, beforeAll, beforeEach, afterEach, afterAll } from 'vitest';
 // biome-ignore lint/correctness/noUnusedImports: using react for render
 import React from 'react';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { IntlProvider } from 'react-intl';
 import { AddFilesModal } from '../files';
+
+class ResizeObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
+beforeAll(() => {
+  vi.stubGlobal('ResizeObserver', ResizeObserverMock);
+});
+
+afterAll(() => {
+  vi.unstubAllGlobals();
+});
 
 // Mock LoggerService
 vi.mock('@microsoft/logic-apps-shared', async () => {
@@ -230,8 +244,8 @@ describe('AddFilesModal', () => {
       fireEvent.click(screen.getByTestId('set-file-details'));
       fireEvent.click(screen.getByText('Add'));
 
-      expect(await screen.findByText('File upload failed')).toBeInTheDocument();
-      expect(screen.getByText('Storage unavailable')).toBeInTheDocument();
+      const errorTitle = await screen.findByText('File upload failed');
+      expect(errorTitle.parentElement).toHaveTextContent("Can't upload file. Please try again. Error: Storage unavailable");
       expect(mockOnDismiss).not.toHaveBeenCalled();
     });
 
