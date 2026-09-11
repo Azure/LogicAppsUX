@@ -1108,11 +1108,14 @@ jobs:
         working-directory: apps/vs-code-designer
         run: pnpm exec mocha out/test/customCodeDotNetVersionShared.test.js
 
+      - name: Prove dotnet symlink regression and fix
+        if: matrix.version == 'net8'
+        run: bash scripts/__test__/resolve-dotnet-root.test.sh
+
       - name: Run custom-code .NET version create/assert + debug lifecycle E2E
         run: |
-          dotnet_binary="$(command -v dotnet)"
-          canonical_dotnet_binary="$(readlink -f -- "$dotnet_binary")"
-          export CUSTOMCODE_DOTNET_BINARY_PATH="$canonical_dotnet_binary"
+          dotnet_root="$(bash scripts/resolve-dotnet-root.sh)"
+          export CUSTOMCODE_DOTNET_BINARY_PATH="$dotnet_root/dotnet"
           "$CUSTOMCODE_DOTNET_BINARY_PATH" --list-sdks
           export PATH="$(dirname -- "$(command -v node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
