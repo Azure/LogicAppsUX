@@ -3,6 +3,10 @@ import type { TagPickerOption } from './settingtagpicker';
 /**
  * HTTP status code options for retry policy configuration.
  * Includes 4xx client errors and 5xx server errors.
+ *
+ * Note: When a custom list is set on a retry policy, it replaces the default
+ * retryable set (408, 429, and 5xx). The defaults are intentionally kept in
+ * this list so users can re-add them alongside their custom codes.
  */
 export const HTTP_STATUS_CODE_OPTIONS: TagPickerOption[] = [
   // 4xx Client Errors
@@ -35,6 +39,7 @@ export const HTTP_STATUS_CODE_OPTIONS: TagPickerOption[] = [
   { label: '429 - Too Many Requests', value: '429' },
   { label: '431 - Request Header Fields Too Large', value: '431' },
   { label: '451 - Unavailable For Legal Reasons', value: '451' },
+  { label: '499 - Client Closed Request', value: '499' },
   // 5xx Server Errors
   { label: '500 - Internal Server Error', value: '500' },
   { label: '501 - Not Implemented', value: '501' },
