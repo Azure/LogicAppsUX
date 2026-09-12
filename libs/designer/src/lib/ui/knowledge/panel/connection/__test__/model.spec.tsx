@@ -2,12 +2,22 @@
  * @vitest-environment jsdom
  */
 import { describe, vi, expect, it, beforeEach, afterEach } from 'vitest';
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { modelTab } from '../tabs/model';
 import type { IntlShape } from 'react-intl';
 import { IntlProvider } from 'react-intl';
 import type { ConnectionParameterSets } from '@microsoft/logic-apps-shared';
+
+const { mockUseCompletionModels, mockUseEmbeddingModels } = vi.hoisted(() => ({
+  mockUseCompletionModels: vi.fn(),
+  mockUseEmbeddingModels: vi.fn(),
+}));
+
+vi.mock('../../../../../core/knowledge/utils/queries', () => ({
+  useCompletionModels: mockUseCompletionModels,
+  useEmbeddingModels: mockUseEmbeddingModels,
+}));
 
 // Mock ResizeObserver for JSDOM
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
@@ -46,10 +56,15 @@ vi.mock('../../../../panel/connectionsPanel/createConnection/formInputs/connecti
 
 // Mock UniversalConnectionParameter
 vi.mock('../../../../panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter', () => ({
-  UniversalConnectionParameter: ({ parameterKey, parameter, value, setValue }: any) => (
-    <div data-testid={`param-${parameterKey}`}>
+  UniversalConnectionParameter: ({ parameterKey, parameter, value, setValue, setKeyValue }: any) => (
+    <div data-testid={`param-${parameterKey}`} data-options={JSON.stringify(parameter?.uiDefinition?.constraints?.allowedValues)}>
       <label>{parameter?.uiDefinition?.displayName || parameterKey}</label>
       <input data-testid={`param-input-${parameterKey}`} value={value || ''} onChange={(e) => setValue(e.target.value)} />
+      {parameterKey === 'openAIEndpoint' ? (
+        <button type="button" data-testid="change-resource" onClick={() => setKeyValue('cognitiveServiceAccountId', 'resource-2')}>
+          Change resource
+        </button>
+      ) : null}
     </div>
   ),
 }));
@@ -103,6 +118,14 @@ describe('modelTab', () => {
               constraints: {},
             },
           },
+          openAIEmbeddingsModel: {
+            type: 'string',
+            uiDefinition: {
+              displayName: 'Embeddings Model',
+              description: 'Model for embeddings',
+              constraints: {},
+            },
+          },
         },
       },
       {
@@ -144,10 +167,19 @@ describe('modelTab', () => {
   const defaultConnectionParams = {
     displayName: 'Test Connection',
     openAIAuthenticationType: 'managedIdentity',
+    cognitiveServiceAccountId: '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/openai',
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseCompletionModels.mockReturnValue({
+      data: [{ text: 'completion-deployment', value: 'completion-deployment' }],
+      isSuccess: true,
+    });
+    mockUseEmbeddingModels.mockReturnValue({
+      data: [{ text: 'embedding-deployment', value: 'embedding-deployment' }],
+      isSuccess: true,
+    });
     mockSetConnectionParameterValues.mockImplementation((fn) => {
       if (typeof fn === 'function') {
         return fn({});
@@ -385,7 +417,7 @@ describe('modelTab', () => {
   });
 
   describe('Model Component (rendered via modelTab)', () => {
-    const renderModelTab = (connectionParams = defaultConnectionParams, isCreating = false) => {
+    const renderModelTab = (connectionParams: Record<string, any> = defaultConnectionParams, isCreating = false) => {
       const tab = modelTab(
         mockIntl,
         mockSelectTab,
@@ -420,6 +452,65 @@ describe('modelTab', () => {
 
       expect(screen.getByTestId('param-openAIEndpoint')).toBeInTheDocument();
       expect(screen.getByTestId('param-openAICompletionsModel')).toBeInTheDocument();
+    });
+
+    it('queries models for the selected resource and stores them in the matching parameter options', () => {
+      renderModelTab();
+
+      expect(mockUseCompletionModels).toHaveBeenCalledWith(defaultConnectionParams.cognitiveServiceAccountId);
+      expect(mockUseEmbeddingModels).toHaveBeenCalledWith(defaultConnectionParams.cognitiveServiceAccountId);
+      expect(screen.getByTestId('param-openAICompletionsModel')).toHaveAttribute(
+        'data-options',
+        JSON.stringify([{ text: 'completion-deployment', value: 'completion-deployment' }])
+      );
+      expect(screen.getByTestId('param-openAIEmbeddingsModel')).toHaveAttribute(
+        'data-options',
+        JSON.stringify([{ text: 'embedding-deployment', value: 'embedding-deployment' }])
+      );
+    });
+
+    it('resets each unavailable model only after its resource query succeeds', async () => {
+      let embeddingModelsLoaded = false;
+      mockUseCompletionModels.mockImplementation((resourceId: string) => ({
+        data: [
+          {
+            text: resourceId === 'resource-2' ? 'new-completion' : 'old-completion',
+            value: resourceId === 'resource-2' ? 'new-completion' : 'old-completion',
+          },
+        ],
+        isSuccess: true,
+      }));
+      mockUseEmbeddingModels.mockImplementation((resourceId: string) => ({
+        data: [
+          {
+            text: resourceId === 'resource-2' ? 'new-embedding' : 'old-embedding',
+            value: resourceId === 'resource-2' ? 'new-embedding' : 'old-embedding',
+          },
+        ],
+        isSuccess: resourceId !== 'resource-2' || embeddingModelsLoaded,
+      }));
+      renderModelTab({
+        ...defaultConnectionParams,
+        openAICompletionsModel: 'old-completion',
+        openAIEmbeddingsModel: 'old-embedding',
+      });
+
+      fireEvent.click(screen.getByTestId('change-resource'));
+
+      await waitFor(() =>
+        expect(mockSetConnectionParameterValues).toHaveBeenCalledWith(
+          expect.objectContaining({ openAICompletionsModel: undefined, openAIEmbeddingsModel: 'old-embedding' })
+        )
+      );
+
+      embeddingModelsLoaded = true;
+      fireEvent.change(screen.getByTestId('param-input-openAIEndpoint'), { target: { value: 'updated endpoint' } });
+
+      await waitFor(() =>
+        expect(mockSetConnectionParameterValues).toHaveBeenCalledWith(
+          expect.objectContaining({ openAICompletionsModel: undefined, openAIEmbeddingsModel: undefined })
+        )
+      );
     });
 
     it('changes auth type when dropdown is changed', () => {

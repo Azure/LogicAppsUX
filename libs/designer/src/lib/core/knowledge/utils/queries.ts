@@ -1,6 +1,8 @@
 import {
+  CognitiveServiceService,
   type Connection,
   ConnectionService,
+  type ConnectionParameterAllowedValue,
   equals,
   type KnowledgeHub,
   type KnowledgeHubExtended,
@@ -17,6 +19,36 @@ const queryOpts = {
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
 };
+
+interface CognitiveServiceDeployment {
+  name?: string;
+  properties?: {
+    capabilities?: Record<string, boolean | string>;
+    provisioningState?: string;
+  };
+}
+
+const useOpenAIModels = (resourceId: string, capability: 'chatCompletion' | 'embeddings') =>
+  useQuery({
+    queryKey: ['knowledgeOpenAIModels', resourceId.toLowerCase(), capability],
+    queryFn: async (): Promise<ConnectionParameterAllowedValue[]> => {
+      const deployments: CognitiveServiceDeployment[] =
+        (await CognitiveServiceService().fetchAllCognitiveServiceAccountDeployments(resourceId)) ?? [];
+      return deployments
+        .filter((deployment) => {
+          const capabilityEnabled = String(deployment.properties?.capabilities?.[capability] ?? '').toLowerCase() === 'true';
+          const provisioningState = deployment.properties?.provisioningState?.toLowerCase();
+          return !!deployment.name && capabilityEnabled && (!provisioningState || provisioningState === 'succeeded');
+        })
+        .map(({ name }) => ({ text: name, value: name }));
+    },
+    enabled: !!resourceId,
+    ...queryOpts,
+  });
+
+export const useCompletionModels = (resourceId: string) => useOpenAIModels(resourceId, 'chatCompletion');
+
+export const useEmbeddingModels = (resourceId: string) => useOpenAIModels(resourceId, 'embeddings');
 
 export const useAllKnowledgeHubs = (siteResourceId: string) => {
   return useQuery({
