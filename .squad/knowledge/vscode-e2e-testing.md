@@ -23,6 +23,20 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 
 ## Current Learnings
 
+### `@vscode/test-cli` Create Workspace CI publishes structured results
+
+- Learning: `.github/workflows/vscode-e2e.yml` runs the latest-stable `@vscode/test-cli` Create Workspace labels in the `vscode-e2e-cli-create-workspace` matrix and each label must publish structured results, not only logs.
+- Why it matters: Without JUnit/JSON summaries, screenshots, and aggregate pass-rate output, failures are discovered by reading long VS Code host logs and users cannot quickly see which label failed.
+- Pattern:
+  1. Run each label through `apps/vs-code-designer/scripts/run-e2e-cli.js`.
+  2. Tee the raw log to `.vscode-test/results/<label>.log`.
+  3. Generate `.json`, `.junit.xml`, and `.summary.md` with `scripts/summarize-e2e-cli-results.js`.
+  4. Upload `vscode-e2e-cli-test-results-<label>`, `vscode-e2e-cli-log-<label>`, and `vscode-e2e-cli-screenshots-<label>`.
+  5. Let `vscode-e2e-cli-create-workspace-report` download all label result artifacts and publish the aggregate pass-rate dashboard plus JSON/JUnit/JSONL trend artifacts.
+- Source: `apps/vs-code-designer/scripts/summarize-e2e-cli-results.js`, `.github/workflows/vscode-e2e.yml`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`, `release-scribe`.
+- Status: verified.
+
 ### `run-e2e.js` is the suite entry point
 
 - Learning: VS Code UI E2E tests must be wired through `apps/vs-code-designer/src/test/ui/run-e2e.js` and its phase model.
@@ -188,6 +202,17 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
   6. Start the second F5 without harness pre-F5 port cleanup so product cleanup code is exercised.
   7. Verify the workflow runs successfully again, including run history `Succeeded` and action evidence such as `Response:Succeeded`.
 - Source: Issue #7040 investigation; `apps/vs-code-designer/src/test/ui/nugetDebugConversion.test.ts`; `apps/vs-code-designer/src/test/ui/run-e2e.ts` scenario `p49-nugetdebugconversion`.
+- Applies to: `vscode-test-specialist`, `test`, `vscode`, `ci-sentinel`.
+- Status: verified.
+
+### Latest-stable CLI parity commands for NuGet and codeful debug
+
+- Learning: The `@vscode/test-cli` baseline has focused manual parity commands for runtime-heavy Create Workspace gaps:
+  - `pnpm run test:e2e-cli:nuget-conversion-lifecycle` creates a Standard Stateful workspace through the CLI Create Workspace webview, seeds a Request/Response workflow, proves bundle debug/run, converts to NuGet, verifies regenerated NuGet project/debug artifacts, and proves post-conversion debug/run without harness port cleanup.
+  - `pnpm run test:e2e-cli:codeful-debug-tasks` creates modern and legacy-control codeful workspaces through the CLI Create Workspace webview, patches only generated codeful source to a connector-free Request/Response debug guard, reopens each generated `.code-workspace` in a fresh latest-stable host, records VS Code task events directly from the extension host, requires the F5 Functions host to report `Running`, and verifies modern skips `publish` while legacy runs `clean release` + `publish`.
+- Run shape: Use the package scripts above, not raw `pnpm run test:e2e-cli --label ...`, for these lifecycle flows. The scripts intentionally launch multiple fresh VS Code hosts: one to create the workspace and write a manifest, then one or more hosts to reopen the generated project with the required startup resource and environment variables.
+- Why it matters: These close the two latest-stable CLI parity rows that used to be documented as ExTester-only while keeping ExTester as the deeper Selenium/UI owner.
+- Source: `apps/vs-code-designer/src/test/e2e/workspaceLifecycle.test.ts`, `apps/vs-code-designer/scripts/run-e2e-cli.js`, `apps/vs-code-designer/src/test/e2e/createWorkspaceParityMap.md`.
 - Applies to: `vscode-test-specialist`, `test`, `vscode`, `ci-sentinel`.
 - Status: verified.
 

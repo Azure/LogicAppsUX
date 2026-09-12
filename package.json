@@ -69,11 +69,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --write"
-    ]
+    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
   },
   "private": true,
   "scripts": {
@@ -100,6 +96,24 @@
     "test:e2e:designer:ui": "playwright test --config=playwright.designer.config.ts --ui",
     "test:e2e:chatClient": "playwright test --config=playwright.chatClient.config.ts",
     "test:e2e:chatClient:ui": "playwright test --config=playwright.chatClient.config.ts --ui",
+    "test:e2e-cli": "pnpm --dir apps/vs-code-designer run test:e2e-cli",
+    "test:e2e-cli:smoke": "pnpm --dir apps/vs-code-designer run test:e2e-cli:smoke",
+    "test:e2e-cli:create-workspace": "pnpm --dir apps/vs-code-designer run test:e2e-cli:create-workspace",
+    "test:e2e-cli:create-workspace:behavior": "pnpm --dir apps/vs-code-designer run test:e2e-cli:create-workspace:behavior",
+    "test:e2e-cli:create-workspace:core-matrix": "pnpm --dir apps/vs-code-designer run test:e2e-cli:create-workspace:core-matrix",
+    "test:e2e-cli:create-workspace:preview-matrix": "pnpm --dir apps/vs-code-designer run test:e2e-cli:create-workspace:preview-matrix",
+    "test:e2e-cli:create-workspace:codeful": "pnpm --dir apps/vs-code-designer run test:e2e-cli:create-workspace:codeful",
+    "test:e2e-cli:create-workspace:fixtures": "pnpm --dir apps/vs-code-designer run test:e2e-cli:create-workspace:fixtures",
+    "test:e2e-cli:create-workspace:full": "pnpm --dir apps/vs-code-designer run test:e2e-cli:create-workspace:full",
+    "test:e2e-cli:workspace-lifecycle": "pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-lifecycle",
+    "test:e2e-cli:nuget-conversion-lifecycle": "pnpm --dir apps/vs-code-designer run test:e2e-cli:nuget-conversion-lifecycle",
+    "test:e2e-cli:msn-weather-lifecycle": "pnpm --dir apps/vs-code-designer run test:e2e-cli:msn-weather-lifecycle",
+    "test:e2e-cli:warm-azure-auth": "pnpm --dir apps/vs-code-designer run test:e2e-cli:warm-azure-auth",
+    "test:e2e-cli:codeful-debug-tasks": "pnpm --dir apps/vs-code-designer run test:e2e-cli:codeful-debug-tasks",
+    "test:e2e-cli:show-create-workspace": "pnpm --dir apps/vs-code-designer run test:e2e-cli:show-create-workspace",
+    "test:e2e-cli:compile": "pnpm --dir apps/vs-code-designer run test:e2e-cli:compile",
+    "test:e2e-cli:open": "pnpm --dir apps/vs-code-designer run test:e2e-cli:open",
+    "test:e2e-cli:open:azure": "pnpm --dir apps/vs-code-designer run test:e2e-cli:open:azure",
     "test:extension-unit": "turbo run test:extension-unit",
     "testgen": "playwright codegen https://localhost:4200",
     "vscode:designer:pack": "turbo run vscode:designer:pack",

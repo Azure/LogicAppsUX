@@ -1,48 +1,57 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
+import { waitForVisibleDelay } from './visibleDelay';
+
+const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+const expectedCommands = [
+  'azureLogicAppsStandard.openDesigner',
+  'azureLogicAppsStandard.createWorkspace',
+  'azureLogicAppsStandard.createProject',
+  'azureLogicAppsStandard.createWorkflow',
+  'azureLogicAppsStandard.openOverview',
+  'azureLogicAppsStandard.addCustomCode',
+  'azureLogicAppsStandard.dataMap.createDataMap',
+  'azureLogicAppsStandard.runProjectConsistencyCheck',
+  'azureLogicAppsStandard.reportIssue',
+];
+
+installDialogGuard();
 
 suite('Logic Apps Commands Tests', () => {
-  vscode.window.showInformationMessage('Starting Command Tests');
+  suiteSetup(async () => {
+    const extension = vscode.extensions.getExtension(logicAppsExtensionId);
+    assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
+    await extension.activate();
+  });
 
-  test('Should list all registered commands', async () => {
+  suiteTeardown(async () => {
+    await waitForVisibleDelay('command registration smoke');
+  });
+
+  test('Should register expected Logic Apps commands', async () => {
     const commands = await vscode.commands.getCommands(true);
-    assert.ok(commands.length > 0, 'Should have registered commands');
-    console.log(`Total commands registered: ${commands.length}`);
+    const missingCommands = expectedCommands.filter((command) => !commands.includes(command));
 
-    // Filter Logic Apps related commands
-    const logicAppsCommands = commands.filter(
-      (cmd) => cmd.includes('logicApps') || cmd.includes('azureLogicApps') || cmd.includes('logic-apps')
-    );
-
-    console.log(`Logic Apps commands found: ${logicAppsCommands.length}`);
-    if (logicAppsCommands.length > 0) {
-      console.log('Logic Apps commands:', logicAppsCommands.slice(0, 10));
-    }
+    assert.deepStrictEqual(missingCommands, [], `Missing expected Logic Apps commands: ${missingCommands.join(', ')}`);
   });
 
-  test('Should be able to execute showInformationMessage', async () => {
-    // This is a basic VS Code API test to ensure the API is working
-    const result = vscode.window.showInformationMessage('Test message from e2e test');
-    assert.ok(result !== undefined, 'showInformationMessage should return a thenable');
-  });
+  test('Should expose a focused command namespace', async () => {
+    const commands = await vscode.commands.getCommands(true);
+    const logicAppsCommands = commands.filter((command) => command.startsWith('azureLogicAppsStandard.'));
 
-  test('Should be able to create output channel', () => {
-    const outputChannel = vscode.window.createOutputChannel('Logic Apps E2E Test');
-    assert.ok(outputChannel, 'Should be able to create output channel');
-
-    outputChannel.appendLine('E2E Test Output Channel Created');
-    outputChannel.show(true);
-
-    // Clean up
-    outputChannel.dispose();
+    assert.ok(logicAppsCommands.length >= expectedCommands.length, 'Should register the Logic Apps command namespace');
   });
 
   test('Should be able to access configuration', () => {
     const config = vscode.workspace.getConfiguration('azureLogicAppsStandard');
     assert.ok(config, 'Configuration should be accessible');
 
-    // Try to get a configuration value (might be undefined if not set)
-    const projectRuntime = config.get('projectRuntime');
-    console.log(`Project runtime config: ${projectRuntime ?? 'not set'}`);
+    assert.strictEqual(config.get('autoRuntimeDependenciesValidationAndInstallation'), false);
+    assert.strictEqual(config.get('autoStartDesignTime'), false);
+  });
+
+  test('Should not attempt startup dialogs while registering commands', async () => {
+    await assertNoDialogAttempts('Logic Apps command registration smoke');
   });
 });
