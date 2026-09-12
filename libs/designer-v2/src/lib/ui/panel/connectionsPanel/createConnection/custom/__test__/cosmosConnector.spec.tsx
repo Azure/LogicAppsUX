@@ -126,7 +126,7 @@ describe('CosmosDbConnector subscription state', () => {
     expect(refetch).toHaveBeenCalledOnce();
   });
 
-  it('selects an account and retrieves its key for key authentication.', async () => {
+  it('selects an account and retrieves its key for key authentication', async () => {
     const account = {
       id: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/db',
       name: 'db',
