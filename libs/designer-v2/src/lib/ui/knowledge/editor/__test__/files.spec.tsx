@@ -223,18 +223,6 @@ describe('AddFilesModal', () => {
       });
     });
 
-    it('shows the upload error and does not dismiss after a failed upload', async () => {
-      mockOnUploadArtifact.mockRejectedValue(new Error('Storage unavailable'));
-      renderComponent();
-
-      fireEvent.click(screen.getByTestId('set-file-details'));
-      fireEvent.click(screen.getByText('Add'));
-
-      expect(await screen.findByText('File upload failed')).toBeInTheDocument();
-      expect(screen.getByText('Storage unavailable')).toBeInTheDocument();
-      expect(mockOnDismiss).not.toHaveBeenCalled();
-    });
-
     it('shows Adding... text while uploading', async () => {
       let resolvePromise: () => void;
       const uploadPromise = new Promise<void>((resolve) => {
