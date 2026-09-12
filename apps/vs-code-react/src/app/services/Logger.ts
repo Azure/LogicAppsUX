@@ -13,6 +13,35 @@ export interface AdditionalContext {
   targetType?: string;
 }
 
+const serializeTelemetryValue = (value: unknown): string | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    return String(value);
+  }
+  if (value instanceof Error) {
+    return JSON.stringify({ name: value.name });
+  }
+
+  try {
+    return JSON.stringify(value) ?? String(value);
+  } catch {
+    return '[Unable to serialize telemetry value]';
+  }
+};
+
+const createTelemetryProperties = (data: Record<string, unknown>): Record<string, string> =>
+  Object.fromEntries(
+    Object.entries(data).flatMap(([key, value]) => {
+      const serializedValue = serializeTelemetryValue(value);
+      return serializedValue === undefined ? [] : [[key, serializedValue]];
+    })
+  );
+
 /**
  * Starts measuring the duration of an event and returns its unique identifier.
  * @param eventName - A string denoting the name of the trace event to start.
@@ -49,7 +78,7 @@ export class LoggerService implements ILoggerService {
   public log = (entry: Omit<LogEntry, 'timestamp'>) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.logTelemetry,
-      data: { ...entry, timestamp: Date.now(), args: [...(entry.args ?? []), this.context] },
+      data: createTelemetryProperties({ ...entry, timestamp: Date.now(), args: [...(entry.args ?? []), this.context] }),
     });
   };
 
@@ -65,7 +94,13 @@ export class LoggerService implements ILoggerService {
     const startTimestamp = Date.now();
     this.sendMsgToVsix({
       command: ExtensionCommand.logTelemetry,
-      data: { ...eventData, timestamp: startTimestamp, actionModifier: 'start', duration: 0, data: { id, context: this.context } },
+      data: createTelemetryProperties({
+        ...eventData,
+        timestamp: startTimestamp,
+        actionModifier: 'start',
+        duration: 0,
+        data: { id, context: this.context },
+      }),
     });
 
     this.inProgressTraces.set(id, { data: eventData, startTimestamp });
@@ -87,13 +122,13 @@ export class LoggerService implements ILoggerService {
     this.inProgressTraces.delete(id);
     this.sendMsgToVsix({
       command: ExtensionCommand.logTelemetry,
-      data: {
+      data: createTelemetryProperties({
         ...traceData.data,
         timestamp: endTimestamp,
         actionModifier: 'end',
         duration: endTimestamp - traceData.startTimestamp,
         data: { ...eventData?.data, context: this.context, id },
-      },
+      }),
     });
   };
 
