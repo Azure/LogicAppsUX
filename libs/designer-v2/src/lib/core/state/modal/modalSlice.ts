@@ -5,12 +5,14 @@ export interface ModalState {
   isCombineVariableOpen: boolean;
   resolveCombineVariable?: (useCombined: boolean) => void;
   isTriggerDescriptionOpen: boolean;
+  isKnowledgeConnectionOpen: boolean;
   kindChangeDialogType?: string;
 }
 
 const initialState: ModalState = {
   isCombineVariableOpen: false,
   isTriggerDescriptionOpen: false,
+  isKnowledgeConnectionOpen: false,
   kindChangeDialogType: undefined,
 };
 
@@ -41,6 +43,12 @@ const modalSlice = createSlice({
     closeKindChangeDialog: (state) => {
       state.kindChangeDialogType = undefined;
     },
+    openKnowledgeConnectionModal: (state) => {
+      state.isKnowledgeConnectionOpen = true;
+    },
+    closeKnowledgeConnectionModal: (state) => {
+      state.isKnowledgeConnectionOpen = false;
+    },
   },
 });
 
@@ -51,5 +59,7 @@ export const {
   closeTriggerDescriptionModal,
   openKindChangeDialog,
   closeKindChangeDialog,
+  openKnowledgeConnectionModal,
+  closeKnowledgeConnectionModal,
 } = modalSlice.actions;
 export default modalSlice.reducer;

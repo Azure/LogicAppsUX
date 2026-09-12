@@ -171,6 +171,7 @@ export interface StandardConnectionServiceOptions {
   };
   readConnections: ReadConnectionsFunc;
   writeConnection?: WriteConnectionFunc;
+  persistKnowledgeHubConnection?: () => Promise<void>;
   connectionCreationClients?: Record<string, ConnectionCreationClient>;
   getCachedConnector?: (connectorId: string) => Promise<Connector>;
 }
@@ -182,6 +183,7 @@ interface ConnectionCreationClient {
 }
 
 export class StandardConnectionService extends BaseConnectionService implements IConnectionService {
+  private shouldPersistKnowledgeHubConnection = false;
   constructor(private readonly _options: StandardConnectionServiceOptions) {
     super(_options.apiHubServiceDetails);
     const { apiHubServiceDetails, readConnections } = _options;
@@ -369,10 +371,21 @@ export class StandardConnectionService extends BaseConnectionService implements 
       parametersMetadata
     );
 
+    if (parametersMetadata.connectionMetadata?.type === ConnectionType.KnowledgeHub) {
+      const existingConnections = await this._options.readConnections();
+      this.shouldPersistKnowledgeHubConnection = Object.keys(existingConnections.knowledgeHubConnections ?? {}).length === 0;
+    }
     await this._options.writeConnection?.(connectionsData);
     this._connections[connection.id] = connection;
 
     return connection;
+  }
+
+  public async persistKnowledgeHubConnection(): Promise<void> {
+    if (this.shouldPersistKnowledgeHubConnection && this._options.persistKnowledgeHubConnection) {
+      await this._options.persistKnowledgeHubConnection();
+      this.shouldPersistKnowledgeHubConnection = false;
+    }
   }
 
   private async _createConnectionInApiHub(
