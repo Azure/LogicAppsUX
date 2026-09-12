@@ -1,5 +1,5 @@
 import { createWorkflowEdge, createWorkflowNode } from '../graph';
-import { getTokenNodeIds, filterTokensForAgentPerInput, convertOutputsToTokens } from '../tokens';
+import { getTokenNodeIds, filterTokensForAgentPerInput, convertOutputsToTokens, getExpressionTokenSections } from '../tokens';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { TokenType } from '@microsoft/designer-ui';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -358,6 +358,33 @@ describe('Token Picker Utilities', () => {
       // Should include all outputs for non-Agent types
       expect(result).toHaveLength(2);
       expect(result.map((r) => r.key)).toEqual(['body1', 'output1']);
+    });
+  });
+
+  describe('getExpressionTokenSections', () => {
+    it('returns all function groups when no allow-list is provided', () => {
+      const sections = getExpressionTokenSections();
+      expect(sections.length).toBeGreaterThan(0);
+      expect(sections.every((section) => section.tokens.length > 0)).toBe(true);
+      const allNames = sections.flatMap((section) => section.tokens.map((token) => token.name));
+      expect(allNames).toEqual(expect.arrayContaining(['contains', 'and', 'equals']));
+    });
+
+    it('restricts functions to the allow-list and drops emptied groups', () => {
+      const sections = getExpressionTokenSections(['contains', 'and', 'equals']);
+      const allNames = sections.flatMap((section) => section.tokens.map((token) => token.name));
+      expect(new Set(allNames)).toEqual(new Set(['contains', 'and', 'equals']));
+      expect(sections.every((section) => section.tokens.length > 0)).toBe(true);
+    });
+
+    it('matches allow-list entries case-insensitively', () => {
+      const sections = getExpressionTokenSections(['CONTAINS', 'And']);
+      const allNames = sections.flatMap((section) => section.tokens.map((token) => token.name));
+      expect(new Set(allNames)).toEqual(new Set(['contains', 'and']));
+    });
+
+    it('treats an empty allow-list as no restriction', () => {
+      expect(getExpressionTokenSections([]).length).toBe(getExpressionTokenSections().length);
     });
   });
 });
