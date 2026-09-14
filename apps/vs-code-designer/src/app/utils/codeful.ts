@@ -1,14 +1,19 @@
 import path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
-import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, localSettingsFileName, lspDirectory, workflowCodefulEnabledKey } from '../../constants';
+import {
+  autoRuntimeDependenciesPathSettingKey,
+  CodefulSdk,
+  CodefulSdkVersion,
+  defaultDependencyPathValue,
+  localSettingsFileName,
+  lspDirectory,
+  workflowCodefulEnabledKey,
+  lspSdkHashMarkerName,
+  codefulSdkProjectHashMarkerName,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
-
-const codefulSdkPackageId = 'Microsoft.Azure.Workflows.Sdk';
-const codefulSdkPackageVersion = '1.0.0-preview.1';
-const lspSdkHashMarkerName = '.lspsdk-hash';
-const codefulSdkProjectHashMarkerName = '.logicapps-lspsdk-hash';
 
 /**
  * Checks whether any workspace folder contains a codeful Logic Apps project.
@@ -99,7 +104,7 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
 
   const projectNugetFolder = path.join(projectPath, '.nuget');
   const projectSdkHashMarkerPath = path.join(projectNugetFolder, codefulSdkProjectHashMarkerName);
-  const projectSdkPackagePath = path.join(projectNugetFolder, 'packages', codefulSdkPackageId.toLowerCase(), codefulSdkPackageVersion);
+  const projectSdkPackagePath = path.join(projectNugetFolder, 'packages', CodefulSdk.WorkflowsSDK.toLowerCase(), CodefulSdkVersion.WorkflowsSDK);
   const restoreNoOpCachePaths = [
     path.join(projectPath, 'obj', 'project.assets.json'),
     path.join(projectPath, 'obj', 'project.nuget.cache'),
@@ -112,7 +117,7 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
   if (await fse.pathExists(projectSdkPackagePath)) {
     await fse.remove(projectSdkPackagePath);
     ext.outputChannel.appendLog(
-      `Removed stale ${codefulSdkPackageId} ${codefulSdkPackageVersion} from project-local NuGet cache at ${projectSdkPackagePath}.`
+      `Removed stale ${CodefulSdk.WorkflowsSDK} ${CodefulSdkVersion.WorkflowsSDK} from project-local NuGet cache at ${projectSdkPackagePath}.`
     );
   }
 
@@ -203,7 +208,7 @@ function escapeRegExp(value: string): string {
  * @returns `true` if the project targets .NET 8 and includes the Microsoft.Azure.Workflows.Sdk package, `false` otherwise
  */
 const isCodefulNet8Csproj = (csprojContent: string): boolean => {
-  return csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes('Microsoft.Azure.Workflows.Sdk');
+  return csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes(CodefulSdk.WorkflowsSDK);
 };
 
 /**

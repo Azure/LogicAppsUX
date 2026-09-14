@@ -20,8 +20,13 @@ import * as crypto from 'crypto';
 import { exec, execSync } from 'child_process';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
-import { lspDirectory } from '../../constants';
-import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
+import {
+  codefulSdkPackageFileName,
+  lspDirectory,
+  lspSdkHashMarkerName,
+  lspServerDirectoryName,
+  lspServerHashMarkerName,
+} from '../../constants';
 
 type BundleFileEntry = { relPath: string; fullPath: string };
 type ExtensionBundleState = { version: string; bundleDir: string; sidecarPath: string };
@@ -2156,7 +2161,7 @@ namespace ${namespaceName}
 
     const { depsRoot } = getRuntimeDependencyPaths();
     const lspDirectoryPath = path.join(depsRoot, lspDirectory);
-    const sdkPackageSource = path.join(projectDir, 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const sdkPackageSource = path.join(projectDir, 'src', 'assets', 'LSPServer', codefulSdkPackageFileName);
     const sdkPackageDestination = path.join(lspDirectoryPath, path.basename(sdkPackageSource));
     if (!fs.existsSync(sdkPackageSource)) {
       throw new Error(`Missing SDK package asset required by ${variant} codeful debug project: ${sdkPackageSource}`);
