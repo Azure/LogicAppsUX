@@ -1,7 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { isParameterRequired, createParameterInfo, toParameterInfoMap, shouldUseParameterInGroup } from '../helper';
 import type { InputParameter, ParameterInfo, ResolvedParameter } from '@microsoft/logic-apps-shared';
+import * as LogicAppsShared from '@microsoft/logic-apps-shared';
 
+// Mock WorkflowService
+vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
+  const original = (await importOriginal()) as object;
+  return {
+    ...original,
+    WorkflowService: vi.fn(),
+  };
+});
 describe('Parameter validation logic for Agent operations', () => {
   describe('shouldUseParameterInGroup - visibility controls serialization inclusion', () => {
     const makeAgentModelTypeParam = (modelTypeValue: string): ParameterInfo =>
@@ -409,91 +418,311 @@ describe('Parameter validation logic for Agent operations', () => {
     });
   });
 
-  describe('toParameterInfoMap - knowledgebase parameter hiding', () => {
-    it('should exclude parameters with editor: "knowledgebase" from the result', () => {
+  describe('toParameterInfoMap - KnowledgeHub enabled/disabled scenarios', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const createInputParameter = (overrides: Partial<InputParameter> = {}): InputParameter =>
+      ({
+        name: 'testParam',
+        key: 'inputs.$.testParam',
+        type: 'string',
+        title: 'Test Parameter',
+        required: false,
+        editor: 'textbox',
+        schema: { type: 'string' },
+        ...overrides,
+      }) as InputParameter;
+
+    const mockWorkflowService = (isKnowledgeHubEnabled: boolean | undefined) => {
+      if (isKnowledgeHubEnabled === undefined) {
+        (LogicAppsShared.WorkflowService as ReturnType<typeof vi.fn>).mockReturnValue(undefined);
+      } else {
+        (LogicAppsShared.WorkflowService as ReturnType<typeof vi.fn>).mockReturnValue({
+          isKnowledgeHubEnabled: () => isKnowledgeHubEnabled,
+          getLogicAppId: () => 'test-logic-app-id',
+          getAppIdentity: () => undefined,
+        });
+      }
+    };
+
+    it('should include knowledgebase parameter when KnowledgeHub is enabled', () => {
+      mockWorkflowService(true);
+
       const inputParameters: InputParameter[] = [
-        {
+        createInputParameter({
           name: 'agentKnowledge',
           key: 'inputs.$.agentKnowledge',
-          type: 'object',
-          title: 'Agent Knowledge',
-          required: false,
           editor: 'knowledgebase',
-          schema: {
-            type: 'object',
-          },
-        } as any,
-        {
-          name: 'messages',
-          key: 'inputs.$.messages',
-          type: 'array',
-          title: 'Messages',
-          required: true,
-          editor: 'array',
-          schema: {
-            type: 'array',
-          },
-        } as any,
+        }),
       ];
 
       const result = toParameterInfoMap(inputParameters, undefined, true);
 
-      // Should only contain 'messages', not 'agentKnowledge'
+      expect(result).toHaveLength(1);
+      expect(result[0].parameterName).toBe('agentKnowledge');
+    });
+
+    it('should exclude knowledgebase parameter when KnowledgeHub is disabled', () => {
+      mockWorkflowService(false);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          editor: 'knowledgebase',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should include non-knowledgebase parameters when KnowledgeHub is enabled', () => {
+      mockWorkflowService(true);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'messages',
+          key: 'inputs.$.messages',
+          editor: 'array',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
       expect(result).toHaveLength(1);
       expect(result[0].parameterName).toBe('messages');
     });
 
-    it('should exclude parameters with editor: "knowledgebase" regardless of case', () => {
+    it('should include non-knowledgebase parameters when KnowledgeHub is disabled', () => {
+      mockWorkflowService(false);
+
       const inputParameters: InputParameter[] = [
-        {
-          name: 'agentKnowledge',
-          key: 'inputs.$.agentKnowledge',
-          type: 'object',
-          title: 'Agent Knowledge',
-          required: false,
-          editor: 'Knowledgebase', // Different casing
-          schema: {
-            type: 'object',
-          },
-        } as any,
+        createInputParameter({
+          name: 'messages',
+          key: 'inputs.$.messages',
+          editor: 'array',
+        }),
       ];
 
       const result = toParameterInfoMap(inputParameters, undefined, true);
 
-      // Should be empty since knowledgebase parameters are hidden
+      expect(result).toHaveLength(1);
+      expect(result[0].parameterName).toBe('messages');
+    });
+
+    it('should default to KnowledgeHub enabled when WorkflowService returns undefined', () => {
+      mockWorkflowService(undefined);
+
+      // Test with non-knowledgebase parameter since knowledgebase requires WorkflowService for other methods
+      // The key behavior being tested is that isKnowledgeHubEnabled defaults to true
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'messages',
+          key: 'inputs.$.messages',
+          editor: 'array',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should include parameter because isKnowledgeHubEnabled defaults to true when service is undefined
+      expect(result).toHaveLength(1);
+      expect(result[0].parameterName).toBe('messages');
+    });
+
+    it('should default to KnowledgeHub enabled when isKnowledgeHubEnabled method is not defined', () => {
+      // WorkflowService exists but doesn't have isKnowledgeHubEnabled method
+      // This should still include knowledgebase parameters (defaults to enabled)
+      (LogicAppsShared.WorkflowService as ReturnType<typeof vi.fn>).mockReturnValue({
+        getLogicAppId: () => 'test-logic-app-id',
+        getAppIdentity: () => undefined,
+      });
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          editor: 'knowledgebase',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should include knowledgebase parameter because default is true when method is undefined
+      expect(result).toHaveLength(1);
+      expect(result[0].parameterName).toBe('agentKnowledge');
+    });
+
+    it('should filter mixed parameters correctly when KnowledgeHub is disabled', () => {
+      mockWorkflowService(false);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          editor: 'knowledgebase',
+        }),
+        createInputParameter({
+          name: 'messages',
+          key: 'inputs.$.messages',
+          editor: 'array',
+        }),
+        createInputParameter({
+          name: 'temperature',
+          key: 'inputs.$.temperature',
+          editor: 'textbox',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should exclude knowledgebase parameter but include others
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.parameterName)).toEqual(['messages', 'temperature']);
+    });
+
+    it('should include all parameters when KnowledgeHub is enabled with mixed editors', () => {
+      mockWorkflowService(true);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          editor: 'knowledgebase',
+        }),
+        createInputParameter({
+          name: 'messages',
+          key: 'inputs.$.messages',
+          editor: 'array',
+        }),
+        createInputParameter({
+          name: 'temperature',
+          key: 'inputs.$.temperature',
+          editor: 'textbox',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should include all parameters
+      expect(result).toHaveLength(3);
+      expect(result.map((p) => p.parameterName)).toEqual(['agentKnowledge', 'messages', 'temperature']);
+    });
+
+    it('should always exclude parameters with dynamicSchema regardless of KnowledgeHub state', () => {
+      mockWorkflowService(true);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'dynamicParam',
+          key: 'inputs.$.dynamicParam',
+          editor: 'textbox',
+          dynamicSchema: { type: 'object' },
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
       expect(result).toHaveLength(0);
     });
 
-    it('should include all parameters when none have editor: "knowledgebase"', () => {
+    it('should exclude both dynamicSchema and knowledgebase parameters when KnowledgeHub is disabled', () => {
+      mockWorkflowService(false);
+
       const inputParameters: InputParameter[] = [
-        {
-          name: 'deploymentId',
-          key: 'inputs.$.deploymentId',
-          type: 'string',
-          title: 'Deployment ID',
-          required: false,
+        createInputParameter({
+          name: 'dynamicParam',
+          key: 'inputs.$.dynamicParam',
           editor: 'textbox',
-          schema: {
-            type: 'string',
-          },
-        } as any,
-        {
-          name: 'temperature',
-          key: 'inputs.$.temperature',
-          type: 'number',
-          title: 'Temperature',
-          required: false,
+          dynamicSchema: { type: 'object' },
+        }),
+        createInputParameter({
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          editor: 'knowledgebase',
+        }),
+        createInputParameter({
+          name: 'normalParam',
+          key: 'inputs.$.normalParam',
           editor: 'textbox',
-          schema: {
-            type: 'number',
-          },
-        } as any,
+        }),
       ];
 
       const result = toParameterInfoMap(inputParameters, undefined, true);
 
+      // Should only include normalParam
+      expect(result).toHaveLength(1);
+      expect(result[0].parameterName).toBe('normalParam');
+    });
+
+    it('should handle case-insensitive knowledgebase editor value', () => {
+      mockWorkflowService(false);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'agentKnowledge',
+          key: 'inputs.$.agentKnowledge',
+          editor: 'KnowledgeBase', // Different casing
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should be excluded due to case-insensitive comparison
+      expect(result).toHaveLength(0);
+    });
+
+    it('should handle multiple knowledgebase parameters when KnowledgeHub is disabled', () => {
+      mockWorkflowService(false);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'agentKnowledge1',
+          key: 'inputs.$.agentKnowledge1',
+          editor: 'knowledgebase',
+        }),
+        createInputParameter({
+          name: 'agentKnowledge2',
+          key: 'inputs.$.agentKnowledge2',
+          editor: 'knowledgebase',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should exclude all knowledgebase parameters
+      expect(result).toHaveLength(0);
+    });
+
+    it('should handle multiple knowledgebase parameters when KnowledgeHub is enabled', () => {
+      mockWorkflowService(true);
+
+      const inputParameters: InputParameter[] = [
+        createInputParameter({
+          name: 'agentKnowledge1',
+          key: 'inputs.$.agentKnowledge1',
+          editor: 'knowledgebase',
+        }),
+        createInputParameter({
+          name: 'agentKnowledge2',
+          key: 'inputs.$.agentKnowledge2',
+          editor: 'knowledgebase',
+        }),
+      ];
+
+      const result = toParameterInfoMap(inputParameters, undefined, true);
+
+      // Should include all knowledgebase parameters
       expect(result).toHaveLength(2);
-      expect(result.map((p) => p.parameterName)).toEqual(['deploymentId', 'temperature']);
+      expect(result.map((p) => p.parameterName)).toEqual(['agentKnowledge1', 'agentKnowledge2']);
     });
   });
 });

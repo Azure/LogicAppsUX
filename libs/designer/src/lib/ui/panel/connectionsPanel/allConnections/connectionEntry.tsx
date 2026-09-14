@@ -148,7 +148,7 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
               icon={<ArrowSwap24Filled />}
               disabled={readOnly}
               onClick={readOnly ? undefined : onReassignButtonClick}
-              style={{ color: 'var(--colorBrandForeground1)' }}
+              style={readOnly ? undefined : { color: 'var(--colorBrandForeground1)' }}
             >
               {reassignButtonText}
             </Button>

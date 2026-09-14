@@ -89,6 +89,7 @@ describe('ConnectionEntry', () => {
 
     const reassignButton = screen.getByRole('button', { name: 'Reassign all connected actions to a new connection' });
     expect(reassignButton.hasAttribute('disabled')).toBe(true);
+    expect(reassignButton.hasAttribute('style')).toBe(false);
 
     fireEvent.click(reassignButton);
     expect(mockDispatch).not.toHaveBeenCalled();

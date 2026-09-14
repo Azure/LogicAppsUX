@@ -1,4 +1,4 @@
-import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
+import { InitOperationManifestService, InitWorkflowService } from '@microsoft/logic-apps-shared';
 import * as initialize from '../initialize';
 import {
   mockGetMyOffice365ProfileOpenApiManifest,
@@ -22,7 +22,11 @@ describe('bjsworkflow initialize', () => {
         isBuiltInConnector: () => false,
         getBuiltInConnector: () => ({}) as any,
       };
+      const workflowService = {
+        isKnowledgeHubEnabled: () => false,
+      } as any;
       InitOperationManifestService(operationManifestService);
+      InitWorkflowService(workflowService);
     });
 
     test('works for an OpenAPI operation with input parameters and values', () => {
