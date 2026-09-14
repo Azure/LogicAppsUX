@@ -8,6 +8,7 @@ import {
   discoverPortalPackages,
   parseArguments,
   releasePortalLock,
+  resolvePackageManagerInvocation,
   resolvePortalReactDirectory,
   snapshotManifests,
 } from '../portal-local.js';
@@ -64,6 +65,12 @@ describe('parseArguments', () => {
       portalRoot: 'D:\\portal',
     });
     expect(() => parseArguments([], {})).toThrow('Provide --portal-root');
+  });
+
+  it('rejects --portal-root without a value', () => {
+    expect(() => parseArguments(['--portal-root'], {})).toThrow('Missing value for --portal-root');
+    expect(() => parseArguments(['--portal-root='], {})).toThrow('Missing value for --portal-root');
+    expect(() => parseArguments(['--portal-root', '--dry-run'], {})).toThrow('Missing value for --portal-root');
   });
 });
 
@@ -129,5 +136,29 @@ describe('Portal worktree locking', () => {
 
     const nextLock = acquirePortalLock(portalReactDirectory);
     releasePortalLock(nextLock);
+  });
+});
+
+describe('Windows package manager invocation', () => {
+  it('runs JavaScript pnpm entrypoints through Node', () => {
+    const directory = createTemporaryDirectory();
+    const pnpmScript = path.join(directory, 'pnpm.cjs');
+    fs.writeFileSync(pnpmScript, '');
+
+    expect(resolvePackageManagerInvocation(pnpmScript, 'node.exe')).toEqual({
+      argsPrefix: [pnpmScript],
+      executable: 'node.exe',
+    });
+  });
+
+  it('runs native pnpm executables directly', () => {
+    const directory = createTemporaryDirectory();
+    const pnpmExecutable = path.join(directory, 'pnpm.exe');
+    fs.writeFileSync(pnpmExecutable, '');
+
+    expect(resolvePackageManagerInvocation(pnpmExecutable, 'node.exe')).toEqual({
+      argsPrefix: [],
+      executable: pnpmExecutable,
+    });
   });
 });

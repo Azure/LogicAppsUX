@@ -30,9 +30,17 @@ export function parseArguments(args, environment = process.env) {
     } else if (argument === '--help' || argument === '-h') {
       options.help = true;
     } else if (argument === '--portal-root') {
-      options.portalRoot = args[++index];
+      const portalRoot = args[++index];
+      if (!portalRoot || portalRoot.startsWith('--')) {
+        throw new Error('Missing value for --portal-root.');
+      }
+      options.portalRoot = portalRoot;
     } else if (argument.startsWith('--portal-root=')) {
-      options.portalRoot = argument.slice('--portal-root='.length);
+      const portalRoot = argument.slice('--portal-root='.length);
+      if (!portalRoot) {
+        throw new Error('Missing value for --portal-root.');
+      }
+      options.portalRoot = portalRoot;
     } else {
       throw new Error(`Unknown argument: ${argument}`);
     }
@@ -161,6 +169,27 @@ export function releasePortalLock(lock) {
   fs.rmSync(lock.path, { force: true });
 }
 
+export function resolvePackageManagerInvocation(packageManagerPath, nodeExecutable = process.execPath) {
+  if (!packageManagerPath || !fs.existsSync(packageManagerPath)) {
+    throw new Error('Unable to locate pnpm. Run this helper through `pnpm portal:local`.');
+  }
+
+  const extension = path.extname(packageManagerPath).toLowerCase();
+  if (extension === '.js' || extension === '.cjs' || extension === '.mjs') {
+    return { argsPrefix: [packageManagerPath], executable: nodeExecutable };
+  }
+  if (extension === '.cmd' || extension === '.bat') {
+    const basePath = packageManagerPath.slice(0, -extension.length);
+    const scriptPath = [`${basePath}.cjs`, `${basePath}.js`, `${basePath}.mjs`].find((candidate) => fs.existsSync(candidate));
+    if (!scriptPath) {
+      throw new Error(`Unable to find the JavaScript entrypoint for ${packageManagerPath}.`);
+    }
+    return { argsPrefix: [scriptPath], executable: nodeExecutable };
+  }
+
+  return { argsPrefix: [], executable: packageManagerPath };
+}
+
 function readWorkspacePackages(logicAppsUxRoot) {
   const librariesDirectory = path.join(logicAppsUxRoot, 'libs');
   const packages = new Map();
@@ -264,24 +293,45 @@ function runCommand(command, args, options = {}) {
     return;
   }
 
-  const result =
-    process.platform === 'win32'
-      ? spawnSync(process.env.ComSpec ?? 'cmd.exe', ['/d', '/s', '/c', commandText], {
-          cwd: options.cwd,
-          env: process.env,
-          stdio: 'inherit',
-        })
-      : spawnSync(command, args, {
-          cwd: options.cwd,
-          env: process.env,
-          stdio: 'inherit',
-        });
+  let executable = command;
+  let executableArguments = args;
+  if (process.platform === 'win32' && command === 'pnpm') {
+    const invocation = resolvePackageManagerInvocation(process.env.npm_execpath);
+    executable = invocation.executable;
+    executableArguments = [...invocation.argsPrefix, ...args];
+  }
+
+  const result = spawnSync(executable, executableArguments, {
+    cwd: options.cwd,
+    env: process.env,
+    stdio: 'inherit',
+  });
 
   if (result.error) {
     throw result.error;
   }
   if (result.status !== 0) {
     throw new Error(`${command} exited with code ${result.status ?? 'unknown'}.`);
+  }
+}
+
+function assertTarAvailable() {
+  const result = spawnSync('tar', ['--version'], {
+    cwd: repositoryRoot,
+    encoding: 'utf8',
+    env: process.env,
+  });
+
+  if (result.error?.code === 'ENOENT') {
+    throw new Error(
+      'The `tar` executable is required to extract local packages. Install bsdtar or enable the Windows tar command, then retry.'
+    );
+  }
+  if (result.error) {
+    throw result.error;
+  }
+  if (result.status !== 0) {
+    throw new Error(`Unable to run tar --version (exit code ${result.status ?? 'unknown'}).`);
   }
 }
 
@@ -429,7 +479,7 @@ async function main() {
     ? undefined
     : path.join(portalReactDirectory, 'node_modules', `.logicappsux-local-backup-${process.pid}-${Date.now()}`);
   const stagedPackages = new Map();
-  let packagesInstalled = false;
+  let portalBuildSucceeded = false;
   let portalLock;
   let preserveBackup = false;
 
@@ -441,6 +491,7 @@ async function main() {
   }
 
   try {
+    assertTarAvailable();
     const tarballs = packPackages(packages, temporaryDirectory, options.dryRun);
     if (!options.dryRun) {
       portalLock = acquirePortalLock(portalReactDirectory);
@@ -451,31 +502,31 @@ async function main() {
     if (!options.dryRun) {
       assertManifestsUnchanged(snapshot);
       verifyInstalledPackages(portalReactDirectory, packages);
-      packagesInstalled = true;
-      fs.rmSync(backupDirectory, { force: true, recursive: true });
       fs.rmSync(temporaryDirectory, { force: true, recursive: true });
     }
 
-    runCommand('npm', ['run', 'build-hybrid:dev'], {
+    runCommand('pnpm', ['run', 'build-hybrid:dev'], {
       cwd: portalReactDirectory,
       dryRun: options.dryRun,
     });
 
     if (!options.dryRun) {
       assertManifestsUnchanged(snapshot);
+      portalBuildSucceeded = true;
+      fs.rmSync(backupDirectory, { force: true, recursive: true });
     }
 
     releasePortalLock(portalLock);
     portalLock = undefined;
 
     if (options.serve) {
-      runCommand('npm', ['run', 'serve'], {
+      runCommand('pnpm', ['run', 'serve'], {
         cwd: portalReactDirectory,
         dryRun: options.dryRun,
       });
     }
   } catch (error) {
-    if (!options.dryRun && !packagesInstalled) {
+    if (!options.dryRun && !portalBuildSucceeded) {
       try {
         restoreInstalledPackages(portalReactDirectory, stagedPackages, backupDirectory);
       } catch (restoreError) {
