@@ -2,19 +2,21 @@
 
 This directory contains utility scripts for the LogicAppsUX project and their corresponding tests.
 
-## Test local packages in Azure Portal
+## Test local packages in Portal
 
-`portal-local.js` builds the LogicAppsUX library packages consumed by an AzureUX-LogicAppsPortal checkout, packs and extracts them directly into that Portal checkout without accessing a package registry or changing its manifests, and runs the Portal hybrid development build and server.
+`portal-local.js` builds the LogicAppsUX library packages consumed by Portal, packs and extracts them directly into that Portal checkout without accessing a package registry or changing its manifests, and runs the Portal hybrid development build and server.
 
-Pass either the Portal repository/worktree root or its `src\Extension\Client\React` directory:
+The helper works with regular Portal checkouts and Portal git worktrees. Pass either the Portal repository/worktree root or its `src\Extension\Client\React` directory:
 
 ```powershell
-pnpm portal:local --portal-root D:\dev\AzureUX-LogicAppsPortal
+pnpm portal:local --portal-root D:\path\to\portal
 ```
 
 Use `--no-serve` to build without starting the Portal server, or `--dry-run` to validate paths and print the commands without making changes. `LOGIC_APPS_PORTAL_ROOT` can provide the default Portal path.
 
 The helper discovers the intersection of Portal dependencies and publishable LogicAppsUX libraries, includes their local workspace dependencies, and installs the generated tarballs directly. This ensures Portal resolves the package contents built from the active LogicAppsUX worktree even when the package version matches a published version.
+
+The `tar` command must be available, and only one helper can target a given Portal worktree at a time. After a successful build, the local packages remain installed in that Portal worktree; run the Portal checkout's normal `npm ci` to restore its published dependencies. If installation, verification, or the Portal build fails, the helper restores the original packages automatically.
 
 ## Shared Utilities
 
@@ -135,6 +137,8 @@ The test suite covers:
 
 ## Files
 
+- `portal-local.js` - Builds and installs local LogicAppsUX packages into a Portal checkout or worktree
+- `__test__/portal-local.spec.ts` - Unit tests for the Portal local-package helper
 - `calculate-next-version.ts` - Main version calculation script
 - `vitest.config.ts` - Vitest configuration for scripts directory
 - `test-version-script.sh` - Convenient test runner script
