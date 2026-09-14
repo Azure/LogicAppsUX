@@ -139,7 +139,8 @@ describe('installLSPSDK', () => {
 
     expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(mocks.admZip).toHaveBeenCalledWith(expect.stringContaining('LSPServer.zip'));
-    expect(mocks.extractAllTo).toHaveBeenCalledWith(targetDirectory, true, true);
+    expect(mocks.ensureDir).toHaveBeenCalledWith(lspServerPath);
+    expect(mocks.extractAllTo).toHaveBeenCalledWith(lspServerPath, true, true);
     expect(mocks.ensureDir).toHaveBeenCalledWith(sdkDirectoryPath);
     expect(mocks.copyFile).toHaveBeenCalledWith(expect.stringContaining(sdkPackageName), sdkDestinationFile);
     expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
@@ -154,7 +155,8 @@ describe('installLSPSDK', () => {
     await installLSPSDK();
 
     expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
-    expect(mocks.extractAllTo).toHaveBeenCalledWith(defaultDependencyPathValue, true, true);
+    expect(mocks.ensureDir).toHaveBeenCalledWith(defaultLspServerPath);
+    expect(mocks.extractAllTo).toHaveBeenCalledWith(defaultLspServerPath, true, true);
   });
 
   it('updates both assets when target files exist but hash markers are missing', async () => {
