@@ -1,6 +1,6 @@
 import path from 'path';
 import * as fse from 'fs-extra';
-import { assetsFolderName, lspDirectory } from '../../constants';
+import { assetsFolderName, codefulSdkPackageFileName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName } from './languageServerProtocolConstants';
 import AdmZip from 'adm-zip';
@@ -25,7 +25,7 @@ export async function installLSPSDK(): Promise<void> {
 
   // Check if SDK needs to be copied or updated
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
-  const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+  const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', codefulSdkPackageFileName);
   const sdkHashMarkerFile = path.join(targetDirectory, lspSdkHashMarkerName);
   const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
   const sdkHash = await getFileHash(sdkNupkgFile);

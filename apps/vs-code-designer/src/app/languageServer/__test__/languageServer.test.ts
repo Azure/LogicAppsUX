@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import LogicAppsLanguageServer from '../languageServer';
 import path from 'path';
+import { codefulSdkPackageFileName } from '../../../constants';
 
 const mocks = vi.hoisted(() => ({
   createFileSystemWatcher: vi.fn(),
@@ -148,7 +149,7 @@ describe('LogicAppsLanguageServer', () => {
     const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
     mocks.languageClient.mockReturnValue(languageClient);
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath);
-    mocks.readdir.mockResolvedValue(['Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg']);
+    mocks.readdir.mockResolvedValue([codefulSdkPackageFileName]);
 
     await new LogicAppsLanguageServer({} as any).start();
 
@@ -159,11 +160,11 @@ describe('LogicAppsLanguageServer', () => {
       {
         run: {
           command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
-          args: [lspServerPath, '--sdk', path.join(sdkFolderPath, 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg')],
+          args: [lspServerPath, '--sdk', path.join(sdkFolderPath, codefulSdkPackageFileName)],
         },
         debug: {
           command: 'D:\\dependencies\\DotNetSDK\\dotnet.exe',
-          args: [lspServerPath, '--sdk', path.join(sdkFolderPath, 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg')],
+          args: [lspServerPath, '--sdk', path.join(sdkFolderPath, codefulSdkPackageFileName)],
         },
       },
       expect.objectContaining({

@@ -1,9 +1,13 @@
 import AdmZip from 'adm-zip';
 import type { ChildProcessWithoutNullStreams } from 'child_process';
 import { mkdtemp, rm } from 'fs/promises';
+import { tmpdir } from 'os';
 import path from 'path';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { codefulSdkPackageFileName } from '../../../constants';
+
+const lspServerAssetsDirectory = fileURLToPath(new URL('../../../assets/LSPServer/', import.meta.url));
 
 interface JsonRpcMessage {
   id?: number | string;
@@ -204,11 +208,11 @@ describe('bundled LSP server CodeLens', () => {
 
   async function startBundledLspServer(initializationOptions?: Record<string, unknown>): Promise<LspProcess> {
     const extractDirectory = await createTempDirectory();
-    const zipPath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'LSPServer.zip');
+    const zipPath = path.join(lspServerAssetsDirectory, 'LSPServer.zip');
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
     const serverDllPath = path.join(extractDirectory, 'SdkLspServer.dll');
-    const sdkPackagePath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const sdkPackagePath = path.join(lspServerAssetsDirectory, codefulSdkPackageFileName);
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -234,7 +238,7 @@ describe('bundled LSP server CodeLens', () => {
   }
 
   async function createTempDirectory(): Promise<string> {
-    const directory = await mkdtemp(path.join(process.cwd(), 'logicapps-lsp-codelens-'));
+    const directory = await mkdtemp(path.join(tmpdir(), 'logicapps-lsp-codelens-'));
     tempDirectories.push(directory);
     return directory;
   }
