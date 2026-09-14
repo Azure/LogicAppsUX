@@ -26,6 +26,7 @@ const mocks = vi.hoisted(() => {
     createWebviewPanel: vi.fn(),
     getWebViewHTML: vi.fn().mockResolvedValue('<html></html>'),
     openMonitoringView: vi.fn(),
+    openProjectOverview: vi.fn(),
     removeWebviewPanelFromCache: vi.fn(),
     tryGetWebviewPanel: vi.fn(),
     shouldUpdateOverviewCallbackInfo: vi.fn((current: any, updated: any) => {
@@ -38,6 +39,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock('vscode', () => ({
+  env: { clipboard: { writeText: vi.fn() } },
   Uri: mocks.MockUri,
   ViewColumn: { Active: -1 },
   window: { createWebviewPanel: mocks.createWebviewPanel },
@@ -84,14 +86,20 @@ class TestOverviewPanel extends OverviewPanel {
   public mockCallbackInfo: ICallbackUrlResponse | undefined;
   public mockEnvironmentReady = true;
 
-  constructor() {
+  constructor(projectId?: string) {
     super(
       { telemetry: { properties: {}, measurements: {} } } as any,
       'test-workflow',
       'test-panel',
       'test-panel-title',
       '2019-10-01-edge-preview',
-      true
+      true,
+      projectId
+        ? {
+            projectId: projectId as any,
+            openProjectOverview: mocks.openProjectOverview,
+          }
+        : undefined
     );
   }
 
@@ -99,10 +107,19 @@ class TestOverviewPanel extends OverviewPanel {
     this.baseUrl = this.mockBaseUrl;
     this.accessToken = this.mockAccessToken;
     this.workflowProps = {
+      callbackInfo: this.mockCallbackInfo,
       name: 'test-workflow',
       stateType: 'Stateful',
       triggerName: 'manual',
-      definition: { triggers: {}, actions: {} } as any,
+      definition: {
+        triggers: {
+          manual: {
+            kind: 'Http',
+            type: 'Request',
+          },
+        },
+        actions: {},
+      } as any,
       kind: 'Stateful',
     };
   }
@@ -260,6 +277,73 @@ describe('OverviewPanel', () => {
       await messageHandler({ command: ExtensionCommand.loadRun, item: { id: 'run-123' } });
 
       expect(mocks.openMonitoringView).toHaveBeenCalled();
+    });
+
+    it('should copy a validated callback URL through the VS Code host clipboard', async () => {
+      overviewPanel.mockCallbackInfo = { value: 'https://callback.example/workflow', method: 'POST' };
+      await overviewPanel.create();
+
+      const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+      await messageHandler({
+        command: ExtensionCommand.copyWorkflowOverviewCallback,
+        data: { workflowName: 'test-workflow' },
+      });
+
+      expect(vscode.env.clipboard.writeText).toHaveBeenCalledWith('https://callback.example/workflow');
+    });
+
+    it('should reject callback copy requests for unknown workflows', async () => {
+      overviewPanel.mockCallbackInfo = { value: 'https://callback.example/workflow', method: 'POST' };
+      await overviewPanel.create();
+
+      const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+      await messageHandler({
+        command: ExtensionCommand.copyWorkflowOverviewCallback,
+        data: { workflowName: 'untrusted-workflow' },
+      });
+
+      expect(vscode.env.clipboard.writeText).not.toHaveBeenCalled();
+    });
+
+    it('should expose and invoke a validated project origin', async () => {
+      overviewPanel = new TestOverviewPanel('project-id');
+      await overviewPanel.create();
+
+      const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+      await messageHandler({ command: ExtensionCommand.initialize });
+      expect(panel.webview.postMessage).toHaveBeenCalledWith({
+        command: ExtensionCommand.initialize_frame,
+        data: expect.objectContaining({
+          projectOverviewOrigin: {
+            projectId: 'project-id',
+          },
+        }),
+      });
+
+      await messageHandler({
+        command: ExtensionCommand.openProjectOverview,
+        data: { projectId: 'project-id' },
+      });
+      expect(mocks.openProjectOverview).toHaveBeenCalledOnce();
+    });
+
+    it('should omit project origin for standalone overview and reject mismatched return messages', async () => {
+      await overviewPanel.create();
+
+      const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+      await messageHandler({ command: ExtensionCommand.initialize });
+      expect(panel.webview.postMessage).toHaveBeenCalledWith({
+        command: ExtensionCommand.initialize_frame,
+        data: expect.objectContaining({
+          projectOverviewOrigin: undefined,
+        }),
+      });
+
+      await messageHandler({
+        command: ExtensionCommand.openProjectOverview,
+        data: { projectId: 'untrusted-project-id' },
+      });
+      expect(mocks.openProjectOverview).not.toHaveBeenCalled();
     });
   });
 
