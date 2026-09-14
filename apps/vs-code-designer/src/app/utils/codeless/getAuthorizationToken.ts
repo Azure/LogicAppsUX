@@ -5,13 +5,14 @@ import type { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AuthenticationSession } from 'vscode';
 import * as vscode from 'vscode';
 
-export async function getAuthData(tenantId?: string): Promise<AuthenticationSession> {
+export async function getAuthData(tenantId?: string): Promise<AuthenticationSession | undefined> {
   // When silentAuth is enabled (e.g. in automated test environments),
   // use { silent: true } to avoid showing the "wants to sign in" dialog.
   // This returns undefined if no cached session exists, instead of prompting.
   const silentAuth = vscode.workspace.getConfiguration('azureLogicAppsStandard').get<boolean>('silentAuth', false);
   if (silentAuth) {
-    return await getSessionFromVSCode(undefined, tenantId, { silent: true });
+    const session = await getSessionFromVSCode(undefined, tenantId, { silent: true });
+    return session ?? getE2eCliAuthSession(tenantId);
   }
   return await getSessionFromVSCode(undefined, tenantId, { createIfNone: true });
 }
@@ -41,6 +42,26 @@ export async function getAuthorizationTokenFromNode(node: AzExtTreeItem): Promis
   }
 
   return await getAuthorizationToken(node.subscription.tenantId);
+}
+
+function getE2eCliAuthSession(tenantId?: string): AuthenticationSession | undefined {
+  const accessToken = process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN?.trim();
+  if (process.env.VSCODE_RUNNING_TESTS !== '1' || !accessToken) {
+    return undefined;
+  }
+
+  const effectiveTenantId = tenantId ?? process.env.LA_E2E_CLI_AZURE_TENANT_ID ?? process.env.WORKFLOWS_TENANT_ID ?? 'e2e-cli';
+  const clientId = process.env.LA_E2E_CLI_AZURE_CLIENT_ID ?? 'e2e-cli';
+
+  return {
+    accessToken,
+    id: `e2e-cli-${effectiveTenantId}`,
+    account: {
+      id: `${clientId}.${effectiveTenantId}`,
+      label: 'Azure CLI test session',
+    },
+    scopes: ['https://management.core.windows.net/.default'],
+  };
 }
 
 export async function getCloudHost(): Promise<string> {
