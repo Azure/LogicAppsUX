@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { azureArguments, candidateNumbers, servicesFor } from './github.mjs';
-import { artifactName, COMMENT_MARKER } from './controller.mjs';
+import { azureArguments, candidateNumbers, prepareJob, servicesFor } from './github.mjs';
+import { artifactName, COMMENT_MARKER, commentBody, DEPLOYMENT_KIND } from './controller.mjs';
 
 const sha = 'a'.repeat(40);
 const repo = { owner: 'Azure', repo: 'LogicAppsUX' };
@@ -213,6 +213,94 @@ describe('trusted GitHub adapter', () => {
     for (const value of ['', '--unexpected', 'name; echo x', 'bad\nname']) {
       expect(() => azureArguments({ ...env, EPHEMERAL_STATIC_WEB_APP: value })).toThrow();
     }
+  });
+});
+
+describe('preparation failure reporting', () => {
+  const message = 'The current preview build did not succeed. The last successful preview, if shown, is unchanged.';
+  const published = {
+    kind: DEPLOYMENT_KIND,
+    number: 42,
+    sha: 'b'.repeat(40),
+    hostname: 'example-pr42.azurestaticapps.net',
+  };
+
+  beforeEach(() => {
+    vi.stubEnv('EPHEMERAL_PR_NUMBER', '42');
+    vi.stubEnv('EPHEMERAL_RESOURCE_GROUP', 'preview-group');
+    vi.stubEnv('EPHEMERAL_STATIC_WEB_APP', 'preview-site');
+    vi.stubEnv('EPHEMERAL_SUBSCRIPTION_ID', 'preview-subscription');
+  });
+  afterEach(() => vi.unstubAllEnvs());
+
+  function failedBuild(previousBody = `${COMMENT_MARKER}\nOld`) {
+    const github = api();
+    github.paginate.mockImplementation(async (method) => {
+      if (method === github.rest.actions.listWorkflowRuns) {
+        return [{ ...run, conclusion: 'failure' }];
+      }
+      if (method === github.rest.repos.listDeployments) {
+        return [{ id: 8, payload: published }];
+      }
+      if (method === github.rest.issues.listComments) {
+        return [{ id: 4, user: { login: 'github-actions[bot]' }, body: previousBody }];
+      }
+      return [];
+    });
+    github.rest.repos.listDeploymentStatuses.mockResolvedValue({ data: [{ state: 'success' }] });
+    return {
+      github,
+      context,
+      core: { setOutput: vi.fn() },
+      azureClient: vi.fn().mockResolvedValue([{ buildId: 'pr42', hostname: published.hostname }]),
+    };
+  }
+
+  it('keeps the targeted failed-build comment and last successful preview details', async () => {
+    const options = failedBuild();
+    await expect(prepareJob(options)).rejects.toThrow('Preview build 10 finished with failure.');
+    expect(options.github.rest.issues.updateComment).toHaveBeenCalledTimes(1);
+    expect(options.github.rest.issues.updateComment).toHaveBeenCalledWith({
+      ...repo,
+      comment_id: 4,
+      body: commentBody(pr, message, published),
+    });
+    expect(options.github.rest.issues.createComment).not.toHaveBeenCalled();
+    expect(options.core.setOutput).not.toHaveBeenCalled();
+  });
+
+  it('does not replace an already matching failure comment on a later reconciliation', async () => {
+    const options = failedBuild(commentBody(pr, message, published));
+    await expect(prepareJob(options)).rejects.toThrow('Preview build 10 finished with failure.');
+    expect(options.github.rest.issues.updateComment).not.toHaveBeenCalled();
+    expect(options.github.rest.issues.createComment).not.toHaveBeenCalled();
+    expect(options.core.setOutput).not.toHaveBeenCalled();
+  });
+
+  it('still reports failures that the controller has not reported', async () => {
+    const options = failedBuild();
+    const error = new Error('GitHub build lookup unavailable');
+    options.github.rest.actions.getWorkflow.mockRejectedValue(error);
+    await expect(prepareJob(options)).rejects.toBe(error);
+    expect(options.github.rest.issues.updateComment).toHaveBeenCalledTimes(1);
+    expect(options.github.rest.issues.updateComment).toHaveBeenCalledWith(
+      expect.objectContaining({ body: expect.stringContaining('Preview reconciliation failed.') })
+    );
+    expect(options.azureClient).not.toHaveBeenCalled();
+    expect(options.core.setOutput).not.toHaveBeenCalled();
+  });
+
+  it('only considers a failure reported after its comment is successfully written', async () => {
+    const options = failedBuild();
+    const error = new Error('GitHub comment update unavailable');
+    options.github.rest.issues.updateComment.mockRejectedValueOnce(error).mockResolvedValueOnce({});
+    await expect(prepareJob(options)).rejects.toBe(error);
+    expect(options.github.rest.issues.updateComment).toHaveBeenCalledTimes(2);
+    expect(options.github.rest.issues.updateComment).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ body: expect.stringContaining('Preview reconciliation failed.') })
+    );
+    expect(options.core.setOutput).not.toHaveBeenCalled();
   });
 });
 

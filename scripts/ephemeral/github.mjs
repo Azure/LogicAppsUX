@@ -233,20 +233,29 @@ export function servicesFor({ github, context, azureClient = azure }) {
   };
 }
 
-export async function prepareJob({ github, context, core }) {
+export async function prepareJob({ github, context, core, azureClient = azure }) {
   const { prepare } = await import('./controller.mjs');
-  const services = servicesFor({ github, context });
+  const services = servicesFor({ github, context, azureClient });
   const number = Number(process.env.EPHEMERAL_PR_NUMBER);
   environmentName(number);
   let state;
+  let reported = false;
   try {
-    state = await prepare(number, services);
+    state = await prepare(number, {
+      ...services,
+      async comment(...args) {
+        await services.comment(...args);
+        reported = true;
+      },
+    });
   } catch (error) {
-    const pr = await services.pull(number);
-    await services.comment(
-      pr,
-      'Preview reconciliation failed. Check the Reconcile Standalone Ephemeral workflow logs; rerun it after resolving the error.'
-    );
+    if (!reported) {
+      const pr = await services.pull(number);
+      await services.comment(
+        pr,
+        'Preview reconciliation failed. Check the Reconcile Standalone Ephemeral workflow logs; rerun it after resolving the error.'
+      );
+    }
     throw error;
   }
   await writeFile(statePath, JSON.stringify(state));

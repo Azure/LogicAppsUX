@@ -21,7 +21,8 @@ const observePreview = async (page: Page, baseURL: string) => {
   await page.route('**/*', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
-    const credentialRequest = /^\/__dev\//.test(url.pathname) || /\/(?:armToken|foundryToken|subscriptionIds)\.json$/i.test(url.pathname);
+    const credentialRequest =
+      /^\/(?:__dev|\.auth)\//.test(url.pathname) || /\/(?:armToken|foundryToken|subscriptionIds)\.json$/i.test(url.pathname);
     const externalApiRequest = url.origin !== origin && ['fetch', 'xhr'].includes(request.resourceType());
     if (credentialRequest || externalApiRequest) {
       prohibitedRequests.push(`${url.origin}${url.pathname}`);
@@ -100,5 +101,22 @@ test('missing static assets return 404 instead of the SPA fallback', async ({ re
     const response = await request.get(path);
     expect(response.status()).toBe(404);
     expect(await response.text()).not.toContain('<div id="root">');
+  }
+});
+
+test('trusted hosting config blocks SWA auth paths in the static harness', async ({ request }) => {
+  // This verifies the config contract and local harness, not SWA's live auth service.
+  const configurationResponse = await request.get('/staticwebapp.config.json');
+  expect(configurationResponse.status()).toBe(200);
+  const configuration = await configurationResponse.json();
+  expect(configuration.routes).toEqual([{ route: '/.auth/*', statusCode: 404 }]);
+
+  for (const path of ['/.auth/login/aad', '/.auth/login/github', '/.auth/me']) {
+    for (const method of ['GET', 'POST', 'HEAD']) {
+      const response = await request.fetch(path, { method, maxRedirects: 0 });
+      expect(response.status()).toBe(404);
+      expect(response.headers().location).toBeUndefined();
+      expect(await response.text()).toBe('');
+    }
   }
 });

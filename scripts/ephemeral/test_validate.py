@@ -1,3 +1,4 @@
+import json
 import pathlib
 import stat
 import tempfile
@@ -43,7 +44,11 @@ class ArtifactTests(unittest.TestCase):
         self.write_archive([
             ("index.html", b"<html></html>"),
             ("assets/app.js", b"const local = true;"),
-            ("staticwebapp.config.json", b'{"platform":{"apiRuntime":"node:20"}}'),
+            ("staticwebapp.config.json", json.dumps({
+                "platform": {"apiRuntime": "node:20"},
+                "routes": [{"route": "/.auth/*", "statusCode": 200}],
+                "responseOverrides": {"404": {"redirect": "/.auth/login/aad", "statusCode": 302}},
+            }).encode()),
         ])
         validate.extract(self.archive, self.destination)
         self.assertEqual((self.destination / "assets/app.js").read_bytes(), b"const local = true;")
@@ -51,6 +56,17 @@ class ArtifactTests(unittest.TestCase):
             (self.destination / "staticwebapp.config.json").read_bytes(),
             pathlib.Path(validate.__file__).with_name("staticwebapp.config.json").read_bytes(),
         )
+        configuration = json.loads((self.destination / "staticwebapp.config.json").read_text())
+        self.assertEqual(configuration["routes"], [{"route": "/.auth/*", "statusCode": 404}])
+        self.assertNotIn("responseOverrides", configuration)
+
+    def test_extracted_trusted_config_contract_blocks_auth_without_pr_config(self):
+        self.write_archive()
+        validate.extract(self.archive, self.destination)
+        configuration = json.loads((self.destination / "staticwebapp.config.json").read_text())
+        self.assertEqual(configuration["routes"], [{"route": "/.auth/*", "statusCode": 404}])
+        self.assertIn("/.auth/*", configuration["navigationFallback"]["exclude"])
+        self.assertEqual(configuration["navigationFallback"]["rewrite"], "/index.html")
 
     def test_paths_cannot_escape_or_hide_files(self):
         for name in ["../outside.js", "/outside.js", "C:/outside.js", "\\\\host\\outside.js", "assets\\a.js",

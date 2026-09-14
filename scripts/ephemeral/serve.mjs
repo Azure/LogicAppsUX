@@ -5,6 +5,27 @@ import { extname, resolve, sep } from 'node:path';
 const root = resolve(process.argv[2] ?? '.ephemeral-site');
 const port = Number(process.argv[3] ?? 4280);
 const configuration = JSON.parse(await readFile(resolve(root, 'staticwebapp.config.json'), 'utf8'));
+const routes = configuration.routes === undefined ? [] : configuration.routes;
+if (
+  !Array.isArray(routes) ||
+  routes.some(
+    (rule) =>
+      !rule ||
+      typeof rule.route !== 'string' ||
+      !/^\/[^*]*\*?$/.test(rule.route) ||
+      rule.statusCode !== 404 ||
+      Object.keys(rule).some((key) => key !== 'route' && key !== 'statusCode')
+  )
+) {
+  throw new Error('Unsupported preview static route: only exact or trailing-wildcard paths with statusCode 404 are supported.');
+}
+const matchesPath = (pathname, pattern) =>
+  new RegExp(
+    `^${pattern
+      .split('*')
+      .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('.*')}$`
+  ).test(pathname);
 const mime = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -33,6 +54,11 @@ const server = createServer(async (request, response) => {
       response.writeHead(400).end();
       return;
     }
+    const route = routes.find((rule) => matchesPath(pathname, rule.route));
+    if (route) {
+      response.writeHead(route.statusCode, configuration.globalHeaders).end();
+      return;
+    }
     let exists;
     try {
       exists = await stat(path);
@@ -44,14 +70,7 @@ const server = createServer(async (request, response) => {
     if (exists?.isDirectory()) {
       path = resolve(path, 'index.html');
     } else if (!exists) {
-      const excluded = configuration.navigationFallback.exclude.some((pattern) =>
-        new RegExp(
-          `^${pattern
-            .split('*')
-            .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-            .join('.*')}$`
-        ).test(pathname)
-      );
+      const excluded = configuration.navigationFallback.exclude.some((pattern) => matchesPath(pathname, pattern));
       if (excluded) {
         response.writeHead(404).end();
         return;

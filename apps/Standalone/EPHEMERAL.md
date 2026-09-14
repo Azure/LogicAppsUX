@@ -170,6 +170,9 @@ using an explicit PR number.
 - Only validated static content reaches SWA. The publisher replaces any
   PR-provided `staticwebapp.config.json` with its own configuration, disables API
   builds, and explicitly chooses a nonproduction named environment.
+- Trusted routing returns 404 for `/.auth/*` to block SWA's built-in authentication
+  endpoints. Excluding these paths from the SPA fallback alone would not disable
+  authentication.
 - GitHub deployment records and comments distinguish the PR head from the actual
   deployed revision. Failures are surfaced in the trusted workflow and PR comment.
 
