@@ -20,8 +20,13 @@ import * as crypto from 'crypto';
 import { exec, execSync } from 'child_process';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
-import { codefulSdkPackageFileName, lspDirectory } from '../../constants';
-import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
+import {
+  codefulSdkPackageFileName,
+  lspDirectory,
+  lspSdkHashMarkerName,
+  lspServerDirectoryName,
+  lspServerHashMarkerName,
+} from '../../constants';
 
 type BundleFileEntry = { relPath: string; fullPath: string };
 type ExtensionBundleState = { version: string; bundleDir: string; sidecarPath: string };

@@ -1,13 +1,18 @@
 import path from 'path';
 import * as fse from 'fs-extra';
-import { assetsFolderName, codefulSdkPackageFileName, lspDirectory } from '../../constants';
+import {
+  assetsFolderName,
+  codefulSdkPackageFileName,
+  lspDirectory,
+  lspSdkHashMarkerName,
+  lspServerDirectoryName,
+  lspServerHashMarkerName,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
-import { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName } from './languageServerProtocolConstants';
 import AdmZip from 'adm-zip';
 import { createHash } from 'crypto';
 import { ensureRuntimeDependenciesDir } from './binaries';
 
-export { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
 const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;

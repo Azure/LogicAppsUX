@@ -499,5 +499,7 @@ export const CodefulSdkVersion = {
 export type CodefulSdkVersion = (typeof CodefulSdkVersion)[keyof typeof CodefulSdkVersion];
 
 export const codefulSdkPackageFileName = `${CodefulSdk.WorkflowsSDK}.${CodefulSdkVersion.WorkflowsSDK}.nupkg`;
+export const lspServerDirectoryName = 'LSPServer';
+export const lspServerHashMarkerName = '.lspserver-hash';
 export const lspSdkHashMarkerName = '.lspsdk-hash';
 export const codefulSdkProjectHashMarkerName = '.logicapps-lspsdk-hash';
