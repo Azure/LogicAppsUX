@@ -19,7 +19,7 @@ Please note, this documentation applies solely to version 2.16.0 and subsequent 
 
 A standard release procedure is initiated against the main branch, accomplishing several tasks:
 
-1. It increments the Minor Version of the package (Major.Minor.Patch), while creating a tag on the git repository. This process also generates a change log detailing the variations from the previous release.
+1. It increments the Minor Version of the package (Major.Minor.Patch), creates a tag, and creates the corresponding `hotfix/v<major>.<minor>` branch from that tag. This process also generates a change log detailing the variations from the previous release.
 2. It creates NPM packages and forwards these packages to the production package repository.
 3. It constructs both VSCode Extensions: Logic Apps Standard and Logic Apps Data Mapper.
 4. It prepares a GitHub release inclusive of a change log and all artifacts intended for submission.
@@ -28,7 +28,7 @@ You should execute this procedure in preparation for a routine release cycle.
 
 ### Execution Steps
 
-1. Navigate to https://github.com/Azure/LogicAppsUX/actions/workflows/production-build.yml.
+1. Navigate to https://github.com/Azure/LogicAppsUX/actions/workflows/version-release.yml.
 2. Select 'Run Workflow', ensuring that the branch is set to 'main' and the release type is designated as 'Minor', as depicted below.
    ![Production Release Settings](./img/productionRelease.png)
 3. Initiate 'Run Workflow'.
@@ -53,31 +53,33 @@ This process will:
 The assumption here is that the necessary change has already been committed to the main branch. Only under rare circumstances should a change first be made in the hotfix branch.
 :::
 
-1. Begin with the repository on your local machine. Write permission is required on the main repository, and the normal fork process is insufficient.
-2. [If the minor version hotfix branch already exists, proceed to step 4] In your terminal of choice, create a branch based on the tag of your version within the repository.
+1. Locate the `hotfix/v<major>.<minor>` branch created automatically when the corresponding `v<major>.<minor>.0` release was published.
+
+2. If the hotfix branch predates this automation and does not exist, create it from the patch-zero tag and push it to the main repository. Write permission is required for this fallback.
    Example command (replace 'version' with your version):
 
 ```
 git checkout -b hotfix/v2.17 v2.17.0
+git push origin hotfix/v2.17
 ```
 
 :::note
 The tag version that the branch is created from should always be patch version 0. To achieve anything higher than 0, the hotfix branch must have been previously created.
 :::
 
-3. Cherry pick the required change to your new branch, ensuring there are no merge conflicts.
+3. Cherry pick the required change to your hotfix branch, ensuring there are no merge conflicts.
 
 ```
 git cherry-pick <commit-id>
 ```
 
-4. Push the new branch to the main repository.
+4. Push the updated branch to the main repository.
 
 ```
 git push
 ```
 
-5. Navigate to https://github.com/Azure/LogicAppsUX/actions/workflows/production-build.yml.
+5. Navigate to https://github.com/Azure/LogicAppsUX/actions/workflows/version-release.yml.
 
 6. Select 'Run Workflow', ensuring that the branch is set to your hotfix branch and the release type is 'Patch', as shown below.
    ![Hotfix Release Settings](./img/hotfixRelease.png)

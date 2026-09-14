@@ -75,7 +75,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { EditorView, VSBrowser, Workbench, type WebDriver } from 'vscode-extension-tester';
-import { captureScreenshot, sleep } from './helpers';
+import { captureScreenshot, dismissQuickPickIfVisible, sleep } from './helpers';
 import { openWorkspaceFileInSession, waitForDependencyValidation } from './designerHelpers';
 
 const TEST_TIMEOUT = 1500_000;
@@ -116,6 +116,7 @@ interface TaskEvent {
 
 /** Recorder phases that prove F5 got past `resolveDebugConfiguration` and reached `executeTask`. */
 const TASK_ACTIVITY_PHASES = new Set(['taskStart', 'taskEnd', 'processStart', 'processEnd']);
+const CONNECTORS_PROMPT_FRAGMENTS = ['enable connectors in azure', 'use connectors from azure', 'skip for now'];
 
 /**
  * How long `vscode.debug.startDebugging` may sit with neither `debugStarted` nor
@@ -268,11 +269,56 @@ interface WaitResult {
   timedOut: boolean;
   /** `vscode.debug.startDebugging` was dispatched but never settled — see DEBUG_INVOKE_HANG_TIMEOUT_MS. */
   debugStartHung: boolean;
+  dismissedConnectorsPrompt: boolean;
 }
 
-async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: string, timeoutMs: number): Promise<WaitResult> {
+async function dismissConnectorsPromptIfVisible(driver: WebDriver, seenOtherPrompts: Set<string>): Promise<boolean> {
+  let widgetText: string;
+  try {
+    await driver
+      .switchTo()
+      .defaultContent()
+      .catch(() => undefined);
+    widgetText =
+      (await driver.executeScript<string | null>(`
+        const widget = document.querySelector('.quick-input-widget:not(.hidden)');
+        if (!widget) { return null; }
+        const input = widget.querySelector('.quick-input-box input');
+        const placeholder = input ? (input.getAttribute('placeholder') || '') : '';
+        return placeholder + '\\n' + (widget.textContent || '');
+      `)) ?? '';
+  } catch {
+    return false;
+  }
+
+  if (widgetText.trim().length === 0) {
+    return false;
+  }
+
+  const normalized = widgetText.toLowerCase();
+  if (!CONNECTORS_PROMPT_FRAGMENTS.some((fragment) => normalized.includes(fragment))) {
+    const summary = widgetText.replace(/\s+/g, ' ').trim().slice(0, 160);
+    if (!seenOtherPrompts.has(summary)) {
+      seenOtherPrompts.add(summary);
+      console.log(`[codefulDebugTasks] A QuickPick is open that is NOT the connectors prompt — leaving it alone: "${summary}"`);
+    }
+    return false;
+  }
+
+  console.log('[codefulDebugTasks] Connectors QuickPick detected during F5 pre-debug path — selecting "Skip for now"');
+  return dismissQuickPickIfVisible(driver);
+}
+
+async function waitForTaskChain(
+  driver: WebDriver,
+  variant: 'modern' | 'legacy',
+  workspaceScope: string,
+  timeoutMs: number
+): Promise<WaitResult> {
   const deadline = Date.now() + timeoutMs;
   const target = normalizeFsPath(workspaceScope);
+  const seenOtherPrompts = new Set<string>();
+  let dismissedConnectorsPrompt = false;
   while (Date.now() < deadline) {
     const events = readEvents();
     const matchScope = events.filter((e) => normalizeFsPath(e.scopeFsPath) === target);
@@ -281,11 +327,15 @@ async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: st
     const funcHostStarted = matchScope.some((e) => e.phase === 'taskStart' && e.taskName === 'func: host start');
     const expectedChainEnded = variant === 'legacy' ? buildEnded && publishEnded && funcHostStarted : buildEnded && funcHostStarted;
     if (expectedChainEnded) {
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: false, debugStartHung: false };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: false, debugStartHung: false, dismissedConnectorsPrompt };
     }
     if (events.some((e) => e.phase === 'debugStartFailed')) {
       console.log('[codefulDebugTasks] waitForTaskChain: debugStartFailed event observed, bailing out');
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: false };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: false, dismissedConnectorsPrompt };
+    }
+
+    if (await dismissConnectorsPromptIfVisible(driver, seenOtherPrompts)) {
+      dismissedConnectorsPrompt = true;
     }
 
     // Hang guard: the recorder logged `debugInvoke` (it is inside
@@ -312,11 +362,18 @@ async function waitForTaskChain(variant: 'modern' | 'legacy', workspaceScope: st
           (Date.now() - debugInvokeAt) / 1000
         )}s ago with no debugStarted/debugStartFailed and no task activity — treating it as hung`
       );
-      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: true };
+      return { buildEnded, publishEnded, funcHostStarted, timedOut: true, debugStartHung: true, dismissedConnectorsPrompt };
     }
     await sleep(1000);
   }
-  return { buildEnded: false, publishEnded: false, funcHostStarted: false, timedOut: true, debugStartHung: false };
+  return {
+    buildEnded: false,
+    publishEnded: false,
+    funcHostStarted: false,
+    timedOut: true,
+    debugStartHung: false,
+    dismissedConnectorsPrompt,
+  };
 }
 
 async function waitForDesignTimeEvidence(workspaceScope: string, notBeforeMs: number, timeoutMs = 180_000): Promise<boolean> {
@@ -532,7 +589,7 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
     // precise diagnosis. That is the correct trade: the guard is a diagnostic accelerator,
     // and buying earlier reporting by shrinking its window is exactly what made it fail
     // healthy runs.
-    const wait = await waitForTaskChain(variant, workspaceDir, 720_000);
+    const wait = await waitForTaskChain(driver, variant, workspaceDir, 720_000);
     console.log(`[codefulDebugTasks] waitForTaskChain: ${JSON.stringify(wait)}`);
 
     // F5 was dispatched but `vscode.debug.startDebugging` never settled and no task

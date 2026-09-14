@@ -83,9 +83,11 @@ describe('TimelineHeader', () => {
   });
 
   it('should render timeline icon in both expanded and collapsed states', () => {
+    const isHostElement = (instance: { type: unknown }) => typeof instance.type === 'string';
+
     // Test expanded
     const expandedComponent = renderWithIntl(defaultProps);
-    const expandedIcons = expandedComponent.root.findAllByProps({ className: 'timeline-icon' });
+    const expandedIcons = expandedComponent.root.findAllByProps({ className: 'timeline-icon' }).filter(isHostElement);
     expect(expandedIcons).toHaveLength(1);
 
     // Test collapsed
@@ -93,7 +95,7 @@ describe('TimelineHeader', () => {
       ...defaultProps,
       isExpanded: false,
     });
-    const collapsedIcons = collapsedComponent.root.findAllByProps({ className: 'timeline-icon' });
+    const collapsedIcons = collapsedComponent.root.findAllByProps({ className: 'timeline-icon' }).filter(isHostElement);
     expect(collapsedIcons).toHaveLength(1);
   });
 

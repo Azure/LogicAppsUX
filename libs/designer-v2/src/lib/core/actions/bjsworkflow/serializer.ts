@@ -1,5 +1,16 @@
 import Constants, { MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
-import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../../common/models/workflow';
+import {
+  isExpressionConnectionMapping,
+  type ConnectionReferences,
+  type Workflow,
+  type WorkflowParameter,
+} from '../../../common/models/workflow';
+import {
+  isConnectionExpressionValid,
+  remapConnectionExpression,
+  remapConnectionExpressionValue,
+  serializeServiceProviderConnectionKey,
+} from '../../utils/connectors/connectionExpression';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -74,11 +85,18 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   if (!options?.skipValidation) {
     const intl = getIntl();
 
-    const operationsWithConnectionErrors = Object.entries(rootState.operations.errors).filter(
-      ([_id, errors]) => !!errors[ErrorLevel.Connection]
-    );
+    const operationsWithConnectionErrors = Object.entries(rootState.operations.errors)
+      .filter(
+        ([id, errors]) => !isExpressionConnectionMapping(rootState.connections.connectionsMapping[id]) && !!errors[ErrorLevel.Connection]
+      )
+      .map(([id]) => id);
+    for (const [id, mapping] of Object.entries(rootState.connections.connectionsMapping)) {
+      if (isExpressionConnectionMapping(mapping) && !isConnectionExpressionValid(mapping.expression)) {
+        operationsWithConnectionErrors.push(id);
+      }
+    }
     if (operationsWithConnectionErrors.length > 0) {
-      const invalidNodes = operationsWithConnectionErrors.map(([id]) => id).join(', ');
+      const invalidNodes = operationsWithConnectionErrors.join(', ');
       throw new SerializationException(
         SerializationErrorCode.INVALID_CONNECTIONS,
         intl.formatMessage(
@@ -142,9 +160,12 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
+  const preservedReferences = Object.values(connectionsMapping ?? {}).some(isExpressionConnectionMapping)
+    ? filterRecord(referencesObject, (_key, reference) => /(^|\/)serviceProviders\//i.test(reference.api.id))
+    : {};
   const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = getRecordEntry(connectionsMapping, nodeId);
-    if (!referenceKey) {
+    if (typeof referenceKey !== 'string' || !referenceKey) {
       return references;
     }
 
@@ -169,7 +190,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
 
     references[referenceKey] = reference;
     return references;
-  }, {});
+  }, preservedReferences);
 
   const parameters = getWorkflowParameters(filterRecord(rootState.workflowParameters.definitions, (key, _) => key !== '')) ?? {};
 
@@ -355,7 +376,13 @@ export const serializeOperation = async (
     nodeInputs?.dynamicLoadStatus !== undefined && nodeInputs.dynamicLoadStatus !== DynamicLoadStatus.SUCCEEDED;
   const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
   const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
-  if ((hasDynamicInputsError || nodeExpectsDynamicInputs) && !hasStash && !hasDynamicParamsInGroups) {
+  if (
+    !isExpressionConnectionMapping(rootState.connections.connectionsMapping[operationId]) &&
+    !nodeInputs?.preservedConnectionInputs &&
+    (hasDynamicInputsError || nodeExpectsDynamicInputs) &&
+    !hasStash &&
+    !hasDynamicParamsInGroups
+  ) {
     const originalDef = getRecordEntry(rootState.workflow.operations, operationId);
     if (originalDef && 'inputs' in originalDef && originalDef.inputs && 'inputs' in serializedOperation) {
       serializedOperation = {
@@ -459,7 +486,31 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
-  const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
+  let inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
+  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
+  if (isExpressionConnectionMapping(rootState.connections.connectionsMapping[operationId]) || nodeInputs?.preservedConnectionInputs) {
+    const rawInputs: Record<string, unknown> = {
+      ...clone(
+        nodeInputs?.preservedConnectionInputs ??
+          (getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.ServiceProvider)?.inputs ??
+          {}
+      ),
+    };
+    delete rawInputs.serviceProviderConfiguration;
+    for (const input of inputsToSerialize) {
+      const segments = parseEx(input.parameterKey);
+      if (segments[0]?.value === 'inputs') {
+        deleteObjectProperty(rawInputs, [
+          ...(manifest.properties.inputsLocation?.slice(1) ?? []),
+          ...segments.slice(2).map((segment) => String(segment.value)),
+        ]);
+      }
+    }
+    inputPathValue = merge(
+      remapConnectionExpressionValue(rawInputs, idReplacements, getParameterNameReplacements(rootState)),
+      inputPathValue
+    );
+  }
 
   // For FoundryAgentServiceV2, strip system messages — instructions live on the Foundry agent definition
   if (inputPathValue?.parameters?.agentModelType === 'FoundryAgentServiceV2' && Array.isArray(inputPathValue?.parameters?.messages)) {
@@ -566,7 +617,7 @@ const serializeConsumptionBuiltInMcpOperation = async (rootState: RootState, nod
   // incomplete Connection object that the backend would reject.
   const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
   const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
-  const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
+  const connectionReference = typeof referenceKey === 'string' ? rootState.connections.connectionReferences[referenceKey] : undefined;
   const connectionId = connectionReference?.connection?.id;
 
   // All auth-related property keys that can appear in parameterValues
@@ -999,6 +1050,13 @@ interface ServiceProviderConnectionConfigInfo {
   };
 }
 
+const getParameterNameReplacements = (rootState: RootState): Record<string, string> =>
+  Object.fromEntries(
+    Object.entries(rootState.workflowParameters?.definitions ?? {})
+      .filter(([id, definition]) => definition.name && definition.name !== id)
+      .map(([id, definition]) => [id, definition.name])
+  );
+
 interface AgentConnectionInfo {
   modelConfigurations: {
     model1: {
@@ -1039,7 +1097,8 @@ const serializeHost = (
 
   const intl = getIntl();
   const { referenceKeyFormat } = manifest.properties.connectionReference;
-  const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId) ?? ('' as any);
+  const mapping = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
+  const referenceKey = typeof mapping === 'string' ? mapping : '';
   const { connectorId, operationId } = getRecordEntry(rootState.operations.operationInfo, nodeId) ?? ({} as any);
 
   switch (referenceKeyFormat) {
@@ -1078,7 +1137,9 @@ const serializeHost = (
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return {
         serviceProviderConfiguration: {
-          connectionName: referenceKey,
+          connectionName: isExpressionConnectionMapping(mapping)
+            ? remapConnectionExpression(mapping.expression, rootState.workflow.idReplacements, getParameterNameReplacements(rootState))
+            : serializeServiceProviderConnectionKey(referenceKey),
           operationId,
           serviceProviderId: connectorId,
         },
