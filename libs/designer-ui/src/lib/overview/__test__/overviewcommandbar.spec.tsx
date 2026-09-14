@@ -64,4 +64,23 @@ describe('lib/overview/overviewcommandbar', () => {
     const runTriggerButton = component.root.find((node) => node.props['aria-label'] === 'Run trigger');
     expect(runTriggerButton.props.disabled).toBe(true);
   });
+
+  it('shows and invokes the project overview backlink only when provided', () => {
+    const onOpenProjectOverview = vi.fn();
+    const component = renderComponent({
+      ...minimal,
+      onOpenProjectOverview,
+    });
+
+    const backlink = component.root.find((node) => node.props['aria-label'] === 'All project workflows');
+    backlink.props.onClick();
+
+    expect(onOpenProjectOverview).toHaveBeenCalledOnce();
+  });
+
+  it('does not show a project overview backlink for standalone workflow overview', () => {
+    const component = renderComponent(minimal);
+
+    expect(component.root.findAll((node) => node.props['aria-label'] === 'All project workflows')).toHaveLength(0);
+  });
 });

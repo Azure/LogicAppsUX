@@ -32,6 +32,8 @@ export interface OverviewProps {
   onRunTrigger(): void;
   onVerifyRunId(runId: string): Promise<Run | RunError> | undefined;
   onCreateUnitTestFromRun?(run: RunDisplayItem): void;
+  onCopyCallbackUrl?(): void;
+  onOpenProjectOverview?(): void;
 }
 
 const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
@@ -61,6 +63,8 @@ export const Overview: React.FC<OverviewProps> = ({
   onRunTrigger,
   onVerifyRunId,
   onCreateUnitTestFromRun,
+  onCopyCallbackUrl,
+  onOpenProjectOverview,
 }: OverviewProps) => {
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -138,15 +142,16 @@ export const Overview: React.FC<OverviewProps> = ({
         agentUrlLoading={agentUrlLoading}
         agentUrlData={agentUrlData}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
-        hasCallbackInfo={!!workflowProperties.callbackInfo}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
+        onOpenProjectOverview={onOpenProjectOverview}
       />
       <OverviewProperties
         {...workflowProperties}
         agentUrl={agentUrlData?.agentUrl}
         agentApiKey={agentUrlData?.queryParams?.apiKey}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+        onCopyCallbackUrl={onCopyCallbackUrl}
       />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>
@@ -179,12 +184,7 @@ export const Overview: React.FC<OverviewProps> = ({
               </div>
             }
           >
-            <RunHistory
-              items={runItems}
-              loading={loading}
-              onOpenRun={onOpenRun}
-              onCreateUnitTestFromRun={onCreateUnitTestFromRun}
-            />
+            <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} onCreateUnitTestFromRun={onCreateUnitTestFromRun} />
           </InfiniteScroll>
           {errorMessage ? (
             <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>

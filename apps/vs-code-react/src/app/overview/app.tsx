@@ -258,6 +258,24 @@ export const OverviewApp = () => {
           });
         }}
         onRunTrigger={runTriggerCall}
+        onCopyCallbackUrl={() => {
+          vscode.postMessage({
+            command: ExtensionCommand.copyWorkflowOverviewCallback,
+            data: {
+              workflowName: selectedWorkflowProperties.name,
+            },
+          });
+        }}
+        onOpenProjectOverview={
+          workflowState.projectOverviewOrigin
+            ? () => {
+                vscode.postMessage({
+                  command: ExtensionCommand.openProjectOverview,
+                  data: workflowState.projectOverviewOrigin,
+                });
+              }
+            : undefined
+        }
         onVerifyRunId={onVerifyRunId}
         onCreateUnitTestFromRun={(run: RunDisplayItem) => {
           vscode.postMessage({

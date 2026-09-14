@@ -7,9 +7,12 @@ import { useNavigate } from 'react-router-dom';
 export const StateWrapper: React.FC = () => {
   const navigate = useNavigate();
   const projectState = useSelector((state: RootState) => state.project);
+  const projectOverviewInitialized = useSelector((state: RootState) => state.projectOverview.initialized);
 
   useEffect(() => {
-    if (projectState.initialized) {
+    if (projectOverviewInitialized) {
+      navigate(`/${ProjectName.overview}`, { replace: true });
+    } else if (projectState.initialized) {
       switch (projectState.project) {
         case ProjectName.export: {
           navigate(`/${ProjectName.export}/${RouteName.instance_selection}`, { replace: true });
@@ -68,7 +71,7 @@ export const StateWrapper: React.FC = () => {
         }
       }
     }
-  }, [projectState, navigate]);
+  }, [projectOverviewInitialized, projectState, navigate]);
 
   return null;
 };

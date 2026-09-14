@@ -85,6 +85,8 @@ vi.mock('@microsoft/designer-ui', () => ({
           Open run
         </button>
         <button onClick={() => props.onRunTrigger()}>Run trigger</button>
+        <button onClick={() => props.onCopyCallbackUrl()}>Copy callback</button>
+        {props.onOpenProjectOverview ? <button onClick={() => props.onOpenProjectOverview()}>All project workflows</button> : null}
         <button
           onClick={() =>
             props.onCreateUnitTestFromRun({
@@ -131,7 +133,9 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 vi.mock('@microsoft/vscode-extension-logic-apps', () => ({
   ExtensionCommand: {
     createUnitTestFromRun: 'createUnitTestFromRun',
+    copyWorkflowOverviewCallback: 'copyWorkflowOverviewCallback',
     loadRun: 'LoadRun',
+    openProjectOverview: 'openProjectOverview',
   },
   HttpClient: mocks.HttpClient,
 }));
@@ -351,6 +355,42 @@ describe('OverviewApp', () => {
       command: ExtensionCommand.createUnitTestFromRun,
       runId: 'run-id',
     });
+  });
+
+  it('requests host-mediated callback URL copy for the selected workflow', () => {
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Copy callback'));
+
+    expect(mocks.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.copyWorkflowOverviewCallback,
+      data: {
+        workflowName: 'workflow-a',
+      },
+    });
+  });
+
+  it('shows a project backlink only for a valid project origin and posts the typed return message', () => {
+    renderOverviewApp({
+      projectOverviewOrigin: {
+        projectId: 'project-id',
+      },
+    });
+
+    fireEvent.click(screen.getByText('All project workflows'));
+
+    expect(mocks.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.openProjectOverview,
+      data: {
+        projectId: 'project-id',
+      },
+    });
+  });
+
+  it('keeps standalone workflow overview valid without a project backlink', () => {
+    renderOverviewApp();
+
+    expect(screen.queryByText('All project workflows')).not.toBeInTheDocument();
   });
 
   it('shows the runtime-down error when the workflow runtime is unavailable', async () => {
