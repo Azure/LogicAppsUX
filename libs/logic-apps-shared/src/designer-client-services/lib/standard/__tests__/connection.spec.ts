@@ -98,6 +98,63 @@ describe('StandardConnectionService', () => {
     });
   });
 
+  describe('createConnection', () => {
+    const createKnowledgeHubConnection = async (connectionsData: ConnectionsData) => {
+      InitLoggerService([
+        {
+          log: vi.fn(),
+          startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+          endTrace: vi.fn(),
+          logErrorWithFormatting: vi.fn(),
+        },
+      ]);
+      const writeConnection = vi.fn().mockResolvedValue(undefined);
+      const persistKnowledgeHubConnection = vi.fn().mockResolvedValue(undefined);
+      const service = new StandardConnectionService({
+        ...createMockOptions(connectionsData),
+        writeConnection,
+        persistKnowledgeHubConnection,
+      });
+
+      await service.createConnection(
+        'HubConnection',
+        { id: '/dummy/knowledgehub' } as any,
+        {
+          displayName: 'Knowledge Hub',
+          connectionParameters: {
+            openAI: {},
+            embeddingsOpenAI: {},
+            completionsOpenAI: {},
+          },
+        },
+        {
+          connectionParameters: {},
+          connectionMetadata: { required: true, type: ConnectionType.KnowledgeHub },
+        }
+      );
+
+      await service.persistKnowledgeHubConnection();
+
+      return { persistKnowledgeHubConnection, writeConnection };
+    };
+
+    it('persists when creating the first Knowledge Hub connection', async () => {
+      const { persistKnowledgeHubConnection, writeConnection } = await createKnowledgeHubConnection({});
+
+      expect(writeConnection).toHaveBeenCalledWith(expect.anything());
+      expect(persistKnowledgeHubConnection).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not persist when a Knowledge Hub connection already exists', async () => {
+      const { persistKnowledgeHubConnection, writeConnection } = await createKnowledgeHubConnection({
+        knowledgeHubConnections: { ExistingHub: {} as any },
+      });
+
+      expect(writeConnection).toHaveBeenCalledWith(expect.anything());
+      expect(persistKnowledgeHubConnection).not.toHaveBeenCalled();
+    });
+  });
+
   describe('createConnection - MCP with ManagedServiceIdentity', () => {
     const mockLoggerService = {
       log: vi.fn(),

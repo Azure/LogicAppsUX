@@ -238,7 +238,7 @@ describe('bundled LSP server CodeLens', () => {
     const zipPath = path.join(lspServerAssetsDirectory, 'LSPServer.zip');
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
-    const serverDllPath = path.join(extractDirectory, 'SdkLspServer.dll');
+    const serverDllPath = path.join(extractDirectory, 'LSPServer', 'SdkLspServer.dll');
     const sdkPackagePath = path.join(lspServerAssetsDirectory, codefulSdkPackageFileName);
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {

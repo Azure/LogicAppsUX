@@ -23,6 +23,24 @@ import { createKnowledgeHub, validateHubNameAvailability } from '../../../core/k
 import { useAllKnowledgeHubs } from '../../../core/knowledge/utils/queries';
 import { useModalStyles } from './styles';
 import type { ServerNotificationData } from '../../mcp/servers/servers';
+import { ConnectionService, delay } from '@microsoft/logic-apps-shared';
+
+const CREATE_KNOWLEDGE_HUB_RETRY_COUNT = 2;
+const CREATE_KNOWLEDGE_HUB_RETRY_DELAY_MS = 15000;
+
+const createKnowledgeHubWithRetry = async (resourceId: string, name: string, description: string): Promise<void> => {
+  for (let attempt = 0; attempt <= CREATE_KNOWLEDGE_HUB_RETRY_COUNT; attempt++) {
+    try {
+      await createKnowledgeHub(resourceId, name, description);
+      return;
+    } catch (error) {
+      if (attempt === CREATE_KNOWLEDGE_HUB_RETRY_COUNT) {
+        throw error;
+      }
+      await delay(CREATE_KNOWLEDGE_HUB_RETRY_DELAY_MS);
+    }
+  }
+};
 
 export const CreateGroup = ({
   resourceId,
@@ -111,7 +129,8 @@ export const CreateGroup = ({
       e.stopPropagation();
       try {
         setIsCreating(true);
-        await createKnowledgeHub(resourceId, name, description);
+        await ConnectionService().persistKnowledgeHubConnection?.();
+        await createKnowledgeHubWithRetry(resourceId, name, description);
         onCreate?.(name, description);
         setCreateError(null);
       } catch (error) {

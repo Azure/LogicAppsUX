@@ -29,22 +29,35 @@ import { useSubscriptions } from '../../../../../core/state/connection/connectio
 import { SubscriptionDropdown } from './components/SubscriptionDropdown';
 import { useHasRoleAssignmentsWritePermissionQuery, useHasRequiredRoleDefinitionsQuery } from '../../../../../core/queries/role';
 import constants from '../../../../../common/constants';
+import { getSubscriptionFromResource } from './cosmosConnector';
 
 const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
-  const { parameterKey, setKeyValue, setValue, parameter, operationParameterValues, parameterValues, value, parameterSet } = props;
+  const {
+    parameterKey,
+    setKeyValue,
+    setValue,
+    parameter,
+    operationParameterValues,
+    parameterValues,
+    value,
+    parameterSet,
+    cssOverrides,
+    styleOverrides,
+  } = props;
   const intl = useIntl();
   const styles = useStyles();
-  const [parameterValue, setParameterValue] = useState<string>('');
+  const [parameterValue, setParameterValue] = useState<string>(value ?? '');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loadingAccountDetails, setLoadingAccountDetails] = useState<boolean>(false);
-  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
-  const [cognitiveServiceAccountId, setCognitiveServiceAccountId] = useState<string>('');
-  const [selectedCognitiveServiceProject, setSelectedCognitiveServiceProject] = useState<string>('');
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState(getSubscriptionFromResource(value));
+  const [cognitiveServiceAccountId, setCognitiveServiceAccountId] = useState<string>(value);
+  const [selectedCognitiveServiceProject, setSelectedCognitiveServiceProject] = useState<string>(value);
   const [apimAccount, setApimAccount] = useState<string>('');
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
+  const hideResourceCreate = useMemo(() => !!operationParameterValues?.['hideCreate'], [operationParameterValues]);
   const isAgentServiceConnection = useMemo(
     () => equals(operationParameterValues?.['agentModelType'] ?? '', 'FoundryAgentServiceV2', true),
     [operationParameterValues]
@@ -417,6 +430,8 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
           }}
           selectedSubscriptionId={selectedSubscriptionId}
           title={stringResources.SELECT_SUBSCRIPTION}
+          styleOverrides={styleOverrides}
+          cssOverrides={cssOverrides}
         />
 
         {isAgentServiceConnection ? (
@@ -629,6 +644,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 {stringResources.LEARN_MORE_CREATE_NEW}
               </Link>
             }
+            cssOverrides={cssOverrides}
           >
             <div className={styles.openAIContainer}>
               <div className={styles.comboxbox}>
@@ -644,7 +660,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                         : stringResources.SELECT_COGNITIVE_SERVICE_OPENAI_RESOURCE
                   }
                   value={isUndefinedOrEmptyString(cognitiveServiceAccountId) ? undefined : cognitiveServiceAccountId.split('/').pop()}
-                  className={styles.openAICombobox}
+                  className={cssOverrides?.combobox ?? styles.openAICombobox}
                   onOptionSelect={async (_e: any, option?: OptionOnSelectData) => {
                     if (option?.optionValue) {
                       const cognitiveServiceKey = option?.optionValue as string;
@@ -669,10 +685,12 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                     })
                   )}
                 </Combobox>
-                <div className={styles.comboboxFooter}>
-                  {requiresRoleAssignments && !isAgentServiceConnection && !!cognitiveServiceAccountId ? <RoleMessages /> : null}
-                  <CreateNewButton href="https://aka.ms/openAICreate" />
-                </div>
+                {hideResourceCreate ? null : (
+                  <div className={styles.comboboxFooter}>
+                    {requiresRoleAssignments && !isAgentServiceConnection && !!cognitiveServiceAccountId ? <RoleMessages /> : null}
+                    <CreateNewButton href="https://aka.ms/openAICreate" />
+                  </div>
+                )}
               </div>
               <Button
                 icon={<RefreshIcon />}
@@ -718,16 +736,18 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   })();
 
   return (
-    <UniversalConnectionParameter
-      {...props}
-      isLoading={shouldDisableField}
-      parameter={{
-        ...parameter,
-        uiDefinition: {
-          ...(parameter.uiDefinition ?? {}),
-          description: fieldDescription,
-        },
-      }}
-    />
+    <div className={shouldDisableField ? cssOverrides?.disabledField : undefined}>
+      <UniversalConnectionParameter
+        {...props}
+        isLoading={shouldDisableField}
+        parameter={{
+          ...parameter,
+          uiDefinition: {
+            ...(parameter.uiDefinition ?? {}),
+            description: fieldDescription,
+          },
+        }}
+      />
+    </div>
   );
 };
