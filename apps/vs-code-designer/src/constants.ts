@@ -494,7 +494,7 @@ export type CodefulSdk = (typeof CodefulSdk)[keyof typeof CodefulSdk];
 export const CodefulSdkVersion = {
   DurableTask: '2.9.0',
   WorkflowsWebJobs: '1.127.21.3-preview',
-  WorkflowsSDK: '1.0.0-preview.1',
+  WorkflowsSDK: '1.0.0-preview.2',
 };
 export type CodefulSdkVersion = (typeof CodefulSdkVersion)[keyof typeof CodefulSdkVersion];
 
