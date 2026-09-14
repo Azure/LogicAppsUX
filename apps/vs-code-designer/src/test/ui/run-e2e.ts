@@ -1408,7 +1408,8 @@ async function main(): Promise<void> {
   const phase1Files = [testFile('basic.test.js'), testFile('commands.test.js'), testFile('createWorkspace.behavior.test.js')];
   // Phase 4.1a (NEW Step 2): fast fixtures-only wizard run that writes the manifest
   // consumed by downstream shape-specific scenarios. Drives the wizard only for
-  // Standard/Stateful, Standard/Stateless, CustomCode/Stateful, and RulesEngine/Stateful.
+  // Standard/Stateful, Standard/Stateless, CustomCode/Stateful, RulesEngine/Stateful,
+  // and Codeful/Stateful.
   const phase1aFiles = [testFile('createWorkspace.fixtures.test.js')];
 
   const phase2Files = [testFile('designerActions.test.js')];
@@ -1469,6 +1470,11 @@ async function main(): Promise<void> {
   // (phase413CreateFiles / phase413AssertFiles), so this phase takes the next
   // free number and is named phaseFuncRepair* rather than phase414*.
   const phaseFuncRepairFiles = [testFile('funcRepair.test.js')];
+  // Phase 4.15 — unified project overview. The codeless and codeful scenarios
+  // reuse their real Phase 4.1 fixtures and each own a fresh VS Code session
+  // because they start/stop the project runtime and open multiple retained
+  // webviews.
+  const phaseProjectOverviewFiles = [testFile('projectOverview.test.js')];
 
   // ------------------------------------------------------------------
   // Per-scenario inventory (Phase A scaffold).
@@ -1702,6 +1708,20 @@ async function main(): Promise<void> {
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
       recorder: true,
+    },
+    {
+      id: 'p415-projectoverview',
+      testFile: phaseProjectOverviewFiles[0],
+      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: false },
+      env: { LA_E2E_PROJECT_OVERVIEW_KIND: 'codeless', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
+    },
+    {
+      id: 'p415-codeful-projectoverview',
+      testFile: phaseProjectOverviewFiles[0],
+      workspaceSpec: { appType: 'codeful', wfType: 'Stateful' },
+      settings: { validateDependencies: 'auto', autoStartDesignTime: false },
+      env: { LA_E2E_PROJECT_OVERVIEW_KIND: 'codeful', LA_E2E_SKIP_VALIDATION_WAIT: '1' },
     },
   ];
 
@@ -2938,6 +2958,20 @@ namespace ${namespaceName}
       await downloadExTesterAssets();
       const funcRepairExit = await runScenarioPhases([funcRepairScenario]);
       process.exit(funcRepairExit);
+    }
+
+    if (e2eMode === 'projectoverviewonly') {
+      const projectOverviewScenarios = scenarios.filter((s) => ['p415-projectoverview', 'p415-codeful-projectoverview'].includes(s.id));
+      if (projectOverviewScenarios.length !== 2) {
+        throw new Error('projectoverviewonly: codeless/codeful project overview scenarios were not both found in scenarios[] table');
+      }
+      await downloadExTesterAssets();
+      const prerequisiteExit = await ensureFixtureManifestForScenarios(projectOverviewScenarios, 'projectoverviewonly');
+      if (prerequisiteExit !== 0) {
+        process.exit(prerequisiteExit);
+      }
+      const projectOverviewExit = await runScenarioPhases(projectOverviewScenarios);
+      process.exit(projectOverviewExit);
     }
 
     if (e2eMode === 'nugetdebugonly') {

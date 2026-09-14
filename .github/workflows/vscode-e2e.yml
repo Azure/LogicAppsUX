@@ -390,6 +390,14 @@ jobs:
             scenario: p49-nugetdebugconversion
             use_workspace_fixtures: true
             use_bundle_artifact: true
+          # Unified project overview owns a dedicated shard because both the
+          # codeless and codeful variants start/stop a real runtime and open
+          # project, workflow, and monitoring webviews. run-e2e gives each
+          # scenario its own fresh VS Code session.
+          - shard: project-overview
+            scenario: p415-projectoverview,p415-codeful-projectoverview
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
           # Multi-designer + dataMapper suite (manifest-multi) + bundle repair.
           - shard: suite-and-bundle
             scenario: p47-suite,p412-bundlerepair

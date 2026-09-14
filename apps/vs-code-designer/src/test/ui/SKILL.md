@@ -73,6 +73,8 @@ Current manifest-backed scenarios:
 | `p49-descriptionpersistence` | Standard Stateful `.code-workspace` |
 | `p49-nugetdebugconversion` | Standard Stateful manifest entry, but no startup resource (`use: 'none'`) because the test clones and opens its own workspace |
 | `p412-bundlerepair` | Standard Stateful `.code-workspace` |
+| `p415-projectoverview` | Standard Stateful `.code-workspace`; the test replaces only generated workflow folders with deterministic Request/Stateful and Recurrence/Stateless workflows |
+| `p415-codeful-projectoverview` | Codeful Stateful `.code-workspace`; the test keeps the generated project/workspace/launch/tasks shape and replaces only the generated workflow source with a connector-independent built-in HTTP Request/Response workflow |
 
 No Phase 4.1 fixture manifest required: `p40-nonlogicapp`, `p41a-fixtures`, `p41b-createworkspace-behavior`, `p48b-conversioncreate`, and standalone `p48d-conversionyes`. The grouped `conversiononly` mode still needs the manifest because its p48a/p48c/p48e phases and workspace-dir resource selection are manifest-backed.
 
@@ -199,8 +201,34 @@ pnpm run test:ui        # Runs node out/test/run-e2e.js
 | `nugetdebugonly` | Runs `p49-nugetdebugconversion`: bundle debug → run Request/Response workflow → stop → convert to NuGet → debug again without harness port cleanup → run workflow again. Requires the Phase 4.1 fixture manifest from `p41a-fixtures` / createWorkspace setup. |
 | `bundleintegrityonly` | Runs Phase 4.11 (`bundleCdnHealth.test.ts`) — pure-Mocha probe of `cdn.functions.azure.com` integrity headers. No VS Code session, no compiled extension required (only `npx tsup --config tsup.e2e.test.config.ts`). Bundled into the `independentonly` shard for CI. |
 | `funcrepaironly` | Runs Phase 4.14 (`funcRepair.test.ts`) only — the Func Core Tools pre-debug self-heal. Requires a manifest from a previous `p41a-fixtures` run. In CI this scenario runs as the ubuntu `func-selfheal` shard and as the `vscode-e2e-funcselfheal-windows` job (which creates its own fixtures first — see section 19). |
+| `projectoverviewonly` | Runs both Phase 4.15 scenarios (`p415-projectoverview` and `p415-codeful-projectoverview`) in separate fresh VS Code sessions. Requires the Standard Stateful and Codeful Stateful Phase 4.1 fixtures. |
 
 **IMPORTANT**: Any focused mode whose scenario uses a manifest-backed `workspaceSpec` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. This includes `designeronly` and `nugetdebugonly`. If the manifest is missing, stale, or a previous run's cleanup removed workspace directories, rerun the fixture/createWorkspace phase before the focused mode.
+
+### Phase 4.15 — unified project overview
+
+- Scenarios: `p415-projectoverview` (codeless) and `p415-codeful-projectoverview` (codeful); focused mode: `E2E_MODE=projectoverviewonly` runs both in separate fresh sessions.
+- Dependencies: the real `Standard + Stateful` and `Codeful + Stateful` `.code-workspace` entries from `p41a-fixtures`. Both scenarios use `autoStartDesignTime: false`, then open **Project overview** from the Logic App project-root Explorer context menu so product startup/progress/readiness owns the runtime launch.
+- Codeless fixture rule: after reopening the generated workspace, replace only generated workflow folders. Create connector-free Stateful and Stateless HTTP Request workflows plus a Stateful Recurrence workflow. The Stateless workflow omits `WithStatelessRunHistory`, while the Recurrence workflow supplies the no-callback case.
+- Codeful fixture rule: keep the wizard-generated project, `.code-workspace`, `.csproj`, `Program.cs`, `.vscode/launch.json`, and `.vscode/tasks.json`. Replace only the generated workflow `.cs` body with a built-in HTTP Request/Response workflow and point the generated NuGet source at the extension-managed SDK package. This preserves the real codeful launch/build/runtime path without depending on managed connectors.
+- Do not synthesize project/workspace/launch/tasks files for either scenario.
+- Project overview selectors:
+  - table: `table`, rows: `table tbody tr`;
+  - filter: `input[placeholder="Filter by workflow name"]`;
+  - column sort buttons use exact visible labels `Workflow`, `Runtime URL`, `Last run`, `Latest run`, and `Workflow overview`;
+  - row actions use `aria-label="Copy callback URL for <name>"`, `Open overview for <name>`, and `Open latest run for <name>`;
+  - workflow backlink: `button[aria-label="All project workflows"]`.
+- Navigation/readiness rules:
+  1. Switch to default content and close all editors before project overview navigation.
+  2. Use raw Selenium visible/non-zero outer `iframe.webview` selection, then enter `#active-frame`; identify the target with page-specific selectors/text because project, workflow, and monitoring panels may all be retained.
+  3. Use Selenium Actions API for every React webview click.
+  4. Treat project readiness as an exact runtime workflow-name match with every entry reporting `health.state === "Healthy"`; this rejects stale, missing, and duplicate registrations. Additionally require a non-empty `listCallbackUrl` before invoking the Request workflow.
+  5. The non-Request Stateless row must show callback unavailable and `Run history unavailable`; the Stateful Request row starts at explicit `No runs`.
+  6. Manual context-menu open and debug auto-open must converge on one project panel with each workflow exactly once.
+  7. Verify automatic refresh by invoking the callback through the supported runtime API and waiting for the row to reach `Succeeded` without clicking Refresh.
+  8. For codeful, assert the generated source-derived workflow row is present before runtime readiness settles, then assert the runtime-generated list contains that workflow exactly once.
+  9. Reveal the retained project-overview editor before stopping debug, then wait for port/runtime settlement and the webview's `Runtime stopped` state.
+- Deliberate E2E omission: injected loading/fatal startup errors remain covered by host/webview unit tests. Forcing internal failures in ExTester would couple Phase 4.15 to unsupported fault injection and make the runtime lifecycle brittle.
 
 **NOTE**: On Windows, `openWorkspaceFileInSession()` may fail to switch workspaces through the simple dialog even when no exception is thrown. The helper falls back to `VSBrowser.instance.openResources()` on Windows and requires a positive title/Explorer postcondition before continuing.
 
