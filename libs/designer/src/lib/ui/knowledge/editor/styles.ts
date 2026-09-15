@@ -7,6 +7,7 @@ export const useKnowledgeStyles = makeStyles({
     flexDirection: 'column',
     gap: tokens.spacingVerticalM,
     paddingTop: tokens.spacingVerticalM,
+    paddingBottom: tokens.spacingVerticalXL,
   },
   header: {
     display: 'flex',

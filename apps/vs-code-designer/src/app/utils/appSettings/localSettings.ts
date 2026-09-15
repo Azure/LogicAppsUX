@@ -8,6 +8,7 @@ import {
   appKindSetting,
   azureWebJobsSecretStorageTypeKey,
   azureStorageTypeSetting,
+  customCodeDotNetVersionSettingKey,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -18,7 +19,7 @@ import { parseJson } from '../parseJson';
 import { generateDesignTimeLocalSettingsJson, generateLocalSettingsJson } from '../../projectConsistency/fileGenerators';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior, type ILocalSettingsJson  } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, ProjectType, TargetFramework, type ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Uri } from 'vscode';
@@ -39,6 +40,15 @@ export async function addOrUpdateLocalAppSettings(
   isDesignTime = false
 ): Promise<void> {
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+  const existingContent = fse.existsSync(localSettingsPath) ? (await fse.readFile(localSettingsPath)).toString() : '';
+  let wasEncrypted = false;
+  if (/[^\s]/.test(existingContent)) {
+    try {
+      wasEncrypted = Boolean((parseJson(existingContent) as ILocalSettingsJson | undefined)?.IsEncrypted);
+    } catch {
+      // getLocalSettingsJson reports the repository-standard localized parse error below.
+    }
+  }
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath, isDesignTime);
 
   settings.Values = settings.Values || {};
@@ -48,6 +58,39 @@ export async function addOrUpdateLocalAppSettings(
   };
 
   await writeFormattedJson(localSettingsPath, settings);
+  if (wasEncrypted) {
+    await executeOnFunctions(encryptLocalSettings, context, Uri.file(localSettingsPath));
+  }
+}
+
+/**
+ * Adds/updates the `LOGIC_APPS_CUSTOMCODE_DOTNETVERSION` app setting in the Logic App's local.settings.json
+ * so the runtime knows which .NET version to use to resolve custom code assemblies. This only applies to
+ * custom-code projects targeting .NET 8 (`net8`) or .NET 10 (`net10.0`); it is a no-op for every other
+ * project type (rules engine, codeful, standard) and target framework (e.g. .NET Framework).
+ * Reuses {@link addOrUpdateLocalAppSettings} so unrelated existing settings and encrypted-settings behavior
+ * are preserved.
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - The authoritative Logic App project path (i.e. `context.projectPath`).
+ * @param {ProjectType} [projectType] - The project type of the logic app.
+ * @param {TargetFramework} [targetFramework] - The target framework of the associated custom code functions project.
+ */
+export async function addCustomCodeDotNetVersionSetting(
+  context: IActionContext,
+  projectPath: string,
+  projectType?: ProjectType,
+  targetFramework?: TargetFramework
+): Promise<void> {
+  if (projectType !== ProjectType.customCode) {
+    return;
+  }
+  if (targetFramework !== TargetFramework.Net8 && targetFramework !== TargetFramework.Net10) {
+    return;
+  }
+
+  await addOrUpdateLocalAppSettings(context, projectPath, {
+    [customCodeDotNetVersionSettingKey]: targetFramework,
+  });
 }
 
 /**

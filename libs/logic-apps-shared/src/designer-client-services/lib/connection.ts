@@ -62,6 +62,7 @@ export interface IConnectionService {
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
   getAuthSetHideKeys?(): string[];
   getSubscriptionLocationWebUrl?(): string;
+  persistKnowledgeHubConnection?(): Promise<void>;
 }
 
 let service: IConnectionService;
