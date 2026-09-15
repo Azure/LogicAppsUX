@@ -38,6 +38,7 @@ import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-app
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
+import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
@@ -356,6 +357,12 @@ export async function createLogicAppWorkspace(context: IActionContext, options: 
       const createFunctionAppFilesStep = new CreateFunctionAppFiles();
       await createFunctionAppFilesStep.setup(mySubContext);
     }
+
+    // Records the .NET version used by the associated custom-code project (net8/net10.0) in the
+    // Logic App's own local.settings.json, at context.projectPath, the authoritative Logic App project
+    // directory. No-op for rulesEngine, codeful, standard, or NetFx.
+    await addCustomCodeDotNetVersionSetting(context, mySubContext.projectPath, mySubContext.projectType, mySubContext.targetFramework);
+
     ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
   }
 
