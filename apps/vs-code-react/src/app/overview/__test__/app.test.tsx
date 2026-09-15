@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   HttpClient: vi.fn(),
   StandardRunService: vi.fn(),
   fetchAgentUrl: vi.fn().mockResolvedValue({ agentUrl: 'http://agent', chatUrl: 'http://chat', hostName: 'http://runtime' }),
+  cancelRun: vi.fn(),
   fetchNextPage: vi.fn(),
   getMoreRuns: vi.fn(),
   getRun: vi.fn(),
@@ -18,10 +19,15 @@ const mocks = vi.hoisted(() => ({
   isRuntimeUp: vi.fn().mockResolvedValue(true),
   mutationError: undefined as unknown,
   mutationFn: undefined as (() => Promise<unknown>) | undefined,
+  mutationLoading: false,
+  mutationMutate: vi.fn(),
+  mutationReset: vi.fn(),
   overviewProps: [] as any[],
   postMessage: vi.fn(),
   refetch: vi.fn().mockResolvedValue(undefined),
+  runsError: undefined as unknown,
   runTrigger: vi.fn(),
+  startTrigger: vi.fn(),
   standardRunService: vi.fn(),
   useInfiniteQuery: vi.fn(),
   useMutation: vi.fn(),
@@ -77,14 +83,52 @@ vi.mock('@microsoft/designer-ui', () => ({
     return (
       <div
         data-error={props.errorMessage ?? ''}
+        data-loading={String(props.loading)}
+        data-run-trigger-pending={String(props.isRunTriggerPending)}
         data-runtime-running={String(props.isWorkflowRuntimeRunning)}
+        data-pending-run-id={props.pendingRunId ?? ''}
         data-testid="overview"
         data-workflow-name={props.workflowProperties.name}
       >
+        <button
+          disabled={Boolean(props.pendingRunId)}
+          onClick={() =>
+            props.onCancelRun({
+              id: '/workflows/workflow-a/runs/run-id',
+              identifier: 'run-id',
+              startTime: '',
+              duration: '',
+              status: 'Running',
+            })
+          }
+        >
+          Cancel run
+        </button>
+        <button
+          disabled={Boolean(props.pendingRunId)}
+          onClick={() =>
+            props.onCancelRun({
+              id: '/workflows/workflow-a/runs/second-run-id',
+              identifier: 'second-run-id',
+              startTime: '',
+              duration: '',
+              status: 'Running',
+            })
+          }
+        >
+          Cancel second run
+        </button>
         <button onClick={() => props.onOpenRun({ id: 'run-id', identifier: 'run-id', startTime: '', duration: '', status: 'Succeeded' })}>
           Open run
         </button>
-        <button onClick={() => props.onRunTrigger()}>Run trigger</button>
+        <button disabled={!props.canRunTrigger || props.isRunTriggerPending} onClick={() => props.onRunTrigger()}>
+          Run trigger
+        </button>
+        <button disabled={props.isRefreshing} onClick={() => props.onLoadRuns()}>
+          Refresh
+        </button>
+        <button onClick={() => props.onCopyCallbackUrl()}>Copy callback</button>
+        {props.onOpenProjectOverview ? <button onClick={() => props.onOpenProjectOverview()}>All project workflows</button> : null}
         <button
           onClick={() =>
             props.onCreateUnitTestFromRun({
@@ -131,7 +175,9 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 vi.mock('@microsoft/vscode-extension-logic-apps', () => ({
   ExtensionCommand: {
     createUnitTestFromRun: 'createUnitTestFromRun',
+    copyWorkflowOverviewCallback: 'copyWorkflowOverviewCallback',
     loadRun: 'LoadRun',
+    openProjectOverview: 'openProjectOverview',
   },
   HttpClient: mocks.HttpClient,
 }));
@@ -169,6 +215,7 @@ const baseWorkflowState = {
     },
     name: 'workflow-a',
     stateType: 'Stateful',
+    triggerName: 'manual',
   },
 };
 
@@ -201,11 +248,15 @@ describe('OverviewApp', () => {
     vi.clearAllMocks();
     mocks.mutationError = undefined;
     mocks.mutationFn = undefined;
+    mocks.mutationLoading = false;
     mocks.overviewProps = [];
+    mocks.runsError = undefined;
     mocks.getRuns.mockResolvedValue({ runs: [], nextLink: undefined });
+    mocks.cancelRun.mockResolvedValue(undefined);
     mocks.getMoreRuns.mockResolvedValue({ runs: [], nextLink: undefined });
     mocks.getRun.mockResolvedValue({ id: 'run-id' });
     mocks.runTrigger.mockResolvedValue(undefined);
+    mocks.startTrigger.mockResolvedValue(undefined);
     mocks.refetch.mockResolvedValue(undefined);
     mocks.fetchAgentUrl.mockResolvedValue({ agentUrl: 'http://agent', chatUrl: 'http://chat', hostName: 'http://runtime' });
     mocks.HttpClient.mockImplementation((options: any) => {
@@ -215,16 +266,18 @@ describe('OverviewApp', () => {
     mocks.StandardRunService.mockImplementation((options: any) => {
       mocks.standardRunService(options);
       return {
+        cancelRun: mocks.cancelRun,
         getMoreRuns: mocks.getMoreRuns,
         getRun: mocks.getRun,
         getRuns: mocks.getRuns,
         runTrigger: mocks.runTrigger,
+        startTrigger: mocks.startTrigger,
       };
     });
     mocks.isRuntimeUp.mockResolvedValue(true);
     mocks.useInfiniteQuery.mockImplementation(() => ({
       data: { pages: [{ runs: [{ id: 'run-id', status: 'Succeeded' }], nextLink: undefined }] },
-      error: undefined,
+      error: mocks.runsError,
       fetchNextPage: mocks.fetchNextPage,
       hasNextPage: false,
       isLoading: false,
@@ -233,10 +286,14 @@ describe('OverviewApp', () => {
     }));
     mocks.useMutation.mockImplementation((mutationFn: () => Promise<unknown>) => {
       mocks.mutationFn = mutationFn;
+      mocks.mutationMutate.mockImplementation(() => {
+        void mutationFn().catch(() => undefined);
+      });
       return {
         error: mocks.mutationError,
-        isLoading: false,
-        mutate: vi.fn(() => mutationFn()),
+        isLoading: mocks.mutationLoading,
+        mutate: mocks.mutationMutate,
+        reset: mocks.mutationReset,
       };
     });
     mocks.useQuery.mockReturnValue({
@@ -257,6 +314,7 @@ describe('OverviewApp', () => {
           kind: 'Stateful',
           name: 'workflow-a',
           stateType: 'Stateful',
+          triggerName: 'firstRequest',
         },
         {
           callbackInfo: {
@@ -266,6 +324,7 @@ describe('OverviewApp', () => {
           kind: 'Agent',
           name: 'workflow-b',
           stateType: 'Agent',
+          triggerName: 'secondRequest',
         },
       ],
     });
@@ -305,30 +364,179 @@ describe('OverviewApp', () => {
       'subscription-id',
       'resource-group'
     );
+
+    await mocks.mutationFn?.();
+    expect(mocks.startTrigger).toHaveBeenCalledWith('secondRequest');
   });
 
-  it('runs the selected workflow trigger and reports missing callback errors', async () => {
-    renderOverviewApp();
+  it('starts the selected workflow trigger through management and never invokes its callback URL', async () => {
+    mocks.refetch.mockReturnValue(new Promise(() => undefined));
+    renderOverviewApp({
+      workflowProperties: {
+        name: 'workflow-a',
+        stateType: 'Stateful',
+        triggerName: 'manual',
+      },
+    });
 
     await mocks.mutationFn?.();
 
-    expect(mocks.runTrigger).toHaveBeenCalledWith({
-      method: 'POST',
-      value: 'https://callback/workflow-a',
-    });
+    expect(mocks.startTrigger).toHaveBeenCalledWith('manual');
+    expect(mocks.runTrigger).not.toHaveBeenCalled();
     expect(mocks.refetch).toHaveBeenCalled();
+  });
 
-    vi.clearAllMocks();
-    renderOverviewApp({
+  it('reports an actionable error when trigger metadata is unavailable', async () => {
+    const workflowWithoutTrigger = {
       workflowProperties: {
-        name: 'workflow-without-callback',
+        callbackInfo: {
+          method: 'POST',
+          value: 'https://callback/workflow-without-trigger',
+        },
+        name: 'workflow-without-trigger',
         stateType: 'Stateful',
+      },
+    };
+    const { unmount } = renderOverviewApp(workflowWithoutTrigger);
+
+    let triggerError: unknown;
+    try {
+      await mocks.mutationFn?.();
+    } catch (error) {
+      triggerError = error;
+    }
+
+    expect(triggerError).toEqual(
+      new Error('Cannot run trigger: Trigger metadata is unavailable. Reopen the workflow overview to reload the workflow metadata.')
+    );
+    expect(mocks.runTrigger).not.toHaveBeenCalled();
+    expect(mocks.startTrigger).not.toHaveBeenCalled();
+
+    unmount();
+    mocks.mutationError = triggerError;
+    renderOverviewApp(workflowWithoutTrigger);
+
+    expect(screen.getByTestId('overview')).toHaveAttribute(
+      'data-error',
+      'Cannot run trigger: Trigger metadata is unavailable. Reopen the workflow overview to reload the workflow metadata.'
+    );
+  });
+
+  it('reports an actionable error when workflow runtime management is unavailable', async () => {
+    renderOverviewApp({
+      baseUrl: undefined,
+      workflowProperties: {
+        name: 'workflow-a',
+        stateType: 'Stateful',
+        triggerName: 'manual',
       },
     });
 
     await expect(mocks.mutationFn?.()).rejects.toThrow(
-      'Cannot run trigger: Workflow runtime is not running or callback URL is not available'
+      'Cannot run trigger: Workflow runtime management is unavailable. Start the workflow runtime and refresh the overview.'
     );
+    expect(mocks.startTrigger).not.toHaveBeenCalled();
+  });
+
+  it('disables only Run trigger while start acknowledgment is pending', () => {
+    mocks.mutationLoading = true;
+
+    renderOverviewApp();
+
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-loading', 'false');
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-run-trigger-pending', 'true');
+    expect(screen.getByRole('button', { name: 'Run trigger' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Cancel run' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Open run' })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run trigger' }));
+    expect(mocks.mutationMutate).not.toHaveBeenCalled();
+  });
+
+  it('resets an earlier trigger error before retrying', () => {
+    mocks.mutationError = new Error('Earlier trigger failure');
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run trigger' }));
+
+    expect(mocks.mutationReset).toHaveBeenCalledOnce();
+    expect(mocks.mutationMutate).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    ['local', { isLocal: true }],
+    ['remote', { isLocal: false }],
+  ])('cancels a %s Standard run with its full run ID and refetches runs', async (_scenario, workflowOverrides) => {
+    renderOverviewApp(workflowOverrides);
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(mocks.cancelRun).toHaveBeenCalledWith('/workflows/workflow-a/runs/run-id'));
+    await waitFor(() => expect(mocks.refetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', ''));
+  });
+
+  it('disables other cancellations and keeps cancellation single-flight while a run is pending', async () => {
+    let resolveCancellation: (() => void) | undefined;
+    mocks.cancelRun.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveCancellation = resolve;
+      })
+    );
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    expect(mocks.cancelRun).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', '/workflows/workflow-a/runs/run-id'));
+    const secondCancelRun = screen.getByRole('button', { name: 'Cancel second run' });
+    expect(secondCancelRun).toBeDisabled();
+
+    fireEvent.click(secondCancelRun);
+
+    expect(mocks.cancelRun).toHaveBeenCalledTimes(1);
+    resolveCancellation?.();
+
+    await waitFor(() => expect(mocks.refetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', ''));
+  });
+
+  it('surfaces thrown cancellation failures, refetches runs, and clears pending state', async () => {
+    mocks.cancelRun.mockRejectedValue(new Error('Cancellation failed'));
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-error', 'Cancellation failed'));
+    expect(mocks.refetch).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', '');
+  });
+
+  it('treats returned Error objects as cancellation failures and still refetches runs', async () => {
+    mocks.cancelRun.mockResolvedValue(new Error('Cancellation returned an error'));
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-error', 'Cancellation returned an error'));
+    expect(mocks.refetch).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', '');
+  });
+
+  it.each([
+    ['run loading', () => (mocks.runsError = new Error('Run loading failed')), 'Run loading failed'],
+    ['trigger', () => (mocks.mutationError = new Error('Trigger failed')), 'Trigger failed'],
+  ])('does not hide an existing %s error with a cancellation error', async (_scenario, arrangeError, expectedError) => {
+    arrangeError();
+    mocks.cancelRun.mockRejectedValue(new Error('Cancellation failed'));
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(mocks.cancelRun).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-error', expectedError));
+    expect(mocks.refetch).toHaveBeenCalledTimes(1);
   });
 
   it('posts open-run and create-unit-test messages to the extension host', () => {
@@ -351,6 +559,42 @@ describe('OverviewApp', () => {
       command: ExtensionCommand.createUnitTestFromRun,
       runId: 'run-id',
     });
+  });
+
+  it('requests host-mediated callback URL copy for the selected workflow', () => {
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Copy callback'));
+
+    expect(mocks.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.copyWorkflowOverviewCallback,
+      data: {
+        workflowName: 'workflow-a',
+      },
+    });
+  });
+
+  it('shows a project backlink only for a valid project origin and posts the typed return message', () => {
+    renderOverviewApp({
+      projectOverviewOrigin: {
+        projectId: 'project-id',
+      },
+    });
+
+    fireEvent.click(screen.getByText('All project workflows'));
+
+    expect(mocks.postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.openProjectOverview,
+      data: {
+        projectId: 'project-id',
+      },
+    });
+  });
+
+  it('keeps standalone workflow overview valid without a project backlink', () => {
+    renderOverviewApp();
+
+    expect(screen.queryByText('All project workflows')).not.toBeInTheDocument();
   });
 
   it('shows the runtime-down error when the workflow runtime is unavailable', async () => {

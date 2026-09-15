@@ -6,10 +6,18 @@ import { debugLogicApp } from '../debugLogicApp';
 import { pickFuncProcessInternal } from '../pickFuncProcess';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from '../pickCustomCodeWorkerProcess';
+import { openProjectOverviewForDebugInvocation } from '../workflows/projectOverview/openProjectOverview';
+import { projectRuntimeRegistry } from '../../utils/funcCoreTools/projectRuntimeRegistry';
+
+const terminationListeners: Array<(session: vscode.DebugSession) => void> = [];
 
 vi.mock('vscode', () => ({
   debug: {
     startDebugging: vi.fn(),
+    onDidTerminateDebugSession: vi.fn((listener) => {
+      terminationListeners.push(listener);
+      return { dispose: vi.fn() };
+    }),
   },
   workspace: {
     getWorkspaceFolder: vi.fn(),
@@ -32,12 +40,26 @@ vi.mock('../pickCustomCodeWorkerProcess', () => ({
   pickCustomCodeNetHostProcessInternal: vi.fn(),
 }));
 
+vi.mock('../workflows/projectOverview/openProjectOverview', () => ({
+  openProjectOverviewForDebugInvocation: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('../../utils/funcCoreTools/projectRuntimeRegistry', () => ({
+  projectRuntimeRegistry: {
+    createDebugInvocationId: vi.fn().mockReturnValue('project#debug-1'),
+    cancelDebugInvocation: vi.fn(),
+    endDebugInvocation: vi.fn(),
+  },
+}));
+
 describe('debugLogicApp', () => {
   const workspaceFolder = { uri: { fsPath: 'D:/workspace/MyLogicApp' } } as vscode.WorkspaceFolder;
   let context: IActionContext;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    terminationListeners.length = 0;
+    vi.mocked(projectRuntimeRegistry.createDebugInvocationId).mockReturnValue('project#debug-1');
     context = {
       telemetry: {
         properties: {},
@@ -50,6 +72,7 @@ describe('debugLogicApp', () => {
     vi.mocked(tryGetLogicAppProjectRoot).mockResolvedValue('D:/workspace/MyLogicApp');
     vi.mocked(pickFuncProcessInternal).mockResolvedValue('1234');
     vi.mocked(vscode.debug.startDebugging).mockResolvedValue(true);
+    vi.mocked(openProjectOverviewForDebugInvocation).mockResolvedValue(undefined);
     vi.mocked(ext.outputChannel.appendLog).mockClear();
   });
 
@@ -80,6 +103,7 @@ describe('debugLogicApp', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
       expect.stringContaining('Workflow debug attach request for "MyLogicApp" completed with result "true"')
     );
+    expect(openProjectOverviewForDebugInvocation).toHaveBeenCalledWith(context, 'D:/workspace/MyLogicApp', 'project#debug-1');
   });
 
   it('starts a single debug session for codeful projects', async () => {
@@ -221,6 +245,7 @@ describe('debugLogicApp', () => {
       expect(workflowProcessId).toBe('1234');
       expect(customCodeProcessId).toBe('5678');
       expect(workflowProcessId).not.toBe(customCodeProcessId);
+      expect(openProjectOverviewForDebugInvocation).toHaveBeenCalledTimes(1);
     });
 
     it('attaches to TWO DIFFERENT processes for clr (NetFx) custom code projects', async () => {
@@ -249,6 +274,53 @@ describe('debugLogicApp', () => {
       expect(workflowProcessId).toBe('1234');
       expect(customCodeProcessId).toBe('9999');
       expect(workflowProcessId).not.toBe(customCodeProcessId);
+      expect(openProjectOverviewForDebugInvocation).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('suppresses the pending overview when a matching debug session terminates', async () => {
+    let resolveOverview: (() => void) | undefined;
+    vi.mocked(openProjectOverviewForDebugInvocation).mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveOverview = resolve;
+      })
+    );
+
+    await debugLogicApp(
+      context,
+      {
+        type: 'logicapp',
+        name: 'Run/Debug logic app MyLogicApp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: true,
+      },
+      workspaceFolder
+    );
+
+    terminationListeners[0]({
+      configuration: { logicAppsDebugInvocationId: 'project#debug-1' },
+    } as vscode.DebugSession);
+    expect(projectRuntimeRegistry.endDebugInvocation).toHaveBeenCalledWith('D:/workspace/MyLogicApp', 'project#debug-1');
+    resolveOverview?.();
+  });
+
+  it('does not schedule an overview after a failed attach request', async () => {
+    vi.mocked(vscode.debug.startDebugging).mockResolvedValue(false);
+
+    await debugLogicApp(
+      context,
+      {
+        type: 'logicapp',
+        name: 'Run/Debug logic app MyLogicApp',
+        request: 'launch',
+        funcRuntime: 'coreclr',
+        isCodeless: true,
+      },
+      workspaceFolder
+    );
+
+    expect(openProjectOverviewForDebugInvocation).not.toHaveBeenCalled();
+    expect(projectRuntimeRegistry.endDebugInvocation).toHaveBeenCalledWith('D:/workspace/MyLogicApp', 'project#debug-1');
   });
 });

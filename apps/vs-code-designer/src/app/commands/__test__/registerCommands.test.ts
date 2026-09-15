@@ -130,6 +130,7 @@ vi.mock('../workflows/enableAzureConnectors', () => ({ enableAzureConnectors: vi
 vi.mock('../workflows/exportLogicApp', () => ({ exportLogicApp: vi.fn() }));
 vi.mock('../workflows/openDesigner/openDesigner', () => ({ openDesigner: vi.fn() }));
 vi.mock('../workflows/openOverview', () => ({ openOverview: vi.fn() }));
+vi.mock('../workflows/projectOverview/openProjectOverview', () => ({ openProjectOverview: vi.fn() }));
 vi.mock('../workflows/reviewValidation', () => ({ reviewValidation: vi.fn() }));
 vi.mock('../workflows/switchDebugMode/switchDebugMode', () => ({ switchDebugMode: vi.fn() }));
 vi.mock('../workflows/switchToDotnetProject', () => ({ switchToDotnetProjectCommand: vi.fn() }));

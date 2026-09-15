@@ -1,24 +1,23 @@
 import type { RunDisplayItem } from './types';
-import type { IColumn, IContextualMenuItem } from '@fluentui/react';
-import { DefaultButton, DetailsListLayoutMode, Link, SelectionMode, ShimmeredDetailsList } from '@fluentui/react';
+import type { IColumn } from '@fluentui/react';
+import { DetailsListLayoutMode, Link, SelectionMode, ShimmeredDetailsList } from '@fluentui/react';
+import { Button, Tooltip } from '@fluentui/react-components';
+import { DismissCircleRegular, HistoryRegular } from '@fluentui/react-icons';
 import { useState } from 'react';
 import type { FormatDateOptions } from 'react-intl';
 import { useIntl } from 'react-intl';
+import { useOverviewStyles } from './styles';
 
 export interface RunHistoryProps {
   items: RunDisplayItem[];
   loading?: boolean;
+  pendingRunId?: string;
   onOpenRun(run: RunDisplayItem): void;
-  onCreateUnitTestFromRun?(run: RunDisplayItem): void;
+  onCancelRun?(run: RunDisplayItem): void;
 }
 
-const ContextMenuKeys = {
-  SHOW_RUN: 'SHOW_RUN',
-  CREATE_UNIT_TEST_FROM_RUN: 'CREATE_UNIT_TEST_FROM_RUN',
-} as const;
-type ContextMenuKeys = (typeof ContextMenuKeys)[keyof typeof ContextMenuKeys];
 const RunHistoryColumnKeys = {
-  CONTEXT_MENU: 'contextMenu',
+  ACTIONS: 'actions',
   DURATION: 'duration',
   IDENTIFIER: 'identifier',
   START_TIME: 'startTime',
@@ -35,16 +34,35 @@ const dateOptions: FormatDateOptions = {
   hour12: true,
 };
 
-export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, onCreateUnitTestFromRun }) => {
+export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, pendingRunId, onOpenRun, onCancelRun }) => {
   const intl = useIntl();
+  const styles = useOverviewStyles();
   const [useUTC, setUseUTC] = useState(false);
 
   const Resources = {
-    CONTEXT_MENU: intl.formatMessage({
-      defaultMessage: 'Show run menu',
-      id: '0JTHTZ',
-      description: 'Button text to show run menu',
+    ACTIONS: intl.formatMessage({
+      defaultMessage: 'Actions',
+      id: 'PkyvtI',
+      description: 'Column header text for run actions',
     }),
+    CANCEL_RUN: (identifier: string) =>
+      intl.formatMessage(
+        {
+          defaultMessage: 'Cancel run {identifier}',
+          id: 'J7Lquu',
+          description: 'Accessible label for the button that cancels a workflow run',
+        },
+        { identifier }
+      ),
+    OPEN_RUN: (identifier: string) =>
+      intl.formatMessage(
+        {
+          defaultMessage: 'Open run {identifier}',
+          id: 'vGTg+5',
+          description: 'Accessible label for the button that opens a workflow run',
+        },
+        { identifier }
+      ),
     DURATION: intl.formatMessage({
       defaultMessage: 'Duration',
       id: 'DZZ3fj',
@@ -54,11 +72,6 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       defaultMessage: 'Identifier',
       id: '33+WHG',
       description: 'Column header text for identifier',
-    }),
-    SHOW_RUN: intl.formatMessage({
-      defaultMessage: 'Show run',
-      id: '6jiO7t',
-      description: 'Menu item text for show run',
     }),
     START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
@@ -109,35 +122,43 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       name: Resources.DURATION,
     },
     {
-      fieldName: RunHistoryColumnKeys.CONTEXT_MENU,
-      isResizable: true,
-      key: RunHistoryColumnKeys.CONTEXT_MENU,
-      minWidth: 0,
-      name: '',
+      fieldName: RunHistoryColumnKeys.ACTIONS,
+      key: RunHistoryColumnKeys.ACTIONS,
+      minWidth: 96,
+      name: Resources.ACTIONS,
     },
   ];
 
-  const contextMenuOptions = [{ key: ContextMenuKeys.SHOW_RUN, name: Resources.SHOW_RUN }];
-
   const handleRenderItemColumn = (item: RunDisplayItem, _?: number, column?: IColumn): React.ReactNode | undefined => {
     switch (column?.key) {
-      case RunHistoryColumnKeys.CONTEXT_MENU:
+      case RunHistoryColumnKeys.ACTIONS: {
+        const openRunLabel = Resources.OPEN_RUN(item.identifier);
+        const cancelRunLabel = Resources.CANCEL_RUN(item.identifier);
+
         return (
-          <DefaultButton
-            aria-label={Resources.CONTEXT_MENU}
-            menuProps={{
-              items: contextMenuOptions,
-              onItemClick: (_, menuItem?: IContextualMenuItem) => {
-                if (menuItem?.key === ContextMenuKeys.SHOW_RUN) {
-                  onOpenRun(item);
-                } else if (menuItem?.key === ContextMenuKeys.CREATE_UNIT_TEST_FROM_RUN && onCreateUnitTestFromRun) {
-                  onCreateUnitTestFromRun(item);
-                }
-              },
-            }}
-            text="…"
-          />
+          <div className={styles.runHistoryActions}>
+            <Tooltip content={openRunLabel} relationship="label">
+              <Button
+                appearance="subtle"
+                aria-label={openRunLabel}
+                icon={<HistoryRegular data-testid={`open-run-icon-${item.identifier}`} />}
+                onClick={() => onOpenRun(item)}
+              />
+            </Tooltip>
+            {item.status.toLowerCase() === 'running' && onCancelRun ? (
+              <Tooltip content={cancelRunLabel} relationship="label">
+                <Button
+                  appearance="subtle"
+                  aria-label={cancelRunLabel}
+                  disabled={Boolean(pendingRunId)}
+                  icon={<DismissCircleRegular data-testid={`cancel-run-icon-${item.identifier}`} />}
+                  onClick={() => onCancelRun(item)}
+                />
+              </Tooltip>
+            ) : null}
+          </div>
         );
+      }
 
       case RunHistoryColumnKeys.IDENTIFIER:
         return (
