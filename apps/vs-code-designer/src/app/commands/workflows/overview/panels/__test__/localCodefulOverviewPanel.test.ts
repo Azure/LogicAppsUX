@@ -255,6 +255,44 @@ describe('LocalCodefulOverviewPanel', () => {
     );
   });
 
+  it('initializes a stateless codeful overview from source discovery', async () => {
+    const codefulContent = `
+      WorkflowFactory.CreateStatelessWorkflow("stateless-workflow", workflow);
+      var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+    `;
+    mocks.readFileSync.mockReturnValue(codefulContent);
+    mocks.sendRequest.mockImplementation(async (_context: any, request: { url: string; method: string }) => {
+      if (request.url.endsWith('/workflows?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: [] });
+      }
+      if (request.url.includes('/triggers?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: [] });
+      }
+      if (request.url.includes('/listCallbackUrl?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: `callback:${request.url}`, method: 'POST' });
+      }
+      throw new Error(`Unexpected request ${request.url}`);
+    });
+
+    const codefulPanel = new LocalCodefulOverviewPanel(context, vscode.Uri.file(codefulFilePath) as any);
+    await codefulPanel.create();
+
+    const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+    await messageHandler({ command: ExtensionCommand.initialize });
+
+    const initCall = panel.webview.postMessage.mock.calls.find(([msg]: any) => msg.command === ExtensionCommand.initialize_frame);
+    const initializePayload = initCall?.[0].data;
+
+    expect(initializePayload.workflowPropertiesList).toHaveLength(1);
+    expect(initializePayload.workflowPropertiesList[0]).toEqual(
+      expect.objectContaining({
+        name: 'stateless-workflow',
+        kind: 'Stateless',
+        stateType: 'Stateless',
+      })
+    );
+  });
+
   it('posts per-workflow callback URL updates when the runtime base URL appears', async () => {
     vi.useFakeTimers();
     (ext as any).workflowRuntimePort = undefined;
