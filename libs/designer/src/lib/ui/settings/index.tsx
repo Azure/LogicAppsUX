@@ -712,7 +712,7 @@ function SecuritySettings({
   dispatch,
   updateSettings,
 }: SettingSectionProps): JSX.Element | null {
-  const { secureInputs, secureOutputs } = nodeSettings;
+  const { secureInputs, secureOutputs, secureErrorResponse } = nodeSettings;
   const operationInfo = useOperationInfo(nodeId);
   const onSecureInputsChange = (checked: boolean): void => {
     updateSettings({ secureInputs: { isSupported: !!secureInputs?.isSupported, value: checked } });
@@ -726,16 +726,22 @@ function SecuritySettings({
     dispatch(updateTokenSecureStatus({ id: nodeId, isSecure: checked }));
   };
 
-  return secureInputs?.isSupported || secureOutputs?.isSupported ? (
+  const onSecureErrorResponseChange = (checked: boolean): void => {
+    updateSettings({ secureErrorResponse: { isSupported: !!secureErrorResponse?.isSupported, value: checked } });
+  };
+
+  return secureInputs?.isSupported || secureOutputs?.isSupported || secureErrorResponse?.isSupported ? (
     <Security
       nodeId={nodeId}
       readOnly={readOnly}
       expanded={isExpanded}
       secureInputs={secureInputs}
       secureOutputs={secureOutputs}
+      secureErrorResponse={secureErrorResponse}
       onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
       onSecureInputsChange={onSecureInputsChange}
       onSecureOutputsChange={onSecureOutputsChange}
+      onSecureErrorResponseChange={onSecureErrorResponseChange}
     />
   ) : null;
 }
