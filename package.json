@@ -69,11 +69,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --write"
-    ]
+    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
   },
   "private": true,
   "scripts": {
@@ -87,6 +83,7 @@
     "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" \"apps/vs-code-react/src/**/*.{ts,tsx}\" --ignore \"**/node_modules/**\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --ignore \"apps/vs-code-react/src/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
     "generateArmToken": "node ./scripts/generateArmToken.js",
     "prepare": "husky || true",
+    "portal:local": "node ./scripts/portal-local.js",
     "publish": "turbo run build:lib && pnpm publish -r",
     "scrub-secrets:e2e": "node ./scrub-e2e-trace.js",
     "start": "turbo run dev",
