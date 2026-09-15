@@ -9,7 +9,7 @@ import {
 } from '@microsoft/logic-apps-designer';
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import type { Connection, ConnectionCreationInfo } from '@microsoft/logic-apps-shared';
-import { getRecordEntry, isArmResourceId, Theme } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, Theme } from '@microsoft/logic-apps-shared';
 import { getDesignerServices } from '../designer/servicesHelper';
 import { VSCodeContext } from '../../webviewCommunication';
 import { useDispatch, useSelector } from 'react-redux';
@@ -96,7 +96,7 @@ const ConnectionView = ({
   }, [sendMsgToVsix]);
 
   const onConnectionSuccessful = (connection: Connection) => {
-    if (isArmResourceId(connection.id)) {
+    if (isManagedConnector(connectorType)) {
       // Managed API connection: send connectionReferences so the extension host
       // can persist them to connections.json (mirrors the designer save flow).
       const designerState = DesignerStore.getState();
