@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as path from 'path';
 import * as vscode from 'vscode';
+import { canonicalizeLocalPath } from '../localPath';
 
 export type ProjectRuntimeLifecycleState = 'starting' | 'running' | 'stopping' | 'stopped' | 'failed' | 'cancelled';
 
@@ -39,16 +39,9 @@ function isCancelled(token?: vscode.CancellationToken): boolean {
   return token?.isCancellationRequested === true;
 }
 
-function normalizeLocalPath(fsPath: string): string {
-  const normalizedPath = path.normalize(path.resolve(fsPath));
-  const root = path.parse(normalizedPath).root;
-  const withoutTrailingSeparator = normalizedPath.length > root.length ? normalizedPath.replace(/[\\/]+$/, '') : normalizedPath;
-  return process.platform === 'win32' ? withoutTrailingSeparator.toLowerCase() : withoutTrailingSeparator;
-}
-
 export function getCanonicalProjectUri(projectPathOrUri: string | vscode.Uri): vscode.Uri {
   const fsPath = typeof projectPathOrUri === 'string' ? projectPathOrUri : projectPathOrUri.fsPath;
-  return vscode.Uri.file(normalizeLocalPath(fsPath));
+  return vscode.Uri.file(canonicalizeLocalPath(fsPath));
 }
 
 export function getCanonicalProjectId(projectPathOrUri: string | vscode.Uri): string {

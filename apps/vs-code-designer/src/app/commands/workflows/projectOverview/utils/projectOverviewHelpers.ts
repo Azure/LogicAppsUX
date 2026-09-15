@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as path from 'path';
+import { canonicalizeLocalPath } from '../../../../utils/localPath';
 
 export class ProjectOverviewAbortError extends Error {
   public constructor(message = 'Project overview operation was cancelled.') {
@@ -25,8 +25,7 @@ export function throwIfAborted(signal?: AbortSignal): void {
 }
 
 export function canonicalizeWorkflowPath(workflowPath: string): string {
-  const normalized = path.normalize(path.resolve(workflowPath)).replace(/[\\/]+$/, '');
-  return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+  return canonicalizeLocalPath(workflowPath);
 }
 
 export function canonicalizeWorkflowName(workflowName: string): string {

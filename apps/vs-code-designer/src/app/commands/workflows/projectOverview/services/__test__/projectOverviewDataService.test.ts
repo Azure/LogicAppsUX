@@ -91,7 +91,7 @@ describe('ProjectOverviewDataService', () => {
       getRuntimeRegistration: vi.fn().mockReturnValue(undefined),
       getWorkflowsPath: vi.fn().mockResolvedValue([
         { name: 'Alpha', path: 'D:\\workspace\\logicapp\\Alpha\\workflow.json' },
-        { name: 'alpha', path: 'D:\\workspace\\logicapp\\Alpha\\.\\workflow.json' },
+        { name: 'alpha', path: 'd:/WORKSPACE/LOGICAPP/Alpha/./workflow.json' },
         { name: 'Broken', path: 'D:\\workspace\\logicapp\\Broken\\workflow.json' },
       ]),
       getWorkflows: vi.fn().mockResolvedValue({ Alpha: workflowContent() }),

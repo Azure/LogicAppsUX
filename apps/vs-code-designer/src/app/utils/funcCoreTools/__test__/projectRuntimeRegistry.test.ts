@@ -19,6 +19,11 @@ describe('ProjectRuntimeRegistry', () => {
 
     expect(first).not.toBe(second);
     expect(getCanonicalProjectId('D:\\workspace-one\\same-name\\.')).toBe(first);
+    expect(getCanonicalProjectId('d:/WORKSPACE-ONE/SAME-NAME')).toBe(first);
+  });
+
+  it('preserves case distinctions for POSIX project paths', () => {
+    expect(getCanonicalProjectId('/workspace/logicapp')).not.toBe(getCanonicalProjectId('/Workspace/LogicApp'));
   });
 
   it('increments the generation when a project runtime restarts', () => {
@@ -67,9 +72,7 @@ describe('ProjectRuntimeRegistry', () => {
     const firstInvocation = registry.createDebugInvocationId(firstProject);
     const secondInvocation = registry.createDebugInvocationId(secondProject);
 
-    expect(
-      registry.endDebugInvocation(process.platform === 'win32' ? firstProject.toLowerCase() : firstProject, firstInvocation)
-    ).toBe(true);
+    expect(registry.endDebugInvocation('d:/WORKSPACE/project-a/.', firstInvocation)).toBe(true);
     expect(registry.getActiveDebugInvocationId(firstProject)).toBeUndefined();
     expect(registry.getActiveDebugInvocationId(secondProject)).toBe(secondInvocation);
   });

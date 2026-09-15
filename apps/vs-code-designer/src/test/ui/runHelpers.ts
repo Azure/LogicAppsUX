@@ -1617,22 +1617,27 @@ export async function openProjectOverviewFromRoot(
   await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
   await workbench.executeCommand('workbench.files.action.refreshFilesExplorer').catch(() => undefined);
 
-  const rootDeadline = Date.now() + 30_000;
-  let rootRow: WebElement | undefined;
-  while (Date.now() < rootDeadline && !rootRow) {
+  const findProjectRootRow = async (): Promise<WebElement | undefined> => {
     const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
     for (const row of rows) {
       try {
-        const text = (await row.getText()).trim();
-        const level = await row.getAttribute('aria-level');
-        if (text === projectRootName || (text.includes(projectRootName) && level === '1')) {
-          rootRow = row;
-          break;
+        const labels = await row.findElements(By.css('.monaco-icon-label .label-name, .label-name'));
+        for (const label of labels) {
+          if ((await label.getText()).trim() === projectRootName) {
+            return row;
+          }
         }
       } catch {
         /* stale row */
       }
     }
+    return undefined;
+  };
+
+  const rootDeadline = Date.now() + 30_000;
+  let rootRow: WebElement | undefined;
+  while (Date.now() < rootDeadline && !rootRow) {
+    rootRow = await findProjectRootRow();
     if (!rootRow) {
       await sleep(500);
     }
@@ -1652,20 +1657,7 @@ export async function openProjectOverviewFromRoot(
       .perform()
       .catch(() => undefined);
     await workbench.executeCommand('workbench.files.action.refreshFilesExplorer').catch(() => undefined);
-    const currentRows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
-    rootRow = undefined;
-    for (const row of currentRows) {
-      try {
-        const text = (await row.getText()).trim();
-        const level = await row.getAttribute('aria-level');
-        if (text === projectRootName || (text.includes(projectRootName) && level === '1')) {
-          rootRow = row;
-          break;
-        }
-      } catch {
-        /* stale row */
-      }
-    }
+    rootRow = await findProjectRootRow();
     if (!rootRow) {
       await sleep(500);
       continue;
@@ -2648,7 +2640,8 @@ async function readRunDetailsActionStatuses(driver: WebDriver): Promise<ActionSt
  * after the UI-scrape poll times out.
  */
 export async function verifyLatestRunActionRunsSucceeded(
-  workflowName: string
+  workflowName: string,
+  allowedSkippedActions: readonly string[] = []
 ): Promise<{ allSucceeded: boolean; details: string } | undefined> {
   const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
   const apiVersion = '2019-10-01-edge-preview';
@@ -2708,7 +2701,9 @@ export async function verifyLatestRunActionRunsSucceeded(
           ? action.properties.status
           : '(missing)',
   }));
-  const nonSucceeded = actionStatuses.filter((action) => action.status !== 'Succeeded');
+  const nonSucceeded = actionStatuses.filter(
+    (action) => action.status !== 'Succeeded' && !(action.status === 'Skipped' && allowedSkippedActions.includes(action.name))
+  );
   const details = `action API run=${latestRunName} actions=${actionStatuses.map((action) => `${action.name}:${action.status}`).join(', ')}`;
   return { allSucceeded: nonSucceeded.length === 0, details };
 }
