@@ -12,7 +12,7 @@ export {
 export { StandardConnectorService, type StandardConnectorServiceOptions } from './connector';
 export { StandardOperationManifestService, isServiceProviderOperation } from './operationmanifest';
 export { StandardSearchService } from './search';
-export { StandardRunService } from './run';
+export { StandardRunService, type StartTriggerOptions, type StartTriggerResult } from './run';
 export { StandardArtifactService } from './artifact';
 export { StandardCustomCodeService } from './customcode';
 export {

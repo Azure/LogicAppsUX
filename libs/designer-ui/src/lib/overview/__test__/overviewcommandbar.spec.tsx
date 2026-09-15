@@ -33,7 +33,7 @@ describe('lib/overview/overviewcommandbar', () => {
     expect(tree).toBeTruthy();
   });
 
-  it('disables Run trigger when runnable callback info is unavailable', () => {
+  it('disables Run trigger when management invocation is unavailable', () => {
     const component = renderComponent({
       ...minimal,
       isWorkflowRuntimeRunning: true,
@@ -43,7 +43,7 @@ describe('lib/overview/overviewcommandbar', () => {
     expect(runTriggerButton.props.disabled).toBe(true);
   });
 
-  it('enables Run trigger when runtime is running and callback info is available', () => {
+  it('enables Run trigger when runtime and management invocation are available', () => {
     const component = renderComponent({
       ...minimal,
       canRunTrigger: true,
@@ -51,7 +51,7 @@ describe('lib/overview/overviewcommandbar', () => {
     });
 
     const runTriggerButton = component.root.find((node) => node.props['aria-label'] === 'Run trigger');
-    expect(runTriggerButton.props.disabled).toBe(false);
+    expect(runTriggerButton.props.disabled).toBeFalsy();
   });
 
   it('keeps Run trigger disabled when runtime is stopped', () => {
@@ -63,6 +63,20 @@ describe('lib/overview/overviewcommandbar', () => {
 
     const runTriggerButton = component.root.find((node) => node.props['aria-label'] === 'Run trigger');
     expect(runTriggerButton.props.disabled).toBe(true);
+  });
+
+  it('disables only Run trigger while a trigger start request is pending', () => {
+    const component = renderComponent({
+      ...minimal,
+      canRunTrigger: true,
+      isRunTriggerPending: true,
+      isWorkflowRuntimeRunning: true,
+    });
+
+    const runTriggerButton = component.root.find((node) => node.props['aria-label'] === 'Run trigger');
+    const refreshButton = component.root.find((node) => node.props['aria-label'] === 'Refresh');
+    expect(runTriggerButton.props.disabled).toBe(true);
+    expect(refreshButton.props.disabled).toBeFalsy();
   });
 
   it('shows and invokes the project overview backlink only when provided', () => {

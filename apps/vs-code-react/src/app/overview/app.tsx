@@ -16,10 +16,6 @@ import { isOverviewRuntimeAvailable, shouldShowLocalDebugError } from './runtime
 import { fetchAgentUrl } from './services/workflowService';
 import { Dropdown, Field, Option, useId } from '@fluentui/react-components';
 
-export interface CallbackInfo {
-  method?: string;
-  value: string;
-}
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
@@ -148,16 +144,32 @@ export const OverviewApp = () => {
   );
 
   const {
-    mutate: runTriggerCall,
-    isLoading: runTriggerLoading,
+    mutate: runTriggerMutation,
+    isLoading: isRunTriggerPending,
     error: runTriggerError,
+    reset: resetRunTrigger,
   } = useMutation(async () => {
-    if (!selectedWorkflowProperties.callbackInfo) {
-      throw new Error('Cannot run trigger: Workflow runtime is not running or callback URL is not available');
+    if (!runService) {
+      throw new Error(
+        'Cannot run trigger: Workflow runtime management is unavailable. Start the workflow runtime and refresh the overview.'
+      );
     }
-    await runService?.runTrigger(selectedWorkflowProperties.callbackInfo as CallbackInfo);
-    return refetch();
+    if (!selectedWorkflowProperties.triggerName) {
+      throw new Error('Cannot run trigger: Trigger metadata is unavailable. Reopen the workflow overview to reload the workflow metadata.');
+    }
+
+    await runService.startTrigger(selectedWorkflowProperties.triggerName);
+    refetch();
   });
+
+  const onRunTrigger = useCallback(() => {
+    if (isRunTriggerPending) {
+      return;
+    }
+
+    resetRunTrigger();
+    runTriggerMutation();
+  }, [isRunTriggerPending, resetRunTrigger, runTriggerMutation]);
 
   const onVerifyRunId = useCallback(
     (runId: string) => {
@@ -220,7 +232,7 @@ export const OverviewApp = () => {
   );
 
   const errorMessage = useMemo((): string | undefined => {
-    if (shouldShowLocalDebugError(workflowState.isLocal, isWorkflowRuntimeRunning)) {
+    if (!runTriggerError && shouldShowLocalDebugError(workflowState.isLocal, isWorkflowRuntimeRunning)) {
       return intlText.DEBUG_PROJECT_ERROR;
     }
     let loadingErrorMessage: string | undefined;
@@ -281,12 +293,14 @@ export const OverviewApp = () => {
         corsNotice={workflowState.corsNotice}
         errorMessage={errorMessage}
         hasMoreRuns={hasNextPage}
-        loading={isLoading || runTriggerLoading}
+        loading={isLoading}
         isDarkMode={theme === Theme.Dark}
         isAgentWorkflow={isAgentWorkflow}
         agentUrlLoading={agentUrlIsLoading}
         agentUrlData={agentUrlData}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+        canRunTrigger={Boolean(runService && selectedWorkflowProperties.triggerName)}
+        isRunTriggerPending={isRunTriggerPending}
         pendingRunId={pendingRunId}
         runItems={runItems ?? []}
         workflowProperties={selectedWorkflowProperties}
@@ -300,7 +314,7 @@ export const OverviewApp = () => {
             item: run,
           });
         }}
-        onRunTrigger={runTriggerCall}
+        onRunTrigger={onRunTrigger}
         onCopyCallbackUrl={() => {
           vscode.postMessage({
             command: ExtensionCommand.copyWorkflowOverviewCallback,

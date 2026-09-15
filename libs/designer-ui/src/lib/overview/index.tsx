@@ -14,11 +14,13 @@ import { useIntl } from 'react-intl';
 import { useOverviewStyles } from './styles';
 
 export interface OverviewProps {
+  canRunTrigger?: boolean;
   corsNotice?: string;
   errorMessage?: string;
   isRefreshing?: boolean;
   isDarkMode?: boolean;
   isAgentWorkflow?: boolean;
+  isRunTriggerPending?: boolean;
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
   isWorkflowRuntimeRunning?: boolean;
@@ -47,11 +49,13 @@ const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
 const navigateForwardIconProps: IIconProps = { iconName: 'NavigateForward' };
 
 export const Overview: React.FC<OverviewProps> = ({
+  canRunTrigger,
   corsNotice,
   errorMessage,
   loading = false,
   isDarkMode,
   isAgentWorkflow,
+  isRunTriggerPending,
   agentUrlLoading,
   agentUrlData,
   isWorkflowRuntimeRunning,
@@ -138,13 +142,14 @@ export const Overview: React.FC<OverviewProps> = ({
   return (
     <div>
       <OverviewCommandBar
-        canRunTrigger={Boolean(workflowProperties.callbackInfo)}
+        canRunTrigger={canRunTrigger}
         isDarkMode={isDarkMode}
         isRefreshing={isRefreshing}
         isAgentWorkflow={isAgentWorkflow}
         agentUrlLoading={agentUrlLoading}
         agentUrlData={agentUrlData}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+        isRunTriggerPending={isRunTriggerPending}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
         onOpenProjectOverview={onOpenProjectOverview}

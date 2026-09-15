@@ -10,6 +10,7 @@ import { clearBlockingUI, sleep } from './helpers';
 import { waitForExtensionReady } from './createWorkspaceShared';
 import {
   clickProjectOverviewButton,
+  clickRunTrigger,
   getWorkflowRuns,
   getProjectOverviewWorkflowNames,
   invokeWorkflowCallback,
@@ -491,6 +492,50 @@ async function waitForWorkflowOverviewRun(
   );
 }
 
+async function getWorkflowOverviewCommandState(
+  driver: WebDriver
+): Promise<{ refreshCount: number; refreshDisabled: boolean; runTriggerCount: number; runTriggerDisabled: boolean }> {
+  return await driver.executeScript(`
+    const refresh = document.querySelector('button[aria-label="Refresh"]');
+    const runTrigger = document.querySelector('button[aria-label="Run trigger"]');
+    const isDisabled = (button) => !!button?.disabled || button?.getAttribute('aria-disabled') === 'true';
+    return {
+      refreshCount: refresh ? 1 : 0,
+      refreshDisabled: isDisabled(refresh),
+      runTriggerCount: runTrigger ? 1 : 0,
+      runTriggerDisabled: isDisabled(runTrigger),
+    };
+  `);
+}
+
+async function waitForWorkflowOverviewCommandsUsable(
+  driver: WebDriver,
+  timeoutMs = 30_000
+): Promise<Awaited<ReturnType<typeof getWorkflowOverviewCommandState>>> {
+  const deadline = Date.now() + timeoutMs;
+  let lastState = await getWorkflowOverviewCommandState(driver);
+  while (Date.now() < deadline) {
+    lastState = await getWorkflowOverviewCommandState(driver);
+    if (lastState.refreshCount === 1 && !lastState.refreshDisabled && lastState.runTriggerCount === 1 && !lastState.runTriggerDisabled) {
+      return lastState;
+    }
+    await sleep(250);
+  }
+  assert.fail(`Workflow Overview commands did not become usable. Last state=${JSON.stringify(lastState)}`);
+}
+
+async function assertNoUpstreamResponseError(driver: WebDriver): Promise<void> {
+  const errorMessages = await driver.executeScript<string[]>(`
+    return Array.from(document.querySelectorAll('[data-testid="msla-overview-error-message"]'))
+      .map((element) => (element.textContent || '').trim())
+      .filter(Boolean);
+  `);
+  assert.ok(
+    errorMessages.every((message) => !/(upstream[\s-]*server|no[\s-]*response|\b502\b)/i.test(message)),
+    `Workflow Overview must not surface an upstream/no-response/502 error after trigger start settles: ${JSON.stringify(errorMessages)}`
+  );
+}
+
 describe('Unified project overview', function () {
   this.timeout(TEST_TIMEOUT);
 
@@ -656,6 +701,18 @@ describe('Unified project overview', function () {
     const copied = await driver.executeScript<string>('return navigator.clipboard.readText();');
     assert.match(copied, /http:\/\/localhost:\d+\//, 'Workflow Overview copy should place the callback URL on the clipboard');
 
+    if (projectOverviewKind === 'codeful') {
+      const existingRuns = new Set((await getWorkflowRuns(requestWorkflow)).map((run) => run.id));
+      assert.ok(
+        await clickRunTrigger(driver, { workflowName: requestWorkflow, timeoutMs: 60_000 }),
+        'Codeful Workflow Overview should start its source-derived HTTP trigger through the Run trigger UI'
+      );
+      const startedRun = await waitForNewWorkflowRun(requestWorkflow, existingRuns, 'Succeeded', 120_000);
+      assert.ok(startedRun, 'Codeful management start should create a new successful exact run');
+      await waitForWorkflowOverviewRun(driver, startedRun.identifier, 'Succeeded', false);
+      await assertNoUpstreamResponseError(driver);
+    }
+
     const backlink = await driver.findElement(By.css('button[aria-label="All project workflows"]'));
     await driver.actions().move({ origin: backlink }).click().perform();
     await driver.switchTo().defaultContent();
@@ -664,10 +721,12 @@ describe('Unified project overview', function () {
       description: 'project overview backlink target',
     });
 
-    assert.ok(
-      await invokeWorkflowCallback(driver, { workflowName: requestWorkflow, body: { source: 'automatic-refresh' } }),
-      'Request workflow invocation should succeed after workflow health and callback readiness'
-    );
+    if (projectOverviewKind === 'codeless') {
+      assert.ok(
+        await invokeWorkflowCallback(driver, { workflowName: requestWorkflow, body: { source: 'automatic-refresh' } }),
+        'Request workflow invocation should succeed after workflow health and callback readiness'
+      );
+    }
     await waitForRowText(driver, requestWorkflow, 'Succeeded', 120_000);
 
     await clickProjectOverviewButton(driver, `Open latest run for ${requestWorkflow}`);
@@ -718,24 +777,43 @@ describe('Unified project overview', function () {
       await waitForProjectCancellationSettled(driver, LONG_RUNNING_WORKFLOW);
 
       const secondExistingRuns = new Set((await getWorkflowRuns(LONG_RUNNING_WORKFLOW)).map((run) => run.id));
-      const secondCallback = await startWorkflowCallback(driver, {
-        workflowName: LONG_RUNNING_WORKFLOW,
-        body: { source: 'workflow-overview-cancel' },
-      });
-      assert.ok(secondCallback, 'Second long-running callback should start without waiting for its Response action');
-      pendingCallbacks.push(secondCallback);
-      const secondRun = await waitForNewWorkflowRun(LONG_RUNNING_WORKFLOW, secondExistingRuns);
-      assert.ok(secondRun, 'Management API should expose the exact second long-running run in Running state');
-
       await clickProjectOverviewButton(driver, `Open overview for ${LONG_RUNNING_WORKFLOW}`);
       await driver.switchTo().defaultContent();
       await switchToActiveWebviewFrame(driver, {
         markerSelectors: ['[data-testid="msla-overview-command-bar"]'],
-        markerText: secondRun.identifier,
-        description: 'workflow overview for exact running cancellation run',
+        markerText: firstRun.identifier,
+        description: 'workflow overview before management trigger start',
       });
+      const existingRunState = await waitForWorkflowOverviewRun(driver, firstRun.identifier, 'Cancelled', false);
+      assert.strictEqual(existingRunState.openCount, 1, 'Existing Workflow Overview history should remain openable before a new start');
+      assert.deepStrictEqual(
+        await waitForWorkflowOverviewCommandsUsable(driver),
+        { refreshCount: 1, refreshDisabled: false, runTriggerCount: 1, runTriggerDisabled: false },
+        'Workflow Overview history actions should remain usable before starting the long-running trigger'
+      );
+
+      assert.ok(
+        await clickRunTrigger(driver, { workflowName: LONG_RUNNING_WORKFLOW, timeoutMs: 60_000 }),
+        'Long-running workflow must be started by clicking the actual Workflow Overview Run trigger button'
+      );
+      const secondRun = await waitForNewWorkflowRun(LONG_RUNNING_WORKFLOW, secondExistingRuns, 'Running', 60_000);
+      assert.ok(
+        secondRun,
+        'Management API should expose a new exact Running run promptly instead of waiting for the five-minute Response action'
+      );
       const workflowRunningState = await waitForWorkflowOverviewRun(driver, secondRun.identifier, 'Running', true);
       assert.strictEqual(workflowRunningState.identifierLinkCount, 1, 'Run identifier should remain a direct link/action');
+      assert.strictEqual(workflowRunningState.openCount, 1, 'New running Workflow Overview history should remain openable');
+      assert.strictEqual(
+        (await getWorkflowOverviewRunState(driver, firstRun.identifier)).openCount,
+        1,
+        'Existing Workflow Overview history should remain openable while the new run is Running'
+      );
+      assert.deepStrictEqual(
+        await waitForWorkflowOverviewCommandsUsable(driver),
+        { refreshCount: 1, refreshDisabled: false, runTriggerCount: 1, runTriggerDisabled: false },
+        'Run trigger acknowledgement should settle while the workflow remains Running, leaving Run trigger and Refresh usable'
+      );
       const workflowOpen = await driver.findElement(By.css(`button[aria-label="Open run ${secondRun.identifier}"]`));
       const workflowCancel = await driver.findElement(By.css(`button[aria-label="Cancel run ${secondRun.identifier}"]`));
       assert.strictEqual((await workflowOpen.getText()).trim(), '', 'Workflow Overview Open action should be icon-only');
@@ -751,6 +829,7 @@ describe('Unified project overview', function () {
       );
       await clickProjectOverviewButton(driver, 'Refresh');
       await waitForWorkflowOverviewRun(driver, secondRun.identifier, 'Cancelled', false);
+      await assertNoUpstreamResponseError(driver);
     }
 
     await revealEditorTab(driver, `${entry.appName} - Project overview`);

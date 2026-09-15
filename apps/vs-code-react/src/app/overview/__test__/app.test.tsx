@@ -19,11 +19,15 @@ const mocks = vi.hoisted(() => ({
   isRuntimeUp: vi.fn().mockResolvedValue(true),
   mutationError: undefined as unknown,
   mutationFn: undefined as (() => Promise<unknown>) | undefined,
+  mutationLoading: false,
+  mutationMutate: vi.fn(),
+  mutationReset: vi.fn(),
   overviewProps: [] as any[],
   postMessage: vi.fn(),
   refetch: vi.fn().mockResolvedValue(undefined),
   runsError: undefined as unknown,
   runTrigger: vi.fn(),
+  startTrigger: vi.fn(),
   standardRunService: vi.fn(),
   useInfiniteQuery: vi.fn(),
   useMutation: vi.fn(),
@@ -79,6 +83,8 @@ vi.mock('@microsoft/designer-ui', () => ({
     return (
       <div
         data-error={props.errorMessage ?? ''}
+        data-loading={String(props.loading)}
+        data-run-trigger-pending={String(props.isRunTriggerPending)}
         data-runtime-running={String(props.isWorkflowRuntimeRunning)}
         data-pending-run-id={props.pendingRunId ?? ''}
         data-testid="overview"
@@ -115,7 +121,12 @@ vi.mock('@microsoft/designer-ui', () => ({
         <button onClick={() => props.onOpenRun({ id: 'run-id', identifier: 'run-id', startTime: '', duration: '', status: 'Succeeded' })}>
           Open run
         </button>
-        <button onClick={() => props.onRunTrigger()}>Run trigger</button>
+        <button disabled={!props.canRunTrigger || props.isRunTriggerPending} onClick={() => props.onRunTrigger()}>
+          Run trigger
+        </button>
+        <button disabled={props.isRefreshing} onClick={() => props.onLoadRuns()}>
+          Refresh
+        </button>
         <button onClick={() => props.onCopyCallbackUrl()}>Copy callback</button>
         {props.onOpenProjectOverview ? <button onClick={() => props.onOpenProjectOverview()}>All project workflows</button> : null}
         <button
@@ -204,6 +215,7 @@ const baseWorkflowState = {
     },
     name: 'workflow-a',
     stateType: 'Stateful',
+    triggerName: 'manual',
   },
 };
 
@@ -236,6 +248,7 @@ describe('OverviewApp', () => {
     vi.clearAllMocks();
     mocks.mutationError = undefined;
     mocks.mutationFn = undefined;
+    mocks.mutationLoading = false;
     mocks.overviewProps = [];
     mocks.runsError = undefined;
     mocks.getRuns.mockResolvedValue({ runs: [], nextLink: undefined });
@@ -243,6 +256,7 @@ describe('OverviewApp', () => {
     mocks.getMoreRuns.mockResolvedValue({ runs: [], nextLink: undefined });
     mocks.getRun.mockResolvedValue({ id: 'run-id' });
     mocks.runTrigger.mockResolvedValue(undefined);
+    mocks.startTrigger.mockResolvedValue(undefined);
     mocks.refetch.mockResolvedValue(undefined);
     mocks.fetchAgentUrl.mockResolvedValue({ agentUrl: 'http://agent', chatUrl: 'http://chat', hostName: 'http://runtime' });
     mocks.HttpClient.mockImplementation((options: any) => {
@@ -257,6 +271,7 @@ describe('OverviewApp', () => {
         getRun: mocks.getRun,
         getRuns: mocks.getRuns,
         runTrigger: mocks.runTrigger,
+        startTrigger: mocks.startTrigger,
       };
     });
     mocks.isRuntimeUp.mockResolvedValue(true);
@@ -271,10 +286,14 @@ describe('OverviewApp', () => {
     }));
     mocks.useMutation.mockImplementation((mutationFn: () => Promise<unknown>) => {
       mocks.mutationFn = mutationFn;
+      mocks.mutationMutate.mockImplementation(() => {
+        void mutationFn().catch(() => undefined);
+      });
       return {
         error: mocks.mutationError,
-        isLoading: false,
-        mutate: vi.fn(() => mutationFn()),
+        isLoading: mocks.mutationLoading,
+        mutate: mocks.mutationMutate,
+        reset: mocks.mutationReset,
       };
     });
     mocks.useQuery.mockReturnValue({
@@ -295,6 +314,7 @@ describe('OverviewApp', () => {
           kind: 'Stateful',
           name: 'workflow-a',
           stateType: 'Stateful',
+          triggerName: 'firstRequest',
         },
         {
           callbackInfo: {
@@ -304,6 +324,7 @@ describe('OverviewApp', () => {
           kind: 'Agent',
           name: 'workflow-b',
           stateType: 'Agent',
+          triggerName: 'secondRequest',
         },
       ],
     });
@@ -343,30 +364,104 @@ describe('OverviewApp', () => {
       'subscription-id',
       'resource-group'
     );
+
+    await mocks.mutationFn?.();
+    expect(mocks.startTrigger).toHaveBeenCalledWith('secondRequest');
   });
 
-  it('runs the selected workflow trigger and reports missing callback errors', async () => {
-    renderOverviewApp();
+  it('starts the selected workflow trigger through management and never invokes its callback URL', async () => {
+    mocks.refetch.mockReturnValue(new Promise(() => undefined));
+    renderOverviewApp({
+      workflowProperties: {
+        name: 'workflow-a',
+        stateType: 'Stateful',
+        triggerName: 'manual',
+      },
+    });
 
     await mocks.mutationFn?.();
 
-    expect(mocks.runTrigger).toHaveBeenCalledWith({
-      method: 'POST',
-      value: 'https://callback/workflow-a',
-    });
+    expect(mocks.startTrigger).toHaveBeenCalledWith('manual');
+    expect(mocks.runTrigger).not.toHaveBeenCalled();
     expect(mocks.refetch).toHaveBeenCalled();
+  });
 
-    vi.clearAllMocks();
-    renderOverviewApp({
+  it('reports an actionable error when trigger metadata is unavailable', async () => {
+    const workflowWithoutTrigger = {
       workflowProperties: {
-        name: 'workflow-without-callback',
+        callbackInfo: {
+          method: 'POST',
+          value: 'https://callback/workflow-without-trigger',
+        },
+        name: 'workflow-without-trigger',
         stateType: 'Stateful',
+      },
+    };
+    const { unmount } = renderOverviewApp(workflowWithoutTrigger);
+
+    let triggerError: unknown;
+    try {
+      await mocks.mutationFn?.();
+    } catch (error) {
+      triggerError = error;
+    }
+
+    expect(triggerError).toEqual(
+      new Error('Cannot run trigger: Trigger metadata is unavailable. Reopen the workflow overview to reload the workflow metadata.')
+    );
+    expect(mocks.runTrigger).not.toHaveBeenCalled();
+    expect(mocks.startTrigger).not.toHaveBeenCalled();
+
+    unmount();
+    mocks.mutationError = triggerError;
+    renderOverviewApp(workflowWithoutTrigger);
+
+    expect(screen.getByTestId('overview')).toHaveAttribute(
+      'data-error',
+      'Cannot run trigger: Trigger metadata is unavailable. Reopen the workflow overview to reload the workflow metadata.'
+    );
+  });
+
+  it('reports an actionable error when workflow runtime management is unavailable', async () => {
+    renderOverviewApp({
+      baseUrl: undefined,
+      workflowProperties: {
+        name: 'workflow-a',
+        stateType: 'Stateful',
+        triggerName: 'manual',
       },
     });
 
     await expect(mocks.mutationFn?.()).rejects.toThrow(
-      'Cannot run trigger: Workflow runtime is not running or callback URL is not available'
+      'Cannot run trigger: Workflow runtime management is unavailable. Start the workflow runtime and refresh the overview.'
     );
+    expect(mocks.startTrigger).not.toHaveBeenCalled();
+  });
+
+  it('disables only Run trigger while start acknowledgment is pending', () => {
+    mocks.mutationLoading = true;
+
+    renderOverviewApp();
+
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-loading', 'false');
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-run-trigger-pending', 'true');
+    expect(screen.getByRole('button', { name: 'Run trigger' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Cancel run' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Open run' })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run trigger' }));
+    expect(mocks.mutationMutate).not.toHaveBeenCalled();
+  });
+
+  it('resets an earlier trigger error before retrying', () => {
+    mocks.mutationError = new Error('Earlier trigger failure');
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Run trigger' }));
+
+    expect(mocks.mutationReset).toHaveBeenCalledOnce();
+    expect(mocks.mutationMutate).toHaveBeenCalledOnce();
   });
 
   it.each([
