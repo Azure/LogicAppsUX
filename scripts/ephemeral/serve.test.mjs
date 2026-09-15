@@ -100,7 +100,7 @@ describe('production artifact smoke server', () => {
   });
 
   it.each([
-    ...extensionExclusions.flatMap((pattern) => [pattern.replace('*', 'missing'), pattern.replace('*', 'nested/missing')]),
+    ...extensionExclusions.flatMap((pattern) => [pattern.replaceAll('*', 'missing'), pattern.replaceAll('*', 'nested/missing')]),
     '/assets/missing.js',
     '/assets/missing',
     '/armToken.json',
