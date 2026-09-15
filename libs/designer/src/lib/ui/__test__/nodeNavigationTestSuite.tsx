@@ -130,13 +130,27 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
         { id: 'ABOUT', title: 'About', visible: true, order: 2, content: <div>{selectedNodeId} about</div> },
       ];
       return (
-        <PanelContent
-          nodeId={selectedNodeId}
-          tabs={tabs}
-          selectedTab={selectedNodeActiveTabId}
-          selectTab={(tabId) => store.dispatch(setSelectedPanelActiveTab(tabId))}
-          trackEvent={vi.fn()}
-        />
+        <div className="msla-panel-layout">
+          <button type="button">Close details</button>
+          <input aria-label="Panel input" />
+          <textarea aria-label="Panel textarea" />
+          <select aria-label="Panel select">
+            <option>Value</option>
+          </select>
+          <div contentEditable suppressContentEditableWarning data-testid="panel-rich-editor">
+            Draft
+          </div>
+          <div role="dialog" aria-label="Nested dialog">
+            <button type="button">Dialog control</button>
+          </div>
+          <PanelContent
+            nodeId={selectedNodeId}
+            tabs={tabs}
+            selectedTab={selectedNodeActiveTabId}
+            selectTab={(tabId) => store.dispatch(setSelectedPanelActiveTab(tabId))}
+            trackEvent={vi.fn()}
+          />
+        </div>
       );
     };
     const Harness = () => {
@@ -176,10 +190,22 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
         <div data-testid="outside" tabIndex={0}>
           Outside the canvas
         </div>
-        <ReactFlowProvider defaultNodes={nodes}>
-          <Harness />
-        </ReactFlowProvider>
-        {includePanel ? <Details /> : null}
+        <div className="msla-designer-canvas">
+          <ReactFlowProvider defaultNodes={nodes}>
+            <Harness />
+          </ReactFlowProvider>
+          {includePanel ? <Details /> : null}
+          <div className="msla-panel-layout">
+            <div className="msla-node-details-panel" id="msla-node-details-panel-Pinned" />
+            <button type="button">Pinned control</button>
+          </div>
+        </div>
+        <div className="msla-designer-canvas">
+          <div className="msla-panel-layout">
+            <div className="msla-node-details-panel" id="msla-node-details-panel-First" />
+            <button type="button">Other designer control</button>
+          </div>
+        </div>
       </Provider>
     );
     return { ...result, store, dispatch, onNavigate, flowRef };
@@ -295,6 +321,35 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
       expect(press('ArrowDown', modifiers, screen.getByTestId('outside')).defaultPrevented).toBe(false);
       expect(dispatch).not.toHaveBeenCalled();
       expect(onNavigate).not.toHaveBeenCalled();
+    });
+
+    it('navigates from the selected details panel Close button and retained tab', () => {
+      const { store, dispatch } = setup({ includePanel: true });
+      expect(press('ArrowDown', modifiers, screen.getByRole('button', { name: 'Close details' })).defaultPrevented).toBe(true);
+      expect(store.getState().panel.operationContent.selectedNodeId).toBe('Scope');
+      expect(dispatch).toHaveBeenLastCalledWith(setFocusNode('Scope-#scope'));
+      const settings = screen.getByRole('tab', { name: 'Settings' });
+      fireEvent.click(settings);
+      press('ArrowUp', modifiers, settings);
+      expect(store.getState().panel.operationContent.selectedNodeId).toBe('First');
+      expect(store.getState().panel.operationContent.selectedNodeActiveTabId).toBe('SETTINGS');
+    });
+
+    it.each(['Pinned control', 'Other designer control', 'Dialog control'])('ignores %s outside the selected panel scope', (name) => {
+      const { dispatch } = setup({ includePanel: true });
+      expect(press('ArrowDown', modifiers, screen.getByRole('button', { name })).defaultPrevented).toBe(false);
+      expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it.each(['Panel input', 'Panel textarea', 'Panel select', 'panel-rich-editor'])('preserves editing keys in %s', (name) => {
+      const { dispatch } = setup({ includePanel: true });
+      const target = name === 'panel-rich-editor' ? screen.getByTestId(name) : screen.getByLabelText(name);
+      if (name === 'panel-rich-editor') {
+        Object.defineProperty(target, 'isContentEditable', { value: true });
+      }
+      expect(press('ArrowDown', modifiers, target).defaultPrevented).toBe(false);
+      expect(press('ArrowUp', modifiers, target).defaultPrevented).toBe(false);
+      expect(dispatch).not.toHaveBeenCalled();
     });
 
     it.each(['Input editor', 'Select editor', 'Textarea editor', 'rich-editor', 'rich-editor-child'])(

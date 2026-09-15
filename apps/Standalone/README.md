@@ -49,7 +49,7 @@ Unknown routes fall back to the production designer development shell.
 
 ## Designer keyboard navigation
 
-In either designer (`/` or `/v2`), focus a card on the canvas and use
+In either designer (`/` or `/v2`), click a card on the canvas and use
 **Ctrl/Cmd + Down** to select the next action or trigger, or **Ctrl/Cmd + Up**
 to select the previous one. Selection follows the existing tab order, including
 scope cards and nested actions, rather than recalculating graph connections.
@@ -59,7 +59,10 @@ Navigation stops at the first and last nodes. With no current selection, Down
 starts at the first node and Up at the last. The selected card receives focus
 and is brought into view, including off-screen cards. Selection uses the usual
 operation-panel behavior and remains available in read-only and monitoring views.
-The shortcuts do not override typing in form fields or content-editable controls.
+The shortcuts also work while a non-editing control in the selected node's
+details panel has focus, including the Close button focused after clicking a card.
+They do not override typing in form fields or content-editable controls, or handle
+keys from pinned panels, other designers, dialogs, or menus.
 
 The operation details panel retains your selected tab when you click or navigate
 to another node. If that node does not offer the tab, its first available tab is

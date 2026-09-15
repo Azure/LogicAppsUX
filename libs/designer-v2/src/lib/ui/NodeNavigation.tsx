@@ -26,7 +26,21 @@ export const NodeNavigation = ({ canvasRef, onNavigate }: NodeNavigationProps) =
 
   const navigate = useCallback(
     (event: KeyboardEvent, direction: 'next' | 'previous') => {
-      if (!(event.target instanceof Element) || !canvasRef.current?.contains(event.target)) {
+      if (!(event.target instanceof Element)) {
+        return;
+      }
+      const canvas = canvasRef.current;
+      const panel = event.target.closest('.msla-panel-layout')?.querySelector('.msla-node-details-panel');
+      const designer = canvas?.closest('.msla-designer-canvas');
+      const isSelectedPanel =
+        selectedNodeId &&
+        panel?.id === `msla-node-details-panel-${selectedNodeId}` &&
+        designer &&
+        panel.closest('.msla-designer-canvas') === designer &&
+        !event.target.closest(
+          '[role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"], [role="textbox"]'
+        );
+      if (!canvas?.contains(event.target) && !isSelectedPanel) {
         return;
       }
       event.preventDefault();

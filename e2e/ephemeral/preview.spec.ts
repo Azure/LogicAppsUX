@@ -69,6 +69,50 @@ const selectRecurrenceWorkflow = async (page: Page, hasBackground: boolean) => {
 };
 
 for (const path of ['/', '/v2']) {
+  for (const modifier of ['Control', 'Meta']) {
+    test(`${path} ${modifier}+arrows navigate immediately after a normal card click`, async ({ page, baseURL }) => {
+      const assertHealthyPreview = await observePreview(page, baseURL!);
+      await page.goto(path);
+      await expectLocalOnlySettings(page);
+      await page.getByRole('combobox', { name: 'Workflow File To Load' }).click();
+      await page.getByRole('option', { name: 'Panel', exact: true }).click();
+      await page.getByRole('button', { name: 'Toolbox' }).click();
+      await page.getByLabel('Zoom view to fit').click();
+
+      const card = (nodeId: string) => page.locator(`[id="msla-node-${nodeId}"]`);
+      await card('manual').click();
+      await expect(page.locator('[id="msla-panel-header-close-nav"]')).toBeFocused();
+      await page.keyboard.press(`${modifier}+ArrowDown`);
+      await expectSelectedAndFocused(page, 'Initialize_ArrayVariable');
+      await expect(card('Initialize_ArrayVariable')).toBeInViewport();
+      await page.keyboard.press(`${modifier}+ArrowUp`);
+      await expectSelectedAndFocused(page, 'manual');
+      await expect(card('manual')).toBeInViewport();
+
+      await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+      await page.keyboard.press(`${modifier}+ArrowDown`);
+      await expectSelectedAndFocused(page, 'Initialize_ArrayVariable');
+      await expect(page.getByRole('tab', { name: 'Settings', exact: true })).toHaveAttribute('aria-selected', 'true');
+
+      await page.locator('[id="Initialize_ArrayVariable-title"]').click();
+      await page.keyboard.press(`${modifier}+ArrowDown`);
+      await expect(page.locator('[id="Initialize_ArrayVariable-title"]')).toBeFocused();
+      await page.keyboard.press(`${modifier}+ArrowUp`);
+      await expect(page.locator('[id="Initialize_ArrayVariable-title"]')).toBeFocused();
+
+      await page.getByLabel('Zoom view to fit').click();
+      await card('Parse_JSON').click();
+      await expect(page.locator('[id="msla-panel-header-close-nav"]')).toBeFocused();
+      await page.keyboard.press(`${modifier}+ArrowUp`);
+      await expectSelectedAndFocused(page, 'Initialize_ArrayVariable');
+      await expect(card('Initialize_ArrayVariable')).toBeInViewport();
+      await page.keyboard.press(`${modifier}+ArrowUp`);
+      await expectSelectedAndFocused(page, 'manual');
+      await expect(card('manual')).toBeInViewport();
+      assertHealthyPreview();
+    });
+  }
+
   test(`${path} loads and edits a local workflow, then survives a direct reload`, async ({ page, baseURL }) => {
     const assertHealthyPreview = await observePreview(page, baseURL!);
 
