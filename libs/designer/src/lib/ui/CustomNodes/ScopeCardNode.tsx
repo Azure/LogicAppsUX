@@ -66,7 +66,7 @@ import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSele
 const ScopeCardNode = ({ id }: NodeProps) => {
   const scopeId = useMemo(() => removeIdTag(id), [id]);
   const nodeComment = useNodeDescription(scopeId);
-  const shouldFocus = useShouldNodeFocus(scopeId);
+  const shouldFocus = useShouldNodeFocus(scopeId, id);
   const node = useActionMetadata(scopeId);
   const operationsInfo = useAllOperations();
 

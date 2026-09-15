@@ -49,7 +49,8 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   };
   useEffect(() => {
     if (setFocus) {
-      focusRef.current?.focus();
+      // Canvas panning owns visibility; native scrolling would offset the viewport.
+      focusRef.current?.focus({ preventScroll: true });
     }
   }, [setFocus]);
   const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick);

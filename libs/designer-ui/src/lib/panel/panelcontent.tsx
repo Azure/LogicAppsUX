@@ -31,7 +31,7 @@ export interface PanelContentProps {
 export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: PanelContentProps): JSX.Element => {
   const intl = useIntl();
 
-  const selectedTabId = selectedTab ?? tabs[0]?.id;
+  const selectedTabId = tabs.find((tab) => tab.id === selectedTab)?.id ?? tabs[0]?.id;
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
@@ -70,6 +70,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
         </Overflow>
       ) : null}
       <div
+        key={nodeId}
         className="msla-panel-content-container"
         tabIndex={selectedTabId === 'ABOUT' ? 0 : undefined}
         role={selectedTabId === 'ABOUT' ? 'region' : undefined}

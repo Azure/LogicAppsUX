@@ -66,7 +66,7 @@ import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 
 const ScopeCardNode = ({ id }: NodeProps) => {
   const scopeId = useMemo(() => removeIdTag(id), [id]);
-  const shouldFocus = useShouldNodeFocus(scopeId);
+  const shouldFocus = useShouldNodeFocus(scopeId, id);
   const node = useActionMetadata(scopeId);
   const errorInfo = useOperationErrorInfo(scopeId);
   const operationsInfo = useAllOperations();

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 
 // ── Mock state toggles ──────────────────────────────────────────────────────
@@ -13,6 +13,7 @@ let mockAllAgentIds: string[] = [];
 let mockNodesMetadata: Record<string, any> = {};
 
 const mockDispatch = vi.fn();
+const mockAfterNavigate = vi.fn();
 
 // ── React-Redux ──────────────────────────────────────────────────────────────
 vi.mock('react-redux', () => ({
@@ -26,7 +27,12 @@ let capturedReactFlowProps: Record<string, any> = {};
 vi.mock('@xyflow/react', () => ({
   ReactFlow: ({ children, ...props }: any) => {
     capturedReactFlowProps = props;
-    return <div data-testid="react-flow">{children}</div>;
+    return (
+      <div data-testid="react-flow">
+        {children}
+        {!props.onlyRenderVisibleElements && <div data-testid="offscreen-node" />}
+      </div>
+    );
   },
   BezierEdge: () => <div />,
 }));
@@ -111,6 +117,20 @@ vi.mock('../connections/edge', () => ({ default: () => <div /> }));
 vi.mock('../connections/handoffEdge', () => ({ default: () => <div /> }));
 vi.mock('../connections/hiddenEdge', () => ({ default: () => <div /> }));
 vi.mock('../connections/draftEdge', () => ({ DraftEdge: () => <div /> }));
+vi.mock('../NodeNavigation', () => ({
+  NodeNavigation: ({ onNavigate }: { onNavigate: () => void }) => (
+    <button
+      type="button"
+      data-testid="node-navigation"
+      onClick={() => {
+        onNavigate();
+        mockAfterNavigate(screen.queryByTestId('offscreen-node') !== null);
+      }}
+    >
+      Navigate
+    </button>
+  ),
+}));
 
 // ── Import under test ───────────────────────────────────────────────────────
 import DesignerReactFlow from '../DesignerReactFlow';
@@ -133,6 +153,7 @@ describe('DesignerReactFlow (designer v1)', () => {
     mockAllAgentIds = [];
     mockNodesMetadata = {};
     mockDispatch.mockClear();
+    mockAfterNavigate.mockClear();
     capturedReactFlowProps = {};
   });
 
@@ -141,6 +162,21 @@ describe('DesignerReactFlow (designer v1)', () => {
   // ──────────────────────────────────────────────────────────
 
   describe('Rendering', () => {
+    it('mounts offscreen DOM before the navigation callback returns, including the first command', () => {
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      expect(screen.getByTestId('react-flow')).toContainElement(screen.getByTestId('node-navigation'));
+      expect(capturedReactFlowProps.onlyRenderVisibleElements).toBe(true);
+      expect(screen.queryByTestId('offscreen-node')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByTestId('node-navigation'));
+      expect(mockAfterNavigate).toHaveBeenNthCalledWith(1, true);
+      expect(capturedReactFlowProps.onlyRenderVisibleElements).toBe(false);
+      const offscreenNode = screen.getByTestId('offscreen-node');
+      fireEvent.click(screen.getByTestId('node-navigation'));
+      expect(mockAfterNavigate).toHaveBeenNthCalledWith(2, true);
+      expect(mockAfterNavigate).toHaveBeenCalledTimes(2);
+      expect(screen.getByTestId('offscreen-node')).toBe(offscreenNode);
+    });
+
     it('should render ReactFlow component', () => {
       render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
       expect(screen.getByTestId('react-flow')).toBeInTheDocument();

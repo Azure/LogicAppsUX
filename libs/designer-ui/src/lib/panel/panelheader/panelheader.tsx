@@ -31,7 +31,7 @@ import {
 } from '@fluentui/react-icons';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -84,7 +84,8 @@ const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element 
   });
   const buttonText = panelCloseTitle;
 
-  useEffect(() => {
+  // Default panel focus must precede an explicit canvas focus request.
+  useLayoutEffect(() => {
     if (!nodeId) {
       return;
     }
