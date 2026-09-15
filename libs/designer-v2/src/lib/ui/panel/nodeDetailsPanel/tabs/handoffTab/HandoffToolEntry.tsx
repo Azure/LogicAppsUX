@@ -28,7 +28,7 @@ import { useOperationParameterByName } from '../../../../../core/state/operation
 import constants from '../../../../../common/constants';
 import { removeAgentHandoff } from '../../../../../core/actions/bjsworkflow/handoff';
 import { ParameterSection } from '../parametersTab';
-import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import { SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -42,6 +42,7 @@ interface HandoffToolEntryProps {
 
 export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => {
   const isReadOnly = useReadOnly();
+  const { supportedExpressionFunctions } = useHostOptions();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -202,7 +203,7 @@ export const HandoffToolEntry = ({ agentId, toolId }: HandoffToolEntryProps) => 
     workflowState,
     replacedIds
   );
-  const expressionGroup = getExpressionTokenSections();
+  const expressionGroup = getExpressionTokenSections(supportedExpressionFunctions);
 
   return (
     <div className={styles.handoffToolEntry}>
