@@ -104,7 +104,12 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
 
   const projectNugetFolder = path.join(projectPath, '.nuget');
   const projectSdkHashMarkerPath = path.join(projectNugetFolder, codefulSdkProjectHashMarkerName);
-  const projectSdkPackagePath = path.join(projectNugetFolder, 'packages', CodefulSdk.WorkflowsSDK.toLowerCase(), CodefulSdkVersion.WorkflowsSDK);
+  const projectSdkPackagePath = path.join(
+    projectNugetFolder,
+    'packages',
+    CodefulSdk.WorkflowsSDK.toLowerCase(),
+    CodefulSdkVersion.WorkflowsSDK
+  );
   const restoreNoOpCachePaths = [
     path.join(projectPath, 'obj', 'project.assets.json'),
     path.join(projectPath, 'obj', 'project.nuget.cache'),

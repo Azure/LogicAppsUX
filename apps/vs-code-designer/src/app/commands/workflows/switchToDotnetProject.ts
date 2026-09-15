@@ -209,11 +209,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   xmlBuildFile = JSON.parse(xmlBuildFile);
   if (isCodeful) {
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.DurableTask, CodefulSdkVersion.DurableTask);
-    xmlBuildFile = addNugetPackagesToBuildFileByName(
-      xmlBuildFile,
-      CodefulSdk.WorkflowsWebJobs,
-      CodefulSdkVersion.WorkflowsWebJobs
-    );
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.WorkflowsWebJobs, CodefulSdkVersion.WorkflowsWebJobs);
     xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.WorkflowsSDK, CodefulSdkVersion.WorkflowsSDK);
     xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
   } else {

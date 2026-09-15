@@ -17,7 +17,6 @@ import {
   vscodeCommand,
   vscodeFolderName,
   workflowFileName,
-  CodefulSdk,
   CodefulSdkVersion,
 } from '../../../../constants';
 import { localize } from '../../../../localize';

@@ -149,7 +149,7 @@ describe('LogicAppsLanguageServer', () => {
     const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
     mocks.languageClient.mockReturnValue(languageClient);
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath);
-    mocks.readdir.mockResolvedValue([codefulSdkPackageFileName]);
+    mocks.readdir.mockResolvedValue(['Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg', codefulSdkPackageFileName]);
 
     await new LogicAppsLanguageServer({} as any).start();
 
