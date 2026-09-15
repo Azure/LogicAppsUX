@@ -8,6 +8,7 @@ import { By, EditorView, Key, type WebDriver, Workbench, VSBrowser } from 'vscod
 import { lspDirectory } from '../../constants';
 import { clearBlockingUI, sleep } from './helpers';
 import { waitForExtensionReady } from './createWorkspaceShared';
+import { openWorkspaceFileInSession } from './designerHelpers';
 import {
   clickProjectOverviewButton,
   clickRunTrigger,
@@ -563,6 +564,7 @@ describe('Unified project overview', function () {
     driver = VSBrowser.instance.driver;
     workbench = new Workbench();
     await waitForExtensionReady(workbench, 180_000);
+    await openWorkspaceFileInSession(workbench, entry.wsFilePath);
     await driver.switchTo().defaultContent();
     await new EditorView().closeAllEditors();
     await clearBlockingUI(driver);
