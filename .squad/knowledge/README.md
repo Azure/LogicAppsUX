@@ -16,6 +16,7 @@ It is not a transcript archive. Do not store raw Copilot conversations, secrets,
 | [vscode-e2e-testing.md](vscode-e2e-testing.md) | VS Code ExTester UI E2E rules and pitfalls |
 | [runtime-readiness-probes.md](runtime-readiness-probes.md) | 4-probe HTTP readiness chain for VS Code Functions runtime (PR #9164) |
 | [vscode-task-env-propagation.md](vscode-task-env-propagation.md) | `func: host start` task env / PATH propagation across Windows / Linux / macOS (PR #9164) |
+| [portal-local-testing.md](portal-local-testing.md) | Testing active LogicAppsUX designer packages in a local Portal checkout or worktree |
 | [unit-testing.md](unit-testing.md) | Unit-test conventions and coverage patterns |
 | [customer-repro.md](customer-repro.md) | Safe customer-facing issue reproduction patterns |
 

@@ -1184,7 +1184,7 @@
       "file_type": "code",
       "norm_label": "iextensionsjson",
       "source_file": "src/lib/models/extensioncommand.ts",
-      "source_location": "L79"
+      "source_location": "L78"
     },
     {
       "id": "lib_models_hybridlogicapp_fileshare",
@@ -4274,18 +4274,6 @@
       "weight": 1.0
     },
     {
-      "source": "lib_services_jwthelper_jwttokenhelper_createinstance",
-      "target": "lib_services_jwthelper_jwttokenhelper",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/lib/services/JwtHelper.ts",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
       "source": "lib_services_jwthelper_jwttokenhelper_extractjwttokenpayload",
       "target": "lib_services_jwthelper_jwttokenhelper_decodejwt",
       "relation": "calls",
@@ -4871,7 +4859,6 @@
       "context": "export",
       "source_file": "src/lib/models/templates/index.ts",
       "source_location": "L4",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -4884,7 +4871,6 @@
       "context": "export",
       "source_file": "src/lib/models/templates/index.ts",
       "source_location": "L5",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6397,7 +6383,6 @@
       "context": "import",
       "source_file": "src/lib/models/bundleFeed.ts",
       "source_location": "L1",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6410,7 +6395,6 @@
       "context": "import",
       "source_file": "src/lib/models/connection.ts",
       "source_location": "L1",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6423,7 +6407,6 @@
       "context": "import",
       "source_file": "src/lib/models/connection.ts",
       "source_location": "L2",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6436,7 +6419,6 @@
       "context": "import",
       "source_file": "src/lib/models/connection.ts",
       "source_location": "L3",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6449,7 +6431,6 @@
       "context": "import",
       "source_file": "src/lib/models/context.ts",
       "source_location": "L1",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6462,7 +6443,6 @@
       "context": "import",
       "source_file": "src/lib/models/context.ts",
       "source_location": "L2",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6475,7 +6455,6 @@
       "context": "import",
       "source_file": "src/lib/models/dataMapper.ts",
       "source_location": "L1",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6488,7 +6467,6 @@
       "context": "import",
       "source_file": "src/lib/models/functions.ts",
       "source_location": "L1",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6501,7 +6479,6 @@
       "context": "import",
       "source_file": "src/lib/models/functions.ts",
       "source_location": "L2",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6514,7 +6491,6 @@
       "context": "import",
       "source_file": "src/lib/models/functions.ts",
       "source_location": "L3",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6527,7 +6503,6 @@
       "context": "import",
       "source_file": "src/lib/models/project.ts",
       "source_location": "L1",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6540,7 +6515,6 @@
       "context": "import",
       "source_file": "src/lib/models/project.ts",
       "source_location": "L3",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6553,7 +6527,6 @@
       "context": "import",
       "source_file": "src/lib/models/project.ts",
       "source_location": "L4",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6566,7 +6539,6 @@
       "context": "import",
       "source_file": "src/lib/models/project.ts",
       "source_location": "L5",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6579,7 +6551,6 @@
       "context": "import",
       "source_file": "src/lib/models/templates/IWorkflowTemplate.ts",
       "source_location": "L5",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6592,7 +6563,6 @@
       "context": "import",
       "source_file": "src/lib/models/workflow.ts",
       "source_location": "L1",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -6605,7 +6575,6 @@
       "context": "import",
       "source_file": "src/lib/models/workflow.ts",
       "source_location": "L2",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -7330,7 +7299,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/models/extensioncommand.ts",
-      "source_location": "L77",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -7341,7 +7310,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/models/extensioncommand.ts",
-      "source_location": "L79",
+      "source_location": "L78",
       "weight": 1.0
     },
     {
@@ -9821,6 +9790,17 @@
     },
     {
       "source": "lib_services_jwthelper_jwttokenhelper",
+      "target": "lib_services_jwthelper_jwttokenhelper_createinstance",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/services/JwtHelper.ts",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_services_jwthelper_jwttokenhelper",
       "target": "lib_services_jwthelper_jwttokenhelper_extractjwttokenpayload",
       "relation": "method",
       "_origin": "ast",
@@ -9997,5 +9977,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f1dec486900b3169211376113bf0588894f50342"
+  "built_at_commit": "5c7453c9cf90bde2ffb20e68fdfaf655a8db19b5"
 }

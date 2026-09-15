@@ -1,7 +1,7 @@
-# Graph Report - src  (2026-09-13)
+# Graph Report - src  (2026-08-26)
 
 ## Corpus Check
-- 31 files · ~5,732 words
+- 31 files · ~5,730 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f1dec486`
+- Built from commit: `5c7453c9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -132,7 +132,7 @@ Nodes (5): IProjectWizardContext, IWebviewProjectContext, ProjectPackageType, Ta
 
 ## Knowledge Gaps
 - **179 isolated node(s):** `IArtifactFile`, `IGitHubReleaseInfo`, `IRuntimeDependencyVersions`, `ICliFeed`, `IRelease` (+174 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 191 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

@@ -1,16 +1,16 @@
-# Graph Report - src  (2026-09-13)
+# Graph Report - src  (2026-08-26)
 
 ## Corpus Check
 - 17 files · ~6,787 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 94 nodes · 133 edges · 11 communities (8 shown, 1 thin omitted)
+- 94 nodes · 133 edges · 11 communities (10 shown, 1 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f1dec486`
+- Built from commit: `5c7453c9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -88,7 +88,7 @@ Nodes (7): ApiHubAuthentication, ConnectionReference, ConnectionReferences, Impe
 
 ## Knowledge Gaps
 - **37 isolated node(s):** `cache`, `intl`, `ResponseData`, `ConnectionReference`, `ApiHubAuthentication` (+32 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 52 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components.
 - **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions

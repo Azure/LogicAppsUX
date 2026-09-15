@@ -1622,7 +1622,6 @@
       "context": "import",
       "source_file": "src/lib/ui/CopilotChatbot.tsx",
       "source_location": "L2",
-      "type_only": true,
       "weight": 1.0
     },
     {
@@ -2607,5 +2606,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f1dec486900b3169211376113bf0588894f50342"
+  "built_at_commit": "5c7453c9cf90bde2ffb20e68fdfaf655a8db19b5"
 }
