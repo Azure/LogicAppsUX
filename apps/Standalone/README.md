@@ -15,6 +15,8 @@ Open [http://localhost:4200](http://localhost:4200). Running `pnpm run start` fr
 
 To develop against Azure Resource Manager, run `pnpm run start:arm` from the repository root. The command generates an ARM token before starting the development tasks.
 
+For local-only PR deployments triggered by the `ephemeral` label, see [PR preview setup and lifecycle](EPHEMERAL.md).
+
 ## Commands
 
 | Command | Run from | Description |
