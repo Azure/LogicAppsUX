@@ -67,7 +67,9 @@ describe('ProjectRuntimeRegistry', () => {
     const firstInvocation = registry.createDebugInvocationId(firstProject);
     const secondInvocation = registry.createDebugInvocationId(secondProject);
 
-    expect(registry.endDebugInvocation(firstProject.toLowerCase(), firstInvocation)).toBe(true);
+    expect(
+      registry.endDebugInvocation(process.platform === 'win32' ? firstProject.toLowerCase() : firstProject, firstInvocation)
+    ).toBe(true);
     expect(registry.getActiveDebugInvocationId(firstProject)).toBeUndefined();
     expect(registry.getActiveDebugInvocationId(secondProject)).toBe(secondInvocation);
   });

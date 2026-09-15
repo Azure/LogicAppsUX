@@ -1,0 +1,42 @@
+{
+  "routes": [
+    {
+      "route": "/.auth/*",
+      "statusCode": 404
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/assets/*",
+      "/*.html",
+      "/*.js",
+      "/*.mjs",
+      "/*.css",
+      "/*.json",
+      "/*.svg",
+      "/*.png",
+      "/*.jpg",
+      "/*.jpeg",
+      "/*.gif",
+      "/*.webp",
+      "/*.ico",
+      "/*.woff",
+      "/*.woff2",
+      "/*.ttf",
+      "/*.eot",
+      "/*.wasm",
+      "/*.txt",
+      "/api/*",
+      "/__dev/*",
+      "/templatesLocalProxy/*",
+      "/.auth/*"
+    ]
+  },
+  "globalHeaders": {
+    "Cache-Control": "no-store",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "Content-Security-Policy": "frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+  }
+}
