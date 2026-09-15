@@ -199,6 +199,56 @@ Result artifacts and summaries are intentionally structured so users do not need
 
 On failure, the per-label summary includes a short failure excerpt and points to both the structured result artifact and screenshot artifact. Use the uploaded log only when you need the complete stack trace or full VS Code host output.
 
+#### Azure DevOps execution model for the GitHub repo
+
+The LogicAppsUX source can stay in GitHub while the VS Code E2E gate runs in Azure DevOps. Use one of these two checkout models:
+
+| Model | Use when | Checkout shape |
+|---|---|---|
+| Azure Pipeline created from the GitHub repo | Required for GitHub PR checks and normal branch triggers. | Install/authorize the Azure Pipelines GitHub App or a GitHub service connection for `Azure/LogicAppsUX`; keep the YAML in the GitHub repo and use `checkout: self`. |
+| Azure Repos bootstrap pipeline with a GitHub repository resource | Good for scheduled/manual ADO-only runs owned by an existing ADO project. | Store a tiny launcher YAML in Azure Repos, add `resources.repositories` with `type: github`, `endpoint: <GitHub service connection>`, `name: Azure/LogicAppsUX`, and `checkout: logicappsux`. Repository-resource triggers do not provide GitHub PR validation; pass the ref manually or run on a schedule. |
+
+Recommended first ADO gate:
+
+1. Create a pipeline in the ADO project that will own the gate, preferably from the GitHub repo if the result should appear as a GitHub PR check.
+2. Start with the existing non-Azure `@vscode/test-cli` Create Workspace labels. They need GitHub checkout, Node/pnpm, Linux GUI dependencies, and `xvfb`; they do not need an Azure ARM service connection.
+3. Mirror the existing GitHub Actions build-once/fan-out pattern:
+   - install Node and pnpm;
+   - run `pnpm install --frozen-lockfile --strict-peer-dependencies`;
+   - run `pnpm turbo run build:extension --cache-dir=.turbo`;
+   - run `npx tsup --config apps/vs-code-designer/tsup.e2e.test.config.ts`;
+   - run `pnpm --dir apps/vs-code-designer run test:e2e-cli:compile`;
+   - publish a tar artifact containing `apps/vs-code-designer/dist/` and `apps/vs-code-designer/out/`;
+   - fan out one job per label and run `xvfb-run ... pnpm exec node scripts/run-e2e-cli.js --label <label>` from `apps/vs-code-designer`.
+4. Publish `apps/vs-code-designer/.vscode-test/results/*.junit.xml` with `PublishTestResults@2`, and publish the JSON, Markdown summaries, logs, and screenshots with `PublishPipelineArtifact@1`. ADO run summaries can use `##vso[task.uploadsummary]<path-to-summary.md>`.
+
+Only add an Azure ARM service connection when promoting the Azure-backed MSN Weather lifecycle. Use a dedicated LogicAppsUX connection if possible, for example `LogicAppsUX-VSCode-E2E-SignIn`, scoped to the `logicappstt` tenant/subscription/resource group. Reusing `LogicAppsPortal-E2E-SignIn` would require that connection's owners to authorize the new pipeline and confirm the permissions are appropriate; do not use Otto's `otto-e2e-testtenant-arm` for LogicAppsUX without explicit ownership approval.
+
+The Azure-backed job should run inside `AzureCLI@2`, mint a token for `https://management.core.windows.net/`, and pass the existing environment contract into `@vscode/test-cli`:
+
+```yaml
+- task: AzureCLI@2
+  displayName: Run VS Code MSN Weather lifecycle
+  inputs:
+    azureSubscription: LogicAppsUX-VSCode-E2E-SignIn
+    scriptType: bash
+    scriptLocation: inlineScript
+    useGlobalConfig: false
+    visibleAzLogin: false
+    inlineScript: |
+      set -euo pipefail
+      export LA_E2E_CLI_AZURE_ACCESS_TOKEN="$(az account get-access-token --resource https://management.core.windows.net/ --query accessToken -o tsv)"
+      cd apps/vs-code-designer
+      xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" pnpm exec node scripts/run-e2e-cli.js --msn-weather-lifecycle
+  env:
+    LA_E2E_CLI_AZURE_TENANT_ID: c9db855a-7930-48d8-8e3c-a409a38faab3
+    LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: $(LA_E2E_CLI_AZURE_SUBSCRIPTION_ID)
+    LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: $(LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME)
+    LA_E2E_CLI_AZURE_LOCATION_NAME: westus
+```
+
+Keep any shared live-resource job serialized with an ADO Exclusive Lock or equivalent if multiple runs use the same resource group or managed connections.
+
 ### Run generated workspace designer/runtime lifecycle
 ```powershell
 pnpm run test:e2e-cli:workspace-lifecycle
@@ -286,7 +336,7 @@ $env:LA_E2E_CLI_AZURE_LOCATION_NAME = 'westus'
 pnpm run test:e2e-cli:msn-weather-lifecycle
 ```
 
-For CI, mirror Otto's pattern at the pipeline level rather than importing its Playwright auth setup: use a test-tenant Azure service connection or equivalent secretless login to mint an ARM token for `https://management.azure.com`, export it as `LA_E2E_CLI_AZURE_ACCESS_TOKEN`, and pass the tenant/subscription/resource-group/location variables into `@vscode/test-cli`. Keep the run serialized if the resource group or managed connections are shared.
+For CI, mirror Otto's pattern at the pipeline level rather than importing its Playwright auth setup: use a test-tenant Azure service connection or equivalent secretless login to mint an ARM token for `https://management.core.windows.net/`, export it as `LA_E2E_CLI_AZURE_ACCESS_TOKEN`, and pass the tenant/subscription/resource-group/location variables into `@vscode/test-cli`. Keep the run serialized if the resource group or managed connections are shared.
 
 ### Run NuGet conversion debug/run lifecycle
 ```powershell
