@@ -142,6 +142,42 @@ export async function getWorkspaceLogicAppRoots(): Promise<string[]> {
   return logicAppRoots;
 }
 
+export async function getLogicAppProjectRoots(context: IActionContext, node?: vscode.Uri): Promise<string[]> {
+  if (node?.fsPath) {
+    return tryGetWorkspaceFolderLogicApps(node.fsPath);
+  }
+
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    const workspaceFolder = await getWorkspaceFolder(context);
+    return tryGetWorkspaceFolderLogicApps(workspaceFolder);
+  }
+
+  return getWorkspaceLogicAppRoots();
+}
+
+export async function selectLogicAppProject(
+  context: IActionContext,
+  projectPaths: readonly string[],
+  placeHolder: string
+): Promise<string | undefined> {
+  if (projectPaths.length <= 1) {
+    return projectPaths[0];
+  }
+
+  const projectPicks: IAzureQuickPickItem<string>[] = projectPaths.map((projectPath) => ({
+    label: path.basename(projectPath),
+    description: projectPath,
+    data: projectPath,
+  }));
+
+  const selectedProject = await context.ui.showQuickPick(projectPicks, { placeHolder });
+  if (!selectedProject?.data) {
+    throw new UserCancelledError();
+  }
+
+  return selectedProject.data;
+}
+
 /**
  * Gets logic app projects from given workspace folder and subFolders one level down.
  * @param {vscode.WorkspaceFolder | string | undefined} workspaceFolder - The workspace folder to check.
@@ -195,7 +231,9 @@ export async function getWorkspaceCustomCodeFunctionsProjectRoots(): Promise<str
  * @param {vscode.WorkspaceFolder | string | undefined} workspaceFolder - The workspace folder to check.
  * @returns {Promise<string[]>} A promise that resolves to an array of custom code project roots.
  */
-async function tryGetWorkspaceFolderCustomCodeFunctionsProjects(workspaceFolder: vscode.WorkspaceFolder | string | undefined): Promise<string[] | undefined> {
+async function tryGetWorkspaceFolderCustomCodeFunctionsProjects(
+  workspaceFolder: vscode.WorkspaceFolder | string | undefined
+): Promise<string[] | undefined> {
   if (isNullOrUndefined(workspaceFolder)) {
     return [];
   }
@@ -327,17 +365,11 @@ async function getLogicAppWorkspaceFolder(
   }
 
   const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
-  const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppProjectRoots.map((projectRoot) => {
-    const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
-    return {
-      label: path.basename(projectRoot),
-      description: projectRoot,
-      data: workspaceFolder ?? getContainingWorkspaceFolder(projectRoot),
-    };
-  });
-
-  const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
-  const selectedFolder: vscode.WorkspaceFolder = selectedItem?.data;
+  const selectedProjectPath = await selectLogicAppProject(context, logicAppProjectRoots, placeHolder);
+  const selectedFolder = selectedProjectPath
+    ? (vscode.workspace.workspaceFolders?.find((folder) => isPathEqual(folder.uri.fsPath, selectedProjectPath)) ??
+      getContainingWorkspaceFolder(selectedProjectPath))
+    : undefined;
   if (!selectedFolder) {
     throw new UserCancelledError();
   }
