@@ -316,6 +316,21 @@ describe('workflow trust wiring', () => {
     expect(trusted).toContain('deployment_environment: ${{ steps.prepare.outputs.environment }}');
   });
 
+  it('pins the upload action to the verified contract for named environments and skipped builds', () => {
+    const upload = trusted.match(/- uses: Azure\/static-web-apps-deploy@([a-f0-9]{40})\r?\n([\s\S]*?)(?=\r?\n      - uses:)/);
+    expect(upload).not.toBeNull();
+    expect(upload[1]).toBe('4d27395796ac319302594769cfe812bd207490b1');
+    expect(upload[2]).toContain('id: upload');
+    expect(upload[2]).toContain("if: steps.prepare.outputs.deploy == 'true'");
+    expect(upload[2]).toContain('action: upload');
+    expect(upload[2]).toContain('app_location: .ephemeral-site');
+    expect(upload[2]).toContain("api_location: ''");
+    expect(upload[2]).toContain("output_location: ''");
+    expect(upload[2]).toContain('skip_app_build: true');
+    expect(upload[2]).toContain('skip_api_build: true');
+    expect(upload[2]).toContain('deployment_environment: ${{ steps.prepare.outputs.environment }}');
+  });
+
   it('keeps PR builds secretless, with read-only permissions and no cached publish state', () => {
     expect(build).not.toMatch(/secrets\.|id-token:|: write|azure\/login|actions\/cache/);
     expect(build).toContain('persist-credentials: false');

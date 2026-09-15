@@ -68,6 +68,23 @@ class ArtifactTests(unittest.TestCase):
         self.assertIn("/.auth/*", configuration["navigationFallback"]["exclude"])
         self.assertEqual(configuration["navigationFallback"]["rewrite"], "/index.html")
 
+    def test_trusted_fallback_exclusions_cover_every_allowed_static_extension(self):
+        self.write_archive()
+        validate.extract(self.archive, self.destination)
+        configuration = json.loads((self.destination / "staticwebapp.config.json").read_text())
+        exclusions = configuration["navigationFallback"]["exclude"]
+        self.assertNotIn("/*", exclusions)
+        for pattern in exclusions:
+            with self.subTest(pattern=pattern):
+                self.assertIsInstance(pattern, str)
+                self.assertLessEqual(pattern.count("*"), 1)
+        for extension in validate.EXTENSIONS:
+            with self.subTest(extension=extension):
+                self.assertIn(f"/*{extension}", exclusions)
+        for prefix in ["/assets", "/api", "/__dev", "/templatesLocalProxy", "/.auth"]:
+            with self.subTest(prefix=prefix):
+                self.assertIn(f"{prefix}/*", exclusions)
+
     def test_paths_cannot_escape_or_hide_files(self):
         for name in ["../outside.js", "/outside.js", "C:/outside.js", "\\\\host\\outside.js", "assets\\a.js",
                      "a/../../outside.js", "./a.js", ".env", "api/run.js", "node_modules/lib.js",

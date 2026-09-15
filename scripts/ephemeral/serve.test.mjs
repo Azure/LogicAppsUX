@@ -1,11 +1,29 @@
 import { execFile, spawn } from 'node:child_process';
 import { once } from 'node:events';
+import { readFileSync } from 'node:fs';
 import { copyFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const configuration = JSON.parse(readFileSync(new URL('./staticwebapp.config.json', import.meta.url), 'utf8'));
+const extensionExclusions = configuration.navigationFallback.exclude.filter((pattern) => pattern.startsWith('/*.'));
+
+const expectInvalidConfiguration = async (configuration, message) => {
+  const directory = await mkdtemp(join(tmpdir(), 'laux-ephemeral-config-'));
+  try {
+    await writeFile(join(directory, 'staticwebapp.config.json'), JSON.stringify(configuration));
+    await expect(
+      promisify(execFile)(process.execPath, [fileURLToPath(new URL('./serve.mjs', import.meta.url)), directory, '0'], {
+        timeout: 5000,
+      })
+    ).rejects.toMatchObject({ code: 1, stderr: expect.stringContaining(message) });
+  } finally {
+    await rm(directory, { recursive: true });
+  }
+};
 
 describe('production artifact smoke server', () => {
   let directory;
@@ -50,7 +68,7 @@ describe('production artifact smoke server', () => {
     }
   });
 
-  it.each(['/', '/v2', '/v2/', '/xauth/me'])('serves the entry document at %s with trusted headers', async (path) => {
+  it.each(['/', '/v2', '/v2/', '/xauth/me', '/missingXjson'])('serves the entry document at %s with trusted headers', async (path) => {
     const response = await fetch(`${baseUrl}${path}`);
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('no-store');
@@ -81,13 +99,21 @@ describe('production artifact smoke server', () => {
     expect(await response.text()).toBe('');
   });
 
-  it.each(['/assets/missing.js', '/missing.json', '/__dev/armToken', '/api/test', '/templatesLocalProxy/templates'])(
-    'keeps %s missing instead of rewriting it to HTML',
-    async (path) => {
-      const response = await fetch(`${baseUrl}${path}`);
-      expect(response.status).toBe(404);
-    }
-  );
+  it.each([
+    ...extensionExclusions.flatMap((pattern) => [pattern.replace('*', 'missing'), pattern.replace('*', 'nested/missing')]),
+    '/assets/missing.js',
+    '/assets/missing',
+    '/armToken.json',
+    '/foundryToken.json',
+    '/subscriptionIds.json',
+    '/__dev/armToken',
+    '/api/test',
+    '/templatesLocalProxy/templates',
+  ])('keeps %s missing instead of rewriting it to HTML', async (path) => {
+    const response = await fetch(`${baseUrl}${path}`);
+    expect(response.status).toBe(404);
+    expect(await response.text()).toBe('');
+  });
 });
 
 describe('unsupported static routing configuration', () => {
@@ -102,16 +128,23 @@ describe('unsupported static routing configuration', () => {
       [{ route: '/.auth/*/callback', statusCode: 404 }],
     ].map((routes) => ({ routes }))
   )('fails at startup rather than silently ignoring $routes', async ({ routes }) => {
-    const directory = await mkdtemp(join(tmpdir(), 'laux-ephemeral-routes-'));
-    try {
-      await writeFile(join(directory, 'staticwebapp.config.json'), JSON.stringify({ routes }));
-      await expect(
-        promisify(execFile)(process.execPath, [fileURLToPath(new URL('./serve.mjs', import.meta.url)), directory, '0'], {
-          timeout: 5000,
-        })
-      ).rejects.toMatchObject({ code: 1, stderr: expect.stringContaining('Unsupported preview static route') });
-    } finally {
-      await rm(directory, { recursive: true });
-    }
+    await expectInvalidConfiguration({ ...configuration, routes }, 'Unsupported preview static route');
+  });
+});
+
+describe('unsupported navigation fallback configuration', () => {
+  it.each(
+    [
+      undefined,
+      null,
+      {},
+      { rewrite: '/other.html', exclude: [] },
+      ...[null, {}, '/*.js', [null], [42], ['missing.js'], ['/*.*'], ['/assets/*/*.js'], ['/*.{js,css}']].map((exclude) => ({
+        rewrite: '/index.html',
+        exclude,
+      })),
+    ].map((navigationFallback) => ({ navigationFallback }))
+  )('fails at startup rather than accepting $navigationFallback', async ({ navigationFallback }) => {
+    await expectInvalidConfiguration({ ...configuration, navigationFallback }, 'Unsupported preview navigation fallback');
   });
 });
