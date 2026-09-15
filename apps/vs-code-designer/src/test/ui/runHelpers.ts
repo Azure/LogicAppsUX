@@ -1047,6 +1047,54 @@ function httpPostJson(url: string, body: unknown, timeoutMs = 60_000): Promise<{
   });
 }
 
+export interface PendingWorkflowCallback {
+  abort(): void;
+  response: Promise<{ status: number; body: string }>;
+}
+
+export interface WorkflowRunSnapshot {
+  id: string;
+  identifier: string;
+  status: string;
+}
+
+function startHttpPostJson(url: string, body: unknown, timeoutMs: number): PendingWorkflowCallback {
+  const payload = JSON.stringify(body ?? {});
+  const client = url.startsWith('https:') ? https : http;
+  let request: http.ClientRequest | undefined;
+  const response = new Promise<{ status: number; body: string }>((resolve) => {
+    request = client.request(
+      url,
+      {
+        method: 'POST',
+        timeout: timeoutMs,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer) => chunks.push(chunk));
+        res.on('end', () => resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }));
+        res.on('error', (error) => resolve({ status: 0, body: error.message }));
+      }
+    );
+    request.on('error', (error) => resolve({ status: 0, body: error.message }));
+    request.on('timeout', () => {
+      request?.destroy();
+      resolve({ status: 0, body: `timeout after ${timeoutMs}ms` });
+    });
+    request.write(payload);
+    request.end();
+  });
+
+  return {
+    abort: () => request?.destroy(),
+    response,
+  };
+}
+
 async function getWorkflowCallbackUrl(workflowName: string, timeoutMs = 180_000): Promise<string | undefined> {
   const apiVersion = '2019-10-01-edge-preview';
   const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
@@ -1100,6 +1148,128 @@ async function getWorkflowCallbackUrl(workflowName: string, timeoutMs = 180_000)
     `[workflowCallback] Callback URL not available for workflow="${workflowName}" within ${timeoutMs}ms (lastStatus=${lastStatus}, lastBody=${lastBody.slice(0, 500)})`
   );
   return undefined;
+}
+
+export async function startWorkflowCallback(
+  driver: WebDriver,
+  opts: { workflowName: string; body?: unknown; timeoutMs?: number }
+): Promise<PendingWorkflowCallback | undefined> {
+  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 180_000 });
+  if (!hostReady) {
+    await captureScreenshot(driver, 'startWorkflowCallback-runtime-not-ready');
+    return undefined;
+  }
+  const workflowsReady = await waitForWorkflowsRegistered(driver, { workflowName: opts.workflowName, timeoutMs: 240_000 });
+  if (!workflowsReady) {
+    await captureScreenshot(driver, 'startWorkflowCallback-workflow-not-ready');
+    return undefined;
+  }
+  const callbackUrl = await getWorkflowCallbackUrl(opts.workflowName, opts.timeoutMs ?? 180_000);
+  if (!callbackUrl) {
+    await captureScreenshot(driver, 'startWorkflowCallback-no-callback-url');
+    return undefined;
+  }
+
+  console.log(`[workflowCallback] Starting non-blocking POST workflow="${opts.workflowName}"`);
+  return startHttpPostJson(callbackUrl, opts.body ?? {}, opts.timeoutMs ?? 600_000);
+}
+
+function parseWorkflowRuns(body: string, workflowName: string): WorkflowRunSnapshot[] {
+  const parsed = JSON.parse(body);
+  const runs = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : [];
+  return runs.flatMap((run: any) => {
+    const identifier = typeof run?.name === 'string' ? run.name : '';
+    const id =
+      typeof run?.id === 'string' && run.id.length > 0
+        ? run.id
+        : identifier
+          ? `/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(identifier)}`
+          : '';
+    const status = typeof run?.properties?.status === 'string' ? run.properties.status : '';
+    return id && identifier ? [{ id, identifier, status }] : [];
+  });
+}
+
+export async function getWorkflowRuns(workflowName: string): Promise<WorkflowRunSnapshot[]> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  const response = await httpRequestJson(
+    {
+      url: `${managementBase}/workflows/${encodeURIComponent(workflowName)}/runs?api-version=${apiVersion}`,
+      method: 'GET',
+    },
+    5_000
+  );
+  if (response.status !== 200) {
+    return [];
+  }
+  try {
+    return parseWorkflowRuns(response.body, workflowName);
+  } catch {
+    return [];
+  }
+}
+
+export async function waitForNewWorkflowRun(
+  workflowName: string,
+  existingRunIds: ReadonlySet<string>,
+  targetStatus = 'Running',
+  timeoutMs = 120_000
+): Promise<WorkflowRunSnapshot | undefined> {
+  const deadline = Date.now() + timeoutMs;
+  let lastRuns: WorkflowRunSnapshot[] = [];
+  while (Date.now() < deadline) {
+    lastRuns = await getWorkflowRuns(workflowName);
+    const run = lastRuns.find((candidate) => !existingRunIds.has(candidate.id) && candidate.status === targetStatus);
+    if (run) {
+      console.log(`[workflowRun] Captured exact run id="${run.id}" identifier="${run.identifier}" status="${run.status}"`);
+      return run;
+    }
+    await sleep(500);
+  }
+  console.log(
+    `[workflowRun] No new ${targetStatus} run for workflow="${workflowName}" within ${timeoutMs}ms; runs=${JSON.stringify(lastRuns)}`
+  );
+  return undefined;
+}
+
+export async function waitForWorkflowRunStatus(
+  workflowName: string,
+  run: Pick<WorkflowRunSnapshot, 'id' | 'identifier'>,
+  targetStatus: string,
+  timeoutMs = 120_000
+): Promise<boolean> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  const url = `${managementBase}/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(run.identifier)}?api-version=${apiVersion}`;
+  const deadline = Date.now() + timeoutMs;
+  let lastStatus = '';
+  let lastBody = '';
+  while (Date.now() < deadline) {
+    const response = await httpRequestJson({ url, method: 'GET' }, 5_000);
+    lastBody = response.body;
+    if (response.status === 200) {
+      try {
+        const parsed = JSON.parse(response.body);
+        const exactId = typeof parsed?.id === 'string' ? parsed.id : '';
+        const exactIdentifier = typeof parsed?.name === 'string' ? parsed.name : '';
+        if ((exactId === run.id || exactIdentifier === run.identifier) && typeof parsed?.properties?.status === 'string') {
+          lastStatus = parsed.properties.status;
+          if (lastStatus === targetStatus) {
+            console.log(`[workflowRun] Exact run id="${run.id}" reached ${targetStatus}`);
+            return true;
+          }
+        }
+      } catch {
+        /* keep polling */
+      }
+    }
+    await sleep(500);
+  }
+  console.log(
+    `[workflowRun] Exact run id="${run.id}" did not reach ${targetStatus} within ${timeoutMs}ms (lastStatus=${lastStatus}, body=${lastBody.slice(0, 1000)})`
+  );
+  return false;
 }
 
 export async function invokeWorkflowCallback(

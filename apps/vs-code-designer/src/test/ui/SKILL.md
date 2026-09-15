@@ -209,7 +209,7 @@ pnpm run test:ui        # Runs node out/test/run-e2e.js
 
 - Scenarios: `p415-projectoverview` (codeless) and `p415-codeful-projectoverview` (codeful); focused mode: `E2E_MODE=projectoverviewonly` runs both in separate fresh sessions.
 - Dependencies: the real `Standard + Stateful` and `Codeful + Stateful` `.code-workspace` entries from `p41a-fixtures`. Both scenarios use `autoStartDesignTime: false`, then open **Project overview** from the Logic App project-root Explorer context menu so product startup/progress/readiness owns the runtime launch.
-- Codeless fixture rule: after reopening the generated workspace, replace only generated workflow folders. Create connector-free Stateful and Stateless HTTP Request workflows plus a Stateful Recurrence workflow. The Stateless workflow omits `WithStatelessRunHistory`, while the Recurrence workflow supplies the no-callback case.
+- Codeless fixture rule: after reopening the generated workspace, replace only generated workflow folders. Create connector-free fast and long-running Stateful HTTP Request workflows, a Stateless HTTP Request workflow, and a Stateful Recurrence workflow. The long-running workflow uses Wait before Response for deterministic cancellation coverage, the Stateless workflow omits `WithStatelessRunHistory`, and the Recurrence workflow supplies the no-callback case.
 - Codeful fixture rule: keep the wizard-generated project, `.code-workspace`, `.csproj`, `Program.cs`, `.vscode/launch.json`, and `.vscode/tasks.json`. Replace only the generated workflow `.cs` body with a built-in HTTP Request/Response workflow and point the generated NuGet source at the extension-managed SDK package. This preserves the real codeful launch/build/runtime path without depending on managed connectors.
 - Do not synthesize project/workspace/launch/tasks files for either scenario.
 - Project overview selectors:
@@ -226,8 +226,10 @@ pnpm run test:ui        # Runs node out/test/run-e2e.js
   5. The non-Request Stateless row must show callback unavailable and `Run history unavailable`; the Stateful Request row starts at explicit `No runs`.
   6. Manual context-menu open and debug auto-open must converge on one project panel with each workflow exactly once.
   7. Verify automatic refresh by invoking the callback through the supported runtime API and waiting for the row to reach `Succeeded` without clicking Refresh.
-  8. For codeful, assert the generated source-derived workflow row is present before runtime readiness settles, then assert the runtime-generated list contains that workflow exactly once.
-  9. Reveal the retained project-overview editor before stopping debug, then wait for port/runtime settlement and the webview's `Runtime stopped` state.
+  8. For cancellation, start the long-running callback without awaiting its HTTP response, capture the exact new run ID from the local management API, and poll that exact run rather than assuming the latest row. Verify immediate Cancel disablement and refreshed Cancel removal in both Project Overview and Workflow Overview, then abort/settle any outstanding callback requests during cleanup.
+  9. Workflow Overview run rows keep the identifier as a direct link/action and use icon-only Open and Cancel actions; no ellipsis or `Show run menu` action should return.
+  10. For codeful, assert the generated source-derived workflow row is present before runtime readiness settles, then assert the runtime-generated list contains that workflow exactly once.
+  11. Reveal the retained project-overview editor before stopping debug, then wait for port/runtime settlement and the webview's `Runtime stopped` state.
 - Deliberate E2E omission: injected loading/fatal startup errors remain covered by host/webview unit tests. Forcing internal failures in ExTester would couple Phase 4.15 to unsupported fault injection and make the runtime lifecycle brittle.
 
 **NOTE**: On Windows, `openWorkspaceFileInSession()` may fail to switch workspaces through the simple dialog even when no exception is thrown. The helper falls back to `VSBrowser.instance.openResources()` on Windows and requires a positive title/Explorer postcondition before continuing.

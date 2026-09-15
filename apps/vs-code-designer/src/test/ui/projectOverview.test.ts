@@ -10,24 +10,31 @@ import { clearBlockingUI, sleep } from './helpers';
 import { waitForExtensionReady } from './createWorkspaceShared';
 import {
   clickProjectOverviewButton,
+  getWorkflowRuns,
   getProjectOverviewWorkflowNames,
   invokeWorkflowCallback,
   openProjectOverviewFromRoot,
   revealEditorTab,
+  startWorkflowCallback,
   stopDebugging,
   switchToActiveWebviewFrame,
   waitForExactHealthyRuntimeWorkflows,
+  waitForNewWorkflowRun,
   waitForRuntimeReady,
   waitForRuntimeStopped,
+  waitForWorkflowRunStatus,
+  type PendingWorkflowCallback,
 } from './runHelpers';
 import { loadWorkspaceManifest, type WorkspaceManifestEntry } from './workspaceManifest';
 
 const TEST_TIMEOUT = 900_000;
 const SCHEMA = 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#';
-const REQUEST_WORKFLOW = 'overview-http-request';
+const CODELESS_RUN_SUFFIX = `${Date.now()}-${process.pid}`;
+const REQUEST_WORKFLOW = `overview-http-request-${CODELESS_RUN_SUFFIX}`;
+const LONG_RUNNING_WORKFLOW = `overview-cancel-request-${CODELESS_RUN_SUFFIX}`;
 const STATELESS_WORKFLOW = 'overview-stateless-no-history';
 const NO_CALLBACK_WORKFLOW = 'overview-timer-no-callback';
-const EXPECTED_WORKFLOWS = [REQUEST_WORKFLOW, STATELESS_WORKFLOW, NO_CALLBACK_WORKFLOW];
+const EXPECTED_WORKFLOWS = [REQUEST_WORKFLOW, LONG_RUNNING_WORKFLOW, STATELESS_WORKFLOW, NO_CALLBACK_WORKFLOW];
 const PROJECT_OVERVIEW_KIND = (process.env.LA_E2E_PROJECT_OVERVIEW_KIND ?? 'codeless').toLowerCase();
 if (PROJECT_OVERVIEW_KIND !== 'codeless' && PROJECT_OVERVIEW_KIND !== 'codeful') {
   throw new Error(`LA_E2E_PROJECT_OVERVIEW_KIND must be "codeless" or "codeful", received "${PROJECT_OVERVIEW_KIND}"`);
@@ -80,6 +87,35 @@ function seedUnifiedOverviewWorkflows(entry: WorkspaceManifestEntry): void {
           kind: 'Http',
           inputs: { statusCode: 200, body: { source: 'project-overview-e2e' } },
           runAfter: {},
+        },
+      },
+      contentVersion: '1.0.0.0',
+      outputs: {},
+      triggers: {
+        manual: {
+          type: 'Request',
+          kind: 'Http',
+          inputs: { schema: { type: 'object' } },
+        },
+      },
+    },
+    kind: 'Stateful',
+  });
+
+  writeWorkflow(entry.appDir, LONG_RUNNING_WORKFLOW, {
+    definition: {
+      $schema: SCHEMA,
+      actions: {
+        Wait: {
+          type: 'Wait',
+          inputs: { interval: { count: 5, unit: 'Minute' } },
+          runAfter: {},
+        },
+        Response: {
+          type: 'Response',
+          kind: 'Http',
+          inputs: { statusCode: 200, body: { source: 'project-overview-cancel-e2e' } },
+          runAfter: { Wait: ['Succeeded'] },
         },
       },
       contentVersion: '1.0.0.0',
@@ -240,7 +276,7 @@ async function getRowText(driver: WebDriver, workflowName: string): Promise<stri
     `
     const workflowName = arguments[0];
     const row = Array.from(document.querySelectorAll('table tbody tr'))
-      .find((candidate) => (candidate.querySelector('th[scope="row"]')?.textContent || '').includes(workflowName));
+      .find((candidate) => (candidate.querySelector('th[scope="row"]')?.textContent || '').trim() === workflowName);
     return row?.textContent || '';
   `,
     workflowName
@@ -356,6 +392,105 @@ async function assertCompactProjectHeader(
   assert.strictEqual(headerState.runtimeToggleCount, 1, 'Compact project header should expose exactly one runtime toggle');
 }
 
+async function getWorkflowRowActionState(
+  driver: WebDriver,
+  workflowName: string
+): Promise<{ cancelCount: number; cancelDisabled: boolean; openLatestCount: number; openWorkflowCount: number }> {
+  return await driver.executeScript(
+    `
+    const workflowName = arguments[0];
+    const row = Array.from(document.querySelectorAll('table tbody tr'))
+      .find((candidate) => (candidate.querySelector('th[scope="row"]')?.textContent || '').trim() === workflowName);
+    const cancel = row?.querySelector('button[aria-label="Cancel run for ' + workflowName + '"]');
+    return {
+      cancelCount: cancel ? 1 : 0,
+      cancelDisabled: !!cancel?.disabled || cancel?.getAttribute('aria-disabled') === 'true',
+      openLatestCount: row?.querySelectorAll('button[aria-label="Open latest run for ' + workflowName + '"]').length || 0,
+      openWorkflowCount: row?.querySelectorAll('button[aria-label="Open overview for ' + workflowName + '"]').length || 0,
+    };
+  `,
+    workflowName
+  );
+}
+
+async function waitForProjectCancellationSettled(driver: WebDriver, workflowName: string, timeoutMs = 120_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  let lastText = '';
+  let lastActions = await getWorkflowRowActionState(driver, workflowName);
+  while (Date.now() < deadline) {
+    lastText = await getRowText(driver, workflowName);
+    lastActions = await getWorkflowRowActionState(driver, workflowName);
+    if (lastText.includes('Cancelled') && lastActions.cancelCount === 0) {
+      return;
+    }
+    await sleep(500);
+  }
+  assert.fail(
+    `Project Overview did not refresh "${workflowName}" to Cancelled without a Cancel action. Last row=${lastText}, actions=${JSON.stringify(lastActions)}`
+  );
+}
+
+async function getWorkflowOverviewRunState(
+  driver: WebDriver,
+  identifier: string
+): Promise<{
+  cancelCount: number;
+  cancelDisabled: boolean;
+  identifierLinkCount: number;
+  menuCount: number;
+  openCount: number;
+  rowText: string;
+}> {
+  return await driver.executeScript(
+    `
+    const identifier = arguments[0];
+    const rows = Array.from(document.querySelectorAll('[role="row"], .ms-DetailsRow'));
+    const row = rows.find((candidate) =>
+      Array.from(candidate.querySelectorAll('a, button')).some((element) => (element.textContent || '').trim() === identifier)
+    );
+    const cancel = row?.querySelector('button[aria-label="Cancel run ' + identifier + '"]');
+    return {
+      cancelCount: cancel ? 1 : 0,
+      cancelDisabled: !!cancel?.disabled || cancel?.getAttribute('aria-disabled') === 'true',
+      identifierLinkCount: row
+        ? Array.from(row.querySelectorAll('a, button')).filter((element) => (element.textContent || '').trim() === identifier).length
+        : 0,
+      menuCount: row?.querySelectorAll('button[aria-label="Show run menu"], button[title="Show run menu"]').length || 0,
+      openCount: row?.querySelectorAll('button[aria-label="Open run ' + identifier + '"]').length || 0,
+      rowText: row?.textContent || '',
+    };
+  `,
+    identifier
+  );
+}
+
+async function waitForWorkflowOverviewRun(
+  driver: WebDriver,
+  identifier: string,
+  expectedStatus: string,
+  expectCancel: boolean,
+  timeoutMs = 120_000
+): Promise<Awaited<ReturnType<typeof getWorkflowOverviewRunState>>> {
+  const deadline = Date.now() + timeoutMs;
+  let lastState = await getWorkflowOverviewRunState(driver, identifier);
+  while (Date.now() < deadline) {
+    lastState = await getWorkflowOverviewRunState(driver, identifier);
+    if (
+      lastState.rowText.includes(expectedStatus) &&
+      lastState.identifierLinkCount > 0 &&
+      lastState.openCount === 1 &&
+      lastState.menuCount === 0 &&
+      (expectCancel ? lastState.cancelCount === 1 : lastState.cancelCount === 0)
+    ) {
+      return lastState;
+    }
+    await sleep(500);
+  }
+  assert.fail(
+    `Workflow Overview run "${identifier}" did not reach status=${expectedStatus}, expectCancel=${expectCancel}. Last state=${JSON.stringify(lastState)}`
+  );
+}
+
 describe('Unified project overview', function () {
   this.timeout(TEST_TIMEOUT);
 
@@ -364,6 +499,7 @@ describe('Unified project overview', function () {
   let entry: WorkspaceManifestEntry;
   let expectedWorkflows: string[];
   let requestWorkflow: string;
+  const pendingCallbacks: PendingWorkflowCallback[] = [];
 
   before(async function () {
     this.timeout(300_000);
@@ -389,6 +525,10 @@ describe('Unified project overview', function () {
   });
 
   after(async () => {
+    for (const callback of pendingCallbacks) {
+      callback.abort();
+      await callback.response.catch(() => undefined);
+    }
     try {
       await driver.switchTo().defaultContent();
       await stopDebugging(driver);
@@ -455,6 +595,7 @@ describe('Unified project overview', function () {
       );
       const noCallbackRow = await getRowText(driver, NO_CALLBACK_WORKFLOW);
       assert.match(noCallbackRow, /Not available/, 'Non-Request workflow should not expose a callback URL');
+      assert.match(await getRowText(driver, LONG_RUNNING_WORKFLOW), /No runs/, 'Cancellation workflow should start with no runs');
     }
 
     assert.strictEqual(
@@ -538,6 +679,79 @@ describe('Unified project overview', function () {
     });
     const monitoringBody = await driver.executeScript<string>('return document.body?.textContent || "";');
     assert.match(monitoringBody, /Succeeded/, 'Latest-run navigation should open the successful monitoring view');
+
+    if (projectOverviewKind === 'codeless') {
+      await revealEditorTab(driver, `${entry.appName} - Project overview`);
+      await switchToActiveWebviewFrame(driver, {
+        markerSelectors: ['table'],
+        description: 'project overview for run cancellation',
+      });
+
+      const firstExistingRuns = new Set((await getWorkflowRuns(LONG_RUNNING_WORKFLOW)).map((run) => run.id));
+      const firstCallback = await startWorkflowCallback(driver, {
+        workflowName: LONG_RUNNING_WORKFLOW,
+        body: { source: 'project-overview-cancel' },
+      });
+      assert.ok(firstCallback, 'Long-running callback should start without waiting for its Response action');
+      pendingCallbacks.push(firstCallback);
+      const firstRun = await waitForNewWorkflowRun(LONG_RUNNING_WORKFLOW, firstExistingRuns);
+      assert.ok(firstRun, 'Management API should expose the exact first long-running run in Running state');
+      await waitForRowText(driver, LONG_RUNNING_WORKFLOW, 'Running', 120_000);
+      const projectRunningActions = await getWorkflowRowActionState(driver, LONG_RUNNING_WORKFLOW);
+      assert.deepStrictEqual(
+        projectRunningActions,
+        { cancelCount: 1, cancelDisabled: false, openLatestCount: 1, openWorkflowCount: 1 },
+        'Running Project Overview row should expose icon-only Open latest, Cancel, and Open workflow actions'
+      );
+
+      const projectCancel = await driver.findElement(By.css(`button[aria-label="Cancel run for ${LONG_RUNNING_WORKFLOW}"]`));
+      assert.strictEqual((await projectCancel.getText()).trim(), '', 'Project Overview Cancel action should be icon-only');
+      await driver.actions().move({ origin: projectCancel }).click().perform();
+      assert.ok(
+        (await getWorkflowRowActionState(driver, LONG_RUNNING_WORKFLOW)).cancelDisabled,
+        'Project Overview Cancel action should disable immediately after click'
+      );
+      assert.ok(
+        await waitForWorkflowRunStatus(LONG_RUNNING_WORKFLOW, firstRun, 'Cancelled'),
+        `Exact first run ${firstRun.id} should reach Cancelled`
+      );
+      await waitForProjectCancellationSettled(driver, LONG_RUNNING_WORKFLOW);
+
+      const secondExistingRuns = new Set((await getWorkflowRuns(LONG_RUNNING_WORKFLOW)).map((run) => run.id));
+      const secondCallback = await startWorkflowCallback(driver, {
+        workflowName: LONG_RUNNING_WORKFLOW,
+        body: { source: 'workflow-overview-cancel' },
+      });
+      assert.ok(secondCallback, 'Second long-running callback should start without waiting for its Response action');
+      pendingCallbacks.push(secondCallback);
+      const secondRun = await waitForNewWorkflowRun(LONG_RUNNING_WORKFLOW, secondExistingRuns);
+      assert.ok(secondRun, 'Management API should expose the exact second long-running run in Running state');
+
+      await clickProjectOverviewButton(driver, `Open overview for ${LONG_RUNNING_WORKFLOW}`);
+      await driver.switchTo().defaultContent();
+      await switchToActiveWebviewFrame(driver, {
+        markerSelectors: ['[data-testid="msla-overview-command-bar"]'],
+        markerText: secondRun.identifier,
+        description: 'workflow overview for exact running cancellation run',
+      });
+      const workflowRunningState = await waitForWorkflowOverviewRun(driver, secondRun.identifier, 'Running', true);
+      assert.strictEqual(workflowRunningState.identifierLinkCount, 1, 'Run identifier should remain a direct link/action');
+      const workflowOpen = await driver.findElement(By.css(`button[aria-label="Open run ${secondRun.identifier}"]`));
+      const workflowCancel = await driver.findElement(By.css(`button[aria-label="Cancel run ${secondRun.identifier}"]`));
+      assert.strictEqual((await workflowOpen.getText()).trim(), '', 'Workflow Overview Open action should be icon-only');
+      assert.strictEqual((await workflowCancel.getText()).trim(), '', 'Workflow Overview Cancel action should be icon-only');
+      await driver.actions().move({ origin: workflowCancel }).click().perform();
+      assert.ok(
+        (await getWorkflowOverviewRunState(driver, secondRun.identifier)).cancelDisabled,
+        'Workflow Overview Cancel action should disable immediately after click'
+      );
+      assert.ok(
+        await waitForWorkflowRunStatus(LONG_RUNNING_WORKFLOW, secondRun, 'Cancelled'),
+        `Exact second run ${secondRun.id} should reach Cancelled`
+      );
+      await clickProjectOverviewButton(driver, 'Refresh');
+      await waitForWorkflowOverviewRun(driver, secondRun.identifier, 'Cancelled', false);
+    }
 
     await revealEditorTab(driver, `${entry.appName} - Project overview`);
     await switchToActiveWebviewFrame(driver, {
