@@ -263,6 +263,31 @@ pnpm run test:e2e-cli:msn-weather-lifecycle
 
 Use this target when authoring Azure-backed designer tests locally. It is intentionally not part of the default CI matrix because it depends on cached Azure credentials, a real subscription/resource group/location, and managed connector availability. `LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL` is optional when your profile needs a non-public Azure cloud.
 
+#### Using the Otto E2E test tenant
+
+The Otto portal real E2E suite uses the dedicated `logicappstt` tenant (`c9db855a-7930-48d8-8e3c-a409a38faab3`) and long-lived canary fixtures such as `automation-project-ncus` / `automation-project-test-app`. LogicAppsUX VS Code E2E can target the same tenant for Azure connector tests, but it cannot directly reuse Otto's Playwright authentication cache:
+
+- Otto signs a browser into `https://otto-canary.azure.com` with Certificate-Based Authentication, saves MSAL tokens from browser `sessionStorage`, and downloads the certificate from `automation-e2e-kv` through the `otto-e2e-testtenant-arm` ADO service connection.
+- VS Code E2E runs inside an extension host and uses VS Code Microsoft authentication plus the test-gated Azure CLI ARM-token fallback. Browser `storageState.json` / `session-storage.json` files from Otto do not populate `vscode.authentication` sessions.
+- To run this lifecycle against `logicappstt`, sign Azure CLI into that tenant, use a subscription/resource group where the test identity can create managed API connections, and set the same `LA_E2E_CLI_AZURE_*` variables above. The resource group can be one already provisioned for LogicAppsUX tests or a new one in the test tenant; do not mutate Otto's shared canary app/project fixtures from VS Code tests.
+
+Example local setup:
+
+```powershell
+az login --tenant c9db855a-7930-48d8-8e3c-a409a38faab3
+az account set --subscription '<logicappstt-subscription-id-or-name>'
+az configure --defaults group='<logicappsux-vscode-e2e-resource-group>'
+
+$account = az account show | ConvertFrom-Json
+$env:LA_E2E_CLI_AZURE_SUBSCRIPTION_ID = $account.id
+$env:LA_E2E_CLI_AZURE_TENANT_ID = 'c9db855a-7930-48d8-8e3c-a409a38faab3'
+$env:LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME = '<logicappsux-vscode-e2e-resource-group>'
+$env:LA_E2E_CLI_AZURE_LOCATION_NAME = 'westus'
+pnpm run test:e2e-cli:msn-weather-lifecycle
+```
+
+For CI, mirror Otto's pattern at the pipeline level rather than importing its Playwright auth setup: use a test-tenant Azure service connection or equivalent secretless login to mint an ARM token for `https://management.azure.com`, export it as `LA_E2E_CLI_AZURE_ACCESS_TOKEN`, and pass the tenant/subscription/resource-group/location variables into `@vscode/test-cli`. Keep the run serialized if the resource group or managed connections are shared.
+
 ### Run NuGet conversion debug/run lifecycle
 ```powershell
 pnpm run test:e2e-cli:nuget-conversion-lifecycle
