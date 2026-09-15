@@ -61,6 +61,7 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
   setAlternateSelectedNode,
   setNodeSelection,
 }: NavigationContract<PanelState>) => {
+  const restoreLayout: (() => void)[] = [];
   const setup = ({
     selectedId = 'First',
     suppress = false,
@@ -82,6 +83,22 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
     includePanel?: boolean;
     nodes?: Node[];
   } = {}) => {
+    if (includePanel) {
+      // JSDOM has no layout; give Fluent's overflow calculation room for all tabs.
+      const width = function (this: HTMLElement) {
+        return this.getAttribute('role') === 'tablist' ? 800 : 80;
+      };
+      const clientWidth = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(width);
+      const offsetWidth = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(width);
+      const bounds = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+        return new DOMRect(0, 0, width.call(this), 32);
+      });
+      restoreLayout.push(() => {
+        clientWidth.mockRestore();
+        offsetWidth.mockRestore();
+        bounds.mockRestore();
+      });
+    }
     const initialOptions: NavigationOptions = {
       suppressDefaultNodeSelectFunctionality: suppress,
       nodeSelectAdditionalCallback: callback,
@@ -176,7 +193,10 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
     return event;
   };
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    restoreLayout.splice(0).forEach((restore) => restore());
+  });
 
   describe.each(['ctrlKey', 'metaKey'] as const)('real %s arrow events', (modifier) => {
     const modifiers = { [modifier]: true };
@@ -338,7 +358,7 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
   describe('operation details tab retention', () => {
     it.each(['click', 'ctrlKey', 'metaKey'] as const)('retains Settings when another node is selected by %s', (selection) => {
       const { store } = setup({ includePanel: true });
-      fireEvent.click(screen.getByRole('tab', { name: 'Settings', exact: true }));
+      fireEvent.click(screen.getByRole('tab', { name: 'Settings' }));
       expect(screen.getByText('First settings')).toBeVisible();
       if (selection === 'click') {
         fireEvent.click(screen.getByRole('button', { name: 'Select scope' }));
@@ -347,14 +367,14 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
       }
       expect(store.getState().panel.operationContent.selectedNodeId).toBe('Scope');
       expect(store.getState().panel.operationContent.selectedNodeActiveTabId).toBe('SETTINGS');
-      expect(screen.getByRole('tab', { name: 'Settings', exact: true })).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByRole('tab', { name: 'Settings' })).toHaveAttribute('aria-selected', 'true');
       expect(screen.getByText('Scope settings')).toBeVisible();
       expect(screen.queryByText('First settings')).not.toBeInTheDocument();
     });
 
     it.each(['click', 'ctrlKey', 'metaKey'] as const)('renders a valid fallback when %s selects a node without Settings', (selection) => {
       const { store } = setup({ includePanel: true, selectedId: 'Scope' });
-      fireEvent.click(screen.getByRole('tab', { name: 'Settings', exact: true }));
+      fireEvent.click(screen.getByRole('tab', { name: 'Settings' }));
       expect(screen.getByText('Scope settings')).toBeVisible();
       if (selection === 'click') {
         fireEvent.click(screen.getByRole('button', { name: 'Select last' }));
@@ -362,10 +382,18 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
         press('ArrowDown', { [selection]: true });
       }
       expect(store.getState().panel.operationContent.selectedNodeId).toBe('Last');
-      expect(screen.queryByRole('tab', { name: 'Settings', exact: true })).not.toBeInTheDocument();
-      expect(screen.getByRole('tab', { name: 'Parameters', exact: true })).toHaveAttribute('aria-selected', 'true');
+      expect(screen.queryByRole('tab', { name: 'Settings' })).not.toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'Parameters' })).toHaveAttribute('aria-selected', 'true');
       expect(screen.getByText('Last parameters')).toBeVisible();
       expect(screen.queryByText('Scope settings')).not.toBeInTheDocument();
+      expect(store.getState().panel.operationContent.selectedNodeActiveTabId).toBe('SETTINGS');
+      if (selection === 'click') {
+        fireEvent.click(screen.getByRole('button', { name: 'Select scope' }));
+      } else {
+        press('ArrowUp', { [selection]: true });
+      }
+      expect(screen.getByRole('tab', { name: 'Settings' })).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByText('Scope settings')).toBeVisible();
     });
 
     it('keeps pinned and selected tab preferences independent while navigating', () => {
@@ -374,7 +402,7 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
         store.dispatch(setAlternateSelectedNode({ nodeId: 'Pinned', panelPersistence: 'pinned' }));
         store.dispatch(setPinnedPanelActiveTab('ABOUT'));
       });
-      fireEvent.click(screen.getByRole('tab', { name: 'Settings', exact: true }));
+      fireEvent.click(screen.getByRole('tab', { name: 'Settings' }));
       press('ArrowDown');
       expect(store.getState().panel.operationContent.selectedNodeActiveTabId).toBe('SETTINGS');
       expect(store.getState().panel.operationContent.alternateSelectedNode).toMatchObject({
