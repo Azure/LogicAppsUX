@@ -19,6 +19,16 @@ if (
 ) {
   throw new Error('Unsupported preview static route: only exact or trailing-wildcard paths with statusCode 404 are supported.');
 }
+const fallback = configuration.navigationFallback;
+if (
+  fallback?.rewrite !== '/index.html' ||
+  !Array.isArray(fallback.exclude) ||
+  fallback.exclude.some((pattern) => typeof pattern !== 'string' || !/^\/[^*{}]*(?:\*(?:\.[a-zA-Z0-9]+)?)?$/.test(pattern))
+) {
+  throw new Error(
+    'Unsupported preview navigation fallback: expected /index.html and exact, trailing-wildcard, or single-extension exclusions with at most one wildcard.'
+  );
+}
 const matchesPath = (pathname, pattern) =>
   new RegExp(
     `^${pattern
@@ -70,12 +80,12 @@ const server = createServer(async (request, response) => {
     if (exists?.isDirectory()) {
       path = resolve(path, 'index.html');
     } else if (!exists) {
-      const excluded = configuration.navigationFallback.exclude.some((pattern) => matchesPath(pathname, pattern));
+      const excluded = fallback.exclude.some((pattern) => matchesPath(pathname, pattern));
       if (excluded) {
         response.writeHead(404).end();
         return;
       }
-      path = resolve(root, `.${configuration.navigationFallback.rewrite}`);
+      path = resolve(root, `.${fallback.rewrite}`);
     }
     const content = await readFile(path);
     response.writeHead(200, {
