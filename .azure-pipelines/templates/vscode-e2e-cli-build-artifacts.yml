@@ -1,0 +1,29 @@
+parameters:
+  - name: artifactStagingPath
+    type: string
+    default: '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/build'
+
+steps:
+  - script: pnpm --dir apps/vs-code-designer run test:e2e-cli:build
+    displayName: Build extension and compile @vscode/test-cli E2E
+    workingDirectory: $(working_directory)
+    env:
+      NPM_CONFIG_USERCONFIG: $(npmrcFile)
+
+  - bash: |
+      set -euo pipefail
+      staging='${{ parameters.artifactStagingPath }}'
+      mkdir -p "$staging"
+
+      paths=(
+        apps/vs-code-designer/dist
+        apps/vs-code-designer/out
+      )
+
+      if [ -d apps/vs-code-designer/node_modules/.cache ]; then
+        paths+=(apps/vs-code-designer/node_modules/.cache)
+      fi
+
+      tar -czf "$staging/extension-build.tar.gz" "${paths[@]}"
+      find "$staging" -maxdepth 1 -type f -print -exec ls -lh {} \;
+    displayName: Stage reusable @vscode/test-cli build artifact

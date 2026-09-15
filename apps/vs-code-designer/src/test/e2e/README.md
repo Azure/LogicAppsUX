@@ -208,6 +208,8 @@ The LogicAppsUX source can stay in GitHub while the VS Code E2E gate runs in Azu
 | Azure Pipeline created from the GitHub repo | Required for GitHub PR checks and normal branch triggers. | Install/authorize the Azure Pipelines GitHub App or a GitHub service connection for `Azure/LogicAppsUX`; keep the YAML in the GitHub repo and use `checkout: self`. |
 | Azure Repos bootstrap pipeline with a GitHub repository resource | Good for scheduled/manual ADO-only runs owned by an existing ADO project. | Store a tiny launcher YAML in Azure Repos, add `resources.repositories` with `type: github`, `endpoint: <GitHub service connection>`, `name: Azure/LogicAppsUX`, and `checkout: logicappsux`. Repository-resource triggers do not provide GitHub PR validation; pass the ref manually or run on a schedule. |
 
+The checked-in starting point is `.azure-pipelines/vscode-e2e-cli.1es.yml`. It is a 1ES/MicroBuild pipeline for the latest-stable `@vscode/test-cli` baseline, with shared templates under `.azure-pipelines/templates/vscode-e2e-cli-*.yml`.
+
 Recommended first ADO gate:
 
 1. Create a pipeline in the ADO project that will own the gate, preferably from the GitHub repo if the result should appear as a GitHub PR check.

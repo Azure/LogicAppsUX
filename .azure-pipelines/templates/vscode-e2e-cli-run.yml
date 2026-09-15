@@ -1,0 +1,153 @@
+parameters:
+  - name: label
+    type: string
+  - name: cliArguments
+    type: string
+  - name: buildArtifactName
+    type: string
+    default: vscode-e2e-cli-build
+  - name: requiresAzureAccessToken
+    type: boolean
+    default: false
+  - name: testARMServiceConnection
+    type: string
+    default: ''
+  - name: azureTenantId
+    type: string
+    default: ''
+  - name: azureSubscriptionId
+    type: string
+    default: ''
+  - name: azureResourceGroupName
+    type: string
+    default: ''
+  - name: azureLocationName
+    type: string
+    default: ''
+  - name: azureManagementBaseUrl
+    type: string
+    default: 'https://management.azure.com'
+  - name: diagnosticsPath
+    type: string
+    default: '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli'
+
+steps:
+  - task: DownloadPipelineArtifact@2
+    displayName: Download @vscode/test-cli build artifact
+    inputs:
+      buildType: current
+      artifactName: ${{ parameters.buildArtifactName }}
+      targetPath: $(Pipeline.Workspace)/${{ parameters.buildArtifactName }}
+
+  - bash: |
+      set -euo pipefail
+      tar -xzf "$(Pipeline.Workspace)/${{ parameters.buildArtifactName }}/extension-build.tar.gz" -C "$(Build.SourcesDirectory)"
+      test -f "$(Build.SourcesDirectory)/apps/vs-code-designer/out/test/e2e/createWorkspace.test.js"
+      test -d "$(Build.SourcesDirectory)/apps/vs-code-designer/dist"
+    displayName: Extract @vscode/test-cli build artifact
+
+  - ${{ if and(eq(parameters.requiresAzureAccessToken, true), eq(parameters.testARMServiceConnection, '')) }}:
+      - bash: |
+          echo 'testARMServiceConnection is required when requiresAzureAccessToken is true.'
+          exit 1
+        displayName: Validate live Azure service connection parameter
+
+  - ${{ if and(eq(parameters.requiresAzureAccessToken, true), ne(parameters.testARMServiceConnection, '')) }}:
+      - task: AzureCLI@2
+        displayName: Mint ARM token for VS Code E2E
+        inputs:
+          azureSubscription: ${{ parameters.testARMServiceConnection }}
+          scriptType: bash
+          scriptLocation: inlineScript
+          useGlobalConfig: false
+          visibleAzLogin: false
+          inlineScript: |
+            set -euo pipefail
+            if [ -z '${{ parameters.azureSubscriptionId }}' ] || [ -z '${{ parameters.azureResourceGroupName }}' ]; then
+              echo 'azureSubscriptionId and azureResourceGroupName are required for live Azure E2E.'
+              exit 1
+            fi
+            token="$(az account get-access-token --resource https://management.core.windows.net/ --query accessToken -o tsv)"
+            if [ -z "$token" ]; then
+              echo 'Azure CLI did not return an ARM token.'
+              exit 1
+            fi
+            echo "##vso[task.setvariable variable=LA_E2E_CLI_AZURE_ACCESS_TOKEN;issecret=true]$token"
+            az account show --query '{subscription:id, tenant:tenantId}' -o json
+
+  - bash: |
+      set -euo pipefail
+      export PATH="$(dirname "$(command -v node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
+      cd apps/vs-code-designer
+      mkdir -p .vscode-test/results
+      set +e
+      xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+        pnpm exec node scripts/run-e2e-cli.js ${{ parameters.cliArguments }} 2>&1 | tee ".vscode-test/results/${{ parameters.label }}.log"
+      status=${PIPESTATUS[0]}
+      set -e
+      outcome='success'
+      if [ "$status" -ne 0 ]; then
+        outcome='failure'
+      fi
+      node scripts/summarize-e2e-cli-results.js \
+        --label "${{ parameters.label }}" \
+        --log ".vscode-test/results/${{ parameters.label }}.log" \
+        --out-dir ".vscode-test/results" \
+        --outcome "$outcome"
+      exit "$status"
+    displayName: Run @vscode/test-cli (${{ parameters.label }})
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      TEMP: $(Agent.TempDirectory)
+      TMP: $(Agent.TempDirectory)
+      TMPDIR: $(Agent.TempDirectory)
+      ${{ if eq(parameters.requiresAzureAccessToken, true) }}:
+        LA_E2E_CLI_AZURE_ACCESS_TOKEN: $(LA_E2E_CLI_AZURE_ACCESS_TOKEN)
+        LA_E2E_CLI_AZURE_TENANT_ID: ${{ parameters.azureTenantId }}
+        LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: ${{ parameters.azureSubscriptionId }}
+        LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
+        LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
+        LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+
+  - task: PublishTestResults@2
+    displayName: Publish JUnit result (${{ parameters.label }})
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: apps/vs-code-designer/.vscode-test/results/${{ parameters.label }}.junit.xml
+      testRunTitle: '@vscode/test-cli ${{ parameters.label }}'
+      failTaskOnFailedTests: false
+
+  - pwsh: |
+      $diagnosticsRoot = '${{ parameters.diagnosticsPath }}'
+      $resultDestination = Join-Path $diagnosticsRoot '${{ parameters.label }}/results'
+      $logDestination = Join-Path $diagnosticsRoot '${{ parameters.label }}/log'
+      $screenshotDestination = Join-Path $diagnosticsRoot '${{ parameters.label }}/screenshots'
+      New-Item -ItemType Directory -Force -Path $resultDestination, $logDestination, $screenshotDestination | Out-Null
+
+      $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
+      $screenshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/screenshots/cli'
+
+      foreach ($extension in @('json', 'junit.xml', 'summary.md')) {
+        $source = Join-Path $resultRoot "${{ parameters.label }}.$extension"
+        if (Test-Path $source) {
+          Copy-Item $source -Destination $resultDestination -Force
+        }
+      }
+
+      $log = Join-Path $resultRoot '${{ parameters.label }}.log'
+      if (Test-Path $log) {
+        Copy-Item $log -Destination $logDestination -Force
+      }
+
+      if (Test-Path $screenshotsRoot) {
+        Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination -Recurse -Force -ErrorAction SilentlyContinue
+      }
+
+      foreach ($directory in @($resultDestination, $logDestination, $screenshotDestination)) {
+        if (-not (Get-ChildItem -Path $directory -Force -ErrorAction SilentlyContinue)) {
+          Set-Content -Path (Join-Path $directory '.empty') -Value 'No files were produced for this artifact.'
+        }
+      }
+    displayName: Stage @vscode/test-cli diagnostics (${{ parameters.label }})
+    condition: always()
