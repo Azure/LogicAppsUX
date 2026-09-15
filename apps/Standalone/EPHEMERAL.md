@@ -28,9 +28,9 @@ Existing PR branches must merge or rebase onto a revision containing the
    preview host. Leave its default/production environment unused.
 2. Create the GitHub environment `standalone-ephemeral` and restrict its deployment
    branches to the protected default branch **before granting Azure access**.
-   Phase 1 can run without manual environment approval because its origins never
-   support Azure authentication. Retain the repository's normal approval policy
-   for workflows from forks.
+   Phase 1 is designed to run without manual environment approval only after
+   provider sign-in blocking is verified on the deployed preview. Retain the
+   repository's normal approval policy for workflows from forks.
 3. Establish an Entra workload identity with GitHub OIDC federation for that
    environment. A dedicated user-assigned managed identity works with Azure Login
    without an app registration or client secret. Use issuer
@@ -176,9 +176,11 @@ using an explicit PR number.
   lacks `skip_api_build` and `deployment_environment`. Verify both inputs and
   retain the explicit environment when updating the pin. This pins the action
   metadata/entrypoint, not its upstream `staticappsclient:stable` container.
-- Trusted routing returns 404 for `/.auth/*` to block SWA's built-in authentication
-  endpoints. Excluding these paths from the SPA fallback alone would not disable
-  authentication.
+- Trusted routing uses exact 404 rules for `/.auth/login/aad` and
+  `/.auth/login/github`, before a defensive `/.auth/*` catch-all, to block both
+  default sign-in providers. The validator rejects missing, reordered, or altered
+  provider policies and writes the validated trusted configuration, not PR policy.
+  Neither the wildcard nor fallback exclusions alone disable SWA authentication.
 - GitHub deployment records and comments distinguish the PR head from the actual
   deployed revision. Failures are surfaced in the trusted workflow and PR comment.
 
@@ -186,6 +188,36 @@ The `build:ephemeral` profile excludes local token-loading code and private publ
 configuration files while preserving the normal `build`, `dev`, and `start:arm`
 paths. The ZIP validator is defense in depth, not proof that arbitrary PR
 JavaScript is trustworthy.
+
+### SWA authentication boundary
+
+[SWA's documented provider-blocking policy](https://learn.microsoft.com/en-us/azure/static-web-apps/authentication-authorization#block-an-authentication-provider)
+is a provider-specific route with `statusCode: 404`. The default providers are
+Microsoft Entra ID (`aad`) and GitHub (`github`); the documentation makes this
+available on all plans without a custom provider, client secret, or identity
+dependency. No extra provider-validation prerequisite is documented.
+[Routing rules](https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#routes)
+are evaluated in order, stop at the first match, and apply to all methods when
+`methods` is omitted. Keep these exact rules ahead of the defensive auth wildcard,
+without redirects, rewrites, or role/method restrictions. Leave public app access,
+security headers, SPA fallback, and all 18 static-suffix exclusions unchanged.
+
+The wildcard is not a universal deny rule for SWA-owned endpoints. Before this
+fix, anonymous requests without following redirects observed `/.auth/login/aad`
+returning 302, `/.auth/me` returning 200, and `/.auth/logout` returning 302 on the
+named pilot preview despite the wildcard. SWA can handle reserved endpoints such
+as `/.auth/me` and `/.auth/logout` ahead of static routing. Their responses are
+not evidence that provider sign-in is enabled or disabled. The local harness
+serves static files and applies route rules; it does not emulate that platform
+service, and its 404 responses do not prove live SWA parity.
+
+After a human merges this fix and the trusted `main` publisher deploys it, verify
+anonymous GETs to **both** exact provider paths return 404 without a `Location`
+header, using no credentials and without following redirects or logging in.
+Record `/.auth/me` and `/.auth/logout` separately as platform-owned observations,
+not required 404s. Until that deployment and check, exact-provider blocking is
+locally validated policy, not a verified live result. Do not enter credentials,
+register preview callback origins, or enable real-resource access to test it.
 
 ## Capacity and recovery
 
@@ -214,7 +246,8 @@ An upload error about multiple wildcard characters in a fallback exclusion is a
 hosting-configuration failure, not an Azure permission failure. SWA accepts at
 most one `*` per exclusion: `/*.*` is invalid. Use the explicit `/*.js`-style
 exclusions for every suffix allowed by `scripts/ephemeral/validate.py`, retaining
-the asset/API/dev-token/template/auth exclusions and the `/.auth/*` 404 route.
+the asset/API/dev-token/template/auth exclusions, both exact provider 404 rules,
+and the defensive `/.auth/*` route.
 The harness rejects unsupported patterns, and tests prevent suffix-list drift.
 See [SWA fallback routes](https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#fallback-routes).
 
@@ -222,8 +255,9 @@ Publisher fixes must merge to `main` before retrying reconciliation of the pilot
 PR. Do not label an infrastructure-fix PR `ephemeral` to test its own publisher:
 the trusted workflow intentionally does not execute the PR's publishing code.
 After merge, reconcile the pilot PR on `main` and verify its named environment,
-`/` and `/v2` reloads, missing assets and auth endpoints, and the unused production
-environment. Local validation alone does not establish live deployment success.
+`/` and `/v2` reloads, missing assets, both exact provider 404s as described above,
+and the unused production environment. Local validation alone does not establish
+live deployment success.
 
 Turning `EPHEMERAL_ENABLED` off stops **both** publishing and automated cleanup.
 Remove labels and verify cleanup (or run a final sweep) before disabling it.

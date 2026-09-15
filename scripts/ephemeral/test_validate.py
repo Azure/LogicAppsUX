@@ -9,6 +9,12 @@ from unittest.mock import patch
 
 import validate
 
+AUTH_ROUTES = [
+    {"route": "/.auth/login/aad", "statusCode": 404},
+    {"route": "/.auth/login/github", "statusCode": 404},
+    {"route": "/.auth/*", "statusCode": 404},
+]
+
 
 class ArtifactTests(unittest.TestCase):
     def setUp(self):
@@ -57,16 +63,51 @@ class ArtifactTests(unittest.TestCase):
             pathlib.Path(validate.__file__).with_name("staticwebapp.config.json").read_bytes(),
         )
         configuration = json.loads((self.destination / "staticwebapp.config.json").read_text())
-        self.assertEqual(configuration["routes"], [{"route": "/.auth/*", "statusCode": 404}])
+        self.assertEqual(configuration["routes"], AUTH_ROUTES)
         self.assertNotIn("responseOverrides", configuration)
 
-    def test_extracted_trusted_config_contract_blocks_auth_without_pr_config(self):
+    def test_extracted_trusted_config_retains_exact_provider_rules_without_pr_config(self):
         self.write_archive()
         validate.extract(self.archive, self.destination)
         configuration = json.loads((self.destination / "staticwebapp.config.json").read_text())
-        self.assertEqual(configuration["routes"], [{"route": "/.auth/*", "statusCode": 404}])
+        self.assertEqual(configuration["routes"], AUTH_ROUTES)
         self.assertIn("/.auth/*", configuration["navigationFallback"]["exclude"])
         self.assertEqual(configuration["navigationFallback"]["rewrite"], "/index.html")
+
+    def test_trusted_provider_policy_drift_is_rejected_before_extraction(self):
+        self.write_archive()
+        config = self.root / "trusted.config.json"
+        invalid_routes = [
+            None, {}, [], AUTH_ROUTES[2:],
+            [AUTH_ROUTES[2], *AUTH_ROUTES[:2]],
+            [{"route": "/*", "statusCode": 200}, *AUTH_ROUTES],
+        ]
+        for index in range(len(AUTH_ROUTES)):
+            invalid_routes.append(AUTH_ROUTES[:index] + AUTH_ROUTES[index + 1:])
+            for change in [
+                {"statusCode": 200}, {"statusCode": "404"}, {"methods": ["GET"]},
+                {"allowedRoles": ["authenticated"]}, {"redirect": "/.auth/login/aad"},
+                {"rewrite": "/index.html"}, {"route": "/.auth/login/*"},
+            ]:
+                routes = [dict(rule) for rule in AUTH_ROUTES]
+                routes[index].update(change)
+                invalid_routes.append(routes)
+        for routes in invalid_routes:
+            with self.subTest(routes=routes):
+                config.write_text(json.dumps({"routes": routes}))
+                with self.assertRaisesRegex(ValueError, "exact aad/github 404 routes"):
+                    validate.extract(self.archive, self.destination, config)
+                self.assertFalse(self.destination.exists())
+
+    def test_invalid_trusted_configuration_is_rejected_before_extraction(self):
+        self.write_archive()
+        config = self.root / "trusted.config.json"
+        for content in ["not json", "null", "[]", "{}"]:
+            with self.subTest(content=content):
+                config.write_text(content)
+                with self.assertRaises(ValueError):
+                    validate.extract(self.archive, self.destination, config)
+                self.assertFalse(self.destination.exists())
 
     def test_trusted_fallback_exclusions_cover_every_allowed_static_extension(self):
         self.write_archive()
