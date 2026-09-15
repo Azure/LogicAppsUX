@@ -10,7 +10,7 @@ import {
   getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import { useCreatePanelStyles } from '../../styles';
-import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FormEvent, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text } from '@fluentui/react-components';
 import ConnectionMultiAuthInput from '../../../../panel/connectionsPanel/createConnection/formInputs/connectionMultiAuth';
 import {
@@ -117,19 +117,19 @@ const Model = ({
     [connectionParameterSets, selectedParamSetIndex]
   );
 
-  useEffect(() => {
-    if (authType) {
-      setConnectionParameterValues((values: Record<string, any>) => ({ ...values, openAIAuthenticationType: authType })); // Set authType in connection parameter values as well so that it can be used for showing/hiding parameters based on auth type
-    }
-  }, [authType, setConnectionParameterValues]);
-
   const handleParametersChange = useCallback(
-    (values: Record<string, any>) => {
+    (values: SetStateAction<Record<string, any>>) => {
       setParameterValues(values);
       setConnectionParameterValues(values);
     },
     [setConnectionParameterValues]
   );
+
+  useEffect(() => {
+    if (authType) {
+      handleParametersChange((values) => ({ ...values, openAIAuthenticationType: authType }));
+    }
+  }, [authType, handleParametersChange]);
 
   useEffect(() => {
     const nextParameterValues = { ...parameterValues };

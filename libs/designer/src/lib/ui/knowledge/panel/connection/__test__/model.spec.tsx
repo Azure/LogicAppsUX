@@ -521,5 +521,23 @@ describe('modelTab', () => {
 
       expect(mockSetConnectionParameterValues).toHaveBeenCalled();
     });
+
+    it('preserves auth type when an unavailable model is reset', async () => {
+      let parentValues: Record<string, any> = {};
+      mockSetConnectionParameterValues.mockImplementation((values) => {
+        parentValues = typeof values === 'function' ? values(parentValues) : values;
+      });
+
+      renderModelTab({});
+
+      await waitFor(() => expect(parentValues.openAIAuthenticationType).toBe('managedIdentity'));
+
+      fireEvent.change(screen.getByTestId('param-input-openAICompletionsModel'), { target: { value: 'unavailable-model' } });
+
+      await waitFor(() => {
+        expect(parentValues.openAICompletionsModel).toBeUndefined();
+        expect(parentValues.openAIAuthenticationType).toBe('managedIdentity');
+      });
+    });
   });
 });
