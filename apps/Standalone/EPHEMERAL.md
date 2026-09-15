@@ -136,6 +136,24 @@ and [Microsoft.Web permissions](https://learn.microsoft.com/en-us/azure/role-bas
 
 ## Lifecycle
 
+Unlabelled PR events are skipped before entering the protected environment;
+removing `ephemeral` still schedules cleanup. Build-completion events re-read the
+live PR and skip it if it is no longer eligible. Scheduled sweeps and explicit
+manual reconciliation remain available for orphan cleanup.
+
+The `standalone-ephemeral` GitHub environment provides access controls and OIDC
+context only. Both trusted jobs use `deployment: false`, so selection, waiting
+for a build, unchanged previews, and cleanup do not create automatic "deployed"
+entries. The controller creates a transient `standalone-pr<number>` deployment
+only after artifact validation and a final eligibility check; it starts as
+`in_progress` and becomes `success` only after a successful SWA upload. A failed
+upload is marked `failure`, and a closed/unlabelled PR is marked `inactive`.
+Historical automatic deployment records are not modified by this change.
+
+Environment branch restrictions and required reviewers still apply with
+`deployment: false`; custom deployment protection rules are not compatible.
+See [GitHub environments without deployments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/control-deployments#using-environments-without-deployments).
+
 | Action | Result |
 |---|---|
 | Add `ephemeral` | Build the PR head, then publish `pr<number>` and its link |
