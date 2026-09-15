@@ -11,6 +11,14 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 const configuration = JSON.parse(readFileSync(new URL('./staticwebapp.config.json', import.meta.url), 'utf8'));
 const extensionExclusions = configuration.navigationFallback.exclude.filter((pattern) => pattern.startsWith('/*.'));
 
+it('retains exact default-provider 404 policies before the defensive auth catch-all', () => {
+  expect(configuration.routes).toEqual([
+    { route: '/.auth/login/aad', statusCode: 404 },
+    { route: '/.auth/login/github', statusCode: 404 },
+    { route: '/.auth/*', statusCode: 404 },
+  ]);
+});
+
 const expectInvalidConfiguration = async (configuration, message) => {
   const directory = await mkdtemp(join(tmpdir(), 'laux-ephemeral-config-'));
   try {
@@ -34,9 +42,9 @@ describe('production artifact smoke server', () => {
     await mkdir(join(directory, 'assets'));
     await writeFile(join(directory, 'index.html'), '<html>Local preview</html>');
     await writeFile(join(directory, 'assets', 'app.js'), 'window.preview = true;');
-    // Existing files ensure auth blocking cannot pass solely via fallback exclusions.
+    // These are static fixtures, not SWA auth handlers; route checks cannot pass solely via fallback exclusions.
     await mkdir(join(directory, '.auth', 'login'), { recursive: true });
-    for (const path of [['login', 'aad'], ['login', 'github'], ['me'], ['providers']]) {
+    for (const path of [['login', 'aad'], ['login', 'github'], ['me'], ['logout'], ['providers']]) {
       await writeFile(join(directory, '.auth', ...path), 'Must not be served');
     }
     await copyFile(new URL('./staticwebapp.config.json', import.meta.url), join(directory, 'staticwebapp.config.json'));
@@ -86,12 +94,27 @@ describe('production artifact smoke server', () => {
     ['GET', '/.auth/login/aad'],
     ['GET', '/.auth/login/github'],
     ['GET', '/.auth/login/aad?post_login_redirect_uri=%2Fv2'],
-    ['GET', '/.auth/me'],
-    ['GET', '/.auth/providers'],
+    ['GET', '/.auth/login/github?post_login_redirect_uri=%2Fv2'],
     ['POST', '/.auth/login/aad'],
+    ['POST', '/.auth/login/github'],
+    ['HEAD', '/.auth/login/aad'],
+    ['HEAD', '/.auth/login/github'],
+  ])('applies the provider rule to %s %s in the static harness', async (method, path) => {
+    const response = await fetch(`${baseUrl}${path}`, { method, redirect: 'manual' });
+    expect(response.status).toBe(404);
+    expect(response.headers.get('location')).toBeNull();
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(await response.text()).toBe('');
+  });
+
+  // SWA may handle these reserved endpoints before static routing; these assertions are local only.
+  it.each([
+    ['GET', '/.auth/me'],
+    ['GET', '/.auth/logout'],
+    ['GET', '/.auth/providers'],
     ['POST', '/.auth/me'],
     ['HEAD', '/.auth/me'],
-  ])('blocks %s %s before static-file serving', async (method, path) => {
+  ])('applies the defensive catch-all to static fixture %s %s, not the SWA service', async (method, path) => {
     const response = await fetch(`${baseUrl}${path}`, { method, redirect: 'manual' });
     expect(response.status).toBe(404);
     expect(response.headers.get('location')).toBeNull();

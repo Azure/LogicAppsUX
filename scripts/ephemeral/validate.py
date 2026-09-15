@@ -1,5 +1,6 @@
 """Validate a GitHub static-site artifact before extracting it on a privileged runner."""
 
+import json
 import pathlib
 import re
 import shutil
@@ -54,6 +55,16 @@ def extract(archive, destination, config=None):
     if destination.exists():
         raise ValueError("Preview extraction destination must not already exist.")
     config = pathlib.Path(config) if config else pathlib.Path(__file__).with_name("staticwebapp.config.json")
+    config_content = config.read_bytes()
+    configuration = json.loads(config_content)
+    # SWA requires provider-specific rules; the wildcard alone does not disable sign-in.
+    auth_routes = [
+        {"route": "/.auth/login/aad", "statusCode": 404},
+        {"route": "/.auth/login/github", "statusCode": 404},
+        {"route": "/.auth/*", "statusCode": 404},
+    ]
+    if not isinstance(configuration, dict) or configuration.get("routes") != auth_routes:
+        raise ValueError("Trusted preview configuration must retain exact aad/github 404 routes before the auth catch-all.")
     if pathlib.Path(archive).stat().st_size > MAX_BYTES:
         raise ValueError("Preview archive exceeds the compressed size limit.")
     with zipfile.ZipFile(archive) as source:
@@ -101,7 +112,7 @@ def extract(archive, destination, config=None):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 with target.open("xb") as output:
                     output.write(content)
-            shutil.copyfile(config, destination / "staticwebapp.config.json")
+            (destination / "staticwebapp.config.json").write_bytes(config_content)
         except Exception:
             shutil.rmtree(destination)
             raise

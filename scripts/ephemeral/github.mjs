@@ -78,7 +78,10 @@ export async function candidateNumbers({ github, context, azureClient = azure })
     const candidates = [];
     for (const item of associated) {
       const { data: pr } = await github.rest.pulls.get({ ...repo, pull_number: item.number });
-      if (pr.base.repo.full_name === `${repo.owner}/${repo.repo}` && matchesRun(run, pr, workflow.id, `${repo.owner}/${repo.repo}`)) {
+      if (
+        eligible(pr, `${repo.owner}/${repo.repo}`, payload.repository.default_branch) &&
+        matchesRun(run, pr, workflow.id, `${repo.owner}/${repo.repo}`)
+      ) {
         candidates.push(pr.number);
       }
     }
