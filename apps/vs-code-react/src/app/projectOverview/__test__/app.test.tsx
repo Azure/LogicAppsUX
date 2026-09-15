@@ -291,15 +291,73 @@ describe('ProjectOverviewApp', () => {
 
     const latestRunButton = screen.getByRole('button', { name: 'Open latest run for Succeeded workflow' });
     const overviewButton = screen.getByRole('button', { name: 'Open overview for Succeeded workflow' });
+    const cancelButton = screen.getByRole('button', { name: 'Cancel run for Running workflow' });
     expect(latestRunButton).toHaveTextContent('');
     expect(latestRunButton.querySelector('svg')).not.toBeNull();
     expect(overviewButton).toHaveTextContent('');
     expect(overviewButton.querySelector('svg')).not.toBeNull();
+    expect(cancelButton).toHaveTextContent('');
+    expect(cancelButton.querySelector('svg')).not.toBeNull();
     expect(screen.queryByRole('button', { name: 'Open latest run for No runs workflow' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Cancel run for Succeeded workflow' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Cancel run for Failed workflow' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Cancel run for Unknown workflow' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Cancel run for No runs workflow' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Open overview for No runs workflow' })).toBeVisible();
 
     expect(latestRunButton).toHaveAttribute('data-tooltip-content', 'Open latest run for Succeeded workflow');
     expect(overviewButton).toHaveAttribute('data-tooltip-content', 'Open overview for Succeeded workflow');
+    expect(cancelButton).toHaveAttribute('data-tooltip-content', 'Cancel run for Running workflow');
+  });
+
+  it('posts one exact cancellation, disables it immediately, and settles from a newer cancelled snapshot', async () => {
+    const runningWorkflow = createWorkflow('Running workflow', {
+      run: { id: 'opaque-running-run', startTime: '2026-09-14T03:00:00.000Z', status: 'rUnNiNg' },
+    });
+    const { store } = renderApp(createSnapshot({ workflows: [runningWorkflow] }));
+    const cancelButton = screen.getByRole('button', { name: 'Cancel run for Running workflow' });
+
+    fireEvent.click(cancelButton);
+    fireEvent.click(cancelButton);
+
+    expect(cancelButton).toBeDisabled();
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: {
+        projectId,
+        runId: 'opaque-running-run',
+        snapshotGeneration: 7,
+        workflowId: 'Running workflow-id',
+      },
+    });
+
+    store.dispatch(
+      updateProjectOverview({
+        snapshot: createSnapshot({
+          generation: 8,
+          workflows: [
+            createWorkflow('Running workflow', {
+              run: { id: 'opaque-running-run', startTime: '2026-09-14T03:00:00.000Z', status: 'Cancelled' },
+            }),
+          ],
+        }),
+      })
+    );
+
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Cancel run for Running workflow' })).not.toBeInTheDocument());
+    expect(screen.getByRole('button', { name: 'Open latest run for Running workflow' })).toBeVisible();
+
+    store.dispatch(
+      updateProjectOverview({
+        snapshot: createSnapshot({
+          generation: 9,
+          workflows: [runningWorkflow],
+        }),
+      })
+    );
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Cancel run for Running workflow' })).toBeEnabled());
   });
 
   it('renders only three sortable headers and leaves Actions unsortable', () => {

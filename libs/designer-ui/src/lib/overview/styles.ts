@@ -19,6 +19,11 @@ export const useOverviewStyles = makeStyles({
       alignSelf: 'baseline',
     },
   },
+  runHistoryActions: {
+    alignItems: 'center',
+    display: 'flex',
+    gap: '4px',
+  },
   overviewLoadMore: {
     display: 'block',
     marginLeft: 'auto',

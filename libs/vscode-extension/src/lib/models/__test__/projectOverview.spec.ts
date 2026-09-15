@@ -11,6 +11,7 @@ import {
   type ProjectOverviewMessageToExtension,
   type ProjectOverviewMessageToWebview,
   type ProjectOverviewProjectId,
+  type ProjectOverviewRunId,
   type ProjectOverviewSnapshot,
   type ProjectOverviewWorkflowId,
 } from '../../../index';
@@ -37,6 +38,7 @@ describe('project overview public protocol', () => {
   it('keeps host and webview commands aligned with the typed public message unions', () => {
     const projectId = 'project-id' as ProjectOverviewProjectId;
     const workflowId = 'workflow-id' as ProjectOverviewWorkflowId;
+    const runId = 'run-id' as ProjectOverviewRunId;
     const snapshot: ProjectOverviewSnapshot = {
       projectId,
       projectName: 'LogicApp',
@@ -67,12 +69,21 @@ describe('project overview public protocol', () => {
       data: { projectId, snapshotGeneration: 4, workflowId },
     };
     expect(workflowAction.command).toBe('openWorkflowOverview');
+    const cancelRunAction: ProjectOverviewMessageToExtension = {
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: { projectId, snapshotGeneration: 4, workflowId, runId },
+    };
+    expect(cancelRunAction).toEqual({
+      command: 'cancelProjectOverviewRun',
+      data: { projectId, snapshotGeneration: 4, workflowId, runId },
+    });
     expect(ExtensionCommand).toMatchObject({
       updateProjectOverview: 'updateProjectOverview',
       refreshProjectOverview: 'refreshProjectOverview',
       retryProjectOverview: 'retryProjectOverview',
       startProjectOverviewRuntime: 'startProjectOverviewRuntime',
       stopProjectOverviewRuntime: 'stopProjectOverviewRuntime',
+      cancelProjectOverviewRun: 'cancelProjectOverviewRun',
       openLatestProjectOverviewRun: 'openLatestProjectOverviewRun',
       copyProjectOverviewCallback: 'copyProjectOverviewCallback',
       copyWorkflowOverviewCallback: 'copyWorkflowOverviewCallback',

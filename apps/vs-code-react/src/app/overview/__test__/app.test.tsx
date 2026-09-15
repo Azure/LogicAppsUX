@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   HttpClient: vi.fn(),
   StandardRunService: vi.fn(),
   fetchAgentUrl: vi.fn().mockResolvedValue({ agentUrl: 'http://agent', chatUrl: 'http://chat', hostName: 'http://runtime' }),
+  cancelRun: vi.fn(),
   fetchNextPage: vi.fn(),
   getMoreRuns: vi.fn(),
   getRun: vi.fn(),
@@ -21,6 +22,7 @@ const mocks = vi.hoisted(() => ({
   overviewProps: [] as any[],
   postMessage: vi.fn(),
   refetch: vi.fn().mockResolvedValue(undefined),
+  runsError: undefined as unknown,
   runTrigger: vi.fn(),
   standardRunService: vi.fn(),
   useInfiniteQuery: vi.fn(),
@@ -78,9 +80,38 @@ vi.mock('@microsoft/designer-ui', () => ({
       <div
         data-error={props.errorMessage ?? ''}
         data-runtime-running={String(props.isWorkflowRuntimeRunning)}
+        data-pending-run-id={props.pendingRunId ?? ''}
         data-testid="overview"
         data-workflow-name={props.workflowProperties.name}
       >
+        <button
+          disabled={Boolean(props.pendingRunId)}
+          onClick={() =>
+            props.onCancelRun({
+              id: '/workflows/workflow-a/runs/run-id',
+              identifier: 'run-id',
+              startTime: '',
+              duration: '',
+              status: 'Running',
+            })
+          }
+        >
+          Cancel run
+        </button>
+        <button
+          disabled={Boolean(props.pendingRunId)}
+          onClick={() =>
+            props.onCancelRun({
+              id: '/workflows/workflow-a/runs/second-run-id',
+              identifier: 'second-run-id',
+              startTime: '',
+              duration: '',
+              status: 'Running',
+            })
+          }
+        >
+          Cancel second run
+        </button>
         <button onClick={() => props.onOpenRun({ id: 'run-id', identifier: 'run-id', startTime: '', duration: '', status: 'Succeeded' })}>
           Open run
         </button>
@@ -206,7 +237,9 @@ describe('OverviewApp', () => {
     mocks.mutationError = undefined;
     mocks.mutationFn = undefined;
     mocks.overviewProps = [];
+    mocks.runsError = undefined;
     mocks.getRuns.mockResolvedValue({ runs: [], nextLink: undefined });
+    mocks.cancelRun.mockResolvedValue(undefined);
     mocks.getMoreRuns.mockResolvedValue({ runs: [], nextLink: undefined });
     mocks.getRun.mockResolvedValue({ id: 'run-id' });
     mocks.runTrigger.mockResolvedValue(undefined);
@@ -219,6 +252,7 @@ describe('OverviewApp', () => {
     mocks.StandardRunService.mockImplementation((options: any) => {
       mocks.standardRunService(options);
       return {
+        cancelRun: mocks.cancelRun,
         getMoreRuns: mocks.getMoreRuns,
         getRun: mocks.getRun,
         getRuns: mocks.getRuns,
@@ -228,7 +262,7 @@ describe('OverviewApp', () => {
     mocks.isRuntimeUp.mockResolvedValue(true);
     mocks.useInfiniteQuery.mockImplementation(() => ({
       data: { pages: [{ runs: [{ id: 'run-id', status: 'Succeeded' }], nextLink: undefined }] },
-      error: undefined,
+      error: mocks.runsError,
       fetchNextPage: mocks.fetchNextPage,
       hasNextPage: false,
       isLoading: false,
@@ -333,6 +367,81 @@ describe('OverviewApp', () => {
     await expect(mocks.mutationFn?.()).rejects.toThrow(
       'Cannot run trigger: Workflow runtime is not running or callback URL is not available'
     );
+  });
+
+  it.each([
+    ['local', { isLocal: true }],
+    ['remote', { isLocal: false }],
+  ])('cancels a %s Standard run with its full run ID and refetches runs', async (_scenario, workflowOverrides) => {
+    renderOverviewApp(workflowOverrides);
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(mocks.cancelRun).toHaveBeenCalledWith('/workflows/workflow-a/runs/run-id'));
+    await waitFor(() => expect(mocks.refetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', ''));
+  });
+
+  it('disables other cancellations and keeps cancellation single-flight while a run is pending', async () => {
+    let resolveCancellation: (() => void) | undefined;
+    mocks.cancelRun.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveCancellation = resolve;
+      })
+    );
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    expect(mocks.cancelRun).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', '/workflows/workflow-a/runs/run-id'));
+    const secondCancelRun = screen.getByRole('button', { name: 'Cancel second run' });
+    expect(secondCancelRun).toBeDisabled();
+
+    fireEvent.click(secondCancelRun);
+
+    expect(mocks.cancelRun).toHaveBeenCalledTimes(1);
+    resolveCancellation?.();
+
+    await waitFor(() => expect(mocks.refetch).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', ''));
+  });
+
+  it('surfaces thrown cancellation failures, refetches runs, and clears pending state', async () => {
+    mocks.cancelRun.mockRejectedValue(new Error('Cancellation failed'));
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-error', 'Cancellation failed'));
+    expect(mocks.refetch).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', '');
+  });
+
+  it('treats returned Error objects as cancellation failures and still refetches runs', async () => {
+    mocks.cancelRun.mockResolvedValue(new Error('Cancellation returned an error'));
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-error', 'Cancellation returned an error'));
+    expect(mocks.refetch).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('overview')).toHaveAttribute('data-pending-run-id', '');
+  });
+
+  it.each([
+    ['run loading', () => (mocks.runsError = new Error('Run loading failed')), 'Run loading failed'],
+    ['trigger', () => (mocks.mutationError = new Error('Trigger failed')), 'Trigger failed'],
+  ])('does not hide an existing %s error with a cancellation error', async (_scenario, arrangeError, expectedError) => {
+    arrangeError();
+    mocks.cancelRun.mockRejectedValue(new Error('Cancellation failed'));
+    renderOverviewApp();
+
+    fireEvent.click(screen.getByText('Cancel run'));
+
+    await waitFor(() => expect(mocks.cancelRun).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-error', expectedError));
+    expect(mocks.refetch).toHaveBeenCalledTimes(1);
   });
 
   it('posts open-run and create-unit-test messages to the extension host', () => {

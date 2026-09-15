@@ -10,12 +10,13 @@ import {
   ProjectOverviewLatestRunAvailability,
   ProjectOverviewLifecycle,
   type ProjectOverviewMessageToExtension,
+  type ProjectOverviewRunId,
   ProjectOverviewRuntimeState,
   type ProjectOverviewVisibilityPayload,
   type ProjectOverviewWorkflow,
   type ProjectOverviewWorkflowId,
 } from '@microsoft/vscode-extension-logic-apps';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -26,6 +27,8 @@ export const ProjectOverviewApp = () => {
   const styles = useProjectOverviewStyles();
   const [filter, setFilter] = useState('');
   const [isStoppingRuntime, setIsStoppingRuntime] = useState(false);
+  const pendingCancellationRunIdsRef = useRef(new Set<ProjectOverviewRunId>());
+  const [pendingCancellations, setPendingCancellations] = useState<ReadonlyMap<ProjectOverviewRunId, number>>(new Map());
 
   const postMessage = useCallback(
     (message: ProjectOverviewMessageToExtension) => {
@@ -57,6 +60,37 @@ export const ProjectOverviewApp = () => {
   useEffect(() => {
     setIsStoppingRuntime(false);
   }, [snapshot?.generation, snapshot?.runtime.generation, snapshot?.runtime.state]);
+
+  useEffect(() => {
+    if (!snapshot) {
+      return;
+    }
+
+    setPendingCancellations((current) => {
+      let changed = false;
+      const next = new Map(current);
+
+      for (const [runId, requestedGeneration] of current) {
+        if (snapshot.generation <= requestedGeneration) {
+          continue;
+        }
+
+        const runStillRunning = snapshot.workflows.some(
+          (workflow) =>
+            workflow.latestRun.availability === ProjectOverviewLatestRunAvailability.Available &&
+            workflow.latestRun.run.runId === runId &&
+            workflow.latestRun.run.status.toLocaleLowerCase() === 'running'
+        );
+        if (!runStillRunning) {
+          next.delete(runId);
+          pendingCancellationRunIdsRef.current.delete(runId);
+          changed = true;
+        }
+      }
+
+      return changed ? next : current;
+    });
+  }, [snapshot]);
 
   const filteredWorkflows = useMemo(() => {
     const normalizedFilter = filter.trim().toLocaleLowerCase();
@@ -98,6 +132,26 @@ export const ProjectOverviewApp = () => {
         data: { ...actionData, workflowId: workflow.workflowId, runId: workflow.latestRun.run.runId },
       });
     }
+  };
+  const cancelLatestRun = (workflow: ProjectOverviewWorkflow) => {
+    if (
+      workflow.latestRun.availability !== ProjectOverviewLatestRunAvailability.Available ||
+      workflow.latestRun.run.status.toLocaleLowerCase() !== 'running'
+    ) {
+      return;
+    }
+
+    const runId = workflow.latestRun.run.runId;
+    if (pendingCancellationRunIdsRef.current.has(runId)) {
+      return;
+    }
+
+    pendingCancellationRunIdsRef.current.add(runId);
+    setPendingCancellations((current) => new Map(current).set(runId, snapshot.generation));
+    postMessage({
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: { ...actionData, workflowId: workflow.workflowId, runId },
+    });
   };
 
   if (snapshot.lifecycle === ProjectOverviewLifecycle.Error) {
@@ -198,6 +252,8 @@ export const ProjectOverviewApp = () => {
           ) : (
             <ProjectOverviewTable
               workflows={filteredWorkflows}
+              pendingCancellationRunIds={new Set(pendingCancellations.keys())}
+              onCancelLatestRun={cancelLatestRun}
               onCopyCallback={copyCallback}
               onOpenLatestRun={openLatestRun}
               onOpenWorkflow={openWorkflow}

@@ -1,8 +1,8 @@
 import { projectOverviewMessages } from './messages';
 import { useProjectOverviewStyles } from './styles';
 import { Button, Link, Tooltip, mergeClasses } from '@fluentui/react-components';
-import { CopyRegular, HistoryRegular, OpenRegular } from '@fluentui/react-icons';
-import type { ProjectOverviewWorkflow, ProjectOverviewWorkflowId } from '@microsoft/vscode-extension-logic-apps';
+import { CopyRegular, DismissCircleRegular, HistoryRegular, OpenRegular } from '@fluentui/react-icons';
+import type { ProjectOverviewRunId, ProjectOverviewWorkflow, ProjectOverviewWorkflowId } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectOverviewCallbackAvailability, ProjectOverviewLatestRunAvailability } from '@microsoft/vscode-extension-logic-apps';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -106,12 +106,21 @@ export const sortProjectOverviewWorkflows = (
 
 interface ProjectOverviewTableProps {
   workflows: ProjectOverviewWorkflow[];
+  pendingCancellationRunIds: ReadonlySet<ProjectOverviewRunId>;
+  onCancelLatestRun: (workflow: ProjectOverviewWorkflow) => void;
   onCopyCallback: (workflowId: ProjectOverviewWorkflowId) => void;
   onOpenLatestRun: (workflow: ProjectOverviewWorkflow) => void;
   onOpenWorkflow: (workflowId: ProjectOverviewWorkflowId) => void;
 }
 
-export const ProjectOverviewTable = ({ workflows, onCopyCallback, onOpenLatestRun, onOpenWorkflow }: ProjectOverviewTableProps) => {
+export const ProjectOverviewTable = ({
+  workflows,
+  pendingCancellationRunIds,
+  onCancelLatestRun,
+  onCopyCallback,
+  onOpenLatestRun,
+  onOpenWorkflow,
+}: ProjectOverviewTableProps) => {
   const styles = useProjectOverviewStyles();
   const intl = useIntl();
   const [sort, setSort] = useState<ProjectOverviewSort>({
@@ -278,6 +287,20 @@ export const ProjectOverviewTable = ({ workflows, onCopyCallback, onOpenLatestRu
                           aria-label={intl.formatMessage(projectOverviewMessages.OPEN_LATEST_RUN, { workflowName: workflow.name })}
                           icon={<HistoryRegular />}
                           onClick={() => onOpenLatestRun(workflow)}
+                        />
+                      </Tooltip>
+                    ) : null}
+                    {run?.status.toLocaleLowerCase() === 'running' ? (
+                      <Tooltip
+                        content={intl.formatMessage(projectOverviewMessages.CANCEL_RUN, { workflowName: workflow.name })}
+                        relationship="label"
+                      >
+                        <Button
+                          appearance="subtle"
+                          aria-label={intl.formatMessage(projectOverviewMessages.CANCEL_RUN, { workflowName: workflow.name })}
+                          disabled={pendingCancellationRunIds.has(run.runId)}
+                          icon={<DismissCircleRegular />}
+                          onClick={() => onCancelLatestRun(workflow)}
                         />
                       </Tooltip>
                     ) : null}

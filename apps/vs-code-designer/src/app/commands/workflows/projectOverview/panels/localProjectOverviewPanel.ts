@@ -12,6 +12,7 @@ import {
   type ProjectOverviewActionPayload,
   type ProjectOverviewMessageToExtension,
   type ProjectOverviewProjectId,
+  type ProjectOverviewRunActionPayload,
   type ProjectOverviewSnapshot,
   type ProjectOverviewWorkflowActionPayload,
 } from '@microsoft/vscode-extension-logic-apps';
@@ -121,6 +122,7 @@ export class LocalProjectOverviewPanel {
   private refreshTimer?: NodeJS.Timeout;
   private refreshInFlight?: Promise<void>;
   private stopInFlight?: Promise<void>;
+  private readonly cancelRunInFlight = new Map<string, Promise<void>>();
 
   public constructor(
     private readonly context: IActionContext,
@@ -325,6 +327,9 @@ export class LocalProjectOverviewPanel {
       case ExtensionCommand.stopProjectOverviewRuntime:
         await this.stopRuntime(message.data);
         break;
+      case ExtensionCommand.cancelProjectOverviewRun:
+        await this.cancelRun(message.data);
+        break;
       case ExtensionCommand.projectOverviewVisibilityChanged:
         if (message.data.projectId === this.projectId) {
           await this.setVisible(message.data.visible);
@@ -387,6 +392,63 @@ export class LocalProjectOverviewPanel {
       runResolution.runtimeRunId,
       workflowResolution.sourcePath
     );
+  }
+
+  private async cancelRun(data: ProjectOverviewRunActionPayload): Promise<void> {
+    if (this.disposed || !this.isCurrentAction(data)) {
+      return;
+    }
+    const workflow = this.snapshot?.workflows.find((candidate) => candidate.workflowId === data.workflowId);
+    if (
+      workflow?.latestRun.availability !== ProjectOverviewLatestRunAvailability.Available ||
+      workflow.latestRun.run.runId !== data.runId ||
+      workflow.latestRun.run.status.trim().toLowerCase() !== 'running'
+    ) {
+      return;
+    }
+
+    const workflowResolution = this.dataService.resolveWorkflow(data.workflowId, data.snapshotGeneration);
+    const runResolution = this.dataService.resolveRun(data.runId, data.snapshotGeneration);
+    if (
+      !workflowResolution ||
+      !runResolution ||
+      workflowResolution.sourceIdentity !== runResolution.sourceIdentity ||
+      workflowResolution.workflowName !== runResolution.workflowName
+    ) {
+      return;
+    }
+
+    const runtimeIdentity = `${runResolution.runtimeGeneration}:${runResolution.runtimePort}:${runResolution.runtimeRunId}`;
+    const existing = this.cancelRunInFlight.get(runtimeIdentity);
+    if (existing) {
+      return await existing;
+    }
+
+    this.clearRefreshTimer();
+    const cancellation = (async (): Promise<void> => {
+      try {
+        await this.dataService.cancelRun(data.workflowId, data.runId, data.snapshotGeneration);
+      } catch (error) {
+        const message = localize(
+          'projectOverviewCancelRunFailed',
+          'Failed to cancel the workflow run: {0}',
+          error instanceof Error ? error.message : String(error)
+        );
+        ext.outputChannel.appendLog(message);
+        if (!this.disposed) {
+          await this.dependencies.showError(message);
+        }
+      } finally {
+        await this.refresh();
+      }
+    })();
+    this.cancelRunInFlight.set(runtimeIdentity, cancellation);
+    try {
+      await cancellation;
+    } finally {
+      this.cancelRunInFlight.delete(runtimeIdentity);
+      this.scheduleRefresh();
+    }
   }
 
   private isCurrentAction(data: ProjectOverviewActionPayload): boolean {
@@ -469,7 +531,10 @@ export class LocalProjectOverviewPanel {
   }
 
   private async postUpdate(snapshot: ProjectOverviewSnapshot): Promise<void> {
-    await this.panel?.webview.postMessage({
+    if (this.disposed || !this.panel) {
+      return;
+    }
+    await this.panel.webview.postMessage({
       command: ExtensionCommand.updateProjectOverview,
       data: { snapshot },
     });

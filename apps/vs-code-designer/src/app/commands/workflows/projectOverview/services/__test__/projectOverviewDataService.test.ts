@@ -522,4 +522,172 @@ describe('ProjectOverviewDataService', () => {
     });
     expect(snapshot.errors[0].code).toBe('runtimeGenerationChanged');
   });
+
+  it('cancels a trusted running run using only the current localhost runtime endpoint', async () => {
+    const request = vi.fn(async (_context, url) => {
+      if (url.includes('/workflows?')) {
+        return JSON.stringify({
+          value: [{ name: 'Orders', health: { state: 'Healthy' }, triggers: { manual: { type: 'Request', kind: 'Http' } } }],
+        });
+      }
+      if (url.includes('/runs?')) {
+        return JSON.stringify({
+          value: [
+            {
+              id: '/workflows/Orders/runs/run with spaces',
+              properties: { status: 'Running', startTime: '2026-01-01T00:00:00Z' },
+            },
+          ],
+        });
+      }
+      return JSON.stringify({ value: 'http://localhost/callback' });
+    });
+    const { service } = createService('codeless', {
+      getWorkflowsPath: vi.fn().mockResolvedValue([{ name: 'Orders', path: `${projectPath}\\Orders\\workflow.json` }]),
+      getWorkflows: vi.fn().mockResolvedValue({ Orders: workflowContent() }),
+      request,
+    });
+    const snapshot = await service.refresh();
+    const workflow = snapshot.workflows[0];
+    expect(workflow.latestRun.availability).toBe(ProjectOverviewLatestRunAvailability.Available);
+    if (workflow.latestRun.availability !== ProjectOverviewLatestRunAvailability.Available) {
+      throw new Error('Expected a latest run.');
+    }
+
+    await expect(service.cancelRun(workflow.workflowId, workflow.latestRun.run.runId, snapshot.generation)).resolves.toBe(true);
+
+    expect(request).toHaveBeenLastCalledWith(
+      context,
+      'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/Orders/runs/run%20with%20spaces/cancel?api-version=2019-10-01-edge-preview',
+      'POST'
+    );
+  });
+
+  it.each([
+    ['stale snapshot', (state: any) => ({ generation: state.snapshot.generation + 1 })],
+    ['forged workflow', () => ({ workflowId: 'forged-workflow' })],
+    ['forged run', () => ({ runId: 'forged-run' })],
+  ])('rejects %s cancellation without issuing an HTTP request', async (_name, change) => {
+    const request = vi.fn(async (_context, url) => {
+      if (url.includes('/workflows?')) {
+        return JSON.stringify({
+          value: [{ name: 'Orders', health: { state: 'Healthy' }, triggers: {} }],
+        });
+      }
+      return JSON.stringify({
+        value: [
+          {
+            id: 'workflows/Orders/runs/run-1',
+            properties: { status: 'Running', startTime: '2026-01-01T00:00:00Z' },
+          },
+        ],
+      });
+    });
+    const { service } = createService('codeless', {
+      getWorkflowsPath: vi.fn().mockResolvedValue([{ name: 'Orders', path: `${projectPath}\\Orders\\workflow.json` }]),
+      getWorkflows: vi.fn().mockResolvedValue({ Orders: workflowContent('Stateful', 'Recurrence') }),
+      request,
+    });
+    const snapshot = await service.refresh();
+    const workflow = snapshot.workflows[0];
+    if (workflow.latestRun.availability !== ProjectOverviewLatestRunAvailability.Available) {
+      throw new Error('Expected a latest run.');
+    }
+    const state = {
+      snapshot,
+      workflowId: workflow.workflowId,
+      runId: workflow.latestRun.run.runId,
+      generation: snapshot.generation,
+    };
+    const changed = change(state);
+    request.mockClear();
+
+    await expect(
+      service.cancelRun(
+        (changed.workflowId ?? state.workflowId) as any,
+        (changed.runId ?? state.runId) as any,
+        changed.generation ?? state.generation
+      )
+    ).resolves.toBe(false);
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['stopped runtime', runtimeRegistration({ lifecycle: 'stopped' })],
+    ['changed generation', runtimeRegistration({ generation: 4 })],
+    ['changed port', runtimeRegistration({ port: 7072 })],
+  ])('rejects cancellation against a %s without issuing an HTTP request', async (_name, changedRegistration) => {
+    let registration = runtimeRegistration();
+    const request = vi.fn(async (_context, url) => {
+      if (url.includes('/workflows?')) {
+        return JSON.stringify({
+          value: [{ name: 'Orders', health: { state: 'Healthy' }, triggers: {} }],
+        });
+      }
+      return JSON.stringify({
+        value: [
+          {
+            id: 'workflows/Orders/runs/run-1',
+            properties: { status: 'Running', startTime: '2026-01-01T00:00:00Z' },
+          },
+        ],
+      });
+    });
+    const { service } = createService('codeless', {
+      getRuntimeRegistration: vi.fn(() => registration),
+      getWorkflowsPath: vi.fn().mockResolvedValue([{ name: 'Orders', path: `${projectPath}\\Orders\\workflow.json` }]),
+      getWorkflows: vi.fn().mockResolvedValue({ Orders: workflowContent('Stateful', 'Recurrence') }),
+      request,
+    });
+    const snapshot = await service.refresh();
+    const workflow = snapshot.workflows[0];
+    if (workflow.latestRun.availability !== ProjectOverviewLatestRunAvailability.Available) {
+      throw new Error('Expected a latest run.');
+    }
+    registration = changedRegistration;
+    request.mockClear();
+
+    await expect(service.cancelRun(workflow.workflowId, workflow.latestRun.run.runId, snapshot.generation)).resolves.toBe(false);
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['different project', { projectPath: 'D:\\workspace\\other' }],
+    ['different source', { sourceIdentity: 'forged-source' }],
+    ['different workflow', { workflowName: 'Other' }],
+    ['forged absolute URL', { runtimeRunId: 'https://attacker.example/runs/run-1' }],
+    ['path traversal', { runtimeRunId: 'workflows/Orders/runs/..' }],
+  ])('rejects a run resolution with %s without issuing an HTTP request', async (_name, mutation) => {
+    const request = vi.fn(async (_context, url) => {
+      if (url.includes('/workflows?')) {
+        return JSON.stringify({
+          value: [{ name: 'Orders', health: { state: 'Healthy' }, triggers: {} }],
+        });
+      }
+      return JSON.stringify({
+        value: [
+          {
+            id: 'workflows/Orders/runs/run-1',
+            properties: { status: 'Running', startTime: '2026-01-01T00:00:00Z' },
+          },
+        ],
+      });
+    });
+    const { service } = createService('codeless', {
+      getWorkflowsPath: vi.fn().mockResolvedValue([{ name: 'Orders', path: `${projectPath}\\Orders\\workflow.json` }]),
+      getWorkflows: vi.fn().mockResolvedValue({ Orders: workflowContent('Stateful', 'Recurrence') }),
+      request,
+    });
+    const snapshot = await service.refresh();
+    const workflow = snapshot.workflows[0];
+    if (workflow.latestRun.availability !== ProjectOverviewLatestRunAvailability.Available) {
+      throw new Error('Expected a latest run.');
+    }
+    const resolution = (service as any).runResolutions.get(workflow.latestRun.run.runId);
+    (service as any).runResolutions.set(workflow.latestRun.run.runId, { ...resolution, ...mutation });
+    request.mockClear();
+
+    await expect(service.cancelRun(workflow.workflowId, workflow.latestRun.run.runId, snapshot.generation)).resolves.toBe(false);
+    expect(request).not.toHaveBeenCalled();
+  });
 });

@@ -7,6 +7,11 @@ export const projectOverviewMessages = defineMessages({
     id: '2Gp9gw',
     description: 'Text shown when a workflow callback URL is unavailable',
   },
+  CANCEL_RUN: {
+    defaultMessage: 'Cancel run for {workflowName}',
+    id: 'ixsaOP',
+    description: 'Accessible label for cancelling a running workflow run',
+  },
   COPY_CALLBACK: {
     defaultMessage: 'Copy callback URL for {workflowName}',
     id: 'hdL1cs',

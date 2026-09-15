@@ -79,6 +79,7 @@ export const ExtensionCommand = {
   retryProjectOverview: 'retryProjectOverview',
   startProjectOverviewRuntime: 'startProjectOverviewRuntime',
   stopProjectOverviewRuntime: 'stopProjectOverviewRuntime',
+  cancelProjectOverviewRun: 'cancelProjectOverviewRun',
   openWorkflowOverview: 'openWorkflowOverview',
   openProjectOverview: 'openProjectOverview',
   openLatestProjectOverviewRun: 'openLatestProjectOverviewRun',

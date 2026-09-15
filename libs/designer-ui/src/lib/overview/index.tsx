@@ -24,11 +24,13 @@ export interface OverviewProps {
   isWorkflowRuntimeRunning?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
+  pendingRunId?: string;
   runItems: RunDisplayItem[];
   workflowProperties: OverviewPropertiesProps;
   onLoadMoreRuns(): void;
   onLoadRuns(): void;
   onOpenRun(run: RunDisplayItem): void;
+  onCancelRun?(run: RunDisplayItem): void;
   onRunTrigger(): void;
   onVerifyRunId(runId: string): Promise<Run | RunError> | undefined;
   onCreateUnitTestFromRun?(run: RunDisplayItem): void;
@@ -55,14 +57,15 @@ export const Overview: React.FC<OverviewProps> = ({
   isWorkflowRuntimeRunning,
   hasMoreRuns = false,
   runItems,
+  pendingRunId,
   workflowProperties,
   isRefreshing,
   onLoadMoreRuns,
   onLoadRuns,
   onOpenRun,
+  onCancelRun,
   onRunTrigger,
   onVerifyRunId,
-  onCreateUnitTestFromRun,
   onCopyCallbackUrl,
   onOpenProjectOverview,
 }: OverviewProps) => {
@@ -184,7 +187,7 @@ export const Overview: React.FC<OverviewProps> = ({
               </div>
             }
           >
-            <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} onCreateUnitTestFromRun={onCreateUnitTestFromRun} />
+            <RunHistory items={runItems} loading={loading} pendingRunId={pendingRunId} onCancelRun={onCancelRun} onOpenRun={onOpenRun} />
           </InfiniteScroll>
           {errorMessage ? (
             <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>

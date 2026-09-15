@@ -177,9 +177,11 @@ export interface ProjectOverviewWorkflowActionPayload extends ProjectOverviewAct
   workflowId: ProjectOverviewWorkflowId;
 }
 
-export interface OpenLatestProjectOverviewRunPayload extends ProjectOverviewWorkflowActionPayload {
+export interface ProjectOverviewRunActionPayload extends ProjectOverviewWorkflowActionPayload {
   runId: ProjectOverviewRunId;
 }
+
+export type OpenLatestProjectOverviewRunPayload = ProjectOverviewRunActionPayload;
 
 export interface OpenProjectOverviewPayload {
   projectId: ProjectOverviewProjectId;
@@ -224,6 +226,10 @@ export type ProjectOverviewMessageToExtension =
   | {
       command: typeof ExtensionCommand.stopProjectOverviewRuntime;
       data: ProjectOverviewActionPayload;
+    }
+  | {
+      command: typeof ExtensionCommand.cancelProjectOverviewRun;
+      data: ProjectOverviewRunActionPayload;
     }
   | {
       command: typeof ExtensionCommand.openWorkflowOverview;

@@ -31,7 +31,12 @@ vi.mock('../../../../../utils/codeless/getWebViewHTML', () => ({ getWebViewHTML:
 vi.mock('../../../monitoringView/openMonitoringView', () => ({ openMonitoringView: vi.fn() }));
 vi.mock('../../../overview/openOverview', () => ({ openOverview: vi.fn() }));
 
-function snapshot(generation = 1, runtimeGeneration = 4, runtimeState: ProjectOverviewRuntimeState = ProjectOverviewRuntimeState.Running) {
+function snapshot(
+  generation = 1,
+  runtimeGeneration = 4,
+  runtimeState: ProjectOverviewRuntimeState = ProjectOverviewRuntimeState.Running,
+  runStatus = 'Succeeded'
+) {
   return {
     projectId: 'project-id',
     projectName: 'LogicApp',
@@ -52,7 +57,7 @@ function snapshot(generation = 1, runtimeGeneration = 4, runtimeState: ProjectOv
         callback: { availability: ProjectOverviewCallbackAvailability.Available, url: 'https://callback' },
         latestRun: {
           availability: ProjectOverviewLatestRunAvailability.Available,
-          run: { runId: 'run-id', status: 'Succeeded', startTime: new Date(0).toISOString() },
+          run: { runId: 'run-id', status: runStatus, startTime: new Date(0).toISOString() },
         },
         errors: [],
       },
@@ -92,6 +97,7 @@ function createHarness() {
     refresh: vi.fn().mockResolvedValue(snapshot(2)),
     getRuntimeRegistration: vi.fn().mockReturnValue({ generation: 4, lifecycle: 'running' }),
     cancel: vi.fn(),
+    cancelRun: vi.fn().mockResolvedValue(true),
     resolveWorkflow: vi.fn((workflowId, generation) =>
       workflowId === 'workflow-id' && generation === 1
         ? {
@@ -114,6 +120,8 @@ function createHarness() {
             kind: ProjectOverviewWorkflowKind.Codeless,
             snapshotGeneration: 1,
             runtimeRunId: 'workflows/Orders/runs/run-1',
+            runtimeGeneration: 4,
+            runtimePort: 7071,
           }
         : undefined
     ),
@@ -292,6 +300,8 @@ describe('LocalProjectOverviewPanel', () => {
       kind: ProjectOverviewWorkflowKind.Codeful,
       snapshotGeneration: 1,
       runtimeRunId: 'workflows/Orders/runs/run-1',
+      runtimeGeneration: 4,
+      runtimePort: 7071,
     });
     await harness.panel.create(snapshot());
     const action = { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'workflow-id' };
@@ -331,6 +341,106 @@ describe('LocalProjectOverviewPanel', () => {
 
     expect(harness.retry).toHaveBeenCalledTimes(1);
     expect(harness.retry).toHaveBeenCalledWith();
+  });
+
+  it('cancels only the current running latest run and refreshes afterward', async () => {
+    const harness = createHarness();
+    harness.service.refresh.mockResolvedValue(snapshot(2, 4, ProjectOverviewRuntimeState.Running, 'Cancelled'));
+    await harness.panel.create(snapshot(1, 4, ProjectOverviewRuntimeState.Running, 'rUnNiNg'));
+    await harness.message({ command: ExtensionCommand.initialize });
+
+    await harness.message({
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'workflow-id', runId: 'run-id' },
+    });
+
+    expect(harness.service.cancelRun).toHaveBeenCalledWith('workflow-id', 'run-id', 1);
+    expect(harness.service.refresh).toHaveBeenCalledTimes(1);
+    expect(harness.dependencies.clearTimer).toHaveBeenCalled();
+    expect(harness.dependencies.setTimer).toHaveBeenLastCalledWith(expect.any(Function), 5000);
+  });
+
+  it.each([
+    ['wrong project', { projectId: 'other-project', snapshotGeneration: 1, workflowId: 'workflow-id', runId: 'run-id' }],
+    ['stale snapshot', { projectId: 'project-id', snapshotGeneration: 0, workflowId: 'workflow-id', runId: 'run-id' }],
+    ['wrong workflow', { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'other-workflow', runId: 'run-id' }],
+    ['wrong run', { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'workflow-id', runId: 'other-run' }],
+  ])('ignores cancellation for a %s', async (_name, data) => {
+    const harness = createHarness();
+    await harness.panel.create(snapshot(1, 4, ProjectOverviewRuntimeState.Running, 'Running'));
+
+    await harness.message({ command: ExtensionCommand.cancelProjectOverviewRun, data });
+
+    expect(harness.service.cancelRun).not.toHaveBeenCalled();
+    expect(harness.service.refresh).not.toHaveBeenCalled();
+  });
+
+  it.each(['Succeeded', 'Failed', 'Cancelled', 'Waiting'])('ignores cancellation when the latest run status is %s', async (status) => {
+    const harness = createHarness();
+    await harness.panel.create(snapshot(1, 4, ProjectOverviewRuntimeState.Running, status));
+
+    await harness.message({
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'workflow-id', runId: 'run-id' },
+    });
+
+    expect(harness.service.cancelRun).not.toHaveBeenCalled();
+  });
+
+  it('coalesces duplicate cancellations by resolved runtime identity', async () => {
+    const harness = createHarness();
+    let release: ((value: boolean) => void) | undefined;
+    harness.service.cancelRun.mockReturnValueOnce(new Promise((resolve) => (release = resolve)));
+    harness.service.refresh.mockResolvedValue(snapshot(2, 4, ProjectOverviewRuntimeState.Running, 'Cancelled'));
+    await harness.panel.create(snapshot(1, 4, ProjectOverviewRuntimeState.Running, 'Running'));
+    const action = {
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'workflow-id', runId: 'run-id' },
+    };
+
+    const first = harness.message(action);
+    const second = harness.message(action);
+    release?.(true);
+    await Promise.all([first, second]);
+
+    expect(harness.service.cancelRun).toHaveBeenCalledTimes(1);
+    expect(harness.service.refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('logs, surfaces, and refreshes after cancellation fails', async () => {
+    const harness = createHarness();
+    harness.service.cancelRun.mockRejectedValue(new Error('cancel failed'));
+    await harness.panel.create(snapshot(1, 4, ProjectOverviewRuntimeState.Running, 'Running'));
+
+    await harness.message({
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'workflow-id', runId: 'run-id' },
+    });
+
+    expect(harness.dependencies.showError).toHaveBeenCalledWith('Failed to cancel the workflow run: cancel failed');
+    expect(harness.service.refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not surface or publish a late cancellation result after disposal', async () => {
+    const harness = createHarness();
+    let rejectCancellation: ((error: Error) => void) | undefined;
+    harness.service.cancelRun.mockReturnValueOnce(new Promise((_resolve, reject) => (rejectCancellation = reject)));
+    await harness.panel.create(snapshot(1, 4, ProjectOverviewRuntimeState.Running, 'Running'));
+
+    const cancellation = harness.message({
+      command: ExtensionCommand.cancelProjectOverviewRun,
+      data: { projectId: 'project-id', snapshotGeneration: 1, workflowId: 'workflow-id', runId: 'run-id' },
+    });
+    harness.dispose();
+    rejectCancellation?.(new Error('late failure'));
+    await cancellation;
+
+    expect(harness.dependencies.showError).not.toHaveBeenCalled();
+    expect(harness.service.refresh).not.toHaveBeenCalled();
+    expect(harness.postMessage).not.toHaveBeenCalledWith({
+      command: ExtensionCommand.updateProjectOverview,
+      data: expect.anything(),
+    });
   });
 
   it('starts a stopped runtime only for the current trusted snapshot', async () => {

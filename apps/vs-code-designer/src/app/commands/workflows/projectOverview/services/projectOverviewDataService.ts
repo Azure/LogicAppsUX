@@ -77,6 +77,8 @@ interface WorkflowIdentityResolution {
 
 interface RunIdentityResolution extends WorkflowIdentityResolution {
   runtimeRunId: string;
+  runtimeGeneration: number;
+  runtimePort: number;
 }
 
 export interface ProjectOverviewDataServiceOptions {
@@ -227,6 +229,41 @@ export class ProjectOverviewDataService {
       return undefined;
     }
     return resolution ? { ...resolution } : undefined;
+  }
+
+  public async cancelRun(workflowId: ProjectOverviewWorkflowId, runId: ProjectOverviewRunId, snapshotGeneration: number): Promise<boolean> {
+    const workflowResolution = this.resolveWorkflow(workflowId, snapshotGeneration);
+    const runResolution = this.resolveRun(runId, snapshotGeneration);
+    if (
+      !workflowResolution ||
+      !runResolution ||
+      canonicalizeWorkflowPath(workflowResolution.projectPath) !== canonicalizeWorkflowPath(this.projectPath) ||
+      canonicalizeWorkflowPath(runResolution.projectPath) !== canonicalizeWorkflowPath(this.projectPath) ||
+      workflowResolution.sourceIdentity !== runResolution.sourceIdentity ||
+      workflowResolution.sourcePath !== runResolution.sourcePath ||
+      workflowResolution.workflowName !== runResolution.workflowName ||
+      workflowResolution.kind !== runResolution.kind
+    ) {
+      return false;
+    }
+
+    const registration = this.dependencies.getRuntimeRegistration(this.projectPath);
+    if (
+      registration?.lifecycle !== 'running' ||
+      registration.generation !== runResolution.runtimeGeneration ||
+      registration.port !== runResolution.runtimePort
+    ) {
+      return false;
+    }
+
+    const runtimeRunPath = this.getRuntimeRunPath(runResolution.runtimeRunId, runResolution.workflowName);
+    if (!runtimeRunPath) {
+      return false;
+    }
+
+    const baseUrl = `http://localhost:${registration.port}${managementApiPrefix}`;
+    await this.dependencies.request(this.context, `${baseUrl}/${runtimeRunPath}/cancel?api-version=${apiVersion}`, HTTP_METHODS.POST);
+    return true;
   }
 
   private async buildSnapshot(generation: number, signal: AbortSignal): Promise<ProjectOverviewSnapshot> {
@@ -433,7 +470,15 @@ export class ProjectOverviewDataService {
     if (runtimeState === 'available' && baseUrl && source.sourceState === ProjectOverviewWorkflowSourceState.Available) {
       try {
         ({ callback, latestRun } = await withTimeout(
-          this.getRuntimeDetails({ ...source, runMode, historySupported }, workflowId, requestTriggerName, baseUrl, snapshotGeneration),
+          this.getRuntimeDetails(
+            { ...source, runMode, historySupported },
+            workflowId,
+            requestTriggerName,
+            baseUrl,
+            snapshotGeneration,
+            registration.generation,
+            registration.port
+          ),
           this.workflowTimeoutMs,
           signal
         ));
@@ -476,7 +521,9 @@ export class ProjectOverviewDataService {
     workflowId: ProjectOverviewWorkflowId,
     requestTriggerName: string | undefined,
     baseUrl: string,
-    snapshotGeneration: number
+    snapshotGeneration: number,
+    runtimeGeneration: number,
+    runtimePort: number
   ): Promise<{ callback: ProjectOverviewCallback; latestRun: ProjectOverviewLatestRunState }> {
     const encodedWorkflowName = encodeURIComponent(source.name);
     const callbackPromise: Promise<ProjectOverviewCallback> = requestTriggerName
@@ -498,7 +545,7 @@ export class ProjectOverviewDataService {
     const latestRunPromise: Promise<ProjectOverviewLatestRunState> = source.historySupported
       ? this.dependencies
           .request(this.context, `${baseUrl}/workflows/${encodedWorkflowName}/runs?api-version=${apiVersion}&$top=1`, HTTP_METHODS.GET)
-          .then((response) => this.parseLatestRun(response, source, workflowId, snapshotGeneration))
+          .then((response) => this.parseLatestRun(response, source, workflowId, snapshotGeneration, runtimeGeneration, runtimePort))
           .catch(() => ({ availability: ProjectOverviewLatestRunAvailability.QueryFailed }))
       : Promise.resolve({ availability: ProjectOverviewLatestRunAvailability.StatelessHistoryUnavailable });
 
@@ -510,7 +557,9 @@ export class ProjectOverviewDataService {
     response: string,
     source: SourceWorkflow,
     workflowId: ProjectOverviewWorkflowId,
-    snapshotGeneration: number
+    snapshotGeneration: number,
+    runtimeGeneration: number,
+    runtimePort: number
   ): ProjectOverviewLatestRunState {
     const parsed = JSON.parse(response);
     const runs = Array.isArray(parsed) ? parsed : parsed?.value;
@@ -529,6 +578,8 @@ export class ProjectOverviewDataService {
       ...this.workflowResolutions.get(workflowId)!,
       runtimeRunId,
       snapshotGeneration,
+      runtimeGeneration,
+      runtimePort,
     });
     return {
       availability: ProjectOverviewLatestRunAvailability.Available,
@@ -571,5 +622,27 @@ export class ProjectOverviewDataService {
     const matchingFile = sourceFiles.find((file) => workflowPattern.test(readFileSync(path.join(this.projectPath, file), 'utf8')));
     const sourceFile = matchingFile ?? sourceFiles[0];
     return sourceFile ? path.join(this.projectPath, sourceFile) : '';
+  }
+
+  private getRuntimeRunPath(runtimeRunId: string, workflowName: string): string | undefined {
+    const match = /^\/?workflows\/([^/?#\\]+)\/runs\/([^/?#\\]+)$/i.exec(runtimeRunId);
+    if (!match) {
+      return undefined;
+    }
+    try {
+      const resolvedWorkflowName = decodeURIComponent(match[1]);
+      const resolvedRunName = decodeURIComponent(match[2]);
+      if (
+        canonicalizeWorkflowName(resolvedWorkflowName) !== canonicalizeWorkflowName(workflowName) ||
+        !resolvedRunName ||
+        resolvedRunName === '.' ||
+        resolvedRunName === '..'
+      ) {
+        return undefined;
+      }
+      return `workflows/${encodeURIComponent(resolvedWorkflowName)}/runs/${encodeURIComponent(resolvedRunName)}`;
+    } catch {
+      return undefined;
+    }
   }
 }

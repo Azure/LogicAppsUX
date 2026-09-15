@@ -5,7 +5,7 @@ import { VSCodeContext } from '../../webviewCommunication';
 import { Overview, type OverviewPropertiesProps, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import { type Runs, StandardRunService, Theme, equals, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntlMessages, overviewMessages } from '../../intl';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
@@ -135,6 +135,9 @@ export const OverviewApp = () => {
       enabled: isWorkflowRuntimeRunning && !!selectedWorkflowProperties.name,
     }
   );
+  const pendingRunIdRef = useRef<string>();
+  const [pendingRunId, setPendingRunId] = useState<string>();
+  const [cancelRunError, setCancelRunError] = useState<unknown>();
 
   const runItems = useMemo(
     () =>
@@ -161,6 +164,35 @@ export const OverviewApp = () => {
       return runService?.getRun(runId);
     },
     [runService]
+  );
+
+  const onCancelRun = useCallback(
+    async (run: RunDisplayItem) => {
+      if (!runService || pendingRunIdRef.current) {
+        return;
+      }
+
+      pendingRunIdRef.current = run.id;
+      setPendingRunId(run.id);
+      setCancelRunError(undefined);
+
+      try {
+        const result = await runService.cancelRun(run.id);
+        if (result instanceof Error) {
+          throw result;
+        }
+      } catch (cancelError) {
+        setCancelRunError(cancelError);
+      } finally {
+        try {
+          await refetch();
+        } finally {
+          pendingRunIdRef.current = undefined;
+          setPendingRunId(undefined);
+        }
+      }
+    },
+    [refetch, runService]
   );
 
   const { isLoading: agentUrlIsLoading, data: agentUrlData } = useQuery(
@@ -209,8 +241,17 @@ export const OverviewApp = () => {
       triggerErrorMessage = String(runTriggerError);
     }
 
-    return loadingErrorMessage ?? triggerErrorMessage;
-  }, [error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR, workflowState.isLocal]);
+    let cancellationErrorMessage: string | undefined;
+    if (cancelRunError instanceof Error) {
+      cancellationErrorMessage = cancelRunError.message;
+    } else if (isRunError(cancelRunError)) {
+      cancellationErrorMessage = cancelRunError.error.message;
+    } else if (cancelRunError) {
+      cancellationErrorMessage = String(cancelRunError);
+    }
+
+    return loadingErrorMessage ?? triggerErrorMessage ?? cancellationErrorMessage;
+  }, [cancelRunError, error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR, workflowState.isLocal]);
 
   return (
     <div className={styles.overviewContainer}>
@@ -246,11 +287,13 @@ export const OverviewApp = () => {
         agentUrlLoading={agentUrlIsLoading}
         agentUrlData={agentUrlData}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+        pendingRunId={pendingRunId}
         runItems={runItems ?? []}
         workflowProperties={selectedWorkflowProperties}
         isRefreshing={isRefetching}
         onLoadMoreRuns={fetchNextPage}
         onLoadRuns={refetch}
+        onCancelRun={onCancelRun}
         onOpenRun={(run: RunDisplayItem) => {
           vscode.postMessage({
             command: ExtensionCommand.loadRun,
