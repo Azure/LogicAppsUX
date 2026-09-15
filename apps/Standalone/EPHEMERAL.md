@@ -170,6 +170,12 @@ using an explicit PR number.
 - Only validated static content reaches SWA. The publisher replaces any
   PR-provided `staticwebapp.config.json` with its own configuration, disables API
   builds, and explicitly chooses a nonproduction named environment.
+- The upload action is pinned to the verified `v1` branch commit
+  `4d27395796ac319302594769cfe812bd207490b1`. The ambiguous `@v1` resolves to
+  the older tag `1a947af9992250f3bc2e68ad0754c0b0c11566c9`, whose action metadata
+  lacks `skip_api_build` and `deployment_environment`. Verify both inputs and
+  retain the explicit environment when updating the pin. This pins the action
+  metadata/entrypoint, not its upstream `staticappsclient:stable` container.
 - Trusted routing returns 404 for `/.auth/*` to block SWA's built-in authentication
   endpoints. Excluding these paths from the SPA fallback alone would not disable
   authentication.
@@ -203,6 +209,21 @@ If setup fails, check the resource name/subscription, OIDC subject and environme
 restrictions, role assignment, SWA capacity, and deployment authorization policy.
 The deploy and delete paths must both work. Do not copy a user's CLI ARM token
 into GitHub secrets as a workaround.
+
+An upload error about multiple wildcard characters in a fallback exclusion is a
+hosting-configuration failure, not an Azure permission failure. SWA accepts at
+most one `*` per exclusion: `/*.*` is invalid. Use the explicit `/*.js`-style
+exclusions for every suffix allowed by `scripts/ephemeral/validate.py`, retaining
+the asset/API/dev-token/template/auth exclusions and the `/.auth/*` 404 route.
+The harness rejects unsupported patterns, and tests prevent suffix-list drift.
+See [SWA fallback routes](https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#fallback-routes).
+
+Publisher fixes must merge to `main` before retrying reconciliation of the pilot
+PR. Do not label an infrastructure-fix PR `ephemeral` to test its own publisher:
+the trusted workflow intentionally does not execute the PR's publishing code.
+After merge, reconcile the pilot PR on `main` and verify its named environment,
+`/` and `/v2` reloads, missing assets and auth endpoints, and the unused production
+environment. Local validation alone does not establish live deployment success.
 
 Turning `EPHEMERAL_ENABLED` off stops **both** publishing and automated cleanup.
 Remove labels and verify cleanup (or run a final sweep) before disabling it.
