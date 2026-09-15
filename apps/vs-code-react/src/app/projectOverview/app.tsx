@@ -75,17 +75,9 @@ export const ProjectOverviewApp = () => {
           continue;
         }
 
-        const runStillRunning = snapshot.workflows.some(
-          (workflow) =>
-            workflow.latestRun.availability === ProjectOverviewLatestRunAvailability.Available &&
-            workflow.latestRun.run.runId === runId &&
-            workflow.latestRun.run.status.toLocaleLowerCase() === 'running'
-        );
-        if (!runStillRunning) {
-          next.delete(runId);
-          pendingCancellationRunIdsRef.current.delete(runId);
-          changed = true;
-        }
+        next.delete(runId);
+        pendingCancellationRunIdsRef.current.delete(runId);
+        changed = true;
       }
 
       return changed ? next : current;
@@ -116,7 +108,14 @@ export const ProjectOverviewApp = () => {
   };
   const refresh = () => postMessage({ command: ExtensionCommand.refreshProjectOverview, data: actionData });
   const retry = () => postMessage({ command: ExtensionCommand.retryProjectOverview, data: actionData });
-  const startRuntime = () => postMessage({ command: ExtensionCommand.startProjectOverviewRuntime, data: actionData });
+  const startRuntime = () =>
+    postMessage({
+      command:
+        snapshot.runtime.state === ProjectOverviewRuntimeState.Error
+          ? ExtensionCommand.retryProjectOverview
+          : ExtensionCommand.startProjectOverviewRuntime,
+      data: actionData,
+    });
   const stopRuntime = () => {
     setIsStoppingRuntime(true);
     postMessage({ command: ExtensionCommand.stopProjectOverviewRuntime, data: actionData });

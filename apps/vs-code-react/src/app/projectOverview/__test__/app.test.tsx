@@ -360,6 +360,30 @@ describe('ProjectOverviewApp', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Cancel run for Running workflow' })).toBeEnabled());
   });
 
+  it('allows cancellation to be retried when a newer snapshot still reports the run as running', async () => {
+    const runningWorkflow = createWorkflow('Running workflow', {
+      run: { id: 'opaque-running-run', startTime: '2026-09-14T03:00:00.000Z', status: 'Running' },
+    });
+    const { store } = renderApp(createSnapshot({ workflows: [runningWorkflow] }));
+    const cancelButton = screen.getByRole('button', { name: 'Cancel run for Running workflow' });
+
+    fireEvent.click(cancelButton);
+    expect(cancelButton).toBeDisabled();
+
+    store.dispatch(
+      updateProjectOverview({
+        snapshot: createSnapshot({
+          generation: 8,
+          workflows: [runningWorkflow],
+        }),
+      })
+    );
+
+    await waitFor(() => expect(cancelButton).toBeEnabled());
+    fireEvent.click(cancelButton);
+    expect(postMessage).toHaveBeenCalledTimes(2);
+  });
+
   it('renders only three sortable headers and leaves Actions unsortable', () => {
     renderApp(createSnapshot());
 
@@ -507,7 +531,7 @@ describe('ProjectOverviewApp', () => {
         </IntlProvider>
       );
 
-    for (const state of [ProjectOverviewRuntimeState.Stopped, ProjectOverviewRuntimeState.Unavailable, ProjectOverviewRuntimeState.Error]) {
+    for (const state of [ProjectOverviewRuntimeState.Stopped, ProjectOverviewRuntimeState.Unavailable]) {
       renderRuntimeState(state);
       const startButton = screen.getByRole('button', { name: 'Start runtime' });
       expect(startButton).toHaveTextContent('');
@@ -519,6 +543,18 @@ describe('ProjectOverviewApp', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start runtime' }));
     expect(postMessage).toHaveBeenCalledWith({
       command: ExtensionCommand.startProjectOverviewRuntime,
+      data: { projectId, snapshotGeneration: 7 },
+    });
+
+    renderRuntimeState(ProjectOverviewRuntimeState.Error);
+    const retryButton = screen.getByRole('button', { name: 'Start runtime' });
+    expect(retryButton).toHaveTextContent('');
+    expect(retryButton.querySelector('svg')).not.toBeNull();
+    expect(retryButton).toHaveAttribute('data-tooltip-content', 'Start runtime');
+    expect(getRuntimeToggleButtons()).toHaveLength(1);
+    fireEvent.click(retryButton);
+    expect(postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.retryProjectOverview,
       data: { projectId, snapshotGeneration: 7 },
     });
 
