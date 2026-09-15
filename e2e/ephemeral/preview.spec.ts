@@ -104,12 +104,17 @@ test('missing static assets return 404 instead of the SPA fallback', async ({ re
   }
 });
 
-test('trusted hosting config blocks SWA auth paths in the static harness', async ({ request }) => {
-  // This verifies the config contract and local harness, not SWA's live auth service.
+test('trusted hosting config retains exact provider blocks in the static harness', async ({ request }) => {
+  // This verifies static routing only; SWA may handle reserved /.auth/me and /.auth/logout ahead of these rules.
+  // Both exact provider 404s still require live verification after a trusted-main deployment, without following redirects.
   const configurationResponse = await request.get('/staticwebapp.config.json');
   expect(configurationResponse.status()).toBe(200);
   const configuration = await configurationResponse.json();
-  expect(configuration.routes).toEqual([{ route: '/.auth/*', statusCode: 404 }]);
+  expect(configuration.routes).toEqual([
+    { route: '/.auth/login/aad', statusCode: 404 },
+    { route: '/.auth/login/github', statusCode: 404 },
+    { route: '/.auth/*', statusCode: 404 },
+  ]);
 
   for (const path of ['/.auth/login/aad', '/.auth/login/github', '/.auth/me']) {
     for (const method of ['GET', 'POST', 'HEAD']) {

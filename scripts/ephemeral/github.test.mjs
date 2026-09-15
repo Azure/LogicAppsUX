@@ -103,12 +103,72 @@ describe('trusted GitHub adapter', () => {
       { head: { ...pr.head, sha: 'b'.repeat(40) } },
       { head: { ...pr.head, repo: null } },
       { base: { ...pr.base, repo: { full_name: 'other/repo' } } },
+      { base: { ...pr.base, ref: 'other-branch' } },
     ]) {
       const github = api();
       github.rest.pulls.get.mockResolvedValue({ data: { ...pr, ...change } });
       expect(await candidateNumbers({ github, context })).toEqual([]);
     }
   });
+
+  it.each([{ labels: [] }, { labels: [{ name: 'risk:medium' }] }, { labels: [{ name: 'Ephemeral' }] }, { state: 'closed' }])(
+    'skips a completed build whose live PR is no longer eligible: %j',
+    async (change) => {
+      const github = api();
+      const azureClient = vi.fn();
+      github.rest.actions.getWorkflowRun.mockResolvedValue({ data: { ...run, pull_requests: [{ number: 42 }] } });
+      github.rest.pulls.get.mockResolvedValue({ data: { ...pr, ...change } });
+
+      expect(await candidateNumbers({ github, context, azureClient })).toEqual([]);
+      expect(azureClient).not.toHaveBeenCalled();
+      expect(github.rest.repos.createDeployment).not.toHaveBeenCalled();
+      expect(github.rest.actions.downloadArtifact).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(['success', 'failure', 'cancelled', 'skipped'])('ignores %s build completion for an unlabelled PR', async (conclusion) => {
+    const github = api();
+    github.rest.actions.getWorkflowRun.mockResolvedValue({ data: { ...run, conclusion, pull_requests: [{ number: 42 }] } });
+    github.rest.pulls.get.mockResolvedValue({ data: { ...pr, labels: [] } });
+    expect(await candidateNumbers({ github, context })).toEqual([]);
+  });
+
+  it.each(['opened', 'reopened', 'synchronize', 'labeled', 'unlabeled', 'closed'])(
+    'does not select an unlabelled PR on %s',
+    async (action) => {
+      const github = api();
+      const azureClient = vi.fn();
+      expect(
+        await candidateNumbers({
+          github,
+          context: {
+            ...context,
+            eventName: 'pull_request_target',
+            payload: { pull_request: { ...pr, labels: [] }, action, label: { name: 'risk:medium' } },
+          },
+          azureClient,
+        })
+      ).toEqual([]);
+      expect(azureClient).not.toHaveBeenCalled();
+      expect(github.paginate).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(['opened', 'reopened', 'synchronize', 'labeled', 'closed'])(
+    'still selects a labelled PR on %s, including cleanup on close',
+    async (action) => {
+      expect(
+        await candidateNumbers({
+          github: api(),
+          context: {
+            ...context,
+            eventName: 'pull_request_target',
+            payload: { pull_request: { ...pr, state: action === 'closed' ? 'closed' : 'open' }, action },
+          },
+        })
+      ).toEqual([42]);
+    }
+  );
 
   it('fails closed on ambiguous associations or API failure', async () => {
     const github = api();
@@ -307,6 +367,23 @@ describe('preparation failure reporting', () => {
 describe('workflow trust wiring', () => {
   const trusted = readFileSync(new URL('../../.github/workflows/standalone-ephemeral.yml', import.meta.url), 'utf8');
   const build = readFileSync(new URL('../../.github/workflows/standalone-ephemeral-build.yml', import.meta.url), 'utf8');
+
+  it('gates PR events before entering the protected environment without suppressing label-removal cleanup', () => {
+    const select = trusted.split('  select:\n')[1].split('    runs-on:')[0];
+    expect(select.replace(/\s+/g, ' ').trim()).toBe(
+      "if: >- vars.EPHEMERAL_ENABLED == 'true' && ( github.event_name != 'pull_request_target' || contains(github.event.pull_request.labels.*.name, 'ephemeral') || (github.event.action == 'unlabeled' && github.event.label.name == 'ephemeral') )"
+    );
+  });
+
+  it('uses the protected environment for access only, never implicit deployment records', () => {
+    const environments = trusted.match(/^\s+environment:\n(?:[ ]{6}.+\n)+/gm);
+    expect(environments).toHaveLength(2);
+    for (const environment of environments) {
+      expect(environment).toContain('name: standalone-ephemeral');
+      expect(environment).toContain('deployment: false');
+    }
+    expect(trusted).not.toMatch(/^\s+environment: standalone-ephemeral$/m);
+  });
 
   it('never executes PR dependencies or PR refs in a credential-bearing workflow', () => {
     expect(trusted).not.toMatch(/pnpm |npm |pull_request\.head|checkout.*refs\/pull/);

@@ -140,6 +140,9 @@ describe('reconciliation', () => {
     expect(services.pull).toHaveBeenCalledTimes(2);
     expect(services.extract.mock.invocationCallOrder[0]).toBeLessThan(services.pull.mock.invocationCallOrder[1]);
     expect(services.pull.mock.invocationCallOrder[1]).toBeLessThan(services.startDeployment.mock.invocationCallOrder[0]);
+    expect(services.deploymentStatus).not.toHaveBeenCalled();
+    await finish(state, true, services);
+    expect(services.deploymentStatus).toHaveBeenCalledExactlyOnceWith(100, 'success', previewUrl(published.hostname));
   });
 
   it('does not redeploy a successfully published identical artifact', async () => {
@@ -149,6 +152,7 @@ describe('reconciliation', () => {
     expect(services.artifact).not.toHaveBeenCalled();
     expect(services.extract).not.toHaveBeenCalled();
     expect(services.startDeployment).not.toHaveBeenCalled();
+    expect(services.deploymentStatus).not.toHaveBeenCalled();
     expect(services.comment).toHaveBeenCalledWith(pr, 'Ready for local-workflow testing.', published);
   });
 
@@ -157,6 +161,8 @@ describe('reconciliation', () => {
     services.build.mockResolvedValue(build);
     expect(await prepare(42, services)).toEqual({ action: 'none' });
     expect(services.extract).not.toHaveBeenCalled();
+    expect(services.startDeployment).not.toHaveBeenCalled();
+    expect(services.deploymentStatus).not.toHaveBeenCalled();
     expect(services.comment).toHaveBeenCalled();
   });
 
@@ -165,6 +171,7 @@ describe('reconciliation', () => {
     services.build.mockResolvedValue({ ...run, conclusion: 'failure' });
     await expect(prepare(42, services)).rejects.toThrow('failure');
     expect(services.startDeployment).not.toHaveBeenCalled();
+    expect(services.deploymentStatus).not.toHaveBeenCalled();
   });
 
   it.each(['artifact', 'extract'])('propagates %s rejection and never starts a deployment', async (method) => {
@@ -172,6 +179,7 @@ describe('reconciliation', () => {
     services[method].mockRejectedValue(new Error('Rejected'));
     await expect(prepare(42, services)).rejects.toThrow('Rejected');
     expect(services.startDeployment).not.toHaveBeenCalled();
+    expect(services.deploymentStatus).not.toHaveBeenCalled();
   });
 
   it('does not publish an older build when a new head arrives during extraction', async () => {
@@ -181,6 +189,7 @@ describe('reconciliation', () => {
     });
     expect(await prepare(42, services)).toEqual({ action: 'none' });
     expect(services.startDeployment).not.toHaveBeenCalled();
+    expect(services.deploymentStatus).not.toHaveBeenCalled();
     expect(services.deleteEnvironment).not.toHaveBeenCalled();
   });
 
@@ -193,6 +202,7 @@ describe('reconciliation', () => {
     expect(await prepare(42, services)).toEqual({ action: 'none' });
     expect(services.deleteEnvironment).toHaveBeenCalledWith(42);
     expect(services.startDeployment).not.toHaveBeenCalled();
+    expect(services.deploymentStatus).not.toHaveBeenCalled();
   });
 
   it('rechecks delayed cleanup and preserves a relabeled or reopened preview', async () => {
