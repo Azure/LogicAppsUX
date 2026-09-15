@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 
 // ── Mock state toggles ──────────────────────────────────────────────────────
@@ -111,6 +111,13 @@ vi.mock('../connections/edge', () => ({ default: () => <div /> }));
 vi.mock('../connections/handoffEdge', () => ({ default: () => <div /> }));
 vi.mock('../connections/hiddenEdge', () => ({ default: () => <div /> }));
 vi.mock('../connections/draftEdge', () => ({ DraftEdge: () => <div /> }));
+vi.mock('../NodeNavigation', () => ({
+  NodeNavigation: ({ onNavigate }: { onNavigate: () => void }) => (
+    <button type="button" data-testid="node-navigation" onClick={onNavigate}>
+      Navigate
+    </button>
+  ),
+}));
 
 // ── Import under test ───────────────────────────────────────────────────────
 import DesignerReactFlow from '../DesignerReactFlow';
@@ -141,6 +148,14 @@ describe('DesignerReactFlow (designer v1)', () => {
   // ──────────────────────────────────────────────────────────
 
   describe('Rendering', () => {
+    it('mounts navigation inside ReactFlow and renders offscreen nodes when navigation starts', () => {
+      render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      expect(screen.getByTestId('react-flow')).toContainElement(screen.getByTestId('node-navigation'));
+      expect(capturedReactFlowProps.onlyRenderVisibleElements).toBe(true);
+      fireEvent.click(screen.getByTestId('node-navigation'));
+      expect(capturedReactFlowProps.onlyRenderVisibleElements).toBe(false);
+    });
+
     it('should render ReactFlow component', () => {
       render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
       expect(screen.getByTestId('react-flow')).toBeInTheDocument();

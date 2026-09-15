@@ -41,8 +41,13 @@ export const useActionMetadata = (id?: string) =>
 export const useNodeDescription = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.operations, id)?.description));
 
-export const useShouldNodeFocus = (id: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
+export const useShouldNodeFocus = (id: string, canvasNodeId = id) =>
+  useSelector(
+    createSelector(
+      getWorkflowState,
+      (state: WorkflowState) => state.focusedCanvasNodeId === id || state.focusedCanvasNodeId === canvasNodeId
+    )
+  );
 
 export const useFocusElement = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusElement));
 
@@ -324,7 +329,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       let caseId = baseId;
       let caseCount = 1;
       const idList = Object.keys(state.nodesMetadata);
-      // eslint-disable-next-line no-loop-func
+
       while (idList.some((id) => id === caseId)) {
         caseCount++;
         caseId = `${baseId}_${caseCount}`;
