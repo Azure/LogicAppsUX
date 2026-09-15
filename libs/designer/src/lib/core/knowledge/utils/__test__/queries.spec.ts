@@ -4,11 +4,12 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAllKnowledgeHubs, useConnection, getCosmosDbEndpoint } from '../queries';
+import { getCosmosDbEndpoint, useAllKnowledgeHubs, useConnection, useCosmosDbResourceId } from '../queries';
 import React from 'react';
 
 const mockExecuteResourceAction = vi.fn();
 const mockGetResource = vi.fn();
+const mockListResources = vi.fn();
 const mockGetConnections = vi.fn();
 const mockLog = vi.fn();
 
@@ -18,6 +19,7 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
   ResourceService: vi.fn(() => ({
     executeResourceAction: mockExecuteResourceAction,
     getResource: mockGetResource,
+    listResources: mockListResources,
   })),
   ConnectionService: vi.fn(() => ({
     getConnections: mockGetConnections,
@@ -261,6 +263,82 @@ describe('knowledge queries', () => {
       const cacheKey = ['cosmosdbendpoint', mixedCaseDb.toLowerCase()];
       const cachedData = queryClient.getQueryData(cacheKey);
       expect(cachedData).toBe('https://test.com');
+    });
+  });
+
+  describe('useCosmosDbResourceId', () => {
+    test('should match a Cosmos DB account by normalized endpoint', async () => {
+      const resourceId = '/subscriptions/sub2/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/myDb';
+      mockListResources.mockResolvedValueOnce([]).mockResolvedValueOnce([
+        {
+          id: resourceId,
+          properties: { documentEndpoint: 'HTTPS://MYDB.DOCUMENTS.AZURE.COM' },
+        },
+      ]);
+
+      const { result } = renderHook(() => useCosmosDbResourceId('https://mydb.documents.azure.com:443/', ['sub1', 'sub2']), {
+        wrapper: createWrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data).toBe(resourceId);
+      expect(mockListResources).toHaveBeenCalledTimes(2);
+    });
+
+    test('should not choose a resource ID when the endpoint match is ambiguous', async () => {
+      mockListResources
+        .mockResolvedValueOnce([
+          {
+            id: '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/myDb',
+            properties: { documentEndpoint: 'https://mydb.documents.azure.com:443/' },
+          },
+        ])
+        .mockResolvedValueOnce([
+          {
+            id: '/subscriptions/sub2/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/myDb',
+            properties: { documentEndpoint: 'https://mydb.documents.azure.com:443/' },
+          },
+        ]);
+
+      const { result } = renderHook(() => useCosmosDbResourceId('https://mydb.documents.azure.com:443/', ['sub1', 'sub2']), {
+        wrapper: createWrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data).toBeNull();
+    });
+
+    test('should continue matching when one subscription query fails', async () => {
+      const resourceId = '/subscriptions/sub2/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/myDb';
+      const error = { code: 'Forbidden', message: 'Access denied' };
+      mockListResources.mockRejectedValueOnce({ error }).mockResolvedValueOnce([
+        {
+          id: resourceId,
+          properties: { documentEndpoint: 'https://mydb.documents.azure.com:443/' },
+        },
+      ]);
+
+      const { result } = renderHook(() => useCosmosDbResourceId('https://mydb.documents.azure.com:443/', ['sub1', 'sub2']), {
+        wrapper: createWrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data).toBe(resourceId);
+      expect(mockLog).toHaveBeenCalledWith({
+        level: 'Error',
+        area: 'KnowledgeHub.getCosmosDbResourceId',
+        error,
+        message: 'Error while fetching Cosmos DB accounts for subscription: sub1',
+      });
     });
   });
 });
