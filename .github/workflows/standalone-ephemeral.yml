@@ -24,10 +24,18 @@ env:
 
 jobs:
   select:
-    if: vars.EPHEMERAL_ENABLED == 'true'
+    if: >-
+      vars.EPHEMERAL_ENABLED == 'true' &&
+      (
+        github.event_name != 'pull_request_target' ||
+        contains(github.event.pull_request.labels.*.name, 'ephemeral') ||
+        (github.event.action == 'unlabeled' && github.event.label.name == 'ephemeral')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment: standalone-ephemeral
+    environment:
+      name: standalone-ephemeral
+      deployment: false
     permissions:
       contents: read
       actions: read
@@ -64,7 +72,9 @@ jobs:
         pr: ${{ fromJSON(needs.select.outputs.prs) }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    environment: standalone-ephemeral
+    environment:
+      name: standalone-ephemeral
+      deployment: false
     concurrency:
       group: standalone-ephemeral-pr-${{ matrix.pr }}
       cancel-in-progress: false
