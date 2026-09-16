@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import { IntlProvider } from 'react-intl';
 import TimelineButtons from '../TimelineButtons';
 
@@ -36,6 +36,14 @@ describe('TimelineButtons', () => {
         <TimelineButtons {...props} />
       </IntlProvider>
     );
+  };
+
+  const renderForInteraction = (props: TimelineButtonsProps) => {
+    let component: renderer.ReactTestRenderer;
+    act(() => {
+      component = renderWithIntl(props);
+    });
+    return component!;
   };
 
   it('should render with default props', () => {
@@ -84,25 +92,29 @@ describe('TimelineButtons', () => {
   });
 
   it('should call handleSelectRepetition with correct params when previous button clicked', () => {
-    const component = renderWithIntl(defaultProps);
+    const component = renderForInteraction(defaultProps);
 
     // Simulate clicking the previous button
     const buttons = component.root.findAllByType('button');
     const previousButton = buttons[0]; // First button is previous
 
-    previousButton.props.onClick({ preventDefault: () => {} });
+    act(() => {
+      previousButton.props.onClick({ preventDefault: () => {} });
+    });
 
     expect(mockHandleSelectRepetition).toHaveBeenCalledWith(0, 0); // transitionIndex - 1, 0
   });
 
   it('should call handleSelectRepetition with correct params when next button clicked', () => {
-    const component = renderWithIntl(defaultProps);
+    const component = renderForInteraction(defaultProps);
 
     // Simulate clicking the next button
     const buttons = component.root.findAllByType('button');
     const nextButton = buttons[1]; // Second button is next
 
-    nextButton.props.onClick({ preventDefault: () => {} });
+    act(() => {
+      nextButton.props.onClick({ preventDefault: () => {} });
+    });
 
     expect(mockHandleSelectRepetition).toHaveBeenCalledWith(2, 0); // transitionIndex + 1, 0
   });

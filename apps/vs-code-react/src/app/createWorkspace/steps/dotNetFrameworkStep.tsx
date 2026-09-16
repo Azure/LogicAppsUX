@@ -61,11 +61,6 @@ export const DotNetFrameworkStep: React.FC = () => {
       label: intlText.DOTNET_8,
       description: intlText.DOTNET_8_DESCRIPTION,
     },
-    {
-      value: TargetFramework.Net10,
-      label: intlText.DOTNET_10,
-      description: intlText.DOTNET_10_DESCRIPTION,
-    },
   ];
 
   const selectedTargetFramework = targetFrameworkOptions.find((option) => option.value === targetFramework);
