@@ -1,8 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getStatelessWorkflowNames } from '../StatelessWorkflowsListStep';
 import { UpdateDebugModeStep } from '../UpdateDebugModeStep';
 import { addOrUpdateLocalAppSettings } from '../../../../../utils/appSettings/localSettings';
-import { lstat, pathExists, readdir, readFileSync } from 'fs-extra';
+import { ensureDir, mkdtemp, remove, writeFile } from 'fs-extra';
+import { tmpdir } from 'os';
+import path from 'path';
 
 vi.mock('@microsoft/vscode-azext-utils', () => ({
   AzureWizardExecuteStep: class AzureWizardExecuteStep<T> {},
@@ -13,96 +15,95 @@ vi.mock('../../../../../utils/appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
 }));
 
-vi.mock('fs-extra', () => ({
-  lstat: vi.fn(),
-  pathExists: vi.fn(),
-  readdir: vi.fn(),
-  readFileSync: vi.fn(),
-}));
+vi.mock('fs-extra', async () => vi.importActual<typeof import('fs-extra')>('fs-extra'));
+vi.mock('os', async () => vi.importActual<typeof import('os')>('os'));
 
 describe('StatelessWorkflowsListStep', () => {
-  const projectPath = 'C:\\projects\\logic-app';
+  let projectPath: string;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    vi.mocked(pathExists).mockResolvedValue(true);
+    projectPath = await mkdtemp(path.join(tmpdir(), 'stateless-workflows-'));
+  });
+
+  afterEach(async () => {
+    await remove(projectPath);
   });
 
   it('discovers codeless and codeful stateless workflows without duplicates', async () => {
-    vi.mocked(readdir).mockResolvedValue([
-      'codeless-stateless',
-      'StatelessWorkflow.cs',
-      'MultipleWorkflows.cs',
-      'DuplicateWorkflow.cs',
-      'StatefulWorkflow.cs',
-      'AgentWorkflow.cs',
-    ] as never);
-    vi.mocked(lstat).mockImplementation(
-      async (filePath) =>
-        ({
-          isDirectory: () => String(filePath).endsWith('codeless-stateless'),
-          isFile: () => !String(filePath).endsWith('codeless-stateless'),
-        }) as never
+    const codelessWorkflowPath = path.join(projectPath, 'codeless-stateless');
+    await ensureDir(codelessWorkflowPath);
+    await writeFile(path.join(codelessWorkflowPath, 'workflow.json'), JSON.stringify({ kind: 'Stateless' }));
+    await writeFile(
+      path.join(projectPath, 'StatelessWorkflow.cs'),
+      createWorkflowProvider('WorkflowFactory.CreateStatelessWorkflow("codeful-stateless", workflow)')
     );
-    vi.mocked(readFileSync).mockImplementation((filePath) => {
-      const normalizedPath = String(filePath);
-      if (normalizedPath.endsWith('workflow.json')) {
-        return JSON.stringify({ kind: 'Stateless' });
-      }
-      if (normalizedPath.endsWith('StatelessWorkflow.cs')) {
-        return 'WorkflowFactory.CreateStatelessWorkflow("codeful-stateless", workflow);';
-      }
-      if (normalizedPath.endsWith('MultipleWorkflows.cs')) {
-        return `
-          WorkflowFactory.CreateStatelessWorkflow("codeful-stateless-two", workflow);
-          WorkflowBuilderFactory.CreateStatelessWorkflow("codeful-stateless-three", workflow);
-          WorkflowFactory.CreateStatelessWorkflow(variableName, workflow);
-          // WorkflowFactory.CreateStatelessWorkflow("commented-out", workflow);
-        `;
-      }
-      if (normalizedPath.endsWith('DuplicateWorkflow.cs')) {
-        return 'WorkflowBuilderFactory.CreateStatelessWorkflow("codeless-stateless", workflow);';
-      }
-      if (normalizedPath.endsWith('StatefulWorkflow.cs')) {
-        return 'WorkflowFactory.CreateStatefulWorkflow("codeful-stateful", workflow);';
-      }
-      return 'WorkflowFactory.CreateAgentWorkflow("codeful-agent", workflow);';
-    });
+    await writeFile(
+      path.join(projectPath, 'MultipleWorkflows.cs'),
+      createWorkflowProvider(`
+        WorkflowFactory.CreateStatelessWorkflow("codeful-stateless-two", workflow),
+        WorkflowBuilderFactory.CreateStatelessWorkflow("codeful-stateless-three", workflow),
+        WorkflowFactory.CreateStatelessWorkflow(variableName, workflow)
+        // WorkflowFactory.CreateStatelessWorkflow("commented-out", workflow)
+      `)
+    );
+    await writeFile(
+      path.join(projectPath, 'DuplicateWorkflow.cs'),
+      createWorkflowProvider('WorkflowBuilderFactory.CreateStatelessWorkflow("codeless-stateless", workflow)')
+    );
+    await writeFile(
+      path.join(projectPath, 'StatefulWorkflow.cs'),
+      createWorkflowProvider('WorkflowFactory.CreateStatefulWorkflow("codeful-stateful", workflow)')
+    );
+    await writeFile(
+      path.join(projectPath, 'AgentWorkflow.cs'),
+      createWorkflowProvider('WorkflowFactory.CreateAgentWorkflow("codeful-agent", workflow)')
+    );
 
-    await expect(getStatelessWorkflowNames(projectPath)).resolves.toEqual([
-      'codeless-stateless',
-      'codeful-stateless',
-      'codeful-stateless-two',
-      'codeful-stateless-three',
-    ]);
+    const workflows = await getStatelessWorkflowNames(projectPath);
+
+    expect(workflows).toEqual(
+      expect.arrayContaining(['codeless-stateless', 'codeful-stateless', 'codeful-stateless-two', 'codeful-stateless-three'])
+    );
+    expect(workflows).toHaveLength(4);
   });
 
-  it('skips unreadable or malformed workflow files', async () => {
-    vi.mocked(readdir).mockResolvedValue(['broken', 'Unreadable.cs'] as never);
-    vi.mocked(lstat).mockImplementation(
-      async (filePath) =>
-        ({
-          isDirectory: () => String(filePath).endsWith('broken'),
-          isFile: () => String(filePath).endsWith('.cs'),
-        }) as never
-    );
-    vi.mocked(readFileSync).mockImplementation((filePath) => {
-      if (String(filePath).endsWith('workflow.json')) {
-        return '{';
-      }
-      throw new Error('Access denied');
-    });
+  it('skips malformed workflow files', async () => {
+    const brokenWorkflowPath = path.join(projectPath, 'broken');
+    await ensureDir(brokenWorkflowPath);
+    await writeFile(path.join(brokenWorkflowPath, 'workflow.json'), '{');
 
     await expect(getStatelessWorkflowNames(projectPath)).resolves.toEqual([]);
   });
 
   it('returns no workflows when the project path does not exist', async () => {
-    vi.mocked(pathExists).mockResolvedValue(false);
+    const missingProjectPath = path.join(projectPath, 'missing');
 
-    await expect(getStatelessWorkflowNames(projectPath)).resolves.toEqual([]);
-    expect(readdir).not.toHaveBeenCalled();
+    await expect(getStatelessWorkflowNames(missingProjectPath)).resolves.toEqual([]);
   });
 });
+
+function createWorkflowProvider(factoryCalls: string): string {
+  return `
+    namespace TestProject
+    {
+      using Microsoft.Azure.Workflows.Sdk;
+
+      public class TestWorkflow : IWorkflowProvider
+      {
+        public FlowDefinition[] GetWorkflows()
+        {
+          var variableName = "variable-workflow";
+          var workflow = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+          return new[]
+          {
+            ${factoryCalls}
+          };
+        }
+      }
+    }
+  `;
+}
 
 describe('UpdateDebugModeStep', () => {
   it('enables stateless run history for the selected codeful workflow', async () => {

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
+import { WorkflowKind } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import path from 'path';
@@ -154,9 +155,47 @@ vi.mock('../../../overviewCallbackInfo', () => ({
 }));
 
 import LocalCodefulOverviewPanel from '../localCodefulOverviewPanel';
+import { getCodefulWorkflowDataFromFiles, getRuntimeCodefulWorkflows } from '../../utils/codefulHelpers';
 
 const context = { telemetry: { properties: {}, measurements: {} } } as any;
 const codefulFilePath = path.join('D:\\project', 'Workflows.cs');
+
+describe('getCodefulWorkflowDataFromFiles', () => {
+  it('maps autonomous agents to Stateful and conversational agent APIs to Agent', () => {
+    mocks.readFileSync.mockReturnValue(`
+      WorkflowFactory.CreateStatefulWorkflow("autonomous-agent", workflow);
+      WorkflowFactory.CreateStatelessWorkflow("stateless-workflow", workflow);
+      WorkflowBuilderFactory.CreateConversationalAgent("legacy-conversational-agent", builder => {});
+      WorkflowFactory.CreateAgentWorkflow("conversational-agent", workflow);
+    `);
+    mocks.readdirSync.mockReturnValue(['Workflows.cs']);
+
+    expect(getCodefulWorkflowDataFromFiles(codefulFilePath)).toEqual([
+      { workflowName: 'autonomous-agent', workflowKind: WorkflowKind.stateful },
+      { workflowName: 'stateless-workflow', workflowKind: WorkflowKind.stateless },
+      { workflowName: 'legacy-conversational-agent', workflowKind: WorkflowKind.agent },
+      { workflowName: 'conversational-agent', workflowKind: WorkflowKind.agent },
+    ]);
+  });
+
+  it('normalizes runtime workflow kinds to the supported Overview kinds', async () => {
+    mocks.sendRequest.mockResolvedValue(
+      JSON.stringify({
+        value: [
+          { name: 'agent-workflow', kind: 'agent' },
+          { name: 'stateless-workflow', kind: 'Stateless' },
+          { name: 'agentic-workflow', kind: 'Stateful' },
+        ],
+      })
+    );
+
+    await expect(getRuntimeCodefulWorkflows(context, 'http://localhost:7071/management', 'api-version')).resolves.toEqual([
+      { workflowName: 'agent-workflow', workflowKind: WorkflowKind.agent },
+      { workflowName: 'stateless-workflow', workflowKind: WorkflowKind.stateless },
+      { workflowName: 'agentic-workflow', workflowKind: WorkflowKind.stateful },
+    ]);
+  });
+});
 
 interface MockPanel {
   active: boolean;

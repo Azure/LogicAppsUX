@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { managementApiPrefix } from '../../../../../constants';
+import { managementApiPrefix, WorkflowKind } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { sendRequest } from '../../../../utils/requestUtils';
@@ -21,6 +21,16 @@ import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-app
 import type { CodefulTriggerData, CodefulWorkflowData, CodefulWorkflowDataResult, OverviewWorkflowProperties } from './types';
 import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
+
+export function normalizeWorkflowKind(kind?: string): WorkflowKind {
+  if (kind?.toLowerCase() === 'agent') {
+    return WorkflowKind.agent;
+  }
+  if (kind?.toLowerCase() === 'stateless') {
+    return WorkflowKind.stateless;
+  }
+  return WorkflowKind.stateful;
+}
 
 export async function getCodefulWorkflowCallbackInfo(
   context: IActionContext,
@@ -168,8 +178,7 @@ export async function getCodefulWorkflowDataList(
       ? [
           {
             workflowName: workflowInfo.workflowName,
-            workflowKind:
-              workflowInfo.workflowType === 'agent' ? 'Agent' : workflowInfo.workflowType === 'stateless' ? 'Stateless' : 'Stateful',
+            workflowKind: normalizeWorkflowKind(workflowInfo.workflowType),
             triggerName: fallbackTriggerName,
             triggerType: hasHttpTrigger ? 'Request' : undefined,
             triggerKind: hasHttpTrigger ? 'Http' : undefined,
@@ -207,7 +216,7 @@ export async function getRuntimeCodefulWorkflows(
           const [runtimeTriggerName, trigger] = Object.entries(workflow.triggers ?? {})[0] ?? [];
           return {
             workflowName: workflow.name,
-            workflowKind: workflow.kind ?? 'Stateful',
+            workflowKind: normalizeWorkflowKind(workflow.kind),
             triggerName: runtimeTriggerName,
             triggerType: trigger?.properties?.type ?? trigger?.type,
             triggerKind: trigger?.properties?.kind ?? trigger?.kind,
@@ -257,10 +266,10 @@ export function getCodefulWorkflowDataFromFiles(filePath: string): CodefulWorkfl
         if (workflowName && !workflows.some((workflow) => workflow.workflowName === workflowName)) {
           const workflowKind =
             factoryMethod === 'CreateStatelessWorkflow'
-              ? 'Stateless'
+              ? WorkflowKind.stateless
               : factoryMethod === 'CreateConversationalAgent' || factoryMethod === 'CreateAgentWorkflow'
-                ? 'Agent'
-                : 'Stateful';
+                ? WorkflowKind.agent
+                : WorkflowKind.stateful;
           workflows.push({ workflowName, workflowKind });
         }
       }
@@ -341,7 +350,7 @@ export function getCodefulWorkflowContent(
       actions: {},
       outputs: {},
     },
-    kind: workflowData.workflowKind ?? 'Stateful',
+    kind: workflowData.workflowKind,
   };
 }
 
