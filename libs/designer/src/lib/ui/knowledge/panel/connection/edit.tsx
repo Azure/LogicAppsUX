@@ -18,7 +18,12 @@ import { useEditPanelStyles, usePanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useConnection, useCosmosDbResourceId } from '../../../../core/knowledge/utils/queries';
+import {
+  useCompletionModelsByEndpoint,
+  useConnection,
+  useCosmosDbResourceId,
+  useEmbeddingModelsByEndpoint,
+} from '../../../../core/knowledge/utils/queries';
 import { createOrUpdateConnection, getConnectionParametersForEdit } from '../../../../core/knowledge/utils/connection';
 import { type ConnectionParameterSetParameter, equals, isEmptyString } from '@microsoft/logic-apps-shared';
 import { setNotification } from '../../../../core/state/knowledge/optionsSlice';
@@ -37,6 +42,10 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
   const { data: connection, isLoading } = useConnection();
   const { connectionParameters, parameterValues } = useMemo(() => getConnectionParametersForEdit(intl, connection), [connection, intl]);
   const [connectionParameterValues, setConnectionParameterValues] = useState<Record<string, any>>(parameterValues ?? {});
+  const openAIEndpoint = connectionParameterValues.openAIEndpoint ?? '';
+  const openAIKey = equals(connectionParameterValues.openAIAuthenticationType, 'key') ? (connectionParameterValues.openAIKey ?? '') : '';
+  const { data: completionModels = [] } = useCompletionModelsByEndpoint(openAIEndpoint, openAIKey);
+  const { data: embeddingModels = [] } = useEmbeddingModelsByEndpoint(openAIEndpoint, openAIKey);
   const [isDirty, setIsDirty] = useState(false);
   const { data: subscriptions, isLoading: areSubscriptionsLoading } = useSubscriptions();
   const shouldResolveCosmosDbResourceId = !parameterValues?.cosmosDbServiceAccountId && !!parameterValues?.cosmosDBEndpoint;
@@ -158,6 +167,32 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
     [INTL_TEXT.errorText, connectionParameterValues]
   );
 
+  const getModelParameterItem = useCallback(
+    (key: string, parameter: ConnectionParameterSetParameter, options: { text?: string; value: any }[]) => {
+      if (options.length === 0) {
+        return getParameterItem(key, parameter, /* disabled */ false);
+      }
+
+      const parameterValue = connectionParameterValues[key] ?? '';
+      return {
+        type: 'dropdown',
+        label: parameter.uiDefinition.displayName,
+        value: parameterValue,
+        selectedOptions: parameterValue ? [parameterValue] : [],
+        options: options.map((option, index) => ({
+          id: `${key}-${index}`,
+          label: option.text ?? String(option.value),
+          value: String(option.value),
+        })),
+        controlled: true,
+        required: true,
+        onOptionSelect: (selectedOptions: string[]) => setConnectionParameterValues((prev) => ({ ...prev, [key]: selectedOptions[0] })),
+        errorMessage: isEmptyString(parameterValue) ? INTL_TEXT.errorText : undefined,
+      } as TemplatesSectionItem;
+    },
+    [INTL_TEXT.errorText, connectionParameterValues, getParameterItem]
+  );
+
   const [nameError, setNameError] = useState<string | undefined>(undefined);
   const handleNameChange = useCallback(
     (name: string) => {
@@ -193,14 +228,14 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
     const items = [
       getParameterItem('openAIAuthenticationType', connectionParameters.openAIAuthenticationType),
       getParameterItem('openAIEndpoint', connectionParameters.openAIEndpoint),
-      getParameterItem('openAICompletionsModel', connectionParameters.openAICompletionsModel, /* disabled */ false),
-      getParameterItem('openAIEmbeddingsModel', connectionParameters.openAIEmbeddingsModel, /* disabled */ false),
+      getModelParameterItem('openAICompletionsModel', connectionParameters.openAICompletionsModel, completionModels),
+      getModelParameterItem('openAIEmbeddingsModel', connectionParameters.openAIEmbeddingsModel, embeddingModels),
     ];
     if (equals(connectionParameterValues['openAIAuthenticationType'], 'key')) {
       items.splice(2, 0, getParameterItem('openAIKey', connectionParameters.openAIKey, /* disabled */ true, /* isSecretField */ true));
     }
     return items;
-  }, [getParameterItem, connectionParameters, connectionParameterValues]);
+  }, [completionModels, embeddingModels, getModelParameterItem, getParameterItem, connectionParameters, connectionParameterValues]);
 
   const [updateError, setUpdateError] = useState<ServerNotificationData | null>(null);
   const handleSave = useCallback(async () => {

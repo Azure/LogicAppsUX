@@ -4,18 +4,33 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { getCosmosDbEndpoint, useAllKnowledgeHubs, useConnection, useCosmosDbResourceId } from '../queries';
+import {
+  getCosmosDbEndpoint,
+  useAllKnowledgeHubs,
+  useCompletionModels,
+  useCompletionModelsByEndpoint,
+  useConnection,
+  useCosmosDbResourceId,
+  useEmbeddingModels,
+  useEmbeddingModelsByEndpoint,
+} from '../queries';
 import React from 'react';
 
 const mockExecuteResourceAction = vi.fn();
 const mockGetResource = vi.fn();
 const mockListResources = vi.fn();
 const mockGetConnections = vi.fn();
+const mockFetchAllCognitiveServiceAccountDeployments = vi.fn();
+const mockHttpGet = vi.fn();
 const mockLog = vi.fn();
 
 let queryClient: QueryClient;
 
 vi.mock('@microsoft/logic-apps-shared', () => ({
+  CognitiveServiceService: vi.fn(() => ({
+    fetchAllCognitiveServiceAccountDeployments: mockFetchAllCognitiveServiceAccountDeployments,
+    httpClient: { get: mockHttpGet },
+  })),
   ResourceService: vi.fn(() => ({
     executeResourceAction: mockExecuteResourceAction,
     getResource: mockGetResource,
@@ -57,6 +72,138 @@ describe('knowledge queries', () => {
 
   const createWrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
+
+  describe('OpenAI models', () => {
+    const resourceId = '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/openai';
+
+    test('derives completion and embedding options from one resource deployment request', async () => {
+      mockFetchAllCognitiveServiceAccountDeployments.mockResolvedValue([
+        { name: 'completion', properties: { capabilities: { chatCompletion: true }, provisioningState: 'Succeeded' } },
+        { name: 'embedding', properties: { capabilities: { embeddings: true }, provisioningState: 'Succeeded' } },
+      ]);
+
+      const { result } = renderHook(() => ({ completion: useCompletionModels(resourceId), embedding: useEmbeddingModels(resourceId) }), {
+        wrapper: createWrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.completion.isSuccess).toBe(true);
+        expect(result.current.embedding.isSuccess).toBe(true);
+      });
+
+      expect(mockFetchAllCognitiveServiceAccountDeployments).toHaveBeenCalledTimes(1);
+      expect(result.current.completion.data).toEqual([{ text: 'completion', value: 'completion' }]);
+      expect(result.current.embedding.data).toEqual([{ text: 'embedding', value: 'embedding' }]);
+    });
+
+    test('filters ready completion deployments into parameter options', async () => {
+      mockFetchAllCognitiveServiceAccountDeployments.mockResolvedValue([
+        { name: 'completion', properties: { capabilities: { chatCompletion: 'True' }, provisioningState: 'Succeeded' } },
+        { name: 'embedding', properties: { capabilities: { embeddings: true }, provisioningState: 'Succeeded' } },
+        { name: 'creating', properties: { capabilities: { chatCompletion: 'true' }, provisioningState: 'Creating' } },
+      ]);
+
+      const { result } = renderHook(() => useCompletionModels(resourceId), { wrapper: createWrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockFetchAllCognitiveServiceAccountDeployments).toHaveBeenCalledTimes(1);
+      expect(mockFetchAllCognitiveServiceAccountDeployments).toHaveBeenCalledWith(resourceId, { throwOnError: true });
+      expect(result.current.data).toEqual([{ text: 'completion', value: 'completion' }]);
+    });
+
+    test('filters ready embedding deployments into parameter options', async () => {
+      mockFetchAllCognitiveServiceAccountDeployments.mockResolvedValue([
+        { name: 'embedding', properties: { capabilities: { embeddings: true }, provisioningState: 'Succeeded' } },
+        { name: 'completion', properties: { capabilities: { chatCompletion: 'true' }, provisioningState: 'Succeeded' } },
+        { name: 'disabled', properties: { capabilities: { embeddings: 'false' }, provisioningState: 'Succeeded' } },
+      ]);
+
+      const { result } = renderHook(() => useEmbeddingModels(resourceId), { wrapper: createWrapper });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockFetchAllCognitiveServiceAccountDeployments).toHaveBeenCalledWith(resourceId, { throwOnError: true });
+      expect(result.current.data).toEqual([{ text: 'embedding', value: 'embedding' }]);
+    });
+
+    test('reports deployment retrieval failures instead of returning an authoritative empty list', async () => {
+      mockFetchAllCognitiveServiceAccountDeployments.mockRejectedValue(new Error('ARM request failed'));
+
+      const { result } = renderHook(() => useCompletionModels(resourceId), { wrapper: createWrapper });
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(result.current.data).toBeUndefined();
+    });
+
+    test('does not fetch deployments without a selected resource', () => {
+      const { result } = renderHook(() => useCompletionModels(''), { wrapper: createWrapper });
+
+      expect(result.current.fetchStatus).toBe('idle');
+      expect(mockFetchAllCognitiveServiceAccountDeployments).not.toHaveBeenCalled();
+    });
+
+    test('derives endpoint model options from one credentialed request without caching the key', async () => {
+      const endpoint = 'https://openai.openai.azure.com/';
+      const key = 'secret-api-key';
+      mockHttpGet.mockResolvedValue({
+        data: [
+          { id: 'completion', status: 'succeeded', capabilities: { completion: true, embeddings: false } },
+          { id: 'chat', status: 'succeeded', capabilities: { completion: false, chat_completion: true, embeddings: false } },
+          { id: 'embedding', status: 'succeeded', capabilities: { completion: false, embeddings: true } },
+          { id: 'failed', status: 'failed', capabilities: { completion: true, embeddings: true } },
+        ],
+      });
+
+      const { result } = renderHook(
+        () => ({
+          completion: useCompletionModelsByEndpoint(endpoint, key),
+          embedding: useEmbeddingModelsByEndpoint(endpoint, key),
+        }),
+        { wrapper: createWrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.completion.isSuccess).toBe(true);
+        expect(result.current.embedding.isSuccess).toBe(true);
+      });
+
+      expect(mockHttpGet).toHaveBeenCalledTimes(1);
+      expect(mockHttpGet).toHaveBeenCalledWith({
+        uri: 'https://openai.openai.azure.com/openai/models',
+        queryParameters: { 'api-version': '2024-10-21' },
+        headers: { 'X-ApiKey': key },
+        noAuth: true,
+      });
+      expect(result.current.completion.data).toEqual([
+        { text: 'completion', value: 'completion' },
+        { text: 'chat', value: 'chat' },
+      ]);
+      expect(result.current.embedding.data).toEqual([{ text: 'embedding', value: 'embedding' }]);
+      expect(
+        queryClient
+          .getQueryCache()
+          .getAll()
+          .every((query) => !JSON.stringify(query.queryKey).includes(key))
+      ).toBe(true);
+    });
+
+    test('does not fetch endpoint models without both endpoint and key', () => {
+      const { result } = renderHook(() => useCompletionModelsByEndpoint('https://openai.openai.azure.com', ''), {
+        wrapper: createWrapper,
+      });
+
+      expect(result.current.fetchStatus).toBe('idle');
+      expect(mockHttpGet).not.toHaveBeenCalled();
+    });
+  });
 
   describe('useAllKnowledgeHubs', () => {
     const mockHubs = [

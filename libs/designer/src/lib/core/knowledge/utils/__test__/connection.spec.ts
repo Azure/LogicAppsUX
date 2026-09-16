@@ -279,6 +279,11 @@ describe('knowledge connection utils', () => {
         properties: {
           displayName: 'Test Hub',
           connectionParameters: {
+            cognitiveServiceAccountId: {
+              metadata: {
+                value: '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/openai',
+              },
+            },
             data: {
               metadata: {
                 value: {
@@ -323,6 +328,9 @@ describe('knowledge connection utils', () => {
       expect(result.parameterValues.openAIAuthenticationType).toBe('ManagedServiceIdentity');
       expect(result.parameterValues.openAICompletionsModel).toBe('gpt-4');
       expect(result.parameterValues.openAIEmbeddingsModel).toBe('text-embedding-ada-002');
+      expect(result.parameterValues.cognitiveServiceAccountId).toBe(
+        '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/openai'
+      );
     });
   });
 });

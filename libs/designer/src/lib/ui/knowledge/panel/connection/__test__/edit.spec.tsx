@@ -114,10 +114,24 @@ const mockUseCosmosDbResourceId = vi.fn(() => ({
   data: undefined as string | undefined,
   isInitialLoading: false,
 }));
+const mockUseCompletionModelsByEndpoint = vi.fn(() => ({
+  data: [
+    { text: 'GPT 4', value: 'gpt-4' },
+    { text: 'GPT 4o', value: 'gpt-4o' },
+  ],
+}));
+const mockUseEmbeddingModelsByEndpoint = vi.fn(() => ({
+  data: [
+    { text: 'Ada 002', value: 'text-embedding-ada-002' },
+    { text: 'Embedding 3 Large', value: 'text-embedding-3-large' },
+  ],
+}));
 
 vi.mock('../../../../../core/knowledge/utils/queries', () => ({
   useConnection: () => mockUseConnection(),
   useCosmosDbResourceId: (...args: any[]) => mockUseCosmosDbResourceId(...args),
+  useCompletionModelsByEndpoint: (endpoint: string, key: string) => mockUseCompletionModelsByEndpoint(endpoint, key),
+  useEmbeddingModelsByEndpoint: (endpoint: string, key: string) => mockUseEmbeddingModelsByEndpoint(endpoint, key),
 }));
 
 const mockUseSubscriptions = vi.fn(() => ({
@@ -163,6 +177,7 @@ const mockGetConnectionParametersForEdit = vi.fn(() => ({
     cosmosDBAuthenticationType: 'managedIdentity',
     cosmosDBEndpoint: 'https://test-cosmos.documents.azure.com:443/',
     openAIAuthenticationType: 'managedIdentity',
+    cognitiveServiceAccountId: '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/openai',
     openAIEndpoint: 'https://test-openai.openai.azure.com/',
     openAICompletionsModel: 'gpt-4',
     openAIEmbeddingsModel: 'text-embedding-ada-002',
@@ -182,14 +197,33 @@ vi.mock('@microsoft/designer-ui', () => ({
     <div data-testid={`section-${title.toLowerCase().replace(/\s+/g, '-')}`}>
       <h3>{title}</h3>
       {items.map((item, index) => (
-        <div key={index} data-testid={`item-${item.label?.toLowerCase().replace(/\s+/g, '-')}`}>
+        <div
+          key={index}
+          data-testid={`item-${item.label?.toLowerCase().replace(/\s+/g, '-')}`}
+          data-item-type={item.type}
+          data-controlled={item.controlled}
+        >
           <label>{item.label}</label>
-          <input
-            data-testid={`input-${item.label?.toLowerCase().replace(/\s+/g, '-')}`}
-            value={item.value}
-            onChange={(e) => item.onChange?.(e.target.value)}
-            disabled={item.disabled}
-          />
+          {item.type === 'dropdown' ? (
+            <select
+              data-testid={`input-${item.label?.toLowerCase().replace(/\s+/g, '-')}`}
+              value={item.value}
+              onChange={(e) => item.onOptionSelect?.([e.target.value])}
+            >
+              {item.options.map((option: any) => (
+                <option key={option.id} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              data-testid={`input-${item.label?.toLowerCase().replace(/\s+/g, '-')}`}
+              value={item.value}
+              onChange={(e) => item.onChange?.(e.target.value)}
+              disabled={item.disabled}
+            />
+          )}
           {item.errorMessage && <span className="error">{item.errorMessage}</span>}
         </div>
       ))}
@@ -288,6 +322,7 @@ describe('EditConnectionPanel Component', () => {
         cosmosDBAuthenticationType: 'managedIdentity',
         cosmosDBEndpoint: 'https://test-cosmos.documents.azure.com:443/',
         openAIAuthenticationType: 'managedIdentity',
+        cognitiveServiceAccountId: '/subscriptions/sub1/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts/openai',
         openAIEndpoint: 'https://test-openai.openai.azure.com/',
         openAICompletionsModel: 'gpt-4',
         openAIEmbeddingsModel: 'text-embedding-ada-002',
@@ -332,6 +367,35 @@ describe('EditConnectionPanel Component', () => {
       renderComponent();
       expect(screen.getByTestId('section-azure-openai-model')).toBeInTheDocument();
       expect(screen.getByText('Azure OpenAI model')).toBeInTheDocument();
+    });
+
+    it('renders model dropdowns without fetching by endpoint for managed identity authentication', async () => {
+      renderComponent();
+
+      expect(mockUseCompletionModelsByEndpoint).toHaveBeenCalledWith('https://test-openai.openai.azure.com/', '');
+      expect(mockUseEmbeddingModelsByEndpoint).toHaveBeenCalledWith('https://test-openai.openai.azure.com/', '');
+      expect(screen.getByTestId('item-completions-model')).toHaveAttribute('data-item-type', 'dropdown');
+      expect(screen.getByTestId('item-embeddings-model')).toHaveAttribute('data-item-type', 'dropdown');
+      expect(screen.getByTestId('item-completions-model')).toHaveAttribute('data-controlled', 'true');
+      expect(screen.getByTestId('item-embeddings-model')).toHaveAttribute('data-controlled', 'true');
+      expect(screen.getByRole('option', { name: 'GPT 4o' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Embedding 3 Large' })).toBeInTheDocument();
+
+      fireEvent.change(screen.getByTestId('input-completions-model'), { target: { value: 'gpt-4o' } });
+
+      await waitFor(() => expect(screen.getByTestId('input-completions-model')).toHaveValue('gpt-4o'));
+    });
+
+    it('renders editable text fields when no model options are available', () => {
+      mockUseCompletionModelsByEndpoint.mockReturnValue({ data: [] });
+      mockUseEmbeddingModelsByEndpoint.mockReturnValue({ data: [] });
+
+      renderComponent();
+
+      expect(screen.getByTestId('item-completions-model')).toHaveAttribute('data-item-type', 'textfield');
+      expect(screen.getByTestId('item-embeddings-model')).toHaveAttribute('data-item-type', 'textfield');
+      expect(screen.getByTestId('input-completions-model')).not.toBeDisabled();
+      expect(screen.getByTestId('input-embeddings-model')).not.toBeDisabled();
     });
 
     it('renders the footer with Save and Cancel buttons', () => {
@@ -523,6 +587,24 @@ describe('EditConnectionPanel Component', () => {
       });
     });
 
+    it('saves the selected completion and embedding models', async () => {
+      renderComponent();
+
+      fireEvent.change(screen.getByTestId('input-completions-model'), { target: { value: 'gpt-4o' } });
+      fireEvent.change(screen.getByTestId('input-embeddings-model'), { target: { value: 'text-embedding-3-large' } });
+      fireEvent.click(screen.getByTestId('footer-btn-0'));
+
+      await waitFor(() =>
+        expect(mockCreateOrUpdateConnection).toHaveBeenCalledWith(
+          expect.objectContaining({
+            openAICompletionsModel: 'gpt-4o',
+            openAIEmbeddingsModel: 'text-embedding-3-large',
+          }),
+          false
+        )
+      );
+    });
+
     it('dispatches closePanel when cancel button is clicked', () => {
       const store = createMockStore();
       const dispatchSpy = vi.spyOn(store, 'dispatch');
@@ -637,6 +719,8 @@ describe('EditConnectionPanel Component', () => {
       renderComponent();
 
       expect(screen.getByTestId('item-openai-key')).toBeInTheDocument();
+      expect(mockUseCompletionModelsByEndpoint).toHaveBeenCalledWith('https://test-openai.openai.azure.com/', 'test-openai-key');
+      expect(mockUseEmbeddingModelsByEndpoint).toHaveBeenCalledWith('https://test-openai.openai.azure.com/', 'test-openai-key');
     });
   });
 

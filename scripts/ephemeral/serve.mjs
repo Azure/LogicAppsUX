@@ -56,6 +56,7 @@ const mime = {
 };
 
 // A static production-artifact harness, deliberately without Vite plugins or API proxies.
+// It does not emulate SWA's reserved auth service, which can run ahead of static routing.
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);

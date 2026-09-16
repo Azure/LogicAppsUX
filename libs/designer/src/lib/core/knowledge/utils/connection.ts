@@ -423,6 +423,11 @@ export const getConnectionParametersForEdit = (intl: IntlShape, connection: Conn
   }
 
   parameterValues['displayName'] = displayName;
+  parameterValues['cognitiveServiceAccountId'] = getObjectPropertyValue(connectionParameters ?? {}, [
+    'cognitiveServiceAccountId',
+    'metadata',
+    'value',
+  ]);
 
   const connectionParametersForUI = Object.keys(allParameters).reduce(
     (result, parameterName) => {
