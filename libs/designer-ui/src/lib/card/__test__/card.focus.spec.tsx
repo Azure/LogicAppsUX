@@ -36,19 +36,19 @@ describe.each([
     expect(focus).not.toHaveBeenCalled();
   });
 
-  it('focuses the actual card with preventScroll on initial mount', () => {
+  it('preserves native focus behavior on initial mount', () => {
     const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     render(card(true));
-    expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true });
+    expect(focus.mock.calls).toEqual([[]]);
     expect(screen.getByRole('button', { name: 'Test node operation' })).toHaveFocus();
   });
 
-  it('uses preventScroll for repeated requests but does not refocus on ordinary rerenders or request clearing', () => {
+  it('preserves native focus for repeated requests without refocusing on ordinary rerenders', () => {
     const { rerender } = render(card(false));
     const target = screen.getByRole('button', { name: 'Test node operation' });
     const focus = vi.spyOn(target, 'focus');
     rerender(card(true));
-    expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true });
+    expect(focus.mock.calls).toEqual([[]]);
     expect(target).toHaveFocus();
 
     rerender(card(true, 'Updated node'));
@@ -61,7 +61,7 @@ describe.each([
 
     rerender(card(true));
     expect(focus).toHaveBeenCalledTimes(2);
-    expect(focus).toHaveBeenLastCalledWith({ preventScroll: true });
+    expect(focus.mock.calls[1]).toEqual([]);
     expect(target).toHaveFocus();
   });
 });

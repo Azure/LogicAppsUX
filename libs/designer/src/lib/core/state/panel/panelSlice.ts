@@ -172,6 +172,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = 'Operation';
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
+      state.operationContent.selectedNodeActiveTabId = undefined;
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }

@@ -20,7 +20,6 @@ const selectedAndPinned = () => {
 
 describe('panel tab preference (designer)', () => {
   it.each([
-    { name: 'changePanelNode', action: changePanelNode('Second') },
     { name: 'setSelectedNodeId', action: setSelectedNodeId('Second') },
     { name: 'openPanel with nodeId', action: openPanel({ panelMode: 'Operation', nodeId: 'Second' }) },
     { name: 'openPanel with nodeIds', action: openPanel({ panelMode: 'Operation', nodeIds: ['Second'] }) },
@@ -33,13 +32,13 @@ describe('panel tab preference (designer)', () => {
     expect(previous.operationContent.selectedNodeId).toBe('First');
   });
 
-  it('uses the latest preference through repeated node changes', () => {
+  it('resets the selected tab on v1 mouse selection while preserving the pinned tab', () => {
     let state = reducer(selectedAndPinned(), changePanelNode('Second'));
     state = reducer(state, setSelectedPanelActiveTab('CODE_VIEW'));
     state = reducer(state, changePanelNode('Third'));
     state = reducer(state, changePanelNode('First'));
     expect(state.operationContent.selectedNodeId).toBe('First');
-    expect(state.operationContent.selectedNodeActiveTabId).toBe('CODE_VIEW');
+    expect(state.operationContent.selectedNodeActiveTabId).toBeUndefined();
     expect(state.operationContent.alternateSelectedNode?.activeTabId).toBe('ABOUT');
   });
 

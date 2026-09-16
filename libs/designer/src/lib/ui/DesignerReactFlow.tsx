@@ -1,7 +1,6 @@
 import type { Connection, Edge, EdgeTypes, NodeChange, ReactFlowInstance } from '@xyflow/react';
 import { BezierEdge, ReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
 import {
   agentOperation,
   containsIdTag,
@@ -40,7 +39,6 @@ import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import ButtonEdge from './connections/edge';
 import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
-import { NodeNavigation } from './NodeNavigation';
 
 const DesignerReactFlow = (props: any) => {
   const { canvasRef } = props;
@@ -391,15 +389,6 @@ const DesignerReactFlow = (props: any) => {
         hideAttribution: true,
       }}
     >
-      <NodeNavigation
-        canvasRef={canvasRef}
-        onNavigate={() => {
-          if (!userInferredTabNavigation) {
-            // Mount off-screen cards before dispatching the one-shot canvas focus request.
-            flushSync(() => setUserInferredTabNavigation(true));
-          }
-        }}
-      />
       {props.children}
     </ReactFlow>
   );

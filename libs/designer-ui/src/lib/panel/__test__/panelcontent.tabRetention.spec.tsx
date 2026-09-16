@@ -42,7 +42,14 @@ describe('PanelContent tab preference', () => {
       offsetWidth.mockRestore();
       bounds.mockRestore();
     };
-    props = { nodeId: 'First', tabs: tabsFor('First'), selectedTab: 'SETTINGS', selectTab: vi.fn(), trackEvent: vi.fn() };
+    props = {
+      enableNodeNavigation: true,
+      nodeId: 'First',
+      tabs: tabsFor('First'),
+      selectedTab: 'SETTINGS',
+      selectTab: vi.fn(),
+      trackEvent: vi.fn(),
+    };
   });
 
   afterEach(() => {
@@ -60,6 +67,23 @@ describe('PanelContent tab preference', () => {
     expect(screen.getByText('Second settings')).toBeVisible();
     expect(screen.queryByText('First settings')).not.toBeInTheDocument();
     expect(props.selectTab).not.toHaveBeenCalled();
+  });
+
+  it('preserves legacy missing-tab behavior without the v2 opt-in', () => {
+    render(<PanelContent {...props} enableNodeNavigation={false} tabs={tabsFor('First').filter(({ id }) => id !== 'SETTINGS')} />, {
+      wrapper,
+    });
+    expect(screen.getByRole('tab', { name: 'Parameters' })).toHaveAttribute('aria-selected', 'false');
+    expect(screen.queryByText('First parameters')).not.toBeInTheDocument();
+  });
+
+  it('preserves legacy node-local state without the v2 opt-in', () => {
+    const tabs = [{ ...tabsFor('First')[0], content: <StatefulPreview serializedContent="First" /> }];
+    const { rerender } = render(<PanelContent {...props} enableNodeNavigation={false} selectedTab="PARAMETERS" tabs={tabs} />, { wrapper });
+    fireEvent.change(screen.getByLabelText('Draft JSON'), { target: { value: 'Unsaved' } });
+    rerender(<PanelContent {...props} enableNodeNavigation={false} nodeId="Second" selectedTab="PARAMETERS" tabs={tabs} />);
+    expect(screen.getByLabelText('Draft JSON')).toHaveValue('Unsaved');
+    expect(screen.getByText('Edits: 1')).toBeVisible();
   });
 
   it('falls back without replacing the preference, then restores it on a compatible node', () => {

@@ -70,7 +70,10 @@ const selectRecurrenceWorkflow = async (page: Page, hasBackground: boolean) => {
 
 for (const path of ['/', '/v2']) {
   for (const modifier of ['Control', 'Meta']) {
-    test(`${path} ${modifier}+arrows navigate immediately after a normal card click`, async ({ page, baseURL }) => {
+    test(`${path} ${modifier}+arrows ${path === '/v2' ? 'navigate immediately after a normal card click' : 'preserve legacy selection and tab reset'}`, async ({
+      page,
+      baseURL,
+    }) => {
       const assertHealthyPreview = await observePreview(page, baseURL!);
       await page.goto(path);
       await expectLocalOnlySettings(page);
@@ -82,6 +85,24 @@ for (const path of ['/', '/v2']) {
       const card = (nodeId: string) => page.locator(`[id="msla-node-${nodeId}"]`);
       await card('manual').click();
       await expect(page.locator('[id="msla-panel-header-close-nav"]')).toBeFocused();
+      if (path === '/') {
+        for (const direction of ['Down', 'Up']) {
+          await page.keyboard.press(`${modifier}+Arrow${direction}`);
+          await expect(page.locator('[id="msla-panel-header-close-nav"]')).toBeFocused();
+          await expect(page.locator('[id="msla-node-details-panel-manual"]')).toBeVisible();
+        }
+        // The legacy canvas itself must not register the new shortcut either.
+        await card('manual').focus();
+        for (const direction of ['Down', 'Up']) {
+          await page.keyboard.press(`${modifier}+Arrow${direction}`);
+          await expectSelectedAndFocused(page, 'manual');
+        }
+        await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+        await card('Initialize_ArrayVariable').click();
+        await expect(page.getByRole('tab', { name: 'Parameters', exact: true })).toHaveAttribute('aria-selected', 'true');
+        assertHealthyPreview();
+        return;
+      }
       await page.keyboard.press(`${modifier}+ArrowDown`);
       await expectSelectedAndFocused(page, 'Initialize_ArrayVariable');
       await expect(card('Initialize_ArrayVariable')).toBeInViewport();
@@ -223,7 +244,7 @@ const renderedOperationOrder = (page: Page) =>
         .sort((left, right) => left.index - right.index)
     );
 
-for (const path of ['/', '/v2']) {
+for (const path of ['/v2']) {
   test(`${path} click and keyboard selection retain Settings and fall back when Testing is unavailable`, async ({
     page,
     baseURL,

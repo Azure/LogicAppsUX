@@ -47,9 +47,9 @@ For local-only PR deployments triggered by the `ephemeral` label, see [PR previe
 
 Unknown routes fall back to the production designer development shell.
 
-## Designer keyboard navigation
+## Designer v2 keyboard navigation
 
-In either designer (`/` or `/v2`), click a card on the canvas and use
+In designer v2 (`/v2`), click a card on the canvas and use
 **Ctrl/Cmd + Down** to select the next action or trigger, or **Ctrl/Cmd + Up**
 to select the previous one. Selection follows the existing tab order, including
 scope cards and nested actions, rather than recalculating graph connections.
@@ -67,6 +67,9 @@ keys from pinned panels, other designers, dialogs, or menus.
 The operation details panel retains your selected tab when you click or navigate
 to another node. If that node does not offer the tab, its first available tab is
 shown instead; your preferred tab is restored on the next node that supports it.
+
+The legacy designer (`/`) does not enable these shortcuts or retain the selected
+details tab across node selections. Its existing keyboard and panel behavior is unchanged.
 
 ## Development model
 

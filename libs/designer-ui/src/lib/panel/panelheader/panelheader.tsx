@@ -31,7 +31,7 @@ import {
 } from '@fluentui/react-icons';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -41,6 +41,7 @@ export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTM
 };
 
 export interface PanelHeaderProps {
+  enableNodeNavigation?: boolean;
   nodeData: PanelNodeData;
   headerItems: JSX.Element[];
   headerLocation: PanelLocation;
@@ -71,7 +72,7 @@ const ResubmitIcon = bundleIcon(ReplayFilled, ReplayRegular);
 const ChevronRightIcon = bundleIcon(ChevronRightFilled, ChevronRightRegular);
 
 const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element => {
-  const { nodeId, onClose } = props;
+  const { nodeId, onClose, enableNodeNavigation = false } = props;
 
   const intl = useIntl();
 
@@ -86,12 +87,18 @@ const CloseButton = (props: PanelHeaderProps & { nodeId: string }): JSX.Element 
 
   // Default panel focus must precede an explicit canvas focus request.
   useLayoutEffect(() => {
-    if (!nodeId) {
+    if (!nodeId || !enableNodeNavigation) {
       return;
     }
 
     menuButtonRef.current?.focus();
-  }, [nodeId]);
+  }, [nodeId, enableNodeNavigation]);
+
+  useEffect(() => {
+    if (nodeId && !enableNodeNavigation) {
+      menuButtonRef.current?.focus();
+    }
+  }, [nodeId, enableNodeNavigation]);
 
   const restoreFocusSourceAttribute = useRestoreFocusSource();
 

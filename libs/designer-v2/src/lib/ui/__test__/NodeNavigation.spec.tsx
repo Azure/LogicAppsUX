@@ -1,5 +1,5 @@
 import { describe } from 'vitest';
-import { nodeNavigationTestSuite } from '../../../../../designer/src/lib/ui/__test__/nodeNavigationTestSuite';
+import { nodeNavigationTestSuite } from './nodeNavigationTestSuite';
 import panelReducer, {
   changePanelNode,
   setAlternateSelectedNode,

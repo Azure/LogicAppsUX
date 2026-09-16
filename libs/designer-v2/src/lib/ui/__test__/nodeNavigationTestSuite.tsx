@@ -144,6 +144,7 @@ export const nodeNavigationTestSuite = <PanelState extends NavigationPanelState>
             <button type="button">Dialog control</button>
           </div>
           <PanelContent
+            enableNodeNavigation
             nodeId={selectedNodeId}
             tabs={tabs}
             selectedTab={selectedNodeActiveTabId}

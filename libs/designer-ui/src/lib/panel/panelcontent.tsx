@@ -22,16 +22,25 @@ import { useIntl } from 'react-intl';
 const MoreHorizontal = bundleIcon(MoreHorizontalFilled, MoreHorizontalRegular);
 
 export interface PanelContentProps {
+  enableNodeNavigation?: boolean;
   nodeId: string;
   tabs: PanelTab[];
   selectedTab?: string;
   selectTab: (tabId: string) => void;
   trackEvent(data: PageActionTelemetryData): void;
 }
-export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: PanelContentProps): JSX.Element => {
+export const PanelContent = ({
+  nodeId,
+  tabs = [],
+  selectedTab,
+  selectTab,
+  enableNodeNavigation = false,
+}: PanelContentProps): JSX.Element => {
   const intl = useIntl();
 
-  const selectedTabId = tabs.find((tab) => tab.id === selectedTab)?.id ?? tabs[0]?.id;
+  const selectedTabId = enableNodeNavigation
+    ? (tabs.find((tab) => tab.id === selectedTab)?.id ?? tabs[0]?.id)
+    : (selectedTab ?? tabs[0]?.id);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
@@ -70,7 +79,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
         </Overflow>
       ) : null}
       <div
-        key={nodeId}
+        key={enableNodeNavigation ? nodeId : undefined}
         className="msla-panel-content-container"
         tabIndex={selectedTabId === 'ABOUT' ? 0 : undefined}
         role={selectedTabId === 'ABOUT' ? 'region' : undefined}

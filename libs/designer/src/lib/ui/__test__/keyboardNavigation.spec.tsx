@@ -7,17 +7,15 @@
  *   The previous ExTester scenario `keyboardNavigation.test.ts` (Phase 4.6,
  *   ADO #10273324) claimed to verify Ctrl+Up / Ctrl+Down navigation between
  *   designer canvas nodes. In practice it only logged whether focus moved —
- *   it never `assert`ed it. React Flow's built-in navigation remains disabled:
+ *   it never `assert`ed it — because in this codebase node-to-node arrow-key
+ *   navigation is intentionally disabled at the React Flow layer:
  *     - `nodesFocusable={false}`
  *     - `edgesFocusable={false}`
  *     - `elementsSelectable={false}`
  *     - `disableKeyboardA11y={true}`
  *   (see `libs/designer/src/lib/ui/DesignerReactFlow.tsx`).
  *
- *   Ctrl/Cmd+Up/Down selection is now implemented separately by NodeNavigation;
- *   its real-keyboard regression tests live in NodeNavigation.spec.tsx.
- *
- *   This file covers the independent
+ *   The *real* keyboard-navigation surface in `<Designer />` is the
  *   "go to operation / node search" hotkey wired up in
  *   `libs/designer/src/lib/ui/Designer.tsx` via `react-hotkeys-hook`:
  *     - Web (non-VS-Code):  Ctrl/Cmd + Shift + P  -> opens NodeSearch panel

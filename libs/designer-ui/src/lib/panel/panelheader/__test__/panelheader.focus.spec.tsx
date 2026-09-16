@@ -47,15 +47,26 @@ const CanvasCard = ({ nodeId, focusedNodeId }: { nodeId: string; focusedNodeId?:
 };
 
 interface FixtureProps {
+  enableNodeNavigation?: boolean;
   selectedNodeId: string;
   focusedNodeId?: string;
   panelFirst: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
 }
 
-const Fixture = ({ selectedNodeId, focusedNodeId, panelFirst, suppressDefaultNodeSelectFunctionality }: FixtureProps) => {
+const Fixture = ({
+  selectedNodeId,
+  focusedNodeId,
+  panelFirst,
+  suppressDefaultNodeSelectFunctionality,
+  enableNodeNavigation = true,
+}: FixtureProps) => {
   const panel = (
-    <PanelHeader {...headerProps(selectedNodeId)} suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality} />
+    <PanelHeader
+      {...headerProps(selectedNodeId)}
+      enableNodeNavigation={enableNodeNavigation}
+      suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
+    />
   );
   const canvas = (
     <div>
@@ -102,6 +113,13 @@ describe.each([
     rerender(<Fixture selectedNodeId="Switch" panelFirst={panelFirst} />);
     expect(screen.getByRole('button', { name: 'Close' })).toBe(close);
     expect(close).toHaveFocus();
+  });
+
+  it('preserves passive panel focus ordering without the v2 opt-in', () => {
+    render(<Fixture selectedNodeId="Switch" focusedNodeId="Switch" panelFirst={panelFirst} enableNodeNavigation={false} />);
+    expect(focusOrder).toEqual(
+      panelFirst ? ['msla-panel-header-close-nav', 'msla-node-Switch'] : ['msla-node-Switch', 'msla-panel-header-close-nav']
+    );
   });
 
   it('lets an explicit canvas passive effect win after default panel focus on initial mount', () => {
