@@ -340,6 +340,7 @@ export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 export const workflowAuthenticationMethodMIValue = 'managedServiceIdentity';
+export const customCodeDotNetVersionSettingKey = 'LOGIC_APPS_CUSTOMCODE_DOTNETVERSION';
 
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
