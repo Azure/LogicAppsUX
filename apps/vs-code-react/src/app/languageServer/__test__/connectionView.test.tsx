@@ -171,6 +171,23 @@ describe('LanguageServerConnectionView', () => {
     });
   });
 
+  it('persists an ApiManagement connection with an ARM ID as managed', () => {
+    const { postMessage } = renderConnectionView({ connectorType: 'ApiManagement' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Managed success' }));
+
+    expect(postMessage).toHaveBeenCalledWith({
+      command: ExtensionCommand.insert_connection,
+      connection: {
+        id: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Web/connections/managed',
+        name: 'managed',
+      },
+      connectionReferences: {
+        referenceOne: { connectionName: 'managed' },
+      },
+    });
+  });
+
   it('captures local addConnection data and sends it with the insert message', () => {
     const { postMessage } = renderConnectionView();
     const wrappedVscode = mocks.getDesignerServices.mock.calls[0][9];
