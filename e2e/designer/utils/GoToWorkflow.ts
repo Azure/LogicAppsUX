@@ -20,6 +20,13 @@ export const GoToMockWorkflow = async (page: Page, workflowName: string) => {
   await page.getByLabel('Zoom view to fit').click({ force: true });
 };
 
+export const GoToMockWorkflowV2 = async (page: Page, workflowName: string) => {
+  await page.goto('/v2');
+  // The v2 route pulls in a large module graph; give the dev server time to serve it.
+  await page.getByText('Local', { exact: true }).waitFor({ state: 'visible', timeout: 3 * 60 * 1000 });
+  await GoToMockWorkflow(page, workflowName);
+};
+
 export const LoadRunFile = async (page: Page, runName: string) => {
   await page.getByRole('button', { name: 'Toolbox' }).click();
   await page.getByRole('heading', { name: '▼ Context Settings' }).click();
