@@ -10,7 +10,7 @@ import {
   getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import { useCreatePanelStyles } from '../../styles';
-import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FormEvent, type SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text } from '@fluentui/react-components';
 import ConnectionMultiAuthInput from '../../../../panel/connectionsPanel/createConnection/formInputs/connectionMultiAuth';
 import {
@@ -18,6 +18,7 @@ import {
   UniversalConnectionParameter,
 } from '../../../../panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter';
 import { comboboxStyles, dropdownStyles, getSelectedAuthIndex, secretFieldStyles } from './basics';
+import { useCompletionModels, useEmbeddingModels } from '../../../../../core/knowledge/utils/queries';
 
 export const modelTab = (
   intl: IntlShape,
@@ -107,25 +108,54 @@ const Model = ({
     getSelectedAuthIndex(connectionParameterSets, connectionParameterValues.openAIAuthenticationType)
   );
   const [parameterValues, setParameterValues] = useState<Record<string, any>>(connectionParameterValues);
+  const selectedOpenAIResourceId = useMemo(() => parameterValues.cognitiveServiceAccountId ?? '', [parameterValues]);
+  const { data: completionModels = [], isSuccess: areCompletionModelsLoaded } = useCompletionModels(selectedOpenAIResourceId);
+  const { data: embeddingModels = [], isSuccess: areEmbeddingModelsLoaded } = useEmbeddingModels(selectedOpenAIResourceId);
 
   const authType = useMemo(
     () => connectionParameterSets?.values[selectedParamSetIndex]?.name,
     [connectionParameterSets, selectedParamSetIndex]
   );
 
-  useEffect(() => {
-    if (authType) {
-      setConnectionParameterValues((values: Record<string, any>) => ({ ...values, openAIAuthenticationType: authType })); // Set authType in connection parameter values as well so that it can be used for showing/hiding parameters based on auth type
-    }
-  }, [authType, setConnectionParameterValues]);
-
   const handleParametersChange = useCallback(
-    (values: Record<string, any>) => {
+    (values: SetStateAction<Record<string, any>>) => {
       setParameterValues(values);
       setConnectionParameterValues(values);
     },
     [setConnectionParameterValues]
   );
+
+  useEffect(() => {
+    if (authType) {
+      handleParametersChange((values) => ({ ...values, openAIAuthenticationType: authType }));
+    }
+  }, [authType, handleParametersChange]);
+
+  useEffect(() => {
+    const nextParameterValues = { ...parameterValues };
+    let shouldResetModel = false;
+
+    if (
+      areCompletionModelsLoaded &&
+      parameterValues.openAICompletionsModel &&
+      !completionModels.some(({ value }) => value === parameterValues.openAICompletionsModel)
+    ) {
+      nextParameterValues.openAICompletionsModel = undefined;
+      shouldResetModel = true;
+    }
+    if (
+      areEmbeddingModelsLoaded &&
+      parameterValues.openAIEmbeddingsModel &&
+      !embeddingModels.some(({ value }) => value === parameterValues.openAIEmbeddingsModel)
+    ) {
+      nextParameterValues.openAIEmbeddingsModel = undefined;
+      shouldResetModel = true;
+    }
+
+    if (shouldResetModel) {
+      handleParametersChange(nextParameterValues);
+    }
+  }, [areCompletionModelsLoaded, areEmbeddingModelsLoaded, completionModels, embeddingModels, handleParametersChange, parameterValues]);
 
   const allParameters = useMemo(
     () => connectionParameterSets?.values[selectedParamSetIndex]?.parameters ?? {},
@@ -177,9 +207,23 @@ const Model = ({
     []
   );
   const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter) => {
+    const modelOptions =
+      key === 'openAICompletionsModel' ? completionModels : key === 'openAIEmbeddingsModel' ? embeddingModels : undefined;
+    const parameterWithOptions = modelOptions
+      ? {
+          ...parameter,
+          uiDefinition: {
+            ...parameter.uiDefinition,
+            constraints: {
+              ...parameter.uiDefinition?.constraints,
+              allowedValues: modelOptions,
+            },
+          },
+        }
+      : parameter;
     const connectionParameterProps: ConnectionParameterProps = {
       parameterKey: key,
-      parameter,
+      parameter: parameterWithOptions,
       operationParameterValues: { agentModelType: 'AzureOpenAI', hideCreate: true },
       value: parameterValues[key],
       setValue: (val: any) => handleParametersChange((values: Record<string, any>) => ({ ...values, [key]: val })),
