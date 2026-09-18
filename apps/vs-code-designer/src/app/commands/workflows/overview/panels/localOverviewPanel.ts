@@ -20,19 +20,20 @@ import { readFileSync } from 'fs';
 import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
 import { sendRequest } from '../../../../utils/requestUtils';
+import type { WorkflowOverviewProjectOrigin } from '../openOverview';
 
 export default class LocalOverviewPanel extends OverviewPanel {
   protected readonly workflowFilePath: string;
   protected projectPath?: string;
   protected localSettings: Record<string, string> = {};
 
-  constructor(context: IActionContext, node: vscode.Uri) {
+  constructor(context: IActionContext, node: vscode.Uri, projectOrigin?: WorkflowOverviewProjectOrigin) {
     const workflowFilePath = node.fsPath;
     const workflowName = basename(dirname(workflowFilePath));
     const panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     const panelTitle = `${workflowName}-overview`;
 
-    super(context, workflowName, panelName, panelTitle, '2019-10-01-edge-preview', true);
+    super(context, workflowName, panelName, panelTitle, '2019-10-01-edge-preview', true, projectOrigin);
 
     this.workflowFilePath = workflowFilePath;
   }
@@ -58,9 +59,7 @@ export default class LocalOverviewPanel extends OverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
-      : {};
+    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
 
     this.workflowContent = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this.triggerName = getTriggerName(this.workflowContent.definition);

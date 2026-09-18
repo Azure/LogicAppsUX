@@ -261,9 +261,10 @@ jobs:
           }
           const versions = fs.readdirSync(root)
             .filter((name) => /^\d+\.\d+\.\d+/.test(name) && fs.statSync(path.join(root, name)).isDirectory())
+            .filter((name) => fs.existsSync(path.join(root, name, '.bundle-source-md5')))
             .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
           if (versions.length === 0) {
-            throw new Error(`No bundle version folders under ${root}`);
+            throw new Error(`No complete bundle version folders with sidecars under ${root}`);
           }
           const bundleDir = path.join(root, versions[0]);
           const sidecarPath = path.join(bundleDir, '.bundle-source-md5');
@@ -280,6 +281,7 @@ jobs:
           }
           console.log(`Bundle verified: ${bundleDir}`);
           console.log(`Sidecar: ${sidecarPath}`);
+          fs.writeFileSync('verified-bundle-version.txt', versions[0]);
           NODE
 
       - name: Verify fixtures manifest exists
@@ -299,9 +301,10 @@ jobs:
 
       - name: Tar Logic Apps extension bundle
         run: |
+          BUNDLE_VERSION="$(cat verified-bundle-version.txt)"
           tar -czf logic-apps-extension-bundle.tar.gz \
             -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles" \
-            Microsoft.Azure.Functions.ExtensionBundle.Workflows
+            "Microsoft.Azure.Functions.ExtensionBundle.Workflows/${BUNDLE_VERSION}"
 
       - name: Upload workspace fixtures artifact
         uses: actions/upload-artifact@v6
@@ -388,6 +391,14 @@ jobs:
           # NuGet -> debug/run again without harness port cleanup.
           - shard: nuget-debug-lifecycle
             scenario: p49-nugetdebugconversion
+            use_workspace_fixtures: true
+            use_bundle_artifact: true
+          # Unified project overview owns a dedicated shard because both the
+          # codeless and codeful variants start/stop a real runtime and open
+          # project, workflow, and monitoring webviews. run-e2e gives each
+          # scenario its own fresh VS Code session.
+          - shard: project-overview
+            scenario: p415-projectoverview,p415-codeful-projectoverview
             use_workspace_fixtures: true
             use_bundle_artifact: true
           # Multi-designer + dataMapper suite (manifest-multi) + bundle repair.
@@ -493,9 +504,18 @@ jobs:
       - name: Extract Logic Apps extension bundle
         if: matrix.use_bundle_artifact == true
         run: |
-          mkdir -p "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
-          tar -xzf logic-apps-extension-bundle.tar.gz -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
-          find "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows" -maxdepth 2 -type f -name '.bundle-source-md5' -print
+          BUNDLE_PARENT="${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
+          BUNDLE_ROOT="${BUNDLE_PARENT}/Microsoft.Azure.Functions.ExtensionBundle.Workflows"
+          rm -rf "${BUNDLE_ROOT}"
+          mkdir -p "${BUNDLE_PARENT}"
+          tar -xzf logic-apps-extension-bundle.tar.gz -C "${BUNDLE_PARENT}"
+          SIDECARS="$(find "${BUNDLE_ROOT}" -mindepth 2 -maxdepth 2 -type f -name '.bundle-source-md5' -print)"
+          if [ "$(printf '%s\n' "${SIDECARS}" | sed '/^$/d' | wc -l)" -ne 1 ]; then
+            echo "::error::Expected exactly one verified bundle sidecar after extraction"
+            find "${BUNDLE_ROOT}" -maxdepth 2 -print || true
+            exit 1
+          fi
+          printf '%s\n' "${SIDECARS}"
 
       - name: Install system dependencies for virtual display
         run: |

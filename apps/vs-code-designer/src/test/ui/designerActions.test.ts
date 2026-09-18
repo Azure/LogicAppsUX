@@ -26,6 +26,7 @@ import {
   invokeWorkflowCallback,
   waitForRunStatusInList as waitForRunStatusInListWithRefresh,
   verifyAllNodesSucceeded as verifyAllNodesSucceededWithActions,
+  verifyLatestRunActionRunsSucceeded,
 } from './runHelpers';
 import {
   openWorkspaceFileInSession as openWorkspaceFileInSessionShared,
@@ -3488,9 +3489,14 @@ describe('Designer Actions Tests', function () {
         await captureScreenshot(driver, 'test2-step12-run-details-opened');
         assert.ok(detailsOpened, 'Should be able to open the succeeded run');
 
-        const { allSucceeded, details } = await verifyAllNodesSucceededWithActions(driver, entry.wfName);
+        const actionResult = await verifyLatestRunActionRunsSucceeded(entry.wfName, ['Response']);
         await captureScreenshot(driver, 'test2-step13-all-nodes-succeeded');
-        assert.ok(allSucceeded, `All action nodes should be succeeded (${details})`);
+        assert.ok(actionResult?.allSucceeded, `All executable action nodes should be succeeded (${actionResult?.details})`);
+        assert.match(
+          actionResult?.details ?? '',
+          /Call_a_local_function_in_this_logic_app:Succeeded/i,
+          `Custom code action should succeed (${actionResult?.details})`
+        );
 
         console.log('[test2] PASSED — full flow: add action + save + build + debug + overview + run succeeded');
       } else {

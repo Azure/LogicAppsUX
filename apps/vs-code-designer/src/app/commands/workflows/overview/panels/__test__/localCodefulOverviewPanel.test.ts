@@ -255,6 +255,68 @@ describe('LocalCodefulOverviewPanel', () => {
     );
   });
 
+  it('initializes the selected codeful workflow and workflow list with per-workflow runtime trigger metadata', async () => {
+    const codefulContent = `
+      WorkflowBuilderFactory.CreateStatefulWorkflow("workflow-a", builder => {});
+      WorkflowBuilderFactory.CreateStatefulWorkflow("workflow-b", builder => {});
+    `;
+    mocks.readFileSync.mockReturnValue(codefulContent);
+    mocks.sendRequest.mockImplementation(async (_context: any, request: { url: string }) => {
+      if (request.url.endsWith('/workflows?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({
+          value: [
+            {
+              name: 'workflow-a',
+              kind: 'Stateful',
+              triggers: { firstRequest: { type: 'Request', kind: 'Http' } },
+            },
+            {
+              name: 'workflow-b',
+              kind: 'Stateful',
+              triggers: { secondRequest: { type: 'Request', kind: 'Http' } },
+            },
+          ],
+        });
+      }
+      if (request.url.includes('/listCallbackUrl?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: `callback:${request.url}`, method: 'POST' });
+      }
+      throw new Error(`Unexpected request ${request.url}`);
+    });
+
+    const codefulPanel = new LocalCodefulOverviewPanel(context, vscode.Uri.file(codefulFilePath) as any);
+    await codefulPanel.create();
+
+    const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+    await messageHandler({ command: ExtensionCommand.initialize });
+
+    const initCall = panel.webview.postMessage.mock.calls.find(([msg]: any) => msg.command === ExtensionCommand.initialize_frame);
+    const initializePayload = initCall?.[0].data;
+
+    expect(initializePayload.workflowProperties).toEqual(
+      expect.objectContaining({
+        name: 'workflow-a',
+        triggerName: 'firstRequest',
+      })
+    );
+    expect(initializePayload.workflowPropertiesList).toEqual([
+      expect.objectContaining({
+        name: 'workflow-a',
+        triggerName: 'firstRequest',
+        callbackInfo: expect.objectContaining({
+          value: expect.stringContaining('/workflows/workflow-a/triggers/firstRequest/listCallbackUrl'),
+        }),
+      }),
+      expect.objectContaining({
+        name: 'workflow-b',
+        triggerName: 'secondRequest',
+        callbackInfo: expect.objectContaining({
+          value: expect.stringContaining('/workflows/workflow-b/triggers/secondRequest/listCallbackUrl'),
+        }),
+      }),
+    ]);
+  });
+
   it('posts per-workflow callback URL updates when the runtime base URL appears', async () => {
     vi.useFakeTimers();
     (ext as any).workflowRuntimePort = undefined;
@@ -320,9 +382,14 @@ describe('LocalCodefulOverviewPanel', () => {
         return JSON.stringify({
           value: [
             {
-              name: 'runtime-workflow',
+              name: 'runtime-workflow-a',
               kind: 'Stateful',
-              triggers: { manual: { type: 'Request', kind: 'Http' } },
+              triggers: { firstRuntimeTrigger: { type: 'Request', kind: 'Http' } },
+            },
+            {
+              name: 'runtime-workflow-b',
+              kind: 'Stateful',
+              triggers: { secondRuntimeTrigger: { type: 'Request', kind: 'Http' } },
             },
           ],
         });
@@ -346,16 +413,20 @@ describe('LocalCodefulOverviewPanel', () => {
       command: ExtensionCommand.update_workflow_properties,
       data: {
         workflowProperties: expect.objectContaining({
-          name: 'runtime-workflow',
-          triggerName: 'manual',
+          name: 'runtime-workflow-a',
+          triggerName: 'firstRuntimeTrigger',
           callbackInfo: expect.objectContaining({
-            value: expect.stringContaining('/workflows/runtime-workflow/triggers/manual/listCallbackUrl'),
+            value: expect.stringContaining('/workflows/runtime-workflow-a/triggers/firstRuntimeTrigger/listCallbackUrl'),
           }),
         }),
         workflowPropertiesList: [
           expect.objectContaining({
-            name: 'runtime-workflow',
-            triggerName: 'manual',
+            name: 'runtime-workflow-a',
+            triggerName: 'firstRuntimeTrigger',
+          }),
+          expect.objectContaining({
+            name: 'runtime-workflow-b',
+            triggerName: 'secondRuntimeTrigger',
           }),
         ],
         kind: 'Stateful',

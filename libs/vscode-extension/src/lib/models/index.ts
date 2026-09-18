@@ -18,3 +18,4 @@ export * from './process';
 export * from './dataMapper';
 export * from './hybridLogicApp';
 export * from './operatingSystem';
+export * from './projectOverview';

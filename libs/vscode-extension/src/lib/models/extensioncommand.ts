@@ -73,6 +73,19 @@ export const ExtensionCommand = {
   package_file: 'package-file',
   workspace_existence_result: 'workspace-existence-result',
   package_existence_result: 'package-existence-result',
+  initializeProjectOverview: 'initializeProjectOverview',
+  updateProjectOverview: 'updateProjectOverview',
+  refreshProjectOverview: 'refreshProjectOverview',
+  retryProjectOverview: 'retryProjectOverview',
+  startProjectOverviewRuntime: 'startProjectOverviewRuntime',
+  stopProjectOverviewRuntime: 'stopProjectOverviewRuntime',
+  cancelProjectOverviewRun: 'cancelProjectOverviewRun',
+  openWorkflowOverview: 'openWorkflowOverview',
+  openProjectOverview: 'openProjectOverview',
+  openLatestProjectOverviewRun: 'openLatestProjectOverviewRun',
+  copyProjectOverviewCallback: 'copyProjectOverviewCallback',
+  copyWorkflowOverviewCallback: 'copyWorkflowOverviewCallback',
+  projectOverviewVisibilityChanged: 'projectOverviewVisibilityChanged',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 
