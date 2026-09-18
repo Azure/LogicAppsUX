@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { LogEntryLevel } from '@microsoft/logic-apps-shared';
 import { LoggerService } from './Logger';
@@ -14,6 +14,7 @@ describe('DataMapperLoggerService', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   it('should log telemetry event', () => {
@@ -28,17 +29,10 @@ describe('DataMapperLoggerService', () => {
       command: 'logTelemetry',
       data: {
         area: 'testEvent',
-        args: [
-          'arg1',
-          'arg2',
-          {
-            dataMapperVersion: 2,
-            designerVersion: '1.0.0',
-          },
-        ],
-        level: LogEntryLevel.Verbose,
+        args: JSON.stringify(['arg1', 'arg2', context]),
+        level: String(LogEntryLevel.Verbose),
         message: 'test message',
-        timestamp: expect.any(Number),
+        timestamp: expect.any(String),
       },
     });
   });
@@ -55,9 +49,9 @@ describe('DataMapperLoggerService', () => {
         actionModifier: 'start',
         name: 'testTrace',
         source: 'testSource',
-        timestamp: expect.any(Number),
-        duration: 0,
-        data: { id: traceId, context },
+        timestamp: expect.any(String),
+        duration: '0',
+        data: JSON.stringify({ id: traceId, context }),
       }),
     });
   });
@@ -78,9 +72,9 @@ describe('DataMapperLoggerService', () => {
         actionModifier: 'end',
         name: 'testTrace',
         source: 'testSource',
-        timestamp: expect.any(Number),
-        duration: expect.any(Number),
-        data: { additional: 'info', context, id: traceId },
+        timestamp: expect.any(String),
+        duration: expect.any(String),
+        data: JSON.stringify({ additional: 'info', context, id: traceId }),
       }),
     });
   });
@@ -89,5 +83,43 @@ describe('DataMapperLoggerService', () => {
     loggerService.endTrace('invalidId');
 
     expect(mockSendMsgToVsix).not.toHaveBeenCalled();
+  });
+
+  it('does not send raw error details as telemetry properties', () => {
+    loggerService.log({
+      level: LogEntryLevel.Error,
+      area: 'createConnection',
+      message: 'Unable to connect',
+      error: new Error('GLASSWING_TEST_ONLY_PASSWORD'),
+    });
+
+    expect(mockSendMsgToVsix).toHaveBeenCalledWith({
+      command: ExtensionCommand.logTelemetry,
+      data: expect.objectContaining({
+        error: JSON.stringify({ name: 'Error' }),
+        message: 'Unable to connect',
+      }),
+    });
+    expect(JSON.stringify(mockSendMsgToVsix.mock.calls)).not.toContain('GLASSWING_TEST_ONLY_PASSWORD');
+  });
+
+  it('does not throw when telemetry data is circular', () => {
+    const circular: Record<string, unknown> = {};
+    circular['self'] = circular;
+
+    expect(() =>
+      loggerService.log({
+        level: LogEntryLevel.Error,
+        area: 'createConnection',
+        message: 'Unable to connect',
+        args: [circular],
+      })
+    ).not.toThrow();
+    expect(mockSendMsgToVsix).toHaveBeenCalledWith({
+      command: ExtensionCommand.logTelemetry,
+      data: expect.objectContaining({
+        args: '[Unable to serialize telemetry value]',
+      }),
+    });
   });
 });
