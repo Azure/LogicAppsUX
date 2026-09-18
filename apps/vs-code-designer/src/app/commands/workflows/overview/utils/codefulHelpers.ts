@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { managementApiPrefix } from '../../../../../constants';
+import { managementApiPrefix, WorkflowKind } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { sendRequest } from '../../../../utils/requestUtils';
@@ -21,6 +21,16 @@ import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-app
 import type { CodefulTriggerData, CodefulWorkflowData, CodefulWorkflowDataResult, OverviewWorkflowProperties } from './types';
 import { readFileSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
+
+export function normalizeWorkflowKind(kind?: string): WorkflowKind {
+  if (kind?.toLowerCase() === 'agent') {
+    return WorkflowKind.agent;
+  }
+  if (kind?.toLowerCase() === 'stateless') {
+    return WorkflowKind.stateless;
+  }
+  return WorkflowKind.stateful;
+}
 
 export async function getCodefulWorkflowCallbackInfo(
   context: IActionContext,
@@ -149,12 +159,11 @@ export async function getCodefulWorkflowDataList(
 
   const hasHttpTrigger = hasHttpRequestTrigger(workflowContent);
   const fallbackTriggerName = getFallbackCodefulTriggerName(workflowContent, hasHttpTrigger);
-  const workflowNames = getCodefulWorkflowNames(workflowFilePath);
-  if (workflowNames.length > 0) {
+  const discoveredWorkflows = getCodefulWorkflowDataFromFiles(workflowFilePath);
+  if (discoveredWorkflows.length > 0) {
     return {
-      workflows: workflowNames.map((workflowName) => ({
-        workflowName,
-        workflowKind: 'Stateful',
+      workflows: discoveredWorkflows.map((workflow) => ({
+        ...workflow,
         triggerName: fallbackTriggerName,
         triggerType: hasHttpTrigger ? 'Request' : undefined,
         triggerKind: hasHttpTrigger ? 'Http' : undefined,
@@ -169,7 +178,7 @@ export async function getCodefulWorkflowDataList(
       ? [
           {
             workflowName: workflowInfo.workflowName,
-            workflowKind: workflowInfo.workflowType === 'agent' ? 'Agent' : 'Stateful',
+            workflowKind: normalizeWorkflowKind(workflowInfo.workflowType),
             triggerName: fallbackTriggerName,
             triggerType: hasHttpTrigger ? 'Request' : undefined,
             triggerKind: hasHttpTrigger ? 'Http' : undefined,
@@ -207,7 +216,7 @@ export async function getRuntimeCodefulWorkflows(
           const [runtimeTriggerName, trigger] = Object.entries(workflow.triggers ?? {})[0] ?? [];
           return {
             workflowName: workflow.name,
-            workflowKind: workflow.kind ?? 'Stateful',
+            workflowKind: normalizeWorkflowKind(workflow.kind),
             triggerName: runtimeTriggerName,
             triggerType: trigger?.properties?.type ?? trigger?.type,
             triggerKind: trigger?.properties?.kind ?? trigger?.kind,
@@ -235,8 +244,8 @@ export async function getRuntimeCodefulWorkflows(
   return [];
 }
 
-export function getCodefulWorkflowNames(filePath: string): string[] {
-  const workflowNames: string[] = [];
+export function getCodefulWorkflowDataFromFiles(filePath: string): CodefulWorkflowData[] {
+  const workflows: CodefulWorkflowData[] = [];
   const visitedFiles = new Set<string>();
   const projectDir = dirname(filePath);
 
@@ -248,12 +257,20 @@ export function getCodefulWorkflowNames(filePath: string): string[] {
 
     try {
       const fileContent = readFileSync(currentFilePath, 'utf8');
-      const workflowRegex = /(?:CreateConversationalAgent|CreateAgentWorkflow|CreateStatefulWorkflow)\s*\(\s*["']([^"']+)["']/g;
+      const workflowRegex =
+        /(CreateConversationalAgent|CreateAgentWorkflow|CreateStatefulWorkflow|CreateStatelessWorkflow)\s*\(\s*["']([^"']+)["']/g;
       let match: RegExpExecArray | null;
       while ((match = workflowRegex.exec(fileContent)) !== null) {
-        const workflowName = match[1];
-        if (workflowName && !workflowNames.includes(workflowName)) {
-          workflowNames.push(workflowName);
+        const factoryMethod = match[1];
+        const workflowName = match[2];
+        if (workflowName && !workflows.some((workflow) => workflow.workflowName === workflowName)) {
+          const workflowKind =
+            factoryMethod === 'CreateStatelessWorkflow'
+              ? WorkflowKind.stateless
+              : factoryMethod === 'CreateConversationalAgent' || factoryMethod === 'CreateAgentWorkflow'
+                ? WorkflowKind.agent
+                : WorkflowKind.stateful;
+          workflows.push({ workflowName, workflowKind });
         }
       }
 
@@ -276,7 +293,11 @@ export function getCodefulWorkflowNames(filePath: string): string[] {
   };
 
   extractWorkflowsFromFile(filePath);
-  return workflowNames;
+  return workflows;
+}
+
+export function getCodefulWorkflowNames(filePath: string): string[] {
+  return getCodefulWorkflowDataFromFiles(filePath).map((workflow) => workflow.workflowName);
 }
 
 export function getFallbackCodefulTriggerName(workflowContent: string, hasHttpTrigger: boolean): string | undefined {
@@ -329,7 +350,7 @@ export function getCodefulWorkflowContent(
       actions: {},
       outputs: {},
     },
-    kind: workflowData.workflowKind ?? 'Stateful',
+    kind: workflowData.workflowKind,
   };
 }
 
