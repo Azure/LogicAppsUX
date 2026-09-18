@@ -3,9 +3,10 @@ import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './simpledictionary.styles';
+import { deepCompareObjects } from '@microsoft/logic-apps-shared';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
@@ -16,6 +17,31 @@ export interface SimpleDictionaryProps {
   onChange?: EventHandler<Record<string, string> | undefined>;
 }
 
+const createValues = (dictionaryValue?: Record<string, string>): SimpleDictionaryRowModel[] => [
+  ...Object.entries(dictionaryValue ?? {}).map(([key, value], index) => ({
+    key,
+    value,
+    index,
+  })),
+  { key: '', value: '', index: Object.keys(dictionaryValue ?? {}).length },
+];
+
+const isSafeDictionaryKey = (key: string): boolean => key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
+
+const valuesToDictionary = (dictionaryRows: SimpleDictionaryRowModel[]): Record<string, string> | undefined => {
+  const nextDictionary = dictionaryRows.reduce((acc, row) => {
+    if (row.key && isSafeDictionaryKey(row.key)) {
+      acc[row.key] = row.value;
+    }
+    return acc;
+  }, {} as Record<string, string>);
+
+  return Object.keys(nextDictionary).length > 0 ? nextDictionary : undefined;
+};
+
+const normalizeDictionary = (dictionary?: Record<string, string>): Record<string, string> | undefined =>
+  Object.keys(dictionary ?? {}).length > 0 ? dictionary : undefined;
+
 export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   disabled,
   customLabel,
@@ -24,27 +50,41 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   onChange,
   ariaLabel,
 }): JSX.Element => {
-  const [values, setValues] = useState([
-    ...Object.entries(value ?? {}).map(([key, value], index) => ({
-      key,
-      value,
-      index,
-    })),
-    { key: '', value: '', index: Object.keys(value ?? {}).length },
-  ]);
+  const [values, setValues] = useState(createValues(value));
+  const valuesRef = useRef(values);
+  const isInitialRenderRef = useRef(true);
+  const isSyncingFromParentRef = useRef(false);
 
   const intl = useIntl();
+
   useEffect(() => {
-    onChange?.(
-      values
-        .filter((x) => x.key && x.key !== '')
-        .reduce((acc: any, val) => {
-          acc[val.key] = val.value;
-          return acc;
-        }, {})
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const nextValues = createValues(value);
+    const currentDictionary = normalizeDictionary(valuesToDictionary(valuesRef.current));
+    const nextDictionary = normalizeDictionary(valuesToDictionary(nextValues));
+
+    if (!deepCompareObjects(currentDictionary, nextDictionary)) {
+      isSyncingFromParentRef.current = true;
+      setValues(nextValues);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    valuesRef.current = values;
   }, [values]);
+
+  useEffect(() => {
+    if (isInitialRenderRef.current) {
+      isInitialRenderRef.current = false;
+      return;
+    }
+
+    if (isSyncingFromParentRef.current) {
+      isSyncingFromParentRef.current = false;
+      return;
+    }
+
+    onChange?.(valuesToDictionary(values));
+  }, [onChange, values]);
 
   const handleItemDelete = (e: SimpleDictionaryRowModel): void => {
     setValues((oldValues) => oldValues.filter((x) => x.index !== e.index).map((x, i) => ({ ...x, index: i })));
