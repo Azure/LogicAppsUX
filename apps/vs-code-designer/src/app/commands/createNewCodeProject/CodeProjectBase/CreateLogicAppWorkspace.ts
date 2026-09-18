@@ -17,6 +17,7 @@ import {
   vscodeCommand,
   vscodeFolderName,
   workflowFileName,
+  CodefulSdkVersion,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
@@ -150,7 +151,8 @@ export const createCodefulWorkflowFile = async (
 
     // Create the .csproj file (only for first workflow)
     const templateProjPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'CodefulProj');
-    const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
+    const templateProjContent = (await fse.readFile(templateProjPath, 'utf-8'))
+      .replace(/<%= codefulSdkPackageVersion %>/g, CodefulSdkVersion.WorkflowsSDK);
     const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
     await fse.writeFile(csprojFilePath, templateProjContent);
 
