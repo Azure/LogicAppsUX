@@ -5,7 +5,7 @@ export interface ICognitiveServiceService {
   fetchAllCognitiveServiceAccounts(subscriptionId: string): Promise<any>;
   fetchCognitiveServiceAccountById(accountId: string): Promise<any>;
   fetchCognitiveServiceAccountKeysById(accountId: string): Promise<any>;
-  fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any>;
+  fetchAllCognitiveServiceAccountDeployments(accountId: string, options?: { throwOnError?: boolean }): Promise<any>;
   /** Lists the models that can be deployed on the account's region (Microsoft.CognitiveServices location model catalog). */
   fetchAvailableModelsForAccount(accountId: string): Promise<any[]>;
   fetchAllCognitiveServiceProjects(serviceAccountId: string): Promise<any>;
