@@ -18,11 +18,17 @@ import { useEditPanelStyles, usePanelStyles } from '../styles';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useCompletionModelsByEndpoint, useConnection, useEmbeddingModelsByEndpoint } from '../../../../core/knowledge/utils/queries';
+import {
+  useCompletionModelsByEndpoint,
+  useConnection,
+  useCosmosDbResourceId,
+  useEmbeddingModelsByEndpoint,
+} from '../../../../core/knowledge/utils/queries';
 import { createOrUpdateConnection, getConnectionParametersForEdit } from '../../../../core/knowledge/utils/connection';
 import { type ConnectionParameterSetParameter, equals, isEmptyString } from '@microsoft/logic-apps-shared';
 import { setNotification } from '../../../../core/state/knowledge/optionsSlice';
 import type { ServerNotificationData } from '../../../mcp/servers/servers';
+import { useSubscriptions } from '../../../../core/state/connection/connectionSelector';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -41,6 +47,12 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
   const { data: completionModels = [] } = useCompletionModelsByEndpoint(openAIEndpoint, openAIKey);
   const { data: embeddingModels = [] } = useEmbeddingModelsByEndpoint(openAIEndpoint, openAIKey);
   const [isDirty, setIsDirty] = useState(false);
+  const { data: subscriptions, isLoading: areSubscriptionsLoading } = useSubscriptions();
+  const shouldResolveCosmosDbResourceId = !parameterValues?.cosmosDbServiceAccountId && !!parameterValues?.cosmosDBEndpoint;
+  const { data: resolvedCosmosDbResourceId, isInitialLoading: isCosmosDbResourceIdLoading } = useCosmosDbResourceId(
+    shouldResolveCosmosDbResourceId ? parameterValues?.cosmosDBEndpoint : undefined,
+    (subscriptions ?? []).map((subscription) => subscription.subscriptionId)
+  );
 
   useEffect(
     () => setIsDirty(hasValuesChanged(connectionParameterValues, parameterValues ?? {})),
@@ -52,6 +64,19 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
       setConnectionParameterValues(parameterValues);
     }
   }, [parameterValues]);
+
+  useEffect(() => {
+    if (resolvedCosmosDbResourceId) {
+      setConnectionParameterValues((values) =>
+        values.cosmosDbServiceAccountId
+          ? values
+          : {
+              ...values,
+              cosmosDbServiceAccountId: resolvedCosmosDbResourceId,
+            }
+      );
+    }
+  }, [parameterValues, resolvedCosmosDbResourceId]);
 
   const [isSaving, setIsSaving] = useState(false);
   const styles = { ...usePanelStyles(), ...useEditPanelStyles() };
@@ -254,7 +279,11 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
         {
           type: 'action',
           text: isSaving ? INTL_TEXT.savingText : INTL_TEXT.buttonText,
-          disabled: isSaving || !isDirty || isLoading,
+          disabled:
+            isSaving ||
+            !isDirty ||
+            isLoading ||
+            (shouldResolveCosmosDbResourceId && (areSubscriptionsLoading || isCosmosDbResourceIdLoading)),
           appearance: 'primary',
           onClick: handleSave,
         },
@@ -265,7 +294,19 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
         },
       ],
     };
-  }, [isSaving, INTL_TEXT.savingText, INTL_TEXT.buttonText, INTL_TEXT.cancelButton, isDirty, isLoading, handleSave, handleDismiss]);
+  }, [
+    isSaving,
+    INTL_TEXT.savingText,
+    INTL_TEXT.buttonText,
+    INTL_TEXT.cancelButton,
+    isDirty,
+    isLoading,
+    shouldResolveCosmosDbResourceId,
+    areSubscriptionsLoading,
+    isCosmosDbResourceIdLoading,
+    handleSave,
+    handleDismiss,
+  ]);
 
   return (
     <Drawer
