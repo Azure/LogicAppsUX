@@ -36,22 +36,61 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getContainingWorkspaceFolder, getWorkspaceFolder } from '../../utils/workspace';
+import { getContainingWorkspaceFolder, getLogicAppProjectRoots, getWorkspaceFolder, selectLogicAppProject } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { stopFuncTaskForWorkspace } from '../../utils/funcCoreTools/funcHostTask';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, ProjectLanguage, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
+import { filterLogicAppProjects, getLogicAppProjectMetadata } from '../../utils/project';
 
 export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
-  await switchToDotnetProject(context, node);
+  const projectPaths = await getLogicAppProjectRoots(context, node);
+  if (projectPaths.length === 0) {
+    vscode.window.showInformationMessage(
+      localize('noLogicAppProjectsFound', 'No Logic App projects were found in the selected workspace.'),
+      'OK'
+    );
+    return;
+  }
+
+  const projects = await getLogicAppProjectMetadata(projectPaths);
+  const eligibleProjects = filterLogicAppProjects(projects, {
+    excludedProjectTypes: [ProjectType.codeful],
+    excludedPackageTypes: [ProjectPackageType.Nuget],
+  });
+
+  if (eligibleProjects.length === 0) {
+    const message =
+      projects.length === 1 && projects[0].projectType === ProjectType.codeful
+        ? localize('convertCodefulToNugetUnavailable', 'Converting to a NuGet-based project is not available for codeful projects.')
+        : projects.length === 1 && projects[0].packageType === ProjectPackageType.Nuget
+          ? localize('projectAlreadyDotnet', 'The Logic App project is already a NuGet-based project.')
+          : localize(
+              'noProjectsAvailableForNugetConversion',
+              'No Logic App projects are available to convert. Only non-codeful projects that are not already NuGet-based can be converted.'
+            );
+    vscode.window.showInformationMessage(message, 'OK');
+    return;
+  }
+
+  const targetPath = await selectLogicAppProject(
+    context,
+    eligibleProjects.map(({ path: projectPath }) => projectPath),
+    localize('selectProjectToConvertToNuget', 'Select a Logic App project to convert to NuGet-based')
+  );
+  if (!targetPath) {
+    throw new Error(localize('logicAppProjectSelectionRequired', 'A Logic App project must be selected.'));
+  }
+
+  await switchToDotnetProject(context, vscode.Uri.file(targetPath));
 }
 
 export async function switchToDotnetProject(context: IActionContext, node?: vscode.Uri, localDotNetMajorVersion = '10', isCodeful = false) {
