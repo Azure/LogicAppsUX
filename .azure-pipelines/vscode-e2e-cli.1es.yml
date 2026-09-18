@@ -73,7 +73,7 @@ parameters:
   - name: azureSubscriptionId
     displayName: Live E2E subscription ID
     type: string
-    default: ''
+    default: f11e76f5-6d71-4e8b-9571-9c5f147628ed
 
   - name: azureResourceGroupName
     displayName: Live E2E resource group name
