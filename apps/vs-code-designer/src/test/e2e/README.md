@@ -224,7 +224,7 @@ Recommended first ADO gate:
    - fan out one job per label and run `xvfb-run ... pnpm exec node scripts/run-e2e-cli.js --label <label>` from `apps/vs-code-designer`.
 4. Publish `apps/vs-code-designer/.vscode-test/results/*.junit.xml` with `PublishTestResults@2`, and publish the JSON, Markdown summaries, logs, and screenshots with `PublishPipelineArtifact@1`. ADO run summaries can use `##vso[task.uploadsummary]<path-to-summary.md>`.
 
-Only add an Azure ARM service connection when promoting the Azure-backed MSN Weather lifecycle. Use a dedicated LogicAppsUX connection if possible, for example `LogicAppsUX-VSCode-E2E-SignIn`, scoped to the `logicappstt` tenant/subscription/resource group. Reusing `LogicAppsPortal-E2E-SignIn` would require that connection's owners to authorize the new pipeline and confirm the permissions are appropriate; do not use Otto's `otto-e2e-testtenant-arm` for LogicAppsUX without explicit ownership approval.
+Only add an Azure ARM service connection when promoting the Azure-backed MSN Weather lifecycle. The checked-in pipeline defaults to the dedicated LogicAppsUX connection `LogicAppsVSCode-E2E-SignIn`, scoped to the `logicappstt` tenant/subscription/resource group. Reusing `LogicAppsPortal-E2E-SignIn` would require that connection's owners to authorize the new pipeline and confirm the permissions are appropriate; do not use Otto's `otto-e2e-testtenant-arm` for LogicAppsUX without explicit ownership approval.
 
 The Azure-backed job should run inside `AzureCLI@2`, mint a token for `https://management.core.windows.net/`, and pass the existing environment contract into `@vscode/test-cli`:
 
@@ -232,7 +232,7 @@ The Azure-backed job should run inside `AzureCLI@2`, mint a token for `https://m
 - task: AzureCLI@2
   displayName: Run VS Code MSN Weather lifecycle
   inputs:
-    azureSubscription: LogicAppsUX-VSCode-E2E-SignIn
+    azureSubscription: LogicAppsVSCode-E2E-SignIn
     scriptType: bash
     scriptLocation: inlineScript
     useGlobalConfig: false

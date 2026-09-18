@@ -58,7 +58,7 @@ parameters:
   - name: testARMServiceConnection
     displayName: Optional ARM service connection for live Azure E2E
     type: string
-    default: ''
+    default: LogicAppsVSCode-E2E-SignIn
 
   - name: enableMsnWeatherLifecycle
     displayName: Run live MSN Weather lifecycle
