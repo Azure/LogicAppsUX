@@ -245,7 +245,7 @@ The Azure-backed job should run inside `AzureCLI@2`, mint a token for `https://m
   env:
     LA_E2E_CLI_AZURE_TENANT_ID: c9db855a-7930-48d8-8e3c-a409a38faab3
     LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: f11e76f5-6d71-4e8b-9571-9c5f147628ed
-    LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: $(LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME)
+    LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: LogicAppsVSCode-E2E-Fixtures
     LA_E2E_CLI_AZURE_LOCATION_NAME: westus
 ```
 

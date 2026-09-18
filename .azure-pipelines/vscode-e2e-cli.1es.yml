@@ -78,7 +78,7 @@ parameters:
   - name: azureResourceGroupName
     displayName: Live E2E resource group name
     type: string
-    default: ''
+    default: LogicAppsVSCode-E2E-Fixtures
 
   - name: azureLocationName
     displayName: Live E2E managed API location
