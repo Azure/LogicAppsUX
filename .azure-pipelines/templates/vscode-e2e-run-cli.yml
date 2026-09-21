@@ -19,6 +19,9 @@ parameters:
   - name: dependsOn
     type: object
     default: []
+  - name: checkoutRef
+    type: string
+    default: ''
   - name: testARMServiceConnection
     type: string
     default: ''
@@ -38,6 +41,10 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 0
+
+      - ${{ if ne(parameters.checkoutRef, '') }}:
+          - script: git checkout ${{ parameters.checkoutRef }}
+            displayName: Checkout VS Code E2E ref
 
       - template: vscode-e2e-setup.yml
         parameters:

@@ -63,7 +63,7 @@ Use one worktree per reviewable PR-sized slice. The goal is to keep independent 
 | --- | --- | --- | --- | --- | --- |
 | 1 | Auth provider seam | `apps/vs-code-designer/src/app/utils/services/*`, `extensionVariables.ts`, token helper tests | Yes | Package version decision for `@microsoft/vscode-azext-azureauth` | Local VS Code auth still works, ADO env vars select the ADO/WIF provider, `silentAuth` behavior is preserved, unit tests cover provider selection |
 | 2 | `@vscode/test-cli` baseline | `.vscode-test.mjs`, `apps/vs-code-designer/src/test/e2e/**`, package scripts | Yes | None, but should coordinate with worktree 1 on test-only API names | Latest/stable VS Code extension-host smoke runs locally for activation and command registration |
-| 3 | 1ES ADO pipeline skeleton | `.azure-pipelines/vscode-e2e.1es.yml`, `.azure-pipelines/templates/**` | Yes with placeholders | Owner-supplied 1ES pool/image and service connection names | Manual, non-blocking 1ES pipeline validates YAML shape, builds once, publishes artifacts, has a stable summary gate |
+| 3 | Integrated 1ES ADO pipeline stage | `.azure-pipelines/1esmain.yml`, `.azure-pipelines/templates/vscode-e2e-*.yml` | Yes with placeholders | Owner-supplied 1ES Linux pool/image and service connection names | Existing 1ES build pipeline can opt into a VS Code E2E validation stage that builds once, publishes artifacts, fans out shards, and has a stable summary gate |
 | 4 | ADO auth smoke | New `@vscode/test-cli` auth tests plus pipeline env wiring | Stack after worktree 1, can prototype in parallel | Worktree 1 provider seam and owner-created WIF service connection | ADO run proves provider sign-in, subscription enumeration, and token acquisition without VS Code auth prompts |
 | 5 | Runtime/debug scenario migration | First migrated runtime/debug probes from ExTester to extension-host tests | Stack after worktrees 1 and 2 | Auth/test CLI seams; owner-approved test resource group | At least one live runtime/debug scenario runs via `@vscode/test-cli`; corresponding ExTester coverage remains until replacement is stable |
 | 6 | Rollout and deprecation guardrails | `plan.md`, PR checklist, scenario matrix, branch-policy notes | Yes | Owner rollout decisions | Reviewers can see which GitHub checks remain, which ADO gate is informational/blocking, and when ExTester scenarios may be retired |
@@ -72,7 +72,7 @@ Use one worktree per reviewable PR-sized slice. The goal is to keep independent 
 
 1. **PR A: Auth provider seam** — base branch `main`; smallest product-code change that enables ADO/WIF selection without changing default local behavior.
 2. **PR B: Test CLI baseline** — base branch `main`; independent unless it needs test-only hooks from PR A.
-3. **PR C: 1ES pipeline skeleton** — base branch `main`; can use placeholder parameters until owner setup values are known.
+3. **PR C: Integrated 1ES VS Code E2E stage** — base branch `main`; can use placeholder parameters until owner setup values are known.
 4. **PR D: ADO auth smoke** — base branch should be PR A or a merged/rebased branch containing PR A; consumes provider seam and WIF variables.
 5. **PR E: Runtime/debug migration** — base branch should include PRs A, B, and D; starts migrating scenarios that need real auth/runtime.
 6. **PR F: Retire or reduce ExTester coverage** — only after repeated green ADO runs and explicit owner approval.
@@ -83,7 +83,7 @@ If using Copilot sessions, create the first three sessions immediately because t
 
 - **Session 1: Auth provider seam** — route to `vscode`; add `test` for unit coverage.
 - **Session 2: Test CLI baseline** — route to `vscode-test-specialist`; add `vscode` for extension activation hooks.
-- **Session 3: 1ES pipeline skeleton** — route to `pr-orchestrator` or `ci-sentinel`; keep it parameterized until owner values are known.
+- **Session 3: Integrated 1ES VS Code E2E stage** — route to `pr-orchestrator` or `ci-sentinel`; keep it parameterized until owner values are known.
 
 ### Active implementation sessions
 
@@ -91,7 +91,7 @@ If using Copilot sessions, create the first three sessions immediately because t
 | --- | --- | --- | --- |
 | Auth provider seam | `64e311e7-f027-4ad2-8a4f-9798c2b59b7f` | Implemented in coordinator worktree | Targeted provider/token unit tests pass; full package typecheck still has unrelated existing failures |
 | `@vscode/test-cli` baseline | `fb4596c6-63ad-4bcd-a9a5-bafcd0622614` | Implemented in child worktree | Child reported latest/stable activation and command-registration smoke passing; not integrated into this coordinator branch |
-| 1ES ADO pipeline skeleton | `3a3c43c3-7f69-4083-b0fe-2007ada12117` | Implemented in coordinator worktree | Child paused with unvalidated local edits; coordinator-owned YAML is parameterized and locally text-checked |
+| Integrated 1ES VS Code E2E stage | `3a3c43c3-7f69-4083-b0fe-2007ada12117` | Implemented in coordinator worktree | Child paused with unvalidated local edits; coordinator-owned YAML is parameterized, folded into `.azure-pipelines/1esmain.yml`, and locally text-checked |
 
 Create the next two sessions after the first wave reports back:
 
@@ -259,11 +259,11 @@ Model after `vscode-azuretools/azdo-pipelines/templates/test.yml`:
       Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_TENANT_ID]$env:tenantId"
 ```
 
-## Workstream 3: 1ES/MountainPass ADO pipeline
+## Workstream 3: 1ES/MountainPass ADO pipeline integration
 
 ### Recommended files
 
-- [x] `.azure-pipelines/vscode-e2e.1es.yml`
+- [x] `.azure-pipelines/1esmain.yml`
 - [x] `.azure-pipelines/templates/vscode-e2e-setup.yml`
 - [x] `.azure-pipelines/templates/vscode-e2e-build-artifacts.yml`
 - [x] `.azure-pipelines/templates/vscode-e2e-run-cli.yml`
@@ -273,7 +273,7 @@ Model after `vscode-azuretools/azdo-pipelines/templates/test.yml`:
 
 ### Pipeline checklist
 
-- [x] Extend a 1ES/MicroBuild template rather than using raw ADO jobs.
+- [x] Integrate with the existing 1ES/MicroBuild build pipeline instead of introducing a parallel root pipeline.
 - [x] Prefer AzureTools newer `azdo-pipelines` template structure over deprecated `azure-pipelines` examples.
 - [x] Configure SDL/CredScan/CodeQL at the 1ES template level.
 - [ ] Exclude `.vscode-test` and generated `dist`/artifact directories from Component Governance/CodeQL as appropriate.
@@ -290,13 +290,13 @@ Model after `vscode-azuretools/azdo-pipelines/templates/test.yml`:
 
 | Stage/job | Purpose | Status |
 | --- | --- | --- |
-| Build extension | Install, build extension, compile tests, publish artifacts | [x] Skeleton implemented |
-| `vscode-test` CLI smoke | Run latest/stable `@vscode/test-cli` against the built extension output with AzureTools WIF env vars when configured | [x] Skeleton implemented |
-| Setup fixtures | Create reusable workspaces/bundles where still needed | [x] Skeleton implemented |
+| Build extension | Existing release build stage remains the owner for package/sign/stage; optional E2E stage builds reusable VS Code test artifacts from the same release tag | [x] Integrated |
+| `vscode-test` CLI smoke | Run latest/stable `@vscode/test-cli` against the built extension output with AzureTools WIF env vars when configured | [x] Integrated |
+| Setup fixtures | Create reusable workspaces/bundles where still needed | [x] Integrated |
 | Auth smoke | Prove WIF provider sign-in, subscription list, token acquisition | [ ] Future test coverage; pipeline env wiring implemented |
-| Extension-host scenario shards | Run migrated `@vscode/test-cli` scenarios | [x] Initial shard fan-out skeleton implemented |
+| Extension-host scenario shards | Run migrated `@vscode/test-cli` scenarios | [x] Initial shard fan-out integrated |
 | Optional ExTester compatibility | Keep minimal UI smoke while migrating | [ ] Planned |
-| Summary gate | One stable result for branch policy | [x] Skeleton implemented |
+| Summary gate | One stable result for branch policy | [x] Integrated |
 
 ## Workstream 4: `@vscode/test-cli` migration
 
