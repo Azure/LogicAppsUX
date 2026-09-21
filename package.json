@@ -69,11 +69,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --write"
-    ]
+    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
   },
   "private": true,
   "scripts": {
@@ -163,6 +159,7 @@
       "brace-expansion@<2": "^1.1.11",
       "redux": "4.2.1",
       "redux-thunk": "2.4.2",
+      "@azure/core-client": "1.10.0",
       "@reduxjs/toolkit": "1.9.7",
       "immer": "9.0.21",
       "react": "18.3.1",

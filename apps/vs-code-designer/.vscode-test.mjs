@@ -14,10 +14,16 @@ export default defineConfig([
       ui: 'tdd',
       timeout: 60000,
     },
+    env: {
+      VSCODE_RUNNING_TESTS: '1',
+      DEBUGTELEMETRY: '1',
+    },
     launchArgs: [
       '--disable-extensions', // Disable other extensions to speed up tests
-      '--user-data-dir', path.join(__dirname, '.vscode-test', 'user-data'),
-      '--extensions-dir', path.join(__dirname, '.vscode-test', 'extensions'),
+      '--user-data-dir',
+      path.join(__dirname, '.vscode-test', 'user-data'),
+      '--extensions-dir',
+      path.join(__dirname, '.vscode-test', 'extensions'),
       '--disable-gpu', // Helps with stability in CI
       '--disable-updates', // Prevent update checks
     ],
@@ -31,9 +37,15 @@ export default defineConfig([
       ui: 'tdd',
       timeout: 120000,
     },
+    env: {
+      VSCODE_RUNNING_TESTS: '1',
+      DEBUGTELEMETRY: '1',
+    },
     launchArgs: [
-      '--user-data-dir', path.join(__dirname, '.vscode-test', 'user-data'),
-      '--extensions-dir', path.join(__dirname, '.vscode-test', 'extensions'),
+      '--user-data-dir',
+      path.join(__dirname, '.vscode-test', 'user-data'),
+      '--extensions-dir',
+      path.join(__dirname, '.vscode-test', 'extensions'),
       '--disable-gpu',
       '--disable-updates',
     ],

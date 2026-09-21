@@ -1,0 +1,150 @@
+# Manual 1ES/MountainPass skeleton for LogicAppsUX VS Code E2E.
+# Owner action required before first run: fill approved pool/image, CFS feed, and
+# service connection values, then link this YAML in Azure DevOps.
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/tags/release
+
+parameters:
+  - name: feedBaseUrl
+    displayName: CFS feed base URL
+    type: string
+    default: ''
+  - name: testARMServiceConnection
+    displayName: ARM WIF service connection for authenticated test shards
+    type: string
+    default: ''
+  - name: linuxPool
+    displayName: Approved 1ES Linux pool
+    type: object
+    default:
+      name: '<OWNER_APPROVED_1ES_LINUX_POOL>'
+      image: '<OWNER_APPROVED_1ES_LINUX_IMAGE>'
+      os: linux
+  - name: windowsPool
+    displayName: Approved 1ES Windows pool
+    type: object
+    default:
+      name: '<OWNER_APPROVED_1ES_WINDOWS_POOL>'
+      image: '<OWNER_APPROVED_1ES_WINDOWS_IMAGE>'
+      os: windows
+  - name: nodeVersion
+    displayName: Node version
+    type: string
+    default: '24.x'
+  - name: dotnetVersion
+    displayName: .NET SDK version
+    type: string
+    default: '8.0.x'
+  - name: runCliSmoke
+    displayName: Run Container Apps-style vscode-test smoke
+    type: boolean
+    default: true
+  - name: scenarioShards
+    displayName: Initial scenario shard list
+    type: object
+    default:
+      - jobName: VscodeE2EActivationCreate
+        displayName: vscode-e2e activation/create smoke
+        scenario: p40-nonlogicapp,p48b-conversioncreate
+        useWorkspaceFixtures: false
+        useBundleArtifact: false
+      - jobName: VscodeE2EDesignerLifecycle
+        displayName: vscode-e2e designer lifecycle
+        scenario: p42-standard,p42-customcode,p42-rulesengine
+        useWorkspaceFixtures: true
+        useBundleArtifact: true
+
+variables:
+  - name: TeamName
+    value: 'Azure Logic Apps for VS Code'
+  - name: working_directory
+    value: '.'
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  parameters:
+    sdl:
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
+      codeql:
+        language: javascript
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
+    pool: ${{ parameters.linuxPool }}
+    stages:
+      - stage: Build
+        displayName: Build VS Code E2E artifacts
+        jobs:
+          - job: BuildE2EArtifacts
+            displayName: Build extension and E2E bundle
+            timeoutInMinutes: 30
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
+                  artifactName: vscode-e2e-build
+            steps:
+              - template: templates/vscode-e2e-build-artifacts.yml
+                parameters:
+                  feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                  nodeVersion: ${{ parameters.nodeVersion }}
+                  dotnetVersion: ${{ parameters.dotnetVersion }}
+
+      - stage: Test
+        displayName: Run VS Code E2E shards
+        dependsOn: Build
+        jobs:
+          - ${{ if eq(parameters.runCliSmoke, true) }}:
+              - template: templates/vscode-e2e-run-cli.yml
+                parameters:
+                  jobName: VscodeE2ECliSmoke
+                  displayName: vscode-test CLI smoke
+                  label: unitTests
+                  feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                  nodeVersion: ${{ parameters.nodeVersion }}
+                  dotnetVersion: ${{ parameters.dotnetVersion }}
+                  pool: ${{ parameters.linuxPool }}
+                  testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+
+          - template: templates/vscode-e2e-setup-fixtures.yml
+            parameters:
+              jobName: SetupFixtures
+              displayName: setup-fixtures (p41a)
+              feedBaseUrl: ${{ parameters.feedBaseUrl }}
+              nodeVersion: ${{ parameters.nodeVersion }}
+              dotnetVersion: ${{ parameters.dotnetVersion }}
+              pool: ${{ parameters.linuxPool }}
+
+          - ${{ each shard in parameters.scenarioShards }}:
+              - template: templates/vscode-e2e-run-scenario.yml
+                parameters:
+                  jobName: ${{ shard.jobName }}
+                  displayName: ${{ shard.displayName }}
+                  scenario: ${{ shard.scenario }}
+                  useWorkspaceFixtures: ${{ shard.useWorkspaceFixtures }}
+                  useBundleArtifact: ${{ shard.useBundleArtifact }}
+                  feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                  nodeVersion: ${{ parameters.nodeVersion }}
+                  dotnetVersion: ${{ parameters.dotnetVersion }}
+                  pool: ${{ parameters.linuxPool }}
+                  dependsOn:
+                    - SetupFixtures
+                  testARMServiceConnection: ''
+
+          - template: templates/vscode-e2e-summary.yml
+            parameters:
+              jobName: VscodeE2ESummary
+              displayName: vscode-e2e-summary
+              dependsOn:
+                - ${{ if eq(parameters.runCliSmoke, true) }}:
+                    - VscodeE2ECliSmoke
+                - SetupFixtures
+                - ${{ each shard in parameters.scenarioShards }}:
+                    - ${{ shard.jobName }}

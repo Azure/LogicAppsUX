@@ -16,7 +16,7 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@microsoft/vscode-azext-azureappservice": "^3.6.6",
     "@microsoft/vscode-azext-azureappsettings": "^0.2.11",
-    "@microsoft/vscode-azext-azureauth": "^4.2.0",
+    "@microsoft/vscode-azext-azureauth": "^5.1.1",
     "@microsoft/vscode-azext-azureutils": "^3.5.2",
     "@microsoft/vscode-azext-utils": "^3.5.0",
     "@microsoft/vscode-azureresources-api": "^2.6.2",
