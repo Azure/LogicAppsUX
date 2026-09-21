@@ -38,6 +38,11 @@ resources:
       type: git
       name: 1ESPipelineTemplates/MicroBuildTemplate
       ref: refs/tags/release
+    - repository: azExtTemplates
+      type: github
+      name: microsoft/vscode-azuretools
+      ref: main
+      endpoint: GitHub-AzureTools
 
 parameters:
   - name: isOfficialBuild
@@ -49,11 +54,6 @@ parameters:
     displayName: Owner-provided variable groups
     type: object
     default: []
-
-  - name: feedBaseUrl
-    displayName: Owner-approved CFS/Azure Artifacts feed base URL
-    type: string
-    default: __OWNER_PROVIDED_CFS_FEED_BASE_URL__
 
   - name: testARMServiceConnection
     displayName: Optional ARM service connection for live Azure E2E
@@ -143,6 +143,7 @@ extends:
       - stage: VSCodeE2ECli
         displayName: VS Code @vscode/test-cli E2E
         variables:
+          - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
           - ${{ each variableGroup in parameters.variableGroups }}:
               - group: ${{ variableGroup }}
           - name: TeamName
@@ -166,7 +167,7 @@ extends:
                 fetchDepth: 1
               - template: templates/vscode-e2e-cli-setup.yml@self
                 parameters:
-                  feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                  feedBaseUrl: ${{ variables.feedBaseUrl }}
                   nodeVersion: ${{ parameters.nodeVersion }}
                   dotnetVersion: ${{ parameters.dotnetVersion }}
                   includeDotNet: true
@@ -195,7 +196,7 @@ extends:
                     fetchDepth: 1
                   - template: templates/vscode-e2e-cli-setup.yml@self
                     parameters:
-                      feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                      feedBaseUrl: ${{ variables.feedBaseUrl }}
                       nodeVersion: ${{ parameters.testNodeVersion }}
                       dotnetVersion: ${{ parameters.dotnetVersion }}
                       includeDotNet: true
@@ -228,7 +229,7 @@ extends:
                     fetchDepth: 1
                   - template: templates/vscode-e2e-cli-setup.yml@self
                     parameters:
-                      feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                      feedBaseUrl: ${{ variables.feedBaseUrl }}
                       nodeVersion: ${{ parameters.testNodeVersion }}
                       dotnetVersion: ${{ parameters.dotnetVersion }}
                       includeDotNet: true
