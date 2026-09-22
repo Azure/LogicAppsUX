@@ -1,0 +1,97 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: displayName
+    type: string
+  - name: feedBaseUrl
+    type: string
+  - name: nodeVersion
+    type: string
+    default: '24.x'
+  - name: dotnetVersion
+    type: string
+    default: '8.0.x'
+  - name: pool
+    type: object
+  - name: dependsOn
+    type: object
+    default: []
+  - name: checkoutRef
+    type: string
+    default: ''
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn: ${{ parameters.dependsOn }}
+    timeoutInMinutes: 30
+    pool: ${{ parameters.pool }}
+    templateContext:
+      outputs:
+        - output: pipelineArtifact
+          targetPath: $(Build.ArtifactStagingDirectory)/fixtures
+          artifactName: vscode-e2e-fixtures
+    steps:
+      - checkout: self
+        fetchDepth: 0
+
+      - ${{ if ne(parameters.checkoutRef, '') }}:
+          - script: git checkout ${{ parameters.checkoutRef }}
+            displayName: Checkout VS Code E2E ref
+
+      - template: vscode-e2e-setup.yml
+        parameters:
+          feedBaseUrl: ${{ parameters.feedBaseUrl }}
+          nodeVersion: ${{ parameters.nodeVersion }}
+          dotnetVersion: ${{ parameters.dotnetVersion }}
+          installLinuxDisplayDependencies: true
+
+      - download: current
+        artifact: vscode-e2e-build
+        displayName: Download VS Code E2E build artifact
+
+      - bash: |
+          set -euo pipefail
+          tar -xzf "$(Pipeline.Workspace)/vscode-e2e-build/extension-build.tar.gz" -C "$(Build.SourcesDirectory)"
+        displayName: Extract VS Code E2E build artifact
+
+      - bash: |
+          set -euo pipefail
+          export PATH="$(dirname "$(which node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        displayName: Run fixtures scenario (p41a-fixtures)
+        env:
+          LA_E2E_SCENARIO: p41a-fixtures
+          LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: $(Agent.TempDirectory)
+          TMPDIR: $(Agent.TempDirectory)
+
+      - bash: |
+          set -euo pipefail
+          manifest="$(Agent.TempDirectory)/la-e2e-test/created-workspaces.json"
+          if [ ! -f "$manifest" ]; then
+            echo "Fixtures manifest missing at $manifest"
+            ls -la "$(Agent.TempDirectory)/la-e2e-test" || true
+            exit 1
+          fi
+          cat "$manifest"
+        displayName: Verify fixtures manifest exists
+
+      - bash: |
+          set -euo pipefail
+          bundle_root="${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows"
+          test -d "$bundle_root"
+          find "$bundle_root" -maxdepth 2 -type f -name '.bundle-source-md5' -print -quit | grep .
+        displayName: Verify Logic Apps extension bundle sidecar
+
+      - bash: |
+          set -euo pipefail
+          mkdir -p "$(Build.ArtifactStagingDirectory)/fixtures"
+          tar -czf "$(Build.ArtifactStagingDirectory)/fixtures/workspace-fixtures.tar.gz" -C "$(Agent.TempDirectory)" la-e2e-test
+          tar -czf "$(Build.ArtifactStagingDirectory)/fixtures/logic-apps-extension-bundle.tar.gz" \
+            -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles" \
+            Microsoft.Azure.Functions.ExtensionBundle.Workflows
+        displayName: Stage reusable VS Code E2E fixture artifacts

@@ -10,7 +10,6 @@ import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsC
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
-import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
   autoStartDesignTimeSetting,
   DependencyDefaultPath,
@@ -35,7 +34,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ensureWorkspace } from './app/commands/ensureWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
+import { createAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
@@ -80,8 +79,8 @@ export async function activate(context: vscode.ExtensionContext) {
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
   context.subscriptions.push(ext.telemetryReporter);
 
-  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
+  ext.subscriptionProvider = await createAzureSubscriptionProvider();
 
   registerUIExtensionVariables(ext);
   registerAzureUtilsExtensionVariables(ext);
@@ -186,7 +185,7 @@ export async function activate(context: vscode.ExtensionContext) {
       } else {
         const projectPaths = await getWorkspaceLogicAppRoots();
         if (await promptShouldAutoStartDesignTime(projectPaths)) {
-          const startDesignTimePromises = projectPaths.map(async (projectPath) => 
+          const startDesignTimePromises = projectPaths.map(async (projectPath) =>
             callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
               innerActionContext.telemetry.properties.isActivationEvent = 'true';
               await startDesignTimeApi(innerActionContext, projectPath);

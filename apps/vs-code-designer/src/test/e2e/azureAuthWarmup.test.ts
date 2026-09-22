@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { getSessionFromVSCode } from '@microsoft/vscode-azext-azureauth/out/src/getSessionFromVSCode';
+import { getSessionFromVSCode } from '@microsoft/vscode-azext-azureauth';
 import * as vscode from 'vscode';
 
 suite('Azure auth warm-up', () => {

@@ -1,0 +1,152 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: displayName
+    type: string
+  - name: scenario
+    type: string
+  - name: useWorkspaceFixtures
+    type: boolean
+    default: false
+  - name: useBundleArtifact
+    type: boolean
+    default: false
+  - name: feedBaseUrl
+    type: string
+  - name: nodeVersion
+    type: string
+    default: '24.x'
+  - name: dotnetVersion
+    type: string
+    default: '8.0.x'
+  - name: pool
+    type: object
+  - name: dependsOn
+    type: object
+    default: []
+  - name: checkoutRef
+    type: string
+    default: ''
+  - name: testARMServiceConnection
+    type: string
+    default: ''
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn: ${{ parameters.dependsOn }}
+    timeoutInMinutes: 35
+    pool: ${{ parameters.pool }}
+    templateContext:
+      outputs:
+        - output: pipelineArtifact
+          targetPath: $(Build.ArtifactStagingDirectory)/diagnostics
+          artifactName: vscode-e2e-diagnostics-${{ parameters.jobName }}
+          condition: always()
+    steps:
+      - checkout: self
+        fetchDepth: 0
+
+      - ${{ if ne(parameters.checkoutRef, '') }}:
+          - script: git checkout ${{ parameters.checkoutRef }}
+            displayName: Checkout VS Code E2E ref
+
+      - template: vscode-e2e-setup.yml
+        parameters:
+          feedBaseUrl: ${{ parameters.feedBaseUrl }}
+          nodeVersion: ${{ parameters.nodeVersion }}
+          dotnetVersion: ${{ parameters.dotnetVersion }}
+          installLinuxDisplayDependencies: true
+
+      - download: current
+        artifact: vscode-e2e-build
+        displayName: Download VS Code E2E build artifact
+
+      - bash: |
+          set -euo pipefail
+          tar -xzf "$(Pipeline.Workspace)/vscode-e2e-build/extension-build.tar.gz" -C "$(Build.SourcesDirectory)"
+        displayName: Extract VS Code E2E build artifact
+
+      - ${{ if or(eq(parameters.useWorkspaceFixtures, true), eq(parameters.useBundleArtifact, true)) }}:
+          - download: current
+            artifact: vscode-e2e-fixtures
+            displayName: Download VS Code E2E fixture artifacts
+
+      - ${{ if eq(parameters.useWorkspaceFixtures, true) }}:
+          - bash: |
+              set -euo pipefail
+              mkdir -p "$(Agent.TempDirectory)"
+              tar -xzf "$(Pipeline.Workspace)/vscode-e2e-fixtures/workspace-fixtures.tar.gz" -C "$(Agent.TempDirectory)"
+              test -f "$(Agent.TempDirectory)/la-e2e-test/created-workspaces.json"
+            displayName: Extract workspace fixtures
+
+      - ${{ if eq(parameters.useBundleArtifact, true) }}:
+          - bash: |
+              set -euo pipefail
+              mkdir -p "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
+              tar -xzf "$(Pipeline.Workspace)/vscode-e2e-fixtures/logic-apps-extension-bundle.tar.gz" \
+                -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
+            displayName: Extract Logic Apps extension bundle
+
+      - ${{ if ne(parameters.testARMServiceConnection, '') }}:
+          - task: AzureCLI@2
+            displayName: Verify test service connection
+            inputs:
+              azureSubscription: ${{ parameters.testARMServiceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              inlineScript: |
+                # Mirrors microsoft/vscode-azuretools azdo-pipelines/templates/test.yml.
+                # AZURESUBSCRIPTION_SERVICE_CONNECTION_ID is set by AzureCLI@2 when addSpnToEnvironment=true.
+                Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_ID]$env:AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"
+                Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_TENANT_ID]$env:tenantId"
+                Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_CLIENT_ID]$env:servicePrincipalId"
+                Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_NAME]${{ parameters.testARMServiceConnection }}"
+                Write-Host "##vso[task.setvariable variable=AzCode_UseAzureFederatedCredentials]true"
+                Write-Host "##vso[task.setvariable variable=AzCode_ServiceConnectionID]$env:AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"
+                Write-Host "##vso[task.setvariable variable=AzCode_ServiceConnectionDomain]$env:tenantId"
+                Write-Host "##vso[task.setvariable variable=AzCode_ServiceConnectionClientID]$env:servicePrincipalId"
+
+      - bash: |
+          set -euo pipefail
+          export PATH="$(dirname "$(which node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            node apps/vs-code-designer/out/test/run-e2e.js
+        displayName: Run ${{ parameters.scenario }}
+        env:
+          LA_E2E_SCENARIO: ${{ parameters.scenario }}
+          LA_E2E_SCENARIO_RETRIES: '1'
+          NODE_OPTIONS: --max-old-space-size=4096
+          TEMP: $(Agent.TempDirectory)
+          TMPDIR: $(Agent.TempDirectory)
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ if ne(parameters.testARMServiceConnection, '') }}:
+            FC_SERVICE_CONNECTION_NAME: ${{ parameters.testARMServiceConnection }}
+            FC_SERVICE_CONNECTION_ID: $(FC_SERVICE_CONNECTION_ID)
+            FC_SERVICE_CONNECTION_CLIENT_ID: $(FC_SERVICE_CONNECTION_CLIENT_ID)
+            FC_SERVICE_CONNECTION_TENANT_ID: $(FC_SERVICE_CONNECTION_TENANT_ID)
+            AzCode_UseAzureFederatedCredentials: true
+            AzCode_ServiceConnectionID: $(FC_SERVICE_CONNECTION_ID)
+            AzCode_ServiceConnectionDomain: $(FC_SERVICE_CONNECTION_TENANT_ID)
+            AzCode_ServiceConnectionClientID: $(FC_SERVICE_CONNECTION_CLIENT_ID)
+          ${{ if eq(parameters.useBundleArtifact, true) }}:
+            LA_E2E_BUNDLE_PREFLIGHT: '1'
+          ${{ if ne(parameters.useBundleArtifact, true) }}:
+            LA_E2E_BUNDLE_PREFLIGHT: '0'
+
+      - pwsh: |
+          New-Item -ItemType Directory -Force -Path "$(Build.ArtifactStagingDirectory)/diagnostics" | Out-Null
+          $paths = @(
+            "$(Agent.TempDirectory)/test-resources/screenshots",
+            "$(Build.SourcesDirectory)/test-resources/screenshots",
+            "$(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test",
+            "$(Build.SourcesDirectory)/apps/vs-code-designer/test-resources"
+          )
+          foreach ($path in $paths) {
+            if (Test-Path $path) {
+              Copy-Item -Recurse -Force $path "$(Build.ArtifactStagingDirectory)/diagnostics" -ErrorAction Continue
+            }
+          }
+        displayName: Collect VS Code E2E diagnostics
+        condition: always()

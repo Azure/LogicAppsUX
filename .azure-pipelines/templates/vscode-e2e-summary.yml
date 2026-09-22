@@ -1,0 +1,34 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: displayName
+    type: string
+  - name: dependsOn
+    type: object
+    default: []
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn: ${{ parameters.dependsOn }}
+    condition: always()
+    steps:
+      - pwsh: |
+          $dependencies = '${{ convertToJson(dependencies) }}' | ConvertFrom-Json
+          $failed = @()
+
+          foreach ($property in $dependencies.PSObject.Properties) {
+            $result = [string]$property.Value.result
+            Write-Host "$($property.Name): $result"
+            if ($result -ne 'Succeeded') {
+              $failed += "$($property.Name)=$result"
+            }
+          }
+
+          if ($failed.Count -gt 0) {
+            Write-Error "Required VS Code E2E shard(s) did not succeed: $($failed -join ', ')"
+            exit 1
+          }
+
+          Write-Host "All required VS Code E2E shards succeeded."
+        displayName: Fail closed on failed, skipped, or canceled shards
