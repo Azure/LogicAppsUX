@@ -1,0 +1,131 @@
+{
+  "skill": "logic-apps-vscode-health",
+  "detectorId": "logicapps-vscode-daily-health",
+  "fingerprintSchemaVersion": 1,
+  "kusto": {
+    "clusterUri": "https://processus.kusto.windows.net",
+    "database": "ClientTelemetry",
+    "table": "VSCodeClient"
+  },
+  "ingestionDelayHours": 2,
+  "expectedRunHourUtc": 10,
+  "dailyWindowAlignment": "Complete UTC day",
+  "dailyBaselineWeeks": 8,
+  "minimumExtensionVersion": "",
+  "targetExtensionVersion": "",
+  "versionChannelMappings": {
+    "stableVersions": [],
+    "prereleaseVersions": []
+  },
+  "privacyMinimumCellCount": 20,
+  "durationFamilies": {
+    "activation": {
+      "measurementKey": "duration",
+      "unit": "seconds",
+      "maximum": 1800
+    },
+    "dependency": {
+      "measurementKey": "duration",
+      "unit": "seconds",
+      "maximum": 1800
+    },
+    "designTime": {
+      "measurementKey": "duration",
+      "unit": "seconds",
+      "maximum": 1800
+    },
+    "creationHandlers": {
+      "measurementKey": "duration",
+      "unit": "seconds",
+      "maximum": 1800
+    },
+    "criticalCommands": {
+      "measurementKey": "duration",
+      "unit": "seconds",
+      "maximum": 1800
+    }
+  },
+  "allowlists": {
+    "activation": [
+      "azureLogicAppsStandard.activate",
+      "activate.logSubscriptions",
+      "activate.ensureWorkspace"
+    ],
+    "knownIgnoredActivation": [
+      "activate.parameterizeAllConnections",
+      "activate.ensureProjectFiles",
+      "activate.ensureVSCodeFiles",
+      "activate.enableLocalManagedIdentityAuth",
+      "activate.startDesignTime",
+      "activate.downloadExtensionBundle"
+    ],
+    "dependencyParents": [
+      "activate.validateAndInstallBinaries"
+    ],
+    "dependencyChildren": [
+      "validateAndInstallBinaries.ensureNodeJs",
+      "validateAndInstallBinaries.ensureFuncCoreTools",
+      "validateAndInstallBinaries.ensureDotnet",
+      "validateAndInstallBinaries.ensureSdkLanguageServer"
+    ],
+    "designTime": [
+      "activate.startDesignTimeApi",
+      "validateRunningFuncProcess.startDesignTimeApi",
+      "designTimeError.languageWorkerFailed.startDesignTimeApi",
+      "designTimeError.portUnavailable.startDesignTimeApi",
+      "startAllDesignTimeApis.startDesignTimeApi",
+      "LocalDesignerPanel.create.startDesignTimeApi",
+      "ConnectionPanel.create.startDesignTimeApi",
+      "LocalDesignerV2Panel.create.startDesignTimeApi",
+      "GenerateADODeploymentScriptsStep.getLogicAppDeploymentArtifactsBuffer.startDesignTimeApi"
+    ],
+    "creationHandlers": [
+      "createWorkspace",
+      "createWorkspaceFromPackage",
+      "createLogicApp",
+      "createWorkflow",
+      "createWorkspaceStructure"
+    ],
+    "criticalCommands": []
+  },
+  "thresholds": {
+    "dailySuccessCurrentMinimum": 100,
+    "dailySuccessBaselineMinimum": 500,
+    "dailyFailureMinimum": 10,
+    "dailySuccessPointDrop": 5,
+    "dailyFailureRateMultiplier": 2,
+    "dailyLatencyDurationMinimum": 400,
+    "dailyLatencyMultiplier": 1.5,
+    "dailyLatencyAbsoluteSeconds": 2,
+    "dailyCriticalSuccessPointDrop": 15,
+    "dailyCriticalFailureRateMultiplier": 3,
+    "dailyCriticalFailureMinimum": 50,
+    "unknownOutcomeMaximumPercent": 2,
+    "invalidItemCountMaximumPercent": 1,
+    "hourlyPersistenceMinimumBins": 2,
+    "hourlyPersistenceValidDurationMinimum": 20
+  },
+  "issue": {
+    "repository": "Azure/LogicAppsUX",
+    "label": "VSCode",
+    "titlePrefix": "[VS Code health]",
+    "maximumMutationsPerRun": 1
+  },
+  "notifications": {
+    "recipients": [
+      "ladevex@microsoft.com"
+    ],
+    "sendOn": [
+      "IssueCreated",
+      "IssueUpdated",
+      "MonitoringUnavailable",
+      "CopilotAssignmentFailed"
+    ]
+  },
+  "archive": {
+    "siteUrl": "https://microsoft.sharepoint.com/teams/LogicApps",
+    "folderPath": "/Shared Documents/VSCodeExtensionDailyMonitor",
+    "fileNamePattern": "LogicAppsVSCodeDailyHealth_yyyyMMddTHHmmssZ.html",
+    "failureBehavior": "Fail the archive action without changing the monitoring decision or sending an otherwise ineligible email"
+  }
+}
