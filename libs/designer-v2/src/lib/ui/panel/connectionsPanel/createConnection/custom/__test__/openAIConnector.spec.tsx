@@ -3,6 +3,7 @@
  */
 import { describe, vi, expect, it, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup, fireEvent, waitFor, act } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import { IntlProvider } from 'react-intl';
 import { CustomOpenAIConnector } from '../openAIConnector';
 import type { ConnectionParameterProps } from '../../formInputs/universalConnectionParameter';
@@ -169,6 +170,10 @@ vi.mock('../styles', () => ({
   }),
 }));
 
+vi.mock('../cosmosConnector', () => ({
+  getSubscriptionFromResource: (value: string) => value?.split('/subscriptions/')[1]?.split('/')[0] ?? '',
+}));
+
 vi.mock('../../../../../../common/constants', () => ({
   default: { LINKS: { APIM_LEARN_MORE: 'https://aka.ms/logicapps-apimdocs' } },
 }));
@@ -259,6 +264,16 @@ describe('CustomOpenAIConnector', () => {
       expect(screen.getByTestId('subscription-dropdown')).toBeInTheDocument();
       expect(screen.getByTestId('parameter-row-cognitive-service-resource-id')).toBeInTheDocument();
       expect(screen.getByTestId('combobox-openai-combobox')).toBeInTheDocument();
+    });
+
+    it('restores the subscription and resource from the current value', () => {
+      const resourceId = '/subscriptions/sub-1/resourceGroups/rg1/providers/Microsoft.CognitiveServices/accounts/openai1';
+
+      render(<CustomOpenAIConnector {...defaultProps} value={resourceId} />, { wrapper });
+
+      expect(screen.getByTestId('subscription-dropdown')).toHaveAttribute('data-selected', 'sub-1');
+      expect(mockUseAllCognitiveServiceAccounts).toHaveBeenCalledWith('sub-1', true);
+      expect(screen.getByTestId('combobox-input-openai-combobox')).toHaveValue('openai1');
     });
 
     it('shows "Loading accounts..." placeholder when fetching', () => {
@@ -425,6 +440,14 @@ describe('CustomOpenAIConnector', () => {
       const createNewLink = links.find((l) => l.textContent?.includes('Create new'));
       expect(createNewLink).toBeInTheDocument();
       expect(createNewLink).toHaveAttribute('href', 'https://aka.ms/openAICreate');
+    });
+
+    it('hides the "Create new" link when requested by the host', () => {
+      render(<CustomOpenAIConnector {...defaultProps} operationParameterValues={{ agentModelType: 'AzureOpenAI', hideCreate: true }} />, {
+        wrapper,
+      });
+
+      expect(screen.queryByText('Create new')).not.toBeInTheDocument();
     });
   });
 

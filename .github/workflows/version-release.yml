@@ -89,6 +89,14 @@ jobs:
           git tag -a ${{ steps.version.outputs.tag_name }} -m "Release ${{ steps.version.outputs.tag_name }}"
           git push origin ${{ steps.version.outputs.tag_name }}
 
+      - name: 'Create and Push Hotfix Branch'
+        if: github.ref_name == 'main'
+        run: |
+          TAG_NAME="${{ steps.version.outputs.tag_name }}"
+          HOTFIX_BRANCH="hotfix/${TAG_NAME%.0}"
+          git branch "$HOTFIX_BRANCH" "$TAG_NAME"
+          git push origin "$HOTFIX_BRANCH"
+
       - name: 'Generate Release Notes'
         id: release-notes
         env:

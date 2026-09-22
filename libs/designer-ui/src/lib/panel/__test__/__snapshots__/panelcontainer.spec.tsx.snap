@@ -31,6 +31,7 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
     >
       <PanelHeader
         commentChange={[Function]}
+        enableNodeNavigation={false}
         handleTitleUpdate={[MockFunction spy]}
         headerItems={[]}
         headerLocation="RIGHT"
@@ -59,6 +60,7 @@ exports[`ui/panel/panelContainer > should construct 1`] = `
         className="msla-panel-contents"
       >
         <PanelContent
+          enableNodeNavigation={false}
           nodeId="nodeId"
           selectTab={[MockFunction spy]}
           tabs={[]}

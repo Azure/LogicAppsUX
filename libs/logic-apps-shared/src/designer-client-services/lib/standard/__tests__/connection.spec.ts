@@ -98,6 +98,115 @@ describe('StandardConnectionService', () => {
     });
   });
 
+  describe('createConnection', () => {
+    const createKnowledgeHubConnection = async (connectionsData: ConnectionsData) => {
+      InitLoggerService([
+        {
+          log: vi.fn(),
+          startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+          endTrace: vi.fn(),
+          logErrorWithFormatting: vi.fn(),
+        },
+      ]);
+      const writeConnection = vi.fn().mockResolvedValue(undefined);
+      const persistKnowledgeHubConnection = vi.fn().mockResolvedValue(undefined);
+      const service = new StandardConnectionService({
+        ...createMockOptions(connectionsData),
+        writeConnection,
+        persistKnowledgeHubConnection,
+      });
+
+      await service.createConnection(
+        'HubConnection',
+        { id: '/dummy/knowledgehub' } as any,
+        {
+          displayName: 'Knowledge Hub',
+          connectionParameters: {
+            openAI: {},
+            embeddingsOpenAI: {},
+            completionsOpenAI: {},
+          },
+        },
+        {
+          connectionParameters: {},
+          connectionMetadata: { required: true, type: ConnectionType.KnowledgeHub },
+        }
+      );
+
+      await service.persistKnowledgeHubConnection();
+
+      return { persistKnowledgeHubConnection, writeConnection };
+    };
+
+    it('persists when creating the first Knowledge Hub connection', async () => {
+      const { persistKnowledgeHubConnection, writeConnection } = await createKnowledgeHubConnection({});
+
+      expect(writeConnection).toHaveBeenCalledWith(expect.anything());
+      expect(persistKnowledgeHubConnection).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not persist when a Knowledge Hub connection already exists', async () => {
+      const { persistKnowledgeHubConnection, writeConnection } = await createKnowledgeHubConnection({
+        knowledgeHubConnections: { ExistingHub: {} as any },
+      });
+
+      expect(writeConnection).toHaveBeenCalledWith(expect.anything());
+      expect(persistKnowledgeHubConnection).not.toHaveBeenCalled();
+    });
+
+    it('serializes OpenAI authentication into both Knowledge Hub model configurations', async () => {
+      InitLoggerService([
+        {
+          log: vi.fn(),
+          startTrace: vi.fn().mockReturnValue('mock-trace-id'),
+          endTrace: vi.fn(),
+          logErrorWithFormatting: vi.fn(),
+        },
+      ]);
+      const writeConnection = vi.fn().mockResolvedValue(undefined);
+      const service = new StandardConnectionService({ ...createMockOptions({}), writeConnection });
+
+      await service.createConnection(
+        'HubConnection',
+        { id: '/dummy/knowledgehub' } as any,
+        {
+          displayName: 'Knowledge Hub',
+          connectionParameters: {
+            openAIAuthenticationType: 'Key',
+            openAIEndpoint: 'https://openai.example.com',
+            openAIKey: 'secret',
+            openAICompletionsModel: 'completion-model',
+            openAIEmbeddingsModel: 'embedding-model',
+          },
+        },
+        {
+          connectionParameters: {
+            openAIAuthenticationType: {
+              uiDefinition: { constraints: { serializationPath: ['openAI', 'authentication', 'type'] } },
+            },
+            openAIEndpoint: {
+              uiDefinition: { constraints: { serializationPath: ['openAI', 'endpoint'] } },
+            },
+            openAIKey: {
+              uiDefinition: { constraints: { serializationPath: ['openAI', 'authentication', 'key'] } },
+            },
+            openAICompletionsModel: {
+              uiDefinition: { constraints: { serializationPath: ['completionsOpenAI', 'completionsModel'] } },
+            },
+            openAIEmbeddingsModel: {
+              uiDefinition: { constraints: { serializationPath: ['embeddingsOpenAI', 'embeddingsModel'] } },
+            },
+          } as any,
+          connectionMetadata: { required: true, type: ConnectionType.KnowledgeHub },
+        }
+      );
+
+      const connectionData = writeConnection.mock.calls[0][0].connectionData;
+      expect(connectionData.completionsOpenAI.openAI.authentication.type).toBe('Key');
+      expect(connectionData.embeddingsOpenAI.openAI.authentication.type).toBe('Key');
+    });
+  });
+
   describe('createConnection - MCP with ManagedServiceIdentity', () => {
     const mockLoggerService = {
       log: vi.fn(),

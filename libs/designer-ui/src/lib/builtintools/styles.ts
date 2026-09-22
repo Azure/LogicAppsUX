@@ -8,6 +8,7 @@ export const useBuiltinToolsStyles = makeStyles({
     border: `1px solid ${tokens.colorNeutralStroke1}`,
     padding: tokens.spacingVerticalM,
     gap: tokens.spacingVerticalS,
+    marginTop: tokens.spacingVerticalXL,
   },
   header: {
     fontWeight: tokens.fontWeightSemibold,

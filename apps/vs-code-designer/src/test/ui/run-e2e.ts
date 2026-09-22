@@ -17,9 +17,15 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as crypto from 'crypto';
-import { exec, execSync } from 'child_process';
+import { exec, execFileSync, execSync } from 'child_process';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
+import {
+  type CustomCodeDotNetTarget,
+  canonicalizeDotNetBinary,
+  deriveCustomCodeDotNetLayout,
+  parseCustomCodeDotNetTargets,
+} from './customCodeDotNetVersionShared';
 import { lspDirectory } from '../../constants';
 import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
 
@@ -42,6 +48,7 @@ type TestSettingsOptions = {
   autoStartDesignTime?: boolean;
   includeRuntimeDependencyPaths?: boolean;
   runtimeDependenciesPathOverride?: string;
+  dotnetBinaryPathOverride?: string;
   useExperimentalBundle?: boolean;
   experimentalBundleSourceUri?: string;
   experimentalBundleVersion?: string;
@@ -1282,6 +1289,7 @@ async function main(): Promise<void> {
     autoStartDesignTime = true,
     includeRuntimeDependencyPaths = true,
     runtimeDependenciesPathOverride,
+    dotnetBinaryPathOverride,
     useExperimentalBundle = false,
     experimentalBundleSourceUri = '',
     experimentalBundleVersion = '',
@@ -1344,7 +1352,7 @@ async function main(): Promise<void> {
         // the design-time API process (func host start) without relying on PATH.
         'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
         'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
-        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinary,
+        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinaryPathOverride || dotnetBinary,
         'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
       });
     }
@@ -1355,6 +1363,9 @@ async function main(): Promise<void> {
     if (runtimeDependenciesPathOverride) {
       console.log(`  Settings dependency path override: ${runtimeDependenciesPathOverride}`);
     }
+    if (dotnetBinaryPathOverride) {
+      console.log(`  Settings dotnet binary override: ${dotnetBinaryPathOverride}`);
+    }
   };
 
   // Write initial settings — keep dependency validation ON for all phases.
@@ -1363,6 +1374,23 @@ async function main(): Promise<void> {
   // timing so the wizard completes before the user opens the designer).
   writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
   const { depsRoot, funcBinary, dotnetBinary, nodeBinary, dotnetSdkDir, nodeJsDir, funcToolsDir } = getRuntimeDependencyPaths();
+  const systemDotnetBinary = (() => {
+    const configuredPath = process.env.CUSTOMCODE_DOTNET_BINARY_PATH?.trim();
+    if (configuredPath) {
+      return canonicalizeDotNetBinary(configuredPath, 'CUSTOMCODE_DOTNET_BINARY_PATH');
+    }
+    let discoveredPath: string | undefined;
+    try {
+      const command = process.platform === 'win32' ? 'where.exe dotnet' : 'command -v dotnet';
+      discoveredPath = execSync(command, { encoding: 'utf8' })
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .find(Boolean);
+    } catch {
+      return undefined;
+    }
+    return discoveredPath ? canonicalizeDotNetBinary(discoveredPath, 'PATH discovery') : undefined;
+  })();
   console.log(`  Created test settings file: ${settingsFile}`);
   console.log(`  funcCoreToolsBinaryPath: ${funcBinary}`);
   console.log(`  autoRuntimeDependenciesPath: ${depsRoot}`);
@@ -1469,6 +1497,12 @@ async function main(): Promise<void> {
   // (phase413CreateFiles / phase413AssertFiles), so this phase takes the next
   // free number and is named phaseFuncRepair* rather than phase414*.
   const phaseFuncRepairFiles = [testFile('funcRepair.test.js')];
+
+  // Phase 4.15 — Custom-code .NET picker and net8 runtime coverage.
+  // 4.15A creates a net8 workspace or asserts net10 is hidden. For net8 only,
+  // 4.15B reopens the generated .code-workspace and proves the full lifecycle.
+  const phaseCustomCodeDotNetCreateFiles = [testFile('customCodeDotNetVersionCreate.test.js')];
+  const phaseCustomCodeDotNetAssertFiles = [testFile('customCodeDotNetVersionAssert.test.js')];
 
   // ------------------------------------------------------------------
   // Per-scenario inventory (Phase A scaffold).
@@ -2088,6 +2122,7 @@ async function main(): Promise<void> {
   const patchGeneratedCodefulProjectForDebugGuard = (entry: CodefulWorkspaceEntry, variant: string): void => {
     const workflowFile = path.join(entry.appDir, `${entry.wfName}.cs`);
     const programFile = path.join(entry.appDir, 'Program.cs');
+    const nugetConfigFile = path.join(entry.appDir, 'nuget.config');
 
     for (const requiredPath of [workflowFile, programFile]) {
       if (!fs.existsSync(requiredPath)) {
@@ -2153,6 +2188,28 @@ namespace ${namespaceName}
     }
     fs.writeFileSync(programFile, patchedProgram, 'utf8');
 
+    const { depsRoot } = getRuntimeDependencyPaths();
+    const lspDirectoryPath = path.join(depsRoot, lspDirectory);
+    const sdkPackageSource = path.join(projectDir, 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const sdkPackageDestination = path.join(lspDirectoryPath, path.basename(sdkPackageSource));
+    if (!fs.existsSync(sdkPackageSource)) {
+      throw new Error(`Missing SDK package asset required by ${variant} codeful debug project: ${sdkPackageSource}`);
+    }
+    fs.mkdirSync(lspDirectoryPath, { recursive: true });
+    fs.copyFileSync(sdkPackageSource, sdkPackageDestination);
+
+    if (fs.existsSync(nugetConfigFile)) {
+      const originalNugetConfig = fs.readFileSync(nugetConfigFile, 'utf8');
+      const patchedNugetConfig = originalNugetConfig.replace(
+        /(<add\s+key=["']current["']\s+value=)(["']).*?\2(\s*\/>)/,
+        `$1"${lspDirectoryPath}"$3`
+      );
+      if (patchedNugetConfig === originalNugetConfig && !originalNugetConfig.includes(lspDirectoryPath)) {
+        throw new Error(`Could not update current package source in ${nugetConfigFile}`);
+      }
+      fs.writeFileSync(nugetConfigFile, patchedNugetConfig, 'utf8');
+    }
+
     for (const connectionArtifact of ['connections.json', 'parameters.json']) {
       const artifactPath = path.join(entry.appDir, connectionArtifact);
       if (fs.existsSync(artifactPath)) {
@@ -2162,6 +2219,7 @@ namespace ${namespaceName}
     }
 
     console.log(`  Patched ${variant} generated codeful workflow to built-in HTTP trigger + Response: ${workflowFile}`);
+    console.log(`  Seeded ${variant} codeful SDK package source: ${sdkPackageDestination}`);
   };
 
   const removeDesignTimeEvidence = async (entry: CodefulWorkspaceEntry, variant: string): Promise<void> => {
@@ -2399,6 +2457,122 @@ namespace ${namespaceName}
     for (const kind of kinds) {
       const exitCode = await withPhaseGroupRetries(`${labelPrefix}-${kind}`, (retryLabel) =>
         runAzuriteReadinessPhasesForKind(retryLabel, kind)
+      );
+      worstExit = Math.max(worstExit, exitCode);
+    }
+    return worstExit;
+  };
+
+  // Phase 4.15 — Custom-code .NET picker and net8 runtime coverage.
+  //
+  //   4.15A net8 — creates a CustomCode workspace through the real wizard.
+  //   4.15B net8 — reopens it and proves settings plus the full debug/run lifecycle.
+  //   4.15A net10 — asserts .NET 10 is absent from the real wizard picker.
+  //
+  // The target consumers read CUSTOMCODE_DOTNET_E2E_VERSION when their modules
+  // load. Target parsing and fixed, disjoint layout derivation are shared and
+  // pure; no shared module captures process.env.
+
+  const runCustomCodeDotNetPhasesForTarget = async (labelPrefix: string, target: CustomCodeDotNetTarget): Promise<number> => {
+    const layout = deriveCustomCodeDotNetLayout(target, os.tmpdir());
+    const workspaceFile = layout.workspaceFilePath;
+    process.env.CUSTOMCODE_DOTNET_E2E_VERSION = target;
+
+    if (target === 'net10') {
+      try {
+        writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
+        await prepareFreshSession(`${labelPrefix}-phase415a-net10-hidden`);
+        return await runPhase('Phase 4.15A: assert CustomCode net10 option is hidden', phaseCustomCodeDotNetCreateFiles);
+      } finally {
+        delete process.env.CUSTOMCODE_DOTNET_E2E_VERSION;
+      }
+    }
+
+    const requiredSdkMajor = '8';
+    if (!systemDotnetBinary || !fs.existsSync(systemDotnetBinary)) {
+      throw new Error(
+        `Custom-code ${target} E2E requires a system dotnet binary with SDK ${requiredSdkMajor}.x. Set CUSTOMCODE_DOTNET_BINARY_PATH to the dotnet installed by actions/setup-dotnet.`
+      );
+    }
+    const installedSdks = execFileSync(systemDotnetBinary, ['--list-sdks'], { encoding: 'utf8' });
+    if (!new RegExp(`^${requiredSdkMajor}\\.\\d+\\.\\d+`, 'm').test(installedSdks)) {
+      throw new Error(
+        `Custom-code ${target} E2E requires SDK ${requiredSdkMajor}.x through ${systemDotnetBinary}. Installed SDKs:\n${installedSdks}`
+      );
+    }
+
+    const originalDotnetRoot = process.env.DOTNET_ROOT;
+    const originalPath = process.env.PATH;
+    const systemDotnetRoot = path.dirname(systemDotnetBinary);
+
+    process.env.DOTNET_ROOT = systemDotnetRoot;
+    process.env.PATH = `${systemDotnetRoot}${path.delimiter}${originalPath || ''}`;
+    console.log(`  Custom-code dotnet target:  ${target}`);
+    console.log(`  Custom-code dotnet binary:  ${systemDotnetBinary}`);
+    console.log(`  Custom-code workspace file: ${workspaceFile}`);
+
+    try {
+      // 4.15A drives the real wizard; validate dependencies + auto-start design time,
+      // matching Phase 4.1a's settings for the same "wizard creates a workspace" shape.
+      writeTestSettings({
+        validateDependencies: true,
+        autoStartDesignTime: true,
+        dotnetBinaryPathOverride: systemDotnetBinary,
+      });
+      await prepareFreshSession(`${labelPrefix}-phase415a-create`);
+      const createExit = await runPhase(`Phase 4.15A: create CustomCode ${target} workspace`, phaseCustomCodeDotNetCreateFiles);
+      if (createExit !== 0) {
+        console.log(`\n⚠ Phase 4.15A (${target}) exited with code ${createExit}; skipping Phase 4.15B`);
+        return createExit;
+      }
+
+      if (!fs.existsSync(workspaceFile)) {
+        console.log(`\n⚠ Phase 4.15A (${target}) did not produce ${workspaceFile}; skipping Phase 4.15B`);
+        return 1;
+      }
+
+      // 4.15B needs autoStartDesignTime ON so `workflow-designtime/` evidence exists
+      // before F5, and validateDependencies 'auto' since func/node were already
+      // hydrated by 4.15A on the same runner.
+      writeTestSettings({
+        validateDependencies: shouldValidateRuntimeDependencies(),
+        autoStartDesignTime: true,
+        dotnetBinaryPathOverride: systemDotnetBinary,
+      });
+      await prepareFreshSession(`${labelPrefix}-phase415b-assert`);
+      const assertExit = await runPhase(
+        `Phase 4.15B: assert CustomCode ${target} dotnet version + run lifecycle`,
+        phaseCustomCodeDotNetAssertFiles,
+        {
+          resources: [workspaceFile],
+        }
+      );
+
+      return Math.max(createExit, assertExit);
+    } finally {
+      delete process.env.CUSTOMCODE_DOTNET_E2E_VERSION;
+      if (originalDotnetRoot === undefined) {
+        delete process.env.DOTNET_ROOT;
+      } else {
+        process.env.DOTNET_ROOT = originalDotnetRoot;
+      }
+      process.env.PATH = originalPath;
+    }
+  };
+
+  /**
+   * Runs the target-specific Phase 4.15 group: 4.15A+4.15B for net8 and only
+   * the 4.15A picker-negative check for net10. `withPhaseGroupRetries` wraps
+   * EACH target rather than the whole sweep, so a net10 flake does not rerun
+   * an already-green net8 create/runtime pair.
+   */
+  const runCustomCodeDotNetPhases = async (labelPrefix: string): Promise<number> => {
+    const targets = parseCustomCodeDotNetTargets(process.env.CUSTOMCODE_DOTNET_E2E_VERSIONS);
+    console.log(`\n  Custom-code dotnet targets: ${targets.join(', ')}`);
+    let worstExit = 0;
+    for (const target of targets) {
+      const exitCode = await withPhaseGroupRetries(`${labelPrefix}-${target}`, (retryLabel) =>
+        runCustomCodeDotNetPhasesForTarget(retryLabel, target)
       );
       worstExit = Math.max(worstExit, exitCode);
     }
@@ -2887,6 +3061,14 @@ namespace ${namespaceName}
       // it per app kind, so wrapping again would multiply the retry budget.
       const phase413Exit = await runAzuriteReadinessPhases('phase413-only');
       process.exit(phase413Exit);
+    }
+
+    if (e2eMode === 'customcodedotnetonly') {
+      await downloadExTesterAssets();
+      // NOTE: no withPhaseGroupRetries here — runCustomCodeDotNetPhases already applies
+      // it per dotnet target, so wrapping again would multiply the retry budget.
+      const phase415Exit = await runCustomCodeDotNetPhases('phase415-only');
+      process.exit(phase415Exit);
     }
 
     // bundleintegrityonly is handled by the early short-circuit at the top

@@ -15,6 +15,7 @@ Read this first on **every** task. Open any file whose triggers match the task d
 | VS Code extension E2E (ExTester), `run-e2e.js`, opening designer, designer/run/debug tests, blocking popups, NuGet conversion debug, issue #7040-style lifecycle regressions | [vscode-e2e-testing.md](vscode-e2e-testing.md) **+** [runtime-readiness-probes.md](runtime-readiness-probes.md) **+** [vscode-task-env-propagation.md](vscode-task-env-propagation.md) **+** `apps/vs-code-designer/src/test/ui/SKILL.md` |
 | Functions runtime readiness, `:7071` probes, `listCallbackUrl`, `waitForRuntimeReady`, "runtime not ready" flakes | [runtime-readiness-probes.md](runtime-readiness-probes.md) |
 | `func: host start` task env, `InlineCodeDependencyGeneratorFailure`, PATH propagation, `languageWorkers__node__defaultExecutablePath` | [vscode-task-env-propagation.md](vscode-task-env-propagation.md) |
+| Portal local testing, Azure Portal, local designer packages, `portal:local`, `--portal-root`, `build-hybrid:dev`, Portal worktrees | [portal-local-testing.md](portal-local-testing.md) |
 | Unit tests, Vitest, coverage strategy, mocking | [unit-testing.md](unit-testing.md) |
 | PR coverage gate (`pr-coverage.yml`), `COVERED_PACKAGES`, `files_ignore` justification | [ci-patterns.md](ci-patterns.md) ("PR coverage gate") |
 | Customer-reported issues, repro environments, sanitized artifacts | [customer-repro.md](customer-repro.md) |

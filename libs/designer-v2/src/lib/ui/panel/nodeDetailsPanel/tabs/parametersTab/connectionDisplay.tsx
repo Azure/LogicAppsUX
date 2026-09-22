@@ -1,8 +1,10 @@
 import { openPanel } from '../../../../../core';
-import { useIsOperationMissingConnection } from '../../../../../core/state/connection/connectionSelector';
+import { useIsOperationMissingConnection, useNodeConnectionMapping } from '../../../../../core/state/connection/connectionSelector';
+import { isExpressionConnectionMapping } from '../../../../../common/models/workflow';
+import { isConnectionExpressionValid } from '../../../../../core/utils/connectors/connectionExpression';
 import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
-import { Badge, Button, InfoLabel, Spinner } from '@fluentui/react-components';
+import { Badge, Button, InfoLabel, Spinner, Text, makeStyles, tokens } from '@fluentui/react-components';
 import { ErrorCircle16Filled, LinkMultiple16Regular } from '@fluentui/react-icons';
 import { Label } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -18,6 +20,16 @@ interface ConnectionDisplayProps {
   hasError: boolean;
 }
 
+const useStyles = makeStyles({
+  expression: {
+    display: 'block',
+    overflowWrap: 'anywhere',
+    whiteSpace: 'pre-wrap',
+    fontFamily: tokens.fontFamilyMonospace,
+    paddingTop: tokens.spacingVerticalXS,
+  },
+});
+
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const { connectionName, nodeId, hasError, isLoading = false, readOnly, readOnlyReason } = props;
 
@@ -26,6 +38,15 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
   const isOperationMissingConnection = useIsOperationMissingConnection(nodeId);
+  const mapping = useNodeConnectionMapping(nodeId);
+  const runtimeConnection = isExpressionConnectionMapping(mapping);
+  const invalidExpression = runtimeConnection && !isConnectionExpressionValid(mapping.expression);
+  const styles = useStyles();
+  const runtimeConnectionText = intl.formatMessage({
+    defaultMessage: 'Connection selected at runtime',
+    id: 'elDTa6',
+    description: 'Status for a connection selected at runtime by an expression',
+  });
 
   const openChangeConnectionCallback = useCallback(() => {
     dispatch(openPanel({ nodeId, panelMode: 'Connection' }));
@@ -35,10 +56,10 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const requiresConnection = useIsConnectionRequired(operationInfo);
 
   useEffect(() => {
-    if (requiresConnection && isOperationMissingConnection) {
+    if (requiresConnection && isOperationMissingConnection && !runtimeConnection && !readOnly) {
       openChangeConnectionCallback();
     }
-  }, [isOperationMissingConnection, openChangeConnectionCallback, requiresConnection]);
+  }, [isOperationMissingConnection, openChangeConnectionCallback, requiresConnection, runtimeConnection, readOnly]);
 
   const connectionDisplayTextWithName = intl.formatMessage(
     {
@@ -82,11 +103,11 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   });
 
   const connectionLabel = useMemo(
-    () => (connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName),
-    [connectionName, connectionDisplayTextWithName, connectionDisplayTextWithoutName]
+    () => (runtimeConnection ? runtimeConnectionText : connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName),
+    [runtimeConnection, runtimeConnectionText, connectionName, connectionDisplayTextWithName, connectionDisplayTextWithoutName]
   );
 
-  if (isLoading) {
+  if (isLoading && !runtimeConnection) {
     return (
       <div className="connection-display">
         <Spinner size={'extra-tiny'} label={loadingText} labelPosition={'after'} />
@@ -94,7 +115,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     );
   }
 
-  const labelText = connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName;
+  const labelText = connectionLabel;
 
   return (
     <div className="connection-display">
@@ -123,7 +144,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
           </Button>
         )}
         <div style={{ flex: 1 }} />
-        {hasError ? (
+        {invalidExpression || (hasError && (!runtimeConnection || mapping.designTimeReferenceKey)) ? (
           <div className="connection-info-badge">
             <Badge appearance="ghost" color="danger" icon={<ErrorCircle16Filled />}>
               {connectionErrorText}
@@ -131,6 +152,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
           </div>
         ) : null}
       </div>
+      {runtimeConnection ? <Text className={styles.expression}>{mapping.expression}</Text> : null}
     </div>
   );
 };

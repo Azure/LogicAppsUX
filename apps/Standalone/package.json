@@ -55,10 +55,12 @@
   "private": true,
   "scripts": {
     "build": "vite build",
+    "build:ephemeral": "vite build --config vite.ephemeral.config.ts --mode ephemeral",
     "dev": "vite --force",
     "e2e": "vite --config vite.e2e.config.ts",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:ephemeral": "vitest run --config vitest.ephemeral.config.ts"
   },
   "type": "module"
 }

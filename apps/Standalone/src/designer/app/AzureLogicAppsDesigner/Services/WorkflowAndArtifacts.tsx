@@ -821,7 +821,8 @@ export const saveNotesStandard = async (notesData?: Record<string, Note>): Promi
 export const createOrUpdateConnection = async (
   siteResourceId: string,
   connectionsData: ConnectionsData,
-  settings: Record<string, string> | undefined
+  settings: Record<string, string> | undefined,
+  isDraft = false
 ): Promise<any> => {
   try {
     await saveWorkflowStandard(
@@ -835,7 +836,8 @@ export const createOrUpdateConnection = async (
       /* notes */ undefined,
       /* mcpServers */ undefined,
       /* clearDirtyState */ () => {},
-      { skipValidation: true, throwError: true }
+      { skipValidation: true, throwError: true },
+      isDraft
     );
   } catch (error) {
     console.log(error);
@@ -992,7 +994,10 @@ export const saveWorkflowStandard = async (
         notesData
       );
     }
-    return;
+
+    if (!connectionsData) {
+      return;
+    }
   }
 
   for (const { name, workflow } of workflows) {
@@ -1000,7 +1005,7 @@ export const saveWorkflowStandard = async (
   }
 
   if (connectionsData) {
-    data.files['connections.json'] = connectionsData;
+    data.files[isDraftSave ? 'connections-draft.json' : 'connections.json'] = connectionsData;
   }
 
   if (parametersData) {
