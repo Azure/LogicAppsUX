@@ -70,6 +70,11 @@ parameters:
     type: boolean
     default: true
 
+  - name: vscodeE2ECheckoutRef
+    displayName: Optional ref for VS Code E2E jobs
+    type: string
+    default: ''
+
   - name: vscodeE2EScenarioShards
     displayName: VS Code E2E scenario shards
     type: object
@@ -158,7 +163,7 @@ extends:
                   - template: .azure-pipelines/templates/vscode-e2e-build-artifacts.yml@LogicAppsUX
                     parameters:
                       feedBaseUrl: ${{ variables.feedBaseUrl }}
-                      checkoutRef: v${{ parameters.publishVersion }}
+                      checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
 
               - ${{ if eq(parameters.runVscodeTestCliSmoke, true) }}:
                   - template: .azure-pipelines/templates/vscode-e2e-run-cli.yml@LogicAppsUX
@@ -170,7 +175,7 @@ extends:
                       pool: ${{ parameters.vscodeE2ELinuxPool }}
                       dependsOn:
                         - BuildVscodeE2EArtifacts
-                      checkoutRef: v${{ parameters.publishVersion }}
+                      checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
                       testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
 
               - template: .azure-pipelines/templates/vscode-e2e-setup-fixtures.yml@LogicAppsUX
@@ -181,7 +186,7 @@ extends:
                   pool: ${{ parameters.vscodeE2ELinuxPool }}
                   dependsOn:
                     - BuildVscodeE2EArtifacts
-                  checkoutRef: v${{ parameters.publishVersion }}
+                  checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
 
               - ${{ each shard in parameters.vscodeE2EScenarioShards }}:
                   - template: .azure-pipelines/templates/vscode-e2e-run-scenario.yml@LogicAppsUX
@@ -195,7 +200,7 @@ extends:
                       pool: ${{ parameters.vscodeE2ELinuxPool }}
                       dependsOn:
                         - SetupVscodeE2EFixtures
-                      checkoutRef: v${{ parameters.publishVersion }}
+                      checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
                       testARMServiceConnection: ''
 
               - template: .azure-pipelines/templates/vscode-e2e-summary.yml@LogicAppsUX

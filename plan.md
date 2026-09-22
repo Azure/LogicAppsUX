@@ -138,6 +138,7 @@ Use this checklist as the human-side setup path. The implementation PR should no
 - [x] Linux pool/image: `OneESHostedPool` / `Azure-Linux-3` (`os: linux`)
 - [ ] Windows pool/image:
 - [x] ARM service connection name: `LogicAppsVSCode-E2E-SignIn`
+- [x] VS Code E2E checkout ref: defaults to the pipeline branch; set `vscodeE2ECheckoutRef` only for explicit tag/ref validation.
 - [ ] ARM service connection ID:
 - [ ] Tenant ID:
 - [ ] Client ID:
