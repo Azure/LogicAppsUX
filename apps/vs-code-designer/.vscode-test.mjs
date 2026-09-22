@@ -10,12 +10,13 @@ const checkoutHash = createHash('sha1').update(__dirname).digest('hex').slice(0,
 const remoteDebuggingPort =
   process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT ?? String(9200 + (Number.parseInt(checkoutHash.slice(0, 4), 16) % 500));
 const userDataSuffix = process.env.LA_E2E_CLI_USER_DATA_SUFFIX;
+const nonWindowsUserDataSuffix = userDataSuffix ?? String(process.pid);
 const userDataDirOverride = process.env.LA_E2E_CLI_USER_DATA_DIR;
 const userDataDir =
   userDataDirOverride ??
   (process.platform === 'win32'
     ? path.join(__dirname, '.vscode-test', userDataSuffix ? `user-data-${userDataSuffix}` : 'user-data')
-    : path.join(tmpdir(), `la-vscode-test-${checkoutHash}${userDataSuffix ? `-${userDataSuffix}` : ''}`));
+    : path.join(tmpdir(), `la-vscode-test-${checkoutHash}-${nonWindowsUserDataSuffix}`));
 const extensionDevelopmentPath = path.join(__dirname, 'dist');
 const startupResource = process.env.LA_E2E_CLI_STARTUP_RESOURCE;
 const includeWorkspaceLifecycle = process.env.LA_E2E_CLI_INCLUDE_WORKSPACE_LIFECYCLE === '1' || process.argv.includes('workspaceLifecycle');
