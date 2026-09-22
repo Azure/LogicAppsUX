@@ -18,6 +18,12 @@ suite('Extension Activation Tests', () => {
   suiteSetup(() => {
     extension = vscode.extensions.getExtension(logicAppsExtensionId);
     activationChannel = vscode.window.createOutputChannel(activationChannelName);
+    activationChannel.show(true);
+  });
+
+  suiteTeardown(() => {
+    activationChannel?.dispose();
+    activationChannel = undefined;
   });
 
   test('VS Code is running', () => {
@@ -100,7 +106,6 @@ suite('Extension Activation Tests', () => {
     const line = `[activation-smoke] ${message}`;
     console.log(line);
     activationChannel?.appendLine(line);
-    activationChannel?.show(true);
   }
 
   function getExtensionDependencies(logicAppsExtension: vscode.Extension<unknown>): string[] {

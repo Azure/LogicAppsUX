@@ -542,7 +542,7 @@ function runVscodeTest(args, options = {}) {
 
   return new Promise((resolve, reject) => {
     child.on('error', reject);
-    child.on('close', async (code) => {
+    child.on('close', async (code, signal) => {
       const remainingOutput = outputFilter.flush();
       if (remainingOutput) {
         process.stdout.write(remainingOutput);
@@ -554,7 +554,11 @@ function runVscodeTest(args, options = {}) {
         reject(new Error(`\n[activation-smoke] Failed because VS Code output contained: ${matchedPattern.name}`));
         return;
       }
-      if (code && code !== 0) {
+      if (code === null || typeof code !== 'number') {
+        reject(new Error(`Process exited without a numeric exit code${signal ? ` (signal: ${signal})` : ''}`));
+        return;
+      }
+      if (code !== 0) {
         reject(new Error(`Exit code: ${code}`));
         return;
       }
