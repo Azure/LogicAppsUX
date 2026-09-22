@@ -61,8 +61,8 @@ parameters:
     displayName: Approved 1ES Linux pool for VS Code E2E
     type: object
     default:
-      name: '<OWNER_APPROVED_1ES_LINUX_POOL>'
-      image: '<OWNER_APPROVED_1ES_LINUX_IMAGE>'
+      name: OneESHostedPool
+      image: Azure-Linux-3
       os: linux
 
   - name: runVscodeTestCliSmoke

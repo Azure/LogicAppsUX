@@ -135,7 +135,7 @@ Use this checklist as the human-side setup path. The implementation PR should no
 - [ ] ADO project:
 - [ ] ADO pipeline name/path:
 - [ ] 1ES/MountainPass template:
-- [ ] Linux pool/image:
+- [x] Linux pool/image: `OneESHostedPool` / `Azure-Linux-3` (`os: linux`)
 - [ ] Windows pool/image:
 - [x] ARM service connection name: `LogicAppsVSCode-E2E-SignIn`
 - [ ] ARM service connection ID:
