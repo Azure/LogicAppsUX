@@ -67,6 +67,11 @@ if (azureAuthWarmup) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);
   });
+} else if (getCreateWorkspaceMatrixCaseLabels(args)) {
+  runCreateWorkspaceMatrixCases(args, visibleDelayMs).catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });
 } else {
   runVscodeTest(args, { visibleDelayMs })
     .then((code) => process.exit(code))
@@ -78,8 +83,32 @@ if (azureAuthWarmup) {
 
 async function runCreateWorkspaceFull(visibleDelayMs) {
   for (const label of ['createWorkspaceBehavior', 'createWorkspaceCoreMatrix', 'createWorkspacePreviewMatrix', 'createWorkspaceCodeful']) {
-    await runVscodeTest(['--label', label], { visibleDelayMs });
+    const labelArgs = ['--label', label];
+    if (getCreateWorkspaceMatrixCaseLabels(labelArgs)) {
+      await runCreateWorkspaceMatrixCases(labelArgs, visibleDelayMs);
+    } else {
+      await runVscodeTest(labelArgs, { visibleDelayMs });
+    }
   }
+}
+
+async function runCreateWorkspaceMatrixCases(args, visibleDelayMs) {
+  const label = getLabelArg(args);
+  const caseLabels = getCreateWorkspaceMatrixCaseLabels(args);
+  const startedAt = Date.now();
+
+  for (const caseLabel of caseLabels) {
+    await runVscodeTest(args, {
+      visibleDelayMs,
+      extraEnv: {
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: caseLabel,
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${sanitizeEnvSegment(label)}-${sanitizeEnvSegment(caseLabel)}-${Date.now()}`,
+      },
+    });
+  }
+
+  console.log(`\n  ${caseLabels.length} passing (${formatDuration(Date.now() - startedAt)})`);
+  return 0;
 }
 
 async function runAzureAuthWarmup(visibleDelayMs) {
@@ -703,6 +732,39 @@ function getLabelArg(args) {
   return args[labelIndex + 1];
 }
 
+function getCreateWorkspaceMatrixCaseLabels(args) {
+  if (process.env.LA_E2E_CLI_CREATE_WORKSPACE_CASE) {
+    return undefined;
+  }
+
+  const label = getLabelArg(args);
+  if (label === 'createWorkspaceCoreMatrix') {
+    return [
+      'standard-stateful',
+      'standard-stateless',
+      'custom-code-stateful',
+      'custom-code-stateless',
+      'rules-engine-stateful',
+      'rules-engine-stateless',
+    ];
+  }
+  if (label === 'createWorkspacePreviewMatrix') {
+    return [
+      'standard-autonomous-agent',
+      'standard-conversational-agent',
+      'custom-code-autonomous-agent',
+      'custom-code-conversational-agent',
+      'rules-engine-autonomous-agent',
+      'rules-engine-conversational-agent',
+    ];
+  }
+  if (label === 'createWorkspaceCodeful') {
+    return ['codeful-modern-control', 'codeful-legacy-control'];
+  }
+
+  return undefined;
+}
+
 function getDeferredCreateWorkspaceParent(label) {
   if (!label?.startsWith('createWorkspace') || label === 'createWorkspaceFixturesManifest') {
     return undefined;
@@ -730,4 +792,15 @@ async function cleanupDeferredWorkspaceParent(workspaceParent) {
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function formatDuration(durationMs) {
+  const seconds = Math.max(1, Math.round(durationMs / 1000));
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return remainingSeconds === 0 ? `${minutes}m` : `${minutes}m ${remainingSeconds}s`;
 }
