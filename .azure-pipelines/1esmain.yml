@@ -55,7 +55,7 @@ parameters:
   - name: testARMServiceConnection
     displayName: ARM WIF service connection for authenticated VS Code E2E shards
     type: string
-    default: ''
+    default: LogicAppsVSCode-E2E-SignIn
 
   - name: vscodeE2ELinuxPool
     displayName: Approved 1ES Linux pool for VS Code E2E

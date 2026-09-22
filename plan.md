@@ -137,7 +137,7 @@ Use this checklist as the human-side setup path. The implementation PR should no
 - [ ] 1ES/MountainPass template:
 - [ ] Linux pool/image:
 - [ ] Windows pool/image:
-- [ ] ARM service connection name:
+- [x] ARM service connection name: `LogicAppsVSCode-E2E-SignIn`
 - [ ] ARM service connection ID:
 - [ ] Tenant ID:
 - [ ] Client ID:
