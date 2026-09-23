@@ -48,7 +48,10 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
   const { data: embeddingModels = [] } = useEmbeddingModelsByEndpoint(openAIEndpoint, openAIKey);
   const [isDirty, setIsDirty] = useState(false);
   const { data: subscriptions, isLoading: areSubscriptionsLoading } = useSubscriptions();
-  const shouldResolveCosmosDbResourceId = !parameterValues?.cosmosDbServiceAccountId && !!parameterValues?.cosmosDBEndpoint;
+  const shouldResolveCosmosDbResourceId = useMemo(
+    () => !parameterValues?.cosmosDbServiceAccountId && !!parameterValues?.cosmosDBEndpoint,
+    [parameterValues]
+  );
   const { data: resolvedCosmosDbResourceId, isInitialLoading: isCosmosDbResourceIdLoading } = useCosmosDbResourceId(
     shouldResolveCosmosDbResourceId ? parameterValues?.cosmosDBEndpoint : undefined,
     (subscriptions ?? []).map((subscription) => subscription.subscriptionId)
@@ -66,7 +69,7 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
   }, [parameterValues]);
 
   useEffect(() => {
-    if (resolvedCosmosDbResourceId) {
+    if (resolvedCosmosDbResourceId && !connectionParameterValues.cosmosDbServiceAccountId) {
       setConnectionParameterValues((values) =>
         values.cosmosDbServiceAccountId
           ? values
@@ -76,7 +79,7 @@ export const EditConnectionPanel = ({ mountNode }: { mountNode: HTMLDivElement |
             }
       );
     }
-  }, [parameterValues, resolvedCosmosDbResourceId]);
+  }, [connectionParameterValues.cosmosDbServiceAccountId, resolvedCosmosDbResourceId]);
 
   const [isSaving, setIsSaving] = useState(false);
   const styles = { ...usePanelStyles(), ...useEditPanelStyles() };
