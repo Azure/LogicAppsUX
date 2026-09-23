@@ -52,44 +52,6 @@ parameters:
     type: boolean
     default: false
 
-  - name: testARMServiceConnection
-    displayName: ARM WIF service connection for authenticated VS Code E2E shards
-    type: string
-    default: LogicAppsVSCode-E2E-SignIn
-
-  - name: vscodeE2ELinuxPool
-    displayName: Approved 1ES Linux pool for VS Code E2E
-    type: object
-    default:
-      name: OneESHostedPool
-      image: Azure-Linux-3
-      os: linux
-
-  - name: runVscodeTestCliSmoke
-    displayName: Run Container Apps-style vscode-test smoke
-    type: boolean
-    default: true
-
-  - name: vscodeE2ECheckoutRef
-    displayName: Optional ref for VS Code E2E jobs
-    type: string
-    default: ''
-
-  - name: vscodeE2EScenarioShards
-    displayName: VS Code E2E scenario shards
-    type: object
-    default:
-      - jobName: VscodeE2EActivationCreate
-        displayName: vscode-e2e activation/create smoke
-        scenario: p40-nonlogicapp,p48b-conversioncreate
-        useWorkspaceFixtures: false
-        useBundleArtifact: false
-      - jobName: VscodeE2EDesignerLifecycle
-        displayName: vscode-e2e designer lifecycle
-        scenario: p42-standard,p42-customcode,p42-rulesengine
-        useWorkspaceFixtures: true
-        useBundleArtifact: true
-
 variables:
   - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
   # Required by MicroBuild template
@@ -97,6 +59,10 @@ variables:
     value: "Azure Logic Apps for VS Code"
   - name: working_directory
     value: '.'
+  - name: vscodeE2ETestARMServiceConnection
+    value: LogicAppsVSCode-E2E-SignIn
+  - name: vscodeE2ECheckoutRef
+    value: $(Build.SourceVersion)
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
@@ -146,70 +112,8 @@ extends:
                   publishVersion: ${{ parameters.publishVersion }}
 
       - ${{ if eq(parameters.enableVscodeE2E, true) }}:
-          - stage: VscodeE2E
-            displayName: VS Code E2E validation
-            dependsOn: Build
-            jobs:
-              - job: BuildVscodeE2EArtifacts
-                displayName: Build VS Code E2E artifacts
-                timeoutInMinutes: 30
-                pool: ${{ parameters.vscodeE2ELinuxPool }}
-                templateContext:
-                  outputs:
-                    - output: pipelineArtifact
-                      targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
-                      artifactName: vscode-e2e-build
-                steps:
-                  - template: .azure-pipelines/templates/vscode-e2e-build-artifacts.yml@LogicAppsUX
-                    parameters:
-                      feedBaseUrl: ${{ variables.feedBaseUrl }}
-                      checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
-
-              - ${{ if eq(parameters.runVscodeTestCliSmoke, true) }}:
-                  - template: .azure-pipelines/templates/vscode-e2e-run-cli.yml@LogicAppsUX
-                    parameters:
-                      jobName: VscodeE2ECliSmoke
-                      displayName: vscode-test CLI smoke
-                      label: unitTests
-                      feedBaseUrl: ${{ variables.feedBaseUrl }}
-                      pool: ${{ parameters.vscodeE2ELinuxPool }}
-                      dependsOn:
-                        - BuildVscodeE2EArtifacts
-                      checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
-                      testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
-
-              - template: .azure-pipelines/templates/vscode-e2e-setup-fixtures.yml@LogicAppsUX
-                parameters:
-                  jobName: SetupVscodeE2EFixtures
-                  displayName: setup-fixtures (p41a)
-                  feedBaseUrl: ${{ variables.feedBaseUrl }}
-                  pool: ${{ parameters.vscodeE2ELinuxPool }}
-                  dependsOn:
-                    - BuildVscodeE2EArtifacts
-                  checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
-
-              - ${{ each shard in parameters.vscodeE2EScenarioShards }}:
-                  - template: .azure-pipelines/templates/vscode-e2e-run-scenario.yml@LogicAppsUX
-                    parameters:
-                      jobName: ${{ shard.jobName }}
-                      displayName: ${{ shard.displayName }}
-                      scenario: ${{ shard.scenario }}
-                      useWorkspaceFixtures: ${{ shard.useWorkspaceFixtures }}
-                      useBundleArtifact: ${{ shard.useBundleArtifact }}
-                      feedBaseUrl: ${{ variables.feedBaseUrl }}
-                      pool: ${{ parameters.vscodeE2ELinuxPool }}
-                      dependsOn:
-                        - SetupVscodeE2EFixtures
-                      checkoutRef: ${{ parameters.vscodeE2ECheckoutRef }}
-                      testARMServiceConnection: ''
-
-              - template: .azure-pipelines/templates/vscode-e2e-summary.yml@LogicAppsUX
-                parameters:
-                  jobName: VscodeE2ESummary
-                  displayName: vscode-e2e-summary
-                  dependsOn:
-                    - ${{ if eq(parameters.runVscodeTestCliSmoke, true) }}:
-                        - VscodeE2ECliSmoke
-                    - SetupVscodeE2EFixtures
-                    - ${{ each shard in parameters.vscodeE2EScenarioShards }}:
-                        - ${{ shard.jobName }}
+          - template: templates/vscode-e2e-stage.yml@self
+            parameters:
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              checkoutRef: ${{ variables.vscodeE2ECheckoutRef }}
+              testARMServiceConnection: ${{ variables.vscodeE2ETestARMServiceConnection }}
