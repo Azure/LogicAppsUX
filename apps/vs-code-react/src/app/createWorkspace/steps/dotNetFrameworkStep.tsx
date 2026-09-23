@@ -57,11 +57,6 @@ export const DotNetFrameworkStep: React.FC = () => {
         ]
       : []),
     {
-      value: TargetFramework.Net8,
-      label: intlText.DOTNET_8,
-      description: intlText.DOTNET_8_DESCRIPTION,
-    },
-    {
       value: TargetFramework.Net10,
       label: intlText.DOTNET_10,
       description: intlText.DOTNET_10_DESCRIPTION,
