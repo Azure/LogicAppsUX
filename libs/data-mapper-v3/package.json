@@ -1,8 +1,8 @@
 {
-  "name": "biztalk-data-mapper",
+  "name": "btm-data-mapper",
   "displayName": "Logic App Data Mapper",
   "description": "Logic App Data Mapper for VS Code - visual BizTalk-compatible schema mapping with functoids and XSLT generation",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "publisher": "microsoft",
   "icon": "media/icons/biztalk-icon.jpg",
   "engines": {
@@ -13,7 +13,6 @@
   "private": true,
   "categories": ["Other", "Visualization"],
   "keywords": ["biztalk", "mapper", "xslt", "xml", "schema", "data mapping", "functoids"],
-  "activationEvents": ["*"],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -144,7 +143,7 @@
     "test": "jest",
     "test:extension-unit": "pnpm run test",
     "test:webview": "pnpm run compile:webview && node test/webviewSmoke.js",
-    "package": "vsce package"
+    "package": "vsce package --no-dependencies --allow-missing-repository --skip-license"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
