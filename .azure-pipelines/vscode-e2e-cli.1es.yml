@@ -113,16 +113,16 @@ parameters:
     displayName: Owner-approved 1ES SDL pool
     type: object
     default:
-      name: __OWNER_PROVIDED_SDL_POOL_NAME__
-      image: __OWNER_PROVIDED_SDL_IMAGE__
+      name: VSEngSS-MicroBuild2022-1ES
+      image: server2022-microbuildVS2022-1es
       os: windows
 
   - name: linuxPool
     displayName: Owner-approved 1ES Linux pool
     type: object
     default:
-      name: __OWNER_PROVIDED_LINUX_POOL_NAME__
-      image: __OWNER_PROVIDED_LINUX_IMAGE__
+      name: AzurePipelines-EO
+      image: 1ESPT-Ubuntu22.04
       os: linux
 
 extends:
