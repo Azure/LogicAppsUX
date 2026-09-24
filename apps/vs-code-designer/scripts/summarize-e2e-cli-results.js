@@ -46,6 +46,8 @@ function writeAggregateResult({ resultsDir, outDir, githubSummary }) {
   fs.mkdirSync(outDir, { recursive: true });
   const results = findJsonResults(resultsDir)
     .map((file) => JSON.parse(fs.readFileSync(file, 'utf-8')))
+    .filter(isSingleResult)
+    .map(normalizeResult)
     .sort((a, b) => String(a.label).localeCompare(String(b.label)));
   const aggregate = buildAggregate(results);
 
@@ -167,16 +169,17 @@ function buildAggregateSummary(aggregate) {
 }
 
 function buildJUnitXml(result) {
-  const failures =
-    result.failedTests.length > 0 ? result.failedTests : Array.from({ length: result.failing }, (_, index) => `Failure ${index + 1}`);
-  const passed =
-    result.passedTests.length > 0 ? result.passedTests : Array.from({ length: result.passing }, (_, index) => `Passing test ${index + 1}`);
+  const failedTests = Array.isArray(result.failedTests) ? result.failedTests : [];
+  const passedTests = Array.isArray(result.passedTests) ? result.passedTests : [];
+  const failureExcerpt = Array.isArray(result.failureExcerpt) ? result.failureExcerpt : [];
+  const failures = failedTests.length > 0 ? failedTests : Array.from({ length: result.failing }, (_, index) => `Failure ${index + 1}`);
+  const passed = passedTests.length > 0 ? passedTests : Array.from({ length: result.passing }, (_, index) => `Passing test ${index + 1}`);
   const testCases = [
     ...passed.map((name) => `    <testcase classname="${escapeXml(result.label)}" name="${escapeXml(name)}" />`),
     ...failures.map((name) =>
       [
         `    <testcase classname="${escapeXml(result.label)}" name="${escapeXml(name)}">`,
-        `      <failure message="${escapeXml(name)}">${escapeXml(result.failureExcerpt.join('\n'))}</failure>`,
+        `      <failure message="${escapeXml(name)}">${escapeXml(failureExcerpt.join('\n'))}</failure>`,
         '    </testcase>',
       ].join('\n')
     ),
@@ -215,6 +218,24 @@ function findJsonResults(directory) {
 
     return entry.name.endsWith('.json') && !entry.name.includes('summary') && !entry.name.includes('aggregate') ? [entryPath] : [];
   });
+}
+
+function isSingleResult(result) {
+  return typeof result?.label === 'string' && typeof result.outcome === 'string';
+}
+
+function normalizeResult(result) {
+  return {
+    ...result,
+    total: Number(result.total) || 0,
+    passing: Number(result.passing) || 0,
+    failing: Number(result.failing) || 0,
+    pending: Number(result.pending) || 0,
+    passRate: Number(result.passRate) || 0,
+    passedTests: Array.isArray(result.passedTests) ? result.passedTests : [],
+    failedTests: Array.isArray(result.failedTests) ? result.failedTests : [],
+    failureExcerpt: Array.isArray(result.failureExcerpt) ? result.failureExcerpt : [],
+  };
 }
 
 function buildFailureExcerpt(logText) {

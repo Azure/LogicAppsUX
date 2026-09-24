@@ -830,7 +830,7 @@ jobs:
         uses: actions/download-artifact@v7
         continue-on-error: true
         with:
-          pattern: vscode-e2e-cli-test-results-*
+          pattern: vscode-e2e-cli-test-results-createWorkspace*
           path: apps/vs-code-designer/.vscode-test/results/aggregate-input
           merge-multiple: true
 
