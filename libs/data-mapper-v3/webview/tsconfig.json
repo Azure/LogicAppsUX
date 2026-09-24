@@ -1,6 +1,7 @@
 {
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "ES2020",
+    "moduleResolution": "Bundler",
     "target": "ES2021",
     "lib": ["ES2021", "DOM"],
     "outDir": "../out/webview",
@@ -8,8 +9,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "jsx": "react",
-    "moduleResolution": "node"
+    "jsx": "react"
   },
   "include": ["src/**/*"]
 }

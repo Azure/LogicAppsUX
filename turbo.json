@@ -32,6 +32,9 @@
       "cache": false,
       "dependsOn": ["vscode-designer#build:extension"]
     },
+    "biztalk-data-mapper#build:extension": {
+      "outputs": ["out/**"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

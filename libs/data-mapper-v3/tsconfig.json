@@ -1,6 +1,7 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "moduleResolution": "Bundler",
     "target": "ES2021",
     "outDir": "out",
     "lib": ["ES2021"],
@@ -14,5 +15,6 @@
     "declaration": true,
     "declarationMap": true
   },
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "out", "webview", "test"]
 }

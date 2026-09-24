@@ -12,8 +12,9 @@ The Data Mapper runs across four processes:
 ## Prerequisites
 
 - VS Code 1.85 or later.
-- Node.js and npm.
-- Run `npm install` in the extension directory.
+- Node.js 20 or later and pnpm 9 or later.
+- .NET SDK 8 for building and debugging the compiler worker.
+- Run `pnpm install` from the repository root.
 - Install the Microsoft C# extension when debugging the .NET worker.
 
 Open the extension directory itself as the VS Code workspace. The checked-in
@@ -100,7 +101,7 @@ external assemblies, and transform execution.
 6. Select `BizTalk.DataMapper.Worker.exe` from the process list.
 7. Repeat the map operation if the code path completed before attachment.
 
-The `npm: debug:prepare` pre-launch task publishes the worker in Debug
+The `Data Mapper v3: Prepare Debug` pre-launch task publishes the worker in Debug
 configuration so its PDB files match the current C# source.
 
 ## Debug Jest tests
@@ -127,7 +128,7 @@ Set breakpoints in the TypeScript source before running the command.
 The F5 configurations run:
 
 ```powershell
-npm run debug:prepare
+pnpm run debug:prepare
 ```
 
 This command:
@@ -149,7 +150,7 @@ npm run package
 
 - Confirm the opened workspace is
   `C:\src\BizTalk-Server\src\BizTalk.DataMapper.VsCode`.
-- Run `npm run debug:prepare` and restart the debug session.
+- Run `pnpm run debug:prepare` and restart the debug session.
 - Open the `.btm` editor before expecting webview breakpoints to bind.
 - For `xsltCompiler.ts`, attach **TypeScript Compiler Host**; the Extension Host
   debugger cannot bind to that child process.

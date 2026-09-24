@@ -27,6 +27,13 @@
       "command": "pnpm run build:extension && pnpm --dir apps/vs-code-designer run build:ui",
       "problemMatcher": [],
       "group": "build"
+    },
+    {
+      "label": "Data Mapper v3: Prepare Debug",
+      "type": "shell",
+      "command": "pnpm --dir libs/data-mapper-v3 run debug:prepare",
+      "problemMatcher": [],
+      "group": "build"
     }
   ]
 }

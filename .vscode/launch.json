@@ -262,6 +262,51 @@
       "env": {
         "E2E_MODE": "createplusconversion"
       }
+    },
+    {
+      "name": "Run Data Mapper v3 Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--disable-extensions", "--extensionDevelopmentPath=${workspaceFolder}/libs/data-mapper-v3"],
+      "outFiles": ["${workspaceFolder}/libs/data-mapper-v3/out/**/*.js"],
+      "skipFiles": ["<node_internals>/**", "${env:USERPROFILE}/.vscode/extensions/**", "**/resources/app/extensions/**"],
+      "resolveSourceMapLocations": ["${workspaceFolder}/libs/data-mapper-v3/**", "!**/node_modules/**"],
+      "sourceMaps": true,
+      "debugWebviews": true,
+      "webRoot": "${workspaceFolder}/libs/data-mapper-v3",
+      "preLaunchTask": "Data Mapper v3: Prepare Debug"
+    },
+    {
+      "name": "Run Data Mapper v3 + Pause Compiler Host",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--disable-extensions", "--extensionDevelopmentPath=${workspaceFolder}/libs/data-mapper-v3"],
+      "outFiles": ["${workspaceFolder}/libs/data-mapper-v3/out/**/*.js"],
+      "skipFiles": ["<node_internals>/**", "${env:USERPROFILE}/.vscode/extensions/**", "**/resources/app/extensions/**"],
+      "resolveSourceMapLocations": ["${workspaceFolder}/libs/data-mapper-v3/**", "!**/node_modules/**"],
+      "sourceMaps": true,
+      "debugWebviews": true,
+      "webRoot": "${workspaceFolder}/libs/data-mapper-v3",
+      "env": {
+        "BIZTALK_DATAMAPPER_COMPILER_INSPECT_PORT": "9230"
+      },
+      "preLaunchTask": "Data Mapper v3: Prepare Debug"
+    },
+    {
+      "name": "Attach to Data Mapper v3 Compiler Host",
+      "type": "pwa-node",
+      "request": "attach",
+      "address": "127.0.0.1",
+      "port": 9230,
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/libs/data-mapper-v3/out/compilerHost.js"],
+      "resolveSourceMapLocations": ["${workspaceFolder}/libs/data-mapper-v3/**", "!**/node_modules/**"]
+    },
+    {
+      "name": "Attach to Data Mapper v3 Compiler Worker",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
     }
   ],
   "inputs": [
