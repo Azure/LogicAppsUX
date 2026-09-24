@@ -12,16 +12,27 @@ jobs:
     displayName: ${{ parameters.displayName }}
     dependsOn: ${{ parameters.dependsOn }}
     condition: always()
+    variables:
+      - ${{ each dependencyName in parameters.dependsOn }}:
+          - name: VSCODE_E2E_RESULT_${{ dependencyName }}
+            value: $[ dependencies.${{ dependencyName }}.result ]
     steps:
       - pwsh: |
-          $dependencies = '${{ convertToJson(dependencies) }}' | ConvertFrom-Json
+          $dependencyNames = '${{ convertToJson(parameters.dependsOn) }}' | ConvertFrom-Json
+          if ($null -eq $dependencyNames) {
+            $dependencyNames = @()
+          } elseif ($dependencyNames -isnot [array]) {
+            $dependencyNames = @($dependencyNames)
+          }
+
           $failed = @()
 
-          foreach ($property in $dependencies.PSObject.Properties) {
-            $result = [string]$property.Value.result
-            Write-Host "$($property.Name): $result"
+          foreach ($dependencyName in $dependencyNames) {
+            $envName = "VSCODE_E2E_RESULT_$dependencyName".ToUpperInvariant()
+            $result = [string][Environment]::GetEnvironmentVariable($envName)
+            Write-Host "${dependencyName}: $result"
             if ($result -ne 'Succeeded') {
-              $failed += "$($property.Name)=$result"
+              $failed += "$dependencyName=$result"
             }
           }
 
