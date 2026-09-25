@@ -26,14 +26,24 @@ steps:
       dotnetVersion: ${{ parameters.dotnetVersion }}
       installLinuxDisplayDependencies: false
 
-  - script: pnpm turbo run build:extension --cache-dir=.turbo
-    displayName: Build VS Code extension
+  - script: pnpm --dir apps/vs-code-designer run build:e2e-cli:extension
+    displayName: Build VS Code extension host for E2E
+    workingDirectory: $(working_directory)
+    env:
+      NPM_CONFIG_USERCONFIG: $(npmrcFile)
+
+  - script: pnpm --dir apps/vs-code-react run build:extension
+    displayName: Build VS Code React webviews for E2E
     workingDirectory: $(working_directory)
     env:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
 
   - script: npx tsup --config tsup.e2e.test.config.ts
     displayName: Compile ExTester E2E bundle
+    workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
+
+  - script: pnpm run test:e2e-cli:compile
+    displayName: Compile vscode-test CLI E2E bundle
     workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
 
   - bash: |
