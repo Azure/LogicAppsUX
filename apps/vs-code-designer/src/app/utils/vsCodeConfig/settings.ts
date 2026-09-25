@@ -19,6 +19,8 @@ import { FuncVersion, Platform, ProjectLanguage, WorkerRuntime } from '@microsof
 import { ConfigurationTarget, Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 
+let globalSettingsUpdateQueue: Promise<void> = Promise.resolve();
+
 /**
  * Gets global setting from vscode.
  * @param {string} key - Setting key.
@@ -39,8 +41,12 @@ export function getGlobalSetting<T>(key: string, prefix: string = ext.prefix): T
  * @returns A promise that resolves when the setting is updated.
  */
 export async function updateGlobalSetting<T = string>(section: string, value: T, prefix: string = ext.prefix): Promise<void> {
-  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
-  await projectConfiguration.update(section, value, ConfigurationTarget.Global);
+  const update = globalSettingsUpdateQueue.then(() => {
+    const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
+    return projectConfiguration.update(section, value, ConfigurationTarget.Global);
+  });
+  globalSettingsUpdateQueue = update.catch(() => undefined);
+  await update;
 }
 
 /**

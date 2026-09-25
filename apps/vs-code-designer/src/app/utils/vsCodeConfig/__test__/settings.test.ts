@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
-import { createSettingsDetails, removeSharedSetting, shouldAlwaysBuildCustomCode } from '../settings';
+import { createSettingsDetails, removeSharedSetting, shouldAlwaysBuildCustomCode, updateGlobalSetting } from '../settings';
 import { ext } from '../../../../extensionVariables';
 
 describe('utils/vsCodeConfig/settings', () => {
@@ -165,6 +165,39 @@ describe('utils/vsCodeConfig/settings', () => {
 
       await expect(removeSharedSetting('integrated.env.windows', 'terminal')).resolves.toBeUndefined();
       expect(ext.outputChannel?.appendLog).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateGlobalSetting', () => {
+    const mockGetConfiguration = vi.mocked(vscode.workspace.getConfiguration);
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('serializes updates to the user settings file', async () => {
+      let completeFirstUpdate: (() => void) | undefined;
+      const update = vi
+        .fn()
+        .mockImplementationOnce(
+          () =>
+            new Promise<void>((resolve) => {
+              completeFirstUpdate = resolve;
+            })
+        )
+        .mockResolvedValueOnce(undefined);
+      mockGetConfiguration.mockReturnValue({ update } as any);
+
+      const firstUpdate = updateGlobalSetting('firstSetting', true);
+      const secondUpdate = updateGlobalSetting('secondSetting', true);
+      await Promise.resolve();
+
+      expect(update).toHaveBeenCalledTimes(1);
+      completeFirstUpdate?.();
+      await Promise.all([firstUpdate, secondUpdate]);
+
+      expect(update).toHaveBeenNthCalledWith(1, 'firstSetting', true, vscode.ConfigurationTarget.Global);
+      expect(update).toHaveBeenNthCalledWith(2, 'secondSetting', true, vscode.ConfigurationTarget.Global);
     });
   });
 
