@@ -37,6 +37,7 @@ steps:
     workingDirectory: $(working_directory)
     env:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
+      NODE_OPTIONS: --max-old-space-size=6144
 
   - script: npx tsup --config tsup.e2e.test.config.ts
     displayName: Compile ExTester E2E bundle
