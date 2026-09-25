@@ -210,6 +210,27 @@ describe('validateAndInstallBinaries', () => {
     expect(recordDependencyUpdateCheck).not.toHaveBeenCalled();
   });
 
+  it('opens user settings when invalid configuration blocks dependency validation', async () => {
+    const openUserSettings = 'Open User Settings (JSON)';
+    (ensureRuntimeDependenciesDir as Mock).mockRejectedValueOnce(
+      new Error('Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.')
+    );
+    (vscode.window.showErrorMessage as Mock).mockResolvedValueOnce(openUserSettings);
+
+    await expect(validateAndInstallBinaries(context)).resolves.toBeUndefined();
+
+    expect(context.telemetry.properties).toMatchObject({
+      result: 'Failed',
+      errorMessage: 'Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.',
+    });
+    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
+      'Unable to validate runtime dependencies because User Settings contains errors. Correct the errors and try again.',
+      openUserSettings
+    );
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('workbench.action.openSettingsJson');
+    expect(getBundleDependencyFeed).not.toHaveBeenCalled();
+  });
+
   it('requires an installed bundle and rethrows dependency validation errors in strict E2E mode', async () => {
     (shouldRequireStrictDependencyValidation as Mock).mockReturnValue(true);
     (ensureExtensionBundleHealthy as Mock).mockRejectedValueOnce(new Error('Bundle sidecar missing'));

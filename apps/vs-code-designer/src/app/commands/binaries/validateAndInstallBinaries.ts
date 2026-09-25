@@ -39,7 +39,30 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: 'Get Settings' });
 
-      const dependencyPath = await ensureRuntimeDependenciesDir();
+      let dependencyPath: string;
+      try {
+        dependencyPath = await ensureRuntimeDependenciesDir();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (!errorMessage.includes('Unable to write into user settings')) {
+          throw error;
+        }
+
+        context.telemetry.properties.result = 'Failed';
+        context.telemetry.properties.errorMessage = errorMessage;
+        const openUserSettings = localize('openUserSettings', 'Open User Settings (JSON)');
+        const selection = await vscode.window.showErrorMessage(
+          localize(
+            'invalidUserSettings',
+            'Unable to validate runtime dependencies because User Settings contains errors. Correct the errors and try again.'
+          ),
+          openUserSettings
+        );
+        if (selection === openUserSettings) {
+          await vscode.commands.executeCommand('workbench.action.openSettingsJson');
+        }
+        return;
+      }
       const dependencyTimeoutMs = getDependencyTimeout() * 1000;
       context.telemetry.properties.dependencyPath = dependencyPath;
       context.telemetry.properties.dependencyTimeoutMs = String(dependencyTimeoutMs);
