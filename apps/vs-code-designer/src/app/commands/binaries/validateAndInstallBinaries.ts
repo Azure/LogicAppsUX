@@ -20,7 +20,8 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
-// The VS Code extension API does not expose ConfigurationEditingError codes.
+// The VS Code extension API does not expose ConfigurationEditingError codes. Revisit this
+// version-dependent text check if VS Code changes its configuration error wording.
 const userSettingsErrorText = 'user settings';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
