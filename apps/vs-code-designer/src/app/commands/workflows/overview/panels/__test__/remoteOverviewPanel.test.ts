@@ -186,10 +186,12 @@ describe('RemoteOverviewPanel', () => {
 
     expect(initializePayload.isLocal).toBe(false);
     expect(initializePayload.corsNotice).toBe('To view runs, set "*" to allowed origins in the CORS setting.');
+    expect(initializePayload.workflowProperties.triggerName).toBe('manual');
     expect(initializePayload.workflowProperties.callbackInfo).toEqual({
       value: 'https://callback.remote/manual',
       method: 'POST',
     });
+    expect(remoteNode.getCallbackUrl).toHaveBeenCalledWith(remoteNode, 'https://management.azure.com/runtime', 'manual', '2018-11-01');
     expect(initializePayload.azureDetails).toEqual(
       expect.objectContaining({
         enabled: true,

@@ -3,7 +3,8 @@
 //
 // Create Workspace FIXTURES tests — drives the wizard for ONLY the runtime-fixture
 // shapes consumed by downstream Phase 4.2 / 4.3 / 4.4 scenario shards:
-// Standard/Stateful, Standard/Stateless, CustomCode/Stateful, RulesEngine/Stateful.
+// Standard/Stateful, Standard/Stateless, CustomCode/Stateful, RulesEngine/Stateful,
+// and Codeful/Stateful.
 // Writes the workspace manifest at
 // WORKSPACE_MANIFEST_PATH that those shards read.
 //
@@ -377,6 +378,22 @@ function assertManifestShape(entry: WorkspaceManifestEntry): void {
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
     throw new Error(`[fixtures:shape] local.settings.json is not valid JSON: ${message}`);
+  }
+
+  if (entry.appType === 'codeful') {
+    const workflowSourcePath = path.join(entry.appDir, `${entry.wfName}.cs`);
+    const projectPath = path.join(entry.appDir, `${entry.appName}.csproj`);
+    for (const requiredPath of [workflowSourcePath, projectPath, path.join(entry.appDir, 'Program.cs')]) {
+      if (!fs.existsSync(requiredPath)) {
+        throw new Error(`[fixtures:shape] Missing codeful generated file at ${requiredPath}`);
+      }
+    }
+    const workflowSource = fs.readFileSync(workflowSourcePath, 'utf-8');
+    if (!workflowSource.includes(entry.wfName)) {
+      throw new Error(`[fixtures:shape] Codeful source does not contain workflow name "${entry.wfName}"`);
+    }
+    console.log(`[fixtures:shape] OK ${entry.label}: host.json v${host.version}, codeful source=${path.basename(workflowSourcePath)}`);
+    return;
   }
 
   const workflowJsonPath = path.join(entry.wfDir, 'workflow.json');
@@ -800,5 +817,56 @@ describe('Create Workspace Fixtures', function () {
 
     await captureScreenshot(driver, 'fixtures-rulesengine-passed');
     console.log('[fixtures:rulesEngine] PASSED');
+  });
+
+  it('should create Codeful + Stateful workspace and record in manifest', async function () {
+    this.timeout(240_000);
+
+    const wsName = uniqueName('cfws');
+    const appName = uniqueName('cfapp');
+    const wfName = uniqueName('cfwf');
+
+    console.log('[fixtures:codeful] Opening Create Workspace command...');
+    await selectCreateWorkspaceCommand(workbench);
+
+    console.log('[fixtures:codeful] Switching to webview...');
+    const webview = await switchToWebviewFrame(driver);
+
+    console.log('[fixtures:codeful] Filling workspace fields...');
+    await fillStandardFormFields(driver, tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'Logic app (codeful)',
+      wfType: 'Stateful',
+    });
+
+    const nextButton = await waitForNextButton(driver);
+    await nextButton.click();
+    await sleep(2000);
+
+    await clickCreateWorkspaceButton(driver, webview, { parentDir: tempDir, wsName });
+
+    const entry = buildManifestEntry('Codeful + Stateful', tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'codeful',
+      wfType: 'Stateful',
+    });
+    await waitForManifestShape(entry);
+
+    deepVerifyWorkspace(tempDir, {
+      wsName,
+      appName,
+      wfName,
+      appType: 'codeful',
+      wfType: 'Stateful',
+    });
+
+    appendToWorkspaceManifest(entry);
+
+    await captureScreenshot(driver, 'fixtures-codeful-passed');
+    console.log('[fixtures:codeful] PASSED');
   });
 });

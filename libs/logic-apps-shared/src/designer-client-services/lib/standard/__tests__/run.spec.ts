@@ -29,6 +29,79 @@ describe('StandardRunService', () => {
     InitLoggerService([{ log: vi.fn() } as any]);
   });
 
+  describe('startTrigger', () => {
+    it('encodes workflow and trigger names and passes the API version exactly once for local calls', async () => {
+      const localService = new StandardRunService({
+        ...mockOptions,
+        baseUrl: 'http://localhost:7071/runtime/webhooks/workflow/api/management',
+        workflowName: 'workflow/name',
+      });
+      vi.mocked(mockHttpClient.post).mockResolvedValue({});
+
+      await localService.startTrigger('manual trigger/with spaces');
+
+      expect(mockHttpClient.post).toHaveBeenCalledWith({
+        uri: 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/workflow%2Fname/triggers/manual%20trigger%2Fwith%20spaces/run',
+        noAuth: true,
+        returnHeaders: true,
+        headers: undefined,
+        queryParameters: { 'api-version': mockOptions.apiVersion },
+        content: undefined,
+      });
+      const request = vi.mocked(mockHttpClient.post).mock.calls[0][0];
+      expect(`${request.uri}?api-version=${request.queryParameters?.['api-version']}`.match(/api-version/g)).toHaveLength(1);
+    });
+
+    it('uses ARM authentication for management calls', async () => {
+      vi.mocked(mockHttpClient.post).mockResolvedValue({});
+
+      await runService.startTrigger('manual');
+
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        expect.objectContaining({
+          noAuth: false,
+          queryParameters: { 'api-version': mockOptions.apiVersion },
+        })
+      );
+    });
+
+    it('accepts an empty acknowledgment and extracts run and tracking IDs from response headers', async () => {
+      vi.mocked(mockHttpClient.post).mockResolvedValue({
+        responseHeaders: {
+          'X-MS-WORKFLOW-RUN-ID': 'run-123',
+          'x-ms-client-tracking-id': 'tracking-456',
+        },
+      });
+
+      await expect(runService.startTrigger('manual')).resolves.toEqual({
+        responseHeaders: {
+          'X-MS-WORKFLOW-RUN-ID': 'run-123',
+          'x-ms-client-tracking-id': 'tracking-456',
+        },
+        runId: 'run-123',
+        trackingId: 'tracking-456',
+      });
+    });
+
+    it('returns an empty result when a 202 acknowledgment has no body or headers', async () => {
+      vi.mocked(mockHttpClient.post).mockResolvedValue(undefined);
+
+      await expect(runService.startTrigger('manual')).resolves.toEqual({
+        responseHeaders: undefined,
+        runId: undefined,
+        trackingId: undefined,
+      });
+    });
+
+    it('surfaces structured service errors', async () => {
+      vi.mocked(mockHttpClient.post).mockRejectedValue({
+        error: { message: 'Trigger could not be started' },
+      });
+
+      await expect(runService.startTrigger('manual')).rejects.toThrow('Trigger could not be started');
+    });
+  });
+
   describe('getScopeRepetitions', () => {
     const mockAction = {
       nodeId: 'testNode',

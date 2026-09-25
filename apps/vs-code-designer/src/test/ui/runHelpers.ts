@@ -27,7 +27,17 @@ import * as http from 'http';
 import * as https from 'https';
 import * as os from 'os';
 import * as path from 'path';
-import { type Workbench, WebView, By, type WebDriver, VSBrowser, Key, EditorView, BottomBarPanel } from 'vscode-extension-tester';
+import {
+  type Workbench,
+  WebView,
+  By,
+  type WebDriver,
+  type WebElement,
+  VSBrowser,
+  Key,
+  EditorView,
+  BottomBarPanel,
+} from 'vscode-extension-tester';
 import {
   sleep,
   captureScreenshot,
@@ -911,6 +921,76 @@ export async function waitForWorkflowsRegistered(
   return false;
 }
 
+/**
+ * Wait for the runtime workflow list to match the expected source-derived names
+ * exactly, with every entry healthy and no duplicate runtime registrations.
+ *
+ * This is stricter than {@link waitForWorkflowsRegistered}: project overview
+ * coverage must reject stale workflows from a previous host, missing generated
+ * codeful workflows, and duplicate registrations that a per-name probe would
+ * otherwise overlook.
+ */
+export async function waitForExactHealthyRuntimeWorkflows(
+  driver: WebDriver,
+  expectedNames: string[],
+  opts: { timeoutMs?: number; intervalMs?: number } = {}
+): Promise<boolean> {
+  const timeoutMs = opts.timeoutMs ?? 240_000;
+  const intervalMs = opts.intervalMs ?? 2_000;
+  const probeUrl = 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows';
+  const expected = [...expectedNames].sort((left, right) => left.localeCompare(right));
+  const deadline = Date.now() + timeoutMs;
+  const startedAt = Date.now();
+  let lastLog = 0;
+  let lastStatus = 0;
+  let lastBody = '';
+  let lastNames: string[] = [];
+  let lastHealth: Array<{ name: string; state: string }> = [];
+
+  while (Date.now() < deadline) {
+    const response = await httpRequestJson({ url: probeUrl, method: 'GET' });
+    lastStatus = response.status;
+    lastBody = response.body;
+    if (response.status === 200) {
+      try {
+        const parsed = JSON.parse(response.body);
+        const workflows = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : [];
+        lastNames = workflows.map((workflow: any) => String(workflow?.name ?? '')).filter(Boolean);
+        lastHealth = workflows.map((workflow: any) => ({
+          name: String(workflow?.name ?? ''),
+          state: String(workflow?.health?.state ?? '(missing)'),
+        }));
+        const sortedNames = [...lastNames].sort((left, right) => left.localeCompare(right));
+        const exactNames = JSON.stringify(sortedNames) === JSON.stringify(expected);
+        const uniqueNames = new Set(lastNames.map((name) => name.toLowerCase())).size === lastNames.length;
+        const allHealthy = lastHealth.length === lastNames.length && lastHealth.every((workflow) => workflow.state === 'Healthy');
+        if (exactNames && uniqueNames && allHealthy) {
+          console.log(`[workflows] Exact healthy runtime snapshot ready (${Date.now() - startedAt}ms): ${JSON.stringify(lastHealth)}`);
+          return true;
+        }
+      } catch {
+        lastNames = [];
+        lastHealth = [];
+      }
+    }
+
+    const now = Date.now();
+    if (now - lastLog >= 10_000) {
+      console.log(
+        `[workflows] Waiting for exact healthy runtime snapshot (${now - startedAt}ms, status=${lastStatus}, expected=${JSON.stringify(expected)}, names=${JSON.stringify(lastNames)}, health=${JSON.stringify(lastHealth)})`
+      );
+      lastLog = now;
+    }
+    await sleep(intervalMs);
+  }
+
+  await captureScreenshot(driver, 'waitForExactHealthyRuntimeWorkflows-timeout');
+  console.log(
+    `[workflows] Exact runtime snapshot mismatch after ${timeoutMs}ms: status=${lastStatus}, expected=${JSON.stringify(expected)}, names=${JSON.stringify(lastNames)}, health=${JSON.stringify(lastHealth)}, body=${lastBody.slice(0, 2000) || '(empty)'}`
+  );
+  return false;
+}
+
 // ---------------------------------------------------------------------------
 // listCallbackUrl probe — gates the overview "Run trigger" enable state
 // ---------------------------------------------------------------------------
@@ -967,6 +1047,54 @@ function httpPostJson(url: string, body: unknown, timeoutMs = 60_000): Promise<{
   });
 }
 
+export interface PendingWorkflowCallback {
+  abort(): void;
+  response: Promise<{ status: number; body: string }>;
+}
+
+export interface WorkflowRunSnapshot {
+  id: string;
+  identifier: string;
+  status: string;
+}
+
+function startHttpPostJson(url: string, body: unknown, timeoutMs: number): PendingWorkflowCallback {
+  const payload = JSON.stringify(body ?? {});
+  const client = url.startsWith('https:') ? https : http;
+  let request: http.ClientRequest | undefined;
+  const response = new Promise<{ status: number; body: string }>((resolve) => {
+    request = client.request(
+      url,
+      {
+        method: 'POST',
+        timeout: timeoutMs,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer) => chunks.push(chunk));
+        res.on('end', () => resolve({ status: res.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }));
+        res.on('error', (error) => resolve({ status: 0, body: error.message }));
+      }
+    );
+    request.on('error', (error) => resolve({ status: 0, body: error.message }));
+    request.on('timeout', () => {
+      request?.destroy();
+      resolve({ status: 0, body: `timeout after ${timeoutMs}ms` });
+    });
+    request.write(payload);
+    request.end();
+  });
+
+  return {
+    abort: () => request?.destroy(),
+    response,
+  };
+}
+
 async function getWorkflowCallbackUrl(workflowName: string, timeoutMs = 180_000): Promise<string | undefined> {
   const apiVersion = '2019-10-01-edge-preview';
   const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
@@ -1020,6 +1148,128 @@ async function getWorkflowCallbackUrl(workflowName: string, timeoutMs = 180_000)
     `[workflowCallback] Callback URL not available for workflow="${workflowName}" within ${timeoutMs}ms (lastStatus=${lastStatus}, lastBody=${lastBody.slice(0, 500)})`
   );
   return undefined;
+}
+
+export async function startWorkflowCallback(
+  driver: WebDriver,
+  opts: { workflowName: string; body?: unknown; timeoutMs?: number }
+): Promise<PendingWorkflowCallback | undefined> {
+  const hostReady = await waitForRuntimeReady(driver, { requireHostRunning: true, timeoutMs: 180_000 });
+  if (!hostReady) {
+    await captureScreenshot(driver, 'startWorkflowCallback-runtime-not-ready');
+    return undefined;
+  }
+  const workflowsReady = await waitForWorkflowsRegistered(driver, { workflowName: opts.workflowName, timeoutMs: 240_000 });
+  if (!workflowsReady) {
+    await captureScreenshot(driver, 'startWorkflowCallback-workflow-not-ready');
+    return undefined;
+  }
+  const callbackUrl = await getWorkflowCallbackUrl(opts.workflowName, opts.timeoutMs ?? 180_000);
+  if (!callbackUrl) {
+    await captureScreenshot(driver, 'startWorkflowCallback-no-callback-url');
+    return undefined;
+  }
+
+  console.log(`[workflowCallback] Starting non-blocking POST workflow="${opts.workflowName}"`);
+  return startHttpPostJson(callbackUrl, opts.body ?? {}, opts.timeoutMs ?? 600_000);
+}
+
+function parseWorkflowRuns(body: string, workflowName: string): WorkflowRunSnapshot[] {
+  const parsed = JSON.parse(body);
+  const runs = Array.isArray(parsed?.value) ? parsed.value : Array.isArray(parsed) ? parsed : [];
+  return runs.flatMap((run: any) => {
+    const identifier = typeof run?.name === 'string' ? run.name : '';
+    const id =
+      typeof run?.id === 'string' && run.id.length > 0
+        ? run.id
+        : identifier
+          ? `/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(identifier)}`
+          : '';
+    const status = typeof run?.properties?.status === 'string' ? run.properties.status : '';
+    return id && identifier ? [{ id, identifier, status }] : [];
+  });
+}
+
+export async function getWorkflowRuns(workflowName: string): Promise<WorkflowRunSnapshot[]> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  const response = await httpRequestJson(
+    {
+      url: `${managementBase}/workflows/${encodeURIComponent(workflowName)}/runs?api-version=${apiVersion}`,
+      method: 'GET',
+    },
+    5_000
+  );
+  if (response.status !== 200) {
+    return [];
+  }
+  try {
+    return parseWorkflowRuns(response.body, workflowName);
+  } catch {
+    return [];
+  }
+}
+
+export async function waitForNewWorkflowRun(
+  workflowName: string,
+  existingRunIds: ReadonlySet<string>,
+  targetStatus = 'Running',
+  timeoutMs = 120_000
+): Promise<WorkflowRunSnapshot | undefined> {
+  const deadline = Date.now() + timeoutMs;
+  let lastRuns: WorkflowRunSnapshot[] = [];
+  while (Date.now() < deadline) {
+    lastRuns = await getWorkflowRuns(workflowName);
+    const run = lastRuns.find((candidate) => !existingRunIds.has(candidate.id) && candidate.status === targetStatus);
+    if (run) {
+      console.log(`[workflowRun] Captured exact run id="${run.id}" identifier="${run.identifier}" status="${run.status}"`);
+      return run;
+    }
+    await sleep(500);
+  }
+  console.log(
+    `[workflowRun] No new ${targetStatus} run for workflow="${workflowName}" within ${timeoutMs}ms; runs=${JSON.stringify(lastRuns)}`
+  );
+  return undefined;
+}
+
+export async function waitForWorkflowRunStatus(
+  workflowName: string,
+  run: Pick<WorkflowRunSnapshot, 'id' | 'identifier'>,
+  targetStatus: string,
+  timeoutMs = 120_000
+): Promise<boolean> {
+  const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
+  const apiVersion = '2019-10-01-edge-preview';
+  const url = `${managementBase}/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(run.identifier)}?api-version=${apiVersion}`;
+  const deadline = Date.now() + timeoutMs;
+  let lastStatus = '';
+  let lastBody = '';
+  while (Date.now() < deadline) {
+    const response = await httpRequestJson({ url, method: 'GET' }, 5_000);
+    lastBody = response.body;
+    if (response.status === 200) {
+      try {
+        const parsed = JSON.parse(response.body);
+        const exactId = typeof parsed?.id === 'string' ? parsed.id : '';
+        const exactIdentifier = typeof parsed?.name === 'string' ? parsed.name : '';
+        if ((exactId === run.id || exactIdentifier === run.identifier) && typeof parsed?.properties?.status === 'string') {
+          lastStatus = parsed.properties.status;
+          if (lastStatus === targetStatus) {
+            console.log(`[workflowRun] Exact run id="${run.id}" reached ${targetStatus}`);
+            return true;
+          }
+        }
+      } catch {
+        /* keep polling */
+      }
+    }
+    await sleep(500);
+  }
+  console.log(
+    `[workflowRun] Exact run id="${run.id}" did not reach ${targetStatus} within ${timeoutMs}ms (lastStatus=${lastStatus}, body=${lastBody.slice(0, 1000)})`
+  );
+  return false;
 }
 
 export async function invokeWorkflowCallback(
@@ -1267,6 +1517,317 @@ export async function prewarmFunctionsHost(driver: WebDriver, opts?: { timeoutMs
 // ===========================================================================
 // Overview helpers
 // ===========================================================================
+
+/**
+ * Switch to the currently visible VS Code webview using raw Selenium frame
+ * selection. This is intentionally marker-driven: ExTester's WebView helper
+ * selects the first iframe in DOM order, which can be a retained but inactive
+ * project/workflow/monitoring panel.
+ */
+export async function switchToActiveWebviewFrame(
+  driver: WebDriver,
+  opts: { markerSelectors?: string[]; markerText?: string; timeoutMs?: number; description?: string } = {}
+): Promise<void> {
+  const timeoutMs = opts.timeoutMs ?? 90_000;
+  const markerSelectors = opts.markerSelectors ?? [];
+  const markerText = opts.markerText;
+  const description = opts.description ?? 'active webview';
+  const deadline = Date.now() + timeoutMs;
+  let lastFrameCount = 0;
+  let lastBody = '';
+
+  while (Date.now() < deadline) {
+    await driver
+      .switchTo()
+      .defaultContent()
+      .catch(() => undefined);
+    const frames = await driver.findElements(By.css('iframe.webview.ready, iframe.webview'));
+    lastFrameCount = frames.length;
+
+    for (let index = frames.length - 1; index >= 0; index--) {
+      let frame: WebElement | undefined;
+      try {
+        const candidate = frames[index];
+        const rect = await candidate.getRect();
+        if (!(await candidate.isDisplayed()) || rect.width < 100 || rect.height < 100) {
+          continue;
+        }
+        frame = candidate;
+        await driver.switchTo().frame(frame);
+        const innerFrames = await driver.findElements(By.css('#active-frame'));
+        if (innerFrames.length > 0) {
+          await driver.switchTo().frame(innerFrames[0]);
+        }
+
+        const markerFound = await driver.executeScript<boolean>(
+          `
+          const selectors = arguments[0];
+          const markerText = arguments[1];
+          const selectorMatch = selectors.length === 0 || selectors.some((selector) => document.querySelector(selector));
+          const textMatch = !markerText || (document.body?.textContent || '').includes(markerText);
+          return Boolean(selectorMatch && textMatch);
+        `,
+          markerSelectors,
+          markerText
+        );
+        if (markerFound) {
+          console.log(`[webview] Entered ${description} (visible iframe ${index + 1}/${frames.length})`);
+          return;
+        }
+        lastBody = await driver.executeScript<string>('return (document.body?.textContent || "").slice(0, 500);').catch(() => '');
+      } catch {
+        /* stale or not-yet-mounted frame; retry */
+      }
+      await driver
+        .switchTo()
+        .defaultContent()
+        .catch(() => undefined);
+    }
+
+    await sleep(500);
+  }
+
+  await driver
+    .switchTo()
+    .defaultContent()
+    .catch(() => undefined);
+  await captureScreenshot(driver, 'switchToActiveWebviewFrame-timeout');
+  throw new Error(
+    `Timed out entering ${description} after ${timeoutMs}ms (frames=${lastFrameCount}, markerText=${markerText ?? '(none)'}, lastBody=${lastBody})`
+  );
+}
+
+/**
+ * Open the unified project overview from the Logic App project-root Explorer
+ * context menu. Returns whether the startup progress notification was observed
+ * before the project overview webview appeared.
+ */
+export async function openProjectOverviewFromRoot(
+  workbench: Workbench,
+  driver: WebDriver,
+  projectRootName: string,
+  timeoutMs = 300_000
+): Promise<{ progressSeen: boolean }> {
+  await driver
+    .switchTo()
+    .defaultContent()
+    .catch(() => undefined);
+  await new EditorView().closeAllEditors().catch(() => undefined);
+  await clearBlockingUI(driver);
+  await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('e').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+  await workbench.executeCommand('workbench.files.action.refreshFilesExplorer').catch(() => undefined);
+
+  const findProjectRootRow = async (): Promise<WebElement | undefined> => {
+    const rows = await driver.findElements(By.css('.explorer-viewlet .monaco-list-row, .explorer-folders-view .monaco-list-row'));
+    for (const row of rows) {
+      try {
+        const labels = await row.findElements(By.css('.monaco-icon-label .label-name, .label-name'));
+        for (const label of labels) {
+          if ((await label.getText()).trim() === projectRootName) {
+            return row;
+          }
+        }
+      } catch {
+        /* stale row */
+      }
+    }
+    return undefined;
+  };
+
+  const rootDeadline = Date.now() + 30_000;
+  let rootRow: WebElement | undefined;
+  while (Date.now() < rootDeadline && !rootRow) {
+    rootRow = await findProjectRootRow();
+    if (!rootRow) {
+      await sleep(500);
+    }
+  }
+  if (!rootRow) {
+    await captureScreenshot(driver, 'projectOverview-project-root-missing');
+    throw new Error(`Project root "${projectRootName}" was not found in the Explorer`);
+  }
+
+  const menuDeadline = Date.now() + 120_000;
+  let selected = false;
+  let lastMenuLabels: string[] = [];
+  while (Date.now() < menuDeadline && !selected) {
+    await driver
+      .actions()
+      .sendKeys(Key.ESCAPE)
+      .perform()
+      .catch(() => undefined);
+    await workbench.executeCommand('workbench.files.action.refreshFilesExplorer').catch(() => undefined);
+    rootRow = await findProjectRootRow();
+    if (!rootRow) {
+      await sleep(500);
+      continue;
+    }
+    await driver.actions().contextClick(rootRow).perform();
+    await sleep(500);
+
+    const menuItems = await driver.findElements(By.css('.context-view .action-item, .monaco-menu .action-item'));
+    lastMenuLabels = [];
+    for (const menuItem of menuItems) {
+      try {
+        const text = (await menuItem.getText()).trim();
+        if (text) {
+          lastMenuLabels.push(text);
+        }
+        if (text === 'Project overview') {
+          await driver.actions().move({ origin: menuItem }).click().perform();
+          selected = true;
+          break;
+        }
+      } catch {
+        /* stale menu item */
+      }
+    }
+    if (!selected) {
+      console.log(`[projectOverview] Waiting for project context activation; menu labels: ${JSON.stringify(lastMenuLabels)}`);
+      await driver
+        .actions()
+        .sendKeys(Key.ESCAPE)
+        .perform()
+        .catch(() => undefined);
+      await sleep(2_000);
+    }
+  }
+  if (!selected) {
+    await captureScreenshot(driver, 'projectOverview-context-menu-missing');
+    throw new Error(
+      `Project overview was not present in the project-root context menu after 120000ms. Last menu labels: ${JSON.stringify(lastMenuLabels)}`
+    );
+  }
+
+  const deadline = Date.now() + timeoutMs;
+  const progressDeadline = Date.now() + Math.min(timeoutMs, 30_000);
+  let progressSeen = false;
+  let webviewSeen = false;
+  while (Date.now() < deadline) {
+    await driver
+      .switchTo()
+      .defaultContent()
+      .catch(() => undefined);
+    progressSeen =
+      progressSeen ||
+      (await driver
+        .executeScript<boolean>(`
+          return (document.body?.textContent || '').includes('Starting Logic Apps project runtime');
+        `)
+        .catch(() => false));
+
+    webviewSeen =
+      webviewSeen ||
+      (await driver
+        .executeScript<boolean>(`
+        return Array.from(document.querySelectorAll('iframe.webview.ready, iframe.webview')).some((frame) => {
+          const rect = frame.getBoundingClientRect();
+          const style = getComputedStyle(frame);
+          return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 100 && rect.height > 100;
+        });
+      `)
+        .catch(() => false));
+    if (webviewSeen && (progressSeen || Date.now() >= progressDeadline)) {
+      return { progressSeen };
+    }
+    await sleep(250);
+  }
+
+  await captureScreenshot(driver, 'projectOverview-open-timeout');
+  throw new Error(`Project overview webview did not appear within ${timeoutMs}ms`);
+}
+
+export async function waitForProjectOverviewText(driver: WebDriver, text: string, timeoutMs = 90_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  let lastBody = '';
+  while (Date.now() < deadline) {
+    lastBody = await driver.executeScript<string>('return document.body?.textContent || "";').catch(() => '');
+    if (lastBody.includes(text)) {
+      return;
+    }
+    await sleep(500);
+  }
+  throw new Error(`Project overview did not show "${text}" within ${timeoutMs}ms. Last body: ${lastBody.slice(0, 1000)}`);
+}
+
+export async function getProjectOverviewWorkflowNames(driver: WebDriver): Promise<string[]> {
+  return await driver.executeScript<string[]>(`
+    return Array.from(document.querySelectorAll('table tbody tr'))
+      .map((row) => row.querySelector('th[scope="row"] .fui-TableCell, th[scope="row"] div, th[scope="row"]')?.textContent || '')
+      .map((text) => text.trim())
+      .filter(Boolean);
+  `);
+}
+
+export async function clickProjectOverviewButton(driver: WebDriver, accessibleName: string): Promise<void> {
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    const buttons = await driver.findElements(By.css('button'));
+    for (const button of buttons) {
+      try {
+        const label = (await button.getAttribute('aria-label')) || (await button.getText());
+        if (label.trim() === accessibleName) {
+          await driver.actions().move({ origin: button }).click().perform();
+          return;
+        }
+      } catch {
+        /* stale button */
+      }
+    }
+    await sleep(250);
+  }
+  throw new Error(`Project overview button "${accessibleName}" was not found`);
+}
+
+export async function revealEditorTab(driver: WebDriver, titleFragment: string): Promise<void> {
+  await driver
+    .switchTo()
+    .defaultContent()
+    .catch(() => undefined);
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    const tabs = await driver.findElements(By.css('.tabs-container .tab, .editor-group-container .tab'));
+    for (const tab of tabs) {
+      try {
+        const label = `${await tab.getAttribute('aria-label')} ${await tab.getText()}`;
+        if (label.includes(titleFragment)) {
+          await driver.actions().move({ origin: tab }).click().perform();
+          return;
+        }
+      } catch {
+        /* stale tab */
+      }
+    }
+    await sleep(500);
+  }
+  throw new Error(`Editor tab containing "${titleFragment}" was not found`);
+}
+
+export async function waitForRuntimeStopped(driver: WebDriver, timeoutMs = 90_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  let lastStatus = '';
+  while (Date.now() < deadline) {
+    const status = await new Promise<string>((resolve) => {
+      const request = http.get('http://localhost:7071/admin/host/status', { timeout: 1_000 }, (response) => {
+        const chunks: Uint8Array[] = [];
+        response.on('data', (chunk: Uint8Array) => chunks.push(chunk));
+        response.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+      });
+      request.on('error', () => resolve(''));
+      request.on('timeout', () => {
+        request.destroy();
+        resolve('');
+      });
+    });
+    lastStatus = status;
+    if (!status || !/"state"\s*:\s*"Running"/i.test(status)) {
+      console.log('[debug] Runtime stop settled; :7071 no longer reports Running');
+      return;
+    }
+    await sleep(1_000);
+  }
+  throw new Error(`Runtime still reported Running after ${timeoutMs}ms. Last status: ${lastStatus}`);
+}
 
 /**
  * Open the overview page by right-clicking on workflow.json in the Explorer
@@ -2079,7 +2640,8 @@ async function readRunDetailsActionStatuses(driver: WebDriver): Promise<ActionSt
  * after the UI-scrape poll times out.
  */
 export async function verifyLatestRunActionRunsSucceeded(
-  workflowName: string
+  workflowName: string,
+  allowedSkippedActions: readonly string[] = []
 ): Promise<{ allSucceeded: boolean; details: string } | undefined> {
   const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
   const apiVersion = '2019-10-01-edge-preview';
@@ -2139,7 +2701,9 @@ export async function verifyLatestRunActionRunsSucceeded(
           ? action.properties.status
           : '(missing)',
   }));
-  const nonSucceeded = actionStatuses.filter((action) => action.status !== 'Succeeded');
+  const nonSucceeded = actionStatuses.filter(
+    (action) => action.status !== 'Succeeded' && !(action.status === 'Skipped' && allowedSkippedActions.includes(action.name))
+  );
   const details = `action API run=${latestRunName} actions=${actionStatuses.map((action) => `${action.name}:${action.status}`).join(', ')}`;
   return { allSucceeded: nonSucceeded.length === 0, details };
 }

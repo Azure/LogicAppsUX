@@ -42,8 +42,9 @@ export async function installLSPSDK(): Promise<void> {
         await removeWithRetry(lspServerPath);
       }
 
+      await fse.ensureDir(lspServerPath);
       const zip = new AdmZip(serverZipFile);
-      await runWithLockedFileRetry(() => zip.extractAllTo(targetDirectory, /* overwrite */ true, /* Permissions */ true));
+      await runWithLockedFileRetry(() => zip.extractAllTo(lspServerPath, /* overwrite */ true, /* Permissions */ true));
 
       if (!(await fse.pathExists(lspServerDllPath))) {
         throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);

@@ -31,6 +31,27 @@ describe('WorkflowSlice', () => {
     expect(state.workflowPropertiesList?.map((workflow) => workflow.name)).toEqual(['workflow-a', 'workflow-b']);
   });
 
+  it('preserves trusted project overview origin context', () => {
+    const state = workflowReducer(
+      undefined,
+      initializeWorkflow({
+        apiVersion: '2019-10-01-edge-preview',
+        baseUrl: 'http://localhost:7071/runtime/webhooks/workflow/api/management',
+        projectOverviewOrigin: {
+          projectId: 'project-id' as any,
+        },
+        workflowProperties: {
+          name: 'workflow-a',
+          stateType: 'Stateful',
+        },
+      })
+    );
+
+    expect(state.projectOverviewOrigin).toEqual({
+      projectId: 'project-id',
+    });
+  });
+
   it('updates callback info for only the matching codeful workflow', () => {
     const state = workflowReducer(
       {

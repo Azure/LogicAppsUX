@@ -180,7 +180,9 @@ exports[`lib/overview/overviewproperties > renders the callback URL property 1`]
           >
             Callback URL:
           </span>
-          <div>
+          <div
+            className="___1i2ojaa_0000000 f122n59 f22iagw f4xv25i fy77jfu fwxcy8t"
+          >
             <a
               className="ms-Link root-128"
               href="callbackInfo.value"
