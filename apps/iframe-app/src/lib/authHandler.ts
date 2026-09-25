@@ -3,6 +3,8 @@
  * Handles token refresh, login popup, and logout scenarios when 401 errors occur
  */
 
+import { ALLOWED_LOGIC_APPS_DOMAINS } from './utils/trusted-domains';
+
 // ============================================================================
 // Types & Interfaces
 // ============================================================================
@@ -41,8 +43,8 @@ export interface AuthHandlerConfig {
 export interface LoginPopupOptions {
   /** Base URL of the App Service */
   baseUrl: string;
-  /** Path to the sign-in endpoint */
-  signInEndpoint?: string;
+  /** Path to the sign-in endpoint (e.g. `/.auth/login/aad`) */
+  signInEndpoint: string;
   /** URL to redirect to after successful login (relative to baseUrl) */
   postLoginRedirectUri?: string;
   /** Callback when login completes successfully, receives auth information including username */
@@ -203,6 +205,54 @@ export async function checkAuthStatus(baseUrl: string): Promise<AuthInformation>
 // ============================================================================
 
 /**
+ * Normalizes and validates a login popup URL to prevent client-side open-redirect
+ * (a.k.a. `window.open` hijacking). The URL — which is built from the potentially
+ * user-influenced `baseUrl`/`signInEndpoint` values — is parsed into a `URL` object
+ * and then strictly matched against the current origin or a trusted domain allowlist.
+ *
+ * @returns the canonicalized, safe URL string, or `null` if the URL is untrusted/invalid.
+ */
+function getValidatedLoginUrl(loginUrl: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(loginUrl);
+  } catch {
+    return null;
+  }
+
+  // Reject URLs that embed userinfo (https://user:pass@host/...). Even when the
+  // host is trusted, this pattern is a common URL-spoofing vector and is never
+  // needed for EasyAuth login popups.
+  if (parsed.username !== '' || parsed.password !== '') {
+    return null;
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+  const isLocalhostHost = hostname === 'localhost' || hostname === '127.0.0.1';
+
+  // Only https is allowed, except http on localhost during local development.
+  if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && isLocalhostHost)) {
+    return null;
+  }
+
+  // Same origin as the hosting page is always trusted — EasyAuth lives on the app's own origin.
+  if (parsed.origin === window.location.origin) {
+    return parsed.href;
+  }
+
+  // localhost is only trusted when the app itself is running locally.
+  if (isLocalhostHost) {
+    const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    return isLocalDevelopment ? parsed.href : null;
+  }
+
+  // Otherwise the host must belong to a trusted Microsoft Logic Apps domain.
+  const isTrustedDomain = ALLOWED_LOGIC_APPS_DOMAINS.some((domain) => hostname === domain.slice(1) || hostname.endsWith(domain));
+
+  return isTrustedDomain ? parsed.href : null;
+}
+
+/**
  * Opens login popup for Azure App Service EasyAuth and monitors for completion.
  * Supports dynamic identity providers via the signInEndpoint parameter.
  * The popup is monitored for navigation back to the app origin or closure.
@@ -216,7 +266,15 @@ export function openLoginPopup(options: LoginPopupOptions): void {
     loginUrl += `?post_login_redirect_uri=${encodeURIComponent(postLoginRedirectUri)}`;
   }
 
-  const popup = window.open(loginUrl, 'auth-login', 'width=600,height=700,popup=true');
+  // Validate the (potentially user-influenced) URL before navigating to guard against
+  // client-side open-redirect via crafted base URL or sign-in endpoint values.
+  const validatedLoginUrl = getValidatedLoginUrl(loginUrl);
+  if (!validatedLoginUrl) {
+    onFailed?.(new Error('Blocked login popup with an untrusted or invalid URL.'));
+    return;
+  }
+
+  const popup = window.open(validatedLoginUrl, 'auth-login', 'width=600,height=700,popup=true');
 
   if (!popup) {
     onFailed?.(new Error('Failed to open login popup'));
