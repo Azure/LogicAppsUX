@@ -36,7 +36,7 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILog
     if (wizardContext.useHybrid) {
       const { storageType } = wizardContext;
       const storageAccountCreateOptions: INewStorageAccountDefaults = {
-        kind: StorageAccountKind.Storage,
+        kind: StorageAccountKind.StorageV2,
         performance: StorageAccountPerformance.Standard,
         replication: StorageAccountReplication.LRS,
       };
