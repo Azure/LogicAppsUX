@@ -231,6 +231,14 @@ describe('validateAndInstallBinaries', () => {
     expect(getBundleDependencyFeed).not.toHaveBeenCalled();
   });
 
+  it('rethrows unrelated dependency directory errors', async () => {
+    (ensureRuntimeDependenciesDir as Mock).mockRejectedValueOnce(new Error('Unable to create runtime dependency directory'));
+
+    await expect(validateAndInstallBinaries(context)).rejects.toThrow('Unable to create runtime dependency directory');
+
+    expect(vscode.window.showErrorMessage).not.toHaveBeenCalled();
+  });
+
   it('requires an installed bundle and rethrows dependency validation errors in strict E2E mode', async () => {
     (shouldRequireStrictDependencyValidation as Mock).mockReturnValue(true);
     (ensureExtensionBundleHealthy as Mock).mockRejectedValueOnce(new Error('Bundle sidecar missing'));

@@ -46,6 +46,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         // VS Code's configuration API does not expose its ConfigurationEditingError code through
         // the extension API, so errors that identify User Settings receive a recovery action.
         if (!(error instanceof Error) || !error.message.toLowerCase().includes('user settings')) {
+          // Preserve the normal validation failure path for unrelated configuration errors.
           throw error;
         }
 
