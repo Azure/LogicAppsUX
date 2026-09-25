@@ -20,6 +20,8 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
+export const invalidUserSettingsWriteError = 'Unable to write into user settings';
+
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
   const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
@@ -44,7 +46,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         dependencyPath = await ensureRuntimeDependenciesDir();
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        if (!errorMessage.includes('Unable to write into user settings')) {
+        if (!errorMessage.includes(invalidUserSettingsWriteError)) {
           throw error;
         }
 
