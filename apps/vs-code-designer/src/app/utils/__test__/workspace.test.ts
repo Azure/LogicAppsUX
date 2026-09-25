@@ -182,12 +182,27 @@ describe('getWorkspaceFolder', () => {
     (vscode.workspace as any).workspaceFolders = [workspaceFolderLogic1, workspaceFolderLogic2];
     const tryGetLogicAppProjectRootSpy = vi.fn(async (_context, folder) => folder.uri.fsPath);
     (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
-    const quickPickSpy = vi.spyOn(mockContext.ui, 'showQuickPick').mockResolvedValue({ data: workspaceFolderLogic2 });
+    const quickPickSpy = vi.spyOn(mockContext.ui, 'showQuickPick').mockResolvedValue({ data: workspaceFolderLogicPath2 });
 
     const result = await workspaceUtils.getWorkspaceFolder(mockContext);
 
     expect(quickPickSpy).toHaveBeenCalled();
     expect(result).toBe(workspaceFolderLogic2);
+  });
+
+  it('should return the exact selected workspace folder when workspace folders are nested', async () => {
+    const parentPath = path.join('logic', 'workspace');
+    const childPath = path.join(parentPath, 'LogicApp');
+    const parentFolder = mockWorkspaceFolder(parentPath);
+    const childFolder = mockWorkspaceFolder(childPath);
+
+    (vscode.workspace as any).workspaceFolders = [parentFolder, childFolder];
+    (tryGetLogicAppProjectRoot as Mock).mockImplementation(async (_context, folder) => folder.uri.fsPath);
+    vi.spyOn(mockContext.ui, 'showQuickPick').mockResolvedValue({ data: childPath });
+
+    const result = await workspaceUtils.getWorkspaceFolder(mockContext);
+
+    expect(result).toBe(childFolder);
   });
 
   it('should throw UserCancelledError if user cancels the prompt', async () => {
@@ -200,6 +215,111 @@ describe('getWorkspaceFolder', () => {
     vi.spyOn(mockContext.ui, 'showQuickPick').mockResolvedValue(undefined);
 
     await expect(workspaceUtils.getWorkspaceFolder(mockContext)).rejects.toThrowError();
+  });
+});
+
+describe('getLogicAppProjectRoots', () => {
+  const mockWorkspaceFolder = (fsPath: string): vscode.WorkspaceFolder => ({ uri: { fsPath } }) as vscode.WorkspaceFolder;
+  const mockContext: any = {
+    ui: {
+      showQuickPick: vi.fn(),
+      onDidFinishPrompt: vi.fn(),
+    },
+  };
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    (vscode.workspace as any).workspaceFolders = [];
+    (vscode.workspace as any).workspaceFile = undefined;
+    vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue([]);
+  });
+
+  it('should discover projects from the selected container', async () => {
+    const selectedPath = path.join('selected', 'container');
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockImplementation(async (projectPath) => projectPath === selectedPath);
+
+    const result = await workspaceUtils.getLogicAppProjectRoots(mockContext, vscode.Uri.file(selectedPath));
+
+    expect(result).toEqual([selectedPath]);
+  });
+
+  it('should prompt for a workspace before discovering projects when none is open', async () => {
+    const projectPath = path.join('logic', 'project');
+    const workspaceFolder = mockWorkspaceFolder(projectPath);
+    (promptOpenProjectOrWorkspace as Mock).mockImplementation(() => {
+      (vscode.workspace as any).workspaceFolders = [workspaceFolder];
+    });
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockImplementation(async (candidatePath) => candidatePath === projectPath);
+
+    const result = await workspaceUtils.getLogicAppProjectRoots(mockContext);
+
+    expect(promptOpenProjectOrWorkspace).toHaveBeenCalled();
+    expect(result).toEqual([projectPath]);
+  });
+
+  it('should discover projects from all open workspace folders', async () => {
+    const projectPath1 = path.join('logic', 'project1');
+    const projectPath2 = path.join('logic', 'project2');
+    (vscode.workspace as any).workspaceFolders = [mockWorkspaceFolder(projectPath1), mockWorkspaceFolder(projectPath2)];
+    vi.spyOn(verifyIsProject, 'isLogicAppProject').mockImplementation(
+      async (candidatePath) => candidatePath === projectPath1 || candidatePath === projectPath2
+    );
+
+    const result = await workspaceUtils.getLogicAppProjectRoots(mockContext);
+
+    expect(result).toEqual([projectPath1, projectPath2]);
+  });
+});
+
+describe('selectLogicAppProject', () => {
+  const mockContext: any = {
+    ui: {
+      showQuickPick: vi.fn(),
+    },
+  };
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should return undefined when no projects are available', async () => {
+    const result = await workspaceUtils.selectLogicAppProject(mockContext, [], 'Select project');
+
+    expect(result).toBeUndefined();
+    expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
+  });
+
+  it('should return the only project without prompting', async () => {
+    const result = await workspaceUtils.selectLogicAppProject(mockContext, ['path/one'], 'Select project');
+
+    expect(result).toBe('path/one');
+    expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
+  });
+
+  it('should prompt with full paths when multiple projects are available', async () => {
+    vi.mocked(mockContext.ui.showQuickPick).mockResolvedValue({
+      label: 'Shared',
+      description: 'repo/two/Shared',
+      data: 'repo/two/Shared',
+    });
+
+    const result = await workspaceUtils.selectLogicAppProject(mockContext, ['repo/one/Shared', 'repo/two/Shared'], 'Select project');
+
+    expect(mockContext.ui.showQuickPick).toHaveBeenCalledWith(
+      [
+        { label: 'Shared', description: 'repo/one/Shared', data: 'repo/one/Shared' },
+        { label: 'Shared', description: 'repo/two/Shared', data: 'repo/two/Shared' },
+      ],
+      { placeHolder: 'Select project' }
+    );
+    expect(result).toBe('repo/two/Shared');
+  });
+
+  it('should throw when project selection is cancelled', async () => {
+    vi.mocked(mockContext.ui.showQuickPick).mockResolvedValue(undefined);
+
+    await expect(workspaceUtils.selectLogicAppProject(mockContext, ['path/one', 'path/two'], 'Select project')).rejects.toThrowError();
   });
 });
 
