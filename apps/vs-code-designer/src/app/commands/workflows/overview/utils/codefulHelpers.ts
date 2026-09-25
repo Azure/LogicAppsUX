@@ -302,6 +302,7 @@ export function getCodefulWorkflowHasHttpTrigger(workflowProperties: OverviewWor
   return trigger?.type?.toLowerCase() === 'request' && trigger?.kind?.toLowerCase() === 'http';
 }
 
+// TODO(aeldridge): This should be actual workflow content
 export function getCodefulWorkflowContent(
   workflowData: CodefulWorkflowData,
   triggerName: string | undefined,
