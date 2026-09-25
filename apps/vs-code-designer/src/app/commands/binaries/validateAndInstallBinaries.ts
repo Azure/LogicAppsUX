@@ -20,6 +20,9 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
+// The VS Code extension API does not expose ConfigurationEditingError codes.
+const userSettingsErrorText = 'user settings';
+
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
   const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
@@ -43,16 +46,17 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         dependencyPath = await ensureRuntimeDependenciesDir();
       } catch (error) {
-        // VS Code's configuration API does not expose its ConfigurationEditingError code through
-        // the extension API, so errors that identify User Settings receive a recovery action.
-        if (!(error instanceof Error) || !error.message.toLowerCase().includes('user settings')) {
+        // Errors that identify User Settings receive a recovery action.
+        if (!(error instanceof Error) || !error.message.toLowerCase().includes(userSettingsErrorText)) {
           // Preserve the normal validation failure path for unrelated configuration errors.
+          context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
           throw error;
         }
 
         const errorMessage = error.message;
         context.telemetry.properties.result = 'Failed';
         context.telemetry.properties.errorMessage = errorMessage;
+        context.telemetry.properties.dependencySettingsInitializationError = 'userSettings';
         const openUserSettings = localize('openUserSettings', 'Open User Settings (JSON)');
         const selection = await vscode.window.showErrorMessage(
           localize(

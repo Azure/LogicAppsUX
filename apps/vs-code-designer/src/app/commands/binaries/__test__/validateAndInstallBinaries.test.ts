@@ -222,6 +222,7 @@ describe('validateAndInstallBinaries', () => {
     expect(context.telemetry.properties).toMatchObject({
       result: 'Failed',
       errorMessage: 'Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.',
+      dependencySettingsInitializationError: 'userSettings',
     });
     expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
       'Unable to validate runtime dependencies because User Settings contains errors. Correct the errors and try again.',
@@ -236,6 +237,7 @@ describe('validateAndInstallBinaries', () => {
 
     await expect(validateAndInstallBinaries(context)).rejects.toThrow('Unable to create runtime dependency directory');
 
+    expect(context.telemetry.properties.dependencySettingsInitializationError).toBe('unrecognized');
     expect(vscode.window.showErrorMessage).not.toHaveBeenCalled();
   });
 
