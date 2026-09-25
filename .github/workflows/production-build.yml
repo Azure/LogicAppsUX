@@ -46,18 +46,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Github Action'
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
           fetch-depth: 0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 24
           package-manager-cache: false
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           run_install: |
             - recursive: true
@@ -79,17 +79,17 @@ jobs:
     steps:
       # checkout the repo
       - name: 'Checkout Github Action'
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           fetch-depth: 0
 
       - name: Set up Node.js version 24
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 24
           package-manager-cache: false
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           run_install: |
             - recursive: true
@@ -109,17 +109,17 @@ jobs:
 
       - name: 'Get Previous tag'
         id: previoustag
-        uses: 'WyriHaximus/github-action-get-previous-tag@v2'
+        uses: 'WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de' # v2.0.0
         with:
           fallback: 0.0.0
 
       - name: Archive VSIX
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           path: |
             apps/vs-code-designer/dist/*.vsix
 
-      - uses: ncipollo/release-action@v1
+      - uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           artifacts: 'LICENSE.md,apps/vs-code-designer/dist/*.vsix'
           generateReleaseNotes: true
@@ -134,24 +134,24 @@ jobs:
         id-token: write
     steps:
       - name: 'Checkout Github Action'
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
 
       - name: Azure login
-        uses: azure/login@v3
+        uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
         with:
           client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 24
           package-manager-cache: false
           
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           run_install: |
             - recursive: true
