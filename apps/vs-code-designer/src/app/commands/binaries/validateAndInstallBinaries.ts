@@ -20,8 +20,6 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
-export const invalidUserSettingsWriteError = 'Unable to write into user settings';
-
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
   const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
@@ -46,8 +44,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         dependencyPath = await ensureRuntimeDependenciesDir();
       } catch (error) {
         // VS Code's configuration API does not expose its ConfigurationEditingError code through
-        // the extension API, so its documented error text identifies malformed user settings.
-        if (!(error instanceof Error) || !error.message.includes(invalidUserSettingsWriteError)) {
+        // the extension API, so errors that identify User Settings receive a recovery action.
+        if (!(error instanceof Error) || !error.message.toLowerCase().includes('user settings')) {
           throw error;
         }
 

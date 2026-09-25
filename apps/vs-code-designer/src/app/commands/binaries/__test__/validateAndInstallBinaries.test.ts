@@ -14,7 +14,7 @@ import { runWithTimeout } from '../../../utils/timeout';
 import { validateDotNetIsLatest } from '../../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../../nodeJs/validateNodeJsIsLatest';
-import { invalidUserSettingsWriteError, validateAndInstallBinaries } from '../validateAndInstallBinaries';
+import { validateAndInstallBinaries } from '../validateAndInstallBinaries';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 
 vi.mock('../../../../localize', () => ({
@@ -213,7 +213,7 @@ describe('validateAndInstallBinaries', () => {
   it('opens user settings when invalid configuration blocks dependency validation', async () => {
     const openUserSettings = 'Open User Settings (JSON)';
     (ensureRuntimeDependenciesDir as Mock).mockRejectedValueOnce(
-      new Error(`${invalidUserSettingsWriteError}. Please open the user settings to correct errors/warnings in it and try again.`)
+      new Error('Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.')
     );
     (vscode.window.showErrorMessage as Mock).mockResolvedValueOnce(openUserSettings);
 
@@ -221,7 +221,7 @@ describe('validateAndInstallBinaries', () => {
 
     expect(context.telemetry.properties).toMatchObject({
       result: 'Failed',
-      errorMessage: `${invalidUserSettingsWriteError}. Please open the user settings to correct errors/warnings in it and try again.`,
+      errorMessage: 'Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.',
     });
     expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
       'Unable to validate runtime dependencies because User Settings contains errors. Correct the errors and try again.',
