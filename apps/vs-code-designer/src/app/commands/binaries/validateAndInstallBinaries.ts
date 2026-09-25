@@ -68,7 +68,8 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         if (selection === openUserSettings) {
           await vscode.commands.executeCommand('workbench.action.openSettingsJson');
         }
-        return;
+        context.errorHandling.suppressDisplay = true;
+        throw error;
       }
       const dependencyTimeoutMs = getDependencyTimeout() * 1000;
       context.telemetry.properties.dependencyPath = dependencyPath;

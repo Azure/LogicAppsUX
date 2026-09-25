@@ -217,7 +217,9 @@ describe('validateAndInstallBinaries', () => {
     );
     (vscode.window.showErrorMessage as Mock).mockResolvedValueOnce(openUserSettings);
 
-    await expect(validateAndInstallBinaries(context)).resolves.toBeUndefined();
+    await expect(validateAndInstallBinaries(context)).rejects.toThrow(
+      'Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.'
+    );
 
     expect(context.telemetry.properties).toMatchObject({
       result: 'Failed',
@@ -230,6 +232,7 @@ describe('validateAndInstallBinaries', () => {
     );
     expect(vscode.commands.executeCommand).toHaveBeenCalledWith('workbench.action.openSettingsJson');
     expect(getBundleDependencyFeed).not.toHaveBeenCalled();
+    expect(context.errorHandling.suppressDisplay).toBe(true);
   });
 
   it('rethrows unrelated dependency directory errors', async () => {
