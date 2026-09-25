@@ -49,11 +49,15 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         dependencyPath = await ensureRuntimeDependenciesDir();
       } catch (error) {
+        const recordUnrecognizedSettingsError = (errorMessage: string) => {
+          context.telemetry.properties.result = 'Failed';
+          context.telemetry.properties.errorMessage = errorMessage;
+          context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
+        };
+
         if (!(error instanceof Error)) {
           // Preserve the normal validation failure path for unrelated configuration errors.
-          context.telemetry.properties.result = 'Failed';
-          context.telemetry.properties.errorMessage = String(error);
-          context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
+          recordUnrecognizedSettingsError(String(error));
           throw error;
         }
 
@@ -62,15 +66,16 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         // Errors that identify User Settings receive a recovery action.
         if (errorCode !== invalidConfigurationErrorCode && !errorMessage.toLowerCase().includes(userSettingsErrorText)) {
           // Preserve the normal validation failure path for unrelated configuration errors.
-          context.telemetry.properties.result = 'Failed';
-          context.telemetry.properties.errorMessage = errorMessage;
-          context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
+          recordUnrecognizedSettingsError(errorMessage);
           throw error;
         }
 
         context.telemetry.properties.result = 'Failed';
         context.telemetry.properties.errorMessage = errorMessage;
         context.telemetry.properties.dependencySettingsInitializationError = 'userSettings';
+        if (errorCode === invalidConfigurationErrorCode && !errorMessage.toLowerCase().includes(userSettingsErrorText)) {
+          context.telemetry.properties.dependencySettingsInitializationError = 'userSettingsCodeOnly';
+        }
         const openUserSettings = localize('openUserSettings', 'Open User Settings (JSON)');
         const selection = await vscode.window.showErrorMessage(
           localize(

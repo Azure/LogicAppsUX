@@ -221,7 +221,7 @@ describe('validateAndInstallBinaries', () => {
     expect(context.telemetry.properties).toMatchObject({
       result: 'Failed',
       errorMessage: 'Les paramètres utilisateur contiennent des erreurs.',
-      dependencySettingsInitializationError: 'userSettings',
+      dependencySettingsInitializationError: 'userSettingsCodeOnly',
     });
     expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
       'Unable to validate runtime dependencies because User Settings contains errors. Correct the errors and try again.',
