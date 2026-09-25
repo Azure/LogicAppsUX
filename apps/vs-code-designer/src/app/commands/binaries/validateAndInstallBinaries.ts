@@ -20,8 +20,9 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
-// The VS Code extension API does not expose ConfigurationEditingError codes. Revisit this
-// version-dependent text check if VS Code changes its configuration error wording.
+// ERROR_INVALID_CONFIGURATION from VS Code's internal ConfigurationEditingErrorCode enum.
+// The extension API does not expose that enum, so the localized message remains a fallback.
+const invalidConfigurationErrorCode = 11;
 const userSettingsErrorText = 'user settings';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
@@ -47,8 +48,12 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         dependencyPath = await ensureRuntimeDependenciesDir();
       } catch (error) {
+        const errorCode = error instanceof Error ? (error as Error & { code?: unknown }).code : undefined;
+        const isInvalidUserSettingsError =
+          error instanceof Error &&
+          (errorCode === invalidConfigurationErrorCode || error.message.toLowerCase().includes(userSettingsErrorText));
         // Errors that identify User Settings receive a recovery action.
-        if (!(error instanceof Error) || !error.message.toLowerCase().includes(userSettingsErrorText)) {
+        if (!isInvalidUserSettingsError) {
           // Preserve the normal validation failure path for unrelated configuration errors.
           context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
           throw error;

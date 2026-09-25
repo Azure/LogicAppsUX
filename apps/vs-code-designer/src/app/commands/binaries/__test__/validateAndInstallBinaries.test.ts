@@ -212,18 +212,15 @@ describe('validateAndInstallBinaries', () => {
 
   it('opens user settings when invalid configuration blocks dependency validation', async () => {
     const openUserSettings = 'Open User Settings (JSON)';
-    (ensureRuntimeDependenciesDir as Mock).mockRejectedValueOnce(
-      new Error('Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.')
-    );
+    const invalidConfigurationError = Object.assign(new Error('Les paramètres utilisateur contiennent des erreurs.'), { code: 11 });
+    (ensureRuntimeDependenciesDir as Mock).mockRejectedValueOnce(invalidConfigurationError);
     (vscode.window.showErrorMessage as Mock).mockResolvedValueOnce(openUserSettings);
 
-    await expect(validateAndInstallBinaries(context)).rejects.toThrow(
-      'Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.'
-    );
+    await expect(validateAndInstallBinaries(context)).rejects.toThrow('Les paramètres utilisateur contiennent des erreurs.');
 
     expect(context.telemetry.properties).toMatchObject({
       result: 'Failed',
-      errorMessage: 'Unable to write into user settings. Please open the user settings to correct errors/warnings in it and try again.',
+      errorMessage: 'Les paramètres utilisateur contiennent des erreurs.',
       dependencySettingsInitializationError: 'userSettings',
     });
     expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
