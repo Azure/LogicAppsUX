@@ -49,18 +49,25 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         dependencyPath = await ensureRuntimeDependenciesDir();
       } catch (error) {
-        const errorCode = error instanceof Error ? (error as Error & { code?: unknown }).code : undefined;
-        const isInvalidUserSettingsError =
-          error instanceof Error &&
-          (errorCode === invalidConfigurationErrorCode || error.message.toLowerCase().includes(userSettingsErrorText));
-        // Errors that identify User Settings receive a recovery action.
-        if (!(error instanceof Error) || !isInvalidUserSettingsError) {
+        if (!(error instanceof Error)) {
           // Preserve the normal validation failure path for unrelated configuration errors.
+          context.telemetry.properties.result = 'Failed';
+          context.telemetry.properties.errorMessage = String(error);
           context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
           throw error;
         }
 
         const errorMessage = error.message;
+        const errorCode = (error as Error & { code?: unknown }).code;
+        // Errors that identify User Settings receive a recovery action.
+        if (errorCode !== invalidConfigurationErrorCode && !errorMessage.toLowerCase().includes(userSettingsErrorText)) {
+          // Preserve the normal validation failure path for unrelated configuration errors.
+          context.telemetry.properties.result = 'Failed';
+          context.telemetry.properties.errorMessage = errorMessage;
+          context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
+          throw error;
+        }
+
         context.telemetry.properties.result = 'Failed';
         context.telemetry.properties.errorMessage = errorMessage;
         context.telemetry.properties.dependencySettingsInitializationError = 'userSettings';
