@@ -21,10 +21,9 @@ import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-log
 import * as vscode from 'vscode';
 
 // ERROR_INVALID_CONFIGURATION from VS Code's internal ConfigurationEditingErrorCode enum.
-// Verify this version-dependent value on VS Code upgrades; telemetry distinguishes code-only
-// matches from unrecognized errors so compatibility regressions can be identified.
+// Verify this version-dependent value on VS Code upgrades; telemetry distinguishes recognized
+// from unrecognized errors so compatibility regressions can be identified.
 const invalidConfigurationErrorCode = 11;
-const userSettingsErrorText = 'user settings';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
@@ -64,7 +63,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         const errorMessage = error.message;
         const errorCode = (error as Error & { code?: unknown }).code;
         // Errors that identify User Settings receive a recovery action.
-        if (errorCode !== invalidConfigurationErrorCode && !errorMessage.toLowerCase().includes(userSettingsErrorText)) {
+        if (errorCode !== invalidConfigurationErrorCode) {
           // Rethrow Errors that do not identify User Settings.
           recordUnrecognizedSettingsError(errorMessage);
           throw error;
@@ -73,9 +72,6 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         context.telemetry.properties.result = 'Failed';
         context.telemetry.properties.errorMessage = errorMessage;
         context.telemetry.properties.dependencySettingsInitializationError = 'userSettings';
-        if (errorCode === invalidConfigurationErrorCode && !errorMessage.toLowerCase().includes(userSettingsErrorText)) {
-          context.telemetry.properties.dependencySettingsInitializationError = 'userSettingsCodeOnly';
-        }
         const openUserSettings = localize('openUserSettings', 'Open User Settings (JSON)');
         const selection = await vscode.window.showErrorMessage(
           localize(
