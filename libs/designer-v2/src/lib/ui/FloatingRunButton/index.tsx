@@ -382,6 +382,7 @@ export const FloatingRunButton = ({
   );
 
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [isPayloadButtonActive, setIsPayloadButtonActive] = useState(false);
 
   if (isA2AWorkflow) {
     return (
@@ -403,7 +404,7 @@ export const FloatingRunButton = ({
   if (canBeRunWithPayload) {
     return (
       <div className={styles.container}>
-        <Tooltip withArrow content={tooltipText} relationship="description">
+        <Tooltip withArrow content={isPayloadButtonActive ? strings.RUN_PAYLOAD_TOOLTIP : tooltipText} relationship="description">
           <SplitButton
             {...buttonCommonProps}
             primaryActionButton={{
@@ -415,7 +416,12 @@ export const FloatingRunButton = ({
             }}
             menuButton={{
               icon: runIsLoading && runHasPayload ? <Spinner size="tiny" /> : <RunWithPayloadIcon />,
+              'aria-label': strings.RUN_PAYLOAD_TOOLTIP,
               onClick: () => setPopoverOpen(true),
+              onFocus: () => setIsPayloadButtonActive(true),
+              onBlur: () => setIsPayloadButtonActive(false),
+              onMouseEnter: () => setIsPayloadButtonActive(true),
+              onMouseLeave: () => setIsPayloadButtonActive(false),
               ref: payloadButtonRef,
               disabled: isDisabled || runIsLoading || !canBeRunWithPayload || !triggerId,
             }}
