@@ -21,8 +21,8 @@ import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-log
 import * as vscode from 'vscode';
 
 // ERROR_INVALID_CONFIGURATION from VS Code's internal ConfigurationEditingErrorCode enum.
-// Verify this version-dependent value on VS Code upgrades; the English text fallback is paired
-// with unrecognized-error telemetry so compatibility regressions can be identified.
+// Verify this version-dependent value on VS Code upgrades; telemetry distinguishes code-only
+// matches from unrecognized errors so compatibility regressions can be identified.
 const invalidConfigurationErrorCode = 11;
 const userSettingsErrorText = 'user settings';
 
@@ -56,7 +56,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         };
 
         if (!(error instanceof Error)) {
-          // Preserve the normal validation failure path for unrelated configuration errors.
+          // Rethrow non-Error values through the normal validation failure path.
           recordUnrecognizedSettingsError(String(error));
           throw error;
         }
@@ -65,7 +65,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         const errorCode = (error as Error & { code?: unknown }).code;
         // Errors that identify User Settings receive a recovery action.
         if (errorCode !== invalidConfigurationErrorCode && !errorMessage.toLowerCase().includes(userSettingsErrorText)) {
-          // Preserve the normal validation failure path for unrelated configuration errors.
+          // Rethrow Errors that do not identify User Settings.
           recordUnrecognizedSettingsError(errorMessage);
           throw error;
         }
