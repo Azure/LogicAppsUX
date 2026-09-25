@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { defaultDependencyPathValue, lspDirectory } from '../../../constants';
+import { codefulSdkPackageFileName, defaultDependencyPathValue, lspDirectory } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { ensureRuntimeDependenciesDir } from '../binaries';
 import { formatLockedFileError, installLSPSDK } from '../languageServerProtocol';
@@ -62,7 +62,7 @@ describe('installLSPSDK', () => {
   const lspHashMarker = path.join(targetDirectory, '.lspserver-hash');
   const sdkDirectoryPath = path.join(targetDirectory, lspDirectory);
   const sdkHashMarker = path.join(targetDirectory, '.lspsdk-hash');
-  const sdkPackageName = 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg';
+  const sdkPackageName = codefulSdkPackageFileName;
   const sdkDestinationFile = path.join(sdkDirectoryPath, sdkPackageName);
   const legacyLspVersionMarker = path.join(targetDirectory, '.lspserver-version');
   const legacyLspPathMarker = path.join(targetDirectory, '.lspserver-path');
