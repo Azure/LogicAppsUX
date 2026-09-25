@@ -45,11 +45,13 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       try {
         dependencyPath = await ensureRuntimeDependenciesDir();
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        if (!errorMessage.includes(invalidUserSettingsWriteError)) {
+        // VS Code's configuration API does not expose its ConfigurationEditingError code through
+        // the extension API, so its documented error text identifies malformed user settings.
+        if (!(error instanceof Error) || !error.message.includes(invalidUserSettingsWriteError)) {
           throw error;
         }
 
+        const errorMessage = error.message;
         context.telemetry.properties.result = 'Failed';
         context.telemetry.properties.errorMessage = errorMessage;
         const openUserSettings = localize('openUserSettings', 'Open User Settings (JSON)');
