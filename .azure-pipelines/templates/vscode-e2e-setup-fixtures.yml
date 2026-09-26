@@ -62,7 +62,7 @@ jobs:
             node apps/vs-code-designer/out/test/run-e2e.js
         displayName: Run fixtures scenario (p41a-fixtures)
         env:
-          LA_E2E_SCENARIO: p41a-fixtures
+          LA_E2E_SCENARIO: p41a-dependency-validation,p41a-fixtures
           LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
           LA_E2E_SCENARIO_RETRIES: '1'
           NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096

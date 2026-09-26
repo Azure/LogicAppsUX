@@ -1748,6 +1748,20 @@ async function main(): Promise<void> {
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
 
+    // Phase 4.1a dependency validation runs the product dependency command in a
+    // disposable VS Code session. The command can leave the workbench QuickInput
+    // focus state unhealthy on hosted Linux, so the actual workspace fixture
+    // wizard runs in the next scenario's fresh session.
+    {
+      id: 'p41a-dependency-validation',
+      testFile: phase1aFiles[0],
+      workspaceSpec: 'self-creates',
+      settings: { validateDependencies: true, autoStartDesignTime: true },
+      env: {
+        LA_E2E_VALIDATE_DEPENDENCIES_ONLY: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+      },
+    },
     // Phase 4.1a (NEW Step 2) — fast fixtures-only wizard run. Writes the manifest
     // consumed by Phase 4.2 / 4.3 shape-specific scenarios. This is the critical
     // path; the full 12-shape behavior validation runs independently as p41b.
@@ -1756,6 +1770,10 @@ async function main(): Promise<void> {
       testFile: phase1aFiles[0],
       workspaceSpec: 'self-creates',
       settings: { validateDependencies: true, autoStartDesignTime: true },
+      env: {
+        LA_E2E_VALIDATE_DEPENDENCIES_ONLY: '0',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '0',
+      },
     },
     // Phase 4.1b (NEW Step 2) — full 12-shape wizard validation + 75 form/validation
     // assertions. Runs on its own parallel shard OFF the critical path. No downstream
@@ -3110,7 +3128,10 @@ namespace ${namespaceName}
               // prepareFreshSession, so the test never sees a previous attempt's debugStarted.
               configureCodefulRecorderEnvironment();
             }
-            if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+            if (
+              (id === 'p41a-fixtures' || id === 'p41a-dependency-validation') &&
+              process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1'
+            ) {
               pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
               pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
               ensureLogicAppsExtensionBundleForStrictValidation(`prelaunch:${id}`);
