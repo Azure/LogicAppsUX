@@ -376,7 +376,7 @@ function installExtensionWithCli(cliBase: string, dep: string, label: string = d
       if (error) {
         const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
         console.warn(`  ⚠ ${label} failed (${elapsed}s): ${getErrorMessage(error)}${output ? `\n${output}` : ''}`);
-        resolve({ dep, success: false });
+        resolve(installExtensionFromVsixFallback(cliBase, dep, label));
       } else {
         console.log(`  ✓ ${label} installed (${elapsed}s)`);
         resolve({ dep, success: true });
@@ -412,6 +412,59 @@ function getVsCodeCliProxyOptions(): { args: string; env: NodeJS.ProcessEnv } {
       ...(proxyBypassList ? { LA_E2E_PROXY_BYPASS_LIST: proxyBypassList } : {}),
     },
   };
+}
+
+function installExtensionFromVsixFallback(cliBase: string, dep: string, label: string): InstallResult {
+  try {
+    const vsixPath = downloadExtensionVsix(dep);
+    const command = `${cliBase} --force --install-extension ${quoteShellArgument(vsixPath)} --extensions-dir="${extDir}"`;
+    execSync(command, { timeout: 300000, env: process.env, stdio: 'pipe' });
+    console.log(`  ✓ ${label} installed from downloaded VSIX`);
+    return { dep, success: true };
+  } catch (error) {
+    console.warn(`  ⚠ ${label} VSIX fallback failed: ${getErrorMessage(error)}`);
+    return { dep, success: false };
+  }
+}
+
+function downloadExtensionVsix(dep: string): string {
+  const [publisher, ...extensionParts] = dep.split('.');
+  const extension = extensionParts.join('.');
+  if (!publisher || !extension) {
+    throw new Error(`Cannot derive Marketplace VSIX URL for extension dependency '${dep}'.`);
+  }
+
+  const vsixDir = path.join(os.tmpdir(), 'test-resources', 'vsix-cache');
+  fs.mkdirSync(vsixDir, { recursive: true });
+  const vsixPath = path.join(vsixDir, `${dep}.vsix`);
+  if (fs.existsSync(vsixPath) && fs.statSync(vsixPath).size > 0) {
+    return vsixPath;
+  }
+
+  const url = `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/latest/vspackage`;
+  execFileSync(
+    'curl',
+    [
+      '--fail',
+      '--location',
+      '--retry',
+      '5',
+      '--retry-delay',
+      '5',
+      '--retry-all-errors',
+      '--connect-timeout',
+      '30',
+      '--output',
+      vsixPath,
+      url,
+    ],
+    { timeout: 300000, stdio: 'pipe' }
+  );
+  return vsixPath;
+}
+
+function quoteShellArgument(value: string): string {
+  return `"${value.replace(/(["\\$`])/g, '\\$1')}"`;
 }
 
 function findNestedWindowsCliPath(codeFolder: string): string | undefined {
