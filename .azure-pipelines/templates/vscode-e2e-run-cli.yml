@@ -81,7 +81,8 @@ jobs:
           set -euo pipefail
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
-          node apps/vs-code-designer/scripts/run-e2e-cli.js --label ${{ parameters.label }}
+          cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
+          node scripts/run-e2e-cli.js --label ${{ parameters.label }}
         displayName: Run vscode-test CLI (${{ parameters.label }})
         env:
           DISPLAY: :99
