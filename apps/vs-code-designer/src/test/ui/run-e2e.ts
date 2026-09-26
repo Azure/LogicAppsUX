@@ -520,6 +520,22 @@ function installExtensionFromVsixFallback(cliBase: string, dep: string, label: s
   }
 }
 
+function isZipFile(filePath: string): boolean {
+  if (!fs.existsSync(filePath) || fs.statSync(filePath).size < 4) {
+    return false;
+  }
+
+  const header = Buffer.alloc(4);
+  const fd = fs.openSync(filePath, 'r');
+  try {
+    fs.readSync(fd, header, 0, header.length, 0);
+  } finally {
+    fs.closeSync(fd);
+  }
+
+  return header[0] === 0x50 && header[1] === 0x4b;
+}
+
 function downloadExtensionVsix(dep: string): string {
   const [publisher, ...extensionParts] = dep.split('.');
   const extension = extensionParts.join('.');
@@ -530,8 +546,11 @@ function downloadExtensionVsix(dep: string): string {
   const vsixDir = path.join(os.tmpdir(), 'test-resources', 'vsix-cache');
   fs.mkdirSync(vsixDir, { recursive: true });
   const vsixPath = path.join(vsixDir, `${dep}.vsix`);
-  if (fs.existsSync(vsixPath) && fs.statSync(vsixPath).size > 0) {
+  if (isZipFile(vsixPath)) {
     return vsixPath;
+  }
+  if (fs.existsSync(vsixPath)) {
+    fs.unlinkSync(vsixPath);
   }
 
   const url = `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/latest/vspackage`;
@@ -540,6 +559,7 @@ function downloadExtensionVsix(dep: string): string {
     [
       '--fail',
       '--location',
+      '--compressed',
       '--retry',
       '5',
       '--retry-delay',
@@ -553,6 +573,9 @@ function downloadExtensionVsix(dep: string): string {
     ],
     { timeout: 300000, stdio: 'pipe' }
   );
+  if (!isZipFile(vsixPath)) {
+    throw new Error(`Downloaded Marketplace package for '${dep}' is not a VSIX zip at ${vsixPath}.`);
+  }
   return vsixPath;
 }
 
