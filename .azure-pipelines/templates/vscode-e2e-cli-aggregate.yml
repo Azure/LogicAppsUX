@@ -1,0 +1,57 @@
+parameters:
+  - name: resultsDir
+    type: string
+    default: apps/vs-code-designer/.vscode-test/results/aggregate-input
+  - name: outDir
+    type: string
+    default: apps/vs-code-designer/.vscode-test/results/aggregate
+  - name: artifactStagingPath
+    type: string
+    default: '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/aggregate'
+
+steps:
+  - pwsh: |
+      $resultsDir = '${{ parameters.resultsDir }}'
+      $outDir = '${{ parameters.outDir }}'
+      New-Item -ItemType Directory -Force -Path $resultsDir, $outDir | Out-Null
+
+      node apps/vs-code-designer/scripts/summarize-e2e-cli-results.js `
+        --aggregate `
+        --results-dir $resultsDir `
+        --out-dir $outDir
+
+      $dashboard = Join-Path $outDir 'vscode-e2e-cli-create-workspace-dashboard.md'
+      if (Test-Path $dashboard) {
+        Write-Host "##vso[task.uploadsummary]$dashboard"
+      }
+
+      $aggregatePath = Join-Path $outDir 'vscode-e2e-cli-create-workspace-results.json'
+      $aggregate = Get-Content $aggregatePath -Raw | ConvertFrom-Json
+      if ($aggregate.total -eq 0) {
+        Write-Error 'No @vscode/test-cli result files were available to aggregate.'
+        exit 1
+      }
+      if ($aggregate.failedLabels.Count -gt 0) {
+        Write-Error "Failed @vscode/test-cli labels: $($aggregate.failedLabels -join ', ')"
+        exit 1
+      }
+    displayName: Summarize aggregate @vscode/test-cli Create Workspace results
+
+  - task: PublishTestResults@2
+    displayName: Publish aggregate JUnit result
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: ${{ parameters.outDir }}/vscode-e2e-cli-create-workspace-results.junit.xml
+      testRunTitle: '@vscode/test-cli Create Workspace aggregate'
+      failTaskOnFailedTests: false
+
+  - pwsh: |
+      $source = '${{ parameters.outDir }}'
+      $destination = '${{ parameters.artifactStagingPath }}'
+      New-Item -ItemType Directory -Force -Path $destination | Out-Null
+      if (Test-Path $source) {
+        Copy-Item (Join-Path $source '*') -Destination $destination -Recurse -Force
+      }
+    displayName: Stage aggregate @vscode/test-cli dashboard
+    condition: always()

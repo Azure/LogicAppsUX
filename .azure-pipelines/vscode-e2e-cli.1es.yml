@@ -1,0 +1,277 @@
+# 1ES/MicroBuild pipeline for the latest-stable @vscode/test-cli VS Code E2E baseline.
+# Create this pipeline directly from the GitHub repo when GitHub PR checks are required.
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - .azure-pipelines/vscode-e2e-cli.1es.yml
+      - .azure-pipelines/templates/vscode-e2e-cli-*.yml
+      - apps/vs-code-designer/**
+      - apps/vs-code-react/**
+      - libs/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - turbo.json
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - .azure-pipelines/vscode-e2e-cli.1es.yml
+      - .azure-pipelines/templates/vscode-e2e-cli-*.yml
+      - apps/vs-code-designer/**
+      - apps/vs-code-react/**
+      - libs/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - turbo.json
+
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/tags/release
+    - repository: azExtTemplates
+      type: github
+      name: microsoft/vscode-azuretools
+      ref: main
+      endpoint: GitHub-AzureTools
+
+parameters:
+  - name: isOfficialBuild
+    displayName: Use official 1ES template
+    type: boolean
+    default: false
+
+  - name: variableGroups
+    displayName: Owner-provided variable groups
+    type: object
+    default: []
+
+  - name: testARMServiceConnection
+    displayName: Optional ARM service connection for live Azure E2E
+    type: string
+    default: LogicAppsVSCode-E2E-SignIn
+
+  - name: enableMsnWeatherLifecycle
+    displayName: Run live MSN Weather lifecycle
+    type: boolean
+    default: false
+
+  - name: azureTenantId
+    displayName: Live E2E tenant ID
+    type: string
+    default: c9db855a-7930-48d8-8e3c-a409a38faab3
+
+  - name: azureSubscriptionId
+    displayName: Live E2E subscription ID
+    type: string
+    default: f11e76f5-6d71-4e8b-9571-9c5f147628ed
+
+  - name: azureResourceGroupName
+    displayName: Live E2E resource group name
+    type: string
+    default: LogicAppsVSCode-E2E-Fixtures
+
+  - name: azureLocationName
+    displayName: Live E2E managed API location
+    type: string
+    default: westus
+
+  - name: nodeVersion
+    displayName: Build Node.js version
+    type: string
+    default: '24.x'
+
+  - name: testNodeVersion
+    displayName: E2E runner Node.js version
+    type: string
+    default: '20.x'
+
+  - name: dotnetVersion
+    displayName: .NET SDK version
+    type: string
+    default: '8.0.x'
+
+  - name: createWorkspaceLabels
+    displayName: '@vscode/test-cli Create Workspace labels'
+    type: object
+    default:
+      - createWorkspaceBehavior
+      - createWorkspaceCoreMatrix
+      - createWorkspacePreviewMatrix
+      - createWorkspaceCodeful
+
+  - name: sdlPool
+    displayName: Owner-approved 1ES SDL pool
+    type: object
+    default:
+      name: VSEngSS-MicroBuild2022-1ES
+      image: server2022-microbuildVS2022-1es
+      os: windows
+
+  - name: linuxPool
+    displayName: Owner-approved 1ES Linux pool
+    type: object
+    default:
+      name: AzurePipelines-EO
+      image: 1ESPT-Ubuntu22.04
+      os: linux
+
+extends:
+  ${{ if eq(parameters.isOfficialBuild, true) }}:
+    template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  ${{ else }}:
+    template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@1esPipelines
+  parameters:
+    sdl:
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
+      codeql:
+        language: javascript
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
+    pool: ${{ parameters.sdlPool }}
+    stages:
+      - stage: VSCodeE2ECli
+        displayName: VS Code @vscode/test-cli E2E
+        variables:
+          - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
+          - ${{ each variableGroup in parameters.variableGroups }}:
+              - group: ${{ variableGroup }}
+          - name: TeamName
+            value: Azure Logic Apps for VS Code
+          - name: working_directory
+            value: .
+          - name: vscodeE2ECliBuildArtifact
+            value: vscode-e2e-cli-build
+        jobs:
+          - job: build_e2e_cli_artifacts
+            displayName: Build @vscode/test-cli artifacts
+            pool: ${{ parameters.linuxPool }}
+            timeoutInMinutes: 25
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/build
+                  artifactName: $(vscodeE2ECliBuildArtifact)
+            steps:
+              - checkout: self
+                fetchDepth: 1
+              - template: templates/vscode-e2e-cli-setup.yml@self
+                parameters:
+                  feedBaseUrl: ${{ variables.feedBaseUrl }}
+                  nodeVersion: ${{ parameters.nodeVersion }}
+                  dotnetVersion: ${{ parameters.dotnetVersion }}
+                  includeDotNet: true
+                  includeLinuxDisplayDependencies: false
+              - template: templates/vscode-e2e-cli-build-artifacts.yml@self
+
+          - ${{ each label in parameters.createWorkspaceLabels }}:
+              - job: e2e_cli_${{ label }}
+                displayName: '@vscode/test-cli Create Workspace (${{ label }})'
+                dependsOn: build_e2e_cli_artifacts
+                pool: ${{ parameters.linuxPool }}
+                timeoutInMinutes: 25
+                templateContext:
+                  outputs:
+                    - output: pipelineArtifact
+                      targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ label }}/results
+                      artifactName: vscode-e2e-cli-test-results-${{ label }}
+                    - output: pipelineArtifact
+                      targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ label }}/log
+                      artifactName: vscode-e2e-cli-log-${{ label }}
+                    - output: pipelineArtifact
+                      targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ label }}/screenshots
+                      artifactName: vscode-e2e-cli-screenshots-${{ label }}
+                steps:
+                  - checkout: self
+                    fetchDepth: 1
+                  - template: templates/vscode-e2e-cli-setup.yml@self
+                    parameters:
+                      feedBaseUrl: ${{ variables.feedBaseUrl }}
+                      nodeVersion: ${{ parameters.testNodeVersion }}
+                      dotnetVersion: ${{ parameters.dotnetVersion }}
+                      includeDotNet: true
+                      includeLinuxDisplayDependencies: true
+                  - template: templates/vscode-e2e-cli-run.yml@self
+                    parameters:
+                      label: ${{ label }}
+                      cliArguments: --label ${{ label }}
+                      buildArtifactName: $(vscodeE2ECliBuildArtifact)
+
+          - ${{ if eq(parameters.enableMsnWeatherLifecycle, true) }}:
+              - job: e2e_cli_msn_weather_lifecycle
+                displayName: '@vscode/test-cli MSN Weather lifecycle'
+                dependsOn: build_e2e_cli_artifacts
+                pool: ${{ parameters.linuxPool }}
+                timeoutInMinutes: 35
+                templateContext:
+                  outputs:
+                    - output: pipelineArtifact
+                      targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/msnWeatherLifecycle/results
+                      artifactName: vscode-e2e-cli-test-results-msnWeatherLifecycle
+                    - output: pipelineArtifact
+                      targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/msnWeatherLifecycle/log
+                      artifactName: vscode-e2e-cli-log-msnWeatherLifecycle
+                    - output: pipelineArtifact
+                      targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/msnWeatherLifecycle/screenshots
+                      artifactName: vscode-e2e-cli-screenshots-msnWeatherLifecycle
+                steps:
+                  - checkout: self
+                    fetchDepth: 1
+                  - template: templates/vscode-e2e-cli-setup.yml@self
+                    parameters:
+                      feedBaseUrl: ${{ variables.feedBaseUrl }}
+                      nodeVersion: ${{ parameters.testNodeVersion }}
+                      dotnetVersion: ${{ parameters.dotnetVersion }}
+                      includeDotNet: true
+                      includeLinuxDisplayDependencies: true
+                  - template: templates/vscode-e2e-cli-run.yml@self
+                    parameters:
+                      label: msnWeatherLifecycle
+                      cliArguments: --msn-weather-lifecycle
+                      buildArtifactName: $(vscodeE2ECliBuildArtifact)
+                      requiresAzureAccessToken: true
+                      testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+                      azureTenantId: ${{ parameters.azureTenantId }}
+                      azureSubscriptionId: ${{ parameters.azureSubscriptionId }}
+                      azureResourceGroupName: ${{ parameters.azureResourceGroupName }}
+                      azureLocationName: ${{ parameters.azureLocationName }}
+
+          - job: e2e_cli_create_workspace_report
+            displayName: '@vscode/test-cli Create Workspace aggregate'
+            dependsOn:
+              - build_e2e_cli_artifacts
+              - ${{ each label in parameters.createWorkspaceLabels }}:
+                  - e2e_cli_${{ label }}
+            condition: always()
+            pool: ${{ parameters.linuxPool }}
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/aggregate
+                  artifactName: vscode-e2e-cli-test-results-summary
+            steps:
+              - checkout: self
+                fetchDepth: 1
+              - task: UseNode@1
+                displayName: Use Node.js ${{ parameters.testNodeVersion }}
+                inputs:
+                  version: ${{ parameters.testNodeVersion }}
+              - ${{ each label in parameters.createWorkspaceLabels }}:
+                  - task: DownloadPipelineArtifact@2
+                    displayName: Download CLI result (${{ label }})
+                    continueOnError: true
+                    inputs:
+                      buildType: current
+                      artifactName: vscode-e2e-cli-test-results-${{ label }}
+                      targetPath: apps/vs-code-designer/.vscode-test/results/aggregate-input
+              - template: templates/vscode-e2e-cli-aggregate.yml@self

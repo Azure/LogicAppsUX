@@ -312,6 +312,16 @@ describe('Workspace Conversion — Click Yes', function () {
       }
     }
 
+    if (reloaded.kind === 'none') {
+      await dumpDialogDiagnostics(driver, 'conversion-yes-no-reload-after-primary-click', DIAGNOSTICS_DIR);
+      const fallbackClicked = await clickWorkspacePromptButton(driver).catch(() => false);
+      if (fallbackClicked) {
+        console.log('[conversionYes] Primary click path did not reload; clicked workspace prompt via selector fallback');
+        await captureScreenshot(driver, 'conversion-yes-selector-fallback-clicked', EXPLICIT_SCREENSHOT_DIR).catch(() => undefined);
+        reloaded = await waitForReloadOrTitleChange(driver, titleBefore, RELOAD_DEADLINE_MS);
+      }
+    }
+
     console.log(`[conversionYes] reload detection result: ${reloaded.kind}`);
     assert.ok(reloaded.kind !== 'none', 'window must reload, title must flip to "(Workspace)", or the Selenium session must end');
 
@@ -375,4 +385,3 @@ describe('Workspace Conversion — Click Yes', function () {
     console.log('[conversionYes] PASSED — prompt appeared, Yes clicked, post-conditions verified');
   });
 });
-

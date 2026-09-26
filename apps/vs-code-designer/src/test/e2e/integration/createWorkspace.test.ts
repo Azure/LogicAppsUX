@@ -264,7 +264,7 @@ suite('Create Logic App Workspace Tests', () => {
     const settingsPath = path.join(vscodePath, 'settings.json');
     assert.ok(fs.existsSync(settingsPath), 'settings.json should exist');
     const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-    assert.strictEqual(settings['azureFunctions.projectLanguage'], 'JavaScript', 'Project language should be JavaScript');
+    assert.strictEqual(settings['azureLogicAppsStandard.projectLanguage'], 'JavaScript', 'Project language should be JavaScript');
 
     // Verify extensions.json
     const extensionsPath = path.join(vscodePath, 'extensions.json');

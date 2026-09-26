@@ -47,6 +47,11 @@ parameters:
     type: string
     default: VSCodeDeployLAUX
 
+  - name: enableVscodeE2E
+    displayName: Run VS Code E2E validation
+    type: boolean
+    default: false
+
 variables:
   - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
   # Required by MicroBuild template
@@ -54,6 +59,10 @@ variables:
     value: "Azure Logic Apps for VS Code"
   - name: working_directory
     value: '.'
+  - name: vscodeE2ETestARMServiceConnection
+    value: LogicAppsVSCode-E2E-SignIn
+  - name: vscodeE2ECheckoutRef
+    value: $(Build.SourceVersion)
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
@@ -101,3 +110,11 @@ extends:
               - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
                 parameters:
                   publishVersion: ${{ parameters.publishVersion }}
+
+      - ${{ if eq(parameters.enableVscodeE2E, true) }}:
+          - template: templates/vscode-e2e-stage.yml@self
+            parameters:
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              checkoutRef: ${{ variables.vscodeE2ECheckoutRef }}
+              testARMServiceConnection: ${{ variables.vscodeE2ETestARMServiceConnection }}
+              dependsOn: []

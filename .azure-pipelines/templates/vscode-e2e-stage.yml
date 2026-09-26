@@ -1,0 +1,93 @@
+parameters:
+  - name: feedBaseUrl
+    type: string
+  - name: dependsOn
+    type: object
+    default: []
+  - name: testARMServiceConnection
+    type: string
+  - name: checkoutRef
+    type: string
+  - name: pool
+    type: object
+    default:
+      name: AzurePipelines-EO
+      image: 1ESPT-Ubuntu22.04
+      os: linux
+  - name: runVscodeTestCliSmoke
+    type: boolean
+    default: true
+  - name: scenarioShards
+    type: object
+    default: []
+
+stages:
+  - stage: VscodeE2E
+    displayName: VS Code E2E validation
+    dependsOn: ${{ parameters.dependsOn }}
+    jobs:
+      - job: BuildVscodeE2EArtifacts
+        displayName: Build VS Code E2E artifacts
+        timeoutInMinutes: 30
+        pool: ${{ parameters.pool }}
+        templateContext:
+          outputs:
+            - output: pipelineArtifact
+              targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
+              artifactName: vscode-e2e-build
+        steps:
+          - template: vscode-e2e-build-artifacts.yml
+            parameters:
+              feedBaseUrl: ${{ parameters.feedBaseUrl }}
+              checkoutRef: ${{ parameters.checkoutRef }}
+
+      - ${{ if eq(parameters.runVscodeTestCliSmoke, true) }}:
+          - template: vscode-e2e-run-cli.yml
+            parameters:
+              jobName: VscodeE2ECliSmoke
+              displayName: vscode-test CLI smoke
+              label: unitTests
+              feedBaseUrl: ${{ parameters.feedBaseUrl }}
+              pool: ${{ parameters.pool }}
+              dependsOn:
+                - BuildVscodeE2EArtifacts
+              checkoutRef: ${{ parameters.checkoutRef }}
+              testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+
+      - ${{ if gt(length(parameters.scenarioShards), 0) }}:
+          - template: vscode-e2e-setup-fixtures.yml
+            parameters:
+              jobName: SetupVscodeE2EFixtures
+              displayName: setup-fixtures (p41a)
+              feedBaseUrl: ${{ parameters.feedBaseUrl }}
+              pool: ${{ parameters.pool }}
+              dependsOn:
+                - BuildVscodeE2EArtifacts
+              checkoutRef: ${{ parameters.checkoutRef }}
+
+          - ${{ each shard in parameters.scenarioShards }}:
+              - template: vscode-e2e-run-scenario.yml
+                parameters:
+                  jobName: ${{ shard.jobName }}
+                  displayName: ${{ shard.displayName }}
+                  scenario: ${{ shard.scenario }}
+                  useWorkspaceFixtures: ${{ shard.useWorkspaceFixtures }}
+                  useBundleArtifact: ${{ shard.useBundleArtifact }}
+                  feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                  pool: ${{ parameters.pool }}
+                  dependsOn:
+                    - SetupVscodeE2EFixtures
+                  checkoutRef: ${{ parameters.checkoutRef }}
+                  testARMServiceConnection: ''
+
+      - template: vscode-e2e-summary.yml
+        parameters:
+          jobName: VscodeE2ESummary
+          displayName: vscode-e2e-summary
+          dependsOn:
+            - ${{ if eq(parameters.runVscodeTestCliSmoke, true) }}:
+                - VscodeE2ECliSmoke
+            - ${{ if gt(length(parameters.scenarioShards), 0) }}:
+                - SetupVscodeE2EFixtures
+            - ${{ each shard in parameters.scenarioShards }}:
+                - ${{ shard.jobName }}

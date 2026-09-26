@@ -1,0 +1,57 @@
+parameters:
+  - name: feedBaseUrl
+    type: string
+  - name: nodeVersion
+    type: string
+    default: '24.x'
+  - name: dotnetVersion
+    type: string
+    default: '8.0.x'
+  - name: checkoutRef
+    type: string
+    default: ''
+
+steps:
+  - checkout: self
+    fetchDepth: 0
+
+  - ${{ if ne(parameters.checkoutRef, '') }}:
+      - script: git checkout ${{ parameters.checkoutRef }}
+        displayName: Checkout VS Code E2E ref
+
+  - template: vscode-e2e-setup.yml
+    parameters:
+      feedBaseUrl: ${{ parameters.feedBaseUrl }}
+      nodeVersion: ${{ parameters.nodeVersion }}
+      dotnetVersion: ${{ parameters.dotnetVersion }}
+      installLinuxDisplayDependencies: false
+
+  - script: pnpm --dir apps/vs-code-designer run build:e2e-cli:extension
+    displayName: Build VS Code extension host for E2E
+    workingDirectory: $(working_directory)
+    env:
+      NPM_CONFIG_USERCONFIG: $(npmrcFile)
+
+  - script: pnpm --dir apps/vs-code-react run build:extension
+    displayName: Build VS Code React webviews for E2E
+    workingDirectory: $(working_directory)
+    env:
+      NPM_CONFIG_USERCONFIG: $(npmrcFile)
+      NODE_OPTIONS: --max-old-space-size=6144
+
+  - script: npx tsup --config tsup.e2e.test.config.ts
+    displayName: Compile ExTester E2E bundle
+    workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
+
+  - script: pnpm run test:e2e-cli:compile
+    displayName: Compile vscode-test CLI E2E bundle
+    workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
+
+  - bash: |
+      set -euo pipefail
+      mkdir -p "$(Build.ArtifactStagingDirectory)/vscode-e2e"
+      tar -czf "$(Build.ArtifactStagingDirectory)/vscode-e2e/extension-build.tar.gz" \
+        apps/vs-code-designer/dist \
+        apps/vs-code-designer/out
+    displayName: Stage reusable VS Code E2E build artifact
+    workingDirectory: $(Build.SourcesDirectory)

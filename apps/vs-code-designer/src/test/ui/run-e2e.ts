@@ -18,6 +18,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as crypto from 'crypto';
 import { exec, execFileSync, execSync } from 'child_process';
+import AdmZip from 'adm-zip';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
 import {
@@ -146,6 +147,7 @@ const DOWNLOAD_RETRY_ATTEMPTS = 3;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
 const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
 
 /**
  * LSP-related artifact names that must be removed when preparing an isolated
@@ -280,6 +282,97 @@ function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
   return state;
 }
 
+function ensureLogicAppsExtensionBundleForStrictValidation(label: string): void {
+  if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION !== '1') {
+    return;
+  }
+
+  try {
+    verifyLogicAppsExtensionBundle(label);
+    return;
+  } catch (error) {
+    console.log(
+      `[${label}] Prewarming Logic Apps extension bundle because strict validation needs a healthy sidecar: ${getErrorMessage(error)}`
+    );
+  }
+
+  const version = getLatestPublicWorkflowsBundleVersion();
+  const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+  fs.rmSync(bundleDir, { recursive: true, force: true });
+  fs.mkdirSync(bundleDir, { recursive: true });
+
+  const zipPath = path.join(os.tmpdir(), 'test-resources', 'bundle-cache', `${EXTENSION_BUNDLE_ID}.${version}.zip`);
+  fs.mkdirSync(path.dirname(zipPath), { recursive: true });
+  const zipUrl = `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${EXTENSION_BUNDLE_ID}/${version}/${EXTENSION_BUNDLE_ID}.${version}_any-any.zip`;
+  console.log(`[${label}] Downloading Logic Apps extension bundle ${version} from public CDN`);
+  execFileSync(
+    'curl',
+    [
+      '--fail',
+      '--location',
+      '--retry',
+      '5',
+      '--retry-delay',
+      '5',
+      '--retry-all-errors',
+      '--connect-timeout',
+      '30',
+      '--output',
+      zipPath,
+      zipUrl,
+    ],
+    { timeout: 600000, stdio: 'pipe' }
+  );
+
+  new AdmZip(zipPath).extractAllTo(bundleDir, true);
+  const files = listBundleFiles(bundleDir);
+  const sourceMd5 = crypto.createHash('md5').update(fs.readFileSync(zipPath)).digest('base64');
+  const contentHash = computeBundleContentHash(bundleDir, files);
+  fs.writeFileSync(
+    path.join(bundleDir, BUNDLE_SIDECAR_FILE),
+    JSON.stringify({
+      version: 1,
+      sourceMd5,
+      contentHash,
+      lastDeepVerifiedMs: Date.now(),
+    }),
+    'utf8'
+  );
+  verifyLogicAppsExtensionBundle(label);
+}
+
+function getLatestPublicWorkflowsBundleVersion(): string {
+  const indexPath = path.join(os.tmpdir(), 'test-resources', 'bundle-cache', `${EXTENSION_BUNDLE_ID}.index.json`);
+  fs.mkdirSync(path.dirname(indexPath), { recursive: true });
+  execFileSync(
+    'curl',
+    [
+      '--fail',
+      '--location',
+      '--retry',
+      '5',
+      '--retry-delay',
+      '5',
+      '--retry-all-errors',
+      '--connect-timeout',
+      '30',
+      '--output',
+      indexPath,
+      `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${EXTENSION_BUNDLE_ID}/index.json`,
+    ],
+    { timeout: 300000, stdio: 'pipe' }
+  );
+  const versions = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+  if (!Array.isArray(versions)) {
+    throw new Error(`Unexpected Logic Apps extension bundle index shape at ${indexPath}`);
+  }
+  const latest = versions.filter((version) => typeof version === 'string' && /^1\.\d+\.\d+/.test(version)).sort(compareSemverDesc)[0];
+  if (!latest) {
+    throw new Error(`No 1.x Logic Apps extension bundle version found in ${indexPath}`);
+  }
+  return latest;
+}
+
 function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
   if (!fs.existsSync(EXTENSION_BUNDLE_ROOT)) {
     return;
@@ -368,20 +461,126 @@ async function withDownloadRetry(label: string, action: () => Promise<void>): Pr
 
 function installExtensionWithCli(cliBase: string, dep: string, label: string = dep): Promise<InstallResult> {
   return new Promise<InstallResult>((resolve) => {
-    const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
+    const { args: proxyArgs, env: proxyEnv } = getVsCodeCliProxyOptions();
+    const command = `${cliBase}${proxyArgs} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
     const startTime = Date.now();
-    exec(command, { timeout: 300000 }, (error: Error | null, stdout: string, stderr: string) => {
+    exec(command, { timeout: 300000, env: { ...process.env, ...proxyEnv } }, (error: Error | null, stdout: string, stderr: string) => {
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
       if (error) {
         const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
         console.warn(`  ⚠ ${label} failed (${elapsed}s): ${getErrorMessage(error)}${output ? `\n${output}` : ''}`);
-        resolve({ dep, success: false });
+        resolve(installExtensionFromVsixFallback(cliBase, dep, label));
       } else {
         console.log(`  ✓ ${label} installed (${elapsed}s)`);
         resolve({ dep, success: true });
       }
     });
   });
+}
+
+function getVsCodeCliProxyOptions(): { args: string; env: NodeJS.ProcessEnv } {
+  const proxyServer =
+    process.env.HTTPS_PROXY ??
+    process.env.https_proxy ??
+    process.env.HTTP_PROXY ??
+    process.env.http_proxy ??
+    process.env.VSTS_HTTP_PROXY ??
+    process.env.vsts_http_proxy;
+  if (!proxyServer) {
+    return { args: '', env: {} };
+  }
+
+  const proxyBypassList =
+    process.env.NO_PROXY ?? process.env.no_proxy ?? process.env.VSTS_HTTP_PROXY_BYPASS ?? process.env.vsts_http_proxy_bypass;
+  const proxyServerReference = process.platform === 'win32' ? '%LA_E2E_PROXY_SERVER%' : '$LA_E2E_PROXY_SERVER';
+  const proxyBypassReference = process.platform === 'win32' ? '%LA_E2E_PROXY_BYPASS_LIST%' : '$LA_E2E_PROXY_BYPASS_LIST';
+  const args = [` --proxy-server="${proxyServerReference}"`, proxyBypassList ? ` --proxy-bypass-list="${proxyBypassReference}"` : ''].join(
+    ''
+  );
+
+  return {
+    args,
+    env: {
+      LA_E2E_PROXY_SERVER: proxyServer,
+      ...(proxyBypassList ? { LA_E2E_PROXY_BYPASS_LIST: proxyBypassList } : {}),
+    },
+  };
+}
+
+function installExtensionFromVsixFallback(cliBase: string, dep: string, label: string): InstallResult {
+  try {
+    const vsixPath = downloadExtensionVsix(dep);
+    const command = `${cliBase} --force --install-extension ${quoteShellArgument(vsixPath)} --extensions-dir="${extDir}"`;
+    execSync(command, { timeout: 300000, env: process.env, stdio: 'pipe' });
+    console.log(`  ✓ ${label} installed from downloaded VSIX`);
+    return { dep, success: true };
+  } catch (error) {
+    console.warn(`  ⚠ ${label} VSIX fallback failed: ${getErrorMessage(error)}`);
+    return { dep, success: false };
+  }
+}
+
+function isZipFile(filePath: string): boolean {
+  if (!fs.existsSync(filePath) || fs.statSync(filePath).size < 4) {
+    return false;
+  }
+
+  const header = Buffer.alloc(4);
+  const fd = fs.openSync(filePath, 'r');
+  try {
+    fs.readSync(fd, header, 0, header.length, 0);
+  } finally {
+    fs.closeSync(fd);
+  }
+
+  return header[0] === 0x50 && header[1] === 0x4b;
+}
+
+function downloadExtensionVsix(dep: string): string {
+  const [publisher, ...extensionParts] = dep.split('.');
+  const extension = extensionParts.join('.');
+  if (!publisher || !extension) {
+    throw new Error(`Cannot derive Marketplace VSIX URL for extension dependency '${dep}'.`);
+  }
+
+  const vsixDir = path.join(os.tmpdir(), 'test-resources', 'vsix-cache');
+  fs.mkdirSync(vsixDir, { recursive: true });
+  const vsixPath = path.join(vsixDir, `${dep}.vsix`);
+  if (isZipFile(vsixPath)) {
+    return vsixPath;
+  }
+  if (fs.existsSync(vsixPath)) {
+    fs.unlinkSync(vsixPath);
+  }
+
+  const url = `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/latest/vspackage`;
+  execFileSync(
+    'curl',
+    [
+      '--fail',
+      '--location',
+      '--compressed',
+      '--retry',
+      '5',
+      '--retry-delay',
+      '5',
+      '--retry-all-errors',
+      '--connect-timeout',
+      '30',
+      '--output',
+      vsixPath,
+      url,
+    ],
+    { timeout: 300000, stdio: 'pipe' }
+  );
+  if (!isZipFile(vsixPath)) {
+    throw new Error(`Downloaded Marketplace package for '${dep}' is not a VSIX zip at ${vsixPath}.`);
+  }
+  return vsixPath;
+}
+
+function quoteShellArgument(value: string): string {
+  return `"${value.replace(/(["\\$`])/g, '\\$1')}"`;
 }
 
 function findNestedWindowsCliPath(codeFolder: string): string | undefined {
@@ -840,6 +1039,11 @@ async function main(): Promise<void> {
     }
   } else {
     console.log('\n=== Step 2: No extension dependencies to install ===');
+  }
+
+  if (process.env.LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY === '1') {
+    console.log('\n=== Prepared extension dependencies only; skipping extension copy and tests ===');
+    return;
   }
 
   // Step 3: Copy our built extension into test-extensions as an "installed" extension
@@ -1544,6 +1748,20 @@ async function main(): Promise<void> {
       settings: { validateDependencies: true, autoStartDesignTime: false },
     },
 
+    // Phase 4.1a dependency validation runs the product dependency command in a
+    // disposable VS Code session. The command can leave the workbench QuickInput
+    // focus state unhealthy on hosted Linux, so the actual workspace fixture
+    // wizard runs in the next scenario's fresh session.
+    {
+      id: 'p41a-dependency-validation',
+      testFile: phase1aFiles[0],
+      workspaceSpec: 'self-creates',
+      settings: { validateDependencies: true, autoStartDesignTime: true },
+      env: {
+        LA_E2E_VALIDATE_DEPENDENCIES_ONLY: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+      },
+    },
     // Phase 4.1a (NEW Step 2) — fast fixtures-only wizard run. Writes the manifest
     // consumed by Phase 4.2 / 4.3 shape-specific scenarios. This is the critical
     // path; the full 12-shape behavior validation runs independently as p41b.
@@ -1552,6 +1770,11 @@ async function main(): Promise<void> {
       testFile: phase1aFiles[0],
       workspaceSpec: 'self-creates',
       settings: { validateDependencies: true, autoStartDesignTime: true },
+      recorder: true,
+      env: {
+        LA_E2E_VALIDATE_DEPENDENCIES_ONLY: '0',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '0',
+      },
     },
     // Phase 4.1b (NEW Step 2) — full 12-shape wizard validation + 75 form/validation
     // assertions. Runs on its own parallel shard OFF the critical path. No downstream
@@ -2906,9 +3129,13 @@ namespace ${namespaceName}
               // prepareFreshSession, so the test never sees a previous attempt's debugStarted.
               configureCodefulRecorderEnvironment();
             }
-            if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+            if (
+              (id === 'p41a-fixtures' || id === 'p41a-dependency-validation') &&
+              process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1'
+            ) {
               pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
               pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
+              ensureLogicAppsExtensionBundleForStrictValidation(`prelaunch:${id}`);
             }
 
             const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
