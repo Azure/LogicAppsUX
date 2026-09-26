@@ -286,6 +286,7 @@ async function getVisibleQuickPickLabels(driver: WebDriver): Promise<string[]> {
 type RecorderEvent = {
   phase?: string;
   taskName?: string;
+  requestId?: string;
   exitCode?: number | null;
 };
 
@@ -297,7 +298,12 @@ async function invokeCreateWorkspaceCommandByTrigger(): Promise<boolean> {
   }
 
   fs.mkdirSync(triggerDir, { recursive: true });
-  fs.writeFileSync(path.join(triggerDir, 'run-command'), 'azureLogicAppsStandard.createWorkspace', 'utf8');
+  const requestId = `create-workspace-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  fs.writeFileSync(
+    path.join(triggerDir, 'run-command'),
+    JSON.stringify({ commandId: 'azureLogicAppsStandard.createWorkspace', requestId }),
+    'utf8'
+  );
   const deadline = Date.now() + 60_000;
   let lastEvent = '';
 
@@ -312,10 +318,14 @@ async function invokeCreateWorkspaceCommandByTrigger(): Promise<boolean> {
           } catch {
             continue;
           }
-          if (event.taskName !== 'azureLogicAppsStandard.createWorkspace') {
+          if (event.taskName !== 'azureLogicAppsStandard.createWorkspace' || event.requestId !== requestId) {
             continue;
           }
           lastEvent = line;
+          if (event.phase === 'commandInvoke') {
+            console.log(`[selectCreateWorkspaceCommand] Test helper started azureLogicAppsStandard.createWorkspace (${requestId})`);
+            return true;
+          }
           if (event.phase === 'commandInvoked' && event.exitCode === 0) {
             console.log('[selectCreateWorkspaceCommand] Invoked azureLogicAppsStandard.createWorkspace through test helper trigger');
             return true;

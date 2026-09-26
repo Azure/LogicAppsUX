@@ -117,11 +117,12 @@ async function waitForCommand(commandId, timeoutMs = 120_000) {
   return false;
 }
 
-async function runCommand(eventsFile, commandId) {
+async function runCommand(eventsFile, commandId, requestId) {
   const startedAt = new Date().toISOString();
   appendEvent(eventsFile, {
     phase: 'commandInvoke',
     taskName: commandId,
+    requestId,
     scopeFsPath: null,
     processId: null,
     exitCode: null,
@@ -135,6 +136,7 @@ async function runCommand(eventsFile, commandId) {
       appendEvent(eventsFile, {
         phase: 'commandInvokeFailed',
         taskName: commandId,
+        requestId,
         scopeFsPath: null,
         processId: null,
         exitCode: 1,
@@ -147,6 +149,7 @@ async function runCommand(eventsFile, commandId) {
     appendEvent(eventsFile, {
       phase: 'commandInvoked',
       taskName: commandId,
+      requestId,
       scopeFsPath: null,
       processId: null,
       exitCode: 0,
@@ -158,6 +161,7 @@ async function runCommand(eventsFile, commandId) {
     appendEvent(eventsFile, {
       phase: 'commandInvokeFailed',
       taskName: commandId,
+      requestId,
       scopeFsPath: null,
       processId: null,
       exitCode: 1,
@@ -403,7 +407,22 @@ function activate(context) {
           timestamp: new Date().toISOString(),
         });
       } else if (entry === 'run-command' && markerText) {
-        runCommand(eventsFile, markerText).catch((err) => console.log(`[la-e2e-recorder] runCommand (file) failed: ${err && err.message}`));
+        let commandId = markerText;
+        let requestId = '';
+        try {
+          const marker = JSON.parse(markerText);
+          if (marker && typeof marker.commandId === 'string') {
+            commandId = marker.commandId;
+          }
+          if (marker && typeof marker.requestId === 'string') {
+            requestId = marker.requestId;
+          }
+        } catch {
+          /* marker is a plain command id */
+        }
+        runCommand(eventsFile, commandId, requestId).catch((err) =>
+          console.log(`[la-e2e-recorder] runCommand (file) failed: ${err && err.message}`)
+        );
       }
     }
   }, 500);
@@ -520,11 +539,11 @@ function activate(context) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('la-e2e.runCommand', async (commandId) => {
+    vscode.commands.registerCommand('la-e2e.runCommand', async (commandId, requestId = '') => {
       if (!commandId || typeof commandId !== 'string') {
         return false;
       }
-      return await runCommand(eventsFile, commandId);
+      return await runCommand(eventsFile, commandId, typeof requestId === 'string' ? requestId : '');
     })
   );
 }
