@@ -82,5 +82,9 @@ steps:
       - bash: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 libasound2t64 libxss1 libatk-bridge2.0-0 libatk1.0-0
+          alsaPackage="libasound2"
+          if apt-cache show libasound2t64 >/dev/null 2>&1; then
+            alsaPackage="libasound2t64"
+          fi
+          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 "$alsaPackage" libxss1 libatk-bridge2.0-0 libatk1.0-0
         displayName: Install Linux display dependencies
