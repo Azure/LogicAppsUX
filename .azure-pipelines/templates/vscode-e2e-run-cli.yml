@@ -80,7 +80,7 @@ jobs:
       - bash: |
           set -euo pipefail
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          pnpm --dir apps/vs-code-designer run test:e2e-cli -- --label ${{ parameters.label }}
+          node apps/vs-code-designer/scripts/run-e2e-cli.js --label ${{ parameters.label }}
         displayName: Run vscode-test CLI (${{ parameters.label }})
         env:
           DISPLAY: :99
