@@ -3,8 +3,7 @@ parameters:
     type: string
   - name: dependsOn
     type: object
-    default:
-      - Build
+    default: []
   - name: testARMServiceConnection
     type: string
   - name: checkoutRef

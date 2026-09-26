@@ -117,3 +117,4 @@ extends:
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               checkoutRef: ${{ variables.vscodeE2ECheckoutRef }}
               testARMServiceConnection: ${{ variables.vscodeE2ETestARMServiceConnection }}
+              dependsOn: []
