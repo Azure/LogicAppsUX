@@ -117,7 +117,7 @@ jobs:
         env:
           LA_E2E_SCENARIO: ${{ parameters.scenario }}
           LA_E2E_SCENARIO_RETRIES: '1'
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --dns-result-order=ipv4first --max-old-space-size=4096
           TEMP: $(Agent.TempDirectory)
           TMPDIR: $(Agent.TempDirectory)
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
