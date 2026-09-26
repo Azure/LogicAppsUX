@@ -18,6 +18,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as crypto from 'crypto';
 import { exec, execFileSync, execSync } from 'child_process';
+import AdmZip from 'adm-zip';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
 import {
@@ -146,6 +147,7 @@ const DOWNLOAD_RETRY_ATTEMPTS = 3;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
 const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
 
 /**
  * LSP-related artifact names that must be removed when preparing an isolated
@@ -278,6 +280,97 @@ function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
     `[${label}] Logic Apps extension bundle healthy: version=${state.version}, files=${files.length}, sidecar=${state.sidecarPath}`
   );
   return state;
+}
+
+function ensureLogicAppsExtensionBundleForStrictValidation(label: string): void {
+  if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION !== '1') {
+    return;
+  }
+
+  try {
+    verifyLogicAppsExtensionBundle(label);
+    return;
+  } catch (error) {
+    console.log(
+      `[${label}] Prewarming Logic Apps extension bundle because strict validation needs a healthy sidecar: ${getErrorMessage(error)}`
+    );
+  }
+
+  const version = getLatestPublicWorkflowsBundleVersion();
+  const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+  fs.rmSync(bundleDir, { recursive: true, force: true });
+  fs.mkdirSync(bundleDir, { recursive: true });
+
+  const zipPath = path.join(os.tmpdir(), 'test-resources', 'bundle-cache', `${EXTENSION_BUNDLE_ID}.${version}.zip`);
+  fs.mkdirSync(path.dirname(zipPath), { recursive: true });
+  const zipUrl = `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${EXTENSION_BUNDLE_ID}/${version}/${EXTENSION_BUNDLE_ID}.${version}_any-any.zip`;
+  console.log(`[${label}] Downloading Logic Apps extension bundle ${version} from public CDN`);
+  execFileSync(
+    'curl',
+    [
+      '--fail',
+      '--location',
+      '--retry',
+      '5',
+      '--retry-delay',
+      '5',
+      '--retry-all-errors',
+      '--connect-timeout',
+      '30',
+      '--output',
+      zipPath,
+      zipUrl,
+    ],
+    { timeout: 600000, stdio: 'pipe' }
+  );
+
+  new AdmZip(zipPath).extractAllTo(bundleDir, true);
+  const files = listBundleFiles(bundleDir);
+  const sourceMd5 = crypto.createHash('md5').update(fs.readFileSync(zipPath)).digest('base64');
+  const contentHash = computeBundleContentHash(bundleDir, files);
+  fs.writeFileSync(
+    path.join(bundleDir, BUNDLE_SIDECAR_FILE),
+    JSON.stringify({
+      version: 1,
+      sourceMd5,
+      contentHash,
+      lastDeepVerifiedMs: Date.now(),
+    }),
+    'utf8'
+  );
+  verifyLogicAppsExtensionBundle(label);
+}
+
+function getLatestPublicWorkflowsBundleVersion(): string {
+  const indexPath = path.join(os.tmpdir(), 'test-resources', 'bundle-cache', `${EXTENSION_BUNDLE_ID}.index.json`);
+  fs.mkdirSync(path.dirname(indexPath), { recursive: true });
+  execFileSync(
+    'curl',
+    [
+      '--fail',
+      '--location',
+      '--retry',
+      '5',
+      '--retry-delay',
+      '5',
+      '--retry-all-errors',
+      '--connect-timeout',
+      '30',
+      '--output',
+      indexPath,
+      `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${EXTENSION_BUNDLE_ID}/index.json`,
+    ],
+    { timeout: 300000, stdio: 'pipe' }
+  );
+  const versions = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+  if (!Array.isArray(versions)) {
+    throw new Error(`Unexpected Logic Apps extension bundle index shape at ${indexPath}`);
+  }
+  const latest = versions.filter((version) => typeof version === 'string' && /^1\.\d+\.\d+/.test(version)).sort(compareSemverDesc)[0];
+  if (!latest) {
+    throw new Error(`No 1.x Logic Apps extension bundle version found in ${indexPath}`);
+  }
+  return latest;
 }
 
 function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
@@ -2997,6 +3090,7 @@ namespace ${namespaceName}
             if (id === 'p41a-fixtures' && process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
               pruneInvalidRuntimeDependencyRoots(`prelaunch:${id}`);
               pruneUnhealthyLogicAppsExtensionBundles(`prelaunch:${id}`);
+              ensureLogicAppsExtensionBundleForStrictValidation(`prelaunch:${id}`);
             }
 
             const { resources, legacyDir } = selectWorkspaceForSpec(workspaceSpec, id);
