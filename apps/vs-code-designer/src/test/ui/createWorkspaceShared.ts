@@ -248,9 +248,20 @@ export async function typeQuickInputQuery(driver: WebDriver, query: string): Pro
     'QuickInput input element not located'
   );
   await driver.wait(until.elementIsEnabled(inputEl), 5_000, 'QuickInput input not enabled');
-  await inputEl.click();
-  await inputEl.sendKeys(Key.chord(Key.CONTROL, 'a'));
-  await inputEl.sendKeys(query);
+  await driver.executeScript(
+    [
+      'const input = arguments[0];',
+      'const query = arguments[1];',
+      'input.focus();',
+      'const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;',
+      'setter.call(input, query);',
+      'input.dispatchEvent(new InputEvent("input", { bubbles: true, cancelable: true, data: query, inputType: "insertText" }));',
+      'input.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));',
+    ].join(''),
+    inputEl,
+    query
+  );
+  await driver.wait(async () => (await inputEl.getAttribute('value')) === query, 5_000, 'QuickInput value not updated');
 }
 
 /**
