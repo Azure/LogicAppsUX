@@ -283,6 +283,59 @@ async function getVisibleQuickPickLabels(driver: WebDriver): Promise<string[]> {
   );
 }
 
+type RecorderEvent = {
+  phase?: string;
+  taskName?: string;
+  exitCode?: number | null;
+};
+
+async function invokeCreateWorkspaceCommandByTrigger(): Promise<boolean> {
+  const triggerDir = process.env.LA_E2E_TRIGGER_DIR;
+  const eventsFile = process.env.LA_E2E_TASK_EVENTS_JSONL || process.env.CODEFUL_TASK_EVENTS_JSONL;
+  if (!triggerDir || !eventsFile) {
+    return false;
+  }
+
+  fs.mkdirSync(triggerDir, { recursive: true });
+  fs.writeFileSync(path.join(triggerDir, 'run-command'), 'azureLogicAppsStandard.createWorkspace', 'utf8');
+  const deadline = Date.now() + 60_000;
+  let lastEvent = '';
+
+  while (Date.now() < deadline) {
+    try {
+      if (fs.existsSync(eventsFile)) {
+        const lines = fs.readFileSync(eventsFile, 'utf8').split(/\r?\n/).filter(Boolean);
+        for (const line of lines) {
+          let event: RecorderEvent;
+          try {
+            event = JSON.parse(line) as RecorderEvent;
+          } catch {
+            continue;
+          }
+          if (event.taskName !== 'azureLogicAppsStandard.createWorkspace') {
+            continue;
+          }
+          lastEvent = line;
+          if (event.phase === 'commandInvoked' && event.exitCode === 0) {
+            console.log('[selectCreateWorkspaceCommand] Invoked azureLogicAppsStandard.createWorkspace through test helper trigger');
+            return true;
+          }
+          if (event.phase === 'commandInvokeFailed') {
+            throw new Error(`Test helper failed to invoke create workspace command. Event: ${line}`);
+          }
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('Test helper failed')) {
+        throw error;
+      }
+    }
+    await sleep(500);
+  }
+
+  throw new Error(`Timed out waiting for test helper to invoke create workspace command. Last event: ${lastEvent}`);
+}
+
 /**
  * Open the command palette, type a search query, and select a specific pick.
  *
@@ -304,6 +357,11 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
     await dismissNotifications(driver);
   } catch {
     // Ignore
+  }
+
+  if (await invokeCreateWorkspaceCommandByTrigger()) {
+    await sleep(2000); // Wait for webview to open
+    return;
   }
 
   const backoffsMs = [1_000, 2_000, 3_000, 5_000, 8_000];

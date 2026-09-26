@@ -1770,6 +1770,7 @@ async function main(): Promise<void> {
       testFile: phase1aFiles[0],
       workspaceSpec: 'self-creates',
       settings: { validateDependencies: true, autoStartDesignTime: true },
+      recorder: true,
       env: {
         LA_E2E_VALIDATE_DEPENDENCIES_ONLY: '0',
         LA_E2E_STRICT_DEPENDENCY_VALIDATION: '0',
