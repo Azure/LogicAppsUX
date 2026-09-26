@@ -19,17 +19,7 @@ parameters:
     default: true
   - name: scenarioShards
     type: object
-    default:
-      - jobName: VscodeE2EActivationCreate
-        displayName: vscode-e2e activation/create smoke
-        scenario: p40-nonlogicapp,p48b-conversioncreate
-        useWorkspaceFixtures: false
-        useBundleArtifact: false
-      - jobName: VscodeE2EDesignerLifecycle
-        displayName: vscode-e2e designer lifecycle
-        scenario: p42-standard,p42-customcode,p42-rulesengine
-        useWorkspaceFixtures: true
-        useBundleArtifact: true
+    default: []
 
 stages:
   - stage: VscodeE2E
@@ -64,30 +54,31 @@ stages:
               checkoutRef: ${{ parameters.checkoutRef }}
               testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
 
-      - template: vscode-e2e-setup-fixtures.yml
-        parameters:
-          jobName: SetupVscodeE2EFixtures
-          displayName: setup-fixtures (p41a)
-          feedBaseUrl: ${{ parameters.feedBaseUrl }}
-          pool: ${{ parameters.pool }}
-          dependsOn:
-            - BuildVscodeE2EArtifacts
-          checkoutRef: ${{ parameters.checkoutRef }}
-
-      - ${{ each shard in parameters.scenarioShards }}:
-          - template: vscode-e2e-run-scenario.yml
+      - ${{ if gt(length(parameters.scenarioShards), 0) }}:
+          - template: vscode-e2e-setup-fixtures.yml
             parameters:
-              jobName: ${{ shard.jobName }}
-              displayName: ${{ shard.displayName }}
-              scenario: ${{ shard.scenario }}
-              useWorkspaceFixtures: ${{ shard.useWorkspaceFixtures }}
-              useBundleArtifact: ${{ shard.useBundleArtifact }}
+              jobName: SetupVscodeE2EFixtures
+              displayName: setup-fixtures (p41a)
               feedBaseUrl: ${{ parameters.feedBaseUrl }}
               pool: ${{ parameters.pool }}
               dependsOn:
-                - SetupVscodeE2EFixtures
+                - BuildVscodeE2EArtifacts
               checkoutRef: ${{ parameters.checkoutRef }}
-              testARMServiceConnection: ''
+
+          - ${{ each shard in parameters.scenarioShards }}:
+              - template: vscode-e2e-run-scenario.yml
+                parameters:
+                  jobName: ${{ shard.jobName }}
+                  displayName: ${{ shard.displayName }}
+                  scenario: ${{ shard.scenario }}
+                  useWorkspaceFixtures: ${{ shard.useWorkspaceFixtures }}
+                  useBundleArtifact: ${{ shard.useBundleArtifact }}
+                  feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                  pool: ${{ parameters.pool }}
+                  dependsOn:
+                    - SetupVscodeE2EFixtures
+                  checkoutRef: ${{ parameters.checkoutRef }}
+                  testARMServiceConnection: ''
 
       - template: vscode-e2e-summary.yml
         parameters:
@@ -96,6 +87,7 @@ stages:
           dependsOn:
             - ${{ if eq(parameters.runVscodeTestCliSmoke, true) }}:
                 - VscodeE2ECliSmoke
-            - SetupVscodeE2EFixtures
+            - ${{ if gt(length(parameters.scenarioShards), 0) }}:
+                - SetupVscodeE2EFixtures
             - ${{ each shard in parameters.scenarioShards }}:
                 - ${{ shard.jobName }}
