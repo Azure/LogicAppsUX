@@ -170,6 +170,7 @@ jobs:
   setup-fixtures:
     name: setup-fixtures (p41a)
     needs: setup-extension-build
+    if: ${{ false }}
     runs-on: ubuntu-latest
     # Headroom for one fresh-session retry (LA_E2E_SCENARIO_RETRIES) if the
     # fixtures scenario flakes, so the retry isn't killed mid-run.
@@ -337,6 +338,7 @@ jobs:
   vscode-e2e:
     name: vscode-e2e (${{ matrix.shard }})
     needs: [setup-extension-build, setup-fixtures]
+    if: ${{ false }}
     # Grouped shards run scenarios sequentially and each failing scenario may
     # retry once in a fresh session (LA_E2E_SCENARIO_RETRIES). 35m gives the
     # heaviest group room for a retry without a timeout-induced failure.
@@ -1428,7 +1430,7 @@ jobs:
           echo "PATH=$PATH"
           node apps/vs-code-designer/out/test/run-e2e.js
         env:
-          LA_E2E_SCENARIO: p41a-fixtures
+          LA_E2E_SCENARIO: p41a-dependency-validation
           # Forces the full FuncCoreTools + DotNetSDK + NodeJs download instead of
           # letting validation short-circuit. Same switch setup-fixtures uses.
           LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1'
@@ -2148,7 +2150,7 @@ jobs:
   # ("vscode-e2e-summary") regardless of how many scenarios we add later.
   vscode-e2e-summary:
     name: vscode-e2e-summary
-    needs: [setup-extension-build, setup-fixtures, vscode-e2e, vscode-e2e-windows, vscode-e2e-cli-create-workspace, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-funcselfheal-windows, vscode-e2e-customcode-dotnet, vscode-e2e-compat, setup-runtime-deps-windows]
+    needs: [setup-extension-build, vscode-e2e-windows, vscode-e2e-cli-create-workspace, vscode-e2e-codeful-ubuntu, vscode-e2e-codeful-windows, vscode-e2e-azurite, vscode-e2e-azurite-windows, vscode-e2e-funcselfheal-windows, vscode-e2e-customcode-dotnet, vscode-e2e-compat, setup-runtime-deps-windows]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -2160,8 +2162,8 @@ jobs:
           # the gate. setup-runtime-deps-windows is the only job using it, and it is
           # intentionally reported below but excluded from the chain.
           echo "setup-extension-build:      ${{ needs.setup-extension-build.result }}"
-          echo "setup-fixtures:             ${{ needs.setup-fixtures.result }}"
-          echo "vscode-e2e (matrix):        ${{ needs.vscode-e2e.result }}"
+          echo "setup-fixtures:             skipped (legacy ExTester fixture bootstrap replaced by test-cli create-workspace checks)"
+          echo "vscode-e2e (matrix):        skipped (legacy ExTester fixture-dependent matrix replaced by focused checks)"
           echo "vscode-e2e-windows:         ${{ needs.vscode-e2e-windows.result }}"
           echo "vscode-e2e-cli-create-workspace: ${{ needs.vscode-e2e-cli-create-workspace.result }}"
           echo "vscode-e2e-codeful-ubuntu:  ${{ needs.vscode-e2e-codeful-ubuntu.result }}"
@@ -2173,8 +2175,6 @@ jobs:
           echo "setup-runtime-deps-windows: ${{ needs.setup-runtime-deps-windows.result }} (advisory, not gated: seeds la-runtime-deps-Windows-v1)"
           echo "compat matrix:              ${{ needs.vscode-e2e-compat.result }}"
           if [ "${{ needs.setup-extension-build.result }}" != "success" ] || \
-             [ "${{ needs.setup-fixtures.result }}" != "success" ] || \
-             [ "${{ needs.vscode-e2e.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-windows.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-cli-create-workspace.result }}" != "success" ] || \
              [ "${{ needs.vscode-e2e-codeful-ubuntu.result }}" != "success" ] || \
