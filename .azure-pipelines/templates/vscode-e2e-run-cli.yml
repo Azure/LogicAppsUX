@@ -85,7 +85,7 @@ jobs:
         displayName: Prepare vscode-test CLI extension dependencies
         env:
           LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
-          NODE_OPTIONS: --dns-result-order=ipv4first --max-old-space-size=4096
+          NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
           TEMP: $(Agent.TempDirectory)
           TMPDIR: $(Agent.TempDirectory)
 
@@ -99,7 +99,7 @@ jobs:
         env:
           DISPLAY: :99
           LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
-          NODE_OPTIONS: --dns-result-order=ipv4first
+          NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection
           TEMP: $(Agent.TempDirectory)
           TMPDIR: $(Agent.TempDirectory)
           ${{ if ne(parameters.testARMServiceConnection, '') }}:
