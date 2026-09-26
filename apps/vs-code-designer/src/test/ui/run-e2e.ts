@@ -368,9 +368,10 @@ async function withDownloadRetry(label: string, action: () => Promise<void>): Pr
 
 function installExtensionWithCli(cliBase: string, dep: string, label: string = dep): Promise<InstallResult> {
   return new Promise<InstallResult>((resolve) => {
-    const command = `${cliBase} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
+    const { args: proxyArgs, env: proxyEnv } = getVsCodeCliProxyOptions();
+    const command = `${cliBase}${proxyArgs} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
     const startTime = Date.now();
-    exec(command, { timeout: 300000 }, (error: Error | null, stdout: string, stderr: string) => {
+    exec(command, { timeout: 300000, env: { ...process.env, ...proxyEnv } }, (error: Error | null, stdout: string, stderr: string) => {
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
       if (error) {
         const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
@@ -382,6 +383,35 @@ function installExtensionWithCli(cliBase: string, dep: string, label: string = d
       }
     });
   });
+}
+
+function getVsCodeCliProxyOptions(): { args: string; env: NodeJS.ProcessEnv } {
+  const proxyServer =
+    process.env.HTTPS_PROXY ??
+    process.env.https_proxy ??
+    process.env.HTTP_PROXY ??
+    process.env.http_proxy ??
+    process.env.VSTS_HTTP_PROXY ??
+    process.env.vsts_http_proxy;
+  if (!proxyServer) {
+    return { args: '', env: {} };
+  }
+
+  const proxyBypassList =
+    process.env.NO_PROXY ?? process.env.no_proxy ?? process.env.VSTS_HTTP_PROXY_BYPASS ?? process.env.vsts_http_proxy_bypass;
+  const proxyServerReference = process.platform === 'win32' ? '%LA_E2E_PROXY_SERVER%' : '$LA_E2E_PROXY_SERVER';
+  const proxyBypassReference = process.platform === 'win32' ? '%LA_E2E_PROXY_BYPASS_LIST%' : '$LA_E2E_PROXY_BYPASS_LIST';
+  const args = [` --proxy-server="${proxyServerReference}"`, proxyBypassList ? ` --proxy-bypass-list="${proxyBypassReference}"` : ''].join(
+    ''
+  );
+
+  return {
+    args,
+    env: {
+      LA_E2E_PROXY_SERVER: proxyServer,
+      ...(proxyBypassList ? { LA_E2E_PROXY_BYPASS_LIST: proxyBypassList } : {}),
+    },
+  };
 }
 
 function findNestedWindowsCliPath(codeFolder: string): string | undefined {
