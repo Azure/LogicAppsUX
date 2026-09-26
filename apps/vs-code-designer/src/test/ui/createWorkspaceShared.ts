@@ -264,11 +264,6 @@ export async function typeQuickInputQuery(driver: WebDriver, query: string): Pro
   await driver.wait(async () => (await inputEl.getAttribute('value')) === query, 5_000, 'QuickInput value not updated');
 }
 
-async function openCommandPaletteWithKeyboard(driver: WebDriver): Promise<void> {
-  await driver.switchTo().defaultContent();
-  await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('p').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
-}
-
 async function getVisibleQuickPickLabels(driver: WebDriver): Promise<string[]> {
   return driver.executeScript<string[]>(
     [
@@ -284,39 +279,6 @@ async function getVisibleQuickPickLabels(driver: WebDriver): Promise<string[]> {
       'return Array.from(widget.querySelectorAll(".monaco-list-row"))',
       '  .map((row) => row.textContent.replace(/\\s+/g, " ").trim())',
       '  .filter(Boolean);',
-    ].join('')
-  );
-}
-
-async function selectVisibleCreateWorkspacePick(driver: WebDriver): Promise<string | undefined> {
-  return driver.executeScript<string | undefined>(
-    [
-      'const widgets = Array.from(document.querySelectorAll(".quick-input-widget"));',
-      'const widget = widgets.find((candidate) => {',
-      '  const style = window.getComputedStyle(candidate);',
-      '  const rect = candidate.getBoundingClientRect();',
-      '  return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0;',
-      '});',
-      'if (!widget) {',
-      '  return undefined;',
-      '}',
-      'const rows = Array.from(widget.querySelectorAll(".monaco-list-row"));',
-      'const matches = rows',
-      '  .map((row) => ({ row, label: row.textContent.replace(/\\s+/g, " ").trim() }))',
-      '  .filter(({ label }) => {',
-      '    const lowerLabel = label.toLowerCase();',
-      '    return lowerLabel.includes("workspace") && !lowerLabel.includes("package") && !lowerLabel.includes("from");',
-      '  })',
-      '  .sort((a, b) => a.label.length - b.label.length);',
-      'const match = matches[0];',
-      'if (!match) {',
-      '  return undefined;',
-      '}',
-      'match.row.scrollIntoView({ block: "center" });',
-      'for (const type of ["mouseover", "mousedown", "mouseup", "click"]) {',
-      '  match.row.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));',
-      '}',
-      'return match.label;',
     ].join('')
   );
 }
@@ -349,14 +311,12 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
   let lastPickLabels: string[] = [];
 
   for (let attempt = 0; attempt < backoffsMs.length; attempt++) {
+    let input: InputBox | QuickOpenBox | undefined;
     try {
-      await openCommandPaletteWithKeyboard(driver);
+      input = await workbench.openCommandPrompt();
       await sleep(500);
 
       // CRITICAL: Use '> ' prefix to stay in command mode (file search otherwise).
-      // We bypass ExTester openCommandPrompt()/InputBox because on slow Linux
-      // runners it can bind a hidden cached widget and fail its visibility wait
-      // before our more robust DOM quick-input helper gets control.
       await typeQuickInputQuery(driver, '> Create new logic app workspace');
       await sleep(2_000); // Wait for picks to populate
       lastPickLabels = await getVisibleQuickPickLabels(driver);
@@ -364,13 +324,24 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
         console.log(`[selectCreateWorkspaceCommand] Pick: "${label}"`);
       }
 
-      const selectedLabel = await selectVisibleCreateWorkspacePick(driver);
+      const picks = await input.getQuickPicks();
+      const pickerLabels = await Promise.all(picks.map((pick) => pick.getLabel()));
+      const selectedLabel =
+        pickerLabels.find((label) => label === 'Azure Logic Apps: Create new logic app workspace...') ??
+        pickerLabels.find((label) => {
+          const lowerLabel = label.toLowerCase();
+          return lowerLabel.includes('workspace') && !lowerLabel.includes('package') && !lowerLabel.includes('from');
+        });
       if (!selectedLabel) {
-        throw new Error(`Could not find create workspace pick. Available picks: ${JSON.stringify(lastPickLabels)}`);
+        throw new Error(
+          `Could not find create workspace pick. Available visible picks: ${JSON.stringify(lastPickLabels)}. Picker labels: ${JSON.stringify(
+            pickerLabels
+          )}`
+        );
       }
 
       console.log(`[selectCreateWorkspaceCommand] Selecting: "${selectedLabel}"`);
-      await driver.actions().sendKeys(Key.ENTER).perform();
+      await input.selectQuickPick(selectedLabel);
       await sleep(2000); // Wait for webview to open
       return;
     } catch (e: any) {
@@ -382,7 +353,7 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
         /* ignore screenshot failure */
       }
       try {
-        await workbench.executeCommand('workbench.action.closeQuickOpen');
+        await safeCancelQuickInput(input, 'selectCreateWorkspaceCommand:error');
       } catch {
         /* ignore */
       }
