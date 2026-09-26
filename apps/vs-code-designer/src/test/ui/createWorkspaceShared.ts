@@ -370,6 +370,7 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
       }
 
       console.log(`[selectCreateWorkspaceCommand] Selecting: "${selectedLabel}"`);
+      await driver.actions().sendKeys(Key.ENTER).perform();
       await sleep(2000); // Wait for webview to open
       return;
     } catch (e: any) {
