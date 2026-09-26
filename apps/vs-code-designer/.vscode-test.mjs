@@ -19,6 +19,7 @@ const userDataDir =
     : path.join(tmpdir(), `la-vscode-test-${checkoutHash}-${nonWindowsUserDataSuffix}`));
 const extensionDevelopmentPath = path.join(__dirname, 'dist');
 const startupResource = process.env.LA_E2E_CLI_STARTUP_RESOURCE;
+const extensionsDir = process.env.LA_E2E_CLI_EXTENSIONS_DIR;
 const includeWorkspaceLifecycle = process.env.LA_E2E_CLI_INCLUDE_WORKSPACE_LIFECYCLE === '1' || process.argv.includes('workspaceLifecycle');
 const includeNugetConversionLifecycle =
   process.env.LA_E2E_CLI_INCLUDE_NUGET_CONVERSION_LIFECYCLE === '1' || process.argv.includes('nugetConversionLifecycle');
@@ -54,7 +55,9 @@ const baseConfig = {
     '--locale=en-US',
     `--remote-debugging-port=${remoteDebuggingPort}`,
     '--remote-debugging-address=127.0.0.1',
+    ...(extensionsDir ? ['--extensions-dir', extensionsDir] : []),
   ],
+  ...(extensionsDir ? { skipExtensionDependencies: true } : {}),
 };
 
 const configs = [

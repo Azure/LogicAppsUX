@@ -842,6 +842,11 @@ async function main(): Promise<void> {
     console.log('\n=== Step 2: No extension dependencies to install ===');
   }
 
+  if (process.env.LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY === '1') {
+    console.log('\n=== Prepared extension dependencies only; skipping extension copy and tests ===');
+    return;
+  }
+
   // Step 3: Copy our built extension into test-extensions as an "installed" extension
   // Skip the copy if dist/main.js hasn't changed (compare mtime for a fast-path).
   console.log('\n=== Step 3: Install our extension from dist/ ===');
