@@ -264,6 +264,63 @@ export async function typeQuickInputQuery(driver: WebDriver, query: string): Pro
   await driver.wait(async () => (await inputEl.getAttribute('value')) === query, 5_000, 'QuickInput value not updated');
 }
 
+async function openCommandPaletteWithKeyboard(driver: WebDriver): Promise<void> {
+  await driver.switchTo().defaultContent();
+  await driver.actions().keyDown(Key.CONTROL).keyDown(Key.SHIFT).sendKeys('p').keyUp(Key.SHIFT).keyUp(Key.CONTROL).perform();
+}
+
+async function getVisibleQuickPickLabels(driver: WebDriver): Promise<string[]> {
+  return driver.executeScript<string[]>(
+    [
+      'const widgets = Array.from(document.querySelectorAll(".quick-input-widget"));',
+      'const widget = widgets.find((candidate) => {',
+      '  const style = window.getComputedStyle(candidate);',
+      '  const rect = candidate.getBoundingClientRect();',
+      '  return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0;',
+      '});',
+      'if (!widget) {',
+      '  return [];',
+      '}',
+      'return Array.from(widget.querySelectorAll(".monaco-list-row"))',
+      '  .map((row) => row.textContent.replace(/\\s+/g, " ").trim())',
+      '  .filter(Boolean);',
+    ].join('')
+  );
+}
+
+async function selectVisibleCreateWorkspacePick(driver: WebDriver): Promise<string | undefined> {
+  return driver.executeScript<string | undefined>(
+    [
+      'const widgets = Array.from(document.querySelectorAll(".quick-input-widget"));',
+      'const widget = widgets.find((candidate) => {',
+      '  const style = window.getComputedStyle(candidate);',
+      '  const rect = candidate.getBoundingClientRect();',
+      '  return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0;',
+      '});',
+      'if (!widget) {',
+      '  return undefined;',
+      '}',
+      'const rows = Array.from(widget.querySelectorAll(".monaco-list-row"));',
+      'const matches = rows',
+      '  .map((row) => ({ row, label: row.textContent.replace(/\\s+/g, " ").trim() }))',
+      '  .filter(({ label }) => {',
+      '    const lowerLabel = label.toLowerCase();',
+      '    return lowerLabel.includes("workspace") && !lowerLabel.includes("package") && !lowerLabel.includes("from");',
+      '  })',
+      '  .sort((a, b) => a.label.length - b.label.length);',
+      'const match = matches[0];',
+      'if (!match) {',
+      '  return undefined;',
+      '}',
+      'match.row.scrollIntoView({ block: "center" });',
+      'for (const type of ["mouseover", "mousedown", "mouseup", "click"]) {',
+      '  match.row.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));',
+      '}',
+      'return match.label;',
+    ].join('')
+  );
+}
+
 /**
  * Open the command palette, type a search query, and select a specific pick.
  *
@@ -287,43 +344,44 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
     // Ignore
   }
 
-  // Retry opening and typing in the command palette — the InputBox is often
-  // not interactable right after openCommandPrompt() on slow CI runners, and
-  // raw ExTester InputBox.setText()/clear() throws ElementNotInteractableError.
-  // We use a longer retry budget with exponential backoff and validate that
-  // the underlying <input> is visible+enabled before sending keys.
   const backoffsMs = [1_000, 2_000, 3_000, 5_000, 8_000];
-  let input: InputBox | QuickOpenBox | undefined;
   let lastError: any;
+  let lastPickLabels: string[] = [];
 
   for (let attempt = 0; attempt < backoffsMs.length; attempt++) {
     try {
-      input = await workbench.openCommandPrompt();
+      await openCommandPaletteWithKeyboard(driver);
       await sleep(500);
 
       // CRITICAL: Use '> ' prefix to stay in command mode (file search otherwise).
-      // We bypass ExTester InputBox.setText() which calls clear() and throws
-      // ElementNotInteractableError when the element is transiently busy.
-      // Raw sendKeys with select-all is reliable.
-      await typeQuickInputQuery(driver, '> logic app workspace');
+      // We bypass ExTester openCommandPrompt()/InputBox because on slow Linux
+      // runners it can bind a hidden cached widget and fail its visibility wait
+      // before our more robust DOM quick-input helper gets control.
+      await typeQuickInputQuery(driver, '> Create new logic app workspace');
       await sleep(2_000); // Wait for picks to populate
-      break; // success
+      lastPickLabels = await getVisibleQuickPickLabels(driver);
+      for (const label of lastPickLabels) {
+        console.log(`[selectCreateWorkspaceCommand] Pick: "${label}"`);
+      }
+
+      const selectedLabel = await selectVisibleCreateWorkspacePick(driver);
+      if (!selectedLabel) {
+        throw new Error(`Could not find create workspace pick. Available picks: ${JSON.stringify(lastPickLabels)}`);
+      }
+
+      console.log(`[selectCreateWorkspaceCommand] Selecting: "${selectedLabel}"`);
+      await sleep(2000); // Wait for webview to open
+      return;
     } catch (e: any) {
       lastError = e;
-      console.log(`[selectCreateWorkspaceCommand] Attempt ${attempt + 1}/${backoffsMs.length}: setText failed: ${e.message}`);
+      console.log(`[selectCreateWorkspaceCommand] Attempt ${attempt + 1}/${backoffsMs.length} failed: ${e.message}`);
       try {
         await captureScreenshot(driver, `selectCreateWorkspaceCommand-timeout-attempt-${attempt + 1}`);
       } catch {
         /* ignore screenshot failure */
       }
-      // Use safeCancelQuickInput (added by upstream PR #9142) instead of a bare
-      // input?.cancel() so a stuck/cancelled QuickInput does not throw inside
-      // the retry path.
-      await safeCancelQuickInput(input, 'selectCreateWorkspaceCommand');
-      // Re-focus the command palette explicitly between retries so the next
-      // openCommandPrompt() lands on a fresh, interactable widget.
       try {
-        await workbench.executeCommand('workbench.action.focusQuickOpen');
+        await workbench.executeCommand('workbench.action.closeQuickOpen');
       } catch {
         /* ignore */
       }
@@ -339,68 +397,11 @@ export async function selectCreateWorkspaceCommand(workbench: Workbench): Promis
     }
   }
 
-  if (!input) {
-    throw new Error('Could not open command prompt');
-  }
-
-  // Get all visible quick pick items
-  let picks = await input.getQuickPicks();
-  console.log(`[selectCreateWorkspaceCommand] Found ${picks.length} picks`);
-
-  let bestPick: (typeof picks)[0] | null = null;
-  let bestLabel = '';
-  const allLabels: string[] = [];
-
-  for (const pick of picks) {
-    const label = await pick.getLabel();
-    allLabels.push(label);
-    console.log(`[selectCreateWorkspaceCommand] Pick: "${label}"`);
-
-    const lowerLabel = label.toLowerCase();
-    // Must contain "workspace" and NOT contain "package" or "from"
-    if (lowerLabel.includes('workspace') && !lowerLabel.includes('package') && !lowerLabel.includes('from')) {
-      if (!bestPick || label.length < bestLabel.length) {
-        bestPick = pick;
-        bestLabel = label;
-      }
-    }
-  }
-
-  if (!bestPick) {
-    // Try a different search term against a fresh command palette. Reusing a
-    // no-pick widget can race VS Code clearing the palette and leave the input
-    // hidden in CI.
-    console.log('[selectCreateWorkspaceCommand] No match, trying "> Create new logic"');
-    await safeCancelQuickInput(input, 'selectCreateWorkspaceCommand:fallback');
-    input = await workbench.openCommandPrompt();
-    await sleep(500);
-    await typeQuickInputQuery(driver, '> Create new logic');
-    await sleep(2000);
-
-    picks = await input.getQuickPicks();
-    for (const pick of picks) {
-      const label = await pick.getLabel();
-      allLabels.push(label);
-      console.log(`[selectCreateWorkspaceCommand] Retry pick: "${label}"`);
-
-      const lowerLabel = label.toLowerCase();
-      if (lowerLabel.includes('workspace') && !lowerLabel.includes('package') && !lowerLabel.includes('from')) {
-        if (!bestPick || label.length < bestLabel.length) {
-          bestPick = pick;
-          bestLabel = label;
-        }
-      }
-    }
-  }
-
-  if (!bestPick) {
-    await safeCancelQuickInput(input, 'selectCreateWorkspaceCommand:no-match');
-    throw new Error(`Could not find "Create new logic app workspace..." command.\nAvailable picks: ${JSON.stringify(allLabels)}`);
-  }
-
-  console.log(`[selectCreateWorkspaceCommand] Selecting: "${bestLabel}"`);
-  await bestPick.select();
-  await sleep(2000); // Wait for webview to open
+  throw new Error(
+    `Could not select "Create new logic app workspace..." command. Last picks: ${JSON.stringify(lastPickLabels)}. Last error: ${
+      lastError instanceof Error ? lastError.message : String(lastError)
+    }`
+  );
 }
 
 /**
