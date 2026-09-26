@@ -223,13 +223,32 @@ export function createTempDir(): string {
 }
 
 export async function typeQuickInputQuery(driver: WebDriver, query: string): Promise<void> {
-  const inputEl = await driver.wait(
-    until.elementLocated(By.css('.quick-input-widget:not(.hidden) .quick-input-box input')),
+  const inputEl = await driver.wait<WebElement>(
+    async () => {
+      const element = await driver.executeScript<WebElement | null>(
+        [
+          'const widgets = Array.from(document.querySelectorAll(".quick-input-widget"));',
+          'for (const widget of widgets) {',
+          '  const style = window.getComputedStyle(widget);',
+          '  const rect = widget.getBoundingClientRect();',
+          '  if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0 || rect.width === 0 || rect.height === 0) {',
+          '    continue;',
+          '  }',
+          '  const input = widget.querySelector(".quick-input-box input");',
+          '  if (input) {',
+          '    return input;',
+          '  }',
+          '}',
+          'return null;',
+        ].join('')
+      );
+      return element ?? false;
+    },
     30_000,
     'QuickInput input element not located'
   );
-  await driver.wait(until.elementIsVisible(inputEl), 30_000, 'QuickInput input not visible');
   await driver.wait(until.elementIsEnabled(inputEl), 5_000, 'QuickInput input not enabled');
+  await inputEl.click();
   await inputEl.sendKeys(Key.chord(Key.CONTROL, 'a'));
   await inputEl.sendKeys(query);
 }
