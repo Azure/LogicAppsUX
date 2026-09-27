@@ -300,13 +300,18 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
 }
 
 function ensureMsnWeatherProfile() {
-  const userDataDir = process.env.LA_E2E_CLI_USER_DATA_DIR ?? getDefaultAzureAuthUserDataDir();
-  process.env.LA_E2E_CLI_USER_DATA_DIR = userDataDir;
   const hasHeadlessAzureAuth =
     !!process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN?.trim() ||
     !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials ?? '') ||
     !!process.env.FC_SERVICE_CONNECTION_ID?.trim() ||
     !!process.env.AzCode_ServiceConnectionID?.trim();
+  if (hasHeadlessAzureAuth && !process.env.LA_E2E_CLI_USER_DATA_DIR?.trim()) {
+    console.log('[workspace-lifecycle][msn-weather] Using per-phase VS Code profiles with headless Azure auth from environment.');
+    return;
+  }
+
+  const userDataDir = process.env.LA_E2E_CLI_USER_DATA_DIR ?? getDefaultAzureAuthUserDataDir();
+  process.env.LA_E2E_CLI_USER_DATA_DIR = userDataDir;
   if (!userDataDir) {
     throw new Error(
       [
