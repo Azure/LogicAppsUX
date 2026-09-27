@@ -533,7 +533,7 @@ async function openDesignerAndCreateWorkflow(
 
   await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: options.useAzureConnectors === true });
 
-  const tab = await waitForWebviewTab(designerViewType, tabsBefore, 360000);
+  const tab = await waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors: options.useAzureConnectors === true });
   assert.strictEqual(getTabViewType(tab), designerTabViewType);
   assert.ok(
     tab.label.includes(createdWorkspace.wfName),
@@ -600,6 +600,30 @@ async function openDesignerAndCreateWorkflow(
   } finally {
     cdp.dispose();
   }
+}
+
+async function waitForDesignerWebviewTab(
+  previousCount: number,
+  options: { useAzureConnectors?: boolean } = {},
+  timeoutMs = 360000
+): Promise<vscode.Tab> {
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    const tabs = getWebviewTabs(designerViewType);
+    if (tabs.length > previousCount) {
+      return tabs[tabs.length - 1];
+    }
+
+    if (tabs.length > 0 && previousCount === 0) {
+      return tabs[tabs.length - 1];
+    }
+
+    await handleDesignerQuickPickPrompts(3000, options);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+
+  assert.fail(`Timed out waiting for ${designerViewType} webview tab to open. Open tabs: ${describeOpenTabs()}`);
 }
 
 async function addRequestTriggerThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
