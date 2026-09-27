@@ -38,7 +38,7 @@ import {
 } from './createWorkspaceCases';
 import type { FieldLabels, WorkspaceAppType, WorkspaceCreationCase, WorkflowType } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
-import { captureCliScreenshot } from './screenshot';
+import { captureCliScreenshot, installFailureScreenshotHook } from './screenshot';
 import { containsIgnoreCase, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeWebviewTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
@@ -187,6 +187,7 @@ type TasksJson = {
 };
 
 installDialogGuard();
+installFailureScreenshotHook();
 
 suite('Create Workspace Experience Tests', () => {
   const createWorkspaceGroup = getCreateWorkspaceGroup();

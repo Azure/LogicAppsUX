@@ -269,6 +269,7 @@ jobs:
           testResultsFiles: apps/vs-code-designer/.vscode-test/results/${{ parameters.label }}.junit.xml
           testRunTitle: '@vscode/test-cli ${{ parameters.artifactName }}'
           failTaskOnFailedTests: false
+          publishRunAttachments: true
 
       - pwsh: |
           $diagnosticsRoot = "$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}"

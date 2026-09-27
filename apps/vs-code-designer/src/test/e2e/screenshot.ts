@@ -7,6 +7,36 @@ import { connectToVsCodeWorkbenchCdp } from './cdpClient';
 const execFileAsync = promisify(execFile);
 const screenshotRoot =
   process.env.LA_E2E_CLI_SCREENSHOT_DIR ?? path.resolve(__dirname, '..', '..', '..', '.vscode-test', 'screenshots', 'cli');
+const failureAttachmentManifestPath = path.join(screenshotRoot, 'failure-attachments.json');
+
+interface FailureScreenshotAttachment {
+  label: string;
+  testTitle: string;
+  screenshotPath: string;
+  createdAt: string;
+}
+
+export function installFailureScreenshotHook(): void {
+  teardown(async function (this: { currentTest?: { state?: string; fullTitle?: () => string; title?: string } }) {
+    if (this.currentTest?.state !== 'failed') {
+      return;
+    }
+
+    const testTitle = this.currentTest.fullTitle?.() ?? this.currentTest.title ?? 'unknown test';
+    const label = process.env.LA_E2E_CLI_LABEL ?? 'unknown';
+    const screenshotPath = await captureCliScreenshot(`failure-${label}-${testTitle}-${Date.now()}`);
+    if (!screenshotPath) {
+      return;
+    }
+
+    appendFailureAttachment({
+      label,
+      testTitle,
+      screenshotPath: path.resolve(screenshotPath),
+      createdAt: new Date().toISOString(),
+    });
+  });
+}
 
 export async function captureCliScreenshot(name: string): Promise<string | undefined> {
   fs.mkdirSync(screenshotRoot, { recursive: true });
@@ -63,6 +93,25 @@ export async function captureCdpScreenshot(
 
 function sanitizeFileSegment(value: string): string {
   return value.replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '') || 'screenshot';
+}
+
+function appendFailureAttachment(entry: FailureScreenshotAttachment): void {
+  fs.mkdirSync(path.dirname(failureAttachmentManifestPath), { recursive: true });
+  const existingEntries = readFailureAttachments();
+  fs.writeFileSync(failureAttachmentManifestPath, `${JSON.stringify([...existingEntries, entry], null, 2)}\n`);
+}
+
+function readFailureAttachments(): FailureScreenshotAttachment[] {
+  if (!fs.existsSync(failureAttachmentManifestPath)) {
+    return [];
+  }
+
+  try {
+    const value = JSON.parse(fs.readFileSync(failureAttachmentManifestPath, 'utf-8'));
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
 }
 
 async function captureWindowsScreenshot(screenshotPath: string): Promise<void> {

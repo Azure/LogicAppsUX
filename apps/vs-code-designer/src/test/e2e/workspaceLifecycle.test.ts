@@ -31,7 +31,7 @@ import {
 } from './cdpFormHelpers';
 import type { CodefulControlVariant, FieldLabels } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard, withAllowedDialogResponses } from './dialogGuard';
-import { captureCdpScreenshot } from './screenshot';
+import { captureCdpScreenshot, installFailureScreenshotHook } from './screenshot';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
@@ -147,6 +147,7 @@ interface CodefulTaskSummary {
 }
 
 installDialogGuard();
+installFailureScreenshotHook();
 
 suite('Generated Workspace Designer Lifecycle Tests', () => {
   const tempWorkspaceParentPath = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-workspace-lifecycle-'));
@@ -531,19 +532,20 @@ async function openDesignerAndCreateWorkflow(
     .then(undefined, (error) => console.warn(`[workspace-lifecycle] openDesigner command rejected: ${String(error)}`));
   assert.ok(openDesignerPromise, 'Expected open designer command to start');
 
-  await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: options.useAzureConnectors === true });
-
-  const tab = await waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors: options.useAzureConnectors === true });
-  assert.strictEqual(getTabViewType(tab), designerTabViewType);
-  assert.ok(
-    tab.label.includes(createdWorkspace.wfName),
-    `Expected designer tab label to include workflow name "${createdWorkspace.wfName}". Open tabs: ${describeOpenTabs()}`
-  );
-
-  await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: options.useAzureConnectors === true });
-
-  const cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
+  let cdp: CdpConnection | undefined;
   try {
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: options.useAzureConnectors === true });
+
+    const tab = await waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors: options.useAzureConnectors === true });
+    assert.strictEqual(getTabViewType(tab), designerTabViewType);
+    assert.ok(
+      tab.label.includes(createdWorkspace.wfName),
+      `Expected designer tab label to include workflow name "${createdWorkspace.wfName}". Open tabs: ${describeOpenTabs()}`
+    );
+
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: options.useAzureConnectors === true });
+
+    cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
     const contextId = await waitForWebviewFrameContext(cdp, {
       allTextIncludes: ['Save'],
       description: `${createdWorkspace.label} designer webview DOM context`,
@@ -598,7 +600,7 @@ async function openDesignerAndCreateWorkflow(
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-failure`);
     throw error;
   } finally {
-    cdp.dispose();
+    cdp?.dispose();
   }
 }
 

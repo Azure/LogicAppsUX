@@ -144,6 +144,27 @@ stages:
               azureLocationName: ${{ parameters.azureLocationName }}
               designerApiLoadTimeoutMs: '600000'
               timeoutInMinutes: 35
+          - template: vscode-e2e-run-cli.yml
+            parameters:
+              jobName: VscodeE2EWindowsMsnWeatherLifecycle
+              displayName: vscode-test CLI Windows MSN Weather lifecycle
+              label: msnWeatherLifecycle
+              cliArguments: --msn-weather-lifecycle
+              artifactName: windows-msnWeatherLifecycle
+              feedBaseUrl: ${{ parameters.feedBaseUrl }}
+              pool: ${{ parameters.windowsPool }}
+              dependsOn:
+                - BuildVscodeE2EArtifacts
+              checkoutRef: ${{ parameters.checkoutRef }}
+              testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+              platform: windows
+              requiresAzureAccessToken: true
+              azureTenantId: ${{ parameters.azureTenantId }}
+              azureSubscriptionId: ${{ parameters.azureSubscriptionId }}
+              azureResourceGroupName: ${{ parameters.azureResourceGroupName }}
+              azureLocationName: ${{ parameters.azureLocationName }}
+              designerApiLoadTimeoutMs: '600000'
+              timeoutInMinutes: 35
 
       - ${{ if and(eq(parameters.runVscodeTestCliSmoke, true), eq(length(parameters.testCliRuns), 0)) }}:
           - template: vscode-e2e-run-cli.yml
@@ -198,6 +219,7 @@ stages:
                     - ${{ cliRun.jobName }}
             - ${{ if eq(parameters.runMsnWeatherLifecycle, true) }}:
                 - VscodeE2EMsnWeatherLifecycle
+                - VscodeE2EWindowsMsnWeatherLifecycle
             - ${{ if and(eq(parameters.runVscodeTestCliSmoke, true), eq(length(parameters.testCliRuns), 0)) }}:
                 - VscodeE2ECliSmoke
             - ${{ if gt(length(parameters.scenarioShards), 0) }}:

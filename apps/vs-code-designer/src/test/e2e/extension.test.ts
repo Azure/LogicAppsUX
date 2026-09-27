@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
-import { captureCliScreenshot } from './screenshot';
+import { captureCliScreenshot, installFailureScreenshotHook } from './screenshot';
 import { normalizeFsPath } from './testUtils';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
@@ -10,6 +10,7 @@ const activationChannelName = 'Logic Apps @vscode/test-cli Smoke';
 const expectedExtensionDevelopmentPath = path.resolve(__dirname, '..', '..', '..', 'dist');
 
 installDialogGuard();
+installFailureScreenshotHook();
 
 suite('Extension Activation Tests', () => {
   let extension: vscode.Extension<unknown> | undefined;

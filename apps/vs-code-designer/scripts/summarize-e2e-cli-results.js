@@ -24,6 +24,7 @@ function writeSingleResult({ label, log, outDir, outcome }) {
 
   const logText = stripAnsi(fs.existsSync(log) ? fs.readFileSync(log, 'utf-8') : '');
   const result = parseMochaLog(label, outcome ?? 'unknown', logText);
+  result.failureAttachments = result.failing > 0 ? loadFailureScreenshotAttachments(outDir, label) : [];
   fs.mkdirSync(outDir, { recursive: true });
 
   fs.writeFileSync(path.join(outDir, `${label}.json`), `${JSON.stringify(result, null, 2)}\n`);
@@ -168,21 +169,35 @@ function buildAggregateSummary(aggregate) {
   return `${lines.join('\n')}\n`;
 }
 
-function buildJUnitXml(result) {
+function buildJUnitXml(result, options = {}) {
   const failedTests = Array.isArray(result.failedTests) ? result.failedTests : [];
   const passedTests = Array.isArray(result.passedTests) ? result.passedTests : [];
   const failureExcerpt = Array.isArray(result.failureExcerpt) ? result.failureExcerpt : [];
+  const failureAttachments =
+    options.includeAttachments === false || !Array.isArray(result.failureAttachments) ? [] : result.failureAttachments;
   const failures = failedTests.length > 0 ? failedTests : Array.from({ length: result.failing }, (_, index) => `Failure ${index + 1}`);
   const passed = passedTests.length > 0 ? passedTests : Array.from({ length: result.passing }, (_, index) => `Passing test ${index + 1}`);
   const testCases = [
     ...passed.map((name) => `    <testcase classname="${escapeXml(result.label)}" name="${escapeXml(name)}" />`),
-    ...failures.map((name) =>
-      [
+    ...failures.map((name) => {
+      const testcaseAttachments = failureAttachments.filter((attachment) => attachmentMatchesTest(attachment, name));
+      const attachmentOutput =
+        testcaseAttachments.length > 0
+          ? [
+              '      <system-out>',
+              escapeXml(testcaseAttachments.map((attachment) => `[[ATTACHMENT|${attachment.screenshotPath}]]`).join('\n')),
+              '      </system-out>',
+            ].join('\n')
+          : '';
+      return [
         `    <testcase classname="${escapeXml(result.label)}" name="${escapeXml(name)}">`,
         `      <failure message="${escapeXml(name)}">${escapeXml(failureExcerpt.join('\n'))}</failure>`,
+        attachmentOutput,
         '    </testcase>',
-      ].join('\n')
-    ),
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }),
   ];
 
   return [
@@ -198,7 +213,7 @@ function buildAggregateJUnitXml(aggregate) {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     `<testsuites name="vscode-e2e-cli-create-workspace" tests="${aggregate.total}" failures="${aggregate.failing}" skipped="${aggregate.pending}">`,
-    ...aggregate.labels.map((result) => buildJUnitXml(result).split('\n').slice(1, -1).join('\n')),
+    ...aggregate.labels.map((result) => buildJUnitXml(result, { includeAttachments: false }).split('\n').slice(1, -1).join('\n')),
     '</testsuites>',
     '',
   ].join('\n');
@@ -235,7 +250,40 @@ function normalizeResult(result) {
     passedTests: Array.isArray(result.passedTests) ? result.passedTests : [],
     failedTests: Array.isArray(result.failedTests) ? result.failedTests : [],
     failureExcerpt: Array.isArray(result.failureExcerpt) ? result.failureExcerpt : [],
+    failureAttachments: Array.isArray(result.failureAttachments) ? result.failureAttachments : [],
   };
+}
+
+function loadFailureScreenshotAttachments(outDir, label) {
+  const manifestPath = path.resolve(outDir, '..', 'screenshots', 'cli', 'failure-attachments.json');
+  if (!fs.existsSync(manifestPath)) {
+    return [];
+  }
+
+  try {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    if (!Array.isArray(manifest)) {
+      return [];
+    }
+
+    return manifest
+      .filter((entry) => entry?.label === label && typeof entry.testTitle === 'string' && typeof entry.screenshotPath === 'string')
+      .filter((entry) => fs.existsSync(entry.screenshotPath));
+  } catch {
+    return [];
+  }
+}
+
+function attachmentMatchesTest(attachment, testName) {
+  const normalizedTitle = normalizeTestName(attachment.testTitle);
+  const normalizedTestName = normalizeTestName(testName);
+  return (
+    normalizedTitle === normalizedTestName || normalizedTitle.includes(normalizedTestName) || normalizedTestName.includes(normalizedTitle)
+  );
+}
+
+function normalizeTestName(value) {
+  return String(value).replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
 function buildFailureExcerpt(logText) {

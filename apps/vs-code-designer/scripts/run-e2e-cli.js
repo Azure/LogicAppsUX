@@ -552,6 +552,7 @@ function runVscodeTest(args, options = {}) {
   const child = spawn(command, commandArgs, {
     env: {
       ...process.env,
+      LA_E2E_CLI_LABEL: label ?? '',
       LA_E2E_CLI_USER_DATA_SUFFIX: userDataSuffix,
       ...(options.visibleDelayMs ? { LA_E2E_CLI_VISIBLE_DELAY_MS: options.visibleDelayMs } : {}),
       ...(deferredWorkspaceParent

@@ -1,6 +1,9 @@
 import * as assert from 'assert';
 import { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
 import * as vscode from 'vscode';
+import { installFailureScreenshotHook } from './screenshot';
+
+installFailureScreenshotHook();
 
 suite('Azure auth warm-up', () => {
   test('creates the VS Code Microsoft auth session used by Azure connector tests', async () => {

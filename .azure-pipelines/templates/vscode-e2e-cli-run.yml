@@ -117,6 +117,7 @@ steps:
       testResultsFiles: apps/vs-code-designer/.vscode-test/results/${{ parameters.label }}.junit.xml
       testRunTitle: '@vscode/test-cli ${{ parameters.label }}'
       failTaskOnFailedTests: false
+      publishRunAttachments: true
 
   - pwsh: |
       $diagnosticsRoot = '${{ parameters.diagnosticsPath }}'
