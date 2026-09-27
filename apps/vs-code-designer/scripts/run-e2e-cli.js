@@ -289,7 +289,7 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
       LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
       LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
       LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
-      LA_E2E_CLI_STARTUP_RESOURCE: entry.appDir,
+      LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
       ...azureEnv,
     },
   });

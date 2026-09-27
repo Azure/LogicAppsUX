@@ -525,25 +525,49 @@ async function openDesignerAndCreateWorkflow(
   const workflowDocument = await vscode.workspace.openTextDocument(vscode.Uri.file(createdWorkspace.workflowJsonPath));
   await vscode.window.showTextDocument(workflowDocument, { preview: false });
   const tabsBefore = getWebviewTabs(designerViewType).length;
+  const useAzureConnectors = options.useAzureConnectors === true;
 
   console.log(`[workspace-lifecycle] ${createdWorkspace.label}: opening designer for ${createdWorkspace.workflowJsonPath}`);
-  const openDesignerPromise = vscode.commands
+  const openDesignerResultPromise = vscode.commands
     .executeCommand(openDesignerCommand, vscode.Uri.file(createdWorkspace.workflowJsonPath))
-    .then(undefined, (error) => console.warn(`[workspace-lifecycle] openDesigner command rejected: ${String(error)}`));
-  assert.ok(openDesignerPromise, 'Expected open designer command to start');
+    .then(
+      () => ({ kind: 'resolved' as const }),
+      (error) => ({ kind: 'rejected' as const, error })
+    );
 
   let cdp: CdpConnection | undefined;
   try {
-    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: options.useAzureConnectors === true });
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors });
 
-    const tab = await waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors: options.useAzureConnectors === true });
+    const tabOrCommandResult = await Promise.race([
+      waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors }).then((tab) => ({ kind: 'tab' as const, tab })),
+      openDesignerResultPromise,
+    ]);
+
+    if (tabOrCommandResult.kind === 'rejected') {
+      throw new Error(
+        `[workspace-lifecycle] openDesigner command rejected before designer tab opened: ${String(tabOrCommandResult.error)}`
+      );
+    }
+
+    let tab: vscode.Tab;
+    if (tabOrCommandResult.kind === 'resolved') {
+      const tabs = getWebviewTabs(designerViewType);
+      if (tabs.length <= tabsBefore) {
+        await handleDesignerQuickPickPrompts(5000, { useAzureConnectors });
+        assert.fail(`openDesigner command completed without opening ${designerViewType}. Open tabs: ${describeOpenTabs()}`);
+      }
+      tab = tabs[tabs.length - 1];
+    } else {
+      tab = tabOrCommandResult.tab;
+    }
     assert.strictEqual(getTabViewType(tab), designerTabViewType);
     assert.ok(
       tab.label.includes(createdWorkspace.wfName),
       `Expected designer tab label to include workflow name "${createdWorkspace.wfName}". Open tabs: ${describeOpenTabs()}`
     );
 
-    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: options.useAzureConnectors === true });
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors });
 
     cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
     const contextId = await waitForWebviewFrameContext(cdp, {
