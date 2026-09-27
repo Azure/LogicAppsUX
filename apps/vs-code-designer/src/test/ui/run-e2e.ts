@@ -462,6 +462,20 @@ function repairCsDevKitNativeAddonPath(extensionsDir: string): void {
   console.log(`  ✓ Repaired C# Dev Kit native addon path: ${nativeTarget}`);
 }
 
+function hasExpectedCsDevKitPlatformPayload(entry: string): boolean {
+  const extensionPath = path.join(extDir, entry);
+  if (process.platform === 'win32') {
+    const architecture = process.arch === 'arm64' ? 'win32-arm64' : 'win32-x64';
+    return fs.existsSync(path.join(extensionPath, 'dist', 'native', architecture, 'NodeAddon.node'));
+  }
+
+  if (process.platform === 'linux') {
+    return fs.existsSync(path.join(extensionPath, 'components', 'server', 'CSDevKit'));
+  }
+
+  return true;
+}
+
 async function withDownloadRetry(label: string, action: () => Promise<void>): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
@@ -567,9 +581,10 @@ function downloadExtensionVsix(dep: string): string {
     throw new Error(`Cannot derive Marketplace VSIX URL for extension dependency '${dep}'.`);
   }
 
+  const targetPlatform = getMarketplaceTargetPlatform();
   const vsixDir = path.join(os.tmpdir(), 'test-resources', 'vsix-cache');
   fs.mkdirSync(vsixDir, { recursive: true });
-  const vsixPath = path.join(vsixDir, `${dep}.vsix`);
+  const vsixPath = path.join(vsixDir, `${dep}-${targetPlatform}.vsix`);
   if (isZipFile(vsixPath)) {
     return vsixPath;
   }
@@ -577,7 +592,7 @@ function downloadExtensionVsix(dep: string): string {
     fs.unlinkSync(vsixPath);
   }
 
-  const url = `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/latest/vspackage`;
+  const url = `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/latest/vspackage?targetPlatform=${targetPlatform}`;
   execFileSync(
     'curl',
     [
@@ -601,6 +616,19 @@ function downloadExtensionVsix(dep: string): string {
     throw new Error(`Downloaded Marketplace package for '${dep}' is not a VSIX zip at ${vsixPath}.`);
   }
   return vsixPath;
+}
+
+function getMarketplaceTargetPlatform(): string {
+  switch (process.platform) {
+    case 'win32':
+      return process.arch === 'arm64' ? 'win32-arm64' : 'win32-x64';
+    case 'darwin':
+      return process.arch === 'arm64' ? 'darwin-arm64' : 'darwin-x64';
+    case 'linux':
+      return process.arch === 'arm64' ? 'linux-arm64' : 'linux-x64';
+    default:
+      throw new Error(`Unsupported VSIX target platform: ${process.platform}-${process.arch}`);
+  }
 }
 
 function quoteShellArgument(value: string): string {
@@ -981,12 +1009,18 @@ async function main(): Promise<void> {
 
   const findValidInstalledExtension = (extensionId: string): string | undefined => {
     const depLower = extensionId.toLowerCase();
-    return getExtensionEntries(extensionId).find((entry) => readExtensionId(entry) === depLower);
+    return getExtensionEntries(extensionId).find(
+      (entry) =>
+        readExtensionId(entry) === depLower && (depLower !== 'ms-dotnettools.csdevkit' || hasExpectedCsDevKitPlatformPayload(entry))
+    );
   };
 
   const removeInvalidExtensionEntries = (extensionId: string): void => {
     for (const entry of getExtensionEntries(extensionId)) {
-      if (readExtensionId(entry) !== extensionId.toLowerCase()) {
+      const depLower = extensionId.toLowerCase();
+      const hasInvalidPackageId = readExtensionId(entry) !== depLower;
+      const hasInvalidPlatformPayload = depLower === 'ms-dotnettools.csdevkit' && !hasExpectedCsDevKitPlatformPayload(entry);
+      if (hasInvalidPackageId || hasInvalidPlatformPayload) {
         console.log(`  Removing invalid cached dependency: ${entry}`);
         fs.rmSync(path.join(extDir, entry), { recursive: true, force: true });
       }
