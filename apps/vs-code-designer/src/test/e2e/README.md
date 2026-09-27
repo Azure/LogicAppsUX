@@ -129,7 +129,7 @@ The smoke prints explicit `[activation-smoke]` lines with the VS Code version, e
 
 The smoke also scans VS Code output for setup warnings that indicate an invalid extension-host baseline. `DialogService: refused to show dialog` and guarded `showInformationMessage` / `showWarningMessage` / `showErrorMessage` calls fail the run instead of being ignored, except for the known VS Code debug notification that can be emitted when the `func: host start` prelaunch task logs errors while the lifecycle test still proves the host and workflow run successfully. Expected modal confirmations in lifecycle tests are answered by the test-only dialog guard in `dialogGuard.ts`; product command code still calls the normal VS Code/azext-utils dialog APIs.
 
-Screenshots are saved under `apps/vs-code-designer/.vscode-test/screenshots/cli/`. Windows captures the full desktop, and Linux/macOS capture the VS Code workbench through the test host's CDP endpoint.
+Screenshots are saved under `apps/vs-code-designer/.vscode-test/screenshots/cli/`. The primary capture path uses the VS Code workbench CDP endpoint; Windows falls back to a full-desktop capture when an interactive screen is available.
 
 The activation/command-only smoke alias skips the Create Workspace webview check:
 

@@ -12,18 +12,28 @@ export async function captureCliScreenshot(name: string): Promise<string | undef
   fs.mkdirSync(screenshotRoot, { recursive: true });
 
   const screenshotPath = path.join(screenshotRoot, `${sanitizeFileSegment(name)}.png`);
-  if (process.platform === 'win32') {
-    await captureWindowsScreenshot(screenshotPath);
-    console.log(`[screenshot] Saved: ${screenshotPath}`);
-    return screenshotPath;
+  try {
+    const cdp = await connectToVsCodeWorkbenchCdp();
+    try {
+      return await captureCdpScreenshot(cdp, name);
+    } finally {
+      cdp.dispose();
+    }
+  } catch (error) {
+    console.warn(`[screenshot] CDP screenshot failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 
-  const cdp = await connectToVsCodeWorkbenchCdp();
-  try {
-    return await captureCdpScreenshot(cdp, name);
-  } finally {
-    cdp.dispose();
+  if (process.platform === 'win32') {
+    try {
+      await captureWindowsScreenshot(screenshotPath);
+      console.log(`[screenshot] Saved: ${screenshotPath}`);
+      return screenshotPath;
+    } catch (error) {
+      console.warn(`[screenshot] Windows screenshot failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
+
+  return undefined;
 }
 
 export async function captureCdpScreenshot(
