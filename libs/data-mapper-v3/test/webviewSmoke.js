@@ -423,10 +423,26 @@ async function run() {
     for (const side of ['source', 'target']) {
         const pane = document.querySelector(`.${side}-tree`);
         const before = JSON.stringify(map);
+        const childNode = Array.from(pane.querySelectorAll('.tree-node'))
+            .find(node => node.dataset.path === '/Root/Value');
+        childNode.dispatchEvent(
+            new dom.window.MouseEvent('contextmenu', { bubbles: true, clientX: 20, clientY: 20 })
+        );
+        assert.equal(document.querySelector('.context-menu'), null);
+
+        pane.querySelector('.schema-header').dispatchEvent(
+            new dom.window.MouseEvent('contextmenu', { bubbles: true, clientX: 20, clientY: 20 })
+        );
+        let replace = document.querySelector('.context-menu button');
+        assert.match(replace.textContent, new RegExp(`Replace ${side === 'source' ? 'Source' : 'Target'} Schema`));
+        replace.click();
+        assert.equal(messages.at(-1).type, 'loadSchema');
+        assert.equal(messages.at(-1).side, side);
+
         pane.querySelector('.tree-node').dispatchEvent(
             new dom.window.MouseEvent('contextmenu', { bubbles: true, clientX: 20, clientY: 20 })
         );
-        const replace = document.querySelector('.context-menu button');
+        replace = document.querySelector('.context-menu button');
         assert.match(replace.textContent, new RegExp(`Replace ${side === 'source' ? 'Source' : 'Target'} Schema`));
         replace.click();
         assert.equal(messages.at(-1).type, 'loadSchema');

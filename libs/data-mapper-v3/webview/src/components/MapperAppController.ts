@@ -123,9 +123,19 @@ export class MapperAppController {
 
     private readonly handleContextMenu = (event: MouseEvent): void => {
         event.preventDefault();
-        const pane = (event.target as Element).closest('.schema-tree-container');
+        const target = event.target instanceof Element ? event.target : null;
+        const pane = target?.closest('.schema-tree-container');
         const side = pane?.classList.contains('source-tree') ? 'source'
             : pane?.classList.contains('target-tree') ? 'target' : undefined;
+        if (side && this.state[`${side}Schema`]) {
+            const clickedHeader = target?.closest('.schema-header');
+            const clickedNode = target?.closest('.tree-node');
+            const rootNode = pane?.querySelector('.tree-node');
+            if (!clickedHeader && clickedNode !== rootNode) {
+                document.querySelectorAll('.context-menu').forEach(menu => menu.remove());
+                return;
+            }
+        }
         this.showContextMenu(event.clientX, event.clientY, side);
     };
 
