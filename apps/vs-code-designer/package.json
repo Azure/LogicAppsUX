@@ -72,6 +72,7 @@
     "test:e2e-cli:smoke": "pnpm run test:e2e-cli --label unitTests",
     "test:e2e-cli:create-workspace": "pnpm run test:e2e-cli --label createWorkspace",
     "test:e2e-cli:create-workspace:behavior": "pnpm run test:e2e-cli --label createWorkspaceBehavior",
+    "test:e2e-cli:create-workspace:behavior-smoke": "pnpm run test:e2e-cli --label createWorkspaceBehaviorSmoke",
     "test:e2e-cli:create-workspace:core-matrix": "pnpm run test:e2e-cli --label createWorkspaceCoreMatrix",
     "test:e2e-cli:create-workspace:preview-matrix": "pnpm run test:e2e-cli --label createWorkspacePreviewMatrix",
     "test:e2e-cli:create-workspace:codeful": "pnpm run test:e2e-cli --label createWorkspaceCodeful",

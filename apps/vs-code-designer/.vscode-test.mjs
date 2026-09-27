@@ -79,6 +79,10 @@ const configs = [
     ...createWorkspaceConfig('behavior', 240000),
   },
   {
+    label: 'createWorkspaceBehaviorSmoke',
+    ...createWorkspaceConfig('behavior-smoke', 240000),
+  },
+  {
     label: 'createWorkspaceCoreMatrix',
     ...createWorkspaceConfig('core-matrix', 900000),
   },

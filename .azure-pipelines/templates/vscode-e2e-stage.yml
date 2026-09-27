@@ -50,8 +50,8 @@ parameters:
         artifactName: windows-unitTests
       - jobName: VscodeE2ECliWindowsCreateWorkspaceBehavior
         displayName: vscode-test CLI Windows create workspace behavior
-        label: createWorkspaceBehavior
-        artifactName: windows-createWorkspaceBehavior
+        label: createWorkspaceBehaviorSmoke
+        artifactName: windows-createWorkspaceBehaviorSmoke
   - name: scenarioShards
     type: object
     default: []

@@ -68,7 +68,15 @@ const funcHostStartTaskLabel = 'func: host start';
 const funcWatchProblemMatcher = '$func-watch';
 const capturedValidationFields = new Set<string>();
 
-type CreateWorkspaceGroup = 'default' | 'behavior' | 'core-matrix' | 'preview-matrix' | 'codeful' | 'fixtures-manifest' | 'full';
+type CreateWorkspaceGroup =
+  | 'default'
+  | 'behavior'
+  | 'behavior-smoke'
+  | 'core-matrix'
+  | 'preview-matrix'
+  | 'codeful'
+  | 'fixtures-manifest'
+  | 'full';
 
 interface FieldValidationCase {
   name: string;
@@ -253,7 +261,7 @@ suite('Create Workspace Experience Tests', () => {
     });
   }
 
-  if (shouldRunCreateWorkspaceGroup(createWorkspaceGroup, ['behavior', 'full'])) {
+  if (shouldRunCreateWorkspaceGroup(createWorkspaceGroup, ['behavior', 'behavior-smoke', 'full'])) {
     test('Should verify review back navigation and app type cleanup', async function () {
       this.timeout(240000);
 
@@ -346,6 +354,7 @@ function getCreateWorkspaceGroup(): CreateWorkspaceGroup {
   const group = process.env.LA_E2E_CLI_CREATE_WORKSPACE_GROUP;
   if (
     group === 'behavior' ||
+    group === 'behavior-smoke' ||
     group === 'core-matrix' ||
     group === 'preview-matrix' ||
     group === 'codeful' ||
