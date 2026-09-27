@@ -519,7 +519,7 @@ async function waitForGeneratedLogicAppFolder(createdWorkspace: CreatedWorkspace
 
 async function openDesignerAndCreateWorkflow(
   createdWorkspace: CreatedWorkspace,
-  options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean } = {}
+  options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean; warmOnly?: boolean } = {}
 ): Promise<void> {
   await closeAllTabs();
   const workflowDocument = await vscode.workspace.openTextDocument(vscode.Uri.file(createdWorkspace.workflowJsonPath));
@@ -587,6 +587,9 @@ async function openDesignerAndCreateWorkflow(
       `${createdWorkspace.label} designer canvas content`
     );
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-ready`);
+    if (options.warmOnly) {
+      return;
+    }
 
     const initialCanvasText = await getDesignerText(cdp, contextId);
     if (initialCanvasText.includes('Add a trigger')) {
@@ -2385,14 +2388,16 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
 
   const settings = getMsnWeatherAzureSettingsFromEnvironment();
   try {
+    await waitForGeneratedLogicAppFolder(createdWorkspace);
     if (settings) {
+      ensureLocalSettingsForDesigner(createdWorkspace.appDir);
+      await openDesignerAndCreateWorkflow(createdWorkspace, { warmOnly: true });
       ensureLocalSettingsForMsnWeather(createdWorkspace.appDir, settings);
     } else {
       console.log(
         '[workspace-lifecycle][msn-weather] Azure settings env vars were not provided; designer will prompt for Azure connector setup.'
       );
     }
-    await waitForGeneratedLogicAppFolder(createdWorkspace);
     await openDesignerAndCreateWorkflow(createdWorkspace, { includeMsnWeather: true, useAzureConnectors: true });
     assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir);
     assertMsnWeatherStandardWorkflow(createdWorkspace);
