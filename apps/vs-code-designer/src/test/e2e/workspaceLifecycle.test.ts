@@ -538,9 +538,13 @@ async function openDesignerAndCreateWorkflow(
   let cdp: CdpConnection | undefined;
   try {
     await handleDesignerQuickPickPrompts(15000, { useAzureConnectors });
+    const designerTabTimeoutMs = getDesignerTabOpenTimeoutMs();
 
     const tabOrCommandResult = await Promise.race([
-      waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors }).then((tab) => ({ kind: 'tab' as const, tab })),
+      waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors }, designerTabTimeoutMs).then((tab) => ({
+        kind: 'tab' as const,
+        tab,
+      })),
       openDesignerResultPromise,
     ]);
 
@@ -626,6 +630,15 @@ async function openDesignerAndCreateWorkflow(
   } finally {
     cdp?.dispose();
   }
+}
+
+function getDesignerTabOpenTimeoutMs(): number {
+  const designerApiLoadTimeoutMs = Number(process.env.LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS);
+  if (Number.isFinite(designerApiLoadTimeoutMs) && designerApiLoadTimeoutMs > 0) {
+    return designerApiLoadTimeoutMs + 60000;
+  }
+
+  return 360000;
 }
 
 async function waitForDesignerWebviewTab(
