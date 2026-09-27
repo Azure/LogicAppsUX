@@ -23,6 +23,21 @@ parameters:
   - name: runVscodeTestCliSmoke
     type: boolean
     default: true
+  - name: runMsnWeatherLifecycle
+    type: boolean
+    default: true
+  - name: azureTenantId
+    type: string
+    default: c9db855a-7930-48d8-8e3c-a409a38faab3
+  - name: azureSubscriptionId
+    type: string
+    default: f11e76f5-6d71-4e8b-9571-9c5f147628ed
+  - name: azureResourceGroupName
+    type: string
+    default: LogicAppsVSCode-E2E-Fixtures
+  - name: azureLocationName
+    type: string
+    default: westus
   - name: testCliRuns
     type: object
     default:
@@ -107,6 +122,28 @@ stages:
                   testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
                   platform: windows
 
+      - ${{ if eq(parameters.runMsnWeatherLifecycle, true) }}:
+          - template: vscode-e2e-run-cli.yml
+            parameters:
+              jobName: VscodeE2EMsnWeatherLifecycle
+              displayName: vscode-test CLI MSN Weather lifecycle
+              label: msnWeatherLifecycle
+              cliArguments: --msn-weather-lifecycle
+              artifactName: msnWeatherLifecycle
+              feedBaseUrl: ${{ parameters.feedBaseUrl }}
+              pool: ${{ parameters.pool }}
+              dependsOn:
+                - BuildVscodeE2EArtifacts
+              checkoutRef: ${{ parameters.checkoutRef }}
+              testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+              platform: linux
+              requiresAzureAccessToken: true
+              azureTenantId: ${{ parameters.azureTenantId }}
+              azureSubscriptionId: ${{ parameters.azureSubscriptionId }}
+              azureResourceGroupName: ${{ parameters.azureResourceGroupName }}
+              azureLocationName: ${{ parameters.azureLocationName }}
+              timeoutInMinutes: 35
+
       - ${{ if and(eq(parameters.runVscodeTestCliSmoke, true), eq(length(parameters.testCliRuns), 0)) }}:
           - template: vscode-e2e-run-cli.yml
             parameters:
@@ -158,6 +195,8 @@ stages:
                     - ${{ cliRun.jobName }}
                 - ${{ each cliRun in parameters.windowsTestCliRuns }}:
                     - ${{ cliRun.jobName }}
+            - ${{ if eq(parameters.runMsnWeatherLifecycle, true) }}:
+                - VscodeE2EMsnWeatherLifecycle
             - ${{ if and(eq(parameters.runVscodeTestCliSmoke, true), eq(length(parameters.testCliRuns), 0)) }}:
                 - VscodeE2ECliSmoke
             - ${{ if gt(length(parameters.scenarioShards), 0) }}:

@@ -63,7 +63,7 @@ parameters:
   - name: enableMsnWeatherLifecycle
     displayName: Run live MSN Weather lifecycle
     type: boolean
-    default: false
+    default: true
 
   - name: azureTenantId
     displayName: Live E2E tenant ID
@@ -247,11 +247,13 @@ extends:
                       azureLocationName: ${{ parameters.azureLocationName }}
 
           - job: e2e_cli_create_workspace_report
-            displayName: '@vscode/test-cli Create Workspace aggregate'
+            displayName: '@vscode/test-cli aggregate'
             dependsOn:
               - build_e2e_cli_artifacts
               - ${{ each label in parameters.createWorkspaceLabels }}:
                   - e2e_cli_${{ label }}
+              - ${{ if eq(parameters.enableMsnWeatherLifecycle, true) }}:
+                  - e2e_cli_msn_weather_lifecycle
             condition: always()
             pool: ${{ parameters.linuxPool }}
             templateContext:
@@ -273,5 +275,13 @@ extends:
                     inputs:
                       buildType: current
                       artifactName: vscode-e2e-cli-test-results-${{ label }}
+                      targetPath: apps/vs-code-designer/.vscode-test/results/aggregate-input
+              - ${{ if eq(parameters.enableMsnWeatherLifecycle, true) }}:
+                  - task: DownloadPipelineArtifact@2
+                    displayName: Download CLI result (msnWeatherLifecycle)
+                    continueOnError: true
+                    inputs:
+                      buildType: current
+                      artifactName: vscode-e2e-cli-test-results-msnWeatherLifecycle
                       targetPath: apps/vs-code-designer/.vscode-test/results/aggregate-input
               - template: templates/vscode-e2e-cli-aggregate.yml@self

@@ -302,6 +302,11 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
 function ensureMsnWeatherProfile() {
   const userDataDir = process.env.LA_E2E_CLI_USER_DATA_DIR ?? getDefaultAzureAuthUserDataDir();
   process.env.LA_E2E_CLI_USER_DATA_DIR = userDataDir;
+  const hasHeadlessAzureAuth =
+    !!process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN?.trim() ||
+    !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials ?? '') ||
+    !!process.env.FC_SERVICE_CONNECTION_ID?.trim() ||
+    !!process.env.AzCode_ServiceConnectionID?.trim();
   if (!userDataDir) {
     throw new Error(
       [
@@ -313,6 +318,11 @@ function ensureMsnWeatherProfile() {
   }
 
   if (!fs.existsSync(userDataDir)) {
+    if (hasHeadlessAzureAuth) {
+      fs.mkdirSync(userDataDir, { recursive: true });
+      console.log(`[workspace-lifecycle][msn-weather] Created VS Code test profile for headless Azure auth: ${path.resolve(userDataDir)}`);
+      return;
+    }
     throw new Error(`MSN Weather lifecycle profile path does not exist: ${userDataDir}`);
   }
 

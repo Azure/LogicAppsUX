@@ -6,6 +6,9 @@ parameters:
   - name: label
     type: string
     default: unitTests
+  - name: cliArguments
+    type: string
+    default: ''
   - name: artifactName
     type: string
   - name: feedBaseUrl
@@ -33,6 +36,24 @@ parameters:
   - name: platform
     type: string
     default: linux
+  - name: requiresAzureAccessToken
+    type: boolean
+    default: false
+  - name: azureTenantId
+    type: string
+    default: ''
+  - name: azureSubscriptionId
+    type: string
+    default: ''
+  - name: azureResourceGroupName
+    type: string
+    default: ''
+  - name: azureLocationName
+    type: string
+    default: ''
+  - name: azureManagementBaseUrl
+    type: string
+    default: 'https://management.azure.com'
 
 jobs:
   - job: ${{ parameters.jobName }}
@@ -88,6 +109,12 @@ jobs:
               tar -xzf "$(Pipeline.Workspace)\vscode-e2e-build\extension-build.tar.gz" -C "$(Build.SourcesDirectory)"
             displayName: Extract VS Code E2E build artifact
 
+      - ${{ if and(eq(parameters.requiresAzureAccessToken, true), eq(parameters.testARMServiceConnection, '')) }}:
+          - bash: |
+              echo 'testARMServiceConnection is required when requiresAzureAccessToken is true.'
+              exit 1
+            displayName: Validate live Azure service connection parameter
+
       - ${{ if ne(parameters.testARMServiceConnection, '') }}:
           - task: AzureCLI@2
             displayName: Verify test service connection
@@ -102,6 +129,16 @@ jobs:
                 Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_ID]$env:AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"
                 Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_CLIENT_ID]$env:servicePrincipalId"
                 Write-Host "##vso[task.setvariable variable=FC_SERVICE_CONNECTION_TENANT_ID]$env:tenantId"
+                if ('${{ parameters.requiresAzureAccessToken }}' -eq 'True') {
+                  if (-not '${{ parameters.azureSubscriptionId }}' -or -not '${{ parameters.azureResourceGroupName }}') {
+                    throw 'azureSubscriptionId and azureResourceGroupName are required for live Azure E2E.'
+                  }
+                  $token = az account get-access-token --resource https://management.core.windows.net/ --query accessToken -o tsv
+                  if (-not $token) {
+                    throw 'Azure CLI did not return an ARM token.'
+                  }
+                  Write-Host "##vso[task.setvariable variable=LA_E2E_CLI_AZURE_ACCESS_TOKEN;issecret=true]$token"
+                }
 
       - ${{ if eq(parameters.platform, 'linux') }}:
           - bash: |
@@ -134,8 +171,12 @@ jobs:
               export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
               cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
               mkdir -p .vscode-test/results
+              cli_arguments='${{ parameters.cliArguments }}'
+              if [ -z "$cli_arguments" ]; then
+                cli_arguments='--label ${{ parameters.label }}'
+              fi
               set +e
-              node scripts/run-e2e-cli.js --label ${{ parameters.label }} 2>&1 | tee ".vscode-test/results/${{ parameters.label }}.log"
+              node scripts/run-e2e-cli.js $cli_arguments 2>&1 | tee ".vscode-test/results/${{ parameters.label }}.log"
               status=${PIPESTATUS[0]}
               set -e
               outcome='success'
@@ -165,13 +206,24 @@ jobs:
                 AzCode_ServiceConnectionID: $(FC_SERVICE_CONNECTION_ID)
                 AzCode_ServiceConnectionDomain: $(FC_SERVICE_CONNECTION_TENANT_ID)
                 AzCode_ServiceConnectionClientID: $(FC_SERVICE_CONNECTION_CLIENT_ID)
+              ${{ if eq(parameters.requiresAzureAccessToken, true) }}:
+                LA_E2E_CLI_AZURE_ACCESS_TOKEN: $(LA_E2E_CLI_AZURE_ACCESS_TOKEN)
+                LA_E2E_CLI_AZURE_TENANT_ID: ${{ parameters.azureTenantId }}
+                LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: ${{ parameters.azureSubscriptionId }}
+                LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
+                LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
+                LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
 
       - ${{ if eq(parameters.platform, 'windows') }}:
           - pwsh: |
               $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
               Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
               New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
-              & node scripts/run-e2e-cli.js --label ${{ parameters.label }} 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.label }}.log"
+              $cliArguments = '${{ parameters.cliArguments }}'
+              if (-not $cliArguments) {
+                $cliArguments = '--label ${{ parameters.label }}'
+              }
+              & node scripts/run-e2e-cli.js @($cliArguments -split ' ') 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.label }}.log"
               $status = $LASTEXITCODE
               $outcome = if ($status -eq 0) { 'success' } else { 'failure' }
               & node scripts/summarize-e2e-cli-results.js `
@@ -196,6 +248,13 @@ jobs:
                 AzCode_ServiceConnectionID: $(FC_SERVICE_CONNECTION_ID)
                 AzCode_ServiceConnectionDomain: $(FC_SERVICE_CONNECTION_TENANT_ID)
                 AzCode_ServiceConnectionClientID: $(FC_SERVICE_CONNECTION_CLIENT_ID)
+              ${{ if eq(parameters.requiresAzureAccessToken, true) }}:
+                LA_E2E_CLI_AZURE_ACCESS_TOKEN: $(LA_E2E_CLI_AZURE_ACCESS_TOKEN)
+                LA_E2E_CLI_AZURE_TENANT_ID: ${{ parameters.azureTenantId }}
+                LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: ${{ parameters.azureSubscriptionId }}
+                LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
+                LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
+                LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
 
       - task: PublishTestResults@2
         displayName: Publish JUnit result (${{ parameters.label }})
