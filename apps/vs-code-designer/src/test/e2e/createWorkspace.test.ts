@@ -797,7 +797,6 @@ async function clickWizardButton(cdp: CdpEvaluator, contextId: number, buttonTex
 }
 
 async function assertInitialCreateWorkspaceContent(cdp: CdpEvaluator, contextId: number): Promise<void> {
-  const pageText = await getPageText(cdp, contextId);
   const expectedText = [
     'Create logic app workspace',
     'Workspace parent folder path',
@@ -811,6 +810,17 @@ async function assertInitialCreateWorkspaceContent(cdp: CdpEvaluator, contextId:
     'Workflow type',
     'Browse',
   ];
+
+  let pageText = '';
+  const deadline = Date.now() + 30000;
+  while (Date.now() < deadline) {
+    pageText = await getPageText(cdp, contextId);
+    if (expectedText.every((text) => containsIgnoreCase(pageText, text)) && !containsIgnoreCase(pageText, 'Package path')) {
+      break;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
 
   for (const text of expectedText) {
     assert.ok(containsIgnoreCase(pageText, text), `Initial Create Workspace page should include "${text}". Text: ${pageText}`);
