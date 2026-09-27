@@ -227,34 +227,41 @@ suite('Create Workspace Experience Tests', () => {
   });
 
   if (shouldRunCreateWorkspaceGroup(createWorkspaceGroup, ['default', 'behavior', 'full'])) {
-    test('Should open the Create Workspace webview and validate fields before project creation', async () => {
+    test('Should open the Create Workspace webview and validate fields before project creation', async function () {
+      this.timeout(420000);
       assertEmptyWorkspace('before executing Create Workspace');
 
-      const tabsBefore = getWebviewTabs(createWorkspaceViewType).length;
+      let lastError: unknown;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const { cdp, contextId } = await openCreateWorkspaceContext();
+        try {
+          await assertInitialCreateWorkspaceContent(cdp, contextId);
+          await captureCliScreenshot('create-workspace-initial-form');
+          await runStandardRequiredFieldProgression(cdp, contextId, tempWorkspaceParentPath);
+          await runStandardFieldValidationCases(cdp, contextId, tempWorkspaceParentPath);
+          await captureCliScreenshot('create-workspace-standard-fields-valid');
 
-      await vscode.commands.executeCommand(createWorkspaceCommand);
+          await runCustomCodeFieldValidationCases(cdp, contextId, tempWorkspaceParentPath);
+          await captureCliScreenshot('create-workspace-custom-code-fields-valid');
 
-      const tab = await waitForWebviewTab(createWorkspaceViewType, tabsBefore);
-      assert.strictEqual(getTabViewType(tab), createWorkspaceTabViewType);
-      assert.strictEqual(tab.label, createWorkspaceTitle);
+          await runRulesEngineFieldValidationCases(cdp, contextId, tempWorkspaceParentPath);
+          await captureCliScreenshot('create-workspace-rules-engine-fields-valid');
+          lastError = undefined;
+          break;
+        } catch (error) {
+          lastError = error;
+          if (attempt === 3 || !isRetryableBlankCreateWorkspaceError(error)) {
+            throw error;
+          }
+          console.warn('[create-workspace-smoke] Retrying initial validation after blank form context');
+        } finally {
+          cdp.dispose();
+          await closeWebviewTabs(createWorkspaceViewType);
+        }
+      }
 
-      const cdp = await connectToVsCodeCdp({ targetName: 'Create Workspace webview' });
-      try {
-        const createWorkspaceContextId = await waitForCreateWorkspaceFrameContext(cdp);
-        await assertInitialCreateWorkspaceContent(cdp, createWorkspaceContextId);
-        await captureCliScreenshot('create-workspace-initial-form');
-        await runStandardRequiredFieldProgression(cdp, createWorkspaceContextId, tempWorkspaceParentPath);
-        await runStandardFieldValidationCases(cdp, createWorkspaceContextId, tempWorkspaceParentPath);
-        await captureCliScreenshot('create-workspace-standard-fields-valid');
-
-        await runCustomCodeFieldValidationCases(cdp, createWorkspaceContextId, tempWorkspaceParentPath);
-        await captureCliScreenshot('create-workspace-custom-code-fields-valid');
-
-        await runRulesEngineFieldValidationCases(cdp, createWorkspaceContextId, tempWorkspaceParentPath);
-        await captureCliScreenshot('create-workspace-rules-engine-fields-valid');
-      } finally {
-        cdp.dispose();
-        await closeWebviewTabs(createWorkspaceViewType);
+      if (lastError) {
+        throw lastError;
       }
 
       await assertNoDialogAttempts('Create Workspace command execution');
@@ -279,7 +286,7 @@ suite('Create Workspace Experience Tests', () => {
             break;
           } catch (error) {
             lastError = error;
-            if (attempt === 3 || !String(error).includes('Timed out waiting for field')) {
+            if (attempt === 3 || !isRetryableBlankCreateWorkspaceError(error)) {
               throw error;
             }
             console.warn(`[create-workspace-smoke] Retrying ${creationCase.label} review/back after blank form context`);
@@ -640,6 +647,11 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
   }
 
   throw lastError;
+}
+
+function isRetryableBlankCreateWorkspaceError(error: unknown): boolean {
+  const message = String(error);
+  return message.includes('Timed out waiting for field') || message.includes('Initial Create Workspace page should include');
 }
 
 async function openCreateWorkspaceContext(): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {

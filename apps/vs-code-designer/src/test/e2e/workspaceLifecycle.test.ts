@@ -525,8 +525,9 @@ async function openDesignerAndCreateWorkflow(
   await vscode.window.showTextDocument(workflowDocument, { preview: false });
   const tabsBefore = getWebviewTabs(designerViewType).length;
 
+  console.log(`[workspace-lifecycle] ${createdWorkspace.label}: opening designer for ${createdWorkspace.workflowJsonPath}`);
   const openDesignerPromise = vscode.commands
-    .executeCommand(openDesignerCommand)
+    .executeCommand(openDesignerCommand, vscode.Uri.file(createdWorkspace.workflowJsonPath))
     .then(undefined, (error) => console.warn(`[workspace-lifecycle] openDesigner command rejected: ${String(error)}`));
   assert.ok(openDesignerPromise, 'Expected open designer command to start');
 
