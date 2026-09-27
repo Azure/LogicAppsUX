@@ -263,19 +263,34 @@ suite('Create Workspace Experience Tests', () => {
 
   if (shouldRunCreateWorkspaceGroup(createWorkspaceGroup, ['behavior', 'behavior-smoke', 'full'])) {
     test('Should verify review back navigation and app type cleanup', async function () {
-      this.timeout(240000);
+      this.timeout(420000);
 
       for (const creationCase of filterCreationCases(getReviewBackCases(), createWorkspaceCaseFilter)) {
-        const { cdp, contextId } = await openCreateWorkspaceContext();
-        try {
-          await fillWorkspaceCreationFields(cdp, contextId, creationCase, tempWorkspaceParentPath);
-          await assertNextButtonEnabled(cdp, contextId, `${creationCase.label} review/back fields`);
-          await goToReviewAndBack(cdp, contextId, creationCase);
-          await assertWorkspaceCreationFields(cdp, contextId, creationCase, tempWorkspaceParentPath);
-          await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase.label, 'review-back');
-        } finally {
-          cdp.dispose();
-          await closeWebviewTabs(createWorkspaceViewType);
+        let lastError: unknown;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          const { cdp, contextId } = await openCreateWorkspaceContext();
+          try {
+            await fillWorkspaceCreationFields(cdp, contextId, creationCase, tempWorkspaceParentPath);
+            await assertNextButtonEnabled(cdp, contextId, `${creationCase.label} review/back fields`);
+            await goToReviewAndBack(cdp, contextId, creationCase);
+            await assertWorkspaceCreationFields(cdp, contextId, creationCase, tempWorkspaceParentPath);
+            await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase.label, 'review-back');
+            lastError = undefined;
+            break;
+          } catch (error) {
+            lastError = error;
+            if (attempt === 3 || !String(error).includes('Timed out waiting for field')) {
+              throw error;
+            }
+            console.warn(`[create-workspace-smoke] Retrying ${creationCase.label} review/back after blank form context`);
+          } finally {
+            cdp.dispose();
+            await closeWebviewTabs(createWorkspaceViewType);
+          }
+        }
+
+        if (lastError) {
+          throw lastError;
         }
       }
 

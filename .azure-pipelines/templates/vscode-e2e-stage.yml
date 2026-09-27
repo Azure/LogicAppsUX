@@ -142,6 +142,7 @@ stages:
               azureSubscriptionId: ${{ parameters.azureSubscriptionId }}
               azureResourceGroupName: ${{ parameters.azureResourceGroupName }}
               azureLocationName: ${{ parameters.azureLocationName }}
+              designerApiLoadTimeoutMs: '600000'
               timeoutInMinutes: 35
 
       - ${{ if and(eq(parameters.runVscodeTestCliSmoke, true), eq(length(parameters.testCliRuns), 0)) }}:

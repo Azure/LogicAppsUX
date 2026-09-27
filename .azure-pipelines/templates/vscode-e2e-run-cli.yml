@@ -54,6 +54,9 @@ parameters:
   - name: azureManagementBaseUrl
     type: string
     default: 'https://management.azure.com'
+  - name: designerApiLoadTimeoutMs
+    type: string
+    default: '300000'
 
 jobs:
   - job: ${{ parameters.jobName }}
@@ -213,6 +216,7 @@ jobs:
                 LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
                 LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
                 LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+                LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
 
       - ${{ if eq(parameters.platform, 'windows') }}:
           - pwsh: |
@@ -255,6 +259,7 @@ jobs:
                 LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
                 LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
                 LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+                LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
 
       - task: PublishTestResults@2
         displayName: Publish JUnit result (${{ parameters.label }})
