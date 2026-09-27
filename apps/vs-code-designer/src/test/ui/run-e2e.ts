@@ -438,6 +438,30 @@ function copyDirSync(src: string, dest: string, skipDir?: string): void {
   }
 }
 
+function repairCsDevKitNativeAddonPath(extensionsDir: string): void {
+  if (process.platform !== 'win32' || !fs.existsSync(extensionsDir)) {
+    return;
+  }
+
+  const csDevKitEntry = fs
+    .readdirSync(extensionsDir)
+    .find((entry) => entry.toLowerCase().startsWith('ms-dotnettools.csdevkit-') || entry.toLowerCase() === 'ms-dotnettools.csdevkit');
+  if (!csDevKitEntry) {
+    return;
+  }
+
+  const nativeSource = path.join(extensionsDir, csDevKitEntry, 'dist', 'native');
+  if (!fs.existsSync(nativeSource)) {
+    console.warn(`  C# Dev Kit native addon source not found: ${nativeSource}`);
+    return;
+  }
+
+  const nativeTarget = path.join(path.dirname(extensionsDir), 'dist', 'native');
+  fs.rmSync(nativeTarget, { recursive: true, force: true });
+  copyDirSync(nativeSource, nativeTarget, extensionsDir);
+  console.log(`  ✓ Repaired C# Dev Kit native addon path: ${nativeTarget}`);
+}
+
 async function withDownloadRetry(label: string, action: () => Promise<void>): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
@@ -1037,6 +1061,7 @@ async function main(): Promise<void> {
     if (missingDeps.length > 0) {
       throw new Error(`Missing E2E extension prerequisite(s): ${missingDeps.join(', ')}. Install/retry before running UI E2E tests.`);
     }
+    repairCsDevKitNativeAddonPath(extDir);
   } else {
     console.log('\n=== Step 2: No extension dependencies to install ===');
   }
