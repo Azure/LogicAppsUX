@@ -75,6 +75,7 @@ export class SchemaParser {
         importedSchemas: Map<string, any> = new Map(),
         expansionStack: Set<string> = new Set()
     ): SchemaNode {
+        namespaces = new Map([...namespaces, ...this.extractNamespaces(element)]);
         let isSubstitutionHead =
             parentPath === '/' || element['#isGlobalRef'] === true;
         // Handle xs:element ref="..." by resolving to the global element definition
@@ -166,6 +167,7 @@ export class SchemaParser {
             instancePath: path,
             type: SchemaNodeType.Element,
             dataType: type,
+            declaredDataType: type,
             dataTypeNamespace: this.resolveQNameNamespace(type, schema, namespaces),
             namespace: this.getElementNamespace(element, parentPath, schema),
             nillable: String(element['@_nillable']).toLowerCase() === 'true',
@@ -920,7 +922,7 @@ export class SchemaParser {
         if (!qname) { return undefined; }
         if (!qname.includes(':')) { return schema['@_targetNamespace']; }
         const prefix = qname.split(':')[0];
-        return schema[`@_xmlns:${prefix}`] || namespaces.get(prefix);
+        return namespaces.get(prefix) ?? schema[`@_xmlns:${prefix}`];
     }
 
     private applySimpleType(

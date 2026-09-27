@@ -1151,7 +1151,7 @@ export class XsltCompiler {
                 return { kind: 'select', value: `userCSharp:StringTrimRight(${inputs.map(i => `string(${i})`).join(', ')})` };
             }
             case 'String Find':
-                return { kind: 'select', value: `string-length(substring-before(${inputs[0]}, ${inputs[1]})) + 1` };
+                return { kind: 'select', value: `(string-length(substring-before(${inputs[0]}, ${inputs[1]})) + 1) * number(contains(${inputs[0]}, ${inputs[1]}))` };
             case 'String Extract':
                 return { kind: 'select', value: `substring(${inputs[0]}, ${inputs[1]}, ${inputs[2]} - ${inputs[1]} + 1)` };
 

@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { MapEditorProvider } from '../src/mapEditorProvider';
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import type { MapDocument } from '../src/model/mapModel';
+import { outputChannel, window as mockWindow } from './__mocks__/vscode';
 
 jest.mock('vscode', () => {
   const base = jest.requireActual('vscode');
@@ -80,7 +81,10 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
 }
 
 describe('schema replacement host transaction', () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => {
+    jest.resetAllMocks();
+    mockWindow.createOutputChannel.mockReturnValue(outputChannel);
+  });
 
   test.each(['source', 'target'] as const)('confirms removal across all pages and applies %s as one undoable edit', async (side) => {
     const host = await setup();

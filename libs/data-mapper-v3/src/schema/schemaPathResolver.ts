@@ -41,7 +41,7 @@ function xpathSteps(path: string): XPathStep[] | undefined {
         pattern.lastIndex = offset;
         const match = pattern.exec(path);
         if (!match) { return undefined; }
-        if (match[2] !== '<Schema>') {
+        if (match[2] !== '<Schema>' && match[2] !== '<schema>') {
             steps.push({ name: match[1] + match[2], namespace: match[3], position: match[4] });
         }
         offset = pattern.lastIndex;

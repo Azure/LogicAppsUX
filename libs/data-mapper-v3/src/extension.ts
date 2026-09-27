@@ -6,8 +6,11 @@ import * as vscode from 'vscode';
 import { MapEditorProvider } from './mapEditorProvider';
 import { MapsTreeProvider } from './mapsTreeProvider';
 import { FunctoidsTreeProvider } from './functoidsTreeProvider';
+import { disposeDataMapperLogger, getDataMapperLogger } from './logger';
 
 export function activate(context: vscode.ExtensionContext) {
+    const logger = getDataMapperLogger();
+    logger.info('Data Mapper extension activating.');
     const provider = MapEditorProvider.register(context);
 
     // Register tree views for the sidebar
@@ -21,6 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Register commands
     context.subscriptions.push(
+        vscode.commands.registerCommand('biztalkDataMapper.showLogs', () => logger.show(true)),
         vscode.commands.registerCommand('biztalkDataMapper.newMap', async () => {
             const mapName = await vscode.window.showInputBox({
                 prompt: 'Enter map name',
@@ -72,16 +76,24 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         vscode.commands.registerCommand('biztalkDataMapper.compileMap', async () => {
+            logger.show(true);
+            logger.info('Compile command selected. Start compilation using the map editor toolbar.');
             vscode.window.showInformationMessage('Use the Compile button in the map editor toolbar');
         }),
 
         vscode.commands.registerCommand('biztalkDataMapper.testMap', async () => {
+            logger.show(true);
+            logger.info('Test Map command: selecting input. Run the transformation from the map editor Test Map panel.');
             const inputFile = await vscode.window.showOpenDialog({
                 canSelectMany: false,
                 filters: { 'XML Files': ['xml'] },
                 title: 'Select Test Input XML'
             });
-            if (!inputFile || inputFile.length === 0) { return; }
+            if (!inputFile || inputFile.length === 0) {
+                logger.info('Test Map input selection cancelled.');
+                return;
+            }
+            logger.info('Test Map input selected.');
             vscode.window.showInformationMessage(`Test map with input: ${inputFile[0].fsPath}`);
         }),
 
@@ -101,6 +113,8 @@ export function activate(context: vscode.ExtensionContext) {
     watcher.onDidCreate(() => mapsTreeProvider.refresh());
     watcher.onDidDelete(() => mapsTreeProvider.refresh());
     context.subscriptions.push(watcher);
+    context.subscriptions.push({ dispose: disposeDataMapperLogger });
+    logger.info('Data Mapper extension ready.');
 }
 
 export function deactivate() {}

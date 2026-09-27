@@ -24,6 +24,7 @@ export interface SchemaNode {
     instancePath?: string;
     type: SchemaNodeType;
     dataType?: string;
+    declaredDataType?: string;
     dataTypeNamespace?: string;
     namespace?: string;
     nillable?: boolean;

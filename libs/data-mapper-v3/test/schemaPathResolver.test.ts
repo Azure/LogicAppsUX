@@ -80,9 +80,16 @@ describe('legacy schema paths', () => {
         expect(resolver.resolve("/*[local-name()='Root' and namespace-uri()='wrong']/*[local-name()='Value']")).toBeUndefined();
     });
 
-    test('round-trips original endpoint and value paths through repeated saves', () => {
+    test.each(['<Schema>', '<schema>'])('resolves the %s wrapper without making element names case-insensitive', (wrapper) => {
+        const raw = `/*[local-name()='${wrapper}']/*[local-name()='Root']/*[local-name()='Value']`;
+        expect(simplifySchemaPath(raw)).toBe('/Root/Value');
+        expect(resolver.require(raw).path).toBe('/Root/Value');
+        expect(resolver.resolve(raw.replace("'Root'", "'root'"))).toBeUndefined();
+    });
+
+    test.each(['<Schema>', '<schema>'])('round-trips original %s endpoint and value paths through repeated saves', (wrapper) => {
         const serializer = new BtmSerializer();
-        const raw = "/*[local-name()='<Schema>']/*[local-name()='Root']/*[local-name()='<Sequence>']/*[local-name()='Value']";
+        const raw = `/*[local-name()='${wrapper}']/*[local-name()='Root']/*[local-name()='<Sequence>']/*[local-name()='Value']`;
         const escaped = raw.replace(/</g, '&lt;').replace(/>/g, '&gt;');
         const btm = `<mapsource Name="Legacy"><SrcTree/><TrgTree/><TreeValues>
           <TestValues><Value Query="${escaped}" value="sample"/></TestValues>

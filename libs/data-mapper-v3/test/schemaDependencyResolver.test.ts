@@ -3,6 +3,46 @@ import { resolveSchemaDependencies } from '../src/schema/schemaDependencyResolve
 import { SchemaParser } from '../src/schema/schemaParser';
 
 describe('schema dependency resolution', () => {
+    test('resolves element-local type and ref prefixes without leaking overrides to siblings', async () => {
+        const rootPath = path.resolve('schemas', 'root.xsd');
+        const imported = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:imported"
+            elementFormDefault="qualified">
+          <xs:complexType name="Record"><xs:sequence><xs:element name="Value" type="xs:string"/></xs:sequence></xs:complexType>
+          <xs:simpleType name="Code"><xs:restriction base="xs:string"><xs:maxLength value="10"/></xs:restriction></xs:simpleType>
+          <xs:element name="Leaf" type="xs:string"/>
+        </xs:schema>`;
+        const root = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:q="urn:root" targetNamespace="urn:root">
+          <xs:import namespace="urn:imported" schemaLocation="imported.xsd"/>
+          <xs:complexType name="Record"><xs:sequence><xs:element name="LocalValue" type="xs:string"/></xs:sequence></xs:complexType>
+          <xs:element name="Root"><xs:complexType><xs:sequence>
+            <xs:element xmlns:q="urn:imported" name="Imported" type="q:Record"/>
+            <xs:element xmlns:new="urn:imported" name="NewPrefix" type="new:Record"/>
+            <xs:element xmlns:q="urn:imported" name="Container"><xs:complexType><xs:sequence>
+              <xs:element name="Inherited" type="q:Record"/>
+            </xs:sequence></xs:complexType></xs:element>
+            <xs:element xmlns:q="urn:imported" ref="q:Leaf"/>
+            <xs:element xmlns:q="urn:imported" name="Code" type="q:Code"/>
+            <xs:element name="Local" type="q:Record"/>
+          </xs:sequence></xs:complexType></xs:element>
+        </xs:schema>`;
+        const dependencies = await resolveSchemaDependencies(
+            root, rootPath, async () => imported,
+            (containingPath, location) => path.resolve(path.dirname(containingPath), location)
+        );
+        const tree = new SchemaParser().parseWithImports(root, rootPath, dependencies);
+        const [overridden, newPrefix, container, ref, code, sibling] = tree.rootElement.children;
+        expect(overridden.children.map(node => node.name)).toEqual(['Value']);
+        expect(overridden.dataTypeNamespace).toBe('urn:imported');
+        expect(newPrefix.children.map(node => node.name)).toEqual(['Value']);
+        expect(container.children[0].children.map(node => node.name)).toEqual(['Value']);
+        expect(ref.name).toBe('Leaf');
+        expect(ref.namespace).toBe('urn:imported');
+        expect(code.restrictions?.maxLength).toBe(10);
+        expect(sibling.children.map(node => node.name)).toEqual(['LocalValue']);
+        expect(sibling.dataTypeNamespace).toBe('urn:root');
+    });
+
     test('loads imports and includes recursively and resolves QNames by namespace', async () => {
         const rootPath = path.resolve('schemas', 'root.xsd');
         const files = new Map<string, string>([
