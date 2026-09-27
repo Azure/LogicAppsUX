@@ -2,6 +2,7 @@ import { execFile } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
+import { connectToVsCodeWorkbenchCdp } from './cdpClient';
 
 const execFileAsync = promisify(execFile);
 const screenshotRoot =
@@ -11,14 +12,18 @@ export async function captureCliScreenshot(name: string): Promise<string | undef
   fs.mkdirSync(screenshotRoot, { recursive: true });
 
   const screenshotPath = path.join(screenshotRoot, `${sanitizeFileSegment(name)}.png`);
-  if (process.platform !== 'win32') {
-    console.log(`[screenshot] Skipping CLI screenshot on unsupported platform: ${process.platform}`);
-    return undefined;
+  if (process.platform === 'win32') {
+    await captureWindowsScreenshot(screenshotPath);
+    console.log(`[screenshot] Saved: ${screenshotPath}`);
+    return screenshotPath;
   }
 
-  await captureWindowsScreenshot(screenshotPath);
-  console.log(`[screenshot] Saved: ${screenshotPath}`);
-  return screenshotPath;
+  const cdp = await connectToVsCodeWorkbenchCdp();
+  try {
+    return await captureCdpScreenshot(cdp, name);
+  } finally {
+    cdp.dispose();
+  }
 }
 
 export async function captureCdpScreenshot(

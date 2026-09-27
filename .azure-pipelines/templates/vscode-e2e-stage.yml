@@ -14,6 +14,12 @@ parameters:
       name: AzurePipelines-EO
       image: 1ESPT-Ubuntu22.04
       os: linux
+  - name: windowsPool
+    type: object
+    default:
+      name: VSEngSS-MicroBuild2022-1ES
+      image: server2022-microbuildVS2022-1es
+      os: windows
   - name: runVscodeTestCliSmoke
     type: boolean
     default: true
@@ -35,6 +41,17 @@ parameters:
       - jobName: VscodeE2ECliCreateWorkspaceCodeful
         displayName: vscode-test CLI create workspace codeful
         label: createWorkspaceCodeful
+  - name: windowsTestCliRuns
+    type: object
+    default:
+      - jobName: VscodeE2ECliWindowsSmoke
+        displayName: vscode-test CLI Windows smoke (unitTests)
+        label: unitTests
+        artifactName: windows-unitTests
+      - jobName: VscodeE2ECliWindowsCreateWorkspaceBehavior
+        displayName: vscode-test CLI Windows create workspace behavior
+        label: createWorkspaceBehavior
+        artifactName: windows-createWorkspaceBehavior
   - name: scenarioShards
     type: object
     default: []
@@ -66,12 +83,29 @@ stages:
                   jobName: ${{ cliRun.jobName }}
                   displayName: ${{ cliRun.displayName }}
                   label: ${{ cliRun.label }}
+                  artifactName: ${{ cliRun.label }}
                   feedBaseUrl: ${{ parameters.feedBaseUrl }}
                   pool: ${{ parameters.pool }}
                   dependsOn:
                     - BuildVscodeE2EArtifacts
                   checkoutRef: ${{ parameters.checkoutRef }}
                   testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+                  platform: linux
+
+          - ${{ each cliRun in parameters.windowsTestCliRuns }}:
+              - template: vscode-e2e-run-cli.yml
+                parameters:
+                  jobName: ${{ cliRun.jobName }}
+                  displayName: ${{ cliRun.displayName }}
+                  label: ${{ cliRun.label }}
+                  artifactName: ${{ cliRun.artifactName }}
+                  feedBaseUrl: ${{ parameters.feedBaseUrl }}
+                  pool: ${{ parameters.windowsPool }}
+                  dependsOn:
+                    - BuildVscodeE2EArtifacts
+                  checkoutRef: ${{ parameters.checkoutRef }}
+                  testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+                  platform: windows
 
       - ${{ if and(eq(parameters.runVscodeTestCliSmoke, true), eq(length(parameters.testCliRuns), 0)) }}:
           - template: vscode-e2e-run-cli.yml
@@ -79,12 +113,14 @@ stages:
               jobName: VscodeE2ECliSmoke
               displayName: vscode-test CLI smoke
               label: unitTests
+              artifactName: unitTests
               feedBaseUrl: ${{ parameters.feedBaseUrl }}
               pool: ${{ parameters.pool }}
               dependsOn:
                 - BuildVscodeE2EArtifacts
               checkoutRef: ${{ parameters.checkoutRef }}
               testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+              platform: linux
 
       - ${{ if gt(length(parameters.scenarioShards), 0) }}:
           - template: vscode-e2e-setup-fixtures.yml
@@ -119,6 +155,8 @@ stages:
           dependsOn:
             - ${{ if eq(parameters.runVscodeTestCliSmoke, true) }}:
                 - ${{ each cliRun in parameters.testCliRuns }}:
+                    - ${{ cliRun.jobName }}
+                - ${{ each cliRun in parameters.windowsTestCliRuns }}:
                     - ${{ cliRun.jobName }}
             - ${{ if and(eq(parameters.runVscodeTestCliSmoke, true), eq(length(parameters.testCliRuns), 0)) }}:
                 - VscodeE2ECliSmoke
