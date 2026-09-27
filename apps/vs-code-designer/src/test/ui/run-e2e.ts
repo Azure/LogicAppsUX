@@ -534,12 +534,12 @@ function installExtensionWithCli(cliBase: string, dep: string, label: string = d
         console.log(`  ✓ ${label} installed (${elapsed}s)`);
         resolve({ dep, success: true });
       }
-
-      function getMarketplaceExtensionReference(dep: string): string {
-        return dep.toLowerCase() === 'ms-dotnettools.csdevkit' ? `${dep}@${CS_DEV_KIT_E2E_VERSION}` : dep;
-      }
     });
   });
+}
+
+function getMarketplaceExtensionReference(dep: string): string {
+  return dep.toLowerCase() === 'ms-dotnettools.csdevkit' ? `${dep}@${CS_DEV_KIT_E2E_VERSION}` : dep;
 }
 
 function getVsCodeCliProxyOptions(): { args: string; env: NodeJS.ProcessEnv } {
