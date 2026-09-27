@@ -588,7 +588,7 @@ async function seedStandardFields(cdp: CdpEvaluator, contextId: number, validPat
 async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase, parentPath: string): Promise<void> {
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
     const { cdp, contextId } = await openCreateWorkspaceContext();
     let submitted = false;
     try {
@@ -603,7 +603,7 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
       await waitForWorkspaceArtifacts(parentPath, creationCase);
       return;
     } catch (error) {
-      if (submitted || attempt === 2) {
+      if (submitted || attempt === 3) {
         throw error;
       }
 

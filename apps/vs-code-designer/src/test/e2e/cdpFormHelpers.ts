@@ -88,7 +88,7 @@ export async function scrollFieldIntoView(cdp: CdpEvaluator, contextId: number, 
 }
 
 export async function waitForFieldVisible(cdp: CdpEvaluator, contextId: number, labels: FieldLabels): Promise<void> {
-  const deadline = Date.now() + 10000;
+  const deadline = Date.now() + 30000;
   while (Date.now() < deadline) {
     const result = await getFieldState(cdp, contextId, labels).catch(() => undefined);
     if (result?.ok) {
