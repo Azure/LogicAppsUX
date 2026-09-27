@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { createRoot, Root } from 'react-dom/client';
-import { createPortal } from 'react-dom';
+import { createRoot, type Root } from 'react-dom/client';
+import { createPortal, flushSync } from 'react-dom';
+import { fitLinkViewport, getCanvasBounds } from './canvasViewport';
 import type { MapFunctoid, MapLink, MapPage } from '../../../src/model/mapModel';
 import type { MapperViewState } from '../../../src/protocol/mapEditorProtocol';
 
@@ -82,7 +83,9 @@ function getLinkPoints(
     offsetY: number,
     scrollLeft: number,
     scrollTop: number,
-    zoom: number
+    zoom: number,
+    originX: number,
+    originY: number
 ): { source: Point; target: Point } | null {
     let source: Point | undefined;
     let target: Point | undefined;
@@ -91,12 +94,12 @@ function getLinkPoints(
         const functoid = page.functoids.find(item => item.id === link.sourceId);
         if (functoid) {
             source = {
-                x: offsetX + (functoid.x + functoidRadius) * zoom - scrollLeft,
-                y: offsetY + functoid.y * zoom - scrollTop
+                x: offsetX + (functoid.x + originX + functoidRadius) * zoom - scrollLeft,
+                y: offsetY + (functoid.y + originY) * zoom - scrollTop
             };
         }
-    } else if (link.sourcePath) {
-        const raw = positions.get(`src:${link.sourcePath}`);
+    } else if (link.sourceType === 'schemaNode') {
+        const raw = positions.get(`src:${link.sourcePath || link.sourceId}`);
         if (raw) {
             source = raw;
         }
@@ -106,12 +109,12 @@ function getLinkPoints(
         const functoid = page.functoids.find(item => item.id === link.targetId);
         if (functoid) {
             target = {
-                x: offsetX + (functoid.x - functoidRadius) * zoom - scrollLeft,
-                y: offsetY + functoid.y * zoom - scrollTop
+                x: offsetX + (functoid.x + originX - functoidRadius) * zoom - scrollLeft,
+                y: offsetY + (functoid.y + originY) * zoom - scrollTop
             };
         }
-    } else if (link.targetPath) {
-        const raw = positions.get(`tgt:${link.targetPath}`);
+    } else if (link.targetType === 'schemaNode') {
+        const raw = positions.get(`tgt:${link.targetPath || link.targetId}`);
         if (raw) {
             target = raw;
         }
@@ -173,6 +176,8 @@ function FunctoidNode({
     functoid,
     selected,
     zoom,
+    originX,
+    originY,
     svgRef,
     callbacks,
     dragTarget,
@@ -181,6 +186,8 @@ function FunctoidNode({
     functoid: MapFunctoid;
     selected: boolean;
     zoom: number;
+    originX: number;
+    originY: number;
     svgRef: React.RefObject<SVGSVGElement>;
     callbacks: CanvasCallbacks;
     dragTarget: React.MutableRefObject<DragTarget | null>;
@@ -192,7 +199,7 @@ function FunctoidNode({
         <g
             className="functoid-node"
             data-id={functoid.id}
-            transform={`translate(${functoid.x * zoom}, ${functoid.y * zoom}) scale(${zoom})`}
+            transform={`translate(${(functoid.x + originX) * zoom}, ${(functoid.y + originY) * zoom}) scale(${zoom})`}
             onClick={event => {
                 event.stopPropagation();
                 clickTimer.current = window.setTimeout(
@@ -219,8 +226,8 @@ function FunctoidNode({
                 }
                 const target = {
                     id: functoid.id,
-                    offsetX: (event.clientX - svgRect.left) / zoom - functoid.x,
-                    offsetY: (event.clientY - svgRect.top) / zoom - functoid.y
+                    offsetX: (event.clientX - svgRect.left) / zoom - originX - functoid.x,
+                    offsetY: (event.clientY - svgRect.top) / zoom - originY - functoid.y
                 };
                 dragTarget.current = target;
                 setDragTarget(target);
@@ -296,9 +303,11 @@ function MappingCanvasView({
 }: CanvasViewProps): React.ReactElement {
     const svgRef = useRef<SVGSVGElement>(null);
     const dragTarget = useRef<DragTarget | null>(null);
+    const dragBounds = useRef<ReturnType<typeof getCanvasBounds> | null>(null);
     const [, setCurrentDrag] = useState<DragTarget | null>(null);
-    const zoomPercent = Math.round(zoom * 100);
+    const zoomPercent = Math.round(zoom * 10000) / 100;
     const mappingArea = host.closest('.mapping-area');
+    const bounds = dragBounds.current ?? getCanvasBounds(page?.functoids ?? []);
 
     const finishDrag = (): void => {
         const target = dragTarget.current;
@@ -310,6 +319,7 @@ function MappingCanvasView({
             callbacks.onFunctoidMove?.(functoid.id, functoid.x, functoid.y);
         }
         dragTarget.current = null;
+        dragBounds.current = null;
         setCurrentDrag(null);
     };
 
@@ -318,8 +328,8 @@ function MappingCanvasView({
             <svg
                 ref={svgRef}
                 className="mapping-svg"
-                width={`${Math.max(100, zoomPercent)}%`}
-                height={`${Math.max(100, zoomPercent)}%`}
+                width={Math.ceil(bounds.width * zoom)}
+                height={Math.ceil(bounds.height * zoom)}
                 onClick={() => callbacks.onDeselect?.()}
                 onMouseMove={event => {
                     const target = dragTarget.current;
@@ -331,8 +341,8 @@ function MappingCanvasView({
                         return;
                     }
                     const rect = svgRef.current.getBoundingClientRect();
-                    functoid.x = (event.clientX - rect.left) / zoom - target.offsetX;
-                    functoid.y = (event.clientY - rect.top) / zoom - target.offsetY;
+                    functoid.x = (event.clientX - rect.left) / zoom - bounds.originX - target.offsetX;
+                    functoid.y = (event.clientY - rect.top) / zoom - bounds.originY - target.offsetY;
                     setCurrentDrag({ ...target });
                 }}
                 onMouseUp={finishDrag}
@@ -352,8 +362,8 @@ function MappingCanvasView({
                     }
                     try {
                         const rect = host.getBoundingClientRect();
-                        const x = (event.clientX - rect.left + host.scrollLeft) / zoom;
-                        const y = (event.clientY - rect.top + host.scrollTop) / zoom;
+                        const x = (event.clientX - rect.left + host.scrollLeft) / zoom - bounds.originX;
+                        const y = (event.clientY - rect.top + host.scrollTop) / zoom - bounds.originY;
                         callbacks.onFunctoidDrop?.(JSON.parse(data), x, y);
                     } catch {
                         return;
@@ -366,10 +376,15 @@ function MappingCanvasView({
                         functoid={functoid}
                         selected={state.selectedFunctoid === functoid.id}
                         zoom={zoom}
+                        originX={bounds.originX}
+                        originY={bounds.originY}
                         svgRef={svgRef}
                         callbacks={callbacks}
                         dragTarget={dragTarget}
-                        setDragTarget={target => setCurrentDrag(target)}
+                        setDragTarget={target => {
+                            dragBounds.current = bounds;
+                            setCurrentDrag(target);
+                        }}
                     />
                 ))}
                 <text x="8" y="16" fill="#888" fontSize="10">
@@ -421,7 +436,9 @@ function MappingCanvasView({
                             offsetY,
                             host.scrollLeft,
                             host.scrollTop,
-                            zoom
+                            zoom,
+                            bounds.originX,
+                            bounds.originY
                         );
                         return points ? (
                             <LinkPath
@@ -487,6 +504,29 @@ export class MappingCanvas extends HTMLElement {
 
     public setZoom(zoom: number): void {
         this.zoom = Math.min(maxZoom, Math.max(minZoom, zoom));
+        this.renderReact();
+    }
+
+    public revealLink(linkId: string): void {
+        const link = this.page?.links.find(item => item.id === linkId);
+        if (!link || !this.page || !this.isConnected) {
+            return;
+        }
+        const nodes = this.page.functoids.filter(node =>
+            (link.sourceType === 'functoid' && node.id === link.sourceId)
+            || (link.targetType === 'functoid' && node.id === link.targetId)
+        );
+        const bounds = getCanvasBounds(this.page.functoids);
+        // A zoom change can add/remove scrollbars and change the usable viewport.
+        for (let pass = 0; pass < 2; pass++) {
+            const viewport = fitLinkViewport(nodes, bounds, this.clientWidth, this.clientHeight, {
+                zoom: this.zoom, scrollLeft: this.scrollLeft, scrollTop: this.scrollTop
+            });
+            this.zoom = viewport.zoom;
+            flushSync(() => this.renderReact());
+            this.scrollLeft = viewport.scrollLeft;
+            this.scrollTop = viewport.scrollTop;
+        }
         this.renderReact();
     }
 

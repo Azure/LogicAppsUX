@@ -7,6 +7,7 @@ import { SchemaTree, SchemaNode, SchemaNodeType, SchemaAttribute, SchemaRestrict
 import { getOrderedXsdChildren, parseOrderedXsd } from './orderedXsdParser';
 
 export class SchemaParser {
+    private choiceCounter = 0;
     public parse(xsdContent: string, filePath: string, rootName?: string): SchemaTree {
         return this.parseWithImports(xsdContent, filePath, new Map(), rootName);
     }
@@ -21,6 +22,7 @@ export class SchemaParser {
         importedSchemas: Map<string, any>,
         rootName?: string
     ): SchemaTree {
+        this.choiceCounter = 0;
         const parsed = parseOrderedXsd(xsdContent);
         const schema = parsed['xs:schema'] || parsed['xsd:schema'] || parsed['schema'];
 
@@ -54,6 +56,7 @@ export class SchemaParser {
             importedSchemas,
             new Set()
         );
+        this.assignNodePaths(rootElement);
 
         return {
             rootElement,
@@ -158,6 +161,9 @@ export class SchemaParser {
         const node: SchemaNode = {
             name,
             path,
+            schemaPath: path,
+            structuralPath: path,
+            instancePath: path,
             type: SchemaNodeType.Element,
             dataType: type,
             dataTypeNamespace: this.resolveQNameNamespace(type, schema, namespaces),
@@ -261,7 +267,8 @@ export class SchemaParser {
         schema: any,
         namespaces: Map<string, string>,
         importedSchemas: Map<string, any>,
-        expansionStack: Set<string>
+        expansionStack: Set<string>,
+        preserveParticle = false
     ): void {
         this.parseAttributes(
             complexType,
@@ -278,7 +285,8 @@ export class SchemaParser {
             schema,
             namespaces,
             importedSchemas,
-            expansionStack
+            expansionStack,
+            preserveParticle
         );
 
         for (const complexContent of this.getChildren(complexType, 'complexContent')) {
@@ -370,7 +378,8 @@ export class SchemaParser {
                         resolved.schema,
                         baseNamespaces,
                         importedSchemas,
-                        new Set(expansionStack).add(key)
+                        new Set(expansionStack).add(key),
+                        true
                     );
                 } else {
                     this.parseAttributes(
@@ -399,7 +408,8 @@ export class SchemaParser {
             schema,
             namespaces,
             importedSchemas,
-            expansionStack
+            expansionStack,
+            true
         );
     }
 
@@ -496,9 +506,10 @@ export class SchemaParser {
         schema: any,
         namespaces: Map<string, string>,
         importedSchemas: Map<string, any>,
-        expansionStack: Set<string>
+        expansionStack: Set<string>,
+        preserveParticle = false
     ): void {
-        for (const child of getOrderedXsdChildren(container)) {
+        for (const child of this.particleChildren(container)) {
             const localName = child.name.split(':').pop();
             if (localName === 'sequence' ||
                 localName === 'choice' ||
@@ -511,7 +522,9 @@ export class SchemaParser {
                     namespaces,
                     importedSchemas,
                     expansionStack,
-                    localName === 'choice'
+                    localName === 'choice',
+                    child.segment,
+                    preserveParticle
                 );
             } else if (localName === 'group') {
                 this.parseGroupReference(
@@ -521,7 +534,8 @@ export class SchemaParser {
                     schema,
                     namespaces,
                     importedSchemas,
-                    expansionStack
+                    expansionStack,
+                    child.segment
                 );
             } else if (localName === 'any') {
                 parentNode.children.push(this.parseWildcard(child.value, parentPath));
@@ -537,10 +551,15 @@ export class SchemaParser {
         namespaces: Map<string, string>,
         importedSchemas: Map<string, any>,
         expansionStack: Set<string>,
-        isChoice: boolean
+        isChoice: boolean,
+        segment?: string,
+        preserveSegment = true
     ): void {
         const startIndex = parentNode.children.length;
-        for (const child of getOrderedXsdChildren(particle)) {
+        const choiceGroup = isChoice ? `choice${this.choiceCounter++}` : undefined;
+        let branch = 0;
+        for (const child of this.particleChildren(particle)) {
+            const branchStart = parentNode.children.length;
             const localName = child.name.split(':').pop();
             if (localName === 'element') {
                 parentNode.children.push(this.parseElement(
@@ -561,7 +580,8 @@ export class SchemaParser {
                     schema,
                     namespaces,
                     importedSchemas,
-                    expansionStack
+                    expansionStack,
+                    child.segment
                 );
             } else if (localName === 'sequence' ||
                 localName === 'choice' ||
@@ -574,16 +594,22 @@ export class SchemaParser {
                     namespaces,
                     importedSchemas,
                     expansionStack,
-                    localName === 'choice'
+                    localName === 'choice',
+                    child.segment
                 );
             }
+            if (choiceGroup) {
+                for (const node of parentNode.children.slice(branchStart)) {
+                    node.isOptional = true;
+                    node.choiceGroup = choiceGroup;
+                    node.choiceBranches = [...(node.choiceBranches || []), { group: choiceGroup, branch }];
+                }
+                branch++;
+            }
         }
-
-        if (isChoice) {
-            const choiceGroup = `${parentPath}#choice${startIndex}`;
+        if (segment) {
             for (const child of parentNode.children.slice(startIndex)) {
-                child.isOptional = true;
-                child.choiceGroup = choiceGroup;
+                this.rebaseSchemaPaths(child, parentPath, `${parentPath}/${segment}`, preserveSegment);
             }
         }
     }
@@ -595,7 +621,8 @@ export class SchemaParser {
         schema: any,
         namespaces: Map<string, string>,
         importedSchemas: Map<string, any>,
-        expansionStack: Set<string>
+        expansionStack: Set<string>,
+        segment?: string
     ): void {
         const reference = this.optionalString(usage['@_ref']);
         if (!reference) {
@@ -637,6 +664,9 @@ export class SchemaParser {
         const minOccurs = usage['@_minOccurs'];
         const maxOccurs = usage['@_maxOccurs'];
         for (const child of parentNode.children.slice(startIndex)) {
+            this.rebaseSchemaPaths(
+                child, parentPath, `${parentPath}/${segment || `<Group:${this.localName(reference)}>`}`
+            );
             if (minOccurs !== undefined) {
                 const referenceMin = Number(minOccurs);
                 child.minOccurs = referenceMin * (child.minOccurs ?? 1);
@@ -658,6 +688,9 @@ export class SchemaParser {
         return {
             name: '*',
             path: `${parentPath}/*`,
+            schemaPath: `${parentPath}/*`,
+            structuralPath: `${parentPath}/*`,
+            instancePath: `${parentPath}/*`,
             type: SchemaNodeType.Any,
             dataType: 'xs:anyType',
             children: [],
@@ -698,6 +731,8 @@ export class SchemaParser {
                     existing => existing.name !== prohibitedName
                 );
             } else if (parsed) {
+                parsed.schemaPath = `${parentNode.path}/@${parsed.name}`;
+                parsed.structuralPath = parsed.schemaPath;
                 const existingIndex = parentNode.attributes.findIndex(
                     existing => existing.name === parsed.name &&
                         existing.namespace === parsed.namespace
@@ -731,6 +766,7 @@ export class SchemaParser {
                 importedSchemas
             );
             if (resolved) {
+                const previousAttributes = new Set(parentNode.attributes);
                 this.parseAttributes(
                     resolved.component,
                     parentNode,
@@ -739,11 +775,19 @@ export class SchemaParser {
                     importedSchemas,
                     new Set(expansionStack).add(key)
                 );
+                for (const attribute of parentNode.attributes) {
+                    if (!previousAttributes.has(attribute)) {
+                        attribute.schemaPath = `${parentNode.path}/<AttrGroup:${this.localName(reference)}>${attribute.schemaPath?.slice(parentNode.path.length)}`;
+                        attribute.structuralPath = `${parentNode.path}/<AttrGroup:${this.localName(reference)}>${attribute.structuralPath?.slice(parentNode.path.length)}`;
+                    }
+                }
             }
         }
         for (const wildcard of this.getChildren(container, 'anyAttribute')) {
             parentNode.attributes.push({
                 name: '*',
+                schemaPath: `${parentNode.path}/@*`,
+                structuralPath: `${parentNode.path}/@*`,
                 type: 'xs:anyType',
                 required: false,
                 wildcard: {
@@ -753,6 +797,64 @@ export class SchemaParser {
                     )
                 }
             });
+        }
+    }
+
+    private particleChildren(container: any): Array<{ name: string; value: any; segment?: string }> {
+        const children = getOrderedXsdChildren(container).map(child => {
+            const name = this.localName(child.name);
+            const segment = name === 'group'
+                ? `<Group:${this.localName(String(child.value['@_ref'] || ''))}>`
+                : ({ sequence: '<Sequence>', choice: '<Choice>', all: '<All>' } as Record<string, string>)[name];
+            return { ...child, segment };
+        });
+        const counts = new Map<string, number>();
+        return children.map(child => {
+            if (!child.segment) { return child; }
+            const position = (counts.get(child.segment) || 0) + 1;
+            counts.set(child.segment, position);
+            return children.filter(other => other.segment === child.segment).length > 1
+                ? { ...child, segment: `${child.segment}[${position}]` }
+                : child;
+        });
+    }
+
+    private rebaseSchemaPaths(
+        node: SchemaNode, from: string, to: string, canonical = true,
+        structuralFrom = from, structuralTo = to
+    ): void {
+        node.structuralPath = structuralTo + (node.structuralPath || node.path).slice(structuralFrom.length);
+        if (canonical) { node.schemaPath = to + (node.schemaPath || node.path).slice(from.length); }
+        for (const attribute of node.attributes) {
+            attribute.structuralPath = structuralTo + (attribute.structuralPath || `${node.path}/@${attribute.name}`).slice(structuralFrom.length);
+            if (canonical) {
+                attribute.schemaPath = to + (attribute.schemaPath || `${node.path}/@${attribute.name}`).slice(from.length);
+            }
+        }
+        node.children.forEach(child => this.rebaseSchemaPaths(child, from, to, canonical, structuralFrom, structuralTo));
+    }
+
+    private assignNodePaths(node: SchemaNode): void {
+        const positions = new Map<string, number>();
+        const schemaPositions = new Map<string, number>();
+        const schemaCounts = new Map<string, number>();
+        for (const child of node.children) {
+            const key = child.schemaPath || child.path;
+            schemaCounts.set(key, (schemaCounts.get(key) || 0) + 1);
+        }
+        for (const child of node.children) {
+            const position = (positions.get(child.name) || 0) + 1;
+            positions.set(child.name, position);
+            const key = child.schemaPath || child.path;
+            if ((schemaCounts.get(key) || 0) > 1) {
+                const schemaPosition = (schemaPositions.get(key) || 0) + 1;
+                schemaPositions.set(key, schemaPosition);
+                const structure = child.structuralPath || key;
+                this.rebaseSchemaPaths(child, key, `${key}[${schemaPosition}]`, true, structure, `${structure}[${schemaPosition}]`);
+            }
+            const duplicate = node.children.filter(other => other.name === child.name).length > 1;
+            child.path = `${node.path}/${child.name}${duplicate ? `[#${position}]` : ''}`;
+            this.assignNodePaths(child);
         }
     }
 

@@ -31,6 +31,7 @@ describe('Map Editor protocol', () => {
             'init',
             'documentChanged',
             'schemaLoaded',
+            'schemaStateChanged',
             'compileResult',
             'assemblySelected',
             'instanceGenerated',
@@ -70,6 +71,10 @@ describe('Map Editor protocol', () => {
         {
             type: 'init',
             data: { map: {}, sourceSchema: null, targetSchema: null, functoids: [] }
+        },
+        {
+            type: 'schemaStateChanged',
+            data: { map: {}, sourceSchema: null, targetSchema: {} }
         },
         {
             type: 'schemaLoaded',

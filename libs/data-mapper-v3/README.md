@@ -18,6 +18,29 @@ A Logic App Data Mapper extension for Visual Studio Code with BizTalk-compatible
 - **Map Testing** — Test maps with sample XML input
 - **Map Validation** — Validate map completeness and correctness
 
+### Data Mapper Assistant layout
+
+Ask **Data Mapper Assistant** to "Arrange the functoids on all pages so the map
+is less cluttered" to lay out every page, or specify "this page" or a page name
+to limit the scope. The Assistant proposes a compact layout operation; the
+editor computes dependency-based positions locally rather than asking the
+model for hundreds of coordinate patches. Only functoid X/Y coordinates change,
+not links, parameters, scripts, or page order.
+
+Review the proposal and select **Apply Changes**. The entire operation is one
+undoable edit. For maps that exceed the selected model's input context, the
+Assistant uses a compact page summary for layout-only requests; mapping-logic
+edits still require the full context.
+
+The mapper surface expands to fit the active page's functoids. Horizontal and
+vertical scrollbars appear when the map extends beyond the visible surface;
+the scrollable area adjusts when zooming or changing pages.
+
+Selecting a connection reveals its start and end points. Linked schema nodes
+are expanded and scrolled into view, while the mapper surface adjusts its zoom
+and scroll position to show the connected functoids. This changes the view only,
+not the saved functoid positions or mapping.
+
 ## Installation
 
 Install from the VS Code Marketplace or from a `.vsix` file:
@@ -35,6 +58,26 @@ code --install-extension biztalk-data-mapper-1.0.0.vsix
 5. **Add functoids**: Click a functoid in the palette to add it to the canvas
 6. **Compile**: Click the "Compile" button to generate XSLT
 7. **Test**: Click "Test" and select an input XML file
+
+### Replace a source or target schema
+
+Right-click anywhere in the source or target schema pane and choose **Replace
+Source Schema…** or **Replace Target Schema…**, then select an XSD. The pane's
+**Replace…** button provides the same action using the keyboard. Empty panes
+offer **Add Source/Target Schema…** in the menu or the existing **Load Schema**
+button. Includes and imports are resolved using the normal schema loader.
+
+Replacement checks links on **every map page**, retaining links whose exact
+element or attribute paths exist in the new schema. Replacing an existing schema
+always displays a warning requiring explicit acceptance, even when all links
+match. If paths are missing, the warning also reports the number of links that
+would be removed. Choose **Replace Schema** to proceed; canceling or dismissing
+the warning keeps the existing schema and map unchanged. Only removed
+links and their functoid link references/parameters are deleted; functoids and
+unrelated mapping remain unchanged. The schema and link changes form one
+undoable document edit; Undo/Redo also restores the displayed schemas.
+Cancelling, a load failure, or editing the map while selection/confirmation is
+open leaves the pending replacement unapplied.
 
 ## Building from Source
 
@@ -94,6 +137,26 @@ architecture and interaction flow.
 - Windows with .NET Framework 4.7.2 or later for legacy VB.NET/JScript Test Map execution
 
 ## File Format
+
+Legacy endpoint paths containing `<Sequence>`, `<Choice>`, `<All>`,
+`<Group:name>`, or `<AttrGroup:name>` are resolved against schema-derived
+aliases while the tree remains flattened. The same resolver is used for
+connections, endpoint navigation, schema replacement, compilation, constants,
+and source test values. Original BTM paths are preserved on save. Ambiguous
+flattened paths are rejected rather than connected to the first matching branch.
+Nested choice branches retain their identity, so multiple fields in a single
+sequence/group branch are not treated as competing choices.
+
+The older `srctree`/`sinktree`/`functions` dialect is not supported. Such maps
+are rejected explicitly instead of being imported as empty maps. XML
+well-formedness and successful link round-tripping do not certify successful
+BizTalk compilation or XSLT equivalence; missing functoid configuration and
+unsupported constructs can still prevent compilation.
+
+Functoids with no output links remain in the map but produce a compilation
+warning instead of configuration errors, matching the legacy Mapper behavior.
+A Table Looping functoid with any output link still requires a valid, non-empty
+table grid; the compiler does not invent missing rows or suppress that error.
 
 The `.btm` file format is XML-based and compatible with BizTalk Server mapper files:
 

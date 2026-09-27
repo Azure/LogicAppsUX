@@ -6,15 +6,18 @@
  */
 
 import { SchemaTree, SchemaNode, SchemaNodeType } from '../model';
+import { SchemaPathResolver } from './schemaPathResolver';
 
 export class InstanceGenerator {
     private loopIndex = 0;
+    private values: Record<string, string> = {};
 
     /**
      * Generates a sample XML instance from a schema tree.
      */
-    public generate(schema: SchemaTree): string {
+    public generate(schema: SchemaTree, testValues?: Record<string, string>, ignoreNamespaces = false): string {
         this.loopIndex = 0;
+        this.values = new SchemaPathResolver(schema, ignoreNamespaces).resolveValues(testValues);
         const root = schema.rootElement;
         const ns = schema.targetNamespace;
         const lines: string[] = [];
@@ -61,7 +64,8 @@ export class InstanceGenerator {
             if (attr.wildcard) {
                 continue;
             }
-            const val = this.escapeXml(this.getAttrValue(attr.name, attr.type, attr.defaultValue, attr.fixedValue));
+            const val = this.escapeXml(this.testValue(`${node.path}/@${attr.name}`) ??
+                this.getAttrValue(attr.name, attr.type, attr.defaultValue, attr.fixedValue));
             openTag += ` ${attr.name}="${val}"`;
         }
 
@@ -70,7 +74,8 @@ export class InstanceGenerator {
 
         if (childElements.length === 0) {
             // Leaf element — generate sample value based on type
-            const value = this.escapeXml(this.generateValueFromType(node.name, node.dataType, node.restrictions));
+            const value = this.escapeXml(this.testValue(node.path) ??
+                this.generateValueFromType(node.name, node.dataType, node.restrictions));
             lines.push(`${openTag}>${value}</${name}>`);
         } else {
             lines.push(`${openTag}>`);
@@ -83,6 +88,11 @@ export class InstanceGenerator {
             }
             lines.push(`${pad}</${name}>`);
         }
+    }
+
+    private testValue(path: string): string | undefined {
+        const value = this.values[path];
+        return value === '<empty>' ? '' : value;
     }
 
     /**
@@ -110,7 +120,12 @@ export class InstanceGenerator {
 
     private getChildElements(node: SchemaNode): SchemaNode[] {
         const results: SchemaNode[] = [];
+        const branches = new Map<string, number>();
         for (const child of node.children) {
+            if (child.choiceBranches?.some(choice => branches.has(choice.group) && branches.get(choice.group) !== choice.branch)) {
+                continue;
+            }
+            child.choiceBranches?.forEach(choice => branches.set(choice.group, choice.branch));
             if (child.type === SchemaNodeType.Element) {
                 results.push(child);
             } else if (child.type === SchemaNodeType.Choice) {

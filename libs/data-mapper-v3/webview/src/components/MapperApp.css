@@ -334,6 +334,8 @@
 .mapping-area {
     display: flex;
     flex: 1;
+    min-height: 0;
+    min-width: 0;
     overflow: hidden;
     position: relative;
 }
@@ -488,6 +490,8 @@
 .mapping-svg {
     position: absolute;
     top: 0; left: 0;
+    min-width: 100%;
+    min-height: 100%;
     overflow: visible;
 }
 
@@ -621,6 +625,10 @@
     font-size: 12px;
 }
 .context-menu-item {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font: inherit;
     display: flex;
     justify-content: space-between;
     align-items: center;

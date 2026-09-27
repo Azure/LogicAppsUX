@@ -3,6 +3,7 @@
  */
 
 import { SchemaNodeView, SchemaTreeRenderer } from './SchemaTreeRenderer';
+import { SchemaPathResolver, linkSchemaPath } from '../../../src/schema/schemaPathResolver';
 import { MappingCanvas } from './MappingCanvas';
 import { FunctoidPalette } from './FunctoidPalette';
 import {
@@ -122,7 +123,10 @@ export class MapperAppController {
 
     private readonly handleContextMenu = (event: MouseEvent): void => {
         event.preventDefault();
-        this.showContextMenu(event.clientX, event.clientY);
+        const pane = (event.target as Element).closest('.schema-tree-container');
+        const side = pane?.classList.contains('source-tree') ? 'source'
+            : pane?.classList.contains('target-tree') ? 'target' : undefined;
+        this.showContextMenu(event.clientX, event.clientY, side);
     };
 
     private readonly handleResize = (): void => this.redrawLinks();
@@ -157,7 +161,7 @@ export class MapperAppController {
         setTimeout(() => this.updateStatusMessage(''), 2000);
     }
 
-    private showContextMenu(x: number, y: number): void {
+    private showContextMenu(x: number, y: number, side?: 'source' | 'target'): void {
         // Remove existing menu
         document.querySelectorAll('.context-menu').forEach(m => m.remove());
 
@@ -167,7 +171,12 @@ export class MapperAppController {
         menu.style.top = `${y}px`;
 
         const hasSelection = !!(this.state.selectedLink || this.state.selectedFunctoid);
-        const items = [
+        const items = side ? [{
+            label: `${this.state[`${side}Schema`] ? 'Replace' : 'Add'} ${side === 'source' ? 'Source' : 'Target'} Schema…`,
+            shortcut: '',
+            action: () => this.vscode.postMessage({ type: 'loadSchema', side }),
+            disabled: !this.state.map
+        }] : [
             { label: '✂️ Cut', shortcut: 'Ctrl+X', action: () => { this.copySelected(); this.deleteSelected(); }, disabled: !hasSelection },
             { label: '📋 Copy', shortcut: 'Ctrl+C', action: () => this.copySelected(), disabled: !hasSelection },
             { label: '📄 Paste', shortcut: 'Ctrl+V', action: () => this.pasteClipboard(), disabled: !this.clipboard },
@@ -185,7 +194,9 @@ export class MapperAppController {
                 menu.appendChild(sep);
                 continue;
             }
-            const el = document.createElement('div');
+            const el = document.createElement('button');
+            el.type = 'button';
+            el.disabled = item.disabled;
             el.className = `context-menu-item${item.disabled ? ' disabled' : ''}`;
             el.innerHTML = `<span class="menu-label">${item.label}</span><span class="menu-shortcut">${item.shortcut}</span>`;
             if (!item.disabled) {
@@ -193,6 +204,11 @@ export class MapperAppController {
             }
             menu.appendChild(el);
         }
+        menu.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                menu.remove();
+            }
+        });
 
         document.body.appendChild(menu);
 
@@ -216,6 +232,19 @@ export class MapperAppController {
             case 'documentChanged':
                 this.state.map = message.data;
                 this.redrawLinks();
+                break;
+            case 'schemaStateChanged':
+                this.state.map = message.data.map;
+                this.state.sourceSchema = message.data.sourceSchema;
+                this.state.targetSchema = message.data.targetSchema;
+                this.pendingLink = null;
+                this.state.selectedLink = null;
+                this.schemaNodeProperties = null;
+                this.functoidPropertiesId = null;
+                this.functoidInputsDraft = null;
+                this.scriptingConfigDraft = null;
+                this.renderView();
+                setTimeout(() => this.redrawLinks(), 150);
                 break;
             case 'schemaLoaded':
                 if (message.data.side === 'source') {
@@ -323,7 +352,10 @@ export class MapperAppController {
                 (nodePath) => this.onSourceNodeClick(nodePath),
                 expandedPaths,
                 (srcPath, tgtPath) => this.completeLinkCreation({ type: 'schemaNode', id: srcPath }, { type: 'schemaNode', id: tgtPath }),
-                (node) => this.openSchemaNodeProperties(node, 'source')
+                (node) => this.openSchemaNodeProperties(node, 'source'),
+                () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }),
+                () => this.redrawLinks(),
+                this.state.map?.options?.ignoreNamespacesForLinks
             );
         } else {
             sourceContainer = document.createElement('div');
@@ -341,7 +373,7 @@ export class MapperAppController {
         canvasContainer.className = 'canvas-container';
         this.canvas = canvasContainer;
         this.canvas.configure(this.state, {
-            onLinkSelect: (linkId) => { this.state.selectedLink = linkId; this.state.selectedFunctoid = null; this.redrawLinks(); },
+            onLinkSelect: (linkId) => this.selectLink(linkId),
             onFunctoidSelect: (fId) => { this.state.selectedFunctoid = fId; this.state.selectedLink = null; this.redrawLinks(); },
             onFunctoidDoubleClick: (fId) => { this.onFunctoidDoubleClick(fId); },
             onFunctoidDrop: (functoid, x, y) => { this.addFunctoidAtPosition(functoid, x, y); },
@@ -369,7 +401,10 @@ export class MapperAppController {
                 (nodePath) => this.onTargetNodeClick(nodePath),
                 expandedPaths,
                 (srcPath, tgtPath) => this.completeLinkCreation({ type: 'schemaNode', id: srcPath }, { type: 'schemaNode', id: tgtPath }),
-                (node) => this.openSchemaNodeProperties(node, 'target')
+                (node) => this.openSchemaNodeProperties(node, 'target'),
+                () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
+                () => this.redrawLinks(),
+                this.state.map?.options?.ignoreNamespacesForLinks
             );
         } else {
             targetContainer = document.createElement('div');
@@ -610,6 +645,23 @@ export class MapperAppController {
         return f?.name || 'Functoid';
     }
 
+    private selectLink(linkId: string): void {
+        const link = this.state.map?.pages[this.state.activePage]?.links.find(item => item.id === linkId);
+        if (!link) {
+            return;
+        }
+        this.state.selectedLink = linkId;
+        this.state.selectedFunctoid = null;
+        if (link.sourceType === 'schemaNode') {
+            this.sourceTree?.revealNode(linkSchemaPath(link, 'source'));
+        }
+        if (link.targetType === 'schemaNode') {
+            this.targetTree?.revealNode(linkSchemaPath(link, 'target'));
+        }
+        this.redrawLinks();
+        this.canvas?.revealLink(linkId);
+    }
+
     private redrawLinks(): void {
         if (!this.canvas || !this.state.map || !this.mappingAreaEl) { return; }
 
@@ -620,18 +672,20 @@ export class MapperAppController {
 
         if (this.sourceTree) {
             for (const link of page.links) {
-                if (link.sourcePath && link.sourceType !== 'functoid') {
-                    const pos = this.sourceTree.getNodePosition(link.sourcePath);
-                    if (pos) { positions.set(`src:${link.sourcePath}`, pos); }
+                if (link.sourceType === 'schemaNode') {
+                    const path = link.sourcePath || link.sourceId;
+                    const pos = this.sourceTree.getNodePosition(linkSchemaPath(link, 'source'));
+                    if (pos) { positions.set(`src:${path}`, pos); }
                 }
             }
         }
 
         if (this.targetTree) {
             for (const link of page.links) {
-                if (link.targetPath && link.targetType !== 'functoid') {
-                    const pos = this.targetTree.getNodePosition(link.targetPath);
-                    if (pos) { positions.set(`tgt:${link.targetPath}`, pos); }
+                if (link.targetType === 'schemaNode') {
+                    const path = link.targetPath || link.targetId;
+                    const pos = this.targetTree.getNodePosition(linkSchemaPath(link, 'target'));
+                    if (pos) { positions.set(`tgt:${path}`, pos); }
                 }
             }
         }
@@ -937,15 +991,19 @@ export class MapperAppController {
         const page = this.state.map.pages[this.state.activePage];
         const sourceNodes = this.flattenLeafNodes(this.state.sourceSchema.rootElement);
         const targetNodes = this.flattenLeafNodes(this.state.targetSchema.rootElement);
+        const sourcePaths = new SchemaPathResolver(this.state.sourceSchema);
+        const targetPaths = new SchemaPathResolver(this.state.targetSchema);
         let added = 0;
 
         for (const src of sourceNodes) {
             const match = targetNodes.find((t: any) => t.name.toLowerCase() === src.name.toLowerCase());
-            if (match && !page.links.find((l: any) => l.sourcePath === src.path && l.targetPath === match.path)) {
+            if (match && !page.links.find((l: any) =>
+                sourcePaths.resolve(l.sourcePath || '')?.path === src.path &&
+                targetPaths.resolve(l.targetPath || '')?.path === match.path)) {
                 page.links.push({
                     id: `link_${Date.now()}_${Math.random().toString(36).substr(2, 6)}_${added}`,
-                    sourceId: src.path, sourcePath: src.path,
-                    targetId: match.path, targetPath: match.path,
+                    sourceId: src.schemaPath || src.path, sourcePath: src.schemaPath || src.path,
+                    targetId: match.schemaPath || match.path, targetPath: match.schemaPath || match.path,
                     sourceType: LinkEndpointType.SchemaNode,
                     targetType: LinkEndpointType.SchemaNode
                 });
@@ -1000,7 +1058,7 @@ export class MapperAppController {
             const hasOutput = page.links.some((l: any) => l.sourceId === functoid.id);
 
             if (!hasInput && !hasOutput) {
-                issues.push(`✗ Functoid "${functoid.name}" (${functoid.id}): not connected — no input or output links`);
+                issues.push(`⚠ Functoid "${functoid.name}" (${functoid.id}): not connected — no input or output links`);
             } else if (!hasInput) {
                 const noInputOk = ['Date', 'Time', 'Date and Time', 'Iteration', 'Scripting'].includes(functoid.name);
                 if (!noInputOk) {
@@ -1081,9 +1139,17 @@ export class MapperAppController {
         if (!this.state.map) { return paths; }
         const page = this.state.map.pages[this.state.activePage];
         if (!page) { return paths; }
+        const resolver = new SchemaPathResolver(
+            (side === 'source' ? this.state.sourceSchema : this.state.targetSchema) || undefined,
+            this.state.map.options?.ignoreNamespacesForLinks
+        );
         for (const link of page.links) {
-            const p = side === 'source' ? link.sourcePath : link.targetPath;
-            if (p) { const parts = p.split('/').filter((s: string) => s); let cur = ''; for (const part of parts) { cur += '/' + part; paths.add(cur); } }
+            const p = linkSchemaPath(link, side);
+            const resolved = p ? resolver.resolve(p) : undefined;
+            if (resolved) {
+                resolved.ancestors.forEach(node => paths.add(node.path));
+                paths.add(resolved.path);
+            }
         }
         return paths;
     }

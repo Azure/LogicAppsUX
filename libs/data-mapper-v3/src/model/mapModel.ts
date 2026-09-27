@@ -11,6 +11,7 @@ export interface MapDocument {
     pages: MapPage[];
     options: MapOptions;
     targetValues?: Record<string, string>;
+    testValues?: Record<string, string>;
     customXsltPath?: string;
     customExtensionXmlPath?: string;
     customXslt?: string;
@@ -57,6 +58,8 @@ export interface MapLink {
     sourcePath?: string;
     targetId: string;
     targetPath?: string;
+    sourceBtmPath?: string;
+    targetBtmPath?: string;
     sourceType: LinkEndpointType;
     targetType: LinkEndpointType;
     label?: string;

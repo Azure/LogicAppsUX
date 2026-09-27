@@ -1,4 +1,5 @@
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
+import { FunctoidRegistry } from '../src/functoids';
 import {
     DEFAULT_MAP_OPTIONS,
     LinkEndpointType,
@@ -11,7 +12,7 @@ import {
 } from '../src/worker/compilerHostProtocol';
 
 describe('compiler worker parity', () => {
-    test('preserves compiler output and schema namespace maps across the worker boundary', () => {
+    test.each([false, true])('preserves compiler output across the worker boundary (unused Table Looping: %s)', unusedTable => {
         const parser = new SchemaParser();
         const source = parser.parse(`
             <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -48,6 +49,20 @@ describe('compiler worker parity', () => {
                 }]
             }]
         };
+        if (unusedTable) {
+            const definition = FunctoidRegistry.getInstance().getFunctoid(703)!;
+            map.pages[0].functoids.push({
+                id: 'unused-table',
+                functoidId: definition.id,
+                category: definition.category,
+                name: definition.name,
+                x: 0,
+                y: 0,
+                inputLinks: [],
+                outputLinks: [],
+                parameters: []
+            });
+        }
         const expected = new XsltCompiler().compile(map, source, target);
         const serialized = JSON.parse(JSON.stringify({
             id: 1,
@@ -59,6 +74,8 @@ describe('compiler worker parity', () => {
         const actual = compileHostRequest(serialized, new XsltCompiler());
 
         expect(actual).toEqual(expected);
+        expect(actual.success).toBe(true);
+        expect(actual.warnings).toHaveLength(unusedTable ? 1 : 0);
         expect(actual.xslt).toContain('xmlns:s0="urn:source"');
         expect(actual.xslt).toContain('xmlns:ns0="urn:target"');
     });

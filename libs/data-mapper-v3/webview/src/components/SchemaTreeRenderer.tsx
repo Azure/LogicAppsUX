@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { createRoot, Root } from 'react-dom/client';
+import React, { useLayoutEffect, useState } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { flushSync } from 'react-dom';
+import { SchemaPathResolver } from '../../../src/schema/schemaPathResolver';
 
 export interface SchemaNodeView {
     name: string;
     path: string;
+    schemaPath?: string;
+    structuralPath?: string;
+    instancePath?: string;
     type?: string;
     dataType?: string;
     dataTypeNamespace?: string;
@@ -36,6 +41,8 @@ export interface SchemaNodeView {
     children?: SchemaNodeView[];
     attributes?: Array<{
         name: string;
+        schemaPath?: string;
+        structuralPath?: string;
         type?: string;
         required?: boolean;
         defaultValue?: string;
@@ -58,6 +65,9 @@ interface SchemaTreeViewProps {
     onNodeClick(nodePath: string): void;
     onNodeDoubleClick?(node: SchemaNodeView): void;
     onDragLink?(sourcePath: string, targetPath: string): void;
+    onReplaceSchema?(): void;
+    revealRequest?: { path: string };
+    onLayoutChange?(): void;
 }
 
 function collectAllPaths(node: SchemaNodeView | undefined, paths: Set<string>): void {
@@ -76,9 +86,26 @@ function SchemaTreeView({
     initialExpanded,
     onNodeClick,
     onNodeDoubleClick,
-    onDragLink
+    onDragLink,
+    onReplaceSchema,
+    revealRequest,
+    onLayoutChange
 }: SchemaTreeViewProps): React.ReactElement {
     const [expandedPaths, setExpandedPaths] = useState(() => new Set(initialExpanded));
+    useLayoutEffect(() => {
+        if (!revealRequest) {
+            return;
+        }
+        const paths = new Set<string>();
+        collectAllPaths(schema.rootElement, paths);
+        setExpandedPaths(current => new Set([
+            ...current,
+            ...[...paths].filter(path => revealRequest.path.startsWith(`${path}/`))
+        ]));
+    }, [revealRequest, schema]);
+    useLayoutEffect(() => {
+        onLayoutChange?.();
+    }, [expandedPaths, onLayoutChange]);
 
     const toggleNode = (event: React.MouseEvent, path: string): void => {
         event.stopPropagation();
@@ -95,7 +122,7 @@ function SchemaTreeView({
 
     const renderNode = (node: SchemaNodeView, depth: number): React.ReactNode => {
         const children = node.children || [];
-        const hasChildren = children.length > 0;
+        const hasChildren = children.length > 0 || !!node.attributes?.length;
         const isExpanded = expandedPaths.has(node.path);
         const isAttribute = node.type === 'attribute' || node.name.startsWith('@');
         const isRepeating = node.maxOccurs === 'unbounded'
@@ -113,11 +140,11 @@ function SchemaTreeView({
                     const element = event.currentTarget;
                     element.classList.add('active');
                     window.setTimeout(() => element.classList.remove('active'), 3000);
-                    onNodeClick(node.path);
+                    onNodeClick(node.schemaPath || node.path);
                 }}
                 onDragStart={event => {
                     event.stopPropagation();
-                    event.dataTransfer.setData('link-endpoint', JSON.stringify({ side, path: node.path }));
+                    event.dataTransfer.setData('link-endpoint', JSON.stringify({ side, path: node.schemaPath || node.path }));
                     event.dataTransfer.effectAllowed = 'link';
                     event.currentTarget.classList.add('active');
                 }}
@@ -143,9 +170,9 @@ function SchemaTreeView({
                             return;
                         }
                         if (endpoint.side === 'source') {
-                            onDragLink(endpoint.path, node.path);
+                            onDragLink(endpoint.path, node.schemaPath || node.path);
                         } else {
-                            onDragLink(node.path, endpoint.path);
+                            onDragLink(node.schemaPath || node.path, endpoint.path);
                         }
                     } catch {
                         return;
@@ -161,6 +188,7 @@ function SchemaTreeView({
                 ...(node.attributes || []).map(attribute => ({
                     name: `@${attribute.name}`,
                     path: `${node.path}/@${attribute.name}`,
+                    schemaPath: attribute.schemaPath || `${node.schemaPath || node.path}/@${attribute.name}`,
                     type: 'attribute',
                     dataType: attribute.type,
                     namespace: attribute.namespace,
@@ -222,6 +250,14 @@ function SchemaTreeView({
                     </span>
                     <button
                         className="schema-btn"
+                        title={`Replace ${side} schema`}
+                        aria-label={`Replace ${side} schema`}
+                        onClick={onReplaceSchema}
+                    >
+                        Replace…
+                    </button>
+                    <button
+                        className="schema-btn"
                         title="Expand All"
                         onClick={() => {
                             const paths = new Set<string>();
@@ -263,8 +299,12 @@ export class SchemaTreeRenderer extends HTMLElement {
     private onNodeClick: (nodePath: string) => void = () => {};
     private onNodeDoubleClick?: (node: SchemaNodeView) => void;
     private onDragLink?: (sourcePath: string, targetPath: string) => void;
+    private onReplaceSchema?: () => void;
     private initialExpanded = new Set<string>();
     private renderVersion = 0;
+    private revealRequest?: { path: string };
+    private onLayoutChange?: () => void;
+    private paths = new SchemaPathResolver<SchemaNodeView>();
 
     public configure(
         schema: SchemaView,
@@ -272,13 +312,20 @@ export class SchemaTreeRenderer extends HTMLElement {
         onNodeClick: (nodePath: string) => void,
         initialExpanded?: Set<string>,
         onDragLink?: (sourcePath: string, targetPath: string) => void,
-        onNodeDoubleClick?: (node: SchemaNodeView) => void
+        onNodeDoubleClick?: (node: SchemaNodeView) => void,
+        onReplaceSchema?: () => void,
+        onLayoutChange?: () => void,
+        ignoreNamespaces = false
     ): void {
         this.schema = schema;
+        this.paths = new SchemaPathResolver(schema, ignoreNamespaces);
+        this.revealRequest = undefined;
         this.side = side;
         this.onNodeClick = onNodeClick;
         this.onDragLink = onDragLink;
         this.onNodeDoubleClick = onNodeDoubleClick;
+        this.onReplaceSchema = onReplaceSchema;
+        this.onLayoutChange = onLayoutChange;
         this.initialExpanded = initialExpanded ? new Set(initialExpanded) : new Set();
         if (schema.rootElement) {
             this.initialExpanded.add(schema.rootElement.path);
@@ -300,8 +347,14 @@ export class SchemaTreeRenderer extends HTMLElement {
     }
 
     public getNodePosition(path: string): { x: number; y: number } | null {
-        const node = Array.from(this.querySelectorAll<HTMLElement>('.tree-node[data-path]'))
-            .find(element => element.dataset.path === path);
+        const resolved = this.paths.resolve(path);
+        if (!resolved) { return null; }
+        path = resolved.path;
+        const visibleNodes = Array.from(this.querySelectorAll<HTMLElement>('.tree-node[data-path]'));
+        const node = visibleNodes.find(element => element.dataset.path === path)
+            ?? visibleNodes
+                .filter(element => element.dataset.path && path.startsWith(`${element.dataset.path}/`))
+                .sort((a, b) => (b.dataset.path?.length ?? 0) - (a.dataset.path?.length ?? 0))[0];
         const connector = node?.querySelector<HTMLElement>('.node-connector');
         const mappingArea = this.closest('.mapping-area');
         if (!connector || !mappingArea) {
@@ -314,6 +367,32 @@ export class SchemaTreeRenderer extends HTMLElement {
             x: connectorRect.left - areaRect.left + connectorRect.width / 2,
             y: connectorRect.top - areaRect.top + connectorRect.height / 2
         };
+    }
+
+    public revealNode(path: string): void {
+        if (!this.isConnected) {
+            return;
+        }
+        const resolved = this.paths.resolve(path);
+        if (!resolved) { return; }
+        path = resolved.path;
+        this.revealRequest = { path };
+        flushSync(() => this.renderReact());
+        const node = Array.from(this.querySelectorAll<HTMLElement>('.tree-node[data-path]'))
+            .find(element => element.dataset.path === path);
+        if (!node) {
+            return;
+        }
+        const pane = this.getBoundingClientRect();
+        const row = node.getBoundingClientRect();
+        const headerHeight = this.querySelector('.schema-header')?.getBoundingClientRect().height ?? 0;
+        if (row.top < pane.top + headerHeight || row.bottom > pane.top + this.clientHeight) {
+            this.scrollTop += row.top - pane.top - headerHeight - (this.clientHeight - headerHeight - row.height) / 2;
+        }
+        const connector = node.querySelector('.node-connector')?.getBoundingClientRect();
+        if (connector && (connector.left < pane.left || connector.right > pane.left + this.clientWidth)) {
+            this.scrollLeft += connector.left - pane.left - (this.clientWidth - connector.width) / 2;
+        }
     }
 
     private renderReact(): void {
@@ -330,6 +409,9 @@ export class SchemaTreeRenderer extends HTMLElement {
                 onNodeClick={this.onNodeClick}
                 onNodeDoubleClick={this.onNodeDoubleClick}
                 onDragLink={this.onDragLink}
+                onReplaceSchema={this.onReplaceSchema}
+                revealRequest={this.revealRequest}
+                onLayoutChange={this.onLayoutChange}
             />
         );
     }

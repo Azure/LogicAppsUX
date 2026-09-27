@@ -26,6 +26,7 @@ import {
 } from '../model';
 import { FunctoidDefinition, FunctoidRegistry } from '../functoids';
 import { SchemaTree, SchemaNode, SchemaNodeType } from '../model/schemaModel';
+import { SchemaPathResolver, instancePathParts, linkSchemaPath } from '../schema/schemaPathResolver';
 
 export interface CompileResult {
     success: boolean;
@@ -110,6 +111,8 @@ export class XsltCompiler {
     private sourceQualified: boolean = false;
     private sourceTree?: SchemaTree;
     private targetTree?: SchemaTree;
+    private sourcePaths = new SchemaPathResolver();
+    private targetPaths = new SchemaPathResolver();
     private currentMap?: MapDocument;
     private sourceNamespacePrefixes: Map<string, string> = new Map();
     private targetNamespacePrefixes: Map<string, string> = new Map();
@@ -151,6 +154,8 @@ export class XsltCompiler {
         this.targetNamespace = targetSchema?.targetNamespace || '';
         this.sourceTree = sourceSchema;
         this.targetTree = targetSchema;
+        this.sourcePaths = new SchemaPathResolver(sourceSchema, map.options.ignoreNamespacesForLinks);
+        this.targetPaths = new SchemaPathResolver(targetSchema, map.options.ignoreNamespacesForLinks);
         this.currentMap = map;
         this.customExtensionXml = map.customExtensionXml;
         this.sourceNamespacePrefixes = this.collectNamespacePrefixes(sourceSchema, 's');
@@ -179,6 +184,8 @@ export class XsltCompiler {
         }
 
         try {
+            map = this.resolveMapPaths(map, sourceSchema, targetSchema);
+            this.currentMap = map;
             const xslt = this.generateXslt(map, sourceSchema, targetSchema);
             this.attachDiagnosticPages();
             return {
@@ -200,6 +207,37 @@ export class XsltCompiler {
                 assemblyPaths: Array.from(this.assemblyReferences)
             };
         }
+    }
+
+    private resolveMapPaths(map: MapDocument, source?: SchemaTree, target?: SchemaTree): MapDocument {
+        return {
+            ...map,
+            targetValues: target ? this.targetPaths.resolveValues(map.targetValues) : map.targetValues,
+            testValues: source ? this.sourcePaths.resolveValues(map.testValues) : map.testValues,
+            pages: map.pages.map(page => ({
+                ...page,
+                links: page.links.map(link => {
+                    const resolved = { ...link };
+                    for (const side of ['source', 'target'] as const) {
+                        if (link[`${side}Type`] !== LinkEndpointType.SchemaNode ||
+                            !(side === 'source' ? source : target)) { continue; }
+                        const path = link[`${side}Path`] || link[`${side}Id`];
+                        const lookupPath = linkSchemaPath(link, side);
+                        const match = (side === 'source' ? this.sourcePaths : this.targetPaths).resolve(lookupPath);
+                        if (match) {
+                            resolved[`${side}Path`] = match.path;
+                            resolved[`${side}Id`] = match.path;
+                        } else {
+                            this.errors.push({
+                                message: `Unresolved or ambiguous ${side} schema path '${path}'`,
+                                pageId: page.id, pageName: page.name, elementId: link.id
+                            });
+                        }
+                    }
+                    return resolved;
+                })
+            }))
+        };
     }
 
     private generateXslt(map: MapDocument, sourceSchema?: SchemaTree, targetSchema?: SchemaTree): string {
@@ -400,7 +438,17 @@ export class XsltCompiler {
     }
 
     private validateP0Map(page: MapPage, targetSchema?: SchemaTree): void {
+        const functoidsWithOutputs = new Set(page.links
+            .filter(link => link.sourceType === LinkEndpointType.Functoid)
+            .map(link => link.sourceId));
         for (const functoid of page.functoids) {
+            if (!functoidsWithOutputs.has(functoid.id)) {
+                this.warnings.push({
+                    message: `${functoid.name} has no output links and is not compiled`,
+                    elementId: functoid.id
+                });
+                continue;
+            }
             if (functoid.functoidId === 260) {
                 this.validateScriptingFunctoid(functoid, page);
             } else if (functoid.functoidId === 424 || functoid.functoidId === 801) {
@@ -476,19 +524,23 @@ export class XsltCompiler {
                 });
             }
         }
-        const choiceGroups = new Map<string, SchemaNode[]>();
+        const choiceGroups = new Map<string, Map<number, SchemaNode[]>>();
         for (const child of node.children) {
-            if (child.choiceGroup) {
-                const group = choiceGroups.get(child.choiceGroup) || [];
-                group.push(child);
-                choiceGroups.set(child.choiceGroup, group);
+            const memberships = child.choiceBranches ||
+                (child.choiceGroup ? [{ group: child.choiceGroup, branch: node.children.indexOf(child) }] : []);
+            for (const membership of memberships) {
+                const group = choiceGroups.get(membership.group) || new Map<number, SchemaNode[]>();
+                const branch = group.get(membership.branch) || [];
+                branch.push(child);
+                group.set(membership.branch, branch);
+                choiceGroups.set(membership.group, group);
             }
         }
-        for (const children of choiceGroups.values()) {
-            const mapped = children.filter(child => this.hasAnyMapping(child, page));
+        for (const branches of choiceGroups.values()) {
+            const mapped = [...branches.values()].filter(children => children.some(child => this.hasAnyMapping(child, page)));
             if (mapped.length > 1) {
                 this.errors.push({
-                    message: `Choice under '${node.name}' has mappings to multiple branches: ${mapped.map(child => child.name).join(', ')}`,
+                    message: `Choice under '${node.name}' has mappings to multiple branches: ${mapped.map(children => children.map(child => child.name).join('/')).join(', ')}`,
                     elementId: node.path
                 });
             }
@@ -707,30 +759,13 @@ export class XsltCompiler {
     }
 
     private findDeepestRepeatingSourcePath(sourcePath: string): string | undefined {
-        const root = this.sourceTree?.rootElement;
-        const parts = sourcePath.split('/').filter(Boolean);
-        if (!root || parts[0] !== root.name) { return undefined; }
-        let current: SchemaNode | undefined = root;
-        let repeatingPath: string | undefined;
-        for (let index = 1; current && index < parts.length; index++) {
-            current = current.children.find(child => child.name === parts[index]);
-            if (current && this.isSourceLoopContext(current)) {
-                repeatingPath = `/${parts.slice(0, index + 1).join('/')}`;
-            }
-        }
-        return repeatingPath;
+        return this.findRepeatingSourcePaths(sourcePath).pop();
     }
 
     private findSchemaNode(root: SchemaNode, path: string): SchemaNode | undefined {
-        const parts = path.split('/').filter(Boolean);
-        if (parts[0] !== root.name) { return undefined; }
-        let current: SchemaNode | undefined = root;
-        for (const part of parts.slice(1)) {
-            if (part.startsWith('@')) { return undefined; }
-            current = current.children.find(child => child.name === part);
-            if (!current) { return undefined; }
-        }
-        return current;
+        const resolved = (root === this.targetTree?.rootElement
+            ? this.targetPaths : this.sourcePaths).resolve(path);
+        return resolved?.attribute ? undefined : resolved?.node;
     }
 
     /**
@@ -1581,6 +1616,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
      */
     private pathToXPath(srcPath: string, contextPath?: string): string {
         const absoluteParts = this.schemaPathParts(srcPath);
+        const resolved = this.sourcePaths.resolve(srcPath);
         if (absoluteParts.length === 0) { return '.'; }
         let parts = absoluteParts.slice(1);
         let consumedParts = 0;
@@ -1609,13 +1645,13 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
             const elemParts = parts.slice(0, -1);
             const attrName = lastPart.substring(1);
             const elementSteps = elemParts.map((part, index) =>
-                this.elementXPath(part, this.findSourceNode(
+                this.elementXPath(part, resolved?.ancestors[consumedParts + index + 1]?.namespace ?? this.findSourceNode(
                     `/${absoluteParts.slice(0, consumedParts + index + 2).join('/')}`
                 )?.namespace)
             );
             const parentPath = `/${absoluteParts.slice(0, -1).join('/')}`;
-            const parent = this.findSourceNode(parentPath);
-            const attribute = parent?.attributes.find(candidate => candidate.name === attrName);
+            const parent = resolved?.node || this.findSourceNode(parentPath);
+            const attribute = resolved?.attribute || parent?.attributes.find(candidate => candidate.name === attrName);
             const attrPrefix = attribute?.namespace
                 ? this.sourceNamespacePrefixes.get(attribute.namespace)
                 : undefined;
@@ -1631,7 +1667,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         const elementPath = [
             ...upwardSteps,
             ...parts.map((part, index) =>
-                this.elementXPath(part, this.findSourceNode(
+                this.elementXPath(part, resolved?.ancestors[consumedParts + index + 1]?.namespace ?? this.findSourceNode(
                     `/${absoluteParts.slice(0, consumedParts + index + 2).join('/')}`
                 )?.namespace)
             )
@@ -1648,17 +1684,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
      * Such paths must not be suffixed with /text() (e.g. count(Items), Items[2]).
      */
     private isContainerSourcePath(srcPath: string): boolean {
-        const root = this.sourceTree?.rootElement;
-        if (!root) { return false; }
-        const parts = this.schemaPathParts(srcPath);
-        if (parts.length === 0) { return false; }
-        if (parts[parts.length - 1].startsWith('@')) { return false; }
-        // First part is the root element name.
-        let node: SchemaNode | undefined = parts[0] === root.name ? root : undefined;
-        for (let i = 1; node && i < parts.length; i++) {
-            node = node.children.find(c => c.name === parts[i]);
-        }
-        return !!node && node.children.length > 0;
+        return !!this.findSourceNode(srcPath)?.children.length;
     }
 
     /**
@@ -2014,7 +2040,7 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     ): string {
         if (link.sourceType === LinkEndpointType.SchemaNode && link.sourcePath) {
             if (link.sourceLinkOption === SourceLinkOption.NameCopy) {
-                const parts = link.sourcePath.split('/').filter(Boolean);
+                const parts = this.schemaPathParts(link.sourcePath);
                 return this.toXPathLiteral((parts[parts.length - 1] || '').replace(/^@/, ''));
             }
             if (link.sourceLinkOption === SourceLinkOption.MixedCopy) {
@@ -2384,30 +2410,12 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     }
 
     private findSourceNode(sourcePath: string): SchemaNode | undefined {
-        const root = this.sourceTree?.rootElement;
-        const parts = this.schemaPathParts(sourcePath);
-        if (!root || parts[0] !== root.name) { return undefined; }
-        let current: SchemaNode | undefined = root;
-        for (const part of parts.slice(1)) {
-            if (part.startsWith('@')) { return undefined; }
-            current = current.children.find(child => child.name === part);
-            if (!current) { return undefined; }
-        }
-        return current;
+        const resolved = this.sourcePaths.resolve(sourcePath);
+        return resolved?.attribute ? undefined : resolved?.node;
     }
 
     private sourcePathIsOptional(sourcePath: string): boolean {
-        const root = this.sourceTree?.rootElement;
-        const parts = this.schemaPathParts(sourcePath);
-        if (!root || parts[0] !== root.name) { return false; }
-        let current: SchemaNode | undefined = root;
-        for (const part of parts.slice(1)) {
-            if (part.startsWith('@')) { return false; }
-            current = current.children.find(child => child.name === part);
-            if (!current) { return false; }
-            if (current.isOptional) { return true; }
-        }
-        return false;
+        return this.sourcePaths.resolve(sourcePath)?.ancestors.slice(1).some(node => node.isOptional) || false;
     }
 
     private getSourceTestExpression(link: MapLink, page: MapPage): string | null {
@@ -2538,15 +2546,9 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
         );
         const repeatingNames: string[] = [];
         if (sourceLink?.sourcePath && this.sourceTree?.rootElement) {
-            const parts = sourceLink.sourcePath.split('/').filter(Boolean);
-            let node: SchemaNode | undefined = parts[0] === this.sourceTree.rootElement.name
-                ? this.sourceTree.rootElement
-                : undefined;
-            for (const part of parts.slice(1)) {
-                if (!node || part.startsWith('@')) { break; }
-                node = node.children.find(child => child.name === part);
-                if (node && (node.maxOccurs === 'unbounded' ||
-                    (typeof node.maxOccurs === 'number' && node.maxOccurs > 1))) {
+            for (const node of this.sourcePaths.resolve(sourceLink.sourcePath)?.ancestors.slice(1) || []) {
+                if (node.maxOccurs === 'unbounded' ||
+                    (typeof node.maxOccurs === 'number' && node.maxOccurs > 1)) {
                     repeatingNames.push(node.name);
                 }
             }
@@ -2642,18 +2644,8 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     }
 
     private findRepeatingSourcePaths(sourcePath: string): string[] {
-        const root = this.sourceTree?.rootElement;
-        const parts = sourcePath.split('/').filter(Boolean);
-        if (!root || parts[0] !== root.name) { return []; }
-        const paths: string[] = [];
-        let current: SchemaNode | undefined = root;
-        for (let index = 1; current && index < parts.length; index++) {
-            current = current.children.find(child => child.name === parts[index]);
-            if (current && this.isSourceLoopContext(current)) {
-                paths.push(`/${parts.slice(0, index + 1).join('/')}`);
-            }
-        }
-        return paths;
+        return this.sourcePaths.resolve(sourcePath)?.ancestors.slice(1)
+            .filter(node => this.isSourceLoopContext(node)).map(node => node.path) || [];
     }
 
     private isSourceLoopContext(node: SchemaNode): boolean {
@@ -2737,9 +2729,10 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     }
 
     private schemaPathParts(path: string): string[] {
-        return path.split('/').filter(part =>
-            part.length > 0 && !(/^<[^<>]+>$/.test(part))
-        );
+        const resolved = this.sourcePaths.resolve(path);
+        return resolved
+            ? [...resolved.ancestors.map(node => node.name), ...(resolved.attribute ? [`@${resolved.attribute.name}`] : [])]
+            : instancePathParts(path);
     }
 
     private generateSimpleTarget(page: MapPage, linkGraph: Map<string, MapLink[]>, indent: number): string {

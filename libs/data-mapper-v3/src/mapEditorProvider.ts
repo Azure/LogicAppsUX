@@ -17,7 +17,8 @@ import { CompilerWorkerClient } from './worker/compilerWorkerClient';
 import type { CompileResult } from './compiler/xsltCompiler';
 import type { SchemaTree } from './model/schemaModel';
 import { resolveSchemaDependencies } from './schema/schemaDependencyResolver';
-import { applyMapPatches, createMapPatchValidationContext, createMapPrompt, parseMapPromptResponse } from './copilot/mapPrompt';
+import { replaceSchema } from './schema/schemaReplacement';
+import { applyMapPatches, createMapLayoutPrompt, createMapPatchValidationContext, createMapPrompt, parseMapPromptResponse } from './copilot/mapPrompt';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
@@ -125,6 +126,46 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       console.warn(`Could not load target schema: ${e.message}`);
       vscode.window.showWarningMessage(`Could not load target schema "${mapDoc.targetSchema.location}": ${e.message}`);
     }
+
+    let disposed = false;
+    let schemaRequest = 0;
+    const schemaCache = new Map<string, SchemaTree | undefined>();
+    const schemaKey = (reference: MapDocument['sourceSchema']) => JSON.stringify({
+      location: reference.location || '',
+      rootName: reference.rootName || '',
+      inlineSchemaXml: reference.inlineSchemaXml || '',
+    });
+    schemaCache.set(schemaKey(mapDoc.sourceSchema), sourceSchemaTree);
+    schemaCache.set(schemaKey(mapDoc.targetSchema), targetSchemaTree);
+    const synchronizeSchemas = async (updatedMap: MapDocument, version: number): Promise<void> => {
+      const load = async (reference: MapDocument['sourceSchema']) => {
+        const key = schemaKey(reference);
+        if (schemaCache.has(key)) {
+          return schemaCache.get(key);
+        }
+        try {
+          const tree = await this.loadSchemaTree(reference, document.uri);
+          schemaCache.set(key, tree);
+          return tree;
+        } catch (error) {
+          if (!disposed && document.version === version) {
+            vscode.window.showWarningMessage(`Could not load schema: ${error instanceof Error ? error.message : String(error)}`);
+          }
+          return undefined;
+        }
+      };
+      const [source, target] = await Promise.all([load(updatedMap.sourceSchema), load(updatedMap.targetSchema)]);
+      if (disposed || document.version !== version) {
+        return;
+      }
+      mapDoc = updatedMap;
+      sourceSchemaTree = source;
+      targetSchemaTree = target;
+      await webviewPanel.webview.postMessage({
+        type: 'schemaStateChanged',
+        data: { map: updatedMap, sourceSchema: source ?? null, targetSchema: target ?? null },
+      });
+    };
 
     // Prepare initial data
     const initData: HostToWebviewMessage = {
@@ -269,23 +310,71 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
           break;
         }
         case 'loadSchema': {
-          const schemaUri = await vscode.window.showOpenDialog({
-            canSelectMany: false,
-            filters: { 'XSD Schema': ['xsd'] },
-            title: `Select ${message.side} Schema`,
-          });
-          if (schemaUri && schemaUri.length > 0) {
-            try {
-              const content = await this.readFile(schemaUri[0].fsPath);
-              if (content) {
-                const tree = this.schemaParser.parse(content, schemaUri[0].fsPath);
-                webviewPanel.webview.postMessage({
-                  type: 'schemaLoaded',
-                  data: { side: message.side, schema: tree, path: schemaUri[0].fsPath },
-                });
+          const request = ++schemaRequest;
+          const version = document.version;
+          const isCurrent = () => !disposed && request === schemaRequest && document.version === version;
+          try {
+            const schemaUri = await vscode.window.showOpenDialog({
+              canSelectMany: false,
+              filters: { 'XSD Schema': ['xsd'] },
+              title: `Select ${message.side} Schema`,
+            });
+            if (!schemaUri?.length || !isCurrent()) {
+              break;
+            }
+            const reference = { location: schemaUri[0].fsPath };
+            const tree = await this.loadSchemaTree(reference, document.uri);
+            if (!isCurrent() || !tree) {
+              break;
+            }
+            const currentMap = this.btmSerializer.deserialize(document.getText().replace(/^\uFEFF/, '').replace(/\0/g, ''));
+            const replacement = replaceSchema(currentMap, message.side, tree, {
+              ...reference, rootName: tree.rootElement.name, namespace: tree.targetNamespace,
+            });
+            const existingSchema = currentMap[`${message.side}Schema`];
+            if (existingSchema.location || existingSchema.inlineSchemaXml || replacement.removedLinkCount > 0) {
+              const linkImpact = replacement.removedLinkCount > 0
+                ? `Replacing the ${message.side} schema will remove ${replacement.removedLinkCount} unmatched link(s) across all pages. Links whose paths exist in the new schema and all functoids will be preserved.`
+                : 'All existing links and functoids will be preserved.';
+              const choice = await vscode.window.showWarningMessage(
+                `Replace the ${message.side} schema with "${path.basename(reference.location)}"? ${linkImpact} This change affects every map page.`,
+                { modal: true }, 'Replace Schema'
+              );
+              if (choice !== 'Replace Schema' || !isCurrent()) {
+                break;
               }
-            } catch (e: any) {
-              vscode.window.showErrorMessage(`Failed to parse schema: ${e.message}`);
+            }
+            if (!isCurrent()) {
+              break;
+            }
+            const edit = new vscode.WorkspaceEdit();
+            const replacementXml = this.btmSerializer.serialize(replacement.map);
+            edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), replacementXml);
+            const key = schemaKey(replacement.map[`${message.side}Schema`]);
+            const hadCachedSchema = schemaCache.has(key);
+            const previousCachedSchema = schemaCache.get(key);
+            schemaCache.set(key, tree);
+            let applied = false;
+            try {
+              applied = await vscode.workspace.applyEdit(edit);
+            } finally {
+              if (!applied) {
+                if (hadCachedSchema) {
+                  schemaCache.set(key, previousCachedSchema);
+                } else {
+                  schemaCache.delete(key);
+                }
+              }
+            }
+            if (!applied) {
+              vscode.window.showErrorMessage('Could not replace schema. The map was not changed.');
+            } else if (!disposed && document.getText() === replacementXml
+              && (message.side === 'source' ? sourceSchemaTree : targetSchemaTree) !== tree) {
+              await synchronizeSchemas(this.btmSerializer.deserialize(replacementXml), document.version);
+            }
+          } catch (error) {
+            if (isCurrent()) {
+              vscode.window.showErrorMessage(`Failed to replace schema: ${error instanceof Error ? error.message : String(error)}`);
             }
           }
           break;
@@ -333,11 +422,21 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             }
           }
           if (schemaTree) {
-            const xml = this.instanceGenerator.generate(schemaTree);
-            webviewPanel.webview.postMessage({
-              type: 'instanceGenerated',
-              data: { side, xml },
-            });
+            try {
+              const map = this.btmSerializer.deserialize(document.getText());
+              const xml = this.instanceGenerator.generate(
+                schemaTree, side === 'source' ? map.testValues : undefined, map.options.ignoreNamespacesForLinks
+              );
+              webviewPanel.webview.postMessage({
+                type: 'instanceGenerated',
+                data: { side, xml },
+              });
+            } catch (error) {
+              webviewPanel.webview.postMessage({
+                type: 'instanceGenerated',
+                data: { side, xml: '', error: error instanceof Error ? error.message : String(error) },
+              });
+            }
           } else {
             webviewPanel.webview.postMessage({
               type: 'instanceGenerated',
@@ -596,7 +695,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               hasOutput: f.hasOutput,
               tooltip: f.tooltip,
             }));
-            const prompt = createMapPrompt(
+            let prompt = createMapPrompt(
               message.data.prompt,
               currentMap,
               message.data.activePage,
@@ -609,10 +708,12 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               }))
             );
             const tokenCount = await model.countTokens(prompt);
-            if (tokenCount > model.maxInputTokens - 1024) {
-              throw new Error(
-                `This map needs ${tokenCount} input tokens, but the selected Copilot model supports ${model.maxInputTokens}.`
-              );
+            const layoutOnly = tokenCount > model.maxInputTokens - 1024;
+            if (layoutOnly) {
+              prompt = createMapLayoutPrompt(message.data.prompt, currentMap, message.data.activePage);
+              if (await model.countTokens(prompt) > model.maxInputTokens - 1024) {
+                throw new Error('Even the map page summary exceeds the selected model context window. Use a model with a larger context window.');
+              }
             }
 
             const messages = [vscode.LanguageModelChatMessage.User(prompt)];
@@ -637,19 +738,27 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               }
               try {
                 plan = parseMapPromptResponse(responseText);
+                if (layoutOnly && plan.patches.some(patch => patch.op !== 'layout')) {
+                  throw new Error('The full map exceeds the model context window. Only layout operations are allowed with the page summary.');
+                }
                 updatedMap = applyMapPatches(currentMap, plan.patches, validationContext);
                 serialized = this.btmSerializer.serialize(updatedMap);
                 this.btmSerializer.deserialize(serialized);
                 break;
               } catch (validationError) {
+                const validationMessage = validationError instanceof Error ? validationError.message : String(validationError);
                 if (attempt === 1) {
+                  if (layoutOnly) {
+                    throw new Error(
+                      `Only layout requests can use the page summary. Other edits require a model with a larger context window. ${validationMessage}`
+                    );
+                  }
                   throw validationError;
                 }
-                const validationMessage = validationError instanceof Error ? validationError.message : String(validationError);
                 messages.push(
                   vscode.LanguageModelChatMessage.Assistant(responseText),
                   vscode.LanguageModelChatMessage.User(
-                    `Your proposed edit was rejected by the Logic App Data Mapper validator: ${validationMessage}\nCorrect the complete edit plan and return only the replacement JSON object. Ensure every functoid and link uses the exact complete shapes and graph invariants in your instructions.`
+                    `Your proposed edit was rejected by the Logic App Data Mapper validator: ${validationMessage}\nCorrect the complete edit plan and return only the replacement JSON object. ${layoutOnly ? 'Only layout operations are allowed; requests that need the full map require a model with a larger context window.' : 'Ensure every functoid and link uses the exact complete shapes and graph invariants in your instructions.'}`
                   )
                 );
               }
@@ -708,10 +817,15 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
     // Update webview when document changes
-    const changeDocSub = vscode.workspace.onDidChangeTextDocument((e) => {
+    const changeDocSub = vscode.workspace.onDidChangeTextDocument(async (e) => {
       if (e.document.uri.toString() === document.uri.toString()) {
         try {
           const updatedMap = this.btmSerializer.deserialize(e.document.getText());
+          if (schemaKey(updatedMap.sourceSchema) !== schemaKey(mapDoc.sourceSchema)
+            || schemaKey(updatedMap.targetSchema) !== schemaKey(mapDoc.targetSchema)) {
+            await synchronizeSchemas(updatedMap, e.document.version);
+            return;
+          }
           webviewPanel.webview.postMessage({
             type: 'documentChanged',
             data: updatedMap,
@@ -723,6 +837,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     });
 
     webviewPanel.onDidDispose(() => {
+      disposed = true;
       changeDocSub.dispose();
     });
   }
