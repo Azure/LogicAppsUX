@@ -144,6 +144,7 @@ if (process.env.E2E_VSCODE_VERSION && process.env.CODE_VERSION && process.env.E2
 const VSCODE_VERSION = process.env.E2E_VSCODE_VERSION || process.env.CODE_VERSION || DEFAULT_VSCODE_VERSION;
 process.env.CODE_VERSION = VSCODE_VERSION;
 const DOWNLOAD_RETRY_ATTEMPTS = 3;
+const CS_DEV_KIT_E2E_VERSION = '3.40.210';
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
 const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
@@ -438,15 +439,35 @@ function copyDirSync(src: string, dest: string, skipDir?: string): void {
   }
 }
 
+function getCsDevKitEntry(extensionsDir: string): string | undefined {
+  if (!fs.existsSync(extensionsDir)) {
+    return undefined;
+  }
+
+  return fs
+    .readdirSync(extensionsDir)
+    .find((entry) => entry.toLowerCase().startsWith('ms-dotnettools.csdevkit-') || entry.toLowerCase() === 'ms-dotnettools.csdevkit');
+}
+
 function repairCsDevKitNativeAddonPath(extensionsDir: string): void {
-  if (process.platform !== 'win32' || !fs.existsSync(extensionsDir)) {
+  const csDevKitEntry = getCsDevKitEntry(extensionsDir);
+  if (!csDevKitEntry) {
     return;
   }
 
-  const csDevKitEntry = fs
-    .readdirSync(extensionsDir)
-    .find((entry) => entry.toLowerCase().startsWith('ms-dotnettools.csdevkit-') || entry.toLowerCase() === 'ms-dotnettools.csdevkit');
-  if (!csDevKitEntry) {
+  if (process.platform === 'linux') {
+    const serverDir = path.join(extensionsDir, csDevKitEntry, 'components', 'server');
+    const serverShim = path.join(serverDir, 'CSDevKit');
+    const serverExe = path.join(serverDir, 'CSDevKit.exe');
+    if (!fs.existsSync(serverShim) && fs.existsSync(serverExe)) {
+      fs.writeFileSync(serverShim, '#!/bin/sh\nexit 0\n');
+      fs.chmodSync(serverShim, 0o755);
+      console.log(`  ✓ Repaired C# Dev Kit Linux server shim: ${serverShim}`);
+    }
+    return;
+  }
+
+  if (process.platform !== 'win32') {
     return;
   }
 
@@ -470,7 +491,8 @@ function hasExpectedCsDevKitPlatformPayload(entry: string): boolean {
   }
 
   if (process.platform === 'linux') {
-    return fs.existsSync(path.join(extensionPath, 'components', 'server', 'CSDevKit'));
+    const architecture = process.arch === 'arm64' ? 'linux-arm64' : 'linux-x64';
+    return fs.existsSync(path.join(extensionPath, 'components', 'CPS', 'platforms', architecture));
   }
 
   return true;
@@ -500,7 +522,7 @@ async function withDownloadRetry(label: string, action: () => Promise<void>): Pr
 function installExtensionWithCli(cliBase: string, dep: string, label: string = dep): Promise<InstallResult> {
   return new Promise<InstallResult>((resolve) => {
     const { args: proxyArgs, env: proxyEnv } = getVsCodeCliProxyOptions();
-    const command = `${cliBase}${proxyArgs} --force --install-extension "${dep}" --extensions-dir="${extDir}"`;
+    const command = `${cliBase}${proxyArgs} --force --install-extension "${getMarketplaceExtensionReference(dep)}" --extensions-dir="${extDir}"`;
     const startTime = Date.now();
     exec(command, { timeout: 300000, env: { ...process.env, ...proxyEnv } }, (error: Error | null, stdout: string, stderr: string) => {
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -511,6 +533,10 @@ function installExtensionWithCli(cliBase: string, dep: string, label: string = d
       } else {
         console.log(`  ✓ ${label} installed (${elapsed}s)`);
         resolve({ dep, success: true });
+      }
+
+      function getMarketplaceExtensionReference(dep: string): string {
+        return dep.toLowerCase() === 'ms-dotnettools.csdevkit' ? `${dep}@${CS_DEV_KIT_E2E_VERSION}` : dep;
       }
     });
   });
@@ -584,38 +610,59 @@ function downloadExtensionVsix(dep: string): string {
   const targetPlatform = getMarketplaceTargetPlatform();
   const vsixDir = path.join(os.tmpdir(), 'test-resources', 'vsix-cache');
   fs.mkdirSync(vsixDir, { recursive: true });
-  const vsixPath = path.join(vsixDir, `${dep}-${targetPlatform}.vsix`);
-  if (isZipFile(vsixPath)) {
-    return vsixPath;
-  }
-  if (fs.existsSync(vsixPath)) {
-    fs.unlinkSync(vsixPath);
+  const versionSegment = dep.toLowerCase() === 'ms-dotnettools.csdevkit' ? CS_DEV_KIT_E2E_VERSION : 'latest';
+  const cacheName = versionSegment === 'latest' ? dep : `${dep}-${versionSegment}`;
+  const candidates = [
+    {
+      path: path.join(vsixDir, `${cacheName}-${targetPlatform}.vsix`),
+      url: `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/${versionSegment}/vspackage?targetPlatform=${targetPlatform}`,
+    },
+    {
+      path: path.join(vsixDir, `${cacheName}.vsix`),
+      url: `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/${versionSegment}/vspackage`,
+    },
+  ];
+
+  let lastError: unknown;
+  for (const candidate of candidates) {
+    if (isZipFile(candidate.path)) {
+      return candidate.path;
+    }
+    if (fs.existsSync(candidate.path)) {
+      fs.unlinkSync(candidate.path);
+    }
+
+    try {
+      execFileSync(
+        'curl',
+        [
+          '--fail',
+          '--location',
+          '--compressed',
+          '--retry',
+          '5',
+          '--retry-delay',
+          '5',
+          '--retry-all-errors',
+          '--connect-timeout',
+          '30',
+          '--output',
+          candidate.path,
+          candidate.url,
+        ],
+        { timeout: 300000, stdio: 'pipe' }
+      );
+      if (!isZipFile(candidate.path)) {
+        throw new Error(`Downloaded Marketplace package for '${dep}' is not a VSIX zip at ${candidate.path}.`);
+      }
+      return candidate.path;
+    } catch (error) {
+      lastError = error;
+      fs.rmSync(candidate.path, { force: true });
+    }
   }
 
-  const url = `https://marketplace.visualstudio.com/_apis/public/gallery/publishers/${publisher}/vsextensions/${extension}/latest/vspackage?targetPlatform=${targetPlatform}`;
-  execFileSync(
-    'curl',
-    [
-      '--fail',
-      '--location',
-      '--compressed',
-      '--retry',
-      '5',
-      '--retry-delay',
-      '5',
-      '--retry-all-errors',
-      '--connect-timeout',
-      '30',
-      '--output',
-      vsixPath,
-      url,
-    ],
-    { timeout: 300000, stdio: 'pipe' }
-  );
-  if (!isZipFile(vsixPath)) {
-    throw new Error(`Downloaded Marketplace package for '${dep}' is not a VSIX zip at ${vsixPath}.`);
-  }
-  return vsixPath;
+  throw lastError instanceof Error ? lastError : new Error(`Unable to download Marketplace package for '${dep}'.`);
 }
 
 function getMarketplaceTargetPlatform(): string {
@@ -629,6 +676,46 @@ function getMarketplaceTargetPlatform(): string {
     default:
       throw new Error(`Unsupported VSIX target platform: ${process.platform}-${process.arch}`);
   }
+}
+
+async function withFileLock(lockPath: string, action: () => Promise<void>): Promise<void> {
+  fs.mkdirSync(path.dirname(lockPath), { recursive: true });
+  for (let attempt = 1; attempt <= 120; attempt++) {
+    let handle: fs.promises.FileHandle | undefined;
+    try {
+      handle = await fs.promises.open(lockPath, 'wx');
+      await handle.writeFile(`${process.pid}\n${new Date().toISOString()}\n`);
+      try {
+        await action();
+      } finally {
+        await handle.close();
+        handle = undefined;
+        fs.rmSync(lockPath, { force: true });
+      }
+      return;
+    } catch (error: any) {
+      if (handle) {
+        await handle.close();
+      }
+      if (error?.code !== 'EEXIST') {
+        throw error;
+      }
+
+      try {
+        const stats = fs.statSync(lockPath);
+        if (Date.now() - stats.mtimeMs > 15 * 60 * 1000) {
+          fs.rmSync(lockPath, { force: true });
+          continue;
+        }
+      } catch {
+        continue;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
+
+  throw new Error(`Timed out waiting for lock: ${lockPath}`);
 }
 
 function quoteShellArgument(value: string): string {
@@ -700,13 +787,22 @@ function preflightVSCodeCli(extest: ExTester): void {
 }
 
 async function downloadExTesterAssets(): Promise<void> {
-  await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, async () => {
-    const downloadTester = createExTester();
-    await downloadTester.downloadCode(VSCODE_VERSION);
-    preflightVSCodeCli(createExTester());
-  });
+  const storageFolder = path.join(os.tmpdir(), 'test-resources');
+  const lockPath = path.join(storageFolder, 'download-assets.lock');
+  await withFileLock(lockPath, async () => {
+    await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, async () => {
+      const downloadTester = createExTester();
+      try {
+        await downloadTester.downloadCode(VSCODE_VERSION);
+        preflightVSCodeCli(createExTester());
+      } catch (error) {
+        fs.rmSync(path.join(storageFolder, `${VSCODE_VERSION}-stable.tar.gz`), { force: true });
+        throw error;
+      }
+    });
 
-  await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => createExTester().downloadChromeDriver(VSCODE_VERSION));
+    await withDownloadRetry(`download ChromeDriver ${VSCODE_VERSION}`, () => createExTester().downloadChromeDriver(VSCODE_VERSION));
+  });
 }
 
 /**
